@@ -150,6 +150,7 @@ VERIFY (receipt: X chunks ingestados, Y errores)
 
 **Duración:** 1 semana  
 **Fecha objetivo:** 2026-10-12
+**Estado:** ✅ COMPLETE (2026-09-21)
 
 ### Entidades a Modelar
 
@@ -188,17 +189,19 @@ class Revision:
 
 class Relation:
     subject_id: str
-    predicate: DERIVED_FROM | SUPERSEDES | REFERENCES | IMPLEMENTS | VALIDATES | CONTRADICTS | GENERATED_BY | BELONGS_TO
+    predicate: DERIVED_FROM | SUPERSEDES | REFERENCES | IMPLEMENTS | VALIDATES | CONTRADICTS | GENERATED_BY | AUTHORIZES | GENERATES | SERVES | REQUIRES | BELONGS_TO
     object_id: str
     confidence: float
 `
 
 ### Entregables
 
-- [ ] src/metadata/schema.py (definición de entidades)
-- [ ] src/metadata/ontology.py (relaciones y reglas)
-- [ ] 	ests/test_metadata_schema.py
-- [ ] Evidence: ontología visualizada (grafo de relaciones)
+- [x] src/metadata/schema.py (definición de entidades)
+- [x] src/metadata/ontology.py (relaciones y reglas)
+- [x] src/metadata/ontology_generator.py (propuestas L1 → L2 → L3 gobernadas)
+- [x] tests/test_metadata_schema.py
+- [x] tests/test_ontology_generator.py
+- [x] Evidence: ontología visualizada (grafo de relaciones)
 
 ---
 

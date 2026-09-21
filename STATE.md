@@ -1,4 +1,26 @@
-# 🎉 L1 COMPLETE — BAGO AGENTIC DATA LAB
+# Current State — BAGO Agentic Data Lab
+
+**Updated:** 2026-09-21 23:20:49
+**Current phase:** L3 · Metadata & Ontology
+**Status:** VERIFIED / COMPLETE for the local L3 acceptance scope
+**Tests:** 37/37 passing
+**Next phase:** L4 · Governed RAG
+**Evidence:** `evidence/l3_ontology_graph.md` with integrity PASS;
+`evidence/ontology_proposal.md` and `evidence/ontology_proposal_examples.md`
+are reproducible review artifacts.
+**Ontology generator:** metadata and relation proposals remain `PROPOSED` until
+validator plus human/contract approval; no automatic canonical promotion.
+Current proposal run: 16 entities and 0 explicit relations in the BAGO source
+documents; the controlled example yields 4 rule-pass proposals, all pending
+approval.
+**Known non-blocking warnings:** Pydantic V1 on Python 3.14 and deprecated
+`datetime.utcnow()` in legacy L1 tests.
+
+The L1 record below is preserved as historical project context.
+
+---
+
+# Historical Record — L1 COMPLETE — BAGO AGENTIC DATA LAB
 
 **Fecha:** 2026-09-21  
 **Fase completada:** L1 · LangGraph Governed Execution  
