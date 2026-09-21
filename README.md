@@ -2,7 +2,7 @@
 
 [![GitHub](https://img.shields.io/badge/GitHub-Repo-blue)](https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB)
 [![Branch](https://img.shields.io/badge/branch-main-green)](https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/tree/main)
-[![Commits](https://img.shields.io/badge/commits-16-orange)](https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/commits/main)
+[![Commits](https://img.shields.io/badge/commits-18-orange)](https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/commits/main)
 [![Tests](https://img.shields.io/badge/tests-64%2F64%20passing-brightgreen)]()
 [![Chunks](https://img.shields.io/badge/chunks_indexed-65-purple)]()
 [![License](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
@@ -226,4 +226,4 @@ MIT License - Ver [LICENSE](LICENSE) para detalles.
 
 **Nota:** Este README se genera dinámicamente. Para actualizar métricas ejecutar `python scripts/generate_dynamic_readme.py`
 
-Generado: 2026-09-22 01:27:24
+Generado: 2026-09-22 01:33:14
