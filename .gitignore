@@ -3,6 +3,7 @@ __pycache__/
 .env
 venv/
 .pytest_cache/
+.bago/evidence/sync-agent/
 evidence/*.png
 evidence/*.mp4
 .DS_Store
