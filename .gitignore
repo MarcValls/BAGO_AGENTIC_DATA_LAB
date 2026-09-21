@@ -6,4 +6,5 @@ venv/
 .bago/evidence/sync-agent/
 evidence/*.png
 evidence/*.mp4
+!evidence/mcp_governed_demo.mp4
 .DS_Store

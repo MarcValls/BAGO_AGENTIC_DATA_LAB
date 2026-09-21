@@ -16,7 +16,7 @@
 |-----------|--------|----------|-----|
 | Agentes y orchestration | 🟡 En aprendizaje | — | L1 LangGraph |
 | Tool calling / APIs | ✅ Conocido | BAGO backend | — |
-| MCP | ❌ No empezado | — | L5 |
+| MCP | ✅ Baseline gobernado | mcp_adapter.py + local stdio demo + video | L6 Bedrock |
 | RAG | 🟡 Parcial | BAGO RAG básico | L4 |
 | Validaciones/permisos | ✅ Fuerte | BAGO governance | — |
 | Action limits / human escalation | ✅ Diseñado | BAGO contracts | — |
@@ -43,7 +43,7 @@
 | Evaluación de modelos | 🟡 Parcial | — | Reforzar tests |
 | Orchestration frameworks | ❌ No empezado | — | L1 LangGraph |
 | Vector DB | ❌ No empezado | — | L4 |
-| MCP | ❌ No empezado | — | L5 |
+| MCP | ✅ Baseline gobernado | mcp_adapter.py + local stdio demo + video | Cloud/provider depth |
 | Testing/CI-CD | 🟡 Parcial | BAGO tests | Reforzar |
 | Seguridad/privacy | ✅ Fuerte | BAGO governance | — |
 | Proyectos públicos | ✅ Este laboratorio | En construcción | GitHub repo |
@@ -91,7 +91,7 @@
 | Tool use | ✅ Diseñado | BAGO tools | — |
 | Business-rule enforcement | ✅ Fuerte | BAGO governance | — |
 | Graceful failure | ✅ Diseñado | BAGO error handling | — |
-| MCP seguro para APIs | ❌ No empezado | — | L5 |
+| MCP seguro para APIs | ✅ Boundary implementado | Registry + effect classification + permits | Integración API real |
 | Retrieval/embeddings | 🟡 Parcial | — | L4 |
 | Feedback loops | 🟡 Parcial | BAGO context | Reforzar |
 | Evals estructurales | ❌ No empezado | — | Reforzar tests |
@@ -108,7 +108,7 @@
 - Aplicar destacando BAGO governance + RAG implementado
 
 ### Wave 2 (4-5 semanas) — Tuio
-- Completar L5-L6 (MCP + Bedrock)
+- Completar L6 (Bedrock; L5 MCP baseline ya verificado)
 - Evidence de LangGraph governed execution
 - Aplicar aunque seniority sea gap; portfolio como compensación
 
@@ -135,8 +135,8 @@
 | LangGraph | Muy Alta | ❌ None | 🎯 Proficient | L1 state graph | L1 completado |
 | LangChain concepts | Alta | ❌ None | 🟡 Basic | — | L1 completado |
 | Multi-agent systems | Muy Alta | 🟡 Basic | 🎯 Proficient | BAGO agents | L9 completado |
-| Tool use | Muy Alta | ✅ Diseñado | 🎯 Implementado | BAGO tools | L5 completado |
-| MCP | Muy Alta | ❌ None | 🎯 Proficient | L5 MCP adapter | L5 completado |
+| Tool use | Muy Alta | ✅ Implementado | 🎯 Proficient | BAGO tools + MCP receipts | L5 baseline |
+| MCP | Muy Alta | ✅ Baseline gobernado | 🎯 Proficient | L5 MCP adapter + video | L5 baseline |
 | RAG | Muy Alta | 🟡 Basic | 🎯 Advanced | L4 governed RAG | L4 completado |
 | Hybrid retrieval | Alta | ❌ None | 🎯 Proficient | L4 benchmarks | L4 completado |
 | Embeddings | Alta | 🟡 Conceptual | 🎯 Implementado | L4 vector store | L4 completado |
@@ -183,7 +183,7 @@
 
 ### Para Tuio (añadir L5-L6)
 
-- [ ] L5: MCP adapter + server local demo
+- [x] L5: MCP adapter + server local demo + video
 - [ ] L6: Bedrock provider adapter funcionando
 - [ ] Evidence de authorization boundary en acción
 - [ ] Receipts de ejecuciones reales

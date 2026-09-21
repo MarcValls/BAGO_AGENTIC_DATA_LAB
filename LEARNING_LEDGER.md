@@ -133,7 +133,7 @@ Orquestar flujos complejos de reasoning + retrieval + action de forma mantenible
 | L2 | — | — | — |
 | L3 | Entity schema, authority, validity, relations, lineage | schema.py + ontology.py + ontology_generator.py + 25 tests + graph/proposal evidence | ✅ Sí |
 | L4 | Governed RAG, hybrid retrieval, metadata filters, evidence context | governed_rag.py + benchmark + 12 tests | ✅ Sí |
-| L5 | — | — | — |
+| L5 | MCP discovery, capability registry, effect classification, governed stdio calls | mcp_adapter.py + local server + 7 tests + execution receipt | ✅ Sí |
 | L6 | — | — | — |
 | L7 | — | — | — |
 | L8 | — | — | — |
@@ -142,7 +142,7 @@ Orquestar flujos complejos de reasoning + retrieval + action de forma mantenible
 ---
 
 **Última actualización:** 2026-09-21  
-**Próxima entrada:** Al completar L5 (MCP)
+**Próxima entrada:** Al completar L6 (AWS Bedrock)
 
 ---
 
@@ -193,4 +193,22 @@ y 3 tests del benchmark.
 reproducibles: tres modos, reranking on/off, top-k 10/25/50/100 y dos
 políticas de metadata. El semantic baseline es offline y no representa una
 evaluación de un modelo cloud.
+
+---
+
+### 2026-09-22 — Governed MCP
+
+**Fase:** L5
+
+**Implementación:** `src/adapters/mcp_adapter.py` separa discovery de
+registration, clasifica efectos en BAGO, crea `ExecutionRequest` y exige
+`Permit` antes de llamar al transporte MCP.
+
+**Tests:** 64/64 passing en la suite combinada; L5 aporta 7 tests, incluida
+una ronda real por stdio contra `scripts/local_mcp_server.py`.
+
+**Evidence:** `evidence/mcp_governed_demo.md` demuestra un `READ` permitido y
+un `WRITE` bloqueado antes del servidor. La evidencia visual está en
+`evidence/mcp_governed_demo.mp4` con SHA-256 asociado; el transcript es
+reproducible con `python scripts/run_mcp_demo.py`.
 

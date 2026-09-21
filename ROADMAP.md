@@ -256,6 +256,7 @@ EVIDENCE (claim → chunk → source → revision mapping)
 **Duración:** 1 semana  
 **Fecha objetivo:** 2026-10-26  
 **🎯 CANDIDATURA Orbitant (~91% fit)**
+**Estado:** ✅ VERIFIED (local governed scope, 2026-09-22; video generated)
 
 ### Conceptos a Aprender
 
@@ -282,10 +283,16 @@ MCP tool
 
 ### Entregables
 
-- [ ] src/adapters/mcp_adapter.py
-- [ ] MCP server local de ejemplo
-- [ ] 	ests/test_mcp_governance.py
-- [ ] Evidence: video mostrando MCP tool call gobernado
+- [x] src/adapters/mcp_adapter.py
+- [x] MCP server local de ejemplo (scripts/local_mcp_server.py)
+- [x] tests/test_mcp_governance.py
+- [x] Evidence: ejecución local stdio con receipt gobernado
+- [x] Evidence: video mostrando MCP tool call gobernado (evidence/mcp_governed_demo.mp4)
+
+### Demo reproducible
+
+python scripts/run_mcp_demo.py descubre dos tools, registra sus efectos en
+BAGO, permite el READ y bloquea el WRITE antes de enviarlo al servidor.
 
 ---
 
