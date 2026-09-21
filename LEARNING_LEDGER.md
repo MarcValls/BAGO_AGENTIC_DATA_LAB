@@ -131,7 +131,7 @@ Orquestar flujos complejos de reasoning + retrieval + action de forma mantenible
 | L0 | Contract + Architecture + Market intel | 5 docs fundacionales | ✅ Sí |
 | L1 | LangGraph StateGraph, Governance boundary, Permit pattern | state_graph.py + 7 tests passing | ✅ Sí |
 | L2 | — | — | — |
-| L3 | — | — | — |
+| L3 | Entity schema, authority, validity, relations, lineage | schema.py + ontology.py + ontology_generator.py + 25 tests + graph/proposal evidence | ✅ Sí |
 | L4 | — | — | — |
 | L5 | — | — | — |
 | L6 | — | — | — |
@@ -142,7 +142,7 @@ Orquestar flujos complejos de reasoning + retrieval + action de forma mantenible
 ---
 
 **Última actualización:** 2026-09-21  
-**Próxima entrada:** Al completar L2 (ETL Pipeline)
+**Próxima entrada:** Al completar L4 (Governed RAG)
 
 ---
 
@@ -153,4 +153,25 @@ Orquestar flujos complejos de reasoning + retrieval + action de forma mantenible
 **Tests:** 4/4 CRIT P0 passing
 
 **Evidence:** 65 chunks ingeridos, idempotencia verificada, receipts generados
+
+---
+
+### 2026-09-21 — Metadata & Ontology
+
+**Fase:** L3
+
+**Implementación:** `src/metadata/schema.py` define entidades, autoridad,
+clasificación, procedencia, versionado y `ValidityStatus`; `src/metadata/ontology.py`
+define relaciones, lineage e integridad del grafo; `src/metadata/ontology_generator.py`
+separa metadata extraction, relation proposals y validation.
+
+**Tests:** 37/37 passing en la suite completa; L3 aporta 12 tests de ontología,
+4 tests de schema, 7 tests de generator y 2 checks de evidencia.
+
+**Evidence:** `evidence/l3_ontology_graph.md`, generado de forma reproducible
+por `scripts/generate_l3_ontology_evidence.py`; 0 errores de integridad.
+`evidence/ontology_proposal.md` registra el resultado sobre la documentación
+BAGO actual (16 entidades, 0 relaciones explícitas) y
+`evidence/ontology_proposal_examples.md` demuestra 4 propuestas que pasan
+reglas pero permanecen pendientes de aprobación humana/contractual.
 

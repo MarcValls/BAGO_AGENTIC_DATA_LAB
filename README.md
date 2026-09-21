@@ -2,8 +2,8 @@
 
 [![GitHub](https://img.shields.io/badge/GitHub-Repo-blue)](https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB)
 [![Branch](https://img.shields.io/badge/branch-main-green)](https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/tree/main)
-[![Commits](https://img.shields.io/badge/commits-6-orange)](https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/commits/main)
-[![Tests](https://img.shields.io/badge/tests-11%2F11%20passing-brightgreen)]()
+[![Commits](https://img.shields.io/badge/commits-9-orange)](https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/commits/main)
+[![Tests](https://img.shields.io/badge/tests-37%2F37%20passing-brightgreen)]()
 [![Chunks](https://img.shields.io/badge/chunks_indexed-65-purple)]()
 [![License](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 
@@ -17,10 +17,10 @@
 
 | Métrica | Valor |
 |---------|-------|
-| **Tests Passing** | 11/11 ✅ |
+| **Tests Passing** | 37/37 ✅ |
 | **Chunks Indexados** | 65 (3 docs) |
-| **Fase Actual** | L2 ✅ COMPLETE |
-| **Próxima Fase** | L3 · Metadata & Ontology |
+| **Fase Actual** | L3 ✅ COMPLETE |
+| **Próxima Fase** | L4 · Governed RAG |
 
 ---
 
@@ -35,12 +35,12 @@ gantt
     L0: Baseline           :done, 2026-09-21, 1d
     L1: LangGraph          :done, 2026-09-21, 1d
     L2: ETL Pipeline       :done, 2026-09-21, 1d
+    L3: Metadata            :done, 2026-09-21, 1d
     
     section Next
-    L3: Metadata           :active, 2026-09-28, 7d
+    L4: Governed RAG        :active, after L3, 7d
     
     section Pending
-    L4: Governed RAG       :crit, after L3, 7d
     L5: MCP                :crit, after L4, 7d
     L6: AWS Bedrock        :crit, after L5, 7d
     L9: End-to-End Agent   :crit, after L8, 7d
@@ -53,7 +53,7 @@ gantt
 | L0 | ✅ | Baseline & Lab Contract | - |
 | L1 | ✅ | LangGraph Governed Execution | - |
 | L2 | ✅ | ETL Pipeline (idempotencia, receipts) | - |
-| L3 | ⏳ | Metadata & Ontology | - |
+| L3 | ✅ | Metadata & Ontology (schema, ontology, lineage, evidence) | - |
 | L4 | ⏳ | Governed RAG (hybrid retrieval) | **Orbitant** |
 | L5 | ⏳ | MCP con gobernanza | **Tuio** |
 | L6 | ⏳ | AWS Bedrock Provider | **Tuio** |
@@ -100,11 +100,28 @@ BAGO_AGENTIC_DATA_LAB/
 │   ├── etl/
 │   │   └── pipeline.py          # L2 ✅ (650 líneas)
 │   ├── retrieval/               # L4 ⏳
-│   ├── metadata/                # L3 ⏳
+│   ├── metadata/                # L3 ✅
+│   │   ├── schema.py            # Entidades y metadata
+│   │   ├── ontology.py          # Relaciones y reglas
+│   │   └── ontology_generator.py # Propuestas gobernadas L1→L3
 │   └── adapters/                # L5-L8 ⏳
 ├── tests/
 │   ├── test_l1_governance.py    # 7 CRIT P0 ✅
-│   └── test_l2_etl_pipeline.py  # 4 CRIT P0 ✅
+│   ├── test_l2_etl_pipeline.py  # 4 CRIT P0 ✅
+│   ├── test_l3_ontology.py      # 12 CRIT P0 ✅
+│   ├── test_l3_evidence.py      # 2 evidence checks ✅
+│   ├── test_metadata_schema.py  # 4 schema checks ✅
+│   └── test_ontology_generator.py # 7 generator checks ✅
+├── evidence/
+│   ├── l3_ontology_graph.md       # Mermaid + integrity receipt
+│   ├── ontology_proposal.md       # Propuesta sobre docs BAGO actuales
+│   └── ontology_proposal_examples.md # Propuestas pendientes de aprobación
+├── scripts/
+│   ├── generate_l3_ontology_evidence.py
+│   ├── generate_ontology_proposal.py
+│   └── generate_dynamic_readme.py
+├── docs/
+│   └── ontology_generator.md  # L1 → L2 → L3 gobernado
 ├── l2_etl_metadata.db           # 65 chunks indexados
 ├── LAB_CONTRACT.md              # Límites con BAGO canónico
 ├── ARCHITECTURE.md              # Decisiones arquitectónicas
@@ -131,14 +148,14 @@ BAGO_AGENTIC_DATA_LAB/
 ### Skills Evidenciadas
 
 ✅ **Python avanzado** - pytest, dataclasses, type hints  
-✅ **Testing CRIT P0** - 11 tests passing, 0 failures  
+✅ **Testing CRIT P0** - 37 tests passing, 0 failures
 ✅ **ETL / Data Pipelines** - 6 stages, idempotencia, receipts  
 ✅ **Content hashing** - SHA-256 para deduplicación  
 ✅ **LangGraph StateGraph** - nodes, edges, TypedDict state  
 ✅ **Gobernanza BAGO** - AuthorizationBoundary → Permit → ExecutionGateway  
+✅ **Metadata & Ontology** - schema, generator, lineage, integrity y evidencia Mermaid
 
 ⏳ **En progreso:**
-- Metadata & Ontology (L3)
 - Hybrid Retrieval RAG (L4)
 - MCP tools con gobernanza (L5)
 - AWS Bedrock provider (L6)
@@ -154,6 +171,13 @@ python -m pytest tests/ -v
 # Ejecutar fase específica
 python -m pytest tests/test_l1_governance.py -v
 python -m pytest tests/test_l2_etl_pipeline.py -v
+python -m pytest tests/test_l3_ontology.py tests/test_l3_evidence.py tests/test_metadata_schema.py -v
+
+# Regenerar evidencia visual de L3
+python scripts/generate_l3_ontology_evidence.py
+
+# Proponer ontología desde documentación (no persiste relaciones)
+python scripts/generate_ontology_proposal.py
 
 # Ver estadísticas ETL
 python -c "from src.etl.pipeline import ETLPipeline; p=ETLPipeline(); print(f'DB: {p.db_path}')"
@@ -172,4 +196,4 @@ MIT License - Ver [LICENSE](LICENSE) para detalles.
 
 **Nota:** Este README se genera dinámicamente. Para actualizar métricas ejecutar `python scripts/generate_dynamic_readme.py`
 
-Generado: 2026-09-21
+Generado: 2026-09-21 23:20:49
