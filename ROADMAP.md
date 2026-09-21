@@ -209,6 +209,7 @@ class Relation:
 
 **Duración:** 1 semana  
 **Fecha objetivo:** 2026-10-19
+**Estado:** ✅ COMPLETE (2026-09-22)
 
 ### Pipeline de Retrieval
 
@@ -223,30 +224,30 @@ LEXICAL RETRIEVAL (BM25, top-k=50)
   ↓
 SEMANTIC RETRIEVAL (embeddings, top-k=50)
   ↓
-RERANKING (cross-encoder, top-k=10)
+RERANKING (deterministic baseline, top-k=10)
   ↓
 AUTHORITY FILTERING (BAGO governance rules)
   ↓
 CONTEXT ASSEMBLY (prompt construction con citations)
   ↓
-GENERATION (LLM response)
+GENERATION (future provider boundary; not executed by L4)
   ↓
 EVIDENCE (claim → chunk → source → revision mapping)
 `
 
 ### Comparativas a Realizar
 
-- [ ] FTS puro vs embeddings puros vs hybrid retrieval
-- [ ] Top-k variations (10, 25, 50, 100)
-- [ ] Con reranking vs sin reranking
-- [ ] Con metadata filters vs sin filters
+- [x] Lexical BM25-like vs semantic hash vs hybrid retrieval
+- [x] Top-k variations (10, 25, 50, 100)
+- [x] Con reranking vs sin reranking
+- [x] Con metadata filters vs sin filters
 
 ### Entregables
 
-- [ ] src/retrieval/governed_rag.py
-- [ ] 	ests/test_retrieval_accuracy.py
-- [ ] vidence/retrieval_benchmark_results.md
-- [ ] Evidence: benchmark comparativo con métricas
+- [x] src/retrieval/governed_rag.py
+- [x] tests/test_retrieval_accuracy.py
+- [x] evidence/retrieval_benchmark_results.md
+- [x] Evidence: benchmark comparativo con métricas
 
 ---
 

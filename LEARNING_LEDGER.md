@@ -132,7 +132,7 @@ Orquestar flujos complejos de reasoning + retrieval + action de forma mantenible
 | L1 | LangGraph StateGraph, Governance boundary, Permit pattern | state_graph.py + 7 tests passing | ✅ Sí |
 | L2 | — | — | — |
 | L3 | Entity schema, authority, validity, relations, lineage | schema.py + ontology.py + ontology_generator.py + 25 tests + graph/proposal evidence | ✅ Sí |
-| L4 | — | — | — |
+| L4 | Governed RAG, hybrid retrieval, metadata filters, evidence context | governed_rag.py + benchmark + 12 tests | ✅ Sí |
 | L5 | — | — | — |
 | L6 | — | — | — |
 | L7 | — | — | — |
@@ -142,7 +142,7 @@ Orquestar flujos complejos de reasoning + retrieval + action de forma mantenible
 ---
 
 **Última actualización:** 2026-09-21  
-**Próxima entrada:** Al completar L4 (Governed RAG)
+**Próxima entrada:** Al completar L5 (MCP)
 
 ---
 
@@ -175,4 +175,22 @@ por `scripts/generate_l3_ontology_evidence.py`; 0 errores de integridad.
 BAGO actual (16 entidades, 0 relaciones explícitas) y
 `evidence/ontology_proposal_examples.md` demuestra 4 propuestas que pasan
 reglas pero permanecen pendientes de aprobación humana/contractual.
+
+---
+
+### 2026-09-22 — Governed RAG
+
+**Fase:** L4
+
+**Implementación:** `src/retrieval/governed_rag.py` separa intent,
+metadata/authority gate, BM25-like lexical retrieval, semantic hash baseline,
+hybrid fusion, reranking y contexto con `EvidenceRef`.
+
+**Tests:** 57/57 passing en la suite combinada; L4 aporta 9 tests de accuracy
+y 3 tests del benchmark.
+
+**Evidence:** `evidence/retrieval_benchmark_results.md` contiene 48 filas
+reproducibles: tres modos, reranking on/off, top-k 10/25/50/100 y dos
+políticas de metadata. El semantic baseline es offline y no representa una
+evaluación de un modelo cloud.
 

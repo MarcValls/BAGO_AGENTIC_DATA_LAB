@@ -1,12 +1,12 @@
 # Current State — BAGO Agentic Data Lab
 
-**Updated:** 2026-09-21 23:20:49
-**Current phase:** L3 · Metadata & Ontology
-**Status:** VERIFIED / COMPLETE for the local L3 acceptance scope
-**Tests:** 45/45 passing en la suite combinada; la aceptación específica de L3
-quedó verificada con 37/37 antes de añadir el agente de sincronización.
-**Next phase:** L4 · Governed RAG
-**Evidence:** `evidence/l3_ontology_graph.md` with integrity PASS;
+**Updated:** 2026-09-22
+**Current phase:** L4 · Governed RAG
+**Status:** VERIFIED / COMPLETE for the local L4 acceptance scope
+**Tests:** 57/57 passing en la suite combinada; L4 aporta 12 tests.
+**Next phase:** L5 · MCP
+**Evidence:** `evidence/l3_ontology_graph.md` with integrity PASS and
+`evidence/retrieval_benchmark_results.md` with 48 reproducible benchmark rows;
 `evidence/ontology_proposal.md` and `evidence/ontology_proposal_examples.md`
 are reproducible review artifacts.
 **Ontology generator:** metadata and relation proposals remain `PROPOSED` until
