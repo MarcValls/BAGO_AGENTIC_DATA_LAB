@@ -1,12 +1,14 @@
 # Current State — BAGO Agentic Data Lab
 
 **Updated:** 2026-09-22
-**Current phase:** L4 · Governed RAG
-**Status:** VERIFIED / COMPLETE for the local L4 acceptance scope
-**Tests:** 57/57 passing en la suite combinada; L4 aporta 12 tests.
-**Next phase:** L5 · MCP
+**Current phase:** L5 · MCP con gobernanza
+**Status:** VERIFIED for the local governed MCP scope; video generated and hashed
+**Tests:** 64/64 passing en la suite combinada; L5 aporta 7 tests.
+**Next phase:** L6 · AWS Bedrock
 **Evidence:** `evidence/l3_ontology_graph.md` with integrity PASS and
 `evidence/retrieval_benchmark_results.md` with 48 reproducible benchmark rows;
+`evidence/mcp_governed_demo.md` with a real local stdio round trip and a
+pre-transport WRITE denial;
 `evidence/ontology_proposal.md` and `evidence/ontology_proposal_examples.md`
 are reproducible review artifacts.
 **Ontology generator:** metadata and relation proposals remain `PROPOSED` until
