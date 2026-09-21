@@ -1,0 +1,8 @@
+*.pyc
+__pycache__/
+.env
+venv/
+.pytest_cache/
+evidence/*.png
+evidence/*.mp4
+.DS_Store
