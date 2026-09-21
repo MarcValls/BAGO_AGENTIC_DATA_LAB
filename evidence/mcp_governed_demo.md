@@ -1,6 +1,6 @@
 # L5 · Governed MCP local demo
 
-Generated at: `2026-09-21T23:28:24.507694+00:00`
+Generated at: `2026-09-21T23:38:20.752741+00:00`
 
 The demo starts `scripts/local_mcp_server.py` over MCP stdio, discovers
 two tools, explicitly registers their effect types in BAGO, and routes
@@ -134,4 +134,4 @@ both calls through `GovernedMCPAdapter`.
 This is a local execution trace; the companion video is
 evidence/mcp_governed_demo.mp4 and its SHA-256 is recorded beside it.
 
-Video SHA-256: `5d34bc08ccb91707f3669bb5aa444dcde6cb6d77ac56e54c3d902cc60dd2b8bd`
+Video SHA-256: `86c3eb75dee43569d02cd89178f89a80f223934dd2f16a29495b8e62796a81f8`
