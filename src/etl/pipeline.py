@@ -10,7 +10,7 @@ Principio crítico: Todo documento ingerido genera receipt con evidence.
 import hashlib
 import json
 import sqlite3
-from datetime import datetime
+from datetime import datetime, timezone
 from dataclasses import dataclass, asdict
 from enum import Enum
 from pathlib import Path
@@ -128,7 +128,7 @@ class ExtractStage:
             source_type=SourceType.FILE,
             location=str(path.absolute()),
             raw_content=content,
-            fetched_at=datetime.utcnow().isoformat(),
+            fetched_at=datetime.now(timezone.utc).isoformat(),
             content_hash=content_hash
         )
     
@@ -145,7 +145,7 @@ class ExtractStage:
             source_type=SourceType.WEB,
             location=url,
             raw_content=content,
-            fetched_at=datetime.utcnow().isoformat(),
+            fetched_at=datetime.now(timezone.utc).isoformat(),
             content_hash=content_hash
         )
 
@@ -182,7 +182,7 @@ class NormalizeStage:
             content=content,
             format=doc_format,
             source_id=source.id,
-            normalized_at=datetime.utcnow().isoformat()
+            normalized_at=datetime.now(timezone.utc).isoformat()
         )
 
 
@@ -234,7 +234,7 @@ class ValidateStage:
         cursor = conn.cursor()
         cursor.execute(
             'INSERT OR REPLACE INTO document_hashes VALUES (?, ?, ?)',
-            (source.content_hash, doc.id, datetime.utcnow().isoformat())
+            (source.content_hash, doc.id, datetime.now(timezone.utc).isoformat())
         )
         conn.commit()
         conn.close()
@@ -273,7 +273,7 @@ class EnrichStage:
             keywords=keywords,
             word_count=len(words),
             source_id=doc.source_id,
-            enriched_at=datetime.utcnow().isoformat()
+            enriched_at=datetime.now(timezone.utc).isoformat()
         )
 
 
@@ -390,7 +390,7 @@ class LoadStage:
                     (chunk.id, chunk.document_id, chunk.chunk_index,
                      chunk.content, chunk.start_offset, chunk.end_offset,
                      chunk.word_count, json.dumps(chunk.metadata),
-                     datetime.utcnow().isoformat())
+                     datetime.now(timezone.utc).isoformat())
                 )
                 loaded_count += 1
             except Exception as e:
@@ -420,7 +420,7 @@ class ETLPipeline:
     
     def ingest_file(self, file_path: str) -> IngestionReceipt:
         """Ingiere archivo individual."""
-        start_time = datetime.utcnow()
+        start_time = datetime.now(timezone.utc)
         
         try:
             # Stage 1: Extract
@@ -440,7 +440,7 @@ class ETLPipeline:
                     chunks_created=0,
                     metadata={'error': f'Validation failed: {status.value}'},
                     ingested_at=start_time.isoformat(),
-                    duration_ms=int((datetime.utcnow() - start_time).total_seconds() * 1000),
+                    duration_ms=int((datetime.now(timezone.utc) - start_time).total_seconds() * 1000),
                     error_message=f"Document validation failed: {status.value}"
                 )
             
@@ -469,7 +469,7 @@ class ETLPipeline:
                     'keywords': enriched.keywords[:5]
                 },
                 ingested_at=start_time.isoformat(),
-                duration_ms=int((datetime.utcnow() - start_time).total_seconds() * 1000),
+                duration_ms=int((datetime.now(timezone.utc) - start_time).total_seconds() * 1000),
                 evidence_refs=[f"chunks:{loaded_count}"]
             )
             
@@ -477,13 +477,13 @@ class ETLPipeline:
             
         except Exception as e:
             return IngestionReceipt(
-                receipt_id=f"receipt_error_{datetime.utcnow().strftime('%Y%m%d%H%M%S')}",
+                receipt_id=f"receipt_error_{datetime.now(timezone.utc).strftime('%Y%m%d%H%M%S')}",
                 source_id=file_path,
                 status=ValidationStatus.ERROR,
                 chunks_created=0,
                 metadata={'error': str(e)},
                 ingested_at=start_time.isoformat(),
-                duration_ms=int((datetime.utcnow() - start_time).total_seconds() * 1000),
+                duration_ms=int((datetime.now(timezone.utc) - start_time).total_seconds() * 1000),
                 error_message=str(e)
             )
 

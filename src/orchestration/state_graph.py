@@ -71,8 +71,8 @@ class Permit:
     
     def is_valid(self) -> bool:
         """Verifica si el permiso está vigente."""
-        from datetime import datetime
-        now = datetime.utcnow().isoformat()
+        from datetime import datetime, timezone
+        now = datetime.now(timezone.utc).isoformat()
         return self.issued_at <= now <= self.expires_at
 
 
@@ -231,10 +231,10 @@ def reason(state: AgentState) -> AgentState:
     proposed_actions = []
     if state.get('requires_action', False):
         # Ejemplo: usuario pide "crea un test para workspace_binding"
-        from datetime import datetime, timedelta
+        from datetime import datetime, timedelta, timezone
         
         action = ExecutionRequest(
-            request_id=f"req_{datetime.utcnow().strftime('%Y%m%d%H%M%S')}",
+            request_id=f"req_{datetime.now(timezone.utc).strftime('%Y%m%d%H%M%S')}",
             tool_name="file_creator",
             effect_type=EffectType.CREATE,
             parameters={
@@ -243,7 +243,7 @@ def reason(state: AgentState) -> AgentState:
             },
             proposed_by="reasoning_node",
             context_revision="v1.0",
-            timestamp=datetime.utcnow().isoformat()
+            timestamp=datetime.now(timezone.utc).isoformat()
         )
         proposed_actions.append(action)
     
@@ -266,7 +266,7 @@ def authorization_gate(state: AgentState) -> AgentState:
     
     ESTE ES EL CORAZÓN DE LA GOBERNANZA BAGO.
     """
-    from datetime import datetime, timedelta
+    from datetime import datetime, timedelta, timezone
     
     proposed = state.get('proposed_actions', [])
     permits_issued = []
@@ -282,8 +282,8 @@ def authorization_gate(state: AgentState) -> AgentState:
                 decision=AuthorizationDecision.ALLOW,
                 rationale="READ action auto-allowed",
                 constraints=["timeout_30s"],
-                issued_at=datetime.utcnow().isoformat(),
-                expires_at=(datetime.utcnow() + timedelta(seconds=30)).isoformat(),
+                issued_at=datetime.now(timezone.utc).isoformat(),
+                expires_at=(datetime.now(timezone.utc) + timedelta(seconds=30)).isoformat(),
                 signed_by="authorization_gate"
             )
             permits_issued.append(permit)
@@ -307,8 +307,8 @@ def authorization_gate(state: AgentState) -> AgentState:
                 decision=AuthorizationDecision.ALLOW,
                 rationale="External API allowed with strict timeout",
                 constraints=["timeout_10s", "retry_max_2", "rate_limit_1_per_s"],
-                issued_at=datetime.utcnow().isoformat(),
-                expires_at=(datetime.utcnow() + timedelta(seconds=10)).isoformat(),
+                issued_at=datetime.now(timezone.utc).isoformat(),
+                expires_at=(datetime.now(timezone.utc) + timedelta(seconds=10)).isoformat(),
                 signed_by="authorization_gate"
             )
             permits_issued.append(permit)
@@ -341,7 +341,7 @@ def execute_actions(state: AgentState) -> AgentState:
             continue
         
         # Simulación de ejecución (en producción: adapter pattern)
-        from datetime import datetime
+        from datetime import datetime, timezone
         import random
         
         receipt = Receipt(

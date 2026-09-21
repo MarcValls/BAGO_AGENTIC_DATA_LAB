@@ -143,3 +143,14 @@ Orquestar flujos complejos de reasoning + retrieval + action de forma mantenible
 
 **Última actualización:** 2026-09-21  
 **Próxima entrada:** Al completar L2 (ETL Pipeline)
+
+---
+
+### 2026-09-21 — ETL Pipeline Gobernado
+
+**Fase:** L2
+
+**Tests:** 4/4 CRIT P0 passing
+
+**Evidence:** 65 chunks ingeridos, idempotencia verificada, receipts generados
+
