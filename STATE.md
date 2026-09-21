@@ -3,7 +3,8 @@
 **Updated:** 2026-09-21 23:20:49
 **Current phase:** L3 · Metadata & Ontology
 **Status:** VERIFIED / COMPLETE for the local L3 acceptance scope
-**Tests:** 37/37 passing
+**Tests:** 45/45 passing en la suite combinada; la aceptación específica de L3
+quedó verificada con 37/37 antes de añadir el agente de sincronización.
 **Next phase:** L4 · Governed RAG
 **Evidence:** `evidence/l3_ontology_graph.md` with integrity PASS;
 `evidence/ontology_proposal.md` and `evidence/ontology_proposal_examples.md`
