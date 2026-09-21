@@ -1,16 +1,22 @@
 # Current State — BAGO Agentic Data Lab
 
 **Updated:** 2026-09-22
-**Current phase:** L5 · MCP con gobernanza
-**Status:** VERIFIED for the local governed MCP scope; video generated and hashed
-**Tests:** 64/64 passing en la suite combinada; L5 aporta 7 tests.
-**Next phase:** L6 · AWS Bedrock
+**Current phase:** L6 · AWS Bedrock Provider
+**Status:** VERIFIED for the offline governed adapter scope; live AWS `NOT_RUN`
+**Tests:** 74/74 passing en la suite combinada; L6 aporta 10 checks offline.
+**Next phase:** L7 · Bedrock Knowledge Base
 **Evidence:** `evidence/l3_ontology_graph.md` with integrity PASS and
 `evidence/retrieval_benchmark_results.md` with 48 reproducible benchmark rows;
 `evidence/mcp_governed_demo.md` with a real local stdio round trip and a
 pre-transport WRITE denial;
+`evidence/bedrock_provider_benchmark.md` with two injected-model fixtures,
+model-scoped permits, receipt cost math and local latency;
 `evidence/ontology_proposal.md` and `evidence/ontology_proposal_examples.md`
 are reproducible review artifacts.
+**L6 boundary:** `Converse` and `ConverseStream` are implemented behind an
+optional boto3 client with bounded retries, error taxonomy and local quota.
+No AWS credentials, model access or live cloud measurement were available for
+this closure, so production connectivity remains `NOT_RUN`.
 **Ontology generator:** metadata and relation proposals remain `PROPOSED` until
 validator plus human/contract approval; no automatic canonical promotion.
 Current proposal run: 16 entities and 0 explicit relations in the BAGO source

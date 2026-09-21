@@ -134,15 +134,15 @@ Orquestar flujos complejos de reasoning + retrieval + action de forma mantenible
 | L3 | Entity schema, authority, validity, relations, lineage | schema.py + ontology.py + ontology_generator.py + 25 tests + graph/proposal evidence | ✅ Sí |
 | L4 | Governed RAG, hybrid retrieval, metadata filters, evidence context | governed_rag.py + benchmark + 12 tests | ✅ Sí |
 | L5 | MCP discovery, capability registry, effect classification, governed stdio calls | mcp_adapter.py + local server + 7 tests + execution receipt | ✅ Sí |
-| L6 | — | — | — |
+| L6 | AWS Bedrock Converse/Stream, provider boundary, retries, quotas, cost receipts | bedrock_provider_adapter.py + 10 tests + offline benchmark | ✅ Sí (offline scope) |
 | L7 | — | — | — |
 | L8 | — | — | — |
 | L9 | — | — | — |
 
 ---
 
-**Última actualización:** 2026-09-21  
-**Próxima entrada:** Al completar L6 (AWS Bedrock)
+**Última actualización:** 2026-09-22
+**Próxima entrada:** Al iniciar L7 (Bedrock Knowledge Base)
 
 ---
 
@@ -211,4 +211,64 @@ una ronda real por stdio contra `scripts/local_mcp_server.py`.
 un `WRITE` bloqueado antes del servidor. La evidencia visual está en
 `evidence/mcp_governed_demo.mp4` con SHA-256 asociado; el transcript es
 reproducible con `python scripts/run_mcp_demo.py`.
+
+---
+
+### 2026-09-22 — Governed AWS Bedrock Provider
+
+**Fase:** L6
+
+**Qué entendí:**
+
+`Converse` ofrece una frontera unificada para modelos conversacionales y
+`ConverseStream` devuelve eventos incrementales. La SDK es transporte, no
+autoridad: BAGO debe decidir si el modelo, la operación y el presupuesto están
+permitidos antes de crear la llamada externa.
+
+**Qué implementé:**
+
+- `src/adapters/bedrock_provider_adapter.py`:
+  - `ExecutionRequest` con `EffectType.EXTERNAL_API` y modelo/operación ligados.
+  - `Permit` obligatorio, expiración y allowlist opcional de modelos.
+  - `Converse` y `ConverseStream` normalizados a `BedrockCallResult`.
+  - retries acotados para timeout/throttle/network, sin retry de autorización o validación.
+  - rate limit local, configuración de timeout del cliente y receipts con usage/cost.
+- `tests/test_bedrock_integration.py`: 10 checks offline con cliente inyectado.
+- `scripts/benchmark_bedrock_provider.py` y
+  `evidence/bedrock_provider_benchmark.md`: dos fixtures de modelo, latencia local
+  y coste calculado con rates explícitos.
+- `docs/aws_bedrock_setup.md`: boto3 opcional, IAM mínimo, cuotas, costes y checklist live.
+
+**Tests:** 74/74 passing en la suite combinada; L6 aporta 10 checks.
+
+**Evidence:** el benchmark offline demuestra `ALLOW → called → SUCCESS` y
+receipts ligados a modelo/request. No se ejecutó una cuenta AWS real: la
+validación de credenciales, IAM, model access, latencia cloud y precio vigente
+queda `NOT_RUN`.
+
+**Failure modes que ahora evito:**
+
+❌ LLM/provider llamado sin permiso explícito
+✅ `ExecutionRequest → Permit → adapter`, y denegación antes del cliente
+
+❌ Retry infinito o retry de `AccessDenied`
+✅ Presupuesto de intentos y taxonomy que solo reintenta errores transitorios
+
+❌ Coste inventado o no trazable
+✅ Coste estimado solo desde `usage` y rates configurados, dentro del receipt
+
+**Interview explanation:**
+
+*"Encapsulé Bedrock detrás de un adapter gobernado. La aplicación construye
+una request de `EXTERNAL_API`, el policy decide el modelo y límites, y un
+permit ligado al request_id habilita `Converse` o `ConverseStream`. El adapter
+normaliza respuestas, limita retries y quota, clasifica fallos y emite un
+receipt con tokens, coste estimado, intentos y evidencia. Las pruebas usan un
+cliente inyectado; la conectividad AWS se valida por separado."*
+
+**Gaps restantes:**
+
+- ⚠️ Live AWS validation: credenciales, IAM, model access y `ConverseStream` real.
+- ⚠️ Prices and quotas must be refreshed from the target AWS account/region.
+- ⚠️ Tool-use end-to-end with MCP remains a later integration milestone.
 
