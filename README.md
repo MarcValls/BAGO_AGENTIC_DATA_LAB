@@ -2,14 +2,14 @@
 
 [![GitHub](https://img.shields.io/badge/GitHub-Repo-blue)](https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB)
 [![Branch](https://img.shields.io/badge/branch-main-green)](https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/tree/main)
-[![Commits](https://img.shields.io/badge/commits-9-orange)](https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/commits/main)
-[![Tests](https://img.shields.io/badge/tests-37%2F37%20passing-brightgreen)]()
+[![Commits](https://img.shields.io/badge/commits-14-orange)](https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/commits/main)
+[![Tests](https://img.shields.io/badge/tests-45%2F45%20passing-brightgreen)]()
 [![Chunks](https://img.shields.io/badge/chunks_indexed-65-purple)]()
 [![License](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 
 > **Laboratorio experimental para desarrollar capacidades de AI Engineering con gobernanza BAGO**
 > 
-> Última actualización: 2026-09-21
+> Última actualización: 2026-09-22
 
 ---
 
@@ -17,7 +17,7 @@
 
 | Métrica | Valor |
 |---------|-------|
-| **Tests Passing** | 37/37 ✅ |
+| **Tests Passing** | 45/45 ✅ |
 | **Chunks Indexados** | 65 (3 docs) |
 | **Fase Actual** | L3 ✅ COMPLETE |
 | **Próxima Fase** | L4 · Governed RAG |
@@ -94,6 +94,8 @@ Ninguna capa externa adquiere autoridad implícita para producir efectos materia
 
 ```
 BAGO_AGENTIC_DATA_LAB/
+├── .github/agents/
+│   └── bago-sync-agent.agent.md # Agente gobernado de commit/push/merge
 ├── src/
 │   ├── orchestration/
 │   │   └── state_graph.py       # L1 ✅ (450 líneas)
@@ -148,7 +150,7 @@ BAGO_AGENTIC_DATA_LAB/
 ### Skills Evidenciadas
 
 ✅ **Python avanzado** - pytest, dataclasses, type hints  
-✅ **Testing CRIT P0** - 37 tests passing, 0 failures
+✅ **Testing CRIT P0** - 45 tests passing, 0 failures
 ✅ **ETL / Data Pipelines** - 6 stages, idempotencia, receipts  
 ✅ **Content hashing** - SHA-256 para deduplicación  
 ✅ **LangGraph StateGraph** - nodes, edges, TypedDict state  
@@ -184,6 +186,9 @@ python -c "from src.etl.pipeline import ETLPipeline; p=ETLPipeline(); print(f'DB
 
 # Regenerar este README dinámico
 python scripts/generate_dynamic_readme.py
+
+# Planificar sincronización sin mutar Git
+python scripts/bago_sync_agent.py plan --fetch --json
 ```
 
 ---
@@ -196,4 +201,4 @@ MIT License - Ver [LICENSE](LICENSE) para detalles.
 
 **Nota:** Este README se genera dinámicamente. Para actualizar métricas ejecutar `python scripts/generate_dynamic_readme.py`
 
-Generado: 2026-09-21 23:20:49
+Generado: 2026-09-22 00:30:06

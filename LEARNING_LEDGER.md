@@ -165,7 +165,8 @@ clasificación, procedencia, versionado y `ValidityStatus`; `src/metadata/ontolo
 define relaciones, lineage e integridad del grafo; `src/metadata/ontology_generator.py`
 separa metadata extraction, relation proposals y validation.
 
-**Tests:** 37/37 passing en la suite completa; L3 aporta 12 tests de ontología,
+**Tests:** 45/45 passing en la suite combinada; la aceptación L3 quedó en
+37/37 antes del agente; L3 aporta 12 tests de ontología,
 4 tests de schema, 7 tests de generator y 2 checks de evidencia.
 
 **Evidence:** `evidence/l3_ontology_graph.md`, generado de forma reproducible
