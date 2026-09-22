@@ -65,6 +65,7 @@
 |-----------|--------|----------|-----|
 | Python | ✅ Fuerte | BAGO backend | — |
 | LLMs | ✅ Provider baseline | Bedrock Converse/Stream offline | Live model evaluation |
+| Bedrock Knowledge Bases | ✅ Baseline offline gobernado | Retrieve/Generate + citations + ETL comparison | Live KB ingestion and relevance |
 | RAG | 🟡 Parcial | — | L4 |
 | LangGraph/LangChain | ❌ No empezado | — | L1 |
 | Agentes | 🟡 Diseñado | BAGO agents | L1 |
@@ -72,7 +73,7 @@
 | Vertex AI / Gemini | ❌ No empezado | — | Auto-study GCP |
 | GCP Cloud | ❌ No empezado | — | Auto-study GCP |
 
-**Nota:** Aunque la oferta es GCP-specific, los conceptos de Bedrock (L6) son transferibles. Estudiaré GCP en paralelo tras completar L6.
+**Nota:** Aunque la oferta es GCP-specific, los conceptos de Bedrock (L6-L7) son transferibles. Estudiaré GCP en paralelo tras completar L7.
 
 ---
 
@@ -115,7 +116,8 @@
 - Aplicar aunque seniority sea gap; portfolio como compensación
 
 ### Wave 3 (6-7 semanas) — Devoteam
-- Completar L7 (Bedrock KB)
+- [x] Completar L7 offline (Bedrock KB + comparación ETL)
+- [ ] Validar L7 contra Knowledge Base AWS real (ingestion, IAM, vector store, relevancia)
 - Auto-study GCP basics (transferencia desde AWS)
 - Aplicar destacando adaptabilidad multi-cloud
 
@@ -149,6 +151,7 @@
 | Lineage | Media | ❌ None | 🎯 Implementado | L3 relations | L3 completado |
 | AWS | Alta | 🟡 Adapter offline | 🎯 Bedrock fluent | L6 adapter + setup doc | Live account validation |
 | Bedrock | Alta | 🟡 Provider baseline | 🎯 Proficient | L6 Converse/Stream + receipts | Live model evaluation |
+| Bedrock Knowledge Bases | Alta | 🟡 Baseline offline | 🎯 Proficient | L7 Retrieve/Generate + citations | Live KB evaluation |
 | IAM | Alta | 🟡 Basic | 🎯 Configurable | L6 least-privilege setup | Live policy check |
 | CI/CD | Alta | 🟡 Basic | 🎯 Implementado | GitHub Actions | L1 completado |
 | Evaluation | Muy Alta | 🟡 Parcial | 🎯 Framework | Test suite | L1 completado |
@@ -194,8 +197,9 @@
 
 ### Para Devoteam (añadir L7 + GCP study)
 
-- [ ] L7: Bedrock KB adapter
-- [ ] Comparativa BAGO ETL vs Bedrock KB
+- [x] L7: Bedrock KB adapter funcionando offline con permits y citations
+- [x] Comparativa BAGO ETL vs Bedrock KB sobre la misma query (fixture)
+- [ ] L7: Knowledge Base AWS real, ingestion y benchmark de relevancia
 - [ ] Auto-study notes de GCP (Vertex AI, Gemini)
 - [ ] Transferencia explícita AWS → GCP en docs
 

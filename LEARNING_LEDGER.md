@@ -135,7 +135,7 @@ Orquestar flujos complejos de reasoning + retrieval + action de forma mantenible
 | L4 | Governed RAG, hybrid retrieval, metadata filters, evidence context | governed_rag.py + benchmark + 12 tests | ✅ Sí |
 | L5 | MCP discovery, capability registry, effect classification, governed stdio calls | mcp_adapter.py + local server + 7 tests + execution receipt | ✅ Sí |
 | L6 | AWS Bedrock Converse/Stream, provider boundary, retries, quotas, cost receipts | bedrock_provider_adapter.py + 10 tests + offline benchmark | ✅ Sí (offline scope) |
-| L7 | — | — | — |
+| L7 | Bedrock Knowledge Base, Retrieve/Generate, metadata filters, citations, managed-vs-local trade-offs | bedrock_kb_adapter.py + 10 tests + ETL/KB comparison | ✅ Sí (offline scope) |
 | L8 | — | — | — |
 | L9 | — | — | — |
 
@@ -271,4 +271,66 @@ cliente inyectado; la conectividad AWS se valida por separado."*
 - ⚠️ Live AWS validation: credenciales, IAM, model access y `ConverseStream` real.
 - ⚠️ Prices and quotas must be refreshed from the target AWS account/region.
 - ⚠️ Tool-use end-to-end with MCP remains a later integration milestone.
+
+---
+
+### 2026-09-22 — Governed Bedrock Knowledge Base
+
+**Fase:** L7
+
+**Qué entendí:**
+
+Una Knowledge Base gestionada separa el ciclo de ingestión/vectorización del
+query runtime. `Retrieve` devuelve referencias para que BAGO pueda ensamblar y
+gobernar el contexto; `RetrieveAndGenerate` añade generación y citas, pero no
+convierte al servicio AWS en autoridad. La decisión correcta para Devoteam es
+comparar el control total del ETL propio con la comodidad gestionada, no
+presentar uno como sustituto universal.
+
+**Qué implementé:**
+
+- `src/adapters/bedrock_kb_adapter.py`:
+  - requests `EXTERNAL_API` para `Retrieve` y `RetrieveAndGenerate`;
+  - allowlist de Knowledge Base, modelo ARN para generación y filtros metadata;
+  - normalización de score, source URI, metadata, chunk IDs y citations;
+  - retries acotados, rate limit local y `BedrockKBReceipt` auditable.
+- `tests/test_bedrock_kb_adapter.py`: 10 checks offline con cliente inyectado.
+- `scripts/compare_bago_etl_vs_bedrock_kb.py` y
+  `evidence/bago_etl_vs_bedrock_kb_comparison.md`: misma query, tres referencias
+  coincidentes, respuesta/citations fixture y comparación de fronteras.
+- `docs/bedrock_knowledge_base.md`: lifecycle, IAM, filtros, costes y checklist live.
+
+**Tests:** 84/84 passing en la suite combinada; L7 aporta 10 checks.
+
+**Evidence:** la comparación demuestra `ExecutionRequest → Permit →
+RetrieveAndGenerate → citations → receipt` y conserva la comparación con el
+ETL/RAG local. El cliente Bedrock es un fixture; AWS real, ingestión, vector
+store, IAM, relevancia cloud y costes vigentes quedan `NOT_RUN`.
+
+**Failure modes que ahora evito:**
+
+❌ Knowledge Base gestionada tratada como autoridad implícita
+✅ BAGO controla KB allowlist, permit, metadata policy y receipt
+
+❌ Respuesta generada sin trazabilidad de fuentes
+✅ `BedrockKBHit` conserva source URI, metadata, score y citation estable
+
+❌ Comparar latencia local con latencia cloud como si fueran equivalentes
+✅ Evidencia separa fixture offline de validación AWS pendiente
+
+**Interview explanation:**
+
+*"Implementé un adapter para `bedrock-agent-runtime` que separa `Retrieve`
+de `RetrieveAndGenerate`. Antes de consultar, BAGO valida la Knowledge Base,
+el modelo y los límites mediante un Permit. Después normalizo referencias y
+citas en un receipt. También comparé la misma query contra el ETL/RAG local:
+el ETL conserva control y provenance; Bedrock reduce operación pero añade
+dependencia, permisos y superficie de coste. La comparación pública usa un
+fixture y deja la conexión AWS como validación separada."*
+
+**Gaps restantes:**
+
+- ⚠️ Crear/ingerir una Knowledge Base real y verificar su service role.
+- ⚠️ Comparar relevancia, filtros y latencia sobre corpus Devoteam real.
+- ⚠️ Actualizar IAM, vector store, quotas y precios con la cuenta/region objetivo.
 

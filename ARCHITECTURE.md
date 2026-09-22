@@ -157,6 +157,7 @@ class Receipt:
 | Adapter | External Tech | Responsibility | Priority |
 |---------|---------------|----------------|----------|
 | BedrockProviderAdapter | AWS Bedrock | Converse API, tool use, streaming | L6 |
+| BedrockKnowledgeBaseAdapter | AWS Bedrock Knowledge Bases | Retrieve/Generate, citations, metadata filters | L7 |
 | MCPCapabilityAdapter | MCP Protocol | Tool discovery, schema validation | L5 |
 | VectorStoreAdapter | FAISS/Pinecone | Embedding storage, similarity search | L4 |
 | ETLSourceAdapter | Web/API/Files | Extraction, normalization | L2 |

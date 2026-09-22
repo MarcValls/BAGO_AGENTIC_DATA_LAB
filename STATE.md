@@ -1,22 +1,28 @@
 # Current State — BAGO Agentic Data Lab
 
 **Updated:** 2026-09-22
-**Current phase:** L6 · AWS Bedrock Provider
-**Status:** VERIFIED for the offline governed adapter scope; live AWS `NOT_RUN`
-**Tests:** 74/74 passing en la suite combinada; L6 aporta 10 checks offline.
-**Next phase:** L7 · Bedrock Knowledge Base
+**Current phase:** L7 · Bedrock Knowledge Base
+**Status:** VERIFIED for the offline governed adapter/comparison scope; live AWS `NOT_RUN`
+**Tests:** 84/84 passing en la suite combinada; L7 aporta 10 checks offline.
+**Next phase:** L8 · Metadata Catalog
 **Evidence:** `evidence/l3_ontology_graph.md` with integrity PASS and
 `evidence/retrieval_benchmark_results.md` with 48 reproducible benchmark rows;
 `evidence/mcp_governed_demo.md` with a real local stdio round trip and a
 pre-transport WRITE denial;
 `evidence/bedrock_provider_benchmark.md` with two injected-model fixtures,
 model-scoped permits, receipt cost math and local latency;
+`evidence/bago_etl_vs_bedrock_kb_comparison.md` with one identical query through
+local BAGO ETL/RAG and an injected Knowledge Base-shaped client;
 `evidence/ontology_proposal.md` and `evidence/ontology_proposal_examples.md`
 are reproducible review artifacts.
 **L6 boundary:** `Converse` and `ConverseStream` are implemented behind an
 optional boto3 client with bounded retries, error taxonomy and local quota.
 No AWS credentials, model access or live cloud measurement were available for
 this closure, so production connectivity remains `NOT_RUN`.
+**L7 boundary:** `Retrieve` and `RetrieveAndGenerate` are implemented behind
+an optional `bedrock-agent-runtime` client with KB allowlists, metadata filters,
+citations, retries, quotas and receipts. The comparison uses a fixture, not a
+live managed Knowledge Base.
 **Ontology generator:** metadata and relation proposals remain `PROPOSED` until
 validator plus human/contract approval; no automatic canonical promotion.
 Current proposal run: 16 entities and 0 explicit relations in the BAGO source
