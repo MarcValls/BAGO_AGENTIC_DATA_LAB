@@ -40,6 +40,7 @@ from orchestration.state_graph import (
     ExecutionRequest,
     Permit,
 )
+from metadata.ontology_engine import OntologyEngine, OntologyReasoningResult
 from retrieval.governed_rag import (
     GovernedRAG,
     QueryIntent,
@@ -52,6 +53,7 @@ class AgentRunStatus(str, Enum):
 
     COMPLETED = "COMPLETED"
     PENDING_AUTHORIZATION = "PENDING_AUTHORIZATION"
+    CONSTRAINT_VIOLATION = "CONSTRAINT_VIOLATION"
     FAILED = "FAILED"
 
 
@@ -155,6 +157,7 @@ class AgentRun:
     provider_result: Optional[BedrockCallResult]
     trace: tuple[str, ...]
     errors: tuple[str, ...]
+    ontology: Optional[OntologyReasoningResult] = None
 
     def to_dict(self) -> dict[str, Any]:
         provider_receipt = None
@@ -177,6 +180,7 @@ class AgentRun:
             "provider_text": provider_text,
             "trace": list(self.trace),
             "errors": list(self.errors),
+            "ontology": self.ontology.to_dict() if self.ontology is not None else None,
         }
 
 
@@ -202,6 +206,7 @@ class KnowledgeAgentState(TypedDict, total=False):
     status: AgentRunStatus
     trace: list[str]
     errors: list[str]
+    ontology: Optional[OntologyReasoningResult]
 
 
 class GovernedKnowledgeAgent:
@@ -215,12 +220,14 @@ class GovernedKnowledgeAgent:
         mcp_adapter: Optional[GovernedMCPAdapter] = None,
         mcp_session: Any = None,
         bedrock_adapter: Optional[GovernedBedrockAdapter] = None,
+        ontology_engine: Optional[OntologyEngine] = None,
     ) -> None:
         self.retriever = retriever
         self.policy = policy or AgentPolicy()
         self.mcp_adapter = mcp_adapter
         self.mcp_session = mcp_session
         self.bedrock_adapter = bedrock_adapter
+        self.ontology_engine = ontology_engine
         self.graph = self._build_graph()
 
     async def run(
@@ -311,13 +318,30 @@ class GovernedKnowledgeAgent:
             state["query"],
             top_k=self.policy.max_retrieval_hits,
         )
+        ontology_result = None
+        context = response.assemble_context(self.policy.context_max_chars)
+        trace = [
+            *state.get("trace", []),
+            f"retrieve_context=hits:{len(response.hits)}; filtered:{response.filtered_count}",
+        ]
+        if self.ontology_engine is not None:
+            ontology_result = self.ontology_engine.reason(
+                state["query"],
+                retrieval=response,
+            )
+            context = context.rstrip() + "\n\n" + ontology_result.context_block()
+            trace.append(
+                "ontology_engine="
+                f"paths:{len(ontology_result.paths)};"
+                f"inferred:{len(ontology_result.inferred_triples)};"
+                f"contradictions:{len(ontology_result.contradictions)};"
+                f"receipt:{ontology_result.receipt.receipt_id}"
+            )
         return {
             "retrieval": response,
-            "context": response.assemble_context(self.policy.context_max_chars),
-            "trace": [
-                *state.get("trace", []),
-                f"retrieve_context=hits:{len(response.hits)}; filtered:{response.filtered_count}",
-            ],
+            "context": context,
+            "ontology": ontology_result,
+            "trace": trace,
         }
 
     def _reason_and_propose(self, state: KnowledgeAgentState) -> KnowledgeAgentState:
@@ -649,6 +673,7 @@ class GovernedKnowledgeAgent:
 
     def _verify_and_respond(self, state: KnowledgeAgentState) -> KnowledgeAgentState:
         retrieval = state["retrieval"]
+        ontology = state.get("ontology")
         provider_result = state.get("provider_result")
         answer = ""
         if provider_result is not None and provider_result.receipt.execution_outcome is ExecutionOutcome.SUCCESS:
@@ -657,6 +682,10 @@ class GovernedKnowledgeAgent:
             answer = self._deterministic_answer(state)
 
         citations = list(retrieval.citations)
+        if ontology is not None:
+            citations.extend(
+                reference for reference in ontology.evidence_refs if reference not in citations
+            )
         if citations:
             answer = answer.rstrip() + "\n\nEvidence:\n" + "\n".join(
                 f"- {citation}" for citation in citations
@@ -673,7 +702,12 @@ class GovernedKnowledgeAgent:
         failed = bool(state.get("errors")) or any(
             proposal.outcome is ExecutionOutcome.FAILURE for proposal in proposals
         )
-        if pending:
+        ontology_violation = ontology is not None and any(
+            violation.severity == "ERROR" for violation in ontology.violations
+        )
+        if ontology_violation:
+            status = AgentRunStatus.CONSTRAINT_VIOLATION
+        elif pending:
             status = AgentRunStatus.PENDING_AUTHORIZATION
         elif failed:
             status = AgentRunStatus.FAILED
@@ -705,6 +739,7 @@ class GovernedKnowledgeAgent:
             provider_result=state.get("provider_result"),
             trace=tuple(state.get("trace", [])),
             errors=tuple(state.get("errors", [])),
+            ontology=state.get("ontology"),
         )
 
     def _build_mcp_proposal(
@@ -889,6 +924,7 @@ class GovernedKnowledgeAgent:
     @staticmethod
     def _deterministic_answer(state: KnowledgeAgentState) -> str:
         retrieval = state["retrieval"]
+        ontology = state.get("ontology")
         query = state["query"].casefold()
         if retrieval.hits:
             snippets = [hit.chunk.content.strip() for hit in retrieval.hits[:3]]
@@ -897,6 +933,8 @@ class GovernedKnowledgeAgent:
             )
         else:
             answer = "No hay contexto elegible con la política de metadata actual."
+        if ontology is not None:
+            answer += "\n\n" + ontology.summary
         if GovernedKnowledgeAgent._is_implementation_query(query):
             answer += (
                 "\n\nSe preparó una propuesta de test; no se creó ningún archivo "

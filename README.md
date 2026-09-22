@@ -1,302 +1,264 @@
 # 🧪 BAGO Agentic Data Lab
 
-[![GitHub](https://img.shields.io/badge/GitHub-Repo-blue)](https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB)
+[![GitHub](https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/actions/workflows/readme-consistency.yml/badge.svg)](https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/actions/workflows/readme-consistency.yml)
 [![Branch](https://img.shields.io/badge/branch-main-green)](https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/tree/main)
-[![Commits](https://img.shields.io/badge/commits-26-orange)](https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/commits/main)
-[![Tests](https://img.shields.io/badge/tests-109%2F109%20passing-brightgreen)]()
-[![Chunks](https://img.shields.io/badge/chunks_indexed-65-purple)]()
+[![Tests](https://img.shields.io/badge/tests-115%2F115%20passing-brightgreen)](https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/actions)
 [![License](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 
-> **Laboratorio experimental para desarrollar capacidades de AI Engineering con gobernanza BAGO**
-> 
-> Última actualización: 2026-09-22
+> Laboratorio experimental para desarrollar capacidades de AI Engineering con gobernanza BAGO.
+> Este documento se genera desde el estado y los artefactos del repositorio.
 
----
-
-## 📊 Estado Actual
+## Estado actual
 
 | Métrica | Valor |
-|---------|-------|
-| **Tests Passing** | 109/109 ✅ |
-| **Chunks Indexados** | 65 (3 docs) |
-| **Fase Actual** | L9 ✅ VERIFIED (offline; AWS/commercetools live NOT_RUN; GitHub issue #14 verified) |
-| **Próxima Fase** | Portfolio closure + validaciones live autorizadas |
+|---|---|
+| Tests ejecutados | **115/115** |
+| Rama pública | `main` |
+| Fase actual | **L10 · Governed Ontology Engine** · VERIFIED |
+| Siguiente bloque | OpenMetadata local real validation, then local observability/evals |
+| Estado declarado | VERIFIED for the local RDF/Turtle materialization, bounded SPARQL subset, deterministic inference, contradiction constraints, RAG seed handoff and injected LLM context; AWS/OpenMetadata/commercetools live integrations remain `NOT_RUN`; GitHub issue #14 is separately executed and verified under human authorization. |
 
----
+El estado público se limita a lo que existe en el checkout y a la evidencia
+referenciada. AWS live, OpenMetadata live y otras integraciones externas
+no se presentan como verificadas si STATE.md las marca como NOT_RUN.
+El commit, push y merge de este snapshot son operaciones separadas.
 
-## 🗺️ Roadmap
+## Roadmap detectado
 
 ```mermaid
-gantt
-    title BAGO Agentic Data Lab - Roadmap
-    dateFormat  YYYY-MM-DD
-    
-    section Completed
-    L0: Baseline           :done, 2026-09-21, 1d
-    L1: LangGraph          :done, 2026-09-21, 1d
-    L2: ETL Pipeline       :done, 2026-09-21, 1d
-    L3: Metadata            :done, 2026-09-21, 1d
-    L4: Governed RAG        :done, 2026-09-22, 1d
-    L5: MCP                :done, 2026-09-22, 1d
-    L6: AWS Bedrock        :done, 2026-09-22, 1d
-    L7: Bedrock KB         :done, 2026-09-22, 1d
-    L8: Metadata Catalog   :done, 2026-09-22, 1d
-
-    section Completed
-    L9: End-to-End Agent   :done, after L8, 7d
-    
-    section Pending
-    L10: Future Extensions  :crit, after L9, 7d
+flowchart LR
+    L0[L0 Baseline & Lab Contract (COMPLETE)]
+    L1[L1 LangGraph Governed Execution (VALIDATED)]
+    L2[L2 ETL / Data Pipeline (VALIDATED)]
+    L3[L3 Metadata & Ontology (VERIFIED)]
+    L4[L4 Governed RAG (VERIFIED)]
+    L5[L5 MCP con gobernanza (VERIFIED)]
+    L6[L6 AWS Bedrock Provider (VERIFIED (offline))]
+    L7[L7 Bedrock Knowledge Base (VERIFIED (offline))]
+    L8[L8 Metadata Catalog (VERIFIED (offline))]
+    L9[L9 End-to-End Governed Agent (VERIFIED (offline))]
+    L10[L10 Governed Ontology Engine (VERIFIED)]
+    L0 --> L1
+    L1 --> L2
+    L2 --> L3
+    L3 --> L4
+    L4 --> L5
+    L5 --> L6
+    L6 --> L7
+    L7 --> L8
+    L8 --> L9
+    L9 --> L10
 ```
 
-### Tiempo observado por fase
+| Fase | Estado | Descripción | Tests | Evidencia/docs |
+|---|---|---|---:|---:|
+| L0 | COMPLETE | Baseline & Lab Contract | 0 | 6 |
+| L1 | VALIDATED | LangGraph Governed Execution | 1 | 0 |
+| L2 | VALIDATED | ETL / Data Pipeline | 1 | 1 |
+| L3 | VERIFIED | Metadata & Ontology | 4 | 2 |
+| L4 | VERIFIED | Governed RAG | 2 | 2 |
+| L5 | VERIFIED | MCP con gobernanza | 1 | 3 |
+| L6 | VERIFIED (offline) | AWS Bedrock Provider | 1 | 2 |
+| L7 | VERIFIED (offline) | Bedrock Knowledge Base | 1 | 2 |
+| L8 | VERIFIED (offline) | Metadata Catalog | 1 | 2 |
+| L9 | VERIFIED (offline) | End-to-End Governed Agent | 1 | 3 |
+| L10 | VERIFIED | Governed Ontology Engine | 1 | 3 |
 
-Intervalo entre commits de cierre consecutivos. Sirve para ver el ritmo real
-registrado en Git y se diferencia explícitamente del tiempo planificado.
+## Arquitectura actual
 
-| Fase | Cierre | Plan | Observado |
-|------|--------|------|-----------|
-| L0 | 21 sep, 20:35 | 1 día | 11 s |
-| L1 | 21 sep, 20:37 | 1 semana | 2 min 20 s |
-| L2 | 21 sep, 20:54 | 1 semana | 16 min 39 s |
-| L3 | 22 sep, 00:22 | 1 semana | 3 h 27 min 40 s |
-| L4 | 22 sep, 01:15 | 1 semana | 53 min 22 s |
-| L5 | 22 sep, 01:31 | 1 semana | 15 min 40 s |
-| L6 | 22 sep, 02:00 | 1 semana | 29 min 12 s |
-| L7 | 22 sep, 02:26 | 1 semana | 25 min 40 s |
-| L8 | 22 sep, 02:52 | 1 semana | 26 min 38 s |
-| L9 | 22 sep, 03:30 | 2 semanas | 37 min 39 s |
+**Principio:** LangGraph propone → BAGO autoriza → ExecutionGateway ejecuta → Receipt evidencia.
 
-**Total registrado L0→L9:** **6 h 55 min 1 s** frente a las **10 semanas**
-planificadas. Es tiempo transcurrido entre cierres Git, no horas netas de trabajo.
-
-### Fases Detalladas
-
-| Fase | Estado | Descripción | Job Target |
-|------|--------|-------------|------------|
-| L0 | ✅ | Baseline & Lab Contract | - |
-| L1 | ✅ | LangGraph Governed Execution | - |
-| L2 | ✅ | ETL Pipeline (idempotencia, receipts) | - |
-| L3 | ✅ | Metadata & Ontology (schema, ontology, lineage, evidence) | - |
-| L4 | ✅ | Governed RAG (hybrid retrieval + evidence) | **Orbitant** |
-| L5 | ✅ | MCP con gobernanza (discovery, registry, permits) | **Orbitant** |
-| L6 | ✅ | AWS Bedrock Provider gobernado (offline; live AWS NOT_RUN) | **Tuio** |
-| L7 | ✅ | Bedrock Knowledge Base gobernado (offline; live AWS NOT_RUN) | **Devoteam** |
-| L8 | ✅ | Metadata Catalog gobernado (offline; OpenMetadata/Docker live NOT_RUN) | **Devoteam** |
-| L9 | ✅ VERIFIED | End-to-End Governed Agent (offline) | **commercetools** |
-
----
-
-## 🏗️ Arquitectura
-
-**Principio Fundamental:** LangGraph propone → BAGO autoriza → ExecutionGateway ejecuta → Receipt evidencia
-
-Ninguna capa externa adquiere autoridad implícita para producir efectos materiales.
-
-```
-┌──────────────────────────────────────────────┐
-│     BAGO GOVERNANCE LAYER                    │
-│  AuthorizationBoundary → Permit              │
-│  (validación, action limits, human escalation)│
-└──────────────────────────────────────────────┘
-              ↓
-┌──────────────────────────────────────────────┐
-│   LANGGRAPH ORCHESTRATION                    │
-│  START → classify → retrieve → reason →      │
-│  propose → auth_gate → execute → verify → END│
-└──────────────────────────────────────────────┘
-              ↓
-┌──────────────────────────────────────────────┐
-│   CAPABILITY ADAPTERS                        │
-│  ETL | RAG | MCP | Bedrock | Vector DB | APIs│
-└──────────────────────────────────────────────┘
+```mermaid
+flowchart LR
+    RAG[Governed RAG]
+    RDF[RDF/Turtle]
+    SPARQL[SPARQL local]
+    INFERENCE[Inference]
+    CONSTRAINTS[Constraints]
+    LLM[LLM context]
+    RAG --> RDF
+    RDF --> SPARQL
+    SPARQL --> INFERENCE
+    INFERENCE --> CONSTRAINTS
+    CONSTRAINTS --> LLM
 ```
 
----
+Pipeline actual:
 
-## 📁 Estructura del Repositorio
+1. RAG recupera documentos y citas
+2. Ontology Engine materializa RDF/Turtle
+3. SPARQL local consulta relaciones
+4. Inference añade inversas, transitivas y simétricas
+5. Constraints detecta endpoints, evidencia y contradicciones
+6. El LLM recibe caminos y evidencia; no recibe autoridad implícita
 
-```
-BAGO_AGENTIC_DATA_LAB/
-├── .github/agents/
-│   └── bago-sync-agent.agent.md # Agente gobernado de commit/push/merge
-├── src/
-│   ├── agent/                # L9 ✅
-│   │   └── governed_knowledge_agent.py # LangGraph + RAG + permits
-│   ├── context/              # Context identity boundary
-│   │   └── workspace_binding.py # Git identity + scope + fingerprint
-│   ├── orchestration/
-│   │   └── state_graph.py       # L1 ✅ (450 líneas)
-│   ├── etl/
-│   │   └── pipeline.py          # L2 ✅ (650 líneas)
-│   ├── retrieval/               # L4 ✅
-│   │   └── governed_rag.py      # Hybrid retrieval + governed evidence
-│   ├── metadata/                # L3 ✅
-│   │   ├── schema.py            # Entidades y metadata
-│   │   ├── ontology.py          # Relaciones y reglas
-│   │   └── ontology_generator.py # Propuestas gobernadas L1→L3
-│   └── adapters/                # L5-L8 ✅ / L9 provider boundary
-│       ├── __init__.py
-│       ├── mcp_adapter.py       # Discovery → registry → permit → call
-│       ├── bedrock_provider_adapter.py # Converse + streaming + receipts
-│       ├── bedrock_kb_adapter.py # Retrieve + citations + KB receipts
-│       └── openmetadata_adapter.py # Catalog + lineage + ownership + quality
-├── tests/
-│   ├── test_l1_governance.py    # 7 CRIT P0 ✅
-│   ├── test_l2_etl_pipeline.py  # 4 CRIT P0 ✅
-│   ├── test_l3_ontology.py      # 12 CRIT P0 ✅
-│   ├── test_l3_evidence.py      # 2 evidence checks ✅
-│   ├── test_metadata_schema.py  # 4 schema checks ✅
-│   ├── test_ontology_generator.py # 7 generator checks ✅
-│   ├── test_retrieval_accuracy.py # 9 retrieval checks ✅
-│   ├── test_retrieval_benchmark.py # 3 benchmark checks ✅
-│   ├── test_mcp_governance.py   # 7 MCP governance checks ✅
-│   ├── test_bedrock_integration.py # 10 Bedrock boundary checks ✅
-│   ├── test_bedrock_kb_adapter.py # 10 Knowledge Base checks ✅
-│   ├── test_openmetadata_adapter.py # 12 Metadata Catalog checks ✅
-│   ├── test_l9_end_to_end_agent.py # 7 capstone checks ✅
-│   └── test_workspace_binding.py # 6 CRIT P0 contract checks ✅
-├── evidence/
-│   ├── l3_ontology_graph.md       # Mermaid + integrity receipt
-│   ├── ontology_proposal.md       # Propuesta sobre docs BAGO actuales
-│   ├── ontology_proposal_examples.md # Propuestas pendientes de aprobación
-│   ├── retrieval_benchmark_results.md # Comparativa reproducible L4
-│   ├── mcp_governed_demo.md      # Receipt de ronda MCP local
-│   ├── mcp_governed_demo.mp4     # Vídeo de evidencia L5
-│   ├── mcp_governed_demo.mp4.sha256 # Hash del vídeo
-│   ├── bedrock_provider_benchmark.md # Benchmark offline L6
-│   ├── bago_etl_vs_bedrock_kb_comparison.md # Comparison offline L7
-│   ├── l8_openmetadata_catalog.md # Catalog + lineage evidence offline L8
-│   ├── l9_commercetools_agent.md # 3 end-to-end scenarios offline L9
-│   └── l9_authorized_actions_20260922.md # Authorization receipt + follow-up
-├── scripts/
-│   ├── generate_l3_ontology_evidence.py
-│   ├── generate_ontology_proposal.py
-│   ├── benchmark_retrieval.py
-│   ├── local_mcp_server.py
-│   ├── run_mcp_demo.py
-│   ├── render_mcp_evidence_video.py
-│   ├── benchmark_bedrock_provider.py
-│   ├── compare_bago_etl_vs_bedrock_kb.py
-│   ├── generate_l8_catalog_evidence.py
-│   ├── generate_l9_agent_evidence.py
-│   └── generate_dynamic_readme.py
-├── docs/
-│   ├── ontology_generator.md  # L1 → L2 → L3 gobernado
-│   ├── governed_rag.md        # L4: retrieval + filtros + citas
-│   ├── mcp_governance.md      # L5: capabilities + permits + receipts
-│   ├── aws_bedrock_setup.md   # L6: IAM + quotas + costes + live checklist
-│   ├── bedrock_knowledge_base.md # L7: retrieval + citations + IAM
-│   ├── openmetadata_catalog.md # L8: catalog + lineage + quality + live boundary
-│   ├── commercetools_capstone.md # L9: agent + portfolio boundary
-│   └── workspace_binding.md # Canonical workspace context contract
-├── l2_etl_metadata.db           # 65 chunks indexados
-├── LAB_CONTRACT.md              # Límites con BAGO canónico
-├── ARCHITECTURE.md              # Decisiones arquitectónicas
-├── ROADMAP.md                   # Timeline detallado
-├── LEARNING_LEDGER.md           # Aprendizajes por fase
-├── JOB_SKILL_MATRIX.md          # Mapeo a empleabilidad
-├── STATE.md                     # Estado operativo
-└── README.md                    # Este archivo
-```
+## Job market alignment
 
----
+La tabla se extrae de LAB_CONTRACT.md; no se duplica manualmente aquí.
 
-## 🎯 Job Market Alignment
+| Empresa | Rol | Fit | Gap principal | Timeline |
+|---|---|---:|---|---|
+| Tuio | Forward Deployed AI Engineer | ~96% | Seniority (~5 años) | 4-5 semanas |
+| Orbitant | AI Engineer | ~91% | LangGraph + Cloud | 2-3 semanas |
+| Devoteam | GCP AI Engineer (Gemini) | ~87% → 93% | Vertex AI / GCP | 6-7 semanas |
+| commercetools | AI Engineer | ~97% | Seniority + LLM production | Stretch goal |
 
-### Target Roles
+## Skills evidenciadas
 
-| Empresa | Rol | Fit Técnico | Gap Principal | Wave |
-|---------|-----|-------------|---------------|------|
-| **Orbitant** | AI Engineer | 93% | RAG + Cloud | 2-3 semanas |
-| **Tuio** | Forward Deployed AI Engineer | 97% | MCP + Bedrock | 4-5 semanas |
-| **Devoteam** | GCP AI Engineer (Gemini Enterprise) | 89% | Vertex AI / GCP | 6-7 semanas |
-| **commercetools** | AI Engineer | 97% | Portfolio completo | 10 semanas (stretch) |
+La tabla se extrae de JOB_SKILL_MATRIX.md y se mantiene fuera del README.
 
-### Skills Evidenciadas
+| Skill | Demanda | Nivel actual | Primera evidencia | Entrevista |
+|---|---|---|---|---|
+| Python | Alta | ✅ Senior | BAGO backend | ✅ Sí |
+| REST APIs | Alta | ✅ Senior | BAGO FastAPI | ✅ Sí |
+| LangGraph | Muy Alta | ❌ None | L1 state graph | L1 completado |
+| LangChain concepts | Alta | ❌ None | — | L1 completado |
+| Multi-agent systems | Muy Alta | 🟢 Reinforced | GovernedKnowledgeAgent + L9 evidence | L9 offline |
+| Tool use | Muy Alta | ✅ Implementado | BAGO tools + MCP receipts | L5 baseline |
+| MCP | Muy Alta | ✅ Baseline gobernado | L5 MCP adapter + video | L5 baseline |
+| RAG | Muy Alta | 🟡 Basic | L4 governed RAG | L4 completado |
+| Hybrid retrieval | Alta | ❌ None | L4 benchmarks | L4 completado |
+| Embeddings | Alta | 🟡 Conceptual | L4 vector store | L4 completado |
+| Vector DB | Alta | ❌ None | L4 FAISS/Pinecone | L4 completado |
+| ETL | Alta | ❌ None | L2 pipeline | L2 completado |
+| Data pipelines | Alta | ❌ None | L2 end-to-end | L2 completado |
+| Metadata/Ontology | Media | 🟢 Implementado | L3 schema + L10 engine | L10 local |
+| RDF / SPARQL / Knowledge Graphs | Alta | 🟢 Baseline local | L10 RDF/Turtle + SPARQL + inference | L10 local; triplestore live separado |
+| Lineage | Media | 🟢 Implementado | L3 relations + L10 paths | L10 local |
+| AWS | Alta | 🟡 Adapter offline | L6 adapter + setup doc | Live account validation |
+| Bedrock | Alta | 🟡 Provider baseline | L6 Converse/Stream + receipts | Live model evaluation |
+| Bedrock Knowledge Bases | Alta | 🟡 Baseline offline | L7 Retrieve/Generate + citations | Live KB evaluation |
+| OpenMetadata Catalog | Media | 🟡 Baseline offline | L8 adapter + lineage evidence | Live Docker evaluation |
+| IAM | Alta | 🟡 Basic | L6 least-privilege setup | Live policy check |
+| CI/CD | Alta | 🟡 Basic | GitHub Actions | L1 completado |
+| Evaluation | Muy Alta | 🟢 Framework baseline | 115 tests + README/L9/L10 scenarios | L10 offline |
+| Observability | Alta | 🟢 Reinforced | Receipts + evidence links + ontology receipt | L10 offline |
+| Secure execution | Muy Alta | ✅ Diseñado | BAGO auth boundary | L1 completado |
+| Authorization | Muy Alta | ✅ Diseñado | BAGO permits | L1 completado |
+| Auditability | Alta | ✅ Diseñado | BAGO receipts | L1 completado |
+| Docker/K8s | Media | ❌ None | Docker Compose | L2/L7 |
 
-✅ **Python avanzado** - pytest, dataclasses, type hints  
-✅ **Testing CRIT P0** - 109 tests passing, 0 failures
-✅ **ETL / Data Pipelines** - 6 stages, idempotencia, receipts  
-✅ **Content hashing** - SHA-256 para deduplicación  
-✅ **LangGraph StateGraph** - nodes, edges, TypedDict state  
-✅ **Gobernanza BAGO** - AuthorizationBoundary → Permit → ExecutionGateway  
-✅ **Metadata & Ontology** - schema, generator, lineage, integrity y evidencia Mermaid
-✅ **Governed RAG** - BM25-like + semantic hash baseline, hybrid fusion, reranking y filtros
-✅ **Governed MCP** - discovery, registry, effect classification, permits y receipts
-✅ **AWS Bedrock Provider** - Converse/streaming gobernados, retries, quotas, costes y receipts offline
-✅ **Bedrock Knowledge Base** - Retrieve/RetrieveAndGenerate, metadata filters, citations y comparación ETL offline
-✅ **Metadata Catalog** - OpenMetadata-shaped search, lineage, ownership, schema version, quality rules y receipts offline
-✅ **End-to-End Governed Agent** - LangGraph + RAG + MCP + Bedrock fixture, propuestas, permits, receipts y tres escenarios
+## Inventario real del checkout
 
-⏳ **En progreso:**
-- Validación live AWS con credenciales/model access (L6)
-- Validación live AWS de Knowledge Base (L7)
-- Validación live OpenMetadata/Docker (L8)
-- Validación live AWS/commercetools y vídeo nuevo de L9 (`NOT_RUN`); GitHub issue #14 ejecutado y verificado bajo autorización humana
+### Código fuente
 
----
+- `src/adapters/__init__.py`
+- `src/adapters/bedrock_kb_adapter.py`
+- `src/adapters/bedrock_provider_adapter.py`
+- `src/adapters/mcp_adapter.py`
+- `src/adapters/openmetadata_adapter.py`
+- `src/agent/__init__.py`
+- `src/agent/governed_knowledge_agent.py`
+- `src/context/__init__.py`
+- `src/context/workspace_binding.py`
+- `src/etl/pipeline.py`
+- `src/metadata/ontology.py`
+- `src/metadata/ontology_engine.py`
+- `src/metadata/ontology_generator.py`
+- `src/metadata/schema.py`
+- `src/orchestration/state_graph.py`
+- `src/retrieval/__init__.py`
+- `src/retrieval/governed_rag.py`
 
-## 🔧 Comandos Útiles
+### Tests
+
+- `tests/test_bago_sync_agent.py` (8 checks)
+- `tests/test_bedrock_integration.py` (10 checks)
+- `tests/test_bedrock_kb_adapter.py` (10 checks)
+- `tests/test_dynamic_readme.py` (3 checks)
+- `tests/test_l10_ontology_engine.py` (4 checks)
+- `tests/test_l1_governance.py` (7 checks)
+- `tests/test_l2_etl_pipeline.py` (4 checks)
+- `tests/test_l3_evidence.py` (2 checks)
+- `tests/test_l3_ontology.py` (12 checks)
+- `tests/test_l9_end_to_end_agent.py` (7 checks)
+- `tests/test_mcp_governance.py` (7 checks)
+- `tests/test_metadata_schema.py` (4 checks)
+- `tests/test_ontology_generator.py` (7 checks)
+- `tests/test_openmetadata_adapter.py` (12 checks)
+- `tests/test_retrieval_accuracy.py` (9 checks)
+- `tests/test_retrieval_benchmark.py` (3 checks)
+- `tests/test_workspace_binding.py` (6 checks)
+
+### Evidencia
+
+- `evidence/bago_etl_vs_bedrock_kb_comparison.md`
+- `evidence/bedrock_provider_benchmark.md`
+- `evidence/l10_ontology_engine.md`
+- `evidence/l3_ontology_graph.md`
+- `evidence/l8_openmetadata_catalog.md`
+- `evidence/l9_authorized_actions_20260922.md`
+- `evidence/l9_commercetools_agent.md`
+- `evidence/mcp_governed_demo.md`
+- `evidence/mcp_governed_demo.mp4`
+- `evidence/mcp_governed_demo.mp4.sha256`
+- `evidence/ontology_proposal.md`
+- `evidence/ontology_proposal_examples.md`
+- `evidence/retrieval_benchmark_results.md`
+
+### Documentación
+
+- `docs/aws_bedrock_setup.md`
+- `docs/bago-sync-agent.md`
+- `docs/bedrock_knowledge_base.md`
+- `docs/commercetools_capstone.md`
+- `docs/governed_rag.md`
+- `docs/mcp_governance.md`
+- `docs/ontology_engine.md`
+- `docs/ontology_generator.md`
+- `docs/openmetadata_catalog.md`
+- `docs/readme_generation.md`
+- `docs/workspace_binding.md`
+
+### Scripts
+
+- `scripts/bago_sync_agent.py`
+- `scripts/benchmark_bedrock_provider.py`
+- `scripts/benchmark_retrieval.py`
+- `scripts/compare_bago_etl_vs_bedrock_kb.py`
+- `scripts/generate_dynamic_readme.py`
+- `scripts/generate_l10_ontology_evidence.py`
+- `scripts/generate_l3_ontology_evidence.py`
+- `scripts/generate_l8_catalog_evidence.py`
+- `scripts/generate_l9_agent_evidence.py`
+- `scripts/generate_ontology_proposal.py`
+- `scripts/local_mcp_server.py`
+- `scripts/render_mcp_evidence_video.py`
+- `scripts/run_mcp_demo.py`
+
+## Comandos reproducibles
 
 ```bash
-# Ejecutar todos los tests
-python -m pytest tests/ -v
-
-# Ejecutar fase específica
-python -m pytest tests/test_l1_governance.py -v
-python -m pytest tests/test_l2_etl_pipeline.py -v
-python -m pytest tests/test_l3_ontology.py tests/test_l3_evidence.py tests/test_metadata_schema.py -v
-
-# Validar Governed RAG y benchmark reproducible
-python -m pytest tests/test_retrieval_accuracy.py tests/test_retrieval_benchmark.py -v
-python scripts/benchmark_retrieval.py
-
-# Validar MCP gobernado y generar su evidencia visual
-python -m pytest tests/test_mcp_governance.py -v
-python scripts/run_mcp_demo.py
-python scripts/render_mcp_evidence_video.py
-
-# Validar Bedrock Provider offline y generar benchmark de receipts
-python -m pytest tests/test_bedrock_integration.py -v
-python scripts/benchmark_bedrock_provider.py
-
-# Comparar la misma query en BAGO ETL y Bedrock Knowledge Base fixture
-python -m pytest tests/test_bedrock_kb_adapter.py -v
-python scripts/compare_bago_etl_vs_bedrock_kb.py
-
-# Validar Metadata Catalog gobernado y generar evidencia offline
-python -m pytest tests/test_openmetadata_adapter.py -v
-python scripts/generate_l8_catalog_evidence.py
-
-# Validar el capstone commercetools offline y generar sus tres escenarios
-python -m pytest tests/test_l9_end_to_end_agent.py -v
-python scripts/generate_l9_agent_evidence.py
-
-# Regenerar evidencia visual de L3
-python scripts/generate_l3_ontology_evidence.py
-
-# Proponer ontología desde documentación (no persiste relaciones)
-python scripts/generate_ontology_proposal.py
-
-# Ver estadísticas ETL
-python -c "from src.etl.pipeline import ETLPipeline; p=ETLPipeline(); print(f'DB: {p.db_path}')"
-
-# Regenerar este README dinámico
+python -m pytest tests -q
 python scripts/generate_dynamic_readme.py
-
-# Planificar sincronización sin mutar Git
-python scripts/bago_sync_agent.py plan --fetch --json
+python scripts/generate_dynamic_readme.py --check --skip-tests
 ```
 
----
+Tests por fase:
 
-## 📜 Licencia
+- `L1`: `python -m pytest tests/test_l1_governance.py -q`
+- `L2`: `python -m pytest tests/test_l2_etl_pipeline.py -q`
+- `L3`: `python -m pytest tests/test_l3_evidence.py tests/test_l3_ontology.py tests/test_metadata_schema.py tests/test_ontology_generator.py -q`
+- `L4`: `python -m pytest tests/test_retrieval_accuracy.py tests/test_retrieval_benchmark.py -q`
+- `L5`: `python -m pytest tests/test_mcp_governance.py -q`
+- `L6`: `python -m pytest tests/test_bedrock_integration.py -q`
+- `L7`: `python -m pytest tests/test_bedrock_kb_adapter.py -q`
+- `L8`: `python -m pytest tests/test_openmetadata_adapter.py -q`
+- `L9`: `python -m pytest tests/test_l9_end_to_end_agent.py -q`
+- `L10`: `python -m pytest tests/test_l10_ontology_engine.py -q`
 
-MIT License - Ver [LICENSE](LICENSE) para detalles.
+## Contrato de generación
 
----
+README.md es un artefacto generado. No editarlo manualmente.
+Las decisiones estables viven en docs/readme_manifest.json y en los
+documentos canónicos enlazados arriba; los inventarios, métricas,
+estado Git y resultados de tests se calculan al generar.
 
-**Nota:** Este README se genera dinámicamente. Para actualizar métricas ejecutar `python scripts/generate_dynamic_readme.py`
+- Generar: python scripts/generate_dynamic_readme.py
+- Comprobar deriva: python scripts/generate_dynamic_readme.py --check --skip-tests
+- Comprobar con la suite completa: python scripts/generate_dynamic_readme.py --check
 
-Generado: 2026-09-22 03:52:09
+Fuente de estado: `STATE.md`; contrato: `LAB_CONTRACT.md`;
+skills: `JOB_SKILL_MATRIX.md`; manifiesto: `docs/readme_manifest.json`.
+
+MIT License — ver [LICENSE](LICENSE).

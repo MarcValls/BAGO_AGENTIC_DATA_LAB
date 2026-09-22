@@ -1,0 +1,155 @@
+{
+  "project": {
+    "title": "BAGO Agentic Data Lab",
+    "emoji": "🧪",
+    "description": "Laboratorio experimental para desarrollar capacidades de AI Engineering con gobernanza BAGO.",
+    "repository": "https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB",
+    "default_branch": "main",
+    "license": "MIT"
+  },
+  "architecture": {
+    "principle": "LangGraph propone → BAGO autoriza → ExecutionGateway ejecuta → Receipt evidencia.",
+    "pipeline": [
+      "RAG recupera documentos y citas",
+      "Ontology Engine materializa RDF/Turtle",
+      "SPARQL local consulta relaciones",
+      "Inference añade inversas, transitivas y simétricas",
+      "Constraints detecta endpoints, evidencia y contradicciones",
+      "El LLM recibe caminos y evidencia; no recibe autoridad implícita"
+    ]
+  },
+  "phases": [
+    {
+      "id": "L0",
+      "name": "Baseline & Lab Contract",
+      "target": "—",
+      "status": "COMPLETE",
+      "checks": [
+        {"kind": "contract", "patterns": ["LAB_CONTRACT.md", "ARCHITECTURE.md", "ROADMAP.md", "LEARNING_LEDGER.md", "JOB_SKILL_MATRIX.md", "LICENSE"]},
+        {"kind": "tests", "patterns": []},
+        {"kind": "evidence", "patterns": []}
+      ],
+      "commit_patterns": ["L0: Initial baseline", "Add: Project structure"]
+    },
+    {
+      "id": "L1",
+      "name": "LangGraph Governed Execution",
+      "target": "—",
+      "status": "VALIDATED",
+      "checks": [
+        {"kind": "code", "patterns": ["src/orchestration/state_graph.py"]},
+        {"kind": "tests", "patterns": ["tests/test_l1_governance.py"]},
+        {"kind": "evidence", "patterns": []}
+      ],
+      "commit_patterns": ["L1: LangGraph Governed Execution"]
+    },
+    {
+      "id": "L2",
+      "name": "ETL / Data Pipeline",
+      "target": "—",
+      "status": "VALIDATED",
+      "checks": [
+        {"kind": "code", "patterns": ["src/etl/pipeline.py"]},
+        {"kind": "tests", "patterns": ["tests/test_l2_etl_pipeline.py"]},
+        {"kind": "evidence", "patterns": ["l2_etl_metadata.db"]}
+      ],
+      "commit_patterns": ["L2: ETL Pipeline VALIDATED"]
+    },
+    {
+      "id": "L3",
+      "name": "Metadata & Ontology",
+      "target": "—",
+      "status": "VERIFIED",
+      "checks": [
+        {"kind": "code", "patterns": ["src/metadata/schema.py", "src/metadata/ontology.py", "src/metadata/ontology_generator.py"]},
+        {"kind": "tests", "patterns": ["tests/test_l3_*.py", "tests/test_metadata_schema.py", "tests/test_ontology_generator.py"]},
+        {"kind": "evidence", "patterns": ["evidence/l3_ontology_graph.md", "docs/ontology_generator.md"]}
+      ],
+      "commit_patterns": ["feat: add governed metadata ontology pipeline"]
+    },
+    {
+      "id": "L4",
+      "name": "Governed RAG",
+      "target": "Orbitant",
+      "status": "VERIFIED",
+      "checks": [
+        {"kind": "code", "patterns": ["src/retrieval/governed_rag.py"]},
+        {"kind": "tests", "patterns": ["tests/test_retrieval_*.py"]},
+        {"kind": "evidence", "patterns": ["evidence/retrieval_benchmark_results.md", "docs/governed_rag.md"]}
+      ],
+      "commit_patterns": ["feat: add governed hybrid retrieval"]
+    },
+    {
+      "id": "L5",
+      "name": "MCP con gobernanza",
+      "target": "Orbitant",
+      "status": "VERIFIED",
+      "checks": [
+        {"kind": "code", "patterns": ["src/adapters/mcp_adapter.py"]},
+        {"kind": "tests", "patterns": ["tests/test_mcp_governance.py"]},
+        {"kind": "evidence", "patterns": ["evidence/mcp_governed_demo.md", "evidence/mcp_governed_demo.mp4", "docs/mcp_governance.md"]}
+      ],
+      "commit_patterns": ["feat: add governed MCP adapter"]
+    },
+    {
+      "id": "L6",
+      "name": "AWS Bedrock Provider",
+      "target": "Tuio",
+      "status": "VERIFIED (offline)",
+      "checks": [
+        {"kind": "code", "patterns": ["src/adapters/bedrock_provider_adapter.py"]},
+        {"kind": "tests", "patterns": ["tests/test_bedrock_integration.py"]},
+        {"kind": "evidence", "patterns": ["evidence/bedrock_provider_benchmark.md", "docs/aws_bedrock_setup.md"]}
+      ],
+      "commit_patterns": ["feat: add governed AWS Bedrock provider adapter"]
+    },
+    {
+      "id": "L7",
+      "name": "Bedrock Knowledge Base",
+      "target": "Devoteam",
+      "status": "VERIFIED (offline)",
+      "checks": [
+        {"kind": "code", "patterns": ["src/adapters/bedrock_kb_adapter.py"]},
+        {"kind": "tests", "patterns": ["tests/test_bedrock_kb_adapter.py"]},
+        {"kind": "evidence", "patterns": ["evidence/bago_etl_vs_bedrock_kb_comparison.md", "docs/bedrock_knowledge_base.md"]}
+      ],
+      "commit_patterns": ["feat: add governed Bedrock Knowledge Base adapter"]
+    },
+    {
+      "id": "L8",
+      "name": "Metadata Catalog",
+      "target": "Devoteam",
+      "status": "VERIFIED (offline)",
+      "checks": [
+        {"kind": "code", "patterns": ["src/adapters/openmetadata_adapter.py"]},
+        {"kind": "tests", "patterns": ["tests/test_openmetadata_adapter.py"]},
+        {"kind": "evidence", "patterns": ["evidence/l8_openmetadata_catalog.md", "docs/openmetadata_catalog.md"]}
+      ],
+      "commit_patterns": ["feat: add governed OpenMetadata catalog adapter"]
+    },
+    {
+      "id": "L9",
+      "name": "End-to-End Governed Agent",
+      "target": "commercetools",
+      "status": "VERIFIED (offline)",
+      "checks": [
+        {"kind": "code", "patterns": ["src/agent/governed_knowledge_agent.py"]},
+        {"kind": "tests", "patterns": ["tests/test_l9_end_to_end_agent.py"]},
+        {"kind": "evidence", "patterns": ["evidence/l9_commercetools_agent.md", "evidence/l9_authorized_actions_20260922.md", "docs/commercetools_capstone.md"]}
+      ],
+      "commit_patterns": ["feat: add L9 commercetools governed agent"]
+    },
+    {
+      "id": "L10",
+      "name": "Governed Ontology Engine",
+      "target": "BAGO / portfolio",
+      "status": "VERIFIED (local)",
+      "checks": [
+        {"kind": "code", "patterns": ["src/metadata/ontology_engine.py", "src/agent/governed_knowledge_agent.py"]},
+        {"kind": "tests", "patterns": ["tests/test_l10_ontology_engine.py"]},
+        {"kind": "evidence", "patterns": ["evidence/l10_ontology_engine.md", "docs/ontology_engine.md", "scripts/generate_l10_ontology_evidence.py"]}
+      ],
+      "commit_patterns": ["feat: add governed ontology engine", "L10"]
+    }
+  ]
+}
