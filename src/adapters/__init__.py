@@ -29,6 +29,21 @@ from .mcp_adapter import (
     MCPGovernancePolicy,
     RegisteredCapability,
 )
+from .openmetadata_adapter import (
+    CatalogEntity,
+    GovernedOpenMetadataAdapter,
+    LineageEdge,
+    MetadataCatalogAdapter,
+    MetadataCatalogConfigurationError,
+    MetadataCatalogGovernanceError,
+    MetadataCatalogReceipt,
+    MetadataCatalogResult,
+    OpenMetadataAdapter,
+    OpenMetadataCatalogPolicy,
+    OpenMetadataErrorKind,
+    OpenMetadataHTTPError,
+    QualityRule,
+)
 
 __all__ = [
     "BedrockCallReceipt",
@@ -54,4 +69,17 @@ __all__ = [
     "RegisteredCapability",
     "GovernedBedrockAdapter",
     "GovernedBedrockKnowledgeBaseAdapter",
+    "CatalogEntity",
+    "GovernedOpenMetadataAdapter",
+    "LineageEdge",
+    "MetadataCatalogAdapter",
+    "MetadataCatalogConfigurationError",
+    "MetadataCatalogGovernanceError",
+    "MetadataCatalogReceipt",
+    "MetadataCatalogResult",
+    "OpenMetadataAdapter",
+    "OpenMetadataCatalogPolicy",
+    "OpenMetadataErrorKind",
+    "OpenMetadataHTTPError",
+    "QualityRule",
 ]

@@ -334,3 +334,68 @@ fixture y deja la conexión AWS como validación separada."*
 - ⚠️ Comparar relevancia, filtros y latencia sobre corpus Devoteam real.
 - ⚠️ Actualizar IAM, vector store, quotas y precios con la cuenta/region objetivo.
 
+---
+
+### 2026-09-22 — Governed OpenMetadata Catalog
+
+**Fase:** L8
+
+**Qué entendí:**
+
+Un catálogo no es sólo una tabla de búsqueda. Para que sea útil al agente debe
+resolver discovery, lineage, ownership, versionado y calidad bajo una misma
+frontera de autoridad. OpenMetadata ofrece APIs para esas capacidades, pero la
+SDK o el servidor no deben saltarse `ExecutionRequest → Permit → receipt`.
+
+**Qué implementé:**
+
+- `src/adapters/openmetadata_adapter.py`:
+  - `search` y `get_lineage` como lecturas gobernadas;
+  - `add_lineage`, `assign_ownership`, `register_schema_version` y
+    `create_quality_rule` como escrituras con scope explícito;
+  - normalización de entidades, owners, tags, versión, autoridad y edges;
+  - retries sólo para timeout/throttle/network, rate limit local y receipts;
+  - cliente inyectable para pruebas y transporte HTTP stdlib preparado para un
+    servidor real.
+- `tests/test_openmetadata_adapter.py`: 12 checks P0 offline.
+- `scripts/generate_l8_catalog_evidence.py` y
+  `evidence/l8_openmetadata_catalog.md`: search, source → asset → chunk,
+  ownership, schema version, quality rule y receipts.
+- `docs/openmetadata_catalog.md`: contrato, endpoints, boundary y checklist live.
+
+**Tests:** 96/96 esperados en la suite combinada; L8 aporta 12 checks.
+
+**Evidence:** el fixture demuestra `ALLOW → transport → SUCCESS` para las seis
+operaciones, dos entidades descubiertas, dos edges de lineage, ownership,
+versionado `2.0`, una quality rule y receipts. No se ejecutó un servidor
+OpenMetadata real.
+
+**Failure modes que ahora evito:**
+
+❌ Escribir lineage, ownership o reglas sin permiso ligado a la request
+✅ Cada operación exige un Permit válido y deja un `MetadataCatalogReceipt`
+
+❌ Reintentar un `401/403` como si fuera un fallo transitorio
+✅ Taxonomía separa autorización, validación, not-found y errores retryables
+
+❌ Confundir un fixture con un catálogo desplegado
+✅ La evidencia identifica el cliente en memoria y mantiene Docker/live como
+`NOT_RUN` hasta comprobarlo realmente
+
+**Interview explanation:**
+
+*"Construí un adapter de OpenMetadata que convierte discovery y cambios de
+metadata en operaciones BAGO gobernadas. Las lecturas recuperan entidades y
+lineage normalizados; las escrituras de ownership, versionado y calidad sólo
+se envían con un Permit acotado. Cada llamada tiene receipt, rate limit y
+taxonomy de errores. La validación offline está cerrada; Docker y el servidor
+real quedan como una prueba de integración separada, no como una afirmación
+implícita."*
+
+**Gaps restantes:**
+
+- ⚠️ Docker/OpenMetadata real: este entorno no tiene `docker` ni `docker compose`.
+- ⚠️ Validar JWT/RBAC, ownership y lineage contra la versión/instancia objetivo.
+- ⚠️ Mapear definitivamente `KnowledgeAsset`/`KnowledgeChunk` a las entidades
+  OpenMetadata elegidas para el despliegue de producción.
+

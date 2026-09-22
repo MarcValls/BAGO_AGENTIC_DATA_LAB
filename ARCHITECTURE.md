@@ -161,7 +161,7 @@ class Receipt:
 | MCPCapabilityAdapter | MCP Protocol | Tool discovery, schema validation | L5 |
 | VectorStoreAdapter | FAISS/Pinecone | Embedding storage, similarity search | L4 |
 | ETLSourceAdapter | Web/API/Files | Extraction, normalization | L2 |
-| MetadataCatalogAdapter | OpenMetadata | Lineage, ownership, quality | L8 |
+| MetadataCatalogAdapter | OpenMetadata | Search, lineage, ownership, schema version, quality y receipts | L8 |
 
 ---
 

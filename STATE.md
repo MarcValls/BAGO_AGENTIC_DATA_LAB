@@ -1,10 +1,11 @@
 # Current State — BAGO Agentic Data Lab
 
 **Updated:** 2026-09-22
-**Current phase:** L7 · Bedrock Knowledge Base
-**Status:** VERIFIED for the offline governed adapter/comparison scope; live AWS `NOT_RUN`
-**Tests:** 84/84 passing en la suite combinada; L7 aporta 10 checks offline.
-**Next phase:** L8 · Metadata Catalog
+**Current phase:** L8 · Metadata Catalog
+**Status:** VERIFIED for the offline governed OpenMetadata adapter/evidence scope;
+OpenMetadata/Docker live `NOT_RUN`
+**Tests:** 96/96 expected after L8; L8 aporta 12 checks offline.
+**Next phase:** L9 · End-to-End Governed Agent
 **Evidence:** `evidence/l3_ontology_graph.md` with integrity PASS and
 `evidence/retrieval_benchmark_results.md` with 48 reproducible benchmark rows;
 `evidence/mcp_governed_demo.md` with a real local stdio round trip and a
@@ -13,6 +14,9 @@ pre-transport WRITE denial;
 model-scoped permits, receipt cost math and local latency;
 `evidence/bago_etl_vs_bedrock_kb_comparison.md` with one identical query through
 local BAGO ETL/RAG and an injected Knowledge Base-shaped client;
+`evidence/l8_openmetadata_catalog.md` with search, source-to-asset-to-chunk
+lineage, ownership, schema version, quality rule and receipts through an
+in-memory OpenMetadata-shaped client;
 `evidence/ontology_proposal.md` and `evidence/ontology_proposal_examples.md`
 are reproducible review artifacts.
 **L6 boundary:** `Converse` and `ConverseStream` are implemented behind an
@@ -23,6 +27,11 @@ this closure, so production connectivity remains `NOT_RUN`.
 an optional `bedrock-agent-runtime` client with KB allowlists, metadata filters,
 citations, retries, quotas and receipts. The comparison uses a fixture, not a
 live managed Knowledge Base.
+**L8 boundary:** catalog search, lineage, ownership, schema versioning and
+quality-rule definitions are implemented behind an injected or optional HTTP
+client with allowlists, permits, retries, quotas and receipts. Docker and a
+live OpenMetadata server were not available, so live catalog validation remains
+`NOT_RUN`.
 **Ontology generator:** metadata and relation proposals remain `PROPOSED` until
 validator plus human/contract approval; no automatic canonical promotion.
 Current proposal run: 16 entities and 0 explicit relations in the BAGO source

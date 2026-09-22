@@ -66,6 +66,7 @@
 | Python | ✅ Fuerte | BAGO backend | — |
 | LLMs | ✅ Provider baseline | Bedrock Converse/Stream offline | Live model evaluation |
 | Bedrock Knowledge Bases | ✅ Baseline offline gobernado | Retrieve/Generate + citations + ETL comparison | Live KB ingestion and relevance |
+| Metadata Catalog / OpenMetadata | ✅ Baseline offline gobernado | Search, lineage, ownership, schema version, quality + receipts | Live Docker deployment |
 | RAG | 🟡 Parcial | — | L4 |
 | LangGraph/LangChain | ❌ No empezado | — | L1 |
 | Agentes | 🟡 Diseñado | BAGO agents | L1 |
@@ -117,7 +118,9 @@
 
 ### Wave 3 (6-7 semanas) — Devoteam
 - [x] Completar L7 offline (Bedrock KB + comparación ETL)
+- [x] Completar L8 offline (Metadata Catalog + lineage + quality)
 - [ ] Validar L7 contra Knowledge Base AWS real (ingestion, IAM, vector store, relevancia)
+- [ ] Validar L8 contra OpenMetadata real (Docker, API, ownership y lineage)
 - Auto-study GCP basics (transferencia desde AWS)
 - Aplicar destacando adaptabilidad multi-cloud
 
@@ -152,6 +155,7 @@
 | AWS | Alta | 🟡 Adapter offline | 🎯 Bedrock fluent | L6 adapter + setup doc | Live account validation |
 | Bedrock | Alta | 🟡 Provider baseline | 🎯 Proficient | L6 Converse/Stream + receipts | Live model evaluation |
 | Bedrock Knowledge Bases | Alta | 🟡 Baseline offline | 🎯 Proficient | L7 Retrieve/Generate + citations | Live KB evaluation |
+| OpenMetadata Catalog | Media | 🟡 Baseline offline | 🎯 Proficient | L8 adapter + lineage evidence | Live Docker evaluation |
 | IAM | Alta | 🟡 Basic | 🎯 Configurable | L6 least-privilege setup | Live policy check |
 | CI/CD | Alta | 🟡 Basic | 🎯 Implementado | GitHub Actions | L1 completado |
 | Evaluation | Muy Alta | 🟡 Parcial | 🎯 Framework | Test suite | L1 completado |
@@ -195,11 +199,14 @@
 - [ ] L6: benchmark de latencia/precio cloud
 - [ ] CRIT report mostrando tests de gobernanza
 
-### Para Devoteam (añadir L7 + GCP study)
+### Para Devoteam (añadir L7-L8 + GCP study)
 
 - [x] L7: Bedrock KB adapter funcionando offline con permits y citations
 - [x] Comparativa BAGO ETL vs Bedrock KB sobre la misma query (fixture)
+- [x] L8: OpenMetadata-shaped catalog adapter con lineage, ownership, versionado y quality rules
+- [x] Evidencia L8 con source → asset → chunk y receipts gobernados (fixture)
 - [ ] L7: Knowledge Base AWS real, ingestion y benchmark de relevancia
+- [ ] L8: OpenMetadata real con Docker y API
 - [ ] Auto-study notes de GCP (Vertex AI, Gemini)
 - [ ] Transferencia explícita AWS → GCP en docs
 
