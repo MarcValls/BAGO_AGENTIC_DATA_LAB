@@ -16,7 +16,8 @@
 |-----------|--------|----------|-----|
 | Agentes y orchestration | 🟡 En aprendizaje | — | L1 LangGraph |
 | Tool calling / APIs | ✅ Conocido | BAGO backend | — |
-| MCP | ✅ Baseline gobernado | mcp_adapter.py + local stdio demo + video | L6 Bedrock |
+| MCP | ✅ Baseline gobernado | mcp_adapter.py + local stdio demo + video | Tool-use cloud end-to-end |
+| Bedrock provider | ✅ Baseline offline gobernado | bedrock_provider_adapter.py + 10 tests + benchmark | Live AWS validation |
 | RAG | 🟡 Parcial | BAGO RAG básico | L4 |
 | Validaciones/permisos | ✅ Fuerte | BAGO governance | — |
 | Action limits / human escalation | ✅ Diseñado | BAGO contracts | — |
@@ -63,7 +64,7 @@
 | Requisito | Estado | Evidence | Gap |
 |-----------|--------|----------|-----|
 | Python | ✅ Fuerte | BAGO backend | — |
-| LLMs | 🟡 Parcial | BAGO providers | L6 Bedrock |
+| LLMs | ✅ Provider baseline | Bedrock Converse/Stream offline | Live model evaluation |
 | RAG | 🟡 Parcial | — | L4 |
 | LangGraph/LangChain | ❌ No empezado | — | L1 |
 | Agentes | 🟡 Diseñado | BAGO agents | L1 |
@@ -108,7 +109,8 @@
 - Aplicar destacando BAGO governance + RAG implementado
 
 ### Wave 2 (4-5 semanas) — Tuio
-- Completar L6 (Bedrock; L5 MCP baseline ya verificado)
+- [x] Completar L6 offline (Bedrock; L5 MCP baseline ya verificado)
+- [ ] Validar L6 contra cuenta AWS real (credenciales, IAM y model access)
 - Evidence de LangGraph governed execution
 - Aplicar aunque seniority sea gap; portfolio como compensación
 
@@ -145,9 +147,9 @@
 | Data pipelines | Alta | ❌ None | 🎯 Implementado | L2 end-to-end | L2 completado |
 | Metadata/Ontology | Media | ❌ None | 🎯 Modelado | L3 schema | L3 completado |
 | Lineage | Media | ❌ None | 🎯 Implementado | L3 relations | L3 completado |
-| AWS | Alta | ❌ None | 🎯 Bedrock fluent | L6 adapter | L6 completado |
-| Bedrock | Alta | ❌ None | 🎯 Proficient | L6 integration | L6 completado |
-| IAM | Alta | 🟡 Basic | 🎯 Configurable | L6 IAM setup | L6 completado |
+| AWS | Alta | 🟡 Adapter offline | 🎯 Bedrock fluent | L6 adapter + setup doc | Live account validation |
+| Bedrock | Alta | 🟡 Provider baseline | 🎯 Proficient | L6 Converse/Stream + receipts | Live model evaluation |
+| IAM | Alta | 🟡 Basic | 🎯 Configurable | L6 least-privilege setup | Live policy check |
 | CI/CD | Alta | 🟡 Basic | 🎯 Implementado | GitHub Actions | L1 completado |
 | Evaluation | Muy Alta | 🟡 Parcial | 🎯 Framework | Test suite | L1 completado |
 | Observability | Alta | 🟡 Parcial | 🎯 Completo | Receipts + logs | L9 completado |
@@ -184,9 +186,10 @@
 ### Para Tuio (añadir L5-L6)
 
 - [x] L5: MCP adapter + server local demo + video
-- [ ] L6: Bedrock provider adapter funcionando
-- [ ] Evidence de authorization boundary en acción
-- [ ] Receipts de ejecuciones reales
+- [x] L6: Bedrock provider adapter funcionando offline con permits y receipts
+- [x] Evidence de authorization boundary en acción (10 tests + benchmark)
+- [ ] Receipts de ejecuciones reales (AWS live `NOT_RUN`)
+- [ ] L6: benchmark de latencia/precio cloud
 - [ ] CRIT report mostrando tests de gobernanza
 
 ### Para Devoteam (añadir L7 + GCP study)
@@ -224,5 +227,5 @@
 
 ---
 
-**Última actualización:** 2026-09-21  
+**Última actualización:** 2026-09-22
 **Próxima revisión:** 2026-09-28 (fin semana 1)

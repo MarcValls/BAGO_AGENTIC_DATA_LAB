@@ -301,6 +301,7 @@ BAGO, permite el READ y bloquea el WRITE antes de enviarlo al servidor.
 **Duración:** 1 semana  
 **Fecha objetivo:** 2026-11-02  
 **🎯 CANDIDATURA Tuio (~96% fit)**
+**Estado:** ✅ VERIFIED (adapter gobernado offline, 2026-09-22; AWS live `NOT_RUN`)
 
 ### Conceptos a Aprender
 
@@ -318,10 +319,11 @@ BAGO, permite el READ y bloquea el WRITE antes de enviarlo al servidor.
 
 ### Entregables
 
-- [ ] src/adapters/bedrock_provider_adapter.py
-- [ ] 	ests/test_bedrock_integration.py
-- [ ] docs/aws_bedrock_setup.md (IAM, quotas, costes)
-- [ ] Evidence: benchmarks de latency/cost por modelo
+- [x] src/adapters/bedrock_provider_adapter.py
+- [x] tests/test_bedrock_integration.py (10 checks offline, cliente inyectado)
+- [x] docs/aws_bedrock_setup.md (IAM, quotas, costes)
+- [x] Evidence: benchmark offline de latency/cost por modelo
+- [ ] Evidence: llamada AWS real `Converse`/`ConverseStream` (NOT_RUN: faltan credenciales y acceso de cuenta)
 
 ---
 
