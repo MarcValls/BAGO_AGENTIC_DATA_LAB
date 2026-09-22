@@ -7,6 +7,19 @@
     "default_branch": "main",
     "license": "MIT"
   },
+  "canonical_documents": [
+    {"path": "STATE.md", "role": "estado operativo actual"},
+    {"path": "LAB_CONTRACT.md", "role": "contrato del laboratorio"},
+    {"path": "ARCHITECTURE.md", "role": "arquitectura y límites"},
+    {"path": "ROADMAP.md", "role": "roadmap ejecutable"},
+    {"path": "LEARNING_LEDGER.md", "role": "aprendizaje y evidencia"},
+    {"path": "JOB_SKILL_MATRIX.md", "role": "skills y alineación laboral"}
+  ],
+  "sync_agent": {
+    "definition": ".github/agents/bago-sync-agent.agent.md",
+    "executor": "scripts/bago_sync_agent.py",
+    "documentation": "docs/bago-sync-agent.md"
+  },
   "architecture": {
     "principle": "LangGraph propone → BAGO autoriza → ExecutionGateway ejecuta → Receipt evidencia.",
     "pipeline": [

@@ -9,7 +9,9 @@ The generator combines:
 - STATE.md for the current phase, lifecycle status and next block;
 - LAB_CONTRACT.md for target roles;
 - JOB_SKILL_MATRIX.md for the technical skill table;
+- the canonical root documents declared in docs/readme_manifest.json;
 - the actual src/, tests/, docs/, evidence/ and scripts/ inventory;
+- the operational sync agent definition and executor;
 - the public default branch;
 - the complete pytest result, when generation is run without --skip-tests.
 

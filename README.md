@@ -14,7 +14,8 @@
 |---|---|
 | Tests ejecutados | **115/115** |
 | Rama pública | `main` |
-| Fase actual | **L10 · Governed Ontology Engine** · VERIFIED |
+| Estado actualizado | 2026-09-22 |
+| Fase actual | **L10 · Governed Ontology Engine** · VERIFIED (local) |
 | Siguiente bloque | OpenMetadata local real validation, then local observability/evals |
 | Estado declarado | VERIFIED for the local RDF/Turtle materialization, bounded SPARQL subset, deterministic inference, contradiction constraints, RAG seed handoff and injected LLM context; AWS/OpenMetadata/commercetools live integrations remain `NOT_RUN`; GitHub issue #14 is separately executed and verified under human authorization. |
 
@@ -22,6 +23,29 @@ El estado público se limita a lo que existe en el checkout y a la evidencia
 referenciada. AWS live, OpenMetadata live y otras integraciones externas
 no se presentan como verificadas si STATE.md las marca como NOT_RUN.
 El commit, push y merge de este snapshot son operaciones separadas.
+
+## Fuentes canónicas
+
+El README proyecta estos documentos; no los sustituye ni los edita.
+
+| Documento | Función | Estado |
+|---|---|---|
+| `STATE.md` | estado operativo actual | PRESENTE |
+| `LAB_CONTRACT.md` | contrato del laboratorio | PRESENTE |
+| `ARCHITECTURE.md` | arquitectura y límites | PRESENTE |
+| `ROADMAP.md` | roadmap ejecutable | PRESENTE |
+| `LEARNING_LEDGER.md` | aprendizaje y evidencia | PRESENTE |
+| `JOB_SKILL_MATRIX.md` | skills y alineación laboral | PRESENTE |
+
+## Agente de sincronización
+
+La sincronización operativa está separada del catálogo de copias de referencia.
+
+| Componente | Estado | Función |
+|---|---|---|
+| `.github/agents/bago-sync-agent.agent.md` | PRESENTE | Definición del agente: contrato operativo |
+| `scripts/bago_sync_agent.py` | PRESENTE | Ejecutor gobernado: commit, push, PR y merge con receipts |
+| `docs/bago-sync-agent.md` | PRESENTE | Documentación: uso y límites |
 
 ## Roadmap detectado
 
@@ -37,7 +61,7 @@ flowchart LR
     L7[L7 Bedrock Knowledge Base (VERIFIED (offline))]
     L8[L8 Metadata Catalog (VERIFIED (offline))]
     L9[L9 End-to-End Governed Agent (VERIFIED (offline))]
-    L10[L10 Governed Ontology Engine (VERIFIED)]
+    L10[L10 Governed Ontology Engine (VERIFIED (local))]
     L0 --> L1
     L1 --> L2
     L2 --> L3
@@ -53,16 +77,16 @@ flowchart LR
 | Fase | Estado | Descripción | Tests | Evidencia/docs |
 |---|---|---|---:|---:|
 | L0 | COMPLETE | Baseline & Lab Contract | 0 | 6 |
-| L1 | VALIDATED | LangGraph Governed Execution | 1 | 0 |
-| L2 | VALIDATED | ETL / Data Pipeline | 1 | 1 |
-| L3 | VERIFIED | Metadata & Ontology | 4 | 2 |
-| L4 | VERIFIED | Governed RAG | 2 | 2 |
-| L5 | VERIFIED | MCP con gobernanza | 1 | 3 |
-| L6 | VERIFIED (offline) | AWS Bedrock Provider | 1 | 2 |
-| L7 | VERIFIED (offline) | Bedrock Knowledge Base | 1 | 2 |
-| L8 | VERIFIED (offline) | Metadata Catalog | 1 | 2 |
-| L9 | VERIFIED (offline) | End-to-End Governed Agent | 1 | 3 |
-| L10 | VERIFIED | Governed Ontology Engine | 1 | 3 |
+| L1 | VALIDATED | LangGraph Governed Execution | 7 | 0 |
+| L2 | VALIDATED | ETL / Data Pipeline | 4 | 1 |
+| L3 | VERIFIED | Metadata & Ontology | 25 | 2 |
+| L4 | VERIFIED | Governed RAG | 12 | 2 |
+| L5 | VERIFIED | MCP con gobernanza | 7 | 3 |
+| L6 | VERIFIED (offline) | AWS Bedrock Provider | 10 | 2 |
+| L7 | VERIFIED (offline) | Bedrock Knowledge Base | 10 | 2 |
+| L8 | VERIFIED (offline) | Metadata Catalog | 12 | 2 |
+| L9 | VERIFIED (offline) | End-to-End Governed Agent | 7 | 3 |
+| L10 | VERIFIED (local) | Governed Ontology Engine | 4 | 3 |
 
 ## Arquitectura actual
 
@@ -252,7 +276,7 @@ Tests por fase:
 README.md es un artefacto generado. No editarlo manualmente.
 Las decisiones estables viven en docs/readme_manifest.json y en los
 documentos canónicos enlazados arriba; los inventarios, métricas,
-estado Git y resultados de tests se calculan al generar.
+inventarios, métricas de tests y estado declarado se calculan al generar.
 
 - Generar: python scripts/generate_dynamic_readme.py
 - Comprobar deriva: python scripts/generate_dynamic_readme.py --check --skip-tests

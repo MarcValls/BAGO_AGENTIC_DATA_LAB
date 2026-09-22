@@ -202,7 +202,8 @@ def phase_inventory(
             )
         status = phase["status"]
         if phase["id"] == current_id:
-            status = state["status_label"]
+            scope = re.search(r"(\s*\([^)]*\))$", str(status))
+            status = state["status_label"] + (scope.group(1) if scope else "")
         if any(check["missing"] for check in checks):
             status = f"{status}; ARTIFACT GAP"
         phases.append(
@@ -249,9 +250,10 @@ def _render_phase_table(phases: list[dict[str, Any]]) -> str:
     ]
     for phase in phases:
         test_count = sum(
-            len(check["matches"])
+            _test_function_count(REPO_ROOT / match)
             for check in phase["checks"]
             if check["kind"] == "tests"
+            for match in check["matches"]
         )
         evidence_count = sum(
             len(check["matches"])
@@ -263,6 +265,48 @@ def _render_phase_table(phases: list[dict[str, Any]]) -> str:
             f"{_cell(phase['name'])} | {test_count} | {evidence_count} |"
         )
     return "\n".join(lines)
+
+
+def _render_canonical_documents(manifest: dict[str, Any]) -> str:
+    lines = [
+        "| Documento | Función | Estado |",
+        "|---|---|---|",
+    ]
+    for document in manifest.get("canonical_documents", []):
+        path = str(document["path"])
+        state = "PRESENTE" if (REPO_ROOT / path).is_file() else "FALTA"
+        lines.append(
+            f"| {_inline(path)} | {_cell(document['role'])} | {_cell(state)} |"
+        )
+    return "\n".join(lines) or "No hay documentos canónicos declarados."
+
+
+def _render_sync_agent(manifest: dict[str, Any]) -> str:
+    config = manifest.get("sync_agent", {})
+    lines = [
+        "| Componente | Estado | Función |",
+        "|---|---|---|",
+    ]
+    labels = {
+        "definition": "Definición del agente",
+        "executor": "Ejecutor gobernado",
+        "documentation": "Documentación",
+    }
+    roles = {
+        "definition": "contrato operativo",
+        "executor": "commit, push, PR y merge con receipts",
+        "documentation": "uso y límites",
+    }
+    for key in ("definition", "executor", "documentation"):
+        path = str(config.get(key, ""))
+        if not path:
+            continue
+        state = "PRESENTE" if (REPO_ROOT / path).is_file() else "FALTA"
+        lines.append(
+            f"| {_inline(path)} | {_cell(state)} | "
+            f"{_cell(labels[key] + ': ' + roles[key])} |"
+        )
+    return "\n".join(lines) or "No hay agente de sincronización declarado."
 
 
 def _render_flowchart(phases: list[dict[str, Any]]) -> str:
@@ -343,6 +387,11 @@ def render_readme(
     test_badge = f"tests-{passing_tests}%2F{total_tests}%20passing"
     branch = project["default_branch"]
     branch_badge = branch.replace("/", "-")
+    current_phase = next(
+        (phase for phase in phases if phase["id"] == state["current_phase"].split(" ", 1)[0]),
+        None,
+    )
+    current_status = current_phase["status"] if current_phase else state["status_label"]
     roles = parse_roles()
     skills = parse_skills()
     test_files = _files_under("tests", "test_*.py")
@@ -368,7 +417,8 @@ def render_readme(
         "|---|---|",
         f"| Tests ejecutados | **{passing_tests}/{total_tests}** |",
         f"| Rama pública | {_inline(branch)} |",
-        f"| Fase actual | **{_cell(state['current_phase'])}** · {_cell(state['status_label'])} |",
+        f"| Estado actualizado | {_cell(state['updated'])} |",
+        f"| Fase actual | **{_cell(state['current_phase'])}** · {_cell(current_status)} |",
         f"| Siguiente bloque | {_cell(state['next_phase'])} |",
         f"| Estado declarado | {_cell(state['status'])} |",
         "",
@@ -376,6 +426,18 @@ def render_readme(
         "referenciada. AWS live, OpenMetadata live y otras integraciones externas",
         "no se presentan como verificadas si STATE.md las marca como NOT_RUN.",
         "El commit, push y merge de este snapshot son operaciones separadas.",
+        "",
+        "## Fuentes canónicas",
+        "",
+        "El README proyecta estos documentos; no los sustituye ni los edita.",
+        "",
+        _render_canonical_documents(manifest),
+        "",
+        "## Agente de sincronización",
+        "",
+        "La sincronización operativa está separada del catálogo de copias de referencia.",
+        "",
+        _render_sync_agent(manifest),
         "",
         "## Roadmap detectado",
         "",
@@ -456,7 +518,7 @@ def render_readme(
             "README.md es un artefacto generado. No editarlo manualmente.",
             "Las decisiones estables viven en docs/readme_manifest.json y en los",
             "documentos canónicos enlazados arriba; los inventarios, métricas,",
-            "estado Git y resultados de tests se calculan al generar.",
+            "inventarios, métricas de tests y estado declarado se calculan al generar.",
             "",
             "- Generar: python scripts/generate_dynamic_readme.py",
             "- Comprobar deriva: python scripts/generate_dynamic_readme.py --check --skip-tests",
