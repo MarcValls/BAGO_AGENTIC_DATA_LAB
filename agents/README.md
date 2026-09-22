@@ -1,4 +1,4 @@
-# Catálogo de agentes BAGO del motor de antología
+# Catálogo de agentes BAGO del laboratorio
 
 Este directorio es un catálogo organizado por responsabilidad. Es una
 colección de referencia dentro de `BAGO_AGENTIC_DATA_LAB`; no es un punto de

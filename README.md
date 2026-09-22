@@ -14,7 +14,7 @@
 |---|---|
 | Tests ejecutados | **115/115** |
 | Rama pública | `main` |
-| Estado actualizado | 2026-09-22 |
+| Estado actualizado | 2026-09-23 |
 | Fase actual | **L10 · Governed Ontology Engine** · VERIFIED (local) |
 | Siguiente bloque | OpenMetadata local real validation, then local observability/evals |
 | Estado declarado | VERIFIED for the local RDF/Turtle materialization, bounded SPARQL subset, deterministic inference, contradiction constraints, RAG seed handoff and injected LLM context; AWS/OpenMetadata/commercetools live integrations remain `NOT_RUN`; GitHub issue #14 is separately executed and verified under human authorization. |
@@ -47,6 +47,25 @@ La sincronización operativa está separada del catálogo de copias de referenci
 | `scripts/bago_sync_agent.py` | PRESENTE | Ejecutor gobernado: commit, push, PR y merge con receipts |
 | `docs/bago-sync-agent.md` | PRESENTE | Documentación: uso y límites |
 
+## Catálogo de agentes
+
+El catálogo organizado por responsabilidad se genera desde `agents/CATALOG_MANIFEST.json`.
+
+Alcance: `reference-only` · activación: `none`.
+El catálogo es de referencia; la definición operativa sigue en `.github/agents`.
+
+| Grupo | Archivos | Responsabilidad |
+|---|---:|---|
+| `01-gobierno-orquestacion` | 11 | arranque, contexto, coordinación y entrega |
+| `02-exploracion-arquitectura` | 13 | exploración, arquitectura, modularidad y archivo |
+| `03-backend-contratos` | 4 | backend y contratos frontend-backend |
+| `04-frontend-ui` | 10 | frontend, UI, estado y navegación |
+| `05-seguridad-verdad` | 8 | seguridad, sinceridad, comandos y aislamiento |
+| `06-tests-calidad-release` | 20 | tests, higiene, análisis, verificación y release |
+| `07-sincronizacion` | 6 | Git, documentación y sincronización de runtime |
+| `08-runtime-supervision` | 3 | infraestructura de agentes |
+| `09-activadores-no-agentes` | 11 | skills y paquetes de activación, no agentes |
+
 ## Roadmap detectado
 
 ```mermaid
@@ -74,19 +93,19 @@ flowchart LR
     L9 --> L10
 ```
 
-| Fase | Estado | Descripción | Tests | Evidencia/docs |
-|---|---|---|---:|---:|
-| L0 | COMPLETE | Baseline & Lab Contract | 0 | 6 |
-| L1 | VALIDATED | LangGraph Governed Execution | 7 | 0 |
-| L2 | VALIDATED | ETL / Data Pipeline | 4 | 1 |
-| L3 | VERIFIED | Metadata & Ontology | 25 | 2 |
-| L4 | VERIFIED | Governed RAG | 12 | 2 |
-| L5 | VERIFIED | MCP con gobernanza | 7 | 3 |
-| L6 | VERIFIED (offline) | AWS Bedrock Provider | 10 | 2 |
-| L7 | VERIFIED (offline) | Bedrock Knowledge Base | 10 | 2 |
-| L8 | VERIFIED (offline) | Metadata Catalog | 12 | 2 |
-| L9 | VERIFIED (offline) | End-to-End Governed Agent | 7 | 3 |
-| L10 | VERIFIED (local) | Governed Ontology Engine | 4 | 3 |
+| Fase | Estado | Objetivo | Descripción | Tests | Evidencia/docs |
+|---|---|---|---|---:|---:|
+| L0 | COMPLETE | — | Baseline & Lab Contract | 0 | 6 |
+| L1 | VALIDATED | — | LangGraph Governed Execution | 7 | 0 |
+| L2 | VALIDATED | — | ETL / Data Pipeline | 4 | 1 |
+| L3 | VERIFIED | — | Metadata & Ontology | 25 | 2 |
+| L4 | VERIFIED | Orbitant | Governed RAG | 12 | 2 |
+| L5 | VERIFIED | Orbitant | MCP con gobernanza | 7 | 3 |
+| L6 | VERIFIED (offline) | Tuio | AWS Bedrock Provider | 10 | 2 |
+| L7 | VERIFIED (offline) | Devoteam | Bedrock Knowledge Base | 10 | 2 |
+| L8 | VERIFIED (offline) | Devoteam | Metadata Catalog | 12 | 2 |
+| L9 | VERIFIED (offline) | commercetools | End-to-End Governed Agent | 7 | 3 |
+| L10 | VERIFIED (local) | BAGO / portfolio | Governed Ontology Engine | 4 | 2 |
 
 ## Arquitectura actual
 
@@ -131,36 +150,48 @@ La tabla se extrae de LAB_CONTRACT.md; no se duplica manualmente aquí.
 
 La tabla se extrae de JOB_SKILL_MATRIX.md y se mantiene fuera del README.
 
-| Skill | Demanda | Nivel actual | Primera evidencia | Entrevista |
-|---|---|---|---|---|
-| Python | Alta | ✅ Senior | BAGO backend | ✅ Sí |
-| REST APIs | Alta | ✅ Senior | BAGO FastAPI | ✅ Sí |
-| LangGraph | Muy Alta | ❌ None | L1 state graph | L1 completado |
-| LangChain concepts | Alta | ❌ None | — | L1 completado |
-| Multi-agent systems | Muy Alta | 🟢 Reinforced | GovernedKnowledgeAgent + L9 evidence | L9 offline |
-| Tool use | Muy Alta | ✅ Implementado | BAGO tools + MCP receipts | L5 baseline |
-| MCP | Muy Alta | ✅ Baseline gobernado | L5 MCP adapter + video | L5 baseline |
-| RAG | Muy Alta | 🟡 Basic | L4 governed RAG | L4 completado |
-| Hybrid retrieval | Alta | ❌ None | L4 benchmarks | L4 completado |
-| Embeddings | Alta | 🟡 Conceptual | L4 vector store | L4 completado |
-| Vector DB | Alta | ❌ None | L4 FAISS/Pinecone | L4 completado |
-| ETL | Alta | ❌ None | L2 pipeline | L2 completado |
-| Data pipelines | Alta | ❌ None | L2 end-to-end | L2 completado |
-| Metadata/Ontology | Media | 🟢 Implementado | L3 schema + L10 engine | L10 local |
-| RDF / SPARQL / Knowledge Graphs | Alta | 🟢 Baseline local | L10 RDF/Turtle + SPARQL + inference | L10 local; triplestore live separado |
-| Lineage | Media | 🟢 Implementado | L3 relations + L10 paths | L10 local |
-| AWS | Alta | 🟡 Adapter offline | L6 adapter + setup doc | Live account validation |
-| Bedrock | Alta | 🟡 Provider baseline | L6 Converse/Stream + receipts | Live model evaluation |
-| Bedrock Knowledge Bases | Alta | 🟡 Baseline offline | L7 Retrieve/Generate + citations | Live KB evaluation |
-| OpenMetadata Catalog | Media | 🟡 Baseline offline | L8 adapter + lineage evidence | Live Docker evaluation |
-| IAM | Alta | 🟡 Basic | L6 least-privilege setup | Live policy check |
-| CI/CD | Alta | 🟡 Basic | GitHub Actions | L1 completado |
-| Evaluation | Muy Alta | 🟢 Framework baseline | 115 tests + README/L9/L10 scenarios | L10 offline |
-| Observability | Alta | 🟢 Reinforced | Receipts + evidence links + ontology receipt | L10 offline |
-| Secure execution | Muy Alta | ✅ Diseñado | BAGO auth boundary | L1 completado |
-| Authorization | Muy Alta | ✅ Diseñado | BAGO permits | L1 completado |
-| Auditability | Alta | ✅ Diseñado | BAGO receipts | L1 completado |
-| Docker/K8s | Media | ❌ None | Docker Compose | L2/L7 |
+| Skill | Demanda | Nivel actual | Nivel objetivo | Primera evidencia | Entrevista |
+|---|---|---|---|---|---|
+| Python | Alta | ✅ Senior | ✅ Senior | BAGO backend | ✅ Sí |
+| REST APIs | Alta | ✅ Senior | ✅ Senior | BAGO FastAPI | ✅ Sí |
+| LangGraph | Muy Alta | ❌ None | 🎯 Proficient | L1 state graph | L1 completado |
+| LangChain concepts | Alta | ❌ None | 🟡 Basic | — | L1 completado |
+| Multi-agent systems | Muy Alta | 🟢 Reinforced | 🎯 Proficient | GovernedKnowledgeAgent + L9 evidence | L9 offline |
+| Tool use | Muy Alta | ✅ Implementado | 🎯 Proficient | BAGO tools + MCP receipts | L5 baseline |
+| MCP | Muy Alta | ✅ Baseline gobernado | 🎯 Proficient | L5 MCP adapter + video | L5 baseline |
+| RAG | Muy Alta | 🟡 Basic | 🎯 Advanced | L4 governed RAG | L4 completado |
+| Hybrid retrieval | Alta | ❌ None | 🎯 Proficient | L4 benchmarks | L4 completado |
+| Embeddings | Alta | 🟡 Conceptual | 🎯 Implementado | L4 vector store | L4 completado |
+| Vector DB | Alta | ❌ None | 🎯 Proficient | L4 FAISS/Pinecone | L4 completado |
+| ETL | Alta | ❌ None | 🎯 Proficient | L2 pipeline | L2 completado |
+| Data pipelines | Alta | ❌ None | 🎯 Implementado | L2 end-to-end | L2 completado |
+| Metadata/Ontology | Media | 🟢 Implementado | 🎯 Proficient | L3 schema + L10 engine | L10 local |
+| RDF / SPARQL / Knowledge Graphs | Alta | 🟢 Baseline local | 🎯 Proficient | L10 RDF/Turtle + SPARQL + inference | L10 local; triplestore live separado |
+| Lineage | Media | 🟢 Implementado | 🎯 Proficient | L3 relations + L10 paths | L10 local |
+| AWS | Alta | 🟡 Adapter offline | 🎯 Bedrock fluent | L6 adapter + setup doc | Live account validation |
+| Bedrock | Alta | 🟡 Provider baseline | 🎯 Proficient | L6 Converse/Stream + receipts | Live model evaluation |
+| Bedrock Knowledge Bases | Alta | 🟡 Baseline offline | 🎯 Proficient | L7 Retrieve/Generate + citations | Live KB evaluation |
+| OpenMetadata Catalog | Media | 🟡 Baseline offline | 🎯 Proficient | L8 adapter + lineage evidence | Live Docker evaluation |
+| IAM | Alta | 🟡 Basic | 🎯 Configurable | L6 least-privilege setup | Live policy check |
+| CI/CD | Alta | 🟡 Basic | 🎯 Implementado | GitHub Actions | L1 completado |
+| Evaluation | Muy Alta | 🟢 Framework baseline | 🎯 Framework | 115 tests + README/L9/L10 scenarios | L10 offline |
+| Observability | Alta | 🟢 Reinforced | 🎯 Completo | Receipts + evidence links + ontology receipt | L10 offline |
+| Secure execution | Muy Alta | ✅ Diseñado | 🎯 Implementado | BAGO auth boundary | L1 completado |
+| Authorization | Muy Alta | ✅ Diseñado | 🎯 Implementado | BAGO permits | L1 completado |
+| Auditability | Alta | ✅ Diseñado | 🎯 Implementado | BAGO receipts | L1 completado |
+| Docker/K8s | Media | ❌ None | 🟡 Basic | Docker Compose | L2/L7 |
+
+## Skills estratégicas
+
+La tabla se extrae de JOB_SKILL_MATRIX.md y se mantiene fuera del README.
+
+| Skill | Nivel actual | Nivel objetivo | Evidencia |
+|---|---|---|---|
+| Arquitectura de sistemas | ✅ Fuerte | ✅ Mantener | AGENTS.md, CANON_BAGO |
+| Diseño de contratos | ✅ Fuerte | ✅ Mantener | BAGO contracts |
+| Documentación técnica | ✅ Fuerte | ✅ Mantener | Este repo |
+| Análisis de trade-offs | ✅ Fuerte | ✅ Mantener | Decision records |
+| Comunicación escrita | ✅ Fuerte | ✅ Mantener | Docs claras |
 
 ## Inventario real del checkout
 
@@ -276,7 +307,7 @@ Tests por fase:
 README.md es un artefacto generado. No editarlo manualmente.
 Las decisiones estables viven en docs/readme_manifest.json y en los
 documentos canónicos enlazados arriba; los inventarios, métricas,
-inventarios, métricas de tests y estado declarado se calculan al generar.
+métricas de tests y estado declarado se calculan al generar.
 
 - Generar: python scripts/generate_dynamic_readme.py
 - Comprobar deriva: python scripts/generate_dynamic_readme.py --check --skip-tests

@@ -158,9 +158,9 @@
       "target": "BAGO / portfolio",
       "status": "VERIFIED (local)",
       "checks": [
-        {"kind": "code", "patterns": ["src/metadata/ontology_engine.py", "src/agent/governed_knowledge_agent.py"]},
+        {"kind": "code", "patterns": ["src/metadata/ontology_engine.py", "src/agent/governed_knowledge_agent.py", "scripts/generate_l10_ontology_evidence.py"]},
         {"kind": "tests", "patterns": ["tests/test_l10_ontology_engine.py"]},
-        {"kind": "evidence", "patterns": ["evidence/l10_ontology_engine.md", "docs/ontology_engine.md", "scripts/generate_l10_ontology_evidence.py"]}
+        {"kind": "evidence", "patterns": ["evidence/l10_ontology_engine.md", "docs/ontology_engine.md"]}
       ],
       "commit_patterns": ["feat: add governed ontology engine", "L10"]
     }

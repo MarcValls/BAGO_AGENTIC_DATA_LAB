@@ -180,6 +180,27 @@ def parse_skills() -> list[list[str]]:
     return rows
 
 
+def parse_soft_skills() -> list[list[str]]:
+    """Extract the strategic/soft skill table from JOB_SKILL_MATRIX.md."""
+    text = (REPO_ROOT / "JOB_SKILL_MATRIX.md").read_text(encoding="utf-8")
+    start = text.find("### Soft Skills")
+    if start < 0:
+        return []
+    section = text[start:]
+    rows: list[list[str]] = []
+    for line in section.splitlines():
+        if (
+            not line.startswith("|")
+            or line.startswith("|---")
+            or line.startswith("| Skill")
+        ):
+            continue
+        cells = [cell.strip() for cell in line.strip().strip("|").split("|")]
+        if len(cells) == 4:
+            rows.append(cells)
+    return rows
+
+
 def phase_inventory(
     manifest: dict[str, Any], state: dict[str, str]
 ) -> list[dict[str, Any]]:
@@ -245,8 +266,8 @@ def _files_under(directory: str, pattern: str = "*") -> list[str]:
 
 def _render_phase_table(phases: list[dict[str, Any]]) -> str:
     lines = [
-        "| Fase | Estado | Descripción | Tests | Evidencia/docs |",
-        "|---|---|---|---:|---:|",
+        "| Fase | Estado | Objetivo | Descripción | Tests | Evidencia/docs |",
+        "|---|---|---|---|---:|---:|",
     ]
     for phase in phases:
         test_count = sum(
@@ -262,7 +283,8 @@ def _render_phase_table(phases: list[dict[str, Any]]) -> str:
         )
         lines.append(
             f"| {_cell(phase['id'])} | {_cell(phase['status'])} | "
-            f"{_cell(phase['name'])} | {test_count} | {evidence_count} |"
+            f"{_cell(phase.get('target', '—'))} | {_cell(phase['name'])} | "
+            f"{test_count} | {evidence_count} |"
         )
     return "\n".join(lines)
 
@@ -363,15 +385,48 @@ def _render_skills(rows: list[list[str]]) -> str:
     if not rows:
         return "No se pudo extraer la tabla técnica desde JOB_SKILL_MATRIX.md."
     lines = [
-        "| Skill | Demanda | Nivel actual | Primera evidencia | Entrevista |",
-        "|---|---|---|---|---|",
+        "| Skill | Demanda | Nivel actual | Nivel objetivo | Primera evidencia | Entrevista |",
+        "|---|---|---|---|---|---|",
     ]
     for skill, demand, current, target, evidence, interview in rows:
-        del target
         lines.append(
             f"| {_cell(skill)} | {_cell(demand)} | {_cell(current)} | "
-            f"{_cell(evidence)} | {_cell(interview)} |"
+            f"{_cell(target)} | {_cell(evidence)} | {_cell(interview)} |"
         )
+    return "\n".join(lines)
+
+
+def _render_soft_skills(rows: list[list[str]]) -> str:
+    if not rows:
+        return "No se pudo extraer la tabla estratégica desde JOB_SKILL_MATRIX.md."
+    lines = [
+        "| Skill | Nivel actual | Nivel objetivo | Evidencia |",
+        "|---|---|---|---|",
+    ]
+    lines.extend(
+        "| " + " | ".join(_cell(cell) for cell in row) + " |"
+        for row in rows
+    )
+    return "\n".join(lines)
+
+
+def _render_agent_catalog() -> str:
+    """Render the committed reference-only agent catalog by responsibility."""
+    manifest_path = REPO_ROOT / "agents" / "CATALOG_MANIFEST.json"
+    if not manifest_path.is_file():
+        return "No hay catálogo de agentes comprometido en este checkout."
+    catalog = _read_json(manifest_path)
+    lines = [
+        f"Alcance: `{catalog.get('scope', 'NOT_DECLARED')}` · "
+        f"activación: `{catalog.get('activation', 'NOT_DECLARED')}`.",
+        "El catálogo es de referencia; la definición operativa sigue en `.github/agents`.",
+        "",
+        "| Grupo | Archivos | Responsabilidad |",
+        "|---|---:|---|",
+    ]
+    for group, responsibility in catalog.get("groups", {}).items():
+        count = len(_files_under(f"agents/{group}"))
+        lines.append(f"| {_inline(group)} | {count} | {_cell(responsibility)} |")
     return "\n".join(lines)
 
 
@@ -394,6 +449,7 @@ def render_readme(
     current_status = current_phase["status"] if current_phase else state["status_label"]
     roles = parse_roles()
     skills = parse_skills()
+    soft_skills = parse_soft_skills()
     test_files = _files_under("tests", "test_*.py")
     docs = _files_under("docs", "*.md")
     evidence = _files_under("evidence", "*")
@@ -439,6 +495,13 @@ def render_readme(
         "",
         _render_sync_agent(manifest),
         "",
+        "## Catálogo de agentes",
+        "",
+        "El catálogo organizado por responsabilidad se genera desde "
+        "`agents/CATALOG_MANIFEST.json`.",
+        "",
+        _render_agent_catalog(),
+        "",
         "## Roadmap detectado",
         "",
         _render_flowchart(phases),
@@ -460,6 +523,12 @@ def render_readme(
         "La tabla se extrae de JOB_SKILL_MATRIX.md y se mantiene fuera del README.",
         "",
         _render_skills(skills),
+        "",
+        "## Skills estratégicas",
+        "",
+        "La tabla se extrae de JOB_SKILL_MATRIX.md y se mantiene fuera del README.",
+        "",
+        _render_soft_skills(soft_skills),
         "",
         "## Inventario real del checkout",
         "",
@@ -518,7 +587,7 @@ def render_readme(
             "README.md es un artefacto generado. No editarlo manualmente.",
             "Las decisiones estables viven en docs/readme_manifest.json y en los",
             "documentos canónicos enlazados arriba; los inventarios, métricas,",
-            "inventarios, métricas de tests y estado declarado se calculan al generar.",
+            "métricas de tests y estado declarado se calculan al generar.",
             "",
             "- Generar: python scripts/generate_dynamic_readme.py",
             "- Comprobar deriva: python scripts/generate_dynamic_readme.py --check --skip-tests",

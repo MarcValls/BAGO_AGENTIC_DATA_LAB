@@ -10,6 +10,7 @@ from generate_dynamic_readme import (  # noqa: E402
     collected_test_count,
     parse_roles,
     parse_skills,
+    parse_soft_skills,
     parse_state,
     phase_inventory,
     render_readme,
@@ -52,6 +53,8 @@ def test_readme_inventory_and_market_tables_are_discovered():
     assert parse_roles()
     skills = parse_skills()
     assert any(row[0] == "RDF / SPARQL / Knowledge Graphs" for row in skills)
+    soft_skills = parse_soft_skills()
+    assert any(row[0] == "Arquitectura de sistemas" for row in soft_skills)
 
 
 def test_rendered_readme_contains_dynamic_contract_and_l10_artifacts():
@@ -71,7 +74,13 @@ def test_rendered_readme_contains_dynamic_contract_and_l10_artifacts():
     assert "python scripts/generate_dynamic_readme.py --check --skip-tests" in rendered
     assert "Estado actualizado" in rendered
     assert "| Fase actual | **L10 · Governed Ontology Engine** · VERIFIED (local) |" in rendered
-    assert "| L10 | VERIFIED (local) |" in rendered
+    assert "| L10 | VERIFIED (local) | BAGO / portfolio | Governed Ontology Engine | 4 | 2 |" in rendered
+    assert "| Skill | Demanda | Nivel actual | Nivel objetivo | Primera evidencia | Entrevista |" in rendered
+    assert "| RAG | Muy Alta | 🟡 Basic | 🎯 Advanced | L4 governed RAG | L4 completado |" in rendered
+    assert "## Skills estratégicas" in rendered
+    assert "| Arquitectura de sistemas | ✅ Fuerte | ✅ Mantener | AGENTS.md, CANON_BAGO |" in rendered
     assert "STATE.md" in rendered
     assert ".github/agents/bago-sync-agent.agent.md" in rendered
     assert "scripts/bago_sync_agent.py" in rendered
+    assert "## Catálogo de agentes" in rendered
+    assert "| `07-sincronizacion` |" in rendered
