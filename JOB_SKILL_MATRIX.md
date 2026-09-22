@@ -151,16 +151,17 @@
 | Vector DB | Alta | ❌ None | 🎯 Proficient | L4 FAISS/Pinecone | L4 completado |
 | ETL | Alta | ❌ None | 🎯 Proficient | L2 pipeline | L2 completado |
 | Data pipelines | Alta | ❌ None | 🎯 Implementado | L2 end-to-end | L2 completado |
-| Metadata/Ontology | Media | ❌ None | 🎯 Modelado | L3 schema | L3 completado |
-| Lineage | Media | ❌ None | 🎯 Implementado | L3 relations | L3 completado |
+| Metadata/Ontology | Media | 🟢 Implementado | 🎯 Proficient | L3 schema + L10 engine | L10 local |
+| RDF / SPARQL / Knowledge Graphs | Alta | 🟢 Baseline local | 🎯 Proficient | L10 RDF/Turtle + SPARQL + inference | L10 local; triplestore live separado |
+| Lineage | Media | 🟢 Implementado | 🎯 Proficient | L3 relations + L10 paths | L10 local |
 | AWS | Alta | 🟡 Adapter offline | 🎯 Bedrock fluent | L6 adapter + setup doc | Live account validation |
 | Bedrock | Alta | 🟡 Provider baseline | 🎯 Proficient | L6 Converse/Stream + receipts | Live model evaluation |
 | Bedrock Knowledge Bases | Alta | 🟡 Baseline offline | 🎯 Proficient | L7 Retrieve/Generate + citations | Live KB evaluation |
 | OpenMetadata Catalog | Media | 🟡 Baseline offline | 🎯 Proficient | L8 adapter + lineage evidence | Live Docker evaluation |
 | IAM | Alta | 🟡 Basic | 🎯 Configurable | L6 least-privilege setup | Live policy check |
 | CI/CD | Alta | 🟡 Basic | 🎯 Implementado | GitHub Actions | L1 completado |
-| Evaluation | Muy Alta | 🟢 Framework baseline | 🎯 Framework | 103 tests + L9 scenarios | L9 offline |
-| Observability | Alta | 🟢 Reinforced | 🎯 Completo | Receipts + evidence links | L9 offline |
+| Evaluation | Muy Alta | 🟢 Framework baseline | 🎯 Framework | 115 tests + README/L9/L10 scenarios | L10 offline |
+| Observability | Alta | 🟢 Reinforced | 🎯 Completo | Receipts + evidence links + ontology receipt | L10 offline |
 | Secure execution | Muy Alta | ✅ Diseñado | 🎯 Implementado | BAGO auth boundary | L1 completado |
 | Authorization | Muy Alta | ✅ Diseñado | 🎯 Implementado | BAGO permits | L1 completado |
 | Auditability | Alta | ✅ Diseñado | 🎯 Implementado | BAGO receipts | L1 completado |

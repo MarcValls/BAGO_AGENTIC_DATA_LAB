@@ -18,8 +18,8 @@ puede incluir pausas, revisión y documentación.
 |------|-------------------|--------------------|------------------|------------|
 | L0 | 2026-09-21 20:35 | 1 día | 11 s | -23 h 59 min 49 s |
 | L1 | 2026-09-21 20:37 | 1 semana | 2 min 20 s | -6 d 23 h 57 min 40 s |
-| L2 | 2026-09-21 20:54 | 1 semana | 16 min 39 s | -6 d 23 h 43 min 21 s |
-| L3 | 2026-09-22 00:22 | 1 semana | 3 h 27 min 40 s | -6 d 20 h 32 min 20 s |
+| L2 | 2026-09-21 21:04 | 1 semana | 26 min 28 s | -6 d 23 h 33 min 32 s |
+| L3 | 2026-09-22 00:22 | 1 semana | 3 h 17 min 51 s | -6 d 20 h 42 min 09 s |
 | L4 | 2026-09-22 01:15 | 1 semana | 53 min 22 s | -6 d 23 h 6 min 38 s |
 | L5 | 2026-09-22 01:31 | 1 semana | 15 min 40 s | -6 d 23 h 44 min 20 s |
 | L6 | 2026-09-22 02:00 | 1 semana | 29 min 12 s | -6 d 23 h 30 min 48 s |
@@ -463,19 +463,71 @@ Un agente capaz de:
 
 ---
 
+## L10 · GOVERNED ONTOLOGY ENGINE
+
+**Prioridad:** coste `0` + evidencia pública + skill repetida en ofertas + mejora real de BAGO
+**Estado:** ✅ VERIFIED (motor local RDF/SPARQL y recorrido RAG → grafo → LLM fixture, 2026-09-22)
+
+L10 convierte el retrieval de texto en retrieval de relaciones sin elevar la
+ontología a autoridad implícita:
+
+```text
+RAG chunks + citations
+  ↓
+RDF materialization
+  ↓
+SPARQL SELECT + inverse/transitive/symmetric inference
+  ↓
+constraints: endpoints, evidence, contradictions
+  ↓
+path + evidence + receipt
+  ↓
+optional LLM reasoning
+```
+
+### Entregables
+
+- [x] `src/metadata/ontology_engine.py`
+- [x] RDF/Turtle materialization from the existing L3 graph
+- [x] bounded local SPARQL `SELECT` subset with joins, filters and limits
+- [x] deterministic inference for supersession, validation, dependency and contradiction paths
+- [x] constraint result `CONSTRAINT_VIOLATION` instead of silently returning green
+- [x] `GovernedKnowledgeAgent` context integration and ontology receipt
+- [x] `tests/test_l10_ontology_engine.py` (4 checks)
+- [x] `scripts/generate_l10_ontology_evidence.py`
+- [x] `evidence/l10_ontology_engine.md`
+- [x] `docs/ontology_engine.md`
+
+### Explicit boundary
+
+The verified scope is a local in-memory graph and a documented SPARQL subset.
+It does not claim a deployed triplestore, AWS live access, OpenMetadata live,
+or a complete W3C SPARQL implementation. Those remain separate validations.
+
+### Orden posterior de trabajo sin coste
+
+1. OpenMetadata local real con Docker, adapter, receipt y prueba reproducible.
+2. Observabilidad y evals locales: trace → tool calls → retrieval → permit →
+   execution → receipt → eval.
+3. Demo end-to-end pública y CI automática.
+4. AWS live sólo con créditos/free tier o una necesidad laboral concreta.
+
+---
+
 ## JOB SKILL MATRIX — Progreso por Fase
 
-| Skill | L0 | L1 | L2 | L3 | L4 | L5 | L6 | L7 | L8 | L9 |
-|-------|----|----|----|----|----|----|----|----|----|----|
-| Python | ✅ | 🟢 | 🟢 | 🟢 | 🟢 | 🟢 | 🟢 | 🟢 | 🟢 | 🟢 |
-| REST APIs | ✅ | 🟡 | 🟢 | 🟢 | 🟢 | 🟢 | 🟢 | 🟢 | 🟢 | 🟢 |
-| LangGraph | ❌ | ✅ | 🟢 | 🟢 | 🟢 | 🟢 | 🟢 | 🟢 | 🟢 | 🟢 |
-| MCP | ❌ | ❌ | ❌ | ❌ | ❌ | ✅ | 🟢 | 🟢 | 🟢 | 🟢 |
-| RAG | 🟡 | ❌ | ❌ | ❌ | ✅ | 🟢 | 🟢 | 🟢 | 🟢 | 🟢 |
-| ETL | ❌ | ❌ | ✅ | 🟢 | 🟢 | 🟢 | 🟢 | 🟢 | 🟢 | 🟢 |
-| Metadata/Ontology | ❌ | ❌ | ❌ | ✅ | 🟢 | 🟢 | 🟢 | 🟢 | 🟢 | 🟢 |
-| AWS Bedrock | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ✅ | 🟢 | 🟢 | 🟢 |
-| Testing/Evals | 🟡 | 🟢 | 🟢 | 🟢 | 🟢 | 🟢 | 🟢 | 🟢 | 🟢 | 🟢 |
+| Skill | L0 | L1 | L2 | L3 | L4 | L5 | L6 | L7 | L8 | L9 | L10 |
+|-------|----|----|----|----|----|----|----|----|----|----|-----|
+| Python | ✅ | 🟢 | 🟢 | 🟢 | 🟢 | 🟢 | 🟢 | 🟢 | 🟢 | 🟢 | 🟢 |
+| REST APIs | ✅ | 🟡 | 🟢 | 🟢 | 🟢 | 🟢 | 🟢 | 🟢 | 🟢 | 🟢 | 🟢 |
+| LangGraph | ❌ | ✅ | 🟢 | 🟢 | 🟢 | 🟢 | 🟢 | 🟢 | 🟢 | 🟢 | 🟢 |
+| MCP | ❌ | ❌ | ❌ | ❌ | ❌ | ✅ | 🟢 | 🟢 | 🟢 | 🟢 | 🟢 |
+| RAG | 🟡 | ❌ | ❌ | ❌ | ✅ | 🟢 | 🟢 | 🟢 | 🟢 | 🟢 | 🟢 |
+| ETL | ❌ | ❌ | ✅ | 🟢 | 🟢 | 🟢 | 🟢 | 🟢 | 🟢 | 🟢 | 🟢 |
+| Metadata/Ontology | ❌ | ❌ | ❌ | ✅ | 🟢 | 🟢 | 🟢 | 🟢 | 🟢 | 🟢 | ✅ |
+| RDF/SPARQL/Reasoning | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ✅ |
+| AWS Bedrock | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ✅ | 🟢 | 🟢 | 🟢 | 🟢 |
+| Testing/Evals | 🟡 | 🟢 | 🟢 | 🟢 | 🟢 | 🟢 | 🟢 | 🟢 | 🟢 | 🟢 | 🟢 |
 
 ✅ = Implemented & Tested  
 🟢 = In use / Reinforced  
@@ -487,19 +539,19 @@ Un agente capaz de:
 ## Estado Operativo
 
 `yaml
-CURRENT_PHASE: L9
-COMPLETION: L9 offline scope VERIFIED
-NEXT_MILESTONE: Portfolio closure and explicitly authorized live validations
+CURRENT_PHASE: L10
+COMPLETION: L10 local ontology scope VERIFIED
+NEXT_MILESTONE: OpenMetadata local real validation, then observability/evals local
 BLOCKERS: AWS, commercetools and GitHub live identities are not configured
 P0_ISSUES: 0
 P1_ISSUES: 0
-TESTS_PASSING: 109/109 (L9 + workspace binding contract)
-EVIDENCE_GENERATED: L9 offline agent evidence
-LEARNING_ENTRIES: L0-L9
-NEXT_ACTION: Review portfolio evidence; keep live integrations NOT_RUN
+TESTS_PASSING: 115/115 (L10 + README generator contract + L9 + workspace binding contract)
+EVIDENCE_GENERATED: L10 ontology engine receipt plus prior L9 evidence
+LEARNING_ENTRIES: L0-L10
+NEXT_ACTION: Keep AWS live NOT_RUN; prepare OpenMetadata local validation
 `
 
 ---
 
-**Última actualización:** 2026-09-21  
+**Última actualización:** 2026-09-22
 **Próxima revisión:** Al completar cada fase

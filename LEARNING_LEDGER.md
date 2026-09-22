@@ -464,3 +464,55 @@ producción."*
 - ⚠️ Video nuevo de las tres demos; el transcript Markdown es reproducible.
 - ⚠️ Evaluación con corpus y tráfico de negocio real de commercetools.
 
+---
+
+### 2026-09-22 — L10 Governed Ontology Engine
+
+**Fase:** L10
+**Estado:** `VERIFIED` para el alcance local RDF/SPARQL + agente; AWS y
+OpenMetadata live siguen `NOT_RUN`.
+
+**Qué entendí:**
+
+RAG recupera texto, pero el motor ontológico recupera la estructura que conecta
+ese texto: qué entidad depende de otra, qué versión sustituye a cuál, qué
+evidencia valida una afirmación y qué relación contradice el resultado. La
+ontología no puede convertirse en autoridad por inferencia; debe devolver el
+camino, la evidencia y un receipt para que BAGO y el LLM razonen con límites.
+
+**Qué implementé:**
+
+- `src/metadata/ontology_engine.py`: materialización RDF/Turtle desde el grafo
+  L3, joins SPARQL locales, filtros `regex`/igualdad y `LIMIT`.
+- Inferencia determinista de inversas, transitividad acotada y simetría de
+  contradicciones.
+- Restricciones de endpoints, evidencia y contradicciones explícitas.
+- Integración opcional en `GovernedKnowledgeAgent`; una violación grave produce
+  `CONSTRAINT_VIOLATION`, aunque el camino pueda seguir siendo inspeccionado.
+- `tests/test_l10_ontology_engine.py`, script de evidencia y documentación.
+
+**Evidence:**
+
+`evidence/l10_ontology_engine.md` ejecuta el caso RAG → RDF/SPARQL → path +
+evidence → fixture LLM con coste `0.0 USD`. El fixture contiene una relación
+contradictoria a propósito: el receipt reporta `CONSTRAINT_VIOLATION` y no se
+presenta como una respuesta limpia.
+
+**Interview explanation:**
+
+*"Construí una frontera ontológica local que convierte el KnowledgeGraph de
+   BAGO en RDF, ejecuta un subconjunto controlado de SPARQL y materializa
+   relaciones inversas/transitivas. El agente no recibe sólo chunks: recibe
+   caminos y citas. Si el grafo contiene una contradicción, el resultado queda
+   marcado como `CONSTRAINT_VIOLATION`; el LLM puede explicar la evidencia, pero
+   no puede borrar la señal de gobernanza."*
+
+**Gaps restantes:**
+
+- ⚠️ Sustituir el store en memoria por un triplestore local reproducible sólo
+  si aporta valor verificable; el contrato de evidencia ya está desacoplado.
+- ⚠️ Validar L10 con un corpus mayor y relaciones extraídas desde documentos
+  reales, manteniendo aprobación antes de promoción canónica.
+- ⚠️ Después de L10: OpenMetadata local real y observabilidad/evals local;
+  AWS live queda pospuesto hasta contar con créditos o una necesidad laboral.
+

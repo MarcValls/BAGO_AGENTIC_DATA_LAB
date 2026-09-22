@@ -92,11 +92,17 @@ ExecutionRequest → AuthorizationBoundary → Permit → ExecutionGateway
    - Nunca construir claims de CV antes de existir evidencia
    - Cada milestone debe ser publicable en GitHub
 
+5. **Prioridad de coste cero para la siguiente capacidad**
+   - Preferir `coste = 0` + evidencia pública + skill repetida en ofertas +
+     mejora real de BAGO
+   - Posponer AWS live, certificaciones y servicios cloud de pago hasta contar
+     con créditos/free tier o una necesidad laboral concreta
+
 ---
 
 ## Criterios de Aceptación por Fase
 
-Cada fase (L0-L9) debe cumplir:
+Cada fase (L0-L10) debe cumplir:
 
 - **P0 = 0** (bloqueantes resueltos)
 - **P1 = 0** (importantes resueltos)
@@ -141,6 +147,7 @@ OBSERVE → SELECT → SPECIFY → IMPLEMENT → TEST → CRIT → FIX → RETES
 | **L7** | Bedrock Knowledge Base | 1 semana | Devoteam (~93%) |
 | **L8** | Metadata Catalog (OpenMetadata) | 1 semana | — |
 | **L9** | End-to-End Governed Agent | 2 semanas | Portfolio completo |
+| **L10** | Governed Ontology Engine (RDF/SPARQL + reasoning local) | 1 semana | BAGO / portfolio |
 
 **Timeline total:** 10-12 semanas para portfolio completo
 
@@ -180,6 +187,7 @@ Skills a desarrollar y evidenciar:
 | RAG | Muy Alta | Parcial | — | — | — | — |
 | ETL/Data Pipelines | Alta | ❌ | — | — | — | — |
 | Metadata/Ontology | Media | ❌ | — | — | — | — |
+| RDF/SPARQL/Knowledge Graphs | Alta | 🟢 | ✅ | ✅ | L10 local receipt | L10 local |
 | AWS Bedrock | Alta | ❌ | — | — | — | — |
 | Testing/Evals | Muy Alta | Parcial | — | — | — | — |
 
@@ -190,15 +198,15 @@ Skills a desarrollar y evidenciar:
 ## Estado Operativo Actual
 
 `yaml
-CURRENT_PHASE: L0
+CURRENT_PHASE: L10
 CURRENT_ITERATION: 1
-OBJECTIVE: Baseline & Lab Contract
-STATUS: IMPLEMENTING
-BLOCKERS: Ninguno
+OBJECTIVE: Governed Ontology Engine local
+STATUS: VERIFIED (local RDF/SPARQL scope)
+BLOCKERS: AWS/OpenMetadata live no autorizados o no configurados
 P0: 0
 P1: 0
 P2: 0
-NEXT_ACTION: Crear documentos fundacionales (ARCHITECTURE.md, ROADMAP.md, LEARNING_LEDGER.md, JOB_SKILL_MATRIX.md)
+NEXT_ACTION: Validar OpenMetadata local real; después observabilidad/evals local
 `
 
 ---

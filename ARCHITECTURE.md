@@ -85,6 +85,24 @@ GENERATION (LLM inference)
 EVIDENCE (claim → chunk → source → revision)
 `
 
+### Pipeline de Reasoning Ontológico (L10)
+
+`
+RETRIEVED CHUNKS + CITATIONS
+  ↓
+RDF MATERIALIZATION (KnowledgeGraph → Turtle triples)
+  ↓
+SPARQL SELECT (bounded local query subset)
+  ↓
+INFERENCE (inverse · transitive · symmetric relations)
+  ↓
+CONSTRAINTS (endpoints · evidence · contradictions)
+  ↓
+PATH + EVIDENCE + ONTOLOGY RECEIPT
+  ↓
+LLM CONTEXT (reasoning only; no authority promotion)
+`
+
 ### Pipeline de Ejecución Governada
 
 `
@@ -163,6 +181,7 @@ class Receipt:
 | ETLSourceAdapter | Web/API/Files | Extraction, normalization | L2 |
 | MetadataCatalogAdapter | OpenMetadata | Search, lineage, ownership, schema version, quality y receipts | L8 |
 | GovernedKnowledgeAgent | LangGraph + RAG + MCP + Bedrock | End-to-end orchestration, proposals, permits, receipts y evidence | L9 |
+| OntologyEngine | Local RDF/Turtle + bounded SPARQL | Relation paths, inference, constraints, contradiction receipts | L10 |
 
 ---
 
@@ -186,6 +205,15 @@ class Receipt:
    - Todo llamada externa tiene timeout máximo
    - Retry policy con backoff exponencial y límite superior
 
+6. **La inferencia no concede autoridad**
+   - Un triple inferido conserva la evidencia de sus premisas
+   - La ontología devuelve paths y restricciones; no promueve automáticamente
+     una propuesta a estado canónico
+
+7. **La contradicción no se oculta**
+   - Una relación `CONTRADICTS` produce `CONSTRAINT_VIOLATION`
+   - El path y el receipt permanecen disponibles para revisión
+
 ---
 
 ## Estrategia de Testing
@@ -201,6 +229,7 @@ class Receipt:
 - LangGraph complete flow (START → END)
 - ETL pipeline end-to-end con datos de prueba
 - RAG retrieval con queries conocidos
+- Ontology Engine con RDF/Turtle, SPARQL, inference y constraint receipt
 
 ### Tests de Gobernanza (CRÍTICOS)
 
@@ -261,6 +290,21 @@ def test_bedrock_timeout_controlled_failure():
 - ✅ Debugging simplificado
 - ❌ Storage overhead
 
+### ADR-004: Ontology Engine local antes que cloud live
+
+**Decisión:** Priorizar un motor RDF/SPARQL local, reproducible y sin coste antes
+de desplegar AWS live u otros servicios de pago.
+
+**Racional:** Convierte retrieval en reasoning sobre relaciones y produce una
+capacidad demostrable con evidencia pública sin introducir credenciales, gasto
+ni dependencia operativa.
+
+**Consecuencias:**
+
+- ✅ Paths de dependencia, supersession, validación y contradicción con receipt
+- ✅ El contrato puede adaptarse más tarde a un triplestore real
+- ❌ El alcance actual no es un triplestore desplegado ni SPARQL completo
+
 ---
 
 ## Roadmap de Implementación
@@ -283,6 +327,7 @@ gantt
     L8: Metadata Catalog         :         des9, after des8, 7d
     section Capstone
     L9: End-to-End Agent         :         des10, after des9, 14d
+    L10: Ontology Engine          :done, des11, after des10, 1d
 `
 
 ---
@@ -290,10 +335,10 @@ gantt
 ## Estado Actual
 
 `yaml
-FASE: L0 (Baseline)
-COMPLETION: 20%
-NEXT_MILESTONE: ARCHITECTURE.md VALIDATED
-BLOCKERS: Ninguno
+FASE: L10 (Governed Ontology Engine)
+COMPLETION: L10 local scope VERIFIED
+NEXT_MILESTONE: OpenMetadata local real + observability/evals local
+BLOCKERS: AWS/OpenMetadata live no autorizados o no configurados
 `
 
-**Última actualización:** 2026-09-21
+**Última actualización:** 2026-09-22
