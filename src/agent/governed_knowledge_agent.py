@@ -342,8 +342,17 @@ class GovernedKnowledgeAgent:
         if self._is_implementation_query(normalized):
             path = self._test_path_from_query(query)
             content = (
+                "from pathlib import Path\n\n"
+                "from src.context.workspace_binding import (\n"
+                "    WorkspaceBinding,\n"
+                "    workspace_binding_is_governed,\n"
+                ")\n\n"
                 "def test_workspace_binding_contract():\n"
-                "    assert workspace_binding_is_governed()\n"
+                "    binding = WorkspaceBinding.from_git(\n"
+                "        Path(__file__).resolve().parents[1],\n"
+                "        context_revision=\"l9-workspace-v1\",\n"
+                "    )\n"
+                "    assert workspace_binding_is_governed(binding)\n"
             )
             proposals.append(
                 self._build_generic_proposal(

@@ -7,6 +7,30 @@
 **L0-L7 (Portfolio completo):** 8 semanas → 2026-11-16  
 **L0-L9 (Capstone):** 10 semanas → 2026-12-01
 
+## Tiempo real registrado por fase
+
+La columna **Tiempo observado** mide el intervalo entre el commit de cierre de la
+fase anterior y el commit de cierre de la fase indicada. Es una métrica
+reproducible basada en Git, no una estimación de horas efectivamente trabajadas:
+puede incluir pausas, revisión y documentación.
+
+| Fase | Cierre registrado | Tiempo planificado | Tiempo observado | Desviación |
+|------|-------------------|--------------------|------------------|------------|
+| L0 | 2026-09-21 20:35 | 1 día | 11 s | -23 h 59 min 49 s |
+| L1 | 2026-09-21 20:37 | 1 semana | 2 min 20 s | -6 d 23 h 57 min 40 s |
+| L2 | 2026-09-21 20:54 | 1 semana | 16 min 39 s | -6 d 23 h 43 min 21 s |
+| L3 | 2026-09-22 00:22 | 1 semana | 3 h 27 min 40 s | -6 d 20 h 32 min 20 s |
+| L4 | 2026-09-22 01:15 | 1 semana | 53 min 22 s | -6 d 23 h 6 min 38 s |
+| L5 | 2026-09-22 01:31 | 1 semana | 15 min 40 s | -6 d 23 h 44 min 20 s |
+| L6 | 2026-09-22 02:00 | 1 semana | 29 min 12 s | -6 d 23 h 30 min 48 s |
+| L7 | 2026-09-22 02:26 | 1 semana | 25 min 40 s | -6 d 23 h 34 min 20 s |
+| L8 | 2026-09-22 02:52 | 1 semana | 26 min 38 s | -6 d 23 h 33 min 22 s |
+| L9 | 2026-09-22 03:30 | 2 semanas | 37 min 39 s | -13 d 23 h 22 min 21 s |
+
+**Lectura rápida:** el cierre L0→L9 quedó registrado en **6 h 55 min 1 s**,
+frente a las **10 semanas** planificadas. La cifra refleja tiempo transcurrido
+entre cierres Git; no debe interpretarse como dedicación neta.
+
 ---
 
 ## L0 · BASELINE & LAB CONTRACT
@@ -429,11 +453,13 @@ Un agente capaz de:
 
 - [x] src/agent/governed_knowledge_agent.py
 - [x] tests/test_l9_end_to_end_agent.py (7 checks offline)
+- [x] src/context/workspace_binding.py (identity, scope, fingerprint)
+- [x] tests/test_workspace_binding.py (6 CRIT P0 contract checks)
 - [x] docs/commercetools_capstone.md
 - [x] scripts/generate_l9_agent_evidence.py
 - [x] evidence/l9_commercetools_agent.md (3 escenarios reproducibles)
 - [ ] Video nuevo de las 3 demos (`NOT_RUN`; la evidencia textual/transcript es reproducible)
-- [ ] Validación contra APIs reales AWS/commercetools/GitHub (`NOT_RUN`)
+- [ ] Validación contra APIs reales AWS/commercetools (`NOT_RUN`); GitHub issue #14 creado y verificado bajo autorización humana
 
 ---
 
@@ -467,7 +493,7 @@ NEXT_MILESTONE: Portfolio closure and explicitly authorized live validations
 BLOCKERS: AWS, commercetools and GitHub live identities are not configured
 P0_ISSUES: 0
 P1_ISSUES: 0
-TESTS_PASSING: 103/103 (expected after L9)
+TESTS_PASSING: 109/109 (L9 + workspace binding contract)
 EVIDENCE_GENERATED: L9 offline agent evidence
 LEARNING_ENTRIES: L0-L9
 NEXT_ACTION: Review portfolio evidence; keep live integrations NOT_RUN

@@ -32,6 +32,16 @@ def test_workspace_binding_contract():
 
 La función `workspace_binding_is_governed()` no existe en el repositorio actual y no hay una implementación canónica de `workspace_binding` que permita convertir esta propuesta en un test ejecutable sin inventar comportamiento de dominio. Por tanto, no se escribió el archivo y no se dejó una regresión deliberada en la suite.
 
+## Seguimiento autorizado
+
+Después de este primer intento, se definió el contrato canónico en
+`src/context/workspace_binding.py` y se añadió
+`tests/test_workspace_binding.py`. El test valida identidad Git, revisión de
+contexto, fingerprint, alcance de rutas y separación entre binding y permiso.
+La propuesta L9 también fue actualizada para generar este test válido. Esta
+segunda acción queda pendiente de su propio commit/PR y no altera la
+veracidad histórica del bloqueo anterior.
+
 ## Límite de validación
 
 Esta ejecución verifica el issue externo y conserva separada la propuesta CREATE bloqueada. No convierte L9 completo en `VALIDATED`: AWS Bedrock real, commercetools real, MCP externo y la validación de vídeo siguen fuera de esta ejecución.

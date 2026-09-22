@@ -34,8 +34,8 @@ comercial que no se haya ejecutado.
 | Escenario | Resultado gobernado |
 |---|---|
 | Pregunta técnica sobre `session_manager` | RAG + citas; MCP `READ` opcional; Bedrock fixture opcional |
-| Crear un test de `workspace_binding` | propone `file_creator` y MCP `WRITE`; no modifica archivos |
-| Comprobar canon RC6 | genera informe con evidencia y propone issue; no llama GitHub |
+| Crear un test de `workspace_binding` | binding canónico + propuesta `file_creator` y MCP `WRITE`; ambos siguen gobernados |
+| Comprobar canon RC6 | genera informe con evidencia; issue #14 creado sólo tras autorización humana |
 
 La evidencia reproducible está en
 `evidence/l9_commercetools_agent.md` y se genera con:
@@ -48,6 +48,7 @@ python scripts/generate_l9_agent_evidence.py
 
 La evidencia actual es `VERIFIED` para el flujo offline y el servidor MCP local.
 El cliente Bedrock es un fixture inyectado. AWS real, una cuenta/API de
-commercetools, creación real de issues y evaluación con tráfico de producción
-permanecen `NOT_RUN` hasta disponer de identidad, permisos y un entorno de
-integración explícitamente autorizado.
+commercetools, MCP externo y evaluación con tráfico de producción permanecen
+`NOT_RUN` hasta disponer de identidad, permisos y un entorno de integración
+explícitamente autorizado. La creación autorizada del issue #14 está verificada
+por separado en `evidence/l9_authorized_actions_20260922.md`.
