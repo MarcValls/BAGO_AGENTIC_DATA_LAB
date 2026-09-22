@@ -392,6 +392,8 @@ OpenMetadata/Docker live `NOT_RUN`)
 **Duración:** 2 semanas  
 **Fecha objetivo:** 2026-12-01  
 **🎯 PORTFOLIO COMPLETO PARA TODAS LAS CANDIDATURAS**
+**Estado:** ✅ VERIFIED (flujo offline, MCP local y Bedrock fixture, 2026-09-22;
+commercetools/AWS live `NOT_RUN`)
 
 ### Integración Final
 
@@ -425,10 +427,13 @@ Un agente capaz de:
 
 ### Entregables
 
-- [ ] src/agent/governed_knowledge_agent.py
-- [ ] 	ests/test_end_to_end_agent.py
-- [ ] README.md final con demos grabadas
-- [ ] Portfolio público completo en GitHub
+- [x] src/agent/governed_knowledge_agent.py
+- [x] tests/test_l9_end_to_end_agent.py (7 checks offline)
+- [x] docs/commercetools_capstone.md
+- [x] scripts/generate_l9_agent_evidence.py
+- [x] evidence/l9_commercetools_agent.md (3 escenarios reproducibles)
+- [ ] Video nuevo de las 3 demos (`NOT_RUN`; la evidencia textual/transcript es reproducible)
+- [ ] Validación contra APIs reales AWS/commercetools/GitHub (`NOT_RUN`)
 
 ---
 
@@ -456,16 +461,16 @@ Un agente capaz de:
 ## Estado Operativo
 
 `yaml
-CURRENT_PHASE: L0
-COMPLETION: 20%
-NEXT_MILESTONE: Completar documentos fundacionales
-BLOCKERS: Ninguno
+CURRENT_PHASE: L9
+COMPLETION: L9 offline scope VERIFIED
+NEXT_MILESTONE: Portfolio closure and explicitly authorized live validations
+BLOCKERS: AWS, commercetools and GitHub live identities are not configured
 P0_ISSUES: 0
 P1_ISSUES: 0
-TESTS_PASSING: 0/0
-EVIDENCE_GENERATED: 0
-LEARNING_ENTRIES: 0
-NEXT_ACTION: Crear LEARNING_LEDGER.md y JOB_SKILL_MATRIX.md
+TESTS_PASSING: 103/103 (expected after L9)
+EVIDENCE_GENERATED: L9 offline agent evidence
+LEARNING_ENTRIES: L0-L9
+NEXT_ACTION: Review portfolio evidence; keep live integrations NOT_RUN
 `
 
 ---

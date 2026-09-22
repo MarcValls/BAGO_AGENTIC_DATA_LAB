@@ -162,6 +162,7 @@ class Receipt:
 | VectorStoreAdapter | FAISS/Pinecone | Embedding storage, similarity search | L4 |
 | ETLSourceAdapter | Web/API/Files | Extraction, normalization | L2 |
 | MetadataCatalogAdapter | OpenMetadata | Search, lineage, ownership, schema version, quality y receipts | L8 |
+| GovernedKnowledgeAgent | LangGraph + RAG + MCP + Bedrock | End-to-end orchestration, proposals, permits, receipts y evidence | L9 |
 
 ---
 

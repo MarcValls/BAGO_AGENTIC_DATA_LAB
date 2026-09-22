@@ -136,13 +136,13 @@ Orquestar flujos complejos de reasoning + retrieval + action de forma mantenible
 | L5 | MCP discovery, capability registry, effect classification, governed stdio calls | mcp_adapter.py + local server + 7 tests + execution receipt | ✅ Sí |
 | L6 | AWS Bedrock Converse/Stream, provider boundary, retries, quotas, cost receipts | bedrock_provider_adapter.py + 10 tests + offline benchmark | ✅ Sí (offline scope) |
 | L7 | Bedrock Knowledge Base, Retrieve/Generate, metadata filters, citations, managed-vs-local trade-offs | bedrock_kb_adapter.py + 10 tests + ETL/KB comparison | ✅ Sí (offline scope) |
-| L8 | — | — | — |
-| L9 | — | — | — |
+| L8 | Metadata Catalog, lineage, ownership, quality | adapter + 12 tests + catalog evidence | ✅ Sí (offline scope) |
+| L9 | End-to-end governed agent, tool proposals, provider boundary | agent + 7 tests + 3-scenario evidence | ✅ Sí (offline scope) |
 
 ---
 
 **Última actualización:** 2026-09-22
-**Próxima entrada:** Al iniciar L7 (Bedrock Knowledge Base)
+**Próxima entrada:** Al cerrar una validación live explícitamente autorizada
 
 ---
 
@@ -398,4 +398,69 @@ implícita."*
 - ⚠️ Validar JWT/RBAC, ownership y lineage contra la versión/instancia objetivo.
 - ⚠️ Mapear definitivamente `KnowledgeAsset`/`KnowledgeChunk` a las entidades
   OpenMetadata elegidas para el despliegue de producción.
+
+---
+
+### 2026-09-22 — End-to-End Governed Agent para commercetools
+
+**Fase:** L9
+
+**Qué entendí:**
+
+Un agente de portfolio no debe ser sólo un prompt conectado a herramientas.
+Debe conservar una cadena verificable desde la pregunta hasta el contexto
+recuperado, la propuesta de herramienta, el permit, el efecto observado y la
+respuesta final. El proveedor LLM y MCP son capacidades intercambiables; la
+autoridad sigue en BAGO.
+
+**Qué implementé:**
+
+- `src/agent/governed_knowledge_agent.py`:
+  - StateGraph con clasificación, retrieval, reasoning/proposal,
+    authorization gate, execution y verification;
+  - integración con `GovernedRAG`, `GovernedMCPAdapter` y
+    `GovernedBedrockAdapter` opcional;
+  - propuestas `CREATE`, `WRITE` y `EXTERNAL_API` que quedan pendientes de
+    aprobación humana y no tienen transporte material;
+  - receipts y citas reunidos en `AgentRun`.
+- `tests/test_l9_end_to_end_agent.py`: 7 checks offline.
+- `scripts/generate_l9_agent_evidence.py` y
+  `evidence/l9_commercetools_agent.md`: tres escenarios reproducibles,
+  MCP local stdio READ, Bedrock fixture y denegaciones pre-transporte.
+- `docs/commercetools_capstone.md`: mapa de capacidades y límites de la
+  candidatura commercetools.
+
+**Evidence:**
+
+`COMPLETED` para la pregunta técnica con citas, READ MCP y Bedrock fixture;
+`PENDING_AUTHORIZATION` para crear un test y crear un issue externo. La suite
+L9 pasa 7/7. No se ejecutó AWS, una API real de commercetools ni GitHub.
+
+**Failure modes que ahora evito:**
+
+❌ El LLM decide y ejecuta una escritura directamente
+✅ El agente sólo propone; BAGO clasifica el efecto y exige aprobación humana
+
+❌ MCP descubierto tratado como autoridad
+✅ Discovery, registry, permit, transporte y receipt quedan separados
+
+❌ Fixture presentado como integración de producción
+✅ La evidencia identifica MCP local/Bedrock fixture y marca live como
+`NOT_RUN`
+
+**Interview explanation:**
+
+*"Construí un agente end-to-end donde LangGraph orquesta, GovernedRAG aporta
+contexto con citas y cada tool proposal se transforma en un ExecutionRequest.
+Las lecturas MCP pueden ejecutarse con un permit acotado; CREATE, WRITE y
+acciones externas se detienen antes del transporte hasta obtener aprobación.
+Bedrock está detrás de otro adapter con allowlist de modelo y receipt de uso.
+Así puedo enseñar el loop completo sin confundir un fixture offline con
+producción."*
+
+**Gaps restantes:**
+
+- ⚠️ Validación live de AWS, commercetools y GitHub con identidades autorizadas.
+- ⚠️ Video nuevo de las tres demos; el transcript Markdown es reproducible.
+- ⚠️ Evaluación con corpus y tráfico de negocio real de commercetools.
 
