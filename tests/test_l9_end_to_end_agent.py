@@ -170,6 +170,9 @@ def test_implementation_query_proposes_create_and_blocks_mcp_write_before_transp
     file_proposal = next(item for item in result.proposals if item.request.tool_name == "file_creator")
     assert file_proposal.request.effect_type is EffectType.CREATE
     assert file_proposal.decision.value == "REQUIRE_HUMAN"
+    assert "WorkspaceBinding.from_git" in file_proposal.request.parameters["content"]
+    assert "workspace_binding_is_governed(binding)" in file_proposal.request.parameters["content"]
+    compile(file_proposal.request.parameters["content"], "<workspace_binding proposal>", "exec")
     mcp_write = next(item for item in result.proposals if item.request.tool_name == "propose_lab_note")
     assert mcp_write.decision.value == "REQUIRE_HUMAN"
     assert mcp_write.called is False

@@ -2,8 +2,8 @@
 
 [![GitHub](https://img.shields.io/badge/GitHub-Repo-blue)](https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB)
 [![Branch](https://img.shields.io/badge/branch-main-green)](https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/tree/main)
-[![Commits](https://img.shields.io/badge/commits-24-orange)](https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/commits/main)
-[![Tests](https://img.shields.io/badge/tests-103%2F103%20passing-brightgreen)]()
+[![Commits](https://img.shields.io/badge/commits-26-orange)](https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/commits/main)
+[![Tests](https://img.shields.io/badge/tests-109%2F109%20passing-brightgreen)]()
 [![Chunks](https://img.shields.io/badge/chunks_indexed-65-purple)]()
 [![License](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 
@@ -17,9 +17,9 @@
 
 | Métrica | Valor |
 |---------|-------|
-| **Tests Passing** | 103/103 ✅ |
+| **Tests Passing** | 109/109 ✅ |
 | **Chunks Indexados** | 65 (3 docs) |
-| **Fase Actual** | L9 ✅ VERIFIED (offline; live integrations NOT_RUN) |
+| **Fase Actual** | L9 ✅ VERIFIED (offline; AWS/commercetools live NOT_RUN; GitHub issue #14 verified) |
 | **Próxima Fase** | Portfolio closure + validaciones live autorizadas |
 
 ---
@@ -48,6 +48,27 @@ gantt
     section Pending
     L10: Future Extensions  :crit, after L9, 7d
 ```
+
+### Tiempo observado por fase
+
+Intervalo entre commits de cierre consecutivos. Sirve para ver el ritmo real
+registrado en Git y se diferencia explícitamente del tiempo planificado.
+
+| Fase | Cierre | Plan | Observado |
+|------|--------|------|-----------|
+| L0 | 21 sep, 20:35 | 1 día | 11 s |
+| L1 | 21 sep, 20:37 | 1 semana | 2 min 20 s |
+| L2 | 21 sep, 20:54 | 1 semana | 16 min 39 s |
+| L3 | 22 sep, 00:22 | 1 semana | 3 h 27 min 40 s |
+| L4 | 22 sep, 01:15 | 1 semana | 53 min 22 s |
+| L5 | 22 sep, 01:31 | 1 semana | 15 min 40 s |
+| L6 | 22 sep, 02:00 | 1 semana | 29 min 12 s |
+| L7 | 22 sep, 02:26 | 1 semana | 25 min 40 s |
+| L8 | 22 sep, 02:52 | 1 semana | 26 min 38 s |
+| L9 | 22 sep, 03:30 | 2 semanas | 37 min 39 s |
+
+**Total registrado L0→L9:** **6 h 55 min 1 s** frente a las **10 semanas**
+planificadas. Es tiempo transcurrido entre cierres Git, no horas netas de trabajo.
 
 ### Fases Detalladas
 
@@ -102,6 +123,8 @@ BAGO_AGENTIC_DATA_LAB/
 ├── src/
 │   ├── agent/                # L9 ✅
 │   │   └── governed_knowledge_agent.py # LangGraph + RAG + permits
+│   ├── context/              # Context identity boundary
+│   │   └── workspace_binding.py # Git identity + scope + fingerprint
 │   ├── orchestration/
 │   │   └── state_graph.py       # L1 ✅ (450 líneas)
 │   ├── etl/
@@ -131,7 +154,8 @@ BAGO_AGENTIC_DATA_LAB/
 │   ├── test_bedrock_integration.py # 10 Bedrock boundary checks ✅
 │   ├── test_bedrock_kb_adapter.py # 10 Knowledge Base checks ✅
 │   ├── test_openmetadata_adapter.py # 12 Metadata Catalog checks ✅
-│   └── test_l9_end_to_end_agent.py # 7 capstone checks ✅
+│   ├── test_l9_end_to_end_agent.py # 7 capstone checks ✅
+│   └── test_workspace_binding.py # 6 CRIT P0 contract checks ✅
 ├── evidence/
 │   ├── l3_ontology_graph.md       # Mermaid + integrity receipt
 │   ├── ontology_proposal.md       # Propuesta sobre docs BAGO actuales
@@ -143,7 +167,8 @@ BAGO_AGENTIC_DATA_LAB/
 │   ├── bedrock_provider_benchmark.md # Benchmark offline L6
 │   ├── bago_etl_vs_bedrock_kb_comparison.md # Comparison offline L7
 │   ├── l8_openmetadata_catalog.md # Catalog + lineage evidence offline L8
-│   └── l9_commercetools_agent.md # 3 end-to-end scenarios offline L9
+│   ├── l9_commercetools_agent.md # 3 end-to-end scenarios offline L9
+│   └── l9_authorized_actions_20260922.md # Authorization receipt + follow-up
 ├── scripts/
 │   ├── generate_l3_ontology_evidence.py
 │   ├── generate_ontology_proposal.py
@@ -163,7 +188,8 @@ BAGO_AGENTIC_DATA_LAB/
 │   ├── aws_bedrock_setup.md   # L6: IAM + quotas + costes + live checklist
 │   ├── bedrock_knowledge_base.md # L7: retrieval + citations + IAM
 │   ├── openmetadata_catalog.md # L8: catalog + lineage + quality + live boundary
-│   └── commercetools_capstone.md # L9: agent + portfolio boundary
+│   ├── commercetools_capstone.md # L9: agent + portfolio boundary
+│   └── workspace_binding.md # Canonical workspace context contract
 ├── l2_etl_metadata.db           # 65 chunks indexados
 ├── LAB_CONTRACT.md              # Límites con BAGO canónico
 ├── ARCHITECTURE.md              # Decisiones arquitectónicas
@@ -190,7 +216,7 @@ BAGO_AGENTIC_DATA_LAB/
 ### Skills Evidenciadas
 
 ✅ **Python avanzado** - pytest, dataclasses, type hints  
-✅ **Testing CRIT P0** - 103 tests passing, 0 failures
+✅ **Testing CRIT P0** - 109 tests passing, 0 failures
 ✅ **ETL / Data Pipelines** - 6 stages, idempotencia, receipts  
 ✅ **Content hashing** - SHA-256 para deduplicación  
 ✅ **LangGraph StateGraph** - nodes, edges, TypedDict state  
@@ -207,7 +233,7 @@ BAGO_AGENTIC_DATA_LAB/
 - Validación live AWS con credenciales/model access (L6)
 - Validación live AWS de Knowledge Base (L7)
 - Validación live OpenMetadata/Docker (L8)
-- Validación live AWS/commercetools/GitHub y vídeo nuevo de L9 (`NOT_RUN`)
+- Validación live AWS/commercetools y vídeo nuevo de L9 (`NOT_RUN`); GitHub issue #14 ejecutado y verificado bajo autorización humana
 
 ---
 
@@ -273,4 +299,4 @@ MIT License - Ver [LICENSE](LICENSE) para detalles.
 
 **Nota:** Este README se genera dinámicamente. Para actualizar métricas ejecutar `python scripts/generate_dynamic_readme.py`
 
-Generado: 2026-09-22 03:28:04
+Generado: 2026-09-22 03:52:09

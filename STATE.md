@@ -2,9 +2,12 @@
 
 **Updated:** 2026-09-22
 **Current phase:** L9 · End-to-End Governed Agent
-**Status:** VERIFIED for the offline governed agent, local MCP round trip and
-injected Bedrock fixture; AWS/commercetools/GitHub live `NOT_RUN`
-**Tests:** 103/103 passing en la suite combinada; L9 aporta 7 checks offline.
+**Status:** VERIFIED for the offline governed agent, local MCP round trip,
+injected Bedrock fixture and workspace binding; AWS/commercetools live
+integrations remain `NOT_RUN`; GitHub issue #14 is separately executed and
+verified under human authorization.
+**Tests:** 109/109 passing en la suite combinada; L9 aporta 7 checks offline y
+workspace binding aporta 6 checks de contrato.
 **Next phase:** Portfolio closure and explicitly authorized live validations
 **Evidence:** `evidence/l3_ontology_graph.md` with integrity PASS and
 `evidence/retrieval_benchmark_results.md` with 48 reproducible benchmark rows;
@@ -19,7 +22,9 @@ lineage, ownership, schema version, quality rule and receipts through an
 in-memory OpenMetadata-shaped client;
 `evidence/l9_commercetools_agent.md` with three end-to-end scenarios, governed
 RAG citations, a local MCP READ receipt, an injected Bedrock receipt and
-pre-transport CREATE/WRITE/external-issue denials;
+pre-transport CREATE/WRITE denials plus the pre-authorization issue proposal;
+`evidence/l9_authorized_actions_20260922.md` records the later human-authorized
+GitHub issue #14 and the workspace-binding follow-up;
 `evidence/ontology_proposal.md` and `evidence/ontology_proposal_examples.md`
 are reproducible review artifacts.
 **L6 boundary:** `Converse` and `ConverseStream` are implemented behind an
@@ -37,8 +42,9 @@ live OpenMetadata server were not available, so live catalog validation remains
 `NOT_RUN`.
 **L9 boundary:** the LangGraph agent composes governed RAG, MCP and optional
 Bedrock provider calls. The local MCP READ and injected Bedrock fixture were
-executed; CREATE, WRITE and GitHub issue proposals stop before transport until
-human approval. AWS, commercetools and GitHub live integrations remain
+executed; CREATE and WRITE proposals still stop before transport until a
+permit. GitHub issue #14 was created only after explicit human approval and is
+verified separately. AWS and commercetools live integrations remain
 `NOT_RUN`.
 **Ontology generator:** metadata and relation proposals remain `PROPOSED` until
 validator plus human/contract approval; no automatic canonical promotion.
