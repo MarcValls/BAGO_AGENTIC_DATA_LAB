@@ -2,8 +2,8 @@
 
 [![GitHub](https://img.shields.io/badge/GitHub-Repo-blue)](https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB)
 [![Branch](https://img.shields.io/badge/branch-main-green)](https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/tree/main)
-[![Commits](https://img.shields.io/badge/commits-23-orange)](https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/commits/main)
-[![Tests](https://img.shields.io/badge/tests-96%2F96%20passing-brightgreen)]()
+[![Commits](https://img.shields.io/badge/commits-24-orange)](https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/commits/main)
+[![Tests](https://img.shields.io/badge/tests-103%2F103%20passing-brightgreen)]()
 [![Chunks](https://img.shields.io/badge/chunks_indexed-65-purple)]()
 [![License](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 
@@ -17,10 +17,10 @@
 
 | Métrica | Valor |
 |---------|-------|
-| **Tests Passing** | 96/96 ✅ |
+| **Tests Passing** | 103/103 ✅ |
 | **Chunks Indexados** | 65 (3 docs) |
-| **Fase Actual** | L8 ✅ VERIFIED (offline; OpenMetadata/Docker live NOT_RUN) |
-| **Próxima Fase** | L9 · End-to-End Governed Agent |
+| **Fase Actual** | L9 ✅ VERIFIED (offline; live integrations NOT_RUN) |
+| **Próxima Fase** | Portfolio closure + validaciones live autorizadas |
 
 ---
 
@@ -42,8 +42,8 @@ gantt
     L7: Bedrock KB         :done, 2026-09-22, 1d
     L8: Metadata Catalog   :done, 2026-09-22, 1d
 
-    section Next
-    L9: End-to-End Agent   :active, after L8, 7d
+    section Completed
+    L9: End-to-End Agent   :done, after L8, 7d
     
     section Pending
     L10: Future Extensions  :crit, after L9, 7d
@@ -62,7 +62,7 @@ gantt
 | L6 | ✅ | AWS Bedrock Provider gobernado (offline; live AWS NOT_RUN) | **Tuio** |
 | L7 | ✅ | Bedrock Knowledge Base gobernado (offline; live AWS NOT_RUN) | **Devoteam** |
 | L8 | ✅ | Metadata Catalog gobernado (offline; OpenMetadata/Docker live NOT_RUN) | **Devoteam** |
-| L9 | ⏳ | End-to-End Governed Agent | **commercetools** |
+| L9 | ✅ VERIFIED | End-to-End Governed Agent (offline) | **commercetools** |
 
 ---
 
@@ -100,6 +100,8 @@ BAGO_AGENTIC_DATA_LAB/
 ├── .github/agents/
 │   └── bago-sync-agent.agent.md # Agente gobernado de commit/push/merge
 ├── src/
+│   ├── agent/                # L9 ✅
+│   │   └── governed_knowledge_agent.py # LangGraph + RAG + permits
 │   ├── orchestration/
 │   │   └── state_graph.py       # L1 ✅ (450 líneas)
 │   ├── etl/
@@ -110,7 +112,7 @@ BAGO_AGENTIC_DATA_LAB/
 │   │   ├── schema.py            # Entidades y metadata
 │   │   ├── ontology.py          # Relaciones y reglas
 │   │   └── ontology_generator.py # Propuestas gobernadas L1→L3
-│   └── adapters/                # L5-L8 ✅ / L9 ⏳
+│   └── adapters/                # L5-L8 ✅ / L9 provider boundary
 │       ├── __init__.py
 │       ├── mcp_adapter.py       # Discovery → registry → permit → call
 │       ├── bedrock_provider_adapter.py # Converse + streaming + receipts
@@ -128,7 +130,8 @@ BAGO_AGENTIC_DATA_LAB/
 │   ├── test_mcp_governance.py   # 7 MCP governance checks ✅
 │   ├── test_bedrock_integration.py # 10 Bedrock boundary checks ✅
 │   ├── test_bedrock_kb_adapter.py # 10 Knowledge Base checks ✅
-│   └── test_openmetadata_adapter.py # 12 Metadata Catalog checks ✅
+│   ├── test_openmetadata_adapter.py # 12 Metadata Catalog checks ✅
+│   └── test_l9_end_to_end_agent.py # 7 capstone checks ✅
 ├── evidence/
 │   ├── l3_ontology_graph.md       # Mermaid + integrity receipt
 │   ├── ontology_proposal.md       # Propuesta sobre docs BAGO actuales
@@ -139,7 +142,8 @@ BAGO_AGENTIC_DATA_LAB/
 │   ├── mcp_governed_demo.mp4.sha256 # Hash del vídeo
 │   ├── bedrock_provider_benchmark.md # Benchmark offline L6
 │   ├── bago_etl_vs_bedrock_kb_comparison.md # Comparison offline L7
-│   └── l8_openmetadata_catalog.md # Catalog + lineage evidence offline L8
+│   ├── l8_openmetadata_catalog.md # Catalog + lineage evidence offline L8
+│   └── l9_commercetools_agent.md # 3 end-to-end scenarios offline L9
 ├── scripts/
 │   ├── generate_l3_ontology_evidence.py
 │   ├── generate_ontology_proposal.py
@@ -150,6 +154,7 @@ BAGO_AGENTIC_DATA_LAB/
 │   ├── benchmark_bedrock_provider.py
 │   ├── compare_bago_etl_vs_bedrock_kb.py
 │   ├── generate_l8_catalog_evidence.py
+│   ├── generate_l9_agent_evidence.py
 │   └── generate_dynamic_readme.py
 ├── docs/
 │   ├── ontology_generator.md  # L1 → L2 → L3 gobernado
@@ -157,7 +162,8 @@ BAGO_AGENTIC_DATA_LAB/
 │   ├── mcp_governance.md      # L5: capabilities + permits + receipts
 │   ├── aws_bedrock_setup.md   # L6: IAM + quotas + costes + live checklist
 │   ├── bedrock_knowledge_base.md # L7: retrieval + citations + IAM
-│   └── openmetadata_catalog.md # L8: catalog + lineage + quality + live boundary
+│   ├── openmetadata_catalog.md # L8: catalog + lineage + quality + live boundary
+│   └── commercetools_capstone.md # L9: agent + portfolio boundary
 ├── l2_etl_metadata.db           # 65 chunks indexados
 ├── LAB_CONTRACT.md              # Límites con BAGO canónico
 ├── ARCHITECTURE.md              # Decisiones arquitectónicas
@@ -184,7 +190,7 @@ BAGO_AGENTIC_DATA_LAB/
 ### Skills Evidenciadas
 
 ✅ **Python avanzado** - pytest, dataclasses, type hints  
-✅ **Testing CRIT P0** - 96 tests passing, 0 failures
+✅ **Testing CRIT P0** - 103 tests passing, 0 failures
 ✅ **ETL / Data Pipelines** - 6 stages, idempotencia, receipts  
 ✅ **Content hashing** - SHA-256 para deduplicación  
 ✅ **LangGraph StateGraph** - nodes, edges, TypedDict state  
@@ -195,11 +201,13 @@ BAGO_AGENTIC_DATA_LAB/
 ✅ **AWS Bedrock Provider** - Converse/streaming gobernados, retries, quotas, costes y receipts offline
 ✅ **Bedrock Knowledge Base** - Retrieve/RetrieveAndGenerate, metadata filters, citations y comparación ETL offline
 ✅ **Metadata Catalog** - OpenMetadata-shaped search, lineage, ownership, schema version, quality rules y receipts offline
+✅ **End-to-End Governed Agent** - LangGraph + RAG + MCP + Bedrock fixture, propuestas, permits, receipts y tres escenarios
 
 ⏳ **En progreso:**
 - Validación live AWS con credenciales/model access (L6)
 - Validación live AWS de Knowledge Base (L7)
 - Validación live OpenMetadata/Docker (L8)
+- Validación live AWS/commercetools/GitHub y vídeo nuevo de L9 (`NOT_RUN`)
 
 ---
 
@@ -235,6 +243,10 @@ python scripts/compare_bago_etl_vs_bedrock_kb.py
 python -m pytest tests/test_openmetadata_adapter.py -v
 python scripts/generate_l8_catalog_evidence.py
 
+# Validar el capstone commercetools offline y generar sus tres escenarios
+python -m pytest tests/test_l9_end_to_end_agent.py -v
+python scripts/generate_l9_agent_evidence.py
+
 # Regenerar evidencia visual de L3
 python scripts/generate_l3_ontology_evidence.py
 
@@ -261,4 +273,4 @@ MIT License - Ver [LICENSE](LICENSE) para detalles.
 
 **Nota:** Este README se genera dinámicamente. Para actualizar métricas ejecutar `python scripts/generate_dynamic_readme.py`
 
-Generado: 2026-09-22 02:51:20
+Generado: 2026-09-22 03:28:04

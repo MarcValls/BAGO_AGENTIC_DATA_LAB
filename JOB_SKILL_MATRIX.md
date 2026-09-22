@@ -125,8 +125,9 @@
 - Aplicar destacando adaptabilidad multi-cloud
 
 ### Wave 4 (10 semanas) — commercetools (stretch)
-- L9 completo (end-to-end agent)
-- Portfolio máximo
+- [x] L9 offline completo (end-to-end governed agent)
+- [x] Tres escenarios reproducibles con RAG, MCP y Bedrock fixture
+- [ ] Validación live de APIs commercetools/AWS/GitHub (`NOT_RUN`)
 - Aplicar como "moonshot"
 
 ---
@@ -141,7 +142,7 @@
 | REST APIs | Alta | ✅ Senior | ✅ Senior | BAGO FastAPI | ✅ Sí |
 | LangGraph | Muy Alta | ❌ None | 🎯 Proficient | L1 state graph | L1 completado |
 | LangChain concepts | Alta | ❌ None | 🟡 Basic | — | L1 completado |
-| Multi-agent systems | Muy Alta | 🟡 Basic | 🎯 Proficient | BAGO agents | L9 completado |
+| Multi-agent systems | Muy Alta | 🟢 Reinforced | 🎯 Proficient | GovernedKnowledgeAgent + L9 evidence | L9 offline |
 | Tool use | Muy Alta | ✅ Implementado | 🎯 Proficient | BAGO tools + MCP receipts | L5 baseline |
 | MCP | Muy Alta | ✅ Baseline gobernado | 🎯 Proficient | L5 MCP adapter + video | L5 baseline |
 | RAG | Muy Alta | 🟡 Basic | 🎯 Advanced | L4 governed RAG | L4 completado |
@@ -158,8 +159,8 @@
 | OpenMetadata Catalog | Media | 🟡 Baseline offline | 🎯 Proficient | L8 adapter + lineage evidence | Live Docker evaluation |
 | IAM | Alta | 🟡 Basic | 🎯 Configurable | L6 least-privilege setup | Live policy check |
 | CI/CD | Alta | 🟡 Basic | 🎯 Implementado | GitHub Actions | L1 completado |
-| Evaluation | Muy Alta | 🟡 Parcial | 🎯 Framework | Test suite | L1 completado |
-| Observability | Alta | 🟡 Parcial | 🎯 Completo | Receipts + logs | L9 completado |
+| Evaluation | Muy Alta | 🟢 Framework baseline | 🎯 Framework | 103 tests + L9 scenarios | L9 offline |
+| Observability | Alta | 🟢 Reinforced | 🎯 Completo | Receipts + evidence links | L9 offline |
 | Secure execution | Muy Alta | ✅ Diseñado | 🎯 Implementado | BAGO auth boundary | L1 completado |
 | Authorization | Muy Alta | ✅ Diseñado | 🎯 Implementado | BAGO permits | L1 completado |
 | Auditability | Alta | ✅ Diseñado | 🎯 Implementado | BAGO receipts | L1 completado |
@@ -212,8 +213,9 @@
 
 ### Para commercetools (L9 completo)
 
-- [ ] End-to-end agent funcionando
-- [ ] 3 scenarios de demo grabados
+- [x] End-to-end agent funcionando offline
+- [x] 3 scenarios de demo reproducibles en Markdown
+- [ ] Video nuevo de las 3 demos (`NOT_RUN`)
 - [ ] Portfolio máximo: L0-L9 todo VALIDATED
 - [ ] Cover letter explicando architecture fit 97%
 
