@@ -2,7 +2,7 @@
 
 [![GitHub](https://img.shields.io/badge/GitHub-Repo-blue)](https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB)
 [![Branch](https://img.shields.io/badge/branch-main-green)](https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/tree/main)
-[![Commits](https://img.shields.io/badge/commits-22-orange)](https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/commits/main)
+[![Commits](https://img.shields.io/badge/commits-23-orange)](https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/commits/main)
 [![Tests](https://img.shields.io/badge/tests-96%2F96%20passing-brightgreen)]()
 [![Chunks](https://img.shields.io/badge/chunks_indexed-65-purple)]()
 [![License](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
