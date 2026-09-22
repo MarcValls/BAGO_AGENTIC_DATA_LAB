@@ -4,7 +4,7 @@
 **Current phase:** L8 · Metadata Catalog
 **Status:** VERIFIED for the offline governed OpenMetadata adapter/evidence scope;
 OpenMetadata/Docker live `NOT_RUN`
-**Tests:** 96/96 expected after L8; L8 aporta 12 checks offline.
+**Tests:** 96/96 passing en la suite combinada; L8 aporta 12 checks offline.
 **Next phase:** L9 · End-to-End Governed Agent
 **Evidence:** `evidence/l3_ontology_graph.md` with integrity PASS and
 `evidence/retrieval_benchmark_results.md` with 48 reproducible benchmark rows;
