@@ -2,8 +2,8 @@
 
 [![GitHub](https://img.shields.io/badge/GitHub-Repo-blue)](https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB)
 [![Branch](https://img.shields.io/badge/branch-main-green)](https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/tree/main)
-[![Commits](https://img.shields.io/badge/commits-20-orange)](https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/commits/main)
-[![Tests](https://img.shields.io/badge/tests-74%2F74%20passing-brightgreen)]()
+[![Commits](https://img.shields.io/badge/commits-21-orange)](https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/commits/main)
+[![Tests](https://img.shields.io/badge/tests-84%2F84%20passing-brightgreen)]()
 [![Chunks](https://img.shields.io/badge/chunks_indexed-65-purple)]()
 [![License](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 
@@ -17,10 +17,10 @@
 
 | Métrica | Valor |
 |---------|-------|
-| **Tests Passing** | 74/74 ✅ |
+| **Tests Passing** | 84/84 ✅ |
 | **Chunks Indexados** | 65 (3 docs) |
-| **Fase Actual** | L6 ✅ VERIFIED (offline; AWS live NOT_RUN) |
-| **Próxima Fase** | L7 · Bedrock Knowledge Base |
+| **Fase Actual** | L7 ✅ VERIFIED (offline; AWS live NOT_RUN) |
+| **Próxima Fase** | L8 · Metadata Catalog |
 
 ---
 
@@ -39,9 +39,10 @@ gantt
     L4: Governed RAG        :done, 2026-09-22, 1d
     L5: MCP                :done, 2026-09-22, 1d
     L6: AWS Bedrock        :done, 2026-09-22, 1d
+    L7: Bedrock KB         :done, 2026-09-22, 1d
 
     section Next
-    L7: Bedrock KB         :active, after L6, 7d
+    L8: Metadata Catalog   :active, after L7, 7d
     
     section Pending
     L9: End-to-End Agent   :crit, after L8, 7d
@@ -58,7 +59,7 @@ gantt
 | L4 | ✅ | Governed RAG (hybrid retrieval + evidence) | **Orbitant** |
 | L5 | ✅ | MCP con gobernanza (discovery, registry, permits) | **Orbitant** |
 | L6 | ✅ | AWS Bedrock Provider gobernado (offline; live AWS NOT_RUN) | **Tuio** |
-| L7 | ⏳ | Bedrock Knowledge Base | **Devoteam** |
+| L7 | ✅ | Bedrock Knowledge Base gobernado (offline; live AWS NOT_RUN) | **Devoteam** |
 | L8 | ⏳ | Metadata Catalog | - |
 | L9 | ⏳ | End-to-End Governed Agent | **commercetools** |
 
@@ -108,10 +109,11 @@ BAGO_AGENTIC_DATA_LAB/
 │   │   ├── schema.py            # Entidades y metadata
 │   │   ├── ontology.py          # Relaciones y reglas
 │   │   └── ontology_generator.py # Propuestas gobernadas L1→L3
-│   └── adapters/                # L5-L6 ✅ / L7-L8 ⏳
+│   └── adapters/                # L5-L7 ✅ / L8 ⏳
 │       ├── __init__.py
 │       ├── mcp_adapter.py       # Discovery → registry → permit → call
-│       └── bedrock_provider_adapter.py # Converse + streaming + receipts
+│       ├── bedrock_provider_adapter.py # Converse + streaming + receipts
+│       └── bedrock_kb_adapter.py # Retrieve + citations + KB receipts
 ├── tests/
 │   ├── test_l1_governance.py    # 7 CRIT P0 ✅
 │   ├── test_l2_etl_pipeline.py  # 4 CRIT P0 ✅
@@ -122,7 +124,8 @@ BAGO_AGENTIC_DATA_LAB/
 │   ├── test_retrieval_accuracy.py # 9 retrieval checks ✅
 │   ├── test_retrieval_benchmark.py # 3 benchmark checks ✅
 │   ├── test_mcp_governance.py   # 7 MCP governance checks ✅
-│   └── test_bedrock_integration.py # 10 Bedrock boundary checks ✅
+│   ├── test_bedrock_integration.py # 10 Bedrock boundary checks ✅
+│   └── test_bedrock_kb_adapter.py # 10 Knowledge Base checks ✅
 ├── evidence/
 │   ├── l3_ontology_graph.md       # Mermaid + integrity receipt
 │   ├── ontology_proposal.md       # Propuesta sobre docs BAGO actuales
@@ -131,7 +134,8 @@ BAGO_AGENTIC_DATA_LAB/
 │   ├── mcp_governed_demo.md      # Receipt de ronda MCP local
 │   ├── mcp_governed_demo.mp4     # Vídeo de evidencia L5
 │   ├── mcp_governed_demo.mp4.sha256 # Hash del vídeo
-│   └── bedrock_provider_benchmark.md # Benchmark offline L6
+│   ├── bedrock_provider_benchmark.md # Benchmark offline L6
+│   └── bago_etl_vs_bedrock_kb_comparison.md # Comparison offline L7
 ├── scripts/
 │   ├── generate_l3_ontology_evidence.py
 │   ├── generate_ontology_proposal.py
@@ -140,12 +144,14 @@ BAGO_AGENTIC_DATA_LAB/
 │   ├── run_mcp_demo.py
 │   ├── render_mcp_evidence_video.py
 │   ├── benchmark_bedrock_provider.py
+│   ├── compare_bago_etl_vs_bedrock_kb.py
 │   └── generate_dynamic_readme.py
 ├── docs/
 │   ├── ontology_generator.md  # L1 → L2 → L3 gobernado
 │   ├── governed_rag.md        # L4: retrieval + filtros + citas
 │   ├── mcp_governance.md      # L5: capabilities + permits + receipts
-│   └── aws_bedrock_setup.md   # L6: IAM + quotas + costes + live checklist
+│   ├── aws_bedrock_setup.md   # L6: IAM + quotas + costes + live checklist
+│   └── bedrock_knowledge_base.md # L7: retrieval + citations + IAM
 ├── l2_etl_metadata.db           # 65 chunks indexados
 ├── LAB_CONTRACT.md              # Límites con BAGO canónico
 ├── ARCHITECTURE.md              # Decisiones arquitectónicas
@@ -172,7 +178,7 @@ BAGO_AGENTIC_DATA_LAB/
 ### Skills Evidenciadas
 
 ✅ **Python avanzado** - pytest, dataclasses, type hints  
-✅ **Testing CRIT P0** - 74 tests passing, 0 failures
+✅ **Testing CRIT P0** - 84 tests passing, 0 failures
 ✅ **ETL / Data Pipelines** - 6 stages, idempotencia, receipts  
 ✅ **Content hashing** - SHA-256 para deduplicación  
 ✅ **LangGraph StateGraph** - nodes, edges, TypedDict state  
@@ -181,10 +187,12 @@ BAGO_AGENTIC_DATA_LAB/
 ✅ **Governed RAG** - BM25-like + semantic hash baseline, hybrid fusion, reranking y filtros
 ✅ **Governed MCP** - discovery, registry, effect classification, permits y receipts
 ✅ **AWS Bedrock Provider** - Converse/streaming gobernados, retries, quotas, costes y receipts offline
+✅ **Bedrock Knowledge Base** - Retrieve/RetrieveAndGenerate, metadata filters, citations y comparación ETL offline
 
 ⏳ **En progreso:**
 - Validación live AWS con credenciales/model access (L6)
-- Bedrock Knowledge Base (L7)
+- Validación live AWS de Knowledge Base (L7)
+- Metadata Catalog (L8)
 
 ---
 
@@ -212,6 +220,10 @@ python scripts/render_mcp_evidence_video.py
 python -m pytest tests/test_bedrock_integration.py -v
 python scripts/benchmark_bedrock_provider.py
 
+# Comparar la misma query en BAGO ETL y Bedrock Knowledge Base fixture
+python -m pytest tests/test_bedrock_kb_adapter.py -v
+python scripts/compare_bago_etl_vs_bedrock_kb.py
+
 # Regenerar evidencia visual de L3
 python scripts/generate_l3_ontology_evidence.py
 
@@ -238,4 +250,4 @@ MIT License - Ver [LICENSE](LICENSE) para detalles.
 
 **Nota:** Este README se genera dinámicamente. Para actualizar métricas ejecutar `python scripts/generate_dynamic_readme.py`
 
-Generado: 2026-09-22 01:58:46
+Generado: 2026-09-22 02:22:18

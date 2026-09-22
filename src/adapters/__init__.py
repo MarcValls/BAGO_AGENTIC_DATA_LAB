@@ -11,6 +11,15 @@ from .bedrock_provider_adapter import (
     BedrockUsage,
     GovernedBedrockAdapter,
 )
+from .bedrock_kb_adapter import (
+    BedrockKBAdapter,
+    BedrockKBHit,
+    BedrockKBReceipt,
+    BedrockKBResult,
+    BedrockKnowledgeBaseAdapter,
+    BedrockKnowledgeBasePolicy,
+    GovernedBedrockKnowledgeBaseAdapter,
+)
 from .mcp_adapter import (
     CapabilityDescriptor,
     CapabilityRegistry,
@@ -24,6 +33,12 @@ from .mcp_adapter import (
 __all__ = [
     "BedrockCallReceipt",
     "BedrockCallResult",
+    "BedrockKBAdapter",
+    "BedrockKBHit",
+    "BedrockKBReceipt",
+    "BedrockKBResult",
+    "BedrockKnowledgeBaseAdapter",
+    "BedrockKnowledgeBasePolicy",
     "BedrockConfigurationError",
     "BedrockErrorKind",
     "BedrockGovernanceError",
@@ -38,4 +53,5 @@ __all__ = [
     "MCPGovernancePolicy",
     "RegisteredCapability",
     "GovernedBedrockAdapter",
+    "GovernedBedrockKnowledgeBaseAdapter",
 ]

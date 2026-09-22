@@ -332,6 +332,7 @@ BAGO, permite el READ y bloquea el WRITE antes de enviarlo al servidor.
 **Duración:** 1 semana  
 **Fecha objetivo:** 2026-11-09  
 **🎯 CANDIDATURA Devoteam (~93% fit)**
+**Estado:** ✅ VERIFIED (adapter y comparación offline, 2026-09-22; AWS live `NOT_RUN`)
 
 ### Comparativa Explícita
 
@@ -346,9 +347,13 @@ BAGO, permite el READ y bloquea el WRITE antes de enviarlo al servidor.
 
 ### Entregables
 
-- [ ] src/adapters/bedrock_kb_adapter.py
-- [ ] vidence/bago_etl_vs_bedrock_kb_comparison.md
-- [ ] Evidence: misma query respondida por ambos sistemas
+- [x] src/adapters/bedrock_kb_adapter.py
+- [x] tests/test_bedrock_kb_adapter.py (10 checks offline, cliente inyectado)
+- [x] docs/bedrock_knowledge_base.md (Retrieve, citations, ingestion, IAM)
+- [x] scripts/compare_bago_etl_vs_bedrock_kb.py
+- [x] evidence/bago_etl_vs_bedrock_kb_comparison.md
+- [x] Evidence: misma query recuperada/generada por ambos fixtures
+- [ ] Evidence: misma query contra Knowledge Base AWS real (NOT_RUN: faltan cuenta, IAM y credenciales)
 
 ---
 
