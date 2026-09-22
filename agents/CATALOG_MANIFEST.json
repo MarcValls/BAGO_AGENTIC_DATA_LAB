@@ -1,0 +1,24 @@
+{
+  "catalog": "BAGO Agentic Data Lab",
+  "scope": "reference-only",
+  "activation": "none",
+  "generated_on": "2026-09-22",
+  "source_policy": "curated copies; originals preserved",
+  "groups": {
+    "01-gobierno-orquestacion": "arranque, contexto, coordinación y entrega",
+    "02-exploracion-arquitectura": "exploración, arquitectura, modularidad y archivo",
+    "03-backend-contratos": "backend y contratos frontend-backend",
+    "04-frontend-ui": "frontend, UI, estado y navegación",
+    "05-seguridad-verdad": "seguridad, sinceridad, comandos y aislamiento",
+    "06-tests-calidad-release": "tests, higiene, análisis, verificación y release",
+    "07-sincronizacion": "Git, documentación y sincronización de runtime",
+    "08-runtime-supervision": "infraestructura de agentes",
+    "09-activadores-no-agentes": "skills y paquetes de activación, no agentes"
+  },
+  "status_vocabulary": {
+    "active-source": "definición localizada en el checkout operativo de origen",
+    "canonical-project-agent": "definición propia del laboratorio destino",
+    "historical": "copia procedente de un paquete, rollback o worktree histórico",
+    "reference": "herramienta, skill o infraestructura agrupada para consulta"
+  }
+}
