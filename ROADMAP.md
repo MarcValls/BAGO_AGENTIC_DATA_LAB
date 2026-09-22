@@ -362,6 +362,9 @@ BAGO, permite el READ y bloquea el WRITE antes de enviarlo al servidor.
 **Duración:** 1 semana  
 **Fecha objetivo:** 2026-11-16
 
+**Estado:** ✅ VERIFIED (adapter, gobernanza y evidencia offline, 2026-09-22;
+OpenMetadata/Docker live `NOT_RUN`)
+
 ### Features a Integrar
 
 - Catalog search
@@ -373,9 +376,14 @@ BAGO, permite el READ y bloquea el WRITE antes de enviarlo al servidor.
 
 ### Entregables
 
-- [ ] src/adapters/openmetadata_adapter.py
-- [ ] OpenMetadata local running (Docker)
-- [ ] Evidence: lineage completo de un documento desde source hasta chunk
+- [x] src/adapters/openmetadata_adapter.py
+- [x] tests/test_openmetadata_adapter.py (12 checks offline, cliente inyectado)
+- [x] docs/openmetadata_catalog.md
+- [x] scripts/generate_l8_catalog_evidence.py
+- [x] evidence/l8_openmetadata_catalog.md (search, source → asset → chunk,
+  ownership, schema version, quality rule y receipts)
+- [ ] OpenMetadata local running (Docker) (`NOT_RUN`: docker no está instalado)
+- [ ] Evidence: misma validación contra servidor OpenMetadata real (`NOT_RUN`)
 
 ---
 
