@@ -1,6 +1,6 @@
 # Current State — BAGO Agentic Data Lab
 
-**Updated:** 2026-09-23
+**Updated:** 2026-09-24
 **Current phase:** L15 · OpenTelemetry + Jaeger Local Live
 **Status:** VERIFIED for the local RDF/Turtle materialization, bounded SPARQL
 subset, deterministic inference, contradiction constraints, RAG seed handoff,
@@ -8,8 +8,11 @@ the real local OpenMetadata 1.12.6 validation, the local restricted sandbox
 execution boundary, the local trace/evaluation chain, the public zero-cost E2E
 demo executed by the same CI contract, the persistent local SQLite vector
 index consumed by GovernedRAG and the local OpenTelemetry → Jaeger trace
-projection;
-AWS/OpenMetadata remote/commercetools live integrations remain `NOT_RUN`;
+projection; one bounded live AWS Bedrock `Converse` call through the governed
+adapter is `VERIFIED`;
+AWS `ConverseStream`, Bedrock Knowledge Base, remote OpenMetadata,
+commercetools live integrations and AWS billing/free-tier eligibility remain
+`NOT_RUN`;
 GitHub issue #14 is separately executed and verified under human authorization.
 **Tests:** 146/146 passing en la suite combinada; L10 aporta 4 checks offline,
 L8 aporta 13 checks de adapter más la validación live local, L9 aporta 7 checks
@@ -19,7 +22,8 @@ checks de trace, linkage y eval determinista; L13 aporta 3 checks de demo E2E,
 composición y límites externos; L14 aporta 4 checks de persistencia, metadata
 gate, reload y backend semántico persistente; L15 aporta 3 checks de endpoint,
 parent links, evidencia inmutable y fallo del exporter.
-**Next phase:** AWS live sólo con créditos/free tier o una necesidad laboral concreta
+**Next phase:** confirm AWS Billing/free-tier state before any additional cloud
+call; keep streaming, Knowledge Base and remote integrations separately scoped
 **Evidence:** `evidence/l3_ontology_graph.md` with integrity PASS and
 `evidence/retrieval_benchmark_results.md` with 48 reproducible benchmark rows;
 `evidence/mcp_governed_demo.md` with a real local stdio round trip and a
@@ -50,14 +54,20 @@ filtering, GovernedRAG integration, stable reload fingerprint and zero-cost
 validation;
 `evidence/l15_otel_jaeger_live.md` with the public E2E trace exported over
 OTLP/HTTP to local Jaeger and queried back with 15 observed spans;
+`evidence/l6_aws_live.md` with one real AWS Bedrock `Converse` call, governed
+permit/receipt, 41-token usage and masked account identity;
 `evidence/l9_authorized_actions_20260922.md` records the later human-authorized
 GitHub issue #14 and the workspace-binding follow-up;
 `evidence/ontology_proposal.md` and `evidence/ontology_proposal_examples.md`
 are reproducible review artifacts.
 **L6 boundary:** `Converse` and `ConverseStream` are implemented behind an
 optional boto3 client with bounded retries, error taxonomy and local quota.
-No AWS credentials, model access or live cloud measurement were available for
-this closure, so production connectivity remains `NOT_RUN`.
+One real `Converse` call passed in `us-east-1` with
+`amazon.nova-lite-v1:0`, 41 total tokens and a governed receipt. The call used
+the account's root principal, so it does not validate least-privilege IAM.
+The receipt's `cost_usd: 0.0` is an adapter estimate, not a billing record;
+AWS billing/free-tier eligibility, `ConverseStream` and Knowledge Base live
+validation remain `NOT_RUN`.
 **L7 boundary:** `Retrieve` and `RetrieveAndGenerate` are implemented behind
 an optional `bedrock-agent-runtime` client with KB allowlists, metadata filters,
 citations, retries, quotas and receipts. The comparison uses a fixture, not a
@@ -66,14 +76,16 @@ live managed Knowledge Base.
 quality-rule definitions are implemented behind an injected or optional HTTP
 client with allowlists, permits, retries, quotas and receipts. The local
 OpenMetadata 1.12.6 Docker deployment, authenticated transport and temporary
-fixture validation are now `VERIFIED`; remote OpenMetadata and AWS remain
-`NOT_RUN`.
+fixture validation are now `VERIFIED`; remote OpenMetadata and managed AWS
+catalog integrations remain `NOT_RUN`; the direct L6 `Converse` call is
+covered separately by `evidence/l6_aws_live.md`.
 **L9 boundary:** the LangGraph agent composes governed RAG, MCP and optional
 Bedrock provider calls. The local MCP READ and injected Bedrock fixture were
 executed; CREATE and WRITE proposals still stop before transport until a
 permit. GitHub issue #14 was created only after explicit human approval and is
 verified separately. AWS and commercetools live integrations remain
-`NOT_RUN`.
+`NOT_RUN` for production cloud claims; the direct L6 `Converse` call is
+covered separately by `evidence/l6_aws_live.md`.
 **L10 boundary:** the engine is a local in-memory RDF graph with a documented
 SPARQL `SELECT` subset, not a deployed triplestore or a complete W3C SPARQL
 implementation. An explicit contradiction produces `CONSTRAINT_VIOLATION`; the

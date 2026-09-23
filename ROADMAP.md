@@ -325,7 +325,8 @@ BAGO, permite el READ y bloquea el WRITE antes de enviarlo al servidor.
 **Duración:** 1 semana  
 **Fecha objetivo:** 2026-11-02  
 **🎯 CANDIDATURA Tuio (~96% fit)**
-**Estado:** ✅ VERIFIED (adapter gobernado offline, 2026-09-22; AWS live `NOT_RUN`)
+**Estado:** ✅ VERIFIED (adapter offline + una llamada AWS `Converse` real,
+2026-09-24; streaming/Knowledge Base/billing siguen `NOT_RUN`)
 
 ### Conceptos a Aprender
 
@@ -347,7 +348,9 @@ BAGO, permite el READ y bloquea el WRITE antes de enviarlo al servidor.
 - [x] tests/test_bedrock_integration.py (10 checks offline, cliente inyectado)
 - [x] docs/aws_bedrock_setup.md (IAM, quotas, costes)
 - [x] Evidence: benchmark offline de latency/cost por modelo
-- [ ] Evidence: llamada AWS real `Converse`/`ConverseStream` (NOT_RUN: faltan credenciales y acceso de cuenta)
+- [x] Evidence: una llamada AWS real `Converse` con receipt gobernado
+- [ ] Evidence: llamada AWS real `ConverseStream` (separada; `NOT_RUN`)
+- [ ] Evidence: billing/free-tier confirmado en AWS Billing (`NOT_RUN`)
 
 ---
 
@@ -633,19 +636,19 @@ observabilidad productiva.
 `yaml
 CURRENT_PHASE: L15
 COMPLETION: L15 OpenTelemetry projection to local Jaeger and query validation VERIFIED
-NEXT_MILESTONE: AWS live only with credits/free tier or a concrete job need
-BLOCKERS: AWS, commercetools and GitHub live identities are not configured
+NEXT_MILESTONE: confirm AWS Billing/free-tier coverage, then optionally validate ConverseStream
+BLOCKERS: AWS billing/least-privilege and remaining remote live identities are not closed
 P0_ISSUES: 0
 P1_ISSUES: 0
 TESTS_PASSING: 146/146 (L8 + L9 + L10 + L11 + L12 + L13 + L14 + L15 + README generator contract + workspace binding contract)
-EVIDENCE_GENERATED: L8 local live + L10 ontology + L11 sandbox + L12 trace/eval + L13 public E2E + L14 vector + L15 OTLP/Jaeger receipts plus prior L9 evidence
+EVIDENCE_GENERATED: L6 live Converse + L8 local live + L10 ontology + L11 sandbox + L12 trace/eval + L13 public E2E + L14 vector + L15 OTLP/Jaeger receipts plus prior L9 evidence
 LEARNING_ENTRIES: L0-L15
-NEXT_ACTION: Keep AWS and OpenMetadata remote live NOT_RUN; use the public E2E, CI, local vector backend and Jaeger trace as the portfolio baseline
+NEXT_ACTION: verify AWS Billing/free-tier coverage for the bounded L6 call; keep streaming, Knowledge Base and remote integrations separately scoped
 `
 
 ---
 
-**Última actualización:** 2026-09-23
+**Última actualización:** 2026-09-24
 **Próxima revisión:** Al completar cada fase
 
 ---
