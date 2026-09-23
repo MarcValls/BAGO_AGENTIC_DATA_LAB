@@ -602,3 +602,53 @@ sin convertirse por ello en una autoridad adicional.
 - ⚠️ El eval comprueba gobernanza y evidencia, no calidad semántica del LLM.
 - ⚠️ AWS live continúa pospuesto hasta créditos/free tier o una necesidad laboral.
 
+---
+
+### 2026-09-23 — L13 Public E2E Demo and CI
+
+**Fase:** L13
+**Estado:** `VERIFIED` para la composición local reproducible y el contrato CI;
+AWS live, OpenMetadata remoto, commercetools y observabilidad de producción
+siguen fuera del alcance.
+
+**Qué entendí:**
+
+Una demo pública útil no es un script que sólo imprime una respuesta. Tiene que
+recorrer las mismas fronteras que el sistema: retrieval, relaciones, evidencia,
+autorización, ejecución acotada, receipt, trace y eval. La CI convierte esa
+secuencia en un contrato repetible para cada push y pull request.
+
+**Qué implementé:**
+
+- `scripts/run_public_e2e_demo.py`: fixture determinista RAG → Ontology Engine
+  → cliente Bedrock-shaped → sandbox pytest tipado → trace → eval.
+- `tests/test_public_e2e_demo.py`: tres checks de resultado, evidencia y
+  límites externos.
+- `requirements.txt`: versiones fijadas para reproducir localmente la suite y
+  la demo.
+- `.github/workflows/ci.yml`: tests, README generado, demo y compilación en
+  Python 3.11.
+- `docs/public_e2e_demo.md` y `evidence/public_e2e_demo.md`.
+
+**Evidence:**
+
+La ejecución local devuelve `PASS`, coste `0.0 USD`, dos hits RAG, cuatro paths
+ontológicos, dos triples inferidos, sandbox `SUCCESS`, 15 eventos de trace y
+eval `1.00`. La CI queda limitada a verificar el checkout; no autoriza ni
+simula integraciones cloud.
+
+**Failure modes que ahora evito:**
+
+- Declarar una demo E2E cuando sólo se probó un adapter aislado.
+- Confundir un cliente fixture con AWS live.
+- Ejecutar pytest como shell arbitrario: la demo usa `ProcessRequest` tipada,
+  `Permit` y `LocalRestrictedBackend`.
+- Publicar una cifra de tests o README que no coincide con el checkout.
+
+**Gaps restantes:**
+
+- ⚠️ La CI verifica el backend local; no es despliegue cloud ni observabilidad
+  productiva.
+- ⚠️ AWS live continúa pospuesto hasta créditos/free tier o una necesidad
+  laboral concreta.
+

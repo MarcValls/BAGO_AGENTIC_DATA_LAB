@@ -1,19 +1,21 @@
 # Current State — BAGO Agentic Data Lab
 
 **Updated:** 2026-09-23
-**Current phase:** L12 · Local Observability & Evals
+**Current phase:** L13 · Public E2E Demo & CI
 **Status:** VERIFIED for the local RDF/Turtle materialization, bounded SPARQL
 subset, deterministic inference, contradiction constraints, RAG seed handoff,
 the real local OpenMetadata 1.12.6 validation, the local restricted sandbox
-execution boundary and the local trace/evaluation chain;
+execution boundary, the local trace/evaluation chain and the public zero-cost
+E2E demo executed by the same CI contract;
 AWS/OpenMetadata remote/commercetools live integrations remain `NOT_RUN`;
 GitHub issue #14 is separately executed and verified under human authorization.
-**Tests:** 136/136 passing en la suite combinada; L10 aporta 4 checks offline,
+**Tests:** 139/139 passing en la suite combinada; L10 aporta 4 checks offline,
 L8 aporta 13 checks de adapter más la validación live local, L9 aporta 7 checks
 offline, workspace binding aporta 6 checks de contrato y L11 aporta 14 checks
 de escapes, permisos, proceso tipado, timeout, entorno y gateway; L12 aporta 5
-checks de trace, linkage y eval determinista.
-**Next phase:** public end-to-end demo and CI
+checks de trace, linkage y eval determinista; L13 aporta 3 checks de demo E2E,
+composición y límites externos.
+**Next phase:** AWS live sólo con créditos/free tier o una necesidad laboral concreta
 **Evidence:** `evidence/l3_ontology_graph.md` with integrity PASS and
 `evidence/retrieval_benchmark_results.md` with 48 reproducible benchmark rows;
 `evidence/mcp_governed_demo.md` with a real local stdio round trip and a
@@ -37,6 +39,8 @@ constraint detection → injected LLM context and a zero-cost receipt;
 denial, typed pytest, filtered environment and fail-closed OS-network receipt;
 `evidence/l12_observability_evals.md` with the local agent → retrieval → permit
 → execution → sandbox → receipt → eval chain;
+`evidence/public_e2e_demo.md` with the public clone-and-run chain, zero-cost
+fixture, typed pytest sandbox, local trace and PASS evaluation;
 `evidence/l9_authorized_actions_20260922.md` records the later human-authorized
 GitHub issue #14 and the workspace-binding follow-up;
 `evidence/ontology_proposal.md` and `evidence/ontology_proposal_examples.md`
@@ -74,6 +78,10 @@ network isolation fail closed and remain `NOT_RUN`.
 JSON trace/evidence checks only. No collector, production telemetry or LLM
 answer-quality claim is made; external provider and OpenMetadata remote calls
 remain `NOT_RUN`.
+**L13 boundary:** the public demo composes local fixtures and injected clients;
+GitHub Actions verifies the repository contract but does not promote cloud or
+production claims. AWS live, remote OpenMetadata and commercetools remain
+`NOT_RUN`.
 **Ontology generator:** metadata and relation proposals remain `PROPOSED` until
 validator plus human/contract approval; no automatic canonical promotion.
 Current proposal run: 16 entities and 0 explicit relations in the BAGO source

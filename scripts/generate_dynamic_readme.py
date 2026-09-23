@@ -471,6 +471,7 @@ def render_readme(
         None,
     )
     current_status = current_phase["status"] if current_phase else state["status_label"]
+    ci_workflow = project.get("ci_workflow", ".github/workflows/readme-consistency.yml")
     roles = parse_roles()
     skills = parse_skills()
     soft_skills = parse_soft_skills()
@@ -488,6 +489,7 @@ def render_readme(
     lines = [
         f"# {project['emoji']} {project['title']}",
         "",
+        f"[![CI]({project['repository']}/actions/workflows/{ci_workflow}/badge.svg)]({project['repository']}/actions/workflows/{ci_workflow})",
         f"[![GitHub]({project['repository']}/actions/workflows/readme-consistency.yml/badge.svg)]({project['repository']}/actions/workflows/readme-consistency.yml)",
         f"[![Branch](https://img.shields.io/badge/branch-{branch_badge}-green)]({project['repository']}/tree/{branch})",
         f"[![Tests](https://img.shields.io/badge/{test_badge}-brightgreen)]({project['repository']}/actions)",
@@ -589,12 +591,19 @@ def render_readme(
         "",
         _markdown_list(infrastructure),
         "",
+        "### CI automática",
+        "",
+        f"- {_inline(f'.github/workflows/{ci_workflow}')} · suite, README, demo E2E y compile check",
+        "",
         "## Comandos reproducibles",
         "",
         FENCE + "bash",
+        "python -m pip install -r requirements.txt",
         "python -m pytest tests -q",
         "python scripts/generate_dynamic_readme.py",
         "python scripts/generate_dynamic_readme.py --check --skip-tests",
+        "python scripts/run_public_e2e_demo.py --check",
+        "python scripts/run_public_e2e_demo.py --write-evidence",
         "docker compose -p bago-openmetadata -f infra/openmetadata/docker-compose.yml up -d",
         "python scripts/run_l8_openmetadata_live_validation.py",
         "python scripts/run_sandbox_local_validation.py",

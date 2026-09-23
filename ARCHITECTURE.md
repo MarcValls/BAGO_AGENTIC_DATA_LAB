@@ -194,6 +194,8 @@ class Receipt:
 | SandboxManager | LocalRestrictedBackend | Workspace, process, credential and fail-closed execution limits | L11 |
 | LocalTraceBuilder | Local JSON trace | Workflow, retrieval, permits, sandbox and receipt linkage | L12 |
 | LocalTraceEvaluator | Deterministic local checks | Coverage, evidence linkage and unauthorized-effect checks | L12 |
+| Public E2E Demo | Committed fixtures + local boundaries | Clone-and-run composition with stable PASS gates | L13 |
+| GitHub Actions CI | Python 3.11 + pinned requirements | Suite, README, E2E and compile verification | L13 |
 
 ---
 
@@ -353,6 +355,21 @@ modelo.
 - ✅ Evals de gobernanza ejecutables offline
 - ❌ No es todavía observabilidad de producción ni evaluación semántica LLM
 
+### ADR-006: Public E2E composition before cloud live
+
+**Decisión:** Cerrar una ruta pública reproducible que componga las fronteras
+locales ya verificadas antes de introducir una dependencia cloud adicional.
+
+**Racional:** Una demo E2E sólo aporta evidencia profesional si atraviesa la
+misma cadena de retrieval, reasoning, authorization, sandbox, receipt, trace y
+eval que el diseño declara. La CI repite esa cadena en cada push y pull request.
+
+**Consecuencias:**
+
+- ✅ Clone-and-run sin credenciales, Docker ni coste
+- ✅ La CI detecta deriva de tests, README, demo y compilación
+- ❌ No convierte fixtures en AWS live, OpenMetadata remoto ni producción
+
 ---
 
 ## Roadmap de Implementación
@@ -378,6 +395,7 @@ gantt
     L10: Ontology Engine          :done, des11, after des10, 1d
     L11: Governed Sandbox         :done, des12, after des11, 1d
     L12: Local Observability      :done, des13, after des12, 1d
+    L13: Public E2E + CI           :done, des14, after des13, 1d
 `
 
 ---
@@ -385,9 +403,9 @@ gantt
 ## Estado Actual
 
 `yaml
-FASE: L12 (Local Observability & Evals)
-COMPLETION: L12 local trace and deterministic eval scope VERIFIED
-NEXT_MILESTONE: public end-to-end demo and CI
+FASE: L13 (Public E2E Demo & CI)
+COMPLETION: L13 public local E2E composition and CI contract VERIFIED
+NEXT_MILESTONE: AWS live only with credits/free tier or a concrete job need
 BLOCKERS: AWS/OpenMetadata live no autorizados o no configurados
 `
 

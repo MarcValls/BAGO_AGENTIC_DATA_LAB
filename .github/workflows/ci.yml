@@ -1,0 +1,35 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+          cache-dependency-path: requirements.txt
+      - name: Install reproducible dependencies
+        run: python -m pip install --upgrade pip
+      - name: Install project dependencies
+        run: python -m pip install -r requirements.txt
+      - name: Run complete test suite
+        run: python -m pytest tests -q
+      - name: Check generated README
+        run: python scripts/generate_dynamic_readme.py --check --skip-tests
+      - name: Check public E2E demo
+        run: python scripts/run_public_e2e_demo.py --check
+      - name: Compile source and scripts
+        run: python -m compileall -q src scripts

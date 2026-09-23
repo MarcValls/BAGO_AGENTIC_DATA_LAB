@@ -631,19 +631,51 @@ observabilidad productiva.
 ## Estado Operativo
 
 `yaml
-CURRENT_PHASE: L12
-COMPLETION: L12 local observability/evals scope VERIFIED
-NEXT_MILESTONE: public end-to-end demo and CI
+CURRENT_PHASE: L13
+COMPLETION: L13 public local E2E composition and CI contract VERIFIED
+NEXT_MILESTONE: AWS live only with credits/free tier or a concrete job need
 BLOCKERS: AWS, commercetools and GitHub live identities are not configured
 P0_ISSUES: 0
 P1_ISSUES: 0
-TESTS_PASSING: 136/136 (L8 + L9 + L10 + L11 + L12 + README generator contract + workspace binding contract)
-EVIDENCE_GENERATED: L8 local live + L10 ontology + L11 sandbox + L12 trace/eval receipts plus prior L9 evidence
-LEARNING_ENTRIES: L0-L12
-NEXT_ACTION: Keep AWS and OpenMetadata remote live NOT_RUN; build public end-to-end demo and CI
+TESTS_PASSING: 139/139 (L8 + L9 + L10 + L11 + L12 + L13 + README generator contract + workspace binding contract)
+EVIDENCE_GENERATED: L8 local live + L10 ontology + L11 sandbox + L12 trace/eval + L13 public E2E receipts plus prior L9 evidence
+LEARNING_ENTRIES: L0-L13
+NEXT_ACTION: Keep AWS and OpenMetadata remote live NOT_RUN; use the public E2E and CI as the portfolio baseline
 `
 
 ---
 
 **Última actualización:** 2026-09-23
 **Próxima revisión:** Al completar cada fase
+
+---
+
+## L13 · PUBLIC E2E DEMO AND CI
+
+**Prioridad:** coste `0` + evidencia pública + ejecución repetible
+**Estado:** ✅ VERIFIED para la ruta local y sus gates de CI
+
+### Criterio de cierre
+
+La demo debe poder ejecutarse desde un clon público con `requirements.txt`, sin
+credenciales ni servicios externos, y debe recorrer:
+
+```text
+RAG → Ontology Engine → injected LLM context
+  → typed pytest sandbox → receipt → LocalTrace → deterministic eval
+```
+
+### Entregables
+
+- [x] `scripts/run_public_e2e_demo.py --check`
+- [x] `tests/test_public_e2e_demo.py` (3 checks)
+- [x] `requirements.txt` con versiones fijadas
+- [x] `.github/workflows/ci.yml` con suite, README, demo y compile gates
+- [x] `docs/public_e2e_demo.md`
+- [x] `evidence/public_e2e_demo.md`
+
+### Límite explícito
+
+La CI demuestra la integridad del checkout y de la ruta local. No equivale a
+AWS live, OpenMetadata remoto, commercetools live ni observabilidad productiva;
+esas integraciones siguen `NOT_RUN`.

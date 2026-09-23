@@ -160,8 +160,8 @@
 | Bedrock Knowledge Bases | Alta | 🟡 Baseline offline | 🎯 Proficient | L7 Retrieve/Generate + citations | Live KB evaluation |
 | OpenMetadata Catalog | Media | 🟢 Local live verificado | 🎯 Proficient | L8 adapter + Docker local + lineage/quality receipts | OpenMetadata remoto |
 | IAM | Alta | 🟡 Basic | 🎯 Configurable | L6 least-privilege setup | Live policy check |
-| CI/CD | Alta | 🟡 Basic | 🎯 Implementado | GitHub Actions | L1 completado |
-| Evaluation | Muy Alta | 🟢 Local governance evals | 🎯 Framework | 136 tests + trace/evidence linkage + L8/L9/L10/L11/L12 scenarios | L12 local |
+| CI/CD | Alta | 🟢 Reproducible | 🎯 Implementado | GitHub Actions + pinned requirements + public E2E | L13 CI |
+| Evaluation | Muy Alta | 🟢 Local governance evals | 🎯 Framework | 139 tests + trace/evidence linkage + L8/L9/L10/L11/L12/L13 scenarios | L13 local + CI |
 | Observability | Alta | 🟢 Local trace verified | 🎯 Completo | LocalTrace: workflow + retrieval + permit + sandbox + receipts | L12 local; collector externo separado |
 | Secure execution | Muy Alta | 🟢 Local backend verified | 🎯 Implementado | BAGO auth boundary + LocalRestrictedBackend + escape tests | L11 local |
 | Authorization | Muy Alta | ✅ Diseñado | 🎯 Implementado | BAGO permits | L1 completado |
