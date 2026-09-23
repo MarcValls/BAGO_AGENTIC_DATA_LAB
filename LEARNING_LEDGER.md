@@ -568,3 +568,37 @@ cuando se pide aislamiento OS que no existe, falla cerrado y lo evidencia."*
   una demo E2E pública reproducible.
 - ⚠️ AWS live continúa pospuesto hasta créditos/free tier o una necesidad laboral.
 
+---
+
+### 2026-09-23 — L12 Local Observability and Evals
+
+**Fase:** L12
+**Estado:** `VERIFIED` para el trace local y las comprobaciones deterministas;
+collector externo y evaluación semántica de LLM siguen fuera del alcance.
+
+**Qué entendí:**
+
+La observabilidad útil para BAGO no empieza por enviar logs a un SaaS. Empieza
+por conservar la relación entre el workflow, el retrieval, el permit, el
+efecto, el sandbox y el receipt. Un eval local puede verificar que esa cadena
+está completa y que una acción `DENY` o `REQUIRE_HUMAN` no produjo un efecto,
+sin convertirse por ello en una autoridad adicional.
+
+**Qué implementé:**
+
+- `src/observability/local_trace.py`: trace ordenado, parent links, eventos y
+  referencias de evidencia para `AgentRun`, receipts y sandbox.
+- `src/evaluation/local_evals.py`: checks deterministas de cobertura, retrieval,
+  permits, receipts, efectos no autorizados y sandbox.
+- `tests/test_l12_observability.py`: cinco checks de integración y fallos
+  controlados.
+- `scripts/run_l12_observability_evidence.py` y
+  `evidence/l12_observability_evals.md`: fixture Bedrock-shaped, pytest tipado
+  local y evaluación PASS sin red ni coste.
+
+**Gaps restantes:**
+
+- ⚠️ No es todavía OpenTelemetry/collector ni observabilidad de producción.
+- ⚠️ El eval comprueba gobernanza y evidencia, no calidad semántica del LLM.
+- ⚠️ AWS live continúa pospuesto hasta créditos/free tier o una necesidad laboral.
+

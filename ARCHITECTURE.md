@@ -192,6 +192,8 @@ class Receipt:
 | GovernedKnowledgeAgent | LangGraph + RAG + MCP + Bedrock | End-to-end orchestration, proposals, permits, receipts y evidence | L9 |
 | OntologyEngine | Local RDF/Turtle + bounded SPARQL | Relation paths, inference, constraints, contradiction receipts | L10 |
 | SandboxManager | LocalRestrictedBackend | Workspace, process, credential and fail-closed execution limits | L11 |
+| LocalTraceBuilder | Local JSON trace | Workflow, retrieval, permits, sandbox and receipt linkage | L12 |
+| LocalTraceEvaluator | Deterministic local checks | Coverage, evidence linkage and unauthorized-effect checks | L12 |
 
 ---
 
@@ -236,6 +238,11 @@ class Receipt:
     - El backend local sólo ofrece política lógica `network=deny`
     - El aislamiento OS requerido permanece explícitamente `NOT_RUN`
 
+11. **La observabilidad no concede autoridad**
+    - Un trace sólo normaliza eventos y receipts ya producidos
+    - Un eval local puede fallar por evidencia incompleta, pero nunca autoriza
+      ni promueve una acción
+
 ---
 
 ## Estrategia de Testing
@@ -254,6 +261,7 @@ class Receipt:
 - Ontology Engine con RDF/Turtle, SPARQL, inference y constraint receipt
 - Sandbox local con escapes de ruta, allowlists de proceso, timeout, entorno
   filtrado, Git read-only y receipts de denegación
+- Trace local con workflow, retrieval, permits, sandbox, receipts y evals
 
 ### Tests de Gobernanza (CRÍTICOS)
 
@@ -329,6 +337,22 @@ ni dependencia operativa.
 - ✅ El contrato puede adaptarse más tarde a un triplestore real
 - ❌ El alcance actual no es un triplestore desplegado ni SPARQL completo
 
+### ADR-005: Observabilidad local antes que collector externo
+
+**Decisión:** Normalizar los eventos y receipts existentes en un trace local y
+evaluarlos con reglas deterministas antes de introducir OpenTelemetry, un
+collector o un servicio externo.
+
+**Racional:** Mantiene el coste en cero, hace pública la cadena de evidencia y
+evita confundir telemetría con autoridad o con una validación de calidad del
+modelo.
+
+**Consecuencias:**
+
+- ✅ Trace reproducible y enlazado a receipts
+- ✅ Evals de gobernanza ejecutables offline
+- ❌ No es todavía observabilidad de producción ni evaluación semántica LLM
+
 ---
 
 ## Roadmap de Implementación
@@ -352,6 +376,8 @@ gantt
     section Capstone
     L9: End-to-End Agent         :         des10, after des9, 14d
     L10: Ontology Engine          :done, des11, after des10, 1d
+    L11: Governed Sandbox         :done, des12, after des11, 1d
+    L12: Local Observability      :done, des13, after des12, 1d
 `
 
 ---
@@ -359,10 +385,10 @@ gantt
 ## Estado Actual
 
 `yaml
-FASE: L10 (Governed Ontology Engine)
-COMPLETION: L10 local scope VERIFIED
-NEXT_MILESTONE: OpenMetadata local real + observability/evals local
+FASE: L12 (Local Observability & Evals)
+COMPLETION: L12 local trace and deterministic eval scope VERIFIED
+NEXT_MILESTONE: public end-to-end demo and CI
 BLOCKERS: AWS/OpenMetadata live no autorizados o no configurados
 `
 
-**Última actualización:** 2026-09-22
+**Última actualización:** 2026-09-23

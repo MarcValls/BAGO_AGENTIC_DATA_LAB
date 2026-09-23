@@ -512,10 +512,8 @@ OpenMetadata remote, or a complete W3C SPARQL implementation.
 
 ### Orden posterior de trabajo sin coste
 
-1. Observabilidad y evals locales: trace → tool calls → retrieval → permit →
-   execution → receipt → eval.
-2. Demo end-to-end pública y CI automática.
-3. AWS live sólo con créditos/free tier o una necesidad laboral concreta.
+1. Demo end-to-end pública reproducible y CI automática.
+2. AWS live sólo con créditos/free tier o una necesidad laboral concreta.
 
 ---
 
@@ -562,11 +560,49 @@ queda fuera de este bloque.
 
 ### Orden posterior de trabajo sin coste
 
-1. Observabilidad/evals locales sobre trace → tool calls → retrieval → permit →
-   sandbox → receipt → eval.
-2. Demo end-to-end pública reproducible y CI automática.
-3. Backend OS-level sólo si existe una necesidad verificable y sin presentar
+1. Demo end-to-end pública reproducible y CI automática.
+2. Backend OS-level sólo si existe una necesidad verificable y sin presentar
    el backend local como aislamiento fuerte.
+
+---
+
+## L12 · LOCAL OBSERVABILITY AND EVALS
+
+**Prioridad:** coste `0` + evidencia pública + observabilidad/evals repetibles
+**Estado:** ✅ VERIFIED (trace local, sandbox receipt y eval determinista,
+2026-09-23)
+
+L12 conecta la evidencia que ya producían las fases anteriores sin añadir una
+segunda autoridad:
+
+```text
+AgentRun
+  ↓
+LocalTraceBuilder
+  ↓
+workflow → retrieval → tool → permit → execution → sandbox → receipt
+  ↓
+LocalTraceEvaluator
+  ↓
+EvaluationReport
+```
+
+### Entregables
+
+- [x] `src/observability/local_trace.py`
+- [x] `src/evaluation/local_evals.py`
+- [x] `tests/test_l12_observability.py` (5 checks)
+- [x] `scripts/run_l12_observability_evidence.py`
+- [x] `evidence/l12_observability_evals.md`
+- [x] `docs/observability_evals.md`
+
+### Explicit boundary
+
+La evidencia es local, serializable y determinista. Usa un cliente
+Bedrock-shaped inyectado y el `LocalRestrictedBackend`; no contacta AWS,
+OpenMetadata remoto ni un collector. El evaluador comprueba gobernanza y
+completitud de evidencia, no calidad semántica de una respuesta LLM ni
+observabilidad productiva.
 
 ---
 
@@ -595,16 +631,16 @@ queda fuera de este bloque.
 ## Estado Operativo
 
 `yaml
-CURRENT_PHASE: L11
-COMPLETION: L11 local restricted sandbox scope VERIFIED
-NEXT_MILESTONE: observability/evals local, then public end-to-end demo and CI
+CURRENT_PHASE: L12
+COMPLETION: L12 local observability/evals scope VERIFIED
+NEXT_MILESTONE: public end-to-end demo and CI
 BLOCKERS: AWS, commercetools and GitHub live identities are not configured
 P0_ISSUES: 0
 P1_ISSUES: 0
-TESTS_PASSING: 130/130 (L8 + L10 + L11 + README generator contract + L9 + workspace binding contract)
-EVIDENCE_GENERATED: L8 local live receipts + L10 ontology engine receipt + L11 sandbox receipts plus prior L9 evidence
-LEARNING_ENTRIES: L0-L11
-NEXT_ACTION: Keep AWS and OpenMetadata remote live NOT_RUN; implement local observability/evals
+TESTS_PASSING: 136/136 (L8 + L9 + L10 + L11 + L12 + README generator contract + workspace binding contract)
+EVIDENCE_GENERATED: L8 local live + L10 ontology + L11 sandbox + L12 trace/eval receipts plus prior L9 evidence
+LEARNING_ENTRIES: L0-L12
+NEXT_ACTION: Keep AWS and OpenMetadata remote live NOT_RUN; build public end-to-end demo and CI
 `
 
 ---

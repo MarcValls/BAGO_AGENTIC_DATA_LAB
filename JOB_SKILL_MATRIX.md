@@ -161,8 +161,8 @@
 | OpenMetadata Catalog | Media | 🟢 Local live verificado | 🎯 Proficient | L8 adapter + Docker local + lineage/quality receipts | OpenMetadata remoto |
 | IAM | Alta | 🟡 Basic | 🎯 Configurable | L6 least-privilege setup | Live policy check |
 | CI/CD | Alta | 🟡 Basic | 🎯 Implementado | GitHub Actions | L1 completado |
-| Evaluation | Muy Alta | 🟢 Framework baseline | 🎯 Framework | 130 tests + README/L8-live/L9/L10/L11 scenarios | L8/L10/L11 local |
-| Observability | Alta | 🟢 Reinforced | 🎯 Completo | Receipts + evidence links + ontology and sandbox receipts | L10/L11 local |
+| Evaluation | Muy Alta | 🟢 Local governance evals | 🎯 Framework | 136 tests + trace/evidence linkage + L8/L9/L10/L11/L12 scenarios | L12 local |
+| Observability | Alta | 🟢 Local trace verified | 🎯 Completo | LocalTrace: workflow + retrieval + permit + sandbox + receipts | L12 local; collector externo separado |
 | Secure execution | Muy Alta | 🟢 Local backend verified | 🎯 Implementado | BAGO auth boundary + LocalRestrictedBackend + escape tests | L11 local |
 | Authorization | Muy Alta | ✅ Diseñado | 🎯 Implementado | BAGO permits | L1 completado |
 | Auditability | Alta | ✅ Diseñado | 🎯 Implementado | BAGO receipts | L1 completado |
