@@ -43,6 +43,7 @@ COMPOSE_VERSION = os.environ.get("OPENMETADATA_VERSION", "1.12.6")
 EVIDENCE_PATH = REPO_ROOT / "evidence" / "l8_openmetadata_live.md"
 COMPOSE_PATH = REPO_ROOT / "infra" / "openmetadata" / "docker-compose.yml"
 ADAPTER_PATH = REPO_ROOT / "src" / "adapters" / "openmetadata_adapter.py"
+HEALTH_TIMEOUT_SECONDS = float(os.environ.get("OPENMETADATA_HEALTH_TIMEOUT_SECONDS", "180"))
 
 
 class LiveValidationError(RuntimeError):
@@ -128,6 +129,26 @@ def _login() -> str:
     if not isinstance(token, str) or not token:
         raise LiveValidationError("OpenMetadata login did not return accessToken")
     return token
+
+
+def _wait_for_healthy() -> Mapping[str, Any]:
+    """Wait for the freshly started local server without weakening fail-closed behavior."""
+    deadline = time.monotonic() + HEALTH_TIMEOUT_SECONDS
+    last_error = "no health response"
+    while True:
+        try:
+            status, health = _request_json("GET", HEALTH_URL)
+            if status == 200 and health.get("OpenMetadataServerHealthCheck", {}).get("healthy"):
+                return health
+            last_error = f"HTTP {status}: health response is not healthy"
+        except (LiveValidationError, OSError) as error:
+            last_error = _redact(str(error))
+        if time.monotonic() >= deadline:
+            raise LiveValidationError(
+                f"OpenMetadata healthcheck did not become healthy within "
+                f"{HEALTH_TIMEOUT_SECONDS:g}s: {last_error}"
+            )
+        time.sleep(2)
 
 
 def _create_entity(token: str, path: str, body: Mapping[str, Any]) -> dict[str, Any]:
@@ -233,7 +254,7 @@ def _write_evidence(result: Mapping[str, Any]) -> None:
     EVIDENCE_PATH.write_text("\n".join(evidence_lines) + "\n", encoding="utf-8")
 
 
-def run(*, keep_data: bool = False) -> dict[str, Any]:
+def run(*, keep_data: bool = False, write_evidence: bool = True) -> dict[str, Any]:
     checks: list[dict[str, str]] = []
     receipts: list[dict[str, Any]] = []
     resources: dict[str, dict[str, Any]] = {}
@@ -249,9 +270,7 @@ def run(*, keep_data: bool = False) -> dict[str, Any]:
     }
 
     try:
-        status, health = _request_json("GET", HEALTH_URL)
-        if status != 200 or not health.get("OpenMetadataServerHealthCheck", {}).get("healthy"):
-            raise LiveValidationError("OpenMetadata healthcheck is not healthy")
+        _wait_for_healthy()
         checks.append({"name": "server health", "status": "PASS", "detail": "HTTP 200; server/database/deadlocks healthy"})
 
         token = _login()
@@ -468,7 +487,8 @@ def run(*, keep_data: bool = False) -> dict[str, Any]:
             result["cleanup_status"] = "PASS" if not cleanup_errors else "PARTIAL"
             if cleanup_errors:
                 result["cleanup_errors"] = cleanup_errors
-    _write_evidence(result)
+    if write_evidence:
+        _write_evidence(result)
     return result
 
 
@@ -479,12 +499,18 @@ def main() -> int:
         action="store_true",
         help="keep the temporary OpenMetadata resources for manual inspection",
     )
+    parser.add_argument(
+        "--check",
+        action="store_true",
+        help="run the live validation and cleanup without rewriting the evidence file",
+    )
     args = parser.parse_args()
-    result = run(keep_data=args.keep_data)
+    result = run(keep_data=args.keep_data, write_evidence=not args.check)
     print(json.dumps({key: value for key, value in result.items() if key != "error"}, sort_keys=True))
     if result.get("error"):
         print(f"ERROR: {result['error']}", file=sys.stderr)
-    print(f"Evidence: {EVIDENCE_PATH}")
+    evidence_target = "NOT_WRITTEN (--check)" if args.check else str(EVIDENCE_PATH)
+    print(f"Evidence: {evidence_target}")
     return 0 if result.get("status") == "PASS" else 1
 
 

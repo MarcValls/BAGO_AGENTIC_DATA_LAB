@@ -11,7 +11,7 @@ permissions:
 jobs:
   verify:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 30
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -33,6 +33,13 @@ jobs:
         run: python scripts/run_public_e2e_demo.py --check
       - name: Check local vector store
         run: python scripts/run_l14_vector_store_validation.py --check
+      - name: Start local OpenMetadata
+        run: docker compose -p bago-openmetadata -f infra/openmetadata/docker-compose.yml up -d
+      - name: Check local OpenMetadata catalog
+        run: python scripts/run_l8_openmetadata_live_validation.py --check
+      - name: Stop local OpenMetadata
+        if: always()
+        run: docker compose -p bago-openmetadata -f infra/openmetadata/docker-compose.yml down -v
       - name: Start local Jaeger
         run: docker compose -p bago-otel -f infra/observability/docker-compose.yml up -d
       - name: Check local OpenTelemetry and Jaeger
