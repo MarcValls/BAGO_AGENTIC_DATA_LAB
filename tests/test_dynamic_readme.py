@@ -94,3 +94,16 @@ def test_rendered_readme_contains_dynamic_contract_and_l10_artifacts():
     assert "scripts/bago_sync_agent.py" in rendered
     assert "## Catálogo de agentes" in rendered
     assert "| `07-sincronizacion` |" in rendered
+
+
+def test_mermaid_labels_are_quoted_for_github_parser():
+    manifest = _read_json(ROOT / "docs" / "readme_manifest.json")
+    rendered = render_readme(
+        manifest=manifest,
+        state=parse_state(),
+        passing_tests=collected_test_count(),
+    )
+
+    assert 'L0["L0 Baseline & Lab Contract (COMPLETE)"]' in rendered
+    assert 'RAG["Governed RAG"]' in rendered
+    assert "L0[L0 Baseline & Lab Contract (COMPLETE)]" not in rendered

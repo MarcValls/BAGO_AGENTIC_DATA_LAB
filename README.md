@@ -2,7 +2,7 @@
 
 [![GitHub](https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/actions/workflows/readme-consistency.yml/badge.svg)](https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/actions/workflows/readme-consistency.yml)
 [![Branch](https://img.shields.io/badge/branch-main-green)](https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/tree/main)
-[![Tests](https://img.shields.io/badge/tests-130%2F130%20passing-brightgreen)](https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/actions)
+[![Tests](https://img.shields.io/badge/tests-131%2F131%20passing-brightgreen)](https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/actions)
 [![License](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 
 > Laboratorio experimental para desarrollar capacidades de AI Engineering con gobernanza BAGO.
@@ -12,7 +12,7 @@
 
 | Métrica | Valor |
 |---|---|
-| Tests ejecutados | **130/130** |
+| Tests ejecutados | **131/131** |
 | Rama pública | `main` |
 | Estado actualizado | 2026-09-23 |
 | Fase actual | **L11 · Governed Sandbox Layer** · VERIFIED (local) |
@@ -70,18 +70,18 @@ El catálogo es de referencia; la definición operativa sigue en `.github/agents
 
 ```mermaid
 flowchart LR
-    L0[L0 Baseline & Lab Contract (COMPLETE)]
-    L1[L1 LangGraph Governed Execution (VALIDATED)]
-    L2[L2 ETL / Data Pipeline (VALIDATED)]
-    L3[L3 Metadata & Ontology (VERIFIED)]
-    L4[L4 Governed RAG (VERIFIED)]
-    L5[L5 MCP con gobernanza (VERIFIED)]
-    L6[L6 AWS Bedrock Provider (VERIFIED (offline))]
-    L7[L7 Bedrock Knowledge Base (VERIFIED (offline))]
-    L8[L8 Metadata Catalog (VERIFIED (local live))]
-    L9[L9 End-to-End Governed Agent (VERIFIED (offline))]
-    L10[L10 Governed Ontology Engine (VERIFIED (local))]
-    L11[L11 Governed Sandbox Layer (VERIFIED (local))]
+    L0["L0 Baseline & Lab Contract (COMPLETE)"]
+    L1["L1 LangGraph Governed Execution (VALIDATED)"]
+    L2["L2 ETL / Data Pipeline (VALIDATED)"]
+    L3["L3 Metadata & Ontology (VERIFIED)"]
+    L4["L4 Governed RAG (VERIFIED)"]
+    L5["L5 MCP con gobernanza (VERIFIED)"]
+    L6["L6 AWS Bedrock Provider (VERIFIED (offline))"]
+    L7["L7 Bedrock Knowledge Base (VERIFIED (offline))"]
+    L8["L8 Metadata Catalog (VERIFIED (local live))"]
+    L9["L9 End-to-End Governed Agent (VERIFIED (offline))"]
+    L10["L10 Governed Ontology Engine (VERIFIED (local))"]
+    L11["L11 Governed Sandbox Layer (VERIFIED (local))"]
     L0 --> L1
     L1 --> L2
     L2 --> L3
@@ -116,15 +116,15 @@ flowchart LR
 
 ```mermaid
 flowchart LR
-    RAG[Governed RAG]
-    RDF[RDF/Turtle]
-    SPARQL[SPARQL local]
-    INFERENCE[Inference]
-    CONSTRAINTS[Constraints]
-    LLM[LLM context]
-    GATEWAY[ExecutionGateway]
-    SANDBOX[SandboxManager]
-    RECEIPT[Receipt]
+    RAG["Governed RAG"]
+    RDF["RDF/Turtle"]
+    SPARQL["SPARQL local"]
+    INFERENCE["Inference"]
+    CONSTRAINTS["Constraints"]
+    LLM["LLM context"]
+    GATEWAY["ExecutionGateway"]
+    SANDBOX["SandboxManager"]
+    RECEIPT["Receipt"]
     RAG --> RDF
     RDF --> SPARQL
     SPARQL --> INFERENCE
@@ -242,7 +242,7 @@ La tabla se extrae de JOB_SKILL_MATRIX.md y se mantiene fuera del README.
 - `tests/test_bago_sync_agent.py` (8 checks)
 - `tests/test_bedrock_integration.py` (10 checks)
 - `tests/test_bedrock_kb_adapter.py` (10 checks)
-- `tests/test_dynamic_readme.py` (3 checks)
+- `tests/test_dynamic_readme.py` (4 checks)
 - `tests/test_l10_ontology_engine.py` (4 checks)
 - `tests/test_l1_governance.py` (7 checks)
 - `tests/test_l2_etl_pipeline.py` (4 checks)

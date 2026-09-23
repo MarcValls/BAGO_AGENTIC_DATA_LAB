@@ -341,7 +341,7 @@ def _render_flowchart(phases: list[dict[str, Any]]) -> str:
     lines = [FENCE + "mermaid", "flowchart LR"]
     for phase in phases:
         label = f"{phase['id']} {phase['name']} ({phase['status']})"
-        lines.append(f"    {phase['id']}[{label}]")
+        lines.append(f"    {phase['id']}[\"{_mermaid_label(label)}\"]")
     for left, right in zip(phases, phases[1:]):
         lines.append(f"    {left['id']} --> {right['id']}")
     lines.append(FENCE)
@@ -379,7 +379,7 @@ def _render_architecture(manifest: dict[str, Any]) -> str:
         "Receipt",
     ]
     for node, label in zip(nodes, labels):
-        lines.append(f"    {node}[{label}]")
+        lines.append(f"    {node}[\"{_mermaid_label(label)}\"]")
     for left, right in zip(nodes, nodes[1:]):
         lines.append(f"    {left} --> {right}")
     lines.extend([FENCE, "", "Pipeline actual:", ""])
@@ -387,6 +387,11 @@ def _render_architecture(manifest: dict[str, Any]) -> str:
         f"{index}. {step}" for index, step in enumerate(architecture["pipeline"], 1)
     )
     return "\n".join(lines)
+
+
+def _mermaid_label(value: str) -> str:
+    """Quote Mermaid labels and keep embedded quotes parser-safe."""
+    return str(value).replace('"', "&quot;")
 
 
 def _render_roles(rows: list[list[str]]) -> str:
