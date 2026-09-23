@@ -82,8 +82,14 @@ class InMemoryOpenMetadataClient:
                     matches.append({"_id": entity["id"], "_source": entity})
             return {"hits": {"hits": matches}}
 
-        if method == "GET" and path.endswith("/lineage"):
-            entity_id = path.split("/")[-2]
+        if method == "GET" and (
+            path.endswith("/lineage") or path.startswith("/v1/lineage/")
+        ):
+            entity_id = (
+                path.rsplit("/", 1)[-1]
+                if path.startswith("/v1/lineage/")
+                else path.split("/")[-2]
+            )
             upstream = [edge for edge in self.edges if edge["toEntity"] == entity_id]
             downstream = [edge for edge in self.edges if edge["fromEntity"] == entity_id]
             connected = {entity_id}
@@ -108,16 +114,15 @@ class InMemoryOpenMetadataClient:
                 self.edges.append(normalized)
             return {"nodes": [], "downstreamEdges": [normalized]}
 
-        if method == "PATCH" and "/v1/table/" in path:
+        if method == "PATCH" and "/v1/tables/" in path:
             entity_id = path.rsplit("/", 1)[-1]
             entity = self.entities[entity_id]
-            patch = dict(json or {})
-            if "owners" in patch:
-                entity["owners"] = patch["owners"]
-            if "version" in patch:
-                entity["version"] = patch["version"]
-            if "schema" in patch:
-                entity.setdefault("extension", {})["bagoSchema"] = patch["schema"]
+            for operation in list(json or []):
+                operation_path = operation.get("path")
+                if operation_path == "/owners":
+                    entity["owners"] = operation.get("value", [])
+                elif operation_path == "/schemaDefinition":
+                    entity["schemaDefinition"] = operation.get("value", "")
             return {"entity": entity}
 
         if method == "POST" and path == "/v1/dataQuality/testDefinitions":
@@ -224,7 +229,8 @@ def _run() -> str:
     assert len(search_result.entities) == 2
     assert len(graph_result.lineage) == 2
     assert owner_result.entities[0].owner == "BAGO Data Governance"
-    assert version_result.entities[0].version == "2.0"
+    version_payload = version_result.raw_response.get("entity", {})
+    assert '"version":"2.0"' in version_payload.get("schemaDefinition", "")
     assert rule_result.raw_response["id"] == "quality-1"
 
     generated = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S UTC")
@@ -260,8 +266,8 @@ Generated: {generated}
 
 This proves the BAGO adapter contract, request/permit enforcement, normalized
 catalog entities, lineage and receipts. It does **not** prove a live
-OpenMetadata deployment. Docker/OpenMetadata validation remains `NOT_RUN` in
-this environment because `docker` and `docker compose` are unavailable.
+OpenMetadata deployment; the separate live local validation is recorded in
+`evidence/l8_openmetadata_live.md`.
 """
 
 

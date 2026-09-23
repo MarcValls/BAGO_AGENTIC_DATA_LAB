@@ -11,12 +11,14 @@ El adapter cubre:
 - `search`: búsqueda de entidades y normalización de ownership, tags, versión y autoridad.
 - `get_lineage` / `add_lineage`: lectura y escritura de edges direccionales.
 - `assign_ownership`: asignación de usuario/equipo como owner.
-- `register_schema_version`: actualización de versión y schema extension.
+- `register_schema_version`: actualización versionada de `schemaDefinition`.
 - `create_quality_rule`: definición de test de calidad TABLE/COLUMN.
 
 La implementación acepta un cliente inyectado para tests y evidencia. Cuando
 no se inyecta cliente, dispone de un transporte JSON mínimo basado en la
-biblioteca estándar; no se invoca durante la evidencia offline.
+biblioteca estándar. El transporte acepta un Bearer JWT opcional mediante
+`OpenMetadataCatalogPolicy(auth_token=...)`; el token sólo vive en memoria,
+no aparece en receipts ni se escribe en evidencia.
 
 ## Boundary de gobernanza
 
@@ -38,8 +40,9 @@ sólo aplican a timeout, throttle y red; un `401/403` no se reintenta.
 El adapter normaliza el contrato hacia endpoints OpenMetadata conocidos:
 
 - `GET /api/v1/search/query` para discovery.
-- `GET /api/v1/{entityType}/{id}/lineage` y `PUT /api/v1/lineage` para lineage.
-- `PATCH /api/v1/{entityType}/{id}` para ownership/version extension.
+- `GET /api/v1/lineage/{entityType}/{id}` y `PUT /api/v1/lineage` para lineage.
+- `PATCH /api/v1/tables/{id}` con `application/json-patch+json` para ownership y
+  `schemaDefinition` versionada.
 - `POST /api/v1/dataQuality/testDefinitions` para quality rules.
 
 El payload de lineage usa `fromEntity`, `toEntity` y `lineageDetails`, y la
@@ -50,6 +53,7 @@ calidad se expresa como test definition con `TABLE` o `COLUMN`.
 ```powershell
 python -m pytest tests/test_openmetadata_adapter.py -v
 python scripts/generate_l8_catalog_evidence.py
+python scripts/run_l8_openmetadata_live_validation.py
 ```
 
 La evidencia está en
@@ -61,21 +65,37 @@ La evidencia está en
 Esto verifica el contrato y la gobernanza del adapter; no es una medición de
 OpenMetadata real.
 
-## Validación live pendiente
+## Validación live local
 
-La ejecución real requiere un servidor OpenMetadata local o remoto, su API y
-credenciales. La documentación oficial del quickstart Docker pide Docker y
-Compose, y recomienda al menos 6 GiB de memoria y 4 vCPUs para el despliegue
-local ([quickstart Docker](https://docs.open-metadata.org/v1.12.x/quick-start/local-docker-deployment)).
+El checkout incluye el compose oficial fijado a OpenMetadata `1.12.6` en
+`infra/openmetadata/docker-compose.yml`. La validación local se ejecuta con:
 
-En este checkout, `docker --version` y `docker compose version` devuelven
-`command not found`; por eso Docker/OpenMetadata live queda `NOT_RUN`, no
-`VERIFIED`. Cuando el runtime exista, la validación debe comprobar el servidor,
-la búsqueda, el lineage y la autorización del usuario/equipo antes de elevar
-la afirmación.
+```powershell
+docker compose -p bago-openmetadata -f infra/openmetadata/docker-compose.yml up -d
+python scripts/run_l8_openmetadata_live_validation.py
+docker compose -p bago-openmetadata -f infra/openmetadata/docker-compose.yml ps --all
+```
+
+La documentación oficial del quickstart Docker pide Docker y Compose, y
+recomienda al menos 6 GiB de memoria y 4 vCPUs para el despliegue local
+([quickstart Docker](https://docs.open-metadata.org/v1.12.x/quick-start/local-docker-deployment)).
+El despliegue ejecutado en este checkout responde `HTTP 200` en
+`http://localhost:8586/healthcheck`; las migraciones terminaron con código 0.
+
+`evidence/l8_openmetadata_live.md` registra la ejecución real y sus receipts:
+
+`health` → `JWT login` → `search` → `add_lineage` → `get_lineage` →
+`assign_ownership` → `register_schema_version` → `create_quality_rule` →
+denegación `REQUIRE_HUMAN` antes del transporte.
+
+El script crea recursos temporales con nombres únicos y elimina sólo sus IDs al
+final. Por tanto, `L8 VERIFIED (local live)` significa servidor Docker local,
+transporte HTTP autenticado y operaciones del adapter verificadas; no significa
+OpenMetadata remoto, AWS, aislamiento de sistema operativo ni producción.
 
 OpenMetadata documenta que la búsqueda se expone en `/api/v1/search/query`,
-que el lineage se crea con `PUT /v1/lineage` y que las definiciones de calidad
-son recursos API propios ([APIs](https://docs.open-metadata.org/v1.12.x/api-reference/main-concepts/metadata-standard/apis),
+que el lineage se consulta bajo `/api/v1/lineage`, se crea con `PUT /v1/lineage`
+y que las definiciones de calidad son recursos API propios
+([APIs](https://docs.open-metadata.org/v1.12.x/api-reference/main-concepts/metadata-standard/apis),
 [lineage](https://docs.open-metadata.org/v1.12.x/api-reference/lineage/add),
 [test definitions](https://docs.open-metadata.org/v1.11.x/api-reference/data-quality/test-definitions)).

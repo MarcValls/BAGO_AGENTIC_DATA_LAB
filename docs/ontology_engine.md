@@ -74,6 +74,8 @@ python -m pytest tests/test_l10_ontology_engine.py -q
 python scripts/generate_l10_ontology_evidence.py
 ```
 
-The generated receipt is `evidence/l10_ontology_engine.md`. It marks AWS and
-OpenMetadata live validation as `NOT_RUN` and uses an injected Bedrock-shaped
-fixture solely to prove that the graph result reaches the provider context.
+The generated receipt is `evidence/l10_ontology_engine.md`. This L10 run uses
+an injected Bedrock-shaped fixture solely to prove that the graph result reaches
+the provider context; AWS remains `NOT_RUN`, while the separate local
+OpenMetadata validation is recorded in `evidence/l8_openmetadata_live.md`.
+OpenMetadata remote validation remains `NOT_RUN`.

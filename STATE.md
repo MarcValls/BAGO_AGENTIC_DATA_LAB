@@ -1,15 +1,18 @@
 # Current State — BAGO Agentic Data Lab
 
 **Updated:** 2026-09-23
-**Current phase:** L10 · Governed Ontology Engine
+**Current phase:** L11 · Governed Sandbox Layer
 **Status:** VERIFIED for the local RDF/Turtle materialization, bounded SPARQL
-subset, deterministic inference, contradiction constraints, RAG seed handoff
-and injected LLM context; AWS/OpenMetadata/commercetools live integrations
-remain `NOT_RUN`; GitHub issue #14 is separately executed and verified under
-human authorization.
-**Tests:** 115/115 passing en la suite combinada; L10 aporta 4 checks offline,
-L9 aporta 7 checks offline y workspace binding aporta 6 checks de contrato.
-**Next phase:** OpenMetadata local real validation, then local observability/evals
+subset, deterministic inference, contradiction constraints, RAG seed handoff,
+the real local OpenMetadata 1.12.6 validation and the local restricted sandbox
+execution boundary;
+AWS/OpenMetadata remote/commercetools live integrations remain `NOT_RUN`;
+GitHub issue #14 is separately executed and verified under human authorization.
+**Tests:** 130/130 passing en la suite combinada; L10 aporta 4 checks offline,
+L8 aporta 13 checks de adapter más la validación live local, L9 aporta 7 checks
+offline, workspace binding aporta 6 checks de contrato y L11 aporta 14 checks
+de escapes, permisos, proceso tipado, timeout, entorno y gateway.
+**Next phase:** local observability/evals, then public end-to-end demo and CI
 **Evidence:** `evidence/l3_ontology_graph.md` with integrity PASS and
 `evidence/retrieval_benchmark_results.md` with 48 reproducible benchmark rows;
 `evidence/mcp_governed_demo.md` with a real local stdio round trip and a
@@ -21,11 +24,16 @@ local BAGO ETL/RAG and an injected Knowledge Base-shaped client;
 `evidence/l8_openmetadata_catalog.md` with search, source-to-asset-to-chunk
 lineage, ownership, schema version, quality rule and receipts through an
 in-memory OpenMetadata-shaped client;
+`evidence/l8_openmetadata_live.md` with a real local Docker server, JWT login,
+HTTP adapter calls, lineage, ownership/schema JSON Patch, quality definition,
+pre-transport denial and cleanup PASS;
 `evidence/l9_commercetools_agent.md` with three end-to-end scenarios, governed
 RAG citations, a local MCP READ receipt, an injected Bedrock receipt and
 pre-transport CREATE/WRITE denials plus the pre-authorization issue proposal;
 `evidence/l10_ontology_engine.md` with RAG → RDF/SPARQL → inference →
 constraint detection → injected LLM context and a zero-cost receipt;
+`evidence/sandbox_local_restricted.md` with workspace read/write, traversal
+denial, typed pytest, filtered environment and fail-closed OS-network receipt;
 `evidence/l9_authorized_actions_20260922.md` records the later human-authorized
 GitHub issue #14 and the workspace-binding follow-up;
 `evidence/ontology_proposal.md` and `evidence/ontology_proposal_examples.md`
@@ -40,8 +48,9 @@ citations, retries, quotas and receipts. The comparison uses a fixture, not a
 live managed Knowledge Base.
 **L8 boundary:** catalog search, lineage, ownership, schema versioning and
 quality-rule definitions are implemented behind an injected or optional HTTP
-client with allowlists, permits, retries, quotas and receipts. Docker and a
-live OpenMetadata server were not available, so live catalog validation remains
+client with allowlists, permits, retries, quotas and receipts. The local
+OpenMetadata 1.12.6 Docker deployment, authenticated transport and temporary
+fixture validation are now `VERIFIED`; remote OpenMetadata and AWS remain
 `NOT_RUN`.
 **L9 boundary:** the LangGraph agent composes governed RAG, MCP and optional
 Bedrock provider calls. The local MCP READ and injected Bedrock fixture were
@@ -54,6 +63,10 @@ SPARQL `SELECT` subset, not a deployed triplestore or a complete W3C SPARQL
 implementation. An explicit contradiction produces `CONSTRAINT_VIOLATION`; the
 path and evidence remain available for review. AWS and OpenMetadata live remain
 `NOT_RUN`.
+**L11 boundary:** `LocalRestrictedBackend` enforces logical workspace,
+capability, typed-process, timeout, Git and environment limits locally. It is
+not Windows Sandbox, a container or a firewall; requests requiring OS-level
+network isolation fail closed and remain `NOT_RUN`.
 **Ontology generator:** metadata and relation proposals remain `PROPOSED` until
 validator plus human/contract approval; no automatic canonical promotion.
 Current proposal run: 16 entities and 0 explicit relations in the BAGO source

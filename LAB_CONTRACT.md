@@ -102,7 +102,7 @@ ExecutionRequest → AuthorizationBoundary → Permit → ExecutionGateway
 
 ## Criterios de Aceptación por Fase
 
-Cada fase (L0-L10) debe cumplir:
+Cada fase (L0-L11) debe cumplir:
 
 - **P0 = 0** (bloqueantes resueltos)
 - **P1 = 0** (importantes resueltos)
@@ -148,6 +148,7 @@ OBSERVE → SELECT → SPECIFY → IMPLEMENT → TEST → CRIT → FIX → RETES
 | **L8** | Metadata Catalog (OpenMetadata) | 1 semana | — |
 | **L9** | End-to-End Governed Agent | 2 semanas | Portfolio completo |
 | **L10** | Governed Ontology Engine (RDF/SPARQL + reasoning local) | 1 semana | BAGO / portfolio |
+| **L11** | Governed Sandbox Layer (local restricted execution) | 1 semana | BAGO / secure execution |
 
 **Timeline total:** 10-12 semanas para portfolio completo
 
@@ -188,6 +189,7 @@ Skills a desarrollar y evidenciar:
 | ETL/Data Pipelines | Alta | ❌ | — | — | — | — |
 | Metadata/Ontology | Media | ❌ | — | — | — | — |
 | RDF/SPARQL/Knowledge Graphs | Alta | 🟢 | ✅ | ✅ | L10 local receipt | L10 local |
+| Secure execution / sandbox | Muy Alta | 🟢 | ✅ | ✅ | L11 local receipts | L11 local |
 | AWS Bedrock | Alta | ❌ | — | — | — | — |
 | Testing/Evals | Muy Alta | Parcial | — | — | — | — |
 
@@ -198,15 +200,15 @@ Skills a desarrollar y evidenciar:
 ## Estado Operativo Actual
 
 `yaml
-CURRENT_PHASE: L10
+CURRENT_PHASE: L11
 CURRENT_ITERATION: 1
-OBJECTIVE: Governed Ontology Engine local
-STATUS: VERIFIED (local RDF/SPARQL scope)
-BLOCKERS: AWS/OpenMetadata live no autorizados o no configurados
+OBJECTIVE: Governed Sandbox Layer local restricted execution
+STATUS: VERIFIED (local logical sandbox scope)
+BLOCKERS: AWS/OpenMetadata remoto live no autorizados o no configurados
 P0: 0
 P1: 0
 P2: 0
-NEXT_ACTION: Validar OpenMetadata local real; después observabilidad/evals local
+NEXT_ACTION: Implementar observabilidad/evals local; después demo E2E pública y CI
 `
 
 ---

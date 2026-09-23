@@ -109,6 +109,7 @@ class OpenMetadataCatalogPolicy:
     """Local policy for API scope, retry, timeout and quota behavior."""
 
     base_url: str = "http://localhost:8585/api"
+    auth_token: Optional[str] = field(default=None, repr=False)
     timeout_seconds: float = 30.0
     max_attempts: int = 3
     backoff_seconds: float = 0.25
@@ -151,6 +152,8 @@ class OpenMetadataCatalogPolicy:
         if self.rate_limit_window_seconds <= 0:
             raise ValueError("rate_limit_window_seconds must be positive")
         object.__setattr__(self, "base_url", normalized_url)
+        normalized_token = self.auth_token.strip() if self.auth_token else None
+        object.__setattr__(self, "auth_token", normalized_token or None)
         object.__setattr__(
             self,
             "allowed_entity_types",
@@ -295,19 +298,24 @@ class QualityRule:
         object.__setattr__(self, "parameters", dict(self.parameters))
 
     def to_payload(self) -> dict[str, Any]:
+        governed_description = self.description.strip()
+        governed_metadata = (
+            f"BAGO entityFQN={self.entity_fqn}; severity={self.severity}"
+        )
+        description = (
+            f"{governed_description}; {governed_metadata}"
+            if governed_description
+            else governed_metadata
+        )
         return {
             "name": self.name,
-            "description": self.description,
+            "description": description,
             "entityType": self.entity_type,
             "testPlatforms": list(self.test_platforms),
             "parameterDefinition": [
                 {"name": str(name), "description": str(value)}
                 for name, value in self.parameters.items()
             ],
-            "extension": {
-                "bagoSeverity": self.severity,
-                "bagoEntityFQN": self.entity_fqn,
-            },
         }
 
 
@@ -370,7 +378,7 @@ class _StdlibOpenMetadataClient:
         path: str,
         *,
         params: Optional[Mapping[str, Any]] = None,
-        json: Optional[Mapping[str, Any]] = None,
+        json: Optional[Any] = None,
         timeout: Optional[float] = None,
     ) -> Mapping[str, Any]:
         query = urlencode({key: value for key, value in (params or {}).items() if value is not None})
@@ -378,11 +386,19 @@ class _StdlibOpenMetadataClient:
         if query:
             url = f"{url}?{query}"
         body = None if json is None else _canonical_json(json).encode("utf-8")
+        content_type = (
+            "application/json-patch+json"
+            if method.upper() == "PATCH" and isinstance(json, list)
+            else "application/json"
+        )
+        headers = {"Accept": "application/json", "Content-Type": content_type}
+        if self.policy.auth_token:
+            headers["Authorization"] = f"Bearer {self.policy.auth_token}"
         request = URLRequest(
             url,
             data=body,
             method=method.upper(),
-            headers={"Accept": "application/json", "Content-Type": "application/json"},
+            headers=headers,
         )
         try:
             with urlopen(request, timeout=timeout or self.policy.timeout_seconds) as response:
@@ -556,7 +572,7 @@ class GovernedOpenMetadataAdapter:
             permit,
             operation="get_lineage",
             method="GET",
-            path=f"/v1/{entity_type}/{resource}/lineage",
+            path=f"/v1/lineage/{entity_type}/{resource}",
             params=params,
             normalizer=self._normalize_lineage,
         )
@@ -589,13 +605,19 @@ class GovernedOpenMetadataAdapter:
             "name": str(request.parameters.get("owner_name", "")),
             "type": str(request.parameters.get("owner_type", "team")),
         }
-        body = {"owners": [owner]}
+        body = [
+            {
+                "op": "replace",
+                "path": "/owners",
+                "value": [owner],
+            }
+        ]
         return self._execute(
             request,
             permit,
             operation="assign_ownership",
             method="PATCH",
-            path=f"/v1/{entity_type}/{resource}",
+            path=f"/v1/{self._entity_collection(entity_type)}/{resource}",
             json_body=body,
             normalizer=self._normalize_entity,
         )
@@ -607,17 +629,24 @@ class GovernedOpenMetadataAdapter:
     ) -> MetadataCatalogResult:
         entity_type = str(request.parameters.get("entity_type", "table"))
         resource = quote(str(request.parameters.get("resource", "")), safe="")
-        body = {
-            "version": str(request.parameters.get("version", "")),
-            "schema": _mapping(request.parameters.get("schema")),
-            "extension": {"bagoSchemaRevision": request.parameters.get("version", "")},
-        }
+        body = [
+            {
+                "op": "add",
+                "path": "/schemaDefinition",
+                "value": _canonical_json(
+                    {
+                        "version": str(request.parameters.get("version", "")),
+                        "schema": _mapping(request.parameters.get("schema")),
+                    }
+                ),
+            }
+        ]
         return self._execute(
             request,
             permit,
             operation="register_schema_version",
             method="PATCH",
-            path=f"/v1/{entity_type}/{resource}",
+            path=f"/v1/{self._entity_collection(entity_type)}/{resource}",
             json_body=body,
             normalizer=self._normalize_entity,
         )
@@ -653,7 +682,7 @@ class GovernedOpenMetadataAdapter:
         method: str,
         path: str,
         params: Optional[Mapping[str, Any]] = None,
-        json_body: Optional[Mapping[str, Any]] = None,
+        json_body: Optional[Any] = None,
         normalizer: Callable[[Mapping[str, Any]], tuple[tuple[CatalogEntity, ...], tuple[LineageEdge, ...], dict[str, Any]]],
     ) -> MetadataCatalogResult:
         started = self._monotonic()
@@ -811,7 +840,7 @@ class GovernedOpenMetadataAdapter:
         path: str,
         *,
         params: Optional[Mapping[str, Any]],
-        json_body: Optional[Mapping[str, Any]],
+        json_body: Optional[Any],
     ) -> Mapping[str, Any]:
         client = self._client or _StdlibOpenMetadataClient(self.policy)
         if not hasattr(client, "request"):
@@ -820,10 +849,22 @@ class GovernedOpenMetadataAdapter:
             method,
             path,
             params=dict(params or {}),
-            json=dict(json_body or {}) if json_body is not None else None,
+            json=json_body,
             timeout=self.policy.timeout_seconds,
         )
         return response if isinstance(response, Mapping) else {"data": response}
+
+    @staticmethod
+    def _entity_collection(entity_type: str) -> str:
+        collections = {
+            "table": "tables",
+            "dashboard": "dashboards",
+            "pipeline": "pipelines",
+            "topic": "topics",
+            "apiEndpoint": "apiEndpoints",
+            "document": "documents",
+        }
+        return collections.get(entity_type, entity_type)
 
     def _reserve_rate_limit(self) -> bool:
         limit = self.policy.max_calls_per_window

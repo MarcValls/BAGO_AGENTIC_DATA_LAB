@@ -30,6 +30,11 @@ Sistema de ejecución gobernada para agentes de IA con trazabilidad completa, de
 └─────────────────────────────────────────────────────────────┘
                               ↓
 ┌─────────────────────────────────────────────────────────────┐
+│                  SANDBOX MANAGER                             │
+│  Permit-derived profiles · path/process limits · evidence   │
+└─────────────────────────────────────────────────────────────┘
+                              ↓
+┌─────────────────────────────────────────────────────────────┐
 │              EXTERNAL CAPABILITIES                           │
 │  AWS Bedrock · MCP tools · APIs · Vector DBs · ETL          │
 └─────────────────────────────────────────────────────────────┘
@@ -114,7 +119,11 @@ AUTHORIZATION_BOUNDARY (validation, permits, action limits)
   ↓
 PERMIT_ISSUED (signed authorization token)
   ↓
-EXECUTION_GATEWAY (effect adapter, provider routing)
+EXECUTION_GATEWAY (single material-effect boundary)
+  ↓
+SANDBOX_MANAGER (permit-derived technical limits)
+  ↓
+LOCAL_RESTRICTED_BACKEND (typed capability execution)
   ↓
 EXTERNAL_EFFECT (API call, database write, file operation)
   ↓
@@ -182,6 +191,7 @@ class Receipt:
 | MetadataCatalogAdapter | OpenMetadata | Search, lineage, ownership, schema version, quality y receipts | L8 |
 | GovernedKnowledgeAgent | LangGraph + RAG + MCP + Bedrock | End-to-end orchestration, proposals, permits, receipts y evidence | L9 |
 | OntologyEngine | Local RDF/Turtle + bounded SPARQL | Relation paths, inference, constraints, contradiction receipts | L10 |
+| SandboxManager | LocalRestrictedBackend | Workspace, process, credential and fail-closed execution limits | L11 |
 
 ---
 
@@ -214,6 +224,18 @@ class Receipt:
    - Una relación `CONTRADICTS` produce `CONSTRAINT_VIOLATION`
    - El path y el receipt permanecen disponibles para revisión
 
+8. **Una acción material no puede saltarse el sandbox**
+   - `ExecutionGateway → SandboxManager` es la frontera única de ejecución local
+   - Un agente o salida LLM no puede elegir un perfil más privilegiado
+
+9. **El sandbox sólo reduce autoridad**
+   - La especificación efectiva es la intersección de permit, perfil y request
+   - Un fallo de aislamiento solicitado produce `DENIED`, nunca ejecución abierta
+
+10. **La red fuerte no se simula**
+    - El backend local sólo ofrece política lógica `network=deny`
+    - El aislamiento OS requerido permanece explícitamente `NOT_RUN`
+
 ---
 
 ## Estrategia de Testing
@@ -230,6 +252,8 @@ class Receipt:
 - ETL pipeline end-to-end con datos de prueba
 - RAG retrieval con queries conocidos
 - Ontology Engine con RDF/Turtle, SPARQL, inference y constraint receipt
+- Sandbox local con escapes de ruta, allowlists de proceso, timeout, entorno
+  filtrado, Git read-only y receipts de denegación
 
 ### Tests de Gobernanza (CRÍTICOS)
 

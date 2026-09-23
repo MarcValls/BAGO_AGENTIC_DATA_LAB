@@ -2,7 +2,7 @@
 
 [![GitHub](https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/actions/workflows/readme-consistency.yml/badge.svg)](https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/actions/workflows/readme-consistency.yml)
 [![Branch](https://img.shields.io/badge/branch-main-green)](https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/tree/main)
-[![Tests](https://img.shields.io/badge/tests-115%2F115%20passing-brightgreen)](https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/actions)
+[![Tests](https://img.shields.io/badge/tests-130%2F130%20passing-brightgreen)](https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/actions)
 [![License](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 
 > Laboratorio experimental para desarrollar capacidades de AI Engineering con gobernanza BAGO.
@@ -12,12 +12,12 @@
 
 | Métrica | Valor |
 |---|---|
-| Tests ejecutados | **115/115** |
+| Tests ejecutados | **130/130** |
 | Rama pública | `main` |
 | Estado actualizado | 2026-09-23 |
-| Fase actual | **L10 · Governed Ontology Engine** · VERIFIED (local) |
-| Siguiente bloque | OpenMetadata local real validation, then local observability/evals |
-| Estado declarado | VERIFIED for the local RDF/Turtle materialization, bounded SPARQL subset, deterministic inference, contradiction constraints, RAG seed handoff and injected LLM context; AWS/OpenMetadata/commercetools live integrations remain `NOT_RUN`; GitHub issue #14 is separately executed and verified under human authorization. |
+| Fase actual | **L11 · Governed Sandbox Layer** · VERIFIED (local) |
+| Siguiente bloque | local observability/evals, then public end-to-end demo and CI |
+| Estado declarado | VERIFIED for the local RDF/Turtle materialization, bounded SPARQL subset, deterministic inference, contradiction constraints, RAG seed handoff, the real local OpenMetadata 1.12.6 validation and the local restricted sandbox execution boundary; AWS/OpenMetadata remote/commercetools live integrations remain `NOT_RUN`; GitHub issue #14 is separately executed and verified under human authorization. |
 
 El estado público se limita a lo que existe en el checkout y a la evidencia
 referenciada. AWS live, OpenMetadata live y otras integraciones externas
@@ -78,9 +78,10 @@ flowchart LR
     L5[L5 MCP con gobernanza (VERIFIED)]
     L6[L6 AWS Bedrock Provider (VERIFIED (offline))]
     L7[L7 Bedrock Knowledge Base (VERIFIED (offline))]
-    L8[L8 Metadata Catalog (VERIFIED (offline))]
+    L8[L8 Metadata Catalog (VERIFIED (local live))]
     L9[L9 End-to-End Governed Agent (VERIFIED (offline))]
     L10[L10 Governed Ontology Engine (VERIFIED (local))]
+    L11[L11 Governed Sandbox Layer (VERIFIED (local))]
     L0 --> L1
     L1 --> L2
     L2 --> L3
@@ -91,6 +92,7 @@ flowchart LR
     L7 --> L8
     L8 --> L9
     L9 --> L10
+    L10 --> L11
 ```
 
 | Fase | Estado | Objetivo | Descripción | Tests | Evidencia/docs |
@@ -103,13 +105,14 @@ flowchart LR
 | L5 | VERIFIED | Orbitant | MCP con gobernanza | 7 | 3 |
 | L6 | VERIFIED (offline) | Tuio | AWS Bedrock Provider | 10 | 2 |
 | L7 | VERIFIED (offline) | Devoteam | Bedrock Knowledge Base | 10 | 2 |
-| L8 | VERIFIED (offline) | Devoteam | Metadata Catalog | 12 | 2 |
+| L8 | VERIFIED (local live) | Devoteam | Metadata Catalog | 13 | 3 |
 | L9 | VERIFIED (offline) | commercetools | End-to-End Governed Agent | 7 | 3 |
 | L10 | VERIFIED (local) | BAGO / portfolio | Governed Ontology Engine | 4 | 2 |
+| L11 | VERIFIED (local) | BAGO / secure execution | Governed Sandbox Layer | 14 | 3 |
 
 ## Arquitectura actual
 
-**Principio:** LangGraph propone → BAGO autoriza → ExecutionGateway ejecuta → Receipt evidencia.
+**Principio:** LangGraph propone → BAGO autoriza → ExecutionGateway → SandboxManager → Receipt evidencia.
 
 ```mermaid
 flowchart LR
@@ -119,11 +122,17 @@ flowchart LR
     INFERENCE[Inference]
     CONSTRAINTS[Constraints]
     LLM[LLM context]
+    GATEWAY[ExecutionGateway]
+    SANDBOX[SandboxManager]
+    RECEIPT[Receipt]
     RAG --> RDF
     RDF --> SPARQL
     SPARQL --> INFERENCE
     INFERENCE --> CONSTRAINTS
     CONSTRAINTS --> LLM
+    LLM --> GATEWAY
+    GATEWAY --> SANDBOX
+    SANDBOX --> RECEIPT
 ```
 
 Pipeline actual:
@@ -134,6 +143,9 @@ Pipeline actual:
 4. Inference añade inversas, transitivas y simétricas
 5. Constraints detecta endpoints, evidencia y contradicciones
 6. El LLM recibe caminos y evidencia; no recibe autoridad implícita
+7. ExecutionGateway exige una SandboxRequest tipada
+8. SandboxManager materializa filesystem y proceso acotados
+9. Receipt evidencia el resultado o la denegación
 
 ## Job market alignment
 
@@ -171,15 +183,15 @@ La tabla se extrae de JOB_SKILL_MATRIX.md y se mantiene fuera del README.
 | AWS | Alta | 🟡 Adapter offline | 🎯 Bedrock fluent | L6 adapter + setup doc | Live account validation |
 | Bedrock | Alta | 🟡 Provider baseline | 🎯 Proficient | L6 Converse/Stream + receipts | Live model evaluation |
 | Bedrock Knowledge Bases | Alta | 🟡 Baseline offline | 🎯 Proficient | L7 Retrieve/Generate + citations | Live KB evaluation |
-| OpenMetadata Catalog | Media | 🟡 Baseline offline | 🎯 Proficient | L8 adapter + lineage evidence | Live Docker evaluation |
+| OpenMetadata Catalog | Media | 🟢 Local live verificado | 🎯 Proficient | L8 adapter + Docker local + lineage/quality receipts | OpenMetadata remoto |
 | IAM | Alta | 🟡 Basic | 🎯 Configurable | L6 least-privilege setup | Live policy check |
 | CI/CD | Alta | 🟡 Basic | 🎯 Implementado | GitHub Actions | L1 completado |
-| Evaluation | Muy Alta | 🟢 Framework baseline | 🎯 Framework | 115 tests + README/L9/L10 scenarios | L10 offline |
-| Observability | Alta | 🟢 Reinforced | 🎯 Completo | Receipts + evidence links + ontology receipt | L10 offline |
-| Secure execution | Muy Alta | ✅ Diseñado | 🎯 Implementado | BAGO auth boundary | L1 completado |
+| Evaluation | Muy Alta | 🟢 Framework baseline | 🎯 Framework | 130 tests + README/L8-live/L9/L10/L11 scenarios | L8/L10/L11 local |
+| Observability | Alta | 🟢 Reinforced | 🎯 Completo | Receipts + evidence links + ontology and sandbox receipts | L10/L11 local |
+| Secure execution | Muy Alta | 🟢 Local backend verified | 🎯 Implementado | BAGO auth boundary + LocalRestrictedBackend + escape tests | L11 local |
 | Authorization | Muy Alta | ✅ Diseñado | 🎯 Implementado | BAGO permits | L1 completado |
 | Auditability | Alta | ✅ Diseñado | 🎯 Implementado | BAGO receipts | L1 completado |
-| Docker/K8s | Media | ❌ None | 🟡 Basic | Docker Compose | L2/L7 |
+| Docker/K8s | Media | 🟡 Docker Compose local | 🎯 Basic | OpenMetadata Compose + reproducible healthcheck | L8 local |
 
 ## Skills estratégicas
 
@@ -207,6 +219,8 @@ La tabla se extrae de JOB_SKILL_MATRIX.md y se mantiene fuera del README.
 - `src/context/__init__.py`
 - `src/context/workspace_binding.py`
 - `src/etl/pipeline.py`
+- `src/execution/__init__.py`
+- `src/execution/gateway.py`
 - `src/metadata/ontology.py`
 - `src/metadata/ontology_engine.py`
 - `src/metadata/ontology_generator.py`
@@ -214,6 +228,14 @@ La tabla se extrae de JOB_SKILL_MATRIX.md y se mantiene fuera del README.
 - `src/orchestration/state_graph.py`
 - `src/retrieval/__init__.py`
 - `src/retrieval/governed_rag.py`
+- `src/sandbox/__init__.py`
+- `src/sandbox/backend.py`
+- `src/sandbox/exceptions.py`
+- `src/sandbox/filesystem.py`
+- `src/sandbox/manager.py`
+- `src/sandbox/process.py`
+- `src/sandbox/receipt.py`
+- `src/sandbox/specification.py`
 
 ### Tests
 
@@ -230,9 +252,10 @@ La tabla se extrae de JOB_SKILL_MATRIX.md y se mantiene fuera del README.
 - `tests/test_mcp_governance.py` (7 checks)
 - `tests/test_metadata_schema.py` (4 checks)
 - `tests/test_ontology_generator.py` (7 checks)
-- `tests/test_openmetadata_adapter.py` (12 checks)
+- `tests/test_openmetadata_adapter.py` (13 checks)
 - `tests/test_retrieval_accuracy.py` (9 checks)
 - `tests/test_retrieval_benchmark.py` (3 checks)
+- `tests/test_sandbox.py` (14 checks)
 - `tests/test_workspace_binding.py` (6 checks)
 
 ### Evidencia
@@ -242,6 +265,7 @@ La tabla se extrae de JOB_SKILL_MATRIX.md y se mantiene fuera del README.
 - `evidence/l10_ontology_engine.md`
 - `evidence/l3_ontology_graph.md`
 - `evidence/l8_openmetadata_catalog.md`
+- `evidence/l8_openmetadata_live.md`
 - `evidence/l9_authorized_actions_20260922.md`
 - `evidence/l9_commercetools_agent.md`
 - `evidence/mcp_governed_demo.md`
@@ -250,6 +274,7 @@ La tabla se extrae de JOB_SKILL_MATRIX.md y se mantiene fuera del README.
 - `evidence/ontology_proposal.md`
 - `evidence/ontology_proposal_examples.md`
 - `evidence/retrieval_benchmark_results.md`
+- `evidence/sandbox_local_restricted.md`
 
 ### Documentación
 
@@ -263,6 +288,7 @@ La tabla se extrae de JOB_SKILL_MATRIX.md y se mantiene fuera del README.
 - `docs/ontology_generator.md`
 - `docs/openmetadata_catalog.md`
 - `docs/readme_generation.md`
+- `docs/sandbox_manager.md`
 - `docs/workspace_binding.md`
 
 ### Scripts
@@ -279,7 +305,13 @@ La tabla se extrae de JOB_SKILL_MATRIX.md y se mantiene fuera del README.
 - `scripts/generate_ontology_proposal.py`
 - `scripts/local_mcp_server.py`
 - `scripts/render_mcp_evidence_video.py`
+- `scripts/run_l8_openmetadata_live_validation.py`
 - `scripts/run_mcp_demo.py`
+- `scripts/run_sandbox_local_validation.py`
+
+### Infraestructura reproducible
+
+- `infra/openmetadata/docker-compose.yml`
 
 ## Comandos reproducibles
 
@@ -287,6 +319,9 @@ La tabla se extrae de JOB_SKILL_MATRIX.md y se mantiene fuera del README.
 python -m pytest tests -q
 python scripts/generate_dynamic_readme.py
 python scripts/generate_dynamic_readme.py --check --skip-tests
+docker compose -p bago-openmetadata -f infra/openmetadata/docker-compose.yml up -d
+python scripts/run_l8_openmetadata_live_validation.py
+python scripts/run_sandbox_local_validation.py
 ```
 
 Tests por fase:
@@ -301,6 +336,7 @@ Tests por fase:
 - `L8`: `python -m pytest tests/test_openmetadata_adapter.py -q`
 - `L9`: `python -m pytest tests/test_l9_end_to_end_agent.py -q`
 - `L10`: `python -m pytest tests/test_l10_ontology_engine.py -q`
+- `L11`: `python -m pytest tests/test_sandbox.py -q`
 
 ## Contrato de generación
 

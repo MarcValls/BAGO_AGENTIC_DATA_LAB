@@ -251,7 +251,12 @@ def _markdown_list(paths: list[str]) -> str:
     return "\n".join(f"- {_inline(path)}" for path in paths)
 
 
-def _files_under(directory: str, pattern: str = "*") -> list[str]:
+def _files_under(
+    directory: str,
+    pattern: str = "*",
+    *,
+    excluded_dirs: tuple[str, ...] = (),
+) -> list[str]:
     root = REPO_ROOT / directory
     if not root.exists():
         return []
@@ -259,6 +264,7 @@ def _files_under(directory: str, pattern: str = "*") -> list[str]:
         _relative(path)
         for path in root.rglob(pattern)
         if path.is_file()
+        and not any(directory_name in path.parts for directory_name in excluded_dirs)
         and "__pycache__" not in path.parts
         and path.suffix != ".pyc"
     )
@@ -350,7 +356,17 @@ def _render_architecture(manifest: dict[str, Any]) -> str:
         FENCE + "mermaid",
         "flowchart LR",
     ]
-    nodes = ["RAG", "RDF", "SPARQL", "INFERENCE", "CONSTRAINTS", "LLM"]
+    nodes = [
+        "RAG",
+        "RDF",
+        "SPARQL",
+        "INFERENCE",
+        "CONSTRAINTS",
+        "LLM",
+        "GATEWAY",
+        "SANDBOX",
+        "RECEIPT",
+    ]
     labels = [
         "Governed RAG",
         "RDF/Turtle",
@@ -358,6 +374,9 @@ def _render_architecture(manifest: dict[str, Any]) -> str:
         "Inference",
         "Constraints",
         "LLM context",
+        "ExecutionGateway",
+        "SandboxManager",
+        "Receipt",
     ]
     for node, label in zip(nodes, labels):
         lines.append(f"    {node}[{label}]")
@@ -454,6 +473,11 @@ def render_readme(
     docs = _files_under("docs", "*.md")
     evidence = _files_under("evidence", "*")
     scripts = _files_under("scripts", "*.py")
+    infrastructure = _files_under(
+        "infra",
+        "*",
+        excluded_dirs=("docker-volume",),
+    )
     source = _files_under("src", "*.py")
 
     lines = [
@@ -556,12 +580,19 @@ def render_readme(
         "",
         _markdown_list(scripts),
         "",
+        "### Infraestructura reproducible",
+        "",
+        _markdown_list(infrastructure),
+        "",
         "## Comandos reproducibles",
         "",
         FENCE + "bash",
         "python -m pytest tests -q",
         "python scripts/generate_dynamic_readme.py",
         "python scripts/generate_dynamic_readme.py --check --skip-tests",
+        "docker compose -p bago-openmetadata -f infra/openmetadata/docker-compose.yml up -d",
+        "python scripts/run_l8_openmetadata_live_validation.py",
+        "python scripts/run_sandbox_local_validation.py",
         FENCE,
         "",
         "Tests por fase:",

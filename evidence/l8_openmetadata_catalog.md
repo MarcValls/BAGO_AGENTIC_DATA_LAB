@@ -1,6 +1,6 @@
 # L8 · OpenMetadata Catalog Evidence
 
-Generated: 2026-09-22 00:46:50 UTC
+Generated: 2026-09-23 01:20:14 UTC
 
 > Scope: deterministic fixture implementing the OpenMetadata-shaped client contract.
 > No Docker container, OpenMetadata server, network call or production token was used.
@@ -32,5 +32,5 @@ Generated: 2026-09-22 00:46:50 UTC
 
 This proves the BAGO adapter contract, request/permit enforcement, normalized
 catalog entities, lineage and receipts. It does **not** prove a live
-OpenMetadata deployment. Docker/OpenMetadata validation remains `NOT_RUN` in
-this environment because `docker` and `docker compose` are unavailable.
+OpenMetadata deployment; the separate live local validation is recorded in
+`evidence/l8_openmetadata_live.md`.

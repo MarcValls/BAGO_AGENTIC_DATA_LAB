@@ -66,7 +66,7 @@
 | Python | ✅ Fuerte | BAGO backend | — |
 | LLMs | ✅ Provider baseline | Bedrock Converse/Stream offline | Live model evaluation |
 | Bedrock Knowledge Bases | ✅ Baseline offline gobernado | Retrieve/Generate + citations + ETL comparison | Live KB ingestion and relevance |
-| Metadata Catalog / OpenMetadata | ✅ Baseline offline gobernado | Search, lineage, ownership, schema version, quality + receipts | Live Docker deployment |
+| Metadata Catalog / OpenMetadata | ✅ Adapter + local live verificado | Search, lineage, ownership, schema version, quality + receipts contra Docker local | OpenMetadata remoto |
 | RAG | 🟡 Parcial | — | L4 |
 | LangGraph/LangChain | ❌ No empezado | — | L1 |
 | Agentes | 🟡 Diseñado | BAGO agents | L1 |
@@ -119,8 +119,9 @@
 ### Wave 3 (6-7 semanas) — Devoteam
 - [x] Completar L7 offline (Bedrock KB + comparación ETL)
 - [x] Completar L8 offline (Metadata Catalog + lineage + quality)
+- [x] Ejecutar L8 live local contra OpenMetadata Docker con cleanup y receipts
 - [ ] Validar L7 contra Knowledge Base AWS real (ingestion, IAM, vector store, relevancia)
-- [ ] Validar L8 contra OpenMetadata real (Docker, API, ownership y lineage)
+- [ ] Validar L8 contra OpenMetadata remoto (la validación Docker local ya está verificada)
 - Auto-study GCP basics (transferencia desde AWS)
 - Aplicar destacando adaptabilidad multi-cloud
 
@@ -157,15 +158,15 @@
 | AWS | Alta | 🟡 Adapter offline | 🎯 Bedrock fluent | L6 adapter + setup doc | Live account validation |
 | Bedrock | Alta | 🟡 Provider baseline | 🎯 Proficient | L6 Converse/Stream + receipts | Live model evaluation |
 | Bedrock Knowledge Bases | Alta | 🟡 Baseline offline | 🎯 Proficient | L7 Retrieve/Generate + citations | Live KB evaluation |
-| OpenMetadata Catalog | Media | 🟡 Baseline offline | 🎯 Proficient | L8 adapter + lineage evidence | Live Docker evaluation |
+| OpenMetadata Catalog | Media | 🟢 Local live verificado | 🎯 Proficient | L8 adapter + Docker local + lineage/quality receipts | OpenMetadata remoto |
 | IAM | Alta | 🟡 Basic | 🎯 Configurable | L6 least-privilege setup | Live policy check |
 | CI/CD | Alta | 🟡 Basic | 🎯 Implementado | GitHub Actions | L1 completado |
-| Evaluation | Muy Alta | 🟢 Framework baseline | 🎯 Framework | 115 tests + README/L9/L10 scenarios | L10 offline |
-| Observability | Alta | 🟢 Reinforced | 🎯 Completo | Receipts + evidence links + ontology receipt | L10 offline |
-| Secure execution | Muy Alta | ✅ Diseñado | 🎯 Implementado | BAGO auth boundary | L1 completado |
+| Evaluation | Muy Alta | 🟢 Framework baseline | 🎯 Framework | 130 tests + README/L8-live/L9/L10/L11 scenarios | L8/L10/L11 local |
+| Observability | Alta | 🟢 Reinforced | 🎯 Completo | Receipts + evidence links + ontology and sandbox receipts | L10/L11 local |
+| Secure execution | Muy Alta | 🟢 Local backend verified | 🎯 Implementado | BAGO auth boundary + LocalRestrictedBackend + escape tests | L11 local |
 | Authorization | Muy Alta | ✅ Diseñado | 🎯 Implementado | BAGO permits | L1 completado |
 | Auditability | Alta | ✅ Diseñado | 🎯 Implementado | BAGO receipts | L1 completado |
-| Docker/K8s | Media | ❌ None | 🟡 Basic | Docker Compose | L2/L7 |
+| Docker/K8s | Media | 🟡 Docker Compose local | 🎯 Basic | OpenMetadata Compose + reproducible healthcheck | L8 local |
 
 ### Soft Skills / Strategic
 
@@ -207,8 +208,9 @@
 - [x] Comparativa BAGO ETL vs Bedrock KB sobre la misma query (fixture)
 - [x] L8: OpenMetadata-shaped catalog adapter con lineage, ownership, versionado y quality rules
 - [x] Evidencia L8 con source → asset → chunk y receipts gobernados (fixture)
+- [x] L8 live local con Docker, API, lineage, ownership, schema, quality y cleanup
 - [ ] L7: Knowledge Base AWS real, ingestion y benchmark de relevancia
-- [ ] L8: OpenMetadata real con Docker y API
+- [ ] L8: OpenMetadata remoto con credenciales propias
 - [ ] Auto-study notes de GCP (Vertex AI, Gemini)
 - [ ] Transferencia explícita AWS → GCP en docs
 

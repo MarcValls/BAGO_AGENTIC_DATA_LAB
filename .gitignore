@@ -7,4 +7,5 @@ venv/
 evidence/*.png
 evidence/*.mp4
 !evidence/mcp_governed_demo.mp4
+infra/openmetadata/docker-volume/
 .DS_Store

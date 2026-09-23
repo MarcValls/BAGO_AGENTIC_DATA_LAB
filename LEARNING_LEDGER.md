@@ -516,3 +516,55 @@ presenta como una respuesta limpia.
 - ⚠️ Después de L10: OpenMetadata local real y observabilidad/evals local;
   AWS live queda pospuesto hasta contar con créditos o una necesidad laboral.
 
+---
+
+### 2026-09-23 — L11 Governed Sandbox Layer
+
+**Fase:** L11
+**Estado:** `VERIFIED` para el backend local restringido y sus receipts; el
+aislamiento OS de red sigue `NOT_RUN`.
+
+**Qué entendí:**
+
+Autorizar una acción y limitar técnicamente su ejecución son capas distintas.
+El `Permit` decide autoridad, pero no debe convertirse automáticamente en
+acceso al filesystem, shell, Git o red. El `ExecutionGateway` debe exigir una
+request tipada y el `SandboxManager` debe derivar un perfil efectivo que sólo
+pueda reducir la autoridad del permit.
+
+**Qué implementé:**
+
+- `src/sandbox/specification.py`: capabilities, perfiles, límites y política de
+  red explícita.
+- `src/sandbox/filesystem.py`: workspace boundary, resolución de symlinks,
+  traversal denial y write allowlist.
+- `src/sandbox/backend.py`: `LocalRestrictedBackend` con `shell=False`, pytest
+  tipado, Git read-only, timeout, límites de salida y filtrado de entorno.
+- `src/sandbox/manager.py`: validación de permit, derivación de perfil y
+  receipt para éxitos, fallos, timeouts y denegaciones.
+- `src/execution/gateway.py`: frontera única que no acepta efectos sin
+  `SandboxRequest`.
+
+**Evidence:**
+
+`tests/test_sandbox.py` aporta 14 checks. `scripts/run_sandbox_local_validation.py`
+ejecuta seis receipts en un workspace temporal: lectura, traversal denial,
+write scope, pytest tipado con secreto filtrado y fail-closed de aislamiento
+OS. El resultado queda en `evidence/sandbox_local_restricted.md`.
+
+**Interview explanation:**
+
+*"Separé autoridad de contención técnica: BAGO autoriza mediante un Permit,
+ExecutionGateway obliga a una request tipada y SandboxManager materializa un
+perfil que no puede aumentar capacidades. El backend local bloquea escapes de
+ruta, shell arbitrario, Git de escritura, timeouts y credenciales heredadas;
+cuando se pide aislamiento OS que no existe, falla cerrado y lo evidencia."*
+
+**Gaps restantes:**
+
+- ⚠️ `LocalRestrictedBackend` no es Windows Sandbox ni un contenedor: no se
+  presenta como aislamiento fuerte de proceso o red.
+- ⚠️ Falta conectar la observabilidad/evals local al trace completo y ejecutar
+  una demo E2E pública reproducible.
+- ⚠️ AWS live continúa pospuesto hasta créditos/free tier o una necesidad laboral.
+
