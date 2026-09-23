@@ -654,6 +654,69 @@ simula integraciones cloud.
 
 ---
 
+### 2026-09-23 — L15 OpenTelemetry + Jaeger Local Live
+
+**Fase:** L15
+**Estado:** `VERIFIED` para la proyección OTLP/HTTP a Jaeger local y la
+consulta de spans del E2E público; collector remoto, SaaS y AWS siguen
+`NOT_RUN`.
+
+**Qué entendí:**
+
+La observabilidad no debe convertirse en una segunda autoridad. BAGO conserva
+un `LocalTrace` determinista como evidencia y puede proyectarlo a OpenTelemetry
+para hacerlo consultable. La relación importante no es sólo emitir logs: es
+preservar parent links, atributos de workflow/retrieval/permit/receipt/sandbox
+y hacer que un fallo del exporter permanezca visible como fallo.
+
+**Qué implementé:**
+
+- `src/observability/otel_bridge.py`: exporter OTLP/HTTP, parent links,
+  atributos BAGO, status mapping, receipt de exportación y `RecordingSpanExporter`
+  para pruebas sin red.
+- `tests/test_l15_otel_bridge.py`: endpoint, parent links, source trace
+  inmutable y fallo de exporter.
+- `infra/observability/docker-compose.yml`: Jaeger all-in-one `1.60.0` con
+  OTLP/HTTP `4318` y query API `16686`.
+- `scripts/run_l15_otel_live_validation.py`, `docs/otel_jaeger.md` y
+  `evidence/l15_otel_jaeger_live.md`: E2E público → exportación → query real.
+- `.github/workflows/ci.yml`: startup, validación y cleanup del servicio local.
+
+**Evidence:**
+
+La ejecución live levanta Jaeger en Docker, ejecuta el E2E público, exporta 15
+spans y recupera el trace más reciente desde la API de Jaeger con 15 spans
+observados y operaciones `agent.run`, `retrieval`, `permit`, `receipt` y
+`sandbox_execution`. Coste `0.0 USD`.
+
+**Failure modes que ahora evito:**
+
+- Presentar JSON local como collector live: Jaeger se levanta y se consulta
+  realmente mediante OTLP/HTTP y su API.
+- Mezclar ejecuciones históricas del fixture: la validación selecciona el
+  trace más reciente asociado al `LocalTrace` actual.
+- Ocultar errores de SDK/exporter: el bridge reporta `FAILURE` y no éxito.
+- Permitir que observabilidad autorice acciones: el bridge sólo proyecta
+  eventos ya producidos y no recibe capacidades ejecutables.
+
+**Interview explanation:**
+
+*"Mantuve el LocalTrace como fuente de evidencia y añadí una proyección
+OpenTelemetry con parent links hacia Jaeger local. El E2E público genera la
+misma cadena gobernada; el exporter la envía por OTLP/HTTP y la validación
+consulta Jaeger para comprobar que los spans de retrieval, permisos, receipts
+y sandbox están presentes. OpenTelemetry observa el resultado, pero no decide
+ni ejecuta nada; si el transporte falla, la evidencia falla cerrado."*
+
+**Gaps restantes:**
+
+- ⚠️ Jaeger es local/efímero: no se valida retención, HA, alertas o producción.
+- ⚠️ Collector remoto, SaaS y AWS siguen fuera por la regla de coste cero.
+- ⚠️ La evaluación continúa centrada en cobertura/gobernanza, no en calidad
+  semántica del LLM.
+
+---
+
 ### 2026-09-23 — L14 Governed Local Vector Store
 
 **Fase:** L14

@@ -631,16 +631,16 @@ observabilidad productiva.
 ## Estado Operativo
 
 `yaml
-CURRENT_PHASE: L14
-COMPLETION: L14 governed local vector store and persistent GovernedRAG backend VERIFIED
+CURRENT_PHASE: L15
+COMPLETION: L15 OpenTelemetry projection to local Jaeger and query validation VERIFIED
 NEXT_MILESTONE: AWS live only with credits/free tier or a concrete job need
 BLOCKERS: AWS, commercetools and GitHub live identities are not configured
 P0_ISSUES: 0
 P1_ISSUES: 0
-TESTS_PASSING: 143/143 (L8 + L9 + L10 + L11 + L12 + L13 + L14 + README generator contract + workspace binding contract)
-EVIDENCE_GENERATED: L8 local live + L10 ontology + L11 sandbox + L12 trace/eval + L13 public E2E + L14 vector receipts plus prior L9 evidence
-LEARNING_ENTRIES: L0-L14
-NEXT_ACTION: Keep AWS and OpenMetadata remote live NOT_RUN; use the public E2E, CI and persistent local vector backend as the portfolio baseline
+TESTS_PASSING: 146/146 (L8 + L9 + L10 + L11 + L12 + L13 + L14 + L15 + README generator contract + workspace binding contract)
+EVIDENCE_GENERATED: L8 local live + L10 ontology + L11 sandbox + L12 trace/eval + L13 public E2E + L14 vector + L15 OTLP/Jaeger receipts plus prior L9 evidence
+LEARNING_ENTRIES: L0-L15
+NEXT_ACTION: Keep AWS and OpenMetadata remote live NOT_RUN; use the public E2E, CI, local vector backend and Jaeger trace as the portfolio baseline
 `
 
 ---
@@ -716,4 +716,43 @@ RetrievalChunk + metadata
 El backend usa SQLite y `HashEmbedding` determinista, sin red ni coste. No es
 un vector database distribuido, un servicio de embeddings alojado, un benchmark
 ANN ni una afirmación de relevancia productiva. Vector DB remoto y AWS siguen
+`NOT_RUN`.
+
+---
+
+## L15 · OPENTELEMETRY + JAEGER LOCAL LIVE
+
+**Prioridad:** coste `0` + evidencia pública + observabilidad live local
+**Estado:** ✅ VERIFIED para OTLP/HTTP, Jaeger Docker y query de spans BAGO
+
+### Criterio de cierre
+
+La cadena pública E2E debe poder exportar el `LocalTrace` existente a un
+backend de observabilidad local y recuperar el resultado desde una API real,
+manteniendo BAGO como autoridad única:
+
+```text
+LocalTrace
+  → OpenTelemetry parented spans
+  → OTLP/HTTP
+  → Jaeger all-in-one local
+  → query API
+  → evidence
+```
+
+### Entregables
+
+- [x] `src/observability/otel_bridge.py`
+- [x] `tests/test_l15_otel_bridge.py` (3 checks)
+- [x] `infra/observability/docker-compose.yml` con Jaeger `1.60.0`
+- [x] `scripts/run_l15_otel_live_validation.py --check`
+- [x] `docs/otel_jaeger.md`
+- [x] `evidence/l15_otel_jaeger_live.md`
+- [x] `.github/workflows/ci.yml` con startup, validación y cleanup de Jaeger
+
+### Límite explícito
+
+Jaeger es local y efímero; OpenTelemetry proyecta evidencia ya creada y no
+concede permisos ni ejecuta acciones. No es producción, alta disponibilidad,
+retención durable, AWS, SaaS ni collector remoto. Esas superficies siguen
 `NOT_RUN`.
