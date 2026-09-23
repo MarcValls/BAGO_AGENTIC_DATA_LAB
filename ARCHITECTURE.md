@@ -79,6 +79,8 @@ LEXICAL RETRIEVAL (BM25, keyword matching)
   ↓
 SEMANTIC RETRIEVAL (embeddings, vector similarity)
   ↓
+PERSISTENT LOCAL VECTOR BACKEND (SQLiteVectorStore, deterministic vectors)
+  ↓
 RERANKING (cross-encoder, relevance scoring)
   ↓
 AUTHORITY FILTERING (BAGO governance rules)
@@ -88,6 +90,20 @@ CONTEXT ASSEMBLY (prompt construction)
 GENERATION (LLM inference)
   ↓
 EVIDENCE (claim → chunk → source → revision)
+`
+
+### Backend semántico persistente local (L14)
+
+`
+RETRIEVAL CHUNKS + METADATA
+  ↓
+SQLITE VECTOR INDEX (content, metadata, deterministic HashEmbedding)
+  ↓
+AUTHORITY / VALIDITY / PROVENANCE GATE
+  ↓
+VECTOR SCORES + STABLE FINGERPRINT
+  ↓
+GOVERNEDRAG CONTEXT + CITATIONS
 `
 
 ### Pipeline de Reasoning Ontológico (L10)
@@ -186,7 +202,8 @@ class Receipt:
 | BedrockProviderAdapter | AWS Bedrock | Converse API, tool use, streaming | L6 |
 | BedrockKnowledgeBaseAdapter | AWS Bedrock Knowledge Bases | Retrieve/Generate, citations, metadata filters | L7 |
 | MCPCapabilityAdapter | MCP Protocol | Tool discovery, schema validation | L5 |
-| VectorStoreAdapter | FAISS/Pinecone | Embedding storage, similarity search | L4 |
+| VectorStoreAdapter | FAISS/Pinecone | Distributed/hosted similarity search for a later live boundary | Future |
+| SQLiteVectorStore | SQLite + deterministic HashEmbedding | Persistent local vectors, metadata gate, reload fingerprint and evidence citations | L14 |
 | ETLSourceAdapter | Web/API/Files | Extraction, normalization | L2 |
 | MetadataCatalogAdapter | OpenMetadata | Search, lineage, ownership, schema version, quality y receipts | L8 |
 | GovernedKnowledgeAgent | LangGraph + RAG + MCP + Bedrock | End-to-end orchestration, proposals, permits, receipts y evidence | L9 |
@@ -370,6 +387,23 @@ eval que el diseño declara. La CI repite esa cadena en cada push y pull request
 - ✅ La CI detecta deriva de tests, README, demo y compilación
 - ❌ No convierte fixtures en AWS live, OpenMetadata remoto ni producción
 
+### ADR-007: Persistent local vector backend before remote vector service
+
+**Decisión:** Añadir un `SQLiteVectorStore` local y determinista detrás del
+contrato semántico de `GovernedRAG` antes de adoptar un vector database remoto.
+
+**Racional:** Cierra la capacidad de persistencia y reload con coste cero,
+mantiene el filtro de autoridad/validity/provenance antes del ranking y produce
+una evidencia pública reproducible sin credenciales ni servicio externo.
+
+**Consecuencias:**
+
+- ✅ El retrieval deja de depender únicamente de un backend semántico en memoria
+- ✅ El fingerprint permite comprobar que el índice se conserva al recargarlo
+- ✅ El backend puede sustituirse más tarde sin mover la frontera de gobernanza
+- ❌ No ofrece distribución, ANN ni relevancia productiva; el vector DB remoto
+  permanece como una validación separada
+
 ---
 
 ## Roadmap de Implementación
@@ -396,6 +430,7 @@ gantt
     L11: Governed Sandbox         :done, des12, after des11, 1d
     L12: Local Observability      :done, des13, after des12, 1d
     L13: Public E2E + CI           :done, des14, after des13, 1d
+    L14: Local Vector Store        :done, des15, after des14, 1d
 `
 
 ---
@@ -403,10 +438,10 @@ gantt
 ## Estado Actual
 
 `yaml
-FASE: L13 (Public E2E Demo & CI)
-COMPLETION: L13 public local E2E composition and CI contract VERIFIED
+FASE: L14 (Governed Local Vector Store)
+COMPLETION: L14 persistent local vector backend and GovernedRAG integration VERIFIED
 NEXT_MILESTONE: AWS live only with credits/free tier or a concrete job need
-BLOCKERS: AWS/OpenMetadata live no autorizados o no configurados
+BLOCKERS: AWS/OpenMetadata live y vector DB remoto no autorizados o no configurados
 `
 
 **Última actualización:** 2026-09-23

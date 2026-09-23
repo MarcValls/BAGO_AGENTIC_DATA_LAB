@@ -631,16 +631,16 @@ observabilidad productiva.
 ## Estado Operativo
 
 `yaml
-CURRENT_PHASE: L13
-COMPLETION: L13 public local E2E composition and CI contract VERIFIED
+CURRENT_PHASE: L14
+COMPLETION: L14 governed local vector store and persistent GovernedRAG backend VERIFIED
 NEXT_MILESTONE: AWS live only with credits/free tier or a concrete job need
 BLOCKERS: AWS, commercetools and GitHub live identities are not configured
 P0_ISSUES: 0
 P1_ISSUES: 0
-TESTS_PASSING: 139/139 (L8 + L9 + L10 + L11 + L12 + L13 + README generator contract + workspace binding contract)
-EVIDENCE_GENERATED: L8 local live + L10 ontology + L11 sandbox + L12 trace/eval + L13 public E2E receipts plus prior L9 evidence
-LEARNING_ENTRIES: L0-L13
-NEXT_ACTION: Keep AWS and OpenMetadata remote live NOT_RUN; use the public E2E and CI as the portfolio baseline
+TESTS_PASSING: 143/143 (L8 + L9 + L10 + L11 + L12 + L13 + L14 + README generator contract + workspace binding contract)
+EVIDENCE_GENERATED: L8 local live + L10 ontology + L11 sandbox + L12 trace/eval + L13 public E2E + L14 vector receipts plus prior L9 evidence
+LEARNING_ENTRIES: L0-L14
+NEXT_ACTION: Keep AWS and OpenMetadata remote live NOT_RUN; use the public E2E, CI and persistent local vector backend as the portfolio baseline
 `
 
 ---
@@ -679,3 +679,41 @@ RAG → Ontology Engine → injected LLM context
 La CI demuestra la integridad del checkout y de la ruta local. No equivale a
 AWS live, OpenMetadata remoto, commercetools live ni observabilidad productiva;
 esas integraciones siguen `NOT_RUN`.
+
+---
+
+## L14 · GOVERNED LOCAL VECTOR STORE
+
+**Prioridad:** coste `0` + evidencia pública + vector retrieval persistente
+**Estado:** ✅ VERIFIED para SQLite local, metadata gate y reload de GovernedRAG
+
+### Criterio de cierre
+
+El laboratorio debe persistir vectores deterministas junto a la metadata del
+chunk, aplicar autoridad/validity/provenance antes del ranking y permitir que
+`GovernedRAG` recargue el backend sin perder su fingerprint.
+
+```text
+RetrievalChunk + metadata
+  → SQLiteVectorStore
+  → metadata/authority/validity gate
+  → deterministic vector scores
+  → GovernedRAG citations
+```
+
+### Entregables
+
+- [x] `src/retrieval/sqlite_vector_store.py`
+- [x] `src/retrieval/governed_rag.py` con backend semántico persistente opcional
+- [x] `tests/test_sqlite_vector_store.py` (4 checks)
+- [x] `scripts/run_l14_vector_store_validation.py --check`
+- [x] `docs/local_vector_store.md`
+- [x] `evidence/l14_vector_store.md`
+- [x] `.github/workflows/ci.yml` con validación del vector store local
+
+### Límite explícito
+
+El backend usa SQLite y `HashEmbedding` determinista, sin red ni coste. No es
+un vector database distribuido, un servicio de embeddings alojado, un benchmark
+ANN ni una afirmación de relevancia productiva. Vector DB remoto y AWS siguen
+`NOT_RUN`.

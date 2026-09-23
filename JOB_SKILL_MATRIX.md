@@ -43,7 +43,7 @@
 | Python | ✅ Fuerte | BAGO backend | — |
 | Evaluación de modelos | 🟡 Parcial | — | Reforzar tests |
 | Orchestration frameworks | ❌ No empezado | — | L1 LangGraph |
-| Vector DB | ❌ No empezado | — | L4 |
+| Vector DB | 🟢 Local persistente | SQLiteVectorStore + GovernedRAG | L14 |
 | MCP | ✅ Baseline gobernado | mcp_adapter.py + local stdio demo + video | Cloud/provider depth |
 | Testing/CI-CD | 🟡 Parcial | BAGO tests | Reforzar |
 | Seguridad/privacy | ✅ Fuerte | BAGO governance | — |
@@ -148,8 +148,8 @@
 | MCP | Muy Alta | ✅ Baseline gobernado | 🎯 Proficient | L5 MCP adapter + video | L5 baseline |
 | RAG | Muy Alta | 🟡 Basic | 🎯 Advanced | L4 governed RAG | L4 completado |
 | Hybrid retrieval | Alta | ❌ None | 🎯 Proficient | L4 benchmarks | L4 completado |
-| Embeddings | Alta | 🟡 Conceptual | 🎯 Implementado | L4 vector store | L4 completado |
-| Vector DB | Alta | ❌ None | 🎯 Proficient | L4 FAISS/Pinecone | L4 completado |
+| Embeddings | Alta | 🟢 Deterministic local | 🎯 Implementado | HashEmbedding + SQLiteVectorStore | L14 local |
+| Vector DB | Alta | 🟢 Local persistent | 🎯 Proficient | SQLiteVectorStore + GovernedRAG reload | L14 local; distributed service separate |
 | ETL | Alta | ❌ None | 🎯 Proficient | L2 pipeline | L2 completado |
 | Data pipelines | Alta | ❌ None | 🎯 Implementado | L2 end-to-end | L2 completado |
 | Metadata/Ontology | Media | 🟢 Implementado | 🎯 Proficient | L3 schema + L10 engine | L10 local |
@@ -161,7 +161,7 @@
 | OpenMetadata Catalog | Media | 🟢 Local live verificado | 🎯 Proficient | L8 adapter + Docker local + lineage/quality receipts | OpenMetadata remoto |
 | IAM | Alta | 🟡 Basic | 🎯 Configurable | L6 least-privilege setup | Live policy check |
 | CI/CD | Alta | 🟢 Reproducible | 🎯 Implementado | GitHub Actions + pinned requirements + public E2E | L13 CI |
-| Evaluation | Muy Alta | 🟢 Local governance evals | 🎯 Framework | 139 tests + trace/evidence linkage + L8/L9/L10/L11/L12/L13 scenarios | L13 local + CI |
+| Evaluation | Muy Alta | 🟢 Local governance evals | 🎯 Framework | 143 tests + trace/evidence linkage + L8/L9/L10/L11/L12/L13/L14 scenarios | L14 local + CI |
 | Observability | Alta | 🟢 Local trace verified | 🎯 Completo | LocalTrace: workflow + retrieval + permit + sandbox + receipts | L12 local; collector externo separado |
 | Secure execution | Muy Alta | 🟢 Local backend verified | 🎯 Implementado | BAGO auth boundary + LocalRestrictedBackend + escape tests | L11 local |
 | Authorization | Muy Alta | ✅ Diseñado | 🎯 Implementado | BAGO permits | L1 completado |

@@ -3,7 +3,7 @@
 [![CI](https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/actions/workflows/ci.yml/badge.svg)](https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/actions/workflows/ci.yml)
 [![GitHub](https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/actions/workflows/readme-consistency.yml/badge.svg)](https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/actions/workflows/readme-consistency.yml)
 [![Branch](https://img.shields.io/badge/branch-main-green)](https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/tree/main)
-[![Tests](https://img.shields.io/badge/tests-139%2F139%20passing-brightgreen)](https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/actions)
+[![Tests](https://img.shields.io/badge/tests-143%2F143%20passing-brightgreen)](https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/actions)
 [![License](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 
 > Laboratorio experimental para desarrollar capacidades de AI Engineering con gobernanza BAGO.
@@ -13,12 +13,12 @@
 
 | Métrica | Valor |
 |---|---|
-| Tests ejecutados | **139/139** |
+| Tests ejecutados | **143/143** |
 | Rama pública | `main` |
 | Estado actualizado | 2026-09-23 |
-| Fase actual | **L13 · Public E2E Demo & CI** · VERIFIED (local) |
+| Fase actual | **L14 · Governed Local Vector Store** · VERIFIED (local) |
 | Siguiente bloque | AWS live sólo con créditos/free tier o una necesidad laboral concreta |
-| Estado declarado | VERIFIED for the local RDF/Turtle materialization, bounded SPARQL subset, deterministic inference, contradiction constraints, RAG seed handoff, the real local OpenMetadata 1.12.6 validation, the local restricted sandbox execution boundary, the local trace/evaluation chain and the public zero-cost E2E demo executed by the same CI contract; AWS/OpenMetadata remote/commercetools live integrations remain `NOT_RUN`; GitHub issue #14 is separately executed and verified under human authorization. |
+| Estado declarado | VERIFIED for the local RDF/Turtle materialization, bounded SPARQL subset, deterministic inference, contradiction constraints, RAG seed handoff, the real local OpenMetadata 1.12.6 validation, the local restricted sandbox execution boundary, the local trace/evaluation chain, the public zero-cost E2E demo executed by the same CI contract and the persistent local SQLite vector index consumed by GovernedRAG; AWS/OpenMetadata remote/commercetools live integrations remain `NOT_RUN`; GitHub issue #14 is separately executed and verified under human authorization. |
 
 El estado público se limita a lo que existe en el checkout y a la evidencia
 referenciada. AWS live, OpenMetadata live y otras integraciones externas
@@ -85,6 +85,7 @@ flowchart LR
     L11["L11 Governed Sandbox Layer (VERIFIED (local))"]
     L12["L12 Local Observability & Evals (VERIFIED (local))"]
     L13["L13 Public E2E Demo & CI (VERIFIED (local))"]
+    L14["L14 Governed Local Vector Store (VERIFIED (local))"]
     L0 --> L1
     L1 --> L2
     L2 --> L3
@@ -98,6 +99,7 @@ flowchart LR
     L10 --> L11
     L11 --> L12
     L12 --> L13
+    L13 --> L14
 ```
 
 | Fase | Estado | Objetivo | Descripción | Tests | Evidencia/docs |
@@ -116,6 +118,7 @@ flowchart LR
 | L11 | VERIFIED (local) | BAGO / secure execution | Governed Sandbox Layer | 14 | 3 |
 | L12 | VERIFIED (local) | BAGO / portfolio | Local Observability & Evals | 5 | 3 |
 | L13 | VERIFIED (local) | BAGO / portfolio | Public E2E Demo & CI | 3 | 2 |
+| L14 | VERIFIED (local) | BAGO / portfolio | Governed Local Vector Store | 4 | 2 |
 
 ## Arquitectura actual
 
@@ -156,7 +159,9 @@ Pipeline actual:
 10. LocalTrace enlaza workflow, retrieval, permits, sandbox y receipts
 11. Local evaluator comprueba cobertura y ausencia de efectos no autorizados
 12. Public E2E compone las fronteras locales con fixtures deterministas
-13. GitHub Actions repite tests, README, demo y compile checks
+13. SQLiteVectorStore persiste vectores deterministas y conserva el gate de metadata
+14. GovernedRAG puede consumir el backend semántico persistente y recargar su fingerprint
+15. GitHub Actions repite tests, README, demo, vector validation y compile checks
 
 ## Job market alignment
 
@@ -184,8 +189,8 @@ La tabla se extrae de JOB_SKILL_MATRIX.md y se mantiene fuera del README.
 | MCP | Muy Alta | ✅ Baseline gobernado | 🎯 Proficient | L5 MCP adapter + video | L5 baseline |
 | RAG | Muy Alta | 🟡 Basic | 🎯 Advanced | L4 governed RAG | L4 completado |
 | Hybrid retrieval | Alta | ❌ None | 🎯 Proficient | L4 benchmarks | L4 completado |
-| Embeddings | Alta | 🟡 Conceptual | 🎯 Implementado | L4 vector store | L4 completado |
-| Vector DB | Alta | ❌ None | 🎯 Proficient | L4 FAISS/Pinecone | L4 completado |
+| Embeddings | Alta | 🟢 Deterministic local | 🎯 Implementado | HashEmbedding + SQLiteVectorStore | L14 local |
+| Vector DB | Alta | 🟢 Local persistent | 🎯 Proficient | SQLiteVectorStore + GovernedRAG reload | L14 local; distributed service separate |
 | ETL | Alta | ❌ None | 🎯 Proficient | L2 pipeline | L2 completado |
 | Data pipelines | Alta | ❌ None | 🎯 Implementado | L2 end-to-end | L2 completado |
 | Metadata/Ontology | Media | 🟢 Implementado | 🎯 Proficient | L3 schema + L10 engine | L10 local |
@@ -197,7 +202,7 @@ La tabla se extrae de JOB_SKILL_MATRIX.md y se mantiene fuera del README.
 | OpenMetadata Catalog | Media | 🟢 Local live verificado | 🎯 Proficient | L8 adapter + Docker local + lineage/quality receipts | OpenMetadata remoto |
 | IAM | Alta | 🟡 Basic | 🎯 Configurable | L6 least-privilege setup | Live policy check |
 | CI/CD | Alta | 🟢 Reproducible | 🎯 Implementado | GitHub Actions + pinned requirements + public E2E | L13 CI |
-| Evaluation | Muy Alta | 🟢 Local governance evals | 🎯 Framework | 139 tests + trace/evidence linkage + L8/L9/L10/L11/L12/L13 scenarios | L13 local + CI |
+| Evaluation | Muy Alta | 🟢 Local governance evals | 🎯 Framework | 143 tests + trace/evidence linkage + L8/L9/L10/L11/L12/L13/L14 scenarios | L14 local + CI |
 | Observability | Alta | 🟢 Local trace verified | 🎯 Completo | LocalTrace: workflow + retrieval + permit + sandbox + receipts | L12 local; collector externo separado |
 | Secure execution | Muy Alta | 🟢 Local backend verified | 🎯 Implementado | BAGO auth boundary + LocalRestrictedBackend + escape tests | L11 local |
 | Authorization | Muy Alta | ✅ Diseñado | 🎯 Implementado | BAGO permits | L1 completado |
@@ -243,6 +248,7 @@ La tabla se extrae de JOB_SKILL_MATRIX.md y se mantiene fuera del README.
 - `src/orchestration/state_graph.py`
 - `src/retrieval/__init__.py`
 - `src/retrieval/governed_rag.py`
+- `src/retrieval/sqlite_vector_store.py`
 - `src/sandbox/__init__.py`
 - `src/sandbox/backend.py`
 - `src/sandbox/exceptions.py`
@@ -273,6 +279,7 @@ La tabla se extrae de JOB_SKILL_MATRIX.md y se mantiene fuera del README.
 - `tests/test_retrieval_accuracy.py` (9 checks)
 - `tests/test_retrieval_benchmark.py` (3 checks)
 - `tests/test_sandbox.py` (14 checks)
+- `tests/test_sqlite_vector_store.py` (4 checks)
 - `tests/test_workspace_binding.py` (6 checks)
 
 ### Evidencia
@@ -281,6 +288,7 @@ La tabla se extrae de JOB_SKILL_MATRIX.md y se mantiene fuera del README.
 - `evidence/bedrock_provider_benchmark.md`
 - `evidence/l10_ontology_engine.md`
 - `evidence/l12_observability_evals.md`
+- `evidence/l14_vector_store.md`
 - `evidence/l3_ontology_graph.md`
 - `evidence/l8_openmetadata_catalog.md`
 - `evidence/l8_openmetadata_live.md`
@@ -302,6 +310,7 @@ La tabla se extrae de JOB_SKILL_MATRIX.md y se mantiene fuera del README.
 - `docs/bedrock_knowledge_base.md`
 - `docs/commercetools_capstone.md`
 - `docs/governed_rag.md`
+- `docs/local_vector_store.md`
 - `docs/mcp_governance.md`
 - `docs/observability_evals.md`
 - `docs/ontology_engine.md`
@@ -327,6 +336,7 @@ La tabla se extrae de JOB_SKILL_MATRIX.md y se mantiene fuera del README.
 - `scripts/local_mcp_server.py`
 - `scripts/render_mcp_evidence_video.py`
 - `scripts/run_l12_observability_evidence.py`
+- `scripts/run_l14_vector_store_validation.py`
 - `scripts/run_l8_openmetadata_live_validation.py`
 - `scripts/run_mcp_demo.py`
 - `scripts/run_public_e2e_demo.py`
@@ -338,7 +348,7 @@ La tabla se extrae de JOB_SKILL_MATRIX.md y se mantiene fuera del README.
 
 ### CI automática
 
-- `.github/workflows/ci.yml` · suite, README, demo E2E y compile check
+- `.github/workflows/ci.yml` · suite, README, demo E2E, vector validation y compile check
 
 ## Comandos reproducibles
 
@@ -349,6 +359,8 @@ python scripts/generate_dynamic_readme.py
 python scripts/generate_dynamic_readme.py --check --skip-tests
 python scripts/run_public_e2e_demo.py --check
 python scripts/run_public_e2e_demo.py --write-evidence
+python scripts/run_l14_vector_store_validation.py --check
+python scripts/run_l14_vector_store_validation.py --write-evidence
 docker compose -p bago-openmetadata -f infra/openmetadata/docker-compose.yml up -d
 python scripts/run_l8_openmetadata_live_validation.py
 python scripts/run_sandbox_local_validation.py
@@ -369,6 +381,7 @@ Tests por fase:
 - `L11`: `python -m pytest tests/test_sandbox.py -q`
 - `L12`: `python -m pytest tests/test_l12_observability.py -q`
 - `L13`: `python -m pytest tests/test_public_e2e_demo.py -q`
+- `L14`: `python -m pytest tests/test_sqlite_vector_store.py -q`
 
 ## Contrato de generación
 
