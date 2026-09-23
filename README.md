@@ -3,7 +3,7 @@
 [![CI](https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/actions/workflows/ci.yml/badge.svg)](https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/actions/workflows/ci.yml)
 [![GitHub](https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/actions/workflows/readme-consistency.yml/badge.svg)](https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/actions/workflows/readme-consistency.yml)
 [![Branch](https://img.shields.io/badge/branch-main-green)](https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/tree/main)
-[![Tests](https://img.shields.io/badge/tests-143%2F143%20passing-brightgreen)](https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/actions)
+[![Tests](https://img.shields.io/badge/tests-146%2F146%20passing-brightgreen)](https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/actions)
 [![License](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 
 > Laboratorio experimental para desarrollar capacidades de AI Engineering con gobernanza BAGO.
@@ -13,12 +13,12 @@
 
 | Métrica | Valor |
 |---|---|
-| Tests ejecutados | **143/143** |
+| Tests ejecutados | **146/146** |
 | Rama pública | `main` |
 | Estado actualizado | 2026-09-23 |
-| Fase actual | **L14 · Governed Local Vector Store** · VERIFIED (local) |
+| Fase actual | **L15 · OpenTelemetry + Jaeger Local Live** · VERIFIED (local live) |
 | Siguiente bloque | AWS live sólo con créditos/free tier o una necesidad laboral concreta |
-| Estado declarado | VERIFIED for the local RDF/Turtle materialization, bounded SPARQL subset, deterministic inference, contradiction constraints, RAG seed handoff, the real local OpenMetadata 1.12.6 validation, the local restricted sandbox execution boundary, the local trace/evaluation chain, the public zero-cost E2E demo executed by the same CI contract and the persistent local SQLite vector index consumed by GovernedRAG; AWS/OpenMetadata remote/commercetools live integrations remain `NOT_RUN`; GitHub issue #14 is separately executed and verified under human authorization. |
+| Estado declarado | VERIFIED for the local RDF/Turtle materialization, bounded SPARQL subset, deterministic inference, contradiction constraints, RAG seed handoff, the real local OpenMetadata 1.12.6 validation, the local restricted sandbox execution boundary, the local trace/evaluation chain, the public zero-cost E2E demo executed by the same CI contract, the persistent local SQLite vector index consumed by GovernedRAG and the local OpenTelemetry → Jaeger trace projection; AWS/OpenMetadata remote/commercetools live integrations remain `NOT_RUN`; GitHub issue #14 is separately executed and verified under human authorization. |
 
 El estado público se limita a lo que existe en el checkout y a la evidencia
 referenciada. AWS live, OpenMetadata live y otras integraciones externas
@@ -86,6 +86,7 @@ flowchart LR
     L12["L12 Local Observability & Evals (VERIFIED (local))"]
     L13["L13 Public E2E Demo & CI (VERIFIED (local))"]
     L14["L14 Governed Local Vector Store (VERIFIED (local))"]
+    L15["L15 OpenTelemetry + Jaeger Local Live (VERIFIED (local live))"]
     L0 --> L1
     L1 --> L2
     L2 --> L3
@@ -100,6 +101,7 @@ flowchart LR
     L11 --> L12
     L12 --> L13
     L13 --> L14
+    L14 --> L15
 ```
 
 | Fase | Estado | Objetivo | Descripción | Tests | Evidencia/docs |
@@ -119,6 +121,7 @@ flowchart LR
 | L12 | VERIFIED (local) | BAGO / portfolio | Local Observability & Evals | 5 | 3 |
 | L13 | VERIFIED (local) | BAGO / portfolio | Public E2E Demo & CI | 3 | 2 |
 | L14 | VERIFIED (local) | BAGO / portfolio | Governed Local Vector Store | 4 | 2 |
+| L15 | VERIFIED (local live) | BAGO / portfolio | OpenTelemetry + Jaeger Local Live | 3 | 2 |
 
 ## Arquitectura actual
 
@@ -161,7 +164,8 @@ Pipeline actual:
 12. Public E2E compone las fronteras locales con fixtures deterministas
 13. SQLiteVectorStore persiste vectores deterministas y conserva el gate de metadata
 14. GovernedRAG puede consumir el backend semántico persistente y recargar su fingerprint
-15. GitHub Actions repite tests, README, demo, vector validation y compile checks
+15. OpenTelemetry proyecta LocalTrace a Jaeger local sin conceder autoridad
+16. GitHub Actions repite tests, README, demo, vector validation, Jaeger validation y compile checks
 
 ## Job market alignment
 
@@ -202,8 +206,8 @@ La tabla se extrae de JOB_SKILL_MATRIX.md y se mantiene fuera del README.
 | OpenMetadata Catalog | Media | 🟢 Local live verificado | 🎯 Proficient | L8 adapter + Docker local + lineage/quality receipts | OpenMetadata remoto |
 | IAM | Alta | 🟡 Basic | 🎯 Configurable | L6 least-privilege setup | Live policy check |
 | CI/CD | Alta | 🟢 Reproducible | 🎯 Implementado | GitHub Actions + pinned requirements + public E2E | L13 CI |
-| Evaluation | Muy Alta | 🟢 Local governance evals | 🎯 Framework | 143 tests + trace/evidence linkage + L8/L9/L10/L11/L12/L13/L14 scenarios | L14 local + CI |
-| Observability | Alta | 🟢 Local trace verified | 🎯 Completo | LocalTrace: workflow + retrieval + permit + sandbox + receipts | L12 local; collector externo separado |
+| Evaluation | Muy Alta | 🟢 Local governance evals | 🎯 Framework | 146 tests + trace/evidence linkage + L8/L9/L10/L11/L12/L13/L14/L15 scenarios | L15 local + CI |
+| Observability | Alta | 🟢 OpenTelemetry local live | 🎯 Completo | LocalTrace + OTLP/HTTP + Jaeger Docker + parent-linked spans | L15 local; remoto separado |
 | Secure execution | Muy Alta | 🟢 Local backend verified | 🎯 Implementado | BAGO auth boundary + LocalRestrictedBackend + escape tests | L11 local |
 | Authorization | Muy Alta | ✅ Diseñado | 🎯 Implementado | BAGO permits | L1 completado |
 | Auditability | Alta | ✅ Diseñado | 🎯 Implementado | BAGO receipts | L1 completado |
@@ -245,6 +249,7 @@ La tabla se extrae de JOB_SKILL_MATRIX.md y se mantiene fuera del README.
 - `src/metadata/schema.py`
 - `src/observability/__init__.py`
 - `src/observability/local_trace.py`
+- `src/observability/otel_bridge.py`
 - `src/orchestration/state_graph.py`
 - `src/retrieval/__init__.py`
 - `src/retrieval/governed_rag.py`
@@ -266,6 +271,7 @@ La tabla se extrae de JOB_SKILL_MATRIX.md y se mantiene fuera del README.
 - `tests/test_dynamic_readme.py` (4 checks)
 - `tests/test_l10_ontology_engine.py` (4 checks)
 - `tests/test_l12_observability.py` (5 checks)
+- `tests/test_l15_otel_bridge.py` (3 checks)
 - `tests/test_l1_governance.py` (7 checks)
 - `tests/test_l2_etl_pipeline.py` (4 checks)
 - `tests/test_l3_evidence.py` (2 checks)
@@ -289,6 +295,7 @@ La tabla se extrae de JOB_SKILL_MATRIX.md y se mantiene fuera del README.
 - `evidence/l10_ontology_engine.md`
 - `evidence/l12_observability_evals.md`
 - `evidence/l14_vector_store.md`
+- `evidence/l15_otel_jaeger_live.md`
 - `evidence/l3_ontology_graph.md`
 - `evidence/l8_openmetadata_catalog.md`
 - `evidence/l8_openmetadata_live.md`
@@ -316,6 +323,7 @@ La tabla se extrae de JOB_SKILL_MATRIX.md y se mantiene fuera del README.
 - `docs/ontology_engine.md`
 - `docs/ontology_generator.md`
 - `docs/openmetadata_catalog.md`
+- `docs/otel_jaeger.md`
 - `docs/public_e2e_demo.md`
 - `docs/readme_generation.md`
 - `docs/sandbox_manager.md`
@@ -337,6 +345,7 @@ La tabla se extrae de JOB_SKILL_MATRIX.md y se mantiene fuera del README.
 - `scripts/render_mcp_evidence_video.py`
 - `scripts/run_l12_observability_evidence.py`
 - `scripts/run_l14_vector_store_validation.py`
+- `scripts/run_l15_otel_live_validation.py`
 - `scripts/run_l8_openmetadata_live_validation.py`
 - `scripts/run_mcp_demo.py`
 - `scripts/run_public_e2e_demo.py`
@@ -344,11 +353,12 @@ La tabla se extrae de JOB_SKILL_MATRIX.md y se mantiene fuera del README.
 
 ### Infraestructura reproducible
 
+- `infra/observability/docker-compose.yml`
 - `infra/openmetadata/docker-compose.yml`
 
 ### CI automática
 
-- `.github/workflows/ci.yml` · suite, README, demo E2E, vector validation y compile check
+- `.github/workflows/ci.yml` · suite, README, demo E2E, vector, Jaeger live y compile check
 
 ## Comandos reproducibles
 
@@ -361,6 +371,10 @@ python scripts/run_public_e2e_demo.py --check
 python scripts/run_public_e2e_demo.py --write-evidence
 python scripts/run_l14_vector_store_validation.py --check
 python scripts/run_l14_vector_store_validation.py --write-evidence
+docker compose -p bago-otel -f infra/observability/docker-compose.yml up -d
+python scripts/run_l15_otel_live_validation.py --check
+python scripts/run_l15_otel_live_validation.py --write-evidence
+docker compose -p bago-otel -f infra/observability/docker-compose.yml down
 docker compose -p bago-openmetadata -f infra/openmetadata/docker-compose.yml up -d
 python scripts/run_l8_openmetadata_live_validation.py
 python scripts/run_sandbox_local_validation.py
@@ -382,6 +396,7 @@ Tests por fase:
 - `L12`: `python -m pytest tests/test_l12_observability.py -q`
 - `L13`: `python -m pytest tests/test_public_e2e_demo.py -q`
 - `L14`: `python -m pytest tests/test_sqlite_vector_store.py -q`
+- `L15`: `python -m pytest tests/test_l15_otel_bridge.py -q`
 
 ## Contrato de generación
 

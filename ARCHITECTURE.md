@@ -146,6 +146,10 @@ EXTERNAL_EFFECT (API call, database write, file operation)
 RECEIPT (what happened, when, outcome, evidence)
   ↓
 VERIFICATION (expected vs actual, assertions)
+  ↓
+OPENTELEMETRY PROJECTION (spans only; no authority)
+  ↓
+JAEGER LOCAL (OTLP/HTTP queryable backend)
 `
 
 ---
@@ -211,6 +215,8 @@ class Receipt:
 | SandboxManager | LocalRestrictedBackend | Workspace, process, credential and fail-closed execution limits | L11 |
 | LocalTraceBuilder | Local JSON trace | Workflow, retrieval, permits, sandbox and receipt linkage | L12 |
 | LocalTraceEvaluator | Deterministic local checks | Coverage, evidence linkage and unauthorized-effect checks | L12 |
+| OTelTraceBridge | OpenTelemetry SDK + OTLP/HTTP | Project LocalTrace into parent-linked spans without authority | L15 |
+| Jaeger local | Docker all-in-one `1.60.0` | Queryable local trace backend for live validation | L15 |
 | Public E2E Demo | Committed fixtures + local boundaries | Clone-and-run composition with stable PASS gates | L13 |
 | GitHub Actions CI | Python 3.11 + pinned requirements | Suite, README, E2E and compile verification | L13 |
 
@@ -261,6 +267,11 @@ class Receipt:
     - Un trace sólo normaliza eventos y receipts ya producidos
     - Un eval local puede fallar por evidencia incompleta, pero nunca autoriza
       ni promueve una acción
+
+12. **OpenTelemetry sólo proyecta evidencia existente**
+    - El `LocalTrace` sigue siendo la fuente de evidencia y la autoridad BAGO
+    - Un fallo de exportación no se convierte en éxito ni habilita ejecución
+    - Jaeger local no se presenta como collector remoto o producción
 
 ---
 
@@ -404,6 +415,22 @@ una evidencia pública reproducible sin credenciales ni servicio externo.
 - ❌ No ofrece distribución, ANN ni relevancia productiva; el vector DB remoto
   permanece como una validación separada
 
+### ADR-008: Local OpenTelemetry projection before remote observability
+
+**Decisión:** Proyectar el `LocalTrace` existente a spans OpenTelemetry y
+validarlos en Jaeger local antes de introducir un collector remoto o SaaS.
+
+**Racional:** Hace visible la cadena E2E real —workflow, retrieval, permits,
+receipts, sandbox y eval— con coste cero, sin duplicar la autoridad ni ocultar
+los límites del trace JSON ya verificado.
+
+**Consecuencias:**
+
+- ✅ Parent links y atributos de evidencia son consultables en un backend live
+- ✅ Docker + Jaeger permiten reproducir la validación desde un clon
+- ✅ El exporter falla cerrado en la evidencia cuando OTLP no responde
+- ❌ No ofrece retención, HA, alertas, producción ni un collector remoto
+
 ---
 
 ## Roadmap de Implementación
@@ -431,6 +458,7 @@ gantt
     L12: Local Observability      :done, des13, after des12, 1d
     L13: Public E2E + CI           :done, des14, after des13, 1d
     L14: Local Vector Store        :done, des15, after des14, 1d
+    L15: OTel + Jaeger Local Live  :done, des16, after des15, 1d
 `
 
 ---
@@ -438,8 +466,8 @@ gantt
 ## Estado Actual
 
 `yaml
-FASE: L14 (Governed Local Vector Store)
-COMPLETION: L14 persistent local vector backend and GovernedRAG integration VERIFIED
+FASE: L15 (OpenTelemetry + Jaeger Local Live)
+COMPLETION: L15 OTLP/HTTP projection and Jaeger query validation VERIFIED
 NEXT_MILESTONE: AWS live only with credits/free tier or a concrete job need
 BLOCKERS: AWS/OpenMetadata live y vector DB remoto no autorizados o no configurados
 `

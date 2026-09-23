@@ -38,7 +38,8 @@
       "Public E2E compone las fronteras locales con fixtures deterministas",
       "SQLiteVectorStore persiste vectores deterministas y conserva el gate de metadata",
       "GovernedRAG puede consumir el backend semántico persistente y recargar su fingerprint",
-      "GitHub Actions repite tests, README, demo, vector validation y compile checks"
+      "OpenTelemetry proyecta LocalTrace a Jaeger local sin conceder autoridad",
+      "GitHub Actions repite tests, README, demo, vector validation, Jaeger validation y compile checks"
     ]
   },
   "phases": [
@@ -221,6 +222,18 @@
         {"kind": "evidence", "patterns": ["evidence/l14_vector_store.md", "docs/local_vector_store.md"]}
       ],
       "commit_patterns": ["feat: add governed local vector store", "L14"]
+    },
+    {
+      "id": "L15",
+      "name": "OpenTelemetry + Jaeger Local Live",
+      "target": "BAGO / portfolio",
+      "status": "VERIFIED (local live)",
+      "checks": [
+        {"kind": "code", "patterns": ["src/observability/otel_bridge.py", "scripts/run_l15_otel_live_validation.py", "infra/observability/docker-compose.yml"]},
+        {"kind": "tests", "patterns": ["tests/test_l15_otel_bridge.py"]},
+        {"kind": "evidence", "patterns": ["evidence/l15_otel_jaeger_live.md", "docs/otel_jaeger.md"]}
+      ],
+      "commit_patterns": ["feat: add local opentelemetry jaeger validation", "L15"]
     }
   ]
 }
