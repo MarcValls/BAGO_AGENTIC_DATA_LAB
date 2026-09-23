@@ -49,6 +49,24 @@ $env:AWS_PROFILE = "your-profile"
 Prefer short-lived role credentials, SSO or another standard AWS credential
 provider.  Do not commit access keys, profiles, `.env` files or tokens.
 
+With AWS CLI 2.32 or newer, the local-development login flow can use the
+existing AWS Management Console session and issue temporary credentials
+without asking for a long-lived access key.  The installed CLI in the
+reference environment is 2.37.0:
+
+```powershell
+$env:AWS_REGION = "us-east-1"
+& "C:\Program Files\Amazon\AWSCLIV2\aws.exe" login --profile bago-free --region $env:AWS_REGION
+& "C:\Program Files\Amazon\AWSCLIV2\aws.exe" sts get-caller-identity --profile bago-free --no-cli-pager
+$env:AWS_PROFILE = "bago-free"
+```
+
+The first command opens a browser for the account holder to authenticate.
+It requires an existing AWS account; it does not create a free-tier account
+or prove that the next inference is bill-free.  If the account uses IAM
+Identity Center, use `aws configure sso` followed by `aws sso login` instead.
+See the [AWS CLI local-development login guide](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-sign-in.html).
+
 The adapter creates a `bedrock-runtime` client with explicit connect/read
 timeouts and disables SDK-level retry multiplication; the adapter owns the
 bounded retry budget and classifies throttling, timeout, network,
