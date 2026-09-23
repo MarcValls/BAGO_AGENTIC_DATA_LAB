@@ -21,14 +21,17 @@
     "documentation": "docs/bago-sync-agent.md"
   },
   "architecture": {
-    "principle": "LangGraph propone → BAGO autoriza → ExecutionGateway ejecuta → Receipt evidencia.",
+    "principle": "LangGraph propone → BAGO autoriza → ExecutionGateway → SandboxManager → Receipt evidencia.",
     "pipeline": [
       "RAG recupera documentos y citas",
       "Ontology Engine materializa RDF/Turtle",
       "SPARQL local consulta relaciones",
       "Inference añade inversas, transitivas y simétricas",
       "Constraints detecta endpoints, evidencia y contradicciones",
-      "El LLM recibe caminos y evidencia; no recibe autoridad implícita"
+      "El LLM recibe caminos y evidencia; no recibe autoridad implícita",
+      "ExecutionGateway exige una SandboxRequest tipada",
+      "SandboxManager materializa filesystem y proceso acotados",
+      "Receipt evidencia el resultado o la denegación"
     ]
   },
   "phases": [
@@ -132,11 +135,11 @@
       "id": "L8",
       "name": "Metadata Catalog",
       "target": "Devoteam",
-      "status": "VERIFIED (offline)",
+      "status": "VERIFIED (local live)",
       "checks": [
-        {"kind": "code", "patterns": ["src/adapters/openmetadata_adapter.py"]},
+        {"kind": "code", "patterns": ["src/adapters/openmetadata_adapter.py", "scripts/run_l8_openmetadata_live_validation.py", "infra/openmetadata/docker-compose.yml"]},
         {"kind": "tests", "patterns": ["tests/test_openmetadata_adapter.py"]},
-        {"kind": "evidence", "patterns": ["evidence/l8_openmetadata_catalog.md", "docs/openmetadata_catalog.md"]}
+        {"kind": "evidence", "patterns": ["evidence/l8_openmetadata_catalog.md", "evidence/l8_openmetadata_live.md", "docs/openmetadata_catalog.md"]}
       ],
       "commit_patterns": ["feat: add governed OpenMetadata catalog adapter"]
     },
@@ -163,6 +166,18 @@
         {"kind": "evidence", "patterns": ["evidence/l10_ontology_engine.md", "docs/ontology_engine.md"]}
       ],
       "commit_patterns": ["feat: add governed ontology engine", "L10"]
+    },
+    {
+      "id": "L11",
+      "name": "Governed Sandbox Layer",
+      "target": "BAGO / secure execution",
+      "status": "VERIFIED (local)",
+      "checks": [
+        {"kind": "code", "patterns": ["src/sandbox/*.py", "src/execution/gateway.py"]},
+        {"kind": "tests", "patterns": ["tests/test_sandbox.py"]},
+        {"kind": "evidence", "patterns": ["evidence/sandbox_local_restricted.md", "docs/sandbox_manager.md", "scripts/run_sandbox_local_validation.py"]}
+      ],
+      "commit_patterns": ["feat: add governed sandbox layer", "L11"]
     }
   ]
 }

@@ -386,8 +386,8 @@ BAGO, permite el READ y bloquea el WRITE antes de enviarlo al servidor.
 **Duración:** 1 semana  
 **Fecha objetivo:** 2026-11-16
 
-**Estado:** ✅ VERIFIED (adapter, gobernanza y evidencia offline, 2026-09-22;
-OpenMetadata/Docker live `NOT_RUN`)
+**Estado:** ✅ VERIFIED (adapter, gobernanza y evidencia offline + live local,
+2026-09-23; OpenMetadata remoto/AWS `NOT_RUN`)
 
 ### Features a Integrar
 
@@ -401,13 +401,18 @@ OpenMetadata/Docker live `NOT_RUN`)
 ### Entregables
 
 - [x] src/adapters/openmetadata_adapter.py
-- [x] tests/test_openmetadata_adapter.py (12 checks offline, cliente inyectado)
+- [x] tests/test_openmetadata_adapter.py (13 checks offline, cliente inyectado)
 - [x] docs/openmetadata_catalog.md
 - [x] scripts/generate_l8_catalog_evidence.py
 - [x] evidence/l8_openmetadata_catalog.md (search, source → asset → chunk,
   ownership, schema version, quality rule y receipts)
-- [ ] OpenMetadata local running (Docker) (`NOT_RUN`: docker no está instalado)
-- [ ] Evidence: misma validación contra servidor OpenMetadata real (`NOT_RUN`)
+- [x] `infra/openmetadata/docker-compose.yml` (OpenMetadata 1.12.6 local)
+- [x] `scripts/run_l8_openmetadata_live_validation.py` (fixture temporal,
+  JWT, HTTP real, cleanup gobernado)
+- [x] `evidence/l8_openmetadata_live.md` (health, search, lineage,
+  ownership, schema, quality y denegación pre-transporte)
+- [x] OpenMetadata local running (Docker; migraciones código 0, healthcheck 200)
+- [ ] OpenMetadata remoto/AWS (`NOT_RUN`: fuera de la regla de coste 0)
 
 ---
 
@@ -501,16 +506,67 @@ optional LLM reasoning
 ### Explicit boundary
 
 The verified scope is a local in-memory graph and a documented SPARQL subset.
-It does not claim a deployed triplestore, AWS live access, OpenMetadata live,
-or a complete W3C SPARQL implementation. Those remain separate validations.
+The separate OpenMetadata validation is now verified against a real local
+Docker deployment; it does not claim a deployed triplestore, AWS live access,
+OpenMetadata remote, or a complete W3C SPARQL implementation.
 
 ### Orden posterior de trabajo sin coste
 
-1. OpenMetadata local real con Docker, adapter, receipt y prueba reproducible.
-2. Observabilidad y evals locales: trace → tool calls → retrieval → permit →
+1. Observabilidad y evals locales: trace → tool calls → retrieval → permit →
    execution → receipt → eval.
-3. Demo end-to-end pública y CI automática.
-4. AWS live sólo con créditos/free tier o una necesidad laboral concreta.
+2. Demo end-to-end pública y CI automática.
+3. AWS live sólo con créditos/free tier o una necesidad laboral concreta.
+
+---
+
+## L11 · GOVERNED SANDBOX LAYER
+
+**Prioridad:** coste `0` + evidencia pública + secure execution + mejora real de
+BAGO
+**Estado:** ✅ VERIFIED (backend local restringido, 2026-09-23)
+
+L11 convierte la frontera conceptual `ExecutionGateway` en una frontera
+material local:
+
+```text
+ExecutionRequest + Permit
+  ↓
+ExecutionGateway
+  ↓
+SandboxManager deriva el perfil efectivo
+  ↓
+LocalRestrictedBackend
+  ↓
+capability tipada + receipt
+```
+
+### Entregables
+
+- [x] `src/sandbox/specification.py` con perfiles y capabilities
+- [x] `src/sandbox/filesystem.py` con workspace boundary y path traversal denial
+- [x] `src/sandbox/backend.py` con proceso tipado, Git read-only, timeout y entorno filtrado
+- [x] `src/sandbox/manager.py` con derivación desde `Permit` y receipts
+- [x] `src/execution/gateway.py` como frontera única que exige `SandboxRequest`
+- [x] `tests/test_sandbox.py` (14 checks)
+- [x] `scripts/run_sandbox_local_validation.py`
+- [x] `evidence/sandbox_local_restricted.md`
+- [x] `docs/sandbox_manager.md`
+
+### Explicit boundary
+
+La evidencia cubre filesystem, capacidades, requests tipadas, pytest local,
+Git allowlisted, timeout, filtrado de entorno y fail-closed. El backend no es
+un contenedor ni implementa aislamiento OS de red; `network=allowlist` y
+`os_network_isolation=required` producen `DENIED` porque el aislamiento fuerte
+queda fuera de este bloque.
+
+### Orden posterior de trabajo sin coste
+
+1. Observabilidad/evals locales sobre trace → tool calls → retrieval → permit →
+   sandbox → receipt → eval.
+2. Demo end-to-end pública reproducible y CI automática.
+3. Backend OS-level sólo si existe una necesidad verificable y sin presentar
+   el backend local como aislamiento fuerte.
 
 ---
 
@@ -539,19 +595,19 @@ or a complete W3C SPARQL implementation. Those remain separate validations.
 ## Estado Operativo
 
 `yaml
-CURRENT_PHASE: L10
-COMPLETION: L10 local ontology scope VERIFIED
-NEXT_MILESTONE: OpenMetadata local real validation, then observability/evals local
+CURRENT_PHASE: L11
+COMPLETION: L11 local restricted sandbox scope VERIFIED
+NEXT_MILESTONE: observability/evals local, then public end-to-end demo and CI
 BLOCKERS: AWS, commercetools and GitHub live identities are not configured
 P0_ISSUES: 0
 P1_ISSUES: 0
-TESTS_PASSING: 115/115 (L10 + README generator contract + L9 + workspace binding contract)
-EVIDENCE_GENERATED: L10 ontology engine receipt plus prior L9 evidence
-LEARNING_ENTRIES: L0-L10
-NEXT_ACTION: Keep AWS live NOT_RUN; prepare OpenMetadata local validation
+TESTS_PASSING: 130/130 (L8 + L10 + L11 + README generator contract + L9 + workspace binding contract)
+EVIDENCE_GENERATED: L8 local live receipts + L10 ontology engine receipt + L11 sandbox receipts plus prior L9 evidence
+LEARNING_ENTRIES: L0-L11
+NEXT_ACTION: Keep AWS and OpenMetadata remote live NOT_RUN; implement local observability/evals
 `
 
 ---
 
-**Última actualización:** 2026-09-22
+**Última actualización:** 2026-09-23
 **Próxima revisión:** Al completar cada fase

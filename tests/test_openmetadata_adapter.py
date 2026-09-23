@@ -7,6 +7,7 @@ import pytest
 
 sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 
+import adapters.openmetadata_adapter as openmetadata_module  # noqa: E402
 from adapters.openmetadata_adapter import (  # noqa: E402
     GovernedOpenMetadataAdapter,
     OpenMetadataCatalogPolicy,
@@ -196,7 +197,7 @@ def test_lineage_normalization_returns_nodes_and_directional_edges():
     assert len(result.lineage) == 2
     assert result.lineage[0].evidence_ref == "evidence/l8.md"
     assert result.lineage[1].pipeline == "etl"
-    assert client.calls[0]["path"] == "/v1/table/asset-1/lineage"
+    assert client.calls[0]["path"] == "/v1/lineage/table/asset-1"
     assert client.calls[0]["params"] == {"upstreamDepth": 2, "downstreamDepth": 3}
 
 
@@ -279,8 +280,10 @@ def test_ownership_schema_version_and_quality_rule_use_write_permits():
     quality_result = adapter.create_quality_rule(quality_request, quality_permit)
 
     assert [call["method"] for call in client.calls] == ["PATCH", "PATCH", "POST"]
-    assert client.calls[0]["json"]["owners"][0]["name"] == "BAGO Data Governance"
-    assert client.calls[1]["json"]["version"] == "2.0"
+    assert client.calls[0]["path"] == "/v1/tables/asset-1"
+    assert client.calls[0]["json"][0]["value"][0]["name"] == "BAGO Data Governance"
+    assert client.calls[1]["path"] == "/v1/tables/asset-1"
+    assert '"version":"2.0"' in client.calls[1]["json"][0]["value"]
     assert client.calls[2]["json"]["entityType"] == "TABLE"
     assert quality_result.receipt.operation == "create_quality_rule"
 
@@ -386,3 +389,37 @@ def test_receipt_is_serializable_and_classification_is_stable():
     assert receipt["receipt_id"].startswith("omreceipt_")
     assert receipt["actual_effect"]["path"] == "/v1/search/query"
     assert GovernedOpenMetadataAdapter.classify_error(OpenMetadataHTTPError(404)) is OpenMetadataErrorKind.NOT_FOUND
+
+
+def test_stdlib_client_sends_optional_bearer_token_without_exposing_it_in_policy_repr(monkeypatch):
+    captured = {}
+
+    class Response:
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *args):
+            return False
+
+        def read(self):
+            return b"{}"
+
+    def fake_urlopen(request, timeout):
+        captured["headers"] = dict(request.header_items())
+        captured["timeout"] = timeout
+        return Response()
+
+    monkeypatch.setattr(openmetadata_module, "urlopen", fake_urlopen)
+    policy = OpenMetadataCatalogPolicy(
+        base_url="http://catalog.test/api",
+        auth_token="local-token",
+        timeout_seconds=7,
+    )
+
+    openmetadata_module._StdlibOpenMetadataClient(policy).request(
+        "GET", "/v1/search/query", params={"q": "contract"}
+    )
+
+    assert captured["headers"]["Authorization"] == "Bearer local-token"
+    assert captured["timeout"] == 7
+    assert "local-token" not in repr(policy)
