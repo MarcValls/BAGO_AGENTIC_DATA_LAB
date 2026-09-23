@@ -152,6 +152,8 @@ class LocalRestrictedBackend:
         for suffix in (".exe", ".cmd", ".bat"):
             if name.endswith(suffix):
                 name = name[: -len(suffix)]
+        if re.fullmatch(r"python(?:\d+(?:\.\d+)*)?", name):
+            return "python"
         return name
 
     def _resolve_executable(self, requested: str, specification: SandboxSpecification) -> str:
