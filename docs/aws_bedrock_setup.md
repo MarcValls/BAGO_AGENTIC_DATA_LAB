@@ -111,6 +111,25 @@ The local quota is a guardrail, not a replacement for AWS account/model
 quotas.  Cost receipts are estimates based on the response `usage` fields and
 the configured rates; they are not billing records.
 
+## Bounded live runner
+
+The checkout includes `scripts/run_l6_aws_live_validation.py`. It performs an
+STS-only preflight by default. A real inference call requires the explicit
+`--execute` flag and is bounded to one `Converse` request, one retry budget,
+`maxTokens <= 64` and a model allowlist. The runner never writes credentials or
+response text to evidence.
+
+```powershell
+python -m pip install boto3
+python scripts/run_l6_aws_live_validation.py
+python scripts/run_l6_aws_live_validation.py --execute --region us-east-1 --model-id amazon.nova-lite-v1:0
+```
+
+The preflight proves only that STS credentials resolve. The `--execute` command
+is the real AWS call and must be treated as potentially billable; free-tier
+credits/account state are checked separately in AWS Billing. Evidence is written
+to `evidence/l6_aws_live.md` only after an explicit live attempt.
+
 ## Live validation checklist
 
 The following is deliberately separate from the offline test result:

@@ -346,6 +346,7 @@ La tabla se extrae de JOB_SKILL_MATRIX.md y se mantiene fuera del README.
 - `scripts/run_l12_observability_evidence.py`
 - `scripts/run_l14_vector_store_validation.py`
 - `scripts/run_l15_otel_live_validation.py`
+- `scripts/run_l6_aws_live_validation.py`
 - `scripts/run_l8_openmetadata_live_validation.py`
 - `scripts/run_mcp_demo.py`
 - `scripts/run_public_e2e_demo.py`
