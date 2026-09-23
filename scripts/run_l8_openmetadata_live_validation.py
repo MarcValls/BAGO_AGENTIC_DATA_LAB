@@ -233,7 +233,7 @@ def _write_evidence(result: Mapping[str, Any]) -> None:
     EVIDENCE_PATH.write_text("\n".join(evidence_lines) + "\n", encoding="utf-8")
 
 
-def run(*, keep_data: bool = False) -> dict[str, Any]:
+def run(*, keep_data: bool = False, write_evidence: bool = True) -> dict[str, Any]:
     checks: list[dict[str, str]] = []
     receipts: list[dict[str, Any]] = []
     resources: dict[str, dict[str, Any]] = {}
@@ -468,7 +468,8 @@ def run(*, keep_data: bool = False) -> dict[str, Any]:
             result["cleanup_status"] = "PASS" if not cleanup_errors else "PARTIAL"
             if cleanup_errors:
                 result["cleanup_errors"] = cleanup_errors
-    _write_evidence(result)
+    if write_evidence:
+        _write_evidence(result)
     return result
 
 
@@ -479,12 +480,18 @@ def main() -> int:
         action="store_true",
         help="keep the temporary OpenMetadata resources for manual inspection",
     )
+    parser.add_argument(
+        "--check",
+        action="store_true",
+        help="run the live validation and cleanup without rewriting the evidence file",
+    )
     args = parser.parse_args()
-    result = run(keep_data=args.keep_data)
+    result = run(keep_data=args.keep_data, write_evidence=not args.check)
     print(json.dumps({key: value for key, value in result.items() if key != "error"}, sort_keys=True))
     if result.get("error"):
         print(f"ERROR: {result['error']}", file=sys.stderr)
-    print(f"Evidence: {EVIDENCE_PATH}")
+    evidence_target = "NOT_WRITTEN (--check)" if args.check else str(EVIDENCE_PATH)
+    print(f"Evidence: {evidence_target}")
     return 0 if result.get("status") == "PASS" else 1
 
 

@@ -1,6 +1,6 @@
 # L8 · OpenMetadata local live evidence
 
-Generated: 2026-09-23T01:16:43.363129+00:00
+Generated: 2026-09-23T22:15:16.015561+00:00
 
 > Scope: real OpenMetadata server started locally with the pinned Docker Compose deployment.
 > Temporary service, database, schema, tables and quality definition were created for the run.
@@ -8,10 +8,10 @@ Generated: 2026-09-23T01:16:43.363129+00:00
 > No AWS account, cloud credential or paid service was used.
 
 - OpenMetadata image version: `1.12.6`
-- Compose SHA256: `d19f9c1877368621452b626ae24e01722010d6fdcb0dc43b2b36bfc871f13f38`
-- Adapter SHA256: `052e91cb9198def9d5f7fd1d8f15d0a44cfbfcc05728f436a84e0046d2d81c9d`
-- Git HEAD observed: `4d1a3493ed29e381643085b140a739223aebe2da`
-- Worktree dirty at execution: `True`
+- Compose SHA256: `6b3b2f019e7f43e8a3db76689a52f883b944bb2ad4bac05bff8e2291900f033a`
+- Adapter SHA256: `acc74428059eaf895cf6a91b539d8c725424d5bcde0110a2e48d9a5f652c32f5`
+- Git HEAD observed: `1a1a0eed8d52dfdf43c1c2e42d40effe4e603e1b`
+- Worktree dirty at execution: `False`
 - Overall result: **PASS**
 
 ## Acceptance checks
@@ -31,13 +31,13 @@ Generated: 2026-09-23T01:16:43.363129+00:00
 
 | Label | Decision | Outcome | Results | Path | Receipt |
 |---|---|---|---:|---|---|
-| search | ALLOW | SUCCESS | 2 | `/v1/search/query` | `omreceipt_6886d52553b0eb93` |
-| add_lineage | ALLOW | SUCCESS | 0 | `/v1/lineage` | `omreceipt_0bf9ff4edbe085ff` |
-| get_lineage | ALLOW | SUCCESS | 2 | `/v1/lineage/table/dc4b43ab-cb61-4500-9ed4-39c539873e8d` | `omreceipt_3c0ebb3cc8a4ce63` |
-| assign_ownership | ALLOW | SUCCESS | 1 | `/v1/tables/dc4b43ab-cb61-4500-9ed4-39c539873e8d` | `omreceipt_d6bbdbd3a4b3fe4e` |
-| register_schema_version | ALLOW | SUCCESS | 1 | `/v1/tables/dc4b43ab-cb61-4500-9ed4-39c539873e8d` | `omreceipt_a5783ce8b6068a0e` |
-| create_quality_rule | ALLOW | SUCCESS | 1 | `/v1/dataQuality/testDefinitions` | `omreceipt_47abb603e79510af` |
-| pre-transport denial | REQUIRE_HUMAN | FAILURE | 0 | `/v1/search/query` | `omreceipt_671d4bd4fb2b5d90` |
+| search | ALLOW | SUCCESS | 2 | `/v1/search/query` | `omreceipt_84ba37d8dc4bc5d3` |
+| add_lineage | ALLOW | SUCCESS | 0 | `/v1/lineage` | `omreceipt_5863e37a80332456` |
+| get_lineage | ALLOW | SUCCESS | 2 | `/v1/lineage/table/b074ed2f-bf83-422f-be5a-3b729e34334e` | `omreceipt_c2201a799f9502b9` |
+| assign_ownership | ALLOW | SUCCESS | 1 | `/v1/tables/b074ed2f-bf83-422f-be5a-3b729e34334e` | `omreceipt_a7a175fda2b83d9c` |
+| register_schema_version | ALLOW | SUCCESS | 1 | `/v1/tables/b074ed2f-bf83-422f-be5a-3b729e34334e` | `omreceipt_064aad86ed4f7263` |
+| create_quality_rule | ALLOW | SUCCESS | 1 | `/v1/dataQuality/testDefinitions` | `omreceipt_e716eb4965dcb6e7` |
+| pre-transport denial | REQUIRE_HUMAN | FAILURE | 0 | `/v1/search/query` | `omreceipt_62f949e071387e5b` |
 
 ## Resource lifecycle
 
