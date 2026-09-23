@@ -1,8 +1,9 @@
 # 🧪 BAGO Agentic Data Lab
 
+[![CI](https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/actions/workflows/ci.yml/badge.svg)](https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/actions/workflows/ci.yml)
 [![GitHub](https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/actions/workflows/readme-consistency.yml/badge.svg)](https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/actions/workflows/readme-consistency.yml)
 [![Branch](https://img.shields.io/badge/branch-main-green)](https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/tree/main)
-[![Tests](https://img.shields.io/badge/tests-136%2F136%20passing-brightgreen)](https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/actions)
+[![Tests](https://img.shields.io/badge/tests-139%2F139%20passing-brightgreen)](https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/actions)
 [![License](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 
 > Laboratorio experimental para desarrollar capacidades de AI Engineering con gobernanza BAGO.
@@ -12,12 +13,12 @@
 
 | Métrica | Valor |
 |---|---|
-| Tests ejecutados | **136/136** |
+| Tests ejecutados | **139/139** |
 | Rama pública | `main` |
 | Estado actualizado | 2026-09-23 |
-| Fase actual | **L12 · Local Observability & Evals** · VERIFIED (local) |
-| Siguiente bloque | public end-to-end demo and CI |
-| Estado declarado | VERIFIED for the local RDF/Turtle materialization, bounded SPARQL subset, deterministic inference, contradiction constraints, RAG seed handoff, the real local OpenMetadata 1.12.6 validation, the local restricted sandbox execution boundary and the local trace/evaluation chain; AWS/OpenMetadata remote/commercetools live integrations remain `NOT_RUN`; GitHub issue #14 is separately executed and verified under human authorization. |
+| Fase actual | **L13 · Public E2E Demo & CI** · VERIFIED (local) |
+| Siguiente bloque | AWS live sólo con créditos/free tier o una necesidad laboral concreta |
+| Estado declarado | VERIFIED for the local RDF/Turtle materialization, bounded SPARQL subset, deterministic inference, contradiction constraints, RAG seed handoff, the real local OpenMetadata 1.12.6 validation, the local restricted sandbox execution boundary, the local trace/evaluation chain and the public zero-cost E2E demo executed by the same CI contract; AWS/OpenMetadata remote/commercetools live integrations remain `NOT_RUN`; GitHub issue #14 is separately executed and verified under human authorization. |
 
 El estado público se limita a lo que existe en el checkout y a la evidencia
 referenciada. AWS live, OpenMetadata live y otras integraciones externas
@@ -83,6 +84,7 @@ flowchart LR
     L10["L10 Governed Ontology Engine (VERIFIED (local))"]
     L11["L11 Governed Sandbox Layer (VERIFIED (local))"]
     L12["L12 Local Observability & Evals (VERIFIED (local))"]
+    L13["L13 Public E2E Demo & CI (VERIFIED (local))"]
     L0 --> L1
     L1 --> L2
     L2 --> L3
@@ -95,6 +97,7 @@ flowchart LR
     L9 --> L10
     L10 --> L11
     L11 --> L12
+    L12 --> L13
 ```
 
 | Fase | Estado | Objetivo | Descripción | Tests | Evidencia/docs |
@@ -112,6 +115,7 @@ flowchart LR
 | L10 | VERIFIED (local) | BAGO / portfolio | Governed Ontology Engine | 4 | 2 |
 | L11 | VERIFIED (local) | BAGO / secure execution | Governed Sandbox Layer | 14 | 3 |
 | L12 | VERIFIED (local) | BAGO / portfolio | Local Observability & Evals | 5 | 3 |
+| L13 | VERIFIED (local) | BAGO / portfolio | Public E2E Demo & CI | 3 | 2 |
 
 ## Arquitectura actual
 
@@ -151,6 +155,8 @@ Pipeline actual:
 9. Receipt evidencia el resultado o la denegación
 10. LocalTrace enlaza workflow, retrieval, permits, sandbox y receipts
 11. Local evaluator comprueba cobertura y ausencia de efectos no autorizados
+12. Public E2E compone las fronteras locales con fixtures deterministas
+13. GitHub Actions repite tests, README, demo y compile checks
 
 ## Job market alignment
 
@@ -190,8 +196,8 @@ La tabla se extrae de JOB_SKILL_MATRIX.md y se mantiene fuera del README.
 | Bedrock Knowledge Bases | Alta | 🟡 Baseline offline | 🎯 Proficient | L7 Retrieve/Generate + citations | Live KB evaluation |
 | OpenMetadata Catalog | Media | 🟢 Local live verificado | 🎯 Proficient | L8 adapter + Docker local + lineage/quality receipts | OpenMetadata remoto |
 | IAM | Alta | 🟡 Basic | 🎯 Configurable | L6 least-privilege setup | Live policy check |
-| CI/CD | Alta | 🟡 Basic | 🎯 Implementado | GitHub Actions | L1 completado |
-| Evaluation | Muy Alta | 🟢 Local governance evals | 🎯 Framework | 136 tests + trace/evidence linkage + L8/L9/L10/L11/L12 scenarios | L12 local |
+| CI/CD | Alta | 🟢 Reproducible | 🎯 Implementado | GitHub Actions + pinned requirements + public E2E | L13 CI |
+| Evaluation | Muy Alta | 🟢 Local governance evals | 🎯 Framework | 139 tests + trace/evidence linkage + L8/L9/L10/L11/L12/L13 scenarios | L13 local + CI |
 | Observability | Alta | 🟢 Local trace verified | 🎯 Completo | LocalTrace: workflow + retrieval + permit + sandbox + receipts | L12 local; collector externo separado |
 | Secure execution | Muy Alta | 🟢 Local backend verified | 🎯 Implementado | BAGO auth boundary + LocalRestrictedBackend + escape tests | L11 local |
 | Authorization | Muy Alta | ✅ Diseñado | 🎯 Implementado | BAGO permits | L1 completado |
@@ -263,6 +269,7 @@ La tabla se extrae de JOB_SKILL_MATRIX.md y se mantiene fuera del README.
 - `tests/test_metadata_schema.py` (4 checks)
 - `tests/test_ontology_generator.py` (7 checks)
 - `tests/test_openmetadata_adapter.py` (13 checks)
+- `tests/test_public_e2e_demo.py` (3 checks)
 - `tests/test_retrieval_accuracy.py` (9 checks)
 - `tests/test_retrieval_benchmark.py` (3 checks)
 - `tests/test_sandbox.py` (14 checks)
@@ -284,6 +291,7 @@ La tabla se extrae de JOB_SKILL_MATRIX.md y se mantiene fuera del README.
 - `evidence/mcp_governed_demo.mp4.sha256`
 - `evidence/ontology_proposal.md`
 - `evidence/ontology_proposal_examples.md`
+- `evidence/public_e2e_demo.md`
 - `evidence/retrieval_benchmark_results.md`
 - `evidence/sandbox_local_restricted.md`
 
@@ -299,6 +307,7 @@ La tabla se extrae de JOB_SKILL_MATRIX.md y se mantiene fuera del README.
 - `docs/ontology_engine.md`
 - `docs/ontology_generator.md`
 - `docs/openmetadata_catalog.md`
+- `docs/public_e2e_demo.md`
 - `docs/readme_generation.md`
 - `docs/sandbox_manager.md`
 - `docs/workspace_binding.md`
@@ -320,18 +329,26 @@ La tabla se extrae de JOB_SKILL_MATRIX.md y se mantiene fuera del README.
 - `scripts/run_l12_observability_evidence.py`
 - `scripts/run_l8_openmetadata_live_validation.py`
 - `scripts/run_mcp_demo.py`
+- `scripts/run_public_e2e_demo.py`
 - `scripts/run_sandbox_local_validation.py`
 
 ### Infraestructura reproducible
 
 - `infra/openmetadata/docker-compose.yml`
 
+### CI automática
+
+- `.github/workflows/ci.yml` · suite, README, demo E2E y compile check
+
 ## Comandos reproducibles
 
 ```bash
+python -m pip install -r requirements.txt
 python -m pytest tests -q
 python scripts/generate_dynamic_readme.py
 python scripts/generate_dynamic_readme.py --check --skip-tests
+python scripts/run_public_e2e_demo.py --check
+python scripts/run_public_e2e_demo.py --write-evidence
 docker compose -p bago-openmetadata -f infra/openmetadata/docker-compose.yml up -d
 python scripts/run_l8_openmetadata_live_validation.py
 python scripts/run_sandbox_local_validation.py
@@ -351,6 +368,7 @@ Tests por fase:
 - `L10`: `python -m pytest tests/test_l10_ontology_engine.py -q`
 - `L11`: `python -m pytest tests/test_sandbox.py -q`
 - `L12`: `python -m pytest tests/test_l12_observability.py -q`
+- `L13`: `python -m pytest tests/test_public_e2e_demo.py -q`
 
 ## Contrato de generación
 

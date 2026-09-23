@@ -26,7 +26,7 @@ def test_readme_sources_are_real_and_state_is_parsed():
     state = parse_state()
     phases = phase_inventory(manifest, state)
 
-    assert state["current_phase"].startswith("L12")
+    assert state["current_phase"].startswith("L13")
     assert state["status_label"] == "VERIFIED"
     l10 = next(phase for phase in phases if phase["id"] == "L10")
     assert l10["status"] == "VERIFIED (local)"
@@ -34,6 +34,8 @@ def test_readme_sources_are_real_and_state_is_parsed():
     assert l11["status"] == "VERIFIED (local)"
     l12 = next(phase for phase in phases if phase["id"] == "L12")
     assert l12["status"] == "VERIFIED (local)"
+    l13 = next(phase for phase in phases if phase["id"] == "L13")
+    assert l13["status"] == "VERIFIED (local)"
     assert any(phase["id"] == "L10" for phase in phases)
     assert (ROOT / "docs" / "readme_manifest.json").is_file()
     l1 = next(phase for phase in phases if phase["id"] == "L1")
@@ -88,12 +90,20 @@ def test_rendered_readme_contains_dynamic_contract_and_l10_artifacts():
     assert "evidence/l12_observability_evals.md" in rendered
     assert "docs/observability_evals.md" in rendered
     assert "scripts/run_l12_observability_evidence.py" in rendered
+    assert "scripts/run_public_e2e_demo.py" in rendered
+    assert "tests/test_public_e2e_demo.py" in rendered
+    assert "evidence/public_e2e_demo.md" in rendered
+    assert "docs/public_e2e_demo.md" in rendered
+    assert "requirements.txt" in rendered
+    assert ".github/workflows/ci.yml" in rendered
+    assert "python scripts/run_public_e2e_demo.py --check" in rendered
     assert "python scripts/generate_dynamic_readme.py --check --skip-tests" in rendered
     assert "Estado actualizado" in rendered
-    assert "| Fase actual | **L12 · Local Observability & Evals** · VERIFIED (local) |" in rendered
+    assert "| Fase actual | **L13 · Public E2E Demo & CI** · VERIFIED (local) |" in rendered
     assert "| L10 | VERIFIED (local) | BAGO / portfolio | Governed Ontology Engine | 4 | 2 |" in rendered
     assert "| L11 | VERIFIED (local) | BAGO / secure execution | Governed Sandbox Layer | 14 | 3 |" in rendered
     assert "| L12 | VERIFIED (local) | BAGO / portfolio | Local Observability & Evals | 5 | 3 |" in rendered
+    assert "| L13 | VERIFIED (local) | BAGO / portfolio | Public E2E Demo & CI | 3 | 2 |" in rendered
     assert "| Skill | Demanda | Nivel actual | Nivel objetivo | Primera evidencia | Entrevista |" in rendered
     assert "| RAG | Muy Alta | 🟡 Basic | 🎯 Advanced | L4 governed RAG | L4 completado |" in rendered
     assert "## Skills estratégicas" in rendered
