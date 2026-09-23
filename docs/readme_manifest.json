@@ -21,7 +21,7 @@
     "documentation": "docs/bago-sync-agent.md"
   },
   "architecture": {
-    "principle": "LangGraph propone → BAGO autoriza → ExecutionGateway → SandboxManager → Receipt evidencia.",
+    "principle": "LangGraph propone → BAGO autoriza → ExecutionGateway → SandboxManager → Receipt → LocalTrace → Eval.",
     "pipeline": [
       "RAG recupera documentos y citas",
       "Ontology Engine materializa RDF/Turtle",
@@ -31,7 +31,9 @@
       "El LLM recibe caminos y evidencia; no recibe autoridad implícita",
       "ExecutionGateway exige una SandboxRequest tipada",
       "SandboxManager materializa filesystem y proceso acotados",
-      "Receipt evidencia el resultado o la denegación"
+      "Receipt evidencia el resultado o la denegación",
+      "LocalTrace enlaza workflow, retrieval, permits, sandbox y receipts",
+      "Local evaluator comprueba cobertura y ausencia de efectos no autorizados"
     ]
   },
   "phases": [
@@ -178,6 +180,18 @@
         {"kind": "evidence", "patterns": ["evidence/sandbox_local_restricted.md", "docs/sandbox_manager.md", "scripts/run_sandbox_local_validation.py"]}
       ],
       "commit_patterns": ["feat: add governed sandbox layer", "L11"]
+    },
+    {
+      "id": "L12",
+      "name": "Local Observability & Evals",
+      "target": "BAGO / portfolio",
+      "status": "VERIFIED (local)",
+      "checks": [
+        {"kind": "code", "patterns": ["src/observability/*.py", "src/evaluation/*.py"]},
+        {"kind": "tests", "patterns": ["tests/test_l12_observability.py"]},
+        {"kind": "evidence", "patterns": ["evidence/l12_observability_evals.md", "docs/observability_evals.md", "scripts/run_l12_observability_evidence.py"]}
+      ],
+      "commit_patterns": ["feat: add local observability and evals", "L12"]
     }
   ]
 }

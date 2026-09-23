@@ -2,7 +2,7 @@
 
 [![GitHub](https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/actions/workflows/readme-consistency.yml/badge.svg)](https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/actions/workflows/readme-consistency.yml)
 [![Branch](https://img.shields.io/badge/branch-main-green)](https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/tree/main)
-[![Tests](https://img.shields.io/badge/tests-131%2F131%20passing-brightgreen)](https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/actions)
+[![Tests](https://img.shields.io/badge/tests-136%2F136%20passing-brightgreen)](https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/actions)
 [![License](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 
 > Laboratorio experimental para desarrollar capacidades de AI Engineering con gobernanza BAGO.
@@ -12,12 +12,12 @@
 
 | Métrica | Valor |
 |---|---|
-| Tests ejecutados | **131/131** |
+| Tests ejecutados | **136/136** |
 | Rama pública | `main` |
 | Estado actualizado | 2026-09-23 |
-| Fase actual | **L11 · Governed Sandbox Layer** · VERIFIED (local) |
-| Siguiente bloque | local observability/evals, then public end-to-end demo and CI |
-| Estado declarado | VERIFIED for the local RDF/Turtle materialization, bounded SPARQL subset, deterministic inference, contradiction constraints, RAG seed handoff, the real local OpenMetadata 1.12.6 validation and the local restricted sandbox execution boundary; AWS/OpenMetadata remote/commercetools live integrations remain `NOT_RUN`; GitHub issue #14 is separately executed and verified under human authorization. |
+| Fase actual | **L12 · Local Observability & Evals** · VERIFIED (local) |
+| Siguiente bloque | public end-to-end demo and CI |
+| Estado declarado | VERIFIED for the local RDF/Turtle materialization, bounded SPARQL subset, deterministic inference, contradiction constraints, RAG seed handoff, the real local OpenMetadata 1.12.6 validation, the local restricted sandbox execution boundary and the local trace/evaluation chain; AWS/OpenMetadata remote/commercetools live integrations remain `NOT_RUN`; GitHub issue #14 is separately executed and verified under human authorization. |
 
 El estado público se limita a lo que existe en el checkout y a la evidencia
 referenciada. AWS live, OpenMetadata live y otras integraciones externas
@@ -82,6 +82,7 @@ flowchart LR
     L9["L9 End-to-End Governed Agent (VERIFIED (offline))"]
     L10["L10 Governed Ontology Engine (VERIFIED (local))"]
     L11["L11 Governed Sandbox Layer (VERIFIED (local))"]
+    L12["L12 Local Observability & Evals (VERIFIED (local))"]
     L0 --> L1
     L1 --> L2
     L2 --> L3
@@ -93,6 +94,7 @@ flowchart LR
     L8 --> L9
     L9 --> L10
     L10 --> L11
+    L11 --> L12
 ```
 
 | Fase | Estado | Objetivo | Descripción | Tests | Evidencia/docs |
@@ -109,10 +111,11 @@ flowchart LR
 | L9 | VERIFIED (offline) | commercetools | End-to-End Governed Agent | 7 | 3 |
 | L10 | VERIFIED (local) | BAGO / portfolio | Governed Ontology Engine | 4 | 2 |
 | L11 | VERIFIED (local) | BAGO / secure execution | Governed Sandbox Layer | 14 | 3 |
+| L12 | VERIFIED (local) | BAGO / portfolio | Local Observability & Evals | 5 | 3 |
 
 ## Arquitectura actual
 
-**Principio:** LangGraph propone → BAGO autoriza → ExecutionGateway → SandboxManager → Receipt evidencia.
+**Principio:** LangGraph propone → BAGO autoriza → ExecutionGateway → SandboxManager → Receipt → LocalTrace → Eval.
 
 ```mermaid
 flowchart LR
@@ -146,6 +149,8 @@ Pipeline actual:
 7. ExecutionGateway exige una SandboxRequest tipada
 8. SandboxManager materializa filesystem y proceso acotados
 9. Receipt evidencia el resultado o la denegación
+10. LocalTrace enlaza workflow, retrieval, permits, sandbox y receipts
+11. Local evaluator comprueba cobertura y ausencia de efectos no autorizados
 
 ## Job market alignment
 
@@ -186,8 +191,8 @@ La tabla se extrae de JOB_SKILL_MATRIX.md y se mantiene fuera del README.
 | OpenMetadata Catalog | Media | 🟢 Local live verificado | 🎯 Proficient | L8 adapter + Docker local + lineage/quality receipts | OpenMetadata remoto |
 | IAM | Alta | 🟡 Basic | 🎯 Configurable | L6 least-privilege setup | Live policy check |
 | CI/CD | Alta | 🟡 Basic | 🎯 Implementado | GitHub Actions | L1 completado |
-| Evaluation | Muy Alta | 🟢 Framework baseline | 🎯 Framework | 130 tests + README/L8-live/L9/L10/L11 scenarios | L8/L10/L11 local |
-| Observability | Alta | 🟢 Reinforced | 🎯 Completo | Receipts + evidence links + ontology and sandbox receipts | L10/L11 local |
+| Evaluation | Muy Alta | 🟢 Local governance evals | 🎯 Framework | 136 tests + trace/evidence linkage + L8/L9/L10/L11/L12 scenarios | L12 local |
+| Observability | Alta | 🟢 Local trace verified | 🎯 Completo | LocalTrace: workflow + retrieval + permit + sandbox + receipts | L12 local; collector externo separado |
 | Secure execution | Muy Alta | 🟢 Local backend verified | 🎯 Implementado | BAGO auth boundary + LocalRestrictedBackend + escape tests | L11 local |
 | Authorization | Muy Alta | ✅ Diseñado | 🎯 Implementado | BAGO permits | L1 completado |
 | Auditability | Alta | ✅ Diseñado | 🎯 Implementado | BAGO receipts | L1 completado |
@@ -219,12 +224,16 @@ La tabla se extrae de JOB_SKILL_MATRIX.md y se mantiene fuera del README.
 - `src/context/__init__.py`
 - `src/context/workspace_binding.py`
 - `src/etl/pipeline.py`
+- `src/evaluation/__init__.py`
+- `src/evaluation/local_evals.py`
 - `src/execution/__init__.py`
 - `src/execution/gateway.py`
 - `src/metadata/ontology.py`
 - `src/metadata/ontology_engine.py`
 - `src/metadata/ontology_generator.py`
 - `src/metadata/schema.py`
+- `src/observability/__init__.py`
+- `src/observability/local_trace.py`
 - `src/orchestration/state_graph.py`
 - `src/retrieval/__init__.py`
 - `src/retrieval/governed_rag.py`
@@ -244,6 +253,7 @@ La tabla se extrae de JOB_SKILL_MATRIX.md y se mantiene fuera del README.
 - `tests/test_bedrock_kb_adapter.py` (10 checks)
 - `tests/test_dynamic_readme.py` (4 checks)
 - `tests/test_l10_ontology_engine.py` (4 checks)
+- `tests/test_l12_observability.py` (5 checks)
 - `tests/test_l1_governance.py` (7 checks)
 - `tests/test_l2_etl_pipeline.py` (4 checks)
 - `tests/test_l3_evidence.py` (2 checks)
@@ -263,6 +273,7 @@ La tabla se extrae de JOB_SKILL_MATRIX.md y se mantiene fuera del README.
 - `evidence/bago_etl_vs_bedrock_kb_comparison.md`
 - `evidence/bedrock_provider_benchmark.md`
 - `evidence/l10_ontology_engine.md`
+- `evidence/l12_observability_evals.md`
 - `evidence/l3_ontology_graph.md`
 - `evidence/l8_openmetadata_catalog.md`
 - `evidence/l8_openmetadata_live.md`
@@ -284,6 +295,7 @@ La tabla se extrae de JOB_SKILL_MATRIX.md y se mantiene fuera del README.
 - `docs/commercetools_capstone.md`
 - `docs/governed_rag.md`
 - `docs/mcp_governance.md`
+- `docs/observability_evals.md`
 - `docs/ontology_engine.md`
 - `docs/ontology_generator.md`
 - `docs/openmetadata_catalog.md`
@@ -305,6 +317,7 @@ La tabla se extrae de JOB_SKILL_MATRIX.md y se mantiene fuera del README.
 - `scripts/generate_ontology_proposal.py`
 - `scripts/local_mcp_server.py`
 - `scripts/render_mcp_evidence_video.py`
+- `scripts/run_l12_observability_evidence.py`
 - `scripts/run_l8_openmetadata_live_validation.py`
 - `scripts/run_mcp_demo.py`
 - `scripts/run_sandbox_local_validation.py`
@@ -337,6 +350,7 @@ Tests por fase:
 - `L9`: `python -m pytest tests/test_l9_end_to_end_agent.py -q`
 - `L10`: `python -m pytest tests/test_l10_ontology_engine.py -q`
 - `L11`: `python -m pytest tests/test_sandbox.py -q`
+- `L12`: `python -m pytest tests/test_l12_observability.py -q`
 
 ## Contrato de generación
 
