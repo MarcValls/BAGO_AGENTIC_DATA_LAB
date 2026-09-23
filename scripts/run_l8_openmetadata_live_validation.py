@@ -43,6 +43,7 @@ COMPOSE_VERSION = os.environ.get("OPENMETADATA_VERSION", "1.12.6")
 EVIDENCE_PATH = REPO_ROOT / "evidence" / "l8_openmetadata_live.md"
 COMPOSE_PATH = REPO_ROOT / "infra" / "openmetadata" / "docker-compose.yml"
 ADAPTER_PATH = REPO_ROOT / "src" / "adapters" / "openmetadata_adapter.py"
+HEALTH_TIMEOUT_SECONDS = float(os.environ.get("OPENMETADATA_HEALTH_TIMEOUT_SECONDS", "180"))
 
 
 class LiveValidationError(RuntimeError):
@@ -128,6 +129,26 @@ def _login() -> str:
     if not isinstance(token, str) or not token:
         raise LiveValidationError("OpenMetadata login did not return accessToken")
     return token
+
+
+def _wait_for_healthy() -> Mapping[str, Any]:
+    """Wait for the freshly started local server without weakening fail-closed behavior."""
+    deadline = time.monotonic() + HEALTH_TIMEOUT_SECONDS
+    last_error = "no health response"
+    while True:
+        try:
+            status, health = _request_json("GET", HEALTH_URL)
+            if status == 200 and health.get("OpenMetadataServerHealthCheck", {}).get("healthy"):
+                return health
+            last_error = f"HTTP {status}: health response is not healthy"
+        except (LiveValidationError, OSError) as error:
+            last_error = _redact(str(error))
+        if time.monotonic() >= deadline:
+            raise LiveValidationError(
+                f"OpenMetadata healthcheck did not become healthy within "
+                f"{HEALTH_TIMEOUT_SECONDS:g}s: {last_error}"
+            )
+        time.sleep(2)
 
 
 def _create_entity(token: str, path: str, body: Mapping[str, Any]) -> dict[str, Any]:
@@ -249,9 +270,7 @@ def run(*, keep_data: bool = False, write_evidence: bool = True) -> dict[str, An
     }
 
     try:
-        status, health = _request_json("GET", HEALTH_URL)
-        if status != 200 or not health.get("OpenMetadataServerHealthCheck", {}).get("healthy"):
-            raise LiveValidationError("OpenMetadata healthcheck is not healthy")
+        _wait_for_healthy()
         checks.append({"name": "server health", "status": "PASS", "detail": "HTTP 200; server/database/deadlocks healthy"})
 
         token = _login()
