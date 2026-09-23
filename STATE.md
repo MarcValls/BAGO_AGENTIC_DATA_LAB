@@ -1,20 +1,22 @@
 # Current State — BAGO Agentic Data Lab
 
 **Updated:** 2026-09-23
-**Current phase:** L13 · Public E2E Demo & CI
+**Current phase:** L14 · Governed Local Vector Store
 **Status:** VERIFIED for the local RDF/Turtle materialization, bounded SPARQL
 subset, deterministic inference, contradiction constraints, RAG seed handoff,
 the real local OpenMetadata 1.12.6 validation, the local restricted sandbox
-execution boundary, the local trace/evaluation chain and the public zero-cost
-E2E demo executed by the same CI contract;
+execution boundary, the local trace/evaluation chain, the public zero-cost E2E
+demo executed by the same CI contract and the persistent local SQLite vector
+index consumed by GovernedRAG;
 AWS/OpenMetadata remote/commercetools live integrations remain `NOT_RUN`;
 GitHub issue #14 is separately executed and verified under human authorization.
-**Tests:** 139/139 passing en la suite combinada; L10 aporta 4 checks offline,
+**Tests:** 143/143 passing en la suite combinada; L10 aporta 4 checks offline,
 L8 aporta 13 checks de adapter más la validación live local, L9 aporta 7 checks
 offline, workspace binding aporta 6 checks de contrato y L11 aporta 14 checks
 de escapes, permisos, proceso tipado, timeout, entorno y gateway; L12 aporta 5
 checks de trace, linkage y eval determinista; L13 aporta 3 checks de demo E2E,
-composición y límites externos.
+composición y límites externos; L14 aporta 4 checks de persistencia, metadata
+gate, reload y backend semántico persistente.
 **Next phase:** AWS live sólo con créditos/free tier o una necesidad laboral concreta
 **Evidence:** `evidence/l3_ontology_graph.md` with integrity PASS and
 `evidence/retrieval_benchmark_results.md` with 48 reproducible benchmark rows;
@@ -41,6 +43,9 @@ denial, typed pytest, filtered environment and fail-closed OS-network receipt;
 → execution → sandbox → receipt → eval chain;
 `evidence/public_e2e_demo.md` with the public clone-and-run chain, zero-cost
 fixture, typed pytest sandbox, local trace and PASS evaluation;
+`evidence/l14_vector_store.md` with a persistent SQLite vector index, metadata
+filtering, GovernedRAG integration, stable reload fingerprint and zero-cost
+validation;
 `evidence/l9_authorized_actions_20260922.md` records the later human-authorized
 GitHub issue #14 and the workspace-binding follow-up;
 `evidence/ontology_proposal.md` and `evidence/ontology_proposal_examples.md`
@@ -82,6 +87,11 @@ remain `NOT_RUN`.
 GitHub Actions verifies the repository contract but does not promote cloud or
 production claims. AWS live, remote OpenMetadata and commercetools remain
 `NOT_RUN`.
+**L14 boundary:** `SQLiteVectorStore` persists deterministic `HashEmbedding`
+vectors locally and applies the existing authority/validity/provenance gate
+before ranking. It is not a distributed vector database, hosted embedding
+service, ANN benchmark or production relevance claim; remote vector DB and AWS
+remain `NOT_RUN`.
 **Ontology generator:** metadata and relation proposals remain `PROPOSED` until
 validator plus human/contract approval; no automatic canonical promotion.
 Current proposal run: 16 entities and 0 explicit relations in the BAGO source

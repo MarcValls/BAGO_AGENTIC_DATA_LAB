@@ -652,3 +652,66 @@ simula integraciones cloud.
 - ⚠️ AWS live continúa pospuesto hasta créditos/free tier o una necesidad
   laboral concreta.
 
+---
+
+### 2026-09-23 — L14 Governed Local Vector Store
+
+**Fase:** L14
+**Estado:** `VERIFIED` para el índice SQLite local, el metadata gate y la
+integración persistente con `GovernedRAG`; vector DB remoto y AWS siguen
+`NOT_RUN`.
+
+**Qué entendí:**
+
+Un retrieval semántico reproducible necesita más que calcular scores en memoria:
+debe persistir el vector junto a la identidad, provenance, autoridad y validez
+del chunk. La persistencia no puede saltarse el filtro de gobernanza, y el
+backend local debe poder sustituirse más tarde sin mover la frontera de
+`GovernedRAG`.
+
+**Qué implementé:**
+
+- `src/retrieval/sqlite_vector_store.py`: índice SQLite sin dependencias
+  externas, `HashEmbedding` determinista, metadata gate, fingerprint estable,
+  búsqueda con citas y fail-closed cuando falta un chunk indexado.
+- `src/retrieval/governed_rag.py`: protocolo semántico opcional y
+  `GovernedRAG.from_sqlite_vector_store(...)` para integrar/reabrir el backend.
+- `tests/test_sqlite_vector_store.py`: cuatro checks de persistencia,
+  reload, metadata filter, GovernedRAG y chunk ausente.
+- `scripts/run_l14_vector_store_validation.py`, `docs/local_vector_store.md`,
+  `evidence/l14_vector_store.md` y el gate correspondiente en GitHub Actions.
+
+**Evidence:**
+
+La validación local persiste tres chunks, filtra uno `SUPERSEDED`, devuelve
+citas desde los dos elegibles, recarga el índice con el mismo fingerprint y
+demuestra que `GovernedRAG` consume el backend persistente. El coste es `0.0
+USD`; no se contactan AWS, un servicio de embeddings ni un vector DB remoto.
+
+**Failure modes que ahora evito:**
+
+- Cerrar la conexión SQLite sólo con `commit` pero dejar el fichero bloqueado
+  en Windows: el backend usa un context manager que cierra cada conexión.
+- Rankear antes de aplicar autoridad/validity/provenance: `search` filtra
+  primero y `GovernedRAG` conserva su gate existente.
+- Presentar SQLite determinista como vector DB de producción: la evidencia
+  separa explícitamente persistencia local de distribución, ANN y relevancia
+  productiva.
+
+**Interview explanation:**
+
+*"Añadí un backend vectorial local y persistente detrás del contrato semántico
+de GovernedRAG. SQLite conserva los chunks, metadata y vectores deterministas;
+la búsqueda aplica el gate de autoridad y validez antes de ordenar y devuelve
+citas y fingerprint. La interfaz queda desacoplada para poder cambiar a un
+servicio remoto después, pero esa validación permanece separada y no se
+presenta como ejecutada."*
+
+**Gaps restantes:**
+
+- ⚠️ No es un vector database distribuido ni un benchmark de relevancia ANN.
+- ⚠️ Embeddings gestionados/producción y validación de vector DB remoto quedan
+  fuera por la regla de coste cero.
+- ⚠️ AWS live continúa pospuesto hasta créditos/free tier o una necesidad
+  laboral concreta.
+

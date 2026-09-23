@@ -11,8 +11,15 @@ from .governed_rag import (
     RetrievalHit,
     RetrievalMode,
     RetrievalResponse,
+    SemanticBackend,
     ValidityStatus,
     load_sqlite_chunks,
+)
+from .sqlite_vector_store import (
+    SQLiteVectorStore,
+    VectorHit,
+    VectorIndexError,
+    VectorSearchResponse,
 )
 
 __all__ = [
@@ -26,6 +33,11 @@ __all__ = [
     "RetrievalHit",
     "RetrievalMode",
     "RetrievalResponse",
+    "SemanticBackend",
+    "SQLiteVectorStore",
+    "VectorHit",
+    "VectorIndexError",
+    "VectorSearchResponse",
     "ValidityStatus",
     "load_sqlite_chunks",
 ]

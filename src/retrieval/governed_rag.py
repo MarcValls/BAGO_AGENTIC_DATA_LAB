@@ -23,7 +23,7 @@ from collections import Counter
 from dataclasses import dataclass, field
 from enum import Enum
 from pathlib import Path
-from typing import Any, Iterable, Mapping, Optional, Sequence
+from typing import Any, Iterable, Mapping, Optional, Protocol, Sequence
 
 from metadata.schema import AuthorityLevel, ValidityStatus
 
@@ -383,6 +383,18 @@ class HashEmbedding:
             return tuple(vector)
         return tuple(value / norm for value in vector)
 
+    def scores(self, query: str, chunks: Sequence[RetrievalChunk]) -> dict[str, float]:
+        """Score chunks through the default deterministic embedding backend."""
+
+        return _semantic_scores(chunks, query, self)
+
+
+class SemanticBackend(Protocol):
+    """Minimal contract for an in-memory or persistent semantic index."""
+
+    def scores(self, query: str, chunks: Sequence[RetrievalChunk]) -> dict[str, float]:
+        """Return one semantic score for every supplied chunk."""
+
 
 def _cosine(left: Sequence[float], right: Sequence[float]) -> float:
     return sum(a * b for a, b in zip(left, right))
@@ -503,6 +515,7 @@ class GovernedRAG:
         *,
         policy: Optional[MetadataFilter] = None,
         embedder: Optional[HashEmbedding] = None,
+        semantic_backend: Optional[SemanticBackend] = None,
         semantic_weight: float = 0.45,
         candidate_k: int = 50,
     ) -> None:
@@ -517,6 +530,7 @@ class GovernedRAG:
         self.chunks = materialized
         self.policy = policy or MetadataFilter()
         self.embedder = embedder or HashEmbedding()
+        self.semantic_backend = semantic_backend or self.embedder
         self.semantic_weight = semantic_weight
         self.candidate_k = candidate_k
 
@@ -527,6 +541,19 @@ class GovernedRAG:
         **kwargs: Any,
     ) -> "GovernedRAG":
         return cls(load_sqlite_chunks(db_path), **kwargs)
+
+    @classmethod
+    def from_sqlite_vector_store(
+        cls,
+        db_path: str | Path,
+        **kwargs: Any,
+    ) -> "GovernedRAG":
+        """Build a governed retriever backed by a persistent local vector index."""
+
+        from .sqlite_vector_store import SQLiteVectorStore
+
+        store = SQLiteVectorStore(db_path)
+        return cls(store.load_chunks(), semantic_backend=store, **kwargs)
 
     @staticmethod
     def classify_intent(query: str) -> QueryIntent:
@@ -577,7 +604,7 @@ class GovernedRAG:
         filtered_count = len(self.chunks) - len(eligible)
         pipeline = ["intent_classification", "metadata_filters"]
         lexical_scores = _bm25_scores(eligible, query)
-        semantic_scores = _semantic_scores(eligible, query, self.embedder)
+        semantic_scores = self.semantic_backend.scores(query, eligible)
         if mode is RetrievalMode.LEXICAL:
             scores = lexical_scores
             pipeline.append("lexical_bm25")
@@ -666,6 +693,7 @@ __all__ = [
     "RetrievalHit",
     "RetrievalMode",
     "RetrievalResponse",
+    "SemanticBackend",
     "ValidityStatus",
     "load_sqlite_chunks",
 ]

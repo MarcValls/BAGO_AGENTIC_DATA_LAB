@@ -36,7 +36,9 @@
       "LocalTrace enlaza workflow, retrieval, permits, sandbox y receipts",
       "Local evaluator comprueba cobertura y ausencia de efectos no autorizados",
       "Public E2E compone las fronteras locales con fixtures deterministas",
-      "GitHub Actions repite tests, README, demo y compile checks"
+      "SQLiteVectorStore persiste vectores deterministas y conserva el gate de metadata",
+      "GovernedRAG puede consumir el backend semántico persistente y recargar su fingerprint",
+      "GitHub Actions repite tests, README, demo, vector validation y compile checks"
     ]
   },
   "phases": [
@@ -207,6 +209,18 @@
         {"kind": "evidence", "patterns": ["evidence/public_e2e_demo.md", "docs/public_e2e_demo.md"]}
       ],
       "commit_patterns": ["feat: add public e2e demo and ci", "L13"]
+    },
+    {
+      "id": "L14",
+      "name": "Governed Local Vector Store",
+      "target": "BAGO / portfolio",
+      "status": "VERIFIED (local)",
+      "checks": [
+        {"kind": "code", "patterns": ["src/retrieval/sqlite_vector_store.py", "scripts/run_l14_vector_store_validation.py"]},
+        {"kind": "tests", "patterns": ["tests/test_sqlite_vector_store.py"]},
+        {"kind": "evidence", "patterns": ["evidence/l14_vector_store.md", "docs/local_vector_store.md"]}
+      ],
+      "commit_patterns": ["feat: add governed local vector store", "L14"]
     }
   ]
 }
