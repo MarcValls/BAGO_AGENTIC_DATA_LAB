@@ -5,8 +5,10 @@ and `ConverseStream` operations.  Bedrock provides the inference capability;
 BAGO remains responsible for the request, permit, execution and receipt.
 
 The implementation is intentionally optional: importing the adapter does not
-require `boto3`, and all repository tests inject a client double.  A live call
-is a separate validation step and is currently `NOT_RUN` in this repository.
+require `boto3`, and all repository tests inject a client double. One bounded
+live `Converse` call is now recorded in
+[`evidence/l6_aws_live.md`](../evidence/l6_aws_live.md); streaming, managed
+Knowledge Bases and billing remain separate validation scopes.
 
 ## Contract
 
@@ -48,6 +50,24 @@ $env:AWS_PROFILE = "your-profile"
 
 Prefer short-lived role credentials, SSO or another standard AWS credential
 provider.  Do not commit access keys, profiles, `.env` files or tokens.
+
+With AWS CLI 2.32 or newer, the local-development login flow can use the
+existing AWS Management Console session and issue temporary credentials
+without asking for a long-lived access key.  The installed CLI in the
+reference environment is 2.37.0:
+
+```powershell
+$env:AWS_REGION = "us-east-1"
+& "C:\Program Files\Amazon\AWSCLIV2\aws.exe" login --profile bago-free --region $env:AWS_REGION
+& "C:\Program Files\Amazon\AWSCLIV2\aws.exe" sts get-caller-identity --profile bago-free --no-cli-pager
+$env:AWS_PROFILE = "bago-free"
+```
+
+The first command opens a browser for the account holder to authenticate.
+It requires an existing AWS account; it does not create a free-tier account
+or prove that the next inference is bill-free.  If the account uses IAM
+Identity Center, use `aws configure sso` followed by `aws sso login` instead.
+See the [AWS CLI local-development login guide](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-sign-in.html).
 
 The adapter creates a `bedrock-runtime` client with explicit connect/read
 timeouts and disables SDK-level retry multiplication; the adapter owns the
@@ -120,9 +140,9 @@ STS-only preflight by default. A real inference call requires the explicit
 response text to evidence.
 
 ```powershell
-python -m pip install boto3
-python scripts/run_l6_aws_live_validation.py
-python scripts/run_l6_aws_live_validation.py --execute --region us-east-1 --model-id amazon.nova-lite-v1:0
+python -m pip install "botocore[crt]" boto3
+python scripts/run_l6_aws_live_validation.py --profile bago-free --region us-east-1
+python scripts/run_l6_aws_live_validation.py --profile bago-free --execute --region us-east-1 --model-id amazon.nova-lite-v1:0
 ```
 
 The preflight proves only that STS credentials resolve. The `--execute` command
@@ -134,14 +154,16 @@ to `evidence/l6_aws_live.md` only after an explicit live attempt.
 
 The following is deliberately separate from the offline test result:
 
-- [ ] `boto3` installed in the target runtime
-- [ ] AWS region selected and model access enabled
-- [ ] Short-lived credentials resolve for the intended profile or role
+- [x] `boto3` and `botocore[crt]` installed in the target runtime
+- [x] AWS region selected and model access enabled for `amazon.nova-lite-v1:0`
+- [x] Short-lived credentials resolve for the intended profile or role
 - [ ] IAM policy permits only the approved inference operation/model
-- [ ] One non-streaming `Converse` call produces a successful receipt
+- [x] One non-streaming `Converse` call produces a successful receipt
 - [ ] One `ConverseStream` call produces a successful receipt
+- [ ] AWS Billing confirms free-tier/credit coverage for the call
 - [ ] Throttling/timeout behavior is observed against the real account without exceeding the budget
 - [ ] Real latency and current price evidence is recorded separately from the fixture benchmark
 
-Until these checks are run, L6 is `VERIFIED` for the local governed adapter
-scope, not `VALIDATED` for AWS production connectivity.
+L6 is now `VERIFIED` for the local governed adapter plus the bounded live
+`Converse` scope. It is not `VALIDATED` for AWS production connectivity,
+least-privilege IAM, streaming, managed Knowledge Bases or zero billing.

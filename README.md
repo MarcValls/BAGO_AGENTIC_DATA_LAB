@@ -15,10 +15,10 @@
 |---|---|
 | Tests ejecutados | **146/146** |
 | Rama pública | `main` |
-| Estado actualizado | 2026-09-23 |
+| Estado actualizado | 2026-09-24 |
 | Fase actual | **L15 · OpenTelemetry + Jaeger Local Live** · VERIFIED (local live) |
-| Siguiente bloque | AWS live sólo con créditos/free tier o una necesidad laboral concreta |
-| Estado declarado | VERIFIED for the local RDF/Turtle materialization, bounded SPARQL subset, deterministic inference, contradiction constraints, RAG seed handoff, the real local OpenMetadata 1.12.6 validation, the local restricted sandbox execution boundary, the local trace/evaluation chain, the public zero-cost E2E demo executed by the same CI contract, the persistent local SQLite vector index consumed by GovernedRAG and the local OpenTelemetry → Jaeger trace projection; AWS/OpenMetadata remote/commercetools live integrations remain `NOT_RUN`; GitHub issue #14 is separately executed and verified under human authorization; the local review checkpoint is recorded in `evidence/bago_canon_compliance_review.md`. |
+| Siguiente bloque | confirm AWS Billing/free-tier state before any additional cloud call; keep streaming, Knowledge Base and remote integrations separately scoped |
+| Estado declarado | VERIFIED for the local RDF/Turtle materialization, bounded SPARQL subset, deterministic inference, contradiction constraints, RAG seed handoff, the real local OpenMetadata 1.12.6 validation, the local restricted sandbox execution boundary, the local trace/evaluation chain, the public zero-cost E2E demo executed by the same CI contract, the persistent local SQLite vector index consumed by GovernedRAG and the local OpenTelemetry → Jaeger trace projection; one bounded live AWS Bedrock `Converse` call through the governed adapter is `VERIFIED`; AWS `ConverseStream`, Bedrock Knowledge Base, remote OpenMetadata, commercetools live integrations and AWS billing/free-tier eligibility remain `NOT_RUN`; GitHub issue #14 is separately executed and verified under human authorization; the local review checkpoint is recorded in `evidence/bago_canon_compliance_review.md`. |
 
 El estado público se limita a lo que existe en el checkout y a la evidencia
 referenciada. AWS live, OpenMetadata live y otras integraciones externas
@@ -77,7 +77,7 @@ flowchart LR
     L3["L3 Metadata & Ontology (VERIFIED)"]
     L4["L4 Governed RAG (VERIFIED)"]
     L5["L5 MCP con gobernanza (VERIFIED)"]
-    L6["L6 AWS Bedrock Provider (VERIFIED (offline))"]
+    L6["L6 AWS Bedrock Provider (VERIFIED (live Converse))"]
     L7["L7 Bedrock Knowledge Base (VERIFIED (offline))"]
     L8["L8 Metadata Catalog (VERIFIED (local live))"]
     L9["L9 End-to-End Governed Agent (VERIFIED (offline))"]
@@ -112,7 +112,7 @@ flowchart LR
 | L3 | VERIFIED | — | Metadata & Ontology | 25 | 2 |
 | L4 | VERIFIED | Orbitant | Governed RAG | 12 | 2 |
 | L5 | VERIFIED | Orbitant | MCP con gobernanza | 7 | 3 |
-| L6 | VERIFIED (offline) | Tuio | AWS Bedrock Provider | 10 | 2 |
+| L6 | VERIFIED (live Converse) | Tuio | AWS Bedrock Provider | 10 | 3 |
 | L7 | VERIFIED (offline) | Devoteam | Bedrock Knowledge Base | 10 | 2 |
 | L8 | VERIFIED (local live) | Devoteam | Metadata Catalog | 13 | 3 |
 | L9 | VERIFIED (offline) | commercetools | End-to-End Governed Agent | 7 | 3 |
@@ -200,8 +200,8 @@ La tabla se extrae de JOB_SKILL_MATRIX.md y se mantiene fuera del README.
 | Metadata/Ontology | Media | 🟢 Implementado | 🎯 Proficient | L3 schema + L10 engine | L10 local |
 | RDF / SPARQL / Knowledge Graphs | Alta | 🟢 Baseline local | 🎯 Proficient | L10 RDF/Turtle + SPARQL + inference | L10 local; triplestore live separado |
 | Lineage | Media | 🟢 Implementado | 🎯 Proficient | L3 relations + L10 paths | L10 local |
-| AWS | Alta | 🟡 Adapter offline | 🎯 Bedrock fluent | L6 adapter + setup doc | Live account validation |
-| Bedrock | Alta | 🟡 Provider baseline | 🎯 Proficient | L6 Converse/Stream + receipts | Live model evaluation |
+| AWS | Alta | 🟢 Bedrock live acotado | 🎯 Bedrock fluent | L6 adapter + live Converse receipt | IAM least-privilege + billing |
+| Bedrock | Alta | 🟢 Converse live acotado | 🎯 Proficient | L6 Converse/Stream + live receipt | Stream + model evaluation |
 | Bedrock Knowledge Bases | Alta | 🟡 Baseline offline | 🎯 Proficient | L7 Retrieve/Generate + citations | Live KB evaluation |
 | OpenMetadata Catalog | Media | 🟢 Local live verificado | 🎯 Proficient | L8 adapter + Docker local + lineage/quality receipts | OpenMetadata remoto |
 | IAM | Alta | 🟡 Basic | 🎯 Configurable | L6 least-privilege setup | Live policy check |
@@ -297,6 +297,7 @@ La tabla se extrae de JOB_SKILL_MATRIX.md y se mantiene fuera del README.
 - `evidence/l14_vector_store.md`
 - `evidence/l15_otel_jaeger_live.md`
 - `evidence/l3_ontology_graph.md`
+- `evidence/l6_aws_live.md`
 - `evidence/l8_openmetadata_catalog.md`
 - `evidence/l8_openmetadata_live.md`
 - `evidence/l9_authorized_actions_20260922.md`

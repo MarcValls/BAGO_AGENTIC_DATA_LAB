@@ -17,7 +17,7 @@
 | Agentes y orchestration | 🟡 En aprendizaje | — | L1 LangGraph |
 | Tool calling / APIs | ✅ Conocido | BAGO backend | — |
 | MCP | ✅ Baseline gobernado | mcp_adapter.py + local stdio demo + video | Tool-use cloud end-to-end |
-| Bedrock provider | ✅ Baseline offline gobernado | bedrock_provider_adapter.py + 10 tests + benchmark | Live AWS validation |
+| Bedrock provider | 🟢 Converse live acotado | adapter + 10 tests + benchmark + `evidence/l6_aws_live.md` | Stream, IAM least-privilege y billing |
 | RAG | 🟡 Parcial | BAGO RAG básico | L4 |
 | Validaciones/permisos | ✅ Fuerte | BAGO governance | — |
 | Action limits / human escalation | ✅ Diseñado | BAGO contracts | — |
@@ -112,7 +112,8 @@
 
 ### Wave 2 (4-5 semanas) — Tuio
 - [x] Completar L6 offline (Bedrock; L5 MCP baseline ya verificado)
-- [ ] Validar L6 contra cuenta AWS real (credenciales, IAM y model access)
+- [x] Validar L6 `Converse` contra cuenta AWS real (credenciales, model access y receipt)
+- [ ] Validar L6 `ConverseStream` y política IAM least-privilege
 - Evidence de LangGraph governed execution
 - Aplicar aunque seniority sea gap; portfolio como compensación
 
@@ -155,8 +156,8 @@
 | Metadata/Ontology | Media | 🟢 Implementado | 🎯 Proficient | L3 schema + L10 engine | L10 local |
 | RDF / SPARQL / Knowledge Graphs | Alta | 🟢 Baseline local | 🎯 Proficient | L10 RDF/Turtle + SPARQL + inference | L10 local; triplestore live separado |
 | Lineage | Media | 🟢 Implementado | 🎯 Proficient | L3 relations + L10 paths | L10 local |
-| AWS | Alta | 🟡 Adapter offline | 🎯 Bedrock fluent | L6 adapter + setup doc | Live account validation |
-| Bedrock | Alta | 🟡 Provider baseline | 🎯 Proficient | L6 Converse/Stream + receipts | Live model evaluation |
+| AWS | Alta | 🟢 Bedrock live acotado | 🎯 Bedrock fluent | L6 adapter + live Converse receipt | IAM least-privilege + billing |
+| Bedrock | Alta | 🟢 Converse live acotado | 🎯 Proficient | L6 Converse/Stream + live receipt | Stream + model evaluation |
 | Bedrock Knowledge Bases | Alta | 🟡 Baseline offline | 🎯 Proficient | L7 Retrieve/Generate + citations | Live KB evaluation |
 | OpenMetadata Catalog | Media | 🟢 Local live verificado | 🎯 Proficient | L8 adapter + Docker local + lineage/quality receipts | OpenMetadata remoto |
 | IAM | Alta | 🟡 Basic | 🎯 Configurable | L6 least-privilege setup | Live policy check |
@@ -198,7 +199,8 @@
 - [x] L5: MCP adapter + server local demo + video
 - [x] L6: Bedrock provider adapter funcionando offline con permits y receipts
 - [x] Evidence de authorization boundary en acción (10 tests + benchmark)
-- [ ] Receipts de ejecuciones reales (AWS live `NOT_RUN`)
+- [x] Receipt de una ejecución real AWS `Converse`
+- [ ] Receipt de `ConverseStream` y validación de precio/billing
 - [ ] L6: benchmark de latencia/precio cloud
 - [ ] CRIT report mostrando tests de gobernanza
 
