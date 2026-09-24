@@ -18,7 +18,7 @@
 | Estado actualizado | 2026-09-24 |
 | Fase actual | **L15 · OpenTelemetry + Jaeger Local Live** · VERIFIED (local live) |
 | Siguiente bloque | confirm AWS Billing/free-tier state before any additional cloud call; keep streaming, Knowledge Base and remote integrations separately scoped |
-| Estado declarado | VERIFIED for the local RDF/Turtle materialization, bounded SPARQL subset, deterministic inference, contradiction constraints, RAG seed handoff, the real local OpenMetadata 1.12.6 validation, the local restricted sandbox execution boundary, the local trace/evaluation chain, the public zero-cost E2E demo executed by the same CI contract, the persistent local SQLite vector index consumed by GovernedRAG and the local OpenTelemetry → Jaeger trace projection; one bounded live AWS Bedrock `Converse` call through the governed adapter is `VERIFIED`; AWS `ConverseStream`, Bedrock Knowledge Base, remote OpenMetadata, commercetools live integrations and AWS billing/free-tier eligibility remain `NOT_RUN`; GitHub issue #14 is separately executed and verified under human authorization; the local review checkpoint is recorded in `evidence/bago_canon_compliance_review.md`. |
+| Estado declarado | VERIFIED for the local RDF/Turtle materialization, bounded SPARQL subset, deterministic inference, contradiction constraints, RAG seed handoff, the real local OpenMetadata 1.12.6 validation, the local restricted sandbox execution boundary, the local trace/evaluation chain, the public zero-cost E2E demo executed by the same CI contract, the persistent local SQLite vector index consumed by GovernedRAG and the local OpenTelemetry → Jaeger trace projection; one bounded live AWS Bedrock `Converse` call through the governed adapter is `VERIFIED`; AWS `ConverseStream`, Bedrock Knowledge Base, remote OpenMetadata, commercetools live integrations and AWS billing/free-tier eligibility remain `NOT_RUN`; GitHub issue #14 is separately executed and verified under human authorization, and the local human-reviewed checkpoint is recorded in `evidence/bago_canon_compliance_review.md`. |
 
 El estado público se limita a lo que existe en el checkout y a la evidencia
 referenciada. AWS live, OpenMetadata live y otras integraciones externas
@@ -290,6 +290,7 @@ La tabla se extrae de JOB_SKILL_MATRIX.md y se mantiene fuera del README.
 
 ### Evidencia
 
+- `evidence/bago_canon_compliance_review.md`
 - `evidence/bago_etl_vs_bedrock_kb_comparison.md`
 - `evidence/bedrock_provider_benchmark.md`
 - `evidence/l10_ontology_engine.md`
