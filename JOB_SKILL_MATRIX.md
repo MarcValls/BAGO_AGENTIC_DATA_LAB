@@ -17,7 +17,7 @@
 | Agentes y orchestration | 🟡 En aprendizaje | — | L1 LangGraph |
 | Tool calling / APIs | ✅ Conocido | BAGO backend | — |
 | MCP | ✅ Baseline gobernado | mcp_adapter.py + local stdio demo + video | Tool-use cloud end-to-end |
-| Bedrock provider | 🟢 Converse live acotado | adapter + 10 tests + benchmark + `evidence/l6_aws_live.md` | Stream, IAM least-privilege y billing |
+| Bedrock provider | 🟢 Converse live + Free Plan observado | adapter + 10 tests + benchmark + `evidence/l6_aws_live.md` + `evidence/l6_aws_free_tier.md` | Stream, IAM least-privilege y cargo cero posterior |
 | RAG | 🟡 Parcial | BAGO RAG básico | L4 |
 | Validaciones/permisos | ✅ Fuerte | BAGO governance | — |
 | Action limits / human escalation | ✅ Diseñado | BAGO contracts | — |
@@ -113,6 +113,7 @@
 ### Wave 2 (4-5 semanas) — Tuio
 - [x] Completar L6 offline (Bedrock; L5 MCP baseline ya verificado)
 - [x] Validar L6 `Converse` contra cuenta AWS real (credenciales, model access y receipt)
+- [x] Confirmar cuenta AWS `FREE/ACTIVE` y créditos restantes mediante API Free Tier de solo lectura
 - [ ] Validar L6 `ConverseStream` y política IAM least-privilege
 - Evidence de LangGraph governed execution
 - Aplicar aunque seniority sea gap; portfolio como compensación
@@ -156,7 +157,7 @@
 | Metadata/Ontology | Media | 🟢 Implementado | 🎯 Proficient | L3 schema + L10 engine | L10 local |
 | RDF / SPARQL / Knowledge Graphs | Alta | 🟢 Baseline local | 🎯 Proficient | L10 RDF/Turtle + SPARQL + inference | L10 local; triplestore live separado |
 | Lineage | Media | 🟢 Implementado | 🎯 Proficient | L3 relations + L10 paths | L10 local |
-| AWS | Alta | 🟢 Bedrock live acotado | 🎯 Bedrock fluent | L6 adapter + live Converse receipt | IAM least-privilege + billing |
+| AWS | Alta | 🟢 Bedrock live + Free Plan observado | 🎯 Bedrock fluent | L6 adapter + live Converse + Free Tier receipts | IAM least-privilege + cargo cero posterior |
 | Bedrock | Alta | 🟢 Converse live acotado | 🎯 Proficient | L6 Converse/Stream + live receipt | Stream + model evaluation |
 | Bedrock Knowledge Bases | Alta | 🟡 Baseline offline | 🎯 Proficient | L7 Retrieve/Generate + citations | Live KB evaluation |
 | OpenMetadata Catalog | Media | 🟢 Local live verificado | 🎯 Proficient | L8 adapter + Docker local + lineage/quality receipts | OpenMetadata remoto |
@@ -200,7 +201,8 @@
 - [x] L6: Bedrock provider adapter funcionando offline con permits y receipts
 - [x] Evidence de authorization boundary en acción (10 tests + benchmark)
 - [x] Receipt de una ejecución real AWS `Converse`
-- [ ] Receipt de `ConverseStream` y validación de precio/billing
+- [x] Receipt de cobertura de cuenta Free Tier (sin invocar Cost Explorer)
+- [ ] Receipt de `ConverseStream` y confirmación posterior de cargo cero
 - [ ] L6: benchmark de latencia/precio cloud
 - [ ] CRIT report mostrando tests de gobernanza
 

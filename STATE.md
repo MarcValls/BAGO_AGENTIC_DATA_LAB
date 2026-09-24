@@ -9,10 +9,11 @@ execution boundary, the local trace/evaluation chain, the public zero-cost E2E
 demo executed by the same CI contract, the persistent local SQLite vector
 index consumed by GovernedRAG and the local OpenTelemetry → Jaeger trace
 projection; one bounded live AWS Bedrock `Converse` call through the governed
-adapter is `VERIFIED`;
+adapter is `VERIFIED`; a separate read-only AWS Free Tier check observes an
+active `FREE` account plan with USD 100.00 remaining at validation time;
 AWS `ConverseStream`, Bedrock Knowledge Base, remote OpenMetadata,
-commercetools live integrations and AWS billing/free-tier eligibility remain
-`NOT_RUN`;
+commercetools live integrations remain `NOT_RUN`, while zero-dollar billing
+for the Bedrock call remains `NOT_PROVEN`;
 GitHub issue #14 is separately executed and verified under human authorization.
 **Tests:** 146/146 passing en la suite combinada; L10 aporta 4 checks offline,
 L8 aporta 13 checks de adapter más la validación live local, L9 aporta 7 checks
@@ -22,8 +23,10 @@ checks de trace, linkage y eval determinista; L13 aporta 3 checks de demo E2E,
 composición y límites externos; L14 aporta 4 checks de persistencia, metadata
 gate, reload y backend semántico persistente; L15 aporta 3 checks de endpoint,
 parent links, evidencia inmutable y fallo del exporter.
-**Next phase:** confirm AWS Billing/free-tier state before any additional cloud
-call; keep streaming, Knowledge Base and remote integrations separately scoped
+**Next phase:** do not make additional cloud calls under the zero-cost rule;
+confirm a later billing record manually only if zero-dollar charging must be
+claimed, and keep streaming, Knowledge Base and remote integrations separately
+scoped
 **Evidence:** `evidence/l3_ontology_graph.md` with integrity PASS and
 `evidence/retrieval_benchmark_results.md` with 48 reproducible benchmark rows;
 `evidence/mcp_governed_demo.md` with a real local stdio round trip and a
@@ -56,6 +59,8 @@ validation;
 OTLP/HTTP to local Jaeger and queried back with 15 observed spans;
 `evidence/l6_aws_live.md` with one real AWS Bedrock `Converse` call, governed
 permit/receipt, 41-token usage and masked account identity;
+`evidence/l6_aws_free_tier.md` with a read-only `FREE` account-plan check,
+remaining-credit observation and Free Tier API result;
 `evidence/l9_authorized_actions_20260922.md` records the later human-authorized
 GitHub issue #14 and the workspace-binding follow-up;
 `evidence/ontology_proposal.md` and `evidence/ontology_proposal_examples.md`
@@ -66,8 +71,9 @@ One real `Converse` call passed in `us-east-1` with
 `amazon.nova-lite-v1:0`, 41 total tokens and a governed receipt. The call used
 the account's root principal, so it does not validate least-privilege IAM.
 The receipt's `cost_usd: 0.0` is an adapter estimate, not a billing record;
-AWS billing/free-tier eligibility, `ConverseStream` and Knowledge Base live
-validation remain `NOT_RUN`.
+the separate read-only evidence observes Free account-plan coverage, but
+zero-dollar billing, `ConverseStream` and Knowledge Base live validation remain
+`NOT_PROVEN` or `NOT_RUN` as scoped.
 **L7 boundary:** `Retrieve` and `RetrieveAndGenerate` are implemented behind
 an optional `bedrock-agent-runtime` client with KB allowlists, metadata filters,
 citations, retries, quotas and receipts. The comparison uses a fixture, not a
