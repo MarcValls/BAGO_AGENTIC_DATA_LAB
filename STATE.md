@@ -14,7 +14,9 @@ active `FREE` account plan with USD 100.00 remaining at validation time;
 AWS `ConverseStream`, Bedrock Knowledge Base, remote OpenMetadata,
 commercetools live integrations remain `NOT_RUN`, while zero-dollar billing
 for the Bedrock call remains `NOT_PROVEN`;
-GitHub issue #14 is separately executed and verified under human authorization.
+GitHub issue #14 is separately executed and verified under human authorization,
+and the local human-reviewed checkpoint is recorded in
+`evidence/bago_canon_compliance_review.md`.
 **Tests:** 146/146 passing en la suite combinada; L10 aporta 4 checks offline,
 L8 aporta 13 checks de adapter más la validación live local, L9 aporta 7 checks
 offline, workspace binding aporta 6 checks de contrato y L11 aporta 14 checks
@@ -63,6 +65,8 @@ permit/receipt, 41-token usage and masked account identity;
 remaining-credit observation and Free Tier API result;
 `evidence/l9_authorized_actions_20260922.md` records the later human-authorized
 GitHub issue #14 and the workspace-binding follow-up;
+`evidence/bago_canon_compliance_review.md` records the local human-reviewed
+canon-compliance checkpoint backing issue #14;
 `evidence/ontology_proposal.md` and `evidence/ontology_proposal_examples.md`
 are reproducible review artifacts.
 **L6 boundary:** `Converse` and `ConverseStream` are implemented behind an
