@@ -16,6 +16,7 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 SRC_ROOT = REPO_ROOT / "src"
 SERVER_PATH = REPO_ROOT / "scripts" / "local_mcp_server.py"
 EVIDENCE_PATH = REPO_ROOT / "evidence" / "l9_commercetools_agent.md"
+CANON_REVIEW_CHECKPOINT_ISSUE = "#29"
 if str(SRC_ROOT) not in sys.path:
     sys.path.insert(0, str(SRC_ROOT))
 
@@ -74,7 +75,8 @@ def l9_scenario_chunks() -> list[RetrievalChunk]:
         (
             "architecture",
             "RC6 architecture review retrieves canon evidence and may propose a GitHub "
-            "issue, but external issue creation remains pending human authorization.",
+            f"issue ({CANON_REVIEW_CHECKPOINT_ISSUE}), but external issue creation "
+            "remains pending human authorization.",
             "RC6 canon",
         ),
     ]
@@ -175,6 +177,12 @@ def render_evidence(result: dict[str, Any]) -> str:
     implementation = scenarios["implementation_query"]
     architecture = scenarios["architecture_query"]
     payload = json.dumps(result, indent=2, ensure_ascii=False, sort_keys=True, default=str)
+    architecture_receipt = (
+        architecture.get("decision_receipts", [{}])[0]
+        if architecture.get("decision_receipts")
+        else {}
+    )
+    architecture_effect = architecture_receipt.get("actual_effect", {})
     return "\n".join(
         [
             "# L9 · Governed Knowledge Agent — commercetools portfolio evidence",
@@ -202,6 +210,16 @@ def render_evidence(result: dict[str, Any]) -> str:
             f"1. Technical query: `{technical['status']}`; citations=`{len(technical['citations'])}`; MCP READ and Bedrock fixture receipts present.",
             f"2. Implementation query: `{implementation['status']}`; CREATE and MCP WRITE proposals have no transport call and leave decision receipts.",
             f"3. Architecture query: `{architecture['status']}`; GitHub issue proposal leaves a `called=false` decision receipt.",
+            "",
+            "## Canon-review checkpoint evidence (issue flow #29)",
+            "",
+            f"- Checkpoint issue flow: `{CANON_REVIEW_CHECKPOINT_ISSUE}`",
+            f"- Query: `{architecture['query']}`",
+            f"- Scenario status: `{architecture['status']}`",
+            f"- Decision: `{architecture_receipt.get('decision', 'UNKNOWN')}`",
+            f"- Tool proposed: `{architecture_receipt.get('tool_name', 'github.create_issue')}`",
+            f"- External transport called: `{architecture_effect.get('called', False)}`",
+            f"- Guard reason: `{architecture_receipt.get('error_message', 'Material effect requires explicit human authorization')}`",
             "",
             "## Reproducible command",
             "",

@@ -1,6 +1,6 @@
 # L9 · Governed Knowledge Agent — commercetools portfolio evidence
 
-Generated at: `2026-09-22T01:28:26.604103+00:00`
+Generated at: `2026-09-24T00:03:42.978002+00:00`
 
 This artifact validates the end-to-end governed orchestration offline.
 The target is the commercetools AI Engineer portfolio scenario; no
@@ -24,6 +24,16 @@ LangGraph → governed RAG → proposal → Permit → optional MCP/Bedrock → 
 2. Implementation query: `PENDING_AUTHORIZATION`; CREATE and MCP WRITE proposals have no transport call and leave decision receipts.
 3. Architecture query: `PENDING_AUTHORIZATION`; GitHub issue proposal leaves a `called=false` decision receipt.
 
+## Canon-review checkpoint evidence (issue flow #29)
+
+- Checkpoint issue flow: `#29`
+- Query: `¿BAGO cumple el canon RC6?`
+- Scenario status: `PENDING_AUTHORIZATION`
+- Decision: `REQUIRE_HUMAN`
+- Tool proposed: `github.create_issue`
+- External transport called: `False`
+- Guard reason: `Material effect requires explicit human authorization`
+
 ## Reproducible command
 
 ```bash
@@ -36,12 +46,12 @@ python scripts/generate_l9_agent_evidence.py
 {
   "bedrock_fixture_calls": 1,
   "bedrock_transport": "injected_fixture_no_aws_call",
-  "generated_at": "2026-09-22T01:28:26.604103+00:00",
+  "generated_at": "2026-09-24T00:03:42.978002+00:00",
   "mcp_transport": "local_stdio_server",
   "retrieval_chunks": 68,
   "scenarios": {
     "architecture_query": {
-      "answer": "Respuesta construida con retrieval gobernado:\n- ejecutar test (gobernado)\n   - Muestra resultado\n\n3. **Query de arquitectura**: \"¿BAGO cumple el canon RC6?\"\n   - Recupera canon + código actual\n   - Compara punto por punto\n   - Genera reporte de gaps\n   - Crea issues en GitHub (gobernado)\n\n### Entregables\n\n- [ ] src/agent/governed_knowledge_agent.py\n- [ ] \tests/test_end_to_end_agent.py\n- [ ] README.md final con demos grabadas\n- [ ] Portfolio público completo en GitHub\n\n---\n\n## JOB SKILL MATRIX — Progreso por Fase\n- RC6 architecture review retrieves canon evidence and may propose a GitHub issue, but external issue creation remains pending human authorization.\n- ha objetivo:** 2026-10-05\n\n### Corpus de Ingesta\n\nDocumentación pública de BAGO:\n- AGENTS.md\n- CANON_BAGO_1.0-RC6.md\n- Docs de backend/\n- Docs de frontend/\n\n### Pipeline a Implementar\n\nSe preparó un informe de gaps; no se envió ningún issue externo sin autorización explícita.\n\nEvidence:\n- etl://enrich_norm_file_ROADMAP_2093e19c#revision=etl\n- docs/commercetools_capstone.md#scenario=architecture#revision=l9\n- etl://enrich_norm_file_ROADMAP_2093e19c#revision=etl\n- etl://enrich_norm_file_LAB_CONTRACT_4a9dc8f5#revision=etl\n- docs/commercetools_capstone.md#scenario=implementation#revision=l9",
+      "answer": "Respuesta construida con retrieval gobernado:\n- ejecutar test (gobernado)\n   - Muestra resultado\n\n3. **Query de arquitectura**: \"¿BAGO cumple el canon RC6?\"\n   - Recupera canon + código actual\n   - Compara punto por punto\n   - Genera reporte de gaps\n   - Crea issues en GitHub (gobernado)\n\n### Entregables\n\n- [ ] src/agent/governed_knowledge_agent.py\n- [ ] \tests/test_end_to_end_agent.py\n- [ ] README.md final con demos grabadas\n- [ ] Portfolio público completo en GitHub\n\n---\n\n## JOB SKILL MATRIX — Progreso por Fase\n- RC6 architecture review retrieves canon evidence and may propose a GitHub issue (#29), but external issue creation remains pending human authorization.\n- ha objetivo:** 2026-10-05\n\n### Corpus de Ingesta\n\nDocumentación pública de BAGO:\n- AGENTS.md\n- CANON_BAGO_1.0-RC6.md\n- Docs de backend/\n- Docs de frontend/\n\n### Pipeline a Implementar\n\nSe preparó un informe de gaps; no se envió ningún issue externo sin autorización explícita.\n\nEvidence:\n- etl://enrich_norm_file_ROADMAP_2093e19c#revision=etl\n- docs/commercetools_capstone.md#scenario=architecture#revision=l9\n- etl://enrich_norm_file_ROADMAP_2093e19c#revision=etl\n- etl://enrich_norm_file_LAB_CONTRACT_4a9dc8f5#revision=etl\n- docs/commercetools_capstone.md#scenario=implementation#revision=l9",
       "citations": [
         "etl://enrich_norm_file_ROADMAP_2093e19c#revision=etl",
         "docs/commercetools_capstone.md#scenario=architecture#revision=l9",
@@ -70,6 +80,7 @@ python scripts/generate_l9_agent_evidence.py
       "errors": [],
       "intent": "retrieval",
       "mcp_receipts": [],
+      "ontology": null,
       "proposals": [
         {
           "arguments": {
@@ -116,9 +127,9 @@ python scripts/generate_l9_agent_evidence.py
               "revision": "etl",
               "source_uri": "etl://enrich_norm_file_ROADMAP_2093e19c"
             },
-            "lexical_score": 11.96259472,
+            "lexical_score": 11.96456988,
             "rank": 1,
-            "score": 1.31238194,
+            "score": 1.31238335,
             "semantic_score": 0.20861466
           },
           {
@@ -131,10 +142,10 @@ python scripts/generate_l9_agent_evidence.py
               "revision": "l9",
               "source_uri": "docs/commercetools_capstone.md#scenario=architecture"
             },
-            "lexical_score": 7.81486431,
+            "lexical_score": 7.69638092,
             "rank": 2,
-            "score": 0.89180571,
-            "semantic_score": 0.14785315
+            "score": 0.90942174,
+            "semantic_score": 0.1679252
           },
           {
             "chunk_id": "chunk_enrich_norm_file_ROADMAP_2093e19c_6",
@@ -146,9 +157,9 @@ python scripts/generate_l9_agent_evidence.py
               "revision": "etl",
               "source_uri": "etl://enrich_norm_file_ROADMAP_2093e19c"
             },
-            "lexical_score": 5.25368543,
+            "lexical_score": 5.2543175,
             "rank": 3,
-            "score": 0.74609293,
+            "score": 0.74608405,
             "semantic_score": 0.14581851
           },
           {
@@ -161,9 +172,9 @@ python scripts/generate_l9_agent_evidence.py
               "revision": "etl",
               "source_uri": "etl://enrich_norm_file_LAB_CONTRACT_4a9dc8f5"
             },
-            "lexical_score": 1.81080667,
+            "lexical_score": 1.8110106,
             "rank": 4,
-            "score": 0.55815191,
+            "score": 0.55813823,
             "semantic_score": 0.15129958
           },
           {
@@ -176,9 +187,9 @@ python scripts/generate_l9_agent_evidence.py
               "revision": "l9",
               "source_uri": "docs/commercetools_capstone.md#scenario=implementation"
             },
-            "lexical_score": 1.66830419,
+            "lexical_score": 1.66846154,
             "rank": 5,
-            "score": 0.5473966,
+            "score": 0.54738181,
             "semantic_score": 0.14966986
           }
         ],
@@ -234,11 +245,11 @@ python scripts/generate_l9_agent_evidence.py
           "decision": "REQUIRE_HUMAN",
           "error_message": "Material effect requires explicit human authorization",
           "evidence_refs": [
-            "agent://file_creator#request=agent_request_179b57096a0c845f"
+            "agent://file_creator#request=agent_request_01132f05831f18e3"
           ],
           "execution_outcome": "FAILURE",
-          "receipt_id": "agent_receipt_c709bab7ab940b75",
-          "request_id": "agent_request_179b57096a0c845f",
+          "receipt_id": "agent_receipt_2f3ada01ad56cada",
+          "request_id": "agent_request_01132f05831f18e3",
           "tool_name": "file_creator"
         }
       ],
@@ -255,21 +266,22 @@ python scripts/generate_l9_agent_evidence.py
           "duration_ms": 0,
           "error_message": "DENY: permit decision is REQUIRE_HUMAN",
           "evidence_refs": [
-            "mcp://bago-local-demo/tools/propose_lab_note#request=mcp_req_3fa93b04f1044b36"
+            "mcp://bago-local-demo/tools/propose_lab_note#request=mcp_req_951ca7cb9b0170fa"
           ],
           "execution_outcome": "FAILURE",
-          "permit_id": "mcp_permit_71e4a0e30554cc85",
-          "receipt_id": "mcp_receipt_cb7eba1de751ac62",
-          "request_id": "mcp_req_3fa93b04f1044b36",
+          "permit_id": "mcp_permit_1b87b99ed926e3e0",
+          "receipt_id": "mcp_receipt_e4bb04aa038392d8",
+          "request_id": "mcp_req_951ca7cb9b0170fa",
           "result": null,
           "server_name": "bago-local-demo",
           "tool_name": "propose_lab_note"
         }
       ],
+      "ontology": null,
       "proposals": [
         {
           "arguments": {
-            "content": "def test_workspace_binding_contract():\n    assert workspace_binding_is_governed()\n",
+            "content": "from pathlib import Path\n\nfrom src.context.workspace_binding import (\n    WorkspaceBinding,\n    workspace_binding_is_governed,\n)\n\ndef test_workspace_binding_contract():\n    binding = WorkspaceBinding.from_git(\n        Path(__file__).resolve().parents[1],\n        context_revision=\"l9-workspace-v1\",\n    )\n    assert workspace_binding_is_governed(binding)\n",
             "path": "tests/test_workspace_binding.py"
           },
           "called": false,
@@ -279,17 +291,17 @@ python scripts/generate_l9_agent_evidence.py
           "error_message": "Material effect requires explicit human authorization",
           "outcome": "FAILURE",
           "permit_id": "",
-          "proposal_id": "proposal_38c0d7283aa7f710",
+          "proposal_id": "proposal_c0a9263293c37393",
           "rationale": "A generated test is a CREATE effect and needs human approval.",
-          "receipt_id": "agent_receipt_c709bab7ab940b75",
-          "request_id": "agent_request_179b57096a0c845f",
+          "receipt_id": "agent_receipt_2f3ada01ad56cada",
+          "request_id": "agent_request_01132f05831f18e3",
           "result": null,
           "tool_name": "file_creator",
           "transport": "none"
         },
         {
           "arguments": {
-            "content": "def test_workspace_binding_contract():\n    assert workspace_binding_is_governed()\n",
+            "content": "from pathlib import Path\n\nfrom src.context.workspace_binding import (\n    WorkspaceBinding,\n    workspace_binding_is_governed,\n)\n\ndef test_workspace_binding_contract():\n    binding = WorkspaceBinding.from_git(\n        Path(__file__).resolve().parents[1],\n        context_revision=\"l9-workspace-v1\",\n    )\n    assert workspace_binding_is_governed(binding)\n",
             "path": "notes/l9-test-proposal.md"
           },
           "called": false,
@@ -298,11 +310,11 @@ python scripts/generate_l9_agent_evidence.py
           "effect_type": "WRITE",
           "error_message": "DENY: permit decision is REQUIRE_HUMAN",
           "outcome": "FAILURE",
-          "permit_id": "mcp_permit_71e4a0e30554cc85",
-          "proposal_id": "proposal_3b21f5940f74a34f",
+          "permit_id": "mcp_permit_1b87b99ed926e3e0",
+          "proposal_id": "proposal_b981df1d0461fc0c",
           "rationale": "Demonstrate that an MCP WRITE is blocked before transport.",
-          "receipt_id": "mcp_receipt_cb7eba1de751ac62",
-          "request_id": "mcp_req_3fa93b04f1044b36",
+          "receipt_id": "mcp_receipt_e4bb04aa038392d8",
+          "request_id": "mcp_req_951ca7cb9b0170fa",
           "result": null,
           "tool_name": "propose_lab_note",
           "transport": "mcp"
@@ -332,9 +344,9 @@ python scripts/generate_l9_agent_evidence.py
               "revision": "etl",
               "source_uri": "etl://enrich_norm_file_ROADMAP_2093e19c"
             },
-            "lexical_score": 10.98130288,
+            "lexical_score": 10.9827866,
             "rank": 1,
-            "score": 1.28980163,
+            "score": 1.28980287,
             "semantic_score": 0.23736013
           },
           {
@@ -347,9 +359,9 @@ python scripts/generate_l9_agent_evidence.py
               "revision": "l9",
               "source_uri": "docs/commercetools_capstone.md#scenario=implementation"
             },
-            "lexical_score": 7.43903679,
+            "lexical_score": 7.43973843,
             "rank": 2,
-            "score": 0.92790082,
+            "score": 0.92788681,
             "semantic_score": 0.21435839
           },
           {
@@ -362,9 +374,9 @@ python scripts/generate_l9_agent_evidence.py
               "revision": "etl",
               "source_uri": "etl://enrich_norm_file_ROADMAP_2093e19c"
             },
-            "lexical_score": 4.89252225,
+            "lexical_score": 4.89347329,
             "rank": 3,
-            "score": 0.72702912,
+            "score": 0.72704692,
             "semantic_score": 0.16845198
           },
           {
@@ -377,9 +389,9 @@ python scripts/generate_l9_agent_evidence.py
               "revision": "etl",
               "source_uri": "etl://enrich_norm_file_LAB_CONTRACT_4a9dc8f5"
             },
-            "lexical_score": 2.28402224,
+            "lexical_score": 2.28437553,
             "rank": 4,
-            "score": 0.57700937,
+            "score": 0.57701554,
             "semantic_score": 0.17995638
           },
           {
@@ -392,9 +404,9 @@ python scripts/generate_l9_agent_evidence.py
               "revision": "etl",
               "source_uri": "etl://enrich_norm_file_ROADMAP_2093e19c"
             },
-            "lexical_score": 2.14556374,
+            "lexical_score": 2.14592579,
             "rank": 5,
-            "score": 0.49558046,
+            "score": 0.49558846,
             "semantic_score": 0.11778307
           }
         ],
@@ -428,7 +440,7 @@ python scripts/generate_l9_agent_evidence.py
         "retrieve_context=hits:5; filtered:0",
         "reason_and_propose=proposals:2",
         "authorize=file_creator:REQUIRE_HUMAN:no_transport",
-        "authorize=propose_lab_note:REQUIRE_HUMAN:permit=mcp_permit_71e4a0e30554cc85",
+        "authorize=propose_lab_note:REQUIRE_HUMAN:permit=mcp_permit_1b87b99ed926e3e0",
         "verify_and_respond=status:PENDING_AUTHORIZATION; citations:5"
       ]
     },
@@ -452,7 +464,7 @@ python scripts/generate_l9_agent_evidence.py
             "tool": "get_lab_status"
           },
           "decision": "ALLOW",
-          "duration_ms": 7,
+          "duration_ms": 3,
           "error_message": null,
           "evidence_refs": [
             "mcp://bago-local-demo/tools/get_lab_status#request=mcp_req_4fe4f0ba0edebf01"
@@ -483,6 +495,7 @@ python scripts/generate_l9_agent_evidence.py
           "tool_name": "get_lab_status"
         }
       ],
+      "ontology": null,
       "proposals": [
         {
           "arguments": {},
@@ -636,9 +649,9 @@ python scripts/generate_l9_agent_evidence.py
               "revision": "etl",
               "source_uri": "etl://enrich_norm_file_ROADMAP_2093e19c"
             },
-            "lexical_score": 9.21322917,
+            "lexical_score": 9.21467938,
             "rank": 1,
-            "score": 1.24422241,
+            "score": 1.24422408,
             "semantic_score": 0.2175787
           },
           {
@@ -651,9 +664,9 @@ python scripts/generate_l9_agent_evidence.py
               "revision": "l9",
               "source_uri": "docs/commercetools_capstone.md#scenario=technical"
             },
-            "lexical_score": 4.34842207,
+            "lexical_score": 4.34889135,
             "rank": 2,
-            "score": 0.79958202,
+            "score": 0.79957114,
             "semantic_score": 0.24596127
           },
           {
@@ -666,9 +679,9 @@ python scripts/generate_l9_agent_evidence.py
               "revision": "etl",
               "source_uri": "etl://enrich_norm_file_LAB_CONTRACT_4a9dc8f5"
             },
-            "lexical_score": 1.82693365,
+            "lexical_score": 1.82713493,
             "rank": 3,
-            "score": 0.49504624,
+            "score": 0.49504411,
             "semantic_score": 0.11660606
           },
           {
@@ -681,9 +694,9 @@ python scripts/generate_l9_agent_evidence.py
               "revision": "etl",
               "source_uri": "etl://enrich_norm_file_ROADMAP_2093e19c"
             },
-            "lexical_score": 1.02077623,
+            "lexical_score": 1.02098833,
             "rank": 4,
-            "score": 0.47101545,
+            "score": 0.47102475,
             "semantic_score": 0.16075445
           },
           {
@@ -696,9 +709,9 @@ python scripts/generate_l9_agent_evidence.py
               "revision": "etl",
               "source_uri": "etl://enrich_norm_file_LAB_CONTRACT_4a9dc8f5"
             },
-            "lexical_score": 1.81080667,
+            "lexical_score": 1.8110106,
             "rank": 5,
-            "score": 0.47065092,
+            "score": 0.47064917,
             "semantic_score": 0.09180505
           }
         ],

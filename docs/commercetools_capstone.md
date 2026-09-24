@@ -35,10 +35,10 @@ comercial que no se haya ejecutado.
 |---|---|
 | Pregunta técnica sobre `session_manager` | RAG + citas; MCP `READ` opcional; Bedrock fixture opcional |
 | Crear un test de `workspace_binding` | binding canónico + propuesta `file_creator` y MCP `WRITE`; ambos siguen gobernados |
-| Comprobar canon RC6 | genera informe con evidencia; issue #14 creado sólo tras autorización humana |
+| Comprobar canon RC6 | genera informe con evidencia; checkpoint explícito del flujo de issue #29 y propuesta externa bajo autorización humana |
 
 La evidencia reproducible está en
-`evidence/l9_commercetools_agent.md` y se genera con:
+`evidence/l9_commercetools_agent.md` (incluye checkpoint explícito de canon-review para el flujo de issue #29) y se genera con:
 
 ```bash
 python scripts/generate_l9_agent_evidence.py
