@@ -119,11 +119,11 @@
       "id": "L6",
       "name": "AWS Bedrock Provider",
       "target": "Tuio",
-      "status": "VERIFIED (live Converse)",
+      "status": "VERIFIED (live Converse + Free Plan observed)",
       "checks": [
-        {"kind": "code", "patterns": ["src/adapters/bedrock_provider_adapter.py"]},
+        {"kind": "code", "patterns": ["src/adapters/bedrock_provider_adapter.py", "scripts/run_l6_aws_free_tier_validation.py"]},
         {"kind": "tests", "patterns": ["tests/test_bedrock_integration.py"]},
-        {"kind": "evidence", "patterns": ["evidence/bedrock_provider_benchmark.md", "evidence/l6_aws_live.md", "docs/aws_bedrock_setup.md"]}
+        {"kind": "evidence", "patterns": ["evidence/bedrock_provider_benchmark.md", "evidence/l6_aws_live.md", "evidence/l6_aws_free_tier.md", "docs/aws_bedrock_setup.md"]}
       ],
       "commit_patterns": ["feat: add governed AWS Bedrock provider adapter"]
     },

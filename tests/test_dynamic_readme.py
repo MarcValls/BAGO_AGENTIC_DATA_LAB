@@ -112,6 +112,7 @@ def test_rendered_readme_contains_dynamic_contract_and_l10_artifacts():
     assert "docs/otel_jaeger.md" in rendered
     assert "infra/observability/docker-compose.yml" in rendered
     assert "scripts/run_l15_otel_live_validation.py --check" in rendered
+    assert "scripts/run_l6_aws_free_tier_validation.py --profile bago-free" in rendered
     assert "python scripts/generate_dynamic_readme.py --check --skip-tests" in rendered
     assert "Estado actualizado" in rendered
     assert "| Fase actual | **L15 · OpenTelemetry + Jaeger Local Live** · VERIFIED (local live) |" in rendered

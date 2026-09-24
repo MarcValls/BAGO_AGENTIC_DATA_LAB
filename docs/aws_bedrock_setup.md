@@ -7,8 +7,10 @@ BAGO remains responsible for the request, permit, execution and receipt.
 The implementation is intentionally optional: importing the adapter does not
 require `boto3`, and all repository tests inject a client double. One bounded
 live `Converse` call is now recorded in
-[`evidence/l6_aws_live.md`](../evidence/l6_aws_live.md); streaming, managed
-Knowledge Bases and billing remain separate validation scopes.
+[`evidence/l6_aws_live.md`](../evidence/l6_aws_live.md). A separate read-only
+Free Tier account-plan check is recorded in
+[`evidence/l6_aws_free_tier.md`](../evidence/l6_aws_free_tier.md); streaming,
+managed Knowledge Bases and invoice-level billing remain separate scopes.
 
 ## Contract
 
@@ -146,9 +148,26 @@ python scripts/run_l6_aws_live_validation.py --profile bago-free --execute --reg
 ```
 
 The preflight proves only that STS credentials resolve. The `--execute` command
-is the real AWS call and must be treated as potentially billable; free-tier
-credits/account state are checked separately in AWS Billing. Evidence is written
-to `evidence/l6_aws_live.md` only after an explicit live attempt.
+is the real AWS call and must be treated as potentially billable. Account-plan
+coverage is checked separately with the read-only Free Tier API; evidence is
+written to `evidence/l6_aws_live.md` only after an explicit live attempt.
+
+## Free Tier account coverage (read-only)
+
+The checkout includes `scripts/run_l6_aws_free_tier_validation.py`. It performs
+only STS identity resolution, `GetAccountPlanState` and one bounded
+`GetFreeTierUsage` read. It does not create resources, invoke Bedrock or call
+Cost Explorer. The latter is intentionally excluded because AWS prices each
+Cost Explorer API request at USD 0.01.
+
+```powershell
+python scripts/run_l6_aws_free_tier_validation.py --profile bago-free --region us-east-1 --write-evidence
+```
+
+The current evidence observes an active `FREE` account plan with USD 100.00
+remaining and zero returned Free Tier usage rows. That proves account-plan
+coverage at the observation time, not a zero-dollar invoice for the earlier
+Bedrock call; the latter remains `NOT_PROVEN` without a later billing record.
 
 ## Live validation checklist
 
@@ -159,11 +178,13 @@ The following is deliberately separate from the offline test result:
 - [x] Short-lived credentials resolve for the intended profile or role
 - [ ] IAM policy permits only the approved inference operation/model
 - [x] One non-streaming `Converse` call produces a successful receipt
+- [x] Read-only Free Tier API observes an active `FREE` plan with remaining credits
 - [ ] One `ConverseStream` call produces a successful receipt
-- [ ] AWS Billing confirms free-tier/credit coverage for the call
+- [ ] A later billing record confirms a zero-dollar charge for the call
 - [ ] Throttling/timeout behavior is observed against the real account without exceeding the budget
 - [ ] Real latency and current price evidence is recorded separately from the fixture benchmark
 
-L6 is now `VERIFIED` for the local governed adapter plus the bounded live
-`Converse` scope. It is not `VALIDATED` for AWS production connectivity,
-least-privilege IAM, streaming, managed Knowledge Bases or zero billing.
+L6 is now `VERIFIED` for the local governed adapter, the bounded live
+`Converse` scope and the observed Free account-plan coverage. It is not
+`VALIDATED` for AWS production connectivity, least-privilege IAM, streaming,
+managed Knowledge Bases or zero billing.

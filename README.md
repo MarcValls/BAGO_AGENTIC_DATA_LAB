@@ -17,12 +17,12 @@
 | Rama pública | `main` |
 | Estado actualizado | 2026-09-24 |
 | Fase actual | **L15 · OpenTelemetry + Jaeger Local Live** · VERIFIED (local live) |
-| Siguiente bloque | confirm AWS Billing/free-tier state before any additional cloud call; keep streaming, Knowledge Base and remote integrations separately scoped |
-| Estado declarado | VERIFIED for the local RDF/Turtle materialization, bounded SPARQL subset, deterministic inference, contradiction constraints, RAG seed handoff, the real local OpenMetadata 1.12.6 validation, the local restricted sandbox execution boundary, the local trace/evaluation chain, the public zero-cost E2E demo executed by the same CI contract, the persistent local SQLite vector index consumed by GovernedRAG and the local OpenTelemetry → Jaeger trace projection; one bounded live AWS Bedrock `Converse` call through the governed adapter is `VERIFIED`; AWS `ConverseStream`, Bedrock Knowledge Base, remote OpenMetadata, commercetools live integrations and AWS billing/free-tier eligibility remain `NOT_RUN`; GitHub issue #14 is separately executed and verified under human authorization, and the local human-reviewed checkpoint is recorded in `evidence/bago_canon_compliance_review.md`. |
+| Siguiente bloque | do not make additional cloud calls under the zero-cost rule; confirm a later billing record manually only if zero-dollar charging must be claimed, and keep streaming, Knowledge Base and remote integrations separately scoped |
+| Estado declarado | VERIFIED for the local RDF/Turtle materialization, bounded SPARQL subset, deterministic inference, contradiction constraints, RAG seed handoff, the real local OpenMetadata 1.12.6 validation, the local restricted sandbox execution boundary, the local trace/evaluation chain, the public zero-cost E2E demo executed by the same CI contract, the persistent local SQLite vector index consumed by GovernedRAG and the local OpenTelemetry → Jaeger trace projection; one bounded live AWS Bedrock `Converse` call through the governed adapter is `VERIFIED`; a separate read-only AWS Free Tier check observes an active `FREE` account plan with USD 100.00 remaining at validation time; AWS `ConverseStream`, Bedrock Knowledge Base, remote OpenMetadata, commercetools live integrations remain `NOT_RUN`, while zero-dollar billing for the Bedrock call remains `NOT_PROVEN`; GitHub issue #14 is separately executed and verified under human authorization, and the local human-reviewed checkpoint is recorded in `evidence/bago_canon_compliance_review.md`. |
 
 El estado público se limita a lo que existe en el checkout y a la evidencia
-referenciada. AWS live, OpenMetadata live y otras integraciones externas
-no se presentan como verificadas si STATE.md las marca como NOT_RUN.
+referenciada. Cada superficie AWS, OpenMetadata u otra integración externa
+conserva en STATE.md su alcance exacto: VERIFIED, NOT_RUN o NOT_PROVEN.
 El commit, push y merge de este snapshot son operaciones separadas.
 
 ## Fuentes canónicas
@@ -77,7 +77,7 @@ flowchart LR
     L3["L3 Metadata & Ontology (VERIFIED)"]
     L4["L4 Governed RAG (VERIFIED)"]
     L5["L5 MCP con gobernanza (VERIFIED)"]
-    L6["L6 AWS Bedrock Provider (VERIFIED (live Converse))"]
+    L6["L6 AWS Bedrock Provider (VERIFIED (live Converse + Free Plan observed))"]
     L7["L7 Bedrock Knowledge Base (VERIFIED (offline))"]
     L8["L8 Metadata Catalog (VERIFIED (local live))"]
     L9["L9 End-to-End Governed Agent (VERIFIED (offline))"]
@@ -112,7 +112,7 @@ flowchart LR
 | L3 | VERIFIED | — | Metadata & Ontology | 25 | 2 |
 | L4 | VERIFIED | Orbitant | Governed RAG | 12 | 2 |
 | L5 | VERIFIED | Orbitant | MCP con gobernanza | 7 | 3 |
-| L6 | VERIFIED (live Converse) | Tuio | AWS Bedrock Provider | 10 | 3 |
+| L6 | VERIFIED (live Converse + Free Plan observed) | Tuio | AWS Bedrock Provider | 10 | 4 |
 | L7 | VERIFIED (offline) | Devoteam | Bedrock Knowledge Base | 10 | 2 |
 | L8 | VERIFIED (local live) | Devoteam | Metadata Catalog | 13 | 3 |
 | L9 | VERIFIED (offline) | commercetools | End-to-End Governed Agent | 7 | 3 |
@@ -200,7 +200,7 @@ La tabla se extrae de JOB_SKILL_MATRIX.md y se mantiene fuera del README.
 | Metadata/Ontology | Media | 🟢 Implementado | 🎯 Proficient | L3 schema + L10 engine | L10 local |
 | RDF / SPARQL / Knowledge Graphs | Alta | 🟢 Baseline local | 🎯 Proficient | L10 RDF/Turtle + SPARQL + inference | L10 local; triplestore live separado |
 | Lineage | Media | 🟢 Implementado | 🎯 Proficient | L3 relations + L10 paths | L10 local |
-| AWS | Alta | 🟢 Bedrock live acotado | 🎯 Bedrock fluent | L6 adapter + live Converse receipt | IAM least-privilege + billing |
+| AWS | Alta | 🟢 Bedrock live + Free Plan observado | 🎯 Bedrock fluent | L6 adapter + live Converse + Free Tier receipts | IAM least-privilege + cargo cero posterior |
 | Bedrock | Alta | 🟢 Converse live acotado | 🎯 Proficient | L6 Converse/Stream + live receipt | Stream + model evaluation |
 | Bedrock Knowledge Bases | Alta | 🟡 Baseline offline | 🎯 Proficient | L7 Retrieve/Generate + citations | Live KB evaluation |
 | OpenMetadata Catalog | Media | 🟢 Local live verificado | 🎯 Proficient | L8 adapter + Docker local + lineage/quality receipts | OpenMetadata remoto |
@@ -298,6 +298,7 @@ La tabla se extrae de JOB_SKILL_MATRIX.md y se mantiene fuera del README.
 - `evidence/l14_vector_store.md`
 - `evidence/l15_otel_jaeger_live.md`
 - `evidence/l3_ontology_graph.md`
+- `evidence/l6_aws_free_tier.md`
 - `evidence/l6_aws_live.md`
 - `evidence/l8_openmetadata_catalog.md`
 - `evidence/l8_openmetadata_live.md`
@@ -348,6 +349,7 @@ La tabla se extrae de JOB_SKILL_MATRIX.md y se mantiene fuera del README.
 - `scripts/run_l12_observability_evidence.py`
 - `scripts/run_l14_vector_store_validation.py`
 - `scripts/run_l15_otel_live_validation.py`
+- `scripts/run_l6_aws_free_tier_validation.py`
 - `scripts/run_l6_aws_live_validation.py`
 - `scripts/run_l8_openmetadata_live_validation.py`
 - `scripts/run_mcp_demo.py`
@@ -378,6 +380,7 @@ docker compose -p bago-otel -f infra/observability/docker-compose.yml up -d
 python scripts/run_l15_otel_live_validation.py --check
 python scripts/run_l15_otel_live_validation.py --write-evidence
 docker compose -p bago-otel -f infra/observability/docker-compose.yml down
+python scripts/run_l6_aws_free_tier_validation.py --profile bago-free --region us-east-1 --write-evidence
 docker compose -p bago-openmetadata -f infra/openmetadata/docker-compose.yml up -d
 python scripts/run_l8_openmetadata_live_validation.py
 python scripts/run_sandbox_local_validation.py
