@@ -1,46 +1,65 @@
-# L13 · Public E2E demo
+# Demo de cliente ficticio: Bruma Market
 
-La demo pública es una sola ruta reproducible para ejecutar el bloque local
-completo sin cuenta cloud, credenciales, Docker ni servicios de pago.
+Bruma Market es un minorista online inventado para ilustrar un problema
+operativo reconocible: decidir qué hacer cuando un pedido exprés llega con más
+de 24 horas de retraso. La política vigente devuelve el coste del envío y un
+recibo de QA valida el cambio respecto a la versión anterior.
 
-```text
-Governed RAG
-  → Ontology Engine
-  → contexto LLM fixture
-  → SandboxManager / LocalRestrictedBackend
-  → pytest tipado
-  → LocalTrace
-  → eval determinista
-```
+Todo el caso y sus datos son fixtures deterministas. No representan a un
+cliente real ni se conectan a servicios externos.
 
-## Requisitos
+## Instalar y ejecutar
 
-- Python 3.11+
-- checkout del repositorio
-- instalación local de `requirements.txt`
-
-No se requiere AWS, OpenMetadata remoto, Docker ni red para ejecutar la demo.
-
-## Ejecución
-
-Desde la raíz del repositorio:
+Requisitos: Python 3.11+ y Bash. Desde la raíz del checkout:
 
 ```bash
-python -m pip install -r requirements.txt
-python scripts/run_public_e2e_demo.py --check
-python scripts/run_public_e2e_demo.py --write-evidence
+bash scripts/install_demo.sh
+.venv/bin/python scripts/bago.py demo
 ```
 
-`--check` no escribe artefactos y falla si el agente, la ontología, el sandbox
-o el eval no terminan correctamente. `--write-evidence` genera
-`evidence/public_e2e_demo.md` después de un resultado PASS.
+El instalador crea `.venv` e instala las dependencias fijadas en
+`requirements.txt`. No modifica el entorno global. Para activar el entorno y
+usar el comando corto:
 
-## Alcance de la evidencia
+```bash
+source .venv/bin/activate
+bago demo
+```
 
-La demo usa un grafo y corpus fixture comprometidos, un cliente
-Bedrock-shaped inyectado y `LocalRestrictedBackend` con una request tipada de
-pytest. Demuestra la composición y la trazabilidad local; no verifica AWS
-live, OpenMetadata remoto, commercetools ni observabilidad de producción.
+Opciones útiles:
 
-La misma cadena se ejecuta en `.github/workflows/ci.yml` junto con la suite,
-la comprobación del README generado y `compileall`.
+```bash
+bago demo --json
+bago demo --write-evidence
+```
+
+`--json` muestra el resumen máquina-legible. `--write-evidence` refresca
+`evidence/public_e2e_demo.md` después de completar correctamente la ejecución.
+Para ejecutar la demo sin el CLI, se mantiene disponible
+`python scripts/run_public_e2e_demo.py --check`.
+
+## Qué muestra
+
+```text
+Pregunta de negocio
+  → Governed RAG con dos fuentes verificadas
+  → Ontology Engine: política v2 sustituye v1 y QA la valida
+  → respuesta con contexto fixture local
+  → sandbox restringido ejecuta un test tipado
+  → traza local y evaluación determinista
+```
+
+La salida de consola resume la respuesta, las fuentes recuperadas, el resultado
+de las validaciones y el coste local de cero dólares.
+
+## Límites
+
+- Sin credenciales, cuenta cloud, Docker, red ni servicios de pago.
+- El cliente LLM tiene forma compatible con Bedrock, pero es un fixture local;
+  no se realiza ninguna llamada a AWS.
+- La ejecución no valida integraciones live con AWS, OpenMetadata o
+  commercetools, ni comportamiento de producción.
+- La evidencia muestra únicamente lo que valida esta ruta local.
+
+La CI ejecuta la misma demo y la suite de pruebas en
+`.github/workflows/ci.yml`.
