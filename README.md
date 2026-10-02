@@ -3,7 +3,7 @@
 [![CI](https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/actions/workflows/ci.yml/badge.svg)](https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/actions/workflows/ci.yml)
 [![GitHub](https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/actions/workflows/readme-consistency.yml/badge.svg)](https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/actions/workflows/readme-consistency.yml)
 [![Branch](https://img.shields.io/badge/branch-main-green)](https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/tree/main)
-[![Tests](https://img.shields.io/badge/tests-146%2F146%20passing-brightgreen)](https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/actions)
+[![Tests](https://img.shields.io/badge/tests-147%2F147%20passing-brightgreen)](https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/actions)
 [![License](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 
 > Laboratorio experimental para desarrollar capacidades de AI Engineering con gobernanza BAGO.
@@ -13,7 +13,7 @@
 
 | Métrica | Valor |
 |---|---|
-| Tests ejecutados | **146/146** |
+| Tests ejecutados | **147/147** |
 | Rama pública | `main` |
 | Estado actualizado | 2026-09-24 |
 | Fase actual | **L15 · OpenTelemetry + Jaeger Local Live** · VERIFIED (local live) |
@@ -119,7 +119,7 @@ flowchart LR
 | L10 | VERIFIED (local) | BAGO / portfolio | Governed Ontology Engine | 4 | 2 |
 | L11 | VERIFIED (local) | BAGO / secure execution | Governed Sandbox Layer | 14 | 3 |
 | L12 | VERIFIED (local) | BAGO / portfolio | Local Observability & Evals | 5 | 3 |
-| L13 | VERIFIED (local) | BAGO / portfolio | Public E2E Demo & CI | 3 | 2 |
+| L13 | VERIFIED (local) | BAGO / portfolio | Public E2E Demo & CI | 4 | 2 |
 | L14 | VERIFIED (local) | BAGO / portfolio | Governed Local Vector Store | 4 | 2 |
 | L15 | VERIFIED (local live) | BAGO / portfolio | OpenTelemetry + Jaeger Local Live | 3 | 2 |
 
@@ -281,7 +281,7 @@ La tabla se extrae de JOB_SKILL_MATRIX.md y se mantiene fuera del README.
 - `tests/test_metadata_schema.py` (4 checks)
 - `tests/test_ontology_generator.py` (7 checks)
 - `tests/test_openmetadata_adapter.py` (13 checks)
-- `tests/test_public_e2e_demo.py` (3 checks)
+- `tests/test_public_e2e_demo.py` (4 checks)
 - `tests/test_retrieval_accuracy.py` (9 checks)
 - `tests/test_retrieval_benchmark.py` (3 checks)
 - `tests/test_sandbox.py` (14 checks)
@@ -334,6 +334,7 @@ La tabla se extrae de JOB_SKILL_MATRIX.md y se mantiene fuera del README.
 
 ### Scripts
 
+- `scripts/bago.py`
 - `scripts/bago_sync_agent.py`
 - `scripts/benchmark_bedrock_provider.py`
 - `scripts/benchmark_retrieval.py`
@@ -368,6 +369,11 @@ La tabla se extrae de JOB_SKILL_MATRIX.md y se mantiene fuera del README.
 ## Comandos reproducibles
 
 ```bash
+bash scripts/install_demo.sh
+.venv/bin/python scripts/bago.py demo
+source .venv/bin/activate
+python scripts/bago.py demo --json
+python scripts/bago.py demo --write-evidence
 python -m pip install -r requirements.txt
 python -m pytest tests -q
 python scripts/generate_dynamic_readme.py
