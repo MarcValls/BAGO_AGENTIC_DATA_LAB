@@ -3,7 +3,7 @@
 ## Release status
 
 - Version: `1.0.0`
-- Release tag: `v1.0.0`
+- Planned release tag: `v1.0.0` (created only after the final independent audit passes).
 - Scope: deterministic local fixture demo; no architecture additions or live cloud calls.
 - Canonical command: `python demo.py`
 - Output directory: `demo_output/`
@@ -31,7 +31,7 @@ Windows PowerShell setup is documented in `docs/one_command_demo.md`.
 
 The release candidate passed the clean-clone Windows/Python 3.11 execution and generated all five artifacts with matching run/trace IDs. The local full suite reports 151 passing tests; the README check and `compileall` pass. GitHub Actions is configured to run the same demo and existing local service checks; a remote Actions run for this release commit is not claimed until observed.
 
-At freeze time the release commit and annotated Git tag identify the immutable source snapshot. Verify the exact commit with:
+After the final audit passes and the freeze is applied, the annotated Git tag identifies the immutable source snapshot. Verify the exact commit with:
 
 ```bash
 git rev-parse v1.0.0^{commit}

@@ -481,16 +481,4 @@ L0..L15 VERIFIED local + zero-cost rule. Snapshot for CV/LinkedIn.
   - `aws_live`: one bounded Bedrock Converse call (NOT_PROVEN zero-dollar billing)
   - `not_run`: AWS ConverseStream, Bedrock KB live, remote OpenMetadata, commercetools live, remote observability
 
-### `v1.0.0` — 2026-10-03
-
-**One-Command Governed Knowledge Agent Demo**
-
-Frozen local fixture demo: python demo.py writes five linked JSON artifacts; clean-clone Windows/Python 3.11 verified.
-
-- Tag: <https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/releases/tag/v1.0.0>
-- Docs: `RELEASE_NOTES_DEMO_V1.md`, `docs/one_command_demo.md`, `docs/one_command_demo_walkthrough.md`
-- Boundaries:
-  - `live_cloud`: NOT_RUN for this canonical demo
-  - `evaluation`: structural governance/evidence checks; not answer-quality evaluation
-
 MIT License — ver [LICENSE](LICENSE).
