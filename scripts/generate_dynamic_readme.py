@@ -309,6 +309,39 @@ def _render_canonical_documents(manifest: dict[str, Any]) -> str:
     return "\n".join(lines) or "No hay documentos canónicos declarados."
 
 
+def _render_one_command_demo(manifest: dict[str, Any]) -> str:
+    config = manifest.get("one_command_demo", {})
+    if not config:
+        return ""
+    artifacts = config.get("artifacts", [])
+    artifact_lines = "\n".join(f"- `{name}`" for name in artifacts)
+    return "\n".join(
+        [
+            "## One-Command Governed Knowledge Agent Demo",
+            "",
+            "A deterministic, credential-free local demonstration of the existing governed-agent path; it composes fixtures, typed execution, receipts, trace and structural evaluation without contacting external services.",
+            "",
+            "```text",
+            "QUESTION → AGENT → GOVERNED RETRIEVAL → EXECUTION → RECEIPTS → TRACE → EVALUATION",
+            "```",
+            "",
+            f"**Run:** `{config.get('command', 'python demo.py')}` (Python 3.11+, after `python -m pip install -r requirements.txt`).",
+            "",
+            f"Example question: {config.get('example_question', '')}",
+            "",
+            f"Expected fixture result: `{config.get('expected_result', 'PASS')}`; 2 retrieval hits, 15 trace events, evaluation score 1.0. Run-specific IDs/hashes may vary.",
+            "",
+            "Artifacts in `demo_output/`:",
+            artifact_lines,
+            "",
+            f"Read the artifact contract, Windows setup, governance controls and limits in [`{config.get('documentation', 'docs/one_command_demo.md')}`]({config.get('documentation', 'docs/one_command_demo.md')}); use [`{config.get('walkthrough', 'docs/one_command_demo_walkthrough.md')}`]({config.get('walkthrough', 'docs/one_command_demo_walkthrough.md')}) for the 30-second, 90-second and 5-minute explanations.",
+            "",
+            "The injected provider is a fixture, not an AWS call; this local demo does not prove production answer quality or sandbox isolation. AWS and remote integrations remain scoped by `STATE.md`.",
+            "",
+        ]
+    )
+
+
 def _render_releases(manifest: dict[str, Any]) -> str:
     releases = manifest.get("releases", [])
     if not releases:
@@ -558,6 +591,7 @@ def render_readme(
         "conserva en STATE.md su alcance exacto: VERIFIED, NOT_RUN o NOT_PROVEN.",
         "El commit, push y merge de este snapshot son operaciones separadas.",
         "",
+        _render_one_command_demo(manifest),
         "## Fuentes canónicas",
         "",
         "El README proyecta estos documentos; no los sustituye ni los edita.",
@@ -643,6 +677,7 @@ def render_readme(
         "",
         FENCE + "bash",
         "python -m pip install -r requirements.txt",
+        "python demo.py",
         "python -m pytest tests -q",
         "python scripts/generate_dynamic_readme.py",
         "python scripts/generate_dynamic_readme.py --check --skip-tests",

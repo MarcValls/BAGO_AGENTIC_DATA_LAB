@@ -1,0 +1,88 @@
+{
+  "checks": [
+    {
+      "detail": "agent.run root is present",
+      "evidence_refs": [
+        "fixtures/public-policy-receipt.md#revision=1.0.0",
+        "fixtures/public-policy-v2.md#revision=2.0.0",
+        "receipt://bedrock_receipt_e5abfadb7bad02f4",
+        "bedrock://eu-west-1/fixture.public-e2e/converse#request=bedrock_req_8ff18bf2d8712e84",
+        "fixtures/public-policy-v1.md#revision=1.0.0",
+        "sandbox://sbxreceipt-77819b1060fc4351"
+      ],
+      "name": "trace_root",
+      "passed": true
+    },
+    {
+      "detail": "all governed workflow stages are present",
+      "evidence_refs": [
+        "fixtures/public-policy-receipt.md#revision=1.0.0",
+        "fixtures/public-policy-v2.md#revision=2.0.0",
+        "receipt://bedrock_receipt_e5abfadb7bad02f4",
+        "bedrock://eu-west-1/fixture.public-e2e/converse#request=bedrock_req_8ff18bf2d8712e84",
+        "fixtures/public-policy-v1.md#revision=1.0.0",
+        "sandbox://sbxreceipt-77819b1060fc4351"
+      ],
+      "name": "workflow_coverage",
+      "passed": true
+    },
+    {
+      "detail": "retrieval hits are linked to citations",
+      "evidence_refs": [
+        "fixtures/public-policy-receipt.md#revision=1.0.0",
+        "fixtures/public-policy-v2.md#revision=2.0.0"
+      ],
+      "name": "retrieval_evidence",
+      "passed": true
+    },
+    {
+      "detail": "tool requests retain authorization linkage",
+      "evidence_refs": [
+        "receipt://bedrock_receipt_e5abfadb7bad02f4"
+      ],
+      "name": "permit_linkage",
+      "passed": true
+    },
+    {
+      "detail": "executions and receipts are linked to evidence",
+      "evidence_refs": [
+        "bedrock://eu-west-1/fixture.public-e2e/converse#request=bedrock_req_8ff18bf2d8712e84",
+        "fixtures/public-policy-receipt.md#revision=1.0.0",
+        "fixtures/public-policy-v1.md#revision=1.0.0",
+        "fixtures/public-policy-v2.md#revision=2.0.0",
+        "sandbox://sbxreceipt-77819b1060fc4351"
+      ],
+      "name": "receipt_linkage",
+      "passed": true
+    },
+    {
+      "detail": "denied or pending tools have no material call",
+      "evidence_refs": [
+        "receipt://bedrock_receipt_e5abfadb7bad02f4"
+      ],
+      "name": "no_unauthorized_effect",
+      "passed": true
+    },
+    {
+      "detail": "sandbox execution is linked to a receipt",
+      "evidence_refs": [
+        "sandbox://sbxreceipt-77819b1060fc4351"
+      ],
+      "name": "sandbox_receipt",
+      "passed": true
+    }
+  ],
+  "cost_usd": 0.0,
+  "evaluation_id": "eval-0425869a90c3f32a",
+  "evidence_refs": [
+    "fixtures/public-policy-receipt.md#revision=1.0.0",
+    "fixtures/public-policy-v2.md#revision=2.0.0",
+    "receipt://bedrock_receipt_e5abfadb7bad02f4",
+    "bedrock://eu-west-1/fixture.public-e2e/converse#request=bedrock_req_8ff18bf2d8712e84",
+    "fixtures/public-policy-v1.md#revision=1.0.0",
+    "sandbox://sbxreceipt-77819b1060fc4351"
+  ],
+  "score": 1.0,
+  "status": "PASS",
+  "trace_id": "trace-d16d70af70441af0"
+}

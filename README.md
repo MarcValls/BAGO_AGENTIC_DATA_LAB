@@ -3,7 +3,7 @@
 [![CI](https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/actions/workflows/ci.yml/badge.svg)](https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/actions/workflows/ci.yml)
 [![GitHub](https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/actions/workflows/readme-consistency.yml/badge.svg)](https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/actions/workflows/readme-consistency.yml)
 [![Branch](https://img.shields.io/badge/branch-main-green)](https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/tree/main)
-[![Tests](https://img.shields.io/badge/tests-149%2F149%20passing-brightgreen)](https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/actions)
+[![Tests](https://img.shields.io/badge/tests-151%2F151%20passing-brightgreen)](https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/actions)
 [![License](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 
 > Laboratorio experimental para desarrollar capacidades de AI Engineering con gobernanza BAGO.
@@ -13,7 +13,7 @@
 
 | Métrica | Valor |
 |---|---|
-| Tests ejecutados | **149/149** |
+| Tests ejecutados | **151/151** |
 | Rama pública | `main` |
 | Estado actualizado | 2026-09-24 |
 | Fase actual | **L15 · OpenTelemetry + Jaeger Local Live** · VERIFIED (local live) |
@@ -24,6 +24,31 @@ El estado público se limita a lo que existe en el checkout y a la evidencia
 referenciada. Cada superficie AWS, OpenMetadata u otra integración externa
 conserva en STATE.md su alcance exacto: VERIFIED, NOT_RUN o NOT_PROVEN.
 El commit, push y merge de este snapshot son operaciones separadas.
+
+## One-Command Governed Knowledge Agent Demo
+
+A deterministic, credential-free local demonstration of the existing governed-agent path; it composes fixtures, typed execution, receipts, trace and structural evaluation without contacting external services.
+
+```text
+QUESTION → AGENT → GOVERNED RETRIEVAL → EXECUTION → RECEIPTS → TRACE → EVALUATION
+```
+
+**Run:** `python demo.py` (Python 3.11+, after `python -m pip install -r requirements.txt`).
+
+Example question: ¿Qué sustituye a la política anterior y qué evidencia la valida?
+
+Expected fixture result: `PASS`; 2 retrieval hits, 15 trace events, evaluation score 1.0. Run-specific IDs/hashes may vary.
+
+Artifacts in `demo_output/`:
+- `summary.json`
+- `agent_run.json`
+- `receipts.json`
+- `trace.json`
+- `evaluation.json`
+
+Read the artifact contract, Windows setup, governance controls and limits in [`docs/one_command_demo.md`](docs/one_command_demo.md); use [`docs/one_command_demo_walkthrough.md`](docs/one_command_demo_walkthrough.md) for the 30-second, 90-second and 5-minute explanations.
+
+The injected provider is a fixture, not an AWS call; this local demo does not prove production answer quality or sandbox isolation. AWS and remote integrations remain scoped by `STATE.md`.
 
 ## Fuentes canónicas
 
@@ -38,6 +63,8 @@ El README proyecta estos documentos; no los sustituye ni los edita.
 | `LEARNING_LEDGER.md` | aprendizaje y evidencia | PRESENTE |
 | `JOB_SKILL_MATRIX.md` | skills y alineación laboral | PRESENTE |
 | `docs/cv_linkedin/portfolio-demo-v1.md` | snapshot freeze portfolio-demo-v1 (CV/LinkedIn) | PRESENTE |
+| `docs/one_command_demo.md` | quickstart and artifact contract for one-command governed demo | PRESENTE |
+| `docs/one_command_demo_walkthrough.md` | canonical demo explanations and artifact walkthrough | PRESENTE |
 
 ## Agente de sincronización
 
@@ -280,6 +307,7 @@ La tabla se extrae de JOB_SKILL_MATRIX.md y se mantiene fuera del README.
 - `tests/test_l9_end_to_end_agent.py` (7 checks)
 - `tests/test_mcp_governance.py` (7 checks)
 - `tests/test_metadata_schema.py` (4 checks)
+- `tests/test_one_command_demo.py` (2 checks)
 - `tests/test_ontology_generator.py` (7 checks)
 - `tests/test_openmetadata_adapter.py` (13 checks)
 - `tests/test_public_e2e_demo.py` (3 checks)
@@ -309,6 +337,11 @@ La tabla se extrae de JOB_SKILL_MATRIX.md y se mantiene fuera del README.
 - `evidence/mcp_governed_demo.md`
 - `evidence/mcp_governed_demo.mp4`
 - `evidence/mcp_governed_demo.mp4.sha256`
+- `evidence/one_command_demo/agent_run.json`
+- `evidence/one_command_demo/evaluation.json`
+- `evidence/one_command_demo/receipts.json`
+- `evidence/one_command_demo/summary.json`
+- `evidence/one_command_demo/trace.json`
 - `evidence/ontology_proposal.md`
 - `evidence/ontology_proposal_examples.md`
 - `evidence/portfolio_demo_v1.md`
@@ -329,6 +362,8 @@ La tabla se extrae de JOB_SKILL_MATRIX.md y se mantiene fuera del README.
 - `docs/local_vector_store.md`
 - `docs/mcp_governance.md`
 - `docs/observability_evals.md`
+- `docs/one_command_demo.md`
+- `docs/one_command_demo_walkthrough.md`
 - `docs/ontology_engine.md`
 - `docs/ontology_generator.md`
 - `docs/openmetadata_catalog.md`
@@ -376,6 +411,7 @@ La tabla se extrae de JOB_SKILL_MATRIX.md y se mantiene fuera del README.
 
 ```bash
 python -m pip install -r requirements.txt
+python demo.py
 python -m pytest tests -q
 python scripts/generate_dynamic_readme.py
 python scripts/generate_dynamic_readme.py --check --skip-tests

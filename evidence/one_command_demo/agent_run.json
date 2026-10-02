@@ -1,0 +1,355 @@
+{
+  "answer": "La política vigente sustituye a la anterior y la evidencia enlazada valida esa relación.\n\nEvidence:\n- fixtures/public-policy-receipt.md#revision=1.0.0\n- fixtures/public-policy-v2.md#revision=2.0.0\n- fixtures/public-policy-v1.md#revision=1.0.0",
+  "citations": [
+    "fixtures/public-policy-receipt.md#revision=1.0.0",
+    "fixtures/public-policy-v2.md#revision=2.0.0",
+    "fixtures/public-policy-v1.md#revision=1.0.0"
+  ],
+  "decision_receipts": [],
+  "errors": [],
+  "intent": "retrieval",
+  "mcp_receipts": [],
+  "ontology": {
+    "evidence_refs": [
+      "fixtures/public-policy-receipt.md#revision=1.0.0",
+      "fixtures/public-policy-v1.md#revision=1.0.0",
+      "fixtures/public-policy-v2.md#revision=2.0.0"
+    ],
+    "inferred_triples": [
+      {
+        "evidence_refs": [
+          "fixtures/public-policy-receipt.md#revision=1.0.0",
+          "fixtures/public-policy-v2.md#revision=2.0.0"
+        ],
+        "inference_rule": "inverse:validates",
+        "inferred": true,
+        "object": "https://bago.local/ontology/public_policy_receipt",
+        "object_is_literal": false,
+        "predicate": "https://bago.local/ontology/validatedBy",
+        "subject": "https://bago.local/ontology/public_policy_v2"
+      }
+    ],
+    "paths": [
+      {
+        "evidence_refs": [
+          "fixtures/public-policy-receipt.md#revision=1.0.0",
+          "fixtures/public-policy-v2.md#revision=2.0.0"
+        ],
+        "nodes": [
+          "https://bago.local/ontology/public_policy_receipt",
+          "https://bago.local/ontology/public_policy_v2"
+        ],
+        "triples": [
+          {
+            "evidence_refs": [
+              "fixtures/public-policy-receipt.md#revision=1.0.0",
+              "fixtures/public-policy-v2.md#revision=2.0.0"
+            ],
+            "inference_rule": "",
+            "inferred": false,
+            "object": "https://bago.local/ontology/public_policy_v2",
+            "object_is_literal": false,
+            "predicate": "https://bago.local/ontology/validates",
+            "subject": "https://bago.local/ontology/public_policy_receipt"
+          }
+        ]
+      },
+      {
+        "evidence_refs": [
+          "fixtures/public-policy-receipt.md#revision=1.0.0",
+          "fixtures/public-policy-v1.md#revision=1.0.0",
+          "fixtures/public-policy-v2.md#revision=2.0.0"
+        ],
+        "nodes": [
+          "https://bago.local/ontology/public_policy_receipt",
+          "https://bago.local/ontology/public_policy_v2",
+          "https://bago.local/ontology/public_policy_v1"
+        ],
+        "triples": [
+          {
+            "evidence_refs": [
+              "fixtures/public-policy-receipt.md#revision=1.0.0",
+              "fixtures/public-policy-v2.md#revision=2.0.0"
+            ],
+            "inference_rule": "",
+            "inferred": false,
+            "object": "https://bago.local/ontology/public_policy_v2",
+            "object_is_literal": false,
+            "predicate": "https://bago.local/ontology/validates",
+            "subject": "https://bago.local/ontology/public_policy_receipt"
+          },
+          {
+            "evidence_refs": [
+              "fixtures/public-policy-v1.md#revision=1.0.0",
+              "fixtures/public-policy-v2.md#revision=2.0.0"
+            ],
+            "inference_rule": "",
+            "inferred": false,
+            "object": "https://bago.local/ontology/public_policy_v1",
+            "object_is_literal": false,
+            "predicate": "https://bago.local/ontology/supersedes",
+            "subject": "https://bago.local/ontology/public_policy_v2"
+          }
+        ]
+      },
+      {
+        "evidence_refs": [
+          "fixtures/public-policy-v1.md#revision=1.0.0",
+          "fixtures/public-policy-v2.md#revision=2.0.0"
+        ],
+        "nodes": [
+          "https://bago.local/ontology/public_policy_v2",
+          "https://bago.local/ontology/public_policy_v1"
+        ],
+        "triples": [
+          {
+            "evidence_refs": [
+              "fixtures/public-policy-v1.md#revision=1.0.0",
+              "fixtures/public-policy-v2.md#revision=2.0.0"
+            ],
+            "inference_rule": "",
+            "inferred": false,
+            "object": "https://bago.local/ontology/public_policy_v1",
+            "object_is_literal": false,
+            "predicate": "https://bago.local/ontology/supersedes",
+            "subject": "https://bago.local/ontology/public_policy_v2"
+          }
+        ]
+      },
+      {
+        "evidence_refs": [
+          "fixtures/public-policy-receipt.md#revision=1.0.0",
+          "fixtures/public-policy-v2.md#revision=2.0.0"
+        ],
+        "nodes": [
+          "https://bago.local/ontology/public_policy_v2",
+          "https://bago.local/ontology/public_policy_receipt"
+        ],
+        "triples": [
+          {
+            "evidence_refs": [
+              "fixtures/public-policy-receipt.md#revision=1.0.0",
+              "fixtures/public-policy-v2.md#revision=2.0.0"
+            ],
+            "inference_rule": "inverse:validates",
+            "inferred": true,
+            "object": "https://bago.local/ontology/public_policy_receipt",
+            "object_is_literal": false,
+            "predicate": "https://bago.local/ontology/validatedBy",
+            "subject": "https://bago.local/ontology/public_policy_v2"
+          }
+        ]
+      }
+    ],
+    "query": "¿Qué sustituye a la política anterior y qué evidencia la valida?",
+    "receipt": {
+      "constraints_checked": 0,
+      "contradictions_found": 0,
+      "cost_usd": 0.0,
+      "evidence_refs": [
+        "fixtures/public-policy-receipt.md#revision=1.0.0",
+        "fixtures/public-policy-v1.md#revision=1.0.0",
+        "fixtures/public-policy-v2.md#revision=2.0.0"
+      ],
+      "explicit_triples": 32,
+      "graph_fingerprint": "26fd868cf279287e6902f88af1909717e42df1d969748a48b4a1f1fa5f275f3c",
+      "inferred_triples": 2,
+      "outcome": "SUCCESS",
+      "paths_found": 4,
+      "query": "¿Qué sustituye a la política anterior y qué evidencia la valida?",
+      "receipt_id": "ontology_receipt_a54b83273a176a65",
+      "sparql_queries": [
+        "PREFIX bago: <https://bago.local/ontology/> SELECT ?subject ?object WHERE { ?subject bago:supersedes ?object . } LIMIT 50",
+        "PREFIX bago: <https://bago.local/ontology/> SELECT ?subject ?object WHERE { ?subject bago:validates ?object . } LIMIT 50",
+        "PREFIX bago: <https://bago.local/ontology/> SELECT ?subject ?object WHERE { ?subject bago:validatedBy ?object . } LIMIT 50"
+      ]
+    },
+    "sparql_bindings": [
+      {
+        "object": "https://bago.local/ontology/public_policy_v1",
+        "subject": "https://bago.local/ontology/public_policy_v2"
+      },
+      {
+        "object": "https://bago.local/ontology/public_policy_v2",
+        "subject": "https://bago.local/ontology/public_policy_receipt"
+      },
+      {
+        "object": "https://bago.local/ontology/public_policy_receipt",
+        "subject": "https://bago.local/ontology/public_policy_v2"
+      }
+    ],
+    "summary": "Ontology Engine (RDF/SPARQL local, coste=0):\nPaths:\n- public_policy_receipt -[validates]-> public_policy_v2\n- public_policy_receipt -[validates]-> public_policy_v2 -[supersedes]-> public_policy_v1\n- public_policy_v2 -[supersedes]-> public_policy_v1\n- public_policy_v2 -[validatedBy]-> public_policy_receipt [inferred]\nInferences: 1 derived triples materialized locally.\nEvidence: fixtures/public-policy-receipt.md#revision=1.0.0, fixtures/public-policy-v1.md#revision=1.0.0, fixtures/public-policy-v2.md#revision=2.0.0\nReceipt: ontology_receipt_a54b83273a176a65 outcome=SUCCESS triples=34",
+    "violations": []
+  },
+  "proposals": [
+    {
+      "arguments": {
+        "inference_config": {
+          "maxTokens": 384,
+          "temperature": 0.0
+        },
+        "messages": [
+          {
+            "content": [
+              {
+                "text": "Question: ¿Qué sustituye a la política anterior y qué evidencia la valida?\n\nGoverned context:\n[1] La evidencia pública valida la política de permisos v2.\nEvidence: fixtures/public-policy-receipt.md#revision=1.0.0\n\n[2] La política de permisos v2 sustituye la política v1 y es la versión vigente gobernada.\nEvidence: fixtures/public-policy-v2.md#revision=2.0.0\n\nOntology Engine (RDF/SPARQL local, coste=0):\nPaths:\n- public_policy_receipt -[validates]-> public_policy_v2\n- public_policy_receipt -[validates]-> public_policy_v2 -[supersedes]-> public_policy_v1\n- public_policy_v2 -[supersedes]-> public_policy_v1\n- public_policy_v2 -[validatedBy]-> public_policy_receipt [inferred]\nInferences: 1 derived triples materialized locally.\nEvidence: fixtures/public-policy-receipt.md#revision=1.0.0, fixtures/public-policy-v1.md#revision=1.0.0, fixtures/public-policy-v2.md#revision=2.0.0\nReceipt: ontology_receipt_a54b83273a176a65 outcome=SUCCESS triples=34\n\nReturn a concise answer with no unsupported claims."
+              }
+            ],
+            "role": "user"
+          }
+        ],
+        "model_id": "fixture.public-e2e",
+        "system": [
+          {
+            "text": "Answer only from the governed context. Do not execute proposed tools."
+          }
+        ],
+        "tool_config": {
+          "tools": [
+            {
+              "toolSpec": {
+                "description": "Propose an action for BAGO authorization; never execute it directly.",
+                "inputSchema": {
+                  "json": {
+                    "properties": {
+                      "reason": {
+                        "type": "string"
+                      },
+                      "tool_name": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "tool_name",
+                      "reason"
+                    ],
+                    "type": "object"
+                  }
+                },
+                "name": "propose_governed_action"
+              }
+            }
+          ]
+        }
+      },
+      "called": true,
+      "context_revision": "public-e2e-v1",
+      "decision": "ALLOW",
+      "effect_type": "EXTERNAL_API",
+      "error_message": null,
+      "outcome": "SUCCESS",
+      "permit_id": "bedrock_permit_c121bd780d783c43",
+      "proposal_id": "proposal_f33de56aed8294fa",
+      "rationale": "Provider generation is a separately governed external call.",
+      "receipt_id": "bedrock_receipt_e5abfadb7bad02f4",
+      "request_id": "bedrock_req_8ff18bf2d8712e84",
+      "result": "La política vigente sustituye a la anterior y la evidencia enlazada valida esa relación.",
+      "tool_name": "bedrock.converse",
+      "transport": "bedrock"
+    }
+  ],
+  "provider_receipt": {
+    "actual_effect": {
+      "attempts": 1,
+      "called": true,
+      "model_id": "fixture.public-e2e",
+      "operation": "converse",
+      "provider": "aws.bedrock"
+    },
+    "attempts": 1,
+    "cost_usd": 0.0,
+    "decision": "ALLOW",
+    "duration_ms": 0,
+    "error_kind": null,
+    "error_message": null,
+    "evidence_refs": [
+      "bedrock://eu-west-1/fixture.public-e2e/converse#request=bedrock_req_8ff18bf2d8712e84"
+    ],
+    "execution_outcome": "SUCCESS",
+    "model_id": "fixture.public-e2e",
+    "operation": "converse",
+    "permit_id": "bedrock_permit_c121bd780d783c43",
+    "receipt_id": "bedrock_receipt_e5abfadb7bad02f4",
+    "request_id": "bedrock_req_8ff18bf2d8712e84",
+    "usage": {
+      "input_tokens": 64,
+      "output_tokens": 19,
+      "total_tokens": 83
+    }
+  },
+  "provider_text": "La política vigente sustituye a la anterior y la evidencia enlazada valida esa relación.",
+  "query": "¿Qué sustituye a la política anterior y qué evidencia la valida?",
+  "retrieval": {
+    "citations": [
+      "fixtures/public-policy-receipt.md#revision=1.0.0",
+      "fixtures/public-policy-v2.md#revision=2.0.0"
+    ],
+    "eligible_count": 2,
+    "filtered_count": 0,
+    "hits": [
+      {
+        "chunk_id": "public-policy-receipt-chunk",
+        "document_id": "public_policy_receipt",
+        "evidence": {
+          "chunk_id": "public-policy-receipt-chunk",
+          "citation": "fixtures/public-policy-receipt.md#revision=1.0.0",
+          "document_id": "public_policy_receipt",
+          "revision": "1.0.0",
+          "source_uri": "fixtures/public-policy-receipt.md"
+        },
+        "lexical_score": 1.72375376,
+        "rank": 1,
+        "score": 1.1075825,
+        "semantic_score": 0.5269695
+      },
+      {
+        "chunk_id": "public-policy-v2-chunk",
+        "document_id": "public_policy_v2",
+        "evidence": {
+          "chunk_id": "public-policy-v2-chunk",
+          "citation": "fixtures/public-policy-v2.md#revision=2.0.0",
+          "document_id": "public_policy_v2",
+          "revision": "2.0.0",
+          "source_uri": "fixtures/public-policy-v2.md"
+        },
+        "lexical_score": 0.88064177,
+        "rank": 2,
+        "score": 0.0778049,
+        "semantic_score": 0.46610621
+      }
+    ],
+    "intent": "retrieval",
+    "metadata_filter": {
+      "allowed_domains": [],
+      "created_after": null,
+      "include_superseded": false,
+      "minimum_authority": "PROPOSED",
+      "require_provenance": true,
+      "required_classifications": []
+    },
+    "mode": "hybrid",
+    "pipeline": [
+      "intent_classification",
+      "metadata_filters",
+      "lexical_bm25",
+      "semantic_embedding",
+      "hybrid_rrf_fusion",
+      "deterministic_reranker",
+      "authority_validity_gate",
+      "evidence_context_ready"
+    ],
+    "query": "¿Qué sustituye a la política anterior y qué evidencia la valida?",
+    "reranked": true
+  },
+  "run_id": "agent_run_3dc0b108e043fa4a",
+  "status": "COMPLETED",
+  "trace": [
+    "classify_intent=retrieval; entities=none",
+    "retrieve_context=hits:2; filtered:0",
+    "ontology_engine=paths:4;inferred:1;contradictions:0;receipt:ontology_receipt_a54b83273a176a65",
+    "reason_and_propose=proposals:1",
+    "authorize=bedrock.converse:ALLOW:permit=bedrock_permit_c121bd780d783c43",
+    "execute=bedrock.converse:SUCCESS",
+    "verify_and_respond=status:COMPLETED; citations:3"
+  ]
+}

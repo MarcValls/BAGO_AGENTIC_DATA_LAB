@@ -1,0 +1,63 @@
+{
+  "agent_status": "COMPLETED",
+  "answer": "La política vigente sustituye a la anterior y la evidencia enlazada valida esa relación.\n\nEvidence:\n- fixtures/public-policy-receipt.md#revision=1.0.0\n- fixtures/public-policy-v2.md#revision=2.0.0\n- fixtures/public-policy-v1.md#revision=1.0.0",
+  "artifacts": [
+    "summary.json",
+    "agent_run.json",
+    "receipts.json",
+    "trace.json",
+    "evaluation.json"
+  ],
+  "aws_live": "NOT_RUN",
+  "cost_usd": 0.0,
+  "evaluation_checks": [
+    {
+      "name": "trace_root",
+      "passed": true
+    },
+    {
+      "name": "workflow_coverage",
+      "passed": true
+    },
+    {
+      "name": "retrieval_evidence",
+      "passed": true
+    },
+    {
+      "name": "permit_linkage",
+      "passed": true
+    },
+    {
+      "name": "receipt_linkage",
+      "passed": true
+    },
+    {
+      "name": "no_unauthorized_effect",
+      "passed": true
+    },
+    {
+      "name": "sandbox_receipt",
+      "passed": true
+    }
+  ],
+  "evaluation_id": "eval-0425869a90c3f32a",
+  "evaluation_score": 1.0,
+  "evaluation_status": "PASS",
+  "fixture_calls": 1,
+  "ontology_contradictions": 0,
+  "ontology_inferred_triples": 2,
+  "ontology_outcome": "SUCCESS",
+  "ontology_paths": 4,
+  "openmetadata_live": "NOT_RUN",
+  "output_directory": "evidence/one_command_demo",
+  "query": "¿Qué sustituye a la política anterior y qué evidencia la valida?",
+  "retrieval_hits": 2,
+  "run_id": "agent_run_3dc0b108e043fa4a",
+  "sandbox_exit_code": 0,
+  "sandbox_profile": "test_runner",
+  "sandbox_status": "SUCCESS",
+  "scope": "public-zero-cost-local-e2e",
+  "status": "PASS",
+  "trace_events": 15,
+  "trace_id": "trace-d16d70af70441af0"
+}

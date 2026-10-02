@@ -1,0 +1,90 @@
+{
+  "agent_decision_receipts": [],
+  "mcp_receipts": [],
+  "ontology_receipt": {
+    "constraints_checked": 0,
+    "contradictions_found": 0,
+    "cost_usd": 0.0,
+    "evidence_refs": [
+      "fixtures/public-policy-receipt.md#revision=1.0.0",
+      "fixtures/public-policy-v1.md#revision=1.0.0",
+      "fixtures/public-policy-v2.md#revision=2.0.0"
+    ],
+    "explicit_triples": 32,
+    "graph_fingerprint": "26fd868cf279287e6902f88af1909717e42df1d969748a48b4a1f1fa5f275f3c",
+    "inferred_triples": 2,
+    "outcome": "SUCCESS",
+    "paths_found": 4,
+    "query": "¿Qué sustituye a la política anterior y qué evidencia la valida?",
+    "receipt_id": "ontology_receipt_a54b83273a176a65",
+    "sparql_queries": [
+      "PREFIX bago: <https://bago.local/ontology/> SELECT ?subject ?object WHERE { ?subject bago:supersedes ?object . } LIMIT 50",
+      "PREFIX bago: <https://bago.local/ontology/> SELECT ?subject ?object WHERE { ?subject bago:validates ?object . } LIMIT 50",
+      "PREFIX bago: <https://bago.local/ontology/> SELECT ?subject ?object WHERE { ?subject bago:validatedBy ?object . } LIMIT 50"
+    ]
+  },
+  "provider_receipt": {
+    "actual_effect": {
+      "attempts": 1,
+      "called": true,
+      "model_id": "fixture.public-e2e",
+      "operation": "converse",
+      "provider": "aws.bedrock"
+    },
+    "attempts": 1,
+    "cost_usd": 0.0,
+    "decision": "ALLOW",
+    "duration_ms": 0,
+    "error_kind": null,
+    "error_message": null,
+    "evidence_refs": [
+      "bedrock://eu-west-1/fixture.public-e2e/converse#request=bedrock_req_8ff18bf2d8712e84"
+    ],
+    "execution_outcome": "SUCCESS",
+    "model_id": "fixture.public-e2e",
+    "operation": "converse",
+    "permit_id": "bedrock_permit_c121bd780d783c43",
+    "receipt_id": "bedrock_receipt_e5abfadb7bad02f4",
+    "request_id": "bedrock_req_8ff18bf2d8712e84",
+    "usage": {
+      "input_tokens": 64,
+      "output_tokens": 19,
+      "total_tokens": 83
+    }
+  },
+  "run_id": "agent_run_3dc0b108e043fa4a",
+  "sandbox_receipts": [
+    {
+      "argv": [
+        "python",
+        "-m",
+        "pytest",
+        "-q",
+        "tests"
+      ],
+      "capability": "run_tests",
+      "duration_ms": 1691,
+      "error_code": null,
+      "error_message": null,
+      "evidence_refs": [
+        "sandbox://sbxreceipt-77819b1060fc4351"
+      ],
+      "exit_code": 0,
+      "filesystem_mode": "workspace_write",
+      "network_mode": "deny",
+      "operation": "run_tests",
+      "permit_id": "public-e2e-sandbox-permit",
+      "profile": "test_runner",
+      "receipt_id": "sbxreceipt-77819b1060fc4351",
+      "request_id": "public-e2e-sandbox-request",
+      "sandbox_id": "sbx-445406f6d9df4058",
+      "status": "SUCCESS",
+      "stderr_bytes": 0,
+      "stderr_sha256": null,
+      "stdout_bytes": 98,
+      "stdout_sha256": "4bcefcc9f6c645923b9993ccf73ad92e6b400ca25458ea14e095857fc2131342",
+      "timed_out": false
+    }
+  ],
+  "trace_id": "trace-d16d70af70441af0"
+}

@@ -1,0 +1,283 @@
+{
+  "cost_usd": 0.0,
+  "event_count": 15,
+  "events": [
+    {
+      "attributes": {
+        "intent": "retrieval",
+        "query_sha256": "5f5d33de4554d6e60f75ed7f8ee7f595d48e043eba20df286f0e285679c40973",
+        "run_id": "agent_run_3dc0b108e043fa4a"
+      },
+      "event_id": "event-bd70d105e61e0b6b",
+      "evidence_refs": [],
+      "kind": "workflow",
+      "name": "agent.run",
+      "parent_event_id": null,
+      "sequence": 0,
+      "status": "COMPLETED",
+      "trace_id": "trace-d16d70af70441af0"
+    },
+    {
+      "attributes": {
+        "detail": "retrieval; entities=none",
+        "raw": "classify_intent=retrieval; entities=none"
+      },
+      "event_id": "event-483128ea5ad82640",
+      "evidence_refs": [],
+      "kind": "workflow",
+      "name": "classify_intent",
+      "parent_event_id": "event-bd70d105e61e0b6b",
+      "sequence": 1,
+      "status": "SUCCESS",
+      "trace_id": "trace-d16d70af70441af0"
+    },
+    {
+      "attributes": {
+        "detail": "hits:2; filtered:0",
+        "raw": "retrieve_context=hits:2; filtered:0"
+      },
+      "event_id": "event-750027a91723e40d",
+      "evidence_refs": [],
+      "kind": "retrieval",
+      "name": "retrieve_context",
+      "parent_event_id": "event-bd70d105e61e0b6b",
+      "sequence": 2,
+      "status": "SUCCESS",
+      "trace_id": "trace-d16d70af70441af0"
+    },
+    {
+      "attributes": {
+        "detail": "paths:4;inferred:1;contradictions:0;receipt:ontology_receipt_a54b83273a176a65",
+        "raw": "ontology_engine=paths:4;inferred:1;contradictions:0;receipt:ontology_receipt_a54b83273a176a65"
+      },
+      "event_id": "event-a0e323d20e304e71",
+      "evidence_refs": [],
+      "kind": "reasoning",
+      "name": "ontology_engine",
+      "parent_event_id": "event-bd70d105e61e0b6b",
+      "sequence": 3,
+      "status": "SUCCESS",
+      "trace_id": "trace-d16d70af70441af0"
+    },
+    {
+      "attributes": {
+        "detail": "proposals:1",
+        "raw": "reason_and_propose=proposals:1"
+      },
+      "event_id": "event-b465cabae2f6393d",
+      "evidence_refs": [],
+      "kind": "workflow",
+      "name": "reason_and_propose",
+      "parent_event_id": "event-bd70d105e61e0b6b",
+      "sequence": 4,
+      "status": "SUCCESS",
+      "trace_id": "trace-d16d70af70441af0"
+    },
+    {
+      "attributes": {
+        "detail": "bedrock.converse:ALLOW:permit=bedrock_permit_c121bd780d783c43",
+        "raw": "authorize=bedrock.converse:ALLOW:permit=bedrock_permit_c121bd780d783c43"
+      },
+      "event_id": "event-31f47b2771a03da4",
+      "evidence_refs": [],
+      "kind": "authorization",
+      "name": "authorize",
+      "parent_event_id": "event-bd70d105e61e0b6b",
+      "sequence": 5,
+      "status": "SUCCESS",
+      "trace_id": "trace-d16d70af70441af0"
+    },
+    {
+      "attributes": {
+        "detail": "bedrock.converse:SUCCESS",
+        "raw": "execute=bedrock.converse:SUCCESS"
+      },
+      "event_id": "event-d1d0818e3b7bf269",
+      "evidence_refs": [],
+      "kind": "execution",
+      "name": "execute",
+      "parent_event_id": "event-bd70d105e61e0b6b",
+      "sequence": 6,
+      "status": "SUCCESS",
+      "trace_id": "trace-d16d70af70441af0"
+    },
+    {
+      "attributes": {
+        "detail": "status:COMPLETED; citations:3",
+        "raw": "verify_and_respond=status:COMPLETED; citations:3"
+      },
+      "event_id": "event-396cff1eaace0dbe",
+      "evidence_refs": [],
+      "kind": "workflow",
+      "name": "verify_and_respond",
+      "parent_event_id": "event-bd70d105e61e0b6b",
+      "sequence": 7,
+      "status": "SUCCESS",
+      "trace_id": "trace-d16d70af70441af0"
+    },
+    {
+      "attributes": {
+        "eligible_count": 2,
+        "filtered_count": 0,
+        "hits": 2,
+        "mode": "hybrid",
+        "pipeline": [
+          "intent_classification",
+          "metadata_filters",
+          "lexical_bm25",
+          "semantic_embedding",
+          "hybrid_rrf_fusion",
+          "deterministic_reranker",
+          "authority_validity_gate",
+          "evidence_context_ready"
+        ]
+      },
+      "event_id": "event-ca657e5aebbf0898",
+      "evidence_refs": [
+        "fixtures/public-policy-receipt.md#revision=1.0.0",
+        "fixtures/public-policy-v2.md#revision=2.0.0"
+      ],
+      "kind": "retrieval",
+      "name": "retrieval",
+      "parent_event_id": "event-750027a91723e40d",
+      "sequence": 8,
+      "status": "SUCCESS",
+      "trace_id": "trace-d16d70af70441af0"
+    },
+    {
+      "attributes": {
+        "called": true,
+        "decision": "ALLOW",
+        "effect_type": "EXTERNAL_API",
+        "outcome": "SUCCESS",
+        "permit_id": "bedrock_permit_c121bd780d783c43",
+        "proposal_id": "proposal_f33de56aed8294fa",
+        "receipt_id": "bedrock_receipt_e5abfadb7bad02f4",
+        "request_id": "bedrock_req_8ff18bf2d8712e84",
+        "tool_name": "bedrock.converse",
+        "transport": "bedrock"
+      },
+      "event_id": "event-51402ac7b1987ef0",
+      "evidence_refs": [
+        "receipt://bedrock_receipt_e5abfadb7bad02f4"
+      ],
+      "kind": "tool",
+      "name": "tool_call",
+      "parent_event_id": "event-b465cabae2f6393d",
+      "sequence": 9,
+      "status": "SUCCESS",
+      "trace_id": "trace-d16d70af70441af0"
+    },
+    {
+      "attributes": {
+        "decision": "ALLOW",
+        "permit_id": "bedrock_permit_c121bd780d783c43",
+        "request_id": "bedrock_req_8ff18bf2d8712e84",
+        "tool_name": "bedrock.converse"
+      },
+      "event_id": "event-ec00fbc9a4da1032",
+      "evidence_refs": [
+        "receipt://bedrock_receipt_e5abfadb7bad02f4"
+      ],
+      "kind": "authorization",
+      "name": "permit",
+      "parent_event_id": "event-51402ac7b1987ef0",
+      "sequence": 10,
+      "status": "ALLOW",
+      "trace_id": "trace-d16d70af70441af0"
+    },
+    {
+      "attributes": {
+        "called": true,
+        "cost_usd": 0.0,
+        "permit_id": "bedrock_permit_c121bd780d783c43",
+        "receipt_id": "bedrock_receipt_e5abfadb7bad02f4",
+        "request_id": "bedrock_req_8ff18bf2d8712e84",
+        "source": "provider"
+      },
+      "event_id": "event-b20e5770f5b3021c",
+      "evidence_refs": [
+        "bedrock://eu-west-1/fixture.public-e2e/converse#request=bedrock_req_8ff18bf2d8712e84"
+      ],
+      "kind": "receipt",
+      "name": "receipt",
+      "parent_event_id": "event-51402ac7b1987ef0",
+      "sequence": 11,
+      "status": "SUCCESS",
+      "trace_id": "trace-d16d70af70441af0"
+    },
+    {
+      "attributes": {
+        "called": null,
+        "cost_usd": 0.0,
+        "permit_id": "",
+        "receipt_id": "ontology_receipt_a54b83273a176a65",
+        "request_id": "",
+        "source": "ontology"
+      },
+      "event_id": "event-411e711767b36fc8",
+      "evidence_refs": [
+        "fixtures/public-policy-receipt.md#revision=1.0.0",
+        "fixtures/public-policy-v1.md#revision=1.0.0",
+        "fixtures/public-policy-v2.md#revision=2.0.0"
+      ],
+      "kind": "receipt",
+      "name": "receipt",
+      "parent_event_id": "event-ca657e5aebbf0898",
+      "sequence": 12,
+      "status": "SUCCESS",
+      "trace_id": "trace-d16d70af70441af0"
+    },
+    {
+      "attributes": {
+        "capability": "run_tests",
+        "network_mode": "deny",
+        "operation": "run_tests",
+        "permit_id": "public-e2e-sandbox-permit",
+        "profile": "test_runner",
+        "receipt_id": "sbxreceipt-77819b1060fc4351",
+        "request_id": "public-e2e-sandbox-request"
+      },
+      "event_id": "event-344930998d73d056",
+      "evidence_refs": [
+        "sandbox://sbxreceipt-77819b1060fc4351"
+      ],
+      "kind": "sandbox",
+      "name": "sandbox_execution",
+      "parent_event_id": "event-bd70d105e61e0b6b",
+      "sequence": 13,
+      "status": "SUCCESS",
+      "trace_id": "trace-d16d70af70441af0"
+    },
+    {
+      "attributes": {
+        "called": null,
+        "cost_usd": 0.0,
+        "permit_id": "public-e2e-sandbox-permit",
+        "receipt_id": "sbxreceipt-77819b1060fc4351",
+        "request_id": "public-e2e-sandbox-request",
+        "source": "sandbox"
+      },
+      "event_id": "event-1a760c6ad946ab7e",
+      "evidence_refs": [
+        "sandbox://sbxreceipt-77819b1060fc4351"
+      ],
+      "kind": "receipt",
+      "name": "receipt",
+      "parent_event_id": "event-344930998d73d056",
+      "sequence": 14,
+      "status": "SUCCESS",
+      "trace_id": "trace-d16d70af70441af0"
+    }
+  ],
+  "evidence_refs": [
+    "fixtures/public-policy-receipt.md#revision=1.0.0",
+    "fixtures/public-policy-v2.md#revision=2.0.0",
+    "receipt://bedrock_receipt_e5abfadb7bad02f4",
+    "bedrock://eu-west-1/fixture.public-e2e/converse#request=bedrock_req_8ff18bf2d8712e84",
+    "fixtures/public-policy-v1.md#revision=1.0.0",
+    "sandbox://sbxreceipt-77819b1060fc4351"
+  ],
+  "run_id": "agent_run_3dc0b108e043fa4a",
+  "trace_id": "trace-d16d70af70441af0"
+}
