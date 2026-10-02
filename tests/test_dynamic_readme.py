@@ -119,7 +119,7 @@ def test_rendered_readme_contains_dynamic_contract_and_l10_artifacts():
     assert "| L10 | VERIFIED (local) | BAGO / portfolio | Governed Ontology Engine | 4 | 2 |" in rendered
     assert "| L11 | VERIFIED (local) | BAGO / secure execution | Governed Sandbox Layer | 14 | 3 |" in rendered
     assert "| L12 | VERIFIED (local) | BAGO / portfolio | Local Observability & Evals | 5 | 3 |" in rendered
-    assert "| L13 | VERIFIED (local) | BAGO / portfolio | Public E2E Demo & CI | 3 | 2 |" in rendered
+    assert "| L13 | VERIFIED (local) | BAGO / portfolio | Public E2E Demo & CI | 4 | 2 |" in rendered
     assert "| L14 | VERIFIED (local) | BAGO / portfolio | Governed Local Vector Store | 4 | 2 |" in rendered
     assert "| L15 | VERIFIED (local live) | BAGO / portfolio | OpenTelemetry + Jaeger Local Live | 3 | 2 |" in rendered
     assert "| Skill | Demanda | Nivel actual | Nivel objetivo | Primera evidencia | Entrevista |" in rendered

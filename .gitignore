@@ -2,6 +2,7 @@
 __pycache__/
 .env
 venv/
+.venv/
 .pytest_cache/
 .bago/evidence/sync-agent/
 evidence/*.png
