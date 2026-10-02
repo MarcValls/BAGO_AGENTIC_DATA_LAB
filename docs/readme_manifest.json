@@ -205,7 +205,7 @@
       "target": "BAGO / portfolio",
       "status": "VERIFIED (local)",
       "checks": [
-        {"kind": "code", "patterns": ["scripts/run_public_e2e_demo.py", "scripts/bago.py", "scripts/install_demo.sh", ".github/workflows/ci.yml", "requirements.txt"]},
+        {"kind": "code", "patterns": ["scripts/run_public_e2e_demo.py", "scripts/bago.py", "scripts/install_demo.sh", "demo.py", "portfolio/README.md", ".github/workflows/ci.yml", "requirements.txt"]},
         {"kind": "tests", "patterns": ["tests/test_public_e2e_demo.py"]},
         {"kind": "evidence", "patterns": ["evidence/public_e2e_demo.md", "docs/public_e2e_demo.md"]}
       ],

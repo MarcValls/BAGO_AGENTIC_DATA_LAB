@@ -3,17 +3,29 @@
 [![CI](https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/actions/workflows/ci.yml/badge.svg)](https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/actions/workflows/ci.yml)
 [![GitHub](https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/actions/workflows/readme-consistency.yml/badge.svg)](https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/actions/workflows/readme-consistency.yml)
 [![Branch](https://img.shields.io/badge/branch-main-green)](https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/tree/main)
-[![Tests](https://img.shields.io/badge/tests-147%2F147%20passing-brightgreen)](https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/actions)
+[![Tests](https://img.shields.io/badge/tests-148%2F148%20passing-brightgreen)](https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/actions)
 [![License](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 
 > Laboratorio experimental para desarrollar capacidades de AI Engineering con gobernanza BAGO.
 > Este documento se genera desde el estado y los artefactos del repositorio.
 
+## Demo de portfolio
+
+La extracción de producto reutiliza los componentes L0–L15 existentes; no
+introduce una arquitectura de agente paralela. Ver [portfolio/README.md](portfolio/README.md).
+
+```bash
+python demo.py
+```
+
+El comando materializa summary, agent run, receipts, trace y evaluation en
+`demo_output/latest/` sin convertir esa proyección en fuente canónica.
+
 ## Estado actual
 
 | Métrica | Valor |
 |---|---|
-| Tests ejecutados | **147/147** |
+| Tests ejecutados | **148/148** |
 | Rama pública | `main` |
 | Estado actualizado | 2026-09-24 |
 | Fase actual | **L15 · OpenTelemetry + Jaeger Local Live** · VERIFIED (local live) |
@@ -119,7 +131,7 @@ flowchart LR
 | L10 | VERIFIED (local) | BAGO / portfolio | Governed Ontology Engine | 4 | 2 |
 | L11 | VERIFIED (local) | BAGO / secure execution | Governed Sandbox Layer | 14 | 3 |
 | L12 | VERIFIED (local) | BAGO / portfolio | Local Observability & Evals | 5 | 3 |
-| L13 | VERIFIED (local) | BAGO / portfolio | Public E2E Demo & CI | 4 | 2 |
+| L13 | VERIFIED (local) | BAGO / portfolio | Public E2E Demo & CI | 5 | 2 |
 | L14 | VERIFIED (local) | BAGO / portfolio | Governed Local Vector Store | 4 | 2 |
 | L15 | VERIFIED (local live) | BAGO / portfolio | OpenTelemetry + Jaeger Local Live | 3 | 2 |
 
@@ -281,7 +293,7 @@ La tabla se extrae de JOB_SKILL_MATRIX.md y se mantiene fuera del README.
 - `tests/test_metadata_schema.py` (4 checks)
 - `tests/test_ontology_generator.py` (7 checks)
 - `tests/test_openmetadata_adapter.py` (13 checks)
-- `tests/test_public_e2e_demo.py` (4 checks)
+- `tests/test_public_e2e_demo.py` (5 checks)
 - `tests/test_retrieval_accuracy.py` (9 checks)
 - `tests/test_retrieval_benchmark.py` (3 checks)
 - `tests/test_sandbox.py` (14 checks)
@@ -364,11 +376,12 @@ La tabla se extrae de JOB_SKILL_MATRIX.md y se mantiene fuera del README.
 
 ### CI automática
 
-- `.github/workflows/ci.yml` · suite, README, demo E2E, vector, Jaeger live y compile check
+- `.github/workflows/ci.yml` · suite, README, demo de portfolio, demo E2E, vector, Jaeger live y compile check
 
 ## Comandos reproducibles
 
 ```bash
+python demo.py
 bash scripts/install_demo.sh
 .venv/bin/python scripts/bago.py demo
 source .venv/bin/activate

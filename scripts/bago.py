@@ -22,6 +22,7 @@ from run_public_e2e_demo import (  # noqa: E402
     render_evidence,
     run_demo,
     summary,
+    write_artifacts,
 )
 
 
@@ -38,9 +39,15 @@ def main(argv: list[str] | None = None) -> int:
         action="store_true",
         help="actualiza evidence/public_e2e_demo.md tras un resultado PASS",
     )
+    demo.add_argument(
+        "--artifacts-dir",
+        type=Path,
+        help="escribe summary, receipts, trace y evaluation JSON en este directorio",
+    )
     args = parser.parse_args(argv)
 
     result = run_demo()
+    written = write_artifacts(result, args.artifacts_dir) if args.artifacts_dir else ()
     if args.write_evidence:
         EVIDENCE_PATH.parent.mkdir(parents=True, exist_ok=True)
         EVIDENCE_PATH.write_text(render_evidence(result), encoding="utf-8")
@@ -61,6 +68,13 @@ def main(argv: list[str] | None = None) -> int:
             f"eval {details['evaluation_status']} ({details['evaluation_score']:.2f})"
         )
         print("Coste del demo: 0 USD · servicios externos: no utilizados")
+        if written:
+            artifact_dir = written[0].parent
+            try:
+                artifact_label = artifact_dir.relative_to(REPO_ROOT)
+            except ValueError:
+                artifact_label = artifact_dir
+            print(f"Artefactos: {artifact_label}")
         if args.write_evidence:
             print(f"Evidencia: {EVIDENCE_PATH.relative_to(REPO_ROOT)}")
     return 0

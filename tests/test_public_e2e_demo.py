@@ -1,12 +1,13 @@
 """Public clone-and-run E2E contract."""
 
+import json
 from pathlib import Path
 import sys
 
 ROOT = Path(__file__).parent.parent
 sys.path.insert(0, str(ROOT / "scripts"))
 
-from run_public_e2e_demo import render_evidence, run_demo  # noqa: E402
+from run_public_e2e_demo import render_evidence, run_demo, write_artifacts  # noqa: E402
 from bago import main as cli_main  # noqa: E402
 
 
@@ -52,3 +53,27 @@ def test_cli_prints_a_concise_business_facing_demo(capsys):
     assert "más de 24 horas" in output
     assert "Coste del demo: 0 USD" in output
     assert '"evaluation_status"' not in output
+
+
+def test_public_demo_materializes_receipts_trace_and_eval(tmp_path):
+    result = run_demo()
+    written = write_artifacts(result, tmp_path)
+
+    assert {path.name for path in written} == {
+        "summary.json",
+        "agent_run.json",
+        "receipts.json",
+        "trace.json",
+        "evaluation.json",
+    }
+
+    receipts = json.loads((tmp_path / "receipts.json").read_text(encoding="utf-8"))
+    trace = json.loads((tmp_path / "trace.json").read_text(encoding="utf-8"))
+    evaluation = json.loads((tmp_path / "evaluation.json").read_text(encoding="utf-8"))
+
+    assert receipts["ontology_receipt"]["outcome"] == "SUCCESS"
+    assert receipts["sandbox_receipt"]["status"] == "SUCCESS"
+    assert trace["trace_id"] == evaluation["trace_id"]
+    assert trace["event_count"] == len(trace["events"])
+    assert evaluation["status"] == "PASS"
+    assert evaluation["score"] == 1.0

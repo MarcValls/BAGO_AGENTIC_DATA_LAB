@@ -4,6 +4,7 @@ __pycache__/
 venv/
 .venv/
 .pytest_cache/
+demo_output/
 .bago/evidence/sync-agent/
 evidence/*.png
 evidence/*.mp4
