@@ -10,16 +10,25 @@ cliente real ni se conectan a servicios externos.
 
 ## Instalar y ejecutar
 
-Requisitos: Python 3.11+ y Bash. Desde la raíz del checkout:
+Requisito: Python 3.11+. Desde la raíz del checkout, la ruta de portfolio es un
+solo comando y funciona tanto en Windows como en macOS/Linux:
+
+```bash
+python demo.py
+```
+
+El launcher crea o reutiliza `.venv`, instala las dependencias fijadas cuando
+hace falta, ejecuta la demo existente y escribe el bundle revisable en
+`demo_output/latest/`.
+
+La ruta Bash anterior sigue disponible para uso manual:
 
 ```bash
 bash scripts/install_demo.sh
 .venv/bin/python scripts/bago.py demo
 ```
 
-El instalador crea `.venv` e instala las dependencias fijadas en
-`requirements.txt`. No modifica el entorno global. Para activar el entorno y
-usar el comando corto:
+Para activar el entorno y usar el CLI directamente:
 
 ```bash
 source .venv/bin/activate
@@ -31,10 +40,12 @@ Opciones útiles:
 ```bash
 python scripts/bago.py demo --json
 python scripts/bago.py demo --write-evidence
+python scripts/bago.py demo --artifacts-dir demo_output/manual
 ```
 
 El CLI se invoca con `python scripts/bago.py`. `--json` muestra el resumen
-máquina-legible. `--write-evidence` refresca
+máquina-legible. `--artifacts-dir` materializa summary, receipts, trace y eval.
+`--write-evidence` refresca
 `evidence/public_e2e_demo.md` después de completar correctamente la ejecución.
 Para ejecutar la demo sin el CLI, se mantiene disponible
 `python scripts/run_public_e2e_demo.py --check`.
