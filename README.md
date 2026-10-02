@@ -37,6 +37,7 @@ El README proyecta estos documentos; no los sustituye ni los edita.
 | `ROADMAP.md` | roadmap ejecutable | PRESENTE |
 | `LEARNING_LEDGER.md` | aprendizaje y evidencia | PRESENTE |
 | `JOB_SKILL_MATRIX.md` | skills y alineación laboral | PRESENTE |
+| `docs/cv_linkedin/portfolio-demo-v1.md` | snapshot freeze portfolio-demo-v1 (CV/LinkedIn) | PRESENTE |
 
 ## Agente de sincronización
 
@@ -295,6 +296,7 @@ La tabla se extrae de JOB_SKILL_MATRIX.md y se mantiene fuera del README.
 - `evidence/l10_ontology_engine.md`
 - `evidence/l12_observability_evals.md`
 - `evidence/l14_vector_store.md`
+- `evidence/l15_jaeger_capture_attempt.md`
 - `evidence/l15_otel_jaeger_live.md`
 - `evidence/l3_ontology_graph.md`
 - `evidence/l6_aws_free_tier.md`
@@ -308,6 +310,9 @@ La tabla se extrae de JOB_SKILL_MATRIX.md y se mantiene fuera del README.
 - `evidence/mcp_governed_demo.mp4.sha256`
 - `evidence/ontology_proposal.md`
 - `evidence/ontology_proposal_examples.md`
+- `evidence/portfolio_demo_v1.md`
+- `evidence/portfolio_demo_v1.mp4`
+- `evidence/portfolio_demo_v1.mp4.sha256`
 - `evidence/public_e2e_demo.md`
 - `evidence/retrieval_benchmark_results.md`
 - `evidence/sandbox_local_restricted.md`
@@ -318,6 +323,7 @@ La tabla se extrae de JOB_SKILL_MATRIX.md y se mantiene fuera del README.
 - `docs/bago-sync-agent.md`
 - `docs/bedrock_knowledge_base.md`
 - `docs/commercetools_capstone.md`
+- `docs/cv_linkedin/portfolio-demo-v1.md`
 - `docs/governed_rag.md`
 - `docs/local_vector_store.md`
 - `docs/mcp_governance.md`
@@ -345,6 +351,7 @@ La tabla se extrae de JOB_SKILL_MATRIX.md y se mantiene fuera del README.
 - `scripts/generate_ontology_proposal.py`
 - `scripts/local_mcp_server.py`
 - `scripts/render_mcp_evidence_video.py`
+- `scripts/render_portfolio_demo_video.py`
 - `scripts/run_l12_observability_evidence.py`
 - `scripts/run_l14_vector_store_validation.py`
 - `scripts/run_l15_otel_live_validation.py`
@@ -416,5 +423,23 @@ métricas de tests y estado declarado se calculan al generar.
 
 Fuente de estado: `STATE.md`; contrato: `LAB_CONTRACT.md`;
 skills: `JOB_SKILL_MATRIX.md`; manifiesto: `docs/readme_manifest.json`.
+
+## Releases congelados
+
+### `portfolio-demo-v1` — 2026-10-02
+
+**Portfolio Demo v1**
+
+L0..L15 VERIFIED local + zero-cost rule. Snapshot for CV/LinkedIn.
+
+- Tag: <https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/releases/tag/portfolio-demo-v1>
+- Docs: `docs/cv_linkedin/portfolio-demo-v1.md`, `evidence/portfolio_demo_v1.md`, `evidence/l15_jaeger_capture_attempt.md`
+- Vídeo: `evidence/portfolio_demo_v1.mp4` (76.50s)
+- SHA-256 sidecar: `evidence/portfolio_demo_v1.mp4.sha256`
+- Frame-set SHA-256 (deterministic): `f7417a1f5d03ac332000ffb31fe4d1f5ee69f9f4606692f779735d419d6645d2` — byte-stable across encoder runs
+- Boundaries:
+  - `verified_local`: L0..L15
+  - `aws_live`: one bounded Bedrock Converse call (NOT_PROVEN zero-dollar billing)
+  - `not_run`: AWS ConverseStream, Bedrock KB live, remote OpenMetadata, commercetools live, remote observability
 
 MIT License — ver [LICENSE](LICENSE).

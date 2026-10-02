@@ -309,6 +309,50 @@ def _render_canonical_documents(manifest: dict[str, Any]) -> str:
     return "\n".join(lines) or "No hay documentos canónicos declarados."
 
 
+def _render_releases(manifest: dict[str, Any]) -> str:
+    releases = manifest.get("releases", [])
+    if not releases:
+        return ""
+    out: list[str] = ["## Releases congelados", ""]
+    for release in releases:
+        tag = str(release.get("tag", ""))
+        repo = str(manifest.get("project", {}).get("repository", "")).rstrip("/")
+        tag_url = f"{repo}/releases/tag/{tag}" if repo and tag else ""
+        header = release.get("title", tag) or tag
+        out.append(f"### `{tag}` — {release.get('date', '')}")
+        out.append("")
+        out.append(f"**{header}**")
+        out.append("")
+        if release.get("summary"):
+            out.append(str(release["summary"]))
+            out.append("")
+        if tag_url:
+            out.append(f"- Tag: <{tag_url}>")
+        docs = release.get("docs", []) or []
+        if docs:
+            doc_links = ", ".join(_inline(d) for d in docs if d)
+            out.append(f"- Docs: {doc_links}")
+        if release.get("video"):
+            duration = release.get("duration", "60-90s")
+            sha = release.get("video_sha256") or ""
+            fset = release.get("video_frame_set_sha256") or ""
+            out.append(f"- Vídeo: {_inline(str(release['video']))} ({duration})")
+            if sha:
+                out.append(f"- SHA-256 sidecar: {_inline(str(sha))}")
+            if fset:
+                out.append(
+                    "- Frame-set SHA-256 (deterministic): "
+                    f"`{fset}` — byte-stable across encoder runs"
+                )
+        boundaries = release.get("boundaries", {}) or {}
+        if boundaries:
+            out.append("- Boundaries:")
+            for key, value in boundaries.items():
+                out.append(f"  - `{key}`: {value}")
+        out.append("")
+    return "\n".join(out)
+
+
 def _render_sync_agent(manifest: dict[str, Any]) -> str:
     config = manifest.get("sync_agent", {})
     lines = [
@@ -648,6 +692,7 @@ def render_readme(
             f"Fuente de estado: {_inline('STATE.md')}; contrato: {_inline('LAB_CONTRACT.md')};",
             f"skills: {_inline('JOB_SKILL_MATRIX.md')}; manifiesto: {_inline('docs/readme_manifest.json')}.",
             "",
+            _render_releases(manifest),
             "MIT License — ver [LICENSE](LICENSE).",
             "",
         ]

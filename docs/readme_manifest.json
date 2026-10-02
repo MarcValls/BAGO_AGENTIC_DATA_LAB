@@ -14,7 +14,8 @@
     {"path": "ARCHITECTURE.md", "role": "arquitectura y límites"},
     {"path": "ROADMAP.md", "role": "roadmap ejecutable"},
     {"path": "LEARNING_LEDGER.md", "role": "aprendizaje y evidencia"},
-    {"path": "JOB_SKILL_MATRIX.md", "role": "skills y alineación laboral"}
+    {"path": "JOB_SKILL_MATRIX.md", "role": "skills y alineación laboral"},
+    {"path": "docs/cv_linkedin/portfolio-demo-v1.md", "role": "snapshot freeze portfolio-demo-v1 (CV/LinkedIn)"}
   ],
   "sync_agent": {
     "definition": ".github/agents/bago-sync-agent.agent.md",
@@ -234,6 +235,28 @@
         {"kind": "evidence", "patterns": ["evidence/l15_otel_jaeger_live.md", "docs/otel_jaeger.md"]}
       ],
       "commit_patterns": ["feat: add local opentelemetry jaeger validation", "L15"]
+    }
+  ],
+  "releases": [
+    {
+      "tag": "portfolio-demo-v1",
+      "date": "2026-10-02",
+      "title": "Portfolio Demo v1",
+      "summary": "L0..L15 VERIFIED local + zero-cost rule. Snapshot for CV/LinkedIn.",
+      "docs": [
+        "docs/cv_linkedin/portfolio-demo-v1.md",
+        "evidence/portfolio_demo_v1.md",
+        "evidence/l15_jaeger_capture_attempt.md"
+      ],
+      "video": "evidence/portfolio_demo_v1.mp4",
+      "video_sha256": "evidence/portfolio_demo_v1.mp4.sha256",
+      "video_frame_set_sha256": "f7417a1f5d03ac332000ffb31fe4d1f5ee69f9f4606692f779735d419d6645d2",
+      "duration": "76.50s",
+      "boundaries": {
+        "verified_local": "L0..L15",
+        "aws_live": "one bounded Bedrock Converse call (NOT_PROVEN zero-dollar billing)",
+        "not_run": "AWS ConverseStream, Bedrock KB live, remote OpenMetadata, commercetools live, remote observability"
+      }
     }
   ]
 }
