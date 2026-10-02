@@ -395,14 +395,14 @@ Governed RAG
 ```bash
 bash scripts/install_demo.sh
 source .venv/bin/activate
-bago demo
+python scripts/bago.py demo
 python -m pytest tests -q
 python scripts/generate_dynamic_readme.py --check --skip-tests
 ```
 
 The installer creates a local `.venv` and installs the pinned requirements.
-`bago demo` prints a short business-facing result; use `bago demo --json` for
-the machine-readable summary or `bago demo --write-evidence` to refresh this
+`python scripts/bago.py demo` prints a short business-facing result; add
+`--json` for the machine-readable summary or `--write-evidence` to refresh this
 file.
 
 The generated evidence is intentionally scoped to this local fixture. It does

@@ -23,17 +23,18 @@ usar el comando corto:
 
 ```bash
 source .venv/bin/activate
-bago demo
+python scripts/bago.py demo
 ```
 
 Opciones útiles:
 
 ```bash
-bago demo --json
-bago demo --write-evidence
+python scripts/bago.py demo --json
+python scripts/bago.py demo --write-evidence
 ```
 
-`--json` muestra el resumen máquina-legible. `--write-evidence` refresca
+El CLI se invoca con `python scripts/bago.py`. `--json` muestra el resumen
+máquina-legible. `--write-evidence` refresca
 `evidence/public_e2e_demo.md` después de completar correctamente la ejecución.
 Para ejecutar la demo sin el CLI, se mantiene disponible
 `python scripts/run_public_e2e_demo.py --check`.
