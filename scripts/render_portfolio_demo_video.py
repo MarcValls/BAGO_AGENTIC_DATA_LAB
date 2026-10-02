@@ -494,12 +494,80 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument(
         "--check",
         action="store_true",
-        help="Check duration falls in 60–90s and exit non-zero otherwise",
+        help=(
+            "Render into a tempdir and assert duration ∈ [60, 90]s without "
+            "touching ``evidence/portfolio_demo_v1.mp4`` or its sidecars. "
+            "Always read-only."
+        ),
     )
     args = parser.parse_args(argv)
 
     evidence = _collect_evidence()
 
+    if args.check:
+        # Read-only validation: render into a tempdir and verify the
+        # duration without overwriting evidence/portfolio_demo_v1.*
+        with tempfile.TemporaryDirectory(prefix="portfolio-demo-v1-check-") as temp_dir:
+            check_dir = Path(temp_dir)
+            frames = _render_frames(evidence, check_dir)
+            check_mp4 = check_dir / "portfolio_demo_v1.mp4"
+            # Inline render to a temp mp4, identical command line
+            seconds_per_frame = args.seconds_per_frame
+            frame_count = len(frames)
+            in_fps = round(1.0 / seconds_per_frame, 4) if seconds_per_frame > 0 else 1.0
+            target_seconds = frame_count * seconds_per_frame
+            ffmpeg = shutil.which("ffmpeg")
+            if not ffmpeg:
+                print("FAIL: ffmpeg not available", file=sys.stderr)
+                return 3
+            cmd = [
+                ffmpeg, "-y", "-loglevel", "error",
+                "-framerate", f"{in_fps:.4f}",
+                "-i", str(check_dir / "frame_%03d.png"),
+                "-f", "lavfi",
+                "-i", "anullsrc=channel_layout=stereo:sample_rate=48000",
+                "-t", f"{target_seconds:.3f}",
+                "-c:v", "libx264", "-profile:v", "baseline", "-level", "4.0",
+                "-preset", "medium", "-crf", "23", "-r", "30",
+                "-pix_fmt", "yuv420p", "-c:a", "aac", "-b:a", "128k",
+                "-shortest", "-movflags", "+faststart",
+                str(check_mp4),
+            ]
+            subprocess.run(cmd, check=True, cwd=REPO_ROOT)
+            duration = _ffprobe_duration(check_mp4)
+            frame_set_digest = _hash_frame_set(frames)
+            existing_mp4_sha = (
+                HASH_PATH.read_text(encoding="utf-8").split()[0]
+                if HASH_PATH.is_file()
+                else None
+            )
+            current_mp4_sha = (
+                hashlib.sha256(OUTPUT_PATH.read_bytes()).hexdigest()
+                if OUTPUT_PATH.is_file()
+                else None
+            )
+            report = {
+                "mode": "check",
+                "duration_seconds": duration,
+                "in_target_window": 60.0 <= duration <= 90.0,
+                "frame_count": frame_count,
+                "frame_set_sha256": frame_set_digest,
+                "checked_mp4_sha256": hashlib.sha256(check_mp4.read_bytes()).hexdigest(),
+                "sidecar_mp4_sha256": existing_mp4_sha,
+                "current_evidence_mp4_sha256": current_mp4_sha,
+                "sidecar_in_sync": existing_mp4_sha == current_mp4_sha,
+                "tag": "portfolio-demo-v1",
+            }
+            print(json.dumps(report, ensure_ascii=False, indent=2, sort_keys=True))
+            if not (60.0 <= duration <= 90.0):
+                print(
+                    f"FAIL duration {duration:.2f}s outside [60, 90]",
+                    file=sys.stderr,
+                )
+                return 2
+            return 0
+
+    # Non-check path: real render that overwrites evidence/portfolio_demo_v1.*
     with tempfile.TemporaryDirectory(prefix="portfolio-demo-v1-") as temp_dir:
         frame_dir = Path(temp_dir)
         frames = _render_frames(evidence, frame_dir)
