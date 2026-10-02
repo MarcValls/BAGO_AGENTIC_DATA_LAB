@@ -18,6 +18,7 @@ from typing import Any
 REPO_ROOT = Path(__file__).resolve().parents[1]
 SRC_ROOT = REPO_ROOT / "src"
 EVIDENCE_PATH = REPO_ROOT / "evidence" / "public_e2e_demo.md"
+DEFAULT_ARTIFACTS_DIR = REPO_ROOT / "demo_output" / "latest"
 if str(REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(REPO_ROOT))
 if str(SRC_ROOT) not in sys.path:
@@ -317,6 +318,61 @@ def summary(result: dict[str, Any]) -> dict[str, Any]:
     }
 
 
+
+def receipt_bundle(result: dict[str, Any]) -> dict[str, Any]:
+    """Collect the receipts already produced by the governed run."""
+
+    run: AgentRun = result["agent_run"]
+    ontology: OntologyReasoningResult = result["ontology"]
+    sandbox: SandboxExecutionResult = result["sandbox"]
+    provider_receipt = (
+        run.provider_result.receipt.to_dict()
+        if run.provider_result is not None
+        else None
+    )
+    return {
+        "agent_decision_receipts": [
+            receipt.to_dict() for receipt in run.decision_receipts
+        ],
+        "mcp_receipts": [receipt.to_dict() for receipt in run.mcp_receipts],
+        "provider_receipt": provider_receipt,
+        "ontology_receipt": ontology.receipt.to_dict(),
+        "sandbox_receipt": sandbox.receipt.to_dict(),
+    }
+
+
+def artifact_payloads(result: dict[str, Any]) -> dict[str, dict[str, Any]]:
+    """Project one passing run into reviewable JSON artifacts."""
+
+    run: AgentRun = result["agent_run"]
+    trace: LocalTrace = result["trace"]
+    evaluation: EvaluationReport = result["evaluation"]
+    return {
+        "summary.json": summary(result),
+        "agent_run.json": run.to_dict(),
+        "receipts.json": receipt_bundle(result),
+        "trace.json": trace.to_dict(),
+        "evaluation.json": evaluation.to_dict(),
+    }
+
+
+def write_artifacts(result: dict[str, Any], output_dir: Path) -> tuple[Path, ...]:
+    """Write the product-facing evidence bundle without changing canonical evidence."""
+
+    destination = output_dir if output_dir.is_absolute() else REPO_ROOT / output_dir
+    destination.mkdir(parents=True, exist_ok=True)
+    written: list[Path] = []
+    for name, payload in artifact_payloads(result).items():
+        path = destination / name
+        path.write_text(
+            json.dumps(payload, ensure_ascii=False, indent=2, sort_keys=True, default=str)
+            + "\n",
+            encoding="utf-8",
+        )
+        written.append(path)
+    return tuple(written)
+
+
 def render_evidence(result: dict[str, Any]) -> str:
     report: EvaluationReport = result["evaluation"]
     trace: LocalTrace = result["trace"]
@@ -429,12 +485,28 @@ def main(argv: list[str] | None = None) -> int:
         action="store_true",
         help="write evidence/public_e2e_demo.md after a passing run",
     )
+    parser.add_argument(
+        "--artifacts-dir",
+        type=Path,
+        help="write summary, receipts, trace and evaluation JSON to this directory",
+    )
     args = parser.parse_args(argv)
     result = run_demo()
+    if args.artifacts_dir is not None:
+        written = write_artifacts(result, args.artifacts_dir)
+    else:
+        written = ()
     if args.write_evidence:
         EVIDENCE_PATH.parent.mkdir(parents=True, exist_ok=True)
         EVIDENCE_PATH.write_text(render_evidence(result), encoding="utf-8")
     print(json.dumps(summary(result), ensure_ascii=False, indent=2, sort_keys=True))
+    if written:
+        artifact_dir = written[0].parent
+        try:
+            artifact_label = artifact_dir.relative_to(REPO_ROOT)
+        except ValueError:
+            artifact_label = artifact_dir
+        print(f"Artifacts: {artifact_label}")
     if args.write_evidence:
         print(f"Evidence: {EVIDENCE_PATH.relative_to(REPO_ROOT)}")
     return 0
