@@ -49,3 +49,11 @@ jobs:
         run: docker compose -p bago-otel -f infra/observability/docker-compose.yml down -v
       - name: Compile source and scripts
         run: python -m compileall -q src scripts
+      - name: Check portfolio demo video (read-only)
+        continue-on-error: true
+        run: |
+          if command -v ffmpeg >/dev/null 2>&1; then
+            python scripts/render_portfolio_demo_video.py --check
+          else
+            echo "ffmpeg not available on this runner; skipping portfolio video check"
+          fi
