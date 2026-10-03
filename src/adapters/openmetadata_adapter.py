@@ -16,6 +16,7 @@ from __future__ import annotations
 import hashlib
 import json
 import time
+import uuid
 from collections import deque
 from dataclasses import dataclass, field
 from datetime import datetime, timedelta, timezone
@@ -426,6 +427,7 @@ class GovernedOpenMetadataAdapter:
         "search": EffectType.READ,
         "get_lineage": EffectType.READ,
         "add_lineage": EffectType.WRITE,
+        "ingest_openlineage_event": EffectType.WRITE,
         "assign_ownership": EffectType.WRITE,
         "register_schema_version": EffectType.WRITE,
         "create_quality_rule": EffectType.CREATE,
@@ -471,6 +473,13 @@ class GovernedOpenMetadataAdapter:
             if len(query) > self.policy.max_query_chars:
                 raise ValueError("search query exceeds policy limit")
             parameters["query"] = query
+        elif operation == "ingest_openlineage_event":
+            event = self._validate_openlineage_event(parameters.get("event"))
+            parameters["event"] = event
+            run_resource = f"run:{event['run']['runId']}"
+            if normalized_resource and normalized_resource != run_resource:
+                raise ValueError("resource must match event.run.runId")
+            normalized_resource = run_resource
         elif operation != "create_quality_rule" and not normalized_resource:
             raise ValueError(f"resource is required for {operation}")
         if "page_size" in parameters:
@@ -591,6 +600,22 @@ class GovernedOpenMetadataAdapter:
             path="/v1/lineage",
             json_body=body,
             normalizer=self._normalize_lineage,
+        )
+
+    def ingest_openlineage_event(
+        self,
+        request: ExecutionRequest,
+        permit: Optional[Permit],
+    ) -> MetadataCatalogResult:
+        """Submit one COMPLETE event; callers verify persistence with a separate read-back."""
+        return self._execute(
+            request,
+            permit,
+            operation="ingest_openlineage_event",
+            method="POST",
+            path="/v1/openlineage/lineage",
+            json_body=request.parameters["event"],
+            normalizer=self._normalize_openlineage,
         )
 
     def assign_ownership(
@@ -807,6 +832,20 @@ class GovernedOpenMetadataAdapter:
                     attempts=attempts,
                 )
             entities, lineage, payload = normalizer(raw_response)
+            result_count = len(entities) + len(lineage)
+            outcome = ExecutionOutcome.SUCCESS
+            result_message = None
+            if operation == "ingest_openlineage_event":
+                result_count = int(payload["lineage_edges_created"])
+                result_message = str(payload.get("message") or "") or None
+                if payload["status"] == "failure":
+                    outcome = ExecutionOutcome.FAILURE
+                    result_message = result_message or (
+                        "OpenMetadata reported a failure while processing the OpenLineage event"
+                    )
+                elif payload["status"] == "partial_success" or result_count == 0:
+                    outcome = ExecutionOutcome.PARTIAL
+                    result_message = result_message or "OpenLineage event created no lineage edges"
             receipt = self._receipt(
                 request,
                 permit_id,
@@ -815,9 +854,12 @@ class GovernedOpenMetadataAdapter:
                 evidence_refs,
                 started,
                 AuthorizationDecision.ALLOW,
-                ExecutionOutcome.SUCCESS,
-                len(entities) + len(lineage),
+                outcome,
+                result_count,
                 attempts,
+                error_message=(
+                    result_message if outcome != ExecutionOutcome.SUCCESS else None
+                ),
             )
             return MetadataCatalogResult(entities, lineage, payload, raw_response, receipt)
         except Exception as error:
@@ -913,6 +955,69 @@ class GovernedOpenMetadataAdapter:
     @staticmethod
     def _operation(request: ExecutionRequest) -> str:
         return request.tool_name.removeprefix("openmetadata.")
+
+    @staticmethod
+    def _validate_openlineage_event(value: Any) -> dict[str, Any]:
+        """Validate and copy the bounded single-event request accepted by this adapter."""
+        if not isinstance(value, Mapping):
+            raise ValueError("event must be a mapping")
+        try:
+            event = json.loads(
+                json.dumps(dict(value), sort_keys=True, separators=(",", ":"), allow_nan=False)
+            )
+        except (TypeError, ValueError) as error:
+            raise ValueError("event must contain only JSON-compatible values") from error
+        if event.get("eventType") != "COMPLETE":
+            raise ValueError("only COMPLETE OpenLineage events are permitted")
+        for field_name in ("eventTime", "producer", "schemaURL"):
+            if not isinstance(event.get(field_name), str) or not event[field_name].strip():
+                raise ValueError(f"event.{field_name} is required")
+        job = _mapping(event.get("job"))
+        if not all(
+            isinstance(job.get(key), str) and job[key].strip()
+            for key in ("namespace", "name")
+        ):
+            raise ValueError("event.job.namespace and event.job.name are required")
+        run = _mapping(event.get("run"))
+        run_id = run.get("runId")
+        if not isinstance(run_id, str):
+            raise ValueError("event.run.runId is required")
+        try:
+            uuid.UUID(run_id)
+        except ValueError as error:
+            raise ValueError("event.run.runId must be a UUID") from error
+        for field_name in ("inputs", "outputs"):
+            datasets = event.get(field_name)
+            if not isinstance(datasets, list) or not datasets:
+                raise ValueError(f"event.{field_name} must contain at least one dataset")
+            for index, dataset in enumerate(datasets):
+                if not isinstance(dataset, Mapping) or not all(
+                    isinstance(dataset.get(key), str) and dataset[key].strip()
+                    for key in ("namespace", "name")
+                ):
+                    raise ValueError(
+                        f"event.{field_name}[{index}] requires namespace and name"
+                    )
+        return event
+
+    @staticmethod
+    def _normalize_openlineage(
+        response: Mapping[str, Any],
+    ) -> tuple[tuple[CatalogEntity, ...], tuple[LineageEdge, ...], dict[str, Any]]:
+        data = _mapping(response)
+        status = str(data.get("status", "")).lower()
+        if status not in {"success", "partial_success", "failure"}:
+            raise ValueError("OpenMetadata OpenLineage response has an unknown status")
+        edge_count = data.get("lineageEdgesCreated")
+        if isinstance(edge_count, bool) or not isinstance(edge_count, int) or edge_count < 0:
+            raise ValueError(
+                "OpenMetadata OpenLineage response has an invalid lineageEdgesCreated"
+            )
+        return (), (), {
+            "status": status,
+            "message": str(data.get("message", "")),
+            "lineage_edges_created": edge_count,
+        }
 
     @staticmethod
     def _normalize_search(

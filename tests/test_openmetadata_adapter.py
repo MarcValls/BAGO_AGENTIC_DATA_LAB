@@ -237,6 +237,228 @@ def test_add_lineage_builds_openmetadata_edge_and_receipt():
     assert result.receipt.actual_effect["method"] == "PUT"
 
 
+def _openlineage_event():
+    return {
+        "eventType": "COMPLETE",
+        "eventTime": "2026-10-03T00:00:00Z",
+        "producer": "https://openlineage.io",
+        "schemaURL": "https://openlineage.io/spec/1-0-5/OpenLineage.json",
+        "run": {"runId": "123e4567-e89b-12d3-a456-426614174000"},
+        "job": {"namespace": "bago-test", "name": "governed-test"},
+        "inputs": [{"namespace": "bago-test-service", "name": "db.schema.source"}],
+        "outputs": [{"namespace": "bago-test-service", "name": "db.schema.target"}],
+    }
+
+
+def test_openlineage_event_uses_governed_post_and_reports_created_edge_count():
+    client = FakeCatalogClient(
+        responses=[
+            {
+                "status": "success",
+                "message": "Created 1 lineage edge(s)",
+                "lineageEdgesCreated": 1,
+            }
+        ]
+    )
+    adapter = GovernedOpenMetadataAdapter(client=client)
+    request, permit = make_request(
+        adapter,
+        "ingest_openlineage_event",
+        entity_type="table",
+        event=_openlineage_event(),
+    )
+
+    result = adapter.ingest_openlineage_event(request, permit)
+
+    assert request.effect_type.value == "WRITE"
+    assert request.parameters["resource"] == "run:123e4567-e89b-12d3-a456-426614174000"
+    assert client.calls[0]["method"] == "POST"
+    assert client.calls[0]["path"] == "/v1/openlineage/lineage"
+    assert client.calls[0]["json"] == _openlineage_event()
+    assert result.payload["lineage_edges_created"] == 1
+    assert result.receipt.execution_outcome.value == "SUCCESS"
+    assert result.receipt.result_count == 1
+    assert result.receipt.error_message is None
+
+
+def test_openlineage_http_success_with_no_edges_is_recorded_as_partial():
+    client = FakeCatalogClient(
+        responses=[
+            {
+                "status": "success",
+                "message": "Event processed, no lineage edges created",
+                "lineageEdgesCreated": 0,
+            }
+        ]
+    )
+    adapter = GovernedOpenMetadataAdapter(client=client)
+    request, permit = make_request(
+        adapter,
+        "ingest_openlineage_event",
+        entity_type="table",
+        event=_openlineage_event(),
+    )
+
+    result = adapter.ingest_openlineage_event(request, permit)
+
+    assert result.receipt.execution_outcome.value == "PARTIAL"
+    assert result.receipt.result_count == 0
+    assert result.receipt.error_message == "Event processed, no lineage edges created"
+    assert result.raw_response["status"] == "success"
+
+
+def test_openlineage_requires_matching_permit_and_valid_complete_event():
+    client = FakeCatalogClient(responses=[{"status": "success", "lineageEdgesCreated": 1}])
+    adapter = GovernedOpenMetadataAdapter(client=client)
+    request, _ = make_request(
+        adapter,
+        "ingest_openlineage_event",
+        entity_type="table",
+        event=_openlineage_event(),
+    )
+
+    result = adapter.ingest_openlineage_event(request, None)
+
+    assert result.receipt.decision.value == "DENY"
+    assert client.calls == []
+    invalid_event = _openlineage_event()
+    invalid_event["eventType"] = "START"
+    with pytest.raises(ValueError, match="only COMPLETE"):
+        make_request(
+            adapter,
+            "ingest_openlineage_event",
+            entity_type="table",
+            event=invalid_event,
+        )
+    with pytest.raises(ValueError, match="resource must match event.run.runId"):
+        make_request(
+            adapter,
+            "ingest_openlineage_event",
+            resource="a-different-run",
+            entity_type="table",
+            event=_openlineage_event(),
+        )
+
+
+def test_openlineage_rejects_uninformative_success_response():
+    client = FakeCatalogClient(responses=[{"status": "success", "message": "ok"}])
+    adapter = GovernedOpenMetadataAdapter(client=client)
+    request, permit = make_request(
+        adapter,
+        "ingest_openlineage_event",
+        entity_type="table",
+        event=_openlineage_event(),
+    )
+
+    result = adapter.ingest_openlineage_event(request, permit)
+
+    assert result.receipt.execution_outcome.value == "FAILURE"
+    assert result.receipt.error_kind is OpenMetadataErrorKind.VALIDATION
+    assert result.receipt.result_count == 0
+    assert "invalid lineageEdgesCreated" in result.receipt.error_message
+    assert client.calls[0]["path"] == "/v1/openlineage/lineage"
+
+
+@pytest.mark.parametrize(
+    ("field", "message"),
+    [("runId", "UUID"), ("inputs", "event.inputs"), ("outputs", "event.outputs")],
+)
+def test_openlineage_rejects_malformed_event_fields(field, message):
+    adapter = GovernedOpenMetadataAdapter(client=FakeCatalogClient())
+    invalid_event = _openlineage_event()
+    if field == "runId":
+        invalid_event["run"]["runId"] = "not-a-uuid"
+    else:
+        invalid_event.pop(field)
+
+    with pytest.raises(ValueError, match=message):
+        make_request(
+            adapter,
+            "ingest_openlineage_event",
+            entity_type="table",
+            event=invalid_event,
+        )
+
+
+def test_openlineage_rejects_non_json_event_values():
+    adapter = GovernedOpenMetadataAdapter(client=FakeCatalogClient())
+    invalid_event = _openlineage_event()
+    invalid_event["job"]["facets"] = {"non_json": object()}
+
+    with pytest.raises(ValueError, match="JSON-compatible"):
+        make_request(
+            adapter,
+            "ingest_openlineage_event",
+            entity_type="table",
+            event=invalid_event,
+        )
+
+
+@pytest.mark.parametrize("edge_count", [True, -1, "0"])
+def test_openlineage_rejects_invalid_created_edge_counts(edge_count):
+    client = FakeCatalogClient(
+        responses=[{"status": "success", "lineageEdgesCreated": edge_count}]
+    )
+    adapter = GovernedOpenMetadataAdapter(client=client)
+    request, permit = make_request(
+        adapter,
+        "ingest_openlineage_event",
+        entity_type="table",
+        event=_openlineage_event(),
+    )
+
+    result = adapter.ingest_openlineage_event(request, permit)
+
+    assert result.receipt.execution_outcome.value == "FAILURE"
+    assert result.receipt.error_kind is OpenMetadataErrorKind.VALIDATION
+
+
+@pytest.mark.parametrize("edge_count", [0, 2])
+def test_openlineage_partial_success_remains_partial(edge_count):
+    client = FakeCatalogClient(
+        responses=[
+            {
+                "status": "partial_success",
+                "message": "Some lineage results were skipped",
+                "lineageEdgesCreated": edge_count,
+            }
+        ]
+    )
+    adapter = GovernedOpenMetadataAdapter(client=client)
+    request, permit = make_request(
+        adapter,
+        "ingest_openlineage_event",
+        entity_type="table",
+        event=_openlineage_event(),
+    )
+
+    result = adapter.ingest_openlineage_event(request, permit)
+
+    assert result.receipt.execution_outcome.value == "PARTIAL"
+    assert result.receipt.result_count == edge_count
+
+
+def test_openlineage_failure_response_has_fallback_receipt_message():
+    client = FakeCatalogClient(
+        responses=[{"status": "failure", "message": "", "lineageEdgesCreated": 0}]
+    )
+    adapter = GovernedOpenMetadataAdapter(client=client)
+    request, permit = make_request(
+        adapter,
+        "ingest_openlineage_event",
+        entity_type="table",
+        event=_openlineage_event(),
+    )
+
+    result = adapter.ingest_openlineage_event(request, permit)
+
+    assert result.receipt.execution_outcome.value == "FAILURE"
+    assert result.receipt.result_count == 0
+    assert result.receipt.error_message == (
+        "OpenMetadata reported a failure while processing the OpenLineage event"
+    )
+
+
 def test_ownership_schema_version_and_quality_rule_use_write_permits():
     client = FakeCatalogClient(
         responses=[
