@@ -3,7 +3,7 @@
 [![CI](https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/actions/workflows/ci.yml/badge.svg)](https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/actions/workflows/ci.yml)
 [![GitHub](https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/actions/workflows/readme-consistency.yml/badge.svg)](https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/actions/workflows/readme-consistency.yml)
 [![Branch](https://img.shields.io/badge/branch-main-green)](https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/tree/main)
-[![Tests](https://img.shields.io/badge/tests-148%2F148%20passing-brightgreen)](https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/actions)
+[![Tests](https://img.shields.io/badge/tests-157%2F157%20passing-brightgreen)](https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/actions)
 [![License](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 
 > Laboratorio experimental para desarrollar capacidades de AI Engineering con gobernanza BAGO.
@@ -25,7 +25,7 @@ El comando materializa summary, agent run, receipts, trace y evaluation en
 
 | Métrica | Valor |
 |---|---|
-| Tests ejecutados | **148/148** |
+| Tests ejecutados | **157/157** |
 | Rama pública | `main` |
 | Estado actualizado | 2026-09-24 |
 | Fase actual | **L15 · OpenTelemetry + Jaeger Local Live** · VERIFIED (local live) |
@@ -126,7 +126,7 @@ flowchart LR
 | L5 | VERIFIED | Orbitant | MCP con gobernanza | 7 | 3 |
 | L6 | VERIFIED (live Converse + Free Plan observed) | Tuio | AWS Bedrock Provider | 10 | 4 |
 | L7 | VERIFIED (offline) | Devoteam | Bedrock Knowledge Base | 10 | 2 |
-| L8 | VERIFIED (local live) | Devoteam | Metadata Catalog | 13 | 3 |
+| L8 | VERIFIED (local live) | Devoteam | Metadata Catalog | 22 | 3 |
 | L9 | VERIFIED (offline) | commercetools | End-to-End Governed Agent | 7 | 3 |
 | L10 | VERIFIED (local) | BAGO / portfolio | Governed Ontology Engine | 4 | 2 |
 | L11 | VERIFIED (local) | BAGO / secure execution | Governed Sandbox Layer | 14 | 3 |
@@ -292,7 +292,7 @@ La tabla se extrae de JOB_SKILL_MATRIX.md y se mantiene fuera del README.
 - `tests/test_mcp_governance.py` (7 checks)
 - `tests/test_metadata_schema.py` (4 checks)
 - `tests/test_ontology_generator.py` (7 checks)
-- `tests/test_openmetadata_adapter.py` (13 checks)
+- `tests/test_openmetadata_adapter.py` (22 checks)
 - `tests/test_public_e2e_demo.py` (5 checks)
 - `tests/test_retrieval_accuracy.py` (9 checks)
 - `tests/test_retrieval_benchmark.py` (3 checks)
