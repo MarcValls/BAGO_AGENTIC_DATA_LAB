@@ -67,13 +67,14 @@ def _matches_many(patterns: list[str]) -> list[str]:
 
 
 def _test_function_count(path: Path) -> int:
+    """Count test functions for the generator's compatibility tests."""
     try:
         tree = ast.parse(path.read_text(encoding="utf-8"))
     except (OSError, SyntaxError):
         return 0
+
     def is_pytest_fixture(node: ast.AST) -> bool:
-        decorators = getattr(node, "decorator_list", [])
-        for decorator in decorators:
+        for decorator in getattr(node, "decorator_list", []):
             target = decorator.func if isinstance(decorator, ast.Call) else decorator
             if isinstance(target, ast.Name) and target.id == "fixture":
                 return True
@@ -90,11 +91,22 @@ def _test_function_count(path: Path) -> int:
 
 
 def collected_test_count() -> int:
-    """Count test functions without importing project dependencies."""
-    return sum(
-        _test_function_count(path)
-        for path in sorted((REPO_ROOT / "tests").glob("test_*.py"))
+    """Count pytest cases, including parametrized cases, without executing them."""
+    output = _run(
+        [
+            sys.executable,
+            "-m",
+            "pytest",
+            "tests",
+            "--collect-only",
+            "-q",
+            "--disable-warnings",
+        ]
     )
+    match = re.search(r"\b(?P<count>\d+)\s+tests? collected\b", output)
+    if not match:
+        raise RuntimeError("pytest collection completed without a parseable case count")
+    return int(match.group("count"))
 
 
 def executed_test_count() -> int:
@@ -498,7 +510,19 @@ def render_readme(
         f"> {project['description']}",
         "> Este documento se genera desde el estado y los artefactos del repositorio.",
         "",
-        "## Demo de portfolio",
+        "## El problema",
+        "",
+        "Un agente empresarial necesita demostrar de dónde viene la respuesta, qué la autoriza y qué efecto ocurrió. Una salida plausible del modelo no demuestra ninguno de esos hechos.",
+        "",
+        "## Arquitectura en una mirada",
+        "",
+        FENCE + "text",
+        "CONOCIMIENTO → EVIDENCIA → RELACIONES → PROPUESTA → AUTORIZACIÓN → EJECUCIÓN RESTRINGIDA → RECIBO → TRACE → EVALUACIÓN",
+        FENCE,
+        "",
+        "El modelo propone; BAGO controla si la propuesta cruza a un efecto. La ruta local reproducible registra 15 spans y conserva los límites entre propuesta, permiso y ejecución.",
+        "",
+        "## Ejecuta la demo",
         "",
         "La extracción de producto reutiliza los componentes L0–L15 existentes; no",
         "introduce una arquitectura de agente paralela. Ver [portfolio/README.md](portfolio/README.md).",
@@ -509,6 +533,32 @@ def render_readme(
         "",
         "El comando materializa summary, agent run, receipts, trace y evaluation en",
         f"{_inline('demo_output/latest/')} sin convertir esa proyección en fuente canónica.",
+        "",
+        "## Evidencia de ejecución",
+        "",
+        "La evidencia versionada de L15 registra el trace consultado en Jaeger: [resultado y trace ID](evidence/l15_otel_jaeger_live.md). El demo produce `trace.json`, recibos y evaluación determinista; Jaeger es una proyección local, no autoridad de ejecución.",
+        "",
+        "### See it in action",
+        "",
+        "Vista real del trace L15 en Jaeger: 15 spans conectan retrieval, propuesta, permiso, ejecución y recibos.",
+        "",
+        "![Jaeger trace graph for the governed BAGO demo](portfolio/assets/jaeger-trace-graph.png)",
+        "",
+        "Trace ID: `94ee6c8d7a05b27487489a97da7480a5` · 15 spans · validado localmente el 2026-10-07. La [evidencia L15 versionada](evidence/l15_otel_jaeger_live.md) es accesible desde GitHub; la UI de Jaeger solo está disponible al reproducirla en local.",
+        "",
+        "### Reproduce el trace en local",
+        "",
+        "Requiere Docker. Este recorrido inicia Jaeger, exporta y consulta el trace, y detiene el servicio al terminar:",
+        "",
+        FENCE + "bash",
+        "docker compose -p bago-otel -f infra/observability/docker-compose.yml up -d",
+        "python scripts/run_l15_otel_live_validation.py --check",
+        "docker compose -p bago-otel -f infra/observability/docker-compose.yml down",
+        FENCE,
+        "",
+        "Guía detallada: [L15 OpenTelemetry + Jaeger](docs/otel_jaeger.md).",
+        "",
+        "Profundiza en las fases L0-L15 en el [roadmap](#roadmap-detectado), o consulta [STATE.md](STATE.md) para el alcance canónico y [portfolio/README.md](portfolio/README.md) para la presentación del producto.",
         "",
         "## Estado actual",
         "",
