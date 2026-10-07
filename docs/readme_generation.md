@@ -23,10 +23,11 @@ Commands:
     python scripts/generate_dynamic_readme.py --check
     python scripts/generate_dynamic_readme.py --check --skip-tests
 
-The --check --skip-tests mode is dependency-light: it counts test functions
-from the source tree and verifies that the checked-in README is exactly
-reproducible. The normal generation path executes the full suite before
-writing.
+The --check --skip-tests mode collects pytest cases, including parametrized
+cases, without executing them and verifies that the checked-in README is
+exactly reproducible. It requires the project dependencies to import test
+modules; install them with `python -m pip install -r requirements.txt` first.
+The normal generation path executes the full suite before writing.
 
 Do not edit README.md manually. If the README is stale, update the source
 document or manifest that owns the claim, then regenerate it.

@@ -59,6 +59,12 @@ def test_readme_sources_are_real_and_state_is_parsed():
 
 
 def test_readme_inventory_and_market_tables_are_discovered():
+    workflow = (ROOT / ".github" / "workflows" / "readme-consistency.yml").read_text(
+        encoding="utf-8"
+    )
+    assert workflow.index("run: python -m pip install -r requirements.txt") < workflow.index(
+        "run: python scripts/generate_dynamic_readme.py --check --skip-tests"
+    )
     assert collected_test_count() >= 100
     assert parse_roles()
     skills = parse_skills()
