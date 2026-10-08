@@ -67,13 +67,14 @@ def _matches_many(patterns: list[str]) -> list[str]:
 
 
 def _test_function_count(path: Path) -> int:
+    """Count test functions for the generator's compatibility tests."""
     try:
         tree = ast.parse(path.read_text(encoding="utf-8"))
     except (OSError, SyntaxError):
         return 0
+
     def is_pytest_fixture(node: ast.AST) -> bool:
-        decorators = getattr(node, "decorator_list", [])
-        for decorator in decorators:
+        for decorator in getattr(node, "decorator_list", []):
             target = decorator.func if isinstance(decorator, ast.Call) else decorator
             if isinstance(target, ast.Name) and target.id == "fixture":
                 return True
@@ -543,7 +544,7 @@ def render_readme(
         "",
         "![Jaeger trace graph for the governed BAGO demo](portfolio/assets/jaeger-trace-graph.png)",
         "",
-        "Trace ID: `94ee6c8d7a05b27487489a97da7480a5` · 15 spans · validado localmente el 2026-10-07. La [evidencia L15 versionada](evidence/l15_otel_jaeger_live.md) es accesible desde GitHub; la UI de Jaeger solo está disponible al reproducirla en local.",
+        "Trace ID: `04b58bb123bb6cc94a8cc0d60c7145ae` · 15 spans · validado localmente el 2026-10-08. La [evidencia L15 versionada](evidence/l15_otel_jaeger_live.md) es accesible desde GitHub; la UI de Jaeger solo está disponible al reproducirla en local.",
         "",
         "### Reproduce el trace en local",
         "",
@@ -557,7 +558,7 @@ def render_readme(
         "",
         "Guía detallada: [L15 OpenTelemetry + Jaeger](docs/otel_jaeger.md).",
         "",
-        "Profundiza en las fases L0–L15 en el [roadmap](#roadmap-detectado), o consulta [STATE.md](STATE.md) para el alcance canónico y [portfolio/README.md](portfolio/README.md) para la presentación del producto.",
+        "Profundiza en las fases L0-L15 en el [roadmap](#roadmap-detectado), o consulta [STATE.md](STATE.md) para el alcance canónico y [portfolio/README.md](portfolio/README.md) para la presentación del producto.",
         "",
         "## Estado actual",
         "",
