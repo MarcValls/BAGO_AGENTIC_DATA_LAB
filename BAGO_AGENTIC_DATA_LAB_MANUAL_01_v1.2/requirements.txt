@@ -1,0 +1,2 @@
+weasyprint==68.0
+Pillow>=10,<13

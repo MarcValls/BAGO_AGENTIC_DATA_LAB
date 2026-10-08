@@ -1,0 +1,13 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "bago-agent-decision-engineering-team",
+  "version": "0.1.0",
+  "description": "Self-coordinating Codex engineering team for interfaces that expose agent conclusions, supporting evidence, provenance, traces, proposed actions, authorization and execution receipts.",
+  "author": {"name": "Marc Valls"},
+  "keywords": ["codex", "multi-agent", "agent-observability", "provenance", "governance", "human-in-the-loop", "decision-inspector"],
+  "extensions": {
+    "com.openai": {
+      "onboardingSkill": "./skills/team-orchestrator/SKILL.md"
+    }
+  }
+}

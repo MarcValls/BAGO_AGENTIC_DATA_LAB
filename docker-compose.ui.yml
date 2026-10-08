@@ -1,0 +1,25 @@
+services:
+  api:
+    image: bago-portfolio:latest
+    build:
+      context: .
+      dockerfile: Dockerfile.ui
+    ports:
+      - "8080:8080"
+    environment:
+      - PYTHONUNBUFFERED=1
+    volumes:
+      - ./demo_output/latest:/app/demo_output/latest:ro
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/api/health"]
+      interval: 5s
+      timeout: 2s
+      retries: 3
+
+  # Optional: Jaeger for trace visualization
+  jaeger:
+    image: jaegertracing/all-in-one:latest
+    ports:
+      - "16687:16686"
+    environment:
+      - COLLECTOR_OTLP_ENABLED=true

@@ -1,0 +1,43 @@
+{
+  "changed_files": [
+    "frontend/src/contracts/trace/trace.ts",
+    "frontend/src/adapters/trace/localTraceAdapter.ts",
+    "frontend/tests/contracts/trace/trace.test.ts",
+    "docs/decision-inspector/contracts/trace/decision-trace-v1.md"
+  ],
+  "outputs": [
+    { "kind": "decision_trace_contract_v1", "path": "frontend/src/contracts/trace/trace.ts" },
+    { "kind": "local_trace_timeline_adapter", "path": "frontend/src/adapters/trace/localTraceAdapter.ts" },
+    { "kind": "trace_contract_tests", "path": "frontend/tests/contracts/trace/trace.test.ts" },
+    { "kind": "trace_contract_documentation", "path": "docs/decision-inspector/contracts/trace/decision-trace-v1.md" }
+  ],
+  "verification": [
+    {
+      "command": "cd frontend; .\\node_modules\\.bin\\tsc --target ES2020 --module commonjs --moduleResolution node --strict --esModuleInterop --skipLibCheck --outDir <TEMP> src/contracts/trace/trace.ts src/adapters/trace/localTraceAdapter.ts tests/contracts/trace/trace.test.ts",
+      "evidence": "TypeScript compilation completed with exit code 0 into a disposable TEMP directory.",
+      "result": "PASS"
+    },
+    {
+      "command": "node --test <TEMP>/tests/contracts/trace/trace.test.js",
+      "evidence": "4 tests passed, 0 failed: unordered source events/sequence gaps; chronology versus causality and missing parents; missing claim/action/Jaeger correlation; failed status and redaction pass-through; duplicate ids; explicit correlation.",
+      "result": "PASS"
+    },
+    {
+      "command": "git diff --check",
+      "evidence": "No whitespace errors in reviewed changes.",
+      "result": "PASS"
+    },
+    {
+      "command": "Inspect LocalTrace source, current trace artifact, CR-001 and W01-W03 handoffs; python .codex-team-kit/scripts/teamctl.py verify",
+      "evidence": "Mapped LocalTrace identity/sequence/parent/status/attributes/evidence_refs. Current sample lacks claim/action ids and UI-to-Jaeger correlation; adapter exposes these absences. W01-W03 dependencies were DONE and validated.",
+      "result": "PASS"
+    }
+  ],
+  "residual_risks": [
+    "Current LocalTrace sample does not carry claim/action ids; these remain explicitly missing until an upstream producer supplies them.",
+    "Current artifacts do not include a UI-to-Jaeger URL/correlation id; Jaeger correlation is marked unavailable.",
+    "The adapter preserves redaction markers but cannot establish that an upstream producer redacted every sensitive value.",
+    "Checks validate the isolated contract/adapter only; UI behavior and full frontend build were not run."
+  ],
+  "next_consumers": ["W08", "W10"]
+}

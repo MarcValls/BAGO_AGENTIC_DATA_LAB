@@ -1,0 +1,15 @@
+{
+  "change_request_id": "CR-002-W10-APP-INTEGRATION-SCOPE",
+  "contract_id": "agent-decision-inspector-W10-write-scope-v1",
+  "old_fingerprint": "0de7f90f5813de00953c16f4a194c274e58b5d2a1fa9ee5d41d36d04e9dde5bf",
+  "proposed_new_fingerprint": "945919fd904cdd709510769bc1d0287761716b7e42e85bc86c5421a26ddbeffd",
+  "reason": "W10 must mount the completed feature in the existing frontend/src/App.tsx and may need to adjust the global frontend shell. W06 build surfaced an existing invalid border-color declaration in frontend/src/index.css. These paths were outside the original W10 scope.",
+  "impacted_consumers": [
+    "W10",
+    "W11",
+    "W12"
+  ],
+  "required_invalidations": [],
+  "decision": "Applied before W10 was claimed; contracts and UI specialist scopes remain unchanged.",
+  "adapted_mission_sha256": "945919fd904cdd709510769bc1d0287761716b7e42e85bc86c5421a26ddbeffd"
+}

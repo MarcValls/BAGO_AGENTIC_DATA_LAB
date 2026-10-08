@@ -1,0 +1,28 @@
+.decision-trace { color: #f8fafc; }
+.decision-trace__header { display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem; flex-wrap: wrap; }
+.decision-trace__header h2 { margin-bottom: .25rem; }
+.decision-trace__header p, .decision-trace__model { color: #cbd5e1; }
+.decision-trace__jaeger { max-width: 24rem; padding: .65rem; border: 1px solid #64748b; border-radius: .4rem; }
+.decision-trace__gaps { margin: 1rem 0; padding: .75rem 1rem; border-left: 4px solid #fbbf24; background: #292524; }
+.decision-trace__gaps h3 { margin-top: 0; }
+.decision-trace__events { display: grid; gap: 1rem; padding-left: 1.5rem; }
+.decision-trace__event article { padding: 1rem; border: 1px solid #475569; border-radius: .5rem; background: #0f172a; }
+.decision-trace__event article > header { display: flex; align-items: baseline; gap: .75rem; flex-wrap: wrap; }
+.decision-trace__event h3 { margin: 0; flex: 1; }
+.decision-trace__sequence { color: #cbd5e1; }
+.decision-trace__status { padding: .2rem .55rem; border: 1px solid #94a3b8; border-radius: 999px; }
+.decision-trace__status--error, .decision-trace__status--deny, .decision-trace__status--failed { color: #fecaca; border-color: #f87171; }
+.decision-trace__facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr)); gap: .75rem; }
+.decision-trace__facts dt, .decision-trace__attribute dt { color: #cbd5e1; font-weight: 600; }
+.decision-trace__facts dd { margin: .25rem 0 0; overflow-wrap: anywhere; }
+.decision-trace__correlation { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem; margin: .75rem 0; }
+.decision-trace__correlation code, .decision-trace code { overflow-wrap: anywhere; }
+.decision-trace__payload { margin-top: .75rem; }
+.decision-trace__payload summary { cursor: pointer; width: fit-content; }
+.decision-trace__payload dl { display: grid; gap: .5rem; }
+.decision-trace__attribute { display: grid; grid-template-columns: minmax(8rem, 1fr) 3fr; gap: .75rem; }
+.decision-trace__attribute dd { margin: 0; min-width: 0; }
+.decision-trace__attribute pre { white-space: pre-wrap; overflow-wrap: anywhere; margin: 0; }
+.decision-trace__redaction-note { color: #cbd5e1; font-size: .9rem; }
+.decision-trace :focus-visible { outline: 3px solid #fbbf24; outline-offset: 3px; }
+@media (max-width: 600px) { .decision-trace__attribute { grid-template-columns: 1fr; gap: .2rem; } }

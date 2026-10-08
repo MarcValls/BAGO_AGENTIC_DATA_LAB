@@ -18,7 +18,9 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: "3.11"
-      - name: Install project dependencies
+          cache: pip
+          cache-dependency-path: requirements.txt
+      - name: Install README check dependencies
         run: python -m pip install -r requirements.txt
       - name: Check generated README
         run: python scripts/generate_dynamic_readme.py --check --skip-tests

@@ -544,7 +544,7 @@ def render_readme(
         "",
         "![Jaeger trace graph for the governed BAGO demo](portfolio/assets/jaeger-trace-graph.png)",
         "",
-        "Trace ID: `94ee6c8d7a05b27487489a97da7480a5` · 15 spans · validado localmente el 2026-10-07. La [evidencia L15 versionada](evidence/l15_otel_jaeger_live.md) es accesible desde GitHub; la UI de Jaeger solo está disponible al reproducirla en local.",
+        "Trace ID: `04b58bb123bb6cc94a8cc0d60c7145ae` · 15 spans · validado localmente el 2026-10-08. La [evidencia L15 versionada](evidence/l15_otel_jaeger_live.md) es accesible desde GitHub; la UI de Jaeger solo está disponible al reproducirla en local.",
         "",
         "### Reproduce el trace en local",
         "",

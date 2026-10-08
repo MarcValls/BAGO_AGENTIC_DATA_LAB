@@ -1,0 +1,63 @@
+{
+  "changed_files": [
+    "frontend/src/contracts/action/action.ts",
+    "frontend/src/adapters/action/agentRun.ts",
+    "frontend/tests/contracts/action/action.test.ts",
+    "docs/decision-inspector/contracts/action/decision-action-v1.md"
+  ],
+  "outputs": [
+    {
+      "path": "frontend/src/contracts/action/action.ts",
+      "kind": "decision_action_contract_v1",
+      "sha256": "b9a106a70c3bdd37f1855f2846052cb51472c8d438aa8f618fc236e83d053730"
+    },
+    {
+      "path": "frontend/src/adapters/action/agentRun.ts",
+      "kind": "agent_run_action_receipt_adapter",
+      "sha256": "5ab6059e347c350e73a4f025150aa3fb8e408486ce83c2698bffa2948f364fa4"
+    },
+    {
+      "path": "frontend/tests/contracts/action/action.test.ts",
+      "kind": "action_contract_tests",
+      "sha256": "23090dc3bb8eb8fba437790c31aa7d347971ca76a10a2ee0d6275158dd129321"
+    },
+    {
+      "path": "docs/decision-inspector/contracts/action/decision-action-v1.md",
+      "kind": "action_contract_documentation",
+      "sha256": "ca5b7a952b909d5b60db86e2a9b6891ec67a41b8b78c53f5312ef329b3ad695c"
+    }
+  ],
+  "verification": [
+    {
+      "command": "frontend: .\\node_modules\\.bin\\tsc --target ES2020 --module commonjs --moduleResolution node --strict --esModuleInterop --skipLibCheck --outDir <temp> src/contracts/action/action.ts src/adapters/action/agentRun.ts tests/contracts/action/action.test.ts",
+      "evidence": "TypeScript compiler completed with exit code 0; output was written to a disposable TEMP directory.",
+      "result": "PASS"
+    },
+    {
+      "command": "frontend: node --test <temp>\\tests\\contracts\\action\\action.test.js",
+      "evidence": "5 tests passed, 0 failed: distinct lifecycle states; expired permit; rejection/reason; execution failure; missing and mismatched receipt; success without matched receipt remains unverified; absent fields remain unknown.",
+      "result": "PASS"
+    },
+    {
+      "command": "python -c <UTF-8 trailing-whitespace and SHA-256 check over four W05 files>",
+      "evidence": "No trailing whitespace; SHA-256 values recorded beside each output.",
+      "result": "PASS"
+    },
+    {
+      "command": "python .codex-team-kit/scripts/teamctl.py inspect W05; python .codex-team-kit/scripts/teamctl.py verify",
+      "evidence": "W05 is CLAIMED by /root/action_contract with W02 dependency DONE; teamctl verify passed before handoff materialization.",
+      "result": "PASS"
+    }
+  ],
+  "residual_risks": [
+    "AgentRun proposal serialization does not include the full Permit; permit validity, issuer and rationale remain unknown unless a matching permit is explicitly supplied.",
+    "The inspected AgentRun sources provide no capability availability or independent eligibility decision; both remain unknown absent a supplied inventory or assessment.",
+    "This is a read-only projection; it does not verify receipt signatures, authorize execution, or prove transport reachability.",
+    "The full frontend application and browser UI were not validated by this contract-focused check."
+  ],
+  "next_consumers": [
+    "W09",
+    "W10",
+    "W11"
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "change_request_id": "CR-003-W10-HTML-SHELL-SCOPE",
+  "contract_id": "agent-decision-inspector-W10-write-scope-v1",
+  "old_fingerprint": "945919fd904cdd709510769bc1d0287761716b7e42e85bc86c5421a26ddbeffd",
+  "proposed_new_fingerprint": "7232ac33aba61b3be09828706f8823da0625030e7edca91d92c3010efd03d4a6",
+  "reason": "W10 app integration also updates the frontend document language, page title, description and favicon to finish the mounted inspector UI and remove the browser favicon 404.",
+  "impacted_consumers": [
+    "W10",
+    "W11",
+    "W12"
+  ],
+  "required_invalidations": [],
+  "decision": "Applied before W10 handoff; W11 verification must include the resulting document shell.",
+  "adapted_mission_sha256": "7232ac33aba61b3be09828706f8823da0625030e7edca91d92c3010efd03d4a6"
+}

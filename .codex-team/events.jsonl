@@ -1,0 +1,34 @@
+{"at": "2026-10-08T16:50:16+00:00", "kind": "MISSION_INIT", "mission_id": "AGENT_DECISION_INSPECTOR_V1", "mission_sha256": "8f07baea4079a652f2730c8d4314e7996847edf6da343241cbc0882104487ea3"}
+{"agent": "team-orchestrator", "at": "2026-10-08T16:50:39+00:00", "kind": "CLAIM", "role": "team-orchestrator", "work_id": "W01"}
+{"at": "2026-10-08T16:51:36+00:00", "kind": "HANDOFF_DONE", "payload_sha256": "735cab00b512f0c214e5e91c87179bb70ce280c24a6d0a84cdd79c5d23d52e0f", "work_id": "W01"}
+{"at": "2026-10-08T16:52:21+00:00", "from_agent": "team-orchestrator", "kind": "COORDINATION_NOTE", "note_kind": "CONTRACT", "text": "CR-001-FRONTEND-MISSION-SCOPES applied before W02/W03 claims. Adapted scopes to frontend/src and frontend/tests based on W01 reuse/boundary inventory; original installed mission and pack unchanged. Adapted fingerprint is in .codex-team/change_requests/CR-001-FRONTEND-MISSION-SCOPES.json.", "to_agent": "team"}
+{"agent": "/root/evidence_contract", "at": "2026-10-08T16:52:27+00:00", "kind": "CLAIM", "role": "evidence-provenance-engineer", "work_id": "W02"}
+{"agent": "/root/ux_contract", "at": "2026-10-08T16:52:27+00:00", "kind": "CLAIM", "role": "decision-ux-engineer", "work_id": "W03"}
+{"at": "2026-10-08T16:53:48+00:00", "kind": "HANDOFF_DONE", "payload_sha256": "f80edf8d7561943ee4710020ab019fb4263c8a41fa1cd9bd6771f08d63243bc2", "work_id": "W03"}
+{"at": "2026-10-08T16:54:40+00:00", "kind": "HANDOFF_DONE", "payload_sha256": "bc9163065d52fce556c30f0c720650dcc7578519c4e810a197555cd09f9de4bd", "work_id": "W02"}
+{"agent": "/root/trace_contract", "at": "2026-10-08T16:55:18+00:00", "kind": "CLAIM", "role": "trace-observability-engineer", "work_id": "W04"}
+{"agent": "/root/inspector_shell", "at": "2026-10-08T16:55:24+00:00", "kind": "CLAIM", "role": "decision-ui-engineer", "work_id": "W06"}
+{"agent": "/root/action_contract", "at": "2026-10-08T16:55:25+00:00", "kind": "CLAIM", "role": "governance-action-engineer", "work_id": "W05"}
+{"at": "2026-10-08T16:56:05+00:00", "kind": "HANDOFF_DONE", "payload_sha256": "71699eb3e798b9e452dd9163f0e271cebe215a8102c72ef4b0008ed641eaa9f5", "work_id": "W04"}
+{"at": "2026-10-08T16:57:06+00:00", "kind": "HANDOFF_DONE", "payload_sha256": "0fc6849206480b9367475bd6785a2465c8ba81f006bfbebc950d56074904e6f1", "work_id": "W06"}
+{"at": "2026-10-08T16:57:36+00:00", "from_agent": "/root/inspector_shell", "kind": "COORDINATION_NOTE", "note_kind": "RISK", "text": "W06 build passed but reported pre-existing CSS syntax warning: frontend/src/index.css button:hover has border-color without colon. CR-002 includes index.css within W10 integration scope for correction.", "to_agent": "team"}
+{"at": "2026-10-08T16:57:44+00:00", "kind": "HANDOFF_DONE", "payload_sha256": "9c67572cf9204377b87123270f39f3be4eda4a76b0bb32fac1b4d2987df63732", "work_id": "W05"}
+{"agent": "/root/evidence_ui", "at": "2026-10-08T16:58:08+00:00", "kind": "CLAIM", "role": "decision-ui-engineer", "work_id": "W07"}
+{"agent": "/root/trace_ui", "at": "2026-10-08T16:58:09+00:00", "kind": "CLAIM", "role": "decision-ui-engineer", "work_id": "W08"}
+{"at": "2026-10-08T16:59:37+00:00", "kind": "HANDOFF_DONE", "payload_sha256": "e91c56d8c7f378ab6414b239e3a007a86496f21510fb9d38ffe74e82e045b740", "work_id": "W08"}
+{"agent": "/root/action_ui", "at": "2026-10-08T16:59:46+00:00", "kind": "CLAIM", "role": "decision-ui-engineer", "work_id": "W09"}
+{"at": "2026-10-08T16:59:50+00:00", "from_agent": "team-orchestrator", "kind": "COORDINATION_NOTE", "note_kind": "INFO", "text": "Live L15 validation executed at 2026-10-08T16:59:38Z: PASS; LocalTrace trace-5b385699ffda0529 projected 15/15 spans to Jaeger trace 04b58bb123bb6cc94a8cc0d60c7145ae; expected operations observed. Evidence is evidence/l15_otel_jaeger_live.md. This validates backend projection only; UI payload does not carry Jaeger trace ID.", "to_agent": "/root/trace_ui"}
+{"at": "2026-10-08T17:00:30+00:00", "kind": "HANDOFF_DONE", "payload_sha256": "8261cefa4fb72c26899b9ddc1bc839307bb403d1c743f18e751f93c35d09130a", "work_id": "W07"}
+{"at": "2026-10-08T17:01:33+00:00", "kind": "HANDOFF_DONE", "payload_sha256": "f7db8b162573d2cfb903807f2a89bb3559e190c037747ae1ec7f12cb5e4da791", "work_id": "W09"}
+{"agent": "team-orchestrator", "at": "2026-10-08T17:01:53+00:00", "kind": "CLAIM", "role": "team-orchestrator", "work_id": "W10"}
+{"at": "2026-10-08T17:15:05+00:00", "kind": "HANDOFF_DONE", "payload_sha256": "a89fb712ca533f4965e2e0f129f50e04ce405198c35c21f3c5e3e5b1992fe27c", "work_id": "W10"}
+{"agent": "/root/verification", "at": "2026-10-08T17:15:08+00:00", "kind": "CLAIM", "role": "verification-engineer", "work_id": "W11"}
+{"at": "2026-10-08T17:17:05+00:00", "kind": "HANDOFF_DONE", "payload_sha256": "4bce151b5965f0b522f9d53f71e590c3df18339be137a46222fe73b98c99d188", "work_id": "W11"}
+{"agent": "/root/receipt_guard", "at": "2026-10-08T17:18:11+00:00", "kind": "CLAIM", "role": "decision-ui-engineer", "work_id": "W13"}
+{"at": "2026-10-08T17:19:57+00:00", "kind": "HANDOFF_DONE", "payload_sha256": "7f20bc48efd2a740cde188058c48f77d2e695022943c30f12d343ddda4f81ada", "work_id": "W13"}
+{"agent": "/root/verification_followup", "at": "2026-10-08T17:20:09+00:00", "kind": "CLAIM", "role": "verification-engineer", "work_id": "W14"}
+{"at": "2026-10-08T17:21:31+00:00", "kind": "HANDOFF_DONE", "payload_sha256": "0420b0b20f22e7b1957ba13018ad87fb2f0b55195542f6fd5de0b9b2e326b3c1", "work_id": "W14"}
+{"agent": "team-orchestrator", "at": "2026-10-08T17:21:55+00:00", "kind": "CLAIM", "role": "team-orchestrator", "work_id": "W12"}
+{"at": "2026-10-08T17:22:11+00:00", "kind": "HANDOFF_DONE", "payload_sha256": "83f39f3c55a9b764c9c2c2a36b921e8d0ccf82751fecb588ad82879a6f2f67d2", "work_id": "W12"}
+{"at": "2026-10-08T20:56:00+00:00", "from_agent": "team-orchestrator", "kind": "COORDINATION_NOTE", "note_kind": "CONTRACT", "text": "CR-005 accepts a backward-compatible handoff schema for the historical kind/path/sha256 and current id/path/frozen output shapes; validate all 14 stored handoffs without rewriting payloads. Refresh state mission_sha256 to the active mission file hash a25883dbc65651ac7ff84129c5092af1b9ffcac4230ea3c7423d632380551e01, already recorded by CR-004.", "to_agent": "team"}
+{"at": "2026-10-08T20:56:41+00:00", "from_agent": "team-orchestrator", "kind": "COORDINATION_NOTE", "note_kind": "INFO", "text": "CR-005 applied: both handoff schema copies now have SHA-256 6da35ba45ccdef4bd10639e2e704287343f2d7cecb87ed61dc2191f63cdc8149; Draft 2020-12 validation passes for all 14 handoffs (9 historical, 5 current) without changing payloads. state.json mission_sha256 now matches active mission a25883dbc65651ac7ff84129c5092af1b9ffcac4230ea3c7423d632380551e01. teamctl verify PASS.", "to_agent": "team"}

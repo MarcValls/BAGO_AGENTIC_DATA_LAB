@@ -1,0 +1,65 @@
+{
+  "changed_files": [
+    "frontend/src/features/decision-inspector/actions/ActionReview.tsx",
+    "frontend/src/features/decision-inspector/actions/ActionReview.css",
+    "frontend/tests/ui/decision-inspector/actions/action-review.test.tsx"
+  ],
+  "next_consumers": [
+    "W10",
+    "W11"
+  ],
+  "outputs": [
+    {
+      "kind": "proposed_action_authorization_execution_receipt_inspector",
+      "path": "frontend/src/features/decision-inspector/actions/ActionReview.tsx",
+      "sha256": "95f37de7d18e2f3ff39041b9e3952bb4edc7be026696551e51f92788054bb373"
+    },
+    {
+      "kind": "responsive_action_inspector_styles",
+      "path": "frontend/src/features/decision-inspector/actions/ActionReview.css",
+      "sha256": "d169b39f42a35928453de2fedc5601f34dde8dd3fa37f874c5bc392b93a4071e"
+    },
+    {
+      "kind": "action_inspector_ui_tests",
+      "path": "frontend/tests/ui/decision-inspector/actions/action-review.test.tsx",
+      "sha256": "4fa70024111d540682f955e6c27afff039ab712fe79541e41970782813346dd0"
+    }
+  ],
+  "payload_sha256": "f7db8b162573d2cfb903807f2a89bb3559e190c037747ae1ec7f12cb5e4da791",
+  "residual_risks": [
+    "W09 surface is not mounted in the app; W10 owns integration.",
+    "Review controls are intentionally disabled and read-only; no approval/rejection API or execution action is invoked.",
+    "Manual keyboard and screen-reader review remains for W11.",
+    "Production build retains pre-existing CSS syntax warning at frontend/src/index.css:1529."
+  ],
+  "role": "decision-ui-engineer",
+  "status": "DONE",
+  "verification": [
+    {
+      "command": "TypeScript focused compile to disposable TEMP directory",
+      "evidence": "tsc --target ES2020 --module commonjs --moduleResolution node --strict --esModuleInterop --skipLibCheck --jsx react-jsx compiled W09 test and imported implementation with exit code 0.",
+      "result": "PASS"
+    },
+    {
+      "command": "Node test runner with temporary CSS import hook",
+      "evidence": "4 action review UI tests passed, 0 failed. Covered normal lifecycle, denied decision, missing/mismatched receipt, success without matched receipt, loading/empty/error/unsupported/unknown.",
+      "result": "PASS"
+    },
+    {
+      "command": "npm run build",
+      "evidence": "TypeScript and Vite production build passed, 107 modules transformed. Existing warning in frontend/src/index.css:1529 border-color declaration is missing a colon.",
+      "result": "PASS"
+    },
+    {
+      "command": "git diff --check -- frontend/src/features/decision-inspector/actions frontend/tests/ui/decision-inspector/actions",
+      "evidence": "No whitespace errors in W09 scoped paths.",
+      "result": "PASS"
+    },
+    {
+      "command": "python .codex-team-kit/scripts/teamctl.py verify",
+      "evidence": "PASS before W09 handoff materialization; dependencies W03, W05, W06 and their handoffs validate.",
+      "result": "PASS"
+    }
+  ],
+  "work_id": "W09"
+}

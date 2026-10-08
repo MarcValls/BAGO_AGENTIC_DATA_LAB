@@ -1,0 +1,60 @@
+{
+  "changed_files": [
+    "frontend/src/features/decision-inspector/integration/DecisionInspector.tsx",
+    "frontend/tests/ui/decision-inspector/integration/integration.test.tsx",
+    "docs/decision-inspector/verification/W13_RECEIPT_RUN_BINDING.md"
+  ],
+  "next_consumers": [
+    "W14"
+  ],
+  "outputs": [
+    {
+      "frozen": false,
+      "id": "receipt-run-binding-guard-v1",
+      "path": "frontend/src/features/decision-inspector/integration/DecisionInspector.tsx",
+      "sha256": "a865f1f4c2733c437499d4124dd426452b286086af1711c1c7276db42b7f76b7"
+    },
+    {
+      "frozen": false,
+      "id": "receipt-run-identity-adversarial-fixtures-v1",
+      "path": "frontend/tests/ui/decision-inspector/integration/integration.test.tsx",
+      "sha256": "eaa5dce00865d0ebc1cba93a6d44c135c7473db8bae9ebec883ecb9de31d04b5"
+    },
+    {
+      "frozen": false,
+      "id": "w11-p1-receipt-run-binding-remediation",
+      "path": "docs/decision-inspector/verification/W13_RECEIPT_RUN_BINDING.md",
+      "sha256": "ffad6321bdfa08b1e84eb1a7390fb08189da3b49d850a1d6dbe5b01d2de72541"
+    }
+  ],
+  "payload_sha256": "7f20bc48efd2a740cde188058c48f77d2e695022943c30f12d343ddda4f81ada",
+  "residual_risks": [
+    "Run identity is source-supplied and checked for equality; this is not cryptographic attestation of receipt origin.",
+    "W14 independent adversarial re-verification remains pending."
+  ],
+  "role": "decision-ui-engineer",
+  "status": "DONE",
+  "verification": [
+    {
+      "command": "npm run build (cwd frontend)",
+      "evidence": "TypeScript build and Vite production build completed; 124 modules transformed.",
+      "result": "PASS"
+    },
+    {
+      "command": "Focused compiled integration check: node --test %TEMP%\\bago-inspector-w13-20261008\\tests\\ui\\decision-inspector\\integration\\integration.test.js (CSS imports stubbed; NODE_PATH=frontend/node_modules)",
+      "evidence": "5 tests passed, 0 failed; includes foreign-run receipt with colliding receipt_id/request_id and missing run_id in mcp/provider receipt inputs.",
+      "result": "PASS"
+    },
+    {
+      "command": "git diff --check -- frontend/src/features/decision-inspector/integration frontend/tests/ui/decision-inspector/integration docs/decision-inspector/verification",
+      "evidence": "No whitespace errors in W13 scopes.",
+      "result": "PASS"
+    },
+    {
+      "command": "python .codex-team-kit/scripts/teamctl.py verify (before W13 handoff)",
+      "evidence": "All dependency handoffs validate before materializing W13.",
+      "result": "PASS"
+    }
+  ],
+  "work_id": "W13"
+}

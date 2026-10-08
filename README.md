@@ -43,7 +43,7 @@ Vista real del trace L15 en Jaeger: 15 spans conectan retrieval, propuesta, perm
 
 ![Jaeger trace graph for the governed BAGO demo](portfolio/assets/jaeger-trace-graph.png)
 
-Trace ID: `94ee6c8d7a05b27487489a97da7480a5` · 15 spans · validado localmente el 2026-10-07. La [evidencia L15 versionada](evidence/l15_otel_jaeger_live.md) es accesible desde GitHub; la UI de Jaeger solo está disponible al reproducirla en local.
+Trace ID: `04b58bb123bb6cc94a8cc0d60c7145ae` · 15 spans · validado localmente el 2026-10-08. La [evidencia L15 versionada](evidence/l15_otel_jaeger_live.md) es accesible desde GitHub; la UI de Jaeger solo está disponible al reproducirla en local.
 
 ### Reproduce el trace en local
 
@@ -286,6 +286,8 @@ La tabla se extrae de JOB_SKILL_MATRIX.md y se mantiene fuera del README.
 - `src/adapters/openmetadata_adapter.py`
 - `src/agent/__init__.py`
 - `src/agent/governed_knowledge_agent.py`
+- `src/api/__init__.py`
+- `src/api/server.py`
 - `src/context/__init__.py`
 - `src/context/workspace_binding.py`
 - `src/etl/pipeline.py`
@@ -293,6 +295,7 @@ La tabla se extrae de JOB_SKILL_MATRIX.md y se mantiene fuera del README.
 - `src/evaluation/local_evals.py`
 - `src/execution/__init__.py`
 - `src/execution/gateway.py`
+- `src/jobs/__init__.py`
 - `src/metadata/ontology.py`
 - `src/metadata/ontology_engine.py`
 - `src/metadata/ontology_generator.py`
@@ -365,10 +368,26 @@ La tabla se extrae de JOB_SKILL_MATRIX.md y se mantiene fuera del README.
 
 ### Documentación
 
+- `docs/AGENT_CHAT_COMPLETE.md`
+- `docs/FINAL_STATUS.md`
+- `docs/IMPLEMENTATION_COMPLETE.md`
+- `docs/README.md`
+- `docs/agent_builder_ui.md`
 - `docs/aws_bedrock_setup.md`
 - `docs/bago-sync-agent.md`
 - `docs/bedrock_knowledge_base.md`
 - `docs/commercetools_capstone.md`
+- `docs/decision-inspector/FINAL_STATUS.md`
+- `docs/decision-inspector/MANUAL_PARA_DUMMIES.md`
+- `docs/decision-inspector/contracts/action/decision-action-v1.md`
+- `docs/decision-inspector/contracts/evidence/decision-evidence-v1.md`
+- `docs/decision-inspector/contracts/trace/decision-trace-v1.md`
+- `docs/decision-inspector/inventory/REPOSITORY_INVENTORY.md`
+- `docs/decision-inspector/ux/UX_CONTRACT.md`
+- `docs/decision-inspector/verification/W11_INDEPENDENT_VERIFICATION.md`
+- `docs/decision-inspector/verification/W13_RECEIPT_RUN_BINDING.md`
+- `docs/decision-inspector/verification/W14_INDEPENDENT_RECEIPT_VERIFICATION.md`
+- `docs/full_orchestration.md`
 - `docs/governed_rag.md`
 - `docs/local_vector_store.md`
 - `docs/mcp_governance.md`
@@ -377,9 +396,11 @@ La tabla se extrae de JOB_SKILL_MATRIX.md y se mantiene fuera del README.
 - `docs/ontology_generator.md`
 - `docs/openmetadata_catalog.md`
 - `docs/otel_jaeger.md`
+- `docs/portfolio_ui.md`
 - `docs/public_e2e_demo.md`
 - `docs/readme_generation.md`
 - `docs/sandbox_manager.md`
+- `docs/submodule-candidates.md`
 - `docs/workspace_binding.md`
 
 ### Scripts
