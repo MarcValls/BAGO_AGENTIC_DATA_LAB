@@ -3,13 +3,25 @@
 [![CI](https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/actions/workflows/ci.yml/badge.svg)](https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/actions/workflows/ci.yml)
 [![GitHub](https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/actions/workflows/readme-consistency.yml/badge.svg)](https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/actions/workflows/readme-consistency.yml)
 [![Branch](https://img.shields.io/badge/branch-main-green)](https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/tree/main)
-[![Tests](https://img.shields.io/badge/tests-157%2F157%20passing-brightgreen)](https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/actions)
+[![Tests](https://img.shields.io/badge/tests-162%2F162%20passing-brightgreen)](https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/actions)
 [![License](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 
 > Laboratorio experimental para desarrollar capacidades de AI Engineering con gobernanza BAGO.
 > Este documento se genera desde el estado y los artefactos del repositorio.
 
-## Demo de portfolio
+## El problema
+
+Un agente empresarial necesita demostrar de dónde viene la respuesta, qué la autoriza y qué efecto ocurrió. Una salida plausible del modelo no demuestra ninguno de esos hechos.
+
+## Arquitectura en una mirada
+
+```text
+CONOCIMIENTO → EVIDENCIA → RELACIONES → PROPUESTA → AUTORIZACIÓN → EJECUCIÓN RESTRINGIDA → RECIBO → TRACE → EVALUACIÓN
+```
+
+El modelo propone; BAGO controla si la propuesta cruza a un efecto. La ruta local reproducible registra 15 spans y conserva los límites entre propuesta, permiso y ejecución.
+
+## Ejecuta la demo
 
 La extracción de producto reutiliza los componentes L0–L15 existentes; no
 introduce una arquitectura de agente paralela. Ver [portfolio/README.md](portfolio/README.md).
@@ -21,13 +33,39 @@ python demo.py
 El comando materializa summary, agent run, receipts, trace y evaluation en
 `demo_output/latest/` sin convertir esa proyección en fuente canónica.
 
+## Evidencia de ejecución
+
+La evidencia versionada de L15 registra el trace consultado en Jaeger: [resultado y trace ID](evidence/l15_otel_jaeger_live.md). El demo produce `trace.json`, recibos y evaluación determinista; Jaeger es una proyección local, no autoridad de ejecución.
+
+### See it in action
+
+Vista real del trace L15 en Jaeger: 15 spans conectan retrieval, propuesta, permiso, ejecución y recibos.
+
+![Jaeger trace graph for the governed BAGO demo](portfolio/assets/jaeger-trace-graph.png)
+
+Trace ID: `94ee6c8d7a05b27487489a97da7480a5` · 15 spans · validado localmente el 2026-10-07. La [evidencia L15 versionada](evidence/l15_otel_jaeger_live.md) es accesible desde GitHub; la UI de Jaeger solo está disponible al reproducirla en local.
+
+### Reproduce el trace en local
+
+Requiere Docker. Este recorrido inicia Jaeger, exporta y consulta el trace, y detiene el servicio al terminar:
+
+```bash
+docker compose -p bago-otel -f infra/observability/docker-compose.yml up -d
+python scripts/run_l15_otel_live_validation.py --check
+docker compose -p bago-otel -f infra/observability/docker-compose.yml down
+```
+
+Guía detallada: [L15 OpenTelemetry + Jaeger](docs/otel_jaeger.md).
+
+Profundiza en las fases L0–L15 en el [roadmap](#roadmap-detectado), o consulta [STATE.md](STATE.md) para el alcance canónico y [portfolio/README.md](portfolio/README.md) para la presentación del producto.
+
 ## Estado actual
 
 | Métrica | Valor |
 |---|---|
-| Tests ejecutados | **157/157** |
+| Tests ejecutados | **162/162** |
 | Rama pública | `main` |
-| Estado actualizado | 2026-09-24 |
+| Estado actualizado | 2026-10-07 |
 | Fase actual | **L15 · OpenTelemetry + Jaeger Local Live** · VERIFIED (local live) |
 | Siguiente bloque | do not make additional cloud calls under the zero-cost rule; confirm a later billing record manually only if zero-dollar charging must be claimed, and keep streaming, Knowledge Base and remote integrations separately scoped |
 | Estado declarado | VERIFIED for the local RDF/Turtle materialization, bounded SPARQL subset, deterministic inference, contradiction constraints, RAG seed handoff, the real local OpenMetadata 1.12.6 validation, the local restricted sandbox execution boundary, the local trace/evaluation chain, the public zero-cost E2E demo executed by the same CI contract, the persistent local SQLite vector index consumed by GovernedRAG and the local OpenTelemetry → Jaeger trace projection; one bounded live AWS Bedrock `Converse` call through the governed adapter is `VERIFIED`; a separate read-only AWS Free Tier check observes an active `FREE` account plan with USD 100.00 remaining at validation time; AWS `ConverseStream`, Bedrock Knowledge Base, remote OpenMetadata, commercetools live integrations remain `NOT_RUN`, while zero-dollar billing for the Bedrock call remains `NOT_PROVEN`; GitHub issue #14 is separately executed and verified under human authorization, and the local human-reviewed checkpoint is recorded in `evidence/bago_canon_compliance_review.md`. |
@@ -248,6 +286,8 @@ La tabla se extrae de JOB_SKILL_MATRIX.md y se mantiene fuera del README.
 - `src/adapters/openmetadata_adapter.py`
 - `src/agent/__init__.py`
 - `src/agent/governed_knowledge_agent.py`
+- `src/api/__init__.py`
+- `src/api/server.py`
 - `src/context/__init__.py`
 - `src/context/workspace_binding.py`
 - `src/etl/pipeline.py`
@@ -255,6 +295,7 @@ La tabla se extrae de JOB_SKILL_MATRIX.md y se mantiene fuera del README.
 - `src/evaluation/local_evals.py`
 - `src/execution/__init__.py`
 - `src/execution/gateway.py`
+- `src/jobs/__init__.py`
 - `src/metadata/ontology.py`
 - `src/metadata/ontology_engine.py`
 - `src/metadata/ontology_generator.py`
@@ -327,10 +368,15 @@ La tabla se extrae de JOB_SKILL_MATRIX.md y se mantiene fuera del README.
 
 ### Documentación
 
+- `docs/AGENT_CHAT_COMPLETE.md`
+- `docs/FINAL_STATUS.md`
+- `docs/IMPLEMENTATION_COMPLETE.md`
+- `docs/agent_builder_ui.md`
 - `docs/aws_bedrock_setup.md`
 - `docs/bago-sync-agent.md`
 - `docs/bedrock_knowledge_base.md`
 - `docs/commercetools_capstone.md`
+- `docs/full_orchestration.md`
 - `docs/governed_rag.md`
 - `docs/local_vector_store.md`
 - `docs/mcp_governance.md`
@@ -339,6 +385,7 @@ La tabla se extrae de JOB_SKILL_MATRIX.md y se mantiene fuera del README.
 - `docs/ontology_generator.md`
 - `docs/openmetadata_catalog.md`
 - `docs/otel_jaeger.md`
+- `docs/portfolio_ui.md`
 - `docs/public_e2e_demo.md`
 - `docs/readme_generation.md`
 - `docs/sandbox_manager.md`
