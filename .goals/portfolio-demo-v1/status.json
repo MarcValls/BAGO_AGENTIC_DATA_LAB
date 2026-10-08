@@ -1,0 +1,40 @@
+{
+  "goal_id": "portfolio-demo-v1",
+  "branch": "main",
+  "started_at": "2026-10-02T00:00:00Z",
+  "lifecycle": "EXECUTED + VERIFIED (with D1=NOT_RUN)",
+  "criteria": {
+    "A1_tag_annotated": {"status": "PASS", "evidence": "git tag -l portfolio-demo-v1 -n20 (annotated, points to c8fed937f807aae2fba228cdeeceb69d97c97c63 == HEAD)"},
+    "B1_tag_pushed": {"status": "PASS", "evidence": "git ls-remote origin portfolio-demo-v1 → c8fed937f807aae2fba228cdeeceb69d97c97c63"},
+    "C1_video_60_90s": {"status": "PASS", "evidence": "evidence/portfolio_demo_v1.mp4 (1920x1080, H.264 baseline, 76.50s, 9 frames, 30 fps)"},
+    "C2_video_sha256": {"status": "PASS", "evidence": "evidence/portfolio_demo_v1.mp4.sha256 (205ace01...) matches the .mp4 in tag; frame_set_sha256 f7417a1f... deterministic and stable across runs"},
+    "C3_duration_check": {"status": "PASS", "evidence": "ffprobe 76.50s ∈ [60,90]"},
+    "D1_jaeger_captures": {"status": "NOT_RUN", "evidence": "Docker daemon inalcanzable durante freeze; ver evidence/l15_jaeger_capture_attempt.md"},
+    "D2_fallback_evidence": {"status": "PASS", "evidence": "evidence/l15_otel_jaeger_live.md (inmutable, 15 spans, trace_found=true)"},
+    "E1_cv_linkedin_doc": {"status": "PASS", "evidence": "docs/cv_linkedin/portfolio-demo-v1.md (en HEAD, versionado)"},
+    "E2_readme_pointer": {"status": "PASS", "evidence": "README.md §Releases congelados + docs/readme_manifest.json §releases (badge 149/149)"}
+  },
+  "evidence": {
+    "tag_ref": "c8fed937f807aae2fba228cdeeceb69d97c97c63",
+    "tag_points_to_commit": "e99f4736d2cb18c5ce4920695f7b2547e3e73fbf",
+    "video_path": "evidence/portfolio_demo_v1.mp4",
+    "video_sha256_sidecar": "evidence/portfolio_demo_v1.mp4.sha256",
+    "video_mp4_sha256": "205ace01b9ca76cb94ef3a49e45e2c3f735f5dc21ac73c7a3cdf85f3e6fd670c",
+    "frame_set_sha256": "f7417a1f5d03ac332000ffb31fe4d1f5ee69f9f4606692f779735d419d6645d2",
+    "duration_seconds": 76.5,
+    "jaeger_captures": [],
+    "fallback_path": "evidence/l15_otel_jaeger_live.md",
+    "cv_doc_path": "docs/cv_linkedin/portfolio-demo-v1.md",
+    "ci_workflow_step": "Check portfolio demo video (read-only) — .github/workflows/ci.yml"
+  },
+  "test_count": "149/149 passing (146 base + 3 portfolio-renderer invariant guards)",
+  "inspector_findings_resolution": {
+    "HIGH_tag_without_artifacts": "RESOLVED — tag now points to commit e99f463 which contains all freeze artifacts. Tag pushed with --force to origin.",
+    "HIGH_mp4_in_gitignore": "RESOLVED — added !evidence/portfolio_demo_v1.mp4 exception. File is tracked and --check reports sidecar_in_sync=true.",
+    "MEDIUM_video_nondeterministic": "RESOLVED — added frame_set_sha256 (deterministic) alongside the MP4 wrapper SHA-256 (encoder-dependent).",
+    "HIGH_working_tree_dirty_under_check": "RESOLVED — --check is now strictly read-only (renders into tempdir). tests/test_render_portfolio_demo_video.py has 3 invariant guards.",
+    "MEDIUM_commits_not_pushed_to_origin_main": "ACKNOWLEDGED — tag points to HEAD of local main; commits 0daf9c3, ebed890, 215d13d, e99f473 are NOT in origin/main. Pushing to main requires operator decision."
+  },
+  "open_finding": "Docker Desktop daemon was unreachable during the freeze; Jaeger live capture deferred per goal.md D2 fallback. Tag is final at c8fed93 / e99f473; further force-updates to portfolio-demo-v1 should be avoided to preserve review-side fetch stability.",
+  "next_validation": "Optional: review and merge commits 0daf9c3 → ebed890 → 215d13d → e99f473 to origin/main via PR. Jaeger live capture can be re-attempted on a host with a working Docker daemon."
+}
