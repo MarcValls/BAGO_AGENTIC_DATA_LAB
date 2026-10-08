@@ -1,0 +1,129 @@
+{
+  "absent_table_reads": [
+    {
+      "body": {
+        "code": 404,
+        "message": "table instance for bago28860_3153d345af_service.bago28860_3153d345af_db.bago28860_3153d345af_absent_schema.input_missing_table not found"
+      },
+      "fqn": "bago28860_3153d345af_service.bago28860_3153d345af_db.bago28860_3153d345af_absent_schema.input_missing_table",
+      "http_status": 404
+    },
+    {
+      "body": {
+        "code": 404,
+        "message": "table instance for bago28860_3153d345af_service.bago28860_3153d345af_db.bago28860_3153d345af_absent_schema.output_missing_table not found"
+      },
+      "fqn": "bago28860_3153d345af_service.bago28860_3153d345af_db.bago28860_3153d345af_absent_schema.output_missing_table",
+      "http_status": 404
+    }
+  ],
+  "cleanup_ids": {
+    "database": "da0ad4b5-6ed5-42cb-b11a-ad031104c5a6",
+    "schema": "6c355ca9-a37e-45bb-b956-7577fb255867",
+    "service": "78984633-a11d-48a2-8cbf-dfa52f7e5661"
+  },
+  "created_table_reads": [
+    {
+      "body": {
+        "code": 404,
+        "message": "table instance for bago28860_3153d345af_service.bago28860_3153d345af_db.bago28860_3153d345af_schema.input_missing_table not found"
+      },
+      "fqn": "bago28860_3153d345af_service.bago28860_3153d345af_db.bago28860_3153d345af_schema.input_missing_table",
+      "http_status": 404
+    },
+    {
+      "body": {
+        "code": 404,
+        "message": "table instance for bago28860_3153d345af_service.bago28860_3153d345af_db.bago28860_3153d345af_schema.output_missing_table not found"
+      },
+      "fqn": "bago28860_3153d345af_service.bago28860_3153d345af_db.bago28860_3153d345af_schema.output_missing_table",
+      "http_status": 404
+    }
+  ],
+  "fixture": {
+    "database_fqn": "bago28860_3153d345af_service.bago28860_3153d345af_db",
+    "prefix": "bago28860_3153d345af",
+    "schema_fqn": "bago28860_3153d345af_service.bago28860_3153d345af_db.bago28860_3153d345af_schema",
+    "service": "bago28860_3153d345af_service",
+    "service_fqn": "bago28860_3153d345af_service"
+  },
+  "lineage_read": {
+    "body": {
+      "code": 400,
+      "message": "UUID string too large"
+    },
+    "http_status": 400
+  },
+  "tests": [
+    {
+      "case": "missing_tables_existing_schema",
+      "http_status": 200,
+      "request": {
+        "eventTime": "2026-10-03T01:00:33.972595Z",
+        "eventType": "COMPLETE",
+        "inputs": [
+          {
+            "name": "bago28860_3153d345af_db.bago28860_3153d345af_schema.input_missing_table",
+            "namespace": "bago28860_3153d345af_service"
+          }
+        ],
+        "job": {
+          "name": "missing-dataset-repro",
+          "namespace": "bago28860_3153d345af_job_namespace"
+        },
+        "outputs": [
+          {
+            "name": "bago28860_3153d345af_db.bago28860_3153d345af_schema.output_missing_table",
+            "namespace": "bago28860_3153d345af_service"
+          }
+        ],
+        "producer": "https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB",
+        "run": {
+          "runId": "fe23e2d1-4bef-4a14-bc36-dc8ffbae1d6a"
+        },
+        "schemaURL": "https://openlineage.io/spec/1-0-5/OpenLineage.json"
+      },
+      "response": {
+        "failedEvents": [],
+        "lineageEdgesCreated": 0,
+        "message": "Event processed, no lineage edges created",
+        "status": "success"
+      }
+    },
+    {
+      "case": "missing_schema_and_tables",
+      "http_status": 200,
+      "request": {
+        "eventTime": "2026-10-03T01:00:34.375626Z",
+        "eventType": "COMPLETE",
+        "inputs": [
+          {
+            "name": "bago28860_3153d345af_db.bago28860_3153d345af_absent_schema.input_missing_table",
+            "namespace": "bago28860_3153d345af_service"
+          }
+        ],
+        "job": {
+          "name": "missing-dataset-repro",
+          "namespace": "bago28860_3153d345af_job_namespace"
+        },
+        "outputs": [
+          {
+            "name": "bago28860_3153d345af_db.bago28860_3153d345af_absent_schema.output_missing_table",
+            "namespace": "bago28860_3153d345af_service"
+          }
+        ],
+        "producer": "https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB",
+        "run": {
+          "runId": "54e908e0-3f23-492a-bca5-8ae12a5ca37d"
+        },
+        "schemaURL": "https://openlineage.io/spec/1-0-5/OpenLineage.json"
+      },
+      "response": {
+        "failedEvents": [],
+        "lineageEdgesCreated": 0,
+        "message": "Event processed, no lineage edges created",
+        "status": "success"
+      }
+    }
+  ]
+}

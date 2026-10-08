@@ -1,0 +1,38 @@
+{
+  "delete_request": {
+    "method": "DELETE",
+    "path": "/v1/services/databaseServices/78984633-a11d-48a2-8cbf-dfa52f7e5661?hardDelete=true&recursive=true",
+    "http_status": 200,
+    "response_deleted_flag": false,
+    "note": "OpenMetadata returned the service representation; the response flag alone does not prove deletion. Follow-up reads and disposable DB/volume removal below are the cleanup evidence."
+  },
+  "follow_up_entity_reads": [
+    {
+      "entity": "databaseService",
+      "http_status": 404,
+      "body": {"code": 404, "message": "databaseService instance for bago28860_3153d345af_service not found"}
+    },
+    {
+      "entity": "database",
+      "http_status": 404,
+      "body": {"code": 404, "message": "database instance for bago28860_3153d345af_service.bago28860_3153d345af_db not found"}
+    },
+    {
+      "entity": "databaseSchema",
+      "http_status": 404,
+      "body": {"code": 404, "message": "databaseSchema instance for bago28860_3153d345af_service.bago28860_3153d345af_db.bago28860_3153d345af_schema not found"}
+    },
+    {
+      "entity": "table",
+      "http_status": 404,
+      "body": {"code": 404, "message": "table instance for bago28860_3153d345af_service.bago28860_3153d345af_db.bago28860_3153d345af_schema.governed_seed_output not found"}
+    }
+  ],
+  "disposable_runtime_cleanup": {
+    "compose_down_volumes_remove_orphans": "PASS",
+    "project_containers_remaining": 0,
+    "project_network_remaining": 0,
+    "project_named_volume_remaining": 0,
+    "temporary_compose_and_scripts_removed": true
+  }
+}
