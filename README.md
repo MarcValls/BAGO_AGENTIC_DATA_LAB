@@ -371,11 +371,22 @@ La tabla se extrae de JOB_SKILL_MATRIX.md y se mantiene fuera del README.
 - `docs/AGENT_CHAT_COMPLETE.md`
 - `docs/FINAL_STATUS.md`
 - `docs/IMPLEMENTATION_COMPLETE.md`
+- `docs/README.md`
 - `docs/agent_builder_ui.md`
 - `docs/aws_bedrock_setup.md`
 - `docs/bago-sync-agent.md`
 - `docs/bedrock_knowledge_base.md`
 - `docs/commercetools_capstone.md`
+- `docs/decision-inspector/FINAL_STATUS.md`
+- `docs/decision-inspector/MANUAL_PARA_DUMMIES.md`
+- `docs/decision-inspector/contracts/action/decision-action-v1.md`
+- `docs/decision-inspector/contracts/evidence/decision-evidence-v1.md`
+- `docs/decision-inspector/contracts/trace/decision-trace-v1.md`
+- `docs/decision-inspector/inventory/REPOSITORY_INVENTORY.md`
+- `docs/decision-inspector/ux/UX_CONTRACT.md`
+- `docs/decision-inspector/verification/W11_INDEPENDENT_VERIFICATION.md`
+- `docs/decision-inspector/verification/W13_RECEIPT_RUN_BINDING.md`
+- `docs/decision-inspector/verification/W14_INDEPENDENT_RECEIPT_VERIFICATION.md`
 - `docs/full_orchestration.md`
 - `docs/governed_rag.md`
 - `docs/local_vector_store.md`
@@ -389,6 +400,7 @@ La tabla se extrae de JOB_SKILL_MATRIX.md y se mantiene fuera del README.
 - `docs/public_e2e_demo.md`
 - `docs/readme_generation.md`
 - `docs/sandbox_manager.md`
+- `docs/submodule-candidates.md`
 - `docs/workspace_binding.md`
 
 ### Scripts
