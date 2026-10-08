@@ -4,6 +4,9 @@ __pycache__/
 venv/
 .venv/
 .pytest_cache/
+node_modules/
+.playwright-cli/
+.gabo/
 demo_output/
 .bago/evidence/sync-agent/
 evidence/*.png

@@ -1,0 +1,30 @@
+.action-review { color: #e2e8f0; }
+.action-review__header, .action-review__card > header { display: flex; justify-content: space-between; gap: 1rem; align-items: start; }
+.action-review__header { margin-bottom: 1rem; flex-wrap: wrap; }
+.action-review__header h2, .action-review__card h3 { margin: 0; }
+.action-review__header p { margin: .35rem 0 0; color: #cbd5e1; }
+.action-review__list { display: grid; gap: 1rem; }
+.action-review__card { border: 1px solid #475569; border-radius: .65rem; background: #111827; padding: 1rem; }
+.action-review__proposal-state { margin: .35rem 0 0; color: #93c5fd; }
+.action-review__facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr)); gap: .75rem 1rem; }
+.action-review__facts div { min-width: 0; }
+.action-review__facts dt { color: #94a3b8; font-size: .875rem; }
+.action-review__facts dd { margin: .2rem 0 0; overflow-wrap: anywhere; }
+.action-review code { overflow-wrap: anywhere; }
+.action-review__card details { margin: 1rem 0; }
+.action-review__card summary { cursor: pointer; min-height: 1.5rem; }
+.action-review__card pre { padding: .75rem; overflow: auto; background: #0b1220; border-radius: .35rem; }
+.action-review__ladder, .action-review__receipt, .action-review__controls { margin-top: 1rem; padding: .85rem; border: 1px solid #334155; border-radius: .45rem; }
+.action-review__ladder h4, .action-review__receipt h4 { margin: 0 0 .5rem; }
+.action-review__ladder ol { list-style: none; margin: 0; padding: 0; display: grid; gap: .5rem; }
+.action-review__ladder li { display: grid; gap: .15rem; padding: .55rem .65rem; border-left: 3px solid #64748b; background: #172033; }
+.action-review__ladder li span { overflow-wrap: anywhere; }
+.action-review__receipt--missing, .action-review__receipt--mismatch, .action-review__receipt--unknown { border-color: #f59e0b; }
+.action-review__receipt p { margin: .35rem 0; overflow-wrap: anywhere; }
+.action-review__receipt ul { margin: .5rem 0 0; }
+.action-review__controls p { margin: 0 0 .65rem; }
+.action-review__controls div { display: flex; flex-wrap: wrap; gap: .5rem; }
+.action-review__controls button { min-height: 2.5rem; }
+.action-review__controls button:disabled { cursor: not-allowed; opacity: .6; }
+.action-review__sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
+@media (max-width: 600px) { .action-review__header, .action-review__card > header { display: block; } }

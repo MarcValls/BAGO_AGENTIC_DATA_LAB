@@ -1,6 +1,6 @@
 # L15 · OpenTelemetry + Jaeger local live validation
 
-Generated at: `2026-10-07T09:47:10.778562+00:00`
+Generated at: `2026-10-08T16:59:38.710666+00:00`
 
 This validation projects the existing BAGO `LocalTrace` into OpenTelemetry
 spans and verifies that Jaeger receives and indexes the public E2E operations:
@@ -52,11 +52,11 @@ observability or an external collector validation.
     "permit",
     "retrieval"
   ],
-  "generated_at": "2026-10-07T09:47:10.778562+00:00",
+  "generated_at": "2026-10-08T16:59:38.710666+00:00",
   "jaeger_query": "http://localhost:16686",
   "local_trace_id": "trace-5b385699ffda0529",
   "matching_trace_ids": [
-    "94ee6c8d7a05b27487489a97da7480a5"
+    "04b58bb123bb6cc94a8cc0d60c7145ae"
   ],
   "observed_operations": [
     "agent.run",

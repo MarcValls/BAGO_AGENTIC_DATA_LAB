@@ -1,0 +1,66 @@
+{
+  "changed_files": [
+    "frontend/src/contracts/trace/trace.ts",
+    "frontend/src/adapters/trace/localTraceAdapter.ts",
+    "frontend/tests/contracts/trace/trace.test.ts",
+    "docs/decision-inspector/contracts/trace/decision-trace-v1.md"
+  ],
+  "next_consumers": [
+    "W08",
+    "W10"
+  ],
+  "outputs": [
+    {
+      "kind": "decision_trace_contract_v1",
+      "path": "frontend/src/contracts/trace/trace.ts",
+      "sha256": "eb66df30bfb6e1e8f125ce9ba03ff3b8253c9dab98a75d54c82c061c92df87b7"
+    },
+    {
+      "kind": "local_trace_timeline_adapter",
+      "path": "frontend/src/adapters/trace/localTraceAdapter.ts",
+      "sha256": "47a1b7ebad5b3427713e8b18c883fe2e002902825ad603fbdb0390ef897ae552"
+    },
+    {
+      "kind": "trace_contract_tests",
+      "path": "frontend/tests/contracts/trace/trace.test.ts",
+      "sha256": "9ea38c2f7259a8785bcd6a58e7502e9fb37a98ec5d83843f063b1a7cd7513714"
+    },
+    {
+      "kind": "trace_contract_documentation",
+      "path": "docs/decision-inspector/contracts/trace/decision-trace-v1.md",
+      "sha256": "e56bfc69d93acf1348ec1f155d09d99c43930cacf3b8e9f44a5961a0d55da00d"
+    }
+  ],
+  "payload_sha256": "71699eb3e798b9e452dd9163f0e271cebe215a8102c72ef4b0008ed641eaa9f5",
+  "residual_risks": [
+    "Current LocalTrace sample does not carry claim/action ids; these remain explicitly missing until an upstream producer supplies them.",
+    "Current artifacts do not include a UI-to-Jaeger URL/correlation id; Jaeger correlation is marked unavailable.",
+    "The adapter preserves redaction markers but cannot establish that an upstream producer redacted every sensitive value.",
+    "Checks validate the isolated contract/adapter only; UI behavior and full frontend build were not run."
+  ],
+  "role": "trace-observability-engineer",
+  "status": "DONE",
+  "verification": [
+    {
+      "command": "cd frontend; .\\node_modules\\.bin\\tsc --target ES2020 --module commonjs --moduleResolution node --strict --esModuleInterop --skipLibCheck --outDir <TEMP> src/contracts/trace/trace.ts src/adapters/trace/localTraceAdapter.ts tests/contracts/trace/trace.test.ts",
+      "evidence": "TypeScript compilation completed with exit code 0 into a disposable TEMP directory.",
+      "result": "PASS"
+    },
+    {
+      "command": "node --test <TEMP>/tests/contracts/trace/trace.test.js",
+      "evidence": "4 tests passed, 0 failed: unordered source events/sequence gaps; chronology versus causality and missing parents; missing claim/action/Jaeger correlation; failed status and redaction pass-through; duplicate ids; explicit correlation.",
+      "result": "PASS"
+    },
+    {
+      "command": "git diff --check",
+      "evidence": "No whitespace errors in reviewed changes.",
+      "result": "PASS"
+    },
+    {
+      "command": "Inspect LocalTrace source, current trace artifact, CR-001 and W01-W03 handoffs; python .codex-team-kit/scripts/teamctl.py verify",
+      "evidence": "Mapped LocalTrace identity/sequence/parent/status/attributes/evidence_refs. Current sample lacks claim/action ids and UI-to-Jaeger correlation; adapter exposes these absences. W01-W03 dependencies were DONE and validated.",
+      "result": "PASS"
+    }
+  ],
+  "work_id": "W04"
+}

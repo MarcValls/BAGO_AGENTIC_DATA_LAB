@@ -1,0 +1,27 @@
+{
+  "work_id": "W07",
+  "role": "decision-ui-engineer",
+  "status": "DONE",
+  "changed_files": [
+    "frontend/src/features/decision-inspector/evidence/EvidenceExplorer.tsx",
+    "frontend/src/features/decision-inspector/evidence/EvidenceExplorer.css",
+    "frontend/tests/ui/decision-inspector/evidence/evidence-explorer.test.tsx"
+  ],
+  "outputs": [
+    { "kind": "claim_evidence_provenance_explorer", "path": "frontend/src/features/decision-inspector/evidence/EvidenceExplorer.tsx" },
+    { "kind": "evidence_explorer_styles", "path": "frontend/src/features/decision-inspector/evidence/EvidenceExplorer.css" },
+    { "kind": "deterministic_ui_tests", "path": "frontend/tests/ui/decision-inspector/evidence/evidence-explorer.test.tsx" }
+  ],
+  "verification": [
+    { "command": "frontend TypeScript transpile of evidence-explorer.test.tsx to disposable TEMP + node --test with CSS no-op loader and frontend NODE_PATH", "result": "PASS", "evidence": "5 tests passed, 0 failed: provided claim/evidence/provenance, unsupported/missing/contradictory/context-only states, no synthetic claims, stale snapshot comparison, and loading/error/unsupported/empty announcements." },
+    { "command": "npm run build (frontend)", "result": "PASS", "evidence": "TypeScript project build and Vite production build completed (107 modules transformed). Existing unrelated CSS warning remains in frontend/src/index.css: border-color #646cff is missing a colon." },
+    { "command": "python .codex-team-kit/scripts/teamctl.py verify", "result": "PASS", "evidence": "Mission dependencies and existing W01-W06 handoffs validated before W07 completion." }
+  ],
+  "residual_risks": [
+    "The explorer is not mounted in the application; W10 owns integration.",
+    "Current AgentRun data does not provide structured claims or semantic entailment; the view renders only explicit contract data and does not derive claims from answer text or citations.",
+    "Freshness is unknown when an expected comparable snapshot identity is absent; no source identity or revision is inferred.",
+    "Manual keyboard and screen-reader usability review remains for W11."
+  ],
+  "next_consumers": ["W10", "W11"]
+}

@@ -1,0 +1,61 @@
+{
+  "work_id": "W09",
+  "role": "decision-ui-engineer",
+  "status": "DONE",
+  "changed_files": [
+    "frontend/src/features/decision-inspector/actions/ActionReview.tsx",
+    "frontend/src/features/decision-inspector/actions/ActionReview.css",
+    "frontend/tests/ui/decision-inspector/actions/action-review.test.tsx"
+  ],
+  "outputs": [
+    {
+      "kind": "proposed_action_authorization_execution_receipt_inspector",
+      "path": "frontend/src/features/decision-inspector/actions/ActionReview.tsx"
+    },
+    {
+      "kind": "responsive_action_inspector_styles",
+      "path": "frontend/src/features/decision-inspector/actions/ActionReview.css"
+    },
+    {
+      "kind": "action_inspector_ui_tests",
+      "path": "frontend/tests/ui/decision-inspector/actions/action-review.test.tsx"
+    }
+  ],
+  "verification": [
+    {
+      "command": "TypeScript focused compile to disposable TEMP directory",
+      "result": "PASS",
+      "evidence": "tsc --target ES2020 --module commonjs --moduleResolution node --strict --esModuleInterop --skipLibCheck --jsx react-jsx compiled W09 test and imported implementation with exit code 0."
+    },
+    {
+      "command": "Node test runner with temporary CSS import hook",
+      "result": "PASS",
+      "evidence": "4 action review UI tests passed, 0 failed. Covered normal lifecycle, denied decision, missing/mismatched receipt, success without matched receipt, loading/empty/error/unsupported/unknown."
+    },
+    {
+      "command": "npm run build",
+      "result": "PASS",
+      "evidence": "TypeScript and Vite production build passed, 107 modules transformed. Existing warning in frontend/src/index.css:1529 border-color declaration is missing a colon."
+    },
+    {
+      "command": "git diff --check -- frontend/src/features/decision-inspector/actions frontend/tests/ui/decision-inspector/actions",
+      "result": "PASS",
+      "evidence": "No whitespace errors in W09 scoped paths."
+    },
+    {
+      "command": "python .codex-team-kit/scripts/teamctl.py verify",
+      "result": "PASS",
+      "evidence": "PASS before W09 handoff materialization; dependencies W03, W05, W06 and their handoffs validate."
+    }
+  ],
+  "residual_risks": [
+    "W09 surface is not mounted in the app; W10 owns integration.",
+    "Review controls are intentionally disabled and read-only; no approval/rejection API or execution action is invoked.",
+    "Manual keyboard and screen-reader review remains for W11.",
+    "Production build retains pre-existing CSS syntax warning at frontend/src/index.css:1529."
+  ],
+  "next_consumers": [
+    "W10",
+    "W11"
+  ]
+}

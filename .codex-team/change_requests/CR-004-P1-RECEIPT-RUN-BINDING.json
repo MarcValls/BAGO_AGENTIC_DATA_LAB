@@ -1,0 +1,15 @@
+{
+  "change_request_id": "CR-004-P1-RECEIPT-RUN-BINDING",
+  "contract_id": "agent-decision-inspector-mission-and-integration-v1",
+  "old_fingerprint": "7232ac33aba61b3be09828706f8823da0625030e7edca91d92c3010efd03d4a6",
+  "proposed_new_fingerprint": "a25883dbc65651ac7ff84129c5092af1b9ffcac4230ea3c7423d632380551e01",
+  "reason": "W11 independent verification found that a receipt from another run could be presented as matched when receipt/request identifiers collide. Add a scoped W13 correction and W14 independent re-verification before W12 terminal gate.",
+  "impacted_consumers": [
+    "W13",
+    "W14",
+    "W12"
+  ],
+  "required_invalidations": [],
+  "decision": "Accepted. W10 integrated UI output was non-frozen; W11 finding remains preserved and is addressed through an explicit follow-up work item.",
+  "adapted_mission_sha256": "a25883dbc65651ac7ff84129c5092af1b9ffcac4230ea3c7423d632380551e01"
+}
