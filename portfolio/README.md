@@ -5,6 +5,11 @@ new agent architecture. It reuses the existing verified L0–L15 components and
 packages one bounded scenario so a reviewer can execute the governed chain and
 inspect its evidence.
 
+For the dated delivery selection, current capability evidence and explicit
+exclusions, start with the [Day 1 inventory](day1-inventory/README.md).
+Historical live evidence is not a claim that those integrations were rerun in
+the latest inventory.
+
 ## One command
 
 From a fresh clone with Python 3.11+:
