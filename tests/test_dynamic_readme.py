@@ -120,6 +120,11 @@ def test_rendered_readme_contains_dynamic_contract_and_l10_artifacts():
     assert "docs/otel_jaeger.md" in rendered
     assert "infra/observability/docker-compose.yml" in rendered
     assert "scripts/run_l15_otel_live_validation.py --check" in rendered
+    assert "## Monitor local del equipo Codex" in rendered
+    assert "http://localhost:5173/team-monitor.html" in rendered
+    assert "python -m src.api.server" in rendered
+    assert "python -m pip install -r requirements.txt fastapi uvicorn" in rendered
+    assert "no toda la actividad interna de la extensión Codex" in rendered
     assert "scripts/run_l6_aws_free_tier_validation.py --profile bago-free" in rendered
     assert "python scripts/generate_dynamic_readme.py --check --skip-tests" in rendered
     assert "Estado actualizado" in rendered
