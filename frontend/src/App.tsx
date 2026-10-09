@@ -9,6 +9,7 @@ import Control from './components/Control'
 import AgentBuilder from './components/AgentBuilder'
 import AgentRunner from './components/AgentRunner'
 import AgentChat from './components/AgentChat'
+import CapabilityManager from './components/CapabilityManager'
 import JobHistory from './components/JobHistory'
 import ProviderSettings from './components/ProviderSettings'
 import { DecisionInspector } from './features/decision-inspector'
@@ -22,11 +23,12 @@ interface Artifacts {
   evaluation: any
 }
 
-type AppView = 'chat' | 'provider_settings' | 'inspector' | 'builder' | 'runner' | 'control' | 'jobs' | 'summary' | 'retrieval' | 'authorization' | 'trace' | 'evaluation'
-type AssistantView = 'inspector' | 'builder' | 'chat' | 'runner' | 'control' | 'jobs' | 'traces' | 'summary' | 'retrieval' | 'authorization' | 'evaluation' | 'provider_settings'
+type AppView = 'chat' | 'capabilities' | 'provider_settings' | 'inspector' | 'builder' | 'runner' | 'control' | 'jobs' | 'summary' | 'retrieval' | 'authorization' | 'trace' | 'evaluation'
+type AssistantView = 'inspector' | 'builder' | 'chat' | 'runner' | 'control' | 'jobs' | 'traces' | 'summary' | 'retrieval' | 'authorization' | 'evaluation' | 'provider_settings' | 'capabilities'
 
 const navigation: Array<{ id: AppView; label: string; group: 'workspace' | 'portfolio' | 'settings' }> = [
   { id: 'chat', label: 'Chat', group: 'workspace' },
+  { id: 'capabilities', label: 'Capabilities', group: 'workspace' },
   { id: 'inspector', label: 'Decision Inspector', group: 'workspace' },
   { id: 'builder', label: 'Agent Builder', group: 'workspace' },
   { id: 'runner', label: 'Agent Runner', group: 'workspace' },
@@ -93,6 +95,7 @@ function App() {
 
       <section className="app-view" aria-label={`${navigation.find((item) => item.id === activeTab)?.label ?? 'Application'} view`}>
         {activeTab === 'chat' && <AgentChat onNavigate={navigateFromChat} onOpenProviderSettings={() => setActiveTab('provider_settings')} />}
+        {activeTab === 'capabilities' && <CapabilityManager />}
         {activeTab === 'provider_settings' && <ProviderSettings />}
         {activeTab === 'builder' && <AgentBuilder onAgentCreated={() => setDemoRefresh((previous) => previous + 1)} />}
         {activeTab === 'runner' && <AgentRunner />}
