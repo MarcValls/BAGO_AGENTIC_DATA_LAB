@@ -1,0 +1,52 @@
+{
+  "changed_files": [
+    "src/api/server.py",
+    "src/capabilities/__init__.py",
+    "src/capabilities/manager.py",
+    "tests/test_capability_manager.py"
+  ],
+  "outputs": [
+    {
+      "path": "evidence/W01_BACKEND_IMPLEMENTATION.md",
+      "description": "Implementation report, endpoint contract, evidence, scope limits, and risks."
+    },
+    {
+      "path": "../src/capabilities/manager.py",
+      "description": "Backend-owned capability inventory and workspace-isolated SQLite proposal store."
+    },
+    {
+      "path": "../src/api/server.py",
+      "description": "Capability catalog and proposal list/create/cancel endpoints."
+    },
+    {
+      "path": "../tests/test_capability_manager.py",
+      "description": "Focused catalog, persistence, isolation, API, and no-model-mutation tests."
+    }
+  ],
+  "verification": [
+    {
+      "command": ".venv-ollama-spiral\\Scripts\\python.exe -m pytest -q tests\\test_capability_manager.py tests\\test_conversation_library.py tests\\test_agent_chat_trace.py",
+      "result": "PASS",
+      "evidence": "17 passed; one Python 3.14 langchain_core/Pydantic v1 compatibility warning."
+    },
+    {
+      "command": ".venv-ollama-spiral\\Scripts\\python.exe -m py_compile src\\capabilities\\__init__.py src\\capabilities\\manager.py src\\api\\server.py tests\\test_capability_manager.py",
+      "result": "PASS"
+    },
+    {
+      "command": "git diff --check -- src\\api\\server.py src\\capabilities tests\\test_capability_manager.py",
+      "result": "PASS"
+    },
+    {
+      "command": "teamctl verify (implementation-runtime, before W01 handoff)",
+      "result": "PASS"
+    }
+  ],
+  "residual_risks": [
+    "W02 UI/chat integration is pending; model output is not permitted to invoke proposal mutation endpoints.",
+    "No authenticated actor/approval workflow exists; proposals do not authorize or execute.",
+    "Full suite, UI/build, live server, installed-store migration, and multi-user security checks were NOT_RUN.",
+    "The dedicated backend-engineer plugin skill file is absent; the general worker skill and assigned implementation profile were used."
+  ],
+  "next_consumers": ["W02"]
+}

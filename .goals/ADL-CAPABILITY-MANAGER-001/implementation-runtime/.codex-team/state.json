@@ -1,0 +1,152 @@
+{
+  "created_at": "2026-10-09T21:34:54+00:00",
+  "mission": {
+    "max_concurrency": 1,
+    "mission_id": "ADL_CAPABILITY_MANAGER_IMPLEMENTATION_001",
+    "objective": "Implement the read-only backend-owned capability catalog and persisted chat-created proposals with a review UI in the existing chat-first app. Proposals must never authorize or execute. Keep Agent Runner fail-closed and preserve existing dirty worktree state.",
+    "terminal_work_items": [
+      "W04"
+    ],
+    "title": "Capability Manager Safe MVP Implementation",
+    "work_items": [
+      {
+        "deliverables": [
+          "Backend-owned capability inventory",
+          "Persistent proposals with safe list/create/cancel operations"
+        ],
+        "depends_on": [],
+        "done_when": [
+          "Catalog reflects only real wired capability availability",
+          "Proposal endpoints persist requests but cannot grant, authorize, execute or create jobs",
+          "Input validation, workspace binding and error states are explicit",
+          "No credentials stored and no source outside scope changed"
+        ],
+        "id": "W01",
+        "read_scopes": [
+          "evidence/W04_CAPABILITY_MANAGER_CONTRACT.md",
+          "src/**",
+          "tests/**"
+        ],
+        "role": "backend-engineer",
+        "title": "Implement capability catalog and persisted non-authorizing proposal API",
+        "write_scopes": [
+          "src/capabilities/**",
+          "src/api/server.py",
+          "tests/test_capability_manager.py"
+        ]
+      },
+      {
+        "deliverables": [
+          "Root navigation view for capability status",
+          "Chat commands to list, inspect and prepare proposals",
+          "Review/cancel proposal state from backend"
+        ],
+        "depends_on": [
+          "W01"
+        ],
+        "done_when": [
+          "Root App remains sole view router",
+          "No model prose can call mutable APIs",
+          "UI distinguishes catalog state from proposal state and execution authority",
+          "Empty/loading/error/blocked states are visible and secrets are not persisted"
+        ],
+        "id": "W02",
+        "read_scopes": [
+          "evidence/W04_CAPABILITY_MANAGER_CONTRACT.md",
+          "frontend/src/**",
+          "src/api/server.py"
+        ],
+        "role": "frontend-engineer",
+        "title": "Build Capability Manager view and chat operations against backend API",
+        "write_scopes": [
+          "frontend/src/App.tsx",
+          "frontend/src/components/AgentChat.tsx",
+          "frontend/src/components/AgentChat.css",
+          "frontend/src/components/CapabilityManager.tsx",
+          "frontend/src/components/CapabilityManager.css"
+        ]
+      },
+      {
+        "deliverables": [
+          "Read-only review of final diff, verification evidence and remaining risks"
+        ],
+        "depends_on": [
+          "W02"
+        ],
+        "done_when": [
+          "Check authority boundaries and claim accuracy",
+          "Inspect final relevant source and worktree state",
+          "Return PASS, FAIL or BLOCKED with evidence",
+          "No code edits"
+        ],
+        "id": "W03",
+        "read_scopes": [
+          "candidate source tree",
+          "implementation-runtime/evidence/**"
+        ],
+        "role": "final-verifier",
+        "title": "Independent final review of candidate and evidence",
+        "write_scopes": [
+          "evidence/W03_FINAL_REVIEW.md",
+          "drafts/W03.json"
+        ]
+      },
+      {
+        "deliverables": [
+          "Final status with checks, hashes, scope and limitations"
+        ],
+        "depends_on": [
+          "W03"
+        ],
+        "done_when": [
+          "All handoffs validate",
+          "Final verification result is reported accurately",
+          "Source execution remains disabled"
+        ],
+        "id": "W04",
+        "read_scopes": [
+          ".codex-team/**",
+          "evidence/**",
+          "candidate diff"
+        ],
+        "role": "team-orchestrator",
+        "title": "Terminal implementation gate",
+        "write_scopes": [
+          "evidence/W04_FINAL_STATUS.md",
+          "drafts/W04.json"
+        ]
+      }
+    ]
+  },
+  "mission_sha256": "d357fba3d5f2363fd89acec07ab32ef3e5621c51569e841d65dff8a28594667b",
+  "mission_source": "C:\\Users\\AMTEC_Terminal_1º\\AppData\\Local\\Temp\\BAGO_AGENTIC_DATA_LAB_conversation_library\\.goals\\ADL-CAPABILITY-MANAGER-001\\implementation-runtime\\.codex-team-kit\\missions\\capability-manager-implementation.json",
+  "protocol_version": "0.1.0",
+  "terminal_gate": "DONE",
+  "updated_at": "2026-10-09T21:53:42+00:00",
+  "work_status": {
+    "W01": {
+      "agent": "bago_implementation_worker",
+      "claimed_at": "2026-10-09T21:35:37+00:00",
+      "done_at": "2026-10-09T21:39:51+00:00",
+      "status": "DONE"
+    },
+    "W02": {
+      "agent": "bago_frontend_engineer",
+      "claimed_at": "2026-10-09T21:40:52+00:00",
+      "done_at": "2026-10-09T21:48:08+00:00",
+      "status": "DONE"
+    },
+    "W03": {
+      "agent": "bago_final_verifier",
+      "claimed_at": "2026-10-09T21:51:11+00:00",
+      "done_at": "2026-10-09T21:52:48+00:00",
+      "status": "DONE"
+    },
+    "W04": {
+      "agent": "bago_team_orchestrator",
+      "claimed_at": "2026-10-09T21:53:13+00:00",
+      "done_at": "2026-10-09T21:53:42+00:00",
+      "status": "DONE"
+    }
+  }
+}

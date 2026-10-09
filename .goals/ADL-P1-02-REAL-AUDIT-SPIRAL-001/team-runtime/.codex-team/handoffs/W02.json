@@ -1,0 +1,50 @@
+{
+  "changed_files": [
+    ".goals/ADL-P1-02-REAL-AUDIT-SPIRAL-001/evidence/P1_02_BACKEND_EXCERPT.txt",
+    ".goals/ADL-P1-02-REAL-AUDIT-SPIRAL-001/evidence/W02_AGENT_AUDIT_COMPLETION.json",
+    ".goals/ADL-P1-02-REAL-AUDIT-SPIRAL-001/evidence/W02_SOURCE_AUDIT_RESULT.md"
+  ],
+  "next_consumers": [
+    "W03"
+  ],
+  "outputs": [
+    {
+      "name": "p1-02-agent-audit-v1",
+      "path": ".goals/ADL-P1-02-REAL-AUDIT-SPIRAL-001/evidence/W02_SOURCE_AUDIT_RESULT.md",
+      "summary": "Two real Ollama Cloud agent turns inspect the finding, active AgentRunner source and a verbatim SHA-bound backend endpoint excerpt; current UI mismatch elements appear corrected, pending runtime/independent verification."
+    },
+    {
+      "name": "p1-02-agent-turn-receipts-v1",
+      "path": ".goals/ADL-P1-02-REAL-AUDIT-SPIRAL-001/evidence/W02_AGENT_AUDIT_COMPLETION.json",
+      "summary": "App API, response source, bounded file reads, conversation revision, provider/model and LocalTrace evidence for the completion turn."
+    }
+  ],
+  "payload_sha256": "8adb47c1362a25943add5c3b884dcf96bc49d66739b627576b63ca56dcfa9203",
+  "residual_risks": [
+    "Agent did not read src/api/server.py directly; it read a literal excerpt with source path, line range and source SHA-256 provenance.",
+    "The live WebSocket response and browser console/interaction are not yet verified.",
+    "No agent job was run or started."
+  ],
+  "role": "evidence-provenance-engineer",
+  "schema_version": "1.0",
+  "status": "DONE",
+  "verification": [
+    {
+      "command": "POST /api/agents/{agent_id}/chat with allow_workspace_read=true",
+      "result": "PASS; both calls returned HTTP 200, source=ollama; LocalTrace records provider=ollama-cloud and model=gemma4:31b"
+    },
+    {
+      "command": "GET /api/conversations/conv_438e701c29684bfab97adbd3abac098b",
+      "result": "PASS; 4 complete messages at revision 4 with read-source and trace references"
+    },
+    {
+      "command": "Read LocalTrace files for both turns",
+      "result": "PASS; first read receipt includes finding brief and AgentRunner; second includes SHA-bound backend excerpt"
+    },
+    {
+      "command": "Check full source size and backend excerpt provenance",
+      "result": "PASS; 55,939-byte server.py exceeded the 32 KiB reader limit; extracted lines 1227-1247 are hash-bound in W01 and included in the readable excerpt"
+    }
+  ],
+  "work_id": "W02"
+}

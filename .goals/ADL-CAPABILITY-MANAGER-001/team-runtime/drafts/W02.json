@@ -1,0 +1,23 @@
+{
+  "changed_files": ["evidence/W02_BACKEND.md"],
+  "outputs": [
+    {
+      "path": "evidence/W02_BACKEND.md",
+      "summary": "Read-only, source-bound mapping of provider/chat, agent configs, bounded file reading, in-memory MCP registry, authorization, sandbox/gateway, jobs/receipts and MVP persistence recommendation."
+    }
+  ],
+  "verification": [
+    {
+      "command": "Static source inspection only; tests and runtime checks were not executed.",
+      "result": "NOT_RUN",
+      "reason": "Assigned work item is a read-only backend audit; no tests/demo/runtime commands were authorized or run."
+    }
+  ],
+  "residual_risks": [
+    "The active worktree is dirty; findings bind to observed working files at HEAD 69b4f4b1ead2552b527e6e48868ab36cc2b38cbc, including modified src/api/server.py and src/providers/ollama.py.",
+    "No runtime/API/UI or MCP demo execution was performed; MCP adapter and gateway integration are not proven live.",
+    "Capability registry and sandbox receipts are not durably connected to application APIs; /ws/agents/run remains fail-closed.",
+    "Current conversation PROJECT_ID is a fixed default and does not identify multiple workspaces."
+  ],
+  "next_consumers": ["W04"]
+}

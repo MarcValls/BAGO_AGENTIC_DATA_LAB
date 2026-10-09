@@ -1,0 +1,49 @@
+{
+  "mission_id": "ADL_CAPABILITY_MANAGER_IMPLEMENTATION_001",
+  "title": "Capability Manager Safe MVP Implementation",
+  "objective": "Implement the read-only backend-owned capability catalog and persisted chat-created proposals with a review UI in the existing chat-first app. Proposals must never authorize or execute. Keep Agent Runner fail-closed and preserve existing dirty worktree state.",
+  "max_concurrency": 1,
+  "terminal_work_items": ["W04"],
+  "work_items": [
+    {
+      "id": "W01",
+      "title": "Implement capability catalog and persisted non-authorizing proposal API",
+      "role": "backend-engineer",
+      "depends_on": [],
+      "write_scopes": ["src/capabilities/**", "src/api/server.py", "tests/test_capability_manager.py"],
+      "read_scopes": ["evidence/W04_CAPABILITY_MANAGER_CONTRACT.md", "src/**", "tests/**"],
+      "deliverables": ["Backend-owned capability inventory", "Persistent proposals with safe list/create/cancel operations"],
+      "done_when": ["Catalog reflects only real wired capability availability", "Proposal endpoints persist requests but cannot grant, authorize, execute or create jobs", "Input validation, workspace binding and error states are explicit", "No credentials stored and no source outside scope changed"]
+    },
+    {
+      "id": "W02",
+      "title": "Build Capability Manager view and chat operations against backend API",
+      "role": "frontend-engineer",
+      "depends_on": ["W01"],
+      "write_scopes": ["frontend/src/App.tsx", "frontend/src/components/AgentChat.tsx", "frontend/src/components/AgentChat.css", "frontend/src/components/CapabilityManager.tsx", "frontend/src/components/CapabilityManager.css"],
+      "read_scopes": ["evidence/W04_CAPABILITY_MANAGER_CONTRACT.md", "frontend/src/**", "src/api/server.py"],
+      "deliverables": ["Root navigation view for capability status", "Chat commands to list, inspect and prepare proposals", "Review/cancel proposal state from backend"],
+      "done_when": ["Root App remains sole view router", "No model prose can call mutable APIs", "UI distinguishes catalog state from proposal state and execution authority", "Empty/loading/error/blocked states are visible and secrets are not persisted"]
+    },
+    {
+      "id": "W03",
+      "title": "Independent final review of candidate and evidence",
+      "role": "final-verifier",
+      "depends_on": ["W02"],
+      "write_scopes": ["evidence/W03_FINAL_REVIEW.md", "drafts/W03.json"],
+      "read_scopes": ["candidate source tree", "implementation-runtime/evidence/**"],
+      "deliverables": ["Read-only review of final diff, verification evidence and remaining risks"],
+      "done_when": ["Check authority boundaries and claim accuracy", "Inspect final relevant source and worktree state", "Return PASS, FAIL or BLOCKED with evidence", "No code edits"]
+    },
+    {
+      "id": "W04",
+      "title": "Terminal implementation gate",
+      "role": "team-orchestrator",
+      "depends_on": ["W03"],
+      "write_scopes": ["evidence/W04_FINAL_STATUS.md", "drafts/W04.json"],
+      "read_scopes": [".codex-team/**", "evidence/**", "candidate diff"],
+      "deliverables": ["Final status with checks, hashes, scope and limitations"],
+      "done_when": ["All handoffs validate", "Final verification result is reported accurately", "Source execution remains disabled"]
+    }
+  ]
+}

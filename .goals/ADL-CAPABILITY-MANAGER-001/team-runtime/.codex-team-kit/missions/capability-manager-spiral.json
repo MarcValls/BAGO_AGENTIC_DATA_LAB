@@ -1,0 +1,49 @@
+{
+  "mission_id": "ADL_CAPABILITY_MANAGER_SPIRAL_001",
+  "title": "Capability Manager Discovery Spiral",
+  "objective": "Run independent read-only BAGO agent audits of the current ADL candidate to define a safe capability manager controlled through the UI and chat. Preserve the current worktree and distinguish registered, available, eligible, authorized, executed, and verified states.",
+  "max_concurrency": 3,
+  "terminal_work_items": ["W04"],
+  "work_items": [
+    {
+      "id": "W01",
+      "title": "Audit capability ownership and architecture",
+      "role": "architecture-auditor",
+      "depends_on": [],
+      "write_scopes": ["evidence/W01_ARCHITECTURE.md", "drafts/W01.json"],
+      "read_scopes": ["candidate source tree: agents/**, src/**, frontend/src/**, docs/**"],
+      "deliverables": ["Source-bound architecture report for capability catalog and authority boundaries"],
+      "done_when": ["Findings cite active candidate HEAD and concrete symbols/files", "Distinguish reference-only agent catalog from activated runtime", "Recommend minimal capability-manager boundary without granting execution"]
+    },
+    {
+      "id": "W02",
+      "title": "Audit backend capability, policy, persistence and execution paths",
+      "role": "backend-auditor",
+      "depends_on": [],
+      "write_scopes": ["evidence/W02_BACKEND.md", "drafts/W02.json"],
+      "read_scopes": ["candidate source tree: src/api/**, src/adapters/**, src/sandbox/**, src/execution/**, src/orchestration/**, tests/**"],
+      "deliverables": ["Source-bound backend capability path and persistence report"],
+      "done_when": ["Trace API, registry, permits, sandbox, gateway and receipts", "Identify what is live versus merely present in code", "No code or state is modified"]
+    },
+    {
+      "id": "W03",
+      "title": "Audit capability manager and chat UI integration points",
+      "role": "frontend-auditor",
+      "depends_on": [],
+      "write_scopes": ["evidence/W03_FRONTEND.md", "drafts/W03.json"],
+      "read_scopes": ["candidate source tree: frontend/src/**, docs/agent-chat-control/**"],
+      "deliverables": ["Source-bound frontend/chat integration report"],
+      "done_when": ["Map current navigation, chat intent routing, API calls and state owners", "Recommend low-cognitive-load UI and review flow", "No code or state is modified"]
+    },
+    {
+      "id": "W04",
+      "title": "Synthesize findings into a reviewable capability manager contract",
+      "role": "team-orchestrator",
+      "depends_on": ["W01", "W02", "W03"],
+      "write_scopes": ["evidence/W04_CAPABILITY_MANAGER_CONTRACT.md", "drafts/W04.json"],
+      "read_scopes": ["evidence/W01_ARCHITECTURE.md", "evidence/W02_BACKEND.md", "evidence/W03_FRONTEND.md"],
+      "deliverables": ["Concrete capability manager MVP contract and implementation sequence"],
+      "done_when": ["Preserves fail-closed execution", "Names data model, API, UI/chat flows and review gates", "Lists validation criteria and residual decisions"]
+    }
+  ]
+}

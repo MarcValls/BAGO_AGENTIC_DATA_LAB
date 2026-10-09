@@ -1,0 +1,30 @@
+{
+  "changed_files": [
+    "evidence/W03_FRONTEND.md"
+  ],
+  "next_consumers": [
+    "W04"
+  ],
+  "outputs": [
+    {
+      "description": "Source-bound read-only frontend/chat integration audit for the capability manager spiral.",
+      "path": "evidence/W03_FRONTEND.md",
+      "sha256": "c77fd5481adf06d0bec6c282269fd78a90a0dfc97b0f8924d1fef62e9b7a04d5"
+    }
+  ],
+  "payload_sha256": "e11365cfd105786223c6789a3a022263d85cae710483dc6ea408161a588c772a",
+  "residual_risks": [
+    "Backend API, registry, authorization, persistence, gateway, and receipt semantics remain for W02 and W04 to establish.",
+    "The report is bound to deliberately dirty source files in the candidate worktree; no source edits or tests were performed."
+  ],
+  "role": "frontend-auditor",
+  "status": "DONE",
+  "verification": [
+    {
+      "command": "Read-only source inspection; no tests/build/runtime checks",
+      "evidence": "Inspection-only assignment; the report binds its findings to candidate HEAD and file SHA-256 values.",
+      "result": "NOT_RUN"
+    }
+  ],
+  "work_id": "W03"
+}

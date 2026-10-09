@@ -1,0 +1,53 @@
+{
+  "changed_files": [
+    ".goals/ADL-OLLAMA-SPIRAL-001/evidence/W04_CONVERSATION_TRACE_VERIFICATION.json",
+    ".goals/ADL-OLLAMA-SPIRAL-001/evidence/REAL_AGENT_EVIDENCE_COMPARISON.md"
+  ],
+  "next_consumers": [
+    "W05"
+  ],
+  "outputs": [
+    {
+      "name": "conversation-trace-evidence-v1",
+      "path": ".goals/ADL-OLLAMA-SPIRAL-001/evidence/W04_CONVERSATION_TRACE_VERIFICATION.json",
+      "summary": "API and SQLite readback verifies the exact two-message agent conversation survived a server restart; LocalTrace and matching Jaeger OTLP projection were read back and correlated by trace id, agent id, model and source file."
+    },
+    {
+      "name": "visual-and-trace-comparison-v1",
+      "path": ".goals/ADL-OLLAMA-SPIRAL-001/evidence/REAL_AGENT_EVIDENCE_COMPARISON.md",
+      "summary": "Side-by-side evidence boundary across app UI/API, persisted conversation and LocalTrace, and the post-run Jaeger projection."
+    }
+  ],
+  "payload_sha256": "8a1a443f920ef7a0dc39e3414458181b137aa48142e7f19d7f029ce010a3a4dd",
+  "residual_risks": [
+    "The model id used is the catalog-listed Cloud id gemma4:31b. The configured string gemma4:31b-cloud was not listed; alias equivalence is not asserted.",
+    "Jaeger received a post-run projection of the LocalTrace. The original app turn state was local_only and its UI did not include a Jaeger link.",
+    "Ollama cost was not reported.",
+    "The existing BAGO terminal mission state outside this isolated mission was not touched."
+  ],
+  "role": "evidence-provenance-engineer",
+  "status": "DONE",
+  "verification": [
+    {
+      "command": "GET /api/conversations/conv_144a84b37b604678a4fc6c60af55ef85 after restarting the same app on port 8084",
+      "evidence": "HTTP 200; active agent conversation at revision 2 with two complete messages; assistant response, source receipt and local trace reference survived restart.",
+      "result": "PASS"
+    },
+    {
+      "command": "Read %LOCALAPPDATA%/BAGO/AgenticDataLab/conversations/library.sqlite3 by exact conversation id",
+      "evidence": "Two message rows exist for the exact conversation id. User and assistant contents/status and assistant references correlate to the file source and trace-ce1f60b61fc34e13.",
+      "result": "PASS"
+    },
+    {
+      "command": "Read .bago/traces/agent-chat/trace-ce1f60b61fc34e13.json and GET http://127.0.0.1:16686/api/traces/75ee12eb3a775282a950d4c603c651c4",
+      "evidence": "Local trace is completed with ollama-cloud/gemma4:31b and one exact read source; Jaeger returns one matching agent.chat span with the local id, model, source, service and 2,578,127 μs duration.",
+      "result": "PASS"
+    },
+    {
+      "command": "Verify persisted screenshot artifacts with SHA-256",
+      "evidence": "App screenshot and Jaeger screenshot exist with digests recorded in W04_CONVERSATION_TRACE_VERIFICATION.json.",
+      "result": "PASS"
+    }
+  ],
+  "work_id": "W04"
+}

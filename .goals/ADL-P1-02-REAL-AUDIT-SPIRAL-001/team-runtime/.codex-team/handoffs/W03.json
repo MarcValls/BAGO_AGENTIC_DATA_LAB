@@ -1,0 +1,52 @@
+{
+  "changed_files": [
+    ".goals/ADL-P1-02-REAL-AUDIT-SPIRAL-001/evidence/probe_agent_run_ws.py",
+    ".goals/ADL-P1-02-REAL-AUDIT-SPIRAL-001/evidence/W03_RUNTIME_PROBE.json",
+    ".goals/ADL-P1-02-REAL-AUDIT-SPIRAL-001/evidence/W03_AGENT_RUNNER_DOM.yml",
+    ".goals/ADL-P1-02-REAL-AUDIT-SPIRAL-001/evidence/W03_BROWSER_EVIDENCE.json",
+    "output/playwright/p1-02-agent-runner-live-20261009.png"
+  ],
+  "next_consumers": [
+    "W04"
+  ],
+  "outputs": [
+    {
+      "name": "p1-02-runtime-check-v1",
+      "path": ".goals/ADL-P1-02-REAL-AUDIT-SPIRAL-001/evidence/W03_BROWSER_EVIDENCE.json",
+      "summary": "Playwright confirms the live Runner page marks execution unavailable and disables Run. A no-payload WebSocket probe on an allowlisted origin observes execution_unavailable and close 1008; jobs remain empty. Same-origin 8084 handshake is denied with HTTP 403 and is retained as a separate runtime issue."
+    },
+    {
+      "name": "p1-02-runner-screenshot-v1",
+      "path": "output/playwright/p1-02-agent-runner-live-20261009.png",
+      "summary": "Live Agent Runner UI showing the unavailable banner and disabled Run controls."
+    }
+  ],
+  "payload_sha256": "ac7044f9a63fe42459c525ecd89a4b966c2dbf23dea187ed880beb6c5f30195e",
+  "residual_risks": [
+    "WebSocket origin allowlist does not include the served page's 8084 origin; same-origin handshake returned HTTP 403.",
+    "Initial page load logged one GET /api/artifacts 404 because the optional demo artifact bundle is absent.",
+    "No agent job was executed; live evidence covers only the fail-closed path."
+  ],
+  "role": "verification-engineer",
+  "schema_version": "1.0",
+  "status": "DONE",
+  "verification": [
+    {
+      "command": "Playwright CLI open, click Agent Runner, snapshot and screenshot at http://127.0.0.1:8084/",
+      "result": "PASS; title matches, app renders, banner and disabled Run controls appear in DOM and screenshot"
+    },
+    {
+      "command": "Read-only websocket probe with Origin http://127.0.0.1:8084",
+      "result": "LIMITATION_OBSERVED; HTTP 403 before endpoint handler because this runtime origin is not allowed"
+    },
+    {
+      "command": "Read-only websocket probe with Origin http://127.0.0.1:8080; send no payload; compare /api/jobs/list",
+      "result": "PASS; HTTP 101, execution_unavailable frame, close 1008, zero jobs before and after"
+    },
+    {
+      "command": "Compare source hashes and listener process identity before/after probes",
+      "result": "PASS; hashes match W01 and listener remains on candidate checkout at port 8084"
+    }
+  ],
+  "work_id": "W03"
+}
