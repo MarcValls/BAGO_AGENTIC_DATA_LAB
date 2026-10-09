@@ -15,7 +15,9 @@ type AgentConfig = {
 
 type Agent = { id: string; config: AgentConfig; created_at: string }
 type ProviderModel = { provider_id: string; model_id: string; display_name: string; source: string; availability_confidence: string }
-type Message = { id: string; role: 'user' | 'assistant'; content: string }
+type MessageTrace = { localId: string; state: string; jaegerId?: string; jaegerUrl?: string }
+type WorkspaceSource = { path: string; start_line: number; end_line: number }
+type Message = { id: string; role: 'user' | 'assistant'; content: string; trace?: MessageTrace; sources?: WorkspaceSource[] }
 type ControlOperation = 'chat' | 'list_agents' | 'draft_agent' | 'navigate'
 type ExistingView = 'inspector' | 'builder' | 'chat' | 'runner' | 'control' | 'jobs' | 'traces' | 'summary' | 'retrieval' | 'authorization' | 'evaluation' | 'provider_settings'
 
@@ -75,6 +77,7 @@ export default function AgentChat({ onNavigate, onOpenProviderSettings }: AgentC
   const [selectedAgent, setSelectedAgent] = useState<Agent | null>(null)
   const [messages, setMessages] = useState<Message[]>([])
   const [input, setInput] = useState('')
+  const [allowWorkspaceRead, setAllowWorkspaceRead] = useState(false)
   const [sending, setSending] = useState(false)
   const [error, setError] = useState('')
   const [draft, setDraft] = useState<AgentConfig | null>(null)
@@ -103,8 +106,8 @@ export default function AgentChat({ onNavigate, onOpenProviderSettings }: AgentC
   useEffect(() => { void refreshAgents() }, [])
   useEffect(() => { messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' }) }, [messages])
 
-  const addAssistantMessage = (content: string) => {
-    setMessages((previous) => [...previous, { id: idFor(), role: 'assistant', content }])
+  const addAssistantMessage = (content: string, trace?: MessageTrace, sources?: WorkspaceSource[]) => {
+    setMessages((previous) => [...previous, { id: idFor(), role: 'assistant', content, ...(trace ? { trace } : {}), ...(sources?.length ? { sources } : {}) }])
   }
 
   const sendMessage = async (event?: FormEvent) => {
@@ -115,6 +118,8 @@ export default function AgentChat({ onNavigate, onOpenProviderSettings }: AgentC
     setError('')
     setCreatedNotice('')
     setDraft(null)
+    const readFilesForThisMessage = allowWorkspaceRead
+    setAllowWorkspaceRead(false)
     const userMessage = { id: idFor(), role: 'user' as const, content }
     setMessages((previous) => [...previous, userMessage])
     setSending(true)
@@ -126,12 +131,18 @@ export default function AgentChat({ onNavigate, onOpenProviderSettings }: AgentC
           .map(({ role, content: text }) => ({ role, content: text }))
         const response = await fetch(`/api/agents/${encodeURIComponent(selectedAgent.id)}/chat`, {
           method: 'POST', headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ message: content, conversation_history: history }),
+          body: JSON.stringify({ message: content, conversation_history: history, allow_workspace_read: readFilesForThisMessage }),
         })
         if (!response.ok) throw new Error(await responseError(response))
         const data = await response.json()
         if (data.source !== 'ollama' || typeof data.assistant_message !== 'string') throw new Error('The server did not confirm a live Ollama response.')
-        addAssistantMessage(data.assistant_message)
+        const localId = response.headers.get('X-Bago-Trace-Id')
+        addAssistantMessage(data.assistant_message, localId ? {
+          localId,
+          state: response.headers.get('X-Bago-Trace-State') || 'unknown',
+          jaegerId: response.headers.get('X-Bago-Jaeger-Trace-Id') || undefined,
+          jaegerUrl: response.headers.get('X-Bago-Jaeger-Trace-Url') || undefined,
+        } : undefined, Array.isArray(data.sources) ? data.sources : undefined)
       } else {
         const intent = inferIntent(content)
         if (intent.operation === 'local_navigate' && intent.view) {
@@ -141,7 +152,7 @@ export default function AgentChat({ onNavigate, onOpenProviderSettings }: AgentC
         }
         const response = await fetch('/api/chat/control', {
           method: 'POST', headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ operation: intent.operation, message: content, ...(intent.view ? { view: intent.view } : {}) }),
+          body: JSON.stringify({ operation: intent.operation, message: content, allow_workspace_read: readFilesForThisMessage, ...(intent.view ? { view: intent.view } : {}) }),
         })
         if (!response.ok) throw new Error(await responseError(response))
         const data = await response.json()
@@ -180,7 +191,7 @@ export default function AgentChat({ onNavigate, onOpenProviderSettings }: AgentC
           addAssistantMessage(data.assistant_message)
           onNavigate(view)
         } else if (data.operation === 'chat' && typeof data.assistant_message === 'string') {
-          addAssistantMessage(data.assistant_message)
+          addAssistantMessage(data.assistant_message, undefined, Array.isArray(data.sources) ? data.sources : undefined)
         } else {
           throw new Error('The server returned an unsupported chat operation.')
         }
@@ -225,8 +236,8 @@ export default function AgentChat({ onNavigate, onOpenProviderSettings }: AgentC
     addAssistantMessage('Proposal cancelled. No agent was created.')
   }
 
-  const openControlChat = () => { setSelectedAgent(null); setMessages([]); setDraft(null); setDraftModels([]); setDraftModelsError(''); setError('') }
-  const selectAgent = (agent: Agent) => { setSelectedAgent(agent); setMessages([]); setDraft(null); setDraftModels([]); setDraftModelsError(''); setError('') }
+  const openControlChat = () => { setSelectedAgent(null); setAllowWorkspaceRead(false); setMessages([]); setDraft(null); setDraftModels([]); setDraftModelsError(''); setError('') }
+  const selectAgent = (agent: Agent) => { setSelectedAgent(agent); setAllowWorkspaceRead(false); setMessages([]); setDraft(null); setDraftModels([]); setDraftModelsError(''); setError('') }
 
   return (
     <section className="control-chat" aria-label="Agent and application chat">
@@ -252,14 +263,14 @@ export default function AgentChat({ onNavigate, onOpenProviderSettings }: AgentC
         <header className="control-chat-header"><div><p className="section-eyebrow">{selectedAgent ? 'Agent conversation' : 'Control plane'}</p><h2>{selectedAgent?.config.name ?? 'How can I help?'}</h2><p>{selectedAgent ? selectedAgent.config.description : 'Ask about your agents, propose a new agent, or open a view.'}</p></div><span className="chat-mode-badge">{selectedAgent ? selectedAgent.config.model_id || 'Sin modelo asignado' : 'Ollama assistant'}</span></header>
         <div className="control-chat-messages" aria-live="polite">
           {messages.length === 0 && <div className="chat-welcome"><div className="welcome-mark" aria-hidden="true">✳</div><h3>{selectedAgent ? `Chat with ${selectedAgent.config.name}` : 'Your workspace, through chat'}</h3><p>{selectedAgent ? 'Messages are sent to this agent through the configured Ollama provider.' : 'The assistant can list your application agents, draft one for your review, and navigate to supported views.'}</p>{!selectedAgent && <div className="prompt-suggestions"><button type="button" onClick={() => setInput('Lista mis agentes')}>List my agents</button><button type="button" onClick={() => setInput('Quiero crear un agente para…')}>Create an agent</button><button type="button" onClick={() => setInput('Abre el Decision Inspector')}>Open the Inspector</button></div>}</div>}
-          {messages.map((message) => <article key={message.id} className={`control-message control-message-${message.role}`}><span className="message-speaker">{message.role === 'user' ? 'You' : selectedAgent?.config.name ?? 'Assistant'}</span><div className="control-message-content">{message.content}</div></article>)}
+          {messages.map((message) => <article key={message.id} className={`control-message control-message-${message.role}`}><span className="message-speaker">{message.role === 'user' ? 'You' : selectedAgent?.config.name ?? 'Assistant'}</span><div className="control-message-content">{message.content}</div>{message.sources?.length ? <div className="message-sources" aria-label="Project files read"><strong>Project files read</strong><ul>{message.sources.map((source) => <li key={`${source.path}:${source.start_line}-${source.end_line}`}><code>{source.path}:{source.start_line}-{source.end_line}</code></li>)}</ul></div> : null}{message.trace && <div className="message-trace" aria-label="Execution trace evidence"><span>Trace {message.trace.state}</span><code>Local: {message.trace.localId}</code>{message.trace.jaegerId && <code>Jaeger: {message.trace.jaegerId}</code>}{message.trace.jaegerUrl && <a href={message.trace.jaegerUrl} target="_blank" rel="noreferrer">Open in Jaeger</a>}</div>}</article>)}
           {draft && <section className="agent-draft-card" aria-labelledby="draft-title"><div className="draft-heading"><div><p className="section-eyebrow">AI-assisted draft</p><h3 id="draft-title">Review and edit before saving</h3></div><span className="draft-status">Not created</span></div><div className="draft-fields"><label>Name<input value={draft.name} maxLength={120} onChange={(event) => setDraft({ ...draft, name: event.target.value })} disabled={creatingDraft} /></label><label>Description<textarea value={draft.description} maxLength={1000} rows={2} onChange={(event) => setDraft({ ...draft, description: event.target.value })} disabled={creatingDraft} /></label><label>Agent type<select value={draft.type} onChange={(event) => setDraft({ ...draft, type: event.target.value as AgentConfig['type'] })} disabled={creatingDraft}><option value="rag">RAG</option><option value="tool">Tool</option><option value="multi-agent">Multi-agent</option></select></label><label>Confirmed Ollama model<select value={draft.model_id ?? ''} onChange={(event) => setDraft({ ...draft, provider_id: 'ollama-cloud', model_id: event.target.value })} disabled={creatingDraft || loadingDraftModels || draftModels.length === 0}><option value="">{loadingDraftModels ? 'Loading models…' : 'Select a confirmed model'}</option>{draftModels.map((model) => <option key={model.model_id} value={model.model_id}>{model.display_name} · {model.source}</option>)}</select></label><label className="draft-prompt-field">System prompt<textarea value={draft.system_prompt} maxLength={12000} rows={6} onChange={(event) => setDraft({ ...draft, system_prompt: event.target.value })} disabled={creatingDraft} /></label></div><p className="draft-model-note" role={draftModelsError ? 'alert' : 'status'}>{draftModelsError || (loadingDraftModels ? 'Checking models from the configured backend…' : 'Model choices come from the configured provider and are not inferred from a public catalog.')}{draftModelsError && <button type="button" onClick={onOpenProviderSettings}>Open provider settings</button>}</p><details className="draft-advanced"><summary>Advanced details</summary><p><strong>Tools:</strong> {draft.tools.length ? draft.tools.join(', ') : 'No tools selected'}</p><p>Creating this profile does not grant tool execution or app-control permissions.</p></details><div className="draft-actions"><button type="button" className="secondary-action" onClick={cancelDraft} disabled={creatingDraft}>Cancel proposal</button><button type="button" className="primary-action" onClick={() => void createDraft()} disabled={creatingDraft || loadingDraftModels || draftModels.length === 0 || !draft.name.trim() || !draft.description.trim() || !draft.system_prompt.trim() || draft.provider_id !== 'ollama-cloud' || !draft.model_id?.trim() || !draftModels.some((model) => model.model_id === draft.model_id)}>{creatingDraft ? 'Creating…' : 'Create agent'}</button></div></section>}
           {createdNotice && <p className="success-state" role="status">{createdNotice}</p>}
           {error && <p className="chat-error" role="alert">{error}{error.toLowerCase().includes('ollama') || error.toLowerCase().includes('provider') ? <button type="button" onClick={onOpenProviderSettings}>Open provider settings</button> : null}</p>}
           {sending && <p className="muted-state" role="status">Waiting for Ollama…</p>}
           <div ref={messagesEndRef} />
         </div>
-        <form className="control-chat-composer" onSubmit={(event) => void sendMessage(event)}><label className="visually-hidden" htmlFor="control-chat-input">Message the assistant or selected agent</label><textarea id="control-chat-input" rows={2} value={input} onChange={(event) => setInput(event.target.value)} placeholder={selectedAgent ? `Message ${selectedAgent.config.name}…` : 'Ask a question, list agents, create an agent, or open a view…'} disabled={sending} /><button className="primary-action" type="submit" disabled={sending || !input.trim()}>{sending ? 'Sending…' : 'Send'}</button><p>Agent creation is only saved after you review and confirm the proposal. Chat cannot run jobs or change files.</p></form>
+        <form className="control-chat-composer" onSubmit={(event) => void sendMessage(event)}><label className="visually-hidden" htmlFor="control-chat-input">Message the assistant or selected agent</label><textarea id="control-chat-input" rows={2} value={input} onChange={(event) => setInput(event.target.value)} placeholder={selectedAgent ? `Message ${selectedAgent.config.name}…` : 'Ask a question, list agents, create an agent, or open a view…'} disabled={sending} /><div className="chat-composer-actions"><label className="workspace-read-toggle"><input type="checkbox" checked={allowWorkspaceRead} onChange={(event) => setAllowWorkspaceRead(event.target.checked)} disabled={sending} /><span>Allow read-only project files for this message <small>Selected text is sent to Ollama Cloud</small></span></label><button className="primary-action" type="submit" disabled={sending || !input.trim()}>{sending ? 'Sending…' : 'Send'}</button></div><p>When enabled, chat can read bounded text files in this project and shows the lines it used. It cannot write files or run jobs.</p></form>
       </div>
     </section>
   )

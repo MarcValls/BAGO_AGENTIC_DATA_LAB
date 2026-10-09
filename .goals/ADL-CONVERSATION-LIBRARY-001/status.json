@@ -1,0 +1,17 @@
+{
+  "goal_id": "ADL-CONVERSATION-LIBRARY-001",
+  "status": "ACTIVE",
+  "phase": "PHASE_0_FREEZE_AND_REUSE_MAP",
+  "phase_state": "PREPARED",
+  "objective": "Persist only conversations created inside this BAGO Agentic Data Lab instance for its App Assistant and configured agents; do not import Codex chats or enable cross-project access.",
+  "acceptance_criteria": 10,
+  "completed_criteria": 0,
+  "verification": "NOT_RUN",
+  "notes": [
+    "User selected Phase 0 plus the persistent MVP.",
+    "User confirmed the target scope is the chats inside Agentic Data Lab, excluding Codex chats.",
+    "Existing dirty worktree content must be preserved.",
+    "The formal baseline is recorded in goal.md before this goal's artifacts were added."
+  ]
+}
+

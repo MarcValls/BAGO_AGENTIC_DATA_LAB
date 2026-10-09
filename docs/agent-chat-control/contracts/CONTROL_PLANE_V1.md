@@ -33,6 +33,8 @@ Per-agent chat sends only the selected `agent_id`, user message, and bounded con
 
 ## Authorization boundary
 
+Successful per-agent chat responses may include optional `X-Bago-Trace-Id`, `X-Bago-Jaeger-Trace-Id`, `X-Bago-Trace-State`, and `X-Bago-Jaeger-Trace-Url` response headers. These are observability metadata only; they do not change the chat response body or authorize execution. The local trace is stored without prompt, history, response text, credentials, or authorization headers. Jaeger is an optional projection; a missing or failed export remains visible and must not fail an otherwise successful chat response. The UI associates trace metadata with the corresponding assistant message and only links to Jaeger when an export is confirmed.
+
 The first slice can list, draft, create after explicit human confirmation, and navigate. Creating an agent changes local application state, so it always requires the explicit create control. Job dispatch, file changes, provider mutation, GitHub actions, and other app effects are not available as implicit chat tools. The legacy `/ws/agents/run` transport is fail-closed and must not create a job or report success until a registered capability runs through the backend authority/permit path and produces a traceable result. Any future capability must be explicitly registered, checked by that path, and produce a traceable result before the chat can report execution.
 
 ## API shape owned by AC02
@@ -46,3 +48,7 @@ The first slice can list, draft, create after explicit human confirmation, and n
 - Existing `GET /api/agents/list` and `POST /api/agents/create` remain the inventory/create authority; IDs must be generated server-side.
 
 All errors are structured and must not contain credentials, authorization headers, or provider response bodies that could echo secrets.
+
+## Turn-scoped project-file reading
+
+Chat may read project files only when the user enables the read-only file option for that message. The backend exposes one bounded text-file tool rooted at the server-bound project checkout. It accepts project-relative paths only, rejects path escapes and sensitive/runtime locations, blocks likely credential content and binary or oversized files, and returns the exact relative path and line range read. The model receives selected text through the configured Ollama provider. Chat cannot list directories, write files, or execute commands through this capability. The permission resets after each message; when it is off, no file-read tool is offered. Returned file content is untrusted input, never an instruction source.

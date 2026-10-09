@@ -258,16 +258,39 @@ def verify(model_id: str | None = None) -> dict[str, Any]:
     return {"provider_id": PROVIDER_ID, "state": "configured_unverified", "model_id": selected, "model_available": found if selected else None, "generation_performed": False}
 
 
-def chat(model_id: str, messages: list[dict[str, str]]) -> str:
+def chat_turn(
+    model_id: str,
+    messages: list[dict[str, Any]],
+    *,
+    tools: list[dict[str, Any]] | None = None,
+) -> dict[str, Any]:
+    """Return one structured Ollama message, including any native tool calls."""
     global _last_successful_model_call, _last_successful_at
     model_id = validate_model_id(model_id)
     _last_successful_model_call = None
     _last_successful_at = None
-    response = _request("POST", "/chat", payload={"model": model_id, "messages": messages, "stream": False}, timeout=120)
+    payload: dict[str, Any] = {"model": model_id, "messages": messages, "stream": False}
+    if tools:
+        payload["tools"] = tools
+    response = _request("POST", "/chat", payload=payload, timeout=120)
     message = response.get("message")
-    content = message.get("content") if isinstance(message, dict) else None
-    if not isinstance(content, str) or not content.strip():
+    if not isinstance(message, dict):
+        raise ProviderError("empty_model_response", "Ollama returned no assistant response.")
+    content = message.get("content")
+    tool_calls = message.get("tool_calls")
+    has_content = isinstance(content, str) and bool(content.strip())
+    has_tool_calls = isinstance(tool_calls, list) and bool(tool_calls)
+    if not has_content and not has_tool_calls:
         raise ProviderError("empty_model_response", "Ollama returned no assistant response.")
     _last_successful_model_call = model_id
     _last_successful_at = utc_now()
+    return message
+
+
+def chat(model_id: str, messages: list[dict[str, Any]]) -> str:
+    """Text-only convenience API retained for callers without tools."""
+    message = chat_turn(model_id, messages)
+    content = message.get("content")
+    if not isinstance(content, str) or not content.strip():
+        raise ProviderError("empty_model_response", "Ollama returned no assistant response.")
     return content.strip()

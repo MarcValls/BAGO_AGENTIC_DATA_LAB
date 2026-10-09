@@ -63,6 +63,8 @@ class TraceEvent:
     parent_event_id: str | None = None
     attributes: Mapping[str, Any] = field(default_factory=dict)
     evidence_refs: tuple[str, ...] = ()
+    start_time_unix_nano: int | None = None
+    end_time_unix_nano: int | None = None
 
     def __post_init__(self) -> None:
         if not self.event_id.strip() or not self.trace_id.strip():
@@ -71,13 +73,21 @@ class TraceEvent:
             raise ValueError("sequence must be non-negative")
         if not self.name.strip() or not self.status.strip():
             raise ValueError("name and status are required")
+        if (self.start_time_unix_nano is None) != (self.end_time_unix_nano is None):
+            raise ValueError("event start and end timestamps must be provided together")
+        if self.start_time_unix_nano is not None and (
+            self.start_time_unix_nano < 0
+            or self.end_time_unix_nano is None
+            or self.end_time_unix_nano < self.start_time_unix_nano
+        ):
+            raise ValueError("event timestamps must be non-negative and ordered")
         kind = self.kind if isinstance(self.kind, TraceKind) else TraceKind(self.kind)
         object.__setattr__(self, "kind", kind)
         object.__setattr__(self, "attributes", dict(self.attributes))
         object.__setattr__(self, "evidence_refs", tuple(str(item) for item in self.evidence_refs))
 
     def to_dict(self) -> dict[str, Any]:
-        return {
+        result = {
             "event_id": self.event_id,
             "trace_id": self.trace_id,
             "sequence": self.sequence,
@@ -88,6 +98,10 @@ class TraceEvent:
             "attributes": dict(self.attributes),
             "evidence_refs": list(self.evidence_refs),
         }
+        if self.start_time_unix_nano is not None:
+            result["start_time_unix_nano"] = self.start_time_unix_nano
+            result["end_time_unix_nano"] = self.end_time_unix_nano
+        return result
 
 
 @dataclass(frozen=True)

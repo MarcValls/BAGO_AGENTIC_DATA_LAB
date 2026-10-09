@@ -10,6 +10,10 @@ Run correlation is carried from the LocalTrace envelope. Existing tool records m
 
 ## Integrity and failure behavior
 
+`TraceEvent` may carry optional `start_time_unix_nano` and `end_time_unix_nano` values. When present, the projection preserves those source times as span bounds; when absent, the exporter may use export-time bounds and must not imply those measure execution duration.
+
+An exported Jaeger trace ID is distinct from `LocalTrace.trace_id` unless an explicit mapping establishes equality. A UI-to-Jaeger link is valid only when the exported Jaeger trace ID is explicitly returned and paired with the local trace ID; otherwise Jaeger correlation remains `unavailable`.
+
 Statuses and attributes pass through unchanged, including failed/denied outcomes and visible redaction markers. Missing parent events, sequence gaps, duplicate event IDs, absent claim/action correlation and absent Jaeger correlation remain explicit. No failure is translated to success. A payload omitted upstream cannot be reconstructed by this read-only adapter.
 
 Focused contract checks cover out-of-order input, chronology versus parent causality, missing parent/correlation, failed calls, redaction pass-through and duplicate IDs. These checks do not establish browser behavior or Jaeger availability.

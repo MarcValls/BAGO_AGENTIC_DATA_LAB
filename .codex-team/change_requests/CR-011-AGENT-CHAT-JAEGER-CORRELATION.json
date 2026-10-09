@@ -1,0 +1,19 @@
+{
+  "change_request_id": "CR-011-AGENT-CHAT-JAEGER-CORRELATION",
+  "contract_id": "agent-chat-control-api-v1",
+  "old_fingerprint": "7e1ba743960ceefd783ab3a9fa333ab10c0161310c4e3c20f550c3715e5a4289",
+  "proposed_new_fingerprint": "2942ed04634acee6a035615c63815d7d17bc049d97bb69380f1c62c87217ce6e",
+  "reason": "The user requested paired visual and Jaeger evidence for a live per-agent chat. Add optional response headers for correlation and projection status without changing the existing JSON response body or request shape. The local trace excludes prompt, history, response text and credentials.",
+  "impacted_consumers": [
+    "AC03 chat UI",
+    "AC04 independent verification",
+    "AC05 terminal evidence",
+    "POST /api/agents/{agent_id}/chat consumers"
+  ],
+  "required_invalidations": [
+    "Verify the existing response body remains unchanged and new headers are optional.",
+    "Rebuild the frontend and exercise the UI with projection success and unavailable states.",
+    "Compare the UI correlation metadata with the exact Jaeger trace and sanitized local trace."
+  ],
+  "decision": "Accepted at user request; additive observability headers preserve the existing request and response body contracts."
+}
