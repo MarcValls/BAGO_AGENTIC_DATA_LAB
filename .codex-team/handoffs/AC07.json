@@ -1,0 +1,59 @@
+{
+  "changed_files": [
+    "src/api/server.py",
+    "docker-compose.ui.yml",
+    "docs/agent-chat-control/contracts/CONTROL_PLANE_V1.md"
+  ],
+  "next_consumers": [
+    "AC04",
+    "AC05"
+  ],
+  "outputs": [
+    {
+      "description": "Standalone server defaults to loopback and CORS is limited to explicit localhost/127.0.0.1 app and Vite development origins. Docker may override bind inside the container.",
+      "path": "src/api/server.py",
+      "sha256": "812fd57df7a0c7276d8f9eae0bdc16248f0aed0a35221cb3f82fbc670af8bdaa"
+    },
+    {
+      "description": "Host port 8080 is bound to 127.0.0.1; container listener binds 0.0.0.0 only on the private container interface.",
+      "path": "docker-compose.ui.yml",
+      "sha256": "1aaa0e3554af79619600781cd1590866f0a91a5c772f35bfec9b5f6317cbb7dc"
+    },
+    {
+      "description": "Contract limits the first unauthenticated UI release to host-local use; LAN exposure requires an authenticated API boundary.",
+      "path": "docs/agent-chat-control/contracts/CONTROL_PLANE_V1.md",
+      "sha256": "f91e731132418382b0ecba3d438b26fd52a868ee4945faa22a601129b2cf5030"
+    }
+  ],
+  "payload_sha256": "4eaa3b63ecf6aebee123f68562ae038998924e1acfdf7628938909bab2384e50",
+  "residual_risks": [
+    "The standalone API is host-local by default but can be explicitly rebound through BAGO_API_HOST; do not set a non-loopback host without an authenticated boundary.",
+    "CORS limits browser origins and is not API authentication.",
+    "No Docker image or running service was started."
+  ],
+  "role": "team-orchestrator",
+  "status": "DONE",
+  "verification": [
+    {
+      "command": "python -m compileall -q src/api/server.py",
+      "evidence": "Static Python compilation passed.",
+      "result": "PASS"
+    },
+    {
+      "command": "docker compose -f docker-compose.ui.yml config --quiet",
+      "evidence": "Docker Compose accepted the host-local port mapping and container bind configuration.",
+      "result": "PASS"
+    },
+    {
+      "command": "git diff --check",
+      "evidence": "No whitespace errors in current diff.",
+      "result": "PASS"
+    },
+    {
+      "command": "External host/network reachability probe",
+      "evidence": "No service was launched and no network exposure probe was requested.",
+      "result": "NOT_RUN"
+    }
+  ],
+  "work_id": "AC07"
+}

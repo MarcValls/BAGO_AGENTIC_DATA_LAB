@@ -1,0 +1,18 @@
+{
+  "change_request_id": "CR-009-LEGACY-RUNNER-EXECUTION-TRUTHFULNESS",
+  "contract_id": "agent-chat-control-contract-v1",
+  "old_fingerprint": "2c8902f0b8dc7950eb43f8f4c5a3969ede9204632a163e170db61986d8fefb98",
+  "proposed_new_fingerprint": "32c7ac19385b28214d47131167c07399ea6d4c3d69c44c3509b6e1b725713555",
+  "reason": "Independent review found the existing /ws/agents/run route sleeps, fabricates metrics/logs and persists a successful job without real execution. The legacy WebSocket chat path also bypasses the selected-model fallback for provider-less records.",
+  "impacted_consumers": [
+    "AC04 independent verification",
+    "Agent Runner UI",
+    "AC03 agent inventory/chat",
+    "AC05 terminal gate"
+  ],
+  "required_invalidations": [
+    "Add AC09 to block fake job success and align legacy agent chat fallback with AC06.",
+    "Re-review final chat and Runner behavior at the final candidate fingerprint."
+  ],
+  "decision": "Accepted as a necessary truthfulness and backward-compatibility correction within the requested agent chat/control work."
+}

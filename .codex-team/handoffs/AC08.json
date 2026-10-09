@@ -1,0 +1,98 @@
+{
+  "changed_files": [
+    "src/api/server.py",
+    "src/providers/ollama.py",
+    "frontend/src/components/ProviderSettings.tsx",
+    "docker-compose.ui.yml",
+    "scripts/run-local-ui.ps1",
+    "docs/agent-chat-control/contracts/CONTROL_PLANE_V1.md",
+    "docs/agent-chat-control/LOCAL_SETUP.md"
+  ],
+  "next_consumers": [
+    "AC04",
+    "AC05"
+  ],
+  "outputs": [
+    {
+      "description": "Reject non-loopback CORS origins and credentialed CORS; host API binding defaults to loopback and rejects non-loopback binding; container mode provider runtime is exposed fail-closed.",
+      "path": "src/api/server.py",
+      "sha256": "a6e6f47dbd2ab3c39a268bc84779b54fc6b6f5c04649bb087056d0910c6cb37b"
+    },
+    {
+      "description": "Container runtime cannot save credentials or call Ollama; status reports unsupported_runtime. Host mode uses the selected API key or local CLI route.",
+      "path": "src/providers/ollama.py",
+      "sha256": "ed5865b410c8d15052966d71d31d369b72e0cd6d3a7de226f8c46bd1e43a4ec9"
+    },
+    {
+      "description": "Provider setup controls are disabled in the container runtime and the host-local setup path is shown.",
+      "path": "frontend/src/components/ProviderSettings.tsx",
+      "sha256": "b58e2e6bff8675bf91bb619a7cc1291e84dd515a60b973ff6d18e1f85543682f"
+    },
+    {
+      "description": "Agent, non-secret provider config, and job history directories are host-mounted; UI and Jaeger ports bind host loopback; container runtime is identified.",
+      "path": "docker-compose.ui.yml",
+      "sha256": "ca4416f0cef4998e4efbe14c14e7e4a54c1fcb01653f8bf36c9d44f020d0d811"
+    },
+    {
+      "description": "Windows host launcher builds the UI, checks dependencies/port, starts the API hidden on loopback, logs outside the repository, and opens the local app.",
+      "path": "scripts/run-local-ui.ps1",
+      "sha256": "e7f152a6b8446daedeb45a1a649b19302b9078c336779f6ac6dd8658fed1575d"
+    },
+    {
+      "description": "v1.2 defines host-local provider support, explicit runtime states, local-only CORS, and persistence behavior.",
+      "path": "docs/agent-chat-control/contracts/CONTROL_PLANE_V1.md",
+      "sha256": "2c8902f0b8dc7950eb43f8f4c5a3969ede9204632a163e170db61986d8fefb98"
+    },
+    {
+      "description": "Windows host setup prerequisites and supported Ollama provider launch flow.",
+      "path": "docs/agent-chat-control/LOCAL_SETUP.md",
+      "sha256": "2757713bc8789355a64ca6fc55ec49cb9c85ab2b4bf1649038ed52a043bdc840"
+    }
+  ],
+  "payload_sha256": "4212d4a484f077a8d2747574a1ae531d8a07d1a28bd31b497cfcfb2ebd24e9d3",
+  "residual_risks": [
+    "The native Windows launch flow was statically checked but not executed; the selected Python environment must contain requirements.txt, FastAPI, and Uvicorn dependencies.",
+    "Docker provider setup remains unsupported by design; Docker UI data paths persist but must not be used to configure Ollama credentials.",
+    "LAN deployments remain unsupported until an authenticated API boundary is implemented."
+  ],
+  "role": "team-orchestrator",
+  "status": "DONE",
+  "verification": [
+    {
+      "command": "npm run build",
+      "evidence": "TypeScript and Vite build passed: 126 modules transformed.",
+      "result": "PASS"
+    },
+    {
+      "command": "python -m compileall -q src/api/server.py src/providers/ollama.py",
+      "evidence": "Static Python compilation passed.",
+      "result": "PASS"
+    },
+    {
+      "command": "docker compose -f docker-compose.ui.yml config --quiet",
+      "evidence": "Compose accepted the loopback mappings, runtime marker, and persistent data mounts.",
+      "result": "PASS"
+    },
+    {
+      "command": "PowerShell AST parse of scripts/run-local-ui.ps1",
+      "evidence": "PowerShell parser returned zero syntax errors.",
+      "result": "PASS"
+    },
+    {
+      "command": "git diff --check",
+      "evidence": "No whitespace errors.",
+      "result": "PASS"
+    },
+    {
+      "command": "Native launcher execution, Docker runtime, secure-store operation, and provider requests",
+      "evidence": "No app process was launched and no credentials or model requests were used.",
+      "result": "NOT_RUN"
+    },
+    {
+      "command": "Automated tests and browser interaction",
+      "evidence": "Not requested.",
+      "result": "NOT_RUN"
+    }
+  ],
+  "work_id": "AC08"
+}

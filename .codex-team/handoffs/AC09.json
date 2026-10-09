@@ -1,0 +1,57 @@
+{
+  "changed_files": [
+    "src/api/server.py",
+    "docs/agent-chat-control/contracts/CONTROL_PLANE_V1.md"
+  ],
+  "next_consumers": [
+    "AC04",
+    "AC05"
+  ],
+  "outputs": [
+    {
+      "description": "/ws/agents/run now reports execution_unavailable and never persists/sends a job success; legacy /ws/agents/chat resolves an unbound legacy record from the currently selected model per request and reports provider readiness failures without modifying the record.",
+      "path": "src/api/server.py",
+      "sha256": "8e3a9f2e62c06503eba03afc5dc0f46c794f9fc6bf440d9644d6b1c6ccf681fc"
+    },
+    {
+      "description": "The legacy runner cannot claim execution until a registered governed capability runs through authority/permit and produces traceable evidence.",
+      "path": "docs/agent-chat-control/contracts/CONTROL_PLANE_V1.md",
+      "sha256": "32c7ac19385b28214d47131167c07399ea6d4c3d69c44c3509b6e1b725713555"
+    }
+  ],
+  "payload_sha256": "083bd0faee8deeef49507209e677aee76a2a1fb75d0bd7384a2b981e03482d02",
+  "residual_risks": [
+    "No browser/WebSocket interaction was performed; error handling was verified by source inspection only.",
+    "Actual governed job dispatch remains unimplemented; the Runner is intentionally fail-closed until a real authorized execution path exists."
+  ],
+  "role": "team-orchestrator",
+  "status": "DONE",
+  "verification": [
+    {
+      "command": "python -m compileall -q src/api/server.py",
+      "evidence": "Static Python compilation passed.",
+      "result": "PASS"
+    },
+    {
+      "command": "Inspect /ws/agents/run handler for save_job and done events",
+      "evidence": "Scoped source inspection confirmed error code execution_unavailable and no job persistence or done/success event.",
+      "result": "PASS"
+    },
+    {
+      "command": "git diff --check",
+      "evidence": "No whitespace errors; line-ending warnings are from coordination/previous frontend files.",
+      "result": "PASS"
+    },
+    {
+      "command": "WebSocket runtime behavior",
+      "evidence": "The API was not launched.",
+      "result": "NOT_RUN"
+    },
+    {
+      "command": "Automated tests",
+      "evidence": "Not requested.",
+      "result": "NOT_RUN"
+    }
+  ],
+  "work_id": "AC09"
+}

@@ -1,0 +1,62 @@
+{
+  "changed_files": [
+    "docs/agent-chat-control/verification/AC04-review.md"
+  ],
+  "next_consumers": [
+    "AC05"
+  ],
+  "outputs": [
+    {
+      "description": "Final candidate-bound independent review; PASS with no P0/P1, one P2 UI consistency issue, and explicit NOT_RUN boundaries.",
+      "path": "docs/agent-chat-control/verification/AC04-review.md",
+      "sha256": "4b9aa1bbbcd8c155e605cd09510b7b921c74c13cc1b580ed0be78a068628a8fb"
+    }
+  ],
+  "payload_sha256": "d590d0c183755a9840c969331bb7310c390e458d7c7fbe60059be352e0d4d4dd",
+  "residual_risks": [
+    "P2: API-key password input remains editable in container mode although save/model actions are disabled and backend rejects writes; key remains component-local until component unmount and is not sent without save.",
+    "Native launcher, Docker runtime, live WebSocket handshake, credential store, and provider behavior remain NOT_RUN.",
+    "Origin and loopback controls do not authenticate hostile software running as the local user; LAN exposure remains unsupported.",
+    "Governed agent execution is intentionally unavailable."
+  ],
+  "role": "verification-engineer",
+  "status": "DONE",
+  "verification": [
+    {
+      "command": "npm run build",
+      "evidence": "126 modules transformed; TypeScript and Vite production build passed.",
+      "result": "PASS"
+    },
+    {
+      "command": "python -m compileall -q src/api/server.py src/providers/ollama.py",
+      "evidence": "Static Python compilation passed.",
+      "result": "PASS"
+    },
+    {
+      "command": "docker compose -f docker-compose.ui.yml config --quiet",
+      "evidence": "Compose configuration parsed successfully.",
+      "result": "PASS"
+    },
+    {
+      "command": "git diff --check",
+      "evidence": "No whitespace errors; line-ending conversion warnings only.",
+      "result": "PASS"
+    },
+    {
+      "command": "python .codex-team-kit/scripts/teamctl.py verify",
+      "evidence": "Completed handoffs and coordination state validated before AC04 handoff.",
+      "result": "PASS"
+    },
+    {
+      "command": "Review all WebSocket routes, provider boundaries, agent chat/draft flows, and final handoff hashes",
+      "evidence": "Findings and current candidate fingerprint are recorded in docs/agent-chat-control/verification/AC04-review.md.",
+      "result": "PASS"
+    },
+    {
+      "command": "Automated tests, browser, runtime, WebSocket client, OS credential store, Ollama requests",
+      "evidence": "Not executed; no UI/API process or provider credentials were used.",
+      "result": "NOT_RUN"
+    }
+  ],
+  "work_id": "AC04"
+}
