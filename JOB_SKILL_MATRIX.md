@@ -14,7 +14,7 @@
 
 | Requisito | Estado | Evidence | Gap |
 |-----------|--------|----------|-----|
-| Agentes y orchestration | 🟡 En aprendizaje | — | L1 LangGraph |
+| Agentes y orchestration | L1 local validated | StateGraph + GovernedRAG + Gateway/Sandbox + LocalTrace | production identity and durable runtime remain separate |
 | Tool calling / APIs | ✅ Conocido | BAGO backend | — |
 | MCP | ✅ Baseline gobernado | mcp_adapter.py + local stdio demo + video | Tool-use cloud end-to-end |
 | Bedrock provider | 🟢 Converse live + Free Plan observado | adapter + 10 tests + benchmark + `evidence/l6_aws_live.md` + `evidence/l6_aws_free_tier.md` | Stream, IAM least-privilege y cargo cero posterior |
@@ -42,7 +42,7 @@
 | Agentes y pipelines | 🟡 En diseño | — | L1-L2 |
 | Python | ✅ Fuerte | BAGO backend | — |
 | Evaluación de modelos | 🟡 Parcial | — | Reforzar tests |
-| Orchestration frameworks | ❌ No empezado | — | L1 LangGraph |
+| Orchestration frameworks | LangGraph implemented locally | L1 interrupt/resume, exact approval, receipts and tests | cloud/runtime depth remains separate |
 | Vector DB | 🟢 Local persistente | SQLiteVectorStore + GovernedRAG | L14 |
 | MCP | ✅ Baseline gobernado | mcp_adapter.py + local stdio demo + video | Cloud/provider depth |
 | Testing/CI-CD | 🟡 Parcial | BAGO tests | Reforzar |
@@ -68,7 +68,7 @@
 | Bedrock Knowledge Bases | ✅ Baseline offline gobernado | Retrieve/Generate + citations + ETL comparison | Live KB ingestion and relevance |
 | Metadata Catalog / OpenMetadata | ✅ Adapter + local live verificado | Search, lineage, ownership, schema version, quality + receipts contra Docker local | OpenMetadata remoto |
 | RAG | 🟡 Parcial | — | L4 |
-| LangGraph/LangChain | ❌ No empezado | — | L1 |
+| LangGraph/LangChain | LangGraph local baseline validated | StateGraph + interrupt/resume + governed execution evidence | managed checkpoint and cloud model integration remain separate |
 | Agentes | 🟡 Diseñado | BAGO agents | L1 |
 | Proveedores externos | ✅ Experiencia | BAGO adapters | L6 |
 | Vertex AI / Gemini | ❌ No empezado | — | Auto-study GCP |
@@ -143,8 +143,8 @@
 |-------|---------------|---------------|--------------|----------------|-----------------|
 | Python | Alta | ✅ Senior | ✅ Senior | BAGO backend | ✅ Sí |
 | REST APIs | Alta | ✅ Senior | ✅ Senior | BAGO FastAPI | ✅ Sí |
-| LangGraph | Muy Alta | ❌ None | 🎯 Proficient | L1 state graph | L1 completado |
-| LangChain concepts | Alta | ❌ None | 🟡 Basic | — | L1 completado |
+| LangGraph | Very High | Implemented locally | Proficient | Integrated StateGraph + exact approval + governed RAG/gateway/sandbox/receipt/LocalTrace | L1 VALIDATED in local scope; identity, durability and OS isolation are not claimed |
+| LangChain concepts | High | Practical baseline | Basic | StateGraph, interrupt/resume, in-memory checkpoint | L1 VALIDATED local |
 | Multi-agent systems | Muy Alta | 🟢 Reinforced | 🎯 Proficient | GovernedKnowledgeAgent + L9 evidence | L9 offline |
 | Tool use | Muy Alta | ✅ Implementado | 🎯 Proficient | BAGO tools + MCP receipts | L5 baseline |
 | MCP | Muy Alta | ✅ Baseline gobernado | 🎯 Proficient | L5 MCP adapter + video | L5 baseline |
@@ -163,11 +163,11 @@
 | OpenMetadata Catalog | Media | 🟢 Local live verificado | 🎯 Proficient | L8 adapter + Docker local + lineage/quality receipts | OpenMetadata remoto |
 | IAM | Alta | 🟡 Basic | 🎯 Configurable | L6 least-privilege setup | Live policy check |
 | CI/CD | Alta | 🟢 Reproducible | 🎯 Implementado | GitHub Actions + pinned requirements + public E2E | L13 CI |
-| Evaluation | Muy Alta | 🟢 Local governance evals | 🎯 Framework | 146 tests + trace/evidence linkage + L8/L9/L10/L11/L12/L13/L14/L15 scenarios | L15 local + CI |
+| Evaluation | Muy Alta | 🟢 Local governance evals | 🎯 Framework | 203 test cases + trace/evidence linkage + L8/L9/L10/L11/L12/L13/L14/L15 scenarios | L15 local + CI |
 | Observability | Alta | 🟢 OpenTelemetry local live | 🎯 Completo | LocalTrace + OTLP/HTTP + Jaeger Docker + parent-linked spans | L15 local; remoto separado |
 | Secure execution | Muy Alta | 🟢 Local backend verified | 🎯 Implementado | BAGO auth boundary + LocalRestrictedBackend + escape tests | L11 local |
-| Authorization | Muy Alta | ✅ Diseñado | 🎯 Implementado | BAGO permits | L1 completado |
-| Auditability | Alta | ✅ Diseñado | 🎯 Implementado | BAGO receipts | L1 completado |
+| Authorization | Muy Alta | ✅ Diseñado | 🎯 Implementado | L1 fail-closed gate; MCP, Bedrock y sandbox tienen límites probados por separado | L1 evidencia parcial |
+| Auditability | Alta | ✅ Diseñado | 🎯 Implementado | Recibos de adapters/sandbox; L1 no fabrica recibos si no hay gateway | L1 evidencia parcial |
 | Docker/K8s | Media | 🟡 Docker Compose local | 🎯 Basic | OpenMetadata Compose + reproducible healthcheck | L8 local |
 
 ### Soft Skills / Strategic
@@ -249,3 +249,14 @@
 
 **Última actualización:** 2026-09-22
 **Próxima revisión:** 2026-09-28 (fin semana 1)
+
+## Portfolio Evidence Update — 2026-10-10 (isolated candidate)
+
+Target profile: **AI platform and agent engineering**. This candidate adds a repeatable Agent Evaluation Lab and trace-linked real-provider evaluation, addressing the project's prior gap between governance checks and answer-level regression checks. It remains an uncommitted worktree change, not an integrated release.
+
+- **Agent evaluation:** `EXECUTED` in `codex/adl-agent-evaluation-lab-20261010`; versioned suites, deterministic declared checks, preflighted Ollama inference, immutable run history, model/agent fingerprint and LocalTrace.
+- **Real provider evidence:** one synthetic single-turn run with `gemma4:31b` and the persisted ADL Read Evidence Agent returned the requested token; result `PASS`. See `.goals/ADL-AGENT-EVALUATION-LAB-001/evidence/live-ollama/receipt.json`. This is a pipeline smoke test, not evidence of general agent quality.
+- **Checks:** backend 27 passed; frontend API 5 passed; rendered initial-loading smoke 1 passed; TypeScript/Vite production build passed. Full UI state coverage remains incomplete; lint and Jaeger export are `NOT_RUN`.
+- **Market context:** LangChain's 2026 survey reports quality as a leading production barrier and offline evaluations in use among surveyed teams; Dynatrace's 2026 SRE report highlights model performance/accuracy monitoring and observability/governance. These reports inform the portfolio prioritization; they do not establish hiring outcomes.
+  - [LangChain State of Agent Engineering](https://www.langchain.com/state-of-agent-engineering?trk=article-ssr-frontend-pulse_little-text-block)
+  - [Dynatrace State of SRE Report 2026](https://www.dynatrace.com/resources/ebooks/sre-report/)

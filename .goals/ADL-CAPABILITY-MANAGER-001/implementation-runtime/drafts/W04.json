@@ -1,0 +1,54 @@
+{
+  "work_id": "W04",
+  "changed_files": [
+    "evidence/W04_FINAL_STATUS.md",
+    "drafts/W04.json"
+  ],
+  "outputs": [
+    {
+      "path": "evidence/W04_FINAL_STATUS.md",
+      "description": "Terminal status, final verification evidence, and explicit capability limits."
+    }
+  ],
+  "verification": [
+    {
+      "command": "teamctl verify",
+      "result": "PASS",
+      "evidence": "W01, W02, and W03 handoffs validate before W04 closure."
+    },
+    {
+      "command": "GET /api/capabilities and GET /api/capabilities/proposals on 127.0.0.1:8084",
+      "result": "PASS",
+      "evidence": "HTTP 200; real wired status for four capabilities; zero proposals; no mutation."
+    },
+    {
+      "command": "Playwright visual inspection of Capability Manager",
+      "result": "PASS",
+      "evidence": "Screenshot: output/playwright/capability-manager-live-20261009.png; catalog states match live API."
+    },
+    {
+      "command": "npm --prefix frontend run lint",
+      "result": "BLOCKED",
+      "evidence": "ESLint executable is unavailable in this checkout."
+    },
+    {
+      "command": "GET /api/artifacts",
+      "result": "NOT_VERIFIED",
+      "evidence": "HTTP 404, recorded as separate residual issue."
+    },
+    {
+      "command": "Live POST proposal create/cancel",
+      "result": "NOT_RUN",
+      "evidence": "Avoided persistent writes to user proposal database; focused tests use temporary SQLite."
+    }
+  ],
+  "residual_risks": [
+    "No authenticated actor identity or human approval flow exists.",
+    "No capability grants, jobs, Runner execution, MCP invocation, or sandbox execution is implemented by this increment.",
+    "Full test suite and live proposal mutation were not run.",
+    "Frontend lint is blocked because ESLint is not installed.",
+    "GET /api/artifacts returns 404 on the observed server.",
+    "Local capability notices are not appended to the durable chat transcript."
+  ],
+  "next_consumers": []
+}

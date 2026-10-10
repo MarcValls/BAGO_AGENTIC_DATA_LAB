@@ -7,18 +7,21 @@ agent builder API, and job history tracking.
 from __future__ import annotations
 
 import asyncio
+import importlib
 import json
 import os
 import re
 import subprocess
+import sys
 import time
 import uuid
+from collections import deque
 from datetime import datetime
 from pathlib import Path
 from typing import Any, Literal
 from urllib.parse import urlsplit
 
-from fastapi import FastAPI, HTTPException, Request, Response, WebSocket, WebSocketDisconnect
+from fastapi import FastAPI, HTTPException, Query, Request, Response, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
@@ -26,6 +29,15 @@ from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 from src.jobs import JobExecution, get_agent_metrics, list_jobs, load_job, save_job
+from src.capabilities import (
+    CapabilityNotFound,
+    CapabilityProposalConflict,
+    CapabilityProposalNotFound,
+    CapabilityStore,
+    capability_catalog,
+)
+from src.conversations import ConversationConflict, ConversationNotFound, ConversationStore
+from src.conversations.library import OwnerKind
 from src.providers import ollama
 from src.agent_tools.workspace_read import (
     MAX_TOOL_CALLS_PER_TURN,
@@ -37,11 +49,33 @@ from src.agent_tools.workspace_read import (
 from src.observability.local_trace import LocalTrace, TraceEvent, TraceKind
 from src.observability.otel_bridge import export_local_trace_to_otlp
 
+# `src.evaluation.local_evals` retains a legacy absolute `observability` import.
+# Add the source root before dynamically loading the evaluation package.
+_SRC_ROOT = str(Path(__file__).resolve().parents[1])
+if _SRC_ROOT not in sys.path:
+    sys.path.insert(0, _SRC_ROOT)
+_evaluation_module = importlib.import_module("src.evaluation.agent_lab")
+EvaluationStore = _evaluation_module.EvaluationStore
+EvaluationValidationError = _evaluation_module.EvaluationValidationError
+RunNotFound = _evaluation_module.RunNotFound
+SuiteConflict = _evaluation_module.SuiteConflict
+SuiteNotFound = _evaluation_module.SuiteNotFound
+config_fingerprint = _evaluation_module.config_fingerprint
+evaluate_answer = _evaluation_module.evaluate_answer
+overall_status = _evaluation_module.overall_status
+utc_now = _evaluation_module.utc_now
+redact_credentials = _evaluation_module.redact_credentials
+contains_credential = _evaluation_module.contains_credential
+
 DEMO_OUTPUT_DIR = Path(__file__).resolve().parent.parent.parent / "demo_output" / "latest"
 AGENTS_DIR = Path(__file__).resolve().parent.parent.parent / "agents" / "created"
 FRONTEND_BUILD = Path(__file__).resolve().parent.parent.parent / "frontend" / "dist"
 REPO_ROOT = Path(__file__).resolve().parent.parent.parent
 AGENT_CHAT_TRACE_DIR = REPO_ROOT / ".bago" / "traces" / "agent-chat"
+CONVERSATIONS = ConversationStore()
+CAPABILITIES = CapabilityStore(REPO_ROOT)
+EVALUATIONS = EvaluationStore(REPO_ROOT)
+EVALUATION_TRACE_DIR = EVALUATIONS.database_path.parent / "traces"
 AGENT_TOOL_ALLOWLIST = frozenset({
     "bedrock.converse",
     "mcp.execute",
@@ -188,9 +222,11 @@ class AgentCreateRequest(BaseModel):
 class ControlChatRequest(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
-    operation: Literal["chat", "list_agents", "draft_agent", "navigate"] = "chat"
+    operation: Literal["chat", "help", "list_agents", "draft_agent", "navigate"] = "chat"
     message: str = Field(default="", max_length=8000)
-    view: Literal["inspector", "builder", "chat", "runner", "control", "jobs", "traces"] | None = None
+    view: Literal["inspector", "builder", "chat", "runner", "control", "jobs", "traces", "summary", "retrieval", "authorization", "evaluation", "provider_settings"] | None = None
+    conversation_id: str
+    revision: int = Field(ge=0)
     allow_workspace_read: bool = False
 
 
@@ -198,8 +234,74 @@ class AgentChatRequest(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     message: str = Field(min_length=1, max_length=8000)
-    conversation_history: list[dict[str, str]] = Field(default_factory=list, max_length=30)
+    conversation_id: str
+    revision: int = Field(ge=0)
     allow_workspace_read: bool = False
+
+
+class ConversationCreateRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    owner_kind: Literal["assistant", "agent"]
+    owner_id: str = Field(default="app-assistant", min_length=1, max_length=128)
+    title: str = Field(default="New conversation", min_length=1, max_length=160)
+
+
+class ConversationRevisionRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    revision: int = Field(ge=0)
+
+
+class CapabilityProposalCreateRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    capability_id: str = Field(min_length=1, max_length=64, pattern=r"^[a-z][a-z0-9_.-]*$")
+    summary: str = Field(min_length=1, max_length=500)
+    requested_scope: str = Field(min_length=1, max_length=1000)
+    conversation_id: str | None = Field(default=None, min_length=37, max_length=37, pattern=r"^conv_[0-9a-f]{32}$")
+
+    @field_validator("summary", "requested_scope")
+    @classmethod
+    def clean_proposal_text(cls, value: str) -> str:
+        value = " ".join(value.split())
+        if not value or any(ord(character) < 32 for character in value):
+            raise ValueError("Proposal text must be plain non-empty text.")
+        if re.search(
+            r"(?:api[_ -]?key|access[_ -]?token|client[_ -]?secret|password)\s*[:=]\s*\S+|"
+            r"\bBearer\s+\S+|-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----",
+            value,
+            re.IGNORECASE,
+        ):
+            raise ValueError("Proposal text must not contain credentials.")
+        return value
+
+
+class CapabilityProposalCancelRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    revision: int = Field(ge=0)
+
+
+class EvaluationSuiteCreateRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    name: str = Field(min_length=1, max_length=100)
+    agent_id: str = Field(min_length=1, max_length=64)
+    cases: list[dict[str, Any]] = Field(min_length=1, max_length=10)
+
+
+class EvaluationSuiteUpdateRequest(EvaluationSuiteCreateRequest):
+    expected_revision: int = Field(ge=0)
+
+
+class EvaluationRunRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    revision: int = Field(ge=0)
+    model_id: str = Field(min_length=1, max_length=128)
+
+
+class ConversationRenameRequest(ConversationRevisionRequest):
+    title: str = Field(min_length=1, max_length=160)
 
 
 class AgentResponse(BaseModel):
@@ -307,6 +409,130 @@ def _load_artifacts() -> dict[str, Any]:
         "receipts": json.loads(receipts_path.read_text()),
         "trace": json.loads(trace_path.read_text()),
         "evaluation": json.loads(evaluation_path.read_text()),
+    }
+
+
+def _load_team_status() -> dict[str, Any]:
+    """Read a sanitized snapshot of the local teamctl coordination state."""
+    team_dir = REPO_ROOT / ".codex-team"
+    state_path = team_dir / "state.json"
+    events_path = team_dir / "events.jsonl"
+
+    if not state_path.is_file():
+        raise HTTPException(status_code=404, detail="Team coordination state not found.")
+
+    try:
+        state = json.loads(state_path.read_text(encoding="utf-8"))
+    except json.JSONDecodeError as exc:
+        raise HTTPException(
+            status_code=503,
+            detail=f"Team coordination state is invalid JSON: {exc}",
+        ) from exc
+    except (OSError, UnicodeDecodeError) as exc:
+        raise HTTPException(
+            status_code=503,
+            detail=f"Team coordination state could not be read: {exc}",
+        ) from exc
+
+    if not isinstance(state, dict):
+        raise HTTPException(status_code=503, detail="Team coordination state must be a JSON object.")
+
+    mission = state.get("mission")
+    work_items = mission.get("work_items") if isinstance(mission, dict) else None
+    work_status = state.get("work_status")
+    if not isinstance(mission, dict) or not isinstance(work_items, list) or not isinstance(work_status, dict):
+        raise HTTPException(status_code=503, detail="Team coordination state has an unsupported shape.")
+
+    tasks = []
+    counts: dict[str, int] = {}
+    for item in work_items:
+        if not isinstance(item, dict) or not isinstance(item.get("id"), str):
+            raise HTTPException(status_code=503, detail="Team coordination state contains an invalid work item.")
+        work_id = item["id"]
+        title = item.get("title", work_id)
+        role = item.get("role", "unknown")
+        depends_on = item.get("depends_on", [])
+        if (
+            not isinstance(title, str)
+            or not isinstance(role, str)
+            or not isinstance(depends_on, list)
+            or not all(isinstance(dependency, str) for dependency in depends_on)
+        ):
+            raise HTTPException(
+                status_code=503,
+                detail=f"Team coordination state contains invalid metadata for {work_id}.",
+            )
+        runtime = work_status.get(work_id)
+        if not isinstance(runtime, dict) or not isinstance(runtime.get("status"), str):
+            raise HTTPException(
+                status_code=503,
+                detail=f"Team coordination state is missing runtime status for {work_id}.",
+            )
+        status = runtime["status"]
+        counts[status] = counts.get(status, 0) + 1
+        tasks.append({
+            "id": work_id,
+            "title": title,
+            "role": role,
+            "depends_on": depends_on,
+            "status": status,
+            "agent": runtime.get("agent") if isinstance(runtime.get("agent"), str) else None,
+            "claimed_at": runtime.get("claimed_at") if isinstance(runtime.get("claimed_at"), str) else None,
+            "done_at": runtime.get("done_at") if isinstance(runtime.get("done_at"), str) else None,
+        })
+
+    recent_events: deque[dict[str, Any]] = deque(maxlen=50)
+    if events_path.is_file():
+        try:
+            with events_path.open(encoding="utf-8") as event_file:
+                for line_number, line in enumerate(event_file, start=1):
+                    try:
+                        event = json.loads(line)
+                    except json.JSONDecodeError as exc:
+                        raise HTTPException(
+                            status_code=503,
+                            detail=f"Team event log has invalid JSON on line {line_number}: {exc}",
+                        ) from exc
+                    if not isinstance(event, dict):
+                        raise HTTPException(
+                            status_code=503,
+                            detail=f"Team event log contains a non-object on line {line_number}.",
+                        )
+                    recent_events.append({
+                        key: event[key]
+                        for key in ("at", "kind", "work_id", "agent", "role", "from_agent", "note_kind")
+                        if isinstance(event.get(key), str)
+                    })
+        except HTTPException:
+            raise
+        except (OSError, UnicodeDecodeError) as exc:
+            raise HTTPException(
+                status_code=503,
+                detail=f"Team event log could not be read: {exc}",
+            ) from exc
+
+    active_agents = sorted({
+        task["agent"]
+        for task in tasks
+        if task["status"] == "CLAIMED" and isinstance(task["agent"], str)
+    })
+    return {
+        "source": "teamctl coordination files",
+        "mission": {
+            "id": mission.get("mission_id") if isinstance(mission.get("mission_id"), str) else "unknown",
+            "title": mission.get("title") if isinstance(mission.get("title"), str) else "Untitled mission",
+            "objective": mission.get("objective") if isinstance(mission.get("objective"), str) else "",
+            "terminal_gate": state.get("terminal_gate") if isinstance(state.get("terminal_gate"), str) else "UNKNOWN",
+            "max_concurrency": mission.get("max_concurrency")
+            if isinstance(mission.get("max_concurrency"), int)
+            else None,
+        },
+        "snapshot_updated_at": state.get("updated_at") if isinstance(state.get("updated_at"), str) else None,
+        "observed_at": datetime.now().astimezone().isoformat(),
+        "counts": counts,
+        "active_agents": active_agents,
+        "tasks": tasks,
+        "recent_events": list(recent_events),
     }
 
 
@@ -418,6 +644,12 @@ def demo_status() -> dict[str, Any]:
         "has_artifacts": has_all,
         "artifact_count": sum(1 for a in artifacts if a.exists()),
     }
+
+
+@app.get("/api/team/status")
+def team_status() -> dict[str, Any]:
+    """Return a read-only snapshot for the local team monitor page."""
+    return _load_team_status()
 
 
 # ===== API: Demo Execution =====
@@ -622,6 +854,175 @@ def _load_agent(agent_id: str) -> AgentResponse:
         raise HTTPException(status_code=500, detail="Stored agent configuration is invalid.") from None
 
 
+def _evaluation_trace(*, run_id: str, suite: dict[str, Any], case: dict[str, Any], agent: AgentResponse,
+                      model_id: str, duration_ms: int, outcome: str, error_code: str | None = None) -> dict[str, str]:
+    """Persist a redacted per-attempt trace outside the workspace."""
+    trace_id = "trace-" + uuid.uuid4().hex[:16]
+    event = TraceEvent(
+        event_id="event-" + uuid.uuid4().hex[:16], trace_id=trace_id, sequence=0,
+        name="agent.evaluation.case", kind=TraceKind.WORKFLOW,
+        status={"PASS": "SUCCESS", "FAIL": "FAILURE", "ERROR": "ERROR"}.get(outcome, "ERROR"),
+        attributes={
+            "evaluation_run_id": run_id, "evaluation_suite_id": suite["id"],
+            "evaluation_suite_version": suite["version"], "evaluation_case_id": case["id"],
+            "agent_id": agent.id, "agent_config_fingerprint": config_fingerprint(agent.config.model_dump()),
+            "provider_id": "ollama-cloud", "model_id": model_id, "outcome": outcome,
+            "duration_ms": duration_ms, "cost_status": "not_reported",
+            **({"error_code": error_code} if error_code else {}),
+        }, evidence_refs=(f"agent://{agent.id}",),
+    )
+    trace = LocalTrace(trace_id=trace_id, run_id=run_id, events=(event,))
+    state, jaeger_trace_id, jaeger_url = "local_trace_failed", "", ""
+    try:
+        EVALUATION_TRACE_DIR.mkdir(parents=True, exist_ok=True)
+        path = EVALUATION_TRACE_DIR / f"{trace_id}.json"
+        payload = trace.to_dict()
+        # LocalTrace's historic cost default is a demo convention, not measured usage.
+        payload.pop("cost_usd", None)
+        temporary = path.with_suffix(".json.tmp")
+        temporary.write_text(json.dumps(payload, ensure_ascii=False, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+        os.replace(temporary, path)
+        state = "local_only"
+    except OSError:
+        pass
+    endpoint = os.environ.get("BAGO_OTEL_EXPORTER_OTLP_ENDPOINT", "").strip()
+    if endpoint and state == "local_only":
+        try:
+            receipt = export_local_trace_to_otlp(trace, endpoint=endpoint,
+                service_name=os.environ.get("OTEL_SERVICE_NAME", "bago-agentic-data-lab"), timeout=2.0)
+            state = "exported" if receipt.exported else "export_failed"
+            jaeger_trace_id = receipt.jaeger_trace_id or ""
+            base = os.environ.get("BAGO_JAEGER_UI_URL", "").strip().rstrip("/")
+            if receipt.exported and jaeger_trace_id and base:
+                jaeger_url = f"{base}/trace/{jaeger_trace_id}"
+        except Exception:
+            state = "export_failed"
+    metadata = {"trace_id": trace_id, "trace_state": state}
+    if jaeger_trace_id:
+        metadata["jaeger_trace_id"] = jaeger_trace_id
+    if jaeger_url:
+        metadata["jaeger_url"] = jaeger_url
+    return metadata
+
+
+@app.get("/api/evaluations/suites")
+def evaluation_list_suites() -> dict[str, Any]:
+    return {"suites": EVALUATIONS.list_suites()}
+
+
+@app.post("/api/evaluations/suites")
+def evaluation_create_suite(request: EvaluationSuiteCreateRequest) -> dict[str, Any]:
+    try:
+        _load_agent(request.agent_id)
+        return {"suite": EVALUATIONS.create_suite(request.name, request.agent_id, request.cases)}
+    except EvaluationValidationError as error:
+        raise HTTPException(status_code=422, detail={"code": "invalid_suite", "message": str(error)}) from None
+
+
+@app.put("/api/evaluations/suites/{suite_id}")
+def evaluation_update_suite(suite_id: str, request: EvaluationSuiteUpdateRequest) -> dict[str, Any]:
+    try:
+        _load_agent(request.agent_id)
+        return {"suite": EVALUATIONS.update_suite(suite_id, request.name, request.agent_id, request.cases, request.expected_revision)}
+    except SuiteNotFound:
+        raise HTTPException(status_code=404, detail={"code": "suite_not_found", "message": "Evaluation suite not found."}) from None
+    except SuiteConflict:
+        raise HTTPException(status_code=409, detail={"code": "suite_revision_conflict", "message": "Suite changed; reload it before updating."}) from None
+    except EvaluationValidationError as error:
+        raise HTTPException(status_code=422, detail={"code": "invalid_suite", "message": str(error)}) from None
+
+
+@app.get("/api/evaluations/runs")
+def evaluation_list_runs(limit: int = Query(default=50, ge=1, le=100)) -> dict[str, Any]:
+    return {"runs": EVALUATIONS.list_runs(limit)}
+
+
+@app.get("/api/evaluations/runs/{run_id}")
+def evaluation_get_run(run_id: str) -> dict[str, Any]:
+    try:
+        return {"run": EVALUATIONS.get_run(run_id)}
+    except RunNotFound:
+        raise HTTPException(status_code=404, detail={"code": "run_not_found", "message": "Evaluation run not found."}) from None
+
+
+@app.post("/api/evaluations/suites/{suite_id}/run")
+async def evaluation_run_suite(suite_id: str, request: EvaluationRunRequest) -> dict[str, Any]:
+    """Explicit real-provider run. All preflight checks finish before inference."""
+    try:
+        suite = EVALUATIONS.get_suite(suite_id)
+    except SuiteNotFound:
+        raise HTTPException(status_code=404, detail={"code": "suite_not_found", "message": "Evaluation suite not found."}) from None
+    if suite["revision"] != request.revision:
+        raise HTTPException(status_code=409, detail={"code": "suite_revision_conflict", "message": "Suite changed; reload it before running."})
+    agent = _load_agent(suite["agent_id"])
+    if contains_credential(agent.config.system_prompt):
+        raise HTTPException(status_code=422, detail={"code": "agent_prompt_contains_credentials", "message": "The agent prompt contains credential-like text; remove it before evaluating."})
+    try:
+        selected_model = ollama.validate_model_id(request.model_id)
+        status = ollama.status()
+        if status.get("provider_id") != "ollama-cloud" or status.get("state") not in {"ready", "configured_unverified"}:
+            raise ollama.ProviderError("provider_not_ready", "Configure and verify Ollama before running this suite.", status.get("state", "not_configured"))
+        discovery = ollama.discover_models()
+        model_ids = {item.get("model_id") for item in discovery.get("models", []) if isinstance(item, dict)}
+        if selected_model not in model_ids:
+            raise ollama.ProviderError("model_unavailable", "The selected model is not available from the configured Ollama provider.")
+    except ollama.ProviderError as error:
+        raise _provider_http_error(error) from None
+
+    # Freeze all identities and counts before the first model call.
+    run_id, started_at = "evalrun_" + uuid.uuid4().hex, utc_now()
+    if not EVALUATIONS.acquire_suite_run(suite_id, run_id):
+        raise HTTPException(status_code=409, detail={"code": "suite_run_in_progress", "message": "This suite already has a run in progress."})
+    start_ns = time.time_ns()
+    fingerprint = config_fingerprint(agent.config.model_dump())
+    case_results: list[dict[str, Any]] = []
+    for case in suite["cases"]:
+        call_start = time.time_ns()
+        answer_preview, checks, trace = "", [], {}
+        try:
+            answer = await asyncio.to_thread(ollama.chat, selected_model, [
+                {"role": "system", "content": agent.config.system_prompt},
+                {"role": "user", "content": case["prompt"]},
+            ])
+            duration = max(0, (time.time_ns() - call_start) // 1_000_000)
+            _, answer_status = evaluate_answer(answer, case, True)
+            trace = await asyncio.to_thread(_evaluation_trace, run_id=run_id, suite=suite, case=case,
+                agent=agent, model_id=selected_model, duration_ms=duration,
+                outcome="PASS" if answer_status == "PASS" else "FAIL")
+            checks, result_status = evaluate_answer(answer, case, trace.get("trace_state") in {"local_only", "exported", "export_failed"})
+            answer_preview = redact_credentials(answer[:4000])
+            case_results.append({"case_id": case["id"], "name": case["name"], "status": result_status,
+                "checks": checks, "answer_preview": answer_preview, "duration_ms": duration, "trace": trace})
+        except ollama.ProviderError as error:
+            duration = max(0, (time.time_ns() - call_start) // 1_000_000)
+            trace = await asyncio.to_thread(_evaluation_trace, run_id=run_id, suite=suite, case=case,
+                agent=agent, model_id=selected_model, duration_ms=duration, outcome="ERROR", error_code=error.code)
+            case_results.append({"case_id": case["id"], "name": case["name"], "status": "ERROR", "checks": [],
+                "answer_preview": "", "duration_ms": duration, "trace": trace, "error_code": error.code})
+        except Exception:
+            # Upstream exception text can contain response bodies or secrets.
+            duration = max(0, (time.time_ns() - call_start) // 1_000_000)
+            safe_code = "provider_error"
+            trace = await asyncio.to_thread(_evaluation_trace, run_id=run_id, suite=suite, case=case,
+                agent=agent, model_id=selected_model, duration_ms=duration, outcome="ERROR", error_code=safe_code)
+            case_results.append({"case_id": case["id"], "name": case["name"], "status": "ERROR", "checks": [],
+                "answer_preview": "", "duration_ms": duration, "trace": trace, "error_code": safe_code})
+    completed_at = utc_now()
+    statuses = [item["status"] for item in case_results]
+    run = {"id": run_id, "suite_id": suite["id"], "suite_version": suite["version"], "suite_name": suite["name"],
+        "agent_id": agent.id, "agent_name": agent.config.name, "agent_config_fingerprint": fingerprint,
+        "provider_id": "ollama-cloud", "model_id": selected_model, "status": overall_status(statuses),
+        "total_cases": len(statuses), "passed_cases": statuses.count("PASS"), "failed_cases": statuses.count("FAIL"),
+        "error_cases": statuses.count("ERROR"), "duration_ms": max(0, (time.time_ns() - start_ns) // 1_000_000),
+        "started_at": started_at, "completed_at": completed_at, "cases": case_results,
+        "usage": {"status": "not_reported"}}
+    try:
+        EVALUATIONS.save_run(run)
+    finally:
+        EVALUATIONS.release_suite_run(suite_id, run_id)
+    return {"run": run}
+
+
 def _write_agent(config: AgentConfig) -> AgentResponse:
     response_data = {"id": f"agent_{uuid.uuid4().hex}", "config": config.model_dump(), "created_at": datetime.utcnow().isoformat()}
     AGENTS_DIR.mkdir(parents=True, exist_ok=True)
@@ -718,6 +1119,138 @@ async def _chat_with_workspace_read(
 
     raise ollama.ProviderError("tool_loop_incomplete", "The chat could not complete its response.")
 
+def _conversation_error(error: Exception) -> HTTPException:
+    if isinstance(error, ConversationNotFound):
+        return HTTPException(status_code=404, detail={"code": "conversation_not_found", "message": "Conversation was not found."})
+    if isinstance(error, ConversationConflict):
+        return HTTPException(status_code=409, detail={"code": "conversation_revision_conflict", "message": "This conversation changed elsewhere. Reload it and try again."})
+    return HTTPException(status_code=422, detail={"code": "invalid_conversation", "message": "Conversation request is invalid."})
+
+
+def _owned_conversation(conversation_id: str, owner_kind: OwnerKind, owner_id: str) -> dict[str, Any]:
+    try:
+        conversation = CONVERSATIONS.get(conversation_id)
+    except ConversationNotFound as error:
+        raise _conversation_error(error) from None
+    if conversation["owner_kind"] != owner_kind or conversation["owner_id"] != owner_id:
+        raise HTTPException(status_code=404, detail={"code": "conversation_not_found", "message": "Conversation was not found."})
+    return conversation
+
+
+def _capability_proposal_error(error: Exception) -> HTTPException:
+    if isinstance(error, CapabilityNotFound):
+        return HTTPException(status_code=404, detail={"code": "capability_not_found", "message": "Capability was not found in this workspace catalog."})
+    if isinstance(error, CapabilityProposalNotFound):
+        return HTTPException(status_code=404, detail={"code": "proposal_not_found", "message": "Capability proposal was not found in this workspace."})
+    if isinstance(error, CapabilityProposalConflict):
+        return HTTPException(status_code=409, detail={"code": "proposal_revision_conflict", "message": "Proposal is no longer pending or its revision changed."})
+    return HTTPException(status_code=422, detail={"code": "invalid_capability_proposal", "message": "Capability proposal is invalid."})
+
+
+@app.get("/api/capabilities")
+async def list_capabilities() -> dict[str, Any]:
+    return capability_catalog(REPO_ROOT)
+
+
+@app.get("/api/capabilities/proposals")
+async def list_capability_proposals(
+    status: Literal["PENDING_REVIEW", "CANCELLED", "EXPIRED", "all"] = "all",
+    limit: int = Query(default=100, ge=1, le=100),
+) -> dict[str, Any]:
+    return {"workspace_id": CAPABILITIES.workspace_id, "proposals": CAPABILITIES.list_proposals(status, limit)}
+
+
+@app.post("/api/capabilities/proposals")
+async def create_capability_proposal(request: CapabilityProposalCreateRequest) -> dict[str, Any]:
+    # This is a direct, explicit API operation. Model output is not routed here,
+    # and proposal creation cannot grant authority or invoke execution code.
+    if request.conversation_id:
+        try:
+            CONVERSATIONS.get(request.conversation_id, include_messages=False)
+        except ConversationNotFound as error:
+            raise _conversation_error(error) from None
+    try:
+        proposal = CAPABILITIES.create_proposal(
+            capability_id=request.capability_id,
+            summary=request.summary,
+            requested_scope=request.requested_scope,
+            conversation_id=request.conversation_id,
+        )
+    except CapabilityNotFound as error:
+        raise _capability_proposal_error(error) from None
+    return {"proposal": proposal, "authority_notice": "Proposal saved for review only; no permission, job, or execution was created."}
+
+
+@app.post("/api/capabilities/proposals/{proposal_id}/cancel")
+async def cancel_capability_proposal(proposal_id: str, request: CapabilityProposalCancelRequest) -> dict[str, Any]:
+    if not re.fullmatch(r"proposal_[0-9a-f]{32}", proposal_id):
+        raise HTTPException(status_code=422, detail={"code": "invalid_proposal_id", "message": "Proposal ID is invalid."})
+    try:
+        proposal = CAPABILITIES.cancel_proposal(proposal_id, request.revision)
+    except (CapabilityProposalNotFound, CapabilityProposalConflict) as error:
+        raise _capability_proposal_error(error) from None
+    return {"proposal": proposal, "authority_notice": "Proposal cancelled; no permission, job, or execution was created."}
+
+
+@app.post("/api/conversations")
+async def create_conversation(request: ConversationCreateRequest) -> dict[str, Any]:
+    owner_id = "app-assistant" if request.owner_kind == "assistant" else request.owner_id
+    if request.owner_kind == "agent":
+        _load_agent(owner_id)
+    return CONVERSATIONS.create(request.owner_kind, owner_id, request.title)
+
+
+@app.get("/api/conversations")
+async def list_conversations(
+    owner_kind: Literal["assistant", "agent"] | None = None,
+    owner_id: str | None = None,
+    status: Literal["active", "archived", "deleted", "all"] = "active",
+    limit: int = 100,
+) -> dict[str, Any]:
+    return {"conversations": CONVERSATIONS.list(owner_kind, owner_id, status, limit)}
+
+
+@app.get("/api/conversations/{conversation_id}")
+async def get_conversation(conversation_id: str) -> dict[str, Any]:
+    try:
+        return CONVERSATIONS.get(conversation_id)
+    except ConversationNotFound as error:
+        raise _conversation_error(error) from None
+
+
+@app.patch("/api/conversations/{conversation_id}")
+async def rename_conversation(conversation_id: str, request: ConversationRenameRequest) -> dict[str, Any]:
+    try:
+        return CONVERSATIONS.rename(conversation_id, request.revision, request.title)
+    except (ConversationNotFound, ConversationConflict, ValueError) as error:
+        raise _conversation_error(error) from None
+
+
+@app.post("/api/conversations/{conversation_id}/archive")
+async def archive_conversation(conversation_id: str, request: ConversationRevisionRequest) -> dict[str, Any]:
+    try:
+        return CONVERSATIONS.set_status(conversation_id, request.revision, "archived")
+    except (ConversationNotFound, ConversationConflict) as error:
+        raise _conversation_error(error) from None
+
+
+@app.post("/api/conversations/{conversation_id}/delete")
+async def delete_conversation(conversation_id: str, request: ConversationRevisionRequest) -> dict[str, Any]:
+    try:
+        CONVERSATIONS.set_status(conversation_id, request.revision, "deleted")
+        return {"id": conversation_id, "status": "deleted", "revision": request.revision + 1}
+    except (ConversationNotFound, ConversationConflict) as error:
+        raise _conversation_error(error) from None
+
+
+@app.post("/api/conversations/{conversation_id}/restore")
+async def restore_conversation(conversation_id: str, request: ConversationRevisionRequest) -> dict[str, Any]:
+    try:
+        return CONVERSATIONS.restore(conversation_id, request.revision)
+    except (ConversationNotFound, ConversationConflict) as error:
+        raise _conversation_error(error) from None
+
+
 @app.post("/api/agents/create")
 async def create_agent(request: AgentCreateRequest) -> AgentResponse:
     """Create and save a new agent configuration."""
@@ -773,14 +1306,54 @@ async def get_agent(agent_id: str) -> AgentResponse:
 
 @app.post("/api/chat/control")
 async def control_chat(request: ControlChatRequest) -> dict[str, Any]:
-    """One bounded chat turn; optional capability is limited to workspace reads."""
+    """Persist an app-assistant turn; optional capability is limited to workspace reads."""
+    conversation = _owned_conversation(request.conversation_id, "assistant", "app-assistant")
+    if conversation["revision"] != request.revision:
+        raise _conversation_error(ConversationConflict(request.conversation_id))
+    history = CONVERSATIONS.history(request.conversation_id)
+    try:
+        user_message = CONVERSATIONS.append_message(request.conversation_id, request.revision, "user", request.message or request.operation)
+    except (ConversationConflict, ConversationNotFound) as error:
+        raise _conversation_error(error) from None
+    revision = user_message["revision"]
+
+    def finish_turn(operation: str, assistant_message: str, **payload: Any) -> dict[str, Any]:
+        nonlocal revision
+        references: dict[str, Any] = {}
+        if payload.get("sources"):
+            references["sources"] = payload["sources"]
+        CONVERSATIONS.append_message(request.conversation_id, revision, "assistant", assistant_message, references)
+        saved = CONVERSATIONS.get(request.conversation_id)
+        return {"operation": operation, "assistant_message": assistant_message, "conversation_id": request.conversation_id, "revision": saved["revision"], "conversation": saved, **payload}
+
+    if request.operation == "help":
+        spanish = bool(re.search(r"\b(hola|puedes|agentes|crear|ayuda|aplicaci[oó]n|qu[eé])\b", request.message, re.IGNORECASE))
+        if spanish:
+            answer = (
+                "Hola. Puedo explicar las vistas, listar tus agentes y ayudarte a crear uno desde este chat: "
+                "genero un borrador editable y solo se guarda cuando lo revisas y pulsas «Create agent». "
+                "También puedo abrir vistas. Para conversar con un agente, selecciónalo en la lista. "
+                "Este chat no inicia trabajos ni modifica archivos."
+            )
+        else:
+            answer = (
+                "Hello. I can explain the views, list your agents, and help create one here: "
+                "I generate an editable draft, saved only after you review it and choose “Create agent”. "
+                "I can also open views. Select an agent in the list to chat with it. "
+                "This chat does not start jobs or modify files."
+            )
+        return finish_turn("help", answer)
+
     if request.operation == "list_agents":
         agents, warnings = _read_agent_records()
-        return {"operation": "list_agents", "assistant_message": f"There are {len(agents)} configured application agents.", "agents": agents, "count": len(agents), "warning_count": len(warnings), "warnings": warnings}
+        names = "\n".join(f"- {agent.config.name} ({agent.config.type})" for agent in agents)
+        answer = f"There are {len(agents)} configured application agents." + (f"\n{names}" if names else "")
+        return finish_turn("list_agents", answer, agents=agents, count=len(agents), warning_count=len(warnings), warnings=warnings)
     if request.operation == "navigate":
         if request.view is None:
             raise HTTPException(status_code=422, detail={"code": "view_required", "message": "Choose one of the existing views."})
-        return {"operation": "navigate", "assistant_message": f"Opening {request.view}.", "navigation": {"view": request.view}}
+        answer = f"Opening {request.view}."
+        return finish_turn("navigate", answer, navigation={"view": request.view})
     if not request.message.strip():
         raise HTTPException(status_code=422, detail={"code": "message_required", "message": "Enter a message."})
 
@@ -793,7 +1366,7 @@ async def control_chat(request: ControlChatRequest) -> dict[str, Any]:
                 raw = await asyncio.to_thread(
                     ollama.chat,
                     model_id,
-                    _agent_draft_messages(request.message.strip(), retry_hint),
+                    _agent_draft_messages("\n".join(f"{item['role']}: {item['content']}" for item in history[-20:] + [{"role": "user", "content": request.message.strip()}]), retry_hint),
                 )
                 try:
                     draft = _parse_agent_draft(raw, model_id)
@@ -808,10 +1381,21 @@ async def control_chat(request: ControlChatRequest) -> dict[str, Any]:
             raise _provider_http_error(error) from None
         except Exception:
             raise HTTPException(status_code=502, detail={"code": "invalid_agent_draft", "message": "The model did not produce a valid agent proposal. No agent was created."}) from None
-        return {"operation": "draft_agent", "assistant_message": "Review this proposal. It will not be saved until you choose Create agent.", "agent_draft": draft.model_dump(), "created": False}
+        answer = "Review this proposal. It will not be saved until you choose Create agent."
+        return finish_turn("draft_agent", answer, agent_draft=draft.model_dump(), created=False)
 
     messages = [
-        {"role": "system", "content": "You are BAGO's app assistant. You can explain the application and its registered views. You cannot create agents, run jobs, change files, or claim those actions occurred. If a user asks for an action, explain the available review flow. " + _workspace_read_instructions(request.allow_workspace_read)},
+        {"role": "system", "content": (
+            "You are BAGO Agentic Data Lab's app assistant. You can explain the application and its registered views, list configured agents, and help the user design a new agent. "
+            "Reply in the language used by the user. "
+            "When the user asks to create or design an agent, the app can generate an editable draft; it is saved only after the user reviews it and explicitly chooses Create agent. "
+            "Never claim that agent creation is unavailable, and never claim the draft has been saved before that confirmation. "
+            "The user can select a configured agent and chat with it. Do not claim that this chat starts a governed job or changes project files. "
+            "You cannot start jobs or modify files. You may read bounded text files from this workspace only when the user enables read access for this message; cite the returned sources and do not claim inspection without them. "
+            "When asked to perform work, explain whether you can help by drafting an agent, chatting with a selected agent, or reading enabled workspace files, and state any unavailable execution capability accurately. "
+            + _workspace_read_instructions(request.allow_workspace_read)
+        )},
+        *history[-30:],
         {"role": "user", "content": request.message.strip()},
     ]
     sources: list[dict[str, Any]] = []
@@ -822,7 +1406,7 @@ async def control_chat(request: ControlChatRequest) -> dict[str, Any]:
             answer = await asyncio.to_thread(ollama.chat, model_id, messages)
     except ollama.ProviderError as error:
         raise _provider_http_error(error) from None
-    return {"operation": "chat", "assistant_message": answer, "agent_draft": None, "sources": sources}
+    return finish_turn("chat", answer, agent_draft=None, sources=sources)
 
 
 def _record_agent_chat_trace(
@@ -906,17 +1490,21 @@ async def chat_with_agent(
     request: AgentChatRequest,
     response: Response,
 ) -> dict[str, Any]:
-    """Chat with one persisted agent; never accept config/tool authority from the client."""
+    """Chat with one persisted agent; conversation history is loaded from the library."""
     record = _load_agent(agent_id)
     if not request.message.strip():
         raise HTTPException(status_code=422, detail={"code": "message_required", "message": "Enter a message."})
+    conversation = _owned_conversation(request.conversation_id, "agent", agent_id)
+    if conversation["revision"] != request.revision:
+        raise _conversation_error(ConversationConflict(request.conversation_id))
+    history = CONVERSATIONS.history(request.conversation_id)
+    try:
+        user_message = CONVERSATIONS.append_message(request.conversation_id, request.revision, "user", request.message.strip())
+    except (ConversationConflict, ConversationNotFound) as error:
+        raise _conversation_error(error) from None
+    revision = user_message["revision"]
     messages = [{"role": "system", "content": record.config.system_prompt + "\n\nYou do not have app-control, write, or command-execution capabilities in this chat. Never claim to have performed them. " + _workspace_read_instructions(request.allow_workspace_read)}]
-    for entry in request.conversation_history:
-        role = entry.get("role")
-        content = entry.get("content", "")
-        if role not in {"user", "assistant"} or not isinstance(content, str) or not content.strip() or len(content) > 4000:
-            raise HTTPException(status_code=422, detail={"code": "invalid_history", "message": "Conversation history contains an invalid entry."})
-        messages.append({"role": role, "content": content})
+    messages.extend(history[-30:])
     messages.append({"role": "user", "content": request.message.strip()})
     # New records pin a model; legacy records may not. In that case use only
     # the explicitly selected provider model for this request, without writing
@@ -940,13 +1528,21 @@ async def chat_with_agent(
         ended_at_ns=time.time_ns(),
         sources=sources,
     )
+    references: dict[str, Any] = {"trace": trace_metadata}
+    if sources:
+        references["sources"] = sources
+    try:
+        CONVERSATIONS.append_message(request.conversation_id, revision, "assistant", answer, references)
+    except (ConversationConflict, ConversationNotFound) as error:
+        raise _conversation_error(error) from None
+    saved = CONVERSATIONS.get(request.conversation_id)
     response.headers["X-Bago-Trace-Id"] = trace_metadata["trace_id"]
     response.headers["X-Bago-Trace-State"] = trace_metadata["trace_state"]
     if trace_metadata.get("jaeger_trace_id"):
         response.headers["X-Bago-Jaeger-Trace-Id"] = trace_metadata["jaeger_trace_id"]
     if trace_metadata.get("jaeger_url"):
         response.headers["X-Bago-Jaeger-Trace-Url"] = trace_metadata["jaeger_url"]
-    return {"agent_id": agent_id, "assistant_message": answer, "source": "ollama", "sources": sources}
+    return {"agent_id": agent_id, "assistant_message": answer, "source": "ollama", "sources": sources, "conversation_id": request.conversation_id, "revision": saved["revision"], "trace": trace_metadata, "conversation": saved}
 
 
 # ===== API: Job History & Metrics =====
@@ -1094,17 +1690,16 @@ async def websocket_agent_chat(websocket: WebSocket) -> None:
     try:
         # Receive chat request
         msg = json.loads(await websocket.receive_text())
-        if not isinstance(msg, dict) or not isinstance(msg.get("agent_id"), str) or not isinstance(msg.get("message"), str):
-            raise ValueError("A valid agent ID and message are required.")
+        if not isinstance(msg, dict) or not isinstance(msg.get("agent_id"), str) or not isinstance(msg.get("message"), str) or not isinstance(msg.get("conversation_id"), str) or not isinstance(msg.get("revision"), int):
+            raise ValueError("A valid agent ID, conversation ID, revision, and message are required.")
         record = _load_agent(msg["agent_id"])
-        history = msg.get("conversation_history", [])
-        if not isinstance(history, list) or len(history) > 30:
-            raise ValueError("Conversation history is invalid.")
+        conversation = _owned_conversation(msg["conversation_id"], "agent", record.id)
+        if conversation["revision"] != msg["revision"]:
+            raise ConversationConflict(msg["conversation_id"])
+        history = CONVERSATIONS.history(msg["conversation_id"])
+        user_message = CONVERSATIONS.append_message(msg["conversation_id"], msg["revision"], "user", msg["message"][:8000])
         messages = [{"role": "system", "content": record.config.system_prompt + "\n\nYou do not have live tool execution or app-control capabilities in this chat."}]
-        for entry in history:
-            if not isinstance(entry, dict) or entry.get("role") not in {"user", "assistant"} or not isinstance(entry.get("content"), str) or len(entry["content"]) > 4000:
-                raise ValueError("Conversation history is invalid.")
-            messages.append({"role": entry["role"], "content": entry["content"]})
+        messages.extend(history[-30:])
         messages.append({"role": "user", "content": msg["message"][:8000]})
         try:
             model_id = record.config.model_id or _selected_model_id()
@@ -1116,14 +1711,24 @@ async def websocket_agent_chat(websocket: WebSocket) -> None:
                 "data": detail.get("message", "Configure an Ollama model before chatting with this agent."),
             })
             return
+        started_at_ns = time.time_ns()
         try:
             answer = await asyncio.to_thread(ollama.chat, model_id, messages)
         except ollama.ProviderError as error:
             await websocket.send_json({"type": "error", "data": error.message, "code": error.code})
             return
+        trace_metadata = await asyncio.to_thread(
+            _record_agent_chat_trace,
+            agent_id=record.id,
+            provider_id=record.config.provider_id or "ollama-cloud",
+            model_id=model_id,
+            started_at_ns=started_at_ns,
+            ended_at_ns=time.time_ns(),
+        )
+        saved_message = CONVERSATIONS.append_message(msg["conversation_id"], user_message["revision"], "assistant", answer, {"trace": trace_metadata})
         await websocket.send_json({"type": "chunk", "data": answer})
-        await websocket.send_json({"type": "done", "source": "ollama"})
-    except (ValueError, json.JSONDecodeError):
+        await websocket.send_json({"type": "done", "source": "ollama", "conversation_id": msg["conversation_id"], "revision": saved_message["revision"]})
+    except (ValueError, ConversationNotFound, ConversationConflict, json.JSONDecodeError):
         try:
             await websocket.send_json({"type": "error", "data": "Invalid chat request."})
         except RuntimeError:

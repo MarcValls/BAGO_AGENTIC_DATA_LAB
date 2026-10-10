@@ -1,0 +1,13 @@
+{
+  "change_request_id": "CR-001-W02-CAPABILITY-CATALOG-COMPATIBILITY",
+  "contract_id": "ADL_AGENT_EVALUATION_IMPLEMENTATION_001/W02.write_scopes",
+  "old_fingerprint": "fabce503af3854313f36f3daeb89a7c205ccd1417d42136205b365ed55b2e892",
+  "proposed_new_fingerprint": "2ac0950bbab1413e57339621dee9116f218a89aecf297491adacd46f3733756c",
+  "reason": "The W01 contract adds agent.evaluate to the backend capability catalog. The existing exact-set API test must be updated in the same backend work item to avoid a predictable CI regression.",
+  "impacted_consumers": [
+    "W02 trace-observability-engineer-01"
+  ],
+  "required_invalidations": [],
+  "status": "APPROVED_BY_ROOT_COORDINATOR",
+  "authority": "Current user requested implementation; repository AGENTS requires safe scoped work and the main agent is the authorized coordinator."
+}

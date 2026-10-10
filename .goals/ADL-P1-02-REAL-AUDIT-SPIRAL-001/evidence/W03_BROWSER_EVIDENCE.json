@@ -1,0 +1,52 @@
+{
+  "schema_version": "1.0",
+  "work_id": "W03",
+  "browser": {
+    "path": "regular Playwright CLI; integrated browser bridge was unavailable",
+    "url": "http://127.0.0.1:8084/",
+    "title": "BAGO Decision Inspector",
+    "interaction": ["open active app", "click Agent Runner", "inspect DOM snapshot", "capture viewport"],
+    "observed_ui": {
+      "status_text": "Agent execution is unavailable. No governed execution capability is registered; Run is disabled.",
+      "run_button_text": "Run unavailable",
+      "run_button_disabled": true,
+      "agent_count": 2
+    },
+    "snapshot_path": ".goals/ADL-P1-02-REAL-AUDIT-SPIRAL-001/evidence/W03_AGENT_RUNNER_DOM.yml",
+    "snapshot_sha256": "E5C7DF4F01B867A0C75EC63DA0B6C2C9E2E32727FC98A7408D7446C195597285",
+    "screenshot_path": "output/playwright/p1-02-agent-runner-live-20261009.png",
+    "screenshot_sha256": "7DBB0A4EA354C9FA0D1CB2A1C41C2959277CBEDF60671D8FD7F18A7BB4DDA13E",
+    "console": {
+      "errors": 1,
+      "warnings": 0,
+      "observed_error": "GET /api/artifacts returned 404 on initial page load because the demo artifact bundle is absent; the Agent Runner view still loaded and its status/button assertions were visible."
+    }
+  },
+  "websocket": {
+    "probe_script": ".goals/ADL-P1-02-REAL-AUDIT-SPIRAL-001/evidence/probe_agent_run_ws.py",
+    "result_path": ".goals/ADL-P1-02-REAL-AUDIT-SPIRAL-001/evidence/W03_RUNTIME_PROBE.json",
+    "same_origin_8084": "HTTP 403 during WebSocket handshake; runtime allowlist did not include the served page origin.",
+    "allowlisted_origin_8080": {
+      "handshake": 101,
+      "message_type": "error",
+      "code": "execution_unavailable",
+      "close_code": 1008
+    },
+    "client_sent_execution_payload": false,
+    "job_ids_before": [],
+    "job_ids_after": [],
+    "jobs_unchanged": true
+  },
+  "candidate": {
+    "head": "69b4f4b1ead2552b527e6e48868ab36cc2b38cbc",
+    "branch": "codex/conversation-library-v1",
+    "runtime_url": "http://127.0.0.1:8084",
+    "listener_pid": 43528,
+    "source_sha256": {
+      "frontend/src/components/AgentRunner.tsx": "D6BCFF256F3ED47C8B8EDA0DE657B0E2727D660EC452C389FFCCC147565A7DAB",
+      "src/api/server.py": "958A6C7A2A1BAF0A04B8AD3BC76F36B0F80BB52AD8AA5E4718E01C480EC30A7E"
+    }
+  },
+  "conclusion": "Rendered UI and source agree that the Run action is unavailable and disabled. The backend fail-closed behavior is live on an allowlisted origin. The page's own origin is currently denied at the WebSocket handshake, a separate local origin configuration issue.",
+  "not_run": ["No agent run was requested or started.", "No console error check was performed for the rejected same-origin WebSocket because UI code never attempted that connection; endpoint response was probed directly."]
+}

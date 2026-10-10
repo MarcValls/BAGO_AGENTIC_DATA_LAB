@@ -1,0 +1,92 @@
+{
+  "schema_version": "1.0",
+  "work_id": "W05",
+  "reviewer": "bago-verifier",
+  "candidate": {
+    "checkout": "C:\\Users\\AMTEC_Terminal_1º\\AppData\\Local\\Temp\\BAGO_AGENTIC_DATA_LAB_conversation_library",
+    "branch": "codex/conversation-library-v1",
+    "head": "69b4f4b1ead2552b527e6e48868ab36cc2b38cbc",
+    "dirty": true,
+    "source_sha256": {
+      "frontend/src/components/AgentRunner.tsx": "D6BCFF256F3ED47C8B8EDA0DE657B0E2727D660EC452C389FFCCC147565A7DAB",
+      "src/api/server.py": "958A6C7A2A1BAF0A04B8AD3BC76F36B0F80BB52AD8AA5E4718E01C480EC30A7E"
+    },
+    "server_py_bytes": 55939
+  },
+  "review": {
+    "real_ollama_generation_vs_fixture": {
+      "result": "PASS_WITH_LIMITS",
+      "evidence": [
+        "W02_AGENT_AUDIT.json and W02_AGENT_AUDIT_COMPLETION.json record HTTP 200, response_source=ollama, provider_id=ollama-cloud, model_id=gemma4:31b, agent identity, conversation revision and source receipts.",
+        "Both persisted LocalTrace files independently hash-match W02/W04 receipts and record completed response, provider/model, workspace-read sources and trace IDs.",
+        "W04 Jaeger readbacks each have one agent.chat span with corresponding local trace ID, provider/model, response_received and source tags; Jaeger ids f326600e04b693653e56a20b83eb062a and db0817ebe3087ca9807ba0c78f94c522."
+      ],
+      "limits": [
+        "Evidence supports two real app responses routed through the configured Ollama provider; it is convergent application/API/LocalTrace evidence, not a vendor-signed receipt or independent network capture of the upstream response.",
+        "No model generation was performed by this reviewer. Jaeger was a post-run projection, not the execution source of truth."
+      ]
+    },
+    "source_read_provenance": {
+      "result": "PASS_WITH_LIMITS",
+      "evidence": [
+        "Current source hashes and 55,939-byte size independently match W01 candidate receipt; HEAD and branch match.",
+        "P1_02_BACKEND_EXCERPT.txt SHA-256 is 4E3C9FB97DC3A65BC32816A5C2E7C4D962C19F96BBEB2DC60198A9A2560F5030; numbered lines 1227-1247 compare byte-content line-for-line with the recorded 55,939-byte server.py SHA-256 source.",
+        "W02 source receipts show model read frontend lines 1-250 and the 28-line excerpt. The W02 completion explicitly says the model did not directly read server.py because it exceeded the 32 KiB tool limit."
+      ],
+      "limits": [
+        "The model inspected the backend handler only through the literal, SHA-bound excerpt; no claim that it read the complete server.py.",
+        "This independent reviewer could compare the excerpt to current source, but that does not change the model's original read boundary."
+      ]
+    },
+    "candidate_and_ui_evidence": {
+      "result": "PASS",
+      "evidence": [
+        "Current git HEAD/branch and source file hashes match W01/W03 receipts; both relevant files remain dirty in the worktree.",
+        "W03 screenshot SHA-256 and DOM snapshot SHA-256 independently match W03_BROWSER_EVIDENCE.json.",
+        "Screenshot visibly shows the unavailable banner and two Run unavailable controls; DOM records those buttons as disabled."
+      ],
+      "limits": ["Conclusion binds to this dirty worktree and these file hashes, not a clean commit or release artifact."]
+    },
+    "websocket_and_jobs": {
+      "result": "PASS_WITH_LIMITATION",
+      "independent_probe": "Executed the existing read-only no-payload probe once during W05. Same-origin Origin http://127.0.0.1:8084 handshake returned HTTP 403; allowed Origin http://127.0.0.1:8080 returned HTTP 101, execution_unavailable and close 1008. No client payload was sent; jobs were empty before and after; expected_behavior=true.",
+      "source_receipt": "W03_RUNTIME_PROBE.json records listener PID 43528, candidate/source hashes, same results and zero job IDs before/after.",
+      "remaining_limit": "Same-origin 8084 WebSocket remains rejected by origin allowlist; this is separate from the disabled UI and fail-closed endpoint result. No job was started."
+    },
+    "conversation_sqlite_and_jaeger": {
+      "result": "PASS",
+      "evidence": [
+        "Read-only GET of conversation conv_438e701c29684bfab97adbd3abac098b returned HTTP 200, revision 4 and four messages.",
+        "W04_SQLITE_API_READBACK.json records SQLite URI mode=ro and API/SQLite matching message content, roles, sequence, statuses, source references and trace references.",
+        "Reviewer recomputed both LocalTrace SHA-256 values; they match W02 and W04 receipts. Read-only Jaeger GET for both stored trace IDs returned one span each. W04_JAEGER_PROJECTION.json binds span tags to model/provider/source and original LocalTrace IDs."
+      ],
+      "limits": ["Jaeger does not establish answer text; persisted conversation/API is the text evidence. Jaeger projection was performed post-run and app trace state was local_only."]
+    },
+    "p1_02_verdict": {
+      "result": "SUPPORTED_FOR_ACTIVE_DIRTY_SNAPSHOT_WITH_LIMITS",
+      "conclusion": "P1-02's false UI promise is corrected in the active snapshot: the user sees execution unavailable, Run is disabled, success is gated on exit_code === 0, and the frontend records server error codes. The backend still intentionally fails closed and live no-payload probing confirms no execution/job occurs. The correction is transparency and prevention of a misleading Run action, not delivery of agent execution capability.",
+      "scope": "Only HEAD 69b4f4b1ead2552b527e6e48868ab36cc2b38cbc plus the exact dirty-file hashes above and the observed runtime process. It does not supersede the prior-snapshot original finding for its own snapshot.",
+      "not_claimed": [
+        "No source modifications by the audit agent or W05 reviewer.",
+        "No agent job execution, all-endpoints audit, clean-checkout/release validation, complete backend source read by the model, provider-signed generation proof, or automatic Jaeger linking.",
+        "The P1-02 wording is not considered a defect after this UI mitigation, while a separate same-origin WebSocket configuration issue remains open."
+      ]
+    }
+  },
+  "mandatory_not_run": [
+    "No Ollama/model generation by W05.",
+    "No source edits, credential reads, agent/job starts, or cleanup actions.",
+    "No full application endpoint audit or production/release validation."
+  ],
+  "prior_handoff_validation": {
+    "result": "PASS",
+    "command": "teamctl verify",
+    "scope": "W01-W04 handoffs before W05 submission",
+    "output": "PASS verify"
+  },
+  "terminal_gate": {
+    "result": "PASS_WITH_EXPLICIT_LIMITS",
+    "reason": "The requested active-snapshot P1-02 claim is supported within its hash-bound dirty-worktree scope. The separate 8084 same-origin handshake mismatch and the absence of execution capability are disclosed rather than hidden.",
+    "critical_limits": ["Dirty snapshot only", "Backend model-read limited to literal excerpt", "same-origin 8084 handshake HTTP 403", "No jobs or source edits", "Jaeger is post-run projection"]
+  }
+}

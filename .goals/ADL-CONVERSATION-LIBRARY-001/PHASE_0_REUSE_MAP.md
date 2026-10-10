@@ -7,7 +7,7 @@
 
 ## Freeze and drift
 
-The isolated worktree is on `codex/agent-chat-control-v1`. Its HEAD is one commit ahead and one commit behind the observed remote `main`, with merge base `4d6a0a95932cb4167b8f6a8caa6fdfcd79f4abff`. The worktree was already dirty before this goal: the tracked-diff and status fingerprints are recorded in `goal.md`. Existing `AGENT_CHAT_CONTROL_PLANE_V1` state is terminal `DONE`; this goal does not mutate that state or its frozen contracts.
+The source baseline was `codex/agent-chat-control-v1`; implementation work now continues in the dedicated `codex/conversation-library-v1` worktree. Its HEAD is one commit ahead and one commit behind the observed remote `main`, with merge base `4d6a0a95932cb4167b8f6a8caa6fdfcd79f4abff`. The worktree was already dirty before this goal: the tracked-diff and status fingerprints are recorded in `goal.md`. Existing `AGENT_CHAT_CONTROL_PLANE_V1` state is terminal `DONE`; this goal does not mutate that state or its frozen contracts.
 
 ## Current responsibilities
 
@@ -37,4 +37,5 @@ The isolated worktree is on `codex/agent-chat-control-v1`. Its HEAD is one commi
 ## Phase 0 conclusion
 
 No second chat-history owner exists in the current local implementation. Existing jobs, vector index, provider configuration, and LocalTrace each own different data. The MVP needs one new conversation store and one UI/library feature, while extending the existing chat routes and AgentChat owner switcher. The local stable agent UUID means cross-references can bind to identity, not visible names.
+
 

@@ -1,0 +1,9 @@
+{"at": "2026-10-09T23:19:37+00:00", "kind": "MISSION_INIT", "mission_id": "ADL_ONE_SHOT_SIGNAL_AGENT_SPIRAL_001", "mission_sha256": "d2a233b81608339d93a08449badefef58a21b34c4a1fe7506758761068098b40"}
+{"agent": "bago_team_orchestrator", "at": "2026-10-09T23:19:38+00:00", "kind": "CLAIM", "role": "team-orchestrator", "work_id": "W01"}
+{"at": "2026-10-09T23:20:45+00:00", "kind": "HANDOFF_DONE", "payload_sha256": "4c946f2520ae5853a6244f7e38e8e969eb262cc4454decdea81b840d7ce4d9c9", "work_id": "W01"}
+{"agent": "bago_frontend_auditor", "at": "2026-10-09T23:20:51+00:00", "kind": "CLAIM", "role": "frontend-auditor", "work_id": "W02"}
+{"agent": "bago_backend_auditor", "at": "2026-10-09T23:20:51+00:00", "kind": "CLAIM", "role": "backend-auditor", "work_id": "W03"}
+{"at": "2026-10-09T23:22:45+00:00", "kind": "HANDOFF_DONE", "payload_sha256": "b30b70202e4e12c4a2ae712b787453f08ec9fcba62afaa4e7b14da1ee66c27db", "work_id": "W03"}
+{"at": "2026-10-09T23:24:47+00:00", "kind": "HANDOFF_DONE", "payload_sha256": "3da9401908535cd4751bbf69cee2c511a8fdfc2225f20457bf27ad8985c48cb0", "work_id": "W02"}
+{"agent": "bago_team_orchestrator", "at": "2026-10-09T23:25:31+00:00", "kind": "CLAIM", "role": "team-orchestrator", "work_id": "W04"}
+{"at": "2026-10-09T23:26:29+00:00", "kind": "HANDOFF_DONE", "payload_sha256": "6c249ea120827da382f74250ae8d47bbc1c0564e2a140b39ff5dbfaa0ee664be", "work_id": "W04"}

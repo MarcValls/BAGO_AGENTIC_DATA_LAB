@@ -1,0 +1,161 @@
+{
+  "created_at": "2026-10-09T23:19:37+00:00",
+  "mission": {
+    "max_concurrency": 2,
+    "mission_id": "ADL_ONE_SHOT_SIGNAL_AGENT_SPIRAL_001",
+    "objective": "Run source-bound, read-only frontend and backend audits of the current ADL candidate for the proposed one-shot and signal-waiting agent lifecycles; synthesize a safe, market-relevant implementation contract while keeping execution fail-closed until source, authorization, idempotency, lifecycle and receipt decisions are concrete.",
+    "terminal_work_items": [
+      "W04"
+    ],
+    "title": "One-shot and Signal-waiting Agent Discovery Spiral",
+    "work_items": [
+      {
+        "deliverables": [
+          "Candidate-bound scope and invariants for the frontend/backend audit spiral"
+        ],
+        "depends_on": [],
+        "done_when": [
+          "Record exact branch and HEAD",
+          "Record existing dirty state is preserved",
+          "Carry forward one-shot/signal proposal and capability-manager fail-closed boundary",
+          "Assign only read-only audit work to the first safe batch"
+        ],
+        "id": "W01",
+        "read_scopes": [
+          "candidate Git state",
+          ".goals/ADL-CONVERSATION-LIBRARY-001/**",
+          ".goals/ADL-CAPABILITY-MANAGER-001/**",
+          ".goals/ADL-AGENT-EVALUATION-LAB-001/**"
+        ],
+        "role": "team-orchestrator",
+        "title": "Bind the candidate and known lifecycle decision",
+        "write_scopes": [
+          "evidence/W01_SCOPE.md",
+          "drafts/W01.json"
+        ]
+      },
+      {
+        "deliverables": [
+          "Frontend state map for creating one-shot and signal-waiting agent definitions"
+        ],
+        "depends_on": [
+          "W01"
+        ],
+        "done_when": [
+          "Trace current agent create/review/save and chat navigation",
+          "Map suitable lifecycle status, trigger configuration, waiting/paused/error/cancelled/completed states",
+          "Identify UI/test seams and avoid claiming an implemented trigger",
+          "Cite current source paths and line ranges; make no product edits"
+        ],
+        "id": "W02",
+        "read_scopes": [
+          "frontend/src/**",
+          "frontend/tests/**",
+          "frontend/package.json",
+          "docs/agent-chat-control/**",
+          ".goals/ADL-CAPABILITY-MANAGER-001/**",
+          ".goals/ADL-CONVERSATION-LIBRARY-001/**"
+        ],
+        "role": "frontend-auditor",
+        "title": "Audit frontend lifecycle, chat and review surfaces",
+        "write_scopes": [
+          "evidence/W02_FRONTEND.md",
+          "drafts/W02.json"
+        ]
+      },
+      {
+        "deliverables": [
+          "Backend state and authority map for bounded one-shot execution and explicit-signal activation"
+        ],
+        "depends_on": [
+          "W01"
+        ],
+        "done_when": [
+          "Trace actual create, persistence, trigger ingestion, authorization/permit, execution gateway, cancellation and receipt seams",
+          "Separate implemented, disconnected, fixture and proposed paths",
+          "Identify idempotency/retry/lifetime and actor identity requirements",
+          "Cite current source paths and line ranges; make no product edits"
+        ],
+        "id": "W03",
+        "read_scopes": [
+          "src/api/**",
+          "src/capabilities/**",
+          "src/execution/**",
+          "src/orchestration/**",
+          "src/sandbox/**",
+          "src/jobs/**",
+          "src/conversations/**",
+          "src/observability/**",
+          "tests/**",
+          ".goals/ADL-CAPABILITY-MANAGER-001/**",
+          ".goals/ADL-CONVERSATION-LIBRARY-001/**"
+        ],
+        "role": "backend-auditor",
+        "title": "Audit backend lifecycle, trigger, execution and evidence seams",
+        "write_scopes": [
+          "evidence/W03_BACKEND.md",
+          "drafts/W03.json"
+        ]
+      },
+      {
+        "deliverables": [
+          "Reviewable lifecycle contract, explicit open decisions and bounded next implementation packet"
+        ],
+        "depends_on": [
+          "W02",
+          "W03"
+        ],
+        "done_when": [
+          "Define one-shot and signal-waiting states without conflating them with execution authority",
+          "Recommend a minimal signal source only if existing project seams support it",
+          "Specify owner/actor, expiry, idempotency, retry, cancellation, audit and trace requirements",
+          "Give a source-bound next frontend/backend batch with acceptance and validation",
+          "Keep unresolved consequential choices PROPOSED and preserve fail-closed Run"
+        ],
+        "id": "W04",
+        "read_scopes": [
+          "evidence/W01_SCOPE.md",
+          "evidence/W02_FRONTEND.md",
+          "evidence/W03_BACKEND.md"
+        ],
+        "role": "team-orchestrator",
+        "title": "Synthesize a project-adapted lifecycle contract and next implementation step",
+        "write_scopes": [
+          "evidence/W04_LIFECYCLE_CONTRACT.md",
+          "drafts/W04.json"
+        ]
+      }
+    ]
+  },
+  "mission_sha256": "d2a233b81608339d93a08449badefef58a21b34c4a1fe7506758761068098b40",
+  "mission_source": "C:\\Users\\AMTEC_Terminal_1º\\AppData\\Local\\Temp\\BAGO_ADL_agent_evaluation_lab_20261010\\.goals\\ADL-ONE-SHOT-SIGNAL-AGENT-SPIRAL-001\\mission.json",
+  "protocol_version": "0.1.0",
+  "terminal_gate": "DONE",
+  "updated_at": "2026-10-09T23:26:30+00:00",
+  "work_status": {
+    "W01": {
+      "agent": "bago_team_orchestrator",
+      "claimed_at": "2026-10-09T23:19:38+00:00",
+      "done_at": "2026-10-09T23:20:45+00:00",
+      "status": "DONE"
+    },
+    "W02": {
+      "agent": "bago_frontend_auditor",
+      "claimed_at": "2026-10-09T23:20:51+00:00",
+      "done_at": "2026-10-09T23:24:47+00:00",
+      "status": "DONE"
+    },
+    "W03": {
+      "agent": "bago_backend_auditor",
+      "claimed_at": "2026-10-09T23:20:51+00:00",
+      "done_at": "2026-10-09T23:22:45+00:00",
+      "status": "DONE"
+    },
+    "W04": {
+      "agent": "bago_team_orchestrator",
+      "claimed_at": "2026-10-09T23:25:31+00:00",
+      "done_at": "2026-10-09T23:26:29+00:00",
+      "status": "DONE"
+    }
+  }
+}

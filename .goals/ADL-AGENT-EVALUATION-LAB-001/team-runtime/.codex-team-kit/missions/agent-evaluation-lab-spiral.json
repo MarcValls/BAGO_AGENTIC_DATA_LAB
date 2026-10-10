@@ -1,0 +1,39 @@
+{
+  "mission_id": "ADL_AGENT_EVALUATION_LAB_SPIRAL_001",
+  "title": "Agent Evaluation Lab Discovery Spiral",
+  "objective": "Inspect existing evaluation, real provider chat, persistence, trace, and UI seams on the isolated candidate; define a bounded evaluation capability without turning test inputs into execution authority.",
+  "max_concurrency": 2,
+  "terminal_work_items": ["W03"],
+  "work_items": [
+    {
+      "id": "W01",
+      "title": "Map backend agent chat, provider, persistence, and trace contracts",
+      "role": "evidence-provenance-engineer",
+      "depends_on": [],
+      "write_scopes": ["evidence/W01_BACKEND_MAP.md", "drafts/W01.json"],
+      "read_scopes": ["src/api/**", "src/providers/**", "src/conversations/**", "src/observability/**", "src/evaluation/**", "tests/**", "docs/agent-chat-control/**"],
+      "deliverables": ["Read-only source-bound backend map and safe evaluation boundaries"],
+      "done_when": ["Bind findings to exact candidate HEAD", "Distinguish actual chat/provider paths from fixture evals", "Identify trace/persistence identity available for per-case linkage", "Do not edit product code"]
+    },
+    {
+      "id": "W02",
+      "title": "Map evaluation UX, entry points, and market-facing evidence gaps",
+      "role": "decision-ux-engineer",
+      "depends_on": [],
+      "write_scopes": ["evidence/W02_PRODUCT_UX_MAP.md", "drafts/W02.json"],
+      "read_scopes": ["frontend/src/**", "JOB_SKILL_MATRIX.md", "docs/**", "evidence/**"],
+      "deliverables": ["Read-only UX/portfolio map for a low-cognitive-load evaluation feature"],
+      "done_when": ["Bind findings to exact candidate HEAD", "Map navigation and existing Evaluation/Trace surfaces", "Identify the smallest user flow for repeatable model-agent evaluation", "Do not edit product code"]
+    },
+    {
+      "id": "W03",
+      "title": "Synthesize bounded Agent Evaluation Lab implementation contract",
+      "role": "team-orchestrator",
+      "depends_on": ["W01", "W02"],
+      "write_scopes": ["evidence/W03_EVALUATION_CONTRACT.md", "drafts/W03.json"],
+      "read_scopes": ["evidence/W01_BACKEND_MAP.md", "evidence/W02_PRODUCT_UX_MAP.md"],
+      "deliverables": ["Implementation contract with data, API, UI, privacy, trace, and acceptance boundaries"],
+      "done_when": ["Preserve server-side provider/model identity", "Make model quality assertions deterministic and explicit", "Keep reads/evals separate from workspace writes and agent jobs", "State which validation must use fixtures versus a real Ollama call"]
+    }
+  ]
+}

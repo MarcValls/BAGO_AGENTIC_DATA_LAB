@@ -6,7 +6,7 @@
 - Included owners: the ADL App Assistant and agents configured inside this ADL instance.
 - Excluded: Codex conversations, imports from other chat systems, cross-project access, semantic retrieval over old chats, execution recovery/idempotency, and automatic promotion of conversation content into canonical memory.
 - First delivery: Phase 0 freeze/reuse map plus Phase 1 local persistent MVP.
-- Worktree: `C:/Users/AMTEC_Terminal_1º/AppData/Local/Temp/BAGO_AGENTIC_DATA_LAB_chat_control`.
+- Worktree: `%USERPROFILE%/AppData/Local/Temp/BAGO_AGENTIC_DATA_LAB_conversation_library`.
 - Preserve every pre-existing dirty or untracked file. Do not modify `.codex-team/state.json`; its existing mission is already terminal `DONE`.
 
 ## Acceptance criteria
@@ -47,4 +47,26 @@
 - Pre-existing tracked diff SHA-256 (`git diff --binary HEAD`): `9bb0259e8730ec77d7427b1b9ff4c3e235b12f278b2193de7cd8a9f9540105b4`.
 - Pre-existing `git status --short --untracked-files=all` stream SHA-256: `3256bedc478acd6ab53c2d08ce830c93af9dd32b3c24495fbf00e274e2606c53` (46 status entries at capture).
 - The current status includes edits/evidence from prior authorized chat, runner, trace, and frontend-audit work. Those changes are not owned by this goal and must remain intact.
+
+
+## Active worktree
+
+- Path: `%USERPROFILE%\AppData\Local\Temp\BAGO_AGENTIC_DATA_LAB_conversation_library`
+- Branch: `codex/conversation-library-v1`
+- Base HEAD: `69b4f4b1ead2552b527e6e48868ab36cc2b38cbc`
+- Reused chat-control changes were ported from the preserved `codex/agent-chat-control-v1` worktree; `.codex-team/state.json` and runtime/provider data were excluded.
+
+## Phase 1 result
+
+- Implementation and closure evidence: `PHASE_1_VERIFICATION.md`.
+- Final candidate remains an uncommitted worktree diff on the base HEAD above; no commit, push, merge, or synchronization was performed.
+
+## Proposed next objective
+
+Support two agent lifecycles:
+
+1. **One-shot agent:** created for one bounded user-requested task, then completed.
+2. **Signal-waiting agent:** registered with an explicitly configured trigger, stays waiting, and activates when that signal arrives.
+
+This is feasible, but remains `PROPOSED`. Before implementation, define signal sources/event types and the authorization, lifetime, idempotency, retry, cancellation, and audit rules. Do not imply an agent is continuously monitoring anything until a real trigger source and runtime are implemented and verified.
 

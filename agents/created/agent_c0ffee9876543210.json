@@ -1,0 +1,15 @@
+{
+  "id": "agent_c0ffee9876543210",
+  "config": {
+    "name": "Library test agent",
+    "description": "Temporary agent for browser recovery verification.",
+    "type": "tool",
+    "system_prompt": "Use only the supplied text.",
+    "provider_id": null,
+    "model_id": null,
+    "tools": [],
+    "retrieval_config": null,
+    "sandbox_profile": null
+  },
+  "created_at": "2026-10-09T00:00:00Z"
+}

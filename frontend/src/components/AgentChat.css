@@ -19,7 +19,19 @@
 .control-agent-option strong { font-size: .88rem; }
 .control-agent-option span { color: #91a6bd; font-size: .75rem; line-height: 1.4; overflow-wrap: anywhere; }
 .agent-list-label { display: flex; justify-content: space-between; margin: 18px 5px 10px; color: #9cb1c8; font-size: .76rem; font-weight: 650; }
-.control-agent-list { overflow-y: auto; }
+.control-agent-list { max-height: 180px; overflow-y: auto; }
+.conversation-library { display: flex; flex-direction: column; gap: 8px; min-height: 130px; max-height: 310px; margin: 12px 0 10px; padding: 12px 8px; border-top: 1px solid #293c53; border-bottom: 1px solid #293c53; }
+.conversation-library-heading, .conversation-library-tabs, .conversation-library-actions { display: flex; align-items: center; justify-content: space-between; gap: 6px; }
+.conversation-library-heading { color: #dce7f2; font-size: .86rem; }
+.conversation-library-heading button, .conversation-library-tabs button, .conversation-library-actions button { padding: 5px 8px; color: #b9cee5; border: 1px solid #344b67; border-radius: 7px; background: #14243a; font-size: .68rem; }
+.conversation-library-tabs button { flex: 1; padding: 5px 3px; }
+.conversation-library-tabs button.selected { border-color: #648fca; color: #eef6ff; background: #1b304d; }
+.conversation-library-list { display: flex; flex-direction: column; gap: 5px; overflow-y: auto; min-height: 0; }
+.conversation-library-item { display: flex; flex-direction: column; gap: 4px; width: 100%; padding: 8px; text-align: left; color: #dce7f2; border: 1px solid #293c53; border-radius: 8px; background: #142237; }
+.conversation-library-item.selected { border-color: #648fca; background: #1b304d; }
+.conversation-library-item strong { overflow: hidden; font-size: .72rem; text-overflow: ellipsis; white-space: nowrap; }
+.conversation-library-item span { color: #91a6bd; font-size: .62rem; }
+.conversation-library-actions { flex-wrap: wrap; justify-content: flex-start; }
 .muted-state, .warning-state, .inline-error { margin: 8px 4px; color: #97a9bd; font-size: .82rem; line-height: 1.5; }
 .warning-state { color: #f1c979; }
 .inline-error { color: #f0a1a1; }
@@ -83,6 +95,19 @@
 .message-sources { margin-top: 10px; padding: 9px 11px; color: #9eb8d4; border: 1px solid #2c4969; border-radius: 9px; background: #102137; font-size: .73rem; }
 .message-sources ul { margin: 5px 0 0; padding-left: 18px; }
 .message-sources code { color: #c4dbf4; overflow-wrap: anywhere; }
+.capability-chat-card, .capability-chat-saved { max-width: 800px; margin: 16px auto; padding: 16px; border: 1px solid #52769e; border-radius: 13px; background: #122238; }
+.capability-chat-card .draft-heading { margin-bottom: 12px; }
+.capability-chat-card h3 { margin: 0; font-size: 1rem; }
+.capability-chat-card label { display: flex; flex-direction: column; gap: 6px; margin: 10px 0; color: #9db3ca; font-size: .74rem; }
+.capability-chat-card input, .capability-chat-card textarea, .capability-chat-card select { width: 100%; padding: 9px 10px; color: #e0eaf5; border: 1px solid #3a506b; border-radius: 8px; background: #0d1929; font: inherit; font-size: .82rem; line-height: 1.45; }
+.capability-chat-card textarea { resize: vertical; }
+.capability-chat-card > p { color: #a3b7cc; font-size: .74rem; line-height: 1.45; }
+.capability-chat-selected { padding: 9px 11px; border-left: 2px solid #6f9dcc; background: #102033; }
+.capability-chat-saved { display: flex; flex-direction: column; gap: 7px; border-color: #355b49; background: #11251d; }
+.capability-chat-saved > div { display: flex; justify-content: space-between; gap: 12px; color: #d8ebde; font-size: .78rem; }
+.capability-chat-saved span, .capability-chat-saved code { color: #93b7a0; font-size: .68rem; overflow-wrap: anywhere; }
+.capability-chat-saved p { margin: 0; color: #bfd4c5; font-size: .76rem; line-height: 1.45; }
+.capability-chat-saved button { align-self: flex-end; }
 .visually-hidden { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
 
 @media (max-width: 760px) {

@@ -1,0 +1,29 @@
+{
+  "work_id": "W01",
+  "role": "team-orchestrator",
+  "status": "DONE",
+  "changed_files": [
+    "evidence/W01_SCOPE.md"
+  ],
+  "outputs": [
+    {
+      "description": "Candidate and authority snapshot plus disjoint read-only frontend/backend scope for this spiral.",
+      "path": "evidence/W01_SCOPE.md"
+    }
+  ],
+  "verification": [
+    {
+      "command": "git rev-parse --abbrev-ref HEAD; git rev-parse HEAD; git status --porcelain=v1 --untracked-files=all and sha256 capture",
+      "result": "PASS",
+      "evidence": "evidence/W01_SCOPE.md"
+    }
+  ],
+  "residual_risks": [
+    "The source checkout is dirty; audit reports must bind claims to cited current files and must not treat the base HEAD as a complete working-tree fingerprint.",
+    "The signal source and authorization/lifecycle behavior remain PROPOSED until the frontend/backend seam review and user decision are complete."
+  ],
+  "next_consumers": [
+    "W02",
+    "W03"
+  ]
+}

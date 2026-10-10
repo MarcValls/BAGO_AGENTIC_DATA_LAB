@@ -5,6 +5,7 @@ from pathlib import Path
 from fastapi import Response
 
 from src.api import server
+from src.conversations import ConversationStore
 
 
 def test_agent_chat_pins_profile_model_and_returns_trace_headers(monkeypatch, tmp_path: Path):
@@ -20,6 +21,9 @@ def test_agent_chat_pins_profile_model_and_returns_trace_headers(monkeypatch, tm
 
     calls = []
     monkeypatch.setattr(server, "_load_agent", lambda _agent_id: Agent())
+    store = ConversationStore(tmp_path / "conversations.sqlite3")
+    conversation = store.create("agent", "agent-demo")
+    monkeypatch.setattr(server, "CONVERSATIONS", store)
     monkeypatch.setattr(server.ollama, "chat", lambda model, messages: calls.append((model, messages)) or "Finding reviewed.")
     monkeypatch.setattr(server, "AGENT_CHAT_TRACE_DIR", tmp_path)
     monkeypatch.setattr(server, "export_local_trace_to_otlp", lambda *args, **kwargs: None)
@@ -28,12 +32,15 @@ def test_agent_chat_pins_profile_model_and_returns_trace_headers(monkeypatch, tm
     response = Response()
     result = asyncio.run(server.chat_with_agent(
         "agent-demo",
-        server.AgentChatRequest(message="P1-02 run token demo-20261009"),
+        server.AgentChatRequest(message="P1-02 run token demo-20261009", conversation_id=conversation["id"], revision=0),
         response,
     ))
 
     assert calls[0][0] == "kimi-k2.6"
-    assert result == {"agent_id": "agent-demo", "assistant_message": "Finding reviewed.", "source": "ollama"}
+    assert result["agent_id"] == "agent-demo"
+    assert result["assistant_message"] == "Finding reviewed."
+    assert result["conversation"]["messages"][1]["content"] == "Finding reviewed."
+    assert result["conversation"]["messages"][1]["references"]["trace"]["trace_id"] == response.headers["X-Bago-Trace-Id"]
     assert response.headers["X-Bago-Trace-State"] == "local_only"
     assert response.headers["X-Bago-Trace-Id"].startswith("trace-")
     files = list(tmp_path.glob("trace-*.json"))

@@ -1,17 +1,32 @@
 {
   "goal_id": "ADL-CONVERSATION-LIBRARY-001",
-  "status": "ACTIVE",
-  "phase": "PHASE_0_FREEZE_AND_REUSE_MAP",
-  "phase_state": "PREPARED",
+  "status": "COMPLETE",
+  "phase": "PHASE_1_PERSISTENT_MVP",
+  "phase_state": "VERIFIED",
   "objective": "Persist only conversations created inside this BAGO Agentic Data Lab instance for its App Assistant and configured agents; do not import Codex chats or enable cross-project access.",
   "acceptance_criteria": 10,
-  "completed_criteria": 0,
-  "verification": "NOT_RUN",
+  "completed_criteria": 10,
+  "verification": "VERIFIED_WITH_RECORDED_LIMITS",
+  "next_objective": {
+    "status": "PROPOSED",
+    "title": "Support one-shot and signal-waiting agents",
+    "intent": "Let users create agents for a bounded one-time task, and agents that remain registered waiting for an explicitly configured signal before activation.",
+    "open_design": [
+      "Define which signal sources and event types are supported.",
+      "Define authorization, lifetime, idempotency, retry, cancellation, and audit behavior before execution is enabled."
+    ]
+  },
   "notes": [
     "User selected Phase 0 plus the persistent MVP.",
     "User confirmed the target scope is the chats inside Agentic Data Lab, excluding Codex chats.",
     "Existing dirty worktree content must be preserved.",
-    "The formal baseline is recorded in goal.md before this goal's artifacts were added."
+    "The formal baseline is recorded in goal.md before this goal's artifacts were added.",
+    "Dedicated worktree created under %USERPROFILE%\\AppData\\Local\\Temp\\BAGO_AGENTIC_DATA_LAB_conversation_library on codex/conversation-library-v1; source worktree preserved.",
+    "Phase 1 focused backend tests, frontend build, and compile checks passed. Actual headed browser recovery now covers two populated agent chats created through the UI, owner switching, backend restart, fresh browser PID 44476, and lifecycle actions; receipt is BROWSER_RESTART_RECEIPT.json.",
+    "App Assistant greeting/capability behavior was exercised in the real browser and persisted without an LLM call; it advertises agent drafting and explicit review/save confirmation.",
+    "Agent answers and traces in the browser recovery test are synthetic local-mock fixtures through the real API/store. The isolated test server on port 8084 was not_configured; the user-configured instance on port 8081 later reported Gemma Cloud as configured_unverified. Live/cloud agent generation was NOT_RUN.",
+    "The preserved source worktree's tracked diff remains unchanged. The recovered 46-entry pre-goal status inventory matches the frozen hash, every baseline path remains present with the same status, and only three goal documents were added. One pre-existing API stdout log received runtime appends while its server process remained active; other original untracked files have pre-goal-start modification times. Individual original content hashes were not recorded for untracked files. SOURCE_WORKTREE_SNAPSHOT_20261009.json preserves the recovered baseline and current hashes. The candidate is uncommitted; no commit, push, merge, or sync was performed.",
+    "Final audit: recovered and reconciled all 46 pre-goal source status entries; no baseline path or status changed, tracked diff SHA-256 is unchanged, and three task records were added. One pre-existing live API stdout log received appended runtime output. Re-ran 8 focused tests, frontend production build, git diff --check, read-only SQLite conversation check, screenshot hash check, and candidate API health check (HTTP 200). Live Ollama generation and lint remain NOT_RUN; no commit, push, merge, or sync.",
+    "Provider scope correction (2026-10-09 20:19 UTC): GET /api/providers/ollama/status on user instance port 8081 reported provider ollama-cloud, state configured_unverified, auth_mode api_key, model_id gemma4:31b-cloud. Port 8084 remains the isolated test server with not_configured. No credential values were read; configured_unverified does not prove a successful generation."
   ]
 }
-

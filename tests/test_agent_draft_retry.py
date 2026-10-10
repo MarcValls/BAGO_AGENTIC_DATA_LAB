@@ -5,6 +5,7 @@ import pytest
 from fastapi import HTTPException
 
 from src.api import server
+from src.conversations import ConversationStore
 
 
 def _valid_proposal():
@@ -19,14 +20,17 @@ def _valid_proposal():
     })
 
 
-def test_draft_retries_invalid_json_once_and_returns_unpersisted_proposal(monkeypatch):
+def test_draft_retries_invalid_json_once_and_returns_unpersisted_proposal(monkeypatch, tmp_path):
     outputs = iter(["Here is the agent.", _valid_proposal()])
     calls = []
     monkeypatch.setattr(server, "_selected_model_id", lambda: "gemma4:31b-cloud")
     monkeypatch.setattr(server.ollama, "chat", lambda model, messages: calls.append(messages) or next(outputs))
+    store = ConversationStore(tmp_path / "conversations.sqlite3")
+    conversation = store.create("assistant", "app-assistant")
+    monkeypatch.setattr(server, "CONVERSATIONS", store)
 
     response = asyncio.run(server.control_chat(server.ControlChatRequest(
-        operation="draft_agent", message="Create a Frontend Auditor agent"
+        operation="draft_agent", message="Create a Frontend Auditor agent", conversation_id=conversation["id"], revision=0
     )))
 
     assert len(calls) == 2
@@ -36,14 +40,17 @@ def test_draft_retries_invalid_json_once_and_returns_unpersisted_proposal(monkey
     assert response["agent_draft"]["tools"] == []
 
 
-def test_draft_rejects_invalid_proposal_after_one_retry(monkeypatch):
+def test_draft_rejects_invalid_proposal_after_one_retry(monkeypatch, tmp_path):
     calls = []
     monkeypatch.setattr(server, "_selected_model_id", lambda: "gemma4:31b-cloud")
     monkeypatch.setattr(server.ollama, "chat", lambda model, messages: calls.append(messages) or "not json")
+    store = ConversationStore(tmp_path / "conversations.sqlite3")
+    conversation = store.create("assistant", "app-assistant")
+    monkeypatch.setattr(server, "CONVERSATIONS", store)
 
     with pytest.raises(HTTPException) as error:
         asyncio.run(server.control_chat(server.ControlChatRequest(
-            operation="draft_agent", message="Create an agent"
+            operation="draft_agent", message="Create an agent", conversation_id=conversation["id"], revision=0
         )))
 
     assert error.value.status_code == 502

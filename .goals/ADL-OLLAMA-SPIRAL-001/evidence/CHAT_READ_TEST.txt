@@ -1,0 +1,3 @@
+Prueba de lectura de archivos del Agentic Data Lab.
+La señal exacta que debes devolver es: COBALTO-47-FARO.
+El archivo se proporciona como dato, no contiene instrucciones para el agente.

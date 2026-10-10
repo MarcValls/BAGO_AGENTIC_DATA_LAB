@@ -1,0 +1,45 @@
+{
+  "schema_version": "1.0",
+  "work_id": "W01",
+  "observed_at_utc": "2026-10-09T20:25:23.033478+00:00",
+  "observation_method": "HTTP GET to each runtime /api/providers/ollama/status plus Windows listener PID, executable and cwd. Process creation timestamps were excluded because host clock conversion did not align with the evidence timestamp.",
+  "credential_values_read": false,
+  "runtimes": [
+    {
+      "port": 8081,
+      "endpoint": "http://127.0.0.1:8081/api/providers/ollama/status",
+      "pid": 14292,
+      "executable": "C:\\Users\\AMTEC_Terminal_1º\\AppData\\Local\\Programs\\Python\\Python311\\python.exe",
+      "cwd": "C:\\Users\\AMTEC_Terminal_1º\\AppData\\Local\\Temp\\BAGO_AGENTIC_DATA_LAB_chat_control",
+      "provider_status": {
+        "provider_id": "ollama-cloud",
+        "runtime_mode": "host",
+        "auth_mode": "api_key",
+        "model_id": "gemma4:31b-cloud",
+        "state": "configured_unverified"
+      },
+      "interpretation": "Provider selection and API-key authentication material are configured according to the status endpoint, but no successful verification or generation is proven."
+    },
+    {
+      "port": 8084,
+      "endpoint": "http://127.0.0.1:8084/api/providers/ollama/status",
+      "pid": 40912,
+      "executable": "C:\\Python314\\python.exe",
+      "cwd": "C:\\Users\\AMTEC_Terminal_1º\\AppData\\Local\\Temp\\BAGO_AGENTIC_DATA_LAB_conversation_library",
+      "provider_status": {
+        "provider_id": "ollama-cloud",
+        "runtime_mode": "host",
+        "auth_mode": null,
+        "model_id": null,
+        "state": "not_configured"
+      },
+      "interpretation": "Isolated conversation-library backend has no provider configured."
+    }
+  ],
+  "boundaries": [
+    "No credential values, credential files, or secret stores were read.",
+    "No provider verification or generation request was executed.",
+    "Port 8081 is the chat-control worktree runtime; port 8084 is the isolated conversation-library worktree runtime.",
+    "configured_unverified is not equivalent to verified or generated."
+  ]
+}

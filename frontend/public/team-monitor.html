@@ -1,0 +1,191 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#0b1220">
+    <title>Monitor del equipo Codex · BAGO</title>
+    <style>
+      :root {
+        color-scheme: dark;
+        font-family: Inter, "Segoe UI", sans-serif;
+        background: #0b1220;
+        color: #e5edf7;
+      }
+
+      body {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 2rem 1.25rem;
+      }
+
+      h1, h2, p { margin-top: 0; }
+      h1 { margin-bottom: 0.4rem; font-size: clamp(1.7rem, 4vw, 2.5rem); }
+      h2 { margin-top: 2rem; font-size: 1.2rem; }
+      .muted { color: #9bacbf; }
+      .notice, .status-line, .task, .event {
+        border: 1px solid #29374b;
+        border-radius: 0.65rem;
+        background: #111c2d;
+        padding: 1rem;
+      }
+      .notice { margin: 1.25rem 0; color: #c6d5e8; }
+      .status-line { margin: 1rem 0; }
+      .metrics, .tasks, .events { display: grid; gap: 0.75rem; }
+      .metrics { grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); }
+      .metric strong { display: block; font-size: 1.5rem; }
+      .task-head, .event-head { display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; }
+      .task h3 { margin: 0; font-size: 1rem; }
+      .task p, .event p { margin: 0.5rem 0 0; overflow-wrap: anywhere; }
+      .badge { border-radius: 999px; padding: 0.2rem 0.6rem; background: #24364e; font-size: 0.8rem; }
+      .badge-claimed { background: #7c4a09; color: #ffdf99; }
+      .badge-done { background: #14532d; color: #bbf7d0; }
+      .badge-failed, .badge-blocked { background: #7f1d1d; color: #fecaca; }
+      .error { border-color: #ef4444; color: #fecaca; }
+      button { border: 1px solid #64748b; border-radius: 0.4rem; padding: 0.45rem 0.75rem; color: inherit; background: #1e293b; cursor: pointer; }
+      button:focus-visible { outline: 3px solid #60a5fa; outline-offset: 2px; }
+      a { color: #93c5fd; }
+
+      @media (prefers-reduced-motion: reduce) {
+        *, *::before, *::after { scroll-behavior: auto !important; }
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <header>
+        <p class="muted">BAGO · coordinación local registrada</p>
+        <h1>Monitor del equipo Codex</h1>
+        <p id="mission" class="muted">Cargando estado del equipo…</p>
+      </header>
+
+      <p class="notice">
+        Este monitor actualiza la coordinación de <code>.codex-team</code> cada 4 segundos.
+        Solo muestra eventos que el protocolo teamctl registra; no inspecciona el razonamiento
+        privado ni toda la actividad interna de la extensión Codex.
+      </p>
+
+      <section aria-labelledby="live-heading">
+        <h2 id="live-heading">Estado</h2>
+        <p id="connection" class="status-line" role="status" aria-live="polite">Conectando…</p>
+        <div id="metrics" class="metrics"></div>
+        <p id="updated" class="muted"></p>
+        <button id="refresh" type="button">Actualizar ahora</button>
+      </section>
+
+      <section aria-labelledby="tasks-heading">
+        <h2 id="tasks-heading">Trabajo coordinado</h2>
+        <div id="tasks" class="tasks"></div>
+      </section>
+
+      <section aria-labelledby="events-heading">
+        <h2 id="events-heading">Eventos recientes</h2>
+        <ol id="events" class="events"></ol>
+      </section>
+    </main>
+
+    <script>
+      const pollIntervalMs = 4000;
+      const connection = document.querySelector("#connection");
+      const mission = document.querySelector("#mission");
+      const metrics = document.querySelector("#metrics");
+      const updated = document.querySelector("#updated");
+      const tasks = document.querySelector("#tasks");
+      const events = document.querySelector("#events");
+      let refreshTimer;
+      let requestInFlight = false;
+
+      function addMetric(label, value) {
+        const card = document.createElement("div");
+        card.className = "task metric";
+        const number = document.createElement("strong");
+        number.textContent = String(value);
+        const name = document.createElement("span");
+        name.textContent = label;
+        card.append(number, name);
+        metrics.append(card);
+      }
+
+      function addText(parent, tagName, value, className) {
+        const element = document.createElement(tagName);
+        if (className) element.className = className;
+        element.textContent = value == null || value === "" ? "No disponible" : String(value);
+        parent.append(element);
+        return element;
+      }
+
+      function render(data) {
+        const counts = data.counts || {};
+        const missionData = data.mission || {};
+        mission.textContent = `${missionData.title} · ${missionData.id} · gate: ${missionData.terminal_gate}`;
+        metrics.replaceChildren();
+        addMetric("Agentes con tarea reclamada", (data.active_agents || []).length);
+        addMetric("En espera", counts.READY || 0);
+        addMetric("Completadas", counts.DONE || 0);
+        addMetric("Bloqueadas / fallidas", (counts.BLOCKED || 0) + (counts.FAILED || 0));
+
+        const lastEvent = (data.recent_events || []).at(-1);
+        const eventAgeSeconds = lastEvent && lastEvent.at
+          ? Math.max(0, Math.floor((Date.now() - Date.parse(lastEvent.at)) / 1000))
+          : null;
+        updated.textContent = `Snapshot: ${data.snapshot_updated_at || "sin fecha"} · Último evento: ${
+          eventAgeSeconds === null ? "ninguno" : `${eventAgeSeconds} s`
+        } · Próxima actualización automática en 4 s.`;
+        connection.className = eventAgeSeconds !== null && eventAgeSeconds > 60
+          ? "status-line muted"
+          : "status-line";
+        connection.textContent = eventAgeSeconds !== null && eventAgeSeconds > 60
+          ? `Conectado; sin eventos de coordinación en ${eventAgeSeconds} s.`
+          : `Conectado · respuesta recibida ${new Date().toLocaleTimeString()}.`;
+
+        tasks.replaceChildren();
+        for (const task of data.tasks || []) {
+          const card = document.createElement("article");
+          card.className = "task";
+          const head = document.createElement("div");
+          head.className = "task-head";
+          addText(head, "h3", `${task.id} · ${task.title}`);
+          const badge = addText(head, "span", task.status, `badge badge-${String(task.status).toLowerCase()}`);
+          badge.setAttribute("aria-label", `Estado: ${task.status}`);
+          card.append(head);
+          addText(card, "p", `Rol: ${task.role} · Agente: ${task.agent || "ninguno"}`);
+          if (task.status === "CLAIMED") addText(card, "p", `Iniciada: ${task.claimed_at || "sin fecha"}`);
+          if (task.depends_on?.length) addText(card, "p", `Depende de: ${task.depends_on.join(", ")}`);
+          tasks.append(card);
+        }
+        if (!tasks.childElementCount) addText(tasks, "p", "No hay tareas registradas.");
+
+        events.replaceChildren();
+        for (const event of [...(data.recent_events || [])].reverse()) {
+          const item = document.createElement("li");
+          item.className = "event";
+          const summary = [event.at, event.kind, event.work_id, event.agent || event.from_agent]
+            .filter(Boolean).join(" · ");
+          addText(item, "p", summary);
+          events.append(item);
+        }
+        if (!events.childElementCount) addText(events, "li", "No hay eventos registrados.");
+      }
+
+      async function refresh() {
+        if (requestInFlight) return;
+        requestInFlight = true;
+        try {
+          const response = await fetch("/api/team/status", { cache: "no-store" });
+          if (!response.ok) throw new Error(`API respondió ${response.status}: ${await response.text()}`);
+          render(await response.json());
+        } catch (error) {
+          connection.className = "status-line error";
+          connection.textContent = `Monitor no disponible: ${error instanceof Error ? error.message : String(error)}`;
+        } finally {
+          requestInFlight = false;
+          clearTimeout(refreshTimer);
+          refreshTimer = setTimeout(refresh, pollIntervalMs);
+        }
+      }
+
+      document.querySelector("#refresh").addEventListener("click", refresh);
+      refresh();
+    </script>
+  </body>
+</html>

@@ -466,6 +466,41 @@ def _render_agent_catalog() -> str:
     return "\n".join(lines)
 
 
+def render_first_user_tutorial(manifest: dict[str, Any]) -> str:
+    """Render and validate the first-user tutorial declared in the manifest."""
+    tutorial = manifest.get("first_user_tutorial")
+    if not tutorial:
+        return "No hay un videotutorial de primer uso declarado."
+
+    required_files = ("video", "subtitles", "guide", "trace", "input")
+    required_values = ("provider", "global_model", "agent_model", "credential_redaction")
+    missing_keys = [key for key in required_files + required_values if not tutorial.get(key)]
+    if missing_keys:
+        raise ValueError("Tutorial metadata is missing: " + ", ".join(missing_keys))
+    missing_files = [
+        tutorial[key]
+        for key in required_files
+        if not (REPO_ROOT / tutorial[key]).is_file()
+    ]
+    if missing_files:
+        raise FileNotFoundError("Tutorial artifacts missing: " + ", ".join(missing_files))
+
+    return "\n".join(
+        [
+            "Guía visual narrada en español para recorrer el chat, los agentes y los ajustes del proveedor.",
+            f"La pantalla completa de configuración se conserva; el campo de {tutorial['credential_redaction']} aparece censurado.",
+            f"La guía distingue el modelo global del asistente ({_inline(tutorial['global_model'])}) del modelo fijado al agente lector ({_inline(tutorial['agent_model'])}).",
+            f"La traza enlazada registra una lectura acotada y respuesta real de {tutorial['provider']}; no acredita una auditoría del código ni ejecución de trabajos.",
+            "",
+            f"- Vídeo: [{_inline('MP4')}]({tutorial['video']})",
+            f"- Subtítulos: [{_inline('SRT')}]({tutorial['subtitles']})",
+            f"- Guía y límites: [{_inline(Path(tutorial['guide']).name)}]({tutorial['guide']})",
+            f"- LocalTrace: [{_inline(Path(tutorial['trace']).name)}]({tutorial['trace']})",
+            f"- Archivo de ejemplo: [{_inline(Path(tutorial['input']).name)}]({tutorial['input']})",
+        ]
+    )
+
+
 def render_readme(
     *,
     manifest: dict[str, Any],
@@ -534,6 +569,10 @@ def render_readme(
         "El comando materializa summary, agent run, receipts, trace y evaluation en",
         f"{_inline('demo_output/latest/')} sin convertir esa proyección en fuente canónica.",
         "",
+        "## Tutorial para usuarios nuevos",
+        "",
+        render_first_user_tutorial(manifest),
+        "",
         "## Evidencia de ejecución",
         "",
         "La evidencia versionada de L15 registra el trace consultado en Jaeger: [resultado y trace ID](evidence/l15_otel_jaeger_live.md). El demo produce `trace.json`, recibos y evaluación determinista; Jaeger es una proyección local, no autoridad de ejecución.",
@@ -557,6 +596,16 @@ def render_readme(
         FENCE,
         "",
         "Guía detallada: [L15 OpenTelemetry + Jaeger](docs/otel_jaeger.md).",
+        "",
+        "## Monitor local del equipo Codex",
+        "",
+        "Para observar en vivo las tareas y eventos que registra la coordinación local, instala las dependencias backend con `python -m pip install -r requirements.txt fastapi uvicorn`, y ejecuta la API y el frontend en dos terminales:",
+        "",
+        FENCE + "bash",
+        "python -m src.api.server",
+        FENCE,
+        "",
+        "En otra terminal, entra en `frontend`, ejecuta `npm install` y después `npm run dev`. Abre [http://localhost:5173/team-monitor.html](http://localhost:5173/team-monitor.html). La página consulta `/api/team/status` cada cuatro segundos; el estado mostrado procede de `.codex-team/state.json` y `.codex-team/events.jsonl`. Solo refleja eventos registrados por teamctl, no toda la actividad interna de la extensión Codex.",
         "",
         "Profundiza en las fases L0-L15 en el [roadmap](#roadmap-detectado), o consulta [STATE.md](STATE.md) para el alcance canónico y [portfolio/README.md](portfolio/README.md) para la presentación del producto.",
         "",

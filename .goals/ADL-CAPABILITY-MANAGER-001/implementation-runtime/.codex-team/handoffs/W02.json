@@ -1,0 +1,56 @@
+{
+  "changed_files": [
+    "frontend/src/App.tsx",
+    "frontend/src/components/AgentChat.tsx",
+    "frontend/src/components/AgentChat.css",
+    "frontend/src/components/CapabilityManager.tsx",
+    "frontend/src/components/CapabilityManager.css"
+  ],
+  "next_consumers": [
+    "W03"
+  ],
+  "outputs": [
+    {
+      "description": "Frontend implementation report, verification results, live-server limitation, and scope boundaries.",
+      "path": "evidence/W02_FRONTEND_IMPLEMENTATION.md",
+      "sha256": "2f36ca633b85690bde676a2809a4d77e5e694a1e45c4654751ff934619e9b514"
+    }
+  ],
+  "payload_sha256": "2f64b88b38768910485dd1bf2ffa833675e7483ca957aaa963a8d95c31acc4a6",
+  "residual_risks": [
+    "Live integration remains unverified because port 8084 returned HTTP 404 for the W01 catalog route; orchestrator must resolve runtime ownership before restarting or demonstrating.",
+    "ESLint script cannot execute because eslint is not installed in this checkout.",
+    "No browser interaction or visual inspection was possible in the current UI session.",
+    "The backend does not persist arbitrary system/chat notices; proposal records persist and carry conversation_id, but local chat notices are not transcript messages.",
+    "Proposals do not authorize capabilities, create jobs, or execute code; Agent Runner remains fail-closed."
+  ],
+  "role": "frontend-engineer",
+  "status": "DONE",
+  "verification": [
+    {
+      "command": "npm --prefix frontend run build",
+      "evidence": "tsc -b and Vite production build completed; 128 modules transformed.",
+      "result": "PASS"
+    },
+    {
+      "command": "npm --prefix frontend run lint",
+      "evidence": "eslint executable unavailable: Windows reported command not recognized. No dependencies installed.",
+      "result": "BLOCKED"
+    },
+    {
+      "command": "git diff --check -- frontend/src/App.tsx frontend/src/components/AgentChat.tsx frontend/src/components/AgentChat.css",
+      "result": "PASS"
+    },
+    {
+      "command": "GET http://127.0.0.1:8084/api/capabilities",
+      "evidence": "HTTP 404 from current listener; live API not verified against W01. Process not restarted.",
+      "result": "NOT_VERIFIED"
+    },
+    {
+      "command": "Browser visual inspection via cua.getState",
+      "evidence": "No apps or browsers were available in the UI automation state.",
+      "result": "NOT_RUN"
+    }
+  ],
+  "work_id": "W02"
+}

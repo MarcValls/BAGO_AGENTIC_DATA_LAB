@@ -12,7 +12,7 @@ from src.sandbox import Capability, SandboxFilesystem, SandboxProfile, SandboxSp
 
 
 READ_WORKSPACE_FILE = "read_workspace_file"
-MAX_FILE_BYTES = 32 * 1024
+MAX_FILE_BYTES = 256 * 1024
 MAX_LINES_PER_READ = 250
 MAX_TOOL_CALLS_PER_TURN = 4
 MAX_TOOL_ROUNDS = 3
@@ -21,7 +21,7 @@ READ_WORKSPACE_TOOL = {
     "type": "function",
     "function": {
         "name": READ_WORKSPACE_FILE,
-        "description": "Read a bounded range from one text file in the currently bound project. Use only when the user enabled project-file reading and asked you to inspect project material. Paths must be relative to the project root.",
+        "description": "Read at most 250 lines from one UTF-8 text file up to 256 KiB in the currently bound project. Use only when the user enabled project-file reading and asked you to inspect project material. Paths must be relative to the project root.",
         "parameters": {
             "type": "object",
             "required": ["path"],

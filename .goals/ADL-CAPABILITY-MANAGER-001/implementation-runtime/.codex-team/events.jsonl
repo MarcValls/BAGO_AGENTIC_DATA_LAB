@@ -1,0 +1,9 @@
+{"at": "2026-10-09T21:34:54+00:00", "kind": "MISSION_INIT", "mission_id": "ADL_CAPABILITY_MANAGER_IMPLEMENTATION_001", "mission_sha256": "d357fba3d5f2363fd89acec07ab32ef3e5621c51569e841d65dff8a28594667b"}
+{"agent": "bago_implementation_worker", "at": "2026-10-09T21:35:37+00:00", "kind": "CLAIM", "role": "backend-engineer", "work_id": "W01"}
+{"at": "2026-10-09T21:39:51+00:00", "kind": "HANDOFF_DONE", "payload_sha256": "96c0fe9bce58f9633bc583330b8ffa8aa6f50fb39ed08aa42575a1209caab887", "work_id": "W01"}
+{"agent": "bago_frontend_engineer", "at": "2026-10-09T21:40:52+00:00", "kind": "CLAIM", "role": "frontend-engineer", "work_id": "W02"}
+{"at": "2026-10-09T21:48:08+00:00", "kind": "HANDOFF_DONE", "payload_sha256": "2f64b88b38768910485dd1bf2ffa833675e7483ca957aaa963a8d95c31acc4a6", "work_id": "W02"}
+{"agent": "bago_final_verifier", "at": "2026-10-09T21:51:11+00:00", "kind": "CLAIM", "role": "final-verifier", "work_id": "W03"}
+{"at": "2026-10-09T21:52:48+00:00", "kind": "HANDOFF_DONE", "payload_sha256": "4cc0e882bbec1508846b40b4582cf673469b3445bbcbe8e0e849b9e0c802d646", "work_id": "W03"}
+{"agent": "bago_team_orchestrator", "at": "2026-10-09T21:53:13+00:00", "kind": "CLAIM", "role": "team-orchestrator", "work_id": "W04"}
+{"at": "2026-10-09T21:53:42+00:00", "kind": "HANDOFF_DONE", "payload_sha256": "bc492768e74b8cee63dbd49f376ddebcf804241bf9fbd862d2b10e339000b2df", "work_id": "W04"}

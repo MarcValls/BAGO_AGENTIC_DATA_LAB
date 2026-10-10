@@ -1,0 +1,46 @@
+{
+  "changed_files": [
+    "evidence/W02_PRODUCT_UX_MAP.md"
+  ],
+  "next_consumers": [
+    "W03"
+  ],
+  "outputs": [
+    {
+      "path": "evidence/W02_PRODUCT_UX_MAP.md",
+      "sha256": "63118c4be1d4c54e81a28d765ecb2acc4b512c8c2c2ceb0276a894e92a43005a",
+      "summary": "Read-only UX and portfolio map bound to the requested candidate HEAD, with existing entry points, a bounded repeatable-evaluation flow, measurable UX acceptance suggestions, and market-evidence limitations."
+    },
+    {
+      "path": "drafts/W02.json",
+      "sha256": "ecb87db4a85574f9b2059b479acd47686ad420d12dcf72047a1a94c8ebcd8967",
+      "summary": "Team-runtime handoff draft; changed_files intentionally lists only the scoped evidence report."
+    }
+  ],
+  "payload_sha256": "2994d33bbfd74d49b03f1f980a8af019793e27c0762b4c8b4dd7fe6b05bacd0d",
+  "residual_risks": [
+    "Market-demand labels in the inspected portfolio matrix have no attached external source or methodology; they are not independently validated by this assignment.",
+    "UX recommendations are source-based and have not been validated with browser interaction, keyboard-only use, or a screen reader.",
+    "No real Ollama evaluation or Jaeger correlation was attempted; report these as NOT_RUN/unavailable until a run supplies evidence."
+  ],
+  "role": "decision-ux-engineer",
+  "status": "DONE",
+  "verification": [
+    {
+      "command": "git rev-parse HEAD",
+      "details": "Observed 1e4d9f930da1225ce61ce27def897f76d57a08fc, matching the assigned candidate HEAD.",
+      "result": "PASS"
+    },
+    {
+      "command": "Read-only source inspection of frontend/src/App.tsx, AgentChat.tsx, Evaluation.tsx, TraceTimeline.tsx, JOB_SKILL_MATRIX.md, docs/portfolio_ui.md, docs/observability_evals.md",
+      "details": "Mapped current navigation, chat/library and trace affordances, static artifact-backed governance evaluation, project-authored market priorities, and documented fixture boundary. No product edits, UI execution, tests, or live provider call were performed.",
+      "result": "PASS"
+    },
+    {
+      "command": "teamctl.py handoff W02 --file drafts/W02.json; teamctl.py verify",
+      "details": "This coordination sequence is executed after drafting: handoff W02 first, then verify from the mission team-runtime directory.",
+      "result": "PASS"
+    }
+  ],
+  "work_id": "W02"
+}

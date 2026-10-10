@@ -1,0 +1,64 @@
+{
+  "work_id": "W03",
+  "role": "final-verifier",
+  "status": "DONE",
+  "changed_files": [
+    "evidence/W03_FINAL_REVIEW.md",
+    "drafts/W03.json"
+  ],
+  "outputs": [
+    {
+      "path": "evidence/W03_FINAL_REVIEW.md",
+      "description": "Independent final review with scoped PASS verdict, evidence, and remaining limitations."
+    }
+  ],
+  "verification": [
+    {
+      "command": "pytest -q tests\\test_capability_manager.py tests\\test_conversation_library.py tests\\test_agent_chat_trace.py",
+      "result": "PASS",
+      "evidence": "17 passed, 1 Python 3.14/Pydantic compatibility warning."
+    },
+    {
+      "command": "npm --prefix frontend run build",
+      "result": "PASS",
+      "evidence": "tsc -b and Vite build; 128 modules transformed."
+    },
+    {
+      "command": "npm --prefix frontend run lint",
+      "result": "BLOCKED",
+      "evidence": "eslint executable is not installed/available in this checkout."
+    },
+    {
+      "command": "git diff --check -- scoped implementation files",
+      "result": "PASS",
+      "evidence": "No diff-check errors."
+    },
+    {
+      "command": "GET /api/capabilities and GET / on 127.0.0.1:8084",
+      "result": "PASS",
+      "evidence": "HTTP 200; expected four capability states; root UI returns HTTP 200."
+    },
+    {
+      "command": "GET /api/artifacts on 127.0.0.1:8084",
+      "result": "NOT_VERIFIED",
+      "evidence": "HTTP 404. Recorded as a separate residual route issue; no P0/P1 catalog contract failure."
+    },
+    {
+      "command": "Live POST to create/cancel capability proposal",
+      "result": "NOT_RUN",
+      "evidence": "Avoided creating persistent records in the user's live proposal database; route behavior is covered with temporary SQLite/TestClient tests."
+    }
+  ],
+  "residual_risks": [
+    "Verdict is scoped to the safe catalog/proposal MVP and does not validate governed execution or authorization.",
+    "ESLint is unavailable; lint remains unverified.",
+    "The full test suite was not run.",
+    "No live POST proposal smoke test was run to avoid persistent user data.",
+    "Capability command notices are not persisted in the conversation transcript, although proposal records are persisted with conversation_id.",
+    "No authenticated actor identity or human approval flow exists.",
+    "GET /api/artifacts returns 404 on the live server tested."
+  ],
+  "next_consumers": [
+    "W04"
+  ]
+}
