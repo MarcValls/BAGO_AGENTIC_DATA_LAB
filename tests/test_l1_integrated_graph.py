@@ -4,6 +4,8 @@ from pathlib import Path
 import sys
 import uuid
 
+import pytest
+
 from langgraph.checkpoint.memory import InMemorySaver
 
 sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
@@ -98,6 +100,25 @@ def test_integrated_graph_pauses_before_effect_and_requires_exact_approval(tmp_p
     assert denied["sandbox_result"].receipt.status is SandboxStatus.DENIED
     assert denied["sandbox_result"].receipt.error_code == "PERMIT_REQUIRED"
     assert "sandbox.execution" in denied["local_trace"].names
+
+
+@pytest.mark.parametrize("malformed_approval", ["false", 1])
+def test_integrated_graph_rejects_non_boolean_approval_values(tmp_path: Path, malformed_approval):
+    (tmp_path / "notes").mkdir()
+    app, _gateway = _app(tmp_path)
+    thread_id, request = _start(app, tmp_path)
+    target = tmp_path / "notes/result.txt"
+
+    result = resume_approval(
+        app,
+        thread_id=thread_id,
+        fingerprint=request["fingerprint"],
+        approved=malformed_approval,
+    )
+
+    assert not target.exists()
+    assert result["authorization_status"] == "DENIED"
+    assert result["sandbox_result"].receipt.error_code == "PERMIT_REQUIRED"
 
 
 def test_integrated_graph_writes_only_after_matching_approval_and_traces_receipt(tmp_path: Path):

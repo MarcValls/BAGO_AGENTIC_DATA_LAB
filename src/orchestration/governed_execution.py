@@ -346,10 +346,10 @@ def build_integrated_governed_graph(
     return graph.compile(checkpointer=checkpointer or InMemorySaver())
 
 
-def resume_approval(app: Any, *, thread_id: str, fingerprint: str, approved: bool = True) -> dict[str, Any]:
+def resume_approval(app: Any, *, thread_id: str, fingerprint: str, approved: Any = True) -> dict[str, Any]:
     """Resume one paused run with an explicit approval/rejection payload."""
     return app.invoke(
-        Command(resume={"approved": bool(approved), "fingerprint": fingerprint}),
+        Command(resume={"approved": type(approved) is bool and approved is True, "fingerprint": fingerprint}),
         config={"configurable": {"thread_id": thread_id}},
     )
 
