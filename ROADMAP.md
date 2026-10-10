@@ -115,6 +115,20 @@ ExecutionRequest → AuthorizationBoundary → Permit → ExecutionGateway
 - [ ] Demo grabada funcionando
 - [ ] LEARNING_LEDGER.md actualizado con conceptos de LangGraph
 
+### Revalidación L1 — 2026-10-10
+
+La auditoría vigente rebajó el claim histórico a `PARTIAL` porque el grafo no
+integraba `GovernedRAG`, `ExecutionGateway` ni `SandboxManager`. El goal
+`L1-GOVERNED-EXECUTION-COMPLETION-001` añade una fábrica de grafo integrada y
+evidencia local de interrupt/resume, aprobación ligada a fingerprint, recibos
+y `LocalTrace`. La ampliación compone L4/L11 sin cambiar sus contratos ni
+estados. La demo reproducible con transcripción y recibos cubre el entregable
+video/demo sin afirmar que se haya grabado un vídeo. El estado permanece
+`PARTIAL` hasta pasar todos los tests, comprobar README y obtener revisión
+independiente sobre el candidato final. Ver
+`docs/langgraph_architecture.md` y la evidencia en
+`evidence/l1-governed-execution-completion-20261010/`.
+
 ---
 
 ## L2 · ETL / DATA PIPELINE

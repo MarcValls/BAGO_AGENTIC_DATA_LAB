@@ -3,7 +3,7 @@
 [![CI](https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/actions/workflows/ci.yml/badge.svg)](https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/actions/workflows/ci.yml)
 [![GitHub](https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/actions/workflows/readme-consistency.yml/badge.svg)](https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/actions/workflows/readme-consistency.yml)
 [![Branch](https://img.shields.io/badge/branch-main-green)](https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/tree/main)
-[![Tests](https://img.shields.io/badge/tests-203%2F203%20passing-brightgreen)](https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/actions)
+[![Tests](https://img.shields.io/badge/tests-207%2F207%20passing-brightgreen)](https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/actions)
 [![License](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 
 > Laboratorio experimental para desarrollar capacidades de AI Engineering con gobernanza BAGO.
@@ -73,7 +73,7 @@ Profundiza en las fases L0-L15 en el [roadmap](#roadmap-detectado), o consulta [
 
 | Métrica | Valor |
 |---|---|
-| Tests ejecutados | **203/203** |
+| Tests ejecutados | **207/207** |
 | Rama pública | `main` |
 | Estado actualizado | 2026-10-10 |
 | Fase actual | **L15 · OpenTelemetry + Jaeger Local Live** · VERIFIED (local live) |
@@ -319,6 +319,7 @@ La tabla se extrae de JOB_SKILL_MATRIX.md y se mantiene fuera del README.
 - `src/observability/__init__.py`
 - `src/observability/local_trace.py`
 - `src/observability/otel_bridge.py`
+- `src/orchestration/governed_execution.py`
 - `src/orchestration/state_graph.py`
 - `src/providers/__init__.py`
 - `src/providers/ollama.py`
@@ -350,6 +351,7 @@ La tabla se extrae de JOB_SKILL_MATRIX.md y se mantiene fuera del README.
 - `tests/test_l12_observability.py` (5 checks)
 - `tests/test_l15_otel_bridge.py` (4 checks)
 - `tests/test_l1_governance.py` (8 checks)
+- `tests/test_l1_integrated_graph.py` (4 checks)
 - `tests/test_l2_etl_pipeline.py` (4 checks)
 - `tests/test_l3_evidence.py` (2 checks)
 - `tests/test_l3_ontology.py` (12 checks)
@@ -377,6 +379,8 @@ La tabla se extrae de JOB_SKILL_MATRIX.md y se mantiene fuera del README.
 - `evidence/l1-governed-execution-20261010/README_CHECK.txt`
 - `evidence/l1-governed-execution-20261010/README_GENERATION.txt`
 - `evidence/l1-governed-execution-20261010/REGRESSION_TESTS.txt`
+- `evidence/l1-governed-execution-completion-20261010/L1_DEMO_RECEIPTS.json`
+- `evidence/l1-governed-execution-completion-20261010/L1_DEMO_TRANSCRIPT.md`
 - `evidence/l10_ontology_engine.md`
 - `evidence/l12_observability_evals.md`
 - `evidence/l14_vector_store.md`
@@ -431,6 +435,7 @@ La tabla se extrae de JOB_SKILL_MATRIX.md y se mantiene fuera del README.
 - `docs/decision-inspector/verification/W14_INDEPENDENT_RECEIPT_VERIFICATION.md`
 - `docs/full_orchestration.md`
 - `docs/governed_rag.md`
+- `docs/langgraph_architecture.md`
 - `docs/local_vector_store.md`
 - `docs/mcp_governance.md`
 - `docs/observability_evals.md`
@@ -463,6 +468,7 @@ La tabla se extrae de JOB_SKILL_MATRIX.md y se mantiene fuera del README.
 - `scripts/run_l12_observability_evidence.py`
 - `scripts/run_l14_vector_store_validation.py`
 - `scripts/run_l15_otel_live_validation.py`
+- `scripts/run_l1_governed_execution_demo.py`
 - `scripts/run_l6_aws_free_tier_validation.py`
 - `scripts/run_l6_aws_live_validation.py`
 - `scripts/run_l8_openmetadata_live_validation.py`
