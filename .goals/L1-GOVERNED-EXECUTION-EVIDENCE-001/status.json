@@ -1,12 +1,14 @@
 {
   "goal_id": "L1-GOVERNED-EXECUTION-EVIDENCE-001",
   "title": "L1 Governed Execution: evidencia suficiente y ligada al código",
-  "status": "PREPARED",
-  "phase": "BASELINE_AUDIT_RECORDED",
+  "status": "VALIDATED",
+  "phase": "EVIDENCE_AUDIT_CLOSED_L1_PARTIAL",
   "candidate": {
     "branch": "codex/l1-governed-execution-evidence-20261010",
-    "head": "aebead4373025c07a4d2c63052890288133d6a4b",
-    "worktree_was_clean_at_start": true
+    "head": "defe7b80840082c0ad2749c2ea17af443b87a055",
+    "base": "325cab5a334674f1d1528762490a4dea3bb05a7b",
+    "worktree_was_clean_at_start": true,
+    "commit_message": "fix: close L1 governed execution evidence gaps"
   },
   "reference_test_run": {
     "command": "python -m pytest tests/test_l1_governance.py -q",
@@ -15,15 +17,32 @@
     "evidence": "evidence/REFERENCE_TEST_AUDIT.md"
   },
   "acceptance": {
-    "A1_candidate_identity_and_hashes": "PASS_BASELINE_ONLY",
-    "A2_seven_test_to_claim_map": "PREPARED",
-    "A3_behavior_tests_against_production_code": "NOT_RUN",
-    "A4_unimplemented_claims_explicit": "PREPARED",
-    "A5_final_candidate_test_receipts": "NOT_RUN",
-    "A6_independent_review": "NOT_RUN",
-    "A7_honest_l1_closure": "NOT_RUN",
-    "A8_generated_readme_and_check": "NOT_RUN"
+    "A1_candidate_identity_and_hashes": "PASS",
+    "A2_seven_test_to_claim_map": "PASS",
+    "A3_behavior_tests_against_production_code": "PASS_WITH_EXPLICIT_PARTIAL_CASES",
+    "A4_unimplemented_claims_explicit": "PASS",
+    "A5_final_candidate_test_receipts": "PASS",
+    "A6_independent_review": "PASS_NO_P0_P1_WITHIN_PASS_CLAIMS",
+    "A7_honest_l1_closure": "PASS_L1_REMAINS_PARTIAL",
+    "A8_generated_readme_and_check": "PASS"
   },
-  "verification_boundary": "Baseline pass proves execution of the reference tests only; no L1 claim is promoted by this record.",
-  "updated_on": "2026-10-10"
+  "verification_boundary": "Evidence goal VALIDATED for the locally executed bounded claims. L1 phase remains PARTIAL; StateGraph integration with ExecutionGateway/RAG/adapters and remote/persistent controls are not proven.",
+  "updated_on": "2026-10-10",
+  "final_test_runs": [
+    {
+      "command": "python -m pytest tests/test_l1_governance.py -q",
+      "result": "8 passed, 1 warning",
+      "evidence": "evidence/l1-governed-execution-20261010/L1_TESTS.txt"
+    },
+    {
+      "command": "python -m pytest tests/test_sandbox.py tests/test_retrieval_accuracy.py tests/test_mcp_governance.py tests/test_bedrock_integration.py -q",
+      "result": "40 passed, 1 warning",
+      "evidence": "evidence/l1-governed-execution-20261010/REGRESSION_TESTS.txt"
+    },
+    {
+      "command": "python -m pytest tests -q",
+      "result": "203 passed, 1 warning in 65.14s",
+      "evidence": "evidence/l1-governed-execution-20261010/FULL_SUITE.txt"
+    }
+  ]
 }

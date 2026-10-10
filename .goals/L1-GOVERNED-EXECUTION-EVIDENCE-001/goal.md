@@ -1,10 +1,12 @@
 # Goal — L1 Governed Execution: evidencia suficiente y ligada al código
 
 **Goal ID:** `L1-GOVERNED-EXECUTION-EVIDENCE-001`
-**Lifecycle:** `PREPARED`
+**Lifecycle:** `VALIDATED` (auditoría de evidencia local; la fase L1 continúa `PARTIAL`)
 **Proyecto:** BAGO Agentic Data Lab
 **Rama de referencia:** `codex/l1-governed-execution-evidence-20261010`
 **Snapshot inicial:** `aebead4373025c07a4d2c63052890288133d6a4b`
+
+**Candidato final ejecutado:** `defe7b80840082c0ad2749c2ea17af443b87a055`
 
 ## Objetivo
 
@@ -91,3 +93,15 @@ ninguna afirmación de L1 a evidencia suficiente.
   por sí sola las garantías de gobernanza descritas por sus nombres.
 - El desglose inicial y los hashes están en
   `evidence/REFERENCE_TEST_AUDIT.md`.
+
+## Cierre del objetivo — 2026-10-10
+
+- Estado del goal: `VALIDATED` para la auditoría de evidencia local.
+- Estado de L1: `PARTIAL (local evidence)`; no se eleva a VALIDATED.
+- Candidato/commit: `defe7b80840082c0ad2749c2ea17af443b87a055` en la rama indicada.
+- Suite L1: **8 passed**; regresión sandbox/retrieval/MCP/Bedrock: **40 passed**;
+  suite completa: **203 passed**, con un aviso Pydantic V1/Python 3.14.
+- La revisión independiente no encontró P0/P1 en los claims PASS con sus límites.
+- README generado y `--check --skip-tests` verificado para 203 tests.
+- Recibo, límites y hashes: `evidence/l1_governed_execution_20261010.md`;
+  salidas: `evidence/l1-governed-execution-20261010/`.
