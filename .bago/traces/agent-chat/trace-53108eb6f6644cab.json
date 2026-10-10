@@ -1,0 +1,37 @@
+{
+  "cost_usd": 0.0,
+  "event_count": 1,
+  "events": [
+    {
+      "attributes": {
+        "agent_id": "agent_b5665184bed24811ad59e90c8c4fdc9f",
+        "cost_status": "not_reported",
+        "duration_ms": 39276,
+        "model_id": "kimi-k2.6",
+        "outcome": "response_received",
+        "provider_id": "ollama-cloud",
+        "workspace_read_count": 1,
+        "workspace_read_sources": [
+          "output/agent-audit/P1-02-server-websocket-source-excerpt.txt:1-25"
+        ]
+      },
+      "end_time_unix_nano": 1791664170934168300,
+      "event_id": "event-6dd0299ba5434e06",
+      "evidence_refs": [
+        "agent://agent_b5665184bed24811ad59e90c8c4fdc9f"
+      ],
+      "kind": "workflow",
+      "name": "agent.chat",
+      "parent_event_id": null,
+      "sequence": 0,
+      "start_time_unix_nano": 1791664131657365100,
+      "status": "COMPLETED",
+      "trace_id": "trace-53108eb6f6644cab"
+    }
+  ],
+  "evidence_refs": [
+    "agent://agent_b5665184bed24811ad59e90c8c4fdc9f"
+  ],
+  "run_id": "agent-chat-eec5e0b617294b18b8d14daee8412a05",
+  "trace_id": "trace-53108eb6f6644cab"
+}
