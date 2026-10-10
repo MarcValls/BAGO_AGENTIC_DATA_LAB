@@ -43,14 +43,14 @@ def test_readme_sources_are_real_and_state_is_parsed():
     assert any(phase["id"] == "L10" for phase in phases)
     assert (ROOT / "docs" / "readme_manifest.json").is_file()
     l1 = next(phase for phase in phases if phase["id"] == "L1")
-    assert l1["status"] == "PARTIAL (local evidence)"
+    assert l1["status"] == "VALIDATED (local governed graph evidence)"
     l3 = next(phase for phase in phases if phase["id"] == "L3")
     assert sum(
         _test_function_count(ROOT / match)
         for check in l1["checks"]
         if check["kind"] == "tests"
         for match in check["matches"]
-    ) == 8
+    ) == 14
     assert sum(
         _test_function_count(ROOT / match)
         for check in l3["checks"]
@@ -110,6 +110,14 @@ def test_rendered_readme_contains_dynamic_contract_and_l10_artifacts():
     assert "python scripts/run_public_e2e_demo.py --check" in rendered
     assert "python demo.py" in rendered
     assert "[portfolio/README.md](portfolio/README.md)" in rendered
+    assert "## Tutorial para usuarios nuevos" in rendered
+    assert "campo de API key aparece censurado" in rendered
+    assert "gemma4:31b" in rendered
+    assert "kimi-k2.6" in rendered
+    assert "respuesta real de Ollama Cloud" in rendered
+    assert "docs/agent-chat-control/assets/ADL_videotutorial_primer_usuario.mp4" in rendered
+    assert "docs/agent-chat-control/assets/trace-c7ec5fcc40284a42.json" in rendered
+    assert "output/tutorial/sample-note.txt" in rendered
     assert "src/retrieval/sqlite_vector_store.py" in rendered
     assert "tests/test_sqlite_vector_store.py" in rendered
     assert "evidence/l14_vector_store.md" in rendered
@@ -130,7 +138,7 @@ def test_rendered_readme_contains_dynamic_contract_and_l10_artifacts():
     assert "python scripts/generate_dynamic_readme.py --check --skip-tests" in rendered
     assert "Estado actualizado" in rendered
     assert "| Fase actual | **L15 · OpenTelemetry + Jaeger Local Live** · VERIFIED (local live) |" in rendered
-    assert "| L1 | PARTIAL (local evidence) | — | LangGraph Governed Execution | 8 | 1 |" in rendered
+    assert "| L1 | VALIDATED (local governed graph evidence) | — | LangGraph Governed Execution | 14 | 4 |" in rendered
     assert "| L10 | VERIFIED (local) | BAGO / portfolio | Governed Ontology Engine | 4 | 2 |" in rendered
     assert "| L11 | VERIFIED (local) | BAGO / secure execution | Governed Sandbox Layer | 14 | 3 |" in rendered
     assert "| L12 | VERIFIED (local) | BAGO / portfolio | Local Observability & Evals | 5 | 3 |" in rendered

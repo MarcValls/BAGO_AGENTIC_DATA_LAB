@@ -1,0 +1,708 @@
+{
+  "captured_at_utc": "2026-10-10T18:55:23.014724+00:00",
+  "cases": {
+    "allowed": {
+      "file_sha256": "783be0f6caec66bc797a4e60da244489e13cae79d68172ca941416ff2ba73d96",
+      "fingerprint": "1b0a3a82e7fa3a76e964dbd7b4a95632b4962d2511c4ced64afb32b99dabc133",
+      "receipt": {
+        "argv": [],
+        "capability": "filesystem_write",
+        "duration_ms": 2,
+        "error_code": null,
+        "error_message": null,
+        "evidence_refs": [
+          "sandbox://sbxreceipt-f05fe68766434a47"
+        ],
+        "exit_code": null,
+        "filesystem_mode": "workspace_write",
+        "network_mode": "deny",
+        "operation": "filesystem_write",
+        "permit_id": "permit-1b0a3a82e7fa3a76e964",
+        "profile": "repository_worker",
+        "receipt_id": "sbxreceipt-f05fe68766434a47",
+        "request_id": "l1-63c516deed844189836a5e187850ae90",
+        "sandbox_id": "sbx-fb3623607ab04155",
+        "status": "SUCCESS",
+        "stderr_bytes": 0,
+        "stderr_sha256": null,
+        "stdout_bytes": 0,
+        "stdout_sha256": null,
+        "timed_out": false
+      },
+      "request_id": "l1-63c516deed844189836a5e187850ae90",
+      "trace": {
+        "cost_usd": 0.0,
+        "event_count": 6,
+        "events": [
+          {
+            "attributes": {
+              "run_id": "l1-63c516deed844189836a5e187850ae90"
+            },
+            "event_id": "event-c7d15eabbdb4749f",
+            "evidence_refs": [],
+            "kind": "workflow",
+            "name": "langgraph.run",
+            "parent_event_id": null,
+            "sequence": 0,
+            "status": "COMPLETED",
+            "trace_id": "trace-03e0de79fe44fec7"
+          },
+          {
+            "attributes": {
+              "citations": [
+                "docs/langgraph_architecture.md#revision=l1-current"
+              ],
+              "hits": [
+                {
+                  "chunk_id": "l1-current-policy",
+                  "citation": "docs/langgraph_architecture.md#revision=l1-current",
+                  "content": "Material writes require a matching approval and workspace-scoped permit.",
+                  "revision": "l1-current"
+                }
+              ]
+            },
+            "event_id": "event-9333e87912744d6f",
+            "evidence_refs": [
+              "docs/langgraph_architecture.md#revision=l1-current"
+            ],
+            "kind": "retrieval",
+            "name": "governed_retrieval",
+            "parent_event_id": null,
+            "sequence": 1,
+            "status": "SUCCESS",
+            "trace_id": "trace-03e0de79fe44fec7"
+          },
+          {
+            "attributes": {
+              "effect_type": "WRITE",
+              "fingerprint": "1b0a3a82e7fa3a76e964dbd7b4a95632b4962d2511c4ced64afb32b99dabc133",
+              "request_id": "l1-63c516deed844189836a5e187850ae90",
+              "tool_name": "filesystem.write"
+            },
+            "event_id": "event-1c1aa6cd2296925c",
+            "evidence_refs": [],
+            "kind": "tool",
+            "name": "action.proposal",
+            "parent_event_id": null,
+            "sequence": 2,
+            "status": "PROPOSED",
+            "trace_id": "trace-03e0de79fe44fec7"
+          },
+          {
+            "attributes": {
+              "approved": true,
+              "fingerprint": "1b0a3a82e7fa3a76e964dbd7b4a95632b4962d2511c4ced64afb32b99dabc133"
+            },
+            "event_id": "event-bba77b04ba88ed68",
+            "evidence_refs": [],
+            "kind": "authorization",
+            "name": "human.approval",
+            "parent_event_id": null,
+            "sequence": 3,
+            "status": "ALLOW",
+            "trace_id": "trace-03e0de79fe44fec7"
+          },
+          {
+            "attributes": {
+              "capability": "filesystem_write",
+              "error_code": null,
+              "operation": "filesystem_write",
+              "permit_id": "permit-1b0a3a82e7fa3a76e964",
+              "receipt_id": "sbxreceipt-f05fe68766434a47",
+              "request_id": "l1-63c516deed844189836a5e187850ae90"
+            },
+            "event_id": "event-f4b22c5e06b7ab31",
+            "evidence_refs": [
+              "sandbox://sbxreceipt-f05fe68766434a47"
+            ],
+            "kind": "sandbox",
+            "name": "sandbox.execution",
+            "parent_event_id": null,
+            "sequence": 4,
+            "status": "SUCCESS",
+            "trace_id": "trace-03e0de79fe44fec7"
+          },
+          {
+            "attributes": {
+              "argv": [],
+              "capability": "filesystem_write",
+              "duration_ms": 2,
+              "error_code": null,
+              "error_message": null,
+              "evidence_refs": [
+                "sandbox://sbxreceipt-f05fe68766434a47"
+              ],
+              "exit_code": null,
+              "filesystem_mode": "workspace_write",
+              "network_mode": "deny",
+              "operation": "filesystem_write",
+              "permit_id": "permit-1b0a3a82e7fa3a76e964",
+              "profile": "repository_worker",
+              "receipt_id": "sbxreceipt-f05fe68766434a47",
+              "request_id": "l1-63c516deed844189836a5e187850ae90",
+              "sandbox_id": "sbx-fb3623607ab04155",
+              "status": "SUCCESS",
+              "stderr_bytes": 0,
+              "stderr_sha256": null,
+              "stdout_bytes": 0,
+              "stdout_sha256": null,
+              "timed_out": false
+            },
+            "event_id": "event-80985e4fb894cf57",
+            "evidence_refs": [
+              "sandbox://sbxreceipt-f05fe68766434a47"
+            ],
+            "kind": "receipt",
+            "name": "sandbox.receipt",
+            "parent_event_id": null,
+            "sequence": 5,
+            "status": "SUCCESS",
+            "trace_id": "trace-03e0de79fe44fec7"
+          }
+        ],
+        "evidence_refs": [
+          "docs/langgraph_architecture.md#revision=l1-current",
+          "sandbox://sbxreceipt-f05fe68766434a47"
+        ],
+        "run_id": "l1-63c516deed844189836a5e187850ae90",
+        "trace_id": "trace-03e0de79fe44fec7"
+      }
+    },
+    "denied": {
+      "fingerprint": "3bb5b682df1541d831d1003b438bf524cd582ca906ddba24eb1b4e3291039bc2",
+      "receipt": {
+        "argv": [],
+        "capability": "filesystem_write",
+        "duration_ms": 0,
+        "error_code": "PERMIT_REQUIRED",
+        "error_message": "a matching permit is required",
+        "evidence_refs": [
+          "sandbox://sbxreceipt-d5c3f311e8244c69"
+        ],
+        "exit_code": null,
+        "filesystem_mode": "unknown",
+        "network_mode": "deny",
+        "operation": "filesystem_write",
+        "permit_id": "",
+        "profile": "unknown",
+        "receipt_id": "sbxreceipt-d5c3f311e8244c69",
+        "request_id": "l1-de8f25912fc948d185d7cfbcf91283f1",
+        "sandbox_id": "",
+        "status": "DENIED",
+        "stderr_bytes": 0,
+        "stderr_sha256": null,
+        "stdout_bytes": 0,
+        "stdout_sha256": null,
+        "timed_out": false
+      },
+      "trace": {
+        "cost_usd": 0.0,
+        "event_count": 6,
+        "events": [
+          {
+            "attributes": {
+              "run_id": "l1-de8f25912fc948d185d7cfbcf91283f1"
+            },
+            "event_id": "event-c92b920d72e4caec",
+            "evidence_refs": [],
+            "kind": "workflow",
+            "name": "langgraph.run",
+            "parent_event_id": null,
+            "sequence": 0,
+            "status": "COMPLETED",
+            "trace_id": "trace-4f7e088300c7cb77"
+          },
+          {
+            "attributes": {
+              "citations": [
+                "docs/langgraph_architecture.md#revision=l1-current"
+              ],
+              "hits": [
+                {
+                  "chunk_id": "l1-current-policy",
+                  "citation": "docs/langgraph_architecture.md#revision=l1-current",
+                  "content": "Material writes require a matching approval and workspace-scoped permit.",
+                  "revision": "l1-current"
+                }
+              ]
+            },
+            "event_id": "event-b13ac43f615e4fcc",
+            "evidence_refs": [
+              "docs/langgraph_architecture.md#revision=l1-current"
+            ],
+            "kind": "retrieval",
+            "name": "governed_retrieval",
+            "parent_event_id": null,
+            "sequence": 1,
+            "status": "SUCCESS",
+            "trace_id": "trace-4f7e088300c7cb77"
+          },
+          {
+            "attributes": {
+              "effect_type": "WRITE",
+              "fingerprint": "3bb5b682df1541d831d1003b438bf524cd582ca906ddba24eb1b4e3291039bc2",
+              "request_id": "l1-de8f25912fc948d185d7cfbcf91283f1",
+              "tool_name": "filesystem.write"
+            },
+            "event_id": "event-7e1273420399a3b3",
+            "evidence_refs": [],
+            "kind": "tool",
+            "name": "action.proposal",
+            "parent_event_id": null,
+            "sequence": 2,
+            "status": "PROPOSED",
+            "trace_id": "trace-4f7e088300c7cb77"
+          },
+          {
+            "attributes": {
+              "approved": false,
+              "fingerprint": "3bb5b682df1541d831d1003b438bf524cd582ca906ddba24eb1b4e3291039bc2"
+            },
+            "event_id": "event-0f29851b95175d7c",
+            "evidence_refs": [],
+            "kind": "authorization",
+            "name": "human.approval",
+            "parent_event_id": null,
+            "sequence": 3,
+            "status": "DENIED",
+            "trace_id": "trace-4f7e088300c7cb77"
+          },
+          {
+            "attributes": {
+              "capability": "filesystem_write",
+              "error_code": "PERMIT_REQUIRED",
+              "operation": "filesystem_write",
+              "permit_id": "",
+              "receipt_id": "sbxreceipt-d5c3f311e8244c69",
+              "request_id": "l1-de8f25912fc948d185d7cfbcf91283f1"
+            },
+            "event_id": "event-2713bdc898a324aa",
+            "evidence_refs": [
+              "sandbox://sbxreceipt-d5c3f311e8244c69"
+            ],
+            "kind": "sandbox",
+            "name": "sandbox.execution",
+            "parent_event_id": null,
+            "sequence": 4,
+            "status": "DENIED",
+            "trace_id": "trace-4f7e088300c7cb77"
+          },
+          {
+            "attributes": {
+              "argv": [],
+              "capability": "filesystem_write",
+              "duration_ms": 0,
+              "error_code": "PERMIT_REQUIRED",
+              "error_message": "a matching permit is required",
+              "evidence_refs": [
+                "sandbox://sbxreceipt-d5c3f311e8244c69"
+              ],
+              "exit_code": null,
+              "filesystem_mode": "unknown",
+              "network_mode": "deny",
+              "operation": "filesystem_write",
+              "permit_id": "",
+              "profile": "unknown",
+              "receipt_id": "sbxreceipt-d5c3f311e8244c69",
+              "request_id": "l1-de8f25912fc948d185d7cfbcf91283f1",
+              "sandbox_id": "",
+              "status": "DENIED",
+              "stderr_bytes": 0,
+              "stderr_sha256": null,
+              "stdout_bytes": 0,
+              "stdout_sha256": null,
+              "timed_out": false
+            },
+            "event_id": "event-c4ac87a860d97720",
+            "evidence_refs": [
+              "sandbox://sbxreceipt-d5c3f311e8244c69"
+            ],
+            "kind": "receipt",
+            "name": "sandbox.receipt",
+            "parent_event_id": null,
+            "sequence": 5,
+            "status": "DENIED",
+            "trace_id": "trace-4f7e088300c7cb77"
+          }
+        ],
+        "evidence_refs": [
+          "docs/langgraph_architecture.md#revision=l1-current",
+          "sandbox://sbxreceipt-d5c3f311e8244c69"
+        ],
+        "run_id": "l1-de8f25912fc948d185d7cfbcf91283f1",
+        "trace_id": "trace-4f7e088300c7cb77"
+      }
+    },
+    "path_escape_failure": {
+      "receipt": {
+        "argv": [],
+        "capability": "filesystem_write",
+        "duration_ms": 1,
+        "error_code": "PATH_ESCAPE",
+        "error_message": "path resolves outside workspace: ../escape.txt",
+        "evidence_refs": [
+          "sandbox://sbxreceipt-c0d5b221381a4611"
+        ],
+        "exit_code": null,
+        "filesystem_mode": "workspace_write",
+        "network_mode": "deny",
+        "operation": "filesystem_write",
+        "permit_id": "permit-bda694d58a0869cf561d",
+        "profile": "repository_worker",
+        "receipt_id": "sbxreceipt-c0d5b221381a4611",
+        "request_id": "l1-e0afa5d98f4f4b128edd02dfcbbfa44a",
+        "sandbox_id": "sbx-065b63c28b04424d",
+        "status": "DENIED",
+        "stderr_bytes": 0,
+        "stderr_sha256": null,
+        "stdout_bytes": 0,
+        "stdout_sha256": null,
+        "timed_out": false
+      },
+      "trace": {
+        "cost_usd": 0.0,
+        "event_count": 6,
+        "events": [
+          {
+            "attributes": {
+              "run_id": "l1-e0afa5d98f4f4b128edd02dfcbbfa44a"
+            },
+            "event_id": "event-35b2a86fe7834a5a",
+            "evidence_refs": [],
+            "kind": "workflow",
+            "name": "langgraph.run",
+            "parent_event_id": null,
+            "sequence": 0,
+            "status": "COMPLETED",
+            "trace_id": "trace-0a3ba1d8f29d700f"
+          },
+          {
+            "attributes": {
+              "citations": [
+                "docs/langgraph_architecture.md#revision=l1-current"
+              ],
+              "hits": [
+                {
+                  "chunk_id": "l1-current-policy",
+                  "citation": "docs/langgraph_architecture.md#revision=l1-current",
+                  "content": "Material writes require a matching approval and workspace-scoped permit.",
+                  "revision": "l1-current"
+                }
+              ]
+            },
+            "event_id": "event-749c7502e4075438",
+            "evidence_refs": [
+              "docs/langgraph_architecture.md#revision=l1-current"
+            ],
+            "kind": "retrieval",
+            "name": "governed_retrieval",
+            "parent_event_id": null,
+            "sequence": 1,
+            "status": "SUCCESS",
+            "trace_id": "trace-0a3ba1d8f29d700f"
+          },
+          {
+            "attributes": {
+              "effect_type": "WRITE",
+              "fingerprint": "bda694d58a0869cf561d7844b79e90808660e6deacfad6dc673572c6ef5abee1",
+              "request_id": "l1-e0afa5d98f4f4b128edd02dfcbbfa44a",
+              "tool_name": "filesystem.write"
+            },
+            "event_id": "event-12a3f556d4426864",
+            "evidence_refs": [],
+            "kind": "tool",
+            "name": "action.proposal",
+            "parent_event_id": null,
+            "sequence": 2,
+            "status": "PROPOSED",
+            "trace_id": "trace-0a3ba1d8f29d700f"
+          },
+          {
+            "attributes": {
+              "approved": true,
+              "fingerprint": "bda694d58a0869cf561d7844b79e90808660e6deacfad6dc673572c6ef5abee1"
+            },
+            "event_id": "event-90f47af84ea9849a",
+            "evidence_refs": [],
+            "kind": "authorization",
+            "name": "human.approval",
+            "parent_event_id": null,
+            "sequence": 3,
+            "status": "ALLOW",
+            "trace_id": "trace-0a3ba1d8f29d700f"
+          },
+          {
+            "attributes": {
+              "capability": "filesystem_write",
+              "error_code": "PATH_ESCAPE",
+              "operation": "filesystem_write",
+              "permit_id": "permit-bda694d58a0869cf561d",
+              "receipt_id": "sbxreceipt-c0d5b221381a4611",
+              "request_id": "l1-e0afa5d98f4f4b128edd02dfcbbfa44a"
+            },
+            "event_id": "event-991d7da5a3d04b18",
+            "evidence_refs": [
+              "sandbox://sbxreceipt-c0d5b221381a4611"
+            ],
+            "kind": "sandbox",
+            "name": "sandbox.execution",
+            "parent_event_id": null,
+            "sequence": 4,
+            "status": "DENIED",
+            "trace_id": "trace-0a3ba1d8f29d700f"
+          },
+          {
+            "attributes": {
+              "argv": [],
+              "capability": "filesystem_write",
+              "duration_ms": 1,
+              "error_code": "PATH_ESCAPE",
+              "error_message": "path resolves outside workspace: ../escape.txt",
+              "evidence_refs": [
+                "sandbox://sbxreceipt-c0d5b221381a4611"
+              ],
+              "exit_code": null,
+              "filesystem_mode": "workspace_write",
+              "network_mode": "deny",
+              "operation": "filesystem_write",
+              "permit_id": "permit-bda694d58a0869cf561d",
+              "profile": "repository_worker",
+              "receipt_id": "sbxreceipt-c0d5b221381a4611",
+              "request_id": "l1-e0afa5d98f4f4b128edd02dfcbbfa44a",
+              "sandbox_id": "sbx-065b63c28b04424d",
+              "status": "DENIED",
+              "stderr_bytes": 0,
+              "stderr_sha256": null,
+              "stdout_bytes": 0,
+              "stdout_sha256": null,
+              "timed_out": false
+            },
+            "event_id": "event-eede3912fee7ae2c",
+            "evidence_refs": [
+              "sandbox://sbxreceipt-c0d5b221381a4611"
+            ],
+            "kind": "receipt",
+            "name": "sandbox.receipt",
+            "parent_event_id": null,
+            "sequence": 5,
+            "status": "DENIED",
+            "trace_id": "trace-0a3ba1d8f29d700f"
+          }
+        ],
+        "evidence_refs": [
+          "docs/langgraph_architecture.md#revision=l1-current",
+          "sandbox://sbxreceipt-c0d5b221381a4611"
+        ],
+        "run_id": "l1-e0afa5d98f4f4b128edd02dfcbbfa44a",
+        "trace_id": "trace-0a3ba1d8f29d700f"
+      }
+    },
+    "process_timeout": {
+      "capability_enabled_by_factory": true,
+      "command_boundary": "typed pytest only; no shell string",
+      "receipt": {
+        "argv": [
+          "python",
+          "-m",
+          "pytest",
+          "timeout_case.py"
+        ],
+        "capability": "run_tests",
+        "duration_ms": 2028,
+        "error_code": "TIMEOUT",
+        "error_message": "process exceeded 2.000s",
+        "evidence_refs": [
+          "sandbox://sbxreceipt-6ee815a8f49241fc"
+        ],
+        "exit_code": null,
+        "filesystem_mode": "read_only",
+        "network_mode": "deny",
+        "operation": "run_tests",
+        "permit_id": "permit-0d288d81933f3b3babfa",
+        "profile": "test_runner",
+        "receipt_id": "sbxreceipt-6ee815a8f49241fc",
+        "request_id": "l1-0db5d3a320af470ba8a7a527ef0d03a2",
+        "sandbox_id": "sbx-0ab447c3758c43ef",
+        "status": "TIMEOUT",
+        "stderr_bytes": 0,
+        "stderr_sha256": null,
+        "stdout_bytes": 296,
+        "stdout_sha256": "cdb4e4275decf5c5c0d7a3e512109deb01b793f0a14f03b249ee69b7d36d8c39",
+        "timed_out": true
+      },
+      "trace": {
+        "cost_usd": 0.0,
+        "event_count": 6,
+        "events": [
+          {
+            "attributes": {
+              "run_id": "l1-0db5d3a320af470ba8a7a527ef0d03a2"
+            },
+            "event_id": "event-4f873191f03f5d4a",
+            "evidence_refs": [],
+            "kind": "workflow",
+            "name": "langgraph.run",
+            "parent_event_id": null,
+            "sequence": 0,
+            "status": "COMPLETED",
+            "trace_id": "trace-4cf130836b8a6436"
+          },
+          {
+            "attributes": {
+              "citations": [
+                "docs/langgraph_architecture.md#revision=l1-current"
+              ],
+              "hits": [
+                {
+                  "chunk_id": "l1-current-policy",
+                  "citation": "docs/langgraph_architecture.md#revision=l1-current",
+                  "content": "Material writes require a matching approval and workspace-scoped permit.",
+                  "revision": "l1-current"
+                }
+              ]
+            },
+            "event_id": "event-ef0cf69918f03685",
+            "evidence_refs": [
+              "docs/langgraph_architecture.md#revision=l1-current"
+            ],
+            "kind": "retrieval",
+            "name": "governed_retrieval",
+            "parent_event_id": null,
+            "sequence": 1,
+            "status": "SUCCESS",
+            "trace_id": "trace-4cf130836b8a6436"
+          },
+          {
+            "attributes": {
+              "effect_type": "EXTERNAL_TOOL",
+              "fingerprint": "0d288d81933f3b3babfae93213bbaecc186b1a3d6cc409e07cf63b19ca4332e6",
+              "request_id": "l1-0db5d3a320af470ba8a7a527ef0d03a2",
+              "tool_name": "pytest"
+            },
+            "event_id": "event-dcacc5286c8f92df",
+            "evidence_refs": [],
+            "kind": "tool",
+            "name": "action.proposal",
+            "parent_event_id": null,
+            "sequence": 2,
+            "status": "PROPOSED",
+            "trace_id": "trace-4cf130836b8a6436"
+          },
+          {
+            "attributes": {
+              "approved": true,
+              "fingerprint": "0d288d81933f3b3babfae93213bbaecc186b1a3d6cc409e07cf63b19ca4332e6"
+            },
+            "event_id": "event-6cef99ea62ef9435",
+            "evidence_refs": [],
+            "kind": "authorization",
+            "name": "human.approval",
+            "parent_event_id": null,
+            "sequence": 3,
+            "status": "ALLOW",
+            "trace_id": "trace-4cf130836b8a6436"
+          },
+          {
+            "attributes": {
+              "capability": "run_tests",
+              "error_code": "TIMEOUT",
+              "operation": "run_tests",
+              "permit_id": "permit-0d288d81933f3b3babfa",
+              "receipt_id": "sbxreceipt-6ee815a8f49241fc",
+              "request_id": "l1-0db5d3a320af470ba8a7a527ef0d03a2"
+            },
+            "event_id": "event-992b01f78f37b4c5",
+            "evidence_refs": [
+              "sandbox://sbxreceipt-6ee815a8f49241fc"
+            ],
+            "kind": "sandbox",
+            "name": "sandbox.execution",
+            "parent_event_id": null,
+            "sequence": 4,
+            "status": "TIMEOUT",
+            "trace_id": "trace-4cf130836b8a6436"
+          },
+          {
+            "attributes": {
+              "argv": [
+                "python",
+                "-m",
+                "pytest",
+                "timeout_case.py"
+              ],
+              "capability": "run_tests",
+              "duration_ms": 2028,
+              "error_code": "TIMEOUT",
+              "error_message": "process exceeded 2.000s",
+              "evidence_refs": [
+                "sandbox://sbxreceipt-6ee815a8f49241fc"
+              ],
+              "exit_code": null,
+              "filesystem_mode": "read_only",
+              "network_mode": "deny",
+              "operation": "run_tests",
+              "permit_id": "permit-0d288d81933f3b3babfa",
+              "profile": "test_runner",
+              "receipt_id": "sbxreceipt-6ee815a8f49241fc",
+              "request_id": "l1-0db5d3a320af470ba8a7a527ef0d03a2",
+              "sandbox_id": "sbx-0ab447c3758c43ef",
+              "status": "TIMEOUT",
+              "stderr_bytes": 0,
+              "stderr_sha256": null,
+              "stdout_bytes": 296,
+              "stdout_sha256": "cdb4e4275decf5c5c0d7a3e512109deb01b793f0a14f03b249ee69b7d36d8c39",
+              "timed_out": true
+            },
+            "event_id": "event-e55ea285f7d94a07",
+            "evidence_refs": [
+              "sandbox://sbxreceipt-6ee815a8f49241fc"
+            ],
+            "kind": "receipt",
+            "name": "sandbox.receipt",
+            "parent_event_id": null,
+            "sequence": 5,
+            "status": "TIMEOUT",
+            "trace_id": "trace-4cf130836b8a6436"
+          }
+        ],
+        "evidence_refs": [
+          "docs/langgraph_architecture.md#revision=l1-current",
+          "sandbox://sbxreceipt-6ee815a8f49241fc"
+        ],
+        "run_id": "l1-0db5d3a320af470ba8a7a527ef0d03a2",
+        "trace_id": "trace-4cf130836b8a6436"
+      }
+    },
+    "replay": {
+      "permit_lifetime": "same SandboxManager instance",
+      "receipt": {
+        "argv": [],
+        "capability": "filesystem_write",
+        "duration_ms": 0,
+        "error_code": "PERMIT_REPLAY",
+        "error_message": "permit has already been consumed",
+        "evidence_refs": [
+          "sandbox://sbxreceipt-9e80c7e9ef284f20"
+        ],
+        "exit_code": null,
+        "filesystem_mode": "workspace_write",
+        "network_mode": "deny",
+        "operation": "filesystem_write",
+        "permit_id": "permit-1b0a3a82e7fa3a76e964",
+        "profile": "repository_worker",
+        "receipt_id": "sbxreceipt-9e80c7e9ef284f20",
+        "request_id": "l1-63c516deed844189836a5e187850ae90",
+        "sandbox_id": "",
+        "status": "DENIED",
+        "stderr_bytes": 0,
+        "stderr_sha256": null,
+        "stdout_bytes": 0,
+        "stdout_sha256": null,
+        "timed_out": false
+      }
+    }
+  },
+  "goal_id": "L1-GOVERNED-EXECUTION-COMPLETION-001",
+  "scope": "local temporary workspace; LocalRestrictedBackend logical filesystem policy; no remote provider, Jaeger, or OS isolation claim",
+  "source_head_at_run": "f19ab7f2e1cebf5118989735227911a712c8cc05"
+}

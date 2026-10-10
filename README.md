@@ -3,7 +3,7 @@
 [![CI](https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/actions/workflows/ci.yml/badge.svg)](https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/actions/workflows/ci.yml)
 [![GitHub](https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/actions/workflows/readme-consistency.yml/badge.svg)](https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/actions/workflows/readme-consistency.yml)
 [![Branch](https://img.shields.io/badge/branch-main-green)](https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/tree/main)
-[![Tests](https://img.shields.io/badge/tests-203%2F203%20passing-brightgreen)](https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/actions)
+[![Tests](https://img.shields.io/badge/tests-210%2F210%20passing-brightgreen)](https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/actions)
 [![License](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 
 > Laboratorio experimental para desarrollar capacidades de AI Engineering con gobernanza BAGO.
@@ -32,6 +32,19 @@ python demo.py
 
 El comando materializa summary, agent run, receipts, trace y evaluation en
 `demo_output/latest/` sin convertir esa proyección en fuente canónica.
+
+## Tutorial para usuarios nuevos
+
+Guía visual narrada en español para recorrer el chat, los agentes y los ajustes del proveedor.
+La pantalla completa de configuración se conserva; el campo de API key aparece censurado.
+La guía distingue el modelo global del asistente (`gemma4:31b`) del modelo fijado al agente lector (`kimi-k2.6`).
+La traza enlazada registra una lectura acotada y respuesta real de Ollama Cloud; no acredita una auditoría del código ni ejecución de trabajos.
+
+- Vídeo: [`MP4`](docs/agent-chat-control/assets/ADL_videotutorial_primer_usuario.mp4)
+- Subtítulos: [`SRT`](docs/agent-chat-control/assets/ADL_videotutorial_primer_usuario.es.srt)
+- Guía y límites: [`TUTORIAL_PRIMER_USO.md`](docs/agent-chat-control/TUTORIAL_PRIMER_USO.md)
+- LocalTrace: [`trace-c7ec5fcc40284a42.json`](docs/agent-chat-control/assets/trace-c7ec5fcc40284a42.json)
+- Archivo de ejemplo: [`sample-note.txt`](output/tutorial/sample-note.txt)
 
 ## Evidencia de ejecución
 
@@ -73,7 +86,7 @@ Profundiza en las fases L0-L15 en el [roadmap](#roadmap-detectado), o consulta [
 
 | Métrica | Valor |
 |---|---|
-| Tests ejecutados | **203/203** |
+| Tests ejecutados | **210/210** |
 | Rama pública | `main` |
 | Estado actualizado | 2026-10-10 |
 | Fase actual | **L15 · OpenTelemetry + Jaeger Local Live** · VERIFIED (local live) |
@@ -132,7 +145,7 @@ El catálogo es de referencia; la definición operativa sigue en `.github/agents
 ```mermaid
 flowchart LR
     L0["L0 Baseline & Lab Contract (COMPLETE)"]
-    L1["L1 LangGraph Governed Execution (PARTIAL (local evidence))"]
+    L1["L1 LangGraph Governed Execution (VALIDATED (local governed graph evidence))"]
     L2["L2 ETL / Data Pipeline (VALIDATED)"]
     L3["L3 Metadata & Ontology (VERIFIED)"]
     L4["L4 Governed RAG (VERIFIED)"]
@@ -167,7 +180,7 @@ flowchart LR
 | Fase | Estado | Objetivo | Descripción | Tests | Evidencia/docs |
 |---|---|---|---|---:|---:|
 | L0 | COMPLETE | — | Baseline & Lab Contract | 0 | 6 |
-| L1 | PARTIAL (local evidence) | — | LangGraph Governed Execution | 8 | 1 |
+| L1 | VALIDATED (local governed graph evidence) | — | LangGraph Governed Execution | 14 | 4 |
 | L2 | VALIDATED | — | ETL / Data Pipeline | 4 | 1 |
 | L3 | VERIFIED | — | Metadata & Ontology | 25 | 2 |
 | L4 | VERIFIED | Orbitant | Governed RAG | 12 | 2 |
@@ -246,8 +259,8 @@ La tabla se extrae de JOB_SKILL_MATRIX.md y se mantiene fuera del README.
 |---|---|---|---|---|---|
 | Python | Alta | ✅ Senior | ✅ Senior | BAGO backend | ✅ Sí |
 | REST APIs | Alta | ✅ Senior | ✅ Senior | BAGO FastAPI | ✅ Sí |
-| LangGraph | Muy Alta | ❌ None | 🎯 Proficient | L1 StateGraph: denegación material; ExecutionGateway aún no integrado | L1 evidencia parcial |
-| LangChain concepts | Alta | ❌ None | 🟡 Basic | — | L1 StateGraph, evidencia parcial |
+| LangGraph | Very High | Implemented locally | Proficient | Integrated StateGraph + exact approval + governed RAG/gateway/sandbox/receipt/LocalTrace | L1 VALIDATED in local scope; identity, durability and OS isolation are not claimed |
+| LangChain concepts | High | Practical baseline | Basic | StateGraph, interrupt/resume, in-memory checkpoint | L1 VALIDATED local |
 | Multi-agent systems | Muy Alta | 🟢 Reinforced | 🎯 Proficient | GovernedKnowledgeAgent + L9 evidence | L9 offline |
 | Tool use | Muy Alta | ✅ Implementado | 🎯 Proficient | BAGO tools + MCP receipts | L5 baseline |
 | MCP | Muy Alta | ✅ Baseline gobernado | 🎯 Proficient | L5 MCP adapter + video | L5 baseline |
@@ -319,6 +332,7 @@ La tabla se extrae de JOB_SKILL_MATRIX.md y se mantiene fuera del README.
 - `src/observability/__init__.py`
 - `src/observability/local_trace.py`
 - `src/observability/otel_bridge.py`
+- `src/orchestration/governed_execution.py`
 - `src/orchestration/state_graph.py`
 - `src/providers/__init__.py`
 - `src/providers/ollama.py`
@@ -350,6 +364,7 @@ La tabla se extrae de JOB_SKILL_MATRIX.md y se mantiene fuera del README.
 - `tests/test_l12_observability.py` (5 checks)
 - `tests/test_l15_otel_bridge.py` (4 checks)
 - `tests/test_l1_governance.py` (8 checks)
+- `tests/test_l1_integrated_graph.py` (6 checks)
 - `tests/test_l2_etl_pipeline.py` (4 checks)
 - `tests/test_l3_evidence.py` (2 checks)
 - `tests/test_l3_ontology.py` (12 checks)
@@ -377,6 +392,12 @@ La tabla se extrae de JOB_SKILL_MATRIX.md y se mantiene fuera del README.
 - `evidence/l1-governed-execution-20261010/README_CHECK.txt`
 - `evidence/l1-governed-execution-20261010/README_GENERATION.txt`
 - `evidence/l1-governed-execution-20261010/REGRESSION_TESTS.txt`
+- `evidence/l1-governed-execution-completion-20261010/COMPILEALL.txt`
+- `evidence/l1-governed-execution-completion-20261010/L1_DEMO_RECEIPTS.json`
+- `evidence/l1-governed-execution-completion-20261010/L1_DEMO_TRANSCRIPT.md`
+- `evidence/l1-governed-execution-completion-20261010/L1_VALIDATION.md`
+- `evidence/l1-governed-execution-completion-20261010/README_CHECK.txt`
+- `evidence/l1-governed-execution-completion-20261010/README_GENERATION.txt`
 - `evidence/l10_ontology_engine.md`
 - `evidence/l12_observability_evals.md`
 - `evidence/l14_vector_store.md`
@@ -406,6 +427,7 @@ La tabla se extrae de JOB_SKILL_MATRIX.md y se mantiene fuera del README.
 - `docs/README.md`
 - `docs/agent-chat-control/FINAL_STATUS.md`
 - `docs/agent-chat-control/LOCAL_SETUP.md`
+- `docs/agent-chat-control/TUTORIAL_PRIMER_USO.md`
 - `docs/agent-chat-control/audit/CODEX_CLI_PROMPT.md`
 - `docs/agent-chat-control/audit/CODEX_CLI_README.md`
 - `docs/agent-chat-control/audit/FRONTEND_AUDIT_HANDOFF.md`
@@ -431,6 +453,7 @@ La tabla se extrae de JOB_SKILL_MATRIX.md y se mantiene fuera del README.
 - `docs/decision-inspector/verification/W14_INDEPENDENT_RECEIPT_VERIFICATION.md`
 - `docs/full_orchestration.md`
 - `docs/governed_rag.md`
+- `docs/langgraph_architecture.md`
 - `docs/local_vector_store.md`
 - `docs/mcp_governance.md`
 - `docs/observability_evals.md`
@@ -463,6 +486,7 @@ La tabla se extrae de JOB_SKILL_MATRIX.md y se mantiene fuera del README.
 - `scripts/run_l12_observability_evidence.py`
 - `scripts/run_l14_vector_store_validation.py`
 - `scripts/run_l15_otel_live_validation.py`
+- `scripts/run_l1_governed_execution_demo.py`
 - `scripts/run_l6_aws_free_tier_validation.py`
 - `scripts/run_l6_aws_live_validation.py`
 - `scripts/run_l8_openmetadata_live_validation.py`
@@ -508,7 +532,7 @@ python scripts/run_sandbox_local_validation.py
 
 Tests por fase:
 
-- `L1`: `python -m pytest tests/test_l1_governance.py -q`
+- `L1`: `python -m pytest tests/test_l1_governance.py tests/test_l1_integrated_graph.py -q`
 - `L2`: `python -m pytest tests/test_l2_etl_pipeline.py -q`
 - `L3`: `python -m pytest tests/test_l3_evidence.py tests/test_l3_ontology.py tests/test_metadata_schema.py tests/test_ontology_generator.py -q`
 - `L4`: `python -m pytest tests/test_retrieval_accuracy.py tests/test_retrieval_benchmark.py -q`

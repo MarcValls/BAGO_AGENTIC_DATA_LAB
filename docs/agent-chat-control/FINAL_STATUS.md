@@ -54,3 +54,11 @@ Se incorporó el patrón del ejemplo existente en BAGO: la IA produce una propue
 ## Seguimiento del launcher local: gestión de puertos (2026-10-09)
 
 El launcher recuerda el PID del listener real (incluyendo el proceso hijo que crea Python en Windows) y su hora de inicio; al relanzar, termina solo la instancia propia verificada. Si 8080 pertenece a otro programa, escoge el primer puerto libre y configura ese origen local para HTTP/WebSocket. Verificación observada: 8080 ocupado por Docker/WSL; primer arranque en 8081 con API saludable; segundo arranque terminó el listener anterior y reutilizó 8081 con un PID nuevo; CORS aceptó el origen 127.0.0.1:8081; listener ajeno 8082 quedó intacto. Detalle en docs/agent-chat-control/verification/local-port-reuse-followup.md.
+
+## Demostración live para el videotutorial (2026-10-10)
+
+La nota inicial de runtime `NOT_RUN` describe la verificación de la primera entrega. En una demostración posterior, la UI local respondió a través de Ollama Cloud: el agente persistido **Frontend Auditor**, fijado a `kimi-k2.6`, leyó las líneas 1-8 de un archivo sintético y devolvió una respuesta. La LocalTrace `trace-c7ec5fcc40284a42` registra `provider_id=ollama-cloud`, `outcome=response_received` y el origen leído. El asistente global estaba configurado con `gemma4:31b`; no es el modelo fijado al agente lector.
+
+El [videotutorial](assets/ADL_videotutorial_primer_usuario.mp4) conserva la pantalla completa de ajustes y cubre el campo de API key con una máscara. La [guía y el alcance](TUTORIAL_PRIMER_USO.md) enlazan subtítulos, archivo de entrada y copia de la traza.
+
+Esta evidencia verifica esa lectura acotada y respuesta live. No demuestra auditoría del código del proyecto, modificación de archivos ni ejecución de jobs. La propuesta de agente que aparece en el vídeo se cancela y no se persiste.
