@@ -1,419 +1,317 @@
 {
-  "created_at": "2026-10-08T18:50:16+02:00",
+  "created_at": "2026-10-09T00:34:43+00:00",
   "mission": {
-    "max_concurrency": 3,
-    "mission_id": "AGENT_DECISION_INSPECTOR_V1",
-    "objective": "Build an interface that lets a human examine agent conclusions, claims, supporting evidence, provenance, confidence, traces, proposed actions, authorization state and execution receipts.",
+    "max_concurrency": 2,
+    "mission_id": "AGENT_CHAT_CONTROL_PLANE_V1",
+    "objective": "Make the chat the primary app entry point; configure Ollama Cloud through a user-selected API-key or local CLI-session mode; list agents; create an agent through a reviewed chat proposal; and chat with configured agents using Ollama Cloud, preserving BAGO authorization boundaries for all material actions.",
     "terminal_work_items": [
-      "W12"
+      "AC05"
     ],
-    "title": "Agent Decision Inspector",
+    "title": "Agent Chat Control Plane",
     "work_items": [
       {
         "deliverables": [
-          "Repository snapshot",
-          "Reuse map",
-          "Boundary map"
+          "Provider auth-mode contract",
+          "Chat control message and agent draft contract",
+          "Explicit action authorization boundary"
         ],
         "depends_on": [],
         "done_when": [
-          "HEAD/snapshot recorded",
-          "Existing evidence/receipt/trace/auth primitives mapped",
-          "No architecture invented before reuse analysis"
+          "API-key and local Ollama CLI modes are distinct",
+          "Provider secrets are never returned to the browser or written into chat/session data",
+          "Agent creation is a proposal until human confirmation",
+          "Only existing, explicitly registered capabilities can be invoked",
+          "Unknown app actions remain proposals and cannot execute"
         ],
         "frozen_outputs": [
-          "decision-inspector-reuse-map-v1"
+          "agent-chat-control-contract-v1"
         ],
-        "id": "W01",
+        "id": "AC01",
         "read_scopes": [
-          "**"
+          "src/**",
+          "frontend/src/**",
+          "docs/decision-inspector/**",
+          "C:/Users/AMTEC_Terminal_1º/BAGO/frontend/src/shared/provider-catalog.ts",
+          "C:/Users/AMTEC_Terminal_1º/BAGO/frontend/src/layout/ProviderConfigModal.tsx"
         ],
         "role": "team-orchestrator",
-        "title": "Freeze repository surface and identify reusable decision/evidence primitives",
+        "title": "Freeze chat control, provider and agent proposal contracts",
         "write_scopes": [
           ".codex-team/**",
-          "docs/decision-inspector/inventory/**"
+          "docs/agent-chat-control/contracts/**",
+          "docs/agent-chat-control/coordination/archive/**"
         ]
       },
       {
         "deliverables": [
-          "Conclusion schema",
-          "Claim-to-evidence links",
-          "Provenance contract",
-          "Contract tests"
+          "Provider settings/model discovery/status APIs",
+          "Server-owned Ollama API-key handling",
+          "Local CLI-session provider mode",
+          "Agent inventory and conversational draft/confirm API",
+          "Real Ollama-backed agent chat"
         ],
         "depends_on": [
-          "W01"
+          "AC01"
         ],
         "done_when": [
-          "Every conclusion can decompose into claims",
-          "Every claim can link to zero or more evidence objects explicitly",
-          "Evidence provenance and snapshot identity are representable",
-          "Contract tests pass"
+          "Both user-selectable authentication modes are explicit and report distinct states",
+          "Secrets are handled only on the backend and are not exposed by status/list APIs",
+          "Provider or model failure returns a visible error and no simulated response",
+          "Agent draft does not create an agent until explicit confirmation",
+          "Creation validates the frozen allowlist and persists a stable unique identity",
+          "Chat config is loaded by agent ID from the server and never trusted from browser-supplied config"
         ],
         "frozen_outputs": [
-          "decision-evidence-contract-v1"
+          "agent-chat-control-api-v1"
         ],
-        "id": "W02",
+        "id": "AC02",
         "read_scopes": [
-          "docs/decision-inspector/inventory/**",
-          "src/**"
-        ],
-        "role": "evidence-provenance-engineer",
-        "title": "Define conclusion, claim, evidence and provenance contracts",
-        "write_scopes": [
-          "frontend/src/contracts/decision/**",
-          "docs/decision-inspector/contracts/evidence/**",
-          "frontend/tests/contracts/evidence/**"
-        ]
-      },
-      {
-        "deliverables": [
-          "Information architecture",
-          "Drill-down flow",
-          "Error/empty/loading states",
-          "Accessibility requirements"
-        ],
-        "depends_on": [
-          "W01"
-        ],
-        "done_when": [
-          "Conclusion -> claim -> evidence -> provenance path defined",
-          "Proposed action review path defined",
-          "Uncertainty and missing evidence states are visible",
-          "Keyboard/screen-reader requirements stated"
-        ],
-        "frozen_outputs": [
-          "decision-inspector-ux-contract-v1"
-        ],
-        "id": "W03",
-        "read_scopes": [
-          "docs/decision-inspector/inventory/**",
-          "src/**"
-        ],
-        "role": "decision-ux-engineer",
-        "title": "Define decision inspection UX and interaction model",
-        "write_scopes": [
-          "docs/decision-inspector/ux/**"
-        ]
-      },
-      {
-        "deliverables": [
-          "Trace event schema",
-          "Timeline adapter",
-          "Correlation ids",
-          "Trace contract tests"
-        ],
-        "depends_on": [
-          "W02"
-        ],
-        "done_when": [
-          "Agent/tool events correlate to claims/actions",
-          "Chronology and causality are distinguishable",
-          "Unknown/missing trace data fails visibly",
-          "Tests pass"
-        ],
-        "frozen_outputs": [
-          "decision-trace-contract-v1"
-        ],
-        "id": "W04",
-        "read_scopes": [
-          "src/contracts/decision/**",
-          "src/**"
-        ],
-        "role": "trace-observability-engineer",
-        "title": "Map traces and tool calls into inspectable timeline contract",
-        "write_scopes": [
-          "frontend/src/contracts/trace/**",
-          "frontend/src/adapters/trace/**",
-          "docs/decision-inspector/contracts/trace/**",
-          "frontend/tests/contracts/trace/**"
-        ]
-      },
-      {
-        "deliverables": [
-          "Action proposal schema",
-          "Authorization state model",
-          "Approval/rejection reasons",
-          "Execution receipt mapping"
-        ],
-        "depends_on": [
-          "W02"
-        ],
-        "done_when": [
-          "Capability, eligibility, authorization, availability and execution are not conflated",
-          "Action risk/approval state is explicit",
-          "Execution receipt links back to proposal",
-          "Tests pass"
-        ],
-        "frozen_outputs": [
-          "decision-action-contract-v1"
-        ],
-        "id": "W05",
-        "read_scopes": [
-          "src/contracts/decision/**",
-          "src/**"
-        ],
-        "role": "governance-action-engineer",
-        "title": "Define proposed action, authorization and receipt inspection contract",
-        "write_scopes": [
-          "frontend/src/contracts/action/**",
-          "frontend/src/adapters/action/**",
-          "docs/decision-inspector/contracts/action/**",
-          "frontend/tests/contracts/action/**"
-        ]
-      },
-      {
-        "deliverables": [
-          "Inspector shell",
-          "Selection state",
-          "Shared status primitives",
-          "Shell tests"
-        ],
-        "depends_on": [
-          "W02",
-          "W03"
-        ],
-        "done_when": [
-          "A conclusion can be selected and navigated",
-          "Shared states render deterministically",
-          "No evidence/action/trace data is fabricated",
-          "Tests pass"
-        ],
-        "frozen_outputs": [],
-        "id": "W06",
-        "read_scopes": [
-          "src/contracts/decision/**",
-          "docs/decision-inspector/ux/**",
-          "src/**"
-        ],
-        "role": "decision-ui-engineer",
-        "title": "Build shared Decision Inspector shell and navigation",
-        "write_scopes": [
-          "frontend/src/features/decision-inspector/shell/**",
-          "frontend/src/features/decision-inspector/shared/**",
-          "frontend/tests/ui/decision-inspector/shell/**"
-        ]
-      },
-      {
-        "deliverables": [
-          "Claim tree",
-          "Evidence viewer",
-          "Provenance panel",
-          "Missing-evidence states"
-        ],
-        "depends_on": [
-          "W02",
-          "W03",
-          "W06"
-        ],
-        "done_when": [
-          "Claim-to-evidence relation is inspectable",
-          "Source/snapshot/provenance is visible",
-          "Unsupported claims are visibly unsupported",
-          "Tests pass"
-        ],
-        "frozen_outputs": [],
-        "id": "W07",
-        "read_scopes": [
-          "src/contracts/decision/**",
-          "docs/decision-inspector/ux/**",
-          "src/features/decision-inspector/shared/**"
-        ],
-        "role": "decision-ui-engineer",
-        "title": "Build evidence and provenance explorer",
-        "write_scopes": [
-          "frontend/src/features/decision-inspector/evidence/**",
-          "frontend/tests/ui/decision-inspector/evidence/**"
-        ]
-      },
-      {
-        "deliverables": [
-          "Trace timeline",
-          "Tool-call details",
-          "Correlation navigation"
-        ],
-        "depends_on": [
-          "W03",
-          "W04",
-          "W06"
-        ],
-        "done_when": [
-          "Timeline links to affected claim/action",
-          "Tool inputs/outputs are inspectable subject to redaction",
-          "Missing trace data is explicit",
-          "Tests pass"
-        ],
-        "frozen_outputs": [],
-        "id": "W08",
-        "read_scopes": [
-          "src/contracts/trace/**",
-          "docs/decision-inspector/ux/**",
-          "src/features/decision-inspector/shared/**"
-        ],
-        "role": "decision-ui-engineer",
-        "title": "Build trace and tool-call timeline",
-        "write_scopes": [
-          "frontend/src/features/decision-inspector/trace/**",
-          "frontend/tests/ui/decision-inspector/trace/**"
-        ]
-      },
-      {
-        "deliverables": [
-          "Action proposal panel",
-          "Authorization ladder",
-          "Approve/reject/request-evidence controls",
-          "Receipt viewer"
-        ],
-        "depends_on": [
-          "W03",
-          "W05",
-          "W06"
-        ],
-        "done_when": [
-          "Proposed action is distinct from executed action",
-          "Authorization state is explicit",
-          "Approval UI cannot imply execution without receipt",
-          "Tests pass"
-        ],
-        "frozen_outputs": [],
-        "id": "W09",
-        "read_scopes": [
-          "src/contracts/action/**",
-          "docs/decision-inspector/ux/**",
-          "src/features/decision-inspector/shared/**"
-        ],
-        "role": "decision-ui-engineer",
-        "title": "Build proposed action and authorization review surface",
-        "write_scopes": [
-          "frontend/src/features/decision-inspector/actions/**",
-          "frontend/tests/ui/decision-inspector/actions/**"
-        ]
-      },
-      {
-        "deliverables": [
-          "Integrated inspector",
-          "Cross-navigation",
-          "End-to-end fixture"
-        ],
-        "depends_on": [
-          "W07",
-          "W08",
-          "W09"
-        ],
-        "done_when": [
-          "Conclusion -> evidence -> trace -> action -> receipt traversal works",
-          "No cross-feature contract violations",
-          "Integration tests pass"
-        ],
-        "frozen_outputs": [],
-        "id": "W10",
-        "read_scopes": [
-          "src/features/decision-inspector/**",
-          "src/contracts/**"
+          "docs/agent-chat-control/contracts/**",
+          "src/orchestration/**",
+          "src/execution/**",
+          "src/agent/**"
         ],
         "role": "team-orchestrator",
-        "title": "Integrate evidence, trace and action surfaces",
+        "title": "Implement Ollama provider configuration and governed chat APIs",
         "write_scopes": [
-          "frontend/src/features/decision-inspector/integration/**",
-          "frontend/src/features/decision-inspector/index.ts",
-          "frontend/src/App.tsx",
-          "frontend/src/App.css",
-          "frontend/src/index.css",
-          "frontend/tests/ui/decision-inspector/integration/**",
-          "frontend/index.html"
+          "src/api/server.py",
+          "src/providers/**",
+          "requirements.txt"
         ]
       },
       {
         "deliverables": [
-          "Verification report",
-          "Adversarial cases",
-          "P0/P1/P2 findings"
+          "Backward-compatible legacy ID and nullable provider/model read path",
+          "No-write migration behavior for stored legacy records"
         ],
         "depends_on": [
-          "W10"
+          "AC02"
         ],
         "done_when": [
-          "Unsupported-claim case tested",
-          "Stale evidence case tested",
-          "Unauthorized action case tested",
-          "Missing receipt case tested",
-          "No P0/P1 remains open"
+          "Valid agent_[0-9a-f]{8,32} records matching their filename appear in inventory",
+          "Missing provider/model is exposed as null and preserved on disk",
+          "Chat may use only the currently selected provider/model for that request when legacy config has no model",
+          "Malformed/untrusted stored data remains rejected or warned; new records remain 32-hex IDs"
         ],
         "frozen_outputs": [
-          "decision-inspector-verification-v1"
+          "agent-chat-control-legacy-compat-v1"
         ],
-        "id": "W11",
+        "id": "AC06",
         "read_scopes": [
-          "src/features/decision-inspector/**",
-          "src/contracts/**",
-          "tests/**",
-          ".codex-team/handoffs/**"
+          "agents/created/**",
+          "docs/agent-chat-control/coordination/archive/**"
         ],
-        "role": "verification-engineer",
-        "title": "Run independent verification and adversarial review",
+        "role": "team-orchestrator",
+        "title": "Preserve legacy agent inventory and request-scoped model fallback",
         "write_scopes": [
-          "frontend/tests/verification/decision-inspector/**",
-          "docs/decision-inspector/verification/**"
+          "src/api/server.py",
+          "docs/agent-chat-control/contracts/**",
+          ".codex-team/**"
         ]
       },
       {
         "deliverables": [
-          "Run-bound receipt association guard",
-          "Wrong-run and missing-run adversarial fixtures",
-          "P1 remediation record"
+          "Chat as app home with links to existing views",
+          "Provider setup UI with API key and Ollama CLI session choices",
+          "Agent inventory in chat",
+          "Agent draft review/confirm card",
+          "Ollama-backed agent conversation states"
         ],
         "depends_on": [
-          "W11"
+          "AC01",
+          "AC02",
+          "AC06"
         ],
         "done_when": [
-          "No receipt is presented as matched unless its explicit run_id equals the source run",
-          "Wrong-run and missing-run receipts cannot establish successful execution",
-          "Focused integration checks pass"
+          "The Inspector and other portfolio views remain reachable from chat-first navigation",
+          "Provider setup never persists a secret in localStorage or renders it after save",
+          "Empty, loading, configured, unauthenticated and error states are clear",
+          "The user can review or cancel an agent draft before it is created",
+          "No response is presented as live model output unless the backend call succeeded"
         ],
-        "id": "W13",
+        "frozen_outputs": [],
+        "id": "AC03",
         "read_scopes": [
-          "frontend/src/adapters/action/**",
-          "frontend/src/contracts/action/**",
+          "docs/agent-chat-control/contracts/**",
+          "frontend/src/components/AgentBuilder.tsx",
           "frontend/src/features/decision-inspector/**",
-          "docs/decision-inspector/verification/**"
+          "agents/created/**"
         ],
         "role": "decision-ui-engineer",
-        "title": "Reject action receipts without matching run identity",
+        "title": "Build chat-first shell, provider setup and conversational agent creation",
         "write_scopes": [
-          "frontend/src/features/decision-inspector/integration/**",
-          "frontend/tests/ui/decision-inspector/integration/**",
-          "docs/decision-inspector/verification/**"
+          "frontend/src/App.tsx",
+          "frontend/src/App.css",
+          "frontend/src/components/AgentChat.tsx",
+          "frontend/src/components/AgentChat.css",
+          "frontend/src/components/ProviderSettings.tsx",
+          "frontend/src/components/ProviderSettings.css"
         ]
       },
       {
         "deliverables": [
-          "Independent P1 closure report",
-          "Wrong-run collision test evidence",
-          "Terminal eligibility verdict"
+          "Loopback API default and explicit local CORS allowlist",
+          "Docker UI port bound to host loopback",
+          "LAN exposure limitation recorded in contract"
         ],
         "depends_on": [
-          "W13"
+          "AC06"
         ],
         "done_when": [
-          "Wrong-run receipt with colliding ids is rejected",
-          "Missing run identity is not presented as verified receipt",
-          "No P0/P1 remains open or gate is explicitly held"
+          "Standalone API defaults to 127.0.0.1",
+          "Docker host port is published only on 127.0.0.1 while container listener remains reachable internally",
+          "CORS no longer permits wildcard origins",
+          "Contract states LAN exposure needs an authenticated API boundary"
         ],
-        "id": "W14",
+        "frozen_outputs": [
+          "agent-chat-control-local-boundary-v1"
+        ],
+        "id": "AC07",
         "read_scopes": [
-          "frontend/src/features/decision-inspector/**",
-          "frontend/src/contracts/action/**",
-          "frontend/src/adapters/action/**",
-          "frontend/tests/ui/decision-inspector/integration/**",
-          ".codex-team/handoffs/**",
-          "docs/decision-inspector/verification/**"
+          "docs/agent-chat-control/coordination/archive/**"
+        ],
+        "role": "team-orchestrator",
+        "title": "Restrict unauthenticated provider configuration API to host-local UI origins",
+        "write_scopes": [
+          "src/api/server.py",
+          "docker-compose.ui.yml",
+          "docs/agent-chat-control/contracts/**",
+          ".codex-team/**"
+        ]
+      },
+      {
+        "deliverables": [
+          "Fail-closed provider capability reporting for unsupported container mode",
+          "Persistent Docker agent/provider/job directories",
+          "Host-local launch path using the OS credential backend and local Ollama CLI endpoint",
+          "Updated independent review evidence"
+        ],
+        "depends_on": [
+          "AC07"
+        ],
+        "done_when": [
+          "Container mode never claims either Ollama auth mode is available when secure OS credential storage or host CLI loopback is not reachable",
+          "Provider UI visibly explains unsupported container auth and provides the local-host launch route",
+          "Container agent/provider/job data directories survive container recreation through host mounts",
+          "A Windows host-local launch script documents/prerequisite-checks the supported runtime without reading credentials",
+          "Final contract distinguishes host-local supported configuration from container limitations"
+        ],
+        "frozen_outputs": [
+          "agent-chat-control-runtime-compat-v1"
+        ],
+        "id": "AC08",
+        "read_scopes": [
+          "Dockerfile.ui",
+          "requirements.txt",
+          "agents/created/**",
+          ".bago/**"
+        ],
+        "role": "team-orchestrator",
+        "title": "Make provider and agent persistence runtime compatibility explicit",
+        "write_scopes": [
+          "src/api/server.py",
+          "src/providers/ollama.py",
+          "frontend/src/components/ProviderSettings.tsx",
+          "frontend/src/components/ProviderSettings.css",
+          "docker-compose.ui.yml",
+          "docs/agent-chat-control/contracts/**",
+          "docs/agent-chat-control/verification/**",
+          "scripts/run-local-ui.ps1",
+          ".codex-team/**",
+          "docs/agent-chat-control/LOCAL_SETUP.md"
+        ]
+      },
+      {
+        "deliverables": [
+          "Legacy Runner no longer emits simulated success/jobs",
+          "Legacy WebSocket chat uses selected configured model for agents without model binding"
+        ],
+        "depends_on": [
+          "AC08"
+        ],
+        "done_when": [
+          "Legacy Runner WebSocket returns execution_unavailable and never creates success jobs or claims successful execution",
+          "Legacy WebSocket chat resolves absent agent model from currently selected provider/model per request and does not rewrite agent record",
+          "Contract states governed execution is not available until authority/permit/receipt path exists"
+        ],
+        "frozen_outputs": [
+          "agent-chat-control-legacy-execution-v1"
+        ],
+        "id": "AC09",
+        "read_scopes": [
+          "frontend/src/components/AgentRunner.tsx",
+          "src/jobs/**"
+        ],
+        "role": "team-orchestrator",
+        "title": "Fail closed legacy runner and preserve fallback in legacy agent chat",
+        "write_scopes": [
+          "src/api/server.py",
+          "docs/agent-chat-control/contracts/**",
+          ".codex-team/**"
+        ]
+      },
+      {
+        "deliverables": [
+          "Shared explicit allowlist check for all WebSocket handshakes",
+          "Contract evidence for browser-origin protection"
+        ],
+        "depends_on": [
+          "AC09"
+        ],
+        "done_when": [
+          "Every WebSocket endpoint rejects missing or non-allowlisted Origin before accepting",
+          "Allowed browser origins are the same validated local origins as HTTP CORS",
+          "Rejected origins cannot run the demo, read agent chat, or access other WebSocket routes"
+        ],
+        "frozen_outputs": [
+          "agent-chat-control-websocket-origin-v1"
+        ],
+        "id": "AC10",
+        "read_scopes": [
+          "frontend/src/components/AgentRunner.tsx",
+          "frontend/src/components/Control.tsx"
+        ],
+        "role": "team-orchestrator",
+        "title": "Validate local browser origins before accepting WebSocket connections",
+        "write_scopes": [
+          "src/api/server.py",
+          "docs/agent-chat-control/contracts/**",
+          ".codex-team/**"
+        ]
+      },
+      {
+        "deliverables": [
+          "Candidate-bound verification record",
+          "Residual risks and NOT_RUN evidence boundary"
+        ],
+        "depends_on": [
+          "AC03",
+          "AC07",
+          "AC08",
+          "AC09",
+          "AC10"
+        ],
+        "done_when": [
+          "The report binds to the exact candidate fingerprint",
+          "Provider secrets are not exposed in API response shapes",
+          "No arbitrary model tool can execute an unregistered app action",
+          "Build/static checks and any unrun checks are reported accurately",
+          "No P0/P1 issue is left unaddressed or the terminal gate is held"
+        ],
+        "frozen_outputs": [
+          "agent-chat-control-verification-v1"
+        ],
+        "id": "AC04",
+        "read_scopes": [
+          "src/**",
+          "frontend/src/**",
+          "docs/agent-chat-control/contracts/**",
+          "docs/agent-chat-control/verification/**"
         ],
         "role": "verification-engineer",
-        "title": "Independently re-verify receipt run binding and terminal eligibility",
+        "title": "Review provider, agent-creation and chat implementation against contracts",
         "write_scopes": [
-          "frontend/tests/verification/decision-inspector/**",
-          "docs/decision-inspector/verification/**"
+          "docs/agent-chat-control/verification/**"
         ]
       },
       {
@@ -423,121 +321,97 @@
           "Known limitations"
         ],
         "depends_on": [
-          "W14"
+          "AC04"
         ],
         "done_when": [
-          "All dependency handoffs validate",
-          "Independent verification has P0=0 and P1=0",
-          "Final evidence index exists",
-          "Residual P2/NOT_RUN items are explicit"
+          "All handoffs validate",
+          "The independent review has no unaddressed P0/P1 finding",
+          "Exact current model/provider readiness is distinguished from code readiness",
+          "Unrun live Ollama calls and broader app-control capabilities are explicit"
         ],
         "frozen_outputs": [
-          "agent-decision-inspector-v1-terminal-gate"
+          "agent-chat-control-plane-v1-terminal-gate"
         ],
-        "id": "W12",
+        "id": "AC05",
         "read_scopes": [
           ".codex-team/**",
-          "docs/decision-inspector/**",
-          "src/features/decision-inspector/**",
-          "tests/**"
+          "docs/agent-chat-control/**",
+          "src/**",
+          "frontend/src/**"
         ],
         "role": "team-orchestrator",
-        "title": "Terminal mission gate",
+        "title": "Close the Agent Chat Control Plane mission",
         "write_scopes": [
           ".codex-team/**",
-          "docs/decision-inspector/FINAL_STATUS.md"
+          "docs/agent-chat-control/FINAL_STATUS.md"
         ]
       }
     ]
   },
-  "mission_sha256": "a25883dbc65651ac7ff84129c5092af1b9ffcac4230ea3c7423d632380551e01",
-  "mission_source": "C:\\Users\\AMTEC_Terminal_1º\\BAGO_AGENTIC_DATA_LAB\\.codex-team\\missions\\agent-decision-inspector-project.json",
+  "mission_sha256": "06d59e06670ce8b1e67791a6079c2a8cd1cd3ecd4fa1fa9039921ad8f0f5907a",
+  "mission_source": "C:\\Users\\AMTEC_Terminal_1º\\AppData\\Local\\Temp\\BAGO_AGENTIC_DATA_LAB_chat_control\\.codex-team\\missions\\agent-chat-control-plane-v1.json",
   "protocol_version": "0.1.0",
   "terminal_gate": "DONE",
-  "updated_at": "2026-10-09T19:31:03+00:00",
+  "updated_at": "2026-10-09T23:25:21+00:00",
   "work_status": {
-    "W01": {
+    "AC01": {
       "agent": "team-orchestrator",
-      "claimed_at": "2026-10-08T18:50:39+02:00",
-      "done_at": "2026-10-08T18:51:36+02:00",
+      "claimed_at": "2026-10-09T00:34:57+00:00",
+      "done_at": "2026-10-09T00:36:05+00:00",
       "status": "DONE"
     },
-    "W02": {
-      "agent": "/root/evidence_contract",
-      "claimed_at": "2026-10-08T18:52:27+02:00",
-      "done_at": "2026-10-08T18:54:40+02:00",
+    "AC02": {
+      "agent": "/root/chat_backend",
+      "claimed_at": "2026-10-09T00:36:22+00:00",
+      "done_at": "2026-10-09T00:42:28+00:00",
       "status": "DONE"
     },
-    "W03": {
-      "agent": "/root/ux_contract",
-      "claimed_at": "2026-10-08T18:52:27+02:00",
-      "done_at": "2026-10-08T18:53:48+02:00",
+    "AC03": {
+      "agent": "/root/chat_ui",
+      "claimed_at": "2026-10-09T00:49:58+00:00",
+      "done_at": "2026-10-09T00:51:46+00:00",
       "status": "DONE"
     },
-    "W04": {
-      "agent": "/root/trace_contract",
-      "claimed_at": "2026-10-08T18:55:18+02:00",
-      "done_at": "2026-10-08T18:56:05+02:00",
-      "status": "DONE"
-    },
-    "W05": {
-      "agent": "/root/action_contract",
-      "claimed_at": "2026-10-08T18:55:25+02:00",
-      "done_at": "2026-10-08T18:57:44+02:00",
-      "status": "DONE"
-    },
-    "W06": {
-      "agent": "/root/inspector_shell",
-      "claimed_at": "2026-10-08T18:55:24+02:00",
-      "done_at": "2026-10-08T18:57:06+02:00",
-      "status": "DONE"
-    },
-    "W07": {
-      "agent": "/root/evidence_ui",
-      "claimed_at": "2026-10-08T18:58:08+02:00",
-      "done_at": "2026-10-08T19:00:30+02:00",
-      "status": "DONE"
-    },
-    "W08": {
-      "agent": "/root/trace_ui",
-      "claimed_at": "2026-10-08T18:58:09+02:00",
-      "done_at": "2026-10-08T18:59:37+02:00",
-      "status": "DONE"
-    },
-    "W09": {
-      "agent": "/root/action_ui",
-      "claimed_at": "2026-10-08T18:59:46+02:00",
-      "done_at": "2026-10-08T19:01:33+02:00",
-      "status": "DONE"
-    },
-    "W10": {
-      "agent": "team-orchestrator",
-      "claimed_at": "2026-10-08T19:01:53+02:00",
-      "done_at": "2026-10-08T19:15:05+02:00",
-      "status": "DONE"
-    },
-    "W11": {
-      "agent": "/root/verification",
-      "claimed_at": "2026-10-08T19:15:08+02:00",
-      "done_at": "2026-10-08T19:17:05+02:00",
-      "status": "DONE"
-    },
-    "W12": {
-      "agent": "team-orchestrator",
-      "claimed_at": "2026-10-08T17:21:55+00:00",
-      "done_at": "2026-10-08T17:22:11+00:00",
-      "status": "DONE"
-    },
-    "W13": {
-      "agent": "/root/receipt_guard",
-      "claimed_at": "2026-10-08T17:18:11+00:00",
-      "done_at": "2026-10-08T17:19:57+00:00",
-      "status": "DONE"
-    },
-    "W14": {
+    "AC04": {
       "agent": "/root/verification_followup",
-      "claimed_at": "2026-10-08T17:20:09+00:00",
-      "done_at": "2026-10-08T17:21:31+00:00",
+      "claimed_at": "2026-10-09T01:04:20+00:00",
+      "done_at": "2026-10-09T01:05:28+00:00",
+      "status": "DONE"
+    },
+    "AC05": {
+      "agent": "team-orchestrator",
+      "claimed_at": "2026-10-09T01:06:14+00:00",
+      "done_at": "2026-10-09T01:06:58+00:00",
+      "status": "DONE"
+    },
+    "AC06": {
+      "agent": "team-orchestrator",
+      "claimed_at": "2026-10-09T00:49:29+00:00",
+      "done_at": "2026-10-09T00:49:55+00:00",
+      "status": "DONE"
+    },
+    "AC07": {
+      "agent": "team-orchestrator",
+      "claimed_at": "2026-10-09T00:50:39+00:00",
+      "done_at": "2026-10-09T00:50:50+00:00",
+      "status": "DONE"
+    },
+    "AC08": {
+      "agent": "team-orchestrator",
+      "claimed_at": "2026-10-09T00:56:00+00:00",
+      "done_at": "2026-10-09T00:58:47+00:00",
+      "status": "DONE"
+    },
+    "AC09": {
+      "agent": "team-orchestrator",
+      "claimed_at": "2026-10-09T01:02:23+00:00",
+      "done_at": "2026-10-09T01:03:03+00:00",
+      "status": "DONE"
+    },
+    "AC10": {
+      "agent": "team-orchestrator",
+      "claimed_at": "2026-10-09T01:03:55+00:00",
+      "done_at": "2026-10-09T01:04:15+00:00",
       "status": "DONE"
     }
   }

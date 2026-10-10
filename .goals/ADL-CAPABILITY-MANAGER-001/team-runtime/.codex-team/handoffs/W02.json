@@ -1,0 +1,32 @@
+{
+  "changed_files": [
+    "evidence/W02_BACKEND.md"
+  ],
+  "next_consumers": [
+    "W04"
+  ],
+  "outputs": [
+    {
+      "path": "evidence/W02_BACKEND.md",
+      "sha256": "f78646c9c740f94f465be78fd86a6f9f16c50dede3420544654f9b88e6a23afb",
+      "summary": "Read-only, source-bound mapping of provider/chat, agent configs, bounded file reading, in-memory MCP registry, authorization, sandbox/gateway, jobs/receipts and MVP persistence recommendation."
+    }
+  ],
+  "payload_sha256": "058986421c5fa9b164d72c9c77f7ff2f8b5301d1f4178f34187af1561cab551f",
+  "residual_risks": [
+    "The active worktree is dirty; findings bind to observed working files at HEAD 69b4f4b1ead2552b527e6e48868ab36cc2b38cbc, including modified src/api/server.py and src/providers/ollama.py.",
+    "No runtime/API/UI or MCP demo execution was performed; MCP adapter and gateway integration are not proven live.",
+    "Capability registry and sandbox receipts are not durably connected to application APIs; /ws/agents/run remains fail-closed.",
+    "Current conversation PROJECT_ID is a fixed default and does not identify multiple workspaces."
+  ],
+  "role": "backend-auditor",
+  "status": "DONE",
+  "verification": [
+    {
+      "command": "Static source inspection only; tests and runtime checks were not executed.",
+      "reason": "Assigned work item is a read-only backend audit; no tests/demo/runtime commands were authorized or run.",
+      "result": "NOT_RUN"
+    }
+  ],
+  "work_id": "W02"
+}

@@ -1,0 +1,49 @@
+{
+  "changed_files": [
+    ".goals/ADL-OLLAMA-SPIRAL-001/evidence/W05_INDEPENDENT_REVIEW.json"
+  ],
+  "next_consumers": [],
+  "outputs": [
+    {
+      "name": "ollama-real-evidence-terminal-v1",
+      "path": ".goals/ADL-OLLAMA-SPIRAL-001/evidence/W05_INDEPENDENT_REVIEW.json",
+      "summary": "Independent review corroborates a bounded live ADL Cloud Gemma turn, persisted conversation, LocalTrace and post-run Jaeger projection; explicitly records model-ID difference and UI/local-only boundaries."
+    }
+  ],
+  "payload_sha256": "8944f810a1a96762af276c71cccf020060033974526b92d63897e321e3ca5c8d",
+  "residual_risks": [
+    "The real turn proves one bounded read-only file response from gemma4:31b through the app's Ollama Cloud integration; it does not prove broader code inspection, file changes, job execution, validation of P1-02, provider-signed billing, or cost.",
+    "Do not describe Jaeger as an automatic in-request export or say the app UI contained the Jaeger link; the original state was local_only and projection happened after the run.",
+    "gemma4:31b-cloud was not tested as a generative model; only gemma4:31b was used."
+  ],
+  "role": "verification-engineer",
+  "status": "DONE",
+  "verification": [
+    {
+      "command": "python .codex-team-kit/scripts/teamctl.py --root .goals/ADL-OLLAMA-SPIRAL-001/team-runtime verify (before W05 handoff)",
+      "evidence": "W01-W04 handoffs, dependency order, scopes and payload hashes validated with no warnings.",
+      "result": "PASS"
+    },
+    {
+      "command": "GET http://127.0.0.1:8084/api/conversations/conv_144a84b37b604678a4fc6c60af55ef85; read exact SQLite rows via mode=ro",
+      "evidence": "HTTP 200; exact owner/project identity and two complete messages read back; SQLite row/messages/references match the API response.",
+      "result": "PASS"
+    },
+    {
+      "command": "Read .bago/traces/agent-chat/trace-ce1f60b61fc34e13.json and GET http://127.0.0.1:16686/api/traces/75ee12eb3a775282a950d4c603c651c4",
+      "evidence": "LocalTrace hash matches W04. Jaeger HTTP 200 returns one OK agent.chat span whose bago.trace_id, model, provider and source match the LocalTrace; Jaeger screenshot hash matches W04.",
+      "result": "PASS"
+    },
+    {
+      "command": "Compare W02 provider verification/catalog, W03 turn, W04 trace receipts and screenshots",
+      "evidence": "The original gemma4:31b-cloud ID was unavailable; the catalog-listed gemma4:31b was selected/saved and used. No alias equivalence is claimed. UI trace state was local_only; Jaeger was projected post-run.",
+      "result": "PASS_WITH_LIMITS"
+    },
+    {
+      "command": "Credential/model-call boundary",
+      "evidence": "W05 made no provider/model request, read-only API/SQLite/Jaeger operations only, and no credential values were accessed.",
+      "result": "PASS"
+    }
+  ],
+  "work_id": "W05"
+}

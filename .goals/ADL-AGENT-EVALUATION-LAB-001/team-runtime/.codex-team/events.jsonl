@@ -1,0 +1,7 @@
+{"at": "2026-10-09T22:14:51+00:00", "kind": "MISSION_INIT", "mission_id": "ADL_AGENT_EVALUATION_LAB_SPIRAL_001", "mission_sha256": "3b691706203d22abc30879dbdac688f5b8a08212421ebf1b442a9bec3a159e17"}
+{"agent": "evidence-provenance-engineer-01", "at": "2026-10-09T22:14:52+00:00", "kind": "CLAIM", "role": "evidence-provenance-engineer", "work_id": "W01"}
+{"agent": "decision-ux-engineer-01", "at": "2026-10-09T22:14:52+00:00", "kind": "CLAIM", "role": "decision-ux-engineer", "work_id": "W02"}
+{"at": "2026-10-09T22:16:27+00:00", "kind": "HANDOFF_DONE", "payload_sha256": "b6b3e231d155b2141068338b3d28201ad9438d8931c7f4ecb7d540501809af87", "work_id": "W01"}
+{"at": "2026-10-09T22:16:37+00:00", "kind": "HANDOFF_DONE", "payload_sha256": "2994d33bbfd74d49b03f1f980a8af019793e27c0762b4c8b4dd7fe6b05bacd0d", "work_id": "W02"}
+{"agent": "team-orchestrator-root", "at": "2026-10-09T22:17:05+00:00", "kind": "CLAIM", "role": "team-orchestrator", "work_id": "W03"}
+{"at": "2026-10-09T22:17:26+00:00", "kind": "HANDOFF_DONE", "payload_sha256": "d3faea9f333c42ac2975c6e118e719687c14d6e5d54560b5b0bfceb49d367c2c", "work_id": "W03"}

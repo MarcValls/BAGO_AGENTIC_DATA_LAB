@@ -1,0 +1,33 @@
+{
+  "changed_files": [
+    "evidence/W01_ARCHITECTURE.md"
+  ],
+  "next_consumers": [
+    "W04"
+  ],
+  "outputs": [
+    {
+      "description": "Source-bound architecture/authority map for a UI and chat capability manager; no product implementation claimed.",
+      "path": "evidence/W01_ARCHITECTURE.md",
+      "sha256": "b0264b74a0a4aeeebf0d2fd8e5c284005a68a9c4818119861ca0fa01156e84b4"
+    }
+  ],
+  "payload_sha256": "3840f43b1f2e497d1e32fc84605d51bb052ba9c16b96a36a3a99a15879a582a5",
+  "residual_risks": [
+    "Capability manager is not integrated into chat/UI; no activation persistence or manager endpoints were found in inspected paths.",
+    "The active Runtime/server process and currently loaded agent inventory were not inspected.",
+    "LocalRestrictedBackend is a logical policy backend, not OS-level isolation.",
+    "ExecutionGateway/sandbox reuse and MCP integration must be confirmed by backend audit W02 before implementation.",
+    "Source tree is deliberately dirty; findings are bound to HEAD plus per-file hashes in the report, not to a clean commit."
+  ],
+  "role": "architecture-auditor",
+  "status": "DONE",
+  "verification": [
+    {
+      "command": "Read-only source inspection, symbol searches, and SHA-256 capture on candidate HEAD 69b4f4b1ead2552b527e6e48868ab36cc2b38cbc",
+      "details": "No tests/build/runtime verification were run. The work item is a read-only architecture audit; inspection evidence and exact source hashes are recorded in the report.",
+      "result": "NOT_RUN"
+    }
+  ],
+  "work_id": "W01"
+}

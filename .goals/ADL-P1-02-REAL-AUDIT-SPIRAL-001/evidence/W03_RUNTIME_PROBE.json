@@ -1,0 +1,50 @@
+{
+  "source_sha256": {
+    "frontend/src/components/AgentRunner.tsx": "D6BCFF256F3ED47C8B8EDA0DE657B0E2727D660EC452C389FFCCC147565A7DAB",
+    "src/api/server.py": "958A6C7A2A1BAF0A04B8AD3BC76F36B0F80BB52AD8AA5E4718E01C480EC30A7E"
+  },
+  "listener_pid": 43528,
+  "job_count_unchanged": true,
+  "jobs_before": {
+    "jobs": []
+  },
+  "branch": "codex/conversation-library-v1",
+  "websocket_probe": {
+    "app_origin_probe": {
+      "accepted": false,
+      "handshake_status": 403
+    },
+    "approved_origin_probe": {
+      "handshake_status": 101,
+      "origin": "http://127.0.0.1:8080"
+    },
+    "client_payload_sent": false,
+    "close_code": 1008,
+    "close_reason": "",
+    "expected_behavior": true,
+    "job_ids_after": [],
+    "job_ids_before": [],
+    "job_list_unchanged": true,
+    "jobs_after_count": 0,
+    "jobs_before_count": 0,
+    "origin": "http://127.0.0.1:8084",
+    "server_message": {
+      "code": "execution_unavailable",
+      "data": "Agent execution is unavailable: no governed execution capability is registered. No job was started or recorded.",
+      "type": "error"
+    },
+    "websocket_url": "ws://127.0.0.1:8084/ws/agents/run"
+  },
+  "model_call_made": false,
+  "captured_at_utc": "2026-10-09T21:09:15.8296909+00:00",
+  "candidate_head": "69b4f4b1ead2552b527e6e48868ab36cc2b38cbc",
+  "root_status": 200,
+  "agent_or_job_execution_started": false,
+  "conclusion": "The fail-closed endpoint was observed on its allowlisted local Origin without sending any request payload. The actual served UI origin on port 8084 was rejected with HTTP 403 during WebSocket handshake; this origin/configuration mismatch is retained as a separate runtime limitation.",
+  "schema_version": "1.0",
+  "work_id": "W03",
+  "jobs_after": {
+    "jobs": []
+  },
+  "runtime_url": "http://127.0.0.1:8084"
+}

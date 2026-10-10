@@ -1,0 +1,58 @@
+{
+  "changed_files": [
+    "frontend/src/App.tsx",
+    "frontend/src/components/AgentChat.tsx",
+    "frontend/src/components/AgentEvaluationLab.tsx",
+    "frontend/src/components/AgentEvaluationLab.css",
+    "frontend/tests/ui/agent-evaluation-lab/agent-evaluation-lab.test.mjs"
+  ],
+  "next_consumers": [
+    "W04"
+  ],
+  "outputs": [
+    {
+      "description": "Primary Agent Evaluation Lab navigation, chat open intent, suite editor/review, explicit Ollama run, persisted run/case results and conditional trace links.",
+      "path": "frontend/src/components/AgentEvaluationLab.tsx"
+    },
+    {
+      "description": "Deterministic fetch-stub coverage for normal discovery, empty suites/runs, API errors, explicit run payload and versioned suite updates.",
+      "path": "frontend/tests/ui/agent-evaluation-lab/agent-evaluation-lab.test.mjs"
+    }
+  ],
+  "payload_sha256": "d8716dce8288385d874870aa6d9b18a12f88df026c3541f4b90bf58df55df46a",
+  "residual_risks": [
+    "Lint could not run because eslint is absent from the declared frontend dependencies.",
+    "No live Ollama inference or Jaeger export was performed by this frontend work item; traces and Jaeger links are rendered only when present in persisted run data.",
+    "Repository root .codex-team/state.json was already modified at task entry and was not touched; W03 coordination remained under implementation-runtime."
+  ],
+  "role": "decision-ui-engineer",
+  "status": "DONE",
+  "verification": [
+    {
+      "command": "frontend: npm run build",
+      "details": "TypeScript project build and Vite production build completed successfully at final W03 source state.",
+      "result": "PASS"
+    },
+    {
+      "command": "frontend: node --test tests/ui/agent-evaluation-lab/agent-evaluation-lab.test.mjs",
+      "details": "5 deterministic tests passed using fetch stubs for model/agent/suite/run data, empty data, safe errors, explicit run identity and expected suite revision.",
+      "result": "PASS"
+    },
+    {
+      "command": "frontend: git diff --check",
+      "details": "No whitespace errors were reported.",
+      "result": "PASS"
+    },
+    {
+      "command": "frontend: npm run lint",
+      "details": "NOT_RUN: package script invokes eslint, which is not installed in this frontend package (command reported eslint not recognized). No lint result is claimed.",
+      "result": "NOT_RUN"
+    },
+    {
+      "command": "W01 dependency validation: teamctl verify from implementation-runtime",
+      "details": "The implementation-runtime mission and W01 frozen contract handoff validated before UI work.",
+      "result": "PASS"
+    }
+  ],
+  "work_id": "W03"
+}

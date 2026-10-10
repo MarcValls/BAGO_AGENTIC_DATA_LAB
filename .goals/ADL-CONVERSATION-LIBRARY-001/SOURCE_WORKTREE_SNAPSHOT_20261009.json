@@ -1,0 +1,473 @@
+{
+  "captured_at_utc": "2026-10-09T20:07:10.997655+00:00",
+  "purpose": "Protect the current source worktree state from this capture onward; this is not the missing pre-goal inventory.",
+  "source_worktree": "C:\\Users\\AMTEC_Terminal_1\u00ba\\AppData\\Local\\Temp\\BAGO_AGENTIC_DATA_LAB_chat_control",
+  "head": "69b4f4b1ead2552b527e6e48868ab36cc2b38cbc",
+  "branch": "codex/agent-chat-control-v1",
+  "entry_count": 49,
+  "status_stream_sha256": "79b17e93672a42a5bcfe7bc7ec03cffdc286a35549c48816b8eb4cbf3f320d07",
+  "tracked_diff_sha256": "9bb0259e8730ec77d7427b1b9ff4c3e235b12f278b2193de7cd8a9f9540105b4",
+  "tracked_diff_bytes": 55828,
+  "pre_goal_status_stream_sha256_recorded": "3256bedc478acd6ab53c2d08ce830c93af9dd32b3c24495fbf00e274e2606c53",
+  "pre_goal_status_entry_count_recorded": 46,
+  "pre_goal_status_path_inventory_available": false,
+  "entries": [
+    {
+      "status": " M",
+      "path": ".codex-team/state.json",
+      "working_tree_sha256": "78fe93ac76efbee3ddf2309da11ddae59f5f3fab0856025ffaa79331d2c8a1d3"
+    },
+    {
+      "status": " M",
+      "path": "docs/agent-chat-control/contracts/CONTROL_PLANE_V1.md",
+      "working_tree_sha256": "98de492e09becfdff66da36922bf16e533a5fef6f7f5440452d1e207e52ead67"
+    },
+    {
+      "status": " M",
+      "path": "docs/decision-inspector/contracts/trace/decision-trace-v1.md",
+      "working_tree_sha256": "92c9132c2eaa7b46057cf174269a1c264dbb6624cddc105c5390c6d700211951"
+    },
+    {
+      "status": " M",
+      "path": "frontend/src/components/AgentChat.css",
+      "working_tree_sha256": "cf5853aa20a6572eb05f7f36274478fb933783fd77dc18ae37cdbc0c0671b7a4"
+    },
+    {
+      "status": " M",
+      "path": "frontend/src/components/AgentChat.tsx",
+      "working_tree_sha256": "2dc4c3873bea04c761cd8326d2ea380c1ce63b475c03db801fb65afbf092ad3a"
+    },
+    {
+      "status": " M",
+      "path": "frontend/src/components/AgentRunner.css",
+      "working_tree_sha256": "c81c6ea2d7c86e3c438807b4dbd2536d09753b43ceae6ad65ac72b1271d5ea89"
+    },
+    {
+      "status": " M",
+      "path": "frontend/src/components/AgentRunner.tsx",
+      "working_tree_sha256": "defb5670ba4fe415de6e65ed7c621f4f7c7806df988e91fc73ddd85f11a22315"
+    },
+    {
+      "status": " M",
+      "path": "src/api/server.py",
+      "working_tree_sha256": "a014d08c303f3343e3f008c0adf77dd5f45d27acab505577b99530e4b8bbb2c2"
+    },
+    {
+      "status": " M",
+      "path": "src/observability/local_trace.py",
+      "working_tree_sha256": "62fcabd1f0fd40a2c39887e7ddfcb4f43e3af50ffed4446973348d582e158abb"
+    },
+    {
+      "status": " M",
+      "path": "src/observability/otel_bridge.py",
+      "working_tree_sha256": "1f6035e57ce5ba11f8e09e68e89062513120f486d0b53bbf13bbf4c0acd560e4"
+    },
+    {
+      "status": " M",
+      "path": "src/providers/ollama.py",
+      "working_tree_sha256": "6edec5985a42c88209301b525982ee8ebf2c12cbe8608ed8ea917ecfcc22ae10"
+    },
+    {
+      "status": " M",
+      "path": "tests/test_l15_otel_bridge.py",
+      "working_tree_sha256": "83eb80907c1afc62d35c143fb94805b8ba90506219434857324b2c02079ea651"
+    },
+    {
+      "status": "??",
+      "path": ".bago/demo-api.stderr.log",
+      "working_tree_sha256": "b560a029c5af649161f78ff993d02ebdd6dcb31c3ce8f78d6ee278acf04967da"
+    },
+    {
+      "status": "??",
+      "path": ".bago/demo-api.stdout.log",
+      "working_tree_sha256": "7dd8650027d02c67b648d5318c0470961d17409f753127b83806b92ca1509e06"
+    },
+    {
+      "status": "??",
+      "path": ".bago/evidence/agent-runs/FRONTEND_AUDITOR_P1_02_20261009.md",
+      "working_tree_sha256": "1fdee1ea14e0aa7076a4952e60458d3bc4cea36d129c796af3431b292405f821"
+    },
+    {
+      "status": "??",
+      "path": ".bago/evidence/agent-runs/FRONTEND_AUDITOR_P1_02_EXECUTION/.codex-team/events.jsonl",
+      "working_tree_sha256": "366bf8e4012235b8ae0c2bbb224478ecfd6147c6ce174ee73831a497c6389fab"
+    },
+    {
+      "status": "??",
+      "path": ".bago/evidence/agent-runs/FRONTEND_AUDITOR_P1_02_EXECUTION/.codex-team/handoffs/W01.json",
+      "working_tree_sha256": "b1ad07f3b26ed6b37bcc413a0e7e4bef2e163fd5427cfdc82e18217591d3f8ad"
+    },
+    {
+      "status": "??",
+      "path": ".bago/evidence/agent-runs/FRONTEND_AUDITOR_P1_02_EXECUTION/.codex-team/handoffs/W02.json",
+      "working_tree_sha256": "d53d825c9194bcd49c3c3be260172e2675e4fb134eb8db47402916ca4b20b3f3"
+    },
+    {
+      "status": "??",
+      "path": ".bago/evidence/agent-runs/FRONTEND_AUDITOR_P1_02_EXECUTION/.codex-team/state.json",
+      "working_tree_sha256": "53853a817e2c2e8ab3cba079ccd7742e7f901f0f536184be01ae9cd6678b9ea7"
+    },
+    {
+      "status": "??",
+      "path": ".bago/evidence/agent-runs/FRONTEND_AUDITOR_P1_02_EXECUTION/W01-handoff-draft.json",
+      "working_tree_sha256": "7c5e4e3eec491cd33abb06f1bdd215728d115b0c5b21177f077b10b0263b0ee3"
+    },
+    {
+      "status": "??",
+      "path": ".bago/evidence/agent-runs/FRONTEND_AUDITOR_P1_02_EXECUTION/W02-handoff-draft.json",
+      "working_tree_sha256": "c45de0cef566396b8af99a33c8fd2d194a3b7f6fc7e4edf1c4e3e9f5bc598c51"
+    },
+    {
+      "status": "??",
+      "path": ".bago/evidence/agent-runs/FRONTEND_AUDITOR_P1_02_EXECUTION/mission.json",
+      "working_tree_sha256": "9490cd0e670d883cb3d88b94d3d1b9e99afa6b83ea11cfae6ced6cb39e52ea4a"
+    },
+    {
+      "status": "??",
+      "path": ".bago/evidence/agent-runs/FRONTEND_AUDITOR_P1_02_EXECUTION/verification.md",
+      "working_tree_sha256": "01669ff7217674799b4723eb4abf73e455971dfee464c1dd2e0abe844d8a2a9d"
+    },
+    {
+      "status": "??",
+      "path": ".bago/evidence/agent-runs/FRONTEND_AUDITOR_P1_02_JAEGER_COMPARISON_20261009.md",
+      "working_tree_sha256": "551687e33a36a2e2bbc9c01edaa71fdd3a25e0f062638e6a817fc3674079ed65"
+    },
+    {
+      "status": "??",
+      "path": ".bago/evidence/agent-runs/FRONTEND_AUDITOR_P1_02_SOURCE_REVIEW/CHAT_MESSAGE_SINGLE_LINE.txt",
+      "working_tree_sha256": "de8edf029752e6e2e5b3e04071aed3abbfbc4e83ede928c6e0d334804a6bca0b"
+    },
+    {
+      "status": "??",
+      "path": ".bago/evidence/agent-runs/FRONTEND_AUDITOR_P1_02_SOURCE_REVIEW/REVIEW_REPORT.md",
+      "working_tree_sha256": "5d54936d4e797b7671b8ebd1f13364838b71ee7ed08db3b28f43587012c583cb"
+    },
+    {
+      "status": "??",
+      "path": ".bago/evidence/agent-runs/FRONTEND_AUDITOR_P1_02_SOURCE_REVIEW/SOURCE_REVIEW_PROMPT.md",
+      "working_tree_sha256": "f9dde80015128e0fcb0103512e66af3e2acdf2161fda490dd9660f1b50c8d175"
+    },
+    {
+      "status": "??",
+      "path": ".bago/providers/ollama.json",
+      "working_tree_sha256": "a91c159200fce0f905e5cf01aa4e4f53fb651197c3bc3b4442ed0b4be9058f04"
+    },
+    {
+      "status": "??",
+      "path": ".bago/traces/agent-chat/trace-1745851445f04ccc.json",
+      "working_tree_sha256": "403507c6525a0a48bb5a713aa5490f7b85b0df61e24bd8b6bf70d10a38b53fc2"
+    },
+    {
+      "status": "??",
+      "path": ".bago/traces/agent-chat/trace-1c3470a70b0a4313.json",
+      "working_tree_sha256": "aa732c47a4b73e54a23fc9c9a771f926df04576b8f940089cfde2a900299dc06"
+    },
+    {
+      "status": "??",
+      "path": ".bago/traces/agent-chat/trace-93dd907b5e5a44b2.json",
+      "working_tree_sha256": "45e685e57d5069c8e28b2c08ecc9d33a0628b4a305566f8720c91fbbb9e31cc4"
+    },
+    {
+      "status": "??",
+      "path": ".bago/traces/agent-chat/trace-a401704ae3b34c1f.json",
+      "working_tree_sha256": "1e9ec9fbd3e36a7eb56367ef7110784f535c16644fd4a1d9ca9ccb097ca6bfd9"
+    },
+    {
+      "status": "??",
+      "path": ".codex-team/change_requests/CR-011-AGENT-CHAT-JAEGER-CORRELATION.json",
+      "working_tree_sha256": "6f37fac3b5875b5f546899bf1b80b28051507fee2087ac04bdeaedd0f01b40be"
+    },
+    {
+      "status": "??",
+      "path": ".codex-team/change_requests/CR-012-TRACE-EVENT-TIMING.json",
+      "working_tree_sha256": "74035b6056bbc8571fc4b3b356c1848690d2ce4cd920c8b363e7c6010b480f27"
+    },
+    {
+      "status": "??",
+      "path": ".codex-team/change_requests/CR-013-CHAT-TURN-SCOPED-WORKSPACE-READ.json",
+      "working_tree_sha256": "db502bf2a100abff77c4263798374320c375cde9ce7ea43548fbe4ad39a57143"
+    },
+    {
+      "status": "??",
+      "path": ".goals/ADL-CONVERSATION-LIBRARY-001/PHASE_0_REUSE_MAP.md",
+      "working_tree_sha256": "edea78edc7c6fe6187649052a665f43a099922358ee6e97aec6a5a93e8ed6cd4"
+    },
+    {
+      "status": "??",
+      "path": ".goals/ADL-CONVERSATION-LIBRARY-001/goal.md",
+      "working_tree_sha256": "f0fdbe3b61a60c217b10650d577aca9abc13109f4895f70433d92a2bd3da2ef3"
+    },
+    {
+      "status": "??",
+      "path": ".goals/ADL-CONVERSATION-LIBRARY-001/status.json",
+      "working_tree_sha256": "b97e26c1005d0e59f84a17857dae45f159f686bf93dec7f62880f981914470fe"
+    },
+    {
+      "status": "??",
+      "path": "agents/created/agent_b5665184bed24811ad59e90c8c4fdc9f.json",
+      "working_tree_sha256": "7d389f7ce3366230f688fc7289f010c1c4f8ae6f5cdd43a3b6764a2a97200260"
+    },
+    {
+      "status": "??",
+      "path": "docs/demo/CHAT_READ_DEMO.txt",
+      "working_tree_sha256": "1400f4bcd33c0540ed651b16a26366de38222e24f4462069c7045c277f1f4c24"
+    },
+    {
+      "status": "??",
+      "path": "output/playwright/agent-chat-jaeger-trace-20261009.png",
+      "working_tree_sha256": "ffb9dce49803021f068906e8d8504f85a90f74f5b23e1613e3dc2e920051ae91"
+    },
+    {
+      "status": "??",
+      "path": "output/playwright/agent-chat-ui-jaeger-20261009.png",
+      "working_tree_sha256": "0d871f2b8d2080e7700fcd1b3a617bddd3d6d8089e8623fd98effb2c3b364c68"
+    },
+    {
+      "status": "??",
+      "path": "output/playwright/agent-runner-disabled-p1-02-20261009.png",
+      "working_tree_sha256": "6770b64c65f90c1c92fa6615de825a3985c545c899d9d5b2ed09c1bf700cb478"
+    },
+    {
+      "status": "??",
+      "path": "output/playwright/chat-read-demo-20261009.png",
+      "working_tree_sha256": "d1db9de0dbaf5370bb16ce75ea33e04bda666f7feb7be5a5d935438b8b0029a2"
+    },
+    {
+      "status": "??",
+      "path": "output/playwright/frontend-auditor-p1-02-jaeger-20261009.png",
+      "working_tree_sha256": "ce61a41811312db178f0822172b4ad19cfdd95274c22b7495e0ab71a395d4eb1"
+    },
+    {
+      "status": "??",
+      "path": "output/playwright/frontend-auditor-p1-02-source-review-20261009.png",
+      "working_tree_sha256": "c9c7e9969fe0ad704556f28f4315f6cf6112038f18c8800e7283b70e9238f7cd"
+    },
+    {
+      "status": "??",
+      "path": "src/agent_tools/workspace_read.py",
+      "working_tree_sha256": "b30ef09867e28471ff0315d65afcbf746085304d5e47d9da392b30d112f65deb"
+    },
+    {
+      "status": "??",
+      "path": "tests/test_agent_chat_trace.py",
+      "working_tree_sha256": "2f8f0cb2b301350def977f923d35b9be05b3914917ad0ed3b4c9bddce93ad665"
+    },
+    {
+      "status": "??",
+      "path": "tests/test_agent_draft_retry.py",
+      "working_tree_sha256": "984edccda97b1b764561b70769ee4695993cace0c7f7b02c1c6d6bb1292f2e4a"
+    }
+  ],
+  "pre_goal_inventory": {
+    "recovered": true,
+    "source": "C:\\Users\\AMTEC_Terminal_1\u00ba\\.codex\\sessions\\2026\\10\\08\\rollout-2026-10-08T02-45-51-01a118f9-437a-7a23-b808-cdc62258558f.jsonl",
+    "session_tool_output_line": 9928,
+    "captured_at_utc": "2026-10-09T18:33:05.174Z",
+    "entry_count": 46,
+    "status_stream_sha256": "3256bedc478acd6ab53c2d08ce830c93af9dd32b3c24495fbf00e274e2606c53",
+    "entries": [
+      {
+        "status": " M",
+        "path": ".codex-team/state.json"
+      },
+      {
+        "status": " M",
+        "path": "docs/agent-chat-control/contracts/CONTROL_PLANE_V1.md"
+      },
+      {
+        "status": " M",
+        "path": "docs/decision-inspector/contracts/trace/decision-trace-v1.md"
+      },
+      {
+        "status": " M",
+        "path": "frontend/src/components/AgentChat.css"
+      },
+      {
+        "status": " M",
+        "path": "frontend/src/components/AgentChat.tsx"
+      },
+      {
+        "status": " M",
+        "path": "frontend/src/components/AgentRunner.css"
+      },
+      {
+        "status": " M",
+        "path": "frontend/src/components/AgentRunner.tsx"
+      },
+      {
+        "status": " M",
+        "path": "src/api/server.py"
+      },
+      {
+        "status": " M",
+        "path": "src/observability/local_trace.py"
+      },
+      {
+        "status": " M",
+        "path": "src/observability/otel_bridge.py"
+      },
+      {
+        "status": " M",
+        "path": "src/providers/ollama.py"
+      },
+      {
+        "status": " M",
+        "path": "tests/test_l15_otel_bridge.py"
+      },
+      {
+        "status": "??",
+        "path": ".bago/demo-api.stderr.log"
+      },
+      {
+        "status": "??",
+        "path": ".bago/demo-api.stdout.log"
+      },
+      {
+        "status": "??",
+        "path": ".bago/evidence/agent-runs/FRONTEND_AUDITOR_P1_02_20261009.md"
+      },
+      {
+        "status": "??",
+        "path": ".bago/evidence/agent-runs/FRONTEND_AUDITOR_P1_02_EXECUTION/.codex-team/events.jsonl"
+      },
+      {
+        "status": "??",
+        "path": ".bago/evidence/agent-runs/FRONTEND_AUDITOR_P1_02_EXECUTION/.codex-team/handoffs/W01.json"
+      },
+      {
+        "status": "??",
+        "path": ".bago/evidence/agent-runs/FRONTEND_AUDITOR_P1_02_EXECUTION/.codex-team/handoffs/W02.json"
+      },
+      {
+        "status": "??",
+        "path": ".bago/evidence/agent-runs/FRONTEND_AUDITOR_P1_02_EXECUTION/.codex-team/state.json"
+      },
+      {
+        "status": "??",
+        "path": ".bago/evidence/agent-runs/FRONTEND_AUDITOR_P1_02_EXECUTION/W01-handoff-draft.json"
+      },
+      {
+        "status": "??",
+        "path": ".bago/evidence/agent-runs/FRONTEND_AUDITOR_P1_02_EXECUTION/W02-handoff-draft.json"
+      },
+      {
+        "status": "??",
+        "path": ".bago/evidence/agent-runs/FRONTEND_AUDITOR_P1_02_EXECUTION/mission.json"
+      },
+      {
+        "status": "??",
+        "path": ".bago/evidence/agent-runs/FRONTEND_AUDITOR_P1_02_EXECUTION/verification.md"
+      },
+      {
+        "status": "??",
+        "path": ".bago/evidence/agent-runs/FRONTEND_AUDITOR_P1_02_JAEGER_COMPARISON_20261009.md"
+      },
+      {
+        "status": "??",
+        "path": ".bago/evidence/agent-runs/FRONTEND_AUDITOR_P1_02_SOURCE_REVIEW/CHAT_MESSAGE_SINGLE_LINE.txt"
+      },
+      {
+        "status": "??",
+        "path": ".bago/evidence/agent-runs/FRONTEND_AUDITOR_P1_02_SOURCE_REVIEW/REVIEW_REPORT.md"
+      },
+      {
+        "status": "??",
+        "path": ".bago/evidence/agent-runs/FRONTEND_AUDITOR_P1_02_SOURCE_REVIEW/SOURCE_REVIEW_PROMPT.md"
+      },
+      {
+        "status": "??",
+        "path": ".bago/providers/ollama.json"
+      },
+      {
+        "status": "??",
+        "path": ".bago/traces/agent-chat/trace-1745851445f04ccc.json"
+      },
+      {
+        "status": "??",
+        "path": ".bago/traces/agent-chat/trace-1c3470a70b0a4313.json"
+      },
+      {
+        "status": "??",
+        "path": ".bago/traces/agent-chat/trace-93dd907b5e5a44b2.json"
+      },
+      {
+        "status": "??",
+        "path": ".bago/traces/agent-chat/trace-a401704ae3b34c1f.json"
+      },
+      {
+        "status": "??",
+        "path": ".codex-team/change_requests/CR-011-AGENT-CHAT-JAEGER-CORRELATION.json"
+      },
+      {
+        "status": "??",
+        "path": ".codex-team/change_requests/CR-012-TRACE-EVENT-TIMING.json"
+      },
+      {
+        "status": "??",
+        "path": ".codex-team/change_requests/CR-013-CHAT-TURN-SCOPED-WORKSPACE-READ.json"
+      },
+      {
+        "status": "??",
+        "path": "agents/created/agent_b5665184bed24811ad59e90c8c4fdc9f.json"
+      },
+      {
+        "status": "??",
+        "path": "docs/demo/CHAT_READ_DEMO.txt"
+      },
+      {
+        "status": "??",
+        "path": "output/playwright/agent-chat-jaeger-trace-20261009.png"
+      },
+      {
+        "status": "??",
+        "path": "output/playwright/agent-chat-ui-jaeger-20261009.png"
+      },
+      {
+        "status": "??",
+        "path": "output/playwright/agent-runner-disabled-p1-02-20261009.png"
+      },
+      {
+        "status": "??",
+        "path": "output/playwright/chat-read-demo-20261009.png"
+      },
+      {
+        "status": "??",
+        "path": "output/playwright/frontend-auditor-p1-02-jaeger-20261009.png"
+      },
+      {
+        "status": "??",
+        "path": "output/playwright/frontend-auditor-p1-02-source-review-20261009.png"
+      },
+      {
+        "status": "??",
+        "path": "src/agent_tools/workspace_read.py"
+      },
+      {
+        "status": "??",
+        "path": "tests/test_agent_chat_trace.py"
+      },
+      {
+        "status": "??",
+        "path": "tests/test_agent_draft_retry.py"
+      }
+    ]
+  },
+  "pre_goal_reconciliation": {
+    "missing_paths": [],
+    "status_changed_paths": [],
+    "added_after_baseline": [
+      ".goals/ADL-CONVERSATION-LIBRARY-001/PHASE_0_REUSE_MAP.md",
+      ".goals/ADL-CONVERSATION-LIBRARY-001/goal.md",
+      ".goals/ADL-CONVERSATION-LIBRARY-001/status.json"
+    ],
+    "unchanged_tracked_diff_sha256": "9bb0259e8730ec77d7427b1b9ff4c3e235b12f278b2193de7cd8a9f9540105b4",
+    "untracked_mtime_anomalies": [
+      {
+        "path": ".bago/demo-api.stdout.log",
+        "last_write_utc": "2026-10-09T19:31:33.885389+00:00",
+        "finding": "pre-existing server stdout log received runtime output while its server process remained active; file was appended, not removed"
+      }
+    ],
+    "caveat": "No baseline content hashes were captured for untracked files. All 46 baseline paths and status codes match, and the tracked diff hash is unchanged. One pre-existing server stdout log received later runtime output while its long-running process remained active; other baseline untracked file mtimes predate goal start."
+  }
+}

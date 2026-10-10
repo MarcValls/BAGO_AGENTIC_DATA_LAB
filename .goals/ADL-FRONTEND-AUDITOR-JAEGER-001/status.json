@@ -1,0 +1,20 @@
+{
+  "goal_id": "ADL-FRONTEND-AUDITOR-JAEGER-001",
+  "status": "EXECUTED",
+  "branch": "codex/adl-agent-evaluation-lab-20261010",
+  "head": "1e4d9f930da1225ce61ce27def897f76d57a08fc",
+  "validation": "PARTIAL",
+  "live_agent_audit": "VERIFIED",
+  "ollama": "VERIFIED_REAL_RESPONSE_gemma4:31b",
+  "workspace_read_receipt": "VERIFIED_TWO_SOURCE_RANGES",
+  "p1_02": "VERIFIED_FIXED_IN_CANDIDATE",
+  "jaeger_projection": "VERIFIED_EXPORTED",
+  "jaeger_query": "VERIFIED_HTTP_200_SAME_TRACE_ID",
+  "screenshot": "VERIFIED",
+  "ui_render_tests": "VERIFIED_14_PASS",
+  "frontend_build": "VERIFIED_PASS",
+  "eslint": "BLOCKED_MISSING_EXECUTABLE",
+  "cli_live_retry": "BLOCKED_WINDOWS_CREDENTIAL_STORE_UNAVAILABLE",
+  "exact_path_allowlist": "NOT_ENFORCED",
+  "commit": "NOT_REQUESTED"
+}

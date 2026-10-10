@@ -1,0 +1,38 @@
+{
+  "candidate_branch": "codex/adl-agent-evaluation-lab-20261010",
+  "candidate_head": "1e4d9f930da1225ce61ce27def897f76d57a08fc",
+  "agent_id": "agent_6b99c36e601c4a868213da340fdf47e5",
+  "agent_name": "Frontend Auditor",
+  "provider_id": "ollama-cloud",
+  "model_id": "gemma4:31b",
+  "chat_endpoint": "POST /api/agents/{agent_id}/chat",
+  "provider_response_source": "ollama",
+  "workspace_read_enabled_for_turn": true,
+  "workspace_read_sources": [
+    {
+      "path": "frontend/src/components/AgentRunner.tsx",
+      "start_line": 1,
+      "end_line": 250
+    },
+    {
+      "path": "src/api/server.py",
+      "start_line": 1525,
+      "end_line": 1550
+    }
+  ],
+  "assistant_response_sha256": "116ca426eadfc3cd32e770aa38a419744e031c672c009ee7d9a57f37150de092",
+  "response_artifact": "agent_response.md",
+  "trace": {
+    "trace_id": "trace-0dd06579c7774b63",
+    "trace_state": "exported",
+    "jaeger_trace_id": "f6bb1ebd27045f19f14495befc42835b",
+    "jaeger_url": "http://127.0.0.1:16686/trace/f6bb1ebd27045f19f14495befc42835b"
+  },
+  "local_trace_file": "evidence/live-audit/traces/trace-0dd06579c7774b63.json",
+  "conversation_id": "conv_067d162a49ff47788ebdb2679fa71554",
+  "conversation_database_outside_repo": "C:\\Users\\AMTEC_~1\\AppData\\Local\\Temp\\adl_frontend_auditor_jaeger_goal_20261010.sqlite3",
+  "jaeger_ui_url": "http://127.0.0.1:16686/trace/f6bb1ebd27045f19f14495befc42835b",
+  "jaeger_query": "PASS",
+  "jaeger_query_artifact": "jaeger_query.json",
+  "read_limit_fix": "MAX_FILE_BYTES raised from 32 KiB to 256 KiB; output remains limited to 250 lines and 4 reads per turn"
+}

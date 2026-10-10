@@ -1,0 +1,66 @@
+{
+  "changed_files": [
+    "src/api/server.py",
+    "src/providers/__init__.py",
+    "src/providers/ollama.py",
+    "requirements.txt"
+  ],
+  "next_consumers": [
+    "AC03"
+  ],
+  "outputs": [
+    {
+      "description": "Provider status/config/models/verify, control chat, inventory, reviewed agent draft, explicit create endpoint, and ID-bound server-loaded agent chat APIs. Create accepts legacy Builder payload without provider/model only by resolving the explicitly selected settings model; never picks a catalogue default.",
+      "path": "src/api/server.py",
+      "sha256": "6db51483007c0f08351ca6f210817a8d12626daf90b528d87ed8b60d0fdf3453"
+    },
+    {
+      "description": "Ollama Cloud API-key and local CLI-session adapter; write-only OS credential handling; non-generative model discovery and verification; real chat; fixed cloud/loopback endpoints; safe errors.",
+      "path": "src/providers/ollama.py",
+      "sha256": "dca950f6e26c77d3bfa4b8cd6bb805822edef4994acc261f4eb6462c8402e0b7"
+    },
+    {
+      "description": "Provider package.",
+      "path": "src/providers/__init__.py",
+      "sha256": "396ff23a4df239dc6870a0fc463a1bf17f99ffc50117a2ee41fb3c0d1cafe2a9"
+    },
+    {
+      "description": "Adds keyring==25.6.0 for OS credential storage.",
+      "path": "requirements.txt",
+      "sha256": "9eca98d43a92e9921ced91875d3f612f476857ae1a2db1638670993b4fc93341"
+    }
+  ],
+  "payload_sha256": "41ec72e3a72ac6d6c54b380ca84b283f485407f1dd429481ef255c30f5e98e09",
+  "residual_risks": [
+    "Live model request and real account model availability remain NOT_RUN until the user configures authentication and initiates a model request.",
+    "API-key storage succeeds only when Python keyring selects a supported secure OS credential backend; null, plaintext, unknown, and unavailable backends fail closed.",
+    "The local CLI-session path was not run; it depends on the user-owned Ollama service and signed-in state.",
+    "AC03 must send provider_id/model_id for conversational creation; the legacy Agent Builder is supported through the explicit model saved in Provider Settings.",
+    "No general app action execution or governed job dispatch is introduced; agent tools remain allowlisted metadata and are not invoked by chat."
+  ],
+  "role": "team-orchestrator",
+  "status": "DONE",
+  "verification": [
+    {
+      "command": "python -m compileall -q src/api/server.py src/providers/ollama.py",
+      "evidence": "Static compilation completed successfully on final AC02 file state.",
+      "result": "PASS"
+    },
+    {
+      "command": "git diff --check",
+      "evidence": "No whitespace errors in the final AC02 diff; Git emitted only line-ending warnings for pre-existing coordination files.",
+      "result": "PASS"
+    },
+    {
+      "command": "Live Ollama provider/model request",
+      "evidence": "No provider calls or token spend were made, as required; Cloud credential/readiness remains unverified.",
+      "result": "NOT_RUN"
+    },
+    {
+      "command": "Automated tests",
+      "evidence": "No tests were added or run, as instructed.",
+      "result": "NOT_RUN"
+    }
+  ],
+  "work_id": "AC02"
+}

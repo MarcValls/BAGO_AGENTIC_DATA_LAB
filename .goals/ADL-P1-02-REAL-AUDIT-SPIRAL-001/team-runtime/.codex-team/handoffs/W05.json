@@ -1,0 +1,42 @@
+{
+  "changed_files": [
+    ".goals/ADL-P1-02-REAL-AUDIT-SPIRAL-001/evidence/W05_INDEPENDENT_REVIEW.json"
+  ],
+  "next_consumers": [],
+  "outputs": [
+    {
+      "name": "p1-02-audit-terminal-v1",
+      "path": ".goals/ADL-P1-02-REAL-AUDIT-SPIRAL-001/evidence/W05_INDEPENDENT_REVIEW.json",
+      "summary": "Independent, hash-bound review of W01-W04 confirms the real Ollama app response evidence, bounded backend excerpt provenance, disabled Runner UI, fail-closed no-payload runtime behavior, persisted conversation and post-run Jaeger readbacks. Verdict is limited to the exact dirty active snapshot."
+    }
+  ],
+  "payload_sha256": "6471bf89a25ecd52d29bf66d7e40ceadb579033e1b396de70434fb9db5ce6bc1",
+  "residual_risks": [
+    "The served page origin 8084 still fails WebSocket origin validation with HTTP 403; keep distinct from allowed-origin endpoint behavior.",
+    "Audit applies to dirty source hashes and observed process, not a clean commit or release.",
+    "The model read server.py through a literal source-hash-bound excerpt because the complete file is 55,939 bytes and exceeds the 32 KiB tool limit.",
+    "Jaeger is a post-run projection; local persisted conversation and LocalTrace remain the source receipts. No job or source change occurred."
+  ],
+  "role": "verification-engineer",
+  "schema_version": "1.0",
+  "status": "DONE",
+  "verification": [
+    {
+      "command": "Recompute candidate HEAD, branch, relevant source hashes, server.py size, screenshot/DOM hashes, excerpt hash and source excerpt comparison",
+      "result": "PASS; exact candidate and evidence hashes match receipts; literal excerpt lines match current hash-bound server.py lines 1227-1247"
+    },
+    {
+      "command": "Run existing no-payload WebSocket/job-count probe",
+      "result": "PASS_WITH_LIMITATION; same-origin 8084 HTTP 403, allowed origin 8080 HTTP 101 then execution_unavailable/1008; no payload; zero jobs unchanged"
+    },
+    {
+      "command": "Read-only conversation GET and LocalTrace hash checks; read-only Jaeger GET for both IDs",
+      "result": "PASS; conversation revision 4/four messages; trace hashes match receipts; each Jaeger readback contains one span"
+    },
+    {
+      "command": "Independent verdict for P1-02 against active snapshot",
+      "result": "PASS_WITH_EXPLICIT_LIMITS; UI mismatch is corrected in this dirty snapshot; backend remains fail-closed; no execution, release, whole-backend-model-read or automatic Jaeger-link claim"
+    }
+  ],
+  "work_id": "W05"
+}

@@ -1,0 +1,189 @@
+{
+  "created_at": "2026-10-09T21:02:58+00:00",
+  "mission": {
+    "max_concurrency": 1,
+    "mission_id": "ADL_P1_02_REAL_AUDIT_SPIRAL_V1",
+    "objective": "Have a real Ollama Cloud ADL agent inspect P1-02 and the exact active candidate source using bounded read-only workspace tools; independently verify the current Agent Runner/backend behavior, persist conversation and LocalTrace evidence, correlate a Jaeger projection, and close with independent review. No agent job or source mutation is authorized.",
+    "terminal_work_items": [
+      "W05"
+    ],
+    "title": "Real ADL P1-02 audit spiral",
+    "work_items": [
+      {
+        "deliverables": [
+          "Finding provenance and candidate fingerprint receipt"
+        ],
+        "depends_on": [],
+        "done_when": [
+          "Original P1-02 wording and source are fingerprinted",
+          "Active runtime is bound to the current checkout and HEAD",
+          "Relevant source hashes and dirty status are recorded",
+          "No credentials are read"
+        ],
+        "frozen_outputs": [
+          "p1-02-target-snapshot-v1"
+        ],
+        "id": "W01",
+        "read_scopes": [
+          ".goals/ADL-OLLAMA-SPIRAL-001/evidence/**",
+          "frontend/src/components/AgentRunner.tsx",
+          "src/api/server.py"
+        ],
+        "role": "team-orchestrator",
+        "title": "Freeze finding provenance and active candidate identity",
+        "write_scopes": [
+          ".goals/ADL-P1-02-REAL-AUDIT-SPIRAL-001/evidence/**"
+        ]
+      },
+      {
+        "deliverables": [
+          "Live ADL response with exact source citations, agent/model identity, conversation id and LocalTrace reference"
+        ],
+        "depends_on": [
+          "W01"
+        ],
+        "done_when": [
+          "The response source is Ollama, not a fixture",
+          "The agent reads the finding brief and both active-candidate source files through the bounded read tool",
+          "The answer distinguishes the original finding from current candidate state and cites line ranges",
+          "No file mutation, job or command execution occurs"
+        ],
+        "frozen_outputs": [
+          "p1-02-agent-audit-v1"
+        ],
+        "id": "W02",
+        "read_scopes": [
+          ".goals/ADL-P1-02-REAL-AUDIT-SPIRAL-001/evidence/P1_02_FINDING_BRIEF.md",
+          "frontend/src/components/AgentRunner.tsx",
+          "src/api/server.py"
+        ],
+        "role": "evidence-provenance-engineer",
+        "title": "Run one real, source-grounded audit through the ADL agent",
+        "write_scopes": [
+          ".goals/ADL-P1-02-REAL-AUDIT-SPIRAL-001/evidence/**",
+          "output/playwright/**"
+        ]
+      },
+      {
+        "deliverables": [
+          "Browser/UI and live WebSocket behavior receipt"
+        ],
+        "depends_on": [
+          "W02"
+        ],
+        "done_when": [
+          "Active UI shows execution unavailable and a disabled Run control",
+          "WebSocket returns execution_unavailable and close 1008",
+          "No job id is created and no execution payload is sent",
+          "UI and endpoint observations are bound to PID, checkout and source hashes"
+        ],
+        "frozen_outputs": [
+          "p1-02-runtime-check-v1"
+        ],
+        "id": "W03",
+        "read_scopes": [
+          "frontend/src/components/AgentRunner.tsx",
+          "src/api/server.py",
+          ".goals/ADL-P1-02-REAL-AUDIT-SPIRAL-001/evidence/W02_AGENT_AUDIT.json"
+        ],
+        "role": "verification-engineer",
+        "title": "Probe the active Agent Runner UI and execution endpoint without starting a job",
+        "write_scopes": [
+          ".goals/ADL-P1-02-REAL-AUDIT-SPIRAL-001/evidence/**",
+          "output/playwright/**"
+        ]
+      },
+      {
+        "deliverables": [
+          "API/SQLite/LocalTrace/Jaeger correlation receipt and evidence comparison"
+        ],
+        "depends_on": [
+          "W03"
+        ],
+        "done_when": [
+          "Conversation messages persist and cite the source excerpts",
+          "LocalTrace records provider, model, read calls and answer completion",
+          "Jaeger projection is correlated and labeled as post-run if applicable",
+          "Evidence boundaries and NOT_RUN items are explicit"
+        ],
+        "frozen_outputs": [
+          "p1-02-audit-correlation-v1"
+        ],
+        "id": "W04",
+        "read_scopes": [
+          ".goals/ADL-P1-02-REAL-AUDIT-SPIRAL-001/evidence/**",
+          ".bago/traces/agent-chat/**"
+        ],
+        "role": "trace-observability-engineer",
+        "title": "Verify durable conversation, LocalTrace and Jaeger correlation",
+        "write_scopes": [
+          ".goals/ADL-P1-02-REAL-AUDIT-SPIRAL-001/evidence/**"
+        ]
+      },
+      {
+        "deliverables": [
+          "Independent review, verdict, limits and terminal gate"
+        ],
+        "depends_on": [
+          "W04"
+        ],
+        "done_when": [
+          "All prior handoffs validate",
+          "Real model source-code inspection is distinguished from runtime endpoint validation",
+          "P1-02 is classified against the exact target snapshot",
+          "No claim is made about source edits or agent job execution"
+        ],
+        "frozen_outputs": [
+          "p1-02-audit-terminal-v1"
+        ],
+        "id": "W05",
+        "read_scopes": [
+          ".goals/ADL-P1-02-REAL-AUDIT-SPIRAL-001/**",
+          "output/playwright/**"
+        ],
+        "role": "verification-engineer",
+        "title": "Independent review and terminal audit verdict",
+        "write_scopes": [
+          ".goals/ADL-P1-02-REAL-AUDIT-SPIRAL-001/evidence/**"
+        ]
+      }
+    ]
+  },
+  "mission_sha256": "9fcb07c80ac5fa29b1cc319803b2edb930015e3835ddc007494d07e3e701225d",
+  "mission_source": "C:\\Users\\AMTEC_Terminal_1º\\AppData\\Local\\Temp\\BAGO_AGENTIC_DATA_LAB_conversation_library\\.goals\\ADL-P1-02-REAL-AUDIT-SPIRAL-001\\mission.json",
+  "protocol_version": "0.1.0",
+  "terminal_gate": "DONE",
+  "updated_at": "2026-10-09T21:21:53+00:00",
+  "work_status": {
+    "W01": {
+      "agent": "root-coordinator",
+      "claimed_at": "2026-10-09T21:03:06+00:00",
+      "done_at": "2026-10-09T21:04:54+00:00",
+      "status": "DONE"
+    },
+    "W02": {
+      "agent": "ADL-agent:agent_d3e63db8b4704080b924a05fb1ab71fc",
+      "claimed_at": "2026-10-09T21:05:56+00:00",
+      "done_at": "2026-10-09T21:07:53+00:00",
+      "status": "DONE"
+    },
+    "W03": {
+      "agent": "root-runtime-verifier",
+      "claimed_at": "2026-10-09T21:08:47+00:00",
+      "done_at": "2026-10-09T21:12:36+00:00",
+      "status": "DONE"
+    },
+    "W04": {
+      "agent": "root-trace-provenance",
+      "claimed_at": "2026-10-09T21:12:57+00:00",
+      "done_at": "2026-10-09T21:19:08+00:00",
+      "status": "DONE"
+    },
+    "W05": {
+      "agent": "bago-verifier",
+      "claimed_at": "2026-10-09T21:19:20+00:00",
+      "done_at": "2026-10-09T21:21:22+00:00",
+      "status": "DONE"
+    }
+  }
+}

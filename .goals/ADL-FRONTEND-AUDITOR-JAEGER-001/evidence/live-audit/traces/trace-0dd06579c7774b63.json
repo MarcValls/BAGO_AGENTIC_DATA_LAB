@@ -1,0 +1,38 @@
+{
+  "cost_usd": 0.0,
+  "event_count": 1,
+  "events": [
+    {
+      "attributes": {
+        "agent_id": "agent_6b99c36e601c4a868213da340fdf47e5",
+        "cost_status": "not_reported",
+        "duration_ms": 5680,
+        "model_id": "gemma4:31b",
+        "outcome": "response_received",
+        "provider_id": "ollama-cloud",
+        "workspace_read_count": 2,
+        "workspace_read_sources": [
+          "frontend/src/components/AgentRunner.tsx:1-250",
+          "src/api/server.py:1525-1550"
+        ]
+      },
+      "end_time_unix_nano": 1791587029516266600,
+      "event_id": "event-30f70deba43f4d89",
+      "evidence_refs": [
+        "agent://agent_6b99c36e601c4a868213da340fdf47e5"
+      ],
+      "kind": "workflow",
+      "name": "agent.chat",
+      "parent_event_id": null,
+      "sequence": 0,
+      "start_time_unix_nano": 1791587023836209300,
+      "status": "COMPLETED",
+      "trace_id": "trace-0dd06579c7774b63"
+    }
+  ],
+  "evidence_refs": [
+    "agent://agent_6b99c36e601c4a868213da340fdf47e5"
+  ],
+  "run_id": "agent-chat-44ff315888ac47b49548f35f819c1c0d",
+  "trace_id": "trace-0dd06579c7774b63"
+}

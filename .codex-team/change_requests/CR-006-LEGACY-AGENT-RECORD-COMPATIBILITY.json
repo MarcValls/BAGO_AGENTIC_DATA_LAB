@@ -1,0 +1,19 @@
+{
+  "change_request_id": "CR-006-LEGACY-AGENT-RECORD-COMPATIBILITY",
+  "contract_id": "agent-chat-control-contract-v1",
+  "old_fingerprint": "109120ea519a587cda26c891e7802bf7027284d2496513720cdb260401d8259d",
+  "proposed_new_fingerprint": "fa2a2a74865a89a0ac6fe698680a7b85b5a687214c1ca879937a916d85b1c82e",
+  "reason": "The target repository already contains a valid user-created agent with an 8-hex agent ID and no provider_id/model_id. Strictly requiring new-format IDs and bound models would hide it from the requested agent inventory. Keep the record visible and chat-capable without rewriting its stored JSON.",
+  "impacted_consumers": [
+    "AC02 backend implementation",
+    "AC03 chat UI and inventory",
+    "AC04 independent verification",
+    "AC05 terminal gate"
+  ],
+  "required_invalidations": [
+    "Add AC06 compatibility work item between AC02 and AC03.",
+    "Invalidate the current AC03 claim until it consumes the revised contract and AC06 handoff.",
+    "Review legacy-record inventory, null provider/model rendering and request-scoped model fallback against the actual record."
+  ],
+  "decision": "Accepted by project inspection and user instruction to continue; no stored legacy agent file is migrated or rewritten."
+}

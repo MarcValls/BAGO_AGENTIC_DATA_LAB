@@ -1,0 +1,43 @@
+- main [ref=e3]:
+  - generic [ref=e4]:
+    - generic [ref=e5]:
+      - generic [aria-hidden] [ref=e6]: B
+      - generic [ref=e7]:
+        - paragraph [ref=e8]: Governed Knowledge Workspace
+        - heading "Agentic Data Lab" [level=1] [ref=e9]
+    - generic [ref=e10]:
+      - generic [ref=e11]: Control plane
+      - button "Provider settings" [ref=e12] [cursor=pointer]
+  - navigation "Application views" [ref=e13]:
+    - generic "Workspace" [ref=e14]:
+      - button "Chat" [ref=e15] [cursor=pointer]
+      - button "Decision Inspector" [ref=e16] [cursor=pointer]
+      - button "Agent Builder" [ref=e17] [cursor=pointer]
+      - button "Agent Runner" [active] [ref=e18] [cursor=pointer]
+    - group [ref=e19]:
+      - generic "Other portfolio views" [ref=e20] [cursor=pointer]
+  - region "Agent Runner view" [ref=e96]:
+    - generic [ref=e97]:
+      - generic [ref=e98]:
+        - heading "🎯 Agent Runner" [level=2] [ref=e99]
+        - generic [ref=e100]:
+          - button "⬇️ Export All" [ref=e101] [cursor=pointer]
+          - generic [ref=e102] [cursor=pointer]: ⬆️ Import
+      - status [ref=e103]: Agent execution is unavailable. No governed execution capability is registered; Run is disabled.
+      - generic [ref=e105]:
+        - heading "Available Agents (2)" [level=3] [ref=e106]
+        - generic [ref=e107]:
+          - generic [ref=e108] [cursor=pointer]:
+            - generic [ref=e109]:
+              - strong [ref=e110]: Library test agent
+              - generic [ref=e111]: tool
+            - paragraph [ref=e112]: Temporary agent for browser recovery verification.
+            - paragraph [ref=e113]: "Tools: 0"
+            - button "Run unavailable" [disabled] [ref=e114]
+          - generic [ref=e115] [cursor=pointer]:
+            - generic [ref=e116]:
+              - strong [ref=e117]: ADL Read Evidence Agent
+              - generic [ref=e118]: tool
+            - paragraph [ref=e119]: Agente de una sola tarea para comprobar lectura textual autorizada y citar su fuente.
+            - paragraph [ref=e120]: "Tools: 0"
+            - button "Run unavailable" [disabled] [ref=e121]
