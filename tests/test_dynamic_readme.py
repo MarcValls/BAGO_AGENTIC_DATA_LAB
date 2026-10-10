@@ -62,7 +62,7 @@ def test_readme_inventory_and_market_tables_are_discovered():
     workflow = (ROOT / ".github" / "workflows" / "readme-consistency.yml").read_text(
         encoding="utf-8"
     )
-    assert workflow.index("run: python -m pip install -r requirements.txt") < workflow.index(
+    assert workflow.index("run: python -m pip install -r requirements-test.txt") < workflow.index(
         "run: python scripts/generate_dynamic_readme.py --check --skip-tests"
     )
     assert collected_test_count() >= 100
