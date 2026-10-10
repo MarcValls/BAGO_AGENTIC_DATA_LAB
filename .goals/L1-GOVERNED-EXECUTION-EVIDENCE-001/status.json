@@ -1,0 +1,29 @@
+{
+  "goal_id": "L1-GOVERNED-EXECUTION-EVIDENCE-001",
+  "title": "L1 Governed Execution: evidencia suficiente y ligada al código",
+  "status": "PREPARED",
+  "phase": "BASELINE_AUDIT_RECORDED",
+  "candidate": {
+    "branch": "codex/l1-governed-execution-evidence-20261010",
+    "head": "aebead4373025c07a4d2c63052890288133d6a4b",
+    "worktree_was_clean_at_start": true
+  },
+  "reference_test_run": {
+    "command": "python -m pytest tests/test_l1_governance.py -q",
+    "result": "7 passed, 5 warnings",
+    "scope": "tests/test_l1_governance.py at initial candidate HEAD",
+    "evidence": "evidence/REFERENCE_TEST_AUDIT.md"
+  },
+  "acceptance": {
+    "A1_candidate_identity_and_hashes": "PASS_BASELINE_ONLY",
+    "A2_seven_test_to_claim_map": "PREPARED",
+    "A3_behavior_tests_against_production_code": "NOT_RUN",
+    "A4_unimplemented_claims_explicit": "PREPARED",
+    "A5_final_candidate_test_receipts": "NOT_RUN",
+    "A6_independent_review": "NOT_RUN",
+    "A7_honest_l1_closure": "NOT_RUN",
+    "A8_generated_readme_and_check": "NOT_RUN"
+  },
+  "verification_boundary": "Baseline pass proves execution of the reference tests only; no L1 claim is promoted by this record.",
+  "updated_on": "2026-10-10"
+}
