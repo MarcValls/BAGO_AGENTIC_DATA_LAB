@@ -1,0 +1,4 @@
+Demostración de lectura desde el chat
+Código de verificación: CHAT-READ-7319
+Color de referencia: azul cobalto
+Instrucción para la respuesta: indica el código y el color que aparecen en este archivo.

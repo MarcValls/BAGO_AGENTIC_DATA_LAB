@@ -1,0 +1,12 @@
+P1-02 live backend WebSocket check
+Timestamp local: 2026-10-10 22:42:23 +02:00
+Endpoint: ws://127.0.0.1:8081/ws/agents/run
+Origin: http://127.0.0.1:8081
+Handshake: accepted
+Server message: {"type":"error","code":"execution_unavailable","data":"Agent execution is unavailable: no governed execution capability is registered. No job was started or recorded."}
+Close frame: received
+Close status: PolicyViolation (1008)
+Job started: no; the handler's response states none was started or recorded.
+Current src/api/server.py SHA-256: a014d08c303f3343e3f008c0adf77dd5f45d27acab505577b99530e4b8bbb2c2
+Source excerpt inspected by Frontend Auditor: output/agent-audit/P1-02-server-websocket-source-excerpt-v2.txt
+No request payload or execution instruction was sent to the socket.
