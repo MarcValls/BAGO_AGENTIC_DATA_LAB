@@ -23,7 +23,7 @@ type ConversationSummary = { id: string; owner_kind: 'assistant' | 'agent'; owne
 type StoredConversation = ConversationSummary & { messages: Array<{ id: string; role: 'user' | 'assistant'; content: string; references?: { trace?: { trace_id?: string; trace_state?: string; jaeger_trace_id?: string; jaeger_url?: string }; sources?: WorkspaceSource[] } }> }
 type LibraryMode = 'active' | 'archived' | 'deleted'
 type ControlOperation = 'chat' | 'help' | 'list_agents' | 'draft_agent' | 'navigate' | 'list_capabilities' | 'propose_capability'
-type ExistingView = 'inspector' | 'builder' | 'chat' | 'runner' | 'control' | 'jobs' | 'traces' | 'summary' | 'retrieval' | 'authorization' | 'evaluation' | 'provider_settings' | 'capabilities'
+type ExistingView = 'inspector' | 'builder' | 'chat' | 'runner' | 'control' | 'jobs' | 'traces' | 'summary' | 'retrieval' | 'authorization' | 'evaluation' | 'evaluation_lab' | 'provider_settings' | 'capabilities'
 type CapabilityDraft = { capabilities: Capability[]; capabilityId: string; summary: string; requestedScope: string; conversationId: string | null }
 
 interface AgentChatProps {
@@ -59,6 +59,7 @@ function inferIntent(message: string): { operation: ControlOperation; view?: Exi
     return { operation: 'draft_agent' }
   }
   const destinations: Array<[RegExp, ExistingView]> = [
+    [/\b(agent evaluation lab|evaluation lab|laboratorio de evaluaci[oó]n de agentes|laboratorio de evaluaci[oó]n)\b/, 'evaluation_lab'],
     [/\b(inspector|decisiones)\b/, 'inspector'],
     [/\b(builder|creaci[oó]n de agentes)\b/, 'builder'],
     [/\b(chat)\b/, 'chat'],
@@ -339,6 +340,11 @@ export default function AgentChat({ onNavigate, onOpenProviderSettings }: AgentC
       if (localCapabilityIntent?.operation === 'navigate' && localCapabilityIntent.view === 'capabilities') {
         setMessages((previous) => [...previous, { id: idFor(), role: 'user', content }])
         onNavigate('capabilities')
+        return
+      }
+      if (localCapabilityIntent?.operation === 'navigate' && localCapabilityIntent.view === 'evaluation_lab') {
+        setMessages((previous) => [...previous, { id: idFor(), role: 'user', content }])
+        onNavigate('evaluation_lab')
         return
       }
       setMessages((previous) => [...previous, { id: idFor(), role: 'user', content }])

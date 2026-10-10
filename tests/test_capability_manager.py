@@ -111,7 +111,7 @@ def test_capability_api_lists_and_persists_proposals_without_execution(monkeypat
     catalog_response = client.get("/api/capabilities")
     assert catalog_response.status_code == 200
     assert {item["id"] for item in catalog_response.json()["capabilities"]} == {
-        "workspace.read_text", "mcp.execute", "sandbox.execute", "agent.run",
+        "workspace.read_text", "agent.evaluate", "mcp.execute", "sandbox.execute", "agent.run",
     }
 
     created = client.post("/api/capabilities/proposals", json={

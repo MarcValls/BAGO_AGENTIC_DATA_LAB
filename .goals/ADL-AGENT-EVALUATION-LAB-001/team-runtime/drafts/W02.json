@@ -1,0 +1,40 @@
+{
+  "changed_files": [
+    "evidence/W02_PRODUCT_UX_MAP.md"
+  ],
+  "outputs": [
+    {
+      "path": "evidence/W02_PRODUCT_UX_MAP.md",
+      "summary": "Read-only UX and portfolio map bound to the requested candidate HEAD, with existing entry points, a bounded repeatable-evaluation flow, measurable UX acceptance suggestions, and market-evidence limitations."
+    },
+    {
+      "path": "drafts/W02.json",
+      "summary": "Team-runtime handoff draft; changed_files intentionally lists only the scoped evidence report."
+    }
+  ],
+  "verification": [
+    {
+      "command": "git rev-parse HEAD",
+      "result": "PASS",
+      "details": "Observed 1e4d9f930da1225ce61ce27def897f76d57a08fc, matching the assigned candidate HEAD."
+    },
+    {
+      "command": "Read-only source inspection of frontend/src/App.tsx, AgentChat.tsx, Evaluation.tsx, TraceTimeline.tsx, JOB_SKILL_MATRIX.md, docs/portfolio_ui.md, docs/observability_evals.md",
+      "result": "PASS",
+      "details": "Mapped current navigation, chat/library and trace affordances, static artifact-backed governance evaluation, project-authored market priorities, and documented fixture boundary. No product edits, UI execution, tests, or live provider call were performed."
+    },
+    {
+      "command": "teamctl.py handoff W02 --file drafts/W02.json; teamctl.py verify",
+      "result": "PASS",
+      "details": "This coordination sequence is executed after drafting: handoff W02 first, then verify from the mission team-runtime directory."
+    }
+  ],
+  "residual_risks": [
+    "Market-demand labels in the inspected portfolio matrix have no attached external source or methodology; they are not independently validated by this assignment.",
+    "UX recommendations are source-based and have not been validated with browser interaction, keyboard-only use, or a screen reader.",
+    "No real Ollama evaluation or Jaeger correlation was attempted; report these as NOT_RUN/unavailable until a run supplies evidence."
+  ],
+  "next_consumers": [
+    "W03"
+  ]
+}

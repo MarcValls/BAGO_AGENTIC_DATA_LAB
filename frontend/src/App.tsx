@@ -11,6 +11,7 @@ import AgentRunner from './components/AgentRunner'
 import AgentChat from './components/AgentChat'
 import CapabilityManager from './components/CapabilityManager'
 import JobHistory from './components/JobHistory'
+import AgentEvaluationLab from './components/AgentEvaluationLab'
 import ProviderSettings from './components/ProviderSettings'
 import { DecisionInspector } from './features/decision-inspector'
 import './App.css'
@@ -23,8 +24,8 @@ interface Artifacts {
   evaluation: any
 }
 
-type AppView = 'chat' | 'capabilities' | 'provider_settings' | 'inspector' | 'builder' | 'runner' | 'control' | 'jobs' | 'summary' | 'retrieval' | 'authorization' | 'trace' | 'evaluation'
-type AssistantView = 'inspector' | 'builder' | 'chat' | 'runner' | 'control' | 'jobs' | 'traces' | 'summary' | 'retrieval' | 'authorization' | 'evaluation' | 'provider_settings' | 'capabilities'
+type AppView = 'chat' | 'capabilities' | 'provider_settings' | 'inspector' | 'builder' | 'runner' | 'control' | 'jobs' | 'summary' | 'retrieval' | 'authorization' | 'trace' | 'evaluation' | 'evaluation_lab'
+type AssistantView = 'inspector' | 'builder' | 'chat' | 'runner' | 'control' | 'jobs' | 'traces' | 'summary' | 'retrieval' | 'authorization' | 'evaluation' | 'evaluation_lab' | 'provider_settings' | 'capabilities'
 
 const navigation: Array<{ id: AppView; label: string; group: 'workspace' | 'portfolio' | 'settings' }> = [
   { id: 'chat', label: 'Chat', group: 'workspace' },
@@ -32,6 +33,7 @@ const navigation: Array<{ id: AppView; label: string; group: 'workspace' | 'port
   { id: 'inspector', label: 'Decision Inspector', group: 'workspace' },
   { id: 'builder', label: 'Agent Builder', group: 'workspace' },
   { id: 'runner', label: 'Agent Runner', group: 'workspace' },
+  { id: 'evaluation_lab', label: 'Agent Evaluation Lab', group: 'workspace' },
   { id: 'control', label: 'Control', group: 'portfolio' },
   { id: 'jobs', label: 'Job History', group: 'portfolio' },
   { id: 'summary', label: 'Summary', group: 'portfolio' },
@@ -99,6 +101,7 @@ function App() {
         {activeTab === 'provider_settings' && <ProviderSettings />}
         {activeTab === 'builder' && <AgentBuilder onAgentCreated={() => setDemoRefresh((previous) => previous + 1)} />}
         {activeTab === 'runner' && <AgentRunner />}
+        {activeTab === 'evaluation_lab' && <AgentEvaluationLab />}
         {activeTab === 'control' && <Control onDemoRun={handleDemoRun} />}
         {activeTab === 'jobs' && <JobHistory />}
         {needsArtifacts && (loadingArtifacts

@@ -7,10 +7,12 @@ agent builder API, and job history tracking.
 from __future__ import annotations
 
 import asyncio
+import importlib
 import json
 import os
 import re
 import subprocess
+import sys
 import time
 import uuid
 from datetime import datetime
@@ -46,6 +48,24 @@ from src.agent_tools.workspace_read import (
 from src.observability.local_trace import LocalTrace, TraceEvent, TraceKind
 from src.observability.otel_bridge import export_local_trace_to_otlp
 
+# `src.evaluation.local_evals` retains a legacy absolute `observability` import.
+# Add the source root before dynamically loading the evaluation package.
+_SRC_ROOT = str(Path(__file__).resolve().parents[1])
+if _SRC_ROOT not in sys.path:
+    sys.path.insert(0, _SRC_ROOT)
+_evaluation_module = importlib.import_module("src.evaluation.agent_lab")
+EvaluationStore = _evaluation_module.EvaluationStore
+EvaluationValidationError = _evaluation_module.EvaluationValidationError
+RunNotFound = _evaluation_module.RunNotFound
+SuiteConflict = _evaluation_module.SuiteConflict
+SuiteNotFound = _evaluation_module.SuiteNotFound
+config_fingerprint = _evaluation_module.config_fingerprint
+evaluate_answer = _evaluation_module.evaluate_answer
+overall_status = _evaluation_module.overall_status
+utc_now = _evaluation_module.utc_now
+redact_credentials = _evaluation_module.redact_credentials
+contains_credential = _evaluation_module.contains_credential
+
 DEMO_OUTPUT_DIR = Path(__file__).resolve().parent.parent.parent / "demo_output" / "latest"
 AGENTS_DIR = Path(__file__).resolve().parent.parent.parent / "agents" / "created"
 FRONTEND_BUILD = Path(__file__).resolve().parent.parent.parent / "frontend" / "dist"
@@ -53,6 +73,8 @@ REPO_ROOT = Path(__file__).resolve().parent.parent.parent
 AGENT_CHAT_TRACE_DIR = REPO_ROOT / ".bago" / "traces" / "agent-chat"
 CONVERSATIONS = ConversationStore()
 CAPABILITIES = CapabilityStore(REPO_ROOT)
+EVALUATIONS = EvaluationStore(REPO_ROOT)
+EVALUATION_TRACE_DIR = EVALUATIONS.database_path.parent / "traces"
 AGENT_TOOL_ALLOWLIST = frozenset({
     "bedrock.converse",
     "mcp.execute",
@@ -258,6 +280,23 @@ class CapabilityProposalCancelRequest(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     revision: int = Field(ge=0)
+
+
+class EvaluationSuiteCreateRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    name: str = Field(min_length=1, max_length=100)
+    agent_id: str = Field(min_length=1, max_length=64)
+    cases: list[dict[str, Any]] = Field(min_length=1, max_length=10)
+
+
+class EvaluationSuiteUpdateRequest(EvaluationSuiteCreateRequest):
+    expected_revision: int = Field(ge=0)
+
+
+class EvaluationRunRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    revision: int = Field(ge=0)
+    model_id: str = Field(min_length=1, max_length=128)
 
 
 class ConversationRenameRequest(ConversationRevisionRequest):
@@ -682,6 +721,175 @@ def _load_agent(agent_id: str) -> AgentResponse:
         raise HTTPException(status_code=404, detail="Agent not found.") from None
     except Exception:
         raise HTTPException(status_code=500, detail="Stored agent configuration is invalid.") from None
+
+
+def _evaluation_trace(*, run_id: str, suite: dict[str, Any], case: dict[str, Any], agent: AgentResponse,
+                      model_id: str, duration_ms: int, outcome: str, error_code: str | None = None) -> dict[str, str]:
+    """Persist a redacted per-attempt trace outside the workspace."""
+    trace_id = "trace-" + uuid.uuid4().hex[:16]
+    event = TraceEvent(
+        event_id="event-" + uuid.uuid4().hex[:16], trace_id=trace_id, sequence=0,
+        name="agent.evaluation.case", kind=TraceKind.WORKFLOW,
+        status={"PASS": "SUCCESS", "FAIL": "FAILURE", "ERROR": "ERROR"}.get(outcome, "ERROR"),
+        attributes={
+            "evaluation_run_id": run_id, "evaluation_suite_id": suite["id"],
+            "evaluation_suite_version": suite["version"], "evaluation_case_id": case["id"],
+            "agent_id": agent.id, "agent_config_fingerprint": config_fingerprint(agent.config.model_dump()),
+            "provider_id": "ollama-cloud", "model_id": model_id, "outcome": outcome,
+            "duration_ms": duration_ms, "cost_status": "not_reported",
+            **({"error_code": error_code} if error_code else {}),
+        }, evidence_refs=(f"agent://{agent.id}",),
+    )
+    trace = LocalTrace(trace_id=trace_id, run_id=run_id, events=(event,))
+    state, jaeger_trace_id, jaeger_url = "local_trace_failed", "", ""
+    try:
+        EVALUATION_TRACE_DIR.mkdir(parents=True, exist_ok=True)
+        path = EVALUATION_TRACE_DIR / f"{trace_id}.json"
+        payload = trace.to_dict()
+        # LocalTrace's historic cost default is a demo convention, not measured usage.
+        payload.pop("cost_usd", None)
+        temporary = path.with_suffix(".json.tmp")
+        temporary.write_text(json.dumps(payload, ensure_ascii=False, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+        os.replace(temporary, path)
+        state = "local_only"
+    except OSError:
+        pass
+    endpoint = os.environ.get("BAGO_OTEL_EXPORTER_OTLP_ENDPOINT", "").strip()
+    if endpoint and state == "local_only":
+        try:
+            receipt = export_local_trace_to_otlp(trace, endpoint=endpoint,
+                service_name=os.environ.get("OTEL_SERVICE_NAME", "bago-agentic-data-lab"), timeout=2.0)
+            state = "exported" if receipt.exported else "export_failed"
+            jaeger_trace_id = receipt.jaeger_trace_id or ""
+            base = os.environ.get("BAGO_JAEGER_UI_URL", "").strip().rstrip("/")
+            if receipt.exported and jaeger_trace_id and base:
+                jaeger_url = f"{base}/trace/{jaeger_trace_id}"
+        except Exception:
+            state = "export_failed"
+    metadata = {"trace_id": trace_id, "trace_state": state}
+    if jaeger_trace_id:
+        metadata["jaeger_trace_id"] = jaeger_trace_id
+    if jaeger_url:
+        metadata["jaeger_url"] = jaeger_url
+    return metadata
+
+
+@app.get("/api/evaluations/suites")
+def evaluation_list_suites() -> dict[str, Any]:
+    return {"suites": EVALUATIONS.list_suites()}
+
+
+@app.post("/api/evaluations/suites")
+def evaluation_create_suite(request: EvaluationSuiteCreateRequest) -> dict[str, Any]:
+    try:
+        _load_agent(request.agent_id)
+        return {"suite": EVALUATIONS.create_suite(request.name, request.agent_id, request.cases)}
+    except EvaluationValidationError as error:
+        raise HTTPException(status_code=422, detail={"code": "invalid_suite", "message": str(error)}) from None
+
+
+@app.put("/api/evaluations/suites/{suite_id}")
+def evaluation_update_suite(suite_id: str, request: EvaluationSuiteUpdateRequest) -> dict[str, Any]:
+    try:
+        _load_agent(request.agent_id)
+        return {"suite": EVALUATIONS.update_suite(suite_id, request.name, request.agent_id, request.cases, request.expected_revision)}
+    except SuiteNotFound:
+        raise HTTPException(status_code=404, detail={"code": "suite_not_found", "message": "Evaluation suite not found."}) from None
+    except SuiteConflict:
+        raise HTTPException(status_code=409, detail={"code": "suite_revision_conflict", "message": "Suite changed; reload it before updating."}) from None
+    except EvaluationValidationError as error:
+        raise HTTPException(status_code=422, detail={"code": "invalid_suite", "message": str(error)}) from None
+
+
+@app.get("/api/evaluations/runs")
+def evaluation_list_runs(limit: int = Query(default=50, ge=1, le=100)) -> dict[str, Any]:
+    return {"runs": EVALUATIONS.list_runs(limit)}
+
+
+@app.get("/api/evaluations/runs/{run_id}")
+def evaluation_get_run(run_id: str) -> dict[str, Any]:
+    try:
+        return {"run": EVALUATIONS.get_run(run_id)}
+    except RunNotFound:
+        raise HTTPException(status_code=404, detail={"code": "run_not_found", "message": "Evaluation run not found."}) from None
+
+
+@app.post("/api/evaluations/suites/{suite_id}/run")
+async def evaluation_run_suite(suite_id: str, request: EvaluationRunRequest) -> dict[str, Any]:
+    """Explicit real-provider run. All preflight checks finish before inference."""
+    try:
+        suite = EVALUATIONS.get_suite(suite_id)
+    except SuiteNotFound:
+        raise HTTPException(status_code=404, detail={"code": "suite_not_found", "message": "Evaluation suite not found."}) from None
+    if suite["revision"] != request.revision:
+        raise HTTPException(status_code=409, detail={"code": "suite_revision_conflict", "message": "Suite changed; reload it before running."})
+    agent = _load_agent(suite["agent_id"])
+    if contains_credential(agent.config.system_prompt):
+        raise HTTPException(status_code=422, detail={"code": "agent_prompt_contains_credentials", "message": "The agent prompt contains credential-like text; remove it before evaluating."})
+    try:
+        selected_model = ollama.validate_model_id(request.model_id)
+        status = ollama.status()
+        if status.get("provider_id") != "ollama-cloud" or status.get("state") not in {"ready", "configured_unverified"}:
+            raise ollama.ProviderError("provider_not_ready", "Configure and verify Ollama before running this suite.", status.get("state", "not_configured"))
+        discovery = ollama.discover_models()
+        model_ids = {item.get("model_id") for item in discovery.get("models", []) if isinstance(item, dict)}
+        if selected_model not in model_ids:
+            raise ollama.ProviderError("model_unavailable", "The selected model is not available from the configured Ollama provider.")
+    except ollama.ProviderError as error:
+        raise _provider_http_error(error) from None
+
+    # Freeze all identities and counts before the first model call.
+    run_id, started_at = "evalrun_" + uuid.uuid4().hex, utc_now()
+    if not EVALUATIONS.acquire_suite_run(suite_id, run_id):
+        raise HTTPException(status_code=409, detail={"code": "suite_run_in_progress", "message": "This suite already has a run in progress."})
+    start_ns = time.time_ns()
+    fingerprint = config_fingerprint(agent.config.model_dump())
+    case_results: list[dict[str, Any]] = []
+    for case in suite["cases"]:
+        call_start = time.time_ns()
+        answer_preview, checks, trace = "", [], {}
+        try:
+            answer = await asyncio.to_thread(ollama.chat, selected_model, [
+                {"role": "system", "content": agent.config.system_prompt},
+                {"role": "user", "content": case["prompt"]},
+            ])
+            duration = max(0, (time.time_ns() - call_start) // 1_000_000)
+            _, answer_status = evaluate_answer(answer, case, True)
+            trace = await asyncio.to_thread(_evaluation_trace, run_id=run_id, suite=suite, case=case,
+                agent=agent, model_id=selected_model, duration_ms=duration,
+                outcome="PASS" if answer_status == "PASS" else "FAIL")
+            checks, result_status = evaluate_answer(answer, case, trace.get("trace_state") in {"local_only", "exported", "export_failed"})
+            answer_preview = redact_credentials(answer[:4000])
+            case_results.append({"case_id": case["id"], "name": case["name"], "status": result_status,
+                "checks": checks, "answer_preview": answer_preview, "duration_ms": duration, "trace": trace})
+        except ollama.ProviderError as error:
+            duration = max(0, (time.time_ns() - call_start) // 1_000_000)
+            trace = await asyncio.to_thread(_evaluation_trace, run_id=run_id, suite=suite, case=case,
+                agent=agent, model_id=selected_model, duration_ms=duration, outcome="ERROR", error_code=error.code)
+            case_results.append({"case_id": case["id"], "name": case["name"], "status": "ERROR", "checks": [],
+                "answer_preview": "", "duration_ms": duration, "trace": trace, "error_code": error.code})
+        except Exception:
+            # Upstream exception text can contain response bodies or secrets.
+            duration = max(0, (time.time_ns() - call_start) // 1_000_000)
+            safe_code = "provider_error"
+            trace = await asyncio.to_thread(_evaluation_trace, run_id=run_id, suite=suite, case=case,
+                agent=agent, model_id=selected_model, duration_ms=duration, outcome="ERROR", error_code=safe_code)
+            case_results.append({"case_id": case["id"], "name": case["name"], "status": "ERROR", "checks": [],
+                "answer_preview": "", "duration_ms": duration, "trace": trace, "error_code": safe_code})
+    completed_at = utc_now()
+    statuses = [item["status"] for item in case_results]
+    run = {"id": run_id, "suite_id": suite["id"], "suite_version": suite["version"], "suite_name": suite["name"],
+        "agent_id": agent.id, "agent_name": agent.config.name, "agent_config_fingerprint": fingerprint,
+        "provider_id": "ollama-cloud", "model_id": selected_model, "status": overall_status(statuses),
+        "total_cases": len(statuses), "passed_cases": statuses.count("PASS"), "failed_cases": statuses.count("FAIL"),
+        "error_cases": statuses.count("ERROR"), "duration_ms": max(0, (time.time_ns() - start_ns) // 1_000_000),
+        "started_at": started_at, "completed_at": completed_at, "cases": case_results,
+        "usage": {"status": "not_reported"}}
+    try:
+        EVALUATIONS.save_run(run)
+    finally:
+        EVALUATIONS.release_suite_run(suite_id, run_id)
+    return {"run": run}
 
 
 def _write_agent(config: AgentConfig) -> AgentResponse:

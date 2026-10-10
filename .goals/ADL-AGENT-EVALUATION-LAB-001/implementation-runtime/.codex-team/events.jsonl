@@ -1,0 +1,11 @@
+{"at": "2026-10-09T22:18:31+00:00", "kind": "MISSION_INIT", "mission_id": "ADL_AGENT_EVALUATION_IMPLEMENTATION_001", "mission_sha256": "3a72d80c13a7168c21cc7346ffb7d9ef75dfca8bb85270c71b61f8388ac3c36e"}
+{"agent": "team-orchestrator-root", "at": "2026-10-09T22:18:32+00:00", "kind": "CLAIM", "role": "team-orchestrator", "work_id": "W01"}
+{"at": "2026-10-09T22:18:32+00:00", "kind": "HANDOFF_DONE", "payload_sha256": "33d0152d3141a615c62ec48e2d01394a6aba7d725a520b0fc4096b9672ccfdd8", "work_id": "W01"}
+{"agent": "trace-observability-engineer-01", "at": "2026-10-09T22:18:43+00:00", "kind": "CLAIM", "role": "trace-observability-engineer", "work_id": "W02"}
+{"agent": "decision-ui-engineer-01", "at": "2026-10-09T22:18:43+00:00", "kind": "CLAIM", "role": "decision-ui-engineer", "work_id": "W03"}
+{"at": "2026-10-09T22:25:16+00:00", "kind": "HANDOFF_DONE", "payload_sha256": "d8716dce8288385d874870aa6d9b18a12f88df026c3541f4b90bf58df55df46a", "work_id": "W03"}
+{"at": "2026-10-09T22:26:38+00:00", "kind": "HANDOFF_DONE", "payload_sha256": "4fc7392e7499c853915bc17dee4e0a13b226bb55bfbdefc85c25d06cb659526d", "work_id": "W02"}
+{"agent": "bago-verifier", "at": "2026-10-09T22:34:28+00:00", "kind": "CLAIM", "role": "verification-engineer", "work_id": "W04"}
+{"at": "2026-10-09T22:36:06+00:00", "kind": "HANDOFF_DONE", "payload_sha256": "5151fdc6c84969a51f7b295a174350d1c3d9cec908d928252bba42f281cfe7a0", "work_id": "W04"}
+{"agent": "team-orchestrator-root", "at": "2026-10-09T22:36:52+00:00", "kind": "CLAIM", "role": "team-orchestrator", "work_id": "W05"}
+{"at": "2026-10-09T22:37:02+00:00", "kind": "HANDOFF_DONE", "payload_sha256": "739f924a25eaa9d4f613fa0f25e817f3acad61ee71c1702b6657145dd7066032", "work_id": "W05"}

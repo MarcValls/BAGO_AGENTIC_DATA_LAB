@@ -249,3 +249,14 @@
 
 **Última actualización:** 2026-09-22
 **Próxima revisión:** 2026-09-28 (fin semana 1)
+
+## Portfolio Evidence Update — 2026-10-10 (isolated candidate)
+
+Target profile: **AI platform and agent engineering**. This candidate adds a repeatable Agent Evaluation Lab and trace-linked real-provider evaluation, addressing the project's prior gap between governance checks and answer-level regression checks. It remains an uncommitted worktree change, not an integrated release.
+
+- **Agent evaluation:** `EXECUTED` in `codex/adl-agent-evaluation-lab-20261010`; versioned suites, deterministic declared checks, preflighted Ollama inference, immutable run history, model/agent fingerprint and LocalTrace.
+- **Real provider evidence:** one synthetic single-turn run with `gemma4:31b` and the persisted ADL Read Evidence Agent returned the requested token; result `PASS`. See `.goals/ADL-AGENT-EVALUATION-LAB-001/evidence/live-ollama/receipt.json`. This is a pipeline smoke test, not evidence of general agent quality.
+- **Checks:** backend 27 passed; frontend API 5 passed; rendered initial-loading smoke 1 passed; TypeScript/Vite production build passed. Full UI state coverage remains incomplete; lint and Jaeger export are `NOT_RUN`.
+- **Market context:** LangChain's 2026 survey reports quality as a leading production barrier and offline evaluations in use among surveyed teams; Dynatrace's 2026 SRE report highlights model performance/accuracy monitoring and observability/governance. These reports inform the portfolio prioritization; they do not establish hiring outcomes.
+  - [LangChain State of Agent Engineering](https://www.langchain.com/state-of-agent-engineering?trk=article-ssr-frontend-pulse_little-text-block)
+  - [Dynatrace State of SRE Report 2026](https://www.dynatrace.com/resources/ebooks/sre-report/)

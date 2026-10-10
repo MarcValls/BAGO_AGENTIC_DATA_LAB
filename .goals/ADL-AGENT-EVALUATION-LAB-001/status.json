@@ -1,0 +1,22 @@
+{
+  "goal_id": "ADL-AGENT-EVALUATION-LAB-001",
+  "status": "EXECUTED",
+  "candidate_branch": "codex/adl-agent-evaluation-lab-20261010",
+  "base_commit": "1e4d9f930da1225ce61ce27def897f76d57a08fc",
+  "worktree": "C:\\Users\\AMTEC_Terminal_1º\\AppData\\Local\\Temp\\BAGO_ADL_agent_evaluation_lab_20261010",
+  "objective": "Build a local Agent Evaluation Lab with real-provider runs, deterministic grading, persistent results, and trace/model linkage.",
+  "implementation": "EXECUTED",
+  "verification": "PARTIAL",
+  "live_ollama": "VERIFIED",
+  "test_summary": {
+    "backend": "27 passed, 1 warning",
+    "frontend_api": "5 passed",
+    "frontend_render": "1 passed (SSR initial loading state)",
+    "production_build": "PASS",
+    "lint": "NOT_RUN (eslint is not installed)",
+    "jaeger": "NOT_RUN; LocalTrace only"
+  },
+  "base_head": "1e4d9f930da1225ce61ce27def897f76d57a08fc",
+  "candidate_source_sha256": "8c751f67b4454e3654fba0dfdb31a732775b215454d987bd58d392ba3b15a87c",
+  "candidate_worktree_state": "DIRTY_UNCOMMITTED"
+}

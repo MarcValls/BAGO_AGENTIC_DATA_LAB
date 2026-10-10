@@ -6,7 +6,8 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "preview": "vite preview",
-    "lint": "eslint src"
+    "lint": "eslint src",
+    "test:ui": "node --test tests/ui/agent-evaluation-lab/agent-evaluation-lab.test.mjs tests/ui/agent-evaluation-lab/rendered.test.mjs"
   },
   "dependencies": {
     "axios": "^1.6.0",
@@ -14,10 +15,12 @@
     "react-dom": "^18.2.0"
   },
   "devDependencies": {
+    "@testing-library/react": "^14.3.1",
     "@types/node": "^26.6.4",
     "@types/react": "^18.2.0",
     "@types/react-dom": "^18.2.0",
     "@vitejs/plugin-react": "^4.0.0",
+    "jsdom": "^22.1.0",
     "typescript": "^5.0.0",
     "vite": "^4.4.0"
   }
