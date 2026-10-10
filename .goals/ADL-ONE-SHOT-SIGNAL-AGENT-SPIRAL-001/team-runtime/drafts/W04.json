@@ -1,0 +1,30 @@
+{
+  "changed_files": [
+    "evidence/W04_LIFECYCLE_CONTRACT.md"
+  ],
+  "outputs": [
+    {
+      "path": "evidence/W04_LIFECYCLE_CONTRACT.md",
+      "summary": "Synthesized separate definition, activation/run and trigger-subscription lifecycles; captured current frontend/backend seams, fail-closed authority and evidence invariants; proposed next signal-source decision and bounded follow-up spirals."
+    }
+  ],
+  "verification": [
+    {
+      "command": "python .codex-team-kit/scripts/teamctl.py --root .goals/ADL-ONE-SHOT-SIGNAL-AGENT-SPIRAL-001/team-runtime verify",
+      "result": "PASS",
+      "reason": "W01-W03 handoffs and W04 terminal contract are checked against the isolated mission runtime."
+    },
+    {
+      "command": "Frontend/backend tests, lint, build, API runtime, Ollama, signal integration, LocalTrace/Jaeger",
+      "result": "NOT_RUN",
+      "reason": "This discovery spiral is source-bound design and does not authorize product execution or runtime integration."
+    }
+  ],
+  "residual_risks": [
+    "No signal ingress or authenticated human actor was found in the inspected candidate seams.",
+    "Agent Runner remains fail-closed; a saved profile or a LocalTrace cannot prove an executed effect.",
+    "One-shot/signal lifecycle, expiry, cancellation and durable idempotency remain proposed; product implementation has not started.",
+    "The candidate worktree was dirty before the spiral; only isolated goal/team-runtime evidence was written."
+  ],
+  "next_consumers": []
+}
