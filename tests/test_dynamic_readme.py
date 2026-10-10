@@ -62,7 +62,7 @@ def test_readme_inventory_and_market_tables_are_discovered():
     workflow = (ROOT / ".github" / "workflows" / "readme-consistency.yml").read_text(
         encoding="utf-8"
     )
-    assert workflow.index("run: python -m pip install -r requirements.txt") < workflow.index(
+    assert workflow.index("run: python -m pip install -r requirements-test.txt") < workflow.index(
         "run: python scripts/generate_dynamic_readme.py --check --skip-tests"
     )
     assert collected_test_count() >= 100
@@ -129,7 +129,7 @@ def test_rendered_readme_contains_dynamic_contract_and_l10_artifacts():
     assert "| L12 | VERIFIED (local) | BAGO / portfolio | Local Observability & Evals | 5 | 3 |" in rendered
     assert "| L13 | VERIFIED (local) | BAGO / portfolio | Public E2E Demo & CI | 5 | 2 |" in rendered
     assert "| L14 | VERIFIED (local) | BAGO / portfolio | Governed Local Vector Store | 4 | 2 |" in rendered
-    assert "| L15 | VERIFIED (local live) | BAGO / portfolio | OpenTelemetry + Jaeger Local Live | 3 | 2 |" in rendered
+    assert "| L15 | VERIFIED (local live) | BAGO / portfolio | OpenTelemetry + Jaeger Local Live | 4 | 2 |" in rendered
     assert "| Skill | Demanda | Nivel actual | Nivel objetivo | Primera evidencia | Entrevista |" in rendered
     assert "| RAG | Muy Alta | 🟡 Basic | 🎯 Advanced | L4 governed RAG | L4 completado |" in rendered
     assert "## Skills estratégicas" in rendered

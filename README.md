@@ -3,7 +3,7 @@
 [![CI](https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/actions/workflows/ci.yml/badge.svg)](https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/actions/workflows/ci.yml)
 [![GitHub](https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/actions/workflows/readme-consistency.yml/badge.svg)](https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/actions/workflows/readme-consistency.yml)
 [![Branch](https://img.shields.io/badge/branch-main-green)](https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/tree/main)
-[![Tests](https://img.shields.io/badge/tests-162%2F162%20passing-brightgreen)](https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/actions)
+[![Tests](https://img.shields.io/badge/tests-200%2F200%20passing-brightgreen)](https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/actions)
 [![License](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 
 > Laboratorio experimental para desarrollar capacidades de AI Engineering con gobernanza BAGO.
@@ -63,7 +63,7 @@ Profundiza en las fases L0-L15 en el [roadmap](#roadmap-detectado), o consulta [
 
 | Métrica | Valor |
 |---|---|
-| Tests ejecutados | **162/162** |
+| Tests ejecutados | **200/200** |
 | Rama pública | `main` |
 | Estado actualizado | 2026-10-07 |
 | Fase actual | **L15 · OpenTelemetry + Jaeger Local Live** · VERIFIED (local live) |
@@ -171,7 +171,7 @@ flowchart LR
 | L12 | VERIFIED (local) | BAGO / portfolio | Local Observability & Evals | 5 | 3 |
 | L13 | VERIFIED (local) | BAGO / portfolio | Public E2E Demo & CI | 5 | 2 |
 | L14 | VERIFIED (local) | BAGO / portfolio | Governed Local Vector Store | 4 | 2 |
-| L15 | VERIFIED (local live) | BAGO / portfolio | OpenTelemetry + Jaeger Local Live | 3 | 2 |
+| L15 | VERIFIED (local live) | BAGO / portfolio | OpenTelemetry + Jaeger Local Live | 4 | 2 |
 
 ## Arquitectura actual
 
@@ -286,12 +286,18 @@ La tabla se extrae de JOB_SKILL_MATRIX.md y se mantiene fuera del README.
 - `src/adapters/openmetadata_adapter.py`
 - `src/agent/__init__.py`
 - `src/agent/governed_knowledge_agent.py`
+- `src/agent_tools/workspace_read.py`
 - `src/api/__init__.py`
 - `src/api/server.py`
+- `src/capabilities/__init__.py`
+- `src/capabilities/manager.py`
 - `src/context/__init__.py`
 - `src/context/workspace_binding.py`
+- `src/conversations/__init__.py`
+- `src/conversations/library.py`
 - `src/etl/pipeline.py`
 - `src/evaluation/__init__.py`
+- `src/evaluation/agent_lab.py`
 - `src/evaluation/local_evals.py`
 - `src/execution/__init__.py`
 - `src/execution/gateway.py`
@@ -304,6 +310,8 @@ La tabla se extrae de JOB_SKILL_MATRIX.md y se mantiene fuera del README.
 - `src/observability/local_trace.py`
 - `src/observability/otel_bridge.py`
 - `src/orchestration/state_graph.py`
+- `src/providers/__init__.py`
+- `src/providers/ollama.py`
 - `src/retrieval/__init__.py`
 - `src/retrieval/governed_rag.py`
 - `src/retrieval/sqlite_vector_store.py`
@@ -318,13 +326,19 @@ La tabla se extrae de JOB_SKILL_MATRIX.md y se mantiene fuera del README.
 
 ### Tests
 
+- `tests/test_agent_chat_trace.py` (1 checks)
+- `tests/test_agent_draft_retry.py` (2 checks)
+- `tests/test_agent_evaluation_lab.py` (11 checks)
+- `tests/test_agent_execution_unavailable.py` (1 checks)
 - `tests/test_bago_sync_agent.py` (8 checks)
 - `tests/test_bedrock_integration.py` (10 checks)
 - `tests/test_bedrock_kb_adapter.py` (10 checks)
+- `tests/test_capability_manager.py` (8 checks)
+- `tests/test_conversation_library.py` (5 checks)
 - `tests/test_dynamic_readme.py` (4 checks)
 - `tests/test_l10_ontology_engine.py` (4 checks)
 - `tests/test_l12_observability.py` (5 checks)
-- `tests/test_l15_otel_bridge.py` (3 checks)
+- `tests/test_l15_otel_bridge.py` (4 checks)
 - `tests/test_l1_governance.py` (7 checks)
 - `tests/test_l2_etl_pipeline.py` (4 checks)
 - `tests/test_l3_evidence.py` (2 checks)
@@ -340,6 +354,7 @@ La tabla se extrae de JOB_SKILL_MATRIX.md y se mantiene fuera del README.
 - `tests/test_sandbox.py` (14 checks)
 - `tests/test_sqlite_vector_store.py` (4 checks)
 - `tests/test_workspace_binding.py` (6 checks)
+- `tests/test_workspace_read.py` (2 checks)
 
 ### Evidencia
 
@@ -372,7 +387,17 @@ La tabla se extrae de JOB_SKILL_MATRIX.md y se mantiene fuera del README.
 - `docs/FINAL_STATUS.md`
 - `docs/IMPLEMENTATION_COMPLETE.md`
 - `docs/README.md`
+- `docs/agent-chat-control/FINAL_STATUS.md`
+- `docs/agent-chat-control/LOCAL_SETUP.md`
+- `docs/agent-chat-control/audit/CODEX_CLI_PROMPT.md`
+- `docs/agent-chat-control/audit/CODEX_CLI_README.md`
+- `docs/agent-chat-control/audit/FRONTEND_AUDIT_HANDOFF.md`
+- `docs/agent-chat-control/contracts/CONTROL_PLANE_V1.md`
+- `docs/agent-chat-control/verification/AC04-review.md`
+- `docs/agent-chat-control/verification/agent-creation-assistance-followup.md`
+- `docs/agent-chat-control/verification/local-port-reuse-followup.md`
 - `docs/agent_builder_ui.md`
+- `docs/agent_evaluation_lab.md`
 - `docs/aws_bedrock_setup.md`
 - `docs/bago-sync-agent.md`
 - `docs/bedrock_knowledge_base.md`
