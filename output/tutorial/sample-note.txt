@@ -1,0 +1,8 @@
+Archivo de muestra para el videotutorial de Agentic Data Lab.
+
+Tema: lectura de documentos con permiso explicito de solo lectura.
+Objetivo: resumir este texto y enumerar sus dos ideas principales.
+
+Ideas:
+- El usuario elige que agente responde.
+- El permiso de lectura se activa para un mensaje concreto y la interfaz muestra el archivo y rango utilizado.

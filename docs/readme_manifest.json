@@ -21,6 +21,17 @@
     "executor": "scripts/bago_sync_agent.py",
     "documentation": "docs/bago-sync-agent.md"
   },
+  "first_user_tutorial": {
+    "video": "docs/agent-chat-control/assets/ADL_videotutorial_primer_usuario.mp4",
+    "subtitles": "docs/agent-chat-control/assets/ADL_videotutorial_primer_usuario.es.srt",
+    "guide": "docs/agent-chat-control/TUTORIAL_PRIMER_USO.md",
+    "trace": "docs/agent-chat-control/assets/trace-c7ec5fcc40284a42.json",
+    "input": "output/tutorial/sample-note.txt",
+    "provider": "Ollama Cloud",
+    "global_model": "gemma4:31b",
+    "agent_model": "kimi-k2.6",
+    "credential_redaction": "API key"
+  },
   "architecture": {
     "principle": "LangGraph propone → BAGO autoriza → ExecutionGateway → SandboxManager → Receipt → LocalTrace → Eval.",
     "pipeline": [

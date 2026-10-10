@@ -33,6 +33,19 @@ python demo.py
 El comando materializa summary, agent run, receipts, trace y evaluation en
 `demo_output/latest/` sin convertir esa proyección en fuente canónica.
 
+## Tutorial para usuarios nuevos
+
+Guía visual narrada en español para recorrer el chat, los agentes y los ajustes del proveedor.
+La pantalla completa de configuración se conserva; el campo de API key aparece censurado.
+La guía distingue el modelo global del asistente (`gemma4:31b`) del modelo fijado al agente lector (`kimi-k2.6`).
+La traza enlazada registra una lectura acotada y respuesta real de Ollama Cloud; no acredita una auditoría del código ni ejecución de trabajos.
+
+- Vídeo: [`MP4`](docs/agent-chat-control/assets/ADL_videotutorial_primer_usuario.mp4)
+- Subtítulos: [`SRT`](docs/agent-chat-control/assets/ADL_videotutorial_primer_usuario.es.srt)
+- Guía y límites: [`TUTORIAL_PRIMER_USO.md`](docs/agent-chat-control/TUTORIAL_PRIMER_USO.md)
+- LocalTrace: [`trace-c7ec5fcc40284a42.json`](docs/agent-chat-control/assets/trace-c7ec5fcc40284a42.json)
+- Archivo de ejemplo: [`sample-note.txt`](output/tutorial/sample-note.txt)
+
 ## Evidencia de ejecución
 
 La evidencia versionada de L15 registra el trace consultado en Jaeger: [resultado y trace ID](evidence/l15_otel_jaeger_live.md). El demo produce `trace.json`, recibos y evaluación determinista; Jaeger es una proyección local, no autoridad de ejecución.
@@ -414,6 +427,7 @@ La tabla se extrae de JOB_SKILL_MATRIX.md y se mantiene fuera del README.
 - `docs/README.md`
 - `docs/agent-chat-control/FINAL_STATUS.md`
 - `docs/agent-chat-control/LOCAL_SETUP.md`
+- `docs/agent-chat-control/TUTORIAL_PRIMER_USO.md`
 - `docs/agent-chat-control/audit/CODEX_CLI_PROMPT.md`
 - `docs/agent-chat-control/audit/CODEX_CLI_README.md`
 - `docs/agent-chat-control/audit/FRONTEND_AUDIT_HANDOFF.md`

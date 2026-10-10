@@ -110,6 +110,14 @@ def test_rendered_readme_contains_dynamic_contract_and_l10_artifacts():
     assert "python scripts/run_public_e2e_demo.py --check" in rendered
     assert "python demo.py" in rendered
     assert "[portfolio/README.md](portfolio/README.md)" in rendered
+    assert "## Tutorial para usuarios nuevos" in rendered
+    assert "campo de API key aparece censurado" in rendered
+    assert "gemma4:31b" in rendered
+    assert "kimi-k2.6" in rendered
+    assert "respuesta real de Ollama Cloud" in rendered
+    assert "docs/agent-chat-control/assets/ADL_videotutorial_primer_usuario.mp4" in rendered
+    assert "docs/agent-chat-control/assets/trace-c7ec5fcc40284a42.json" in rendered
+    assert "output/tutorial/sample-note.txt" in rendered
     assert "src/retrieval/sqlite_vector_store.py" in rendered
     assert "tests/test_sqlite_vector_store.py" in rendered
     assert "evidence/l14_vector_store.md" in rendered
