@@ -51,7 +51,7 @@
       "result": "PASS"
     },
     {
-      "command": "python .codex-team-kit/scripts/teamctl.py verify",
+      "command": "python .bago/team/kit/scripts/teamctl.py verify",
       "evidence": "Mission dependencies W03, W04 and W06 and existing handoffs validated before implementation; W08 claim recorded by teamctl.",
       "result": "PASS"
     }

@@ -146,10 +146,13 @@ def test_rendered_readme_contains_dynamic_contract_and_l10_artifacts():
     assert "| L14 | VERIFIED (local) | BAGO / portfolio | Governed Local Vector Store | 4 | 2 |" in rendered
     assert "| L15 | VERIFIED (local live) | BAGO / portfolio | OpenTelemetry + Jaeger Local Live | 4 | 2 |" in rendered
     assert "| Skill | Demanda | Nivel actual | Nivel objetivo | Primera evidencia | Entrevista |" in rendered
+    assert "La tabla se genera desde `.bago/canon/JOB_SKILL_MATRIX.md`; actualiza allí los datos." in rendered
+    assert "se mantiene fuera del README" not in rendered
     assert "| RAG | Muy Alta | 🟡 Basic | 🎯 Advanced | L4 governed RAG | L4 completado |" in rendered
     assert "## Skills estratégicas" in rendered
     assert "| Arquitectura de sistemas | ✅ Fuerte | ✅ Mantener | AGENTS.md, CANON_BAGO |" in rendered
-    assert "STATE.md" in rendered
+    assert ".bago/canon/STATE.md" in rendered
+    assert "[BAGO context](.bago/INDEX.md)" in rendered
     assert ".github/agents/bago-sync-agent.agent.md" in rendered
     assert "scripts/bago_sync_agent.py" in rendered
     assert "## Catálogo de agentes" in rendered

@@ -29,7 +29,7 @@
       "result": "PASS"
     },
     {
-      "command": "python .codex-team-kit/scripts/teamctl.py verify",
+      "command": "python .bago/team/kit/scripts/teamctl.py verify",
       "evidence": "W01-W10 handoffs validated before W11 handoff.",
       "result": "PASS"
     },

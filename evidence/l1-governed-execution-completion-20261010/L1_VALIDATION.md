@@ -35,9 +35,9 @@ these bounded claims.
 | Check | Result | Evidence |
 |---|---|---|
 | Full test suite | `210 passed` | `python scripts/generate_dynamic_readme.py` completed and reported 210 tests; this workflow runs `pytest tests -q` before rendering README |
-| Focused L1, integration and sandbox tests | `29 passed` | `.goals/L1-GOVERNED-EXECUTION-COMPLETION-001/evidence/FOCUSED_TESTS.txt` |
-| Generated README consistency | `PASS`, 210 tests | `.goals/L1-GOVERNED-EXECUTION-COMPLETION-001/evidence/README_CHECK.txt` |
-| Python compile check | `PASS` | `.goals/L1-GOVERNED-EXECUTION-COMPLETION-001/evidence/COMPILEALL.txt` |
+| Focused L1, integration and sandbox tests | `29 passed` | `.bago/goals/L1-GOVERNED-EXECUTION-COMPLETION-001/evidence/FOCUSED_TESTS.txt` |
+| Generated README consistency | `PASS`, 210 tests | `.bago/goals/L1-GOVERNED-EXECUTION-COMPLETION-001/evidence/README_CHECK.txt` |
+| Python compile check | `PASS` | `.bago/goals/L1-GOVERNED-EXECUTION-COMPLETION-001/evidence/COMPILEALL.txt` |
 | Independent review | `P0=0, P1=0` in declared scope | review of implementation commit `f19ab7f2`; details recorded in goal status |
 
 There is one known warning: Pydantic V1 compatibility support warns on Python

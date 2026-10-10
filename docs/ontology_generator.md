@@ -62,7 +62,7 @@ Use selected documents and an explicit output path:
 
 ```bash
 python scripts/generate_ontology_proposal.py \
-  LAB_CONTRACT.md ARCHITECTURE.md \
+  .bago/canon/LAB_CONTRACT.md .bago/canon/ARCHITECTURE.md \
   --output evidence/ontology_proposal.md
 ```
 

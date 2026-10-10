@@ -56,7 +56,7 @@
       "result": "PASS"
     },
     {
-      "command": "python .codex-team-kit/scripts/teamctl.py verify",
+      "command": "python .bago/team/kit/scripts/teamctl.py verify",
       "evidence": "PASS before W09 handoff materialization; dependencies W03, W05, W06 and their handoffs validate.",
       "result": "PASS"
     }

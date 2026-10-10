@@ -414,7 +414,7 @@ def _load_artifacts() -> dict[str, Any]:
 
 def _load_team_status() -> dict[str, Any]:
     """Read a sanitized snapshot of the local teamctl coordination state."""
-    team_dir = REPO_ROOT / ".codex-team"
+    team_dir = REPO_ROOT / ".bago/team/runtime"
     state_path = team_dir / "state.json"
     events_path = team_dir / "events.jsonl"
 

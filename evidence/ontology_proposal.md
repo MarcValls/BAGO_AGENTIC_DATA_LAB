@@ -14,9 +14,9 @@ contract-level approval and are not written into the proposal graph.
 
 ## Documents
 
-- `LAB_CONTRACT.md`
-- `ARCHITECTURE.md`
-- `ROADMAP.md`
+- `.bago/canon/LAB_CONTRACT.md`
+- `.bago/canon/ARCHITECTURE.md`
+- `.bago/canon/ROADMAP.md`
 
 ## Candidate entities
 

@@ -1,0 +1,18 @@
+{
+  "schema": "bago.goal_status.v1",
+  "goal": "context-unification",
+  "status": "VALIDATED",
+  "base_ref": "origin/main",
+  "base_head": "2af091bc8948398d4bc6b44d4cafa1693c86fcb6",
+  "final_base_head": "2af091bc8948398d4bc6b44d4cafa1693c86fcb6",
+  "verification": {
+    "full_suite": "PASS: 210 tests",
+    "readme_consistency": "PASS: 210 tests",
+    "historical_artifacts": "PASS: 163/163 moved evidence/runtime/snapshot/checksum artifacts match baseline byte-for-byte; 67 were restored after path rewrite was detected",
+    "teamctl_verify": "PASS",
+    "plugin_teamctl_verify": "PASS",
+    "migration_json": "PASS: 3 files parsed",
+    "diff_check": "PASS",
+    "base_freshness": "PASS: fetched origin/main equals candidate merge base"
+  }
+}

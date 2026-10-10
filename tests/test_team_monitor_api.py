@@ -6,7 +6,7 @@ from src.api import server
 
 
 def _write_team_snapshot(root, *, status="CLAIMED"):
-    team_dir = root / ".codex-team"
+    team_dir = root / ".bago/team/runtime"
     team_dir.mkdir(parents=True)
     state = {
         "updated_at": "2026-10-09T19:00:00+02:00",
@@ -62,7 +62,7 @@ def test_team_status_is_read_only_sanitized_and_reflects_file_updates(tmp_path, 
         assert payload["recent_events"][0]["kind"] == "CLAIM"
         assert "text" not in payload["recent_events"][0]
 
-        state_path = tmp_path / ".codex-team" / "state.json"
+        state_path = tmp_path / ".bago/team/runtime" / "state.json"
         state = json.loads(state_path.read_text(encoding="utf-8"))
         state["work_status"]["W01"]["status"] = "DONE"
         state_path.write_text(json.dumps(state), encoding="utf-8")
@@ -80,8 +80,8 @@ def test_team_status_reports_missing_or_invalid_state(tmp_path, monkeypatch):
         missing = client.get("/api/team/status")
         assert missing.status_code == 404
 
-        team_dir = tmp_path / ".codex-team"
-        team_dir.mkdir()
+        team_dir = tmp_path / ".bago/team/runtime"
+        team_dir.mkdir(parents=True)
         (team_dir / "state.json").write_text("{", encoding="utf-8")
         invalid = client.get("/api/team/status")
         assert invalid.status_code == 503

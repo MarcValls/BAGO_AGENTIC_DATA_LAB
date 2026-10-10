@@ -103,7 +103,7 @@ authorization or become execution authority.
 This demo proves the local governed chain represented by its artifacts and CI.
 It does not claim production deployment, live Bedrock Knowledge Base,
 `ConverseStream`, remote OpenMetadata or remote observability. Those surfaces
-retain the status declared by the lab's canonical `STATE.md` and evidence.
+retain the status declared by the lab's canonical `.bago/canon/STATE.md` and evidence.
 
 For the engineering history and phase-by-phase validation, see the repository
-root `README.md`, `ARCHITECTURE.md`, `STATE.md` and `evidence/`.
+root `README.md`, `.bago/canon/ARCHITECTURE.md`, `.bago/canon/STATE.md` and `evidence/`.

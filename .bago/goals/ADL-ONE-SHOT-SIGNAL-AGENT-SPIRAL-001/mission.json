@@ -1,0 +1,49 @@
+{
+  "mission_id": "ADL_ONE_SHOT_SIGNAL_AGENT_SPIRAL_001",
+  "title": "One-shot and Signal-waiting Agent Discovery Spiral",
+  "objective": "Run source-bound, read-only frontend and backend audits of the current ADL candidate for the proposed one-shot and signal-waiting agent lifecycles; synthesize a safe, market-relevant implementation contract while keeping execution fail-closed until source, authorization, idempotency, lifecycle and receipt decisions are concrete.",
+  "max_concurrency": 2,
+  "terminal_work_items": ["W04"],
+  "work_items": [
+    {
+      "id": "W01",
+      "title": "Bind the candidate and known lifecycle decision",
+      "role": "team-orchestrator",
+      "depends_on": [],
+      "write_scopes": ["evidence/W01_SCOPE.md", "drafts/W01.json"],
+      "read_scopes": ["candidate Git state", ".bago/goals/ADL-CONVERSATION-LIBRARY-001/**", ".bago/goals/ADL-CAPABILITY-MANAGER-001/**", ".bago/goals/ADL-AGENT-EVALUATION-LAB-001/**"],
+      "deliverables": ["Candidate-bound scope and invariants for the frontend/backend audit spiral"],
+      "done_when": ["Record exact branch and HEAD", "Record existing dirty state is preserved", "Carry forward one-shot/signal proposal and capability-manager fail-closed boundary", "Assign only read-only audit work to the first safe batch"]
+    },
+    {
+      "id": "W02",
+      "title": "Audit frontend lifecycle, chat and review surfaces",
+      "role": "frontend-auditor",
+      "depends_on": ["W01"],
+      "write_scopes": ["evidence/W02_FRONTEND.md", "drafts/W02.json"],
+      "read_scopes": ["frontend/src/**", "frontend/tests/**", "frontend/package.json", "docs/agent-chat-control/**", ".bago/goals/ADL-CAPABILITY-MANAGER-001/**", ".bago/goals/ADL-CONVERSATION-LIBRARY-001/**"],
+      "deliverables": ["Frontend state map for creating one-shot and signal-waiting agent definitions"],
+      "done_when": ["Trace current agent create/review/save and chat navigation", "Map suitable lifecycle status, trigger configuration, waiting/paused/error/cancelled/completed states", "Identify UI/test seams and avoid claiming an implemented trigger", "Cite current source paths and line ranges; make no product edits"]
+    },
+    {
+      "id": "W03",
+      "title": "Audit backend lifecycle, trigger, execution and evidence seams",
+      "role": "backend-auditor",
+      "depends_on": ["W01"],
+      "write_scopes": ["evidence/W03_BACKEND.md", "drafts/W03.json"],
+      "read_scopes": ["src/api/**", "src/capabilities/**", "src/execution/**", "src/orchestration/**", "src/sandbox/**", "src/jobs/**", "src/conversations/**", "src/observability/**", "tests/**", ".bago/goals/ADL-CAPABILITY-MANAGER-001/**", ".bago/goals/ADL-CONVERSATION-LIBRARY-001/**"],
+      "deliverables": ["Backend state and authority map for bounded one-shot execution and explicit-signal activation"],
+      "done_when": ["Trace actual create, persistence, trigger ingestion, authorization/permit, execution gateway, cancellation and receipt seams", "Separate implemented, disconnected, fixture and proposed paths", "Identify idempotency/retry/lifetime and actor identity requirements", "Cite current source paths and line ranges; make no product edits"]
+    },
+    {
+      "id": "W04",
+      "title": "Synthesize a project-adapted lifecycle contract and next implementation step",
+      "role": "team-orchestrator",
+      "depends_on": ["W02", "W03"],
+      "write_scopes": ["evidence/W04_LIFECYCLE_CONTRACT.md", "drafts/W04.json"],
+      "read_scopes": ["evidence/W01_SCOPE.md", "evidence/W02_FRONTEND.md", "evidence/W03_BACKEND.md"],
+      "deliverables": ["Reviewable lifecycle contract, explicit open decisions and bounded next implementation packet"],
+      "done_when": ["Define one-shot and signal-waiting states without conflating them with execution authority", "Recommend a minimal signal source only if existing project seams support it", "Specify owner/actor, expiry, idempotency, retry, cancellation, audit and trace requirements", "Give a source-bound next frontend/backend batch with acceptance and validation", "Keep unresolved consequential choices PROPOSED and preserve fail-closed Run"]
+    }
+  ]
+}

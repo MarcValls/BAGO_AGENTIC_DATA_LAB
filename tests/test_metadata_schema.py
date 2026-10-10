@@ -57,7 +57,7 @@ def test_schema_chunk_serializes_without_losing_metadata():
 def test_schema_source_and_revision_support_provenance():
     source = Source(
         source_id="source_schema",
-        uri="LAB_CONTRACT.md",
+        uri=".bago/canon/LAB_CONTRACT.md",
         source_type="FILE",
     )
     revision = Revision(
