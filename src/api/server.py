@@ -15,6 +15,7 @@ import subprocess
 import sys
 import time
 import uuid
+from collections import deque
 from datetime import datetime
 from pathlib import Path
 from typing import Any, Literal
@@ -411,6 +412,130 @@ def _load_artifacts() -> dict[str, Any]:
     }
 
 
+def _load_team_status() -> dict[str, Any]:
+    """Read a sanitized snapshot of the local teamctl coordination state."""
+    team_dir = REPO_ROOT / ".codex-team"
+    state_path = team_dir / "state.json"
+    events_path = team_dir / "events.jsonl"
+
+    if not state_path.is_file():
+        raise HTTPException(status_code=404, detail="Team coordination state not found.")
+
+    try:
+        state = json.loads(state_path.read_text(encoding="utf-8"))
+    except json.JSONDecodeError as exc:
+        raise HTTPException(
+            status_code=503,
+            detail=f"Team coordination state is invalid JSON: {exc}",
+        ) from exc
+    except (OSError, UnicodeDecodeError) as exc:
+        raise HTTPException(
+            status_code=503,
+            detail=f"Team coordination state could not be read: {exc}",
+        ) from exc
+
+    if not isinstance(state, dict):
+        raise HTTPException(status_code=503, detail="Team coordination state must be a JSON object.")
+
+    mission = state.get("mission")
+    work_items = mission.get("work_items") if isinstance(mission, dict) else None
+    work_status = state.get("work_status")
+    if not isinstance(mission, dict) or not isinstance(work_items, list) or not isinstance(work_status, dict):
+        raise HTTPException(status_code=503, detail="Team coordination state has an unsupported shape.")
+
+    tasks = []
+    counts: dict[str, int] = {}
+    for item in work_items:
+        if not isinstance(item, dict) or not isinstance(item.get("id"), str):
+            raise HTTPException(status_code=503, detail="Team coordination state contains an invalid work item.")
+        work_id = item["id"]
+        title = item.get("title", work_id)
+        role = item.get("role", "unknown")
+        depends_on = item.get("depends_on", [])
+        if (
+            not isinstance(title, str)
+            or not isinstance(role, str)
+            or not isinstance(depends_on, list)
+            or not all(isinstance(dependency, str) for dependency in depends_on)
+        ):
+            raise HTTPException(
+                status_code=503,
+                detail=f"Team coordination state contains invalid metadata for {work_id}.",
+            )
+        runtime = work_status.get(work_id)
+        if not isinstance(runtime, dict) or not isinstance(runtime.get("status"), str):
+            raise HTTPException(
+                status_code=503,
+                detail=f"Team coordination state is missing runtime status for {work_id}.",
+            )
+        status = runtime["status"]
+        counts[status] = counts.get(status, 0) + 1
+        tasks.append({
+            "id": work_id,
+            "title": title,
+            "role": role,
+            "depends_on": depends_on,
+            "status": status,
+            "agent": runtime.get("agent") if isinstance(runtime.get("agent"), str) else None,
+            "claimed_at": runtime.get("claimed_at") if isinstance(runtime.get("claimed_at"), str) else None,
+            "done_at": runtime.get("done_at") if isinstance(runtime.get("done_at"), str) else None,
+        })
+
+    recent_events: deque[dict[str, Any]] = deque(maxlen=50)
+    if events_path.is_file():
+        try:
+            with events_path.open(encoding="utf-8") as event_file:
+                for line_number, line in enumerate(event_file, start=1):
+                    try:
+                        event = json.loads(line)
+                    except json.JSONDecodeError as exc:
+                        raise HTTPException(
+                            status_code=503,
+                            detail=f"Team event log has invalid JSON on line {line_number}: {exc}",
+                        ) from exc
+                    if not isinstance(event, dict):
+                        raise HTTPException(
+                            status_code=503,
+                            detail=f"Team event log contains a non-object on line {line_number}.",
+                        )
+                    recent_events.append({
+                        key: event[key]
+                        for key in ("at", "kind", "work_id", "agent", "role", "from_agent", "note_kind")
+                        if isinstance(event.get(key), str)
+                    })
+        except HTTPException:
+            raise
+        except (OSError, UnicodeDecodeError) as exc:
+            raise HTTPException(
+                status_code=503,
+                detail=f"Team event log could not be read: {exc}",
+            ) from exc
+
+    active_agents = sorted({
+        task["agent"]
+        for task in tasks
+        if task["status"] == "CLAIMED" and isinstance(task["agent"], str)
+    })
+    return {
+        "source": "teamctl coordination files",
+        "mission": {
+            "id": mission.get("mission_id") if isinstance(mission.get("mission_id"), str) else "unknown",
+            "title": mission.get("title") if isinstance(mission.get("title"), str) else "Untitled mission",
+            "objective": mission.get("objective") if isinstance(mission.get("objective"), str) else "",
+            "terminal_gate": state.get("terminal_gate") if isinstance(state.get("terminal_gate"), str) else "UNKNOWN",
+            "max_concurrency": mission.get("max_concurrency")
+            if isinstance(mission.get("max_concurrency"), int)
+            else None,
+        },
+        "snapshot_updated_at": state.get("updated_at") if isinstance(state.get("updated_at"), str) else None,
+        "observed_at": datetime.now().astimezone().isoformat(),
+        "counts": counts,
+        "active_agents": active_agents,
+        "tasks": tasks,
+        "recent_events": list(recent_events),
+    }
+
+
 # ===== API: Artifact Viewing =====
 
 @app.get("/api/artifacts")
@@ -519,6 +644,12 @@ def demo_status() -> dict[str, Any]:
         "has_artifacts": has_all,
         "artifact_count": sum(1 for a in artifacts if a.exists()),
     }
+
+
+@app.get("/api/team/status")
+def team_status() -> dict[str, Any]:
+    """Return a read-only snapshot for the local team monitor page."""
+    return _load_team_status()
 
 
 # ===== API: Demo Execution =====

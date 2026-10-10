@@ -57,6 +57,16 @@ docker compose -p bago-otel -f infra/observability/docker-compose.yml down
 
 Guía detallada: [L15 OpenTelemetry + Jaeger](docs/otel_jaeger.md).
 
+## Monitor local del equipo Codex
+
+Para observar en vivo las tareas y eventos que registra la coordinación local, instala las dependencias backend con `python -m pip install -r requirements.txt fastapi uvicorn`, y ejecuta la API y el frontend en dos terminales:
+
+```bash
+python -m src.api.server
+```
+
+En otra terminal, entra en `frontend`, ejecuta `npm install` y después `npm run dev`. Abre [http://localhost:5173/team-monitor.html](http://localhost:5173/team-monitor.html). La página consulta `/api/team/status` cada cuatro segundos; el estado mostrado procede de `.codex-team/state.json` y `.codex-team/events.jsonl`. Solo refleja eventos registrados por teamctl, no toda la actividad interna de la extensión Codex.
+
 Profundiza en las fases L0-L15 en el [roadmap](#roadmap-detectado), o consulta [STATE.md](STATE.md) para el alcance canónico y [portfolio/README.md](portfolio/README.md) para la presentación del producto.
 
 ## Estado actual
@@ -353,6 +363,7 @@ La tabla se extrae de JOB_SKILL_MATRIX.md y se mantiene fuera del README.
 - `tests/test_retrieval_benchmark.py` (3 checks)
 - `tests/test_sandbox.py` (14 checks)
 - `tests/test_sqlite_vector_store.py` (4 checks)
+- `tests/test_team_monitor_api.py` (2 checks)
 - `tests/test_workspace_binding.py` (6 checks)
 - `tests/test_workspace_read.py` (2 checks)
 
