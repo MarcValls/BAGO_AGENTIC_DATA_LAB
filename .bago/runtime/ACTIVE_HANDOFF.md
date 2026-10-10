@@ -12,4 +12,4 @@ Integrity check: all 163 moved historical evidence, snapshot, runtime, handoff a
 
 The README's skills table explanation now states that the table is rendered from `.bago/canon/JOB_SKILL_MATRIX.md`; a regression assertion rejects the previous contradictory phrase. The branch freshness rule is documented in root `AGENTS.md`, `.bago/INDEX.md`, and the migration map.
 
-Remaining release action: commit/push the validated candidate and set its branch description; do not merge automatically.
+Published on remote branch `codex/bago-context-unification-20261011`; draft PR [#47](https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/pull/47) carries the branch description and verification record. Merge remains pending review.

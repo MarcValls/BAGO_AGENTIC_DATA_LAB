@@ -5,6 +5,11 @@
   "base_ref": "origin/main",
   "base_head": "2af091bc8948398d4bc6b44d4cafa1693c86fcb6",
   "final_base_head": "2af091bc8948398d4bc6b44d4cafa1693c86fcb6",
+  "publication": {
+    "branch": "codex/bago-context-unification-20261011",
+    "status": "DRAFT_PR",
+    "pull_request": 47
+  },
   "verification": {
     "full_suite": "PASS: 210 tests",
     "readme_consistency": "PASS: 210 tests",
