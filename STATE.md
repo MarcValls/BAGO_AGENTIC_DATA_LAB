@@ -17,7 +17,7 @@ for the Bedrock call remains `NOT_PROVEN`;
 GitHub issue #14 is separately executed and verified under human authorization,
 and the local human-reviewed checkpoint is recorded in
 `evidence/bago_canon_compliance_review.md`.
-**Tests:** 202/202 passing; suite completa ejecutada en GitHub Actions con
+**Tests:** 210/210 passing for local L1 candidate `f19ab7f2e1cebf5118989735227911a712c8cc05` (Python 3.14; known Pydantic V1 warning). Historical suite completa ejecutada en GitHub Actions con
 Python 3.11 el 2026-10-10 para el commit `4bfd5d220a31e92d5a79ab02219a072959790467`
 (run `38063094115`). L10 aporta 4 checks offline,
 L8 aporta 13 checks de adapter más la validación live local, L9 aporta 7 checks
@@ -132,7 +132,7 @@ approval.
 **Known non-blocking warnings:** Pydantic V1 on Python 3.14 and deprecated
 datetime.utcnow() in legacy tests outside the revised L1 suite.
 
-## L1 re-audit — 2026-10-10
+## L1 re-audit at 48f67fdf - 2026-10-10 (superseded)
 
 The historical L1 `VALIDATED` label is superseded for current reporting by
 `PARTIAL (local evidence)`. The seven original reference tests previously
@@ -145,7 +145,31 @@ longer fabricates success receipts. See
 `evidence/l1_governed_execution_20261010.md` for candidate identity, test
 receipts, scope and remaining integration evidence.
 
-The L1 record below is preserved as historical project context.
+The following integrated validation supersedes this PARTIAL status for its
+explicit local scope. The original L1 record below remains historical context.
+
+## L1 integrated validation - f19ab7f2 - 2026-10-10
+
+L1 status: VALIDATED for deterministic local governed graph execution.
+
+The integrated StateGraph connects GovernedRAG, exact-fingerprint LangGraph
+interrupt/resume, ExecutionGateway, SandboxManager, observed receipts and
+LocalTrace. The demo ran from code commit
+f19ab7f2e1cebf5118989735227911a712c8cc05 and materialized allowed write,
+approval mismatch denial, permit replay denial, workspace escape denial and a
+real typed pytest timeout. Graph action cases have sandbox receipts and graph
+results include LocalTrace. The focused set passed 29 tests; README generation
+executed the complete suite and reported 210 tests, and the generated README
+check reported 210 tests. compileall passed. Independent review of the code
+commit found no P0/P1 in A1-A7 and verified strict boolean approval handling.
+
+This phase claim is limited to a local temporary workspace and logical
+LocalRestrictedBackend controls. It does not establish authenticated human
+identity, durable checkpoints or replay protection across manager restarts,
+OS/network isolation, remote MCP/Bedrock execution, Jaeger projection, or a
+screen-recorded video. The test-runner capability is opt-in and limited to a
+typed pytest operation. Machine-readable receipts and transcript are under
+evidence/l1-governed-execution-completion-20261010/.
 
 ---
 

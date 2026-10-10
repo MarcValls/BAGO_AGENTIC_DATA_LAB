@@ -14,7 +14,7 @@
 
 | Requisito | Estado | Evidence | Gap |
 |-----------|--------|----------|-----|
-| Agentes y orchestration | 🟡 En aprendizaje | — | L1 LangGraph |
+| Agentes y orchestration | L1 local validated | StateGraph + GovernedRAG + Gateway/Sandbox + LocalTrace | production identity and durable runtime remain separate |
 | Tool calling / APIs | ✅ Conocido | BAGO backend | — |
 | MCP | ✅ Baseline gobernado | mcp_adapter.py + local stdio demo + video | Tool-use cloud end-to-end |
 | Bedrock provider | 🟢 Converse live + Free Plan observado | adapter + 10 tests + benchmark + `evidence/l6_aws_live.md` + `evidence/l6_aws_free_tier.md` | Stream, IAM least-privilege y cargo cero posterior |
@@ -42,7 +42,7 @@
 | Agentes y pipelines | 🟡 En diseño | — | L1-L2 |
 | Python | ✅ Fuerte | BAGO backend | — |
 | Evaluación de modelos | 🟡 Parcial | — | Reforzar tests |
-| Orchestration frameworks | ❌ No empezado | — | L1 LangGraph |
+| Orchestration frameworks | LangGraph implemented locally | L1 interrupt/resume, exact approval, receipts and tests | cloud/runtime depth remains separate |
 | Vector DB | 🟢 Local persistente | SQLiteVectorStore + GovernedRAG | L14 |
 | MCP | ✅ Baseline gobernado | mcp_adapter.py + local stdio demo + video | Cloud/provider depth |
 | Testing/CI-CD | 🟡 Parcial | BAGO tests | Reforzar |
@@ -68,7 +68,7 @@
 | Bedrock Knowledge Bases | ✅ Baseline offline gobernado | Retrieve/Generate + citations + ETL comparison | Live KB ingestion and relevance |
 | Metadata Catalog / OpenMetadata | ✅ Adapter + local live verificado | Search, lineage, ownership, schema version, quality + receipts contra Docker local | OpenMetadata remoto |
 | RAG | 🟡 Parcial | — | L4 |
-| LangGraph/LangChain | ❌ No empezado | — | L1 |
+| LangGraph/LangChain | LangGraph local baseline validated | StateGraph + interrupt/resume + governed execution evidence | managed checkpoint and cloud model integration remain separate |
 | Agentes | 🟡 Diseñado | BAGO agents | L1 |
 | Proveedores externos | ✅ Experiencia | BAGO adapters | L6 |
 | Vertex AI / Gemini | ❌ No empezado | — | Auto-study GCP |
@@ -143,8 +143,8 @@
 |-------|---------------|---------------|--------------|----------------|-----------------|
 | Python | Alta | ✅ Senior | ✅ Senior | BAGO backend | ✅ Sí |
 | REST APIs | Alta | ✅ Senior | ✅ Senior | BAGO FastAPI | ✅ Sí |
-| LangGraph | Muy Alta | ❌ None | 🎯 Proficient | L1 StateGraph: denegación material; ExecutionGateway aún no integrado | L1 evidencia parcial |
-| LangChain concepts | Alta | ❌ None | 🟡 Basic | — | L1 StateGraph, evidencia parcial |
+| LangGraph | Very High | Implemented locally | Proficient | Integrated StateGraph + exact approval + governed RAG/gateway/sandbox/receipt/LocalTrace | L1 VALIDATED in local scope; identity, durability and OS isolation are not claimed |
+| LangChain concepts | High | Practical baseline | Basic | StateGraph, interrupt/resume, in-memory checkpoint | L1 VALIDATED local |
 | Multi-agent systems | Muy Alta | 🟢 Reinforced | 🎯 Proficient | GovernedKnowledgeAgent + L9 evidence | L9 offline |
 | Tool use | Muy Alta | ✅ Implementado | 🎯 Proficient | BAGO tools + MCP receipts | L5 baseline |
 | MCP | Muy Alta | ✅ Baseline gobernado | 🎯 Proficient | L5 MCP adapter + video | L5 baseline |

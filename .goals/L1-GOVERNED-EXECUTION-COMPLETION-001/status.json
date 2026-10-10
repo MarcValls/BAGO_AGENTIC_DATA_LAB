@@ -1,0 +1,29 @@
+{
+  "goal_id": "L1-GOVERNED-EXECUTION-COMPLETION-001",
+  "title": "Completar L1: LangGraph Governed Execution",
+  "status": "VALIDATED",
+  "phase": "FINAL_GATES_AND_CANON_CLOSED",
+  "branch": "codex/l1-governed-execution-completion-20261010",
+  "base_head": "48f67fdf00a97548f1f40b18f5c2dd23229a54c2",
+  "previous_goal": {
+    "id": "L1-GOVERNED-EXECUTION-EVIDENCE-001",
+    "status": "VALIDATED",
+    "result": "L1 remains PARTIAL"
+  },
+  "acceptance": {
+    "A1_graph_connected_to_governed_rag_and_gateway": "EXECUTED",
+    "A2_explicit_request_bound_interrupt_resume_confirmation": "EXECUTED",
+    "A3_bounded_workspace_write_and_observed_receipt": "EXECUTED",
+    "A4_replay_and_failure_control": "EXECUTED",
+    "A5_governed_retrieval": "VERIFIED",
+    "A6_reference_case_mapping": "VERIFIED",
+    "A7_demo_docs_learning_and_evidence": "EXECUTED",
+    "A8_tests_readme_independent_review": "VALIDATED",
+    "A9_canonical_l1_status_only_after_gates": "VALIDATED"
+  },
+  "scope_decision": "Intentional extension of L1 to compose existing L4 GovernedRAG and L11 SandboxManager for end-to-end evidence; their contracts/statuses remain unchanged. Approval demonstration is request/workspace-bound LangGraph pause/resume and does not establish authenticated production identity. A reproducible demo transcript and receipts satisfy the historical video/demo deliverable; no video claim unless recorded.",
+  "implementation_head": "f19ab7f2e1cebf5118989735227911a712c8cc05",
+  "demo_source_head": "f19ab7f2e1cebf5118989735227911a712c8cc05",
+  "verification_boundary": "L1 VALIDATED for the explicitly bounded local scope after 210 complete tests, 29 focused tests, README generation/check, compileall, five-case demo receipts and independent review with no P0/P1; production identity, durable replay protection, OS/network isolation, remote providers, Jaeger and video remain unclaimed.",
+  "updated_on": "2026-10-10"
+}

@@ -97,35 +97,37 @@ ExecutionRequest → AuthorizationBoundary → Permit → ExecutionGateway
 
 ### Entregables
 
-- [ ] src/orchestration/state_graph.py (implementación completa)
-- [ ] 	ests/test_langgraph_governance.py (todos los tests de gobernanza)
-- [ ] docs/langgraph_architecture.md (diagramas + decisiones)
-- [ ] Evidence: video/demo del grafo ejecutando end-to-end
+- [x] Integrated implementation: src/orchestration/governed_execution.py and reference nodes in state_graph.py
+- [x] tests/test_l1_governance.py and tests/test_l1_integrated_graph.py
+- [x] docs/langgraph_architecture.md (diagramas + decisiones)
+- [x] Evidence: reproducible demo, transcript, receipts and LocalTrace; no video recording claim
 
 ### Tests Críticos (CRIT)
 
-- [ ] LangGraph intenta ejecutar herramienta directamente → DENY
-- [ ] Permit reutilizado → DENY
-- [ ] Timeout en node → CONTROLLED_FAILURE + RECEIPT
+- [x] Material graph action pauses before effect; missing or altered approval is denied
+- [x] Permit reuse is denied within the SandboxManager lifetime
+- [x] Real execution-node timeout returns controlled failure and receipt
 
 ### Criterios de Validación
 
-- [ ] P0 = 0, P1 = 0
-- [ ] Todos los tests pasando
-- [ ] Demo grabada funcionando
-- [ ] LEARNING_LEDGER.md actualizado con conceptos de LangGraph
+- [x] P0 = 0, P1 = 0 in independent review for the bounded claims
+- [x] Complete local test suite and README checks pass
+- [x] Reproducible demo executed with transcript and receipts bound to code commit
+- [x] LEARNING_LEDGER.md actualizado con conceptos de LangGraph
 
 ### Revalidación L1 — 2026-10-10
 
-La auditoría vigente rebajó el claim histórico a `PARTIAL` porque el grafo no
+La auditoría del commit `48f67fdf` rebajó el claim histórico a `PARTIAL` porque el grafo no
 integraba `GovernedRAG`, `ExecutionGateway` ni `SandboxManager`. El goal
 `L1-GOVERNED-EXECUTION-COMPLETION-001` añade una fábrica de grafo integrada y
 evidencia local de interrupt/resume, aprobación ligada a fingerprint, recibos
 y `LocalTrace`. La ampliación compone L4/L11 sin cambiar sus contratos ni
 estados. La demo reproducible con transcripción y recibos cubre el entregable
-video/demo sin afirmar que se haya grabado un vídeo. El estado permanece
-`PARTIAL` hasta pasar todos los tests, comprobar README y obtener revisión
-independiente sobre el candidato final. Ver
+video/demo sin afirmar que se haya grabado un vídeo. El candidato de código
+`f19ab7f2e1cebf5118989735227911a712c8cc05` superó suite completa, generación y
+check del README, `compileall` y revisión independiente sin P0/P1 para el
+alcance delimitado. La fase L1 queda `VALIDATED` bajo esos criterios y límites.
+Ver
 `docs/langgraph_architecture.md` y la evidencia en
 `evidence/l1-governed-execution-completion-20261010/`.
 

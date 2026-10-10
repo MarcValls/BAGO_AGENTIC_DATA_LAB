@@ -59,13 +59,13 @@
       "id": "L1",
       "name": "LangGraph Governed Execution",
       "target": "—",
-      "status": "PARTIAL (local evidence)",
+      "status": "VALIDATED (local governed graph evidence)",
       "checks": [
-        {"kind": "code", "patterns": ["src/orchestration/state_graph.py"]},
-        {"kind": "tests", "patterns": ["tests/test_l1_governance.py"]},
-        {"kind": "evidence", "patterns": ["evidence/l1_governed_execution_20261010.md"]}
+        {"kind": "code", "patterns": ["src/orchestration/state_graph.py", "src/orchestration/governed_execution.py"]},
+        {"kind": "tests", "patterns": ["tests/test_l1_governance.py", "tests/test_l1_integrated_graph.py"]},
+        {"kind": "evidence", "patterns": ["evidence/l1_governed_execution_20261010.md", "evidence/l1-governed-execution-completion-20261010/L1_VALIDATION.md", "evidence/l1-governed-execution-completion-20261010/L1_DEMO_RECEIPTS.json", "evidence/l1-governed-execution-completion-20261010/L1_DEMO_TRANSCRIPT.md"]}
       ],
-      "commit_patterns": ["L1: LangGraph Governed Execution"]
+      "commit_patterns": ["feat: integrate L1 governed LangGraph execution", "fix: require strict L1 approval booleans"]
     },
     {
       "id": "L2",
