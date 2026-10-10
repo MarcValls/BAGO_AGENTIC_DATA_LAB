@@ -59,11 +59,11 @@
       "id": "L1",
       "name": "LangGraph Governed Execution",
       "target": "—",
-      "status": "VALIDATED",
+      "status": "PARTIAL (local evidence)",
       "checks": [
         {"kind": "code", "patterns": ["src/orchestration/state_graph.py"]},
         {"kind": "tests", "patterns": ["tests/test_l1_governance.py"]},
-        {"kind": "evidence", "patterns": []}
+        {"kind": "evidence", "patterns": ["evidence/l1_governed_execution_20261010.md"]}
       ],
       "commit_patterns": ["L1: LangGraph Governed Execution"]
     },

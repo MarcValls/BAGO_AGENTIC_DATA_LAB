@@ -3,7 +3,7 @@
 [![CI](https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/actions/workflows/ci.yml/badge.svg)](https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/actions/workflows/ci.yml)
 [![GitHub](https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/actions/workflows/readme-consistency.yml/badge.svg)](https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/actions/workflows/readme-consistency.yml)
 [![Branch](https://img.shields.io/badge/branch-main-green)](https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/tree/main)
-[![Tests](https://img.shields.io/badge/tests-202%2F202%20passing-brightgreen)](https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/actions)
+[![Tests](https://img.shields.io/badge/tests-203%2F203%20passing-brightgreen)](https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/actions)
 [![License](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 
 > Laboratorio experimental para desarrollar capacidades de AI Engineering con gobernanza BAGO.
@@ -73,7 +73,7 @@ Profundiza en las fases L0-L15 en el [roadmap](#roadmap-detectado), o consulta [
 
 | Métrica | Valor |
 |---|---|
-| Tests ejecutados | **202/202** |
+| Tests ejecutados | **203/203** |
 | Rama pública | `main` |
 | Estado actualizado | 2026-10-10 |
 | Fase actual | **L15 · OpenTelemetry + Jaeger Local Live** · VERIFIED (local live) |
@@ -132,7 +132,7 @@ El catálogo es de referencia; la definición operativa sigue en `.github/agents
 ```mermaid
 flowchart LR
     L0["L0 Baseline & Lab Contract (COMPLETE)"]
-    L1["L1 LangGraph Governed Execution (VALIDATED)"]
+    L1["L1 LangGraph Governed Execution (PARTIAL (local evidence))"]
     L2["L2 ETL / Data Pipeline (VALIDATED)"]
     L3["L3 Metadata & Ontology (VERIFIED)"]
     L4["L4 Governed RAG (VERIFIED)"]
@@ -167,7 +167,7 @@ flowchart LR
 | Fase | Estado | Objetivo | Descripción | Tests | Evidencia/docs |
 |---|---|---|---|---:|---:|
 | L0 | COMPLETE | — | Baseline & Lab Contract | 0 | 6 |
-| L1 | VALIDATED | — | LangGraph Governed Execution | 7 | 0 |
+| L1 | PARTIAL (local evidence) | — | LangGraph Governed Execution | 8 | 1 |
 | L2 | VALIDATED | — | ETL / Data Pipeline | 4 | 1 |
 | L3 | VERIFIED | — | Metadata & Ontology | 25 | 2 |
 | L4 | VERIFIED | Orbitant | Governed RAG | 12 | 2 |
@@ -246,8 +246,8 @@ La tabla se extrae de JOB_SKILL_MATRIX.md y se mantiene fuera del README.
 |---|---|---|---|---|---|
 | Python | Alta | ✅ Senior | ✅ Senior | BAGO backend | ✅ Sí |
 | REST APIs | Alta | ✅ Senior | ✅ Senior | BAGO FastAPI | ✅ Sí |
-| LangGraph | Muy Alta | ❌ None | 🎯 Proficient | L1 state graph | L1 completado |
-| LangChain concepts | Alta | ❌ None | 🟡 Basic | — | L1 completado |
+| LangGraph | Muy Alta | ❌ None | 🎯 Proficient | L1 StateGraph: denegación material; ExecutionGateway aún no integrado | L1 evidencia parcial |
+| LangChain concepts | Alta | ❌ None | 🟡 Basic | — | L1 StateGraph, evidencia parcial |
 | Multi-agent systems | Muy Alta | 🟢 Reinforced | 🎯 Proficient | GovernedKnowledgeAgent + L9 evidence | L9 offline |
 | Tool use | Muy Alta | ✅ Implementado | 🎯 Proficient | BAGO tools + MCP receipts | L5 baseline |
 | MCP | Muy Alta | ✅ Baseline gobernado | 🎯 Proficient | L5 MCP adapter + video | L5 baseline |
@@ -266,11 +266,11 @@ La tabla se extrae de JOB_SKILL_MATRIX.md y se mantiene fuera del README.
 | OpenMetadata Catalog | Media | 🟢 Local live verificado | 🎯 Proficient | L8 adapter + Docker local + lineage/quality receipts | OpenMetadata remoto |
 | IAM | Alta | 🟡 Basic | 🎯 Configurable | L6 least-privilege setup | Live policy check |
 | CI/CD | Alta | 🟢 Reproducible | 🎯 Implementado | GitHub Actions + pinned requirements + public E2E | L13 CI |
-| Evaluation | Muy Alta | 🟢 Local governance evals | 🎯 Framework | 202 test cases + trace/evidence linkage + L8/L9/L10/L11/L12/L13/L14/L15 scenarios | L15 local + CI |
+| Evaluation | Muy Alta | 🟢 Local governance evals | 🎯 Framework | 203 test cases + trace/evidence linkage + L8/L9/L10/L11/L12/L13/L14/L15 scenarios | L15 local + CI |
 | Observability | Alta | 🟢 OpenTelemetry local live | 🎯 Completo | LocalTrace + OTLP/HTTP + Jaeger Docker + parent-linked spans | L15 local; remoto separado |
 | Secure execution | Muy Alta | 🟢 Local backend verified | 🎯 Implementado | BAGO auth boundary + LocalRestrictedBackend + escape tests | L11 local |
-| Authorization | Muy Alta | ✅ Diseñado | 🎯 Implementado | BAGO permits | L1 completado |
-| Auditability | Alta | ✅ Diseñado | 🎯 Implementado | BAGO receipts | L1 completado |
+| Authorization | Muy Alta | ✅ Diseñado | 🎯 Implementado | L1 fail-closed gate; MCP, Bedrock y sandbox tienen límites probados por separado | L1 evidencia parcial |
+| Auditability | Alta | ✅ Diseñado | 🎯 Implementado | Recibos de adapters/sandbox; L1 no fabrica recibos si no hay gateway | L1 evidencia parcial |
 | Docker/K8s | Media | 🟡 Docker Compose local | 🎯 Basic | OpenMetadata Compose + reproducible healthcheck | L8 local |
 
 ## Skills estratégicas
@@ -349,7 +349,7 @@ La tabla se extrae de JOB_SKILL_MATRIX.md y se mantiene fuera del README.
 - `tests/test_l10_ontology_engine.py` (4 checks)
 - `tests/test_l12_observability.py` (5 checks)
 - `tests/test_l15_otel_bridge.py` (4 checks)
-- `tests/test_l1_governance.py` (7 checks)
+- `tests/test_l1_governance.py` (8 checks)
 - `tests/test_l2_etl_pipeline.py` (4 checks)
 - `tests/test_l3_evidence.py` (2 checks)
 - `tests/test_l3_ontology.py` (12 checks)
@@ -372,10 +372,16 @@ La tabla se extrae de JOB_SKILL_MATRIX.md y se mantiene fuera del README.
 - `evidence/bago_canon_compliance_review.md`
 - `evidence/bago_etl_vs_bedrock_kb_comparison.md`
 - `evidence/bedrock_provider_benchmark.md`
+- `evidence/l1-governed-execution-20261010/FULL_SUITE.txt`
+- `evidence/l1-governed-execution-20261010/L1_TESTS.txt`
+- `evidence/l1-governed-execution-20261010/README_CHECK.txt`
+- `evidence/l1-governed-execution-20261010/README_GENERATION.txt`
+- `evidence/l1-governed-execution-20261010/REGRESSION_TESTS.txt`
 - `evidence/l10_ontology_engine.md`
 - `evidence/l12_observability_evals.md`
 - `evidence/l14_vector_store.md`
 - `evidence/l15_otel_jaeger_live.md`
+- `evidence/l1_governed_execution_20261010.md`
 - `evidence/l3_ontology_graph.md`
 - `evidence/l6_aws_free_tier.md`
 - `evidence/l6_aws_live.md`
