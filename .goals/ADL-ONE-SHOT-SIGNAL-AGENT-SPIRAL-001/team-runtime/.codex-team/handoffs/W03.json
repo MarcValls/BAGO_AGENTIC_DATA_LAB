@@ -1,0 +1,33 @@
+{
+  "changed_files": [
+    "evidence/W03_BACKEND.md"
+  ],
+  "next_consumers": [
+    "W04"
+  ],
+  "outputs": [
+    {
+      "path": "evidence/W03_BACKEND.md",
+      "sha256": "d67382cec6d10c528ff78ecd9a5687e60e965a2c1fc782397ea7c6d4124f57ed",
+      "summary": "Read-only backend audit maps agent persistence, chat, capabilities/proposals, fail-closed execution, sandbox/permit/receipt seams, demo jobs, trace evidence, and lifecycle gaps for one-shot and signal-waiting agents."
+    }
+  ],
+  "payload_sha256": "b30b70202e4e12c4a2ae712b787453f08ec9fcba62afaa4e7b14da1ee66c27db",
+  "residual_risks": [
+    "Candidate is dirty relative to HEAD; findings bind to observed worktree sources, with baseline preservation recorded in W01_SCOPE.md.",
+    "No authenticated human actor is visible in the product API paths reviewed; define approval identity before authorizing effects.",
+    "No connected signal ingress, durable one-shot/run lifecycle, execution cancellation, or durable idempotency was found in the audited backend seams.",
+    "ExecutionGateway/SandboxManager and receipt data structures exist but are not wired to Agent Runner; sandbox permit replay tracking is process-local.",
+    "W03 performed no runtime, test, Ollama, OTLP or Jaeger validation."
+  ],
+  "role": "backend-auditor",
+  "status": "DONE",
+  "verification": [
+    {
+      "command": "Static source and existing-test inspection only; no product tests or runtime integrations executed.",
+      "reason": "W03 is a read-only discovery audit; only source inspection was authorized. Existing assertions are described as source evidence, not as tests run in this handoff.",
+      "result": "NOT_RUN"
+    }
+  ],
+  "work_id": "W03"
+}
