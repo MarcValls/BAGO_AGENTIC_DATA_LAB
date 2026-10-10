@@ -1,5 +1,13 @@
 # L1 reference-test audit — baseline
 
+> Scope correction (2026-10-10): this baseline inspected the seven test bodies
+> and `src/orchestration/state_graph.py`, but did not search the later-layer
+> production modules. Its statements that replay, retrieval, MCP and Bedrock
+> controls were absent from the repository were overbroad. Those controls do
+> exist in separate modules and have independent tests; the seven original
+> L1 cases did not call them. The final re-audit supersedes those repository-
+> wide absence claims while preserving this record as the initial snapshot.
+
 ## Candidate and run
 
 - Repository: `BAGO_AGENTIC_DATA_LAB`
@@ -34,15 +42,17 @@ must be materialized and hashed at the final candidate.
   and explicitly denies WRITE/CREATE/DELETE requests in the baseline source.
 - `execute_actions` consumes issued permits, then synthesizes mock effects and
   receipts. That is local simulation, not a real governed material execution.
-- `retrieve_context` returns a hard-coded mock chunk. L1 does not provide the
-  ingestion/provenance/version-filtering or MCP registry/provider timeout
-  implementations asserted by several test names.
+- `retrieve_context` returns a hard-coded mock chunk. The L1 StateGraph is not
+  wired to the repository's later-layer provenance/version gate, MCP registry,
+  Bedrock timeout adapter or sandbox replay control. Those controls exist and
+  are tested separately; the initial seven cases did not exercise them.
 
 ## Baseline conclusion
 
 The reference suite passes, but **only the authorization gate case directly
-exercises one of the named production controls**, and the safe-query integration
-case covers a narrow graph path. The suite is not sufficient evidence for all
-seven claims. Preserve the historical tests as references; strengthen tests
-against production behavior where it exists and explicitly lower claims for
-missing L1 capabilities. Do not mark L1 broadly `VALIDATED` from this baseline.
+exercises a named L1 production control**, and the safe-query integration case
+covers a narrow graph path. The suite is not sufficient evidence for all seven
+claims. The final goal replaces fixture-only checks with production-boundary
+tests where those boundaries exist, denies external effects at the unbound L1
+gate, removes synthetic execution receipts, and keeps end-to-end integration
+claims `PARTIAL` until the graph is wired to the governed components.

@@ -130,7 +130,20 @@ Current proposal run: 16 entities and 0 explicit relations in the BAGO source
 documents; the controlled example yields 4 rule-pass proposals, all pending
 approval.
 **Known non-blocking warnings:** Pydantic V1 on Python 3.14 and deprecated
-`datetime.utcnow()` in legacy L1 tests.
+datetime.utcnow() in legacy tests outside the revised L1 suite.
+
+## L1 re-audit — 2026-10-10
+
+The historical L1 `VALIDATED` label is superseded for current reporting by
+`PARTIAL (local evidence)`. The seven original reference tests previously
+passed while five exercised only logic defined inside the tests. The revised
+suite calls the compiled StateGraph and the production sandbox, retrieval,
+MCP and Bedrock boundaries; these later-layer controls are tested separately
+and are not wired together by the L1 graph. The graph now denies all
+non-read effects and fails closed when no `ExecutionGateway` is bound; it no
+longer fabricates success receipts. See
+`evidence/l1_governed_execution_20261010.md` for candidate identity, test
+receipts, scope and remaining integration evidence.
 
 The L1 record below is preserved as historical project context.
 
@@ -138,9 +151,12 @@ The L1 record below is preserved as historical project context.
 
 # Historical Record — L1 COMPLETE — BAGO AGENTIC DATA LAB
 
+> Historical claim recorded on 2026-09-21. Its `VALIDATED` label is not the
+> current verification state; see the 2026-10-10 L1 re-audit above.
+
 **Fecha:** 2026-09-21  
 **Fase completada:** L1 · LangGraph Governed Execution  
-**Estado:** ✅ VALIDATED (7 tests CRIT P0 passing)
+**Estado histórico en la fecha:** VALIDATED (7 tests CRIT P0 passing)
 
 ---
 

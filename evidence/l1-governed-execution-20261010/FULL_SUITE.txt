@@ -1,0 +1,10 @@
+........................................................................ [ 35%]
+........................................................................ [ 70%]
+...........................................................              [100%]
+============================== warnings summary ===============================
+..\..\..\..\..\..\Python314\Lib\site-packages\langchain_core\utils\pydantic.py:42
+  C:\Python314\Lib\site-packages\langchain_core\utils\pydantic.py:42: UserWarning: Core Pydantic V1 functionality isn't compatible with Python 3.14 or greater.
+    from pydantic.v1 import BaseModel as BaseModelV1
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+203 passed, 1 warning in 65.14s (0:01:05)

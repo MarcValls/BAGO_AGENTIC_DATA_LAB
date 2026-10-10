@@ -288,30 +288,18 @@ def authorization_gate(state: AgentState) -> AgentState:
             )
             permits_issued.append(permit)
             
-        elif request.effect_type in [EffectType.WRITE, EffectType.CREATE, EffectType.DELETE]:
-            # VALIDACIÓN EXPLÍCITA REQUERIDA
-            # En producción: verificar signatures, quotas, etc.
-            
-            # Demo: denegamos todo para mostrar el mecanismo
+        elif request.effect_type in [
+            EffectType.WRITE,
+            EffectType.CREATE,
+            EffectType.DELETE,
+            EffectType.EXTERNAL_API,
+            EffectType.EXTERNAL_TOOL,
+        ]:
+            # This graph has no human-approval or registered-capability input.
+            # Fail closed for every effect that can change state or leave the
+            # process; timeout labels alone are not authorization.
             denial_reason = f"Action {request.effect_type.value} requires explicit human authorization"
             denials.append(denial_reason)
-            
-            # Alternativamente, podríamos emitir REQUIRE_HUMAN
-            # permit = Permit(..., decision=AuthorizationDecision.REQUIRE_HUMAN, ...)
-            
-        elif request.effect_type == EffectType.EXTERNAL_API:
-            # APIs externas requieren timeouts estrictos
-            permit = Permit(
-                permit_id=f"permit_{request.to_hash()}",
-                request_id=request.request_id,
-                decision=AuthorizationDecision.ALLOW,
-                rationale="External API allowed with strict timeout",
-                constraints=["timeout_10s", "retry_max_2", "rate_limit_1_per_s"],
-                issued_at=datetime.now(timezone.utc).isoformat(),
-                expires_at=(datetime.now(timezone.utc) + timedelta(seconds=10)).isoformat(),
-                signed_by="authorization_gate"
-            )
-            permits_issued.append(permit)
     
     return {
         'authorization_requests': proposed,
@@ -322,13 +310,12 @@ def authorization_gate(state: AgentState) -> AgentState:
 
 def execute_actions(state: AgentState) -> AgentState:
     """
-    Node 5: Ejecuta acciones autorizadas.
+    Node 5: Valida el enlace del executor antes de ejecutar.
     
-    CRÍTICO: Solo ejecuta si tiene Permit válido.
-    Sin Permit = NO EXECUTION.
+    Este grafo experimental no está enlazado a ExecutionGateway. No debe
+    convertir un Permit por sí solo en un efecto o un receipt de éxito.
     """
     permits = state.get('permits_issued', [])
-    receipts = []
     failures = []
     
     for permit in permits:
@@ -339,25 +326,12 @@ def execute_actions(state: AgentState) -> AgentState:
         if permit.decision != AuthorizationDecision.ALLOW:
             failures.append(f"Permit {permit.permit_id} decision={permit.decision.value}")
             continue
-        
-        # Simulación de ejecución (en producción: adapter pattern)
-        from datetime import datetime, timezone
-        import random
-        
-        receipt = Receipt(
-            receipt_id=f"receipt_{permit.permit_id}",
-            permit_id=permit.permit_id,
-            execution_outcome=ExecutionOutcome.SUCCESS if random.random() > 0.1 else ExecutionOutcome.FAILURE,
-            actual_effect={'mock': 'effect_data'},
-            evidence_refs=['evidence_001'],
-            duration_ms=random.randint(50, 500),
-            cost_usd=0.001,
-            error_message=None if random.random() > 0.1 else "Mock timeout"
+        failures.append(
+            f"ExecutionGateway is not bound; permit {permit.permit_id} was not executed"
         )
-        receipts.append(receipt)
     
     return {
-        'execution_receipts': receipts,
+        'execution_receipts': [],
         'execution_failures': failures
     }
 
@@ -381,9 +355,9 @@ def verify_and_respond(state: AgentState) -> AgentState:
     
     EXECUTION SUMMARY:
     - Actions proposed: {len(state.get('authorization_requests', []))}
-    - Permits issued: {len(receipts)}
+    - Permits issued: {len(state.get('permits_issued', []))}
     - Executions successful: {sum(1 for r in receipts if r.execution_outcome == ExecutionOutcome.SUCCESS)}
-    - Executions failed: {len(state.get('execution_failures', []))}
+    - Executions failed or unavailable: {len(state.get('execution_failures', [])) + sum(1 for r in receipts if r.execution_outcome == ExecutionOutcome.FAILURE)}
     
     EVIDENCE:
     {chr(10).join(evidence_links) if evidence_links else 'No external actions executed'}

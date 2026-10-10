@@ -1,355 +1,316 @@
+"""Behavioral evidence for the original L1 governance reference claims.
+
+These tests call production boundaries. Some controls live in later modules
+(sandbox, retrieval, MCP and Bedrock); their passing tests do not prove that
+the L1 StateGraph is wired to those boundaries. The goal evidence records that
+integration boundary explicitly.
 """
-L1 · Tests Críticos de Gobernanza BAGO
 
-Estos tests verifican que LangGraph NO puede ejecutar efectos materiales directamente.
-Cada test debe fallar si la gobernanza está rota.
+from __future__ import annotations
 
-CRIT P0 — Estos tests SON la barrera de seguridad.
-"""
+from datetime import datetime, timedelta, timezone
+from pathlib import Path
+import sys
 
-import pytest
-from datetime import datetime, timedelta
+import anyio
+
+sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
+
+from src.adapters.bedrock_provider_adapter import (
+    BedrockErrorKind,
+    BedrockProviderAdapter,
+    BedrockProviderPolicy,
+)
+from src.adapters.mcp_adapter import GovernedMCPAdapter
+from src.execution import ExecutionGateway
+from metadata.schema import AuthorityLevel
+from orchestration.state_graph import (
+    AuthorizationDecision as MCPAuthorizationDecision,
+    EffectType as MCPEffectType,
+    ExecutionOutcome as MCPExecutionOutcome,
+    ExecutionRequest as MCPExecutionRequest,
+)
 from src.orchestration.state_graph import (
     AgentState,
-    ExecutionRequest,
-    EffectType,
-    Permit,
     AuthorizationDecision,
-    Receipt,
+    EffectType,
     ExecutionOutcome,
+    ExecutionRequest,
+    Permit,
+    authorization_gate,
     build_governed_agent_graph,
-    authorization_gate
+    execute_actions,
+)
+from retrieval.governed_rag import GovernedRAG, MetadataFilter, RetrievalChunk
+from src.sandbox import (
+    Capability,
+    FilesystemOperation,
+    FilesystemRequest,
+    SandboxManager,
+    SandboxRequest,
+    SandboxStatus,
 )
 
 
-# ============================================================================
-# CRIT P0-001: LangGraph NO ejecuta directamente
-# ============================================================================
+def _permit_for_read(root: Path, request_id: str) -> Permit:
+    now = datetime.now(timezone.utc)
+    return Permit(
+        permit_id=f"permit-{request_id}",
+        request_id=request_id,
+        decision=AuthorizationDecision.ALLOW,
+        rationale="bounded test read",
+        constraints=[
+            "sandbox_profile=read_only_agent",
+            f"workspace_root={root.resolve()}",
+            f"capability={Capability.FILESYSTEM_READ.value}",
+        ],
+        issued_at=now.isoformat(),
+        expires_at=(now + timedelta(minutes=5)).isoformat(),
+        signed_by="l1-test-authority",
+    )
+
 
 def test_langgraph_cannot_execute_directly():
-    """
-    CRIT P0-001: LangGraph intenta ejecutar herramienta directamente → EXPECTED: DENY
-    
-    Este es el test MÁS CRÍTICO de todo el sistema.
-    Si falla, la arquitectura gobernada está ROTA.
-    
-    Escenario:
-    - LangGraph propone una acción de tipo WRITE
-    - authorization_gate DEBE denegarla automáticamente
-    - Sin permiso explícito, NO hay ejecución
-    """
-    
-    # Estado con acción propuesta
-    state = AgentState(
-        query="Crea un archivo test.py",
-        intent='action',
-        requires_action=True,
-        proposed_actions=[
-            ExecutionRequest(
-                request_id="test_req_001",
-                tool_name="file_creator",
-                effect_type=EffectType.WRITE,  # ¡WRITE directo!
-                parameters={'path': 'test.py', 'content': '# test'},
-                proposed_by="langgraph_node",
-                context_revision="v1.0",
-                timestamp=datetime.utcnow().isoformat()
-            )
-        ]
+    """A material request through the compiled graph receives no permit/receipt."""
+    result = build_governed_agent_graph().invoke(
+        AgentState(query="Crea un archivo de prueba")
     )
-    
-    # Ejecuta authorization_gate
-    result = authorization_gate(state)
-    
-    # VERIFICACIÓN CRÍTICA: Debe haber DENIAL
-    assert len(result['authorization_denials']) > 0, \
-        "CRIT FAIL: WRITE action fue permitida sin autorización explícita"
-    
-    # Verifica que NO hay permits para esta acción
-    permits_for_write = [
-        p for p in result.get('permits_issued', [])
-        if p.request_id == "test_req_001"
-    ]
-    assert len(permits_for_write) == 0, \
-        "CRIT FAIL: Permit emitido para WRITE sin autorización humana"
-    
-    print("✅ CRIT P0-001 PASS: LangGraph cannot execute directly")
+
+    assert result["intent"] == "action"
+    assert result["proposed_actions"]
+    assert result["authorization_denials"]
+    assert result["permits_issued"] == []
+    assert result["execution_receipts"] == []
+
+    # No human-approval or registered-capability input exists in this graph.
+    # Every non-read effect must therefore fail closed at the production gate.
+    for effect in (
+        EffectType.WRITE,
+        EffectType.CREATE,
+        EffectType.DELETE,
+        EffectType.EXTERNAL_API,
+        EffectType.EXTERNAL_TOOL,
+    ):
+        request = ExecutionRequest(
+            request_id=f"req-{effect.value.lower()}",
+            tool_name="test-tool",
+            effect_type=effect,
+            parameters={},
+            proposed_by="l1-test",
+            context_revision="test-v1",
+            timestamp=datetime.now(timezone.utc).isoformat(),
+        )
+        decision = authorization_gate({"proposed_actions": [request]})
+        assert decision["authorization_denials"], effect
+        assert decision["permits_issued"] == [], effect
 
 
-# ============================================================================
-# CRIT P0-002: Permit reutilizado → DENY
-# ============================================================================
-
-def test_permit_reuse_denied():
-    """
-    CRIT P0-002: Intento de reutilizar permiso → EXPECTED: DENY
-    
-    Un permiso solo puede usarse UNA VEZ.
-    Reutilización = ataque de replay → DEBE ser denegado.
-    """
-    
-    # Crea un permiso ya usado
-    used_permit = Permit(
-        permit_id="permit_used_001",
-        request_id="req_001",
-        decision=AuthorizationDecision.ALLOW,
-        rationale="Test permit",
-        constraints=["single_use"],
-        issued_at=(datetime.utcnow() - timedelta(seconds=10)).isoformat(),
-        expires_at=(datetime.utcnow() + timedelta(seconds=300)).isoformat(),
-        signed_by="test_authority"
+def test_permit_reuse_denied(tmp_path: Path):
+    """The real gateway/sandbox boundary rejects a consumed permit on replay."""
+    (tmp_path / "input.txt").write_text("read once", encoding="utf-8")
+    operation = FilesystemRequest(
+        "req-replay", FilesystemOperation.READ, "input.txt"
     )
-    
-    # Simula que ya fue usado (en producción: tracking en base de datos)
-    used_permits = {"permit_used_001"}
-    
-    # Intenta reutilizar
-    permit_to_validate = used_permit
-    
-    # VERIFICACIÓN: El permiso está en el set de usados
-    assert permit_to_validate.permit_id in used_permits, \
-        "Setup error: permit should be marked as used"
-    
-    # En producción, execution_gateway verificaría esto
-    is_valid = (
-        permit_to_validate.is_valid() and
-        permit_to_validate.permit_id not in used_permits
+    sandbox_request = SandboxRequest(
+        request_id=operation.request_id,
+        workspace_root=tmp_path,
+        operation=operation,
     )
-    
-    assert not is_valid, \
-        "CRIT FAIL: Permit reutilizado considerado válido"
-    
-    print("✅ CRIT P0-002 PASS: Permit reuse detected and denied")
+    execution_request = ExecutionRequest(
+        request_id=operation.request_id,
+        tool_name="filesystem.read",
+        effect_type=EffectType.READ,
+        parameters={"path": "input.txt"},
+        proposed_by="l1-test",
+        context_revision="test-v1",
+        timestamp=datetime.now(timezone.utc).isoformat(),
+    )
+    permit = _permit_for_read(tmp_path, operation.request_id)
+    gateway = ExecutionGateway(sandbox_manager=SandboxManager())
 
+    first = gateway.execute(
+        request=execution_request,
+        permit=permit,
+        sandbox_request=sandbox_request,
+    )
+    replay = gateway.execute(
+        request=execution_request,
+        permit=permit,
+        sandbox_request=sandbox_request,
+    )
 
-# ============================================================================
-# CRIT P0-003: Documento sin provenance → REJECT
-# ============================================================================
+    assert first.ok
+    assert first.value == "read once"
+    assert replay.receipt.status is SandboxStatus.DENIED
+    assert replay.receipt.error_code == "PERMIT_REPLAY"
+    assert replay.receipt.evidence_refs
+
 
 def test_document_without_provenance_rejected():
-    """
-    CRIT P0-003: Documento sin metadata de provenance → EXPECTED: REJECT
-    
-    Todo documento ingerido DEBE tener:
-    - source (URL/file path)
-    - authority level
-    - version/revision
-    - timestamp
-    
-    Sin esto = rechazado del retrieval.
-    """
-    
-    # Documento SIN provenance
-    bad_chunk = {
-        'id': 'chunk_bad',
-        'content': 'Esto es contenido sin metadata...',
-        # ❌ FALTA: source, authority, revision, timestamp
-    }
-    
-    # Documento CON provenance completa
-    good_chunk = {
-        'id': 'chunk_good',
-        'content': 'Contenido con metadata completa',
-        'source': 'docs/BAGO_CANON.md',
-        'authority': 'high',
-        'revision': 'v1.0',
-        'ingested_at': datetime.utcnow().isoformat()
-    }
-    
-    # Validación de schema
-    required_fields = ['source', 'authority', 'revision']
-    
-    bad_has_all = all(field in bad_chunk for field in required_fields)
-    good_has_all = all(field in good_chunk for field in required_fields)
-    
-    assert not bad_has_all, \
-        "Setup error: bad_chunk should be missing required fields"
-    assert good_has_all, \
-        "Setup error: good_chunk should have all required fields"
-    
-    # En producción: filter out chunks sin provenance
-    valid_chunks = [
-        chunk for chunk in [bad_chunk, good_chunk]
-        if all(field in chunk for field in required_fields)
-    ]
-    
-    assert len(valid_chunks) == 1, \
-        "CRIT FAIL: Chunk sin provenance pasó el filtro"
-    assert valid_chunks[0]['id'] == 'chunk_good', \
-        "CRIT FAIL: Chunk incorrecto pasó el filtro"
-    
-    print("✅ CRIT P0-003 PASS: Document without provenance rejected")
+    """GovernedRAG filters a chunk missing source URI or revision metadata."""
+    chunk = RetrievalChunk(
+        chunk_id="chunk-no-provenance",
+        document_id="doc-1",
+        content="A useful governed fact.",
+    )
 
+    response = GovernedRAG([chunk]).retrieve("governed fact")
 
-# ============================================================================
-# CRIT P0-004: Chunk superseded como autoridad → FILTERED
-# ============================================================================
+    assert response.eligible_count == 0
+    assert response.filtered_count == 1
+    assert response.hits == ()
+
 
 def test_superseded_chunk_filtered_in_retrieval():
-    """
-    CRIT P0-004: Chunk de revisión superseded usado como autoridad → EXPECTED: FILTERED
-    
-    Si un documento tiene revision v2.0, los chunks de v1.0 están SUPERSEDED.
-    No pueden usarse como autoridad para reasoning.
-    """
-    
+    """The production metadata gate excludes superseded evidence before ranking."""
     chunks = [
-        {
-            'id': 'chunk_v1',
-            'content': 'Versión antigua...',
-            'revision': 'v1.0',
-            'superseded_by': 'v2.0',  # ⚠️ SUPERSEDED
-            'is_current': False
-        },
-        {
-            'id': 'chunk_v2',
-            'content': 'Versión actual...',
-            'revision': 'v2.0',
-            'superseded_by': None,
-            'is_current': True  # ✅ CURRENT
-        }
+        RetrievalChunk(
+            chunk_id="chunk-v1",
+            document_id="policy",
+            content="Governed permit controls execution.",
+            source_uri="docs/policy-v1.md",
+            revision="v1",
+            authority=AuthorityLevel.CANONICAL,
+            validity="SUPERSEDED",
+            domain="governance",
+        ),
+        RetrievalChunk(
+            chunk_id="chunk-v2",
+            document_id="policy",
+            content="Governed permit controls execution.",
+            source_uri="docs/policy-v2.md",
+            revision="v2",
+            authority=AuthorityLevel.CANONICAL,
+            validity="CURRENT",
+            domain="governance",
+        ),
     ]
-    
-    # Filtra solo chunks current
-    current_chunks = [c for c in chunks if c.get('is_current', False)]
-    
-    assert len(current_chunks) == 1, \
-        "CRIT FAIL: Múltiples versiones consideradas current"
-    assert current_chunks[0]['id'] == 'chunk_v2', \
-        "CRIT FAIL: Versión superseded considerada current"
-    
-    print("✅ CRIT P0-004 PASS: Superseded chunk filtered from retrieval")
 
+    response = GovernedRAG(chunks).retrieve(
+        "governed permit execution",
+        metadata_filter=MetadataFilter(
+            minimum_authority=AuthorityLevel.CANONICAL,
+            allowed_domains=("governance",),
+        ),
+        top_k=10,
+    )
 
-# ============================================================================
-# CRIT P0-005: MCP tool no registrado → DENY
-# ============================================================================
+    assert response.eligible_count == 1
+    assert response.filtered_count == 1
+    assert [hit.chunk.chunk_id for hit in response.hits] == ["chunk-v2"]
+    assert response.hits[0].evidence.revision == "v2"
+
 
 def test_mcp_tool_unregistered_denied():
-    """
-    CRIT P0-005: MCP tool no registrada en capability registry → EXPECTED: DENY
-    
-    Las herramientas MCP deben registrarse EXPLÍCITAMENTE antes de usarse.
-    Tool descubierta ≠ Tool autorizada.
-    """
-    
-    # Registry de tools autorizadas
-    registered_tools = {
-        'file_reader': {'effect_type': EffectType.READ},
-        'file_writer': {'effect_type': EffectType.WRITE}
-    }
-    
-    # Tool NO registrada (descubierta vía MCP)
-    discovered_tool = 'external_api_caller'
-    
-    # Verifica registro
-    is_registered = discovered_tool in registered_tools
-    
-    assert not is_registered, \
-        "Setup error: tool should not be registered"
-    
-    # En producción: authorization_gate rechazaría
-    would_be_allowed = is_registered
-    
-    assert not would_be_allowed, \
-        "CRIT FAIL: Unregistered tool would be allowed"
-    
-    print("✅ CRIT P0-005 PASS: Unregistered MCP tool denied")
+    """A discovered but unregistered MCP tool is denied before transport."""
+    adapter = GovernedMCPAdapter("l1-test-server")
+    adapter.discover_tools(
+        [
+            {
+                "name": "external_api_caller",
+                "description": "test tool",
+                "inputSchema": {"type": "object", "properties": {}},
+            }
+        ]
+    )
+    request = MCPExecutionRequest(
+        request_id="mcp-unregistered-1",
+        tool_name="external_api_caller",
+        effect_type=MCPEffectType.READ,
+        parameters={},
+        proposed_by="l1-test",
+        context_revision="test-v1",
+        timestamp=datetime.now(timezone.utc).isoformat(),
+    )
+    calls: list[str] = []
 
+    class Session:
+        async def call_tool(self, **kwargs):
+            calls.append(kwargs["name"])
+            raise AssertionError("unregistered MCP tool reached transport")
 
-# ============================================================================
-# CRIT P0-006: Timeout en provider → CONTROLLED_FAILURE + RECEIPT
-# ============================================================================
+    receipt = anyio.run(adapter.call, Session(), request, None)
+
+    assert receipt.decision.value == MCPAuthorizationDecision.DENY.value
+    assert receipt.execution_outcome.value == MCPExecutionOutcome.FAILURE.value
+    assert receipt.actual_effect["called"] is False
+    assert "not registered" in (receipt.error_message or "")
+    assert calls == []
+
 
 def test_bedrock_provider_timeout_controlled_failure():
-    """
-    CRIT P0-006: Bedrock provider timeout → EXPECTED: CONTROLLED_FAILURE + RECEIPT
-    
-    Los timeouts externos DEBEN producir receipts con error_message.
-    Nunca silent failures.
-    """
-    
-    # Simula timeout
-    timeout_occurred = True
-    max_duration_ms = 10000
-    
-    # Receipt generado
-    receipt = Receipt(
-        receipt_id="receipt_timeout_001",
-        permit_id="permit_001",
-        execution_outcome=ExecutionOutcome.FAILURE if timeout_occurred else ExecutionOutcome.SUCCESS,
-        actual_effect={},
-        evidence_refs=[],
-        duration_ms=max_duration_ms + 1000,  # Exceeds limit
-        cost_usd=0.0,
-        error_message="Provider timeout after 10000ms" if timeout_occurred else None
+    """An injected provider timeout follows the real retry and receipt path."""
+    model_id = "fixture.bedrock-model"
+
+    class TimeoutClient:
+        def __init__(self) -> None:
+            self.calls = 0
+
+        def converse(self, **kwargs):
+            self.calls += 1
+            raise TimeoutError("read timeout")
+
+    client = TimeoutClient()
+    adapter = BedrockProviderAdapter(
+        client=client,
+        policy=BedrockProviderPolicy(
+            allowed_model_ids=frozenset({model_id}),
+            max_attempts=2,
+            backoff_seconds=0,
+        ),
+        sleep_fn=lambda _delay: None,
     )
-    
-    # VERIFICACIONES
-    assert receipt.execution_outcome == ExecutionOutcome.FAILURE, \
-        "CRIT FAIL: Timeout no marcado como FAILURE"
-    
-    assert receipt.error_message is not None, \
-        "CRIT FAIL: Timeout sin error_message en receipt"
-    
-    assert receipt.duration_ms > max_duration_ms, \
-        "Setup error: duration should exceed timeout"
-    
-    # Evidence: aunque falló, hay receipt
-    assert len(receipt.evidence_refs) >= 0, \
-        "Receipt exists even on failure (audit trail preserved)"
-    
-    print("✅ CRIT P0-006 PASS: Timeout produces controlled failure + receipt")
+    request = adapter.build_execution_request(
+        model_id,
+        [{"role": "user", "content": [{"text": "test timeout"}]}],
+        proposed_by="l1-test",
+        context_revision="test-v1",
+    )
+    permit = adapter.authorize(request)
 
+    result = adapter.converse(request, permit)
 
-# ============================================================================
-# INTEGRATION TEST: Grafo completo
-# ============================================================================
+    assert result.receipt.execution_outcome.value == ExecutionOutcome.FAILURE.value
+    assert result.receipt.error_kind is BedrockErrorKind.TIMEOUT
+    assert result.receipt.attempts == 2
+    assert result.receipt.actual_effect["called"] is True
+    assert result.receipt.receipt_id
+    assert client.calls == 2
+
 
 def test_governed_agent_graph_end_to_end():
-    """
-    Integration test: Ejecuta el grafo completo y verifica gobernanza.
-    """
-    
-    app = build_governed_agent_graph()
-    
-    # Query que NO requiere acción material
-    safe_query = "¿Qué es BAGO?"
-    
-    initial_state = AgentState(query=safe_query)
-    
-    result = app.invoke(initial_state)
-    
-    # Verifica que el grafo completó
-    assert 'final_response' in result, \
-        "Graph did not produce final_response"
-    
-    assert 'intent' in result, \
-        "Graph did not classify intent"
-    
-    # Para queries de solo retrieval, no debería haber denials
-    assert result.get('requires_action', False) == False, \
-        "Safe query incorrectly flagged as requiring action"
-    
-    print("✅ Integration test PASS: Graph executed end-to-end")
+    """The compiled graph completes its safe retrieval-only path."""
+    result = build_governed_agent_graph().invoke(
+        AgentState(query="Explica qué es BAGO")
+    )
+
+    assert result["final_response"]
+    assert result["intent"] == "retrieval"
+    assert result["retrieved_chunks"]
+    assert result["requires_action"] is False
+    assert result["proposed_actions"] == []
+    assert result["permits_issued"] == []
+    assert result["execution_receipts"] == []
 
 
-# ============================================================================
-# RUN ALL TESTS
-# ============================================================================
+def test_unbound_graph_executor_does_not_fabricate_success_receipt():
+    """A valid permit alone cannot produce a synthetic execution receipt."""
+    request = ExecutionRequest(
+        request_id="req-unbound-executor",
+        tool_name="filesystem.read",
+        effect_type=EffectType.READ,
+        parameters={"path": "input.txt"},
+        proposed_by="l1-test",
+        context_revision="test-v1",
+        timestamp=datetime.now(timezone.utc).isoformat(),
+    )
+    gate_result = authorization_gate({"proposed_actions": [request]})
+    assert len(gate_result["permits_issued"]) == 1
 
-if __name__ == "__main__":
-    print("=" * 80)
-    print("L1 · CRITICAL GOVERNANCE TESTS")
-    print("=" * 80)
-    
-    test_langgraph_cannot_execute_directly()
-    test_permit_reuse_denied()
-    test_document_without_provenance_rejected()
-    test_superseded_chunk_filtered_in_retrieval()
-    test_mcp_tool_unregistered_denied()
-    test_bedrock_provider_timeout_controlled_failure()
-    test_governed_agent_graph_end_to_end()
-    
-    print("=" * 80)
-    print("ALL CRIT P0 TESTS PASSED ✅")
-    print("=" * 80)
+    execution_result = execute_actions(
+        {"permits_issued": gate_result["permits_issued"]}
+    )
+
+    assert execution_result["execution_receipts"] == []
+    assert len(execution_result["execution_failures"]) == 1
+    assert "ExecutionGateway is not bound" in execution_result["execution_failures"][0]
