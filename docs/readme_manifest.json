@@ -9,12 +9,12 @@
     "ci_workflow": "ci.yml"
   },
   "canonical_documents": [
-    {"path": "STATE.md", "role": "estado operativo actual"},
-    {"path": "LAB_CONTRACT.md", "role": "contrato del laboratorio"},
-    {"path": "ARCHITECTURE.md", "role": "arquitectura y límites"},
-    {"path": "ROADMAP.md", "role": "roadmap ejecutable"},
-    {"path": "LEARNING_LEDGER.md", "role": "aprendizaje y evidencia"},
-    {"path": "JOB_SKILL_MATRIX.md", "role": "skills y alineación laboral"}
+    {"path": ".bago/canon/STATE.md", "role": "estado operativo actual"},
+    {"path": ".bago/canon/LAB_CONTRACT.md", "role": "contrato del laboratorio"},
+    {"path": ".bago/canon/ARCHITECTURE.md", "role": "arquitectura y límites"},
+    {"path": ".bago/canon/ROADMAP.md", "role": "roadmap ejecutable"},
+    {"path": ".bago/canon/LEARNING_LEDGER.md", "role": "aprendizaje y evidencia"},
+    {"path": ".bago/canon/JOB_SKILL_MATRIX.md", "role": "skills y alineación laboral"}
   ],
   "sync_agent": {
     "definition": ".github/agents/bago-sync-agent.agent.md",
@@ -60,7 +60,7 @@
       "target": "—",
       "status": "COMPLETE",
       "checks": [
-        {"kind": "contract", "patterns": ["LAB_CONTRACT.md", "ARCHITECTURE.md", "ROADMAP.md", "LEARNING_LEDGER.md", "JOB_SKILL_MATRIX.md", "LICENSE"]},
+        {"kind": "contract", "patterns": [".bago/canon/LAB_CONTRACT.md", ".bago/canon/ARCHITECTURE.md", ".bago/canon/ROADMAP.md", ".bago/canon/LEARNING_LEDGER.md", ".bago/canon/JOB_SKILL_MATRIX.md", "LICENSE"]},
         {"kind": "tests", "patterns": []},
         {"kind": "evidence", "patterns": []}
       ],

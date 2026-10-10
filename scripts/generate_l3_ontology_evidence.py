@@ -31,7 +31,7 @@ def build_evidence_graph() -> KnowledgeGraph:
     graph = KnowledgeGraph()
     graph.sources["source_lab_contract"] = Source(
         source_id="source_lab_contract",
-        uri="LAB_CONTRACT.md",
+        uri=".bago/canon/LAB_CONTRACT.md",
         source_type="FILE",
     )
 

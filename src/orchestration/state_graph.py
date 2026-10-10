@@ -188,7 +188,7 @@ def retrieve_context(state: AgentState) -> AgentState:
         {
             'id': 'chunk_001',
             'content': 'BAGO es un sistema de ejecución gobernada...',
-            'source': 'LAB_CONTRACT.md',
+            'source': '.bago/canon/LAB_CONTRACT.md',
             'authority': 'high',
             'revision': 'v1.0'
         }

@@ -1,9 +1,9 @@
 {
   "changed_files": [
-    ".codex-team/change_requests/CR-004-P1-RECEIPT-RUN-BINDING.json",
-    ".codex-team/missions/agent-decision-inspector-project.json",
-    ".codex-team/state.json",
-    ".codex-team/drafts/W12.json",
+    ".bago/team/runtime/change_requests/CR-004-P1-RECEIPT-RUN-BINDING.json",
+    ".bago/team/runtime/missions/agent-decision-inspector-project.json",
+    ".bago/team/runtime/state.json",
+    ".bago/team/runtime/drafts/W12.json",
     "docs/decision-inspector/FINAL_STATUS.md"
   ],
   "next_consumers": [],
@@ -39,7 +39,7 @@
   "status": "DONE",
   "verification": [
     {
-      "command": "python .codex-team-kit/scripts/teamctl.py verify",
+      "command": "python .bago/team/kit/scripts/teamctl.py verify",
       "evidence": "W01-W14 prerequisite handoffs validated; W11 P1 is closed by W13 and W14.",
       "result": "PASS"
     },

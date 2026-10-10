@@ -65,7 +65,7 @@
       "result": "PASS"
     },
     {
-      "command": "python .codex-team-kit/scripts/teamctl.py verify",
+      "command": "python .bago/team/kit/scripts/teamctl.py verify",
       "evidence": "W06 dependencies W02 and W03 are DONE with valid handoffs; CR-001 adapted frontend write scopes.",
       "result": "PASS"
     }

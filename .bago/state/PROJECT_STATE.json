@@ -1,0 +1,17 @@
+{
+  "schema": "bago.project_state.v1",
+  "project": "BAGO_AGENTIC_DATA_LAB",
+  "authority_entrypoint": ".bago/INDEX.md",
+  "canon_directory": ".bago/canon",
+  "goals_directory": ".bago/goals",
+  "team_kit_directory": ".bago/team/kit",
+  "team_runtime_directory": ".bago/team/runtime",
+  "migration": {
+    "goal": ".bago/goals/context-unification/goal.md",
+    "status": "VALIDATED",
+    "base_head": "2af091bc8948398d4bc6b44d4cafa1693c86fcb6",
+    "branch": "codex/bago-context-unification-20261011",
+    "pull_request": 47,
+    "verification": "PASS: 210 tests; README consistency; 163/163 historical artifacts byte-identical; teamctl and plugin teamctl; JSON; diff check; refreshed origin/main matches candidate base"
+  }
+}

@@ -12,7 +12,7 @@
         "provider_id": "ollama-cloud",
         "workspace_read_count": 1,
         "workspace_read_sources": [
-          ".goals/ADL-P1-02-REAL-AUDIT-SPIRAL-001/evidence/P1_02_BACKEND_EXCERPT.txt:1-28"
+          ".bago/goals/ADL-P1-02-REAL-AUDIT-SPIRAL-001/evidence/P1_02_BACKEND_EXCERPT.txt:1-28"
         ]
       },
       "end_time_unix_nano": 1791580002538418200,

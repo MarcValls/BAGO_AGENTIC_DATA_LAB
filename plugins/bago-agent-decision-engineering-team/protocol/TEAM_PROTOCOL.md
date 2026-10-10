@@ -6,7 +6,7 @@ Coordinate specialized Codex engineering agents without relying on conversationa
 
 ## Shared state
 
-All runtime coordination lives under `.codex-team/` in the target repository:
+All runtime coordination lives under `.bago/team/runtime/` in the target repository:
 
 - `state.json`: mission, work item states, claims and terminal gate.
 - `events.jsonl`: append-only coordination log.
@@ -31,7 +31,7 @@ The orchestrator does not pair agents by persona preference. It pairs READY work
 4. Independent verification boundaries.
 5. Maximum configured concurrency.
 
-`scripts/teamctl.py pair` computes conservative safe batches. If overlap cannot be ruled out, the items are serialized.
+`python .bago/team/kit/scripts/teamctl.py pair` computes conservative safe batches. If overlap cannot be ruled out, the items are serialized.
 
 ## Handoff contract
 

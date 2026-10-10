@@ -51,7 +51,7 @@
       "result": "PASS"
     },
     {
-      "command": "python .codex-team-kit/scripts/teamctl.py verify (before W13 handoff)",
+      "command": "python .bago/team/kit/scripts/teamctl.py verify (before W13 handoff)",
       "evidence": "All dependency handoffs validate before materializing W13.",
       "result": "PASS"
     }

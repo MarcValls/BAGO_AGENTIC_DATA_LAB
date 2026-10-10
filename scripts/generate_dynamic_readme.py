@@ -128,8 +128,8 @@ def executed_test_count() -> int:
 
 
 def parse_state() -> dict[str, str]:
-    """Read the current, top-level state block from STATE.md."""
-    text = (REPO_ROOT / "STATE.md").read_text(encoding="utf-8")
+    """Read the current, top-level state block from .bago/canon/STATE.md."""
+    text = (REPO_ROOT / ".bago/canon/STATE.md").read_text(encoding="utf-8")
 
     def field(name: str) -> str:
         pattern = rf"^\*\*{re.escape(name)}:\*\*\s*(.*?)(?=^\*\*|\Z)"
@@ -152,8 +152,8 @@ def parse_state() -> dict[str, str]:
 
 
 def parse_roles() -> list[list[str]]:
-    """Extract the current target-role table from LAB_CONTRACT.md."""
-    text = (REPO_ROOT / "LAB_CONTRACT.md").read_text(encoding="utf-8")
+    """Extract the current target-role table from .bago/canon/LAB_CONTRACT.md."""
+    text = (REPO_ROOT / ".bago/canon/LAB_CONTRACT.md").read_text(encoding="utf-8")
     start = text.find("### Vacantes Prioritarias Identificadas")
     if start < 0:
         return []
@@ -173,8 +173,8 @@ def parse_roles() -> list[list[str]]:
 
 
 def parse_skills() -> list[list[str]]:
-    """Extract the technical skill table from JOB_SKILL_MATRIX.md."""
-    text = (REPO_ROOT / "JOB_SKILL_MATRIX.md").read_text(encoding="utf-8")
+    """Extract the technical skill table from .bago/canon/JOB_SKILL_MATRIX.md."""
+    text = (REPO_ROOT / ".bago/canon/JOB_SKILL_MATRIX.md").read_text(encoding="utf-8")
     start = text.find("### Technical Skills")
     end = text.find("### Soft Skills", start)
     section = text[start : end if end >= 0 else None]
@@ -193,8 +193,8 @@ def parse_skills() -> list[list[str]]:
 
 
 def parse_soft_skills() -> list[list[str]]:
-    """Extract the strategic/soft skill table from JOB_SKILL_MATRIX.md."""
-    text = (REPO_ROOT / "JOB_SKILL_MATRIX.md").read_text(encoding="utf-8")
+    """Extract the strategic/soft skill table from .bago/canon/JOB_SKILL_MATRIX.md."""
+    text = (REPO_ROOT / ".bago/canon/JOB_SKILL_MATRIX.md").read_text(encoding="utf-8")
     start = text.find("### Soft Skills")
     if start < 0:
         return []
@@ -408,7 +408,7 @@ def _mermaid_label(value: str) -> str:
 
 def _render_roles(rows: list[list[str]]) -> str:
     if not rows:
-        return "No se pudo extraer la tabla de vacantes desde LAB_CONTRACT.md."
+        return "No se pudo extraer la tabla de vacantes desde .bago/canon/LAB_CONTRACT.md."
     lines = [
         "| Empresa | Rol | Fit | Gap principal | Timeline |",
         "|---|---|---:|---|---|",
@@ -419,7 +419,7 @@ def _render_roles(rows: list[list[str]]) -> str:
 
 def _render_skills(rows: list[list[str]]) -> str:
     if not rows:
-        return "No se pudo extraer la tabla técnica desde JOB_SKILL_MATRIX.md."
+        return "No se pudo extraer la tabla técnica desde .bago/canon/JOB_SKILL_MATRIX.md."
     lines = [
         "| Skill | Demanda | Nivel actual | Nivel objetivo | Primera evidencia | Entrevista |",
         "|---|---|---|---|---|---|",
@@ -434,7 +434,7 @@ def _render_skills(rows: list[list[str]]) -> str:
 
 def _render_soft_skills(rows: list[list[str]]) -> str:
     if not rows:
-        return "No se pudo extraer la tabla estratégica desde JOB_SKILL_MATRIX.md."
+        return "No se pudo extraer la tabla estratégica desde .bago/canon/JOB_SKILL_MATRIX.md."
     lines = [
         "| Skill | Nivel actual | Nivel objetivo | Evidencia |",
         "|---|---|---|---|",
@@ -605,9 +605,9 @@ def render_readme(
         "python -m src.api.server",
         FENCE,
         "",
-        "En otra terminal, entra en `frontend`, ejecuta `npm install` y después `npm run dev`. Abre [http://localhost:5173/team-monitor.html](http://localhost:5173/team-monitor.html). La página consulta `/api/team/status` cada cuatro segundos; el estado mostrado procede de `.codex-team/state.json` y `.codex-team/events.jsonl`. Solo refleja eventos registrados por teamctl, no toda la actividad interna de la extensión Codex.",
+        "En otra terminal, entra en `frontend`, ejecuta `npm install` y después `npm run dev`. Abre [http://localhost:5173/team-monitor.html](http://localhost:5173/team-monitor.html). La página consulta `/api/team/status` cada cuatro segundos; el estado mostrado procede de `.bago/team/runtime/state.json` y `.bago/team/runtime/events.jsonl`. Solo refleja eventos registrados por teamctl, no toda la actividad interna de la extensión Codex.",
         "",
-        "Profundiza en las fases L0-L15 en el [roadmap](#roadmap-detectado), o consulta [STATE.md](STATE.md) para el alcance canónico y [portfolio/README.md](portfolio/README.md) para la presentación del producto.",
+        "Profundiza en las fases L0-L15 en el [roadmap](#roadmap-detectado), o consulta [.bago/canon/STATE.md](.bago/canon/STATE.md) para el alcance canónico y [portfolio/README.md](portfolio/README.md) para la presentación del producto.",
         "",
         "## Estado actual",
         "",
@@ -622,12 +622,12 @@ def render_readme(
         "",
         "El estado público se limita a lo que existe en el checkout y a la evidencia",
         "referenciada. Cada superficie AWS, OpenMetadata u otra integración externa",
-        "conserva en STATE.md su alcance exacto: VERIFIED, NOT_RUN o NOT_PROVEN.",
+        "conserva en .bago/canon/STATE.md su alcance exacto: VERIFIED, NOT_RUN o NOT_PROVEN.",
         "El commit, push y merge de este snapshot son operaciones separadas.",
         "",
         "## Fuentes canónicas",
         "",
-        "El README proyecta estos documentos; no los sustituye ni los edita.",
+        "El contexto del proyecto y el mapa de autoridad están centralizados en [BAGO context](.bago/INDEX.md). El README proyecta estos documentos; no los sustituye ni los edita.",
         "",
         _render_canonical_documents(manifest),
         "",
@@ -656,19 +656,19 @@ def render_readme(
         "",
         "## Job market alignment",
         "",
-        "La tabla se extrae de LAB_CONTRACT.md; no se duplica manualmente aquí.",
+        "La tabla se extrae de .bago/canon/LAB_CONTRACT.md; no se duplica manualmente aquí.",
         "",
         _render_roles(roles),
         "",
         "## Skills evidenciadas",
         "",
-        "La tabla se extrae de JOB_SKILL_MATRIX.md y se mantiene fuera del README.",
+        "La tabla se genera desde `.bago/canon/JOB_SKILL_MATRIX.md`; actualiza allí los datos.",
         "",
         _render_skills(skills),
         "",
         "## Skills estratégicas",
         "",
-        "La tabla se extrae de JOB_SKILL_MATRIX.md y se mantiene fuera del README.",
+        "La tabla se genera desde `.bago/canon/JOB_SKILL_MATRIX.md`; actualiza allí los datos.",
         "",
         _render_soft_skills(soft_skills),
         "",
@@ -762,8 +762,8 @@ def render_readme(
             "- Comprobar deriva: python scripts/generate_dynamic_readme.py --check --skip-tests",
             "- Comprobar con la suite completa: python scripts/generate_dynamic_readme.py --check",
             "",
-            f"Fuente de estado: {_inline('STATE.md')}; contrato: {_inline('LAB_CONTRACT.md')};",
-            f"skills: {_inline('JOB_SKILL_MATRIX.md')}; manifiesto: {_inline('docs/readme_manifest.json')}.",
+            f"Fuente de estado: {_inline('.bago/canon/STATE.md')}; contrato: {_inline('.bago/canon/LAB_CONTRACT.md')};",
+            f"skills: {_inline('.bago/canon/JOB_SKILL_MATRIX.md')}; manifiesto: {_inline('docs/readme_manifest.json')}.",
             "",
             "MIT License — ver [LICENSE](LICENSE).",
             "",

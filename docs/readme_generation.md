@@ -6,10 +6,10 @@ of truth.
 The generator combines:
 
 - docs/readme_manifest.json for stable project decisions and phase metadata;
-- STATE.md for the current phase, lifecycle status and next block;
-- LAB_CONTRACT.md for target roles;
-- JOB_SKILL_MATRIX.md for the technical skill table;
-- JOB_SKILL_MATRIX.md for the strategic/soft skill table;
+- .bago/canon/STATE.md for the current phase, lifecycle status and next block;
+- .bago/canon/LAB_CONTRACT.md for target roles;
+- .bago/canon/JOB_SKILL_MATRIX.md for the technical skill table;
+- .bago/canon/JOB_SKILL_MATRIX.md for the strategic/soft skill table;
 - the canonical root documents declared in docs/readme_manifest.json;
 - the actual src/, tests/, docs/, evidence/ and scripts/ inventory;
 - the operational sync agent definition and executor;
@@ -40,9 +40,9 @@ against its sources before closing work:
 | README content | Authoritative source |
 |---|---|
 | Project description and phase definitions | `docs/readme_manifest.json` |
-| Current phase, date, status, tests and next block | `STATE.md` and the full test run |
-| Target roles | `LAB_CONTRACT.md` |
-| Technical and strategic skills | `JOB_SKILL_MATRIX.md` |
+| Current phase, date, status, tests and next block | `.bago/canon/STATE.md` and the full test run |
+| Target roles | `.bago/canon/LAB_CONTRACT.md` |
+| Technical and strategic skills | `.bago/canon/JOB_SKILL_MATRIX.md` |
 | Architecture, sync agent, catalog and checkout inventories | Declared manifests and current repository files |
 | First-use video, captions, guide, input and trace | `first_user_tutorial` in `docs/readme_manifest.json` plus the referenced artifacts |
 

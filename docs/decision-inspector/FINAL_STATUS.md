@@ -23,7 +23,7 @@ La validación local proyectó **15/15 spans** desde LocalTrace a Jaeger y encon
 - `npm run build` en `frontend`: **PASS**, compilación TypeScript y Vite, 124 módulos.
 - Integración Decision Inspector: **5/5 PASS**, incluidos recibos de otro run con IDs coincidentes y recibos sin `run_id`.
 - Verificación independiente W11/W14: **0 P0, 0 P1 abiertos**. W11 detectó un P1 de asociación de recibos; W13 lo corrigió y W14 confirmó el cierre con pruebas adversariales y controles positivos.
-- `python .codex-team-kit/scripts/teamctl.py verify`: **PASS** para todos los handoffs de la misión.
+- `python .bago/team/kit/scripts/teamctl.py verify`: **PASS** para todos los handoffs de la misión.
 - `git diff --check`: **PASS**.
 
 ## Límites y pendientes
