@@ -1,0 +1,56 @@
+- main [ref=e3]:
+  - generic [ref=e4]:
+    - generic [ref=e5]:
+      - generic [aria-hidden] [ref=e6]: B
+      - generic [ref=e7]:
+        - paragraph [ref=e8]: Governed Knowledge Workspace
+        - heading "Agentic Data Lab" [level=1] [ref=e9]
+    - generic [ref=e10]:
+      - generic [ref=e11]: Control plane
+      - button "Provider settings" [ref=e12] [cursor=pointer]
+  - navigation "Application views" [ref=e13]:
+    - generic "Workspace" [ref=e14]:
+      - button "Chat" [ref=e15] [cursor=pointer]
+      - button "Decision Inspector" [ref=e16] [cursor=pointer]
+      - button "Agent Builder" [ref=e17] [cursor=pointer]
+      - button "Agent Runner" [ref=e18] [cursor=pointer]
+    - group [ref=e19]:
+      - generic "Other portfolio views" [ref=e20] [cursor=pointer]
+  - region "Chat view" [ref=e125]:
+    - region "Agent and application chat" [ref=e126]:
+      - complementary "Agent inventory" [ref=e127]:
+        - generic [ref=e128]:
+          - generic [ref=e129]:
+            - paragraph [ref=e130]: Workspace
+            - heading "Agents" [level=2] [ref=e131]
+          - button "Refresh agent list" [ref=e132] [cursor=pointer]: ↻
+        - button "App assistant Chat, list agents, create drafts, navigate" [ref=e133] [cursor=pointer]:
+          - strong [ref=e134]: App assistant
+          - generic [ref=e135]: Chat, list agents, create drafts, navigate
+        - generic [ref=e136]:
+          - generic [ref=e137]: Your application agents
+          - generic [ref=e138]: "0"
+        - paragraph [ref=e139]: No agents created yet. Ask the app assistant to create one.
+        - button "Configure Ollama provider" [ref=e140] [cursor=pointer]:
+          - text: Configure Ollama provider
+          - generic [aria-hidden] [ref=e141]: →
+      - generic [ref=e142]:
+        - generic [ref=e143]:
+          - generic [ref=e144]:
+            - paragraph [ref=e145]: Control plane
+            - heading "How can I help?" [level=2] [ref=e146]
+            - paragraph [ref=e147]: Ask about your agents, propose a new agent, or open a view.
+          - generic [ref=e148]: Ollama assistant
+        - generic [ref=e149]:
+          - article [ref=e163]:
+            - generic [ref=e164]: You
+            - generic [ref=e165]: "Responde únicamente: conexión verificada."
+          - article [ref=e166]:
+            - generic [ref=e167]: Assistant
+            - generic [ref=e168]: conexión verificada.
+        - generic [ref=e158]:
+          - generic [ref=e159]: Message the assistant or selected agent
+          - textbox "Message the assistant or selected agent" [ref=e160]:
+            - /placeholder: Ask a question, list agents, create an agent, or open a view…
+          - button "Send" [disabled] [ref=e161]
+          - paragraph [ref=e162]: Agent creation is only saved after you review and confirm the proposal. Chat cannot run jobs or change files.

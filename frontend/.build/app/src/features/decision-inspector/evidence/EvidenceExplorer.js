@@ -1,0 +1,45 @@
+import { jsx as _jsx, jsxs as _jsxs, Fragment as _Fragment } from "react/jsx-runtime";
+import { useMemo, useState } from 'react';
+import { assessEvidenceFreshness } from '../../../contracts/decision/evidence';
+import { EvidenceSupportStatus, InspectorStateView, freshnessLabel } from '../shared/InspectorState';
+import './EvidenceExplorer.css';
+const valueOrMissing = (value) => value || 'Not provided';
+function claimSupport(claim, evidenceById) {
+    if (claim.evidence.length === 0)
+        return 'unsupported';
+    const links = claim.evidence.map(link => ({ link, evidence: evidenceById.get(link.evidenceId) }));
+    if (links.some(item => !item.evidence))
+        return 'missing';
+    if (links.some(item => item.link.relation === 'contradicts'))
+        return 'contradictory';
+    if (links.some(item => item.link.relation === 'supports'))
+        return 'supported';
+    return 'unknown';
+}
+function ClaimRow({ claim, selected, support, onSelect }) {
+    return _jsxs("li", { className: "evidence-explorer__claim", children: [_jsxs("button", { type: "button", className: "evidence-explorer__claim-button", "aria-pressed": selected, onClick: onSelect, children: [_jsx("span", { className: "evidence-explorer__claim-text", children: claim.text || `Claim ${claim.id}` }), _jsx(EvidenceSupportStatus, { status: support })] }), claim.confidence === undefined
+                ? _jsx("p", { className: "evidence-explorer__metadata", children: "Confidence not provided" })
+                : _jsxs("p", { className: "evidence-explorer__metadata", children: ["Confidence provided: ", claim.confidence] })] });
+}
+function EvidenceDetails({ evidence, relation, claimId, freshness }) {
+    return _jsxs("article", { className: "evidence-explorer__evidence-card", "aria-labelledby": "evidence-detail-title", children: [_jsxs("h4", { id: "evidence-detail-title", children: ["Evidence ", valueOrMissing(evidence.id)] }), _jsxs("p", { className: "evidence-explorer__relation", children: ["Claim ", claimId, " relation: ", _jsx("strong", { children: relation.replace('_', ' ') })] }), _jsx("p", { children: evidence.excerpt || 'No excerpt was provided.' }), _jsxs("dl", { className: "evidence-explorer__provenance", children: [_jsxs("div", { children: [_jsx("dt", { children: "Artifact reference" }), _jsx("dd", { children: _jsx("code", { children: valueOrMissing(evidence.artifactRef) }) })] }), _jsxs("div", { children: [_jsx("dt", { children: "Source identity" }), _jsx("dd", { children: _jsx("code", { children: valueOrMissing(evidence.sourceIdentity) }) })] }), _jsxs("div", { children: [_jsx("dt", { children: "Snapshot source URI" }), _jsx("dd", { children: _jsx("code", { children: valueOrMissing(evidence.snapshot?.sourceUri) }) })] }), _jsxs("div", { children: [_jsx("dt", { children: "Snapshot revision" }), _jsx("dd", { children: _jsx("code", { children: valueOrMissing(evidence.snapshot?.revision) }) })] }), _jsxs("div", { children: [_jsx("dt", { children: "Document ID" }), _jsx("dd", { children: _jsx("code", { children: valueOrMissing(evidence.snapshot?.documentId) }) })] }), _jsxs("div", { children: [_jsx("dt", { children: "Chunk ID" }), _jsx("dd", { children: _jsx("code", { children: valueOrMissing(evidence.snapshot?.chunkId) }) })] }), _jsxs("div", { children: [_jsx("dt", { children: "Content fingerprint" }), _jsx("dd", { children: _jsx("code", { children: valueOrMissing(evidence.contentFingerprint) }) })] }), _jsxs("div", { children: [_jsx("dt", { children: "Freshness" }), _jsx("dd", { children: freshnessLabel(freshness) })] })] })] });
+}
+export function EvidenceExplorer({ conclusion, expectedSnapshot, state = { status: 'ready' }, initialClaimId, initialEvidenceId }) {
+    const [claimId, setClaimId] = useState(initialClaimId);
+    const [evidenceId, setEvidenceId] = useState(initialEvidenceId);
+    const evidenceById = useMemo(() => new Map(conclusion.evidence.map(item => [item.id, item])), [conclusion.evidence]);
+    const selectedClaim = conclusion.claims.find(claim => claim.id === claimId);
+    const selectedLink = selectedClaim?.evidence.find(link => link.evidenceId === evidenceId) ?? selectedClaim?.evidence[0];
+    const selectedEvidence = selectedLink ? evidenceById.get(selectedLink.evidenceId) : undefined;
+    const selectedFreshness = selectedEvidence && (expectedSnapshot
+        ? assessEvidenceFreshness(selectedEvidence.snapshot, expectedSnapshot)
+        : selectedEvidence.freshness);
+    const noClaims = conclusion.claims.length === 0;
+    return _jsxs("section", { className: "evidence-explorer", "aria-labelledby": "evidence-explorer-title", children: [_jsxs("header", { className: "evidence-explorer__header", children: [_jsx("h2", { id: "evidence-explorer-title", children: "Claims and evidence" }), _jsxs("p", { children: ["Conclusion: ", conclusion.text || 'Not provided'] }), _jsxs("p", { className: "evidence-explorer__metadata", children: ["Run ID: ", _jsx("code", { children: valueOrMissing(conclusion.runId) }), " \u00B7 Conclusion ID: ", _jsx("code", { children: conclusion.id || 'Not provided' })] })] }), _jsx(InspectorStateView, { state: state, children: noClaims ? _jsxs("section", { className: "evidence-explorer__empty", "aria-label": "Claims unavailable", children: [_jsx("h3", { children: "Claims not provided" }), _jsx("p", { children: "The source did not provide a structured claim list. Citations are not converted into claims." })] }) : _jsxs("div", { className: "evidence-explorer__layout", children: [_jsxs("section", { "aria-labelledby": "claim-list-title", children: [_jsx("h3", { id: "claim-list-title", children: "Claims" }), _jsx("ul", { className: "evidence-explorer__claim-list", children: conclusion.claims.map(claim => _jsx(ClaimRow, { claim: claim, selected: selectedClaim?.id === claim.id, support: claimSupport(claim, evidenceById), onSelect: () => { setClaimId(claim.id); setEvidenceId(undefined); } }, claim.id)) })] }), selectedClaim ? _jsxs("section", { "aria-labelledby": "evidence-list-title", children: [_jsx("h3", { id: "evidence-list-title", children: "Evidence for selected claim" }), _jsxs("p", { className: "evidence-explorer__metadata", children: ["Claim ID: ", _jsx("code", { children: selectedClaim.id })] }), selectedClaim.evidence.length === 0 ? _jsxs("div", { className: "evidence-explorer__empty", children: [_jsx(EvidenceSupportStatus, { status: "unsupported" }), _jsx("p", { children: "No supporting evidence linked to this claim." })] }) : _jsxs(_Fragment, { children: [selectedClaim.evidence.every(link => link.relation === 'context_only' || link.relation === 'insufficient') && _jsx("p", { className: "evidence-explorer__metadata", children: "Linked records are context-only or marked insufficient; no explicit supporting relation was provided." }), _jsx("ul", { className: "evidence-explorer__evidence-list", children: selectedClaim.evidence.map((link, index) => {
+                                                const evidence = evidenceById.get(link.evidenceId);
+                                                return _jsx("li", { children: evidence ? _jsxs("button", { type: "button", className: "evidence-explorer__evidence-button", "aria-pressed": selectedLink === link, onClick: () => setEvidenceId(link.evidenceId), children: [_jsxs("span", { children: ["Evidence reference ", _jsx("code", { children: link.evidenceId })] }), _jsxs("span", { children: ["Relation: ", link.relation.replace('_', ' ')] }), _jsxs("span", { children: ["Freshness: ", freshnessLabel(expectedSnapshot ? assessEvidenceFreshness(evidence.snapshot, expectedSnapshot) : evidence.freshness)] })] }) : _jsxs("div", { className: "evidence-explorer__missing", role: "status", children: [_jsx(EvidenceSupportStatus, { status: "missing" }), _jsxs("p", { children: ["Referenced evidence ", _jsx("code", { children: link.evidenceId || 'Not provided' }), " is unavailable in the supplied evidence inventory."] }), _jsxs("p", { children: ["Relation: ", link.relation.replace('_', ' ')] })] }) }, `${link.evidenceId}-${index}`);
+                                            }) }), selectedEvidence && selectedLink && selectedFreshness && _jsx(EvidenceDetails, { evidence: selectedEvidence, relation: selectedLink.relation, claimId: selectedClaim.id, freshness: selectedFreshness }), selectedClaim.evidence.some(link => {
+                                            const item = evidenceById.get(link.evidenceId);
+                                            return item && (expectedSnapshot ? assessEvidenceFreshness(item.snapshot, expectedSnapshot) : item.freshness) === 'stale';
+                                        }) && _jsx("p", { className: "evidence-explorer__stale-note", role: "status", children: "At least one linked evidence snapshot is stale; it remains visible with its supplied identity." })] })] }) : _jsxs("section", { className: "evidence-explorer__empty", "aria-label": "Claim selection unavailable", children: [_jsx("h3", { children: "Select a claim" }), _jsx("p", { children: "No claim is selected. Choose a source-provided claim to inspect its evidence." })] })] }) })] });
+}

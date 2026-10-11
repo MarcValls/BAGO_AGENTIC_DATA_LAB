@@ -1,0 +1,671 @@
+{
+  "schema": "bago.dependency_graph.v1",
+  "built_at": "2026-10-08T19:19:32.956989+00:00",
+  "imports": {
+    ".codex-team-kit/scripts/teamctl.py": [],
+    "agents/05-seguridad-verdad/security_analyzer.py": [],
+    "agents/06-tests-calidad-release/duplication_finder.py": [],
+    "agents/06-tests-calidad-release/logic_checker.py": [],
+    "agents/06-tests-calidad-release/smell_detector.py": [],
+    "agents/07-sincronizacion/executors/bago_sync_agent.py": [],
+    "agents/07-sincronizacion/legacy/bago_sync_bidirectional.py": [],
+    "agents/08-runtime-supervision/infrastructure/agent_factory.py": [],
+    "agents/08-runtime-supervision/infrastructure/agent_gateway.py": [],
+    "demo.py": [],
+    "frontend/src/adapters/action/agentRun.js": [],
+    "frontend/src/adapters/action/agentRun.ts": [],
+    "frontend/src/adapters/trace/localTraceAdapter.js": [],
+    "frontend/src/adapters/trace/localTraceAdapter.ts": [],
+    "frontend/src/App.js": [
+      "frontend/src/App.css",
+      "frontend/src/components/AgentBuilder.js",
+      "frontend/src/components/AgentChat.js",
+      "frontend/src/components/AgentRunner.js",
+      "frontend/src/components/Authorization.js",
+      "frontend/src/components/Control.js",
+      "frontend/src/components/Evaluation.js",
+      "frontend/src/components/JobHistory.js",
+      "frontend/src/components/Retrieval.js",
+      "frontend/src/components/Summary.js",
+      "frontend/src/components/Trace.js",
+      "frontend/src/features/decision-inspector/index.js"
+    ],
+    "frontend/src/App.tsx": [
+      "frontend/src/App.css",
+      "frontend/src/components/AgentBuilder.js",
+      "frontend/src/components/AgentChat.js",
+      "frontend/src/components/AgentRunner.js",
+      "frontend/src/components/Authorization.js",
+      "frontend/src/components/Control.js",
+      "frontend/src/components/Evaluation.js",
+      "frontend/src/components/JobHistory.js",
+      "frontend/src/components/Retrieval.js",
+      "frontend/src/components/Summary.js",
+      "frontend/src/components/Trace.js",
+      "frontend/src/features/decision-inspector/index.js"
+    ],
+    "frontend/src/components/AgentBuilder.js": [
+      "frontend/src/components/AgentBuilder.css"
+    ],
+    "frontend/src/components/AgentBuilder.tsx": [
+      "frontend/src/components/AgentBuilder.css"
+    ],
+    "frontend/src/components/AgentChat.js": [
+      "frontend/src/components/AgentChat.css"
+    ],
+    "frontend/src/components/AgentChat.tsx": [
+      "frontend/src/components/AgentChat.css"
+    ],
+    "frontend/src/components/AgentExecutor.js": [],
+    "frontend/src/components/AgentRunner.js": [
+      "frontend/src/components/AgentRunner.css"
+    ],
+    "frontend/src/components/AgentRunner.tsx": [
+      "frontend/src/components/AgentRunner.css"
+    ],
+    "frontend/src/components/Authorization.js": [
+      "frontend/src/components/Authorization.css"
+    ],
+    "frontend/src/components/Authorization.tsx": [
+      "frontend/src/components/Authorization.css"
+    ],
+    "frontend/src/components/Control.js": [
+      "frontend/src/components/Control.css"
+    ],
+    "frontend/src/components/Control.tsx": [
+      "frontend/src/components/Control.css"
+    ],
+    "frontend/src/components/Evaluation.js": [
+      "frontend/src/components/Evaluation.css"
+    ],
+    "frontend/src/components/Evaluation.tsx": [
+      "frontend/src/components/Evaluation.css"
+    ],
+    "frontend/src/components/JobHistory.js": [
+      "frontend/src/components/JobHistory.css"
+    ],
+    "frontend/src/components/JobHistory.tsx": [
+      "frontend/src/components/JobHistory.css"
+    ],
+    "frontend/src/components/PerformanceMetrics.js": [],
+    "frontend/src/components/Retrieval.js": [
+      "frontend/src/components/Retrieval.css"
+    ],
+    "frontend/src/components/Retrieval.tsx": [
+      "frontend/src/components/Retrieval.css"
+    ],
+    "frontend/src/components/Summary.js": [
+      "frontend/src/components/Summary.css"
+    ],
+    "frontend/src/components/Summary.tsx": [
+      "frontend/src/components/Summary.css"
+    ],
+    "frontend/src/components/Trace.js": [
+      "frontend/src/components/Trace.css"
+    ],
+    "frontend/src/components/Trace.tsx": [
+      "frontend/src/components/Trace.css"
+    ],
+    "frontend/src/contracts/action/action.js": [],
+    "frontend/src/contracts/action/action.ts": [],
+    "frontend/src/contracts/decision/evidence.js": [],
+    "frontend/src/contracts/decision/evidence.ts": [],
+    "frontend/src/contracts/trace/trace.js": [],
+    "frontend/src/contracts/trace/trace.ts": [],
+    "frontend/src/features/decision-inspector/actions/ActionReview.js": [
+      "frontend/src/features/decision-inspector/actions/ActionReview.css"
+    ],
+    "frontend/src/features/decision-inspector/actions/ActionReview.tsx": [
+      "frontend/src/features/decision-inspector/actions/ActionReview.css"
+    ],
+    "frontend/src/features/decision-inspector/evidence/EvidenceExplorer.js": [
+      "frontend/src/features/decision-inspector/evidence/EvidenceExplorer.css"
+    ],
+    "frontend/src/features/decision-inspector/evidence/EvidenceExplorer.tsx": [
+      "frontend/src/features/decision-inspector/evidence/EvidenceExplorer.css"
+    ],
+    "frontend/src/features/decision-inspector/integration/DecisionInspector.js": [
+      "frontend/src/features/decision-inspector/integration/DecisionInspector.css"
+    ],
+    "frontend/src/features/decision-inspector/integration/DecisionInspector.tsx": [
+      "frontend/src/features/decision-inspector/integration/DecisionInspector.css"
+    ],
+    "frontend/src/features/decision-inspector/shared/InspectorState.js": [
+      "frontend/src/features/decision-inspector/shared/InspectorState.css"
+    ],
+    "frontend/src/features/decision-inspector/shared/InspectorState.tsx": [
+      "frontend/src/features/decision-inspector/shared/InspectorState.css"
+    ],
+    "frontend/src/features/decision-inspector/shell/InspectorShell.js": [
+      "frontend/src/features/decision-inspector/shell/InspectorShell.css"
+    ],
+    "frontend/src/features/decision-inspector/shell/InspectorShell.tsx": [
+      "frontend/src/features/decision-inspector/shell/InspectorShell.css"
+    ],
+    "frontend/src/features/decision-inspector/trace/TraceTimeline.js": [
+      "frontend/src/features/decision-inspector/trace/TraceTimeline.css"
+    ],
+    "frontend/src/features/decision-inspector/trace/TraceTimeline.tsx": [
+      "frontend/src/features/decision-inspector/trace/TraceTimeline.css"
+    ],
+    "frontend/tests/contracts/action/action.test.ts": [],
+    "frontend/tests/contracts/evidence/evidence.test.ts": [],
+    "frontend/tests/contracts/trace/trace.test.ts": [],
+    "frontend/tests/ui/decision-inspector/actions/action-review.test.tsx": [],
+    "frontend/tests/ui/decision-inspector/evidence/evidence-explorer.test.tsx": [],
+    "frontend/tests/ui/decision-inspector/integration/integration.test.tsx": [],
+    "frontend/tests/ui/decision-inspector/shell/shell.test.tsx": [],
+    "frontend/tests/ui/decision-inspector/trace/trace.test.tsx": [],
+    "plugins/bago-agent-decision-engineering-team/scripts/teamctl.py": [],
+    "scripts/bago.py": [],
+    "scripts/bago_sync_agent.py": [],
+    "scripts/benchmark_bedrock_provider.py": [],
+    "scripts/benchmark_retrieval.py": [],
+    "scripts/compare_bago_etl_vs_bedrock_kb.py": [],
+    "scripts/generate_dynamic_readme.py": [],
+    "scripts/generate_l10_ontology_evidence.py": [],
+    "scripts/generate_l3_ontology_evidence.py": [],
+    "scripts/generate_l8_catalog_evidence.py": [],
+    "scripts/generate_l9_agent_evidence.py": [],
+    "scripts/generate_ontology_proposal.py": [],
+    "scripts/local_mcp_server.py": [],
+    "scripts/render_mcp_evidence_video.py": [],
+    "scripts/run_l12_observability_evidence.py": [],
+    "scripts/run_l14_vector_store_validation.py": [],
+    "scripts/run_l15_otel_live_validation.py": [
+      "scripts/run_public_e2e_demo.py"
+    ],
+    "scripts/run_l6_aws_free_tier_validation.py": [],
+    "scripts/run_l6_aws_live_validation.py": [],
+    "scripts/run_l8_openmetadata_live_validation.py": [],
+    "scripts/run_mcp_demo.py": [],
+    "scripts/run_public_e2e_demo.py": [
+      "src/orchestration/state_graph.py"
+    ],
+    "scripts/run_sandbox_local_validation.py": [
+      "src/orchestration/state_graph.py",
+      "src/sandbox/__init__.py"
+    ],
+    "src/adapters/bedrock_kb_adapter.py": [
+      "src/adapters/bedrock_provider_adapter.py"
+    ],
+    "src/adapters/bedrock_provider_adapter.py": [],
+    "src/adapters/mcp_adapter.py": [],
+    "src/adapters/openmetadata_adapter.py": [],
+    "src/agent/governed_knowledge_agent.py": [],
+    "src/api/server.py": [
+      "src/jobs/__init__.py"
+    ],
+    "src/context/workspace_binding.py": [],
+    "src/etl/pipeline.py": [],
+    "src/evaluation/local_evals.py": [],
+    "src/execution/gateway.py": [
+      "src/orchestration/state_graph.py",
+      "src/sandbox/manager.py",
+      "src/sandbox/receipt.py"
+    ],
+    "src/jobs/__init__.py": [],
+    "src/metadata/ontology.py": [
+      "src/metadata/schema.py"
+    ],
+    "src/metadata/ontology_engine.py": [
+      "src/metadata/ontology.py",
+      "src/metadata/schema.py"
+    ],
+    "src/metadata/ontology_generator.py": [
+      "src/metadata/ontology.py",
+      "src/metadata/schema.py"
+    ],
+    "src/metadata/schema.py": [],
+    "src/observability/local_trace.py": [],
+    "src/observability/otel_bridge.py": [
+      "src/observability/local_trace.py"
+    ],
+    "src/orchestration/state_graph.py": [],
+    "src/retrieval/governed_rag.py": [
+      "src/retrieval/sqlite_vector_store.py"
+    ],
+    "src/retrieval/sqlite_vector_store.py": [
+      "src/retrieval/governed_rag.py"
+    ],
+    "src/sandbox/backend.py": [
+      "src/sandbox/exceptions.py",
+      "src/sandbox/filesystem.py",
+      "src/sandbox/process.py",
+      "src/sandbox/receipt.py",
+      "src/sandbox/specification.py"
+    ],
+    "src/sandbox/exceptions.py": [],
+    "src/sandbox/filesystem.py": [
+      "src/sandbox/exceptions.py",
+      "src/sandbox/specification.py"
+    ],
+    "src/sandbox/manager.py": [
+      "src/orchestration/state_graph.py",
+      "src/sandbox/backend.py",
+      "src/sandbox/exceptions.py",
+      "src/sandbox/filesystem.py",
+      "src/sandbox/process.py",
+      "src/sandbox/receipt.py",
+      "src/sandbox/specification.py"
+    ],
+    "src/sandbox/process.py": [
+      "src/sandbox/specification.py"
+    ],
+    "src/sandbox/receipt.py": [],
+    "src/sandbox/specification.py": [
+      "src/sandbox/exceptions.py"
+    ],
+    "tests/test_bago_sync_agent.py": [],
+    "tests/test_bedrock_integration.py": [],
+    "tests/test_bedrock_kb_adapter.py": [],
+    "tests/test_dynamic_readme.py": [],
+    "tests/test_l10_ontology_engine.py": [],
+    "tests/test_l12_observability.py": [],
+    "tests/test_l15_otel_bridge.py": [],
+    "tests/test_l1_governance.py": [
+      "src/orchestration/state_graph.py"
+    ],
+    "tests/test_l2_etl_pipeline.py": [],
+    "tests/test_l3_evidence.py": [],
+    "tests/test_l3_ontology.py": [],
+    "tests/test_l9_end_to_end_agent.py": [],
+    "tests/test_mcp_governance.py": [],
+    "tests/test_metadata_schema.py": [],
+    "tests/test_ontology_generator.py": [],
+    "tests/test_openmetadata_adapter.py": [],
+    "tests/test_public_e2e_demo.py": [],
+    "tests/test_retrieval_accuracy.py": [],
+    "tests/test_retrieval_benchmark.py": [],
+    "tests/test_sandbox.py": [
+      "src/execution/__init__.py",
+      "src/orchestration/state_graph.py",
+      "src/sandbox/__init__.py",
+      "src/sandbox/exceptions.py"
+    ],
+    "tests/test_sqlite_vector_store.py": [],
+    "tests/test_workspace_binding.py": [
+      "src/context/workspace_binding.py"
+    ]
+  },
+  "dependents": {
+    "frontend/src/App.css": [
+      "frontend/src/App.js",
+      "frontend/src/App.tsx"
+    ],
+    "frontend/src/components/AgentBuilder.js": [
+      "frontend/src/App.js",
+      "frontend/src/App.tsx"
+    ],
+    "frontend/src/components/AgentChat.js": [
+      "frontend/src/App.js",
+      "frontend/src/App.tsx"
+    ],
+    "frontend/src/components/AgentRunner.js": [
+      "frontend/src/App.js",
+      "frontend/src/App.tsx"
+    ],
+    "frontend/src/components/Authorization.js": [
+      "frontend/src/App.js",
+      "frontend/src/App.tsx"
+    ],
+    "frontend/src/components/Control.js": [
+      "frontend/src/App.js",
+      "frontend/src/App.tsx"
+    ],
+    "frontend/src/components/Evaluation.js": [
+      "frontend/src/App.js",
+      "frontend/src/App.tsx"
+    ],
+    "frontend/src/components/JobHistory.js": [
+      "frontend/src/App.js",
+      "frontend/src/App.tsx"
+    ],
+    "frontend/src/components/Retrieval.js": [
+      "frontend/src/App.js",
+      "frontend/src/App.tsx"
+    ],
+    "frontend/src/components/Summary.js": [
+      "frontend/src/App.js",
+      "frontend/src/App.tsx"
+    ],
+    "frontend/src/components/Trace.js": [
+      "frontend/src/App.js",
+      "frontend/src/App.tsx"
+    ],
+    "frontend/src/features/decision-inspector/index.js": [
+      "frontend/src/App.js",
+      "frontend/src/App.tsx"
+    ],
+    "frontend/src/components/AgentBuilder.css": [
+      "frontend/src/components/AgentBuilder.js",
+      "frontend/src/components/AgentBuilder.tsx"
+    ],
+    "frontend/src/components/AgentChat.css": [
+      "frontend/src/components/AgentChat.js",
+      "frontend/src/components/AgentChat.tsx"
+    ],
+    "frontend/src/components/AgentRunner.css": [
+      "frontend/src/components/AgentRunner.js",
+      "frontend/src/components/AgentRunner.tsx"
+    ],
+    "frontend/src/components/Authorization.css": [
+      "frontend/src/components/Authorization.js",
+      "frontend/src/components/Authorization.tsx"
+    ],
+    "frontend/src/components/Control.css": [
+      "frontend/src/components/Control.js",
+      "frontend/src/components/Control.tsx"
+    ],
+    "frontend/src/components/Evaluation.css": [
+      "frontend/src/components/Evaluation.js",
+      "frontend/src/components/Evaluation.tsx"
+    ],
+    "frontend/src/components/JobHistory.css": [
+      "frontend/src/components/JobHistory.js",
+      "frontend/src/components/JobHistory.tsx"
+    ],
+    "frontend/src/components/Retrieval.css": [
+      "frontend/src/components/Retrieval.js",
+      "frontend/src/components/Retrieval.tsx"
+    ],
+    "frontend/src/components/Summary.css": [
+      "frontend/src/components/Summary.js",
+      "frontend/src/components/Summary.tsx"
+    ],
+    "frontend/src/components/Trace.css": [
+      "frontend/src/components/Trace.js",
+      "frontend/src/components/Trace.tsx"
+    ],
+    "frontend/src/features/decision-inspector/actions/ActionReview.css": [
+      "frontend/src/features/decision-inspector/actions/ActionReview.js",
+      "frontend/src/features/decision-inspector/actions/ActionReview.tsx"
+    ],
+    "frontend/src/features/decision-inspector/evidence/EvidenceExplorer.css": [
+      "frontend/src/features/decision-inspector/evidence/EvidenceExplorer.js",
+      "frontend/src/features/decision-inspector/evidence/EvidenceExplorer.tsx"
+    ],
+    "frontend/src/features/decision-inspector/integration/DecisionInspector.css": [
+      "frontend/src/features/decision-inspector/integration/DecisionInspector.js",
+      "frontend/src/features/decision-inspector/integration/DecisionInspector.tsx"
+    ],
+    "frontend/src/features/decision-inspector/shared/InspectorState.css": [
+      "frontend/src/features/decision-inspector/shared/InspectorState.js",
+      "frontend/src/features/decision-inspector/shared/InspectorState.tsx"
+    ],
+    "frontend/src/features/decision-inspector/shell/InspectorShell.css": [
+      "frontend/src/features/decision-inspector/shell/InspectorShell.js",
+      "frontend/src/features/decision-inspector/shell/InspectorShell.tsx"
+    ],
+    "frontend/src/features/decision-inspector/trace/TraceTimeline.css": [
+      "frontend/src/features/decision-inspector/trace/TraceTimeline.js",
+      "frontend/src/features/decision-inspector/trace/TraceTimeline.tsx"
+    ],
+    "scripts/run_public_e2e_demo.py": [
+      "scripts/run_l15_otel_live_validation.py"
+    ],
+    "src/orchestration/state_graph.py": [
+      "scripts/run_public_e2e_demo.py",
+      "scripts/run_sandbox_local_validation.py",
+      "src/execution/gateway.py",
+      "src/sandbox/manager.py",
+      "tests/test_l1_governance.py",
+      "tests/test_sandbox.py"
+    ],
+    "src/sandbox/__init__.py": [
+      "scripts/run_sandbox_local_validation.py",
+      "tests/test_sandbox.py"
+    ],
+    "src/adapters/bedrock_provider_adapter.py": [
+      "src/adapters/bedrock_kb_adapter.py"
+    ],
+    "src/jobs/__init__.py": [
+      "src/api/server.py"
+    ],
+    "src/sandbox/manager.py": [
+      "src/execution/gateway.py"
+    ],
+    "src/sandbox/receipt.py": [
+      "src/execution/gateway.py",
+      "src/sandbox/backend.py",
+      "src/sandbox/manager.py"
+    ],
+    "src/metadata/schema.py": [
+      "src/metadata/ontology.py",
+      "src/metadata/ontology_engine.py",
+      "src/metadata/ontology_generator.py"
+    ],
+    "src/metadata/ontology.py": [
+      "src/metadata/ontology_engine.py",
+      "src/metadata/ontology_generator.py"
+    ],
+    "src/observability/local_trace.py": [
+      "src/observability/otel_bridge.py"
+    ],
+    "src/retrieval/sqlite_vector_store.py": [
+      "src/retrieval/governed_rag.py"
+    ],
+    "src/retrieval/governed_rag.py": [
+      "src/retrieval/sqlite_vector_store.py"
+    ],
+    "src/sandbox/exceptions.py": [
+      "src/sandbox/backend.py",
+      "src/sandbox/filesystem.py",
+      "src/sandbox/manager.py",
+      "src/sandbox/specification.py",
+      "tests/test_sandbox.py"
+    ],
+    "src/sandbox/filesystem.py": [
+      "src/sandbox/backend.py",
+      "src/sandbox/manager.py"
+    ],
+    "src/sandbox/process.py": [
+      "src/sandbox/backend.py",
+      "src/sandbox/manager.py"
+    ],
+    "src/sandbox/specification.py": [
+      "src/sandbox/backend.py",
+      "src/sandbox/filesystem.py",
+      "src/sandbox/manager.py",
+      "src/sandbox/process.py"
+    ],
+    "src/sandbox/backend.py": [
+      "src/sandbox/manager.py"
+    ],
+    "src/execution/__init__.py": [
+      "tests/test_sandbox.py"
+    ],
+    "src/context/workspace_binding.py": [
+      "tests/test_workspace_binding.py"
+    ]
+  },
+  "tests_by_file": {
+    "tests/test_bago_sync_agent.py": [
+      "tests/test_bago_sync_agent.py"
+    ],
+    "docs/ontology_engine.md": [
+      "tests/test_l10_ontology_engine.py"
+    ],
+    "scripts/bago_sync_agent.py": [
+      "tests/test_bago_sync_agent.py"
+    ],
+    "scripts/bago.py": [
+      "tests/test_bago_sync_agent.py"
+    ],
+    "tests/test_retrieval_accuracy.py": [
+      "tests/test_retrieval_accuracy.py"
+    ],
+    "frontend/src/contracts/decision/evidence.js": [
+      "frontend/tests/contracts/evidence/evidence.test.ts",
+      "frontend/tests/ui/decision-inspector/evidence/evidence-explorer.test.tsx",
+      "tests/test_l3_evidence.py"
+    ],
+    "demo.py": [
+      "tests/test_public_e2e_demo.py"
+    ],
+    "tests/test_bedrock_integration.py": [
+      "tests/test_bedrock_integration.py"
+    ],
+    "evidence/public_e2e_demo.md": [
+      "tests/test_public_e2e_demo.py"
+    ],
+    "src/metadata/schema.py": [
+      "tests/test_metadata_schema.py"
+    ],
+    "frontend/src/contracts/trace/trace.ts": [
+      "frontend/tests/contracts/trace/trace.test.ts",
+      "frontend/tests/ui/decision-inspector/trace/trace.test.tsx"
+    ],
+    "tests/test_bedrock_kb_adapter.py": [
+      "tests/test_bedrock_kb_adapter.py"
+    ],
+    "tests/test_retrieval_benchmark.py": [
+      "tests/test_retrieval_benchmark.py"
+    ],
+    "tests/test_l1_governance.py": [
+      "tests/test_l1_governance.py"
+    ],
+    "tests/test_public_e2e_demo.py": [
+      "tests/test_public_e2e_demo.py"
+    ],
+    "src/metadata/ontology.py": [
+      "tests/test_l10_ontology_engine.py",
+      "tests/test_l3_ontology.py",
+      "tests/test_ontology_generator.py"
+    ],
+    "docs/workspace_binding.md": [
+      "tests/test_workspace_binding.py"
+    ],
+    "frontend/tests/contracts/evidence/evidence.test.ts": [
+      "frontend/tests/contracts/evidence/evidence.test.ts"
+    ],
+    "src/metadata/ontology_engine.py": [
+      "tests/test_l10_ontology_engine.py"
+    ],
+    "frontend/tests/ui/decision-inspector/actions/action-review.test.tsx": [
+      "frontend/tests/ui/decision-inspector/actions/action-review.test.tsx"
+    ],
+    "tests/test_l15_otel_bridge.py": [
+      "tests/test_l15_otel_bridge.py"
+    ],
+    "tests/test_sqlite_vector_store.py": [
+      "tests/test_sqlite_vector_store.py"
+    ],
+    "tests/test_l9_end_to_end_agent.py": [
+      "tests/test_l9_end_to_end_agent.py"
+    ],
+    "frontend/src/contracts/trace/trace.js": [
+      "frontend/tests/contracts/trace/trace.test.ts",
+      "frontend/tests/ui/decision-inspector/trace/trace.test.tsx"
+    ],
+    "tests/test_workspace_binding.py": [
+      "tests/test_workspace_binding.py"
+    ],
+    "src/adapters/openmetadata_adapter.py": [
+      "tests/test_openmetadata_adapter.py"
+    ],
+    "docs/ontology_generator.md": [
+      "tests/test_ontology_generator.py"
+    ],
+    "frontend/tests/ui/decision-inspector/evidence/evidence-explorer.test.tsx": [
+      "frontend/tests/ui/decision-inspector/evidence/evidence-explorer.test.tsx"
+    ],
+    "frontend/tests/contracts/action/action.test.ts": [
+      "frontend/tests/contracts/action/action.test.ts"
+    ],
+    "tests/test_mcp_governance.py": [
+      "tests/test_mcp_governance.py"
+    ],
+    "src/context/workspace_binding.py": [
+      "tests/test_workspace_binding.py"
+    ],
+    "frontend/tests/ui/decision-inspector/trace/trace.test.tsx": [
+      "frontend/tests/contracts/trace/trace.test.ts",
+      "frontend/tests/ui/decision-inspector/trace/trace.test.tsx"
+    ],
+    "tests/test_l12_observability.py": [
+      "tests/test_l12_observability.py"
+    ],
+    "frontend/tests/ui/decision-inspector/shell/shell.test.tsx": [
+      "frontend/tests/ui/decision-inspector/shell/shell.test.tsx"
+    ],
+    "frontend/src/contracts/action/action.js": [
+      "frontend/tests/contracts/action/action.test.ts",
+      "frontend/tests/ui/decision-inspector/actions/action-review.test.tsx"
+    ],
+    "src/etl/pipeline.py": [
+      "tests/test_l2_etl_pipeline.py"
+    ],
+    "tests/test_metadata_schema.py": [
+      "tests/test_metadata_schema.py"
+    ],
+    "src/adapters/bedrock_kb_adapter.py": [
+      "tests/test_bedrock_kb_adapter.py"
+    ],
+    "frontend/tests/contracts/trace/trace.test.ts": [
+      "frontend/tests/contracts/trace/trace.test.ts",
+      "frontend/tests/ui/decision-inspector/trace/trace.test.tsx"
+    ],
+    "frontend/tests/ui/decision-inspector/integration/integration.test.tsx": [
+      "frontend/tests/ui/decision-inspector/integration/integration.test.tsx"
+    ],
+    "docs/mcp_governance.md": [
+      "tests/test_mcp_governance.py"
+    ],
+    "tests/test_l3_evidence.py": [
+      "tests/test_l3_evidence.py"
+    ],
+    "tests/test_l3_ontology.py": [
+      "tests/test_l3_ontology.py"
+    ],
+    "tests/test_sandbox.py": [
+      "tests/test_sandbox.py"
+    ],
+    "tests/test_ontology_generator.py": [
+      "tests/test_ontology_generator.py"
+    ],
+    "docs/public_e2e_demo.md": [
+      "tests/test_public_e2e_demo.py"
+    ],
+    "tests/test_dynamic_readme.py": [
+      "tests/test_dynamic_readme.py"
+    ],
+    "frontend/src/contracts/decision/evidence.ts": [
+      "frontend/tests/contracts/evidence/evidence.test.ts",
+      "frontend/tests/ui/decision-inspector/evidence/evidence-explorer.test.tsx",
+      "tests/test_l3_evidence.py"
+    ],
+    "tests/test_openmetadata_adapter.py": [
+      "tests/test_openmetadata_adapter.py"
+    ],
+    "src/retrieval/sqlite_vector_store.py": [
+      "tests/test_sqlite_vector_store.py"
+    ],
+    "tests/test_l2_etl_pipeline.py": [
+      "tests/test_l2_etl_pipeline.py"
+    ],
+    "docs/decision-inspector/MANUAL_PARA_DUMMIES_assets/trace.png": [
+      "frontend/tests/contracts/trace/trace.test.ts",
+      "frontend/tests/ui/decision-inspector/trace/trace.test.tsx"
+    ],
+    "src/metadata/ontology_generator.py": [
+      "tests/test_ontology_generator.py"
+    ],
+    "evidence/l10_ontology_engine.md": [
+      "tests/test_l10_ontology_engine.py"
+    ],
+    "agents/07-sincronizacion/executors/bago_sync_agent.py": [
+      "tests/test_bago_sync_agent.py"
+    ],
+    "frontend/src/contracts/action/action.ts": [
+      "frontend/tests/contracts/action/action.test.ts",
+      "frontend/tests/ui/decision-inspector/actions/action-review.test.tsx"
+    ],
+    "tests/test_l10_ontology_engine.py": [
+      "tests/test_l10_ontology_engine.py"
+    ],
+    "src/observability/otel_bridge.py": [
+      "tests/test_l15_otel_bridge.py"
+    ]
+  }
+}

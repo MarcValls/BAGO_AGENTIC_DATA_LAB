@@ -1,0 +1,16 @@
+{
+  "sources": {},
+  "queries": {
+    "05551bfb9a46395c": {
+      "query": "Ver y leer carpetas y archivos",
+      "fragments": [],
+      "source_hashes": {
+        "CANON.MD": "",
+        ".bago/core/task_response_contract.py": "",
+        ".bago/core/workspace_binding.py": "",
+        ".bago/core/context_patterns.py": ""
+      },
+      "updated_at": 1791487173.7287872
+    }
+  }
+}

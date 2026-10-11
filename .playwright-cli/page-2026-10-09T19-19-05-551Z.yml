@@ -1,0 +1,87 @@
+- main [ref=e3]:
+  - generic [ref=e4]:
+    - generic [ref=e5]:
+      - generic [aria-hidden] [ref=e6]: B
+      - generic [ref=e7]:
+        - paragraph [ref=e8]: Governed Knowledge Workspace
+        - heading "Agentic Data Lab" [level=1] [ref=e9]
+    - generic [ref=e10]:
+      - generic [ref=e11]: Control plane
+      - button "Provider settings" [ref=e12] [cursor=pointer]
+  - navigation "Application views" [ref=e13]:
+    - generic "Workspace" [ref=e14]:
+      - button "Chat" [ref=e15] [cursor=pointer]
+      - button "Decision Inspector" [ref=e16] [cursor=pointer]
+      - button "Agent Builder" [ref=e17] [cursor=pointer]
+      - button "Agent Runner" [ref=e18] [cursor=pointer]
+    - group [ref=e19]:
+      - generic "Other portfolio views" [ref=e20] [cursor=pointer]
+  - region "Chat view" [ref=e21]:
+    - region "Agent and application chat" [ref=e22]:
+      - complementary "Agent inventory" [ref=e23]:
+        - generic [ref=e24]:
+          - generic [ref=e25]:
+            - paragraph [ref=e26]: Workspace
+            - heading "Agents" [level=2] [ref=e27]
+          - button "Refresh agent list" [ref=e28] [cursor=pointer]: ↻
+        - button "App assistant Chat, list agents, create drafts, navigate" [ref=e29] [cursor=pointer]:
+          - strong [ref=e30]: App assistant
+          - generic [ref=e31]: Chat, list agents, create drafts, navigate
+        - generic [ref=e32]:
+          - generic [ref=e33]: Your application agents
+          - generic [ref=e34]: "1"
+        - button "Library test agent tool · Sin modelo asignado Temporary agent for browser recovery verification." [active] [ref=e74] [cursor=pointer]:
+          - strong [ref=e75]: Library test agent
+          - generic [ref=e76]: tool · Sin modelo asignado
+          - generic [ref=e77]: Temporary agent for browser recovery verification.
+        - region "Conversation library" [ref=e36]:
+          - generic [ref=e37]:
+            - strong [ref=e38]: Chats
+            - button "New" [ref=e39] [cursor=pointer]
+          - group "Conversation status" [ref=e40]:
+            - button "Recent" [ref=e41] [cursor=pointer]
+            - button "Archived" [ref=e42] [cursor=pointer]
+            - button "Trash" [ref=e43] [cursor=pointer]
+          - generic [ref=e78]:
+            - button "Agent 2 question 9/10/2026, 21:18:08" [ref=e119] [cursor=pointer]:
+              - strong [ref=e120]: Agent 2 question
+              - generic [ref=e121]: 9/10/2026, 21:18:08
+            - button "Agent 1 question 9/10/2026, 21:18:08" [ref=e122] [cursor=pointer]:
+              - strong [ref=e123]: Agent 1 question
+              - generic [ref=e124]: 9/10/2026, 21:18:08
+          - generic [ref=e82]:
+            - button "Rename" [ref=e83] [cursor=pointer]
+            - button "Archive" [ref=e84] [cursor=pointer]
+            - button "Move to trash" [ref=e85] [cursor=pointer]
+        - button "Configure Ollama provider" [ref=e45] [cursor=pointer]:
+          - text: Configure Ollama provider
+          - generic [aria-hidden] [ref=e46]: →
+      - generic [ref=e47]:
+        - generic [ref=e48]:
+          - generic [ref=e49]:
+            - paragraph [ref=e50]: Agent conversation
+            - heading "Library test agent" [level=2] [ref=e125]
+            - paragraph [ref=e52]: Agent 2 question
+          - generic [ref=e53]: Sin modelo asignado
+        - generic [ref=e54]:
+          - article [ref=e126]:
+            - generic [ref=e127]: You
+            - generic [ref=e128]: Agent 2 question
+          - article [ref=e129]:
+            - generic [ref=e130]: Library test agent
+            - generic [ref=e131]: Agent 2 saved reply.
+            - generic "Execution trace evidence" [ref=e132]:
+              - generic [ref=e133]: Trace local_only
+              - code [ref=e134]: "Local: trace-test-2"
+        - generic [ref=e63]:
+          - generic [ref=e64]: Message the assistant or selected agent
+          - textbox "Message the assistant or selected agent" [ref=e65]:
+            - /placeholder: Message Library test agent.
+          - generic [ref=e66]:
+            - generic [ref=e67] [cursor=pointer]:
+              - checkbox "Allow read-only project files for this message Selected text is sent to Ollama Cloud" [ref=e68]
+              - generic [ref=e69]:
+                - text: Allow read-only project files for this message
+                - generic [ref=e70]: Selected text is sent to Ollama Cloud
+            - button "Send" [disabled] [ref=e71]
+          - paragraph [ref=e72]: When enabled, chat can read bounded text files in this project and shows the lines it used. It cannot write files or run jobs.

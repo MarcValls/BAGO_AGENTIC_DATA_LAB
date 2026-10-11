@@ -1,0 +1,60 @@
+- main [ref=f5e3]:
+  - generic [ref=f5e4]:
+    - generic [ref=f5e5]:
+      - generic [aria-hidden] [ref=f5e6]: B
+      - generic [ref=f5e7]:
+        - paragraph [ref=f5e8]: Governed Knowledge Workspace
+        - heading "Agentic Data Lab" [level=1] [ref=f5e9]
+    - generic [ref=f5e10]:
+      - generic [ref=f5e11]: Control plane
+      - button "Provider settings" [ref=f5e12] [cursor=pointer]
+  - navigation "Application views" [ref=f5e13]:
+    - generic "Workspace" [ref=f5e14]:
+      - button "Chat" [ref=f5e15] [cursor=pointer]
+      - button "Decision Inspector" [ref=f5e16] [cursor=pointer]
+      - button "Agent Builder" [ref=f5e17] [cursor=pointer]
+      - button "Agent Runner" [ref=f5e18] [cursor=pointer]
+    - group [ref=f5e19]:
+      - generic "Other portfolio views" [ref=f5e20] [cursor=pointer]
+  - region "Chat view" [ref=f5e21]:
+    - region "Agent and application chat" [ref=f5e22]:
+      - complementary "Agent inventory" [ref=f5e23]:
+        - generic [ref=f5e24]:
+          - generic [ref=f5e25]:
+            - paragraph [ref=f5e26]: Workspace
+            - heading "Agents" [level=2] [ref=f5e27]
+          - button "Refresh agent list" [ref=f5e28] [cursor=pointer]: ↻
+        - button "App assistant Chat, list agents, create drafts, navigate" [ref=f5e29] [cursor=pointer]:
+          - strong [ref=f5e30]: App assistant
+          - generic [ref=f5e31]: Chat, list agents, create drafts, navigate
+        - generic [ref=f5e32]:
+          - generic [ref=f5e33]: Your application agents
+          - generic [ref=f5e34]: "1"
+        - button "Frontend Auditor tool · kimi-k2.6 Analiza hallazgos de frontend, prioriza severidades, cita evidencias y propone correcciones técnicas acotadas." [ref=f5e36] [cursor=pointer]:
+          - strong [ref=f5e37]: Frontend Auditor
+          - generic [ref=f5e38]: tool · kimi-k2.6
+          - generic [ref=f5e39]: Analiza hallazgos de frontend, prioriza severidades, cita evidencias y propone correcciones técnicas acotadas.
+        - button "Configure Ollama provider" [ref=f5e40] [cursor=pointer]:
+          - text: Configure Ollama provider
+          - generic [aria-hidden] [ref=f5e41]: →
+      - generic [ref=f5e42]:
+        - generic [ref=f5e43]:
+          - generic [ref=f5e44]:
+            - paragraph [ref=f5e45]: Control plane
+            - heading "How can I help?" [level=2] [ref=f5e46]
+            - paragraph [ref=f5e47]: Ask about your agents, propose a new agent, or open a view.
+          - generic [ref=f5e48]: Ollama assistant
+        - generic [ref=f5e50]:
+          - generic [aria-hidden] [ref=f5e51]: ✳
+          - heading "Your workspace, through chat" [level=3] [ref=f5e52]
+          - paragraph [ref=f5e53]: The assistant can list your application agents, draft one for your review, and navigate to supported views.
+          - generic [ref=f5e54]:
+            - button "List my agents" [ref=f5e55] [cursor=pointer]
+            - button "Create an agent" [ref=f5e56] [cursor=pointer]
+            - button "Open the Inspector" [ref=f5e57] [cursor=pointer]
+        - generic [ref=f5e58]:
+          - generic [ref=f5e59]: Message the assistant or selected agent
+          - textbox "Message the assistant or selected agent" [ref=f5e60]:
+            - /placeholder: Ask a question, list agents, create an agent, or open a view…
+          - button "Send" [disabled] [ref=f5e61]
+          - paragraph [ref=f5e62]: Agent creation is only saved after you review and confirm the proposal. Chat cannot run jobs or change files.

@@ -1,0 +1,56 @@
+- main [ref=f1e3]:
+  - generic [ref=f1e4]:
+    - generic [ref=f1e5]:
+      - paragraph [ref=f1e6]: BAGO · Governed Knowledge Agent
+      - heading "Agentic Data Lab" [level=1] [ref=f1e7]
+    - generic [ref=f1e8]: PASS
+  - button "Decision Inspector" [ref=f1e9] [cursor=pointer]
+  - region "BAGO decision inspector" [ref=f1e10]:
+    - generic [ref=f1e11]:
+      - generic [ref=f1e12]:
+        - paragraph [ref=f1e13]: Governed agent run
+        - heading "Decision Inspector" [level=1] [ref=f1e14]
+        - paragraph [ref=f1e15]: Follow the source conclusion through evidence, trace, actions and receipts.
+        - code [ref=f1e16]: "Run ID: agent_run_9d84b6dac1197cfd"
+      - generic [ref=f1e17]: COMPLETED
+    - navigation "Inspector views" [ref=f1e18]:
+      - button "Decision" [active] [ref=f1e19] [cursor=pointer]
+      - button "Trace" [ref=f1e20] [cursor=pointer]
+      - button "Actions" [ref=f1e21] [cursor=pointer]
+    - region "Agent conclusion" [ref=f1e585]:
+      - paragraph [ref=f1e586]: Source supplied conclusion · run agent_run_9d84b6dac1197cfd
+      - heading "¿Qué política aplica a los pedidos exprés que llegan con más de 24 horas de retraso y qué evidencia valida la regla?" [level=2] [ref=f1e587]
+      - paragraph [ref=f1e588]: "Para pedidos exprés con más de 24 horas de retraso, la política vigente devuelve el coste del envío; el acta de QA valida la regla. Evidence: - fixtures/bruma-delivery-policy-qa.md#revision=1.0.0 - fixtures/bruma-delivery-policy-v2.md#revision=2.0.0"
+    - generic [ref=f1e589]:
+      - generic [ref=f1e590]:
+        - generic [ref=f1e591]: Evidence references
+        - strong [ref=f1e592]: "2"
+      - generic [ref=f1e593]:
+        - generic [ref=f1e594]: Structured claims
+        - strong [ref=f1e595]: Not provided
+      - generic [ref=f1e596]:
+        - generic [ref=f1e597]: Trace events
+        - strong [ref=f1e598]: "15"
+      - generic [ref=f1e599]:
+        - generic [ref=f1e600]: Proposed actions
+        - strong [ref=f1e601]: "1"
+    - main [ref=f1e602]:
+      - generic [ref=f1e603]:
+        - heading "Decision Inspector" [level=1] [ref=f1e604]
+        - paragraph [ref=f1e605]:
+          - text: "Run ID:"
+          - code [ref=f1e606]: agent_run_9d84b6dac1197cfd
+      - paragraph [ref=f1e607]: Run agent_run_9d84b6dac1197cfd › Conclusion
+      - navigation "Conclusion details" [ref=f1e608]:
+        - button "Conclusion" [pressed] [ref=f1e609] [cursor=pointer]
+        - button "Claims" [ref=f1e610] [cursor=pointer]
+        - button "Evidence" [ref=f1e611] [cursor=pointer]
+        - button "Provenance" [ref=f1e612] [cursor=pointer]
+      - region [ref=f1e613]:
+        - heading "Conclusion" [level=2] [ref=f1e614]
+        - generic [ref=f1e615]:
+          - heading "Conclusion source" [level=3] [ref=f1e616]
+          - paragraph [ref=f1e617]: The answer above is the source supplied by this run.
+          - paragraph [ref=f1e618]: Claims are not derived from answer text or citations.
+  - group [ref=f1e56]:
+    - generic "Other portfolio views" [ref=f1e57] [cursor=pointer]

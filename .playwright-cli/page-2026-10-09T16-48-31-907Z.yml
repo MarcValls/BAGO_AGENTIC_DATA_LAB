@@ -1,0 +1,103 @@
+- generic [active] [ref=f1e1]:
+  - generic:
+    - generic:
+      - generic:
+        - banner [ref=f1e2]:
+          - generic [ref=f1e3]:
+            - menu [ref=f1e4]:
+              - menuitem [ref=f1e5] [cursor=pointer]:
+                - textbox "Lookup by Trace ID..." [ref=f1e12]
+              - menuitem "About Jaeger" [ref=f1e13] [cursor=pointer]
+            - menu [ref=f1e18]:
+              - menuitem [ref=f1e19] [cursor=pointer]:
+                - link "JAEGER UI" [ref=f1e21]:
+                  - /url: /
+              - menuitem [ref=f1e22] [cursor=pointer]:
+                - link "Search" [ref=f1e24]:
+                  - /url: /search
+              - menuitem [ref=f1e25] [cursor=pointer]:
+                - link "Compare" [ref=f1e27]:
+                  - /url: /trace/...
+              - menuitem [ref=f1e28] [cursor=pointer]:
+                - link "System Architecture" [ref=f1e30]:
+                  - /url: /dependencies
+              - menuitem [ref=f1e31] [cursor=pointer]:
+                - link "Monitor" [ref=f1e33]:
+                  - /url: /monitor
+              - menuitem [disabled]
+        - main [ref=f1e34]:
+          - generic [ref=f1e35]:
+            - generic [ref=f1e37]:
+              - generic [ref=f1e38]:
+                - switch [checked] [ref=f1e39] [cursor=pointer]:
+                  - 'heading "bago- agentic- data- lab: agent. chat 687d4cf" [level=1] [ref=f1e42]':
+                    - generic [ref=f1e43]:
+                      - generic [ref=f1e44]: bago-
+                      - generic [ref=f1e45]: agentic-
+                      - generic [ref=f1e46]: data-
+                      - generic [ref=f1e47]: "lab:"
+                      - generic [ref=f1e48]: agent.
+                      - generic [ref=f1e49]: chat
+                    - text: 687d4cf
+                - generic [ref=f1e51]:
+                  - textbox "Find..." [ref=f1e53]
+                  - img [ref=f1e55] [cursor=pointer]
+                  - button [disabled] [ref=f1e58]
+                  - button [disabled] [ref=f1e59]
+                  - button [disabled] [ref=f1e60]
+                  - button [disabled] [ref=f1e61]
+                - button "⌘" [ref=f1e62] [cursor=pointer]
+                - button "Trace Timeline" [ref=f1e64] [cursor=pointer]
+                - button "Archive Trace" [ref=f1e68] [cursor=pointer]
+              - list [ref=f1e73]:
+                - listitem [ref=f1e74]:
+                  - text: Trace Start
+                  - strong [ref=f1e75]:
+                    - generic [ref=f1e76]: October 9 2026, 18:46:07.193
+                - listitem [ref=f1e77]:
+                  - separator [ref=f1e78]
+                - listitem [ref=f1e79]:
+                  - text: Duration
+                  - strong [ref=f1e80]: 1m 53s
+                - listitem [ref=f1e81]:
+                  - separator [ref=f1e82]
+                - listitem [ref=f1e83]:
+                  - text: Services
+                  - strong [ref=f1e84]: "1"
+                - listitem [ref=f1e85]:
+                  - separator [ref=f1e86]
+                - listitem [ref=f1e87]:
+                  - text: Depth
+                  - strong [ref=f1e88]: "1"
+                - listitem [ref=f1e89]:
+                  - separator [ref=f1e90]
+                - listitem [ref=f1e91]:
+                  - text: Total Spans
+                  - strong [ref=f1e92]: "1"
+              - generic [ref=f1e94]:
+                - generic [ref=f1e95]: 0μs
+                - generic [ref=f1e96]: 28.23s
+                - generic [ref=f1e97]: 56.46s
+                - generic [ref=f1e98]: 1m 25s
+                - generic [ref=f1e99]: 1m 53s
+            - generic [ref=f1e114]:
+              - generic [ref=f1e115]:
+                - generic [ref=f1e116]:
+                  - heading "Service & Operation" [level=3] [ref=f1e117]
+                  - generic [ref=f1e118]:
+                    - img [ref=f1e119] [cursor=pointer]
+                    - img [ref=f1e121] [cursor=pointer]
+                    - img [ref=f1e123] [cursor=pointer]
+                    - img [ref=f1e126] [cursor=pointer]
+                - generic [ref=f1e129]:
+                  - generic:
+                    - generic: 0μs
+                    - generic: 28.23s
+                    - generic: 56.46s
+                    - generic: 1m 25s
+                    - generic: 1m 53s
+              - generic [ref=f1e136]:
+                - switch "bago-agentic-data-lab agent.chat" [ref=f1e141] [cursor=pointer]:
+                  - generic [ref=f1e142]: bago-agentic-data-lab
+                  - text: agent.chat
+                - generic [ref=f1e143] [cursor=pointer]: 1m 53s

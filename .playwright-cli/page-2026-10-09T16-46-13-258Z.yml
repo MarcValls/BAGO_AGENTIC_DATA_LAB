@@ -1,0 +1,57 @@
+- main [ref=e3]:
+  - generic [ref=e4]:
+    - generic [ref=e5]:
+      - generic [aria-hidden] [ref=e6]: B
+      - generic [ref=e7]:
+        - paragraph [ref=e8]: Governed Knowledge Workspace
+        - heading "Agentic Data Lab" [level=1] [ref=e9]
+    - generic [ref=e10]:
+      - generic [ref=e11]: Control plane
+      - button "Provider settings" [ref=e12] [cursor=pointer]
+  - navigation "Application views" [ref=e13]:
+    - generic "Workspace" [ref=e14]:
+      - button "Chat" [ref=e15] [cursor=pointer]
+      - button "Decision Inspector" [ref=e16] [cursor=pointer]
+      - button "Agent Builder" [ref=e17] [cursor=pointer]
+      - button "Agent Runner" [ref=e18] [cursor=pointer]
+    - group [ref=e19]:
+      - generic "Other portfolio views" [ref=e20] [cursor=pointer]
+  - region "Chat view" [ref=e21]:
+    - region "Agent and application chat" [ref=e22]:
+      - complementary "Agent inventory" [ref=e23]:
+        - generic [ref=e24]:
+          - generic [ref=e25]:
+            - paragraph [ref=e26]: Workspace
+            - heading "Agents" [level=2] [ref=e27]
+          - button "Refresh agent list" [ref=e28] [cursor=pointer]: ↻
+        - button "App assistant Chat, list agents, create drafts, navigate" [ref=e29] [cursor=pointer]:
+          - strong [ref=e30]: App assistant
+          - generic [ref=e31]: Chat, list agents, create drafts, navigate
+        - generic [ref=e32]:
+          - generic [ref=e33]: Your application agents
+          - generic [ref=e34]: "1"
+        - button "Frontend Auditor tool · kimi-k2.6 Analiza hallazgos de frontend, prioriza severidades, cita evidencias y propone correcciones técnicas acotadas." [ref=e36] [cursor=pointer]:
+          - strong [ref=e37]: Frontend Auditor
+          - generic [ref=e38]: tool · kimi-k2.6
+          - generic [ref=e39]: Analiza hallazgos de frontend, prioriza severidades, cita evidencias y propone correcciones técnicas acotadas.
+        - button "Configure Ollama provider" [ref=e40] [cursor=pointer]:
+          - text: Configure Ollama provider
+          - generic [aria-hidden] [ref=e41]: →
+      - generic [ref=e42]:
+        - generic [ref=e43]:
+          - generic [ref=e44]:
+            - paragraph [ref=e45]: Agent conversation
+            - heading "Frontend Auditor" [level=2] [ref=e63]
+            - paragraph [ref=e47]: Analiza hallazgos de frontend, prioriza severidades, cita evidencias y propone correcciones técnicas acotadas.
+          - generic [ref=e48]: kimi-k2.6
+        - generic [ref=e49]:
+          - article [ref=e65]:
+            - generic [ref=e66]: You
+            - generic [ref=e67]: "[Jaeger paired evidence run 2026-10-09] Revisa este hallazgo P1-02: la vista Agent Runner ofrece ejecutar un agente aunque POST /ws/agents/run devuelve execution_unavailable; además interpreta como éxito una respuesta sin comprobar exit_code. No inspecciones archivos ni ejecutes herramientas. En español, responde con (1) severidad y motivo, (2) evidencia que te he dado, (3) corrección acotada y (4) qué no queda verificado."
+          - status [ref=e68]: Waiting for Ollama…
+        - generic [ref=e58]:
+          - generic [ref=e59]: Message the assistant or selected agent
+          - textbox "Message the assistant or selected agent" [disabled] [ref=e60]:
+            - /placeholder: Message Frontend Auditor…
+          - button "Sending…" [disabled] [ref=e69]
+          - paragraph [ref=e62]: Agent creation is only saved after you review and confirm the proposal. Chat cannot run jobs or change files.
