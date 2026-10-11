@@ -57,7 +57,7 @@
       "result": "PASS"
     },
     {
-      "command": "Inspect LocalTrace source, current trace artifact, CR-001 and W01-W03 handoffs; python .codex-team-kit/scripts/teamctl.py verify",
+      "command": "Inspect LocalTrace source, current trace artifact, CR-001 and W01-W03 handoffs; python .bago/team/kit/scripts/teamctl.py verify",
       "evidence": "Mapped LocalTrace identity/sequence/parent/status/attributes/evidence_refs. Current sample lacks claim/action ids and UI-to-Jaeger correlation; adapter exposes these absences. W01-W03 dependencies were DONE and validated.",
       "result": "PASS"
     }

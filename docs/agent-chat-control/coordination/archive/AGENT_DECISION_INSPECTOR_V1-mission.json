@@ -13,7 +13,7 @@
       "role": "team-orchestrator",
       "depends_on": [],
       "write_scopes": [
-        ".codex-team/**",
+        ".bago/team/runtime/**",
         "docs/decision-inspector/inventory/**"
       ],
       "read_scopes": [
@@ -337,7 +337,7 @@
         "src/features/decision-inspector/**",
         "src/contracts/**",
         "tests/**",
-        ".codex-team/handoffs/**"
+        ".bago/team/runtime/handoffs/**"
       ],
       "deliverables": [
         "Verification report",
@@ -400,7 +400,7 @@
         "frontend/src/contracts/action/**",
         "frontend/src/adapters/action/**",
         "frontend/tests/ui/decision-inspector/integration/**",
-        ".codex-team/handoffs/**",
+        ".bago/team/runtime/handoffs/**",
         "docs/decision-inspector/verification/**"
       ],
       "deliverables": [
@@ -422,11 +422,11 @@
         "W14"
       ],
       "write_scopes": [
-        ".codex-team/**",
+        ".bago/team/runtime/**",
         "docs/decision-inspector/FINAL_STATUS.md"
       ],
       "read_scopes": [
-        ".codex-team/**",
+        ".bago/team/runtime/**",
         "docs/decision-inspector/**",
         "src/features/decision-inspector/**",
         "tests/**"

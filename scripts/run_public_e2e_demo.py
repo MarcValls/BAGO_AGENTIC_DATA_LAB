@@ -286,9 +286,9 @@ def run_demo() -> dict[str, Any]:
 
 def summary(result: dict[str, Any]) -> dict[str, Any]:
     run: AgentRun = result["agent_run"]
+    trace: LocalTrace = result["trace"]
     ontology: OntologyReasoningResult = result["ontology"]
     sandbox: SandboxExecutionResult = result["sandbox"]
-    trace: LocalTrace = result["trace"]
     evaluation: EvaluationReport = result["evaluation"]
     return {
         "status": result["status"],
@@ -323,6 +323,7 @@ def receipt_bundle(result: dict[str, Any]) -> dict[str, Any]:
     """Collect the receipts already produced by the governed run."""
 
     run: AgentRun = result["agent_run"]
+    trace: LocalTrace = result["trace"]
     ontology: OntologyReasoningResult = result["ontology"]
     sandbox: SandboxExecutionResult = result["sandbox"]
     provider_receipt = (
@@ -331,6 +332,8 @@ def receipt_bundle(result: dict[str, Any]) -> dict[str, Any]:
         else None
     )
     return {
+        "run_id": run.run_id,
+        "trace_id": trace.trace_id,
         "agent_decision_receipts": [
             receipt.to_dict() for receipt in run.decision_receipts
         ],
@@ -347,8 +350,25 @@ def artifact_payloads(result: dict[str, Any]) -> dict[str, dict[str, Any]]:
     run: AgentRun = result["agent_run"]
     trace: LocalTrace = result["trace"]
     evaluation: EvaluationReport = result["evaluation"]
+    report = summary(result)
+    report.update(
+        {
+            "run_id": run.run_id,
+            "query": run.query,
+            "answer": run.answer,
+            "trace_id": trace.trace_id,
+            "evaluation_id": evaluation.evaluation_id,
+            "artifacts": [
+                "summary.json",
+                "agent_run.json",
+                "receipts.json",
+                "trace.json",
+                "evaluation.json",
+            ],
+        }
+    )
     return {
-        "summary.json": summary(result),
+        "summary.json": report,
         "agent_run.json": run.to_dict(),
         "receipts.json": receipt_bundle(result),
         "trace.json": trace.to_dict(),

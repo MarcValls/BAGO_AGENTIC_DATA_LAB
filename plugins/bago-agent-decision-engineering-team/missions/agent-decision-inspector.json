@@ -10,7 +10,7 @@
       "title": "Freeze repository surface and identify reusable decision/evidence primitives",
       "role": "team-orchestrator",
       "depends_on": [],
-      "write_scopes": [".codex-team/**", "docs/decision-inspector/inventory/**"],
+      "write_scopes": [".bago/team/runtime/**", "docs/decision-inspector/inventory/**"],
       "read_scopes": ["**"],
       "deliverables": ["Repository snapshot", "Reuse map", "Boundary map"],
       "done_when": ["HEAD/snapshot recorded", "Existing evidence/receipt/trace/auth primitives mapped", "No architecture invented before reuse analysis"],
@@ -121,7 +121,7 @@
       "role": "verification-engineer",
       "depends_on": ["W10"],
       "write_scopes": ["tests/verification/decision-inspector/**", "docs/decision-inspector/verification/**"],
-      "read_scopes": ["src/features/decision-inspector/**", "src/contracts/**", "tests/**", ".codex-team/handoffs/**"],
+      "read_scopes": ["src/features/decision-inspector/**", "src/contracts/**", "tests/**", ".bago/team/runtime/handoffs/**"],
       "deliverables": ["Verification report", "Adversarial cases", "P0/P1/P2 findings"],
       "done_when": ["Unsupported-claim case tested", "Stale evidence case tested", "Unauthorized action case tested", "Missing receipt case tested", "No P0/P1 remains open"],
       "frozen_outputs": ["decision-inspector-verification-v1"]
@@ -131,8 +131,8 @@
       "title": "Terminal mission gate",
       "role": "team-orchestrator",
       "depends_on": ["W11"],
-      "write_scopes": [".codex-team/**", "docs/decision-inspector/FINAL_STATUS.md"],
-      "read_scopes": [".codex-team/**", "docs/decision-inspector/**", "src/features/decision-inspector/**", "tests/**"],
+      "write_scopes": [".bago/team/runtime/**", "docs/decision-inspector/FINAL_STATUS.md"],
+      "read_scopes": [".bago/team/runtime/**", "docs/decision-inspector/**", "src/features/decision-inspector/**", "tests/**"],
       "deliverables": ["Final status", "Evidence index", "Known limitations"],
       "done_when": ["All dependency handoffs validate", "Independent verification has P0=0 and P1=0", "Final evidence index exists", "Residual P2/NOT_RUN items are explicit"],
       "frozen_outputs": ["agent-decision-inspector-v1-terminal-gate"]

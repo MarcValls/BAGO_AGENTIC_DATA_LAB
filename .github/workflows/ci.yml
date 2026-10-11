@@ -33,10 +33,6 @@ jobs:
         run: python scripts/generate_dynamic_readme.py --check --skip-tests
       - name: Check public E2E demo
         run: python scripts/run_public_e2e_demo.py --check
-<<<<<<< HEAD
-      - name: Run one-command demo and write artifacts
-        run: python demo.py
-=======
       - name: Check one-command portfolio demo
         run: python demo.py --no-bootstrap --artifacts-dir demo_output/ci
       - name: Upload portfolio evidence bundle
@@ -44,7 +40,6 @@ jobs:
         with:
           name: governed-agent-demo-evidence
           path: demo_output/ci
->>>>>>> 36fa7829894fed839aaa8d21677dd3c853a9f9e1
       - name: Check local vector store
         run: python scripts/run_l14_vector_store_validation.py --check
       - name: Start local OpenMetadata

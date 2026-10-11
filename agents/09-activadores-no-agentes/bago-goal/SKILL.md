@@ -12,7 +12,7 @@ metadata:
 Use este skill para objetivos con acceptance criteria, iteraciones y verificacion.
 
 1. Entrevista al usuario para clarificar el objetivo y criterios.
-2. Crea .goals/<id>/goal.md y status.json.
+2. Crea .bago/goals/<id>/goal.md y status.json.
 3. Ejecuta el plan paso a paso.
 4. Realiza un Inspector pass con contexto fresco.
 5. Cierra con terminos BAGO: EXECUTED, VERIFIED, VALIDATED, BLOCKED.

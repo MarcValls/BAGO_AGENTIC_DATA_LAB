@@ -1,0 +1,122 @@
+{
+  "goal_id": "openmetadata-lineage-28860",
+  "lifecycle": "MERGED; CI_PASS; UNRELEASED",
+  "stage": "P3_VERIFIED_NO_RELEASE",
+  "authorization": "Marc Valls authorized a disposable local OpenMetadata 1.12.10 run and a minimal adapter change if warranted",
+  "release_baseline": {
+    "tag": "v1.0.0",
+    "commit": "b584235ecfdbc2ecb1c3d601ce40fb4f973ff2e8"
+  },
+  "work_branch": {
+    "name": "real-world/openmetadata-28860-v1.1",
+    "base_commit": "b584235ecfdbc2ecb1c3d601ce40fb4f973ff2e8",
+    "initial_commit": "14ab65f97fa90bc7d12387748ac98ff821f12654",
+    "commit": "85007a1da4871670e8aa06a661e3056652a776a0",
+    "committed": true,
+    "pushed": true,
+    "merged": true
+  },
+  "permissions": {
+    "cross_repository_read": true,
+    "minimal_adapter_and_tests_on_new_branch": true,
+    "local_openmetadata_1_12_10": true,
+    "preserve_existing_local_1_12_6_stack": true,
+    "live_cloud_calls": false,
+    "external_issue_or_pr": false,
+    "bago_repo_push_and_pr": true,
+    "openmetadata_server_fix": false,
+    "new_architecture": false
+  },
+  "issue": {
+    "url": "https://github.com/open-metadata/OpenMetadata/issues/28860",
+    "state": "OPEN",
+    "title_prefix": "[Feature Request]",
+    "labels": [],
+    "reported_version": "1.12.10",
+    "title_route": "/api/v1/lineage",
+    "version_matched_openlineage_event_route": "POST /api/v1/openlineage/lineage",
+    "exact_public_request_reproduced": false,
+    "core_missing_dataset_behavior_reproduced_on_correct_event_route": true
+  },
+  "local_runtime": {
+    "release_tag": "1.12.10-release",
+    "source_commit": "3bc20e698abf222742908c2aa5d0eaa736e7cfbd",
+    "compose_asset_sha256": "8b5c23178803169e41c6c0a8ab1da6b0c65e8007c98a4a6d107a33f3074596d0",
+    "server_image_digest": "sha256:f2fb66b1ea6420a84c986e1035a55308948807352efe9d87ce510612d0dd404c",
+    "db_image_digest": "sha256:3b8f467ff0b418cf3bedd30b1cc29a30f8c832376db0461acf5ab41ba516a8ed",
+    "elasticsearch_image_digest": "sha256:4f6bdcb742e892539c6ac49b0dd3e4e182e90218546e8c6a22db378c344acb60",
+    "compose_project": "bago-om28860-11210",
+    "loopback_ports": [18585, 18586],
+    "isolated_stack_cleaned_up": true,
+    "fixture_cleanup_follow_up_reads_all_404": true,
+    "delete_response_reported_deleted_false": true,
+    "disposable_db_volume_removed": true
+  },
+  "runtime_findings": {
+    "missing_table_existing_schema_http_status": 200,
+    "missing_table_existing_schema_response_status": "success",
+    "missing_table_existing_schema_edges_created": 0,
+    "missing_table_existing_schema_message": "Event processed, no lineage edges created",
+    "missing_table_entity_reads": 404,
+    "table_autocreate_server_log": "SQLIntegrityConstraintViolationException: Column 'updatedAt' cannot be null",
+    "missing_schema_edges_created": 0,
+    "preseeded_positive_control_edges_created": 1,
+    "preseeded_positive_control_lineage_source": "OpenLineage",
+    "post_generic_lineage_http_status": 405,
+    "put_generic_lineage_openlineage_payload_http_status": 400
+  },
+  "repository_facts": {
+    "compose_openmetadata_version": "1.12.6",
+    "openlineage_event_ingest_in_data_lab_before_change": false,
+    "new_adapter_operation": "ingest_openlineage_event",
+    "new_adapter_operation_effect": "WRITE",
+    "zero_edge_http_2xx_receipt_outcome": "PARTIAL",
+    "existing_generic_lineage_api": "PUT /api/v1/lineage"
+  },
+  "verdict": "CORE_BEHAVIOR_REPRODUCED_ON_CORRECT_EVENT_API; GOVERNED_ZERO_EDGE_VISIBILITY_ADDED; NO_SERVER_FIX",
+  "findings": {"P0": 0, "P1": 1, "P2": 1},
+  "tests": {
+    "python_3_11_targeted_adapter": "27 passed",
+    "python_3_14_full_suite": "162 passed; 5 compatibility/deprecation warnings",
+    "python_3_11_full_suite": "162 passed in a temporary venv populated from pinned requirements.txt; venv removed",
+    "github_actions_latest_commit": "PASS: full-suite verify and README consistency checks passed",
+    "python_3_11_compileall_changed_files": "PASS"
+  },
+  "evidence_files": [
+    ".bago/goals/openmetadata-lineage-28860/evidence/reproduction-direct.json",
+    ".bago/goals/openmetadata-lineage-28860/evidence/reproduction-governed-adapter.json",
+    ".bago/goals/openmetadata-lineage-28860/evidence/openmetadata-server-observations.log",
+    ".bago/goals/openmetadata-lineage-28860/evidence/cleanup-lookups.json",
+    ".bago/goals/openmetadata-lineage-28860/evidence/SHA256SUMS.txt"
+  ],
+  "report": ".bago/goals/openmetadata-lineage-28860/audit.md",
+  "cross_repo_layer": {
+    "frozen_contract_version": "v0.9-FIX8",
+    "contract_sha256": "d15ecd534f6f6ee34daff78107886c6d695b84d4790c04fbb4a0c35c2bf6c65e",
+    "contract_semantic_tests": "LAE-01...24 = 24 PASS",
+    "frozen_contract_runtime_state": "NOT_IMPLEMENTED",
+    "separate_bago_mvp": "candidate/untracked; 8 isolated unit checks reported",
+    "separate_cli_candidate": "untracked; 2 focused tests reported; global validation NOT_RUN",
+    "integrated_or_reused": false
+  },
+  "evidence": {
+    "github_issue_query": "gh issue view 28860 -R open-metadata/OpenMetadata",
+    "openmetadata_release_source": "OpenMetadata 1.12.10-release commit 3bc20e698abf222742908c2aa5d0eaa736e7cfbd",
+    "local_repo_worktree": "adapter/tests and generated README metrics committed on separate branch; .bago/goals evidence and unrelated untracked paths remain local and excluded from push; no v1.0.0 tracked artifacts changed",
+    "cross_repo_review": "read-only; no files changed in C:/Users/AMTEC_Terminal_1º/BAGO"
+  },
+  "pull_request": {
+    "number": 36,
+    "url": "https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/pull/36",
+    "base": "main",
+    "head": "real-world/openmetadata-28860-v1.1",
+    "state": "MERGED",
+    "head_commit": "85007a1da4871670e8aa06a661e3056652a776a0",
+    "merge_commit": "c2a7768e15da59e57aae132c0aac492c63de5a64",
+    "merged_at": "2026-10-03T12:28:36Z",
+    "merged_by_github_login": "MarcValls",
+    "checks": "PASS"
+  },
+  "next_action": "Record that GitHub reports PR #36 merged by MarcValls after the last status check; confirm whether this was intentional. Do not release or pursue upstream issue activity without separate authorization.",
+  "freeze_policy": "v1.0.0 remains immutable; this unreleased work branch is separate and requires a separate version/release decision."
+}

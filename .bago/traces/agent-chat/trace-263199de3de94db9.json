@@ -12,7 +12,7 @@
         "provider_id": "ollama-cloud",
         "workspace_read_count": 2,
         "workspace_read_sources": [
-          ".goals/ADL-P1-02-REAL-AUDIT-SPIRAL-001/evidence/P1_02_FINDING_BRIEF.md:1-20",
+          ".bago/goals/ADL-P1-02-REAL-AUDIT-SPIRAL-001/evidence/P1_02_FINDING_BRIEF.md:1-20",
           "frontend/src/components/AgentRunner.tsx:1-250"
         ]
       },

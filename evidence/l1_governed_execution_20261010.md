@@ -49,8 +49,8 @@ Las huellas SHA-256 corresponden al contenido incluido en el commit `defe7b8`:
 | `tests/test_l1_governance.py` | `bbbd7c24f804d6a84705ac126c63dadf98e81ff4c55d399823ddb921c08cde6c` |
 | `tests/test_dynamic_readme.py` | `d827362153ca97c5e53dbba7c85912b92105ef8e3c8768b21751b82563d7b136` |
 | `docs/readme_manifest.json` | `ab2a7e4a6b0bdcf9084a976c15b2517e7209be6b059e452cd7a91ac6da3c6ed1` |
-| `STATE.md` | `db8c2695b2e9b8613f29b3748132f34b9d83056635c137173a811c34261453ff` |
-| `JOB_SKILL_MATRIX.md` | `78862e3f0fea030855d506d851ec8dca6900bfc6e0d8bed0ce515d6b1a6830ab` |
+| `.bago/canon/STATE.md` | `db8c2695b2e9b8613f29b3748132f34b9d83056635c137173a811c34261453ff` |
+| `.bago/canon/JOB_SKILL_MATRIX.md` | `78862e3f0fea030855d506d851ec8dca6900bfc6e0d8bed0ce515d6b1a6830ab` |
 | `README.md` | `af54de293a4555d4e96fc7652a4a9f4e3e2dcb361656b3b79318a743d3d21a11` |
 
 | Recibo | SHA-256 |

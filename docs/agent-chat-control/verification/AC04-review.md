@@ -38,7 +38,7 @@ The previously identified fake Runner success, missing legacy WebSocket model fa
 | `python -m compileall -q src/api/server.py src/providers/ollama.py` | PASS | No compilation errors. |
 | `docker compose -f docker-compose.ui.yml config --quiet` | PASS | Compose accepted the loopback ports, container marker, and mounts. |
 | `git diff --check` | PASS | No whitespace errors; Git printed line-ending conversion warnings. |
-| `python .codex-team-kit/scripts/teamctl.py verify` | PASS | Coordination state and completed handoffs validated before AC04 submission. |
+| `python .bago/team/kit/scripts/teamctl.py verify` | PASS | Coordination state and completed handoffs validated before AC04 submission. |
 | AC09/AC10 route and Origin source inspection | PASS | Final `src/api/server.py` hash is `c8b5bb35ec8bf0c1fbb3972c8be815aff70fd785e32c5ebd962a461134acfda6`, matching AC10. |
 | Automated tests | NOT_RUN | Not requested in this review assignment. |
 | Browser/manual keyboard and screen-reader review | NOT_RUN | No browser session was started. |

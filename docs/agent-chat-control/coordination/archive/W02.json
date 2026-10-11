@@ -52,7 +52,7 @@
       "result": "PASS"
     },
     {
-      "command": "python .codex-team-kit/scripts/teamctl.py inspect W02; python .codex-team-kit/scripts/teamctl.py verify",
+      "command": "python .bago/team/kit/scripts/teamctl.py inspect W02; python .bago/team/kit/scripts/teamctl.py verify",
       "evidence": "W02 is CLAIMED by /root/evidence_contract, depends on DONE W01; teamctl verify passed after W03 handoff.",
       "result": "PASS"
     }

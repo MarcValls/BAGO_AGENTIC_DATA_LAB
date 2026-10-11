@@ -16,6 +16,7 @@
     "noFallthroughCasesInSwitch": true,
     "jsx": "react-jsx",
     "outDir": ".build/app",
+    "incremental": true,
     "tsBuildInfoFile": ".build/app.tsbuildinfo"
   },
   "include": ["src"],

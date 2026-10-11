@@ -4,7 +4,7 @@ Snapshot time: 2026-10-08T16:52Z (UTC)
 Repository: `C:\Users\AMTEC_Terminal_1º\BAGO_AGENTIC_DATA_LAB`
 Branch: `real-world/openmetadata-28860-v1.1`
 HEAD: `c87f619d4a167bca854de4bbda75e2574c076c75`
-Working tree: pre-existing untracked frontend build outputs (`frontend/src/**/*.js`, Vite declarations/config output, TypeScript build info); pack install additions (`AGENTS.md`, `.agents/`, `.codex/`, `.codex-team-kit/`, `plugins/`); mission runtime `.codex-team/` created for this execution. No tracked source modifications were present at inventory time.
+Working tree: pre-existing untracked frontend build outputs (`frontend/src/**/*.js`, Vite declarations/config output, TypeScript build info); pack install additions (`AGENTS.md`, `.agents/`, `.codex/`, `.bago/team/kit/`, `plugins/`); mission runtime `.bago/team/runtime/` created for this execution. No tracked source modifications were present at inventory time.
 
 ## Reuse map
 

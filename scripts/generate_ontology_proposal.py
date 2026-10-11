@@ -20,7 +20,7 @@ from metadata.ontology_generator import (  # noqa: E402
 )
 
 
-DEFAULT_DOCUMENTS = ("LAB_CONTRACT.md", "ARCHITECTURE.md", "ROADMAP.md")
+DEFAULT_DOCUMENTS = (".bago/canon/LAB_CONTRACT.md", ".bago/canon/ARCHITECTURE.md", ".bago/canon/ROADMAP.md")
 
 
 def render_report(
