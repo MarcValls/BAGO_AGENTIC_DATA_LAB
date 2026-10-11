@@ -1,0 +1,45 @@
+{
+  "schema_version": "1.0",
+  "work_id": "W02",
+  "supplement_to": "W02_PROVIDER_VERIFICATION.json",
+  "captured_at_utc": "2026-10-09T20:37:10Z",
+  "runtime": "http://127.0.0.1:8084",
+  "process": {
+    "previous_pid": 40912,
+    "previous_runtime": "C:\\Python314\\python.exe; keyring NOT_INSTALLED",
+    "new_pid": 17840,
+    "new_runtime": ".venv-ollama-spiral\\Scripts\\python.exe",
+    "fixed_port": 8084,
+    "health_after_restart": "ok"
+  },
+  "credential_storage": {
+    "backend_class": "keyring.backends.Windows.WinVaultKeyring",
+    "credential_value_read_or_recorded": false,
+    "auth_config_saved_via_ui": true,
+    "keyring_existing_credential_reused": true,
+    "provider_status": "configured_unverified"
+  },
+  "catalog": {
+    "request": "GET /api/providers/ollama/models via UI",
+    "http_status": 200,
+    "source": "ollama_cloud_api",
+    "count": 18,
+    "gemma_ids": ["gemma4:31b"],
+    "generation_performed": false,
+    "screenshot": "output/playwright/ollama-spiral-provider-model-catalog-20261009.png"
+  },
+  "specific_verify": {
+    "request": "POST /api/providers/ollama/verify",
+    "model_id": "gemma4:31b",
+    "response": {
+      "provider_id": "ollama-cloud",
+      "state": "configured_unverified",
+      "model_id": "gemma4:31b",
+      "model_available": true,
+      "generation_performed": false
+    }
+  },
+  "configuration_file": ".bago/providers/ollama.json",
+  "model_selection": "Not yet saved; waiting for user choice because configured gemma4:31b-cloud is not listed and gemma4:31b is.",
+  "generation": "NOT_RUN"
+}

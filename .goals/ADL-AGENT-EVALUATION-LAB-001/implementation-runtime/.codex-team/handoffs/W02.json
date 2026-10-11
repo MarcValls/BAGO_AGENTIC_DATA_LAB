@@ -1,0 +1,76 @@
+{
+  "changed_files": [
+    "src/evaluation/agent_lab.py",
+    "src/api/server.py",
+    "src/capabilities/manager.py",
+    "tests/test_agent_evaluation_lab.py",
+    "tests/test_capability_manager.py",
+    "docs/agent_evaluation_lab.md"
+  ],
+  "next_consumers": [
+    "W04"
+  ],
+  "outputs": [
+    {
+      "description": "Workspace-isolated SQLite suites, immutable revisions and run snapshots, validation, deterministic grading, provider-independent helpers and concurrent suite run lease.",
+      "path": "src/evaluation/agent_lab.py"
+    },
+    {
+      "description": "Suite CRUD/run-history endpoints; preflighted real Ollama inference; safe provider errors; per-case LocalTrace and conditional Jaeger export.",
+      "path": "src/api/server.py"
+    },
+    {
+      "description": "Catalog entry for the explicit, bounded, no-jobs/no-workspace-write agent.evaluate capability.",
+      "path": "src/capabilities/manager.py"
+    },
+    {
+      "description": "Focused backend coverage for SQLite, validation, versions/conflicts, all suite states, concurrency, provider/model preflight, real-call pathway stubs, safe errors, redaction, trace linkage and no side effects.",
+      "path": "tests/test_agent_evaluation_lab.py"
+    },
+    {
+      "description": "CR-001-approved exact catalog expectation updated for agent.evaluate.",
+      "path": "tests/test_capability_manager.py"
+    },
+    {
+      "description": "Backend API, persistence, grading, privacy, trace and status semantics.",
+      "path": "docs/agent_evaluation_lab.md"
+    }
+  ],
+  "payload_sha256": "4fc7392e7499c853915bc17dee4e0a13b226bb55bfbdefc85c25d06cb659526d",
+  "residual_risks": [
+    "No live Ollama request or live Jaeger/OTLP export was run. This handoff verifies the endpoint with provider stubs and Jaeger URL emission is conditional on confirmed export.",
+    "No usage or monetary cost is reported; run metadata explicitly says not_reported.",
+    "Ruff's three F811 duplicate-definition findings in src/api/server.py predate W02 and were excluded from the scoped API lint command.",
+    "An earlier teamctl status invocation was accidentally run without --root and touched the repository-root .codex-team/state.json. It was not reverted; subsequent W02 coordination is restricted to implementation-runtime. The main agent was notified and is inspecting that state diff."
+  ],
+  "role": "trace-observability-engineer",
+  "status": "DONE",
+  "verification": [
+    {
+      "command": "py -3.14 -m pytest -q tests/test_agent_evaluation_lab.py tests/test_agent_chat_trace.py tests/test_capability_manager.py",
+      "details": "26 passed in 2.15s; one warning from langchain_core that its Pydantic v1 compatibility layer is not compatible with Python 3.14. Provider calls in the new endpoint test are stubs; no live inference was performed.",
+      "result": "PASS"
+    },
+    {
+      "command": "py -3.14 -m ruff check src/evaluation/agent_lab.py src/capabilities/manager.py tests/test_agent_evaluation_lab.py tests/test_capability_manager.py",
+      "details": "All checks passed.",
+      "result": "PASS"
+    },
+    {
+      "command": "py -3.14 -m ruff check --ignore F811 src/api/server.py",
+      "details": "All checks passed with F811 ignored because server.py contains pre-existing duplicate definitions of export_agents, list_workflows and dispatch_workflow.",
+      "result": "PASS"
+    },
+    {
+      "command": "py -3.14 -m py_compile src/evaluation/agent_lab.py src/api/server.py src/capabilities/manager.py tests/test_agent_evaluation_lab.py tests/test_capability_manager.py",
+      "details": "All scoped Python modules compiled.",
+      "result": "PASS"
+    },
+    {
+      "command": "git diff --check -- src/evaluation/agent_lab.py src/api/server.py src/capabilities/manager.py tests/test_agent_evaluation_lab.py tests/test_capability_manager.py docs/agent_evaluation_lab.md",
+      "details": "No whitespace errors in scoped tracked diffs. Newly added Python files are covered by compile and Ruff checks.",
+      "result": "PASS"
+    }
+  ],
+  "work_id": "W02"
+}

@@ -1,0 +1,19 @@
+{
+  "change_request_id": "CR-012-TRACE-EVENT-TIMING",
+  "contract_id": "decision-trace-contract-v1",
+  "old_fingerprint": "f73949f6e56fee88a2e9d02506abe1b5fbc7a6d0fada33525a88f349f3ee7d64",
+  "proposed_new_fingerprint": "92c9132c2eaa7b46057cf174269a1c264dbb6624cddc105c5390c6d700211951",
+  "reason": "A real agent-chat span must preserve observed inference start/end time so Jaeger duration reflects the model request rather than the later projection time. Add optional event timing fields; historical events without timestamps keep their current behavior.",
+  "impacted_consumers": [
+    "LocalTrace and TraceEvent consumers",
+    "OTel bridge",
+    "W04 trace contract consumers",
+    "tests/test_l15_otel_bridge.py"
+  ],
+  "required_invalidations": [
+    "Verify old traces without event timestamps still project successfully.",
+    "Verify timestamped events preserve source timing and local trace JSON remains unchanged by export.",
+    "Check Jaeger span duration against the source LocalTrace timing."
+  ],
+  "decision": "Accepted at user request for the paired UI/Jaeger evidence workflow."
+}

@@ -1,0 +1,35 @@
+{
+  "event_count": 1,
+  "events": [
+    {
+      "attributes": {
+        "agent_config_fingerprint": "f09dcdc477bc8aef04684fc49628536df28cf4c24769f70c3c8d99d17d9e03c7",
+        "agent_id": "agent_d3e63db8b4704080b924a05fb1ab71fc",
+        "cost_status": "not_reported",
+        "duration_ms": 1095,
+        "evaluation_case_id": "case_synthetic_ping_20261010",
+        "evaluation_run_id": "evalrun_167d1a0a434a400989aceaed64f24630",
+        "evaluation_suite_id": "evalsuite_edc8e45fe63e4398af22f4968e911d0f",
+        "evaluation_suite_version": 1,
+        "model_id": "gemma4:31b",
+        "outcome": "PASS",
+        "provider_id": "ollama-cloud"
+      },
+      "event_id": "event-33a6becdfb434ac7",
+      "evidence_refs": [
+        "agent://agent_d3e63db8b4704080b924a05fb1ab71fc"
+      ],
+      "kind": "workflow",
+      "name": "agent.evaluation.case",
+      "parent_event_id": null,
+      "sequence": 0,
+      "status": "SUCCESS",
+      "trace_id": "trace-c03d1ed69fe647a2"
+    }
+  ],
+  "evidence_refs": [
+    "agent://agent_d3e63db8b4704080b924a05fb1ab71fc"
+  ],
+  "run_id": "evalrun_167d1a0a434a400989aceaed64f24630",
+  "trace_id": "trace-c03d1ed69fe647a2"
+}

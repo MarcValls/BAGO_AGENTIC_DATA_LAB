@@ -1,0 +1,48 @@
+{
+  "schema_version": "1.0",
+  "work_id": "W02",
+  "role": "verification-engineer",
+  "captured_at_utc": "2026-10-09T20:27:09Z",
+  "candidate": {
+    "head": "69b4f4b1ead2552b527e6e48868ab36cc2b38cbc",
+    "branch": "codex/conversation-library-v1",
+    "worktree": "C:\\Users\\AMTEC_Terminal_1º\\AppData\\Local\\Temp\\BAGO_AGENTIC_DATA_LAB_conversation_library"
+  },
+  "runtime": {
+    "base_url": "http://127.0.0.1:8081",
+    "api_route": "POST /api/providers/ollama/verify",
+    "worktree_identity_source": "W01_PROVIDER_SCOPE.json",
+    "configured_provider": "ollama-cloud"
+  },
+  "request": {
+    "model_id": "gemma4:31b-cloud",
+    "credential_values_exposed_to_or_recorded_by_verifier": false
+  },
+  "implementation_semantics": {
+    "source": "src/providers/ollama.py:248-258 and src/api/server.py:417-422",
+    "operation": "Reads configured auth mode internally and performs non-generative GET /api/tags model discovery; compares requested model ID to the returned catalog.",
+    "generation_performed": false,
+    "credential_value_returned_by_endpoint": false
+  },
+  "observation": {
+    "http_status": 200,
+    "elapsed_ms": 1275,
+    "response": {
+      "provider_id": "ollama-cloud",
+      "state": "configured_unverified",
+      "model_id": "gemma4:31b-cloud",
+      "model_available": false,
+      "generation_performed": false
+    }
+  },
+  "interpretation": {
+    "verified": "The configured provider verification endpoint on port 8081 completed its catalog check and returned HTTP 200 without a generation call or exposing a credential value.",
+    "not_verified": "The selected model gemma4:31b-cloud was not found in the provider model catalog exposed to this check. The endpoint state remains configured_unverified. No successful generation or usable chat is proven.",
+    "next_action_gate": "Do not attempt W03 against gemma4:31b-cloud unless the configured model becomes listed/available or an authorized model selection is made and separately verified. No provider setting was changed."
+  },
+  "limitations": [
+    "This is provider/catalog availability evidence only, not inference evidence.",
+    "The verify endpoint returns only a boolean for the selected model; no model catalog names were captured.",
+    "The verifier did not access or record a credential value. The provider backend read its configured credential internally as needed for its authenticated catalog request; neither the value nor an authentication header was returned or captured."
+  ]
+}

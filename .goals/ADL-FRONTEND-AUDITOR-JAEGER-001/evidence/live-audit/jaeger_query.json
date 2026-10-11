@@ -1,0 +1,23 @@
+{
+  "query_url": "http://127.0.0.1:16686/api/traces/f6bb1ebd27045f19f14495befc42835b",
+  "http_status": 200,
+  "traceID": "f6bb1ebd27045f19f14495befc42835b",
+  "span_count": 1,
+  "spans": [
+    {
+      "operationName": "agent.chat",
+      "traceID": "f6bb1ebd27045f19f14495befc42835b",
+      "process": "adl-frontend-auditor-proof",
+      "selected_tags": {
+        "bago.trace_id": "trace-0dd06579c7774b63",
+        "bago.run_id": "agent-chat-44ff315888ac47b49548f35f819c1c0d",
+        "bago.event.agent_id": "agent_6b99c36e601c4a868213da340fdf47e5",
+        "bago.event.provider_id": "ollama-cloud",
+        "bago.event.model_id": "gemma4:31b",
+        "bago.event.workspace_read_count": 2,
+        "bago.event.workspace_read_sources": "[\"frontend/src/components/AgentRunner.tsx:1-250\",\"src/api/server.py:1525-1550\"]"
+      }
+    }
+  ],
+  "api_returned_same_trace_id": true
+}

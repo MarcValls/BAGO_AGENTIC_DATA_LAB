@@ -1,0 +1,24 @@
+{
+  "schema_version": "1.0",
+  "work_id": "W01",
+  "role": "team-orchestrator",
+  "changed_files": [
+    ".goals/ADL-P1-02-REAL-AUDIT-SPIRAL-001/evidence/P1_02_FINDING_BRIEF.md",
+    ".goals/ADL-P1-02-REAL-AUDIT-SPIRAL-001/evidence/W01_TARGET_SNAPSHOT.json"
+  ],
+  "outputs": [
+    {
+      "name": "p1-02-target-snapshot-v1",
+      "path": ".goals/ADL-P1-02-REAL-AUDIT-SPIRAL-001/evidence/W01_TARGET_SNAPSHOT.json",
+      "summary": "Original P1-02 source, active candidate identity, dirty-source hashes, provider/model preflight and runtime process lineage are recorded."
+    }
+  ],
+  "verification": [
+    {"command": "git rev-parse HEAD; git branch --show-current", "result": "PASS; 69b4f4b1ead2552b527e6e48868ab36cc2b38cbc on codex/conversation-library-v1"},
+    {"command": "Get-FileHash relevant source and original finding", "result": "PASS; hashes recorded in W01_TARGET_SNAPSHOT.json"},
+    {"command": "GET /api/providers/ollama/status and /api/providers/ollama/models", "result": "PASS; catalog lists gemma4:31b from ollama_cloud_api; no inference or credential disclosure"},
+    {"command": "Inspect listener PID and uvicorn commandline", "result": "PASS; listener PID 43528 is child of Uvicorn PID 46248, launched from candidate checkout on 8084"}
+  ],
+  "residual_risks": ["Dirty source worktree; evidence binds to SHA-256 of exact files.", "Original P1-02 applies to a prior snapshot, not automatically this one."],
+  "next_consumers": ["W02"]
+}

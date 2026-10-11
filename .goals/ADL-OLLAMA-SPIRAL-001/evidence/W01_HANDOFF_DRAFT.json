@@ -1,0 +1,37 @@
+{
+  "changed_files": [
+    ".goals/ADL-OLLAMA-SPIRAL-001/evidence/W01_PROVIDER_SCOPE.json"
+  ],
+  "outputs": [
+    {
+      "name": "provider-scope-v1",
+      "path": ".goals/ADL-OLLAMA-SPIRAL-001/evidence/W01_PROVIDER_SCOPE.json",
+      "summary": "Read-only runtime identity and Ollama status for ports 8081 and 8084; no credential value accessed."
+    }
+  ],
+  "verification": [
+    {
+      "command": "Invoke-RestMethod GET http://127.0.0.1:8081/api/providers/ollama/status and GET http://127.0.0.1:8084/api/providers/ollama/status",
+      "result": "PASS",
+      "evidence": "8081 returned ollama-cloud, gemma4:31b-cloud, api_key, configured_unverified; 8084 returned ollama-cloud, not_configured."
+    },
+    {
+      "command": "Read Windows listener PID, executable, cwd and process creation time for ports 8081 and 8084",
+      "result": "PASS",
+      "evidence": "8081 PID 14292 cwd BAGO_AGENTIC_DATA_LAB_chat_control; 8084 PID 40912 cwd BAGO_AGENTIC_DATA_LAB_conversation_library."
+    },
+    {
+      "command": "Credential access boundary",
+      "result": "PASS",
+      "evidence": "No credential values/files/secret stores read; no verify or generation endpoint called."
+    }
+  ],
+  "residual_risks": [
+    "Port 8081 is configured_unverified; authentication, model availability and generation remain unverified for W02.",
+    "Port 8084 has no provider configuration; it is not the configured runtime.",
+    "Runtime cwd and process identity are point-in-time observations and can change after restart."
+  ],
+  "next_consumers": [
+    "W02"
+  ]
+}

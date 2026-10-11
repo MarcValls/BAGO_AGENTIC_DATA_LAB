@@ -1,0 +1,60 @@
+{
+  "changed_files": [
+    ".goals/ADL-OLLAMA-SPIRAL-001/evidence/CHAT_READ_TEST.txt",
+    ".goals/ADL-OLLAMA-SPIRAL-001/evidence/W03_READ_FIXTURE.json",
+    ".goals/ADL-OLLAMA-SPIRAL-001/evidence/W03_READ_TOOL_PREFLIGHT.json",
+    ".goals/ADL-OLLAMA-SPIRAL-001/evidence/W03_RUNTIME_DIAGNOSTIC.json",
+    ".goals/ADL-OLLAMA-SPIRAL-001/evidence/W03_REAL_AGENT_TURN.json",
+    "output/playwright/ollama-spiral-provider-store-blocker-20261009.png",
+    "output/playwright/ollama-spiral-provider-model-catalog-20261009.png",
+    "output/playwright/ollama-spiral-gemma-selected-20261009.png",
+    "output/playwright/ollama-spiral-real-agent-turn-20261009.png"
+  ],
+  "next_consumers": [
+    "W04"
+  ],
+  "outputs": [
+    {
+      "name": "real-agent-turn-v1",
+      "path": ".goals/ADL-OLLAMA-SPIRAL-001/evidence/W03_REAL_AGENT_TURN.json",
+      "summary": "One live ADL agent request returned source=ollama using ollama-cloud/gemma4:31b, read the exact authorized challenge file, returned its marker and line citation, and persisted a local trace."
+    },
+    {
+      "name": "browser-evidence-v1",
+      "path": "output/playwright/ollama-spiral-real-agent-turn-20261009.png",
+      "summary": "Visible app evidence showing the named agent response, read-source receipt, and local trace id."
+    }
+  ],
+  "payload_sha256": "b99d916a2b529ddd8b08a1f6d9d40750b2ac0fbf8a2b35110723725d7cdc42f3",
+  "residual_risks": [
+    "The configured historical model id gemma4:31b-cloud was absent from the provider catalog; the user-selected Gemma 4 31B family/model was resolved to the catalog-listed Cloud id gemma4:31b and this exact id is documented.",
+    "The app initially reported trace_state=local_only; Jaeger projection and persistence verification are W04 work.",
+    "Ollama did not report a model cost value.",
+    "Provider settings and the task-specific runtime environment were configured as task setup outside W03's declared changed_files scope; no credential value was read or stored in this evidence."
+  ],
+  "role": "trace-observability-engineer",
+  "status": "DONE",
+  "verification": [
+    {
+      "command": "GET http://127.0.0.1:8084/api/providers/ollama/status after the turn",
+      "evidence": "state=ready; auth_mode=api_key; model_id=gemma4:31b; last_verified_at matches the successful live turn.",
+      "result": "PASS"
+    },
+    {
+      "command": "Browser POST /api/agents/agent_d3e63db8b4704080b924a05fb1ab71fc/chat",
+      "evidence": "HTTP 200, 2610 ms, response source=ollama, one source receipt for CHAT_READ_TEST.txt lines 1-3, assistant returned COBALTO-47-FARO, trace id trace-ce1f60b61fc34e13.",
+      "result": "PASS"
+    },
+    {
+      "command": "Inspect persisted local trace .bago/traces/agent-chat/trace-ce1f60b61fc34e13.json",
+      "evidence": "Completed agent.chat event records provider_id=ollama-cloud, model_id=gemma4:31b, outcome=response_received and one workspace read from the exact file.",
+      "result": "PASS"
+    },
+    {
+      "command": "Check screenshot artifact existence",
+      "evidence": "The app screenshot was captured through Playwright at output/playwright/ollama-spiral-real-agent-turn-20261009.png.",
+      "result": "PASS"
+    }
+  ],
+  "work_id": "W03"
+}

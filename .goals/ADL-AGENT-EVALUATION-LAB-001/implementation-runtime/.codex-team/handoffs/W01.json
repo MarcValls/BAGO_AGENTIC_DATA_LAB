@@ -1,0 +1,32 @@
+{
+  "changed_files": [
+    "evidence/W01_API_CONTRACT.md"
+  ],
+  "next_consumers": [
+    "W02",
+    "W03"
+  ],
+  "outputs": [
+    {
+      "description": "Frozen versioned DTO, route, persistence, trace, privacy and UI contract for the bounded Evaluation Lab MVP.",
+      "path": "evidence/W01_API_CONTRACT.md",
+      "sha256": "fa5c4588f8628fe4b48bd2e4026828cdfd6f418e62c1759137fa3025c63c4f42"
+    }
+  ],
+  "payload_sha256": "33d0152d3141a615c62ec48e2d01394a6aba7d725a520b0fc4096b9672ccfdd8",
+  "residual_risks": [
+    "No implementation or executable check has run yet.",
+    "Provider exposes no token/cost usage in current Ollama chat response; costs stay NOT_REPORTED.",
+    "Whether local OTLP/Jaeger will be reachable is not yet verified."
+  ],
+  "role": "team-orchestrator",
+  "status": "DONE",
+  "verification": [
+    {
+      "command": "Cross-checked contract against completed discovery W01/W02 handoffs and current agent/provider/chat/trace code",
+      "details": "The contract names explicit real-provider preflight, single-turn calls, immutable run records, safe error traces, no effects and the separate existing governance Evaluation view.",
+      "result": "PASS"
+    }
+  ],
+  "work_id": "W01"
+}

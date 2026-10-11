@@ -2,6 +2,7 @@ anyio==4.13.0
 beautifulsoup4==4.14.3
 langchain-core==1.6.3
 langgraph==1.2.11
+keyring==25.6.0
 markdown==3.10.2
 mcp==1.30.0
 opentelemetry-api==1.44.0

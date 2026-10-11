@@ -1,0 +1,35 @@
+{
+  "schema_version": "1.0",
+  "work_id": "W03",
+  "captured_at_utc": "2026-10-09T20:33:00Z",
+  "runtime_findings": [
+    {
+      "url": "http://127.0.0.1:8081",
+      "backend_cwd": "C:\\Users\\AMTEC_Terminal_1º\\AppData\\Local\\Temp\\BAGO_AGENTIC_DATA_LAB_chat_control",
+      "backend_pid": 14292,
+      "conversation_api": "HTTP 404",
+      "browser_turn": "HTTP 422 Request data failed validation",
+      "provider_generation": "NOT_REACHED",
+      "interpretation": "The open browser UI sent the conversation-library request shape to the older chat-control server; this was an application contract mismatch, not an Ollama response."
+    },
+    {
+      "url": "http://127.0.0.1:8084",
+      "backend_cwd": "C:\\Users\\AMTEC_Terminal_1º\\AppData\\Local\\Temp\\BAGO_AGENTIC_DATA_LAB_conversation_library",
+      "backend_pid": 40912,
+      "conversation_api": "HTTP 200",
+      "provider_status": {
+        "provider_id": "ollama-cloud",
+        "state": "not_configured",
+        "auth_mode": null,
+        "model_id": null
+      },
+      "provider_ui_save_attempt": "Rejected safely: supported operating-system credential store unavailable",
+      "python_runtime": "C:\\Python314\\python.exe",
+      "keyring_module": "NOT_INSTALLED",
+      "generation": "NOT_RUN",
+      "interpretation": "The correct conversation-library app is running, but its Python 3.14 runtime lacks the keyring package required to reuse the user's OS-stored credential. No credential was read or recorded."
+    }
+  ],
+  "screenshot": "output/playwright/ollama-spiral-provider-store-blocker-20261009.png",
+  "scope": "Runtime and UI diagnostics only; no provider model selection or agent configuration was changed."
+}

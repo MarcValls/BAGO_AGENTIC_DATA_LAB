@@ -42,6 +42,7 @@ class OTelExportReceipt:
     status: str
     error: str = ""
     cost_usd: float = 0.0
+    jaeger_trace_id: str | None = None
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -53,6 +54,7 @@ class OTelExportReceipt:
             "status": self.status,
             "error": self.error,
             "cost_usd": self.cost_usd,
+            "jaeger_trace_id": self.jaeger_trace_id,
         }
 
 
@@ -82,8 +84,14 @@ class _CapturingExporter(SpanExporter):
     def __init__(self, delegate: SpanExporter) -> None:
         self.delegate = delegate
         self.last_result = SpanExportResult.SUCCESS
+        self.trace_ids: list[str] = []
 
     def export(self, spans: Sequence[ReadableSpan]) -> SpanExportResult:
+        self.trace_ids.extend(
+            f"{span.context.trace_id:032x}"
+            for span in spans
+            if span.context is not None
+        )
         self.last_result = self.delegate.export(spans)
         return self.last_result
 
@@ -194,13 +202,15 @@ def export_local_trace(
         for event in local_trace.events:
             parent = spans_by_event_id.get(event.parent_event_id or "")
             context = set_span_in_context(parent) if parent is not None else None
-            span = tracer.start_span(
-                event.name,
-                context=context,
-                attributes=_span_attributes(local_trace, event),
-            )
+            start_options: dict[str, Any] = {}
+            if event.start_time_unix_nano is not None:
+                start_options["start_time"] = event.start_time_unix_nano
+            span = tracer.start_span(event.name, context=context, attributes=_span_attributes(local_trace, event), **start_options)
             _set_status(span, event.status)
-            span.end()
+            if event.end_time_unix_nano is None:
+                span.end()
+            else:
+                span.end(end_time=event.end_time_unix_nano)
             spans_by_event_id[event.event_id] = span
         flushed = processor.force_flush()
         if not flushed:
@@ -221,6 +231,7 @@ def export_local_trace(
         exported=exported,
         status="PASS" if exported else "FAILURE",
         error=error,
+        jaeger_trace_id=(capturing.trace_ids[0] if exported and capturing.trace_ids else None),
     )
 
 

@@ -1,0 +1,69 @@
+{
+  "schema_version": "1.0",
+  "work_id": "W04",
+  "status": "VERIFIED",
+  "captured_at_utc": "2026-10-09T20:51:00Z",
+  "conversation": {
+    "runtime": "http://127.0.0.1:8084",
+    "conversation_id": "conv_144a84b37b604678a4fc6c60af55ef85",
+    "project_id": "bago-agentic-data-lab:default",
+    "owner_kind": "agent",
+    "owner_id": "agent_d3e63db8b4704080b924a05fb1ab71fc",
+    "status": "active",
+    "revision": 2,
+    "message_count": 2,
+    "messages": [
+      {"sequence": 1, "role": "user", "status": "complete"},
+      {"sequence": 2, "role": "assistant", "status": "complete", "text_contains": "COBALTO-47-FARO", "source": "ollama", "sources": [{"path": ".goals/ADL-OLLAMA-SPIRAL-001/evidence/CHAT_READ_TEST.txt", "start_line": 1, "end_line": 3}], "trace_id": "trace-ce1f60b61fc34e13"}
+    ],
+    "verified_after_app_restart": true,
+    "api_readback": "GET /api/conversations/conv_144a84b37b604678a4fc6c60af55ef85 returned HTTP 200 with both messages",
+    "sqlite_readback": {
+      "path": "%LOCALAPPDATA%/BAGO/AgenticDataLab/conversations/library.sqlite3",
+      "message_rows_for_conversation": 2
+    }
+  },
+  "local_trace": {
+    "path": ".bago/traces/agent-chat/trace-ce1f60b61fc34e13.json",
+    "sha256": "62ef1ee1c0a4f523ff4e2c1533cd786b696219deae1fc637706dec8b2aa44b93",
+    "trace_id": "trace-ce1f60b61fc34e13",
+    "event": "agent.chat",
+    "status": "COMPLETED",
+    "provider_id": "ollama-cloud",
+    "model_id": "gemma4:31b",
+    "outcome": "response_received",
+    "workspace_read_count": 1,
+    "workspace_read_sources": [".goals/ADL-OLLAMA-SPIRAL-001/evidence/CHAT_READ_TEST.txt:1-3"]
+  },
+  "jaeger_projection": {
+    "method": "Projected the persisted LocalTrace to the local OTLP/HTTP collector after the agent turn; no model call was made during export.",
+    "endpoint": "http://127.0.0.1:4318/v1/traces",
+    "export_status": "PASS",
+    "service_name": "bago-agentic-data-lab",
+    "local_trace_id_attribute": "trace-ce1f60b61fc34e13",
+    "jaeger_trace_id": "75ee12eb3a775282a950d4c603c651c4",
+    "span_id": "31f218a406db3435",
+    "operation": "agent.chat",
+    "status": "OK",
+    "duration_us": 2578127,
+    "provider_id": "ollama-cloud",
+    "model_id": "gemma4:31b",
+    "workspace_read_source": ".goals/ADL-OLLAMA-SPIRAL-001/evidence/CHAT_READ_TEST.txt:1-3",
+    "jaeger_api_readback": "GET /api/traces/75ee12eb3a775282a950d4c603c651c4 returned one span",
+    "screenshot": "output/playwright/jaeger-ollama-spiral-trace-20261009.png",
+    "screenshot_sha256": "897760d112c5f71ce85df3f105a4f26298e6aa84d2b5871b4a485394d77ce5ef"
+  },
+  "post_restart_runtime": {
+    "new_pid": 46248,
+    "port": 8084,
+    "health": "ok",
+    "provider_state": "configured_unverified",
+    "configured_model_id": "gemma4:31b"
+  },
+  "limitations": [
+    "The agent response UI at execution time showed trace_state=local_only. Jaeger contains a later OTLP projection of the same persisted LocalTrace, not an automatic export performed during that request.",
+    "The app UI itself does not display the later Jaeger trace id/link for this turn.",
+    "The prior configured string gemma4:31b-cloud was absent from the provider catalog; the listed Cloud model id gemma4:31b was selected through Provider Settings UI. Exact alias equivalence is not asserted.",
+    "Ollama cost was not reported."
+  ]
+}

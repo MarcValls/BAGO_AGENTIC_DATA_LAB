@@ -1,0 +1,34 @@
+{
+  "changed_files": [
+    "evidence/W04_CAPABILITY_MANAGER_CONTRACT.md"
+  ],
+  "next_consumers": [],
+  "outputs": [
+    {
+      "frozen": true,
+      "id": "adl-capability-manager-mvp-contract",
+      "path": "evidence/W04_CAPABILITY_MANAGER_CONTRACT.md",
+      "sha256": "0dff2463f06f9af5e374e87d0871653b922d971306de716d55dd1ddaf9a7f9d2"
+    }
+  ],
+  "payload_sha256": "91ebc3c528309cade65dfd8e3a78ebf06714179dccb46009c414578b863212d5",
+  "residual_risks": [
+    "No authenticated actor identity is available for capability-grant approval",
+    "No capability-manager implementation or governed agent execution was exercised"
+  ],
+  "role": "team-orchestrator",
+  "status": "DONE",
+  "verification": [
+    {
+      "command": "teamctl verify before W04 synthesis",
+      "evidence": "W01-W03 handoffs validated before synthesis",
+      "result": "PASS"
+    },
+    {
+      "command": "tests/build/browser/runtime/provider checks",
+      "evidence": "This mission performed read-only audits and contract synthesis; no implementation was made.",
+      "result": "NOT_RUN"
+    }
+  ],
+  "work_id": "W04"
+}

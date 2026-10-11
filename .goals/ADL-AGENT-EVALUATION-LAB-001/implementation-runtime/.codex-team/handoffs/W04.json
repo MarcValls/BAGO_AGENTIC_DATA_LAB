@@ -1,0 +1,48 @@
+{
+  "changed_files": [
+    "evidence/W04_INDEPENDENT_VERIFICATION.md"
+  ],
+  "next_consumers": [
+    "W05"
+  ],
+  "outputs": [
+    {
+      "description": "Read-only independent review against W01, including candidate baseline/fingerprint, P1 privacy mitigation boundary, open P2 UI-test coverage, live receipt limits, and exact test evidence not independently rerun.",
+      "path": "evidence/W04_INDEPENDENT_VERIFICATION.md",
+      "sha256": "d036168212068e8349fd3656604eb825baeb36df7f190ec93ee3b021ad21f7fb"
+    }
+  ],
+  "payload_sha256": "5151fdc6c84969a51f7b295a174350d1c3d9cec908d928252bba42f281cfe7a0",
+  "residual_risks": [
+    "P2 remains open: SSR test proves only initial loading; required UI states and model-inaccessible case lack component-level tests.",
+    "Secret detection/redaction is heuristic, with documented false-positive risk for long hex values and possible false negatives for arbitrary secrets.",
+    "Live Ollama receipt predates the latest detector hardening and contains a response hash but no inspectable response preview; Jaeger remains NOT_RUN.",
+    "Final test claims are root-reported and not independently rerun in this review."
+  ],
+  "role": "verification-engineer",
+  "schema_version": "1.0",
+  "status": "DONE",
+  "verification": [
+    {
+      "command": "Read current source, frozen W01 contract, backend/frontend test source, implementation-runtime W02/W03 handoffs, candidate evidence and live Ollama receipt/LocalTrace",
+      "result": "PASS_WITH_LIMITS; privacy hardening and CR-002 warning are present; SSR covers the real component initial loading render only; live receipt predates final detector hardening and omits response preview"
+    },
+    {
+      "command": "git rev-parse HEAD; git branch --show-current; git status --short; per-file Get-FileHash",
+      "result": "PASS; branch codex/adl-agent-evaluation-lab-20261010 at baseline HEAD 1e4d9f930da1225ce61ce27def897f76d57a08fc with uncommitted candidate changes; current file hashes recorded in the review"
+    },
+    {
+      "command": "git diff --check",
+      "result": "PASS for tracked diff only; does not cover untracked new files"
+    },
+    {
+      "command": "Root-reported final pytest/Ruff/py_compile/frontend node tests/build/SSR test",
+      "result": "Reported PASS in root evidence; NOT independently rerun by bago-verifier. Exact commands/results and limitations are itemized in W04_INDEPENDENT_VERIFICATION.md"
+    },
+    {
+      "command": "Live provider, Jaeger, and full UI interaction tests",
+      "result": "NOT_RUN by reviewer; existing live receipt was reviewed as bounded historical evidence and no provider request was made"
+    }
+  ],
+  "work_id": "W04"
+}

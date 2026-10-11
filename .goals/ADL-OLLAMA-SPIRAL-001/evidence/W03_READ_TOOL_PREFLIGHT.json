@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0",
+  "work_id": "W03",
+  "status": "PREPARED",
+  "check": "Local preflight of the exact production read-only tool used by ADL chat.",
+  "path": ".goals/ADL-OLLAMA-SPIRAL-001/evidence/CHAT_READ_TEST.txt",
+  "returned_source": {
+    "path": ".goals/ADL-OLLAMA-SPIRAL-001/evidence/CHAT_READ_TEST.txt",
+    "start_line": 1,
+    "end_line": 3
+  },
+  "marker_present_in_tool_result": true,
+  "live_model_execution": "NOT_RUN",
+  "limitation": "This check proves the app's read tool can return the fixture; it does not prove a model or agent requested/read it."
+}

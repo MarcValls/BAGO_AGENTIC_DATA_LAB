@@ -1,0 +1,46 @@
+{
+  "schema_version": "1.0",
+  "work_id": "W01",
+  "status": "EXECUTED",
+  "captured_at_utc": "2026-10-09T21:03:57Z",
+  "finding": {
+    "id": "CRIT-BAGO-ADL-FRONTEND-20261009-01/P1-02",
+    "source_path": "C:\\Users\\AMTEC_Terminal_1º\\BAGO_AGENTIC_DATA_LAB\\.bago\\CRIT-BAGO-ADL-FRONTEND-20261009-01.md",
+    "source_lines": "31-36",
+    "source_sha256": "EB331E30BC5F9E720CF2C714E8E02766F8488980C72413FF8B3F9F8AB1BA48BF",
+    "brief_path": ".goals/ADL-P1-02-REAL-AUDIT-SPIRAL-001/evidence/P1_02_FINDING_BRIEF.md",
+    "brief_sha256": "1DE67AFDA83C77324E543FC407A552BC20F635EA09650534875924BD638404C8"
+  },
+  "candidate": {
+    "checkout": "C:\\Users\\AMTEC_Terminal_1º\\AppData\\Local\\Temp\\BAGO_AGENTIC_DATA_LAB_conversation_library",
+    "branch": "codex/conversation-library-v1",
+    "head": "69b4f4b1ead2552b527e6e48868ab36cc2b38cbc",
+    "runtime_url": "http://127.0.0.1:8084",
+    "listener_pid": 43528,
+    "uvicorn_parent_pid": 46248,
+    "runtime_command": "python -m uvicorn src.api.server:app --host 127.0.0.1 --port 8084",
+    "source_files_are_dirty": true,
+    "source_sha256": {
+      "frontend/src/components/AgentRunner.tsx": "D6BCFF256F3ED47C8B8EDA0DE657B0E2727D660EC452C389FFCCC147565A7DAB",
+      "src/api/server.py": "958A6C7A2A1BAF0A04B8AD3BC76F36B0F80BB52AD8AA5E4718E01C480EC30A7E"
+    }
+  },
+  "provider_preflight": {
+    "provider_id": "ollama-cloud",
+    "auth_mode": "api_key",
+    "model_id": "gemma4:31b",
+    "status_before_inference": "configured_unverified",
+    "catalog_source": "ollama_cloud_api",
+    "catalog_lists_model": true,
+    "credential_value_read": false
+  },
+  "checks": {
+    "process_cwd_and_commandline": "PASS",
+    "provider_status_and_catalog": "PASS; no inference performed by these GET requests",
+    "websocket_job_started": "NOT_RUN"
+  },
+  "residual_risks": [
+    "The source snapshot is a dirty worktree; conclusions bind to the recorded file hashes, not HEAD alone.",
+    "The original finding describes a prior packed snapshot and must be re-evaluated against the current file hashes."
+  ]
+}

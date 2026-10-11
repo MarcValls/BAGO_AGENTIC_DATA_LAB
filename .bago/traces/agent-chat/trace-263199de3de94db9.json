@@ -1,0 +1,38 @@
+{
+  "cost_usd": 0.0,
+  "event_count": 1,
+  "events": [
+    {
+      "attributes": {
+        "agent_id": "agent_d3e63db8b4704080b924a05fb1ab71fc",
+        "cost_status": "not_reported",
+        "duration_ms": 7097,
+        "model_id": "gemma4:31b",
+        "outcome": "response_received",
+        "provider_id": "ollama-cloud",
+        "workspace_read_count": 2,
+        "workspace_read_sources": [
+          ".goals/ADL-P1-02-REAL-AUDIT-SPIRAL-001/evidence/P1_02_FINDING_BRIEF.md:1-20",
+          "frontend/src/components/AgentRunner.tsx:1-250"
+        ]
+      },
+      "end_time_unix_nano": 1791579963551380700,
+      "event_id": "event-1c226750065b43cb",
+      "evidence_refs": [
+        "agent://agent_d3e63db8b4704080b924a05fb1ab71fc"
+      ],
+      "kind": "workflow",
+      "name": "agent.chat",
+      "parent_event_id": null,
+      "sequence": 0,
+      "start_time_unix_nano": 1791579956453890500,
+      "status": "COMPLETED",
+      "trace_id": "trace-263199de3de94db9"
+    }
+  ],
+  "evidence_refs": [
+    "agent://agent_d3e63db8b4704080b924a05fb1ab71fc"
+  ],
+  "run_id": "agent-chat-f5779687da294b3485b68be559b61cf7",
+  "trace_id": "trace-263199de3de94db9"
+}
