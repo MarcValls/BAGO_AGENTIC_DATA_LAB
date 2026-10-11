@@ -1,0 +1,112 @@
+{
+  "planHash": "e4228e16433aabb3394345d51bf863dd213a73c20e0d16148c601b080e734956",
+  "phase": "postupgrade",
+  "recordedAtUtc": "2026-10-11T03:50:32.4315943Z",
+  "retryCount": 1,
+  "resetBaseline": false,
+  "complete": true,
+  "result": {
+    "setupSucceeded": true,
+    "setupDurationMs": 7157,
+    "setupFailureOutput": null,
+    "assertions": [
+      {
+        "name": "production-build",
+        "kind": "process",
+        "verificationMethod": "exit-code",
+        "passed": true,
+        "timedOut": false,
+        "skipped": false,
+        "skippedReason": null,
+        "exitCode": 0,
+        "outputSample": "\r\n\u003E bago-portfolio-ui@1.0.0 build\r\n\u003E tsc -b \u0026\u0026 vite build\r\n\r\n\u001B[36mvite v8.3.4 \u001B[32mbuilding client environment for production...\u001B[36m\u001B[39m\r\ntransforming...\r\n\u2713 109 modules transformed.\r\nrendering chunks...\r\ncomputing gzip size...\r\ndist/index.html                   0.61 kB \u2502 gzip:   0.36 kB\r\ndist/assets/index-DOyL7ASU.css   30.85 kB \u2502 gzip:   6.16 kB\r\ndist/assets/index-C67Ekh58.js   353.70 kB \u2502 gzip: 104.96 kB\r\n\r\n\u001B[32m\u2713 built in 534ms\u001B[39m\r\n",
+        "durationMs": 3875
+      },
+      {
+        "name": "tests-pass",
+        "kind": "process",
+        "verificationMethod": "test-results",
+        "passed": true,
+        "timedOut": false,
+        "skipped": false,
+        "skippedReason": null,
+        "exitCode": 0,
+        "outputSample": "\r\n\u003E bago-portfolio-ui@1.0.0 test\r\n\u003E vitest run tests/runtime/package-upgrade.test.tsx\r\n\r\n\r\n RUN  v5.0.3 C:/Users/AMTEC_Terminal_1\u00BA/BAGO_AGENTIC_DATA_LAB/frontend\r\n\r\n\r\n Test Files  1 passed (1)\r\n      Tests  2 passed (2)\r\n   Start at  05:50:27\r\n   Duration  2.93s (import 78%, transform 19%, worker 3%, tests 1%)\r\n\r\n",
+        "durationMs": 4964,
+        "testResults": {
+          "testFramework": "vitest",
+          "runnerDetectedFrom": "package_json",
+          "testsTotal": 2,
+          "testsPassed": 2,
+          "testsFailed": 0,
+          "testsSkipped": 0,
+          "parseFailed": false
+        }
+      },
+      {
+        "name": "dev-server-serves-home",
+        "kind": "http-probe",
+        "verificationMethod": "http-status",
+        "passed": true,
+        "timedOut": false,
+        "skipped": false,
+        "skippedReason": null,
+        "exitCode": null,
+        "outputSample": "HTTP 200\n\u003C!doctype html\u003E\n\u003Chtml lang=\u0022es\u0022\u003E\n  \u003Chead\u003E\n    \u003Cscript type=\u0022module\u0022\u003Eimport { injectIntoGlobalHook } from \u0022/@react-refresh\u0022;\ninjectIntoGlobalHook(window);\nwindow.$RefreshReg$ = () =\u003E {};\nwindow.$RefreshSig$ = () =\u003E (type) =\u003E type;\u003C/script\u003E\n\n    \u003Cscript type=\u0022module\u0022 src=\u0022/@vite/client\u0022\u003E\u003C/script\u003E\n\n    \u003Cmeta charset=\u0022UTF-8\u0022 /\u003E\n    \u003Clink rel=\u0022icon\u0022 href=\u0022data:,\u0022 /\u003E\n    \u003Cmeta name=\u0022viewport\u0022 content=\u0022width=device-width, initial-scale=1.0\u0022 /\u003E\n    \u003Cmeta name=\u0022theme-color\u0022 content=\u0022#0b1120\u0022 /\u003E\n    \u003Cmeta name=\u0022description\u0022 content=\u0022Inspecciona conclusiones de agentes, evidencia, trazas, acciones y recibos.\u0022 /\u003E\n    \u003Ctitle\u003EBAGO Decision Inspector\u003C/title\u003E\n  \u003C/head\u003E\n  \u003Cbody\u003E\n    \u003Cdiv id=\u0022root\u0022\u003E\u003C/div\u003E\n    \u003Cscript type=\u0022module\u0022 src=\u0022/src/main.tsx\u0022\u003E\u003C/script\u003E\n  \u003C/body\u003E\n\u003C/html\u003E\r\n\n--- server output ---\n\r\n\u003E bago-portfolio-ui@1.0.0 dev\r\n\u003E vite --host 127.0.0.1 --strictPort\r\n\r\n\r\n  \u001B[32m\u001B[1mVITE\u001B[22m v8.3.4\u001B[39m  \u001B[2mready in \u001B[0m\u001B[1m370\u001B[22m\u001B[2m\u001B[0m ms\u001B[22m\r\n\r\n  \u001B[32m\u279C\u001B[39m  \u001B[1mLocal\u001B[22m:   \u001B[36mhttp://127.0.0.1:\u001B[1m5173\u001B[22m/\u001B[39m\r\n",
+        "durationMs": 1568
+      }
+    ],
+    "executions": [
+      {
+        "source": "setup[0]",
+        "resolvedExecutable": "C:\\Program Files\\nodejs\\npm.CMD",
+        "args": [
+          "ci"
+        ],
+        "cwd": "C:\\Users\\AMTEC_Terminal_1\u00BA\\BAGO_AGENTIC_DATA_LAB\\frontend",
+        "env": {},
+        "prependPath": [],
+        "platform": "win32"
+      },
+      {
+        "source": "production-build",
+        "resolvedExecutable": "C:\\Program Files\\nodejs\\npm.CMD",
+        "args": [
+          "run",
+          "build"
+        ],
+        "cwd": "C:\\Users\\AMTEC_Terminal_1\u00BA\\BAGO_AGENTIC_DATA_LAB\\frontend",
+        "env": {},
+        "prependPath": [],
+        "platform": "win32"
+      },
+      {
+        "source": "tests-pass",
+        "resolvedExecutable": "C:\\Program Files\\nodejs\\npm.CMD",
+        "args": [
+          "test"
+        ],
+        "cwd": "C:\\Users\\AMTEC_Terminal_1\u00BA\\BAGO_AGENTIC_DATA_LAB\\frontend",
+        "env": {},
+        "prependPath": [],
+        "platform": "win32"
+      },
+      {
+        "source": "dev-server-serves-home",
+        "resolvedExecutable": "C:\\Program Files\\nodejs\\npm.CMD",
+        "args": [
+          "run",
+          "dev",
+          "--",
+          "--host",
+          "127.0.0.1",
+          "--strictPort"
+        ],
+        "cwd": "C:\\Users\\AMTEC_Terminal_1\u00BA\\BAGO_AGENTIC_DATA_LAB\\frontend",
+        "env": {},
+        "prependPath": [],
+        "platform": "win32"
+      }
+    ]
+  }
+}

@@ -1,5 +1,5 @@
 import { createElement } from "react";
-import { renderToString } from "react-dom/server";
+import { renderToString } from "react-dom/server.node";
 import axios from "axios";
 import { expect, it } from "vitest";
 import App from "../../src/App";
