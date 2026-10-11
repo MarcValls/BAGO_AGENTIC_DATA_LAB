@@ -1,0 +1,3650 @@
+{
+  "contract": "urn:bago-layer:git-change-review:v1",
+  "contract_version": 1,
+  "source": {
+    "kind": "git_worktree_snapshot",
+    "captured_at": "2026-10-11T08:10:19+00:00",
+    "repository": {
+      "name": "BAGO_AGENTIC_DATA_LAB"
+    },
+    "scope": "local checkout; branch refs, current worktree and index"
+  },
+  "checkout": {
+    "branch": "main",
+    "head": {
+      "sha": "851ff9e9c83ec4f2f84d3068fb18ec2d0a33561e",
+      "short_sha": "851ff9e9c83e"
+    },
+    "upstream": {
+      "name": "origin/main",
+      "ahead": 9,
+      "behind": 14
+    },
+    "merge": {
+      "in_progress": true,
+      "target_sha": "9428b272735e365c5a1b83197008c31eaa281ee5",
+      "unresolved_index_entries": 0
+    }
+  },
+  "changes": [
+    {
+      "path": ".bago/INDEX.md",
+      "old_path": null,
+      "status": "A",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/canon/ARCHITECTURE.md",
+      "old_path": "ARCHITECTURE.md",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/canon/JOB_SKILL_MATRIX.md",
+      "old_path": "JOB_SKILL_MATRIX.md",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/canon/LAB_CONTRACT.md",
+      "old_path": "LAB_CONTRACT.md",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/canon/LEARNING_LEDGER.md",
+      "old_path": "LEARNING_LEDGER.md",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/canon/ROADMAP.md",
+      "old_path": "ROADMAP.md",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/canon/STATE.md",
+      "old_path": "STATE.md",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/context/GENERATED_CONTEXT.md",
+      "old_path": null,
+      "status": "A",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/context/PROJECT_CONTEXT.md",
+      "old_path": null,
+      "status": "A",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/goals/ADL-AGENT-EVALUATION-LAB-001/evidence/CANDIDATE_EVIDENCE.md",
+      "old_path": ".goals/ADL-AGENT-EVALUATION-LAB-001/evidence/CANDIDATE_EVIDENCE.md",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/goals/ADL-AGENT-EVALUATION-LAB-001/evidence/live-ollama/receipt.json",
+      "old_path": ".goals/ADL-AGENT-EVALUATION-LAB-001/evidence/live-ollama/receipt.json",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/goals/ADL-AGENT-EVALUATION-LAB-001/evidence/live-ollama/traces/trace-c03d1ed69fe647a2.json",
+      "old_path": ".goals/ADL-AGENT-EVALUATION-LAB-001/evidence/live-ollama/traces/trace-c03d1ed69fe647a2.json",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/goals/ADL-AGENT-EVALUATION-LAB-001/goal.md",
+      "old_path": ".goals/ADL-AGENT-EVALUATION-LAB-001/goal.md",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/goals/ADL-AGENT-EVALUATION-LAB-001/implementation-runtime/.codex-team-kit/missions/agent-evaluation-implementation.json",
+      "old_path": ".goals/ADL-AGENT-EVALUATION-LAB-001/implementation-runtime/.codex-team-kit/missions/agent-evaluation-implementation.json",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/goals/ADL-AGENT-EVALUATION-LAB-001/implementation-runtime/.codex-team-kit/protocol/TEAM_PROTOCOL.md",
+      "old_path": ".codex-team-kit/protocol/TEAM_PROTOCOL.md",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/goals/ADL-AGENT-EVALUATION-LAB-001/implementation-runtime/.codex-team-kit/scripts/teamctl.py",
+      "old_path": ".codex-team-kit/scripts/teamctl.py",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/goals/ADL-AGENT-EVALUATION-LAB-001/implementation-runtime/.codex-team/change_requests/CR-001-W02-CAPABILITY-CATALOG-COMPATIBILITY.json",
+      "old_path": ".goals/ADL-AGENT-EVALUATION-LAB-001/implementation-runtime/.codex-team/change_requests/CR-001-W02-CAPABILITY-CATALOG-COMPATIBILITY.json",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/goals/ADL-AGENT-EVALUATION-LAB-001/implementation-runtime/.codex-team/events.jsonl",
+      "old_path": ".goals/ADL-AGENT-EVALUATION-LAB-001/implementation-runtime/.codex-team/events.jsonl",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/goals/ADL-AGENT-EVALUATION-LAB-001/implementation-runtime/.codex-team/handoffs/W01.json",
+      "old_path": ".goals/ADL-AGENT-EVALUATION-LAB-001/implementation-runtime/.codex-team/handoffs/W01.json",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/goals/ADL-AGENT-EVALUATION-LAB-001/implementation-runtime/.codex-team/handoffs/W02.json",
+      "old_path": ".goals/ADL-AGENT-EVALUATION-LAB-001/implementation-runtime/.codex-team/handoffs/W02.json",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/goals/ADL-AGENT-EVALUATION-LAB-001/implementation-runtime/.codex-team/handoffs/W03.json",
+      "old_path": ".goals/ADL-AGENT-EVALUATION-LAB-001/implementation-runtime/.codex-team/handoffs/W03.json",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/goals/ADL-AGENT-EVALUATION-LAB-001/implementation-runtime/.codex-team/handoffs/W04.json",
+      "old_path": ".goals/ADL-AGENT-EVALUATION-LAB-001/implementation-runtime/.codex-team/handoffs/W04.json",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/goals/ADL-AGENT-EVALUATION-LAB-001/implementation-runtime/.codex-team/handoffs/W05.json",
+      "old_path": ".goals/ADL-AGENT-EVALUATION-LAB-001/implementation-runtime/.codex-team/handoffs/W05.json",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/goals/ADL-AGENT-EVALUATION-LAB-001/implementation-runtime/.codex-team/state.json",
+      "old_path": ".goals/ADL-AGENT-EVALUATION-LAB-001/implementation-runtime/.codex-team/state.json",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/goals/ADL-AGENT-EVALUATION-LAB-001/implementation-runtime/drafts/W01.json",
+      "old_path": ".goals/ADL-AGENT-EVALUATION-LAB-001/implementation-runtime/drafts/W01.json",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/goals/ADL-AGENT-EVALUATION-LAB-001/implementation-runtime/drafts/W02.json",
+      "old_path": ".goals/ADL-AGENT-EVALUATION-LAB-001/implementation-runtime/drafts/W02.json",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/goals/ADL-AGENT-EVALUATION-LAB-001/implementation-runtime/drafts/W03.json",
+      "old_path": ".goals/ADL-AGENT-EVALUATION-LAB-001/implementation-runtime/drafts/W03.json",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/goals/ADL-AGENT-EVALUATION-LAB-001/implementation-runtime/drafts/W04.json",
+      "old_path": ".goals/ADL-AGENT-EVALUATION-LAB-001/implementation-runtime/drafts/W04.json",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/goals/ADL-AGENT-EVALUATION-LAB-001/implementation-runtime/drafts/W05.json",
+      "old_path": ".goals/ADL-AGENT-EVALUATION-LAB-001/implementation-runtime/drafts/W05.json",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/goals/ADL-AGENT-EVALUATION-LAB-001/implementation-runtime/evidence/W01_API_CONTRACT.md",
+      "old_path": ".goals/ADL-AGENT-EVALUATION-LAB-001/implementation-runtime/evidence/W01_API_CONTRACT.md",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/goals/ADL-AGENT-EVALUATION-LAB-001/implementation-runtime/evidence/W04_INDEPENDENT_VERIFICATION.md",
+      "old_path": ".goals/ADL-AGENT-EVALUATION-LAB-001/implementation-runtime/evidence/W04_INDEPENDENT_VERIFICATION.md",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/goals/ADL-AGENT-EVALUATION-LAB-001/implementation-runtime/evidence/W05_FINAL_STATUS.md",
+      "old_path": ".goals/ADL-AGENT-EVALUATION-LAB-001/implementation-runtime/evidence/W05_FINAL_STATUS.md",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/goals/ADL-AGENT-EVALUATION-LAB-001/status.json",
+      "old_path": ".goals/ADL-AGENT-EVALUATION-LAB-001/status.json",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/goals/ADL-AGENT-EVALUATION-LAB-001/team-runtime/.codex-team-kit/missions/agent-evaluation-lab-spiral.json",
+      "old_path": ".goals/ADL-AGENT-EVALUATION-LAB-001/team-runtime/.codex-team-kit/missions/agent-evaluation-lab-spiral.json",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/goals/ADL-AGENT-EVALUATION-LAB-001/team-runtime/.codex-team-kit/protocol/TEAM_PROTOCOL.md",
+      "old_path": ".goals/ADL-AGENT-EVALUATION-LAB-001/implementation-runtime/.codex-team-kit/protocol/TEAM_PROTOCOL.md",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/goals/ADL-AGENT-EVALUATION-LAB-001/team-runtime/.codex-team-kit/scripts/teamctl.py",
+      "old_path": ".goals/ADL-AGENT-EVALUATION-LAB-001/implementation-runtime/.codex-team-kit/scripts/teamctl.py",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/goals/ADL-AGENT-EVALUATION-LAB-001/team-runtime/.codex-team/events.jsonl",
+      "old_path": ".goals/ADL-AGENT-EVALUATION-LAB-001/team-runtime/.codex-team/events.jsonl",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/goals/ADL-AGENT-EVALUATION-LAB-001/team-runtime/.codex-team/handoffs/W01.json",
+      "old_path": ".goals/ADL-AGENT-EVALUATION-LAB-001/team-runtime/.codex-team/handoffs/W01.json",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/goals/ADL-AGENT-EVALUATION-LAB-001/team-runtime/.codex-team/handoffs/W02.json",
+      "old_path": ".goals/ADL-AGENT-EVALUATION-LAB-001/team-runtime/.codex-team/handoffs/W02.json",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/goals/ADL-AGENT-EVALUATION-LAB-001/team-runtime/.codex-team/handoffs/W03.json",
+      "old_path": ".goals/ADL-AGENT-EVALUATION-LAB-001/team-runtime/.codex-team/handoffs/W03.json",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/goals/ADL-AGENT-EVALUATION-LAB-001/team-runtime/.codex-team/state.json",
+      "old_path": ".goals/ADL-AGENT-EVALUATION-LAB-001/team-runtime/.codex-team/state.json",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/goals/ADL-AGENT-EVALUATION-LAB-001/team-runtime/drafts/W01.json",
+      "old_path": ".goals/ADL-AGENT-EVALUATION-LAB-001/team-runtime/drafts/W01.json",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/goals/ADL-AGENT-EVALUATION-LAB-001/team-runtime/drafts/W02.json",
+      "old_path": ".goals/ADL-AGENT-EVALUATION-LAB-001/team-runtime/drafts/W02.json",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/goals/ADL-AGENT-EVALUATION-LAB-001/team-runtime/drafts/W03.json",
+      "old_path": ".goals/ADL-AGENT-EVALUATION-LAB-001/team-runtime/drafts/W03.json",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/goals/ADL-AGENT-EVALUATION-LAB-001/team-runtime/evidence/W01_BACKEND_MAP.md",
+      "old_path": ".goals/ADL-AGENT-EVALUATION-LAB-001/team-runtime/evidence/W01_BACKEND_MAP.md",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/goals/ADL-AGENT-EVALUATION-LAB-001/team-runtime/evidence/W02_PRODUCT_UX_MAP.md",
+      "old_path": ".goals/ADL-AGENT-EVALUATION-LAB-001/team-runtime/evidence/W02_PRODUCT_UX_MAP.md",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/goals/ADL-AGENT-EVALUATION-LAB-001/team-runtime/evidence/W03_EVALUATION_CONTRACT.md",
+      "old_path": ".goals/ADL-AGENT-EVALUATION-LAB-001/team-runtime/evidence/W03_EVALUATION_CONTRACT.md",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/goals/ADL-CAPABILITY-MANAGER-001/implementation-runtime/.codex-team-kit/missions/capability-manager-implementation.json",
+      "old_path": ".goals/ADL-CAPABILITY-MANAGER-001/implementation-runtime/.codex-team-kit/missions/capability-manager-implementation.json",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/goals/ADL-CAPABILITY-MANAGER-001/implementation-runtime/.codex-team-kit/protocol/COMMUNICATION.md",
+      "old_path": ".codex-team-kit/protocol/COMMUNICATION.md",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/goals/ADL-CAPABILITY-MANAGER-001/implementation-runtime/.codex-team-kit/protocol/TEAM_PROTOCOL.md",
+      "old_path": ".goals/ADL-AGENT-EVALUATION-LAB-001/team-runtime/.codex-team-kit/protocol/TEAM_PROTOCOL.md",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/goals/ADL-CAPABILITY-MANAGER-001/implementation-runtime/.codex-team-kit/scripts/teamctl.py",
+      "old_path": ".goals/ADL-AGENT-EVALUATION-LAB-001/team-runtime/.codex-team-kit/scripts/teamctl.py",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/goals/ADL-CAPABILITY-MANAGER-001/implementation-runtime/.codex-team/events.jsonl",
+      "old_path": ".goals/ADL-CAPABILITY-MANAGER-001/implementation-runtime/.codex-team/events.jsonl",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/goals/ADL-CAPABILITY-MANAGER-001/implementation-runtime/.codex-team/handoffs/W01.json",
+      "old_path": ".goals/ADL-CAPABILITY-MANAGER-001/implementation-runtime/.codex-team/handoffs/W01.json",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/goals/ADL-CAPABILITY-MANAGER-001/implementation-runtime/.codex-team/handoffs/W02.json",
+      "old_path": ".goals/ADL-CAPABILITY-MANAGER-001/implementation-runtime/.codex-team/handoffs/W02.json",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/goals/ADL-CAPABILITY-MANAGER-001/implementation-runtime/.codex-team/handoffs/W03.json",
+      "old_path": ".goals/ADL-CAPABILITY-MANAGER-001/implementation-runtime/.codex-team/handoffs/W03.json",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/goals/ADL-CAPABILITY-MANAGER-001/implementation-runtime/.codex-team/handoffs/W04.json",
+      "old_path": ".goals/ADL-CAPABILITY-MANAGER-001/implementation-runtime/.codex-team/handoffs/W04.json",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/goals/ADL-CAPABILITY-MANAGER-001/implementation-runtime/.codex-team/state.json",
+      "old_path": ".goals/ADL-CAPABILITY-MANAGER-001/implementation-runtime/.codex-team/state.json",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/goals/ADL-CAPABILITY-MANAGER-001/implementation-runtime/drafts/W01.json",
+      "old_path": ".goals/ADL-CAPABILITY-MANAGER-001/implementation-runtime/drafts/W01.json",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/goals/ADL-CAPABILITY-MANAGER-001/implementation-runtime/drafts/W02.json",
+      "old_path": ".goals/ADL-CAPABILITY-MANAGER-001/implementation-runtime/drafts/W02.json",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/goals/ADL-CAPABILITY-MANAGER-001/implementation-runtime/drafts/W03.json",
+      "old_path": ".goals/ADL-CAPABILITY-MANAGER-001/implementation-runtime/drafts/W03.json",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/goals/ADL-CAPABILITY-MANAGER-001/implementation-runtime/drafts/W04.json",
+      "old_path": ".goals/ADL-CAPABILITY-MANAGER-001/implementation-runtime/drafts/W04.json",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/goals/ADL-CAPABILITY-MANAGER-001/implementation-runtime/evidence/W01_BACKEND_IMPLEMENTATION.md",
+      "old_path": ".goals/ADL-CAPABILITY-MANAGER-001/implementation-runtime/evidence/W01_BACKEND_IMPLEMENTATION.md",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/goals/ADL-CAPABILITY-MANAGER-001/implementation-runtime/evidence/W02_FRONTEND_IMPLEMENTATION.md",
+      "old_path": ".goals/ADL-CAPABILITY-MANAGER-001/implementation-runtime/evidence/W02_FRONTEND_IMPLEMENTATION.md",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/goals/ADL-CAPABILITY-MANAGER-001/implementation-runtime/evidence/W03_FINAL_REVIEW.md",
+      "old_path": ".goals/ADL-CAPABILITY-MANAGER-001/implementation-runtime/evidence/W03_FINAL_REVIEW.md",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/goals/ADL-CAPABILITY-MANAGER-001/implementation-runtime/evidence/W04_FINAL_STATUS.md",
+      "old_path": ".goals/ADL-CAPABILITY-MANAGER-001/implementation-runtime/evidence/W04_FINAL_STATUS.md",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/goals/ADL-CAPABILITY-MANAGER-001/implementation-runtime/evidence/capability-manager-api.stderr.log",
+      "old_path": ".goals/ADL-CAPABILITY-MANAGER-001/implementation-runtime/evidence/capability-manager-api.stderr.log",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/goals/ADL-CAPABILITY-MANAGER-001/implementation-runtime/evidence/capability-manager-api.stdout.log",
+      "old_path": ".goals/ADL-CAPABILITY-MANAGER-001/implementation-runtime/evidence/capability-manager-api.stdout.log",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/goals/ADL-CAPABILITY-MANAGER-001/team-runtime/.codex-team-kit/missions/capability-manager-spiral.json",
+      "old_path": ".goals/ADL-CAPABILITY-MANAGER-001/team-runtime/.codex-team-kit/missions/capability-manager-spiral.json",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/goals/ADL-CAPABILITY-MANAGER-001/team-runtime/.codex-team-kit/protocol/COMMUNICATION.md",
+      "old_path": ".goals/ADL-CAPABILITY-MANAGER-001/implementation-runtime/.codex-team-kit/protocol/COMMUNICATION.md",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/goals/ADL-CAPABILITY-MANAGER-001/team-runtime/.codex-team-kit/protocol/TEAM_PROTOCOL.md",
+      "old_path": ".goals/ADL-CAPABILITY-MANAGER-001/implementation-runtime/.codex-team-kit/protocol/TEAM_PROTOCOL.md",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/goals/ADL-CAPABILITY-MANAGER-001/team-runtime/.codex-team-kit/scripts/teamctl.py",
+      "old_path": ".goals/ADL-CAPABILITY-MANAGER-001/implementation-runtime/.codex-team-kit/scripts/teamctl.py",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/goals/ADL-CAPABILITY-MANAGER-001/team-runtime/.codex-team/drafts/W03.json",
+      "old_path": ".goals/ADL-CAPABILITY-MANAGER-001/team-runtime/.codex-team/drafts/W03.json",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/goals/ADL-CAPABILITY-MANAGER-001/team-runtime/.codex-team/events.jsonl",
+      "old_path": ".goals/ADL-CAPABILITY-MANAGER-001/team-runtime/.codex-team/events.jsonl",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/goals/ADL-CAPABILITY-MANAGER-001/team-runtime/.codex-team/handoffs/W01.json",
+      "old_path": ".goals/ADL-CAPABILITY-MANAGER-001/team-runtime/.codex-team/handoffs/W01.json",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/goals/ADL-CAPABILITY-MANAGER-001/team-runtime/.codex-team/handoffs/W02.json",
+      "old_path": ".goals/ADL-CAPABILITY-MANAGER-001/team-runtime/.codex-team/handoffs/W02.json",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/goals/ADL-CAPABILITY-MANAGER-001/team-runtime/.codex-team/handoffs/W03.json",
+      "old_path": ".goals/ADL-CAPABILITY-MANAGER-001/team-runtime/.codex-team/handoffs/W03.json",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/goals/ADL-CAPABILITY-MANAGER-001/team-runtime/.codex-team/handoffs/W04.json",
+      "old_path": ".goals/ADL-CAPABILITY-MANAGER-001/team-runtime/.codex-team/handoffs/W04.json",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/goals/ADL-CAPABILITY-MANAGER-001/team-runtime/.codex-team/state.json",
+      "old_path": ".goals/ADL-CAPABILITY-MANAGER-001/team-runtime/.codex-team/state.json",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/goals/ADL-CAPABILITY-MANAGER-001/team-runtime/drafts/W01.json",
+      "old_path": ".goals/ADL-CAPABILITY-MANAGER-001/team-runtime/drafts/W01.json",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/goals/ADL-CAPABILITY-MANAGER-001/team-runtime/drafts/W02.json",
+      "old_path": ".goals/ADL-CAPABILITY-MANAGER-001/team-runtime/drafts/W02.json",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/goals/ADL-CAPABILITY-MANAGER-001/team-runtime/drafts/W04.json",
+      "old_path": ".goals/ADL-CAPABILITY-MANAGER-001/team-runtime/drafts/W04.json",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/goals/ADL-CAPABILITY-MANAGER-001/team-runtime/evidence/W01_ARCHITECTURE.md",
+      "old_path": ".goals/ADL-CAPABILITY-MANAGER-001/team-runtime/evidence/W01_ARCHITECTURE.md",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/goals/ADL-CAPABILITY-MANAGER-001/team-runtime/evidence/W02_BACKEND.md",
+      "old_path": ".goals/ADL-CAPABILITY-MANAGER-001/team-runtime/evidence/W02_BACKEND.md",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/goals/ADL-CAPABILITY-MANAGER-001/team-runtime/evidence/W03_FRONTEND.md",
+      "old_path": ".goals/ADL-CAPABILITY-MANAGER-001/team-runtime/evidence/W03_FRONTEND.md",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/goals/ADL-CAPABILITY-MANAGER-001/team-runtime/evidence/W04_CAPABILITY_MANAGER_CONTRACT.md",
+      "old_path": ".goals/ADL-CAPABILITY-MANAGER-001/team-runtime/evidence/W04_CAPABILITY_MANAGER_CONTRACT.md",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/goals/ADL-CONVERSATION-LIBRARY-001/BROWSER_RESTART_RECEIPT.json",
+      "old_path": ".goals/ADL-CONVERSATION-LIBRARY-001/BROWSER_RESTART_RECEIPT.json",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/goals/ADL-CONVERSATION-LIBRARY-001/MOCK_AGENT_CHAT_CALLS.jsonl",
+      "old_path": ".goals/ADL-CONVERSATION-LIBRARY-001/MOCK_AGENT_CHAT_CALLS.jsonl",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/goals/ADL-CONVERSATION-LIBRARY-001/PHASE_0_REUSE_MAP.md",
+      "old_path": ".goals/ADL-CONVERSATION-LIBRARY-001/PHASE_0_REUSE_MAP.md",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/goals/ADL-CONVERSATION-LIBRARY-001/PHASE_1_VERIFICATION.md",
+      "old_path": ".goals/ADL-CONVERSATION-LIBRARY-001/PHASE_1_VERIFICATION.md",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/goals/ADL-CONVERSATION-LIBRARY-001/SOURCE_WORKTREE_SNAPSHOT_20261009.json",
+      "old_path": ".goals/ADL-CONVERSATION-LIBRARY-001/SOURCE_WORKTREE_SNAPSHOT_20261009.json",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/goals/ADL-CONVERSATION-LIBRARY-001/agent-browser-alpha.png",
+      "old_path": ".goals/ADL-CONVERSATION-LIBRARY-001/agent-browser-alpha.png",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/goals/ADL-CONVERSATION-LIBRARY-001/agent-browser-beta.png",
+      "old_path": ".goals/ADL-CONVERSATION-LIBRARY-001/agent-browser-beta.png",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/goals/ADL-CONVERSATION-LIBRARY-001/agent-browser-recovered-alpha.png",
+      "old_path": ".goals/ADL-CONVERSATION-LIBRARY-001/agent-browser-recovered-alpha.png",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/goals/ADL-CONVERSATION-LIBRARY-001/agent-browser-recovered-beta.png",
+      "old_path": ".goals/ADL-CONVERSATION-LIBRARY-001/agent-browser-recovered-beta.png",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/goals/ADL-CONVERSATION-LIBRARY-001/assistant-capabilities-browser.png",
+      "old_path": ".goals/ADL-CONVERSATION-LIBRARY-001/assistant-capabilities-browser.png",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/goals/ADL-CONVERSATION-LIBRARY-001/goal.md",
+      "old_path": ".goals/ADL-CONVERSATION-LIBRARY-001/goal.md",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/goals/ADL-CONVERSATION-LIBRARY-001/status.json",
+      "old_path": ".goals/ADL-CONVERSATION-LIBRARY-001/status.json",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/goals/ADL-FRONTEND-AUDITOR-JAEGER-001/evidence/FINAL_PROOF.md",
+      "old_path": ".goals/ADL-FRONTEND-AUDITOR-JAEGER-001/evidence/FINAL_PROOF.md",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/goals/ADL-FRONTEND-AUDITOR-JAEGER-001/evidence/INDEPENDENT_REVIEW.md",
+      "old_path": ".goals/ADL-FRONTEND-AUDITOR-JAEGER-001/evidence/INDEPENDENT_REVIEW.md",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/goals/ADL-FRONTEND-AUDITOR-JAEGER-001/evidence/INDEPENDENT_REVIEW_FOLLOWUP.md",
+      "old_path": ".goals/ADL-FRONTEND-AUDITOR-JAEGER-001/evidence/INDEPENDENT_REVIEW_FOLLOWUP.md",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/goals/ADL-FRONTEND-AUDITOR-JAEGER-001/evidence/historical_crit_meta.json",
+      "old_path": ".goals/ADL-FRONTEND-AUDITOR-JAEGER-001/evidence/historical_crit_meta.json",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/goals/ADL-FRONTEND-AUDITOR-JAEGER-001/evidence/live-audit/agent_response.md",
+      "old_path": ".goals/ADL-FRONTEND-AUDITOR-JAEGER-001/evidence/live-audit/agent_response.md",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/goals/ADL-FRONTEND-AUDITOR-JAEGER-001/evidence/live-audit/agents/created/agent_6b99c36e601c4a868213da340fdf47e5.json",
+      "old_path": ".goals/ADL-FRONTEND-AUDITOR-JAEGER-001/evidence/live-audit/agents/created/agent_6b99c36e601c4a868213da340fdf47e5.json",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/goals/ADL-FRONTEND-AUDITOR-JAEGER-001/evidence/live-audit/current_source_hashes.json",
+      "old_path": ".goals/ADL-FRONTEND-AUDITOR-JAEGER-001/evidence/live-audit/current_source_hashes.json",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/goals/ADL-FRONTEND-AUDITOR-JAEGER-001/evidence/live-audit/jaeger-trace.png",
+      "old_path": ".goals/ADL-FRONTEND-AUDITOR-JAEGER-001/evidence/live-audit/jaeger-trace.png",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/goals/ADL-FRONTEND-AUDITOR-JAEGER-001/evidence/live-audit/jaeger_query.json",
+      "old_path": ".goals/ADL-FRONTEND-AUDITOR-JAEGER-001/evidence/live-audit/jaeger_query.json",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/goals/ADL-FRONTEND-AUDITOR-JAEGER-001/evidence/live-audit/receipt.json",
+      "old_path": ".goals/ADL-FRONTEND-AUDITOR-JAEGER-001/evidence/live-audit/receipt.json",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/goals/ADL-FRONTEND-AUDITOR-JAEGER-001/evidence/live-audit/traces/trace-0dd06579c7774b63.json",
+      "old_path": ".goals/ADL-FRONTEND-AUDITOR-JAEGER-001/evidence/live-audit/traces/trace-0dd06579c7774b63.json",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/goals/ADL-FRONTEND-AUDITOR-JAEGER-001/evidence/live-audit/traces/trace-5a657ed775e9409b.json",
+      "old_path": ".goals/ADL-FRONTEND-AUDITOR-JAEGER-001/evidence/live-audit/traces/trace-5a657ed775e9409b.json",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/goals/ADL-FRONTEND-AUDITOR-JAEGER-001/goal.md",
+      "old_path": ".goals/ADL-FRONTEND-AUDITOR-JAEGER-001/goal.md",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/goals/ADL-FRONTEND-AUDITOR-JAEGER-001/status.json",
+      "old_path": ".goals/ADL-FRONTEND-AUDITOR-JAEGER-001/status.json",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/goals/ADL-OLLAMA-SPIRAL-001/evidence/CHAT_READ_TEST.txt",
+      "old_path": ".goals/ADL-OLLAMA-SPIRAL-001/evidence/CHAT_READ_TEST.txt",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/goals/ADL-OLLAMA-SPIRAL-001/evidence/REAL_AGENT_EVIDENCE_COMPARISON.md",
+      "old_path": ".goals/ADL-OLLAMA-SPIRAL-001/evidence/REAL_AGENT_EVIDENCE_COMPARISON.md",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/goals/ADL-OLLAMA-SPIRAL-001/evidence/W01_HANDOFF_DRAFT.json",
+      "old_path": ".goals/ADL-OLLAMA-SPIRAL-001/evidence/W01_HANDOFF_DRAFT.json",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/goals/ADL-OLLAMA-SPIRAL-001/evidence/W01_PROVIDER_SCOPE.json",
+      "old_path": ".goals/ADL-OLLAMA-SPIRAL-001/evidence/W01_PROVIDER_SCOPE.json",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/goals/ADL-OLLAMA-SPIRAL-001/evidence/W02_AUTH_PERSISTENCE_RESTART.json",
+      "old_path": ".goals/ADL-OLLAMA-SPIRAL-001/evidence/W02_AUTH_PERSISTENCE_RESTART.json",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/goals/ADL-OLLAMA-SPIRAL-001/evidence/W02_CANDIDATE_RUNTIME_PROVIDER.json",
+      "old_path": ".goals/ADL-OLLAMA-SPIRAL-001/evidence/W02_CANDIDATE_RUNTIME_PROVIDER.json",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/goals/ADL-OLLAMA-SPIRAL-001/evidence/W02_HANDOFF_DRAFT.json",
+      "old_path": ".goals/ADL-OLLAMA-SPIRAL-001/evidence/W02_HANDOFF_DRAFT.json",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/goals/ADL-OLLAMA-SPIRAL-001/evidence/W02_PROVIDER_CATALOG_SUPPLEMENT.json",
+      "old_path": ".goals/ADL-OLLAMA-SPIRAL-001/evidence/W02_PROVIDER_CATALOG_SUPPLEMENT.json",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/goals/ADL-OLLAMA-SPIRAL-001/evidence/W02_PROVIDER_VERIFICATION.json",
+      "old_path": ".goals/ADL-OLLAMA-SPIRAL-001/evidence/W02_PROVIDER_VERIFICATION.json",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/goals/ADL-OLLAMA-SPIRAL-001/evidence/W03_READ_FIXTURE.json",
+      "old_path": ".goals/ADL-OLLAMA-SPIRAL-001/evidence/W03_READ_FIXTURE.json",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/goals/ADL-OLLAMA-SPIRAL-001/evidence/W03_READ_TOOL_PREFLIGHT.json",
+      "old_path": ".goals/ADL-OLLAMA-SPIRAL-001/evidence/W03_READ_TOOL_PREFLIGHT.json",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/goals/ADL-OLLAMA-SPIRAL-001/evidence/W03_REAL_AGENT_TURN.json",
+      "old_path": ".goals/ADL-OLLAMA-SPIRAL-001/evidence/W03_REAL_AGENT_TURN.json",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/goals/ADL-OLLAMA-SPIRAL-001/evidence/W03_RUNTIME_DIAGNOSTIC.json",
+      "old_path": ".goals/ADL-OLLAMA-SPIRAL-001/evidence/W03_RUNTIME_DIAGNOSTIC.json",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/goals/ADL-OLLAMA-SPIRAL-001/evidence/W04_CONVERSATION_TRACE_VERIFICATION.json",
+      "old_path": ".goals/ADL-OLLAMA-SPIRAL-001/evidence/W04_CONVERSATION_TRACE_VERIFICATION.json",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/goals/ADL-OLLAMA-SPIRAL-001/evidence/W05_INDEPENDENT_REVIEW.json",
+      "old_path": ".goals/ADL-OLLAMA-SPIRAL-001/evidence/W05_INDEPENDENT_REVIEW.json",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/goals/ADL-OLLAMA-SPIRAL-001/mission.json",
+      "old_path": ".goals/ADL-OLLAMA-SPIRAL-001/mission.json",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/goals/ADL-OLLAMA-SPIRAL-001/team-runtime/.codex-team/events.jsonl",
+      "old_path": ".goals/ADL-OLLAMA-SPIRAL-001/team-runtime/.codex-team/events.jsonl",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/goals/ADL-OLLAMA-SPIRAL-001/team-runtime/.codex-team/handoffs/W01.json",
+      "old_path": ".goals/ADL-OLLAMA-SPIRAL-001/team-runtime/.codex-team/handoffs/W01.json",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/goals/ADL-OLLAMA-SPIRAL-001/team-runtime/.codex-team/handoffs/W02.json",
+      "old_path": ".goals/ADL-OLLAMA-SPIRAL-001/team-runtime/.codex-team/handoffs/W02.json",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/goals/ADL-OLLAMA-SPIRAL-001/team-runtime/.codex-team/handoffs/W03.json",
+      "old_path": ".goals/ADL-OLLAMA-SPIRAL-001/team-runtime/.codex-team/handoffs/W03.json",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/goals/ADL-OLLAMA-SPIRAL-001/team-runtime/.codex-team/handoffs/W04.json",
+      "old_path": ".goals/ADL-OLLAMA-SPIRAL-001/team-runtime/.codex-team/handoffs/W04.json",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/goals/ADL-OLLAMA-SPIRAL-001/team-runtime/.codex-team/handoffs/W05.json",
+      "old_path": ".goals/ADL-OLLAMA-SPIRAL-001/team-runtime/.codex-team/handoffs/W05.json",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/goals/ADL-OLLAMA-SPIRAL-001/team-runtime/.codex-team/state.json",
+      "old_path": ".goals/ADL-OLLAMA-SPIRAL-001/team-runtime/.codex-team/state.json",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/goals/ADL-ONE-SHOT-SIGNAL-AGENT-SPIRAL-001/goal.md",
+      "old_path": ".goals/ADL-ONE-SHOT-SIGNAL-AGENT-SPIRAL-001/goal.md",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/goals/ADL-ONE-SHOT-SIGNAL-AGENT-SPIRAL-001/mission.json",
+      "old_path": ".goals/ADL-ONE-SHOT-SIGNAL-AGENT-SPIRAL-001/mission.json",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/goals/ADL-ONE-SHOT-SIGNAL-AGENT-SPIRAL-001/status.json",
+      "old_path": ".goals/ADL-ONE-SHOT-SIGNAL-AGENT-SPIRAL-001/status.json",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/goals/ADL-ONE-SHOT-SIGNAL-AGENT-SPIRAL-001/team-runtime/.codex-team/events.jsonl",
+      "old_path": ".goals/ADL-ONE-SHOT-SIGNAL-AGENT-SPIRAL-001/team-runtime/.codex-team/events.jsonl",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/goals/ADL-ONE-SHOT-SIGNAL-AGENT-SPIRAL-001/team-runtime/.codex-team/handoffs/W01.json",
+      "old_path": ".goals/ADL-ONE-SHOT-SIGNAL-AGENT-SPIRAL-001/team-runtime/.codex-team/handoffs/W01.json",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/goals/ADL-ONE-SHOT-SIGNAL-AGENT-SPIRAL-001/team-runtime/.codex-team/handoffs/W02.json",
+      "old_path": ".goals/ADL-ONE-SHOT-SIGNAL-AGENT-SPIRAL-001/team-runtime/.codex-team/handoffs/W02.json",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/goals/ADL-ONE-SHOT-SIGNAL-AGENT-SPIRAL-001/team-runtime/.codex-team/handoffs/W03.json",
+      "old_path": ".goals/ADL-ONE-SHOT-SIGNAL-AGENT-SPIRAL-001/team-runtime/.codex-team/handoffs/W03.json",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/goals/ADL-ONE-SHOT-SIGNAL-AGENT-SPIRAL-001/team-runtime/.codex-team/handoffs/W04.json",
+      "old_path": ".goals/ADL-ONE-SHOT-SIGNAL-AGENT-SPIRAL-001/team-runtime/.codex-team/handoffs/W04.json",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/goals/ADL-ONE-SHOT-SIGNAL-AGENT-SPIRAL-001/team-runtime/.codex-team/state.json",
+      "old_path": ".goals/ADL-ONE-SHOT-SIGNAL-AGENT-SPIRAL-001/team-runtime/.codex-team/state.json",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/goals/ADL-ONE-SHOT-SIGNAL-AGENT-SPIRAL-001/team-runtime/drafts/W01.json",
+      "old_path": ".goals/ADL-ONE-SHOT-SIGNAL-AGENT-SPIRAL-001/team-runtime/drafts/W01.json",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/goals/ADL-ONE-SHOT-SIGNAL-AGENT-SPIRAL-001/team-runtime/drafts/W02.json",
+      "old_path": ".goals/ADL-ONE-SHOT-SIGNAL-AGENT-SPIRAL-001/team-runtime/drafts/W02.json",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/goals/ADL-ONE-SHOT-SIGNAL-AGENT-SPIRAL-001/team-runtime/drafts/W03.json",
+      "old_path": ".goals/ADL-ONE-SHOT-SIGNAL-AGENT-SPIRAL-001/team-runtime/drafts/W03.json",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/goals/ADL-ONE-SHOT-SIGNAL-AGENT-SPIRAL-001/team-runtime/drafts/W04.json",
+      "old_path": ".goals/ADL-ONE-SHOT-SIGNAL-AGENT-SPIRAL-001/team-runtime/drafts/W04.json",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/goals/ADL-ONE-SHOT-SIGNAL-AGENT-SPIRAL-001/team-runtime/evidence/W01_SCOPE.md",
+      "old_path": ".goals/ADL-ONE-SHOT-SIGNAL-AGENT-SPIRAL-001/team-runtime/evidence/W01_SCOPE.md",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/goals/ADL-ONE-SHOT-SIGNAL-AGENT-SPIRAL-001/team-runtime/evidence/W02_FRONTEND.md",
+      "old_path": ".goals/ADL-ONE-SHOT-SIGNAL-AGENT-SPIRAL-001/team-runtime/evidence/W02_FRONTEND.md",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/goals/ADL-ONE-SHOT-SIGNAL-AGENT-SPIRAL-001/team-runtime/evidence/W03_BACKEND.md",
+      "old_path": ".goals/ADL-ONE-SHOT-SIGNAL-AGENT-SPIRAL-001/team-runtime/evidence/W03_BACKEND.md",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/goals/ADL-ONE-SHOT-SIGNAL-AGENT-SPIRAL-001/team-runtime/evidence/W04_LIFECYCLE_CONTRACT.md",
+      "old_path": ".goals/ADL-ONE-SHOT-SIGNAL-AGENT-SPIRAL-001/team-runtime/evidence/W04_LIFECYCLE_CONTRACT.md",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/goals/ADL-P1-02-REAL-AUDIT-SPIRAL-001/evidence/P1_02_AUDIT_EVIDENCE_COMPARISON.md",
+      "old_path": ".goals/ADL-P1-02-REAL-AUDIT-SPIRAL-001/evidence/P1_02_AUDIT_EVIDENCE_COMPARISON.md",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/goals/ADL-P1-02-REAL-AUDIT-SPIRAL-001/evidence/P1_02_BACKEND_EXCERPT.txt",
+      "old_path": ".goals/ADL-P1-02-REAL-AUDIT-SPIRAL-001/evidence/P1_02_BACKEND_EXCERPT.txt",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/goals/ADL-P1-02-REAL-AUDIT-SPIRAL-001/evidence/P1_02_FINDING_BRIEF.md",
+      "old_path": ".goals/ADL-P1-02-REAL-AUDIT-SPIRAL-001/evidence/P1_02_FINDING_BRIEF.md",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/goals/ADL-P1-02-REAL-AUDIT-SPIRAL-001/evidence/W01_HANDOFF_DRAFT.json",
+      "old_path": ".goals/ADL-P1-02-REAL-AUDIT-SPIRAL-001/evidence/W01_HANDOFF_DRAFT.json",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/goals/ADL-P1-02-REAL-AUDIT-SPIRAL-001/evidence/W01_TARGET_SNAPSHOT.json",
+      "old_path": ".goals/ADL-P1-02-REAL-AUDIT-SPIRAL-001/evidence/W01_TARGET_SNAPSHOT.json",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/goals/ADL-P1-02-REAL-AUDIT-SPIRAL-001/evidence/W02_AGENT_AUDIT.json",
+      "old_path": ".goals/ADL-P1-02-REAL-AUDIT-SPIRAL-001/evidence/W02_AGENT_AUDIT.json",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/goals/ADL-P1-02-REAL-AUDIT-SPIRAL-001/evidence/W02_AGENT_AUDIT_COMPLETION.json",
+      "old_path": ".goals/ADL-P1-02-REAL-AUDIT-SPIRAL-001/evidence/W02_AGENT_AUDIT_COMPLETION.json",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/goals/ADL-P1-02-REAL-AUDIT-SPIRAL-001/evidence/W02_HANDOFF_DRAFT.json",
+      "old_path": ".goals/ADL-P1-02-REAL-AUDIT-SPIRAL-001/evidence/W02_HANDOFF_DRAFT.json",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/goals/ADL-P1-02-REAL-AUDIT-SPIRAL-001/evidence/W02_SOURCE_AUDIT_RESULT.md",
+      "old_path": ".goals/ADL-P1-02-REAL-AUDIT-SPIRAL-001/evidence/W02_SOURCE_AUDIT_RESULT.md",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/goals/ADL-P1-02-REAL-AUDIT-SPIRAL-001/evidence/W03_AGENT_RUNNER_DOM.yml",
+      "old_path": ".goals/ADL-P1-02-REAL-AUDIT-SPIRAL-001/evidence/W03_AGENT_RUNNER_DOM.yml",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/goals/ADL-P1-02-REAL-AUDIT-SPIRAL-001/evidence/W03_BROWSER_EVIDENCE.json",
+      "old_path": ".goals/ADL-P1-02-REAL-AUDIT-SPIRAL-001/evidence/W03_BROWSER_EVIDENCE.json",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/goals/ADL-P1-02-REAL-AUDIT-SPIRAL-001/evidence/W03_HANDOFF_DRAFT.json",
+      "old_path": ".goals/ADL-P1-02-REAL-AUDIT-SPIRAL-001/evidence/W03_HANDOFF_DRAFT.json",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/goals/ADL-P1-02-REAL-AUDIT-SPIRAL-001/evidence/W03_RUNTIME_PROBE.json",
+      "old_path": ".goals/ADL-P1-02-REAL-AUDIT-SPIRAL-001/evidence/W03_RUNTIME_PROBE.json",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/goals/ADL-P1-02-REAL-AUDIT-SPIRAL-001/evidence/W04_HANDOFF_DRAFT.json",
+      "old_path": ".goals/ADL-P1-02-REAL-AUDIT-SPIRAL-001/evidence/W04_HANDOFF_DRAFT.json",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/goals/ADL-P1-02-REAL-AUDIT-SPIRAL-001/evidence/W04_JAEGER_PROJECTION.json",
+      "old_path": ".goals/ADL-P1-02-REAL-AUDIT-SPIRAL-001/evidence/W04_JAEGER_PROJECTION.json",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/goals/ADL-P1-02-REAL-AUDIT-SPIRAL-001/evidence/W04_SQLITE_API_READBACK.json",
+      "old_path": ".goals/ADL-P1-02-REAL-AUDIT-SPIRAL-001/evidence/W04_SQLITE_API_READBACK.json",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/goals/ADL-P1-02-REAL-AUDIT-SPIRAL-001/evidence/W05_INDEPENDENT_REVIEW.json",
+      "old_path": ".goals/ADL-P1-02-REAL-AUDIT-SPIRAL-001/evidence/W05_INDEPENDENT_REVIEW.json",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/goals/ADL-P1-02-REAL-AUDIT-SPIRAL-001/evidence/inspect_conversation_store.py",
+      "old_path": ".goals/ADL-P1-02-REAL-AUDIT-SPIRAL-001/evidence/inspect_conversation_store.py",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/goals/ADL-P1-02-REAL-AUDIT-SPIRAL-001/evidence/p1-02-jaeger-span-details-20261009.png",
+      "old_path": ".goals/ADL-P1-02-REAL-AUDIT-SPIRAL-001/evidence/p1-02-jaeger-span-details-20261009.png",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/goals/ADL-P1-02-REAL-AUDIT-SPIRAL-001/evidence/p1-02-jaeger-trace-20261009.png",
+      "old_path": ".goals/ADL-P1-02-REAL-AUDIT-SPIRAL-001/evidence/p1-02-jaeger-trace-20261009.png",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/goals/ADL-P1-02-REAL-AUDIT-SPIRAL-001/evidence/probe_agent_run_ws.py",
+      "old_path": ".goals/ADL-P1-02-REAL-AUDIT-SPIRAL-001/evidence/probe_agent_run_ws.py",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/goals/ADL-P1-02-REAL-AUDIT-SPIRAL-001/evidence/project_p1_02_traces_to_jaeger.py",
+      "old_path": ".goals/ADL-P1-02-REAL-AUDIT-SPIRAL-001/evidence/project_p1_02_traces_to_jaeger.py",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/goals/ADL-P1-02-REAL-AUDIT-SPIRAL-001/mission.json",
+      "old_path": ".goals/ADL-P1-02-REAL-AUDIT-SPIRAL-001/mission.json",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/goals/ADL-P1-02-REAL-AUDIT-SPIRAL-001/team-runtime/.codex-team/events.jsonl",
+      "old_path": ".goals/ADL-P1-02-REAL-AUDIT-SPIRAL-001/team-runtime/.codex-team/events.jsonl",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/goals/ADL-P1-02-REAL-AUDIT-SPIRAL-001/team-runtime/.codex-team/handoffs/W01.json",
+      "old_path": ".goals/ADL-P1-02-REAL-AUDIT-SPIRAL-001/team-runtime/.codex-team/handoffs/W01.json",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/goals/ADL-P1-02-REAL-AUDIT-SPIRAL-001/team-runtime/.codex-team/handoffs/W02.json",
+      "old_path": ".goals/ADL-P1-02-REAL-AUDIT-SPIRAL-001/team-runtime/.codex-team/handoffs/W02.json",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/goals/ADL-P1-02-REAL-AUDIT-SPIRAL-001/team-runtime/.codex-team/handoffs/W03.json",
+      "old_path": ".goals/ADL-P1-02-REAL-AUDIT-SPIRAL-001/team-runtime/.codex-team/handoffs/W03.json",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/goals/ADL-P1-02-REAL-AUDIT-SPIRAL-001/team-runtime/.codex-team/handoffs/W04.json",
+      "old_path": ".goals/ADL-P1-02-REAL-AUDIT-SPIRAL-001/team-runtime/.codex-team/handoffs/W04.json",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/goals/ADL-P1-02-REAL-AUDIT-SPIRAL-001/team-runtime/.codex-team/handoffs/W05.json",
+      "old_path": ".goals/ADL-P1-02-REAL-AUDIT-SPIRAL-001/team-runtime/.codex-team/handoffs/W05.json",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/goals/ADL-P1-02-REAL-AUDIT-SPIRAL-001/team-runtime/.codex-team/state.json",
+      "old_path": ".goals/ADL-P1-02-REAL-AUDIT-SPIRAL-001/team-runtime/.codex-team/state.json",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/goals/L1-GOVERNED-EXECUTION-COMPLETION-001/evidence/ALL_TESTS.txt",
+      "old_path": ".goals/L1-GOVERNED-EXECUTION-COMPLETION-001/evidence/ALL_TESTS.txt",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/goals/L1-GOVERNED-EXECUTION-COMPLETION-001/evidence/BASELINE_L1.txt",
+      "old_path": ".goals/L1-GOVERNED-EXECUTION-COMPLETION-001/evidence/BASELINE_L1.txt",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/goals/L1-GOVERNED-EXECUTION-COMPLETION-001/evidence/COMPILEALL.txt",
+      "old_path": ".goals/L1-GOVERNED-EXECUTION-COMPLETION-001/evidence/COMPILEALL.txt",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/goals/L1-GOVERNED-EXECUTION-COMPLETION-001/evidence/FOCUSED_TESTS.txt",
+      "old_path": ".goals/L1-GOVERNED-EXECUTION-COMPLETION-001/evidence/FOCUSED_TESTS.txt",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/goals/L1-GOVERNED-EXECUTION-COMPLETION-001/evidence/README_CHECK.txt",
+      "old_path": ".goals/L1-GOVERNED-EXECUTION-COMPLETION-001/evidence/README_CHECK.txt",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/goals/L1-GOVERNED-EXECUTION-COMPLETION-001/goal.md",
+      "old_path": ".goals/L1-GOVERNED-EXECUTION-COMPLETION-001/goal.md",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/goals/L1-GOVERNED-EXECUTION-COMPLETION-001/status.json",
+      "old_path": ".goals/L1-GOVERNED-EXECUTION-COMPLETION-001/status.json",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/goals/L1-GOVERNED-EXECUTION-EVIDENCE-001/evidence/REFERENCE_TEST_AUDIT.md",
+      "old_path": ".goals/L1-GOVERNED-EXECUTION-EVIDENCE-001/evidence/REFERENCE_TEST_AUDIT.md",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/goals/L1-GOVERNED-EXECUTION-EVIDENCE-001/goal.md",
+      "old_path": ".goals/L1-GOVERNED-EXECUTION-EVIDENCE-001/goal.md",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/goals/L1-GOVERNED-EXECUTION-EVIDENCE-001/status.json",
+      "old_path": ".goals/L1-GOVERNED-EXECUTION-EVIDENCE-001/status.json",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/goals/context-unification/goal.md",
+      "old_path": null,
+      "status": "A",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/goals/context-unification/status.json",
+      "old_path": null,
+      "status": "A",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/goals/one-command-demo-v1/RELEASE_NOTES_v1.0.0.md",
+      "old_path": ".goals/one-command-demo-v1/RELEASE_NOTES_v1.0.0.md",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/goals/one-command-demo-v1/audit-p1.md",
+      "old_path": ".goals/one-command-demo-v1/audit-p1.md",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/goals/one-command-demo-v1/goal.md",
+      "old_path": ".goals/one-command-demo-v1/goal.md",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/goals/one-command-demo-v1/release-candidate.md",
+      "old_path": ".goals/one-command-demo-v1/release-candidate.md",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/goals/one-command-demo-v1/status.json",
+      "old_path": ".goals/one-command-demo-v1/status.json",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/goals/openmetadata-lineage-28860/audit.md",
+      "old_path": ".goals/openmetadata-lineage-28860/audit.md",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/goals/openmetadata-lineage-28860/evidence/SHA256SUMS.txt",
+      "old_path": ".goals/openmetadata-lineage-28860/evidence/SHA256SUMS.txt",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/goals/openmetadata-lineage-28860/evidence/cleanup-lookups.json",
+      "old_path": ".goals/openmetadata-lineage-28860/evidence/cleanup-lookups.json",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/goals/openmetadata-lineage-28860/evidence/openmetadata-server-observations.log",
+      "old_path": ".goals/openmetadata-lineage-28860/evidence/openmetadata-server-observations.log",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/goals/openmetadata-lineage-28860/evidence/reproduction-direct.json",
+      "old_path": ".goals/openmetadata-lineage-28860/evidence/reproduction-direct.json",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/goals/openmetadata-lineage-28860/evidence/reproduction-governed-adapter.json",
+      "old_path": ".goals/openmetadata-lineage-28860/evidence/reproduction-governed-adapter.json",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/goals/openmetadata-lineage-28860/goal.md",
+      "old_path": ".goals/openmetadata-lineage-28860/goal.md",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/goals/openmetadata-lineage-28860/status.json",
+      "old_path": ".goals/openmetadata-lineage-28860/status.json",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/goals/portfolio-demo-v1/goal.md",
+      "old_path": ".goals/portfolio-demo-v1/goal.md",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/goals/portfolio-demo-v1/status.json",
+      "old_path": ".goals/portfolio-demo-v1/status.json",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/migrations/context-unification-20261011/MIGRATION_MAP.md",
+      "old_path": null,
+      "status": "A",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/migrations/context-unification-20261011/REFERENCE_SNAPSHOT.md",
+      "old_path": null,
+      "status": "A",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/migrations/context-unification-20261011/reference-snapshot.json",
+      "old_path": null,
+      "status": "A",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/runtime/ACTIVE_HANDOFF.md",
+      "old_path": null,
+      "status": "A",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/state/PROJECT_STATE.json",
+      "old_path": null,
+      "status": "A",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/team/kit/missions/agent-decision-inspector.json",
+      "old_path": ".codex-team-kit/missions/agent-decision-inspector.json",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/team/kit/protocol/COMMUNICATION.md",
+      "old_path": ".goals/ADL-CAPABILITY-MANAGER-001/team-runtime/.codex-team-kit/protocol/COMMUNICATION.md",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/team/kit/protocol/TEAM_PROTOCOL.md",
+      "old_path": ".goals/ADL-CAPABILITY-MANAGER-001/team-runtime/.codex-team-kit/protocol/TEAM_PROTOCOL.md",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/team/kit/protocol/handoff.schema.json",
+      "old_path": ".codex-team-kit/protocol/handoff.schema.json",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/team/kit/protocol/pairing_rules.json",
+      "old_path": ".codex-team-kit/protocol/pairing_rules.json",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/team/kit/protocol/work_item.schema.json",
+      "old_path": ".codex-team-kit/protocol/work_item.schema.json",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/team/kit/scripts/teamctl.py",
+      "old_path": ".goals/ADL-CAPABILITY-MANAGER-001/team-runtime/.codex-team-kit/scripts/teamctl.py",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/team/kit/templates/handoff-draft.example.json",
+      "old_path": ".codex-team-kit/templates/handoff-draft.example.json",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/team/runtime/change_requests/CR-001-FRONTEND-MISSION-SCOPES.json",
+      "old_path": ".codex-team/change_requests/CR-001-FRONTEND-MISSION-SCOPES.json",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/team/runtime/change_requests/CR-002-W10-APP-INTEGRATION-SCOPE.json",
+      "old_path": ".codex-team/change_requests/CR-002-W10-APP-INTEGRATION-SCOPE.json",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/team/runtime/change_requests/CR-003-W10-HTML-SHELL-SCOPE.json",
+      "old_path": ".codex-team/change_requests/CR-003-W10-HTML-SHELL-SCOPE.json",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/team/runtime/change_requests/CR-004-P1-RECEIPT-RUN-BINDING.json",
+      "old_path": ".codex-team/change_requests/CR-004-P1-RECEIPT-RUN-BINDING.json",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/team/runtime/change_requests/CR-005-HANDOFF-SCHEMA-BACKWARD-COMPATIBILITY.json",
+      "old_path": ".codex-team/change_requests/CR-005-HANDOFF-SCHEMA-BACKWARD-COMPATIBILITY.json",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/team/runtime/change_requests/CR-006-LEGACY-AGENT-RECORD-COMPATIBILITY.json",
+      "old_path": ".codex-team/change_requests/CR-006-LEGACY-AGENT-RECORD-COMPATIBILITY.json",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/team/runtime/change_requests/CR-007-HOST-LOCAL-PROVIDER-API-BOUNDARY.json",
+      "old_path": ".codex-team/change_requests/CR-007-HOST-LOCAL-PROVIDER-API-BOUNDARY.json",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/team/runtime/change_requests/CR-008-RUNTIME-CAPABILITY-AND-PERSISTENCE.json",
+      "old_path": ".codex-team/change_requests/CR-008-RUNTIME-CAPABILITY-AND-PERSISTENCE.json",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/team/runtime/change_requests/CR-009-LEGACY-RUNNER-EXECUTION-TRUTHFULNESS.json",
+      "old_path": ".codex-team/change_requests/CR-009-LEGACY-RUNNER-EXECUTION-TRUTHFULNESS.json",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/team/runtime/change_requests/CR-010-LOCAL-WEBSOCKET-ORIGIN-VALIDATION.json",
+      "old_path": ".codex-team/change_requests/CR-010-LOCAL-WEBSOCKET-ORIGIN-VALIDATION.json",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/team/runtime/change_requests/CR-011-AGENT-CHAT-JAEGER-CORRELATION.json",
+      "old_path": ".codex-team/change_requests/CR-011-AGENT-CHAT-JAEGER-CORRELATION.json",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/team/runtime/change_requests/CR-012-TRACE-EVENT-TIMING.json",
+      "old_path": ".codex-team/change_requests/CR-012-TRACE-EVENT-TIMING.json",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/team/runtime/change_requests/CR-013-CHAT-TURN-SCOPED-WORKSPACE-READ.json",
+      "old_path": ".codex-team/change_requests/CR-013-CHAT-TURN-SCOPED-WORKSPACE-READ.json",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/team/runtime/drafts/AC02-handoff.json",
+      "old_path": ".codex-team/drafts/AC02-handoff.json",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/team/runtime/drafts/AC04-handoff.json",
+      "old_path": ".codex-team/drafts/AC04-handoff.json",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/team/runtime/drafts/AC05-handoff.json",
+      "old_path": ".codex-team/drafts/AC05-handoff.json",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/team/runtime/drafts/AC06-handoff.json",
+      "old_path": ".codex-team/drafts/AC06-handoff.json",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/team/runtime/drafts/AC07-handoff.json",
+      "old_path": ".codex-team/drafts/AC07-handoff.json",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/team/runtime/drafts/AC08-handoff.json",
+      "old_path": ".codex-team/drafts/AC08-handoff.json",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/team/runtime/drafts/AC09-handoff.json",
+      "old_path": ".codex-team/drafts/AC09-handoff.json",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/team/runtime/drafts/AC10-handoff.json",
+      "old_path": ".codex-team/drafts/AC10-handoff.json",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/team/runtime/drafts/W02.json",
+      "old_path": ".codex-team/drafts/W02.json",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/team/runtime/drafts/W03.json",
+      "old_path": ".codex-team/drafts/W03.json",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/team/runtime/drafts/W04.json",
+      "old_path": ".codex-team/drafts/W04.json",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/team/runtime/drafts/W05.json",
+      "old_path": ".codex-team/drafts/W05.json",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/team/runtime/drafts/W06.json",
+      "old_path": ".codex-team/drafts/W06.json",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/team/runtime/drafts/W07.json",
+      "old_path": ".codex-team/drafts/W07.json",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/team/runtime/drafts/W08.json",
+      "old_path": ".codex-team/drafts/W08.json",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/team/runtime/drafts/W09.json",
+      "old_path": ".codex-team/drafts/W09.json",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/team/runtime/drafts/W10.json",
+      "old_path": ".codex-team/drafts/W10.json",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/team/runtime/drafts/W11.json",
+      "old_path": ".codex-team/drafts/W11.json",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/team/runtime/drafts/W12.json",
+      "old_path": ".codex-team/drafts/W12.json",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/team/runtime/drafts/W13.json",
+      "old_path": ".codex-team/drafts/W13.json",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/team/runtime/drafts/W14.json",
+      "old_path": ".codex-team/drafts/W14.json",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/team/runtime/events.jsonl",
+      "old_path": ".codex-team/events.jsonl",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/team/runtime/handoffs/AC01.json",
+      "old_path": ".codex-team/handoffs/AC01.json",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/team/runtime/handoffs/AC02.json",
+      "old_path": ".codex-team/handoffs/AC02.json",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/team/runtime/handoffs/AC03.json",
+      "old_path": ".codex-team/handoffs/AC03.json",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/team/runtime/handoffs/AC04.json",
+      "old_path": ".codex-team/handoffs/AC04.json",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/team/runtime/handoffs/AC05.json",
+      "old_path": ".codex-team/handoffs/AC05.json",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/team/runtime/handoffs/AC06.json",
+      "old_path": ".codex-team/handoffs/AC06.json",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/team/runtime/handoffs/AC07.json",
+      "old_path": ".codex-team/handoffs/AC07.json",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/team/runtime/handoffs/AC08.json",
+      "old_path": ".codex-team/handoffs/AC08.json",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/team/runtime/handoffs/AC09.json",
+      "old_path": ".codex-team/handoffs/AC09.json",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/team/runtime/handoffs/AC10.json",
+      "old_path": ".codex-team/handoffs/AC10.json",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/team/runtime/handoffs/W01.draft.bak",
+      "old_path": ".codex-team/handoffs/W01.draft.bak",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/team/runtime/missions/agent-chat-control-plane-v1.json",
+      "old_path": ".codex-team/missions/agent-chat-control-plane-v1.json",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/team/runtime/missions/agent-decision-inspector-project.json",
+      "old_path": ".codex-team/missions/agent-decision-inspector-project.json",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/team/runtime/state.json",
+      "old_path": ".codex-team/state.json",
+      "status": "R",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/traces/agent-chat/trace-263199de3de94db9.json",
+      "old_path": null,
+      "status": "M",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/traces/agent-chat/trace-5928204206a14073.json",
+      "old_path": null,
+      "status": "M",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".bago/traces/agent-chat/trace-ce1f60b61fc34e13.json",
+      "old_path": null,
+      "status": "M",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".github/workflows/ci.yml",
+      "old_path": null,
+      "status": "M",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": ".gitignore",
+      "old_path": null,
+      "status": "M",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": "AGENTS.md",
+      "old_path": null,
+      "status": "M",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": "BAGO_AGENTIC_DATA_LAB.code-workspace",
+      "old_path": null,
+      "status": "M",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": "README.md",
+      "old_path": null,
+      "status": "MM",
+      "staged": true,
+      "unstaged": true,
+      "untracked": false
+    },
+    {
+      "path": "agents/09-activadores-no-agentes/bago-goal/SKILL.md",
+      "old_path": null,
+      "status": "M",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": "demo.py",
+      "old_path": null,
+      "status": "M",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": "docs/README.md",
+      "old_path": null,
+      "status": "M",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": "docs/agent-chat-control/FINAL_STATUS.md",
+      "old_path": null,
+      "status": "M",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": "docs/agent-chat-control/coordination/archive/AGENT_DECISION_INSPECTOR_V1-mission.json",
+      "old_path": null,
+      "status": "M",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": "docs/agent-chat-control/coordination/archive/AGENT_DECISION_INSPECTOR_V1-state.json",
+      "old_path": null,
+      "status": "M",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": "docs/agent-chat-control/coordination/archive/W02.json",
+      "old_path": null,
+      "status": "M",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": "docs/agent-chat-control/coordination/archive/W04.json",
+      "old_path": null,
+      "status": "M",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": "docs/agent-chat-control/coordination/archive/W05.json",
+      "old_path": null,
+      "status": "M",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": "docs/agent-chat-control/coordination/archive/W06.json",
+      "old_path": null,
+      "status": "M",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": "docs/agent-chat-control/coordination/archive/W07.json",
+      "old_path": null,
+      "status": "M",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": "docs/agent-chat-control/coordination/archive/W08.json",
+      "old_path": null,
+      "status": "M",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": "docs/agent-chat-control/coordination/archive/W09.json",
+      "old_path": null,
+      "status": "M",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": "docs/agent-chat-control/coordination/archive/W11.json",
+      "old_path": null,
+      "status": "M",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": "docs/agent-chat-control/coordination/archive/W12.json",
+      "old_path": null,
+      "status": "M",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": "docs/agent-chat-control/coordination/archive/W13.json",
+      "old_path": null,
+      "status": "M",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": "docs/agent-chat-control/verification/AC04-review.md",
+      "old_path": null,
+      "status": "M",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": "docs/decision-inspector/FINAL_STATUS.md",
+      "old_path": null,
+      "status": "M",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": "docs/decision-inspector/inventory/REPOSITORY_INVENTORY.md",
+      "old_path": null,
+      "status": "M",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": "docs/decision-inspector/verification/W11_INDEPENDENT_VERIFICATION.md",
+      "old_path": null,
+      "status": "M",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": "docs/ontology_generator.md",
+      "old_path": null,
+      "status": "M",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": "docs/readme_generation.md",
+      "old_path": null,
+      "status": "M",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": "docs/readme_manifest.json",
+      "old_path": null,
+      "status": "M",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": "evidence/l1-governed-execution-completion-20261010/L1_VALIDATION.md",
+      "old_path": null,
+      "status": "M",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": "evidence/l1_governed_execution_20261010.md",
+      "old_path": null,
+      "status": "M",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": "evidence/ontology_proposal.md",
+      "old_path": null,
+      "status": "M",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": "frontend/.tsupgrader/runtime-validation/baseline-result.json",
+      "old_path": null,
+      "status": "A",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": "frontend/.tsupgrader/runtime-validation/eval-plan.json",
+      "old_path": null,
+      "status": "A",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": "frontend/.tsupgrader/runtime-validation/postupgrade-result.json",
+      "old_path": null,
+      "status": "A",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": "frontend/package-lock.json",
+      "old_path": null,
+      "status": "M",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": "frontend/package.json",
+      "old_path": null,
+      "status": "M",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": "frontend/public/team-monitor.html",
+      "old_path": null,
+      "status": "M",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": "frontend/tests/ui/agent-evaluation-lab/agent-evaluation-lab.test.mjs",
+      "old_path": null,
+      "status": "M",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": "frontend/tsconfig.json",
+      "old_path": null,
+      "status": "M",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": "plugins/bago-agent-decision-engineering-team/missions/agent-decision-inspector.json",
+      "old_path": null,
+      "status": "M",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": "plugins/bago-agent-decision-engineering-team/protocol/COMMUNICATION.md",
+      "old_path": null,
+      "status": "M",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": "plugins/bago-agent-decision-engineering-team/protocol/TEAM_PROTOCOL.md",
+      "old_path": null,
+      "status": "M",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": "plugins/bago-agent-decision-engineering-team/scripts/teamctl.py",
+      "old_path": null,
+      "status": "M",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": "plugins/bago-agent-decision-engineering-team/skills/team-orchestrator/SKILL.md",
+      "old_path": null,
+      "status": "M",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": "portfolio/README.md",
+      "old_path": null,
+      "status": "M",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": "scripts/generate_dynamic_readme.py",
+      "old_path": null,
+      "status": "M",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": "scripts/generate_l3_ontology_evidence.py",
+      "old_path": null,
+      "status": "M",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": "scripts/generate_ontology_proposal.py",
+      "old_path": null,
+      "status": "M",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": "scripts/run_public_e2e_demo.py",
+      "old_path": null,
+      "status": "M",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": "src/agent_tools/workspace_read.py",
+      "old_path": null,
+      "status": "M",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": "src/api/server.py",
+      "old_path": null,
+      "status": "M",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": "src/etl/pipeline.py",
+      "old_path": null,
+      "status": "M",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": "src/orchestration/state_graph.py",
+      "old_path": null,
+      "status": "M",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": "tests/test_dynamic_readme.py",
+      "old_path": null,
+      "status": "M",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": "tests/test_metadata_schema.py",
+      "old_path": null,
+      "status": "M",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": "tests/test_team_monitor_api.py",
+      "old_path": null,
+      "status": "M",
+      "staged": true,
+      "unstaged": false,
+      "untracked": false
+    },
+    {
+      "path": "docs/bago-layer/git-change-review.html",
+      "old_path": null,
+      "status": "??",
+      "staged": false,
+      "unstaged": false,
+      "untracked": true
+    },
+    {
+      "path": "docs/bago-layer/git-change-review.v1.json",
+      "old_path": null,
+      "status": "??",
+      "staged": false,
+      "unstaged": false,
+      "untracked": true
+    },
+    {
+      "path": "docs/bago-layer/git-change-review.v1.schema.json",
+      "old_path": null,
+      "status": "??",
+      "staged": false,
+      "unstaged": false,
+      "untracked": true
+    },
+    {
+      "path": "output/playwright/git-change-review-desktop.png",
+      "old_path": null,
+      "status": "??",
+      "staged": false,
+      "unstaged": false,
+      "untracked": true
+    },
+    {
+      "path": "output/playwright/git-change-review-mobile.png",
+      "old_path": null,
+      "status": "??",
+      "staged": false,
+      "unstaged": false,
+      "untracked": true
+    },
+    {
+      "path": "scripts/generate_git_change_review.py",
+      "old_path": null,
+      "status": "??",
+      "staged": false,
+      "unstaged": false,
+      "untracked": true
+    }
+  ],
+  "branches": [
+    {
+      "name": "appmod/typescript-upgrade-20261011051933",
+      "kind": "local",
+      "sha": "3a9d244861c111756dcc6664dd85eceeddb169d7",
+      "upstream": "origin/appmod/typescript-upgrade-20261011051933",
+      "tracking": "[behind 30]",
+      "is_current": false
+    },
+    {
+      "name": "codex/adl-agent-evaluation-lab-20261010",
+      "kind": "local",
+      "sha": "a5b5ef29c12b4101d51fb4ea3da89f2e175758ea",
+      "upstream": "origin/codex/adl-agent-evaluation-lab-20261010",
+      "tracking": null,
+      "is_current": false
+    },
+    {
+      "name": "codex/agent-chat-control-v1",
+      "kind": "local",
+      "sha": "13a1136deba3049d622d373fe7a20becb155ebb1",
+      "upstream": "origin/codex/agent-chat-control-v1",
+      "tracking": null,
+      "is_current": false
+    },
+    {
+      "name": "codex/bago-context-unification-20261011",
+      "kind": "local",
+      "sha": "6f3ee8a66a164a19829693e43bf0b95859d6c576",
+      "upstream": "origin/codex/bago-context-unification-20261011",
+      "tracking": "[behind 6]",
+      "is_current": false
+    },
+    {
+      "name": "codex/bago-context-unification-pre-main-20261011",
+      "kind": "local",
+      "sha": "8a3c4286e18b3cc5dd87689fccf7b63d9b26acbe",
+      "upstream": null,
+      "tracking": null,
+      "is_current": false
+    },
+    {
+      "name": "codex/conversation-library-v1",
+      "kind": "local",
+      "sha": "1e4d9f930da1225ce61ce27def897f76d57a08fc",
+      "upstream": "origin/codex/conversation-library-v1",
+      "tracking": null,
+      "is_current": false
+    },
+    {
+      "name": "codex/crit-bago-adl-frontend-20261009",
+      "kind": "local",
+      "sha": "69b4f4b1ead2552b527e6e48868ab36cc2b38cbc",
+      "upstream": null,
+      "tracking": null,
+      "is_current": false
+    },
+    {
+      "name": "codex/docs-readme-metrics-20260922",
+      "kind": "local",
+      "sha": "1eb6b4f0c738adb16d2dae921e1ee30ecf657a48",
+      "upstream": null,
+      "tracking": null,
+      "is_current": false
+    },
+    {
+      "name": "codex/fix-ci-dependencies-pr40-20261010",
+      "kind": "local",
+      "sha": "19f3ada506ba592838836ad84d4f5172911b23dd",
+      "upstream": "origin/real-world/openmetadata-28860-v1.1",
+      "tracking": "[behind 33]",
+      "is_current": false
+    },
+    {
+      "name": "codex/fix-ci-missing-fastapi-20261010",
+      "kind": "local",
+      "sha": "5644eeaa7518fd9b37ca6f72ff104efe9a5f408b",
+      "upstream": "origin/codex/adl-agent-evaluation-lab-20261010",
+      "tracking": "[behind 9]",
+      "is_current": false
+    },
+    {
+      "name": "codex/fix-main-readme-ci-20261010",
+      "kind": "local",
+      "sha": "4844a1dc4d87e7b64cf7f4cbb7ac9da0e2bc4ae6",
+      "upstream": "origin/codex/fix-main-readme-ci-20261010",
+      "tracking": null,
+      "is_current": false
+    },
+    {
+      "name": "codex/fix-mcp-video-20260922",
+      "kind": "local",
+      "sha": "8029b8c79b624137b8908e6dd076d61249d2962b",
+      "upstream": null,
+      "tracking": null,
+      "is_current": false
+    },
+    {
+      "name": "codex/l1-governed-execution-completion-20261010",
+      "kind": "local",
+      "sha": "b6c9a2c36c36028bdeeb51f5592a9bdb080b5aac",
+      "upstream": "origin/codex/l1-governed-execution-completion-20261010",
+      "tracking": null,
+      "is_current": false
+    },
+    {
+      "name": "codex/l1-governed-execution-evidence-20261010",
+      "kind": "local",
+      "sha": "48f67fdf00a97548f1f40b18f5c2dd23229a54c2",
+      "upstream": "origin/codex/l1-governed-execution-evidence-20261010",
+      "tracking": null,
+      "is_current": false
+    },
+    {
+      "name": "codex/l1-ollama-cloud-tools-20261010",
+      "kind": "local",
+      "sha": "e4457796624b47891ac19bdb01fe7777ea775f68",
+      "upstream": null,
+      "tracking": null,
+      "is_current": false
+    },
+    {
+      "name": "codex/l10-ontology-readme-20260922",
+      "kind": "local",
+      "sha": "7d88017308450a681a2f61076285c5c5a421f41e",
+      "upstream": "origin/main",
+      "tracking": "[behind 125]",
+      "is_current": false
+    },
+    {
+      "name": "codex/l3-metadata-ontology-20260922",
+      "kind": "local",
+      "sha": "0c46f905d76738c0159b5025b7b92ff4edb5a345",
+      "upstream": "origin/codex/l3-metadata-ontology-20260922",
+      "tracking": null,
+      "is_current": false
+    },
+    {
+      "name": "codex/l4-governed-rag-20260922",
+      "kind": "local",
+      "sha": "345964999a3fd00b158a25c1cd240bb509e40684",
+      "upstream": null,
+      "tracking": null,
+      "is_current": false
+    },
+    {
+      "name": "codex/l5-mcp-governance-20260922",
+      "kind": "local",
+      "sha": "81ee8fe320576748562dd7556c821b0f11b01119",
+      "upstream": "origin/main",
+      "tracking": "[ahead 1, behind 138]",
+      "is_current": false
+    },
+    {
+      "name": "codex/l6-bedrock-provider-20260922",
+      "kind": "local",
+      "sha": "e4889128f87f8d2192c4b9a220b3efa69425966c",
+      "upstream": null,
+      "tracking": null,
+      "is_current": false
+    },
+    {
+      "name": "codex/l7-bedrock-kb-20260922",
+      "kind": "local",
+      "sha": "b76d63b8878029e9a459e5bd32fffe778a0501f7",
+      "upstream": null,
+      "tracking": null,
+      "is_current": false
+    },
+    {
+      "name": "codex/l8-final-state-20260922",
+      "kind": "local",
+      "sha": "f83239d6b171a1bf7e30369208cf085aeee76a56",
+      "upstream": null,
+      "tracking": null,
+      "is_current": false
+    },
+    {
+      "name": "codex/l8-openmetadata-20260922",
+      "kind": "local",
+      "sha": "e09d1b705975013169646dbaeaec07d0c0b76983",
+      "upstream": null,
+      "tracking": null,
+      "is_current": false
+    },
+    {
+      "name": "codex/l9-authorized-actions-20260922",
+      "kind": "local",
+      "sha": "e813d1d78287bf6ebcf848e461cd5ca1ae755b8c",
+      "upstream": null,
+      "tracking": null,
+      "is_current": false
+    },
+    {
+      "name": "codex/l9-commercetools-20260922",
+      "kind": "local",
+      "sha": "e0952c1da33890177a563a23131faf77f295a981",
+      "upstream": null,
+      "tracking": null,
+      "is_current": false
+    },
+    {
+      "name": "codex/lab-sync-agent-20260922",
+      "kind": "local",
+      "sha": "fc73a17b0bf524a79dc02f28758d2df0bce1b54d",
+      "upstream": "origin/codex/lab-sync-agent-20260922",
+      "tracking": null,
+      "is_current": false
+    },
+    {
+      "name": "codex/readme-complete-fix-20260923",
+      "kind": "local",
+      "sha": "0d021eba96a7da33e1f19628abef3dc344b4ab24",
+      "upstream": null,
+      "tracking": null,
+      "is_current": false
+    },
+    {
+      "name": "codex/readme-dynamic-fix-20260923",
+      "kind": "local",
+      "sha": "278f96006dedeb082d020667005a3e3cd3e5970b",
+      "upstream": null,
+      "tracking": null,
+      "is_current": false
+    },
+    {
+      "name": "codex/readme-evidence-20261007",
+      "kind": "local",
+      "sha": "6ac0639f694a0b6a5b7b28d9c3f5d25d3b8bda4b",
+      "upstream": "origin/main",
+      "tracking": "[behind 63]",
+      "is_current": false
+    },
+    {
+      "name": "codex/workspace-binding-20260922",
+      "kind": "local",
+      "sha": "a0dde663e34270040e90e98fdbfa01f4967c8d94",
+      "upstream": null,
+      "tracking": null,
+      "is_current": false
+    },
+    {
+      "name": "experiment/genesis-binding-20261008",
+      "kind": "local",
+      "sha": "85007a1da4871670e8aa06a661e3056652a776a0",
+      "upstream": null,
+      "tracking": null,
+      "is_current": false
+    },
+    {
+      "name": "feat/aws-free-tier-live-harness",
+      "kind": "local",
+      "sha": "80efcd2b4cacfd83c6673d993999298b3c04b827",
+      "upstream": null,
+      "tracking": null,
+      "is_current": false
+    },
+    {
+      "name": "feat/aws-login-documentation",
+      "kind": "local",
+      "sha": "377c89881c920f678973df1c1b207308fef1d5bf",
+      "upstream": null,
+      "tracking": null,
+      "is_current": false
+    },
+    {
+      "name": "feat/ci-openmetadata-live",
+      "kind": "local",
+      "sha": "3c3bb535f8833bf84fa393f330e8a51d3f4cebbd",
+      "upstream": null,
+      "tracking": null,
+      "is_current": false
+    },
+    {
+      "name": "feat/governed-local-vector-store",
+      "kind": "local",
+      "sha": "2ccc5b6878bb3ab3bc7a405cdb085d391bd2df03",
+      "upstream": null,
+      "tracking": null,
+      "is_current": false
+    },
+    {
+      "name": "feat/governed-sandbox-and-local-validation",
+      "kind": "local",
+      "sha": "65d2a8df8ebe2b1f785bb1432862b8df9ea06418",
+      "upstream": null,
+      "tracking": null,
+      "is_current": false
+    },
+    {
+      "name": "feat/l6-aws-live-evidence",
+      "kind": "local",
+      "sha": "8d24f423562fc8acdcbf581749b88c0e729fc36f",
+      "upstream": null,
+      "tracking": null,
+      "is_current": false
+    },
+    {
+      "name": "feat/l6-free-tier-coverage",
+      "kind": "local",
+      "sha": "c4851936ac28fb48e5a2e19e2a3fe2cac2fe0722",
+      "upstream": null,
+      "tracking": null,
+      "is_current": false
+    },
+    {
+      "name": "feat/local-observability-evals",
+      "kind": "local",
+      "sha": "e7a8aa6978c3f5fc89aba6af4013429d5f36da79",
+      "upstream": null,
+      "tracking": null,
+      "is_current": false
+    },
+    {
+      "name": "feat/local-otel-jaeger-live",
+      "kind": "local",
+      "sha": "d34b6f14d8b1b8386cea8b8ccc346e2e6f1e2e68",
+      "upstream": null,
+      "tracking": null,
+      "is_current": false
+    },
+    {
+      "name": "feat/public-e2e-demo-ci",
+      "kind": "local",
+      "sha": "3e5f67f4b2a8d82623320b02dc09fa7bb108e014",
+      "upstream": null,
+      "tracking": null,
+      "is_current": false
+    },
+    {
+      "name": "fix/readme-mermaid-rendering",
+      "kind": "local",
+      "sha": "02f21a9cb91bae195a9b918094a70c9a26694a0d",
+      "upstream": null,
+      "tracking": null,
+      "is_current": false
+    },
+    {
+      "name": "main",
+      "kind": "local",
+      "sha": "851ff9e9c83ec4f2f84d3068fb18ec2d0a33561e",
+      "upstream": "origin/main",
+      "tracking": "[ahead 9, behind 14]",
+      "is_current": true
+    },
+    {
+      "name": "real-world/openmetadata-28860-v1.1",
+      "kind": "local",
+      "sha": "19f3ada506ba592838836ad84d4f5172911b23dd",
+      "upstream": "origin/real-world/openmetadata-28860-v1.1",
+      "tracking": "[behind 33]",
+      "is_current": false
+    },
+    {
+      "name": "origin",
+      "kind": "local",
+      "sha": "9428b272735e365c5a1b83197008c31eaa281ee5",
+      "upstream": null,
+      "tracking": null,
+      "is_current": false
+    },
+    {
+      "name": "origin/appmod/typescript-upgrade-20261011051933",
+      "kind": "remote",
+      "sha": "dac6fff4f0e3fc040c5e71defbf654e25689364d",
+      "upstream": null,
+      "tracking": null,
+      "is_current": false
+    },
+    {
+      "name": "origin/codex/adl-agent-evaluation-lab-20261010",
+      "kind": "remote",
+      "sha": "a5b5ef29c12b4101d51fb4ea3da89f2e175758ea",
+      "upstream": null,
+      "tracking": null,
+      "is_current": false
+    },
+    {
+      "name": "origin/codex/agent-chat-control-v1",
+      "kind": "remote",
+      "sha": "13a1136deba3049d622d373fe7a20becb155ebb1",
+      "upstream": null,
+      "tracking": null,
+      "is_current": false
+    },
+    {
+      "name": "origin/codex/bago-context-unification-20261011",
+      "kind": "remote",
+      "sha": "c3ea66a16f38b2dafe9b261d58161b3b1520f88c",
+      "upstream": null,
+      "tracking": null,
+      "is_current": false
+    },
+    {
+      "name": "origin/codex/conversation-library-v1",
+      "kind": "remote",
+      "sha": "1e4d9f930da1225ce61ce27def897f76d57a08fc",
+      "upstream": null,
+      "tracking": null,
+      "is_current": false
+    },
+    {
+      "name": "origin/codex/docs-readme-metrics-20260922",
+      "kind": "remote",
+      "sha": "1eb6b4f0c738adb16d2dae921e1ee30ecf657a48",
+      "upstream": null,
+      "tracking": null,
+      "is_current": false
+    },
+    {
+      "name": "origin/codex/fix-main-readme-ci-20261010",
+      "kind": "remote",
+      "sha": "4844a1dc4d87e7b64cf7f4cbb7ac9da0e2bc4ae6",
+      "upstream": null,
+      "tracking": null,
+      "is_current": false
+    },
+    {
+      "name": "origin/codex/fix-mcp-video-20260922",
+      "kind": "remote",
+      "sha": "8029b8c79b624137b8908e6dd076d61249d2962b",
+      "upstream": null,
+      "tracking": null,
+      "is_current": false
+    },
+    {
+      "name": "origin/codex/l1-governed-execution-completion-20261010",
+      "kind": "remote",
+      "sha": "b6c9a2c36c36028bdeeb51f5592a9bdb080b5aac",
+      "upstream": null,
+      "tracking": null,
+      "is_current": false
+    },
+    {
+      "name": "origin/codex/l1-governed-execution-evidence-20261010",
+      "kind": "remote",
+      "sha": "48f67fdf00a97548f1f40b18f5c2dd23229a54c2",
+      "upstream": null,
+      "tracking": null,
+      "is_current": false
+    },
+    {
+      "name": "origin/codex/l10-ontology-readme-20260922",
+      "kind": "remote",
+      "sha": "7d88017308450a681a2f61076285c5c5a421f41e",
+      "upstream": null,
+      "tracking": null,
+      "is_current": false
+    },
+    {
+      "name": "origin/codex/l3-metadata-ontology-20260922",
+      "kind": "remote",
+      "sha": "0c46f905d76738c0159b5025b7b92ff4edb5a345",
+      "upstream": null,
+      "tracking": null,
+      "is_current": false
+    },
+    {
+      "name": "origin/codex/l4-governed-rag-20260922",
+      "kind": "remote",
+      "sha": "345964999a3fd00b158a25c1cd240bb509e40684",
+      "upstream": null,
+      "tracking": null,
+      "is_current": false
+    },
+    {
+      "name": "origin/codex/l5-mcp-governance-20260922",
+      "kind": "remote",
+      "sha": "81ee8fe320576748562dd7556c821b0f11b01119",
+      "upstream": null,
+      "tracking": null,
+      "is_current": false
+    },
+    {
+      "name": "origin/codex/l6-bedrock-provider-20260922",
+      "kind": "remote",
+      "sha": "e4889128f87f8d2192c4b9a220b3efa69425966c",
+      "upstream": null,
+      "tracking": null,
+      "is_current": false
+    },
+    {
+      "name": "origin/codex/l7-bedrock-kb-20260922",
+      "kind": "remote",
+      "sha": "b76d63b8878029e9a459e5bd32fffe778a0501f7",
+      "upstream": null,
+      "tracking": null,
+      "is_current": false
+    },
+    {
+      "name": "origin/codex/l8-final-state-20260922",
+      "kind": "remote",
+      "sha": "f83239d6b171a1bf7e30369208cf085aeee76a56",
+      "upstream": null,
+      "tracking": null,
+      "is_current": false
+    },
+    {
+      "name": "origin/codex/l8-openmetadata-20260922",
+      "kind": "remote",
+      "sha": "e09d1b705975013169646dbaeaec07d0c0b76983",
+      "upstream": null,
+      "tracking": null,
+      "is_current": false
+    },
+    {
+      "name": "origin/codex/l9-authorized-actions-20260922",
+      "kind": "remote",
+      "sha": "e813d1d78287bf6ebcf848e461cd5ca1ae755b8c",
+      "upstream": null,
+      "tracking": null,
+      "is_current": false
+    },
+    {
+      "name": "origin/codex/l9-commercetools-20260922",
+      "kind": "remote",
+      "sha": "e0952c1da33890177a563a23131faf77f295a981",
+      "upstream": null,
+      "tracking": null,
+      "is_current": false
+    },
+    {
+      "name": "origin/codex/lab-sync-agent-20260922",
+      "kind": "remote",
+      "sha": "fc73a17b0bf524a79dc02f28758d2df0bce1b54d",
+      "upstream": null,
+      "tracking": null,
+      "is_current": false
+    },
+    {
+      "name": "origin/codex/readme-complete-fix-20260923",
+      "kind": "remote",
+      "sha": "0d021eba96a7da33e1f19628abef3dc344b4ab24",
+      "upstream": null,
+      "tracking": null,
+      "is_current": false
+    },
+    {
+      "name": "origin/codex/readme-dynamic-fix-20260923",
+      "kind": "remote",
+      "sha": "278f96006dedeb082d020667005a3e3cd3e5970b",
+      "upstream": null,
+      "tracking": null,
+      "is_current": false
+    },
+    {
+      "name": "origin/codex/workspace-binding-20260922",
+      "kind": "remote",
+      "sha": "a0dde663e34270040e90e98fdbfa01f4967c8d94",
+      "upstream": null,
+      "tracking": null,
+      "is_current": false
+    },
+    {
+      "name": "origin/copilot/29",
+      "kind": "remote",
+      "sha": "2dd30f8a81a63015b5de0309a686345855a4226a",
+      "upstream": null,
+      "tracking": null,
+      "is_current": false
+    },
+    {
+      "name": "origin/copilot/bago-canon-compliance-review",
+      "kind": "remote",
+      "sha": "9c66f931ed64ace2541c5bf05ea51074afd690c8",
+      "upstream": null,
+      "tracking": null,
+      "is_current": false
+    },
+    {
+      "name": "origin/copilot/fix-failing-github-actions-job",
+      "kind": "remote",
+      "sha": "27db9b5c590a597ac3328ba86267aceae86b7325",
+      "upstream": null,
+      "tracking": null,
+      "is_current": false
+    },
+    {
+      "name": "origin/copilot/fix-github-actions-job-verify",
+      "kind": "remote",
+      "sha": "9e07047606794af7a68dbc5315fafda56bad874b",
+      "upstream": null,
+      "tracking": null,
+      "is_current": false
+    },
+    {
+      "name": "origin/copilot/fix-readme-github-actions-job",
+      "kind": "remote",
+      "sha": "56bbde9f2f787411f5743f4e5e2a4c29cbc9c39a",
+      "upstream": null,
+      "tracking": null,
+      "is_current": false
+    },
+    {
+      "name": "origin/copilot/fix-verify-job-failure",
+      "kind": "remote",
+      "sha": "9e762c56a9487cb4c7bab33a123d2c426b8f9cd2",
+      "upstream": null,
+      "tracking": null,
+      "is_current": false
+    },
+    {
+      "name": "origin/copilot/sustituir-ejemplo-caso-cliente",
+      "kind": "remote",
+      "sha": "1c4288218f93f62a0a2b28b60426a4da39a149c0",
+      "upstream": null,
+      "tracking": null,
+      "is_current": false
+    },
+    {
+      "name": "origin/feat/aws-free-tier-live-harness",
+      "kind": "remote",
+      "sha": "80efcd2b4cacfd83c6673d993999298b3c04b827",
+      "upstream": null,
+      "tracking": null,
+      "is_current": false
+    },
+    {
+      "name": "origin/feat/aws-login-documentation",
+      "kind": "remote",
+      "sha": "377c89881c920f678973df1c1b207308fef1d5bf",
+      "upstream": null,
+      "tracking": null,
+      "is_current": false
+    },
+    {
+      "name": "origin/feat/ci-openmetadata-live",
+      "kind": "remote",
+      "sha": "3c3bb535f8833bf84fa393f330e8a51d3f4cebbd",
+      "upstream": null,
+      "tracking": null,
+      "is_current": false
+    },
+    {
+      "name": "origin/feat/governed-agent-portfolio-demo",
+      "kind": "remote",
+      "sha": "c451375d60c58604fd60824f94a9994f106721f1",
+      "upstream": null,
+      "tracking": null,
+      "is_current": false
+    },
+    {
+      "name": "origin/feat/governed-local-vector-store",
+      "kind": "remote",
+      "sha": "2ccc5b6878bb3ab3bc7a405cdb085d391bd2df03",
+      "upstream": null,
+      "tracking": null,
+      "is_current": false
+    },
+    {
+      "name": "origin/feat/governed-sandbox-and-local-validation",
+      "kind": "remote",
+      "sha": "65d2a8df8ebe2b1f785bb1432862b8df9ea06418",
+      "upstream": null,
+      "tracking": null,
+      "is_current": false
+    },
+    {
+      "name": "origin/feat/l6-aws-live-evidence",
+      "kind": "remote",
+      "sha": "8d24f423562fc8acdcbf581749b88c0e729fc36f",
+      "upstream": null,
+      "tracking": null,
+      "is_current": false
+    },
+    {
+      "name": "origin/feat/l6-free-tier-coverage",
+      "kind": "remote",
+      "sha": "c4851936ac28fb48e5a2e19e2a3fe2cac2fe0722",
+      "upstream": null,
+      "tracking": null,
+      "is_current": false
+    },
+    {
+      "name": "origin/feat/local-observability-evals",
+      "kind": "remote",
+      "sha": "e7a8aa6978c3f5fc89aba6af4013429d5f36da79",
+      "upstream": null,
+      "tracking": null,
+      "is_current": false
+    },
+    {
+      "name": "origin/feat/local-otel-jaeger-live",
+      "kind": "remote",
+      "sha": "d34b6f14d8b1b8386cea8b8ccc346e2e6f1e2e68",
+      "upstream": null,
+      "tracking": null,
+      "is_current": false
+    },
+    {
+      "name": "origin/feat/public-e2e-demo-ci",
+      "kind": "remote",
+      "sha": "3e5f67f4b2a8d82623320b02dc09fa7bb108e014",
+      "upstream": null,
+      "tracking": null,
+      "is_current": false
+    },
+    {
+      "name": "origin/fix/readme-mermaid-rendering",
+      "kind": "remote",
+      "sha": "02f21a9cb91bae195a9b918094a70c9a26694a0d",
+      "upstream": null,
+      "tracking": null,
+      "is_current": false
+    },
+    {
+      "name": "origin/main",
+      "kind": "remote",
+      "sha": "9428b272735e365c5a1b83197008c31eaa281ee5",
+      "upstream": null,
+      "tracking": null,
+      "is_current": false
+    },
+    {
+      "name": "origin/real-world/openmetadata-28860-v1.1",
+      "kind": "remote",
+      "sha": "602d7b4a6028e9f7d86c7808c179305e65d3c93e",
+      "upstream": null,
+      "tracking": null,
+      "is_current": false
+    }
+  ],
+  "commits": [
+    {
+      "sha": "9428b272735e365c5a1b83197008c31eaa281ee5",
+      "short_sha": "9428b27",
+      "date": "2026-10-11T06:41:56+02:00",
+      "author": "Marc Valls Sanvictor",
+      "subject": "Merge pull request #50 from MarcValls/copilot/fix-verify-job-failure"
+    },
+    {
+      "sha": "c3de37d4629dea1b636cf22c5d8f4e649e02e868",
+      "short_sha": "c3de37d",
+      "date": "2026-10-11T06:41:36+02:00",
+      "author": "Marc Valls Sanvictor",
+      "subject": "Merge pull request #51 from MarcValls/real-world/openmetadata-28860-v1.1"
+    },
+    {
+      "sha": "602d7b4a6028e9f7d86c7808c179305e65d3c93e",
+      "short_sha": "602d7b4",
+      "date": "2026-10-11T06:40:24+02:00",
+      "author": "Marc Valls Sanvictor",
+      "subject": "Merge pull request #49 from MarcValls/appmod/typescript-upgrade-20261011051933"
+    },
+    {
+      "sha": "9e762c56a9487cb4c7bab33a123d2c426b8f9cd2",
+      "short_sha": "9e762c5",
+      "date": "2026-10-11T04:39:11Z",
+      "author": "copilot-swe-agent[bot]",
+      "subject": "Initial plan"
+    },
+    {
+      "sha": "851ff9e9c83ec4f2f84d3068fb18ec2d0a33561e",
+      "short_sha": "851ff9e",
+      "date": "2026-10-11T06:38:22+02:00",
+      "author": "AMTEC-Terminal",
+      "subject": "Add comprehensive tests for OpenLineage event handling and team monitoring API"
+    },
+    {
+      "sha": "b17964f982c4df98e38233942410747a83a777eb",
+      "short_sha": "b17964f",
+      "date": "2026-10-11T06:14:14+02:00",
+      "author": "Marc Valls Sanvictor",
+      "subject": "Merge pull request #48 from MarcValls/appmod/typescript-upgrade-20261011051933"
+    },
+    {
+      "sha": "7783f228691f908d5a29a58f09d5bcb6ef4f6f96",
+      "short_sha": "7783f22",
+      "date": "2026-10-11T06:13:44+02:00",
+      "author": "Marc Valls Sanvictor",
+      "subject": "Merge pull request #47 from MarcValls/codex/bago-context-unification-20261011"
+    },
+    {
+      "sha": "4fabfb12a761fc99b42c4161ce6c90f216bbf3e7",
+      "short_sha": "4fabfb1",
+      "date": "2026-10-11T06:11:16+02:00",
+      "author": "AMTEC-Terminal",
+      "subject": "chore: add frontend build artifacts and runtime smoke tests"
+    },
+    {
+      "sha": "dac6fff4f0e3fc040c5e71defbf654e25689364d",
+      "short_sha": "dac6fff",
+      "date": "2026-10-11T03:55:50Z",
+      "author": "openai-code-agent[bot]",
+      "subject": "Merge origin/main into appmod/typescript-upgrade-20261011051933"
+    },
+    {
+      "sha": "5d30fd9e5541de5c3e6b7dcb891114bd165855a5",
+      "short_sha": "5d30fd9",
+      "date": "2026-10-11T03:54:02Z",
+      "author": "openai-code-agent[bot]",
+      "subject": "Merge remote-tracking branch origin/appmod/typescript-upgrade-20261011051933"
+    },
+    {
+      "sha": "a5527a553658d68509d1efe57ffc212d03d99da3",
+      "short_sha": "a5527a5",
+      "date": "2026-10-11T03:52:50Z",
+      "author": "openai-code-agent[bot]",
+      "subject": "merge main and resolve package conflict with frontend test compatibility"
+    },
+    {
+      "sha": "3a9d244861c111756dcc6664dd85eceeddb169d7",
+      "short_sha": "3a9d244",
+      "date": "2026-10-11T05:51:25+02:00",
+      "author": "AMTEC-Terminal",
+      "subject": "chore: upgrade frontend dependencies and adjust test imports"
+    },
+    {
+      "sha": "1b9c11272f8f17450406ac700c8f0654f4fa8c3c",
+      "short_sha": "1b9c112",
+      "date": "2026-10-11T05:45:39+02:00",
+      "author": "AMTEC-Terminal",
+      "subject": "chore: update frontend dependencies and add testing framework"
+    },
+    {
+      "sha": "0be533c07796840ae97b371773f3208ff7639bc3",
+      "short_sha": "0be533c",
+      "date": "2026-10-11T05:24:36+02:00",
+      "author": "AMTEC-Terminal",
+      "subject": "On real-world/openmetadata-28860-v1.1: Auto-stash: Save uncommitted changes before migration"
+    },
+    {
+      "sha": "3879a232fe4d026f549c91b9567f4872b5da7fae",
+      "short_sha": "3879a23",
+      "date": "2026-10-11T05:24:36+02:00",
+      "author": "AMTEC-Terminal",
+      "subject": "index on real-world/openmetadata-28860-v1.1: 19f3ada fix(ci): install API test dependencies"
+    },
+    {
+      "sha": "e8ac9f755fea072a7da49a125b1841d4b9ab5bc1",
+      "short_sha": "e8ac9f7",
+      "date": "2026-10-11T05:24:36+02:00",
+      "author": "AMTEC-Terminal",
+      "subject": "untracked files on real-world/openmetadata-28860-v1.1: 19f3ada fix(ci): install API test dependencies"
+    },
+    {
+      "sha": "c24e72a333637f356b12d92722a628cdcf4cfe1d",
+      "short_sha": "c24e72a",
+      "date": "2026-10-11T05:16:54+02:00",
+      "author": "AMTEC-Terminal",
+      "subject": "Agent host session e13c1827-dd63-4b0d-9d29-554c932ad9c7 - baseline checkpoint"
+    },
+    {
+      "sha": "46d723526ea43fc80821b99dd8bd0bc49cafba50",
+      "short_sha": "46d7235",
+      "date": "2026-10-11T04:11:28+02:00",
+      "author": "AMTEC-Terminal",
+      "subject": "Agent host session f082ac59-3847-412b-99b6-3c0baf2fd5fc - turn 18"
+    },
+    {
+      "sha": "0759e4324322f4ca63ababdee0b0c41fd507ff34",
+      "short_sha": "0759e43",
+      "date": "2026-10-11T04:11:27+02:00",
+      "author": "AMTEC-Terminal",
+      "subject": "Agent host session f082ac59-3847-412b-99b6-3c0baf2fd5fc - turn 18 start"
+    },
+    {
+      "sha": "b2d0f8920b18c6d25c11432d19fde8900519199e",
+      "short_sha": "b2d0f89",
+      "date": "2026-10-11T03:56:41+02:00",
+      "author": "AMTEC-Terminal",
+      "subject": "Agent host session f082ac59-3847-412b-99b6-3c0baf2fd5fc - turn 17"
+    },
+    {
+      "sha": "23513f04e87455c051ab40a20c66f7b9adf14ab0",
+      "short_sha": "23513f0",
+      "date": "2026-10-11T03:56:41+02:00",
+      "author": "AMTEC-Terminal",
+      "subject": "Agent host session f082ac59-3847-412b-99b6-3c0baf2fd5fc - turn 17 start"
+    },
+    {
+      "sha": "8b1ce7d2f41cf717c2bf519720bb436f430b7113",
+      "short_sha": "8b1ce7d",
+      "date": "2026-10-11T03:47:28+02:00",
+      "author": "AMTEC-Terminal",
+      "subject": "Agent host session f082ac59-3847-412b-99b6-3c0baf2fd5fc - turn 16"
+    },
+    {
+      "sha": "0d11d1f7a47a04b4ca7d70f0b177172541f0a910",
+      "short_sha": "0d11d1f",
+      "date": "2026-10-11T03:47:27+02:00",
+      "author": "AMTEC-Terminal",
+      "subject": "Agent host session f082ac59-3847-412b-99b6-3c0baf2fd5fc - turn 16 start"
+    },
+    {
+      "sha": "fbf3e622f9f50df0b8a8ee9993c2bac551f07216",
+      "short_sha": "fbf3e62",
+      "date": "2026-10-11T03:24:34+02:00",
+      "author": "AMTEC-Terminal",
+      "subject": "Agent host session f082ac59-3847-412b-99b6-3c0baf2fd5fc - turn 15"
+    },
+    {
+      "sha": "409cbe4ff6bfaad385a89376b23fb52868b6f66c",
+      "short_sha": "409cbe4",
+      "date": "2026-10-11T03:24:33+02:00",
+      "author": "AMTEC-Terminal",
+      "subject": "Agent host session f082ac59-3847-412b-99b6-3c0baf2fd5fc - turn 15 start"
+    },
+    {
+      "sha": "5c9d47328e9b864136f2735c73b626f58924fafd",
+      "short_sha": "5c9d473",
+      "date": "2026-10-11T03:00:57+02:00",
+      "author": "AMTEC-Terminal",
+      "subject": "Agent host session f082ac59-3847-412b-99b6-3c0baf2fd5fc - turn 14"
+    },
+    {
+      "sha": "30d0a9c4ca85ad3cea5636e06d33c71524632ed1",
+      "short_sha": "30d0a9c",
+      "date": "2026-10-11T03:00:56+02:00",
+      "author": "AMTEC-Terminal",
+      "subject": "Agent host session f082ac59-3847-412b-99b6-3c0baf2fd5fc - turn 14 start"
+    },
+    {
+      "sha": "c3ea66a16f38b2dafe9b261d58161b3b1520f88c",
+      "short_sha": "c3ea66a",
+      "date": "2026-10-11T00:48:39Z",
+      "author": "copilot-swe-agent[bot]",
+      "subject": "Merge remote-tracking branch 'origin/main' into codex/bago-context-unification-20261011"
+    },
+    {
+      "sha": "36fa7829894fed839aaa8d21677dd3c853a9f9e1",
+      "short_sha": "36fa782",
+      "date": "2026-10-11T02:44:37+02:00",
+      "author": "Marc Valls Sanvictor",
+      "subject": "Merge pull request #46 from MarcValls/codex/agent-chat-control-v1"
+    },
+    {
+      "sha": "d4a5861da57e12d10af1efe7b95e9b6f4b791f23",
+      "short_sha": "d4a5861",
+      "date": "2026-10-11T02:39:45+02:00",
+      "author": "AMTEC-Terminal",
+      "subject": "Agent host session f082ac59-3847-412b-99b6-3c0baf2fd5fc - turn 13"
+    }
+  ],
+  "integration": {
+    "status": "PROPOSED",
+    "consumer": "BAGO Layer",
+    "entrypoint": "window.BagoLayerChangeReview.mount(snapshot)"
+  }
+}

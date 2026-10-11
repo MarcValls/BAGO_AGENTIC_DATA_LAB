@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:bago-layer:git-change-review:v1",
+  "title": "BAGO Layer Git Change Review Snapshot",
+  "type": "object",
+  "required": ["contract", "contract_version", "source", "checkout", "changes", "branches", "commits", "integration"],
+  "properties": {
+    "contract": {"const": "urn:bago-layer:git-change-review:v1"},
+    "contract_version": {"const": 1},
+    "source": {
+      "type": "object",
+      "required": ["kind", "captured_at", "repository", "scope"],
+      "properties": {
+        "kind": {"const": "git_worktree_snapshot"},
+        "captured_at": {"type": "string", "format": "date-time"},
+        "repository": {"type": "object", "required": ["name"], "properties": {"name": {"type": "string"}}, "additionalProperties": false},
+        "scope": {"type": "string"}
+      }, "additionalProperties": false
+    },
+    "checkout": {
+      "type": "object", "required": ["branch", "head", "upstream", "merge"],
+      "properties": {
+        "branch": {"type": "string"},
+        "head": {"type": "object", "required": ["sha", "short_sha"], "properties": {"sha": {"type": "string", "pattern": "^[0-9a-f]{40,64}$"}, "short_sha": {"type": "string"}}, "additionalProperties": false},
+        "upstream": {"type": "object", "required": ["name", "ahead", "behind"], "properties": {"name": {"type": ["string", "null"]}, "ahead": {"type": ["integer", "null"], "minimum": 0}, "behind": {"type": ["integer", "null"], "minimum": 0}}, "additionalProperties": false},
+        "merge": {"type": "object", "required": ["in_progress", "target_sha", "unresolved_index_entries"], "properties": {"in_progress": {"type": "boolean"}, "target_sha": {"type": ["string", "null"]}, "unresolved_index_entries": {"type": "integer", "minimum": 0}}, "additionalProperties": false}
+      }, "additionalProperties": false
+    },
+    "changes": {"type": "array", "items": {"type": "object", "required": ["path", "old_path", "status", "staged", "unstaged", "untracked"], "properties": {"path": {"type": "string"}, "old_path": {"type": ["string", "null"]}, "status": {"type": "string"}, "staged": {"type": "boolean"}, "unstaged": {"type": "boolean"}, "untracked": {"type": "boolean"}}, "additionalProperties": false}},
+    "branches": {"type": "array", "items": {"type": "object", "required": ["name", "kind", "sha", "upstream", "tracking", "is_current"], "properties": {"name": {"type": "string"}, "kind": {"enum": ["local", "remote"]}, "sha": {"type": "string"}, "upstream": {"type": ["string", "null"]}, "tracking": {"type": ["string", "null"]}, "is_current": {"type": "boolean"}}, "additionalProperties": false}},
+    "commits": {"type": "array", "items": {"type": "object", "required": ["sha", "short_sha", "date", "author", "subject"], "properties": {"sha": {"type": "string"}, "short_sha": {"type": "string"}, "date": {"type": "string", "format": "date-time"}, "author": {"type": "string"}, "subject": {"type": "string"}}, "additionalProperties": false}},
+    "integration": {"type": "object", "required": ["status", "consumer", "entrypoint"], "properties": {"status": {"enum": ["PROPOSED", "PREPARED", "EXECUTED", "VERIFIED", "VALIDATED"]}, "consumer": {"type": "string"}, "entrypoint": {"type": "string"}}, "additionalProperties": false}
+  },
+  "additionalProperties": false
+}

@@ -1,9 +1,19 @@
+## Branch base freshness
+
+Before creating an implementation worktree, fetch the intended remote base
+(normally `origin/main`), record its exact SHA, and create the work branch from
+that fetched ref. Do not use a similarly named local branch or an older task
+branch as the base. Before publishing, fetch again and compare the branch's
+merge base with the refreshed remote base. If the remote advanced, rebase or
+recreate the candidate and rerun affected checks. Record both base SHAs in the
+goal evidence.
+
 <!-- BAGO_AGENT_DECISION_TEAM_v0.1.0 -->
 ## BAGO Agent Decision Engineering Team
 For work involving agent conclusions, evidence, provenance, traces, proposed actions, authorization or receipts:
-- Read .codex-team-kit/protocol/TEAM_PROTOCOL.md.
-- Use .codex-team-kit/missions/agent-decision-inspector.json unless the user names another mission.
-- Use python .codex-team-kit/scripts/teamctl.py ... as the coordination authority.
+- Read .bago/team/kit/protocol/TEAM_PROTOCOL.md.
+- Use .bago/team/kit/missions/agent-decision-inspector.json unless the user names another mission.
+- Use python .bago/team/kit/scripts/teamctl.py ... as the coordination authority.
 - For each assigned role, read plugins/bago-agent-decision-engineering-team/skills/<role>/SKILL.md before editing.
 - Start only READY work; use pair to decide safe parallelism; never infer completion from chat alone.
 - Every completed work item requires a materialized handoff and verify PASS.

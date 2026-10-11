@@ -3,11 +3,7 @@
 [![CI](https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/actions/workflows/ci.yml/badge.svg)](https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/actions/workflows/ci.yml)
 [![GitHub](https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/actions/workflows/readme-consistency.yml/badge.svg)](https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/actions/workflows/readme-consistency.yml)
 [![Branch](https://img.shields.io/badge/branch-main-green)](https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/tree/main)
-<<<<<<< HEAD
-[![Tests](https://img.shields.io/badge/tests-151%2F151%20passing-brightgreen)](https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/actions)
-=======
-[![Tests](https://img.shields.io/badge/tests-210%2F210%20passing-brightgreen)](https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/actions)
->>>>>>> 36fa7829894fed839aaa8d21677dd3c853a9f9e1
+[![Tests](https://img.shields.io/badge/tests-215%2F215%20passing-brightgreen)](https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/actions)
 [![License](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 
 > Laboratorio experimental para desarrollar capacidades de AI Engineering con gobernanza BAGO.
@@ -82,19 +78,15 @@ Para observar en vivo las tareas y eventos que registra la coordinación local, 
 python -m src.api.server
 ```
 
-En otra terminal, entra en `frontend`, ejecuta `npm install` y después `npm run dev`. Abre [http://localhost:5173/team-monitor.html](http://localhost:5173/team-monitor.html). La página consulta `/api/team/status` cada cuatro segundos; el estado mostrado procede de `.codex-team/state.json` y `.codex-team/events.jsonl`. Solo refleja eventos registrados por teamctl, no toda la actividad interna de la extensión Codex.
+En otra terminal, entra en `frontend`, ejecuta `npm install` y después `npm run dev`. Abre [http://localhost:5173/team-monitor.html](http://localhost:5173/team-monitor.html). La página consulta `/api/team/status` cada cuatro segundos; el estado mostrado procede de `.bago/team/runtime/state.json` y `.bago/team/runtime/events.jsonl`. Solo refleja eventos registrados por teamctl, no toda la actividad interna de la extensión Codex.
 
-Profundiza en las fases L0-L15 en el [roadmap](#roadmap-detectado), o consulta [STATE.md](STATE.md) para el alcance canónico y [portfolio/README.md](portfolio/README.md) para la presentación del producto.
+Profundiza en las fases L0-L15 en el [roadmap](#roadmap-detectado), o consulta [.bago/canon/STATE.md](.bago/canon/STATE.md) para el alcance canónico y [portfolio/README.md](portfolio/README.md) para la presentación del producto.
 
 ## Estado actual
 
 | Métrica | Valor |
 |---|---|
-<<<<<<< HEAD
-| Tests ejecutados | **151/151** |
-=======
-| Tests ejecutados | **210/210** |
->>>>>>> 36fa7829894fed839aaa8d21677dd3c853a9f9e1
+| Tests ejecutados | **215/215** |
 | Rama pública | `main` |
 | Estado actualizado | 2026-10-10 |
 | Fase actual | **L15 · OpenTelemetry + Jaeger Local Live** · VERIFIED (local live) |
@@ -103,7 +95,7 @@ Profundiza en las fases L0-L15 en el [roadmap](#roadmap-detectado), o consulta [
 
 El estado público se limita a lo que existe en el checkout y a la evidencia
 referenciada. Cada superficie AWS, OpenMetadata u otra integración externa
-conserva en STATE.md su alcance exacto: VERIFIED, NOT_RUN o NOT_PROVEN.
+conserva en .bago/canon/STATE.md su alcance exacto: VERIFIED, NOT_RUN o NOT_PROVEN.
 El commit, push y merge de este snapshot son operaciones separadas.
 
 ## One-Command Governed Knowledge Agent Demo
@@ -133,16 +125,16 @@ The injected provider is a fixture, not an AWS call; this local demo does not pr
 
 ## Fuentes canónicas
 
-El README proyecta estos documentos; no los sustituye ni los edita.
+El contexto del proyecto y el mapa de autoridad están centralizados en [BAGO context](.bago/INDEX.md). El README proyecta estos documentos; no los sustituye ni los edita.
 
 | Documento | Función | Estado |
 |---|---|---|
-| `STATE.md` | estado operativo actual | PRESENTE |
-| `LAB_CONTRACT.md` | contrato del laboratorio | PRESENTE |
-| `ARCHITECTURE.md` | arquitectura y límites | PRESENTE |
-| `ROADMAP.md` | roadmap ejecutable | PRESENTE |
-| `LEARNING_LEDGER.md` | aprendizaje y evidencia | PRESENTE |
-| `JOB_SKILL_MATRIX.md` | skills y alineación laboral | PRESENTE |
+| `.bago/canon/STATE.md` | estado operativo actual | PRESENTE |
+| `.bago/canon/LAB_CONTRACT.md` | contrato del laboratorio | PRESENTE |
+| `.bago/canon/ARCHITECTURE.md` | arquitectura y límites | PRESENTE |
+| `.bago/canon/ROADMAP.md` | roadmap ejecutable | PRESENTE |
+| `.bago/canon/LEARNING_LEDGER.md` | aprendizaje y evidencia | PRESENTE |
+| `.bago/canon/JOB_SKILL_MATRIX.md` | skills y alineación laboral | PRESENTE |
 | `docs/cv_linkedin/portfolio-demo-v1.md` | snapshot freeze portfolio-demo-v1 (CV/LinkedIn) | PRESENTE |
 | `docs/one_command_demo.md` | quickstart and artifact contract for one-command governed demo | PRESENTE |
 | `docs/one_command_demo_walkthrough.md` | canonical demo explanations and artifact walkthrough | PRESENTE |
@@ -280,7 +272,7 @@ Pipeline actual:
 
 ## Job market alignment
 
-La tabla se extrae de LAB_CONTRACT.md; no se duplica manualmente aquí.
+La tabla se extrae de .bago/canon/LAB_CONTRACT.md; no se duplica manualmente aquí.
 
 | Empresa | Rol | Fit | Gap principal | Timeline |
 |---|---|---:|---|---|
@@ -291,7 +283,7 @@ La tabla se extrae de LAB_CONTRACT.md; no se duplica manualmente aquí.
 
 ## Skills evidenciadas
 
-La tabla se extrae de JOB_SKILL_MATRIX.md y se mantiene fuera del README.
+La tabla se genera desde `.bago/canon/JOB_SKILL_MATRIX.md`; actualiza allí los datos.
 
 | Skill | Demanda | Nivel actual | Nivel objetivo | Primera evidencia | Entrevista |
 |---|---|---|---|---|---|
@@ -326,7 +318,7 @@ La tabla se extrae de JOB_SKILL_MATRIX.md y se mantiene fuera del README.
 
 ## Skills estratégicas
 
-La tabla se extrae de JOB_SKILL_MATRIX.md y se mantiene fuera del README.
+La tabla se genera desde `.bago/canon/JOB_SKILL_MATRIX.md`; actualiza allí los datos.
 
 | Skill | Nivel actual | Nivel objetivo | Evidencia |
 |---|---|---|---|
@@ -411,14 +403,9 @@ La tabla se extrae de JOB_SKILL_MATRIX.md y se mantiene fuera del README.
 - `tests/test_metadata_schema.py` (4 checks)
 - `tests/test_one_command_demo.py` (2 checks)
 - `tests/test_ontology_generator.py` (7 checks)
-<<<<<<< HEAD
-- `tests/test_openmetadata_adapter.py` (13 checks)
-- `tests/test_public_e2e_demo.py` (3 checks)
-- `tests/test_render_portfolio_demo_video.py` (3 checks)
-=======
 - `tests/test_openmetadata_adapter.py` (22 checks)
 - `tests/test_public_e2e_demo.py` (5 checks)
->>>>>>> 36fa7829894fed839aaa8d21677dd3c853a9f9e1
+- `tests/test_render_portfolio_demo_video.py` (3 checks)
 - `tests/test_retrieval_accuracy.py` (9 checks)
 - `tests/test_retrieval_benchmark.py` (3 checks)
 - `tests/test_sandbox.py` (14 checks)
@@ -495,9 +482,7 @@ La tabla se extrae de JOB_SKILL_MATRIX.md y se mantiene fuera del README.
 - `docs/bago-sync-agent.md`
 - `docs/bedrock_knowledge_base.md`
 - `docs/commercetools_capstone.md`
-<<<<<<< HEAD
 - `docs/cv_linkedin/portfolio-demo-v1.md`
-=======
 - `docs/decision-inspector/FINAL_STATUS.md`
 - `docs/decision-inspector/MANUAL_PARA_DUMMIES.md`
 - `docs/decision-inspector/contracts/action/decision-action-v1.md`
@@ -509,7 +494,6 @@ La tabla se extrae de JOB_SKILL_MATRIX.md y se mantiene fuera del README.
 - `docs/decision-inspector/verification/W13_RECEIPT_RUN_BINDING.md`
 - `docs/decision-inspector/verification/W14_INDEPENDENT_RECEIPT_VERIFICATION.md`
 - `docs/full_orchestration.md`
->>>>>>> 36fa7829894fed839aaa8d21677dd3c853a9f9e1
 - `docs/governed_rag.md`
 - `docs/langgraph_architecture.md`
 - `docs/local_vector_store.md`
@@ -536,6 +520,7 @@ La tabla se extrae de JOB_SKILL_MATRIX.md y se mantiene fuera del README.
 - `scripts/benchmark_retrieval.py`
 - `scripts/compare_bago_etl_vs_bedrock_kb.py`
 - `scripts/generate_dynamic_readme.py`
+- `scripts/generate_git_change_review.py`
 - `scripts/generate_l10_ontology_evidence.py`
 - `scripts/generate_l3_ontology_evidence.py`
 - `scripts/generate_l8_catalog_evidence.py`
@@ -621,8 +606,8 @@ métricas de tests y estado declarado se calculan al generar.
 - Comprobar deriva: python scripts/generate_dynamic_readme.py --check --skip-tests
 - Comprobar con la suite completa: python scripts/generate_dynamic_readme.py --check
 
-Fuente de estado: `STATE.md`; contrato: `LAB_CONTRACT.md`;
-skills: `JOB_SKILL_MATRIX.md`; manifiesto: `docs/readme_manifest.json`.
+Fuente de estado: `.bago/canon/STATE.md`; contrato: `.bago/canon/LAB_CONTRACT.md`;
+skills: `.bago/canon/JOB_SKILL_MATRIX.md`; manifiesto: `docs/readme_manifest.json`.
 
 ## Releases congelados
 

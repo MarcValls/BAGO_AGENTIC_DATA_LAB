@@ -5,15 +5,10 @@ node_modules/
 venv/
 .venv/
 .pytest_cache/
-<<<<<<< HEAD
 demo_output/
 .tmp-demo-output*/
-=======
-node_modules/
 .playwright-cli/
 .gabo/
-demo_output/
->>>>>>> 36fa7829894fed839aaa8d21677dd3c853a9f9e1
 .bago/evidence/sync-agent/
 evidence/*.png
 evidence/*.mp4
