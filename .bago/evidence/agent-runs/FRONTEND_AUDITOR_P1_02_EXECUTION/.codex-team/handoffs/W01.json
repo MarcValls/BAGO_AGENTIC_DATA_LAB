@@ -1,0 +1,55 @@
+{
+  "changed_files": [
+    "frontend/src/components/AgentRunner.tsx",
+    "frontend/src/components/AgentRunner.css"
+  ],
+  "next_consumers": [
+    "W02"
+  ],
+  "outputs": [
+    {
+      "files": {
+        "frontend/src/components/AgentRunner.css": "c81c6ea2d7c86e3c438807b4dbd2536d09753b43ceae6ad65ac72b1271d5ea89",
+        "frontend/src/components/AgentRunner.tsx": "defb5670ba4fe415de6e65ed7c621f4f7c7806df988e91fc73ddd85f11a22315"
+      },
+      "name": "Runner UI source fingerprints"
+    },
+    {
+      "finding": "Original audit report lines 31-36 identify the mismatch. Runner source at original lines 53-97,188-197 offered Run and unconditional success; authoritative server source at src/api/server.py:968-985 emits type=error, code=execution_unavailable, data and closes 1008 without creating a job.",
+      "name": "P1-02 source inspection",
+      "server": "src/api/server.py:968-985",
+      "source_report": "C:\\Users\\AMTEC_Terminal_1º\\BAGO_AGENTIC_DATA_LAB\\.bago\\CRIT-BAGO-ADL-FRONTEND-20261009-01.md:31-36"
+    },
+    {
+      "facts": [
+        "Runner visibly states execution unavailable and disables Run while the server has no governed executor.",
+        "Error frames render the server code and data in the Runner log.",
+        "Terminal done is success only when exit_code is integer zero; missing, noninteger, or nonzero exit code is failure."
+      ],
+      "name": "Implemented behavior"
+    }
+  ],
+  "payload_sha256": "b5b1e3e3f70778090d8496453f1249998fc921380f14ccf811549c16226873d8",
+  "residual_risks": [
+    "The Runner remains intentionally non-executable until a governed execution capability is implemented and explicitly enabled.",
+    "Rendered browser confirmation and independent behavior verification are assigned to W02 and are not claimed in W01.",
+    "No runtime call to /ws/agents/run or agent code execution was performed."
+  ],
+  "role": "decision-ui-engineer",
+  "status": "DONE",
+  "verification": [
+    {
+      "command": "npm run build",
+      "evidence": "tsc -b && vite build; Vite 4.5.14, 126 modules transformed, build completed.",
+      "result": "PASS",
+      "working_directory": "frontend"
+    },
+    {
+      "command": "git diff --check -- frontend/src/components/AgentRunner.tsx frontend/src/components/AgentRunner.css",
+      "evidence": "No whitespace errors.",
+      "result": "PASS",
+      "working_directory": "."
+    }
+  ],
+  "work_id": "W01"
+}
