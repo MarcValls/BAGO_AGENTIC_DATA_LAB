@@ -508,9 +508,9 @@ if __name__ == "__main__":
     else:
         # Default: ingest lab documentation
         files_to_ingest = [
-            "LAB_CONTRACT.md",
-            "ARCHITECTURE.md",
-            "ROADMAP.md"
+            ".bago/canon/LAB_CONTRACT.md",
+            ".bago/canon/ARCHITECTURE.md",
+            ".bago/canon/ROADMAP.md"
         ]
     
     receipts = []

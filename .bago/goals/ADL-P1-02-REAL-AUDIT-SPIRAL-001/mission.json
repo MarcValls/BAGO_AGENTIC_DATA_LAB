@@ -1,0 +1,64 @@
+{
+  "mission_id": "ADL_P1_02_REAL_AUDIT_SPIRAL_V1",
+  "title": "Real ADL P1-02 audit spiral",
+  "objective": "Have a real Ollama Cloud ADL agent inspect P1-02 and the exact active candidate source using bounded read-only workspace tools; independently verify the current Agent Runner/backend behavior, persist conversation and LocalTrace evidence, correlate a Jaeger projection, and close with independent review. No agent job or source mutation is authorized.",
+  "max_concurrency": 1,
+  "terminal_work_items": ["W05"],
+  "work_items": [
+    {
+      "id": "W01",
+      "title": "Freeze finding provenance and active candidate identity",
+      "role": "team-orchestrator",
+      "depends_on": [],
+      "write_scopes": [".bago/goals/ADL-P1-02-REAL-AUDIT-SPIRAL-001/evidence/**"],
+      "read_scopes": [".bago/goals/ADL-OLLAMA-SPIRAL-001/evidence/**", "frontend/src/components/AgentRunner.tsx", "src/api/server.py"],
+      "deliverables": ["Finding provenance and candidate fingerprint receipt"],
+      "done_when": ["Original P1-02 wording and source are fingerprinted", "Active runtime is bound to the current checkout and HEAD", "Relevant source hashes and dirty status are recorded", "No credentials are read"],
+      "frozen_outputs": ["p1-02-target-snapshot-v1"]
+    },
+    {
+      "id": "W02",
+      "title": "Run one real, source-grounded audit through the ADL agent",
+      "role": "evidence-provenance-engineer",
+      "depends_on": ["W01"],
+      "write_scopes": [".bago/goals/ADL-P1-02-REAL-AUDIT-SPIRAL-001/evidence/**", "output/playwright/**"],
+      "read_scopes": [".bago/goals/ADL-P1-02-REAL-AUDIT-SPIRAL-001/evidence/P1_02_FINDING_BRIEF.md", "frontend/src/components/AgentRunner.tsx", "src/api/server.py"],
+      "deliverables": ["Live ADL response with exact source citations, agent/model identity, conversation id and LocalTrace reference"],
+      "done_when": ["The response source is Ollama, not a fixture", "The agent reads the finding brief and both active-candidate source files through the bounded read tool", "The answer distinguishes the original finding from current candidate state and cites line ranges", "No file mutation, job or command execution occurs"],
+      "frozen_outputs": ["p1-02-agent-audit-v1"]
+    },
+    {
+      "id": "W03",
+      "title": "Probe the active Agent Runner UI and execution endpoint without starting a job",
+      "role": "verification-engineer",
+      "depends_on": ["W02"],
+      "write_scopes": [".bago/goals/ADL-P1-02-REAL-AUDIT-SPIRAL-001/evidence/**", "output/playwright/**"],
+      "read_scopes": ["frontend/src/components/AgentRunner.tsx", "src/api/server.py", ".bago/goals/ADL-P1-02-REAL-AUDIT-SPIRAL-001/evidence/W02_AGENT_AUDIT.json"],
+      "deliverables": ["Browser/UI and live WebSocket behavior receipt"],
+      "done_when": ["Active UI shows execution unavailable and a disabled Run control", "WebSocket returns execution_unavailable and close 1008", "No job id is created and no execution payload is sent", "UI and endpoint observations are bound to PID, checkout and source hashes"],
+      "frozen_outputs": ["p1-02-runtime-check-v1"]
+    },
+    {
+      "id": "W04",
+      "title": "Verify durable conversation, LocalTrace and Jaeger correlation",
+      "role": "trace-observability-engineer",
+      "depends_on": ["W03"],
+      "write_scopes": [".bago/goals/ADL-P1-02-REAL-AUDIT-SPIRAL-001/evidence/**"],
+      "read_scopes": [".bago/goals/ADL-P1-02-REAL-AUDIT-SPIRAL-001/evidence/**", ".bago/traces/agent-chat/**"],
+      "deliverables": ["API/SQLite/LocalTrace/Jaeger correlation receipt and evidence comparison"],
+      "done_when": ["Conversation messages persist and cite the source excerpts", "LocalTrace records provider, model, read calls and answer completion", "Jaeger projection is correlated and labeled as post-run if applicable", "Evidence boundaries and NOT_RUN items are explicit"],
+      "frozen_outputs": ["p1-02-audit-correlation-v1"]
+    },
+    {
+      "id": "W05",
+      "title": "Independent review and terminal audit verdict",
+      "role": "verification-engineer",
+      "depends_on": ["W04"],
+      "write_scopes": [".bago/goals/ADL-P1-02-REAL-AUDIT-SPIRAL-001/evidence/**"],
+      "read_scopes": [".bago/goals/ADL-P1-02-REAL-AUDIT-SPIRAL-001/**", "output/playwright/**"],
+      "deliverables": ["Independent review, verdict, limits and terminal gate"],
+      "done_when": ["All prior handoffs validate", "Real model source-code inspection is distinguished from runtime endpoint validation", "P1-02 is classified against the exact target snapshot", "No claim is made about source edits or agent job execution"],
+      "frozen_outputs": ["p1-02-audit-terminal-v1"]
+    }
+  ]
+}

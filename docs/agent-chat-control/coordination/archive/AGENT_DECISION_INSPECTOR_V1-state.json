@@ -31,7 +31,7 @@
         "role": "team-orchestrator",
         "title": "Freeze repository surface and identify reusable decision/evidence primitives",
         "write_scopes": [
-          ".codex-team/**",
+          ".bago/team/runtime/**",
           "docs/decision-inspector/inventory/**"
         ]
       },
@@ -348,7 +348,7 @@
           "src/features/decision-inspector/**",
           "src/contracts/**",
           "tests/**",
-          ".codex-team/handoffs/**"
+          ".bago/team/runtime/handoffs/**"
         ],
         "role": "verification-engineer",
         "title": "Run independent verification and adversarial review",
@@ -406,7 +406,7 @@
           "frontend/src/contracts/action/**",
           "frontend/src/adapters/action/**",
           "frontend/tests/ui/decision-inspector/integration/**",
-          ".codex-team/handoffs/**",
+          ".bago/team/runtime/handoffs/**",
           "docs/decision-inspector/verification/**"
         ],
         "role": "verification-engineer",
@@ -436,7 +436,7 @@
         ],
         "id": "W12",
         "read_scopes": [
-          ".codex-team/**",
+          ".bago/team/runtime/**",
           "docs/decision-inspector/**",
           "src/features/decision-inspector/**",
           "tests/**"
@@ -444,14 +444,14 @@
         "role": "team-orchestrator",
         "title": "Terminal mission gate",
         "write_scopes": [
-          ".codex-team/**",
+          ".bago/team/runtime/**",
           "docs/decision-inspector/FINAL_STATUS.md"
         ]
       }
     ]
   },
   "mission_sha256": "a25883dbc65651ac7ff84129c5092af1b9ffcac4230ea3c7423d632380551e01",
-  "mission_source": "C:\\Users\\AMTEC_Terminal_1º\\BAGO_AGENTIC_DATA_LAB\\.codex-team\\missions\\agent-decision-inspector-project.json",
+  "mission_source": "C:\\Users\\AMTEC_Terminal_1º\\BAGO_AGENTIC_DATA_LAB\\.bago/team/runtime\\missions\\agent-decision-inspector-project.json",
   "protocol_version": "0.1.0",
   "terminal_gate": "DONE",
   "updated_at": "2026-10-08T20:24:51+00:00",

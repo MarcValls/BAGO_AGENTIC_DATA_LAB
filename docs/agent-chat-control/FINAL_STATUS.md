@@ -26,7 +26,7 @@
 - `docker compose -f docker-compose.ui.yml config --quiet`: PASS.
 - Parseo AST de `scripts/run-local-ui.ps1`: PASS.
 - `git diff --check`: PASS.
-- `.codex-team` `teamctl verify`: PASS para los handoffs de la misión.
+- `.bago/team/runtime` `teamctl verify`: PASS para los handoffs de la misión.
 
 ## No ejecutado y limitaciones
 
@@ -42,8 +42,8 @@
 - Contrato: `docs/agent-chat-control/contracts/CONTROL_PLANE_V1.md`.
 - Revisión independiente: `docs/agent-chat-control/verification/AC04-review.md`.
 - Preparación de ejecución local: `docs/agent-chat-control/LOCAL_SETUP.md`.
-- Handoffs: `.codex-team/handoffs/AC01.json`, `AC02.json`, `AC03.json`, `AC04.json`, `AC06.json`, `AC07.json`, `AC08.json`, `AC09.json`, `AC10.json`.
-- Cambios de contrato: `.codex-team/change_requests/CR-006` a `CR-010`.
+- Handoffs: `.bago/team/runtime/handoffs/AC01.json`, `AC02.json`, `AC03.json`, `AC04.json`, `AC06.json`, `AC07.json`, `AC08.json`, `AC09.json`, `AC10.json`.
+- Cambios de contrato: `.bago/team/runtime/change_requests/CR-006` a `CR-010`.
 
 Esta misión cierra la primera vertical slice de chat, provider, inventario y creación de agentes. No certifica el objetivo mayor de controlar toda la aplicación desde el chat ni la ejecución de trabajos gobernada.
 

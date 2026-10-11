@@ -35,7 +35,7 @@ READ_WORKSPACE_TOOL = {
 }
 
 _BLOCKED_DIRECTORY_NAMES = frozenset({
-    ".bago", ".git", ".codex", ".codex-team", ".agents", ".venv", "venv",
+    ".bago", ".git", ".codex", ".bago/team/runtime", ".agents", ".venv", "venv",
     "env", "node_modules", "__pycache__", ".pytest_cache", ".mypy_cache",
     ".ruff_cache", "dist", "build", "coverage", "target",
 })

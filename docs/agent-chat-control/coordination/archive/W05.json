@@ -58,7 +58,7 @@
       "result": "PASS"
     },
     {
-      "command": "python .codex-team-kit/scripts/teamctl.py inspect W05; python .codex-team-kit/scripts/teamctl.py verify",
+      "command": "python .bago/team/kit/scripts/teamctl.py inspect W05; python .bago/team/kit/scripts/teamctl.py verify",
       "evidence": "W05 is CLAIMED by /root/action_contract with W02 dependency DONE; teamctl verify passed before handoff materialization.",
       "result": "PASS"
     }

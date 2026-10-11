@@ -12,9 +12,9 @@ Any message that changes a contract, dependency, risk classification or consumer
 
 Use:
 
-`python .codex-team-kit/scripts/teamctl.py note --from-agent <id> --to-agent <id-or-root> --kind INFO|BLOCKER|CONTRACT|RISK|QUESTION --text "..."`
+`python .bago/team/kit/scripts/teamctl.py note --from-agent <id> --to-agent <id-or-root> --kind INFO|BLOCKER|CONTRACT|RISK|QUESTION --text "..."`
 
-This appends the note to `.codex-team/events.jsonl`.
+This appends the note to `.bago/team/runtime/events.jsonl`.
 
 Completion is communicated only through a validated handoff. A live message saying "done" never unlocks dependent work.
 

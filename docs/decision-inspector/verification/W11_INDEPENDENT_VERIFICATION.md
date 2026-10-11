@@ -28,7 +28,7 @@ The current producer places receipt arrays inside an `AgentRun`, which provides 
 ## Executed verification
 
 - `npm run build` from `frontend/`: **PASS**; TypeScript project build and Vite production build completed, 124 modules transformed.
-- `python .codex-team-kit/scripts/teamctl.py verify`: **PASS** before W11 handoff; W01-W10 coordination handoffs validated.
+- `python .bago/team/kit/scripts/teamctl.py verify`: **PASS** before W11 handoff; W01-W10 coordination handoffs validated.
 - `node --test` against the prior W10 temporary integration output: **NOT_RUN / harness failure**. Initial invocation could not resolve React from `%TEMP%`; adding `NODE_PATH` then exposed a missing relative compiled source path. This does not invalidate W10's earlier recorded 3/3 result, but that result was not reproduced here.
 - Browser keyboard-only and screen-reader verification: **NOT_RUN**; no browser tabs were exposed in this verifier session.
 - Jaeger screenshots exist under `output/playwright/` and W10 handoff records their hashes. Screenshot pixel/visual review was NOT_RUN in this verification pass; their existence/hash is evidence artifact presence only.

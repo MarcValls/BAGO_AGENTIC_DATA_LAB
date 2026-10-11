@@ -78,9 +78,9 @@ Para observar en vivo las tareas y eventos que registra la coordinación local, 
 python -m src.api.server
 ```
 
-En otra terminal, entra en `frontend`, ejecuta `npm install` y después `npm run dev`. Abre [http://localhost:5173/team-monitor.html](http://localhost:5173/team-monitor.html). La página consulta `/api/team/status` cada cuatro segundos; el estado mostrado procede de `.codex-team/state.json` y `.codex-team/events.jsonl`. Solo refleja eventos registrados por teamctl, no toda la actividad interna de la extensión Codex.
+En otra terminal, entra en `frontend`, ejecuta `npm install` y después `npm run dev`. Abre [http://localhost:5173/team-monitor.html](http://localhost:5173/team-monitor.html). La página consulta `/api/team/status` cada cuatro segundos; el estado mostrado procede de `.bago/team/runtime/state.json` y `.bago/team/runtime/events.jsonl`. Solo refleja eventos registrados por teamctl, no toda la actividad interna de la extensión Codex.
 
-Profundiza en las fases L0-L15 en el [roadmap](#roadmap-detectado), o consulta [STATE.md](STATE.md) para el alcance canónico y [portfolio/README.md](portfolio/README.md) para la presentación del producto.
+Profundiza en las fases L0-L15 en el [roadmap](#roadmap-detectado), o consulta [.bago/canon/STATE.md](.bago/canon/STATE.md) para el alcance canónico y [portfolio/README.md](portfolio/README.md) para la presentación del producto.
 
 ## Estado actual
 
@@ -95,21 +95,21 @@ Profundiza en las fases L0-L15 en el [roadmap](#roadmap-detectado), o consulta [
 
 El estado público se limita a lo que existe en el checkout y a la evidencia
 referenciada. Cada superficie AWS, OpenMetadata u otra integración externa
-conserva en STATE.md su alcance exacto: VERIFIED, NOT_RUN o NOT_PROVEN.
+conserva en .bago/canon/STATE.md su alcance exacto: VERIFIED, NOT_RUN o NOT_PROVEN.
 El commit, push y merge de este snapshot son operaciones separadas.
 
 ## Fuentes canónicas
 
-El README proyecta estos documentos; no los sustituye ni los edita.
+El contexto del proyecto y el mapa de autoridad están centralizados en [BAGO context](.bago/INDEX.md). El README proyecta estos documentos; no los sustituye ni los edita.
 
 | Documento | Función | Estado |
 |---|---|---|
-| `STATE.md` | estado operativo actual | PRESENTE |
-| `LAB_CONTRACT.md` | contrato del laboratorio | PRESENTE |
-| `ARCHITECTURE.md` | arquitectura y límites | PRESENTE |
-| `ROADMAP.md` | roadmap ejecutable | PRESENTE |
-| `LEARNING_LEDGER.md` | aprendizaje y evidencia | PRESENTE |
-| `JOB_SKILL_MATRIX.md` | skills y alineación laboral | PRESENTE |
+| `.bago/canon/STATE.md` | estado operativo actual | PRESENTE |
+| `.bago/canon/LAB_CONTRACT.md` | contrato del laboratorio | PRESENTE |
+| `.bago/canon/ARCHITECTURE.md` | arquitectura y límites | PRESENTE |
+| `.bago/canon/ROADMAP.md` | roadmap ejecutable | PRESENTE |
+| `.bago/canon/LEARNING_LEDGER.md` | aprendizaje y evidencia | PRESENTE |
+| `.bago/canon/JOB_SKILL_MATRIX.md` | skills y alineación laboral | PRESENTE |
 
 ## Agente de sincronización
 
@@ -242,7 +242,7 @@ Pipeline actual:
 
 ## Job market alignment
 
-La tabla se extrae de LAB_CONTRACT.md; no se duplica manualmente aquí.
+La tabla se extrae de .bago/canon/LAB_CONTRACT.md; no se duplica manualmente aquí.
 
 | Empresa | Rol | Fit | Gap principal | Timeline |
 |---|---|---:|---|---|
@@ -253,7 +253,7 @@ La tabla se extrae de LAB_CONTRACT.md; no se duplica manualmente aquí.
 
 ## Skills evidenciadas
 
-La tabla se extrae de JOB_SKILL_MATRIX.md y se mantiene fuera del README.
+La tabla se genera desde `.bago/canon/JOB_SKILL_MATRIX.md`; actualiza allí los datos.
 
 | Skill | Demanda | Nivel actual | Nivel objetivo | Primera evidencia | Entrevista |
 |---|---|---|---|---|---|
@@ -288,7 +288,7 @@ La tabla se extrae de JOB_SKILL_MATRIX.md y se mantiene fuera del README.
 
 ## Skills estratégicas
 
-La tabla se extrae de JOB_SKILL_MATRIX.md y se mantiene fuera del README.
+La tabla se genera desde `.bago/canon/JOB_SKILL_MATRIX.md`; actualiza allí los datos.
 
 | Skill | Nivel actual | Nivel objetivo | Evidencia |
 |---|---|---|---|
@@ -559,7 +559,7 @@ métricas de tests y estado declarado se calculan al generar.
 - Comprobar deriva: python scripts/generate_dynamic_readme.py --check --skip-tests
 - Comprobar con la suite completa: python scripts/generate_dynamic_readme.py --check
 
-Fuente de estado: `STATE.md`; contrato: `LAB_CONTRACT.md`;
-skills: `JOB_SKILL_MATRIX.md`; manifiesto: `docs/readme_manifest.json`.
+Fuente de estado: `.bago/canon/STATE.md`; contrato: `.bago/canon/LAB_CONTRACT.md`;
+skills: `.bago/canon/JOB_SKILL_MATRIX.md`; manifiesto: `docs/readme_manifest.json`.
 
 MIT License — ver [LICENSE](LICENSE).

@@ -1,6 +1,6 @@
 # Documentación del repositorio
 
-Este índice agrupa las guías por área. El estado vigente y los contratos del laboratorio siguen en los documentos canónicos de la raíz, como `STATE.md`, `LAB_CONTRACT.md` y `ARCHITECTURE.md`.
+Este índice agrupa las guías por área. El estado vigente y los contratos del laboratorio siguen en `.bago/canon/`, como `STATE.md`, `LAB_CONTRACT.md` y `ARCHITECTURE.md`.
 
 ## Producto y agentes
 
