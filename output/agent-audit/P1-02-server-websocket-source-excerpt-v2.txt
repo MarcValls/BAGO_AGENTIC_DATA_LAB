@@ -1,0 +1,25 @@
+# P1-02 source excerpt v2 for read-only agent audit
+Source: src/api/server.py
+Source SHA-256: a014d08c303f3343e3f008c0adf77dd5f45d27acab505577b99530e4b8bbb2c2
+Source line range: 1065-1084
+Each numbered line below maps exactly to the source line number:
+1065: @app.websocket("/ws/agents/run")
+1066: async def websocket_agent_run(websocket: WebSocket) -> None:
+1067:     """Fail closed until an agent has a real governed execution path."""
+1068:     if not await _accept_local_websocket(websocket):
+1069:         return
+1070:     try:
+1071:         await websocket.send_json({
+1072:             "type": "error",
+1073:             "code": "execution_unavailable",
+1074:             "data": "Agent execution is unavailable: no governed execution capability is registered. No job was started or recorded.",
+1075:         })
+1076:     except (RuntimeError, WebSocketDisconnect):
+1077:         pass
+1078:     finally:
+1079:         try:
+1080:             await websocket.close(code=1008)
+1081:         except RuntimeError:
+1082:             pass
+1083: 
+1084: 

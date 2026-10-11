@@ -1,0 +1,10 @@
+INFO:     Started server process [43296]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:8083 (Press CTRL+C to quit)
+C:\Users\AMTEC_Terminal_1º\AppData\Local\Temp\BAGO_AGENTIC_DATA_LAB_chat_control\.venv\Lib\site-packages\fastapi\openapi\utils.py:303: UserWarning: Duplicate Operation ID export_agents_api_agents_export_get for function export_agents at C:\Users\AMTEC_Terminal_1º\AppData\Local\Temp\BAGO_AGENTIC_DATA_LAB_chat_control\src\api\server.py
+  warnings.warn(message, stacklevel=1)
+C:\Users\AMTEC_Terminal_1º\AppData\Local\Temp\BAGO_AGENTIC_DATA_LAB_chat_control\.venv\Lib\site-packages\fastapi\openapi\utils.py:303: UserWarning: Duplicate Operation ID list_workflows_api_ci_workflows_get for function list_workflows at C:\Users\AMTEC_Terminal_1º\AppData\Local\Temp\BAGO_AGENTIC_DATA_LAB_chat_control\src\api\server.py
+  warnings.warn(message, stacklevel=1)
+C:\Users\AMTEC_Terminal_1º\AppData\Local\Temp\BAGO_AGENTIC_DATA_LAB_chat_control\.venv\Lib\site-packages\fastapi\openapi\utils.py:303: UserWarning: Duplicate Operation ID dispatch_workflow_api_ci_workflows__workflow_id__dispatch_post for function dispatch_workflow at C:\Users\AMTEC_Terminal_1º\AppData\Local\Temp\BAGO_AGENTIC_DATA_LAB_chat_control\src\api\server.py
+  warnings.warn(message, stacklevel=1)
