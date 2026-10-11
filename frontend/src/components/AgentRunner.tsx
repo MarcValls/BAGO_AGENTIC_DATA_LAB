@@ -14,11 +14,15 @@ interface Agent {
 }
 
 interface ExecutionResult {
-  job_id: string
+  job_id?: string
   status: string
   duration_ms: number
   cost_usd: number
+  exit_code: number | null
 }
+
+// /ws/agents/run intentionally fails closed until a governed executor exists.
+const AGENT_EXECUTION_AVAILABLE = false
 
 export default function AgentRunner() {
   const [agents, setAgents] = useState<Agent[]>([])
@@ -51,6 +55,11 @@ export default function AgentRunner() {
   }
 
   const executeAgent = async (agent: Agent) => {
+    if (!AGENT_EXECUTION_AVAILABLE) {
+      showNotification('error', 'Agent execution is unavailable: no governed execution capability is registered.')
+      return
+    }
+
     setSelectedAgent(agent)
     setIsRunning(true)
     setLogs([])
@@ -73,18 +82,26 @@ export default function AgentRunner() {
         if (msg.type === 'stdout') {
           setLogs((prev) => [...prev, msg.data])
         } else if (msg.type === 'done') {
+          const exitCode = Number.isInteger(msg.exit_code) ? msg.exit_code as number : null
           const result: ExecutionResult = {
             job_id: msg.job_id,
-            status: msg.exit_code === 0 ? 'success' : 'failed',
+            status: exitCode === 0 ? 'success' : 'failed',
             duration_ms: msg.duration_ms || 0,
             cost_usd: msg.cost_usd || 0,
+            exit_code: exitCode,
           }
           setResult(result)
           setIsRunning(false)
           ws.close()
-          showNotification('success', `Agent ${agent.config.name} executed successfully`)
+          if (exitCode === 0) {
+            showNotification('success', `Agent ${agent.config.name} executed successfully`)
+          } else {
+            showNotification('error', `Agent execution failed: terminal exit code ${exitCode ?? 'missing'}`)
+          }
         } else if (msg.type === 'error') {
-          setLogs((prev) => [...prev, `[ERROR] ${msg.data}`])
+          const errorCode = typeof msg.code === 'string' ? msg.code : 'unknown_error'
+          const errorData = typeof msg.data === 'string' ? msg.data : JSON.stringify(msg.data ?? 'No error details provided')
+          setLogs((prev) => [...prev, `[ERROR] ${errorCode}: ${errorData}`])
           setIsRunning(false)
           ws.close()
           showNotification('error', `Agent execution failed: ${msg.data}`)
@@ -166,6 +183,10 @@ export default function AgentRunner() {
         </div>
       </div>
 
+      <div className="execution-unavailable" role="status">
+        Agent execution is unavailable. No governed execution capability is registered; Run is disabled.
+      </div>
+
       <div className="runner-grid">
         <div className="agents-panel">
           <h3>Available Agents ({agents.length})</h3>
@@ -190,10 +211,11 @@ export default function AgentRunner() {
                       e.stopPropagation()
                       executeAgent(agent)
                     }}
-                    disabled={isRunning}
+                    disabled={!AGENT_EXECUTION_AVAILABLE || isRunning}
                     className="btn btn-primary btn-small"
+                    title="Agent execution is unavailable until a governed execution capability is registered."
                   >
-                    {isRunning && selectedAgent?.id === agent.id ? '⏳ Running' : '▶ Run'}
+                    Run unavailable
                   </button>
                 </div>
               ))}
@@ -209,7 +231,7 @@ export default function AgentRunner() {
               <h4>Logs</h4>
               <div className="logs-box">
                 {logs.length === 0 ? (
-                  <p style={{ color: 'rgba(255, 255, 255, 0.4)' }}>Awaiting execution...</p>
+                  <p style={{ color: 'rgba(255, 255, 255, 0.4)' }}>Execution unavailable. No job was started.</p>
                 ) : (
                   logs.map((line, idx) => (
                     <div key={idx} className="log-line">
@@ -228,13 +250,16 @@ export default function AgentRunner() {
                     <strong>Status:</strong> <span className={`badge badge-${result.status}`}>{result.status}</span>
                   </div>
                   <div>
-                    <strong>Job ID:</strong> <code>{result.job_id}</code>
+                    <strong>Job ID:</strong> <code>{result.job_id || 'N/A'}</code>
                   </div>
                   <div>
                     <strong>Duration:</strong> {(result.duration_ms / 1000).toFixed(2)}s
                   </div>
                   <div>
                     <strong>Cost:</strong> ${result.cost_usd.toFixed(4)}
+                  </div>
+                  <div>
+                    <strong>Exit code:</strong> <code>{result.exit_code ?? 'missing'}</code>
                   </div>
                 </div>
               </div>

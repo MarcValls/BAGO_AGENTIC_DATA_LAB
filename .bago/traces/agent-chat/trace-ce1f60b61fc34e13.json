@@ -1,0 +1,37 @@
+{
+  "cost_usd": 0.0,
+  "event_count": 1,
+  "events": [
+    {
+      "attributes": {
+        "agent_id": "agent_d3e63db8b4704080b924a05fb1ab71fc",
+        "cost_status": "not_reported",
+        "duration_ms": 2578,
+        "model_id": "gemma4:31b",
+        "outcome": "response_received",
+        "provider_id": "ollama-cloud",
+        "workspace_read_count": 1,
+        "workspace_read_sources": [
+          ".goals/ADL-OLLAMA-SPIRAL-001/evidence/CHAT_READ_TEST.txt:1-3"
+        ]
+      },
+      "end_time_unix_nano": 1791578791989980300,
+      "event_id": "event-58ebff10b3c14891",
+      "evidence_refs": [
+        "agent://agent_d3e63db8b4704080b924a05fb1ab71fc"
+      ],
+      "kind": "workflow",
+      "name": "agent.chat",
+      "parent_event_id": null,
+      "sequence": 0,
+      "start_time_unix_nano": 1791578789411852900,
+      "status": "COMPLETED",
+      "trace_id": "trace-ce1f60b61fc34e13"
+    }
+  ],
+  "evidence_refs": [
+    "agent://agent_d3e63db8b4704080b924a05fb1ab71fc"
+  ],
+  "run_id": "agent-chat-61b07ab30d714aecbac2cd697a48af96",
+  "trace_id": "trace-ce1f60b61fc34e13"
+}

@@ -1,0 +1,12 @@
+{
+  "schema_version": "1.0",
+  "work_id": "W03",
+  "status": "PREPARED",
+  "artifact": ".goals/ADL-OLLAMA-SPIRAL-001/evidence/CHAT_READ_TEST.txt",
+  "sha256": "bd0005f5c4238a17f871f92f015cafd10172b9208143bcc66524b1c3c84fcc5d",
+  "bytes": 188,
+  "expected_marker": "COBALTO-47-FARO",
+  "purpose": "A bounded read-only text-file challenge for one real chat turn. The agent must cite the returned path/line and reproduce the marker. The chat will receive this file only after read access is enabled for that message.",
+  "live_model_execution": "NOT_RUN",
+  "fixture_test_is_not_generation": true
+}

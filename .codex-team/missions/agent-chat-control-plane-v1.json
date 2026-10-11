@@ -1,0 +1,348 @@
+{
+  "mission_id": "AGENT_CHAT_CONTROL_PLANE_V1",
+  "title": "Agent Chat Control Plane",
+  "objective": "Make the chat the primary app entry point; configure Ollama Cloud through a user-selected API-key or local CLI-session mode; list agents; create an agent through a reviewed chat proposal; and chat with configured agents using Ollama Cloud, preserving BAGO authorization boundaries for all material actions.",
+  "max_concurrency": 2,
+  "terminal_work_items": [
+    "AC05"
+  ],
+  "work_items": [
+    {
+      "id": "AC01",
+      "title": "Freeze chat control, provider and agent proposal contracts",
+      "role": "team-orchestrator",
+      "depends_on": [],
+      "write_scopes": [
+        ".codex-team/**",
+        "docs/agent-chat-control/contracts/**",
+        "docs/agent-chat-control/coordination/archive/**"
+      ],
+      "read_scopes": [
+        "src/**",
+        "frontend/src/**",
+        "docs/decision-inspector/**",
+        "C:/Users/AMTEC_Terminal_1º/BAGO/frontend/src/shared/provider-catalog.ts",
+        "C:/Users/AMTEC_Terminal_1º/BAGO/frontend/src/layout/ProviderConfigModal.tsx"
+      ],
+      "deliverables": [
+        "Provider auth-mode contract",
+        "Chat control message and agent draft contract",
+        "Explicit action authorization boundary"
+      ],
+      "done_when": [
+        "API-key and local Ollama CLI modes are distinct",
+        "Provider secrets are never returned to the browser or written into chat/session data",
+        "Agent creation is a proposal until human confirmation",
+        "Only existing, explicitly registered capabilities can be invoked",
+        "Unknown app actions remain proposals and cannot execute"
+      ],
+      "frozen_outputs": [
+        "agent-chat-control-contract-v1"
+      ]
+    },
+    {
+      "id": "AC02",
+      "title": "Implement Ollama provider configuration and governed chat APIs",
+      "role": "team-orchestrator",
+      "depends_on": [
+        "AC01"
+      ],
+      "write_scopes": [
+        "src/api/server.py",
+        "src/providers/**",
+        "requirements.txt"
+      ],
+      "read_scopes": [
+        "docs/agent-chat-control/contracts/**",
+        "src/orchestration/**",
+        "src/execution/**",
+        "src/agent/**"
+      ],
+      "deliverables": [
+        "Provider settings/model discovery/status APIs",
+        "Server-owned Ollama API-key handling",
+        "Local CLI-session provider mode",
+        "Agent inventory and conversational draft/confirm API",
+        "Real Ollama-backed agent chat"
+      ],
+      "done_when": [
+        "Both user-selectable authentication modes are explicit and report distinct states",
+        "Secrets are handled only on the backend and are not exposed by status/list APIs",
+        "Provider or model failure returns a visible error and no simulated response",
+        "Agent draft does not create an agent until explicit confirmation",
+        "Creation validates the frozen allowlist and persists a stable unique identity",
+        "Chat config is loaded by agent ID from the server and never trusted from browser-supplied config"
+      ],
+      "frozen_outputs": [
+        "agent-chat-control-api-v1"
+      ]
+    },
+    {
+      "id": "AC06",
+      "title": "Preserve legacy agent inventory and request-scoped model fallback",
+      "role": "team-orchestrator",
+      "depends_on": [
+        "AC02"
+      ],
+      "write_scopes": [
+        "src/api/server.py",
+        "docs/agent-chat-control/contracts/**",
+        ".codex-team/**"
+      ],
+      "read_scopes": [
+        "agents/created/**",
+        "docs/agent-chat-control/coordination/archive/**"
+      ],
+      "deliverables": [
+        "Backward-compatible legacy ID and nullable provider/model read path",
+        "No-write migration behavior for stored legacy records"
+      ],
+      "done_when": [
+        "Valid agent_[0-9a-f]{8,32} records matching their filename appear in inventory",
+        "Missing provider/model is exposed as null and preserved on disk",
+        "Chat may use only the currently selected provider/model for that request when legacy config has no model",
+        "Malformed/untrusted stored data remains rejected or warned; new records remain 32-hex IDs"
+      ],
+      "frozen_outputs": [
+        "agent-chat-control-legacy-compat-v1"
+      ]
+    },
+    {
+      "id": "AC03",
+      "title": "Build chat-first shell, provider setup and conversational agent creation",
+      "role": "decision-ui-engineer",
+      "depends_on": [
+        "AC01",
+        "AC02",
+        "AC06"
+      ],
+      "write_scopes": [
+        "frontend/src/App.tsx",
+        "frontend/src/App.css",
+        "frontend/src/components/AgentChat.tsx",
+        "frontend/src/components/AgentChat.css",
+        "frontend/src/components/ProviderSettings.tsx",
+        "frontend/src/components/ProviderSettings.css"
+      ],
+      "read_scopes": [
+        "docs/agent-chat-control/contracts/**",
+        "frontend/src/components/AgentBuilder.tsx",
+        "frontend/src/features/decision-inspector/**",
+        "agents/created/**"
+      ],
+      "deliverables": [
+        "Chat as app home with links to existing views",
+        "Provider setup UI with API key and Ollama CLI session choices",
+        "Agent inventory in chat",
+        "Agent draft review/confirm card",
+        "Ollama-backed agent conversation states"
+      ],
+      "done_when": [
+        "The Inspector and other portfolio views remain reachable from chat-first navigation",
+        "Provider setup never persists a secret in localStorage or renders it after save",
+        "Empty, loading, configured, unauthenticated and error states are clear",
+        "The user can review or cancel an agent draft before it is created",
+        "No response is presented as live model output unless the backend call succeeded"
+      ],
+      "frozen_outputs": []
+    },
+    {
+      "id": "AC07",
+      "title": "Restrict unauthenticated provider configuration API to host-local UI origins",
+      "role": "team-orchestrator",
+      "depends_on": [
+        "AC06"
+      ],
+      "write_scopes": [
+        "src/api/server.py",
+        "docker-compose.ui.yml",
+        "docs/agent-chat-control/contracts/**",
+        ".codex-team/**"
+      ],
+      "read_scopes": [
+        "docs/agent-chat-control/coordination/archive/**"
+      ],
+      "deliverables": [
+        "Loopback API default and explicit local CORS allowlist",
+        "Docker UI port bound to host loopback",
+        "LAN exposure limitation recorded in contract"
+      ],
+      "done_when": [
+        "Standalone API defaults to 127.0.0.1",
+        "Docker host port is published only on 127.0.0.1 while container listener remains reachable internally",
+        "CORS no longer permits wildcard origins",
+        "Contract states LAN exposure needs an authenticated API boundary"
+      ],
+      "frozen_outputs": [
+        "agent-chat-control-local-boundary-v1"
+      ]
+    },
+    {
+      "id": "AC08",
+      "title": "Make provider and agent persistence runtime compatibility explicit",
+      "role": "team-orchestrator",
+      "depends_on": [
+        "AC07"
+      ],
+      "write_scopes": [
+        "src/api/server.py",
+        "src/providers/ollama.py",
+        "frontend/src/components/ProviderSettings.tsx",
+        "frontend/src/components/ProviderSettings.css",
+        "docker-compose.ui.yml",
+        "docs/agent-chat-control/contracts/**",
+        "docs/agent-chat-control/verification/**",
+        "scripts/run-local-ui.ps1",
+        ".codex-team/**",
+        "docs/agent-chat-control/LOCAL_SETUP.md"
+      ],
+      "read_scopes": [
+        "Dockerfile.ui",
+        "requirements.txt",
+        "agents/created/**",
+        ".bago/**"
+      ],
+      "deliverables": [
+        "Fail-closed provider capability reporting for unsupported container mode",
+        "Persistent Docker agent/provider/job directories",
+        "Host-local launch path using the OS credential backend and local Ollama CLI endpoint",
+        "Updated independent review evidence"
+      ],
+      "done_when": [
+        "Container mode never claims either Ollama auth mode is available when secure OS credential storage or host CLI loopback is not reachable",
+        "Provider UI visibly explains unsupported container auth and provides the local-host launch route",
+        "Container agent/provider/job data directories survive container recreation through host mounts",
+        "A Windows host-local launch script documents/prerequisite-checks the supported runtime without reading credentials",
+        "Final contract distinguishes host-local supported configuration from container limitations"
+      ],
+      "frozen_outputs": [
+        "agent-chat-control-runtime-compat-v1"
+      ]
+    },
+    {
+      "id": "AC09",
+      "title": "Fail closed legacy runner and preserve fallback in legacy agent chat",
+      "role": "team-orchestrator",
+      "depends_on": [
+        "AC08"
+      ],
+      "write_scopes": [
+        "src/api/server.py",
+        "docs/agent-chat-control/contracts/**",
+        ".codex-team/**"
+      ],
+      "read_scopes": [
+        "frontend/src/components/AgentRunner.tsx",
+        "src/jobs/**"
+      ],
+      "deliverables": [
+        "Legacy Runner no longer emits simulated success/jobs",
+        "Legacy WebSocket chat uses selected configured model for agents without model binding"
+      ],
+      "done_when": [
+        "Legacy Runner WebSocket returns execution_unavailable and never creates success jobs or claims successful execution",
+        "Legacy WebSocket chat resolves absent agent model from currently selected provider/model per request and does not rewrite agent record",
+        "Contract states governed execution is not available until authority/permit/receipt path exists"
+      ],
+      "frozen_outputs": [
+        "agent-chat-control-legacy-execution-v1"
+      ]
+    },
+    {
+      "id": "AC10",
+      "title": "Validate local browser origins before accepting WebSocket connections",
+      "role": "team-orchestrator",
+      "depends_on": [
+        "AC09"
+      ],
+      "write_scopes": [
+        "src/api/server.py",
+        "docs/agent-chat-control/contracts/**",
+        ".codex-team/**"
+      ],
+      "read_scopes": [
+        "frontend/src/components/AgentRunner.tsx",
+        "frontend/src/components/Control.tsx"
+      ],
+      "deliverables": [
+        "Shared explicit allowlist check for all WebSocket handshakes",
+        "Contract evidence for browser-origin protection"
+      ],
+      "done_when": [
+        "Every WebSocket endpoint rejects missing or non-allowlisted Origin before accepting",
+        "Allowed browser origins are the same validated local origins as HTTP CORS",
+        "Rejected origins cannot run the demo, read agent chat, or access other WebSocket routes"
+      ],
+      "frozen_outputs": [
+        "agent-chat-control-websocket-origin-v1"
+      ]
+    },
+    {
+      "id": "AC04",
+      "title": "Review provider, agent-creation and chat implementation against contracts",
+      "role": "verification-engineer",
+      "depends_on": [
+        "AC03",
+        "AC07",
+        "AC08",
+        "AC09",
+        "AC10"
+      ],
+      "write_scopes": [
+        "docs/agent-chat-control/verification/**"
+      ],
+      "read_scopes": [
+        "src/**",
+        "frontend/src/**",
+        "docs/agent-chat-control/contracts/**",
+        "docs/agent-chat-control/verification/**"
+      ],
+      "deliverables": [
+        "Candidate-bound verification record",
+        "Residual risks and NOT_RUN evidence boundary"
+      ],
+      "done_when": [
+        "The report binds to the exact candidate fingerprint",
+        "Provider secrets are not exposed in API response shapes",
+        "No arbitrary model tool can execute an unregistered app action",
+        "Build/static checks and any unrun checks are reported accurately",
+        "No P0/P1 issue is left unaddressed or the terminal gate is held"
+      ],
+      "frozen_outputs": [
+        "agent-chat-control-verification-v1"
+      ]
+    },
+    {
+      "id": "AC05",
+      "title": "Close the Agent Chat Control Plane mission",
+      "role": "team-orchestrator",
+      "depends_on": [
+        "AC04"
+      ],
+      "write_scopes": [
+        ".codex-team/**",
+        "docs/agent-chat-control/FINAL_STATUS.md"
+      ],
+      "read_scopes": [
+        ".codex-team/**",
+        "docs/agent-chat-control/**",
+        "src/**",
+        "frontend/src/**"
+      ],
+      "deliverables": [
+        "Final status",
+        "Evidence index",
+        "Known limitations"
+      ],
+      "done_when": [
+        "All handoffs validate",
+        "The independent review has no unaddressed P0/P1 finding",
+        "Exact current model/provider readiness is distinguished from code readiness",
+        "Unrun live Ollama calls and broader app-control capabilities are explicit"
+      ],
+      "frozen_outputs": [
+        "agent-chat-control-plane-v1-terminal-gate"
+      ]
+    }
+  ]
+}

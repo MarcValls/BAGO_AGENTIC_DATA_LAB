@@ -1,0 +1,2 @@
+{"fixture": true, "provider": "local-mock", "model_id": "fixture/mock-chat", "user_message": "Fixture browser conversation beta: verify a second thread stays independent.", "message_count": 2, "at": "2026-10-09T19:56:06Z"}
+{"fixture": true, "provider": "local-mock", "model_id": "fixture/mock-chat", "user_message": "Fixture browser conversation alpha: confirm the first isolated thread also survives restart.", "message_count": 2, "at": "2026-10-09T19:57:00Z"}

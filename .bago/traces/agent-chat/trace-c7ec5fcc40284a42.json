@@ -1,0 +1,37 @@
+{
+  "cost_usd": 0.0,
+  "event_count": 1,
+  "events": [
+    {
+      "attributes": {
+        "agent_id": "agent_b5665184bed24811ad59e90c8c4fdc9f",
+        "cost_status": "not_reported",
+        "duration_ms": 16957,
+        "model_id": "kimi-k2.6",
+        "outcome": "response_received",
+        "provider_id": "ollama-cloud",
+        "workspace_read_count": 1,
+        "workspace_read_sources": [
+          "output/tutorial/sample-note.txt:1-8"
+        ]
+      },
+      "end_time_unix_nano": 1791667549090460800,
+      "event_id": "event-5f6202b5deb548ed",
+      "evidence_refs": [
+        "agent://agent_b5665184bed24811ad59e90c8c4fdc9f"
+      ],
+      "kind": "workflow",
+      "name": "agent.chat",
+      "parent_event_id": null,
+      "sequence": 0,
+      "start_time_unix_nano": 1791667532133296000,
+      "status": "COMPLETED",
+      "trace_id": "trace-c7ec5fcc40284a42"
+    }
+  ],
+  "evidence_refs": [
+    "agent://agent_b5665184bed24811ad59e90c8c4fdc9f"
+  ],
+  "run_id": "agent-chat-6bdb097912214fd883e6056b666dc0be",
+  "trace_id": "trace-c7ec5fcc40284a42"
+}

@@ -1,38 +1,42 @@
-.container {
-  width: 100%;
-}
+.app-shell { width: min(1480px, 100%); max-width: none; min-height: 100vh; margin: 0 auto; padding: 18px clamp(14px, 3vw, 42px) 36px; }
+.app-header { display: flex; justify-content: space-between; align-items: center; gap: 20px; padding: 5px 2px 17px; border-bottom: 1px solid #26364b; }
+.brand-lockup { display: flex; align-items: center; gap: 12px; }
+.brand-symbol { display: grid; width: 42px; height: 42px; place-items: center; border: 1px solid #587da6; border-radius: 13px; background: linear-gradient(145deg, #264464, #132338); color: #c4ddfa; font-weight: 800; }
+.app-kicker { margin: 0 0 3px; color: #88a2bf; font-size: .67rem; font-weight: 750; letter-spacing: .1em; text-transform: uppercase; }
+.app-header h1 { margin: 0; font-size: 1.25rem; letter-spacing: -.02em; }
+.app-header-actions { display: flex; align-items: center; gap: 12px; }
+.workspace-label { color: #8195aa; font-size: .75rem; }
+.header-provider-link { padding: 8px 11px; color: #c0d5ed; border: 1px solid #344a64; border-radius: 9px; background: #142237; font-size: .76rem; }
+.header-provider-link:hover { border-color: #6b8eb7; }
+.primary-navigation { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 54px; margin-bottom: 15px; border-bottom: 1px solid #26364b; }
+.navigation-group { display: flex; flex-wrap: wrap; gap: 6px; }
+.navigation-item { padding: 8px 11px; color: #9badc1; border: 1px solid transparent; border-radius: 8px; background: transparent; font-size: .78rem; }
+.navigation-item:hover { color: #dce9f8; border-color: #344b65; background: #122035; }
+.navigation-item.active { color: #d3e6fc; border-color: #3f6287; background: #1a3049; }
+.portfolio-navigation { position: relative; align-self: stretch; display: flex; align-items: center; color: #a9bacd; font-size: .78rem; }
+.portfolio-navigation > summary { padding: 8px 10px; border: 1px solid #2c4057; border-radius: 8px; cursor: pointer; list-style: none; white-space: nowrap; }
+.portfolio-navigation > summary::-webkit-details-marker { display: none; }
+.portfolio-navigation[open] > summary { border-color: #57789c; background: #172940; }
+.portfolio-navigation-content { position: absolute; z-index: 5; top: calc(100% - 2px); right: 0; display: grid; width: min(460px, calc(100vw - 30px)); grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 4px; padding: 13px; border: 1px solid #344b65; border-radius: 12px; background: #111e2e; box-shadow: 0 18px 45px rgba(0, 0, 0, .4); }
+.portfolio-navigation-content .navigation-caption { grid-column: 1 / -1; padding: 8px 8px 3px; color: #7188a0; font-size: .64rem; font-weight: 750; letter-spacing: .11em; text-transform: uppercase; }
+.portfolio-navigation-content .settings-caption { margin-top: 4px; border-top: 1px solid #293c51; }
+.portfolio-navigation-content .navigation-item { text-align: left; }
+.app-view { min-width: 0; }
+.app-view-state { display: flex; min-height: 45vh; flex-direction: column; justify-content: center; align-items: center; gap: 10px; color: #92a7bd; }
+.artifact-unavailable { max-width: 650px; margin: 9vh auto; padding: 27px; border: 1px solid #354961; border-radius: 16px; background: #111e2e; }
+.artifact-unavailable h2 { margin: 0 0 10px; }
+.artifact-unavailable p:not(.app-kicker) { color: #a3b3c5; line-height: 1.55; }
 
-.app-kicker {
-  margin: 0 0 0.25rem;
-  color: #93c5fd;
-  font-size: 0.78rem;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+@media (max-width: 850px) {
+  .primary-navigation { align-items: flex-start; flex-direction: column; padding: 10px 0; }
+  .portfolio-navigation { align-self: flex-start; }
+  .portfolio-navigation-content { left: 0; right: auto; }
 }
-
-.inspector-home {
-  border: 1px solid #60a5fa;
-  border-radius: 0.45rem;
-  color: #eff6ff;
-  background: #1e3a5f;
-}
-
-.portfolio-views {
-  margin-top: 1.5rem;
-  border-top: 1px solid #334155;
-  padding-top: 0.75rem;
-}
-
-.portfolio-views > summary {
-  color: #aebdd0;
-  cursor: pointer;
-  padding: 0.5rem 0;
-}
-
-.app-state {
-  min-height: 60vh;
-  display: grid;
-  align-content: center;
-  justify-items: center;
+@media (max-width: 550px) {
+  .app-header { align-items: flex-start; }
+  .workspace-label { display: none; }
+  .app-header h1 { font-size: 1.05rem; }
+  .brand-symbol { width: 36px; height: 36px; }
+  .navigation-group { width: 100%; }
+  .portfolio-navigation-content { grid-template-columns: 1fr; }
 }

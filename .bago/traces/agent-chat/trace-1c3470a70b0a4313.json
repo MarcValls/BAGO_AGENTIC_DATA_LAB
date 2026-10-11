@@ -1,0 +1,33 @@
+{
+  "cost_usd": 0.0,
+  "event_count": 1,
+  "events": [
+    {
+      "attributes": {
+        "agent_id": "agent_b5665184bed24811ad59e90c8c4fdc9f",
+        "cost_status": "not_reported",
+        "duration_ms": 112916,
+        "model_id": "kimi-k2.6",
+        "outcome": "response_received",
+        "provider_id": "ollama-cloud"
+      },
+      "end_time_unix_nano": 1791564480110072400,
+      "event_id": "event-e7bd07911f9547bf",
+      "evidence_refs": [
+        "agent://agent_b5665184bed24811ad59e90c8c4fdc9f"
+      ],
+      "kind": "workflow",
+      "name": "agent.chat",
+      "parent_event_id": null,
+      "sequence": 0,
+      "start_time_unix_nano": 1791564367193320300,
+      "status": "COMPLETED",
+      "trace_id": "trace-1c3470a70b0a4313"
+    }
+  ],
+  "evidence_refs": [
+    "agent://agent_b5665184bed24811ad59e90c8c4fdc9f"
+  ],
+  "run_id": "agent-chat-3cd84410d7e74480b7b6b6b8218ede7f",
+  "trace_id": "trace-1c3470a70b0a4313"
+}

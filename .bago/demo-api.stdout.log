@@ -1,0 +1,22 @@
+INFO:     127.0.0.1:58382 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58383 - "GET /openapi.json HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58384 - "GET /api/providers/ollama/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58385 - "GET / HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:58385 - "GET /assets/index-660dd2ab.js HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:58386 - "GET /assets/index-c3c1fa0f.css HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:58386 - "GET /api/agents/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58386 - "GET /api/artifacts HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:58399 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58399 - "GET /assets/index-660dd2ab.js HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58400 - "GET /assets/index-c3c1fa0f.css HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58399 - "GET /api/agents/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58399 - "GET /api/artifacts HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:58418 - "POST /api/chat/control HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64553 - "GET /api/agents/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64558 - "GET /api/agents/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64712 - "GET /api/agents/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64938 - "POST /api/chat/control HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65091 - "POST /api/chat/control HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65254 - "POST /api/chat/control HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49217 - "GET /api/providers/ollama/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49273 - "GET /api/providers/ollama/status HTTP/1.1" 200 OK

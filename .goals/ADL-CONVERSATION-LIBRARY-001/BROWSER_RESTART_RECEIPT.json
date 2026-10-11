@@ -1,0 +1,160 @@
+{
+  "goal_id": "ADL-CONVERSATION-LIBRARY-001",
+  "verified_at_utc": "2026-10-09T20:02:03Z",
+  "candidate": {
+    "head": "69b4f4b1ead2552b527e6e48868ab36cc2b38cbc",
+    "branch": "codex/conversation-library-v1",
+    "worktree": "C:\\Users\\AMTEC_Terminal_1º\\AppData\\Local\\Temp\\BAGO_AGENTIC_DATA_LAB_conversation_library"
+  },
+  "isolated_database": {
+    "path": "C:\\Users\\AMTEC_Terminal_1º\\AppData\\Local\\Temp\\adl-conversation-library-browser-20261009.sqlite3",
+    "project_id": "bago-agentic-data-lab:default",
+    "provider_credentials_stored": false
+  },
+  "backend_restart": {
+    "port": 8084,
+    "original_pid": 20680,
+    "mock_setup_pid_failed_import": 25540,
+    "mock_fixture_pid": 43804,
+    "restored_normal_pid": 40912,
+    "same_uvicorn_command_and_cwd": true,
+    "database_path_preserved": true,
+    "provider_after_restore": {
+      "provider_id": "ollama-cloud",
+      "state": "not_configured",
+      "runtime_mode": "host",
+      "auth_mode": null,
+      "model_id": null
+    }
+  },
+  "browser_restart": {
+    "session": "adl-library",
+    "closed_before_reopen": true,
+    "fresh_browser_pid": 44476,
+    "pre_restart_pid": "NOT_RECORDED",
+    "url": "http://127.0.0.1:8084/"
+  },
+  "agent_chat_fixture": {
+    "agent_id": "agent_c0ffee9876543210",
+    "agent_name": "Library test agent",
+    "mock_model_id": "fixture/mock-chat",
+    "mock_call_count": 2,
+    "mock_call_receipt": "MOCK_AGENT_CHAT_CALLS.jsonl",
+    "live_ollama_calls": 0,
+    "agent_configuration_restored_after_test": true,
+    "synthetic_trace_state": "test_fixture"
+  },
+  "recovered_agent_conversations": {
+    "agent_alpha": {
+      "id": "conv_fddf034826a34cb68f0207f5d335d970",
+      "owner_kind": "agent",
+      "owner_id": "agent_c0ffee9876543210",
+      "project_id": "bago-agentic-data-lab:default",
+      "title": "Fixture browser conversation alpha: confirm the first isolated thread ",
+      "status": "active",
+      "revision": 2,
+      "created_at": "2026-10-09T19:56:30.868Z",
+      "updated_at": "2026-10-09T19:57:00.513Z",
+      "message_count": 2,
+      "messages": [
+        {
+          "role": "user",
+          "content": "Fixture browser conversation alpha: confirm the first isolated thread also survives restart.",
+          "references": {}
+        },
+        {
+          "role": "assistant",
+          "content": "TEST FIXTURE ONLY (no Ollama request): Fixture browser conversation alpha: confirm the first isolated thread also survives restart.",
+          "references": {
+            "trace": {
+              "trace_id": "trace-fixture-4e5dfdc83d18",
+              "trace_state": "test_fixture",
+              "provider_id": "ollama-cloud",
+              "model_id": "fixture/mock-chat",
+              "fixture": true
+            }
+          }
+        }
+      ]
+    },
+    "agent_beta": {
+      "id": "conv_4a1cff90cb4644c58299ea6739d1b696",
+      "owner_kind": "agent",
+      "owner_id": "agent_c0ffee9876543210",
+      "project_id": "bago-agentic-data-lab:default",
+      "title": "Fixture browser conversation beta: verify a second thread stays indepe",
+      "status": "active",
+      "revision": 2,
+      "created_at": "2026-10-09T19:35:43.414Z",
+      "updated_at": "2026-10-09T19:56:06.183Z",
+      "message_count": 2,
+      "messages": [
+        {
+          "role": "user",
+          "content": "Fixture browser conversation beta: verify a second thread stays independent.",
+          "references": {}
+        },
+        {
+          "role": "assistant",
+          "content": "TEST FIXTURE ONLY (no Ollama request): Fixture browser conversation beta: verify a second thread stays independent.",
+          "references": {
+            "trace": {
+              "trace_id": "trace-fixture-93144a801472",
+              "trace_state": "test_fixture",
+              "provider_id": "ollama-cloud",
+              "model_id": "fixture/mock-chat",
+              "fixture": true
+            }
+          }
+        }
+      ]
+    }
+  },
+  "assistant_after_browser_action": {
+    "id": "conv_b6a2fbcc9fed470591ad970d6c1e7b6b",
+    "revision": 8,
+    "message_count": 8,
+    "last_exchange": [
+      {
+        "role": "user",
+        "content": "Hola!"
+      },
+      {
+        "role": "assistant",
+        "content": "Hola. Puedo explicar las vistas, listar tus agentes y ayudarte a crear uno desde este chat: genero un borrador editable y solo se guarda cuando lo revisas y pulsas «Create agent». También puedo abrir vistas. Para conversar con un agente, selecciónalo en la lista. Este chat no inicia trabajos ni modifica archivos."
+      }
+    ]
+  },
+  "lifecycle_probe": {
+    "id": "conv_61d7f7ddf98e4f77b3a148f3a2499a93",
+    "title": "Failed provider probe (fixture only)",
+    "revision": 6,
+    "final_status": "active",
+    "ui_actions": [
+      "rename",
+      "archive",
+      "restore",
+      "soft-delete",
+      "restore"
+    ],
+    "api_statuses": "200 OK"
+  },
+  "browser_network": {
+    "conversation_list_and_details_after_fresh_browser": "200 OK",
+    "assistant_chat_control": "200 OK",
+    "agent_details_retrieved_for_both_ids": "200 OK",
+    "known_unrelated_artifacts_request": "GET /api/artifacts -> 404"
+  },
+  "screenshots_sha256": {
+    "agent-browser-alpha.png": "a4c2894c9200dacd46ffe913072f9f7ac76463548cf2ff0046dc9294406cf7fb",
+    "agent-browser-beta.png": "0a125b12d80b4c1af001fe2778e70e11f1a6fc511ca94a57fa734c39ccc16d7f",
+    "agent-browser-recovered-alpha.png": "c90d4505214675b49728796ed327dcba6ae72478e34d766692a1b99a85e34fba",
+    "agent-browser-recovered-beta.png": "4ceee8be8ecc5a7cd8bd454e93a972742832f783549d496828b1326b6075d4b8",
+    "assistant-capabilities-browser.png": "5b8a618eb296308c502ec2ea61089519eb17125912ac8714dccabf9f79233680"
+  },
+  "limitations": [
+    "Both agent responses and traces are synthetic fixtures created through the real browser/API/store path; they do not prove live Ollama generation or real agent reasoning.",
+    "The pre-restart browser PID was not captured; the Playwright session was closed and reopened and returned fresh PID 44476.",
+    "Ollama provider remained not_configured."
+  ]
+}

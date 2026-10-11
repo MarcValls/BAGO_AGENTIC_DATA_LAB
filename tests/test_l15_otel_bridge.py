@@ -96,6 +96,36 @@ def test_local_trace_projects_to_parented_spans_without_mutating_source():
     assert local_trace.to_json() == before
 
 
+def test_timestamped_local_event_preserves_timing_and_returns_export_trace_id():
+    start_ns = 1_800_000_000_000_000_000
+    end_ns = start_ns + 250_000_000
+    event = TraceEvent(
+        event_id="event-chat",
+        trace_id="trace-chat-local",
+        sequence=0,
+        name="agent.chat",
+        kind=TraceKind.WORKFLOW,
+        status="COMPLETED",
+        attributes={"model_id": "kimi-k2.6"},
+        start_time_unix_nano=start_ns,
+        end_time_unix_nano=end_ns,
+    )
+    local_trace = LocalTrace("trace-chat-local", "run-chat", (event,))
+    exporter = RecordingSpanExporter()
+
+    receipt = export_local_trace(
+        local_trace,
+        exporter=exporter,
+        endpoint="http://collector:4318",
+    )
+
+    assert receipt.exported is True
+    assert receipt.jaeger_trace_id == f"{exporter.spans[0].context.trace_id:032x}"
+    assert exporter.spans[0].start_time == start_ns
+    assert exporter.spans[0].end_time == end_ns
+    assert local_trace.events[0].to_dict()["start_time_unix_nano"] == start_ns
+
+
 class FailingExporter(SpanExporter):
     def export(self, spans):
         return SpanExportResult.FAILURE

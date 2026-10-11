@@ -1,0 +1,40 @@
+{
+  "changed_files": [
+    ".goals/ADL-OLLAMA-SPIRAL-001/evidence/W02_PROVIDER_VERIFICATION.json"
+  ],
+  "next_consumers": [
+    "W03"
+  ],
+  "outputs": [
+    {
+      "name": "provider-verification-v1",
+      "path": ".goals/ADL-OLLAMA-SPIRAL-001/evidence/W02_PROVIDER_VERIFICATION.json",
+      "summary": "Non-generative Ollama Cloud catalog verification for gemma4:31b-cloud on configured runtime 8081; HTTP 200, selected model unavailable, no credential values exposed."
+    }
+  ],
+  "payload_sha256": "aa005f41a4b13d52a04ae2023656305950f8ea0ce6b511032a438ae4dfffca59",
+  "residual_risks": [
+    "gemma4:31b-cloud is not listed by the configured provider check; this does not prove a successful generation. Keep W03 gated until the selected configured model is available or an authorized model selection is separately verified.",
+    "No Ollama generation, chat, agent creation, or provider configuration change was performed."
+  ],
+  "role": "verification-engineer",
+  "status": "DONE",
+  "verification": [
+    {
+      "command": "Inspect src/providers/ollama.py verify/discover_models and src/api/server.py POST /api/providers/ollama/verify",
+      "evidence": "verify() calls discover_models(), which performs GET /api/tags and compares the selected model; it does not call chat or generate inference tokens.",
+      "result": "PASS"
+    },
+    {
+      "command": "POST http://127.0.0.1:8081/api/providers/ollama/verify with model_id=gemma4:31b-cloud",
+      "evidence": "HTTP 200; provider_id=ollama-cloud; state=configured_unverified; model_available=false; generation_performed=false. Exact result is in W02_PROVIDER_VERIFICATION.json.",
+      "result": "PASS"
+    },
+    {
+      "command": "Credential disclosure boundary",
+      "evidence": "The verifier did not read, print, or record the secret. The backend used its configured secret internally for the catalog request; the secret and authorization header were not returned or captured.",
+      "result": "PASS"
+    }
+  ],
+  "work_id": "W02"
+}

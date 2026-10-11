@@ -1,0 +1,49 @@
+{
+  "schema_version": "1.0",
+  "work_id": "W02",
+  "supplement_to": "W02_PROVIDER_VERIFICATION.json",
+  "captured_at_utc": "2026-10-09T20:28:35Z",
+  "runtime": "http://127.0.0.1:8081",
+  "catalog_request": {
+    "method": "GET",
+    "path": "/api/providers/ollama/models",
+    "http_status": 200,
+    "elapsed_ms": 893,
+    "source": "ollama_cloud_api",
+    "availability_confidence": "listed",
+    "generation_performed": false,
+    "credential_values_exposed_or_recorded": false
+  },
+  "returned_model_ids": [
+    "glm-5.3-flash",
+    "deepseek-v4.1-flash",
+    "mistral-large-4",
+    "kimi-k2.6",
+    "kimi-k2.7-code",
+    "deepseek-v4-pro:0813",
+    "nemotron-3-ultra",
+    "glm-5.2",
+    "glm-5.3",
+    "gpt-oss:20b",
+    "gpt-oss:120b",
+    "minimax-m3",
+    "nemotron-3-super",
+    "kimi-k3",
+    "minimax-m2.7",
+    "gemma4:31b",
+    "nemotron-3-nano:30b",
+    "mistral-large-3:675b"
+  ],
+  "provider_verify_response": {
+    "provider_id": "ollama-cloud",
+    "state": "configured_unverified",
+    "model_id": "gemma4:31b-cloud",
+    "model_available": false,
+    "generation_performed": false
+  },
+  "interpretation": {
+    "model_id_mismatch": "The configured/requested ID gemma4:31b-cloud is not in the returned catalog; gemma4:31b is listed as the available Gemma ID.",
+    "generation": "No generation request was made. These endpoints establish catalog metadata only.",
+    "configuration": "Provider settings were not changed. Any model selection change requires the governing user/application flow."
+  }
+}

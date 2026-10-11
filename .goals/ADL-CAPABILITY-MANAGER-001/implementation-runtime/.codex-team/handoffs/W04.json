@@ -1,0 +1,58 @@
+{
+  "changed_files": [
+    "evidence/W04_FINAL_STATUS.md",
+    "drafts/W04.json"
+  ],
+  "next_consumers": [],
+  "outputs": [
+    {
+      "description": "Terminal status, final verification evidence, and explicit capability limits.",
+      "path": "evidence/W04_FINAL_STATUS.md",
+      "sha256": "21ce43468269d430d6c495d09612eaa0132460dcc10ea38ff90e011a16c5e795"
+    }
+  ],
+  "payload_sha256": "bc492768e74b8cee63dbd49f376ddebcf804241bf9fbd862d2b10e339000b2df",
+  "residual_risks": [
+    "No authenticated actor identity or human approval flow exists.",
+    "No capability grants, jobs, Runner execution, MCP invocation, or sandbox execution is implemented by this increment.",
+    "Full test suite and live proposal mutation were not run.",
+    "Frontend lint is blocked because ESLint is not installed.",
+    "GET /api/artifacts returns 404 on the observed server.",
+    "Local capability notices are not appended to the durable chat transcript."
+  ],
+  "role": "team-orchestrator",
+  "status": "DONE",
+  "verification": [
+    {
+      "command": "teamctl verify",
+      "evidence": "W01, W02, and W03 handoffs validate before W04 closure.",
+      "result": "PASS"
+    },
+    {
+      "command": "GET /api/capabilities and GET /api/capabilities/proposals on 127.0.0.1:8084",
+      "evidence": "HTTP 200; real wired status for four capabilities; zero proposals; no mutation.",
+      "result": "PASS"
+    },
+    {
+      "command": "Playwright visual inspection of Capability Manager",
+      "evidence": "Screenshot: output/playwright/capability-manager-live-20261009.png; catalog states match live API.",
+      "result": "PASS"
+    },
+    {
+      "command": "npm --prefix frontend run lint",
+      "evidence": "ESLint executable is unavailable in this checkout.",
+      "result": "BLOCKED"
+    },
+    {
+      "command": "GET /api/artifacts",
+      "evidence": "HTTP 404, recorded as separate residual issue.",
+      "result": "NOT_VERIFIED"
+    },
+    {
+      "command": "Live POST proposal create/cancel",
+      "evidence": "Avoided persistent writes to user proposal database; focused tests use temporary SQLite.",
+      "result": "NOT_RUN"
+    }
+  ],
+  "work_id": "W04"
+}

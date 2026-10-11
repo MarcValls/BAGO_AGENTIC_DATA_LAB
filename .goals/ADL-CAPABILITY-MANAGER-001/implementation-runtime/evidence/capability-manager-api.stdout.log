@@ -1,0 +1,21 @@
+INFO:     127.0.0.1:54797 - "GET /api/capabilities HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54824 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54824 - "GET /assets/index-35ece464.js HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54826 - "GET /assets/index-033f3650.css HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54826 - "GET /api/agents/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54824 - "GET /api/conversations?owner_kind=assistant&owner_id=app-assistant&status=active HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54826 - "GET /api/artifacts HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:54826 - "GET /api/conversations/conv_1b1ee9e98fbd4b8493fdfdc35ab15ce4 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54826 - "GET /api/capabilities/proposals?status=all&limit=100 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54837 - "GET /api/capabilities HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54838 - "GET /api/capabilities/proposals?status=all&limit=100 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54880 - "GET /api/capabilities HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54881 - "GET /api/capabilities/proposals HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54882 - "GET /api/artifacts HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:54883 - "GET /api/capabilities HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54884 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54919 - "GET /api/capabilities HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54920 - "GET /api/artifacts HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:55301 - "GET /api/agents/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55301 - "GET /api/capabilities HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55302 - "GET /api/capabilities/proposals?status=all&limit=100 HTTP/1.1" 200 OK

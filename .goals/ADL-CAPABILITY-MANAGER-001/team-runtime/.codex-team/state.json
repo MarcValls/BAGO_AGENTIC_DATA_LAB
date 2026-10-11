@@ -1,0 +1,135 @@
+{
+  "created_at": "2026-10-09T21:29:37+00:00",
+  "mission": {
+    "max_concurrency": 3,
+    "mission_id": "ADL_CAPABILITY_MANAGER_SPIRAL_001",
+    "objective": "Run independent read-only BAGO agent audits of the current ADL candidate to define a safe capability manager controlled through the UI and chat. Preserve the current worktree and distinguish registered, available, eligible, authorized, executed, and verified states.",
+    "terminal_work_items": [
+      "W04"
+    ],
+    "title": "Capability Manager Discovery Spiral",
+    "work_items": [
+      {
+        "deliverables": [
+          "Source-bound architecture report for capability catalog and authority boundaries"
+        ],
+        "depends_on": [],
+        "done_when": [
+          "Findings cite active candidate HEAD and concrete symbols/files",
+          "Distinguish reference-only agent catalog from activated runtime",
+          "Recommend minimal capability-manager boundary without granting execution"
+        ],
+        "id": "W01",
+        "read_scopes": [
+          "candidate source tree: agents/**, src/**, frontend/src/**, docs/**"
+        ],
+        "role": "architecture-auditor",
+        "title": "Audit capability ownership and architecture",
+        "write_scopes": [
+          "evidence/W01_ARCHITECTURE.md",
+          "drafts/W01.json"
+        ]
+      },
+      {
+        "deliverables": [
+          "Source-bound backend capability path and persistence report"
+        ],
+        "depends_on": [],
+        "done_when": [
+          "Trace API, registry, permits, sandbox, gateway and receipts",
+          "Identify what is live versus merely present in code",
+          "No code or state is modified"
+        ],
+        "id": "W02",
+        "read_scopes": [
+          "candidate source tree: src/api/**, src/adapters/**, src/sandbox/**, src/execution/**, src/orchestration/**, tests/**"
+        ],
+        "role": "backend-auditor",
+        "title": "Audit backend capability, policy, persistence and execution paths",
+        "write_scopes": [
+          "evidence/W02_BACKEND.md",
+          "drafts/W02.json"
+        ]
+      },
+      {
+        "deliverables": [
+          "Source-bound frontend/chat integration report"
+        ],
+        "depends_on": [],
+        "done_when": [
+          "Map current navigation, chat intent routing, API calls and state owners",
+          "Recommend low-cognitive-load UI and review flow",
+          "No code or state is modified"
+        ],
+        "id": "W03",
+        "read_scopes": [
+          "candidate source tree: frontend/src/**, docs/agent-chat-control/**"
+        ],
+        "role": "frontend-auditor",
+        "title": "Audit capability manager and chat UI integration points",
+        "write_scopes": [
+          "evidence/W03_FRONTEND.md",
+          "drafts/W03.json"
+        ]
+      },
+      {
+        "deliverables": [
+          "Concrete capability manager MVP contract and implementation sequence"
+        ],
+        "depends_on": [
+          "W01",
+          "W02",
+          "W03"
+        ],
+        "done_when": [
+          "Preserves fail-closed execution",
+          "Names data model, API, UI/chat flows and review gates",
+          "Lists validation criteria and residual decisions"
+        ],
+        "id": "W04",
+        "read_scopes": [
+          "evidence/W01_ARCHITECTURE.md",
+          "evidence/W02_BACKEND.md",
+          "evidence/W03_FRONTEND.md"
+        ],
+        "role": "team-orchestrator",
+        "title": "Synthesize findings into a reviewable capability manager contract",
+        "write_scopes": [
+          "evidence/W04_CAPABILITY_MANAGER_CONTRACT.md",
+          "drafts/W04.json"
+        ]
+      }
+    ]
+  },
+  "mission_sha256": "58fe2fdac067351923644ef3d4cdcbb3aec49d3700415ef2a9459ba5a7a1f628",
+  "mission_source": "C:\\Users\\AMTEC_Terminal_1º\\AppData\\Local\\Temp\\BAGO_AGENTIC_DATA_LAB_conversation_library\\.goals\\ADL-CAPABILITY-MANAGER-001\\team-runtime\\.codex-team-kit\\missions\\capability-manager-spiral.json",
+  "protocol_version": "0.1.0",
+  "terminal_gate": "DONE",
+  "updated_at": "2026-10-09T23:18:10+00:00",
+  "work_status": {
+    "W01": {
+      "agent": "bago_architecture_auditor",
+      "claimed_at": "2026-10-09T21:30:16+00:00",
+      "done_at": "2026-10-09T21:31:32+00:00",
+      "status": "DONE"
+    },
+    "W02": {
+      "agent": "bago_backend_auditor",
+      "claimed_at": "2026-10-09T21:30:26+00:00",
+      "done_at": "2026-10-09T21:32:33+00:00",
+      "status": "DONE"
+    },
+    "W03": {
+      "agent": "bago_frontend_auditor",
+      "claimed_at": "2026-10-09T21:30:47+00:00",
+      "done_at": "2026-10-09T21:31:43+00:00",
+      "status": "DONE"
+    },
+    "W04": {
+      "agent": "team-orchestrator",
+      "claimed_at": "2026-10-09T21:33:31+00:00",
+      "done_at": "2026-10-09T21:33:59+00:00",
+      "status": "DONE"
+    }
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "schema_version": "1.0",
+  "work_id": "W02",
+  "captured_at_utc": "2026-10-09T20:38:00Z",
+  "runtime": "http://127.0.0.1:8084",
+  "action": "Restarted the same candidate application on its fixed port using .venv-ollama-spiral.",
+  "identity": {
+    "previous_pid": 17840,
+    "new_pid": 34444,
+    "working_directory": "C:\\Users\\AMTEC_Terminal_1º\\AppData\\Local\\Temp\\BAGO_AGENTIC_DATA_LAB_conversation_library",
+    "port": 8084
+  },
+  "post_restart_health": "ok",
+  "post_restart_provider_status": {
+    "provider_id": "ollama-cloud",
+    "state": "configured_unverified",
+    "runtime_mode": "host",
+    "auth_mode": "api_key",
+    "model_id": null
+  },
+  "conclusion": "The provider authentication configuration and access to the existing OS credential persisted across an application restart. No credential value was read or recorded. No model was selected and no generation occurred."
+}

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import axios from 'axios'
 import Summary from './components/Summary'
 import Retrieval from './components/Retrieval'
@@ -9,7 +9,10 @@ import Control from './components/Control'
 import AgentBuilder from './components/AgentBuilder'
 import AgentRunner from './components/AgentRunner'
 import AgentChat from './components/AgentChat'
+import CapabilityManager from './components/CapabilityManager'
 import JobHistory from './components/JobHistory'
+import AgentEvaluationLab from './components/AgentEvaluationLab'
+import ProviderSettings from './components/ProviderSettings'
 import { DecisionInspector } from './features/decision-inspector'
 import './App.css'
 
@@ -21,24 +24,31 @@ interface Artifacts {
   evaluation: any
 }
 
-const portfolioViews = [
-  { id: 'builder', label: 'Agent Builder' },
-  { id: 'chat', label: 'Agent Chat' },
-  { id: 'runner', label: 'Agent Runner' },
-  { id: 'control', label: 'Control' },
-  { id: 'jobs', label: 'Job History' },
-  { id: 'summary', label: 'Summary' },
-  { id: 'retrieval', label: 'Retrieval & Ontology' },
-  { id: 'authorization', label: 'Authorization' },
-  { id: 'trace', label: 'Trace' },
-  { id: 'evaluation', label: 'Evaluation' },
+type AppView = 'chat' | 'capabilities' | 'provider_settings' | 'inspector' | 'builder' | 'runner' | 'control' | 'jobs' | 'summary' | 'retrieval' | 'authorization' | 'trace' | 'evaluation' | 'evaluation_lab'
+type AssistantView = 'inspector' | 'builder' | 'chat' | 'runner' | 'control' | 'jobs' | 'traces' | 'summary' | 'retrieval' | 'authorization' | 'evaluation' | 'evaluation_lab' | 'provider_settings' | 'capabilities'
+
+const navigation: Array<{ id: AppView; label: string; group: 'workspace' | 'portfolio' | 'settings' }> = [
+  { id: 'chat', label: 'Chat', group: 'workspace' },
+  { id: 'capabilities', label: 'Capabilities', group: 'workspace' },
+  { id: 'inspector', label: 'Decision Inspector', group: 'workspace' },
+  { id: 'builder', label: 'Agent Builder', group: 'workspace' },
+  { id: 'runner', label: 'Agent Runner', group: 'workspace' },
+  { id: 'evaluation_lab', label: 'Agent Evaluation Lab', group: 'workspace' },
+  { id: 'control', label: 'Control', group: 'portfolio' },
+  { id: 'jobs', label: 'Job History', group: 'portfolio' },
+  { id: 'summary', label: 'Summary', group: 'portfolio' },
+  { id: 'retrieval', label: 'Retrieval & Ontology', group: 'portfolio' },
+  { id: 'authorization', label: 'Authorization', group: 'portfolio' },
+  { id: 'trace', label: 'Trace', group: 'portfolio' },
+  { id: 'evaluation', label: 'Evaluation', group: 'portfolio' },
+  { id: 'provider_settings', label: 'Provider Settings', group: 'settings' },
 ]
 
 function App() {
   const [artifacts, setArtifacts] = useState<Artifacts | null>(null)
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
-  const [activeTab, setActiveTab] = useState('inspector')
+  const [loadingArtifacts, setLoadingArtifacts] = useState(true)
+  const [artifactError, setArtifactError] = useState<string | null>(null)
+  const [activeTab, setActiveTab] = useState<AppView>('chat')
   const [demoRefresh, setDemoRefresh] = useState(0)
 
   useEffect(() => {
@@ -46,52 +56,67 @@ function App() {
       try {
         const response = await axios.get('/api/artifacts')
         setArtifacts(response.data)
-        setError(null)
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'Failed to load artifacts')
+        setArtifactError(null)
+      } catch (error) {
+        setArtifactError(error instanceof Error ? error.message : 'Run artifacts are unavailable.')
       } finally {
-        setLoading(false)
+        setLoadingArtifacts(false)
       }
     }
-    fetchArtifacts()
+    void fetchArtifacts()
   }, [demoRefresh])
 
-  const handleDemoRun = () => {
+  const handleDemoRun = useCallback(() => {
     setDemoRefresh((previous) => previous + 1)
     setActiveTab('inspector')
-  }
+  }, [])
 
-  if (loading) return <main className="container app-state"><div className="spinner" role="status" /><p>Loading run artifacts…</p></main>
-  if (error) return <main className="container app-state"><section className="card" role="alert"><h1>Run artifacts unavailable</h1><p>{error}</p><p>Run <code>python demo.py</code> to create a governed demo artifact bundle.</p></section></main>
-  if (!artifacts) return <main className="container app-state"><p role="status">No run data was provided.</p></main>
+  const navigateFromChat = useCallback((view: AssistantView) => {
+    const tab: AppView = view === 'traces' ? 'trace' : view
+    setActiveTab(tab)
+  }, [])
+
+  const needsArtifacts = ['inspector', 'summary', 'retrieval', 'authorization', 'trace', 'evaluation'].includes(activeTab)
 
   return (
-    <main className="container">
-      <header className="header">
-        <div><p className="app-kicker">BAGO · Governed Knowledge Agent</p><h1>Agentic Data Lab</h1></div>
-        <span className={`badge ${artifacts.summary.status === 'PASS' ? 'success' : 'error'}`}>{artifacts.summary.status}</span>
+    <main className="container app-shell">
+      <header className="app-header">
+        <div className="brand-lockup"><span className="brand-symbol" aria-hidden="true">B</span><div><p className="app-kicker">Governed Knowledge Workspace</p><h1>Agentic Data Lab</h1></div></div>
+        <div className="app-header-actions"><span className="workspace-label">Control plane</span><button type="button" className="header-provider-link" onClick={() => setActiveTab('provider_settings')}>Provider settings</button></div>
       </header>
 
-      <button className="inspector-home" type="button" aria-current={activeTab === 'inspector' ? 'page' : undefined} onClick={() => setActiveTab('inspector')}>Decision Inspector</button>
+      <nav className="primary-navigation" aria-label="Application views">
+        <div className="navigation-group" aria-label="Workspace">
+          {navigation.filter((item) => item.group === 'workspace').map((item) => <button key={item.id} type="button" className={`navigation-item ${activeTab === item.id ? 'active' : ''}`} aria-current={activeTab === item.id ? 'page' : undefined} onClick={() => setActiveTab(item.id)}>{item.label}</button>)}
+        </div>
+        <details className="portfolio-navigation">
+          <summary>Other portfolio views</summary>
+          <div className="portfolio-navigation-content"><span className="navigation-caption">Portfolio</span>{navigation.filter((item) => item.group === 'portfolio').map((item) => <button key={item.id} type="button" className={`navigation-item ${activeTab === item.id ? 'active' : ''}`} aria-current={activeTab === item.id ? 'page' : undefined} onClick={() => setActiveTab(item.id)}>{item.label}</button>)}<span className="navigation-caption settings-caption">Settings</span>{navigation.filter((item) => item.group === 'settings').map((item) => <button key={item.id} type="button" className={`navigation-item ${activeTab === item.id ? 'active' : ''}`} aria-current={activeTab === item.id ? 'page' : undefined} onClick={() => setActiveTab(item.id)}>{item.label}</button>)}</div>
+        </details>
+      </nav>
 
-      {activeTab === 'inspector' && <DecisionInspector artifacts={artifacts} />}
-
-      <details className="portfolio-views">
-        <summary>Other portfolio views</summary>
-        <nav className="tabs" aria-label="Other portfolio views">
-          {portfolioViews.map((view) => <button key={view.id} className={`tab ${activeTab === view.id ? 'active' : ''}`} onClick={() => setActiveTab(view.id)}>{view.label}</button>)}
-        </nav>
-        {activeTab === 'builder' && <AgentBuilder onAgentCreated={handleDemoRun} />}
-        {activeTab === 'chat' && <AgentChat />}
+      <section className="app-view" aria-label={`${navigation.find((item) => item.id === activeTab)?.label ?? 'Application'} view`}>
+        {activeTab === 'chat' && <AgentChat onNavigate={navigateFromChat} onOpenProviderSettings={() => setActiveTab('provider_settings')} />}
+        {activeTab === 'capabilities' && <CapabilityManager />}
+        {activeTab === 'provider_settings' && <ProviderSettings />}
+        {activeTab === 'builder' && <AgentBuilder onAgentCreated={() => setDemoRefresh((previous) => previous + 1)} />}
         {activeTab === 'runner' && <AgentRunner />}
+        {activeTab === 'evaluation_lab' && <AgentEvaluationLab />}
         {activeTab === 'control' && <Control onDemoRun={handleDemoRun} />}
         {activeTab === 'jobs' && <JobHistory />}
-        {activeTab === 'summary' && <Summary data={artifacts} />}
-        {activeTab === 'retrieval' && <Retrieval data={artifacts} />}
-        {activeTab === 'authorization' && <Authorization data={artifacts} />}
-        {activeTab === 'trace' && <Trace data={artifacts} />}
-        {activeTab === 'evaluation' && <Evaluation data={artifacts} />}
-      </details>
+        {needsArtifacts && (loadingArtifacts
+          ? <div className="app-view-state" role="status"><span className="spinner" /><p>Loading portfolio artifacts…</p></div>
+          : artifactError || !artifacts
+            ? <section className="artifact-unavailable" role="status"><p className="app-kicker">Portfolio evidence</p><h2>Artifacts are not available yet</h2><p>{artifactError ?? 'No artifact bundle was returned.'}</p><p>Run a governed demo from the Control view to create its artifact bundle.</p><button type="button" className="navigation-item active" onClick={() => setActiveTab('control')}>Open Control</button></section>
+            : <>
+              {activeTab === 'inspector' && <DecisionInspector artifacts={artifacts} />}
+              {activeTab === 'summary' && <Summary data={artifacts} />}
+              {activeTab === 'retrieval' && <Retrieval data={artifacts} />}
+              {activeTab === 'authorization' && <Authorization data={artifacts} />}
+              {activeTab === 'trace' && <Trace data={artifacts} />}
+              {activeTab === 'evaluation' && <Evaluation data={artifacts} />}
+            </>)}
+      </section>
     </main>
   )
 }

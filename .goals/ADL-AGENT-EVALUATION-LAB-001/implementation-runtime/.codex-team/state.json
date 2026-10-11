@@ -1,0 +1,204 @@
+{
+  "created_at": "2026-10-10T00:18:31+02:00",
+  "mission": {
+    "max_concurrency": 2,
+    "mission_id": "ADL_AGENT_EVALUATION_IMPLEMENTATION_001",
+    "objective": "Implement a real-provider, deterministic, local agent evaluation surface against the frozen API contract, with persistent suites/runs and explicit trace linkage while preserving no-tools/no-jobs boundaries.",
+    "terminal_work_items": [
+      "W05"
+    ],
+    "title": "Agent Evaluation Lab Implementation Spiral",
+    "work_items": [
+      {
+        "deliverables": [
+          "Explicit versioned DTOs, route contract, trace/persistence semantics and UI boundary"
+        ],
+        "depends_on": [],
+        "done_when": [
+          "Concrete request/response fields and limits recorded",
+          "Provider and no-effect boundaries explicit",
+          "Contract hash materialized before consumers start"
+        ],
+        "id": "W01",
+        "read_scopes": [
+          "../team-runtime/evidence/W01_BACKEND_MAP.md",
+          "../team-runtime/evidence/W02_PRODUCT_UX_MAP.md",
+          "../team-runtime/evidence/W03_EVALUATION_CONTRACT.md",
+          "src/**",
+          "frontend/src/**"
+        ],
+        "role": "team-orchestrator",
+        "title": "Freeze Evaluation Lab API/data/UI contract",
+        "write_scopes": [
+          "evidence/W01_API_CONTRACT.md",
+          "drafts/W01.json"
+        ]
+      },
+      {
+        "deliverables": [
+          "Workspace-isolated suite/run persistence, deterministic evaluator, safe API and trace attributes, backend tests and operator documentation"
+        ],
+        "depends_on": [
+          "W01"
+        ],
+        "done_when": [
+          "API conforms to W01 contract",
+          "Model/provider IDs resolved server-side; no tools/jobs/workspace writes",
+          "Provider errors are explicit and traced without secret/body leakage",
+          "Focused tests pass against temporary storage and provider fixture"
+        ],
+        "id": "W02",
+        "read_scopes": [
+          "evidence/W01_API_CONTRACT.md",
+          "src/providers/**",
+          "src/conversations/**",
+          "src/observability/**",
+          "src/capabilities/**",
+          "tests/test_agent_chat_trace.py"
+        ],
+        "role": "trace-observability-engineer",
+        "title": "Implement backend store, live run endpoint and LocalTrace correlation",
+        "write_scopes": [
+          "src/evaluation/agent_lab.py",
+          "src/api/server.py",
+          "src/capabilities/manager.py",
+          "tests/test_agent_evaluation_lab.py",
+          "docs/agent_evaluation_lab.md",
+          "tests/test_capability_manager.py"
+        ]
+      },
+      {
+        "deliverables": [
+          "Low-cognitive-load suite editor/review/run/results view, primary navigation, chat route and component tests"
+        ],
+        "depends_on": [
+          "W01"
+        ],
+        "done_when": [
+          "No provider call occurs before explicit Run",
+          "Shows provider call count and effective model before confirmation",
+          "Loading, empty, error, unavailability and run outcomes are explicit",
+          "No synthetic evidence/trace/Jaeger link is fabricated",
+          "UI build and focused tests pass"
+        ],
+        "id": "W03",
+        "read_scopes": [
+          "evidence/W01_API_CONTRACT.md",
+          "frontend/src/components/AgentChat.tsx",
+          "frontend/src/components/CapabilityManager.tsx",
+          "frontend/src/App.tsx",
+          "frontend/tests/ui/**"
+        ],
+        "role": "decision-ui-engineer",
+        "title": "Implement Evaluation Lab UI and chat navigation",
+        "write_scopes": [
+          "frontend/src/App.tsx",
+          "frontend/src/components/AgentChat.tsx",
+          "frontend/src/components/AgentEvaluationLab.tsx",
+          "frontend/src/components/AgentEvaluationLab.css",
+          "frontend/tests/ui/agent-evaluation-lab/**"
+        ]
+      },
+      {
+        "deliverables": [
+          "Independent scope/security/trace/UX review with P0/P1/P2 and NOT_RUN boundary"
+        ],
+        "depends_on": [
+          "W02",
+          "W03"
+        ],
+        "done_when": [
+          "Validate current-source diffs and evidence against W01 contract",
+          "Inspect provider failure, stale suite revision, malformed suite, trace unavailable, and fixture-vs-live labels",
+          "No implementation edits",
+          "State exactly which executable checks were rerun"
+        ],
+        "id": "W04",
+        "read_scopes": [
+          "src/evaluation/agent_lab.py",
+          "src/api/server.py",
+          "src/capabilities/manager.py",
+          "tests/test_agent_evaluation_lab.py",
+          "frontend/src/App.tsx",
+          "frontend/src/components/AgentChat.tsx",
+          "frontend/src/components/AgentEvaluationLab.tsx",
+          "frontend/tests/ui/agent-evaluation-lab/**",
+          "docs/agent_evaluation_lab.md"
+        ],
+        "role": "verification-engineer",
+        "title": "Independent adversarial verification",
+        "write_scopes": [
+          "evidence/W04_INDEPENDENT_VERIFICATION.md",
+          "drafts/W04.json"
+        ]
+      },
+      {
+        "deliverables": [
+          "Final status, hashes and evidence index bound to candidate HEAD"
+        ],
+        "depends_on": [
+          "W04"
+        ],
+        "done_when": [
+          "All handoffs validate",
+          "No P0/P1 unresolved for claimed scope",
+          "Live inference evidence is separated from fixture tests",
+          "Any unrun Jaeger/lint/UI check is explicit",
+          "No commit or sync is claimed"
+        ],
+        "id": "W05",
+        "read_scopes": [
+          "../team-runtime/evidence/**",
+          "evidence/W01_API_CONTRACT.md",
+          "evidence/W04_INDEPENDENT_VERIFICATION.md",
+          "../../../../src/**",
+          "../../../../frontend/src/**",
+          "../../../../tests/**"
+        ],
+        "role": "team-orchestrator",
+        "title": "Terminal goal gate and evidence index",
+        "write_scopes": [
+          "evidence/W05_FINAL_STATUS.md",
+          "drafts/W05.json"
+        ]
+      }
+    ]
+  },
+  "mission_sha256": "64dc019b1e57885e1c2056d7bb3ff09161a5eba6884bcbfdd17bfc6ce6c605ac",
+  "mission_source": "C:\\Users\\AMTEC_Terminal_1º\\AppData\\Local\\Temp\\BAGO_ADL_agent_evaluation_lab_20261010\\.goals\\ADL-AGENT-EVALUATION-LAB-001\\implementation-runtime\\.codex-team-kit\\missions\\agent-evaluation-implementation.json",
+  "protocol_version": "0.1.0",
+  "terminal_gate": "DONE",
+  "updated_at": "2026-10-09T22:37:03+00:00",
+  "work_status": {
+    "W01": {
+      "agent": "team-orchestrator-root",
+      "claimed_at": "2026-10-10T00:18:32+02:00",
+      "done_at": "2026-10-10T00:18:32+02:00",
+      "status": "DONE"
+    },
+    "W02": {
+      "agent": "trace-observability-engineer-01",
+      "claimed_at": "2026-10-10T00:18:43+02:00",
+      "done_at": "2026-10-09T22:26:38+00:00",
+      "status": "DONE"
+    },
+    "W03": {
+      "agent": "decision-ui-engineer-01",
+      "claimed_at": "2026-10-10T00:18:43+02:00",
+      "done_at": "2026-10-09T22:25:16+00:00",
+      "status": "DONE"
+    },
+    "W04": {
+      "agent": "bago-verifier",
+      "claimed_at": "2026-10-09T22:34:28+00:00",
+      "done_at": "2026-10-09T22:36:06+00:00",
+      "status": "DONE"
+    },
+    "W05": {
+      "agent": "team-orchestrator-root",
+      "claimed_at": "2026-10-09T22:36:52+00:00",
+      "done_at": "2026-10-09T22:37:02+00:00",
+      "status": "DONE"
+    }
+  }
+}

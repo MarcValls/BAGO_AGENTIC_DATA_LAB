@@ -1,0 +1,185 @@
+{
+  "created_at": "2026-10-09T20:23:37+00:00",
+  "mission": {
+    "max_concurrency": 1,
+    "mission_id": "ADL_OLLAMA_REAL_EVIDENCE_SPIRAL_V1",
+    "objective": "Verify the configured Gemma Cloud provider and create one bounded real agent conversation in the ADL application, then verify persisted conversation and trace evidence. Do not read credentials or modify files through the agent.",
+    "terminal_work_items": [
+      "W05"
+    ],
+    "title": "ADL real Ollama evidence spiral",
+    "work_items": [
+      {
+        "deliverables": [
+          "Runtime/provider scope record"
+        ],
+        "depends_on": [],
+        "done_when": [
+          "Port 8081 and isolated port 8084 are distinguished",
+          "No credential value is read",
+          "Configured model identity and status are recorded"
+        ],
+        "frozen_outputs": [
+          "provider-scope-v1"
+        ],
+        "id": "W01",
+        "read_scopes": [
+          "src/providers/**",
+          "src/api/server.py",
+          ".goals/ADL-CONVERSATION-LIBRARY-001/**"
+        ],
+        "role": "team-orchestrator",
+        "title": "Freeze provider scope and current runtime identity",
+        "write_scopes": [
+          ".goals/ADL-OLLAMA-SPIRAL-001/evidence/**"
+        ]
+      },
+      {
+        "deliverables": [
+          "Provider verification receipt"
+        ],
+        "depends_on": [
+          "W01"
+        ],
+        "done_when": [
+          "Actual configured provider check is executed",
+          "Result distinguishes model listing/auth from generation",
+          "No credential value is disclosed"
+        ],
+        "frozen_outputs": [
+          "provider-verification-v1"
+        ],
+        "id": "W02",
+        "read_scopes": [
+          ".goals/ADL-OLLAMA-SPIRAL-001/evidence/**",
+          "src/providers/ollama.py",
+          "src/api/server.py"
+        ],
+        "role": "verification-engineer",
+        "title": "Verify the configured model through the supported provider check",
+        "write_scopes": [
+          ".goals/ADL-OLLAMA-SPIRAL-001/evidence/**"
+        ]
+      },
+      {
+        "deliverables": [
+          "Real browser turn, screenshot, local trace reference, model/provider identity"
+        ],
+        "depends_on": [
+          "W02"
+        ],
+        "done_when": [
+          "A real Ollama response is returned in ADL",
+          "Prompt forbids file mutation and requests a bounded visible result",
+          "No synthetic fixture is used"
+        ],
+        "frozen_outputs": [
+          "real-agent-turn-v1"
+        ],
+        "id": "W03",
+        "read_scopes": [
+          ".goals/ADL-OLLAMA-SPIRAL-001/evidence/**",
+          "src/observability/**",
+          "frontend/src/components/AgentChat.tsx"
+        ],
+        "role": "trace-observability-engineer",
+        "title": "Run one bounded real turn through an existing ADL agent",
+        "write_scopes": [
+          ".goals/ADL-OLLAMA-SPIRAL-001/evidence/**",
+          "output/playwright/**"
+        ]
+      },
+      {
+        "deliverables": [
+          "Database/API/trace correlation receipt"
+        ],
+        "depends_on": [
+          "W03"
+        ],
+        "done_when": [
+          "Conversation and user/assistant messages are read back from backend storage",
+          "Provider/model and trace reference are supported by observed data",
+          "Missing or unavailable trace fields stay explicit"
+        ],
+        "frozen_outputs": [
+          "conversation-trace-evidence-v1"
+        ],
+        "id": "W04",
+        "read_scopes": [
+          ".goals/ADL-OLLAMA-SPIRAL-001/evidence/**",
+          "src/conversations/**",
+          "src/observability/**"
+        ],
+        "role": "evidence-provenance-engineer",
+        "title": "Verify the conversation and available trace persisted after the real turn",
+        "write_scopes": [
+          ".goals/ADL-OLLAMA-SPIRAL-001/evidence/**"
+        ]
+      },
+      {
+        "deliverables": [
+          "Final verification handoff and limits"
+        ],
+        "depends_on": [
+          "W04"
+        ],
+        "done_when": [
+          "All prior handoffs validate",
+          "Real generation is distinguished from mock tests",
+          "No unsupported claims remain",
+          "Terminal gate passes"
+        ],
+        "frozen_outputs": [
+          "ollama-real-evidence-terminal-v1"
+        ],
+        "id": "W05",
+        "read_scopes": [
+          ".goals/ADL-OLLAMA-SPIRAL-001/**",
+          "output/playwright/**"
+        ],
+        "role": "verification-engineer",
+        "title": "Independent evidence review and terminal gate",
+        "write_scopes": [
+          ".goals/ADL-OLLAMA-SPIRAL-001/evidence/**"
+        ]
+      }
+    ]
+  },
+  "mission_sha256": "174b7dec8caf6e723366e8c4f3e68dc3d6d05b875d2350d24fe5d6fe20331031",
+  "mission_source": "C:\\Users\\AMTEC_Terminal_1º\\AppData\\Local\\Temp\\BAGO_AGENTIC_DATA_LAB_conversation_library\\.goals\\ADL-OLLAMA-SPIRAL-001\\mission.json",
+  "protocol_version": "0.1.0",
+  "terminal_gate": "DONE",
+  "updated_at": "2026-10-09T20:56:23+00:00",
+  "work_status": {
+    "W01": {
+      "agent": "provider-preflight",
+      "claimed_at": "2026-10-09T20:24:39+00:00",
+      "done_at": "2026-10-09T20:25:28+00:00",
+      "status": "DONE"
+    },
+    "W02": {
+      "agent": "bago-verifier",
+      "claimed_at": "2026-10-09T20:26:12+00:00",
+      "done_at": "2026-10-09T20:27:55+00:00",
+      "status": "DONE"
+    },
+    "W03": {
+      "agent": "trace-observability-engineer",
+      "claimed_at": "2026-10-09T20:30:31+00:00",
+      "done_at": "2026-10-09T20:50:37+00:00",
+      "status": "DONE"
+    },
+    "W04": {
+      "agent": "evidence-provenance-engineer",
+      "claimed_at": "2026-10-09T20:50:47+00:00",
+      "done_at": "2026-10-09T20:52:07+00:00",
+      "status": "DONE"
+    },
+    "W05": {
+      "agent": "bago-verifier",
+      "claimed_at": "2026-10-09T20:52:26+00:00",
+      "done_at": "2026-10-09T20:55:03+00:00",
+      "status": "DONE"
+    }
+  }
+}
