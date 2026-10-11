@@ -1,0 +1,68 @@
+{
+  "changed_files": [
+    ".codex-team/change_requests/CR-004-P1-RECEIPT-RUN-BINDING.json",
+    ".codex-team/missions/agent-decision-inspector-project.json",
+    ".codex-team/state.json",
+    ".codex-team/drafts/W12.json",
+    "docs/decision-inspector/FINAL_STATUS.md"
+  ],
+  "next_consumers": [],
+  "outputs": [
+    {
+      "frozen": true,
+      "id": "agent-decision-inspector-v1-terminal-gate",
+      "path": "docs/decision-inspector/FINAL_STATUS.md",
+      "sha256": "030b80ce6a3bd976a219c55383c31628096a95571c2f1c2214ec7fef15983dca"
+    },
+    {
+      "frozen": false,
+      "id": "decision-inspector-jaeger-graph",
+      "path": "output/playwright/jaeger-localtrace-04b58bb.png",
+      "sha256": "ac7267f45b313f89a673f72820a9369c58c8f032d2f1e7b5b86522205e7a092e"
+    },
+    {
+      "frozen": false,
+      "id": "decision-inspector-trace-view",
+      "path": "output/playwright/decision-inspector-trace.png",
+      "sha256": "cfe440c270b9b69445726add7be2447232277fcc677fff766cababe29b439ead"
+    }
+  ],
+  "payload_sha256": "83f39f3c55a9b764c9c2c2a36b921e8d0ccf82751fecb588ad82879a6f2f67d2",
+  "residual_risks": [
+    "Keyboard-only, screen-reader and screenshot pixel review NOT_RUN (P2).",
+    "Current run has no structured claims or claim-to-evidence links.",
+    "UI-to-Jaeger direct correlation unavailable; backend projection is verified.",
+    "AWS live and remote collector NOT_RUN.",
+    "Run identity check is equality over source-provided values, not cryptographic attestation."
+  ],
+  "role": "team-orchestrator",
+  "status": "DONE",
+  "verification": [
+    {
+      "command": "python .codex-team-kit/scripts/teamctl.py verify",
+      "evidence": "W01-W14 prerequisite handoffs validated; W11 P1 is closed by W13 and W14.",
+      "result": "PASS"
+    },
+    {
+      "command": "npm run build (cwd frontend)",
+      "evidence": "W14 final source build; TypeScript and Vite, 124 modules.",
+      "result": "PASS"
+    },
+    {
+      "command": "node --test compiled W13 integration fixture",
+      "evidence": "5 passed; includes wrong-run collision and missing run_id adversarial cases.",
+      "result": "PASS"
+    },
+    {
+      "command": "scripts/run_l15_otel_live_validation.py --check --write-evidence",
+      "evidence": "15/15 spans; LocalTrace trace-5b385699ffda0529; Jaeger 04b58bb123bb6cc94a8cc0d60c7145ae.",
+      "result": "PASS"
+    },
+    {
+      "command": "git diff --check",
+      "evidence": "No whitespace errors.",
+      "result": "PASS"
+    }
+  ],
+  "work_id": "W12"
+}

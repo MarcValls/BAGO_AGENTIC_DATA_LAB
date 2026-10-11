@@ -1,0 +1,31 @@
+{
+  "mission_id": "FRONTEND_AUDITOR_P1_02_EXECUTION_V1",
+  "title": "Repair and independently verify P1-02",
+  "objective": "Have a coding agent inspect the exact P1-02 evidence and source, make the smallest truthful Runner UI repair, then independently verify the implementation and record evidence.",
+  "max_concurrency": 1,
+  "terminal_work_items": ["W02"],
+  "work_items": [
+    {
+      "id": "W01",
+      "title": "Inspect P1-02 and repair the Runner UI",
+      "role": "decision-ui-engineer",
+      "depends_on": [],
+      "write_scopes": ["frontend/src/components/AgentRunner.tsx", "frontend/src/components/AgentRunner.css"],
+      "read_scopes": ["frontend/src/components/AgentRunner.tsx", "frontend/src/components/AgentRunner.css", "src/api/server.py", "tests/**", ".bago/CRIT-BAGO-ADL-FRONTEND-20261009-01.md"],
+      "deliverables": ["Source-grounded P1-02 inspection", "Minimal Runner correction", "Build/check results and exact source hashes in handoff"],
+      "done_when": ["The coding agent cites the actual frontend and authoritative server lines it inspected", "Runner visibly states execution is unavailable and cannot start a run", "No success notification can be shown for a terminal result unless exit_code is exactly zero", "Frontend build passes", "No unrelated files are changed"],
+      "frozen_outputs": []
+    },
+    {
+      "id": "W02",
+      "title": "Independently verify P1-02 closure evidence",
+      "role": "verification-engineer",
+      "depends_on": ["W01"],
+      "write_scopes": [".bago/evidence/agent-runs/FRONTEND_AUDITOR_P1_02_EXECUTION/verification.md"],
+      "read_scopes": ["frontend/src/components/AgentRunner.tsx", "frontend/src/components/AgentRunner.css", "src/api/server.py", "tests/**", ".bago/CRIT-BAGO-ADL-FRONTEND-20261009-01.md", ".bago/evidence/agent-runs/FRONTEND_AUDITOR_P1_02_EXECUTION/**"],
+      "deliverables": ["Independent source and behavior verification", "P1-02 disposition with tested and NOT_RUN boundaries"],
+      "done_when": ["Verifier independently confirms actual source behavior against /ws/agents/run", "Disabled/unavailable UI is confirmed in a rendered browser session", "Success/failure handling requires explicit exit_code zero", "Build and applicable checks pass", "Report binds verdict to final source hashes and does not overstate app-agent or provider execution"],
+      "frozen_outputs": []
+    }
+  ]
+}

@@ -1,0 +1,118 @@
+{
+  "created_at": "2026-10-09T22:14:51+00:00",
+  "mission": {
+    "max_concurrency": 2,
+    "mission_id": "ADL_AGENT_EVALUATION_LAB_SPIRAL_001",
+    "objective": "Inspect existing evaluation, real provider chat, persistence, trace, and UI seams on the isolated candidate; define a bounded evaluation capability without turning test inputs into execution authority.",
+    "terminal_work_items": [
+      "W03"
+    ],
+    "title": "Agent Evaluation Lab Discovery Spiral",
+    "work_items": [
+      {
+        "deliverables": [
+          "Read-only source-bound backend map and safe evaluation boundaries"
+        ],
+        "depends_on": [],
+        "done_when": [
+          "Bind findings to exact candidate HEAD",
+          "Distinguish actual chat/provider paths from fixture evals",
+          "Identify trace/persistence identity available for per-case linkage",
+          "Do not edit product code"
+        ],
+        "id": "W01",
+        "read_scopes": [
+          "src/api/**",
+          "src/providers/**",
+          "src/conversations/**",
+          "src/observability/**",
+          "src/evaluation/**",
+          "tests/**",
+          "docs/agent-chat-control/**"
+        ],
+        "role": "evidence-provenance-engineer",
+        "title": "Map backend agent chat, provider, persistence, and trace contracts",
+        "write_scopes": [
+          "evidence/W01_BACKEND_MAP.md",
+          "drafts/W01.json"
+        ]
+      },
+      {
+        "deliverables": [
+          "Read-only UX/portfolio map for a low-cognitive-load evaluation feature"
+        ],
+        "depends_on": [],
+        "done_when": [
+          "Bind findings to exact candidate HEAD",
+          "Map navigation and existing Evaluation/Trace surfaces",
+          "Identify the smallest user flow for repeatable model-agent evaluation",
+          "Do not edit product code"
+        ],
+        "id": "W02",
+        "read_scopes": [
+          "frontend/src/**",
+          "JOB_SKILL_MATRIX.md",
+          "docs/**",
+          "evidence/**"
+        ],
+        "role": "decision-ux-engineer",
+        "title": "Map evaluation UX, entry points, and market-facing evidence gaps",
+        "write_scopes": [
+          "evidence/W02_PRODUCT_UX_MAP.md",
+          "drafts/W02.json"
+        ]
+      },
+      {
+        "deliverables": [
+          "Implementation contract with data, API, UI, privacy, trace, and acceptance boundaries"
+        ],
+        "depends_on": [
+          "W01",
+          "W02"
+        ],
+        "done_when": [
+          "Preserve server-side provider/model identity",
+          "Make model quality assertions deterministic and explicit",
+          "Keep reads/evals separate from workspace writes and agent jobs",
+          "State which validation must use fixtures versus a real Ollama call"
+        ],
+        "id": "W03",
+        "read_scopes": [
+          "evidence/W01_BACKEND_MAP.md",
+          "evidence/W02_PRODUCT_UX_MAP.md"
+        ],
+        "role": "team-orchestrator",
+        "title": "Synthesize bounded Agent Evaluation Lab implementation contract",
+        "write_scopes": [
+          "evidence/W03_EVALUATION_CONTRACT.md",
+          "drafts/W03.json"
+        ]
+      }
+    ]
+  },
+  "mission_sha256": "3b691706203d22abc30879dbdac688f5b8a08212421ebf1b442a9bec3a159e17",
+  "mission_source": "C:\\Users\\AMTEC_Terminal_1º\\AppData\\Local\\Temp\\BAGO_ADL_agent_evaluation_lab_20261010\\.goals\\ADL-AGENT-EVALUATION-LAB-001\\team-runtime\\.codex-team-kit\\missions\\agent-evaluation-lab-spiral.json",
+  "protocol_version": "0.1.0",
+  "terminal_gate": "DONE",
+  "updated_at": "2026-10-09T22:17:26+00:00",
+  "work_status": {
+    "W01": {
+      "agent": "evidence-provenance-engineer-01",
+      "claimed_at": "2026-10-09T22:14:52+00:00",
+      "done_at": "2026-10-09T22:16:27+00:00",
+      "status": "DONE"
+    },
+    "W02": {
+      "agent": "decision-ux-engineer-01",
+      "claimed_at": "2026-10-09T22:14:52+00:00",
+      "done_at": "2026-10-09T22:16:37+00:00",
+      "status": "DONE"
+    },
+    "W03": {
+      "agent": "team-orchestrator-root",
+      "claimed_at": "2026-10-09T22:17:05+00:00",
+      "done_at": "2026-10-09T22:17:26+00:00",
+      "status": "DONE"
+    }
+  }
+}

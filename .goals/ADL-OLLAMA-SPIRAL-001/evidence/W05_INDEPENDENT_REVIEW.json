@@ -1,0 +1,117 @@
+{
+  "schema_version": "1.0",
+  "work_id": "W05",
+  "role": "verification-engineer",
+  "reviewed_at_utc": "2026-10-09T20:54:29Z",
+  "candidate": {
+    "head": "69b4f4b1ead2552b527e6e48868ab36cc2b38cbc",
+    "branch": "codex/conversation-library-v1",
+    "worktree": "C:\\Users\\AMTEC_Terminal_1º\\AppData\\Local\\Temp\\BAGO_AGENTIC_DATA_LAB_conversation_library"
+  },
+  "verdict": "PASS_WITH_EXPLICIT_LIMITS",
+  "prior_handoffs": {
+    "teamctl_verify": "PASS before W05 closure; W01-W04 handoffs and dependencies validate.",
+    "scope": "Read-only independent review. No credentials read; no model request, configuration change, agent creation, restart, source edit, or database write performed by W05."
+  },
+  "model_identity_audit": {
+    "original_configured_id": "gemma4:31b-cloud",
+    "original_configured_runtime_check": {
+      "runtime": "http://127.0.0.1:8081",
+      "model_available": false,
+      "generation_performed": false
+    },
+    "catalog_selected_id": "gemma4:31b",
+    "catalog_runtime_check": {
+      "runtime": "http://127.0.0.1:8084",
+      "source": "ollama_cloud_api",
+      "model_available": true,
+      "generation_performed": false
+    },
+    "model_used_by_real_turn": "gemma4:31b",
+    "evidence": [
+      ".goals/ADL-OLLAMA-SPIRAL-001/evidence/W02_PROVIDER_VERIFICATION.json",
+      ".goals/ADL-OLLAMA-SPIRAL-001/evidence/W02_PROVIDER_CATALOG_SUPPLEMENT.json",
+      ".goals/ADL-OLLAMA-SPIRAL-001/evidence/W02_CANDIDATE_RUNTIME_PROVIDER.json",
+      ".goals/ADL-OLLAMA-SPIRAL-001/evidence/W03_REAL_AGENT_TURN.json",
+      "output/playwright/ollama-spiral-gemma-selected-20261009.png"
+    ],
+    "conclusion": "The exact configured string gemma4:31b-cloud was not available and was not used. The catalog-listed ID gemma4:31b was saved through Provider Settings and used for the live turn. No alias equivalence is asserted. The W03 receipt describes this as the selected model; the screenshot independently proves the saved UI state, not the identity of the person who clicked the control."
+  },
+  "real_turn_review": {
+    "result": "PASS",
+    "conversation_id": "conv_144a84b37b604678a4fc6c60af55ef85",
+    "agent_id": "agent_d3e63db8b4704080b924a05fb1ab71fc",
+    "http_status": 200,
+    "response_source": "ollama",
+    "model_id": "gemma4:31b",
+    "bounded_read": {
+      "path": ".goals/ADL-OLLAMA-SPIRAL-001/evidence/CHAT_READ_TEST.txt",
+      "lines": "1-3",
+      "expected_marker": "COBALTO-47-FARO",
+      "current_fixture_sha256": "bd0005f5c4238a17f871f92f015cafd10172b9208143bcc66524b1c3c84fcc5d",
+      "matches_preflight_fixture_receipt": true
+    },
+    "screenshot": {
+      "path": "output/playwright/ollama-spiral-real-agent-turn-20261009.png",
+      "sha256_observed_during_review": "0f613e4c510299e43abffb0ee7b30eba10767a5a327fda86947b2ab3dbb2558a"
+    },
+    "evidence_boundary": "The app/API response, visible UI, model badge, and completed LocalTrace consistently support a real provider-backed chat. No separate provider-signed request receipt or cost report is available."
+  },
+  "persistence_and_trace_review": {
+    "conversation_api": {
+      "request": "GET http://127.0.0.1:8084/api/conversations/conv_144a84b37b604678a4fc6c60af55ef85",
+      "http_status": 200,
+      "owner_kind": "agent",
+      "owner_id": "agent_d3e63db8b4704080b924a05fb1ab71fc",
+      "project_id": "bago-agentic-data-lab:default",
+      "status": "active",
+      "revision": 2,
+      "message_count": 2,
+      "assistant_trace_reference": "trace-ce1f60b61fc34e13",
+      "assistant_source": ".goals/ADL-OLLAMA-SPIRAL-001/evidence/CHAT_READ_TEST.txt:1-3"
+    },
+    "sqlite_read_only": {
+      "path": "%LOCALAPPDATA%/BAGO/AgenticDataLab/conversations/library.sqlite3",
+      "mode": "read-only URI",
+      "conversation_row_matches_api": true,
+      "message_rows": 2,
+      "references_match_api": true
+    },
+    "local_trace": {
+      "path": ".bago/traces/agent-chat/trace-ce1f60b61fc34e13.json",
+      "sha256": "62ef1ee1c0a4f523ff4e2c1533cd786b696219deae1fc637706dec8b2aa44b93",
+      "status": "COMPLETED",
+      "outcome": "response_received",
+      "provider_id": "ollama-cloud",
+      "model_id": "gemma4:31b",
+      "workspace_read_count": 1,
+      "matches_w04_hash": true
+    },
+    "jaeger_projection": {
+      "request": "GET http://127.0.0.1:16686/api/traces/75ee12eb3a775282a950d4c603c651c4",
+      "http_status": 200,
+      "jaeger_trace_id": "75ee12eb3a775282a950d4c603c651c4",
+      "span_count": 1,
+      "span_id": "31f218a406db3435",
+      "operation": "agent.chat",
+      "status": "OK",
+      "duration_us": 2578127,
+      "correlation_attribute": "bago.trace_id=trace-ce1f60b61fc34e13",
+      "provider_id": "ollama-cloud",
+      "model_id": "gemma4:31b",
+      "workspace_read_source": ".goals/ADL-OLLAMA-SPIRAL-001/evidence/CHAT_READ_TEST.txt:1-3",
+      "screenshot": {
+        "path": "output/playwright/jaeger-ollama-spiral-trace-20261009.png",
+        "sha256": "897760d112c5f71ce85df3f105a4f26298e6aa84d2b5871b4a485394d77ce5ef",
+        "matches_w04_receipt": true
+      }
+    },
+    "trace_boundary": "The app UI and saved assistant message reported trace_state=local_only. Jaeger trace 75ee12eb3a775282a950d4c603c651c4 is a separate post-run OTLP projection correlated by bago.trace_id; the app did not automatically attach the Jaeger ID or link during the turn."
+  },
+  "limits": [
+    "gemma4:31b-cloud and gemma4:31b are distinct identifiers in this evidence. The initial ID was unavailable; the available catalog-listed ID gemma4:31b was selected and used. No alias relationship is claimed.",
+    "The UI screenshot documents the selected/saved model state but does not independently identify who selected it; W03 records that the listed model was selected in Provider Settings.",
+    "The real-turn provenance is app-side evidence correlated across UI/API, SQLite, LocalTrace and Jaeger; no provider-signed transaction receipt or model cost is available.",
+    "Jaeger corroborates projected execution metadata, not the assistant's answer text or authorization. The response/source are established by the app and conversation store."
+  ]
+}

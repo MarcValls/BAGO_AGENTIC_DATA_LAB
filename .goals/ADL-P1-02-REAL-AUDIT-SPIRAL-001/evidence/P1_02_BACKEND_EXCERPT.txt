@@ -1,0 +1,28 @@
+Verbatim source excerpt prepared for bounded agent audit.
+Candidate HEAD: 69b4f4b1ead2552b527e6e48868ab36cc2b38cbc
+Source path: src/api/server.py
+Source line range: 1227-1247
+Source SHA-256: 958A6C7A2A1BAF0A04B8AD3BC76F36B0F80BB52AD8AA5E4718E01C480EC30A7E
+The numbered code lines below are copied verbatim from the stated source range.
+
+1227: # ===== WebSocket: Agent Execution =====
+1228: 
+1229: @app.websocket("/ws/agents/run")
+1230: async def websocket_agent_run(websocket: WebSocket) -> None:
+1231:     """Fail closed until an agent has a real governed execution path."""
+1232:     if not await _accept_local_websocket(websocket):
+1233:         return
+1234:     try:
+1235:         await websocket.send_json({
+1236:             "type": "error",
+1237:             "code": "execution_unavailable",
+1238:             "data": "Agent execution is unavailable: no governed execution capability is registered. No job was started or recorded.",
+1239:         })
+1240:     except (RuntimeError, WebSocketDisconnect):
+1241:         pass
+1242:     finally:
+1243:         try:
+1244:             await websocket.close(code=1008)
+1245:         except RuntimeError:
+1246:             pass
+1247: 

@@ -67,13 +67,14 @@ def _matches_many(patterns: list[str]) -> list[str]:
 
 
 def _test_function_count(path: Path) -> int:
+    """Count test functions for the generator's compatibility tests."""
     try:
         tree = ast.parse(path.read_text(encoding="utf-8"))
     except (OSError, SyntaxError):
         return 0
+
     def is_pytest_fixture(node: ast.AST) -> bool:
-        decorators = getattr(node, "decorator_list", [])
-        for decorator in decorators:
+        for decorator in getattr(node, "decorator_list", []):
             target = decorator.func if isinstance(decorator, ast.Call) else decorator
             if isinstance(target, ast.Name) and target.id == "fixture":
                 return True
@@ -90,11 +91,22 @@ def _test_function_count(path: Path) -> int:
 
 
 def collected_test_count() -> int:
-    """Count test functions without importing project dependencies."""
-    return sum(
-        _test_function_count(path)
-        for path in sorted((REPO_ROOT / "tests").glob("test_*.py"))
+    """Count pytest cases, including parametrized cases, without executing them."""
+    output = _run(
+        [
+            sys.executable,
+            "-m",
+            "pytest",
+            "tests",
+            "--collect-only",
+            "-q",
+            "--disable-warnings",
+        ]
     )
+    match = re.search(r"\b(?P<count>\d+)\s+tests? collected\b", output)
+    if not match:
+        raise RuntimeError("pytest collection completed without a parseable case count")
+    return int(match.group("count"))
 
 
 def executed_test_count() -> int:
@@ -531,6 +543,41 @@ def _render_agent_catalog() -> str:
     return "\n".join(lines)
 
 
+def render_first_user_tutorial(manifest: dict[str, Any]) -> str:
+    """Render and validate the first-user tutorial declared in the manifest."""
+    tutorial = manifest.get("first_user_tutorial")
+    if not tutorial:
+        return "No hay un videotutorial de primer uso declarado."
+
+    required_files = ("video", "subtitles", "guide", "trace", "input")
+    required_values = ("provider", "global_model", "agent_model", "credential_redaction")
+    missing_keys = [key for key in required_files + required_values if not tutorial.get(key)]
+    if missing_keys:
+        raise ValueError("Tutorial metadata is missing: " + ", ".join(missing_keys))
+    missing_files = [
+        tutorial[key]
+        for key in required_files
+        if not (REPO_ROOT / tutorial[key]).is_file()
+    ]
+    if missing_files:
+        raise FileNotFoundError("Tutorial artifacts missing: " + ", ".join(missing_files))
+
+    return "\n".join(
+        [
+            "Guía visual narrada en español para recorrer el chat, los agentes y los ajustes del proveedor.",
+            f"La pantalla completa de configuración se conserva; el campo de {tutorial['credential_redaction']} aparece censurado.",
+            f"La guía distingue el modelo global del asistente ({_inline(tutorial['global_model'])}) del modelo fijado al agente lector ({_inline(tutorial['agent_model'])}).",
+            f"La traza enlazada registra una lectura acotada y respuesta real de {tutorial['provider']}; no acredita una auditoría del código ni ejecución de trabajos.",
+            "",
+            f"- Vídeo: [{_inline('MP4')}]({tutorial['video']})",
+            f"- Subtítulos: [{_inline('SRT')}]({tutorial['subtitles']})",
+            f"- Guía y límites: [{_inline(Path(tutorial['guide']).name)}]({tutorial['guide']})",
+            f"- LocalTrace: [{_inline(Path(tutorial['trace']).name)}]({tutorial['trace']})",
+            f"- Archivo de ejemplo: [{_inline(Path(tutorial['input']).name)}]({tutorial['input']})",
+        ]
+    )
+
+
 def render_readme(
     *,
     manifest: dict[str, Any],
@@ -574,6 +621,70 @@ def render_readme(
         "",
         f"> {project['description']}",
         "> Este documento se genera desde el estado y los artefactos del repositorio.",
+        "",
+        "## El problema",
+        "",
+        "Un agente empresarial necesita demostrar de dónde viene la respuesta, qué la autoriza y qué efecto ocurrió. Una salida plausible del modelo no demuestra ninguno de esos hechos.",
+        "",
+        "## Arquitectura en una mirada",
+        "",
+        FENCE + "text",
+        "CONOCIMIENTO → EVIDENCIA → RELACIONES → PROPUESTA → AUTORIZACIÓN → EJECUCIÓN RESTRINGIDA → RECIBO → TRACE → EVALUACIÓN",
+        FENCE,
+        "",
+        "El modelo propone; BAGO controla si la propuesta cruza a un efecto. La ruta local reproducible registra 15 spans y conserva los límites entre propuesta, permiso y ejecución.",
+        "",
+        "## Ejecuta la demo",
+        "",
+        "La extracción de producto reutiliza los componentes L0–L15 existentes; no",
+        "introduce una arquitectura de agente paralela. Ver [portfolio/README.md](portfolio/README.md).",
+        "",
+        FENCE + "bash",
+        "python demo.py",
+        FENCE,
+        "",
+        "El comando materializa summary, agent run, receipts, trace y evaluation en",
+        f"{_inline('demo_output/latest/')} sin convertir esa proyección en fuente canónica.",
+        "",
+        "## Tutorial para usuarios nuevos",
+        "",
+        render_first_user_tutorial(manifest),
+        "",
+        "## Evidencia de ejecución",
+        "",
+        "La evidencia versionada de L15 registra el trace consultado en Jaeger: [resultado y trace ID](evidence/l15_otel_jaeger_live.md). El demo produce `trace.json`, recibos y evaluación determinista; Jaeger es una proyección local, no autoridad de ejecución.",
+        "",
+        "### See it in action",
+        "",
+        "Vista real del trace L15 en Jaeger: 15 spans conectan retrieval, propuesta, permiso, ejecución y recibos.",
+        "",
+        "![Jaeger trace graph for the governed BAGO demo](portfolio/assets/jaeger-trace-graph.png)",
+        "",
+        "Trace ID: `04b58bb123bb6cc94a8cc0d60c7145ae` · 15 spans · validado localmente el 2026-10-08. La [evidencia L15 versionada](evidence/l15_otel_jaeger_live.md) es accesible desde GitHub; la UI de Jaeger solo está disponible al reproducirla en local.",
+        "",
+        "### Reproduce el trace en local",
+        "",
+        "Requiere Docker. Este recorrido inicia Jaeger, exporta y consulta el trace, y detiene el servicio al terminar:",
+        "",
+        FENCE + "bash",
+        "docker compose -p bago-otel -f infra/observability/docker-compose.yml up -d",
+        "python scripts/run_l15_otel_live_validation.py --check",
+        "docker compose -p bago-otel -f infra/observability/docker-compose.yml down",
+        FENCE,
+        "",
+        "Guía detallada: [L15 OpenTelemetry + Jaeger](docs/otel_jaeger.md).",
+        "",
+        "## Monitor local del equipo Codex",
+        "",
+        "Para observar en vivo las tareas y eventos que registra la coordinación local, instala las dependencias backend con `python -m pip install -r requirements.txt fastapi uvicorn`, y ejecuta la API y el frontend en dos terminales:",
+        "",
+        FENCE + "bash",
+        "python -m src.api.server",
+        FENCE,
+        "",
+        "En otra terminal, entra en `frontend`, ejecuta `npm install` y después `npm run dev`. Abre [http://localhost:5173/team-monitor.html](http://localhost:5173/team-monitor.html). La página consulta `/api/team/status` cada cuatro segundos; el estado mostrado procede de `.codex-team/state.json` y `.codex-team/events.jsonl`. Solo refleja eventos registrados por teamctl, no toda la actividad interna de la extensión Codex.",
+        "",
+        "Profundiza en las fases L0-L15 en el [roadmap](#roadmap-detectado), o consulta [STATE.md](STATE.md) para el alcance canónico y [portfolio/README.md](portfolio/README.md) para la presentación del producto.",
         "",
         "## Estado actual",
         "",
@@ -671,11 +782,17 @@ def render_readme(
         "",
         "### CI automática",
         "",
-        f"- {_inline(f'.github/workflows/{ci_workflow}')} · suite, README, demo E2E, vector, Jaeger live y compile check",
+        f"- {_inline(f'.github/workflows/{ci_workflow}')} · suite, README, demo de portfolio, demo E2E, vector, Jaeger live y compile check",
         "",
         "## Comandos reproducibles",
         "",
         FENCE + "bash",
+        "python demo.py",
+        "bash scripts/install_demo.sh",
+        ".venv/bin/python scripts/bago.py demo",
+        "source .venv/bin/activate",
+        "python scripts/bago.py demo --json",
+        "python scripts/bago.py demo --write-evidence",
         "python -m pip install -r requirements.txt",
         "python demo.py",
         "python -m pytest tests -q",

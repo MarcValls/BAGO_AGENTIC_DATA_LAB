@@ -191,6 +191,9 @@ def test_architecture_query_prepares_external_issue_without_sending_it():
     assert issue.request.effect_type is EffectType.EXTERNAL_API
     assert issue.decision.value == "REQUIRE_HUMAN"
     assert issue.called is False
+    assert issue.request.parameters["body"].startswith("Offline BAGO architecture review.")
+    assert "Citations:" in issue.request.parameters["body"]
+    assert "Human review is required before creating an external issue." in issue.request.parameters["body"]
     assert result.decision_receipts[0].actual_effect["called"] is False
     assert "no se envió ningún issue" in result.answer
 

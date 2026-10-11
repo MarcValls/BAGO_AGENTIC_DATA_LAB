@@ -1,0 +1,11 @@
+{
+  "version": "0.1.0",
+  "default_max_concurrency": 3,
+  "rules": [
+    "all_dependencies_done",
+    "no_write_scope_overlap",
+    "no_verifier_with_implementation_of_same_terminal_surface",
+    "no_consumer_before_frozen_contract_handoff",
+    "serialize_on_ambiguous_scope_overlap"
+  ]
+}

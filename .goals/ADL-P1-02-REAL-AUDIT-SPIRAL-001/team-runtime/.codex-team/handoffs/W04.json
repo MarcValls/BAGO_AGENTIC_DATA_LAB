@@ -1,0 +1,54 @@
+{
+  "changed_files": [
+    ".goals/ADL-P1-02-REAL-AUDIT-SPIRAL-001/evidence/inspect_conversation_store.py",
+    ".goals/ADL-P1-02-REAL-AUDIT-SPIRAL-001/evidence/W04_SQLITE_API_READBACK.json",
+    ".goals/ADL-P1-02-REAL-AUDIT-SPIRAL-001/evidence/project_p1_02_traces_to_jaeger.py",
+    ".goals/ADL-P1-02-REAL-AUDIT-SPIRAL-001/evidence/W04_JAEGER_PROJECTION.json",
+    ".goals/ADL-P1-02-REAL-AUDIT-SPIRAL-001/evidence/P1_02_AUDIT_EVIDENCE_COMPARISON.md",
+    ".goals/ADL-P1-02-REAL-AUDIT-SPIRAL-001/evidence/p1-02-jaeger-span-details-20261009.png"
+  ],
+  "next_consumers": [
+    "W05"
+  ],
+  "outputs": [
+    {
+      "name": "p1-02-audit-correlation-v1",
+      "path": ".goals/ADL-P1-02-REAL-AUDIT-SPIRAL-001/evidence/P1_02_AUDIT_EVIDENCE_COMPARISON.md",
+      "summary": "Compares the real ADL agent source receipts, visible Runner state, live fail-closed endpoint, API/SQLite conversation, LocalTrace and Jaeger spans; records excerpt and same-origin limits."
+    },
+    {
+      "name": "p1-02-jaeger-projection-v1",
+      "path": ".goals/ADL-P1-02-REAL-AUDIT-SPIRAL-001/evidence/W04_JAEGER_PROJECTION.json",
+      "summary": "Two persisted agent.chat LocalTraces projected post-run; Jaeger API readback confirmed one span per trace, provider/model/source and successful status."
+    }
+  ],
+  "payload_sha256": "44760be5e2a415fa2836f50036ea7f87f6f9e19f9e41d2741baf38032fc08efa",
+  "residual_risks": [
+    "Jaeger is not automatically linked by the app response and does not establish answer text; the persisted chat/API is the text evidence.",
+    "The same-origin 8084 WebSocket handshake returns HTTP 403, likely due the active origin allowlist; this is a separate runtime issue.",
+    "Provider-reported model cost is absent.",
+    "No source code was changed and no agent job was executed."
+  ],
+  "role": "trace-observability-engineer",
+  "schema_version": "1.0",
+  "status": "DONE",
+  "verification": [
+    {
+      "command": "Read-only GET /api/conversations/conv_438e701c29684bfab97adbd3abac098b and SQLite URI mode=ro",
+      "result": "PASS; API and SQLite have four matching complete messages, conversation identity, message content and source/trace references"
+    },
+    {
+      "command": "Export persisted LocalTrace IDs trace-263199de3de94db9 and trace-5928204206a14073 to local OTLP; GET each Jaeger trace",
+      "result": "PASS; 2 OTLP exports, each Jaeger API readback returns one OK agent.chat span with matching local trace ID, model, provider and source"
+    },
+    {
+      "command": "Inspect Playwright capture of Jaeger span detail",
+      "result": "PASS; screenshot shows gemma4:31b, ollama-cloud, response_received and backend excerpt source"
+    },
+    {
+      "command": "Compare UI/API, persistence and trace receipts",
+      "result": "PASS_WITH_EXPLICIT_LIMITS; Jaeger is a post-run projection, same-origin 8084 gets 403, backend was read by hash-bound excerpt due 32 KiB tool limit"
+    }
+  ],
+  "work_id": "W04"
+}

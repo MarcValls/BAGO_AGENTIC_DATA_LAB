@@ -1,0 +1,37 @@
+{
+  "changed_files": [
+    "evidence/W02_FRONTEND.md"
+  ],
+  "next_consumers": [
+    "W04"
+  ],
+  "outputs": [
+    {
+      "path": "evidence/W02_FRONTEND.md",
+      "sha256": "342c90f1ce5f6897eb941c2a35413a15bbd7f7ff898465ed45183d34a6672a30",
+      "summary": "Read-only frontend state map for chat-assisted agent creation, Builder review/save, conversation/capability statuses, fail-closed Runner, UI test coverage, and proposed lifecycle UI seams; findings distinguish facts, inference, recommendation and NOT_RUN."
+    }
+  ],
+  "payload_sha256": "3da9401908535cd4751bbf69cee2c511a8fdfc2225f20457bf27ad8985c48cb0",
+  "residual_risks": [
+    "Worktree contains pre-existing product changes; the report binds key source claims to current file hashes and current line ranges, while HEAD is only the base commit.",
+    "No agent trigger or runtime lifecycle is implemented or verified by this frontend audit.",
+    "Signal source/event, actor identity and authorization, lifetime, idempotency, retry, cancellation and audit semantics remain open for W04 synthesis/user decision.",
+    "Frontend-specific project Copilot instructions and a named frontend-auditor plugin skill are absent in this candidate; the available role agent prompts and mission protocol were used."
+  ],
+  "role": "frontend-auditor",
+  "status": "DONE",
+  "verification": [
+    {
+      "command": "Static inspection of current frontend sources, test inventory, contract and prior goal records; source SHA-256 values recorded in report.",
+      "evidence": "evidence/W02_FRONTEND.md",
+      "result": "PASS"
+    },
+    {
+      "command": "Frontend tests, lint, build, browser and runtime/trigger execution",
+      "reason": "W02 is a read-only discovery audit; no product edits or runtime verification were assigned.",
+      "result": "NOT_RUN"
+    }
+  ],
+  "work_id": "W02"
+}

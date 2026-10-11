@@ -1,0 +1,9 @@
+{"at": "2026-10-09T21:29:37+00:00", "kind": "MISSION_INIT", "mission_id": "ADL_CAPABILITY_MANAGER_SPIRAL_001", "mission_sha256": "58fe2fdac067351923644ef3d4cdcbb3aec49d3700415ef2a9459ba5a7a1f628"}
+{"agent": "bago_architecture_auditor", "at": "2026-10-09T21:30:16+00:00", "kind": "CLAIM", "role": "architecture-auditor", "work_id": "W01"}
+{"agent": "bago_backend_auditor", "at": "2026-10-09T21:30:26+00:00", "kind": "CLAIM", "role": "backend-auditor", "work_id": "W02"}
+{"agent": "bago_frontend_auditor", "at": "2026-10-09T21:30:47+00:00", "kind": "CLAIM", "role": "frontend-auditor", "work_id": "W03"}
+{"at": "2026-10-09T21:31:32+00:00", "kind": "HANDOFF_DONE", "payload_sha256": "3840f43b1f2e497d1e32fc84605d51bb052ba9c16b96a36a3a99a15879a582a5", "work_id": "W01"}
+{"at": "2026-10-09T21:31:43+00:00", "kind": "HANDOFF_DONE", "payload_sha256": "e11365cfd105786223c6789a3a022263d85cae710483dc6ea408161a588c772a", "work_id": "W03"}
+{"at": "2026-10-09T21:32:33+00:00", "kind": "HANDOFF_DONE", "payload_sha256": "058986421c5fa9b164d72c9c77f7ff2f8b5301d1f4178f34187af1561cab551f", "work_id": "W02"}
+{"agent": "team-orchestrator", "at": "2026-10-09T21:33:31+00:00", "kind": "CLAIM", "role": "team-orchestrator", "work_id": "W04"}
+{"at": "2026-10-09T21:33:59+00:00", "kind": "HANDOFF_DONE", "payload_sha256": "91ebc3c528309cade65dfd8e3a78ebf06714179dccb46009c414578b863212d5", "work_id": "W04"}

@@ -1,0 +1,22 @@
+{
+  "change_request_id": "CR-013-CHAT-TURN-SCOPED-WORKSPACE-READ",
+  "contract_id": "agent-chat-control-api-v1",
+  "old_fingerprint": "2942ed04634acee6a035615c63815d7d17bc049d97bb69380f1c62c87217ce6e",
+  "proposed_new_fingerprint": "98de492e09becfdff66da36922bf16e533a5fef6f7f5440452d1e207e52ead67",
+  "reason": "The user requested read access from chat. Add an explicitly enabled, per-message, read-only capability with a bounded workspace file reader and visible source receipts; preserve the existing no-write/no-command boundary.",
+  "impacted_consumers": [
+    "POST /api/chat/control",
+    "POST /api/agents/{agent_id}/chat",
+    "AgentChat UI",
+    "agent.chat LocalTrace and Jaeger projection",
+    "AC04 verification"
+  ],
+  "required_invalidations": [
+    "Confirm the default request denies file access and the UI requires per-message opt-in.",
+    "Verify traversal, absolute paths, symlink escapes, sensitive/runtime paths, binary/oversized files, and credential-like content are denied.",
+    "Verify only bounded text ranges inside the bound project are returned and source paths/line ranges are visible.",
+    "Verify both app-assistant and agent chat flows use Ollama tool calling only when opted in; no write or command tool is offered.",
+    "Build/static verification and report whether a live Ollama tool-call was run."
+  ],
+  "decision": "Accepted under the current user request; proposed the per-message read-only boundary, then amended the frozen control-plane contract before implementation verification."
+}

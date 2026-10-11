@@ -1,0 +1,32 @@
+{
+  "work_id": "W01",
+  "role": "evidence-provenance-engineer",
+  "status": "DONE",
+  "changed_files": [
+    "evidence/W01_BACKEND_MAP.md"
+  ],
+  "outputs": [
+    {
+      "kind": "read_only_backend_architecture_map",
+      "path": "evidence/W01_BACKEND_MAP.md",
+      "description": "Maps Ollama agent-chat execution, local persistence, trace/eval seams, fixture-vs-live evidence, and constraints for real repeatable agent evaluations at candidate HEAD 1e4d9f930da1225ce61ce27def897f76d57a08fc."
+    }
+  ],
+  "verification": [
+    {
+      "command": "Read-only source and test-code inspection at candidate HEAD 1e4d9f930da1225ce61ce27def897f76d57a08fc; no product edits, tests, Ollama calls, or runtime data reads.",
+      "result": "PASS",
+      "evidence": "evidence/W01_BACKEND_MAP.md; source locations and NOT_RUN boundaries recorded."
+    }
+  ],
+  "residual_risks": [
+    "No suite/case/run identity or agent-configuration fingerprint is linked into current agent-chat traces.",
+    "Provider errors occur before the current trace writer; a failed request can leave a persisted user message without assistant result or failure trace.",
+    "Current LocalTraceEvaluator checks governed execution evidence, not agent response quality; existing chat tests stub the provider.",
+    "Trace cost is not reported; LocalTrace and EvaluationReport use a 0.0 default that must not be treated as measured zero cost.",
+    "Live Ollama availability, model identity in the local configured provider, and Jaeger projection were not checked in this read-only work item."
+  ],
+  "next_consumers": [
+    "W03"
+  ]
+}

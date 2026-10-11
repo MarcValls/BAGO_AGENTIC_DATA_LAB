@@ -1,0 +1,19 @@
+{
+  "id": "agent_78f9cfd1",
+  "config": {
+    "name": "Basic RAG Agent",
+    "description": "Simple retrieval-augmented generation agent",
+    "type": "rag",
+    "system_prompt": "You are a helpful assistant that answers questions based on retrieved context.",
+    "tools": [
+      "retrieval.search",
+      "bedrock.converse"
+    ],
+    "retrieval_config": {
+      "mode": "hybrid",
+      "top_k": 5
+    },
+    "sandbox_profile": null
+  },
+  "created_at": "2026-10-09T00:37:03.231560"
+}

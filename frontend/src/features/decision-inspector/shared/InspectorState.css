@@ -1,0 +1,9 @@
+.decision-inspector-state { padding: 1.25rem; border: 1px solid #64748b; border-radius: .5rem; background: #172033; color: #f8fafc; }
+.decision-inspector-state h2 { margin: 0 0 .5rem; font-size: 1.15rem; }
+.decision-inspector-state p { margin: 0; }
+.decision-inspector-state button { margin-top: 1rem; }
+.decision-inspector-state--error { border-color: #f87171; }
+.decision-inspector-state--unknown, .decision-inspector-state--unsupported { border-color: #fbbf24; }
+.decision-inspector-support { display: inline-block; padding: .2rem .5rem; border: 1px solid currentColor; border-radius: 999px; font-size: .875rem; }
+.decision-inspector-support--supported { color: #86efac; }
+.decision-inspector-support--unsupported, .decision-inspector-support--missing, .decision-inspector-support--stale, .decision-inspector-support--contradictory, .decision-inspector-support--unknown { color: #fcd34d; }

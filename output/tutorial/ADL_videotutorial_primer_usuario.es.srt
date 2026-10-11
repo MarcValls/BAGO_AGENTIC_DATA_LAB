@@ -1,0 +1,39 @@
+1
+00:00:00,000 --> 00:00:10,196
+Bienvenido al Agentic Data Lab. El chat es la puerta de entrada: puedes hablar con el asistente de la aplicacion o seleccionar uno de tus agentes.
+
+2
+00:00:10,446 --> 00:00:19,456
+La lista lateral muestra tus agentes. Usa List my agents para actualizarla o pulsa un agente para abrir su conversacion.
+
+3
+00:00:19,706 --> 00:00:29,258
+Provider settings muestra el estado, el metodo de autenticacion y el modelo. El recuadro de API key esta censurado en esta grabacion.
+
+4
+00:00:29,508 --> 00:00:39,173
+Selecciona el agente. Para una lectura, habilita el permiso de solo lectura unicamente en este mensaje y nombra el archivo de ejemplo.
+
+5
+00:00:39,423 --> 00:00:48,205
+La respuesta aparece con el archivo y el rango leido. Esa referencia te permite comprobar de donde obtuvo el agente el texto.
+
+6
+00:00:48,455 --> 00:00:57,326
+Para disenar un agente, vuelve al asistente y describe la tarea. La propuesta usa el modelo confirmado por el proveedor.
+
+7
+00:00:57,576 --> 00:01:07,935
+Revisa nombre, descripcion, tipo, modelo e instrucciones. El borrador no se guarda hasta que confirmes con Create agent.
+
+8
+00:01:08,185 --> 00:01:15,910
+Si solo estabas explorando, elige Cancel proposal. La lista de agentes queda sin cambios.
+
+9
+00:01:16,160 --> 00:01:26,044
+La barra tambien abre el Agent Builder para empezar desde una plantilla o configurar un agente a medida. Otras vistas estan en la misma navegacion.
+
+10
+00:01:26,294 --> 00:01:35,534
+Prueba primero con mensajes y archivos de ejemplo. Evita copiar credenciales en el chat y revisa cada propuesta antes de guardarla.

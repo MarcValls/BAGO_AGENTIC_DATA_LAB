@@ -1,0 +1,18 @@
+{
+  "goal_id": "ADL-ONE-SHOT-SIGNAL-AGENT-SPIRAL-001",
+  "status": "EXECUTED",
+  "phase": "DISCOVERY_SPIRAL_COMPLETE",
+  "candidate_branch": "codex/adl-agent-evaluation-lab-20261010",
+  "candidate_head": "1e4d9f930da1225ce61ce27def897f76d57a08fc",
+  "career_focus": "AI platform and agent engineering",
+  "frontend_audit": "DONE_READ_ONLY",
+  "backend_audit": "DONE_READ_ONLY",
+  "synthesis": "DONE_CONTRACT_PROPOSED",
+  "implementation": "NOT_AUTHORIZED_BY_DISCOVERY_CONTRACT",
+  "open_decisions": [
+    "first real signal source and event schema",
+    "authenticated actor and authorization boundary",
+    "expiry, retry, cancellation, idempotency and retention policy"
+  ],
+  "commit_sync": "NOT_REQUESTED"
+}

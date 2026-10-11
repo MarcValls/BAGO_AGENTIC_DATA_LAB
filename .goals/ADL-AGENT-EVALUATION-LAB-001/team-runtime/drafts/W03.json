@@ -1,0 +1,10 @@
+{
+  "work_id": "W03",
+  "role": "team-orchestrator",
+  "status": "DONE",
+  "changed_files": ["evidence/W03_EVALUATION_CONTRACT.md"],
+  "outputs": [{"path": "evidence/W03_EVALUATION_CONTRACT.md", "description": "Synthesized and bounded Agent Evaluation Lab product, data, API, UI, privacy, trace, market rationale, and acceptance contract."}],
+  "verification": [{"command": "Inspected W01/W02 reports and validated their handoffs with teamctl", "result": "PASS", "details": "Both dependent work items were DONE and their evidence and handoff hashes validate; product implementation and runtime verification remain NOT_RUN."}],
+  "residual_risks": ["Single-turn deterministic assertions do not establish factual correctness or general semantic quality.", "Ollama API key status is configured but unverified; only model discovery has succeeded, and real inference/Jaeger export remain NOT_RUN at contract synthesis.", "No agent jobs, workspace writes, tool calls, online evals, or multi-provider comparison are included."],
+  "next_consumers": []
+}

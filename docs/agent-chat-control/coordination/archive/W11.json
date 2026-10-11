@@ -1,0 +1,43 @@
+{
+  "changed_files": [
+    "docs/decision-inspector/verification/W11_INDEPENDENT_VERIFICATION.md"
+  ],
+  "next_consumers": [
+    "W12"
+  ],
+  "outputs": [
+    {
+      "frozen": true,
+      "id": "decision-inspector-verification-v1",
+      "path": "docs/decision-inspector/verification/W11_INDEPENDENT_VERIFICATION.md",
+      "sha256": "46b96c3560688df427bb6f17d14f08e7baae178a4c7f498032be5f15976691f9"
+    }
+  ],
+  "payload_sha256": "4bce151b5965f0b522f9d53f71e590c3df18339be137a46222fe73b98c99d188",
+  "residual_risks": [
+    "P1: action receipt provenance cannot prove run ownership when a receipt stream is mis-scoped or correlation identifiers collide.",
+    "Manual keyboard-only and screen-reader verification NOT_RUN.",
+    "Current live source run has no structured claim links; Jaeger correlation to the UI is unavailable.",
+    "AWS live and remote collector verification NOT_RUN."
+  ],
+  "role": "verification-engineer",
+  "status": "DONE",
+  "verification": [
+    {
+      "command": "npm run build (cwd frontend)",
+      "evidence": "tsc -b and Vite production build completed; 124 modules transformed.",
+      "result": "PASS"
+    },
+    {
+      "command": "python .codex-team-kit/scripts/teamctl.py verify",
+      "evidence": "W01-W10 handoffs validated before W11 handoff.",
+      "result": "PASS"
+    },
+    {
+      "command": "Independent source, contract, adversarial fixture, and screenshot artifact review",
+      "evidence": "Verification completed and P1 recorded: receipt records do not carry run identity; wrong-run receipt correlation is not independently rejectable. Browser keyboard/screen-reader and screenshot visual review are NOT_RUN. See report for all case-level results.",
+      "result": "PASS"
+    }
+  ],
+  "work_id": "W11"
+}

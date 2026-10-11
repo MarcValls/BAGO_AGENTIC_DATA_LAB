@@ -39,6 +39,72 @@ Cada entrada debe poder usarse para:
 [Qué no sé todavía sobre este tema, qué quiero explorar después]
 `
 
+### 2026-10-10 - LangGraph interrupt/resume con ejecución gobernada
+
+**Fase:** L1
+
+**Estado de evidencia:** `EXECUTED`; la validación de fase sigue `PARTIAL`
+hasta superar suite completa, README e inspección independiente.
+
+**Qué entendí:**
+
+Un permiso no basta si no está vinculado a la petición exacta que una persona
+revisó. El flujo debe pausar fuera del paso que ejecuta, recibir una respuesta
+de reanudación, recalcular el fingerprint canónico de la petición y rechazar la
+aprobación si cambian parámetros, workspace, capability u operación. La
+aprobación local de la demo no autentica identidad ni reemplaza autorización
+de producción.
+
+**Qué implementé:**
+
+- `src/orchestration/governed_execution.py`: grafo inyectable que conecta
+  `GovernedRAG`, LangGraph `interrupt`/`Command`, `ExecutionGateway`,
+  `SandboxManager`, recibos y `LocalTrace` desde el resultado real del grafo.
+- `tests/test_l1_integrated_graph.py`: pausa antes del efecto, mismatch,
+  escritura permitida, retrieval vigente, replay de permiso, escape de
+  workspace y petición tipada inválida.
+- `scripts/run_l1_governed_execution_demo.py`,
+  `docs/langgraph_architecture.md` y la transcripción/recibos versionados bajo
+  `evidence/l1-governed-execution-completion-20261010/`.
+
+**Evidence:**
+
+La suite enfocada registró `27 passed` para integración, casos L1 previos y
+sandbox. El demo registró escritura observada, denegación por aprobación
+alterada, replay `PERMIT_REPLAY`, escape `PATH_ESCAPE` y timeout real de
+`pytest` (`TIMEOUT`), cada uno con recibo;
+las rutas de grafo incluyen LocalTrace derivado del resultado real. La suite
+completa, README y revisión independiente aún están pendientes al registrar
+esta entrada.
+
+**Failure modes que ahora evito:**
+
+- Ejecutar un write al entrar en el grafo antes de que haya aprobación.
+- Confiar solo en un booleano sin confirmar el hash de toda la petición.
+- Contar un permiso como ejecución o inventar recibos cuando falta permiso.
+- Tratar una denegación del manager como prueba de aislamiento a nivel de SO.
+- Promover L1 por las pruebas de L4/L11 sin demostrar la integración del grafo.
+
+**Interview explanation:**
+
+"Integré un StateGraph con retrieval gobernado y una frontera de ejecución
+local. El grafo presenta la petición y se pausa; el caller reanuda el mismo
+thread con una aprobación y el hash completo de la propuesta. El nodo recalcula
+el hash, crea un permit acotado al workspace y llama al gateway con una
+operación de filesystem tipada. El sandbox devuelve un recibo incluso ante
+denegación y el LocalTrace proyecta los eventos reales. La demo prueba el
+control lógico local, no identidad autenticada ni aislamiento de sistema
+operativo."
+
+**Gaps restantes:**
+
+- Checkpointer durable y persistente, identidad/autenticación de quien aprueba
+  y almacenamiento durable anti-replay.
+- `LocalRestrictedBackend` no proporciona aislamiento OS/red.
+- Jaeger/OTel no se ejecutó para esta fase; `LocalTrace` es la fuente local de
+  evidencia.
+- El cierre de `VALIDATED` depende de suite completa, README y review P0/P1.
+
 ---
 
 ## Entradas

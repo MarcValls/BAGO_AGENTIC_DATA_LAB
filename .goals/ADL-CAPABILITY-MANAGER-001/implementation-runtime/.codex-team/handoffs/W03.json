@@ -1,0 +1,66 @@
+{
+  "changed_files": [
+    "evidence/W03_FINAL_REVIEW.md",
+    "drafts/W03.json"
+  ],
+  "next_consumers": [
+    "W04"
+  ],
+  "outputs": [
+    {
+      "description": "Independent final review with scoped PASS verdict, evidence, and remaining limitations.",
+      "path": "evidence/W03_FINAL_REVIEW.md",
+      "sha256": "912d1242dc7d6439de5b719662e2cade2a781b812bca6cfb4c774297a83b3d76"
+    }
+  ],
+  "payload_sha256": "4cc0e882bbec1508846b40b4582cf673469b3445bbcbe8e0e849b9e0c802d646",
+  "residual_risks": [
+    "Verdict is scoped to the safe catalog/proposal MVP and does not validate governed execution or authorization.",
+    "ESLint is unavailable; lint remains unverified.",
+    "The full test suite was not run.",
+    "No live POST proposal smoke test was run to avoid persistent user data.",
+    "Capability command notices are not persisted in the conversation transcript, although proposal records are persisted with conversation_id.",
+    "No authenticated actor identity or human approval flow exists.",
+    "GET /api/artifacts returns 404 on the live server tested."
+  ],
+  "role": "final-verifier",
+  "status": "DONE",
+  "verification": [
+    {
+      "command": "pytest -q tests\\test_capability_manager.py tests\\test_conversation_library.py tests\\test_agent_chat_trace.py",
+      "evidence": "17 passed, 1 Python 3.14/Pydantic compatibility warning.",
+      "result": "PASS"
+    },
+    {
+      "command": "npm --prefix frontend run build",
+      "evidence": "tsc -b and Vite build; 128 modules transformed.",
+      "result": "PASS"
+    },
+    {
+      "command": "npm --prefix frontend run lint",
+      "evidence": "eslint executable is not installed/available in this checkout.",
+      "result": "BLOCKED"
+    },
+    {
+      "command": "git diff --check -- scoped implementation files",
+      "evidence": "No diff-check errors.",
+      "result": "PASS"
+    },
+    {
+      "command": "GET /api/capabilities and GET / on 127.0.0.1:8084",
+      "evidence": "HTTP 200; expected four capability states; root UI returns HTTP 200.",
+      "result": "PASS"
+    },
+    {
+      "command": "GET /api/artifacts on 127.0.0.1:8084",
+      "evidence": "HTTP 404. Recorded as a separate residual route issue; no P0/P1 catalog contract failure.",
+      "result": "NOT_VERIFIED"
+    },
+    {
+      "command": "Live POST to create/cancel capability proposal",
+      "evidence": "Avoided creating persistent records in the user's live proposal database; route behavior is covered with temporary SQLite/TestClient tests.",
+      "result": "NOT_RUN"
+    }
+  ],
+  "work_id": "W03"
+}

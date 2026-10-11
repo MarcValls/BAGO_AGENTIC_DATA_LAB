@@ -1,0 +1,42 @@
+{
+  "changed_files": [
+    "docs/decision-inspector/inventory/REPOSITORY_INVENTORY.md"
+  ],
+  "next_consumers": [
+    "W02",
+    "W03"
+  ],
+  "outputs": [
+    {
+      "kind": "repository_snapshot_reuse_map_boundary_map",
+      "path": "docs/decision-inspector/inventory/REPOSITORY_INVENTORY.md",
+      "sha256": "1645a3b97aac412f163b870b15e3b6f43075a6219b1d5f7c6225a207809a261f"
+    }
+  ],
+  "payload_sha256": "735cab00b512f0c214e5e91c87179bb70ce280c24a6d0a84cdd79c5d23d52e0f",
+  "residual_risks": [
+    "Mission implementation paths conflict with this repository's frontend/src React application; a change request is required before UI implementation.",
+    "Frontend and API were not running at snapshot time; browser behavior remains unverified.",
+    "Jaeger contains backend trace projection but no current UI correlation identifier was found."
+  ],
+  "role": "team-orchestrator",
+  "status": "DONE",
+  "verification": [
+    {
+      "command": "git rev-parse HEAD; git status --short",
+      "evidence": "Captured HEAD c87f619d4a167bca854de4bbda75e2574c076c75 and classified pre-existing untracked build outputs separately from pack and mission files.",
+      "result": "PASS"
+    },
+    {
+      "command": "Inspect src/agent, src/observability, src/sandbox, src/api, frontend/src and demo_output/latest",
+      "evidence": "Inventory records existing run/evidence/trace/authorization/receipt/evaluation/API/UI owners and hashes of the key source files and trace artifact.",
+      "result": "PASS"
+    },
+    {
+      "command": "GET http://localhost:16686/api/services and query service=bago-agentic-data-lab",
+      "evidence": "Local Jaeger responds and has indexed 15-span traces; explicitly scoped as backend projection, not UI behavior.",
+      "result": "PASS"
+    }
+  ],
+  "work_id": "W01"
+}

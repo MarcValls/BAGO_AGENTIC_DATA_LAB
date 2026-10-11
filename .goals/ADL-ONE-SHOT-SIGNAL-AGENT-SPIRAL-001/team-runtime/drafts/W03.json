@@ -1,0 +1,28 @@
+{
+  "changed_files": [
+    "evidence/W03_BACKEND.md"
+  ],
+  "outputs": [
+    {
+      "path": "evidence/W03_BACKEND.md",
+      "summary": "Read-only backend audit maps agent persistence, chat, capabilities/proposals, fail-closed execution, sandbox/permit/receipt seams, demo jobs, trace evidence, and lifecycle gaps for one-shot and signal-waiting agents."
+    }
+  ],
+  "verification": [
+    {
+      "command": "Static source and existing-test inspection only; no product tests or runtime integrations executed.",
+      "result": "NOT_RUN",
+      "reason": "W03 is a read-only discovery audit; only source inspection was authorized. Existing assertions are described as source evidence, not as tests run in this handoff."
+    }
+  ],
+  "residual_risks": [
+    "Candidate is dirty relative to HEAD; findings bind to observed worktree sources, with baseline preservation recorded in W01_SCOPE.md.",
+    "No authenticated human actor is visible in the product API paths reviewed; define approval identity before authorizing effects.",
+    "No connected signal ingress, durable one-shot/run lifecycle, execution cancellation, or durable idempotency was found in the audited backend seams.",
+    "ExecutionGateway/SandboxManager and receipt data structures exist but are not wired to Agent Runner; sandbox permit replay tracking is process-local.",
+    "W03 performed no runtime, test, Ollama, OTLP or Jaeger validation."
+  ],
+  "next_consumers": [
+    "W04"
+  ]
+}

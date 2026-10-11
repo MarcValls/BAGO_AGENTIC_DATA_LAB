@@ -1,0 +1,60 @@
+{
+  "changed_files": [
+    "frontend/src/features/decision-inspector/trace/TraceTimeline.tsx",
+    "frontend/src/features/decision-inspector/trace/TraceTimeline.css",
+    "frontend/tests/ui/decision-inspector/trace/trace.test.tsx"
+  ],
+  "next_consumers": [
+    "W10",
+    "W11"
+  ],
+  "outputs": [
+    {
+      "kind": "trace_timeline_and_tool_call_inspector",
+      "path": "frontend/src/features/decision-inspector/trace/TraceTimeline.tsx",
+      "sha256": "53860643b743027fe0f8b13b6952f68e7be7f7cf51bbf180041b2b9dd1f38b02"
+    },
+    {
+      "kind": "trace_timeline_accessible_styles",
+      "path": "frontend/src/features/decision-inspector/trace/TraceTimeline.css",
+      "sha256": "d97750c19ee3cd527db5e973a87c015b415db23228a24b67e6839fc1e0bd6816"
+    },
+    {
+      "kind": "trace_timeline_ui_tests",
+      "path": "frontend/tests/ui/decision-inspector/trace/trace.test.tsx",
+      "sha256": "1624f326f6cda4af844ece83eea12908d29f4663f7880305c5e83224d40dd70c"
+    }
+  ],
+  "payload_sha256": "e91c56d8c7f378ab6414b239e3a007a86496f21510fb9d38ffe74e82e045b740",
+  "residual_risks": [
+    "Timeline UI behavior is server-rendered and unit checked; interactive browser and screen-reader behavior remain for W11/manual verification.",
+    "Current trace contract has no UI-to-Jaeger URL/correlation. The UI therefore states unavailable and offers no Jaeger link.",
+    "Redaction markers are preserved from source; UI cannot verify that upstream producers redacted all sensitive values.",
+    "Full frontend production build was not run for W08; scoped strict TypeScript compilation and four focused UI tests passed."
+  ],
+  "role": "decision-ui-engineer",
+  "status": "DONE",
+  "verification": [
+    {
+      "command": "frontend: tsc --target ES2020 --module commonjs --moduleResolution node --strict --esModuleInterop --skipLibCheck --jsx react-jsx --outDir <temp> tests/ui/decision-inspector/trace/trace.test.tsx src/features/decision-inspector/trace/TraceTimeline.tsx src/adapters/trace/localTraceAdapter.ts src/contracts/trace/trace.ts src/features/decision-inspector/shared/InspectorState.tsx",
+      "evidence": "Scoped trace component, contract adapter, shared state and UI test compile with strict TypeScript into a disposable temp directory.",
+      "result": "PASS"
+    },
+    {
+      "command": "node --require <temp-css-hook> --test <temp>/tests/ui/decision-inspector/trace/trace.test.js",
+      "evidence": "4 tests passed: chronology versus explicit causality and visible gaps; DENY preservation; explicit-only claim/action navigation and redaction pass-through; Jaeger unavailable; missing/empty/loading/error states.",
+      "result": "PASS"
+    },
+    {
+      "command": "git diff --check -- frontend/src/features/decision-inspector/trace frontend/tests/ui/decision-inspector/trace",
+      "evidence": "No whitespace errors in W08 scoped files.",
+      "result": "PASS"
+    },
+    {
+      "command": "python .codex-team-kit/scripts/teamctl.py verify",
+      "evidence": "Mission dependencies W03, W04 and W06 and existing handoffs validated before implementation; W08 claim recorded by teamctl.",
+      "result": "PASS"
+    }
+  ],
+  "work_id": "W08"
+}

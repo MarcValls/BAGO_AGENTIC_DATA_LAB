@@ -157,7 +157,12 @@ class LocalRestrictedBackend:
         return name
 
     def _resolve_executable(self, requested: str, specification: SandboxSpecification) -> str:
-        resolved = str(Path(requested).expanduser().resolve()) if Path(requested).is_absolute() else (shutil.which(requested) or requested)
+        requested_path = Path(requested).expanduser()
+        resolved = (
+            os.path.abspath(str(requested_path))
+            if requested_path.is_absolute()
+            else (shutil.which(requested) or requested)
+        )
         requested_name = self._executable_name(resolved)
         allowed = tuple(specification.allowed_executables)
         for entry in allowed:

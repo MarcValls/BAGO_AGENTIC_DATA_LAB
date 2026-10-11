@@ -1,0 +1,35 @@
+{
+  "schema_version": "1.0",
+  "work_id": "W05",
+  "role": "team-orchestrator",
+  "status": "DONE",
+  "changed_files": [
+    "evidence/W05_FINAL_STATUS.md"
+  ],
+  "outputs": [
+    {
+      "path": "evidence/W05_FINAL_STATUS.md",
+      "description": "Terminal gate summary bound to candidate source fingerprint with explicit EXECUTED/PARTIAL/NOT_RUN boundaries."
+    }
+  ],
+  "verification": [
+    {
+      "command": "teamctl --root <implementation-runtime> verify",
+      "result": "PASS; W01-W04 handoffs validated before W05 closure."
+    },
+    {
+      "command": "Focused backend, Ruff, py_compile, frontend API tests, SSR render, npm run build, git diff --check",
+      "result": "Root-reported PASS with exact counts and warning recorded in final status; W04 explicitly did not independently rerun these root checks."
+    },
+    {
+      "command": "Live Ollama / Jaeger / frontend lint / complete interaction UI suite",
+      "result": "Live Ollama receipt reviewed as a single real synthetic run; it predates detector hardening. Jaeger and lint NOT_RUN; full rendered UI coverage PARTIAL/open."
+    }
+  ],
+  "residual_risks": [
+    "P2 UI render-level test coverage remains partial; candidate is not VALIDATED.",
+    "Credential detection is heuristic and may miss arbitrary natural-language secrets or flag long hex values.",
+    "Live smoke request predates final detector hardening; Jaeger/OTLP and frontend lint were not run."
+  ],
+  "next_consumers": []
+}

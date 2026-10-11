@@ -1,0 +1,55 @@
+{
+  "changed_files": [
+    "frontend/src/features/decision-inspector/evidence/EvidenceExplorer.tsx",
+    "frontend/src/features/decision-inspector/evidence/EvidenceExplorer.css",
+    "frontend/tests/ui/decision-inspector/evidence/evidence-explorer.test.tsx"
+  ],
+  "next_consumers": [
+    "W10",
+    "W11"
+  ],
+  "outputs": [
+    {
+      "kind": "claim_evidence_provenance_explorer",
+      "path": "frontend/src/features/decision-inspector/evidence/EvidenceExplorer.tsx",
+      "sha256": "72ebd99ee0dea2e2795851a1bdd305c22dfd4e3d9bbada7d89914b351e892817"
+    },
+    {
+      "kind": "evidence_explorer_styles",
+      "path": "frontend/src/features/decision-inspector/evidence/EvidenceExplorer.css",
+      "sha256": "35d545bf373b3c6d59c8fd42e52b7a768fed4cb773b7fd9eea94e5ff2805b029"
+    },
+    {
+      "kind": "deterministic_ui_tests",
+      "path": "frontend/tests/ui/decision-inspector/evidence/evidence-explorer.test.tsx",
+      "sha256": "ca0c7ae67413b81ede727b5933c7c72547b6199e4763ec18bdaa4832e4d557b4"
+    }
+  ],
+  "payload_sha256": "8261cefa4fb72c26899b9ddc1bc839307bb403d1c743f18e751f93c35d09130a",
+  "residual_risks": [
+    "The explorer is not mounted in the application; W10 owns integration.",
+    "Current AgentRun data does not provide structured claims or semantic entailment; the view renders only explicit contract data and does not derive claims from answer text or citations.",
+    "Freshness is unknown when an expected comparable snapshot identity is absent; no source identity or revision is inferred.",
+    "Manual keyboard and screen-reader usability review remains for W11."
+  ],
+  "role": "decision-ui-engineer",
+  "status": "DONE",
+  "verification": [
+    {
+      "command": "frontend TypeScript transpile of evidence-explorer.test.tsx to disposable TEMP + node --test with CSS no-op loader and frontend NODE_PATH",
+      "evidence": "5 tests passed, 0 failed: provided claim/evidence/provenance, unsupported/missing/contradictory/context-only states, no synthetic claims, stale snapshot comparison, and loading/error/unsupported/empty announcements.",
+      "result": "PASS"
+    },
+    {
+      "command": "npm run build (frontend)",
+      "evidence": "TypeScript project build and Vite production build completed (107 modules transformed). Existing unrelated CSS warning remains in frontend/src/index.css: border-color #646cff is missing a colon.",
+      "result": "PASS"
+    },
+    {
+      "command": "python .codex-team-kit/scripts/teamctl.py verify",
+      "evidence": "Mission dependencies and existing W01-W06 handoffs validated before W07 completion.",
+      "result": "PASS"
+    }
+  ],
+  "work_id": "W07"
+}

@@ -1,0 +1,4 @@
+
+[plugins."bago-agent-decision-engineering-team@local-repo"]
+enabled = true
+

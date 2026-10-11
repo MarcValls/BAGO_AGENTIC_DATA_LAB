@@ -1,0 +1,95 @@
+{
+  "release": "BAGO_AGENTIC_DATA_LAB_MANUAL_01_v1.2",
+  "project": "BAGO_AGENTIC_DATA_LAB",
+  "status": "EDITORIAL_PASS",
+  "pages": 9,
+  "original_captures": 4,
+  "source_markdown_unchanged": true,
+  "files": [
+    {
+      "path": "BAGO_ADL_MANUAL_COMO_LEER_UNA_EJECUCION_v1.2.pdf",
+      "sha256": "c64ccb93fbe2e677b44d102be551ef299001e04d6b0ae76effad94f3d5e518f1",
+      "bytes": 365345
+    },
+    {
+      "path": "LEEME.md",
+      "sha256": "95233d5a8a71f09eb993996a77295493620d78b6d6a140a829369714b9f999b4",
+      "bytes": 2169
+    },
+    {
+      "path": "MANUAL_PARA_DUMMIES.md",
+      "sha256": "4219f93faea2c637b07a36628b50921e438236032fb2c41b84c6de6e6c9ca89f",
+      "bytes": 6983
+    },
+    {
+      "path": "MANUAL_PARA_DUMMIES_assets/actions.png",
+      "sha256": "d6aaf89663f19adc289b06d8bcf15d739c24df7a488e8ae68d5d943ecb5997f8",
+      "bytes": 110185
+    },
+    {
+      "path": "MANUAL_PARA_DUMMIES_assets/jaeger.png",
+      "sha256": "ac7267f45b313f89a673f72820a9369c58c8f032d2f1e7b5b86522205e7a092e",
+      "bytes": 61786
+    },
+    {
+      "path": "MANUAL_PARA_DUMMIES_assets/overview.png",
+      "sha256": "75b27d13d95abd542d8e365417b73bdb34d3f1a87fdf6105aee5f561dd696da9",
+      "bytes": 166407
+    },
+    {
+      "path": "MANUAL_PARA_DUMMIES_assets/trace.png",
+      "sha256": "bf6f6b25bd925b439e0c8f4a23a92b0bfa000d674ae9eacfeca18bd108fa4f86",
+      "bytes": 525055
+    },
+    {
+      "path": "PREVIEW_CONTACT_SHEET.png",
+      "sha256": "067de47aa509d8b8afbd4f4144729aa87b1667422a7121569557ab75d47b50c4",
+      "bytes": 429205
+    },
+    {
+      "path": "QA_MAQUETACION.md",
+      "sha256": "9c1527f1db8e97c3870c65269cb183523d23a5d655f285ca49d5845e22249fda",
+      "bytes": 1291
+    },
+    {
+      "path": "actions_recorte.png",
+      "sha256": "c9240e3c6d59a4b105dca17f788ae4bf0d160153f20fc43a3ebacf76e28a2adc",
+      "bytes": 22578
+    },
+    {
+      "path": "build_manual.py",
+      "sha256": "c0f8973aa768b41f4f09d2ab5e8005894cf8ddc86fb1a4d16e97c00329bdc161",
+      "bytes": 21035
+    },
+    {
+      "path": "estilos.css",
+      "sha256": "05adf67d301aab113426b807b3aa54db23a17ba514c624bf2acb2648b1075395",
+      "bytes": 16459
+    },
+    {
+      "path": "jaeger_recorte.png",
+      "sha256": "a7d24c1a98fec86c0ed940d5f171809b614702391748e3776ca19e12b045a490",
+      "bytes": 34628
+    },
+    {
+      "path": "manual.html",
+      "sha256": "db0009cb611819ee4bc946deeaddda42adae6c0f68c006f43eba820a9193f908",
+      "bytes": 15948
+    },
+    {
+      "path": "overview_recorte.png",
+      "sha256": "05a82c4e355f42a088841fdcbf493a59e6ac4146a9403253c27c13160ef411b7",
+      "bytes": 96992
+    },
+    {
+      "path": "requirements.txt",
+      "sha256": "a01d1c65bdfe002450d93de5e0497628c001451ad567c6a65aa67f7c2d364182",
+      "bytes": 32
+    },
+    {
+      "path": "trace_recorte.png",
+      "sha256": "420861eb35f51024fb6a346b7d21209f1f004c7bdfca363bb048446ce0a9aaa0",
+      "bytes": 53035
+    }
+  ]
+}

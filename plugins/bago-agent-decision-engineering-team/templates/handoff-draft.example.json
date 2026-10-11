@@ -1,0 +1,21 @@
+{
+  "changed_files": [
+    "docs/decision-inspector/ux/interaction-model.md"
+  ],
+  "outputs": [
+    {
+      "id": "decision-inspector-ux-contract-v1",
+      "path": "docs/decision-inspector/ux/interaction-model.md",
+      "frozen": true
+    }
+  ],
+  "verification": [
+    {
+      "command": "npm test -- decision-inspector",
+      "result": "PASS",
+      "evidence": "test output or evidence path"
+    }
+  ],
+  "residual_risks": [],
+  "next_consumers": ["W06"]
+}

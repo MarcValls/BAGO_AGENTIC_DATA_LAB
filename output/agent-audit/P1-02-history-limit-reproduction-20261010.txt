@@ -1,0 +1,9 @@
+P1-02 / agent-chat history size guard reproduction
+Timestamp local: 2026-10-10 22:43:11 +02:00
+Method: POST /api/agents/agent_b5665184bed24811ad59e90c8c4fdc9f/chat
+Synthetic request: valid message; conversation_history contains one assistant entry with 4001 characters; allow_workspace_read=false.
+HTTP status: 422
+Response: {"detail":{"code":"invalid_history","message":"Conversation history contains an invalid entry."}}
+Source validation: src/api/server.py lines 914-919 reject non-string/blank entries and any history content longer than 4000 characters. The validation runs before the provider call branch (line 927 onward).
+Provider generation: not invoked by this guard reproduction.
+Note: this safely reproduces the same rejection class observed on the earlier follow-up; it does not reproduce the earlier conversation payload.

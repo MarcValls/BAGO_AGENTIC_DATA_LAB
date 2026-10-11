@@ -1,0 +1,11 @@
+{"at": "2026-10-09T21:02:58+00:00", "kind": "MISSION_INIT", "mission_id": "ADL_P1_02_REAL_AUDIT_SPIRAL_V1", "mission_sha256": "9fcb07c80ac5fa29b1cc319803b2edb930015e3835ddc007494d07e3e701225d"}
+{"agent": "root-coordinator", "at": "2026-10-09T21:03:06+00:00", "kind": "CLAIM", "role": "team-orchestrator", "work_id": "W01"}
+{"at": "2026-10-09T21:04:54+00:00", "kind": "HANDOFF_DONE", "payload_sha256": "92707028e05f4e4ec6877907852042ab117b78e0082878d102634ba97258294d", "work_id": "W01"}
+{"agent": "ADL-agent:agent_d3e63db8b4704080b924a05fb1ab71fc", "at": "2026-10-09T21:05:56+00:00", "kind": "CLAIM", "role": "evidence-provenance-engineer", "work_id": "W02"}
+{"at": "2026-10-09T21:07:53+00:00", "kind": "HANDOFF_DONE", "payload_sha256": "8adb47c1362a25943add5c3b884dcf96bc49d66739b627576b63ca56dcfa9203", "work_id": "W02"}
+{"agent": "root-runtime-verifier", "at": "2026-10-09T21:08:47+00:00", "kind": "CLAIM", "role": "verification-engineer", "work_id": "W03"}
+{"at": "2026-10-09T21:12:36+00:00", "kind": "HANDOFF_DONE", "payload_sha256": "ac7044f9a63fe42459c525ecd89a4b966c2dbf23dea187ed880beb6c5f30195e", "work_id": "W03"}
+{"agent": "root-trace-provenance", "at": "2026-10-09T21:12:57+00:00", "kind": "CLAIM", "role": "trace-observability-engineer", "work_id": "W04"}
+{"at": "2026-10-09T21:19:08+00:00", "kind": "HANDOFF_DONE", "payload_sha256": "44760be5e2a415fa2836f50036ea7f87f6f9e19f9e41d2741baf38032fc08efa", "work_id": "W04"}
+{"agent": "bago-verifier", "at": "2026-10-09T21:19:20+00:00", "kind": "CLAIM", "role": "verification-engineer", "work_id": "W05"}
+{"at": "2026-10-09T21:21:22+00:00", "kind": "HANDOFF_DONE", "payload_sha256": "6471bf89a25ecd52d29bf66d7e40ceadb579033e1b396de70434fb9db5ce6bc1", "work_id": "W05"}

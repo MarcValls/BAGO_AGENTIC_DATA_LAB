@@ -1,9 +1,12 @@
-# L13 · Public E2E Demo — reproducible local evidence
+# L13 · Bruma Market demo — reproducible local evidence
 
-Generated at: `2026-09-23T03:20:50.871073+00:00`
+Generated at: `2026-10-02T16:30:24.709126+00:00`
 
-This is the public clone-and-run path for the BAGO Agentic Data Lab. It uses
-only committed code and deterministic local fixtures:
+This is a realistic but entirely fictional client scenario. Bruma Market is an
+online retailer whose governed policy refunds the express shipping fee when an
+order arrives more than 24 hours late. A QA receipt validates the current rule.
+The demo uses deterministic local fixtures; it does not contain real customer
+data or contact a live service.
 
 ```text
 Governed RAG
@@ -27,10 +30,18 @@ Governed RAG
 
 ## Result
 
+- Fictional client: `Bruma Market (cliente ficticio)`
+- Scenario: `Pedidos exprés con más de 24 horas de retraso`
+- Question: `¿Qué política aplica a los pedidos exprés que llegan con más de 24 horas de retraso y qué evidencia valida la regla?`
+- Answer: `Para pedidos exprés con más de 24 horas de retraso, la política vigente devuelve el coste del envío; el acta de QA valida la regla.
+
+Evidence:
+- fixtures/bruma-delivery-policy-qa.md#revision=1.0.0
+- fixtures/bruma-delivery-policy-v2.md#revision=2.0.0`
 - Overall status: `PASS`
 - Agent status: `COMPLETED`
 - Ontology outcome: `SUCCESS`
-- Ontology paths: `4`
+- Ontology paths: `2`
 - Inferred triples: `2`
 - Contradictions: `0`
 - Sandbox status: `SUCCESS`
@@ -51,11 +62,17 @@ Governed RAG
 ## Reproduce from a public clone
 
 ```bash
-python -m pip install -r requirements.txt
-python scripts/run_public_e2e_demo.py --check
+bash scripts/install_demo.sh
+source .venv/bin/activate
+python scripts/bago.py demo
 python -m pytest tests -q
 python scripts/generate_dynamic_readme.py --check --skip-tests
 ```
+
+The installer creates a local `.venv` and installs the pinned requirements.
+`python scripts/bago.py demo` prints a short business-facing result; add
+`--json` for the machine-readable summary or `--write-evidence` to refresh this
+file.
 
 The generated evidence is intentionally scoped to this local fixture. It does
 not promote AWS, remote OpenMetadata, commercetools or production observability
@@ -67,7 +84,9 @@ claims to `VALIDATED`.
 {
   "agent_status": "COMPLETED",
   "aws_live": "NOT_RUN",
-  "context_revision": "public-e2e-v1",
+  "case": "Pedidos exprés con más de 24 horas de retraso",
+  "client": "Bruma Market (cliente ficticio)",
+  "context_revision": "bruma-market-delivery-v1",
   "cost_usd": 0.0,
   "evaluation_checks": [
     {
@@ -105,23 +124,22 @@ claims to `VALIDATED`.
   "model": "fixture.public-e2e",
   "ontology_contradictions": 0,
   "ontology_evidence_refs": [
-    "fixtures/public-policy-receipt.md#revision=1.0.0",
-    "fixtures/public-policy-v1.md#revision=1.0.0",
-    "fixtures/public-policy-v2.md#revision=2.0.0"
+    "fixtures/bruma-delivery-policy-qa.md#revision=1.0.0",
+    "fixtures/bruma-delivery-policy-v2.md#revision=2.0.0"
   ],
   "ontology_inferred_triples": 2,
   "ontology_outcome": "SUCCESS",
-  "ontology_paths": 4,
+  "ontology_paths": 2,
   "openmetadata_live": "NOT_RUN",
-  "query": "¿Qué sustituye a la política anterior y qué evidencia la valida?",
+  "query": "¿Qué política aplica a los pedidos exprés que llegan con más de 24 horas de retraso y qué evidencia valida la regla?",
   "retrieval_hits": 2,
   "sandbox_evidence_refs": [
-    "sandbox://sbxreceipt-f8856b48f91542ec"
+    "sandbox://sbxreceipt-aef2d979aa774814"
   ],
   "sandbox_exit_code": 0,
   "sandbox_profile": "test_runner",
   "sandbox_status": "SUCCESS",
-  "scope": "public-zero-cost-local-e2e",
+  "scope": "fictional-client-zero-cost-local-e2e",
   "status": "PASS",
   "trace_event_names": [
     "agent.run",

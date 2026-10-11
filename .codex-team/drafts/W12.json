@@ -1,0 +1,61 @@
+{
+  "changed_files": [
+    ".codex-team/change_requests/CR-004-P1-RECEIPT-RUN-BINDING.json",
+    ".codex-team/missions/agent-decision-inspector-project.json",
+    ".codex-team/state.json",
+    ".codex-team/drafts/W12.json",
+    "docs/decision-inspector/FINAL_STATUS.md"
+  ],
+  "outputs": [
+    {
+      "path": "docs/decision-inspector/FINAL_STATUS.md",
+      "id": "agent-decision-inspector-v1-terminal-gate",
+      "frozen": true
+    },
+    {
+      "path": "output/playwright/jaeger-localtrace-04b58bb.png",
+      "id": "decision-inspector-jaeger-graph",
+      "frozen": false
+    },
+    {
+      "path": "output/playwright/decision-inspector-trace.png",
+      "id": "decision-inspector-trace-view",
+      "frozen": false
+    }
+  ],
+  "verification": [
+    {
+      "result": "PASS",
+      "command": "python .codex-team-kit/scripts/teamctl.py verify",
+      "evidence": "W01-W14 prerequisite handoffs validated; W11 P1 is closed by W13 and W14."
+    },
+    {
+      "result": "PASS",
+      "command": "npm run build (cwd frontend)",
+      "evidence": "W14 final source build; TypeScript and Vite, 124 modules."
+    },
+    {
+      "result": "PASS",
+      "command": "node --test compiled W13 integration fixture",
+      "evidence": "5 passed; includes wrong-run collision and missing run_id adversarial cases."
+    },
+    {
+      "result": "PASS",
+      "command": "scripts/run_l15_otel_live_validation.py --check --write-evidence",
+      "evidence": "15/15 spans; LocalTrace trace-5b385699ffda0529; Jaeger 04b58bb123bb6cc94a8cc0d60c7145ae."
+    },
+    {
+      "result": "PASS",
+      "command": "git diff --check",
+      "evidence": "No whitespace errors."
+    }
+  ],
+  "residual_risks": [
+    "Keyboard-only, screen-reader and screenshot pixel review NOT_RUN (P2).",
+    "Current run has no structured claims or claim-to-evidence links.",
+    "UI-to-Jaeger direct correlation unavailable; backend projection is verified.",
+    "AWS live and remote collector NOT_RUN.",
+    "Run identity check is equality over source-provided values, not cryptographic attestation."
+  ],
+  "next_consumers": []
+}

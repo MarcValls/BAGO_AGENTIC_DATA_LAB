@@ -20,19 +20,31 @@ jobs:
         with:
           python-version: "3.11"
           cache: pip
-          cache-dependency-path: requirements.txt
+          cache-dependency-path: |
+            requirements.txt
+            requirements-test.txt
       - name: Install reproducible dependencies
         run: python -m pip install --upgrade pip
       - name: Install project dependencies
-        run: python -m pip install -r requirements.txt
+        run: python -m pip install -r requirements-test.txt
       - name: Run complete test suite
         run: python -m pytest tests -q
       - name: Check generated README
         run: python scripts/generate_dynamic_readme.py --check --skip-tests
       - name: Check public E2E demo
         run: python scripts/run_public_e2e_demo.py --check
+<<<<<<< HEAD
       - name: Run one-command demo and write artifacts
         run: python demo.py
+=======
+      - name: Check one-command portfolio demo
+        run: python demo.py --no-bootstrap --artifacts-dir demo_output/ci
+      - name: Upload portfolio evidence bundle
+        uses: actions/upload-artifact@v4
+        with:
+          name: governed-agent-demo-evidence
+          path: demo_output/ci
+>>>>>>> 36fa7829894fed839aaa8d21677dd3c853a9f9e1
       - name: Check local vector store
         run: python scripts/run_l14_vector_store_validation.py --check
       - name: Start local OpenMetadata

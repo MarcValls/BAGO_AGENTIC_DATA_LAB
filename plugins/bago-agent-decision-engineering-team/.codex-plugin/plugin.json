@@ -1,0 +1,12 @@
+{
+  "name": "bago-agent-decision-engineering-team",
+  "version": "0.1.0",
+  "description": "Self-coordinating Codex engineering team for agent decision inspection interfaces.",
+  "author": {"name": "Marc Valls"},
+  "skills": "./skills/",
+  "extensions": {
+    "com.openai": {
+      "onboardingSkill": "./skills/team-orchestrator/SKILL.md"
+    }
+  }
+}

@@ -18,6 +18,7 @@ from typing import Any
 REPO_ROOT = Path(__file__).resolve().parents[1]
 SRC_ROOT = REPO_ROOT / "src"
 EVIDENCE_PATH = REPO_ROOT / "evidence" / "public_e2e_demo.md"
+DEFAULT_ARTIFACTS_DIR = REPO_ROOT / "demo_output" / "latest"
 if str(REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(REPO_ROOT))
 if str(SRC_ROOT) not in sys.path:
@@ -45,9 +46,14 @@ from sandbox import (  # noqa: E402
 )
 
 
-QUERY = "¿Qué sustituye a la política anterior y qué evidencia la valida?"
+CLIENT_NAME = "Bruma Market (cliente ficticio)"
+CASE_DESCRIPTION = "Pedidos exprés con más de 24 horas de retraso"
+QUERY = (
+    "¿Qué política aplica a los pedidos exprés que llegan con más de 24 horas "
+    "de retraso y qué evidencia valida la regla?"
+)
 MODEL_ID = "fixture.public-e2e"
-CONTEXT_REVISION = "public-e2e-v1"
+CONTEXT_REVISION = "bruma-market-delivery-v1"
 
 
 class FixtureBedrockClient:
@@ -64,8 +70,9 @@ class FixtureBedrockClient:
                     "content": [
                         {
                             "text": (
-                                "La política vigente sustituye a la anterior y la "
-                                "evidencia enlazada valida esa relación."
+                                "Para pedidos exprés con más de 24 horas de retraso, "
+                                "la política vigente devuelve el coste del envío; "
+                                "el acta de QA valida la regla."
                             )
                         }
                     ]
@@ -82,43 +89,45 @@ def build_graph() -> KnowledgeGraph:
     graph = KnowledgeGraph()
     graph.sources.update(
         {
-            "public_policy_source": Source(
-                "public_policy_source", "fixtures/public-policy.md", "FILE"
+            "delivery_policy_source": Source(
+                "delivery_policy_source", "fixtures/bruma-delivery-policy.md", "FILE"
             ),
-            "public_evidence_source": Source(
-                "public_evidence_source", "fixtures/public-policy-receipt.md", "FILE"
+            "delivery_evidence_source": Source(
+                "delivery_evidence_source",
+                "fixtures/bruma-delivery-policy-qa.md",
+                "FILE",
             ),
         }
     )
     old_policy = KnowledgeAsset(
-        asset_id="public_policy_v1",
-        title="Public permit policy v1",
-        description="Previous policy version in the public fixture.",
+        asset_id="bruma_delivery_policy_v1",
+        title="Bruma Market express delivery policy v1",
+        description="Previous customer policy: refund shipping after 48 hours.",
         asset_type="CONTRACT",
-        source_id="public_policy_source",
+        source_id="delivery_policy_source",
         version="1.0.0",
         authority=AuthorityLevel.CANONICAL,
-        metadata={"provenance": "fixtures/public-policy-v1.md"},
+        metadata={"provenance": "fixtures/bruma-delivery-policy-v1.md"},
     )
     current_policy = KnowledgeAsset(
-        asset_id="public_policy_v2",
-        title="Public permit policy v2",
-        description="Current governed policy version in the public fixture.",
+        asset_id="bruma_delivery_policy_v2",
+        title="Bruma Market express delivery policy v2",
+        description="Current rule: refund the express shipping fee after a 24-hour delay.",
         asset_type="CONTRACT",
-        source_id="public_policy_source",
+        source_id="delivery_policy_source",
         version="2.0.0",
         authority=AuthorityLevel.VERIFIED,
-        metadata={"provenance": "fixtures/public-policy-v2.md"},
+        metadata={"provenance": "fixtures/bruma-delivery-policy-v2.md"},
     )
     validation_receipt = KnowledgeAsset(
-        asset_id="public_policy_receipt",
-        title="Public policy v2 validation receipt",
-        description="Evidence that validates the current policy.",
+        asset_id="bruma_delivery_policy_qa",
+        title="Bruma Market delivery policy v2 QA receipt",
+        description="QA evidence validating the revised express-delivery rule.",
         asset_type="EVIDENCE",
-        source_id="public_evidence_source",
+        source_id="delivery_evidence_source",
         version="1.0.0",
         authority=AuthorityLevel.VERIFIED,
-        metadata={"provenance": "fixtures/public-policy-receipt.md"},
+        metadata={"provenance": "fixtures/bruma-delivery-policy-qa.md"},
     )
     old_policy.mark_superseded(current_policy.asset_id)
     for asset in (old_policy, current_policy, validation_receipt):
@@ -126,13 +135,13 @@ def build_graph() -> KnowledgeGraph:
     graph.relations.extend(
         [
             OntologyRelation(
-                "public_supersedes",
+                "bruma_policy_supersedes",
                 RelationType.SUPERSEDES,
                 current_policy.asset_id,
                 old_policy.asset_id,
             ),
             OntologyRelation(
-                "public_validates",
+                "bruma_qa_validates_policy",
                 RelationType.VALIDATES,
                 validation_receipt.asset_id,
                 current_policy.asset_id,
@@ -146,27 +155,31 @@ def build_retriever() -> GovernedRAG:
     return GovernedRAG(
         [
             RetrievalChunk(
-                chunk_id="public-policy-v2-chunk",
-                document_id="public_policy_v2",
+                chunk_id="bruma-delivery-policy-v2",
+                document_id="bruma_delivery_policy_v2",
                 content=(
-                    "La política de permisos v2 sustituye la política v1 y es la "
-                    "versión vigente gobernada."
+                    "Bruma Market, cliente ficticio. La política de entrega exprés "
+                    "v2 sustituye la v1: si el pedido llega con más de 24 horas de "
+                    "retraso, se devuelve el coste del envío exprés."
                 ),
-                title="Public permit policy v2",
-                source_uri="fixtures/public-policy-v2.md",
+                title="Bruma Market express delivery policy v2",
+                source_uri="fixtures/bruma-delivery-policy-v2.md",
                 revision="2.0.0",
                 authority=AuthorityLevel.VERIFIED,
-                metadata={"asset_id": "public_policy_v2"},
+                metadata={"asset_id": "bruma_delivery_policy_v2"},
             ),
             RetrievalChunk(
-                chunk_id="public-policy-receipt-chunk",
-                document_id="public_policy_receipt",
-                content="La evidencia pública valida la política de permisos v2.",
-                title="Public policy validation receipt",
-                source_uri="fixtures/public-policy-receipt.md",
+                chunk_id="bruma-delivery-qa-receipt",
+                document_id="bruma_delivery_policy_qa",
+                content=(
+                    "El acta de QA de Bruma Market valida la política de entrega "
+                    "exprés v2 con casos de prueba de retraso superior a 24 horas."
+                ),
+                title="Bruma Market delivery policy v2 QA receipt",
+                source_uri="fixtures/bruma-delivery-policy-qa.md",
                 revision="1.0.0",
                 authority=AuthorityLevel.VERIFIED,
-                metadata={"asset_id": "public_policy_receipt"},
+                metadata={"asset_id": "bruma_delivery_policy_qa"},
             ),
         ]
     )
@@ -260,6 +273,8 @@ def run_demo() -> dict[str, Any]:
 
     return {
         "status": "PASS",
+        "client": CLIENT_NAME,
+        "case": CASE_DESCRIPTION,
         "agent_run": run,
         "ontology": ontology,
         "sandbox": sandbox_result,
@@ -277,7 +292,9 @@ def summary(result: dict[str, Any]) -> dict[str, Any]:
     evaluation: EvaluationReport = result["evaluation"]
     return {
         "status": result["status"],
-        "scope": "public-zero-cost-local-e2e",
+        "client": result["client"],
+        "case": result["case"],
+        "scope": "fictional-client-zero-cost-local-e2e",
         "cost_usd": evaluation.cost_usd,
         "agent_status": run.status.value,
         "retrieval_hits": len(run.retrieval.hits),
@@ -299,6 +316,61 @@ def summary(result: dict[str, Any]) -> dict[str, Any]:
         "aws_live": "NOT_RUN",
         "openmetadata_live": "NOT_RUN",
     }
+
+
+
+def receipt_bundle(result: dict[str, Any]) -> dict[str, Any]:
+    """Collect the receipts already produced by the governed run."""
+
+    run: AgentRun = result["agent_run"]
+    ontology: OntologyReasoningResult = result["ontology"]
+    sandbox: SandboxExecutionResult = result["sandbox"]
+    provider_receipt = (
+        run.provider_result.receipt.to_dict()
+        if run.provider_result is not None
+        else None
+    )
+    return {
+        "agent_decision_receipts": [
+            receipt.to_dict() for receipt in run.decision_receipts
+        ],
+        "mcp_receipts": [receipt.to_dict() for receipt in run.mcp_receipts],
+        "provider_receipt": provider_receipt,
+        "ontology_receipt": ontology.receipt.to_dict(),
+        "sandbox_receipt": sandbox.receipt.to_dict(),
+    }
+
+
+def artifact_payloads(result: dict[str, Any]) -> dict[str, dict[str, Any]]:
+    """Project one passing run into reviewable JSON artifacts."""
+
+    run: AgentRun = result["agent_run"]
+    trace: LocalTrace = result["trace"]
+    evaluation: EvaluationReport = result["evaluation"]
+    return {
+        "summary.json": summary(result),
+        "agent_run.json": run.to_dict(),
+        "receipts.json": receipt_bundle(result),
+        "trace.json": trace.to_dict(),
+        "evaluation.json": evaluation.to_dict(),
+    }
+
+
+def write_artifacts(result: dict[str, Any], output_dir: Path) -> tuple[Path, ...]:
+    """Write the product-facing evidence bundle without changing canonical evidence."""
+
+    destination = output_dir if output_dir.is_absolute() else REPO_ROOT / output_dir
+    destination.mkdir(parents=True, exist_ok=True)
+    written: list[Path] = []
+    for name, payload in artifact_payloads(result).items():
+        path = destination / name
+        path.write_text(
+            json.dumps(payload, ensure_ascii=False, indent=2, sort_keys=True, default=str)
+            + "\n",
+            encoding="utf-8",
+        )
+        written.append(path)
+    return tuple(written)
 
 
 def render_evidence(result: dict[str, Any]) -> str:
@@ -323,12 +395,15 @@ def render_evidence(result: dict[str, Any]) -> str:
         }
     )
     encoded = json.dumps(evidence_payload, ensure_ascii=False, indent=2, sort_keys=True)
-    return f"""# L13 · Public E2E Demo — reproducible local evidence
+    return f"""# L13 · Bruma Market demo — reproducible local evidence
 
 Generated at: `{generated_at}`
 
-This is the public clone-and-run path for the BAGO Agentic Data Lab. It uses
-only committed code and deterministic local fixtures:
+This is a realistic but entirely fictional client scenario. Bruma Market is an
+online retailer whose governed policy refunds the express shipping fee when an
+order arrives more than 24 hours late. A QA receipt validates the current rule.
+The demo uses deterministic local fixtures; it does not contain real customer
+data or contact a live service.
 
 ```text
 Governed RAG
@@ -352,6 +427,10 @@ Governed RAG
 
 ## Result
 
+- Fictional client: `{result['client']}`
+- Scenario: `{result['case']}`
+- Question: `{QUERY}`
+- Answer: `{result['agent_run'].answer}`
 - Overall status: `{result['status']}`
 - Agent status: `{result['agent_run'].status.value}`
 - Ontology outcome: `{ontology.receipt.outcome}`
@@ -370,11 +449,17 @@ Governed RAG
 ## Reproduce from a public clone
 
 ```bash
-python -m pip install -r requirements.txt
-python scripts/run_public_e2e_demo.py --check
+bash scripts/install_demo.sh
+source .venv/bin/activate
+python scripts/bago.py demo
 python -m pytest tests -q
 python scripts/generate_dynamic_readme.py --check --skip-tests
 ```
+
+The installer creates a local `.venv` and installs the pinned requirements.
+`python scripts/bago.py demo` prints a short business-facing result; add
+`--json` for the machine-readable summary or `--write-evidence` to refresh this
+file.
 
 The generated evidence is intentionally scoped to this local fixture. It does
 not promote AWS, remote OpenMetadata, commercetools or production observability
@@ -400,12 +485,28 @@ def main(argv: list[str] | None = None) -> int:
         action="store_true",
         help="write evidence/public_e2e_demo.md after a passing run",
     )
+    parser.add_argument(
+        "--artifacts-dir",
+        type=Path,
+        help="write summary, receipts, trace and evaluation JSON to this directory",
+    )
     args = parser.parse_args(argv)
     result = run_demo()
+    if args.artifacts_dir is not None:
+        written = write_artifacts(result, args.artifacts_dir)
+    else:
+        written = ()
     if args.write_evidence:
         EVIDENCE_PATH.parent.mkdir(parents=True, exist_ok=True)
         EVIDENCE_PATH.write_text(render_evidence(result), encoding="utf-8")
     print(json.dumps(summary(result), ensure_ascii=False, indent=2, sort_keys=True))
+    if written:
+        artifact_dir = written[0].parent
+        try:
+            artifact_label = artifact_dir.relative_to(REPO_ROOT)
+        except ValueError:
+            artifact_label = artifact_dir
+        print(f"Artifacts: {artifact_label}")
     if args.write_evidence:
         print(f"Evidence: {EVIDENCE_PATH.relative_to(REPO_ROOT)}")
     return 0

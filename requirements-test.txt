@@ -1,0 +1,7 @@
+-r requirements.txt
+
+# The API test suite imports FastAPI and uses Starlette's TestClient (httpx).
+# Keep these out of the core library/runtime requirements and install them in CI.
+fastapi==0.136.1
+httpx==0.28.1
+uvicorn==0.46.0

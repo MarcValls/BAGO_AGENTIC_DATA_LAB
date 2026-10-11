@@ -1,0 +1,130 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "bago://codex-team/handoff.schema.json",
+  "type": "object",
+  "required": [
+    "work_id",
+    "role",
+    "status",
+    "changed_files",
+    "outputs",
+    "verification",
+    "residual_risks",
+    "next_consumers",
+    "payload_sha256"
+  ],
+  "properties": {
+    "work_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "role": {
+      "type": "string",
+      "minLength": 1
+    },
+    "status": {
+      "const": "DONE"
+    },
+    "changed_files": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "uniqueItems": true
+    },
+    "outputs": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "anyOf": [
+          {
+            "required": [
+              "kind",
+              "path",
+              "sha256"
+            ],
+            "properties": {
+              "kind": {
+                "type": "string"
+              },
+              "path": {
+                "type": "string"
+              },
+              "sha256": {
+                "type": "string"
+              }
+            }
+          },
+          {
+            "required": [
+              "id",
+              "path",
+              "frozen"
+            ],
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "path": {
+                "type": "string"
+              },
+              "frozen": {
+                "type": "boolean"
+              },
+              "sha256": {
+                "type": "string"
+              }
+            }
+          }
+        ]
+      }
+    },
+    "verification": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "command",
+          "result"
+        ],
+        "properties": {
+          "command": {
+            "type": "string"
+          },
+          "result": {
+            "enum": [
+              "PASS",
+              "FAIL",
+              "NOT_RUN"
+            ]
+          },
+          "evidence": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        }
+      }
+    },
+    "residual_risks": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "next_consumers": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "uniqueItems": true
+    },
+    "payload_sha256": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    }
+  },
+  "additionalProperties": true
+}

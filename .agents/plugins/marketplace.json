@@ -1,0 +1,20 @@
+{
+  "name": "local-repo",
+  "interface": {
+    "displayName": "Repo Local Plugins"
+  },
+  "plugins": [
+    {
+      "name": "bago-agent-decision-engineering-team",
+      "source": {
+        "source": "local",
+        "path": "./plugins/bago-agent-decision-engineering-team"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Developer Tools"
+    }
+  ]
+}

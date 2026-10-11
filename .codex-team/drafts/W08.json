@@ -1,0 +1,28 @@
+{
+  "work_id": "W08",
+  "role": "decision-ui-engineer",
+  "status": "DONE",
+  "changed_files": [
+    "frontend/src/features/decision-inspector/trace/TraceTimeline.tsx",
+    "frontend/src/features/decision-inspector/trace/TraceTimeline.css",
+    "frontend/tests/ui/decision-inspector/trace/trace.test.tsx"
+  ],
+  "outputs": [
+    { "kind": "trace_timeline_and_tool_call_inspector", "path": "frontend/src/features/decision-inspector/trace/TraceTimeline.tsx", "sha256": "53860643b743027fe0f8b13b6952f68e7be7f7cf51bbf180041b2b9dd1f38b02" },
+    { "kind": "trace_timeline_accessible_styles", "path": "frontend/src/features/decision-inspector/trace/TraceTimeline.css", "sha256": "d97750c19ee3cd527db5e973a87c015b415db23228a24b67e6839fc1e0bd6816" },
+    { "kind": "trace_timeline_ui_tests", "path": "frontend/tests/ui/decision-inspector/trace/trace.test.tsx", "sha256": "1624f326f6cda4af844ece83eea12908d29f4663f7880305c5e83224d40dd70c" }
+  ],
+  "verification": [
+    { "command": "frontend: tsc --target ES2020 --module commonjs --moduleResolution node --strict --esModuleInterop --skipLibCheck --jsx react-jsx --outDir <temp> tests/ui/decision-inspector/trace/trace.test.tsx src/features/decision-inspector/trace/TraceTimeline.tsx src/adapters/trace/localTraceAdapter.ts src/contracts/trace/trace.ts src/features/decision-inspector/shared/InspectorState.tsx", "result": "PASS", "evidence": "Scoped trace component, contract adapter, shared state and UI test compile with strict TypeScript into a disposable temp directory." },
+    { "command": "node --require <temp-css-hook> --test <temp>/tests/ui/decision-inspector/trace/trace.test.js", "result": "PASS", "evidence": "4 tests passed: chronology versus explicit causality and visible gaps; DENY preservation; explicit-only claim/action navigation and redaction pass-through; Jaeger unavailable; missing/empty/loading/error states." },
+    { "command": "Python UTF-8 scan of the 3 W08 files for trailing spaces/tabs and final newline", "result": "PASS", "evidence": "All 3 files have final newlines and no trailing whitespace; counts: TSX component 75 lines, CSS 28 lines, test 50 lines." },
+    { "command": "python .codex-team-kit/scripts/teamctl.py verify", "result": "PASS", "evidence": "Mission dependencies W03, W04 and W06 and existing handoffs validated before implementation; W08 claim recorded by teamctl." }
+  ],
+  "residual_risks": [
+    "Timeline UI behavior is server-rendered and unit checked; interactive browser and screen-reader behavior remain for W11/manual verification.",
+    "Current trace contract has no UI-to-Jaeger URL/correlation. The UI therefore states unavailable and offers no Jaeger link.",
+    "Redaction markers are preserved from source; UI cannot verify that upstream producers redacted all sensitive values.",
+    "Full frontend production build was not run for W08; scoped strict TypeScript compilation and four focused UI tests passed."
+  ],
+  "next_consumers": ["W10", "W11"]
+}

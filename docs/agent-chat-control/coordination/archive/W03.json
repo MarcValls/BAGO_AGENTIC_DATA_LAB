@@ -1,0 +1,43 @@
+{
+  "changed_files": [
+    "docs/decision-inspector/ux/UX_CONTRACT.md"
+  ],
+  "next_consumers": [
+    "W06",
+    "W07",
+    "W08",
+    "W09"
+  ],
+  "outputs": [
+    {
+      "kind": "decision_inspector_ux_contract",
+      "path": "docs/decision-inspector/ux/UX_CONTRACT.md",
+      "sha256": "0b7db5d5ae93b3212a874f4f33932c3d34f8292104a698c89f18818a928cf056"
+    }
+  ],
+  "payload_sha256": "f80edf8d7561943ee4710020ab019fb4263c8a41fa1cd9bd6771f08d63243bc2",
+  "residual_risks": [
+    "The UX contract is a design artifact; implementation and browser/accessibility behavior remain unverified.",
+    "Structured claim data, comparable source snapshot metadata, and UI-to-Jaeger correlation were not found in the inspected surfaces; consumers must not synthesize them."
+  ],
+  "role": "decision-ux-engineer",
+  "status": "DONE",
+  "verification": [
+    {
+      "command": "Inspect W03 assignment and CR-001; verify W01 dependency handoff",
+      "evidence": "teamctl inspect W03 showed CLAIMED by /root/ux_contract, depends_on W01, write scope docs/decision-inspector/ux/**; CR-001 applied before affected work was claimed; W01 handoff lists W03 as next consumer.",
+      "result": "PASS"
+    },
+    {
+      "command": "Review frontend/src/App.tsx, Summary.tsx, Retrieval.tsx, Authorization.tsx, Trace.tsx and LocalTrace/AgentRun/receipt source",
+      "evidence": "UX contract maps existing Summary, Retrieval, Authorization, Trace and Evaluation views and run/trace/evidence/proposal/permit/receipt fields; it explicitly labels structured claims, freshness comparison and UI-Jaeger correlation as unavailable unless supplied.",
+      "result": "PASS"
+    },
+    {
+      "command": "Get-FileHash docs/decision-inspector/ux/UX_CONTRACT.md -Algorithm SHA256",
+      "evidence": "SHA256 0B7DB5D5AE93B3212A874F4F33932C3D34F8292104A698C89F18818A928CF056",
+      "result": "PASS"
+    }
+  ],
+  "work_id": "W03"
+}

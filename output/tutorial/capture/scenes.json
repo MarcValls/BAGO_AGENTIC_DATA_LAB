@@ -1,0 +1,66 @@
+{
+  "scenes": [
+    {
+      "id": "01_intro",
+      "start_ms": 1406,
+      "end_ms": 11852,
+      "narration_id": "01_intro"
+    },
+    {
+      "id": "02_agents",
+      "start_ms": 11856,
+      "end_ms": 21117,
+      "narration_id": "02_agents"
+    },
+    {
+      "id": "03_provider",
+      "start_ms": 21328,
+      "end_ms": 31133,
+      "narration_id": "03_provider"
+    },
+    {
+      "id": "04_read",
+      "start_ms": 31269,
+      "end_ms": 41185,
+      "narration_id": "04_read"
+    },
+    {
+      "id": "05_receipt",
+      "start_ms": 44587,
+      "end_ms": 53634,
+      "narration_id": "05_receipt"
+    },
+    {
+      "id": "06_draft",
+      "start_ms": 53683,
+      "end_ms": 62818,
+      "narration_id": "06_draft"
+    },
+    {
+      "id": "07_review",
+      "start_ms": 62827,
+      "end_ms": 73450,
+      "narration_id": "07_review"
+    },
+    {
+      "id": "08_cancel",
+      "start_ms": 73454,
+      "end_ms": 81435,
+      "narration_id": "08_cancel"
+    },
+    {
+      "id": "09_builder",
+      "start_ms": 82321,
+      "end_ms": 92455,
+      "narration_id": "09_builder"
+    },
+    {
+      "id": "10_outro",
+      "start_ms": 92460,
+      "end_ms": 101952,
+      "narration_id": "10_outro"
+    }
+  ],
+  "errors": [],
+  "source_video": "raw/adl-first-user-tutorial-source.webm"
+}

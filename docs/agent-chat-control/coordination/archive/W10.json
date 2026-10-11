@@ -1,0 +1,67 @@
+{
+  "changed_files": [
+    "frontend/index.html",
+    "frontend/src/App.tsx",
+    "frontend/src/App.css",
+    "frontend/src/index.css",
+    "frontend/src/features/decision-inspector/integration/DecisionInspector.tsx",
+    "frontend/src/features/decision-inspector/integration/DecisionInspector.css",
+    "frontend/src/features/decision-inspector/index.ts",
+    "frontend/tests/ui/decision-inspector/integration/integration.test.tsx"
+  ],
+  "next_consumers": [
+    "W11"
+  ],
+  "outputs": [
+    {
+      "frozen": false,
+      "id": "decision-inspector-integrated-ui-v1",
+      "path": "frontend/src/features/decision-inspector/integration/DecisionInspector.tsx",
+      "sha256": "5ac06770e5d627bb977bc82efc710c1d20123c1d380f47e4aec242d40e48f229"
+    },
+    {
+      "frozen": false,
+      "id": "decision-inspector-browser-evidence-v1",
+      "path": "output/playwright/decision-inspector-overview.png",
+      "sha256": "75b27d13d95abd542d8e365417b73bdb34d3f1a87fdf6105aee5f561dd696da9"
+    },
+    {
+      "frozen": false,
+      "id": "decision-inspector-trace-ui-evidence-v1",
+      "path": "output/playwright/decision-inspector-trace.png",
+      "sha256": "cfe440c270b9b69445726add7be2447232277fcc677fff766cababe29b439ead"
+    },
+    {
+      "frozen": false,
+      "id": "jaeger-live-graph-evidence-v1",
+      "path": "output/playwright/jaeger-localtrace-04b58bb.png",
+      "sha256": "ac7267f45b313f89a673f72820a9369c58c8f032d2f1e7b5b86522205e7a092e"
+    }
+  ],
+  "payload_sha256": "a89fb712ca533f4965e2e0f129f50e04ce405198c35c21f3c5e3e5b1992fe27c",
+  "residual_risks": [
+    "Current LocalTrace payload has no Jaeger trace id; UI states Jaeger correlation unavailable. Jaeger graph screenshot independently shows the same live validation trace.",
+    "Structured claims and explicit claim-to-evidence links are absent from the current source run; UI displays this gap and does not infer claims.",
+    "AWS live and remote collector verification are NOT_RUN."
+  ],
+  "role": "team-orchestrator",
+  "status": "DONE",
+  "verification": [
+    {
+      "command": "npm run build --workspace frontend",
+      "evidence": "Vite production build; 124 modules; dark global UI and document shell",
+      "result": "PASS"
+    },
+    {
+      "command": "node --test <compiled integration.test.js>",
+      "evidence": "3/3 integration checks in %TEMP%\\bago-inspector-integration-check-20261008",
+      "result": "PASS"
+    },
+    {
+      "command": "scripts/run_l15_otel_live_validation.py --check --write-evidence",
+      "evidence": "evidence/l15_otel_jaeger_live.md; LocalTrace trace-5b385699ffda0529 mapped to Jaeger 04b58bb123bb6cc94a8cc0d60c7145ae; 15 spans",
+      "result": "PASS"
+    }
+  ],
+  "work_id": "W10"
+}

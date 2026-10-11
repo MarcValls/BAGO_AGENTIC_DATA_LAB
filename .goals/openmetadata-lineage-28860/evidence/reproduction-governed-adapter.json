@@ -1,0 +1,204 @@
+{
+  "evidence_metadata": {
+    "capture_scope": "live local adapter integration before final adapter hardening",
+    "success_receipt_note": "The captured SUCCESS receipt has error_message set to the server message. Final code leaves error_message null for SUCCESS; see the unit test asserting that behavior. The final adapter also tightens JSON/event and permit resource validation. This historical live run still proves the HTTP result, edge count, persisted edge, and PARTIAL zero-edge behavior."
+  },
+  "cleanup": {
+    "attempted": true,
+    "http_status": 200,
+    "response": {
+      "dataProducts": [],
+      "deleted": false,
+      "description": "Temporary OpenLineage validation fixture",
+      "entityStatus": "Unprocessed",
+      "followers": [],
+      "fullyQualifiedName": "bago28860_3153d345af_service",
+      "id": "78984633-a11d-48a2-8cbf-dfa52f7e5661",
+      "name": "bago28860_3153d345af_service",
+      "owners": [],
+      "serviceType": "CustomDatabase",
+      "tags": [],
+      "updatedAt": 1790989232464,
+      "updatedBy": "admin",
+      "version": 0.1
+    }
+  },
+  "fixture_prefix": "bago28860_3153d345af",
+  "lineage_read": {
+    "body": {
+      "downstreamEdges": [
+        {
+          "fromEntity": "d1d351e3-b09f-4ca8-ad02-949c91372679",
+          "lineageDetails": {
+            "columnsLineage": [],
+            "createdAt": 1790989535191,
+            "createdBy": "admin",
+            "description": "Lineage from OpenLineage event for job: bago28860-governed-audit/adapter-integration (run: 9e3ca2ab-e8db-42c1-8a54-83055d2d7f05)",
+            "source": "OpenLineage",
+            "updatedAt": 1790989535191,
+            "updatedBy": "admin"
+          },
+          "toEntity": "fceca1ff-cee9-48a5-ae28-f76427ba79fa"
+        }
+      ],
+      "entity": {
+        "deleted": false,
+        "description": "Temporary OpenLineage audit seed",
+        "displayName": "governed_seed_input",
+        "fullyQualifiedName": "bago28860_3153d345af_service.bago28860_3153d345af_db.bago28860_3153d345af_schema.governed_seed_input",
+        "href": "http://127.0.0.1:18585/api/v1/tables/d1d351e3-b09f-4ca8-ad02-949c91372679",
+        "id": "d1d351e3-b09f-4ca8-ad02-949c91372679",
+        "name": "governed_seed_input",
+        "type": "table"
+      },
+      "nodes": [
+        {
+          "deleted": false,
+          "description": "Temporary OpenLineage audit seed",
+          "displayName": "governed_seed_output",
+          "fullyQualifiedName": "bago28860_3153d345af_service.bago28860_3153d345af_db.bago28860_3153d345af_schema.governed_seed_output",
+          "href": "http://127.0.0.1:18585/api/v1/tables/fceca1ff-cee9-48a5-ae28-f76427ba79fa",
+          "id": "fceca1ff-cee9-48a5-ae28-f76427ba79fa",
+          "name": "governed_seed_output",
+          "type": "table"
+        }
+      ],
+      "upstreamEdges": []
+    },
+    "http_status": 200
+  },
+  "missing_entity_event": {
+    "http_status": 200,
+    "receipt": {
+      "actual_effect": {
+        "base_url": "http://127.0.0.1:18585/api",
+        "method": "POST",
+        "path": "/v1/openlineage/lineage",
+        "transport": "stdlib_http"
+      },
+      "attempts": 1,
+      "decision": "ALLOW",
+      "duration_ms": 136,
+      "error_kind": null,
+      "error_message": "Event processed, no lineage edges created",
+      "evidence_refs": [
+        ".goals/openmetadata-lineage-28860/audit.md"
+      ],
+      "execution_outcome": "PARTIAL",
+      "operation": "ingest_openlineage_event",
+      "permit_id": "ompermit_49fde862505a6fef",
+      "receipt_id": "omreceipt_bd69ebf8d241d657",
+      "request_id": "omreq_34a66cc2911df69c",
+      "result_count": 0
+    },
+    "request": {
+      "eventTime": "2026-10-03T01:05:34.364063Z",
+      "eventType": "COMPLETE",
+      "inputs": [
+        {
+          "name": "bago28860_3153d345af_service.bago28860_3153d345af_db.bago28860_3153d345af_schema.governed_missing_input",
+          "namespace": "bago28860_3153d345af_service"
+        }
+      ],
+      "job": {
+        "name": "adapter-integration",
+        "namespace": "bago28860-governed-audit"
+      },
+      "outputs": [
+        {
+          "name": "bago28860_3153d345af_service.bago28860_3153d345af_db.bago28860_3153d345af_schema.governed_missing_output",
+          "namespace": "bago28860_3153d345af_service"
+        }
+      ],
+      "producer": "https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB",
+      "run": {
+        "runId": "771bb4bf-7df3-4ec4-8d70-8c5239d7381a"
+      },
+      "schemaURL": "https://openlineage.io/spec/1-0-5/OpenLineage.json"
+    },
+    "response": {
+      "failedEvents": [],
+      "lineageEdgesCreated": 0,
+      "message": "Event processed, no lineage edges created",
+      "status": "success"
+    }
+  },
+  "missing_table_reads": [
+    {
+      "body": {
+        "code": 404,
+        "message": "table instance for bago28860_3153d345af_service.bago28860_3153d345af_db.bago28860_3153d345af_schema.governed_missing_input not found"
+      },
+      "fqn": "bago28860_3153d345af_service.bago28860_3153d345af_db.bago28860_3153d345af_schema.governed_missing_input",
+      "http_status": 404
+    },
+    {
+      "body": {
+        "code": 404,
+        "message": "table instance for bago28860_3153d345af_service.bago28860_3153d345af_db.bago28860_3153d345af_schema.governed_missing_output not found"
+      },
+      "fqn": "bago28860_3153d345af_service.bago28860_3153d345af_db.bago28860_3153d345af_schema.governed_missing_output",
+      "http_status": 404
+    }
+  ],
+  "seeded_entity_event": {
+    "http_status": 200,
+    "receipt": {
+      "actual_effect": {
+        "base_url": "http://127.0.0.1:18585/api",
+        "method": "POST",
+        "path": "/v1/openlineage/lineage",
+        "transport": "stdlib_http"
+      },
+      "attempts": 1,
+      "decision": "ALLOW",
+      "duration_ms": 758,
+      "error_kind": null,
+      "error_message": "Created 1 lineage edge(s)",
+      "evidence_refs": [
+        ".goals/openmetadata-lineage-28860/audit.md"
+      ],
+      "execution_outcome": "SUCCESS",
+      "operation": "ingest_openlineage_event",
+      "permit_id": "ompermit_5864fd93cce113fb",
+      "receipt_id": "omreceipt_45691c8c1cf6e1f1",
+      "request_id": "omreq_83888e79964eb25d",
+      "result_count": 1
+    },
+    "request": {
+      "eventTime": "2026-10-03T01:05:35.015131Z",
+      "eventType": "COMPLETE",
+      "inputs": [
+        {
+          "name": "bago28860_3153d345af_service.bago28860_3153d345af_db.bago28860_3153d345af_schema.governed_seed_input",
+          "namespace": "bago28860_3153d345af_service"
+        }
+      ],
+      "job": {
+        "name": "adapter-integration",
+        "namespace": "bago28860-governed-audit"
+      },
+      "outputs": [
+        {
+          "name": "bago28860_3153d345af_service.bago28860_3153d345af_db.bago28860_3153d345af_schema.governed_seed_output",
+          "namespace": "bago28860_3153d345af_service"
+        }
+      ],
+      "producer": "https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB",
+      "run": {
+        "runId": "9e3ca2ab-e8db-42c1-8a54-83055d2d7f05"
+      },
+      "schemaURL": "https://openlineage.io/spec/1-0-5/OpenLineage.json"
+    },
+    "response": {
+      "failedEvents": [],
+      "lineageEdgesCreated": 1,
+      "message": "Created 1 lineage edge(s)",
+      "status": "success"
+    }
+  },
+  "seeded_table_ids": [
+    "d1d351e3-b09f-4ca8-ad02-949c91372679",
+    "fceca1ff-cee9-48a5-ae28-f76427ba79fa"
+  ]
+}
