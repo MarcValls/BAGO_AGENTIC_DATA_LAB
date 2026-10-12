@@ -1,5 +1,8 @@
-import { useState } from 'react'
 import './Control.css'
+import './WindowsSurface.css'
+import { useState } from 'react'
+import TerminalPane from './TerminalPane'
+import WindowPanel from './WindowPanel'
 
 interface Props {
   onDemoRun?: () => void
@@ -20,7 +23,9 @@ export default function Control({ onDemoRun }: Props) {
     setExitCode(null)
 
     try {
-      const ws = new WebSocket('ws://localhost:8080/ws/demo/run')
+      const websocketUrl = new URL('/ws/demo/run', window.location.href)
+      websocketUrl.protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:'
+      const ws = new WebSocket(websocketUrl)
 
       ws.onopen = () => {
         ws.send(JSON.stringify({
@@ -113,8 +118,7 @@ export default function Control({ onDemoRun }: Props) {
 
   return (
     <div className="control-container">
-      <div className="control-panel">
-        <h2>🚀 Demo Orchestration</h2>
+      <WindowPanel title="Demo orchestration" description="Run and inspect the existing demo" className="control-panel">
 
         <div className="control-section">
           <h3>Execute Demo</h3>
@@ -145,24 +149,24 @@ export default function Control({ onDemoRun }: Props) {
               disabled={isRunning}
               className={`btn btn-primary ${isRunning ? 'disabled' : ''}`}
             >
-              {isRunning ? '⏳ Running...' : '▶ Run Demo (WebSocket)'}
+              {isRunning ? 'Running...' : 'Run demo (WebSocket)'}
             </button>
             <button
               onClick={runDemoHTTP}
               disabled={isRunning}
               className={`btn btn-secondary ${isRunning ? 'disabled' : ''}`}
             >
-              {isRunning ? '⏳ Running...' : '▶ Run Demo (HTTP)'}
+              {isRunning ? 'Running...' : 'Run demo (HTTP)'}
             </button>
           </div>
         </div>
 
         <div className="status-section">
           <div className={`status-badge ${status}`}>
-            {status === 'idle' && '⚪ Idle'}
-            {status === 'running' && '🟡 Running'}
-            {status === 'success' && '🟢 Success'}
-            {status === 'error' && '🔴 Error'}
+            {status === 'idle' && 'Idle'}
+            {status === 'running' && 'Running'}
+            {status === 'success' && 'Success'}
+            {status === 'error' && 'Error'}
           </div>
           {exitCode !== null && (
             <div className="exit-code">Exit Code: <strong>{exitCode}</strong></div>
@@ -181,43 +185,33 @@ export default function Control({ onDemoRun }: Props) {
               </button>
             </div>
           </div>
-          <div className="logs-output">
-            {logs.length === 0 ? (
-              <p style={{ color: 'rgba(255, 255, 255, 0.4)' }}>No logs yet. Run demo to see output.</p>
-            ) : (
-              logs.map((line, idx) => (
-                <div key={idx} className="log-line">
-                  {line}
-                </div>
-              ))
-            )}
-          </div>
+          <TerminalPane status={status} exitCode={exitCode} logs={logs} emptyMessage="No logs yet. Run demo to see output." />
         </div>
-      </div>
+      </WindowPanel>
 
       <div className="control-sidebar">
         <div className="card">
           <h3>Quick Info</h3>
-          <p><strong>Endpoint:</strong> http://localhost:8080</p>
-          <p><strong>WebSocket:</strong> ws://localhost:8080/ws/demo/run</p>
+          <p><strong>Endpoint:</strong> {window.location.origin}</p>
+          <p><strong>WebSocket:</strong> {window.location.protocol === 'https:' ? 'wss:' : 'ws:'}//{window.location.host}/ws/demo/run</p>
           <p><strong>API:</strong> /api/demo/run (POST)</p>
         </div>
 
         <div className="card">
           <h3>What This Does</h3>
-          <ul style={{ fontSize: '0.9em', lineHeight: '1.6' }}>
-            <li>✓ Executes <code>python demo.py</code></li>
-            <li>✓ Streams logs in real-time</li>
-            <li>✓ Captures exit code</li>
-            <li>✓ Optional: write evidence bundle</li>
-            <li>✓ Optional: JSON output format</li>
-            <li>✓ Downloadable logs</li>
+          <ul>
+            <li>Executes <code>python demo.py</code></li>
+            <li>Streams logs in real time</li>
+            <li>Captures exit code</li>
+            <li>Optional evidence bundle</li>
+            <li>Optional JSON output</li>
+            <li>Downloadable logs</li>
           </ul>
         </div>
 
         <div className="card">
           <h3>Next Steps</h3>
-          <ul style={{ fontSize: '0.9em', lineHeight: '1.6' }}>
+          <ul>
             <li>1. Run demo via this panel</li>
             <li>2. Check logs for errors</li>
             <li>3. Refresh Summary tab</li>

@@ -1,6 +1,8 @@
 import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
-import { useState, useEffect } from 'react';
 import './AgentRunner.css';
+import { useState, useEffect } from 'react';
+// /ws/agents/run intentionally fails closed until a governed executor exists.
+const AGENT_EXECUTION_AVAILABLE = false;
 export default function AgentRunner() {
     const [agents, setAgents] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -30,6 +32,10 @@ export default function AgentRunner() {
         setTimeout(() => setNotification(null), 3000);
     };
     const executeAgent = async (agent) => {
+        if (!AGENT_EXECUTION_AVAILABLE) {
+            showNotification('error', 'Agent execution is unavailable: no governed execution capability is registered.');
+            return;
+        }
         setSelectedAgent(agent);
         setIsRunning(true);
         setLogs([]);
@@ -49,19 +55,28 @@ export default function AgentRunner() {
                     setLogs((prev) => [...prev, msg.data]);
                 }
                 else if (msg.type === 'done') {
+                    const exitCode = Number.isInteger(msg.exit_code) ? msg.exit_code : null;
                     const result = {
                         job_id: msg.job_id,
-                        status: msg.exit_code === 0 ? 'success' : 'failed',
+                        status: exitCode === 0 ? 'success' : 'failed',
                         duration_ms: msg.duration_ms || 0,
                         cost_usd: msg.cost_usd || 0,
+                        exit_code: exitCode,
                     };
                     setResult(result);
                     setIsRunning(false);
                     ws.close();
-                    showNotification('success', `Agent ${agent.config.name} executed successfully`);
+                    if (exitCode === 0) {
+                        showNotification('success', `Agent ${agent.config.name} executed successfully`);
+                    }
+                    else {
+                        showNotification('error', `Agent execution failed: terminal exit code ${exitCode ?? 'missing'}`);
+                    }
                 }
                 else if (msg.type === 'error') {
-                    setLogs((prev) => [...prev, `[ERROR] ${msg.data}`]);
+                    const errorCode = typeof msg.code === 'string' ? msg.code : 'unknown_error';
+                    const errorData = typeof msg.data === 'string' ? msg.data : JSON.stringify(msg.data ?? 'No error details provided');
+                    setLogs((prev) => [...prev, `[ERROR] ${errorCode}: ${errorData}`]);
                     setIsRunning(false);
                     ws.close();
                     showNotification('error', `Agent execution failed: ${msg.data}`);
@@ -115,8 +130,8 @@ export default function AgentRunner() {
     if (loading) {
         return _jsx("div", { className: "agent-runner", children: "Loading agents..." });
     }
-    return (_jsxs("div", { className: "agent-runner", children: [notification && (_jsx("div", { className: `notification notification-${notification.type}`, children: notification.message })), _jsxs("div", { className: "runner-header", children: [_jsx("h2", { children: "\uD83C\uDFAF Agent Runner" }), _jsxs("div", { className: "runner-actions", children: [_jsx("button", { onClick: downloadAgentZip, className: "btn btn-secondary btn-small", children: "\u2B07\uFE0F Export All" }), _jsxs("label", { className: "btn btn-secondary btn-small", children: ["\u2B06\uFE0F Import", _jsx("input", { type: "file", accept: ".zip", onChange: (e) => e.target.files && importAgentZip(e.target.files[0]), style: { display: 'none' } })] })] })] }), _jsxs("div", { className: "runner-grid", children: [_jsxs("div", { className: "agents-panel", children: [_jsxs("h3", { children: ["Available Agents (", agents.length, ")"] }), agents.length === 0 ? (_jsx("p", { style: { color: 'rgba(255, 255, 255, 0.5)' }, children: "No agents created yet. Create one in Agent Builder." })) : (_jsx("div", { className: "agents-list", children: agents.map((agent) => (_jsxs("div", { className: `agent-item ${selectedAgent?.id === agent.id ? 'selected' : ''}`, onClick: () => setSelectedAgent(agent), children: [_jsxs("div", { className: "agent-item-header", children: [_jsx("strong", { children: agent.config.name }), _jsx("span", { className: "badge", children: agent.config.type })] }), _jsx("p", { className: "agent-item-desc", children: agent.config.description }), _jsxs("p", { className: "agent-item-tools", children: ["Tools: ", agent.config.tools.length] }), _jsx("button", { onClick: (e) => {
+    return (_jsxs("div", { className: "agent-runner", children: [notification && (_jsx("div", { className: `notification notification-${notification.type}`, children: notification.message })), _jsx("div", { className: "runner-header", children: _jsxs("div", { className: "runner-actions", children: [_jsx("button", { onClick: downloadAgentZip, className: "btn btn-secondary btn-small", "aria-label": "Export all agents", title: "Export all agents", children: "\u2193 Export" }), _jsxs("label", { className: "btn btn-secondary btn-small", title: "Import agents from ZIP", children: ["\u2191 Import", _jsx("input", { type: "file", accept: ".zip", "aria-label": "Import agents from ZIP", onChange: (e) => e.target.files && importAgentZip(e.target.files[0]) })] })] }) }), _jsx("div", { className: "execution-unavailable", role: "status", children: "Agent execution is unavailable. No governed execution capability is registered; Run is disabled." }), _jsxs("div", { className: "runner-grid", children: [_jsxs("div", { className: "agents-panel", children: [_jsxs("h3", { children: ["Available Agents (", agents.length, ")"] }), agents.length === 0 ? (_jsx("p", { children: "No agents created yet. Create one in Agent Builder." })) : (_jsx("div", { className: "agents-list", children: agents.map((agent) => (_jsxs("div", { className: `agent-item ${selectedAgent?.id === agent.id ? 'selected' : ''}`, onClick: () => setSelectedAgent(agent), children: [_jsxs("div", { className: "agent-item-header", children: [_jsx("strong", { children: agent.config.name }), _jsx("span", { className: "badge", children: agent.config.type })] }), _jsx("p", { className: "agent-item-desc", children: agent.config.description }), _jsxs("p", { className: "agent-item-tools", children: ["Tools: ", agent.config.tools.length] }), _jsx("button", { onClick: (e) => {
                                                 e.stopPropagation();
                                                 executeAgent(agent);
-                                            }, disabled: isRunning, className: "btn btn-primary btn-small", children: isRunning && selectedAgent?.id === agent.id ? '⏳ Running' : '▶ Run' })] }, agent.id))) }))] }), selectedAgent && (_jsxs("div", { className: "execution-panel", children: [_jsxs("h3", { children: ["Execution: ", selectedAgent.config.name] }), _jsxs("div", { className: "execution-logs", children: [_jsx("h4", { children: "Logs" }), _jsx("div", { className: "logs-box", children: logs.length === 0 ? (_jsx("p", { style: { color: 'rgba(255, 255, 255, 0.4)' }, children: "Awaiting execution..." })) : (logs.map((line, idx) => (_jsx("div", { className: "log-line", children: line }, idx)))) })] }), result && (_jsxs("div", { className: "execution-result", children: [_jsx("h4", { children: "Result" }), _jsxs("div", { className: "result-details", children: [_jsxs("div", { children: [_jsx("strong", { children: "Status:" }), " ", _jsx("span", { className: `badge badge-${result.status}`, children: result.status })] }), _jsxs("div", { children: [_jsx("strong", { children: "Job ID:" }), " ", _jsx("code", { children: result.job_id })] }), _jsxs("div", { children: [_jsx("strong", { children: "Duration:" }), " ", (result.duration_ms / 1000).toFixed(2), "s"] }), _jsxs("div", { children: [_jsx("strong", { children: "Cost:" }), " $", result.cost_usd.toFixed(4)] })] })] }))] }))] })] }));
+                                            }, disabled: !AGENT_EXECUTION_AVAILABLE || isRunning, className: "btn btn-primary btn-small", title: "Agent execution is unavailable until a governed execution capability is registered.", children: "Run unavailable" })] }, agent.id))) }))] }), selectedAgent && (_jsxs("div", { className: "execution-panel", children: [_jsxs("h3", { children: ["Execution: ", selectedAgent.config.name] }), _jsxs("div", { className: "execution-logs", children: [_jsx("h4", { children: "Logs" }), _jsx("div", { className: "logs-box", children: logs.length === 0 ? (_jsx("p", { children: "Execution unavailable. No job was started." })) : (logs.map((line, idx) => (_jsx("div", { className: "log-line", children: line }, idx)))) })] }), result && (_jsxs("div", { className: "execution-result", children: [_jsx("h4", { children: "Result" }), _jsxs("div", { className: "result-details", children: [_jsxs("div", { children: [_jsx("strong", { children: "Status:" }), " ", _jsx("span", { className: `badge badge-${result.status}`, children: result.status })] }), _jsxs("div", { children: [_jsx("strong", { children: "Job ID:" }), " ", _jsx("code", { children: result.job_id || 'N/A' })] }), _jsxs("div", { children: [_jsx("strong", { children: "Duration:" }), " ", (result.duration_ms / 1000).toFixed(2), "s"] }), _jsxs("div", { children: [_jsx("strong", { children: "Cost:" }), " $", result.cost_usd.toFixed(4)] }), _jsxs("div", { children: [_jsx("strong", { children: "Exit code:" }), " ", _jsx("code", { children: result.exit_code ?? 'missing' })] })] })] }))] }))] })] }));
 }

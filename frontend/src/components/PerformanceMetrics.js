@@ -1,6 +1,6 @@
 import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
 import { useEffect, useState } from 'react';
-import './PerformanceMetrics.css';
+
 export default function PerformanceMetrics({ agentId }) {
     const [metrics, setMetrics] = useState(null);
     const [loading, setLoading] = useState(true);

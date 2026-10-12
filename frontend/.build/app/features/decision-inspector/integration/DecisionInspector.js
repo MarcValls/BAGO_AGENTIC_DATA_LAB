@@ -1,4 +1,5 @@
 import { Fragment as _Fragment, jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
+import './DecisionInspector.css';
 import { useMemo, useState } from 'react';
 import { actionBundleFromAgentRun } from '../../../adapters/action/agentRun';
 import { localTraceToTimeline } from '../../../adapters/trace/localTraceAdapter';
@@ -7,7 +8,6 @@ import { ActionReview } from '../actions/ActionReview';
 import { EvidenceExplorer } from '../evidence/EvidenceExplorer';
 import { InspectorShell } from '../shell/InspectorShell';
 import { TraceTimeline as TraceTimelineView } from '../trace/TraceTimeline';
-import './DecisionInspector.css';
 function record(value) {
     return value !== null && typeof value === 'object' && !Array.isArray(value)
         ? value

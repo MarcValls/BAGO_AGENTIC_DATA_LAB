@@ -1,7 +1,7 @@
 import { Fragment as _Fragment, jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
+import './ActionReview.css';
 import { validateActionBundle } from '../../../contracts/action/action';
 import { InspectorStateView } from '../shared/InspectorState';
-import './ActionReview.css';
 const authorizationLabel = {
     authorized: 'Authorized by recorded decision',
     rejected: 'Rejected by recorded decision',

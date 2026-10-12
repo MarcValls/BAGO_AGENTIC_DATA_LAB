@@ -1,5 +1,8 @@
-import { useState, useEffect } from 'react'
 import './JobHistory.css'
+import './WindowsSurface.css'
+import { useState, useEffect } from 'react'
+import DataGrid, { DataGridRow } from './DataGrid'
+import TabStrip from './TabStrip'
 
 interface Job {
   job_id: string
@@ -20,11 +23,13 @@ interface JobHistoryProps {
   onJobSelect?: (job: Job) => void
 }
 
+type JobFilter = 'all' | 'demo' | 'agent'
+
 export default function JobHistory({ onJobSelect }: JobHistoryProps) {
   const [jobs, setJobs] = useState<Job[]>([])
   const [loading, setLoading] = useState(true)
   const [selectedJob, setSelectedJob] = useState<Job | null>(null)
-  const [filter, setFilter] = useState<'all' | 'demo' | 'agent'>('all')
+  const [filter, setFilter] = useState<JobFilter>('all')
 
   useEffect(() => {
     fetchJobs()
@@ -45,6 +50,10 @@ export default function JobHistory({ onJobSelect }: JobHistoryProps) {
   }
 
   const filteredJobs = filter === 'all' ? jobs : jobs.filter((j) => j.job_type === filter)
+  const selectJob = (job: Job) => {
+    setSelectedJob(job)
+    onJobSelect?.(job)
+  }
 
   const getStatusBadge = (status: string) => {
     const badges: Record<string, string> = {
@@ -67,30 +76,32 @@ export default function JobHistory({ onJobSelect }: JobHistoryProps) {
     return date.toLocaleTimeString()
   }
 
+  const gridRows: DataGridRow[] = filteredJobs.map((job) => ({
+    id: job.job_id,
+    cells: [
+      <span className="status-cell" key="status"><span className="status-icon">{getStatusBadge(job.status)}</span>{job.status}</span>,
+      <span className="type-cell" key="type">{job.job_type}</span>,
+      <span className="id-cell" key="id" title={job.job_id}>{job.job_id.substring(0, 12)}...</span>,
+      <span className="duration-cell" key="duration">{formatDuration(job.duration_ms)}</span>,
+      <span className="cost-cell" key="cost">${job.cost_usd.toFixed(4)}</span>,
+      <span className="date-cell" key="created">{formatDate(job.created_at)}</span>,
+    ],
+  }))
+
   return (
     <div className="job-history">
       <div className="history-header">
-        <h2>📊 Job History</h2>
-        <div className="filter-tabs">
-          <button
-            className={`filter-btn ${filter === 'all' ? 'active' : ''}`}
-            onClick={() => setFilter('all')}
-          >
-            All ({jobs.length})
-          </button>
-          <button
-            className={`filter-btn ${filter === 'demo' ? 'active' : ''}`}
-            onClick={() => setFilter('demo')}
-          >
-            Demo ({jobs.filter((j) => j.job_type === 'demo').length})
-          </button>
-          <button
-            className={`filter-btn ${filter === 'agent' ? 'active' : ''}`}
-            onClick={() => setFilter('agent')}
-          >
-            Agent ({jobs.filter((j) => j.job_type === 'agent').length})
-          </button>
-        </div>
+        <h2>Job History</h2>
+        <TabStrip<JobFilter>
+          label="Job type filter"
+          value={filter}
+          onChange={setFilter}
+          items={[
+            { id: 'all', label: `All (${jobs.length})` },
+            { id: 'demo', label: `Demo (${jobs.filter((j) => j.job_type === 'demo').length})` },
+            { id: 'agent', label: `Agent (${jobs.filter((j) => j.job_type === 'agent').length})` },
+          ]}
+        />
       </div>
 
       {loading ? (
@@ -100,39 +111,16 @@ export default function JobHistory({ onJobSelect }: JobHistoryProps) {
       ) : (
         <div className="jobs-grid">
           <div className="jobs-list">
-            <table className="jobs-table">
-              <thead>
-                <tr>
-                  <th>Status</th>
-                  <th>Type</th>
-                  <th>ID</th>
-                  <th>Duration</th>
-                  <th>Cost</th>
-                  <th>Created</th>
-                </tr>
-              </thead>
-              <tbody>
-                {filteredJobs.map((job) => (
-                  <tr
-                    key={job.job_id}
-                    className={`job-row ${selectedJob?.job_id === job.job_id ? 'selected' : ''}`}
-                    onClick={() => setSelectedJob(job)}
-                  >
-                    <td className="status-cell">
-                      <span className="status-icon">{getStatusBadge(job.status)}</span>
-                      {job.status}
-                    </td>
-                    <td className="type-cell">{job.job_type}</td>
-                    <td className="id-cell" title={job.job_id}>
-                      {job.job_id.substring(0, 12)}...
-                    </td>
-                    <td className="duration-cell">{formatDuration(job.duration_ms)}</td>
-                    <td className="cost-cell">${job.cost_usd.toFixed(4)}</td>
-                    <td className="date-cell">{formatDate(job.created_at)}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+            <DataGrid
+              label="Job history"
+              columns={['Status', 'Type', 'ID', 'Duration', 'Cost', 'Created']}
+              rows={gridRows}
+              selectedId={selectedJob?.job_id}
+              onSelect={(id) => {
+                const job = filteredJobs.find((item) => item.job_id === id)
+                if (job) selectJob(job)
+              }}
+            />
           </div>
 
           {selectedJob && (

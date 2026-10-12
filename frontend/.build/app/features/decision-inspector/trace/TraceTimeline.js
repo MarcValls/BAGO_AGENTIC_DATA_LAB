@@ -1,6 +1,6 @@
 import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
-import { InspectorStateView } from '../shared/InspectorState';
 import './TraceTimeline.css';
+import { InspectorStateView } from '../shared/InspectorState';
 function Payload({ event }) {
     const values = Object.entries(event.attributes);
     const renderValue = (value) => {

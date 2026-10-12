@@ -1,7 +1,7 @@
+import './ActionReview.css'
 import type { ActionInspectionBundle, ProposedAction } from '../../../contracts/action/action'
 import { validateActionBundle } from '../../../contracts/action/action'
 import { InspectorStateView, type InspectorState } from '../shared/InspectorState'
-import './ActionReview.css'
 
 export interface ActionReviewProps {
   bundle?: ActionInspectionBundle

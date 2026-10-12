@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Símbolo BAGO">
+  <title>BAGO - símbolo circular en negativo</title>
+  <path d="M 33.151 10.030 A 22 22 0 0 1 53.970 30.849" fill="none" stroke="#447B9D" stroke-width="9.3" stroke-linecap="butt"/>
+  <path d="M 53.916 33.917 A 22 22 0 0 1 33.151 53.970" fill="none" stroke="#F2EFEA" stroke-width="9.3" stroke-linecap="butt"/>
+  <path d="M 30.849 53.970 A 22 22 0 0 1 30.849 10.030" fill="none" stroke="#F2EFEA" stroke-width="9.3" stroke-linecap="butt"/>
+  <path d="M 32.000 5.200 V 14.100 M 32.000 50.000 V 58.200" stroke="#F2EFEA" stroke-width="2" stroke-linecap="square" fill="none"/>
+</svg>

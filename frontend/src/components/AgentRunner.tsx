@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react'
 import './AgentRunner.css'
+import { useState, useEffect } from 'react'
 
 interface Agent {
   id: string
@@ -166,18 +166,18 @@ export default function AgentRunner() {
       )}
 
       <div className="runner-header">
-        <h2>🎯 Agent Runner</h2>
         <div className="runner-actions">
-          <button onClick={downloadAgentZip} className="btn btn-secondary btn-small">
-            ⬇️ Export All
+          <button onClick={downloadAgentZip} className="btn btn-secondary btn-small" aria-label="Export all agents" title="Export all agents">
+            ↓ Export
           </button>
-          <label className="btn btn-secondary btn-small">
-            ⬆️ Import
+          <label className="btn btn-secondary btn-small" title="Import agents from ZIP">
+            ↑ Import
             <input
               type="file"
               accept=".zip"
+              aria-label="Import agents from ZIP"
               onChange={(e) => e.target.files && importAgentZip(e.target.files[0])}
-              style={{ display: 'none' }}
+
             />
           </label>
         </div>
@@ -191,7 +191,7 @@ export default function AgentRunner() {
         <div className="agents-panel">
           <h3>Available Agents ({agents.length})</h3>
           {agents.length === 0 ? (
-            <p style={{ color: 'rgba(255, 255, 255, 0.5)' }}>No agents created yet. Create one in Agent Builder.</p>
+            <p>No agents created yet. Create one in Agent Builder.</p>
           ) : (
             <div className="agents-list">
               {agents.map((agent) => (
@@ -231,7 +231,7 @@ export default function AgentRunner() {
               <h4>Logs</h4>
               <div className="logs-box">
                 {logs.length === 0 ? (
-                  <p style={{ color: 'rgba(255, 255, 255, 0.4)' }}>Execution unavailable. No job was started.</p>
+                  <p>Execution unavailable. No job was started.</p>
                 ) : (
                   logs.map((line, idx) => (
                     <div key={idx} className="log-line">

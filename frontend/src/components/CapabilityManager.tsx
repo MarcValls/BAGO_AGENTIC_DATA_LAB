@@ -1,5 +1,5 @@
-import { useCallback, useEffect, useState } from 'react'
 import './CapabilityManager.css'
+import { useCallback, useEffect, useState } from 'react'
 
 export type Capability = {
   id: string
@@ -43,7 +43,6 @@ export async function capabilityResponseError(response: Response): Promise<strin
 export default function CapabilityManager() {
   const [capabilities, setCapabilities] = useState<Capability[]>([])
   const [proposals, setProposals] = useState<CapabilityProposal[]>([])
-  const [authorityNotice, setAuthorityNotice] = useState('')
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [canceling, setCanceling] = useState<string | null>(null)
@@ -62,7 +61,6 @@ export default function CapabilityManager() {
       const proposalData = await proposalResponse.json()
       setCapabilities(Array.isArray(catalog.capabilities) ? catalog.capabilities : [])
       setProposals(Array.isArray(proposalData.proposals) ? proposalData.proposals : [])
-      setAuthorityNotice(typeof catalog.authority_notice === 'string' ? catalog.authority_notice : '')
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : 'Capability data could not be loaded.')
     } finally { setLoading(false) }
@@ -80,7 +78,6 @@ export default function CapabilityManager() {
       })
       if (!response.ok) throw new Error(await capabilityResponseError(response))
       const result = await response.json()
-      setAuthorityNotice(typeof result.authority_notice === 'string' ? result.authority_notice : 'Proposal cancelled; no permission, job, or execution was created.')
       await refresh()
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : 'Proposal could not be cancelled.')
@@ -89,12 +86,7 @@ export default function CapabilityManager() {
   }
 
   return (
-    <section className="capability-manager" aria-labelledby="capability-manager-title">
-      <header className="capability-manager-header">
-        <div><p className="section-eyebrow">Backend-owned inventory</p><h2 id="capability-manager-title">Capabilities</h2><p>See what is connected in this workspace and review saved proposals.</p></div>
-        <button type="button" className="secondary-action" onClick={() => void refresh()} disabled={loading}>Refresh</button>
-      </header>
-      {authorityNotice && <p className="capability-authority-notice" role="note">{authorityNotice}</p>}
+    <section className="capability-manager" aria-label="Capabilities">
       {loading && <p className="capability-state" role="status">Loading capability catalog and proposals…</p>}
       {error && <p className="capability-error" role="alert">{error}</p>}
       {!loading && !error && capabilities.length === 0 && <p className="capability-state">No capability records were returned by the backend.</p>}
@@ -106,9 +98,11 @@ export default function CapabilityManager() {
           <details><summary>Limits and source fingerprints</summary><pre>{JSON.stringify({ limits: capability.limits, source_fingerprints: capability.source_fingerprints }, null, 2)}</pre></details>
         </article>)}
       </div>}
-      <section className="capability-proposals" aria-labelledby="capability-proposals-title">
-        <div className="capability-section-heading"><div><p className="section-eyebrow">Persisted backend records</p><h3 id="capability-proposals-title">Proposals</h3></div><span>{loading ? '—' : proposals.length}</span></div>
-        {!loading && !error && proposals.length === 0 && <p className="capability-state">No proposals saved yet. Ask the chat to prepare one for review.</p>}
+      <section className={`capability-proposals ${!loading && !error && proposals.length === 0 ? 'is-empty' : ''}`} aria-labelledby="capability-proposals-title">
+        <div className="capability-section-heading">
+          <div className="capability-section-title"><h3 id="capability-proposals-title">Proposals</h3><span>{loading ? '—' : proposals.length}</span></div>
+          {!loading && !error && proposals.length === 0 && <p className="capability-empty-proposals">No saved proposals. <span>Ask the chat to prepare one for review.</span></p>}
+        </div>
         <div className="capability-proposal-list">{proposals.map((proposal) => <article className="capability-proposal" key={proposal.id}>
           <div className="capability-card-heading"><div><h4>{capabilities.find((item) => item.id === proposal.capability_id)?.name ?? proposal.capability_id}</h4><code>{proposal.id}</code></div><span className="capability-status">{proposal.status}</span></div>
           <p>{proposal.summary}</p><p><strong>Requested scope:</strong> {proposal.requested_scope}</p>

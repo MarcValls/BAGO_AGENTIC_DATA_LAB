@@ -1,5 +1,4 @@
 import './Authorization.css'
-
 interface Artifacts {
   summary: any
   agent_run: any
@@ -29,11 +28,11 @@ export default function Authorization({ data }: Props) {
       <div className="card">
         <h2>Tool Proposals</h2>
         {proposals.map((proposal: any, idx: number) => (
-          <div key={idx} className="card" style={{ marginLeft: '0', marginTop: '12px' }}>
+          <div key={idx} className="card">
             <div className="grid">
               <div className="metric">
                 <label>Tool</label>
-                <div style={{ fontSize: '1em' }}>{proposal.tool_name}</div>
+                <div>{proposal.tool_name}</div>
               </div>
               <div className="metric">
                 <label>Decision</label>
@@ -45,7 +44,7 @@ export default function Authorization({ data }: Props) {
               </div>
               <div className="metric">
                 <label>Effect Type</label>
-                <div style={{ fontSize: '1em' }}>{proposal.effect_type}</div>
+                <div>{proposal.effect_type}</div>
               </div>
               <div className="metric">
                 <label>Status</label>
@@ -62,7 +61,7 @@ export default function Authorization({ data }: Props) {
             {proposal.result && (
               <div>
                 <p><strong>Result:</strong></p>
-                <p style={{ color: 'rgba(255, 255, 255, 0.8)' }}>{proposal.result}</p>
+                <p>{proposal.result}</p>
               </div>
             )}
           </div>
@@ -91,19 +90,19 @@ export default function Authorization({ data }: Props) {
             </div>
             <div className="metric">
               <label>Cost (USD)</label>
-              <div style={{ fontSize: '1.5em', fontWeight: '600' }}>${providerReceipt.cost_usd.toFixed(2)}</div>
+              <div>${providerReceipt.cost_usd.toFixed(2)}</div>
             </div>
             <div className="metric">
               <label>Duration (ms)</label>
-              <div style={{ fontSize: '1.5em', fontWeight: '600' }}>{providerReceipt.duration_ms}</div>
+              <div>{providerReceipt.duration_ms}</div>
             </div>
             <div className="metric">
               <label>Input Tokens</label>
-              <div style={{ fontSize: '1.5em', fontWeight: '600' }}>{providerReceipt.usage?.input_tokens || 0}</div>
+              <div>{providerReceipt.usage?.input_tokens || 0}</div>
             </div>
             <div className="metric">
               <label>Output Tokens</label>
-              <div style={{ fontSize: '1.5em', fontWeight: '600' }}>{providerReceipt.usage?.output_tokens || 0}</div>
+              <div>{providerReceipt.usage?.output_tokens || 0}</div>
             </div>
           </div>
         )}
@@ -124,23 +123,23 @@ export default function Authorization({ data }: Props) {
               </div>
               <div className="metric">
                 <label>Profile</label>
-                <div style={{ fontSize: '1em' }}>{sandboxReceipt.profile}</div>
+                <div>{sandboxReceipt.profile}</div>
               </div>
               <div className="metric">
                 <label>Capability</label>
-                <div style={{ fontSize: '1em' }}>{sandboxReceipt.capability}</div>
+                <div>{sandboxReceipt.capability}</div>
               </div>
               <div className="metric">
                 <label>Exit Code</label>
-                <div style={{ fontSize: '1.5em', fontWeight: '600' }}>{sandboxReceipt.exit_code}</div>
+                <div>{sandboxReceipt.exit_code}</div>
               </div>
               <div className="metric">
                 <label>Duration (ms)</label>
-                <div style={{ fontSize: '1.5em', fontWeight: '600' }}>{sandboxReceipt.duration_ms}</div>
+                <div>{sandboxReceipt.duration_ms}</div>
               </div>
               <div className="metric">
                 <label>Network</label>
-                <div style={{ fontSize: '1em' }}>{sandboxReceipt.network_mode}</div>
+                <div>{sandboxReceipt.network_mode}</div>
               </div>
             </div>
             <p><strong>Sandbox ID:</strong> {sandboxReceipt.sandbox_id}</p>

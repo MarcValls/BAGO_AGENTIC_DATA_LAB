@@ -220,3 +220,76 @@
     max-height: 300px;
   }
 }
+
+.control-section, .status-section, .logs-section, .card { border-radius: 4px; }
+.control-section, .logs-section { border-color: #34485f; }
+.control-container { gap: 12px; }
+.button-group { flex-wrap: wrap; }
+.btn, .btn-small { border-radius: 4px; }
+.control-sidebar { gap: 12px; }
+
+@media (max-width: 550px) {
+  .control-container { min-width: 0; grid-template-columns: minmax(0, 1fr); }
+  .control-panel, .control-sidebar, .control-section, .logs-section, .card { min-width: 0; }
+  .control-sidebar { flex-direction: column; }
+  .control-section, .logs-section { padding: 10px; }
+  .button-group { display: grid; grid-template-columns: minmax(0, 1fr); }
+  .button-group .btn { width: 100%; min-width: 0; }
+  .status-section { flex-wrap: wrap; gap: 8px; }
+  .logs-header { flex-wrap: wrap; gap: 8px; }
+}
+
+.control-container {
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+  grid-template-columns: minmax(0, 1fr) minmax(250px, 300px);
+  gap: 12px;
+  overflow: hidden;
+  padding: 12px;
+  box-sizing: border-box;
+}
+.control-panel { min-width: 0; min-height: 0; }
+.control-panel .window-panel-content { gap: 10px; overflow: hidden; padding: 12px; }
+.control-section {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 8px 16px;
+  margin: 0;
+  padding: 10px 12px;
+}
+.control-section h3 { grid-column: 1 / -1; margin: 0; }
+.control-options { flex-direction: row; flex-wrap: wrap; gap: 8px 16px; margin: 0; }
+.button-group .btn { min-height: 34px; padding: 6px 12px; }
+.status-section { min-height: 0; margin: 0; padding: 7px 10px; }
+.status-badge { padding: 5px 9px; }
+.logs-section { display: flex; min-height: 0; flex: 1 1 auto; flex-direction: column; }
+.logs-header { flex: 0 0 auto; }
+.terminal-pane { min-height: 0; flex: 1 1 auto; }
+.terminal-pane-output { min-height: 0; max-height: none; flex: 1 1 auto; }
+.control-sidebar { min-height: 0; overflow: auto; }
+.control-sidebar .card { overflow-wrap: anywhere; }
+
+@media (max-width: 1024px) {
+  .control-container {
+    height: auto;
+    min-height: 100%;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: minmax(380px, 1fr) auto;
+    overflow: visible;
+  }
+  .control-panel { min-height: 380px; }
+}
+
+@media (max-width: 550px) {
+  .control-container { min-height: 100%; grid-template-rows: minmax(390px, auto) auto; padding: 8px; }
+  .control-panel { min-height: 390px; }
+  .control-panel .window-panel-content { padding: 9px; }
+  .control-section { grid-template-columns: minmax(0, 1fr); gap: 8px; }
+  .control-section h3 { grid-column: auto; }
+  .control-options { flex-direction: column; gap: 7px; }
+  .button-group { display: grid; grid-template-columns: minmax(0, 1fr); }
+  .button-group .btn { width: 100%; min-width: 0; }
+}

@@ -1,5 +1,6 @@
-import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
-import { useEffect, useState } from 'react';
+import { Fragment as _Fragment, jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
+import './App.css';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import axios from 'axios';
 import Summary from './components/Summary';
 import Retrieval from './components/Retrieval';
@@ -10,53 +11,110 @@ import Control from './components/Control';
 import AgentBuilder from './components/AgentBuilder';
 import AgentRunner from './components/AgentRunner';
 import AgentChat from './components/AgentChat';
+import CapabilityManager from './components/CapabilityManager';
 import JobHistory from './components/JobHistory';
+import AgentEvaluationLab from './components/AgentEvaluationLab';
+import ProviderSettings from './components/ProviderSettings';
 import { DecisionInspector } from './features/decision-inspector';
-import './App.css';
-const portfolioViews = [
-    { id: 'builder', label: 'Agent Builder' },
-    { id: 'chat', label: 'Agent Chat' },
-    { id: 'runner', label: 'Agent Runner' },
-    { id: 'control', label: 'Control' },
-    { id: 'jobs', label: 'Job History' },
-    { id: 'summary', label: 'Summary' },
-    { id: 'retrieval', label: 'Retrieval & Ontology' },
-    { id: 'authorization', label: 'Authorization' },
-    { id: 'trace', label: 'Trace' },
-    { id: 'evaluation', label: 'Evaluation' },
+const navigation = [
+    { id: 'chat', label: 'Chat', layer: 'interaction' },
+    { id: 'capabilities', label: 'Capabilities', layer: 'interaction' },
+    { id: 'builder', label: 'Agent Builder', layer: 'interaction' },
+    { id: 'runner', label: 'Agent Runner', layer: 'interaction' },
+    { id: 'evaluation_lab', label: 'Agent Evaluation Lab', layer: 'interaction' },
+    { id: 'control', label: 'Control', layer: 'interaction' },
+    { id: 'inspector', label: 'Decision Inspector', layer: 'data' },
+    { id: 'jobs', label: 'Job History', layer: 'data' },
+    { id: 'summary', label: 'Summary', layer: 'data' },
+    { id: 'retrieval', label: 'Retrieval & Ontology', layer: 'data' },
+    { id: 'authorization', label: 'Authorization', layer: 'data' },
+    { id: 'trace', label: 'Trace', layer: 'data' },
+    { id: 'evaluation', label: 'Evaluation', layer: 'data' },
 ];
+const interactionNavigation = navigation.filter((item) => item.layer === 'interaction');
+const dataNavigation = navigation.filter((item) => item.layer === 'data');
+const interactionIcons = {
+    chat: '◌',
+    capabilities: '◇',
+    builder: '⊞',
+    runner: '▷',
+    evaluation_lab: '▦',
+    control: '⌘',
+};
+function isDataView(view) {
+    return dataNavigation.some((item) => item.id === view);
+}
 function App() {
     const [artifacts, setArtifacts] = useState(null);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
-    const [activeTab, setActiveTab] = useState('inspector');
+    const [loadingArtifacts, setLoadingArtifacts] = useState(true);
+    const [artifactError, setArtifactError] = useState(null);
+    const [activeInteractionView, setActiveInteractionView] = useState('chat');
+    const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+    const [activeDataView, setActiveDataView] = useState('inspector');
+    const [dataLayerOpen, setDataLayerOpen] = useState(false);
+    const [settingsOpen, setSettingsOpen] = useState(false);
     const [demoRefresh, setDemoRefresh] = useState(0);
+    const dataLayerRef = useRef(null);
+    const settingsDialogRef = useRef(null);
     useEffect(() => {
         const fetchArtifacts = async () => {
             try {
                 const response = await axios.get('/api/artifacts');
                 setArtifacts(response.data);
-                setError(null);
+                setArtifactError(null);
             }
-            catch (err) {
-                setError(err instanceof Error ? err.message : 'Failed to load artifacts');
+            catch (error) {
+                setArtifactError(error instanceof Error ? error.message : 'Run artifacts are unavailable.');
             }
             finally {
-                setLoading(false);
+                setLoadingArtifacts(false);
             }
         };
-        fetchArtifacts();
+        void fetchArtifacts();
     }, [demoRefresh]);
-    const handleDemoRun = () => {
+    const handleDemoRun = useCallback(() => {
         setDemoRefresh((previous) => previous + 1);
-        setActiveTab('inspector');
-    };
-    if (loading)
-        return _jsxs("main", { className: "container app-state", children: [_jsx("div", { className: "spinner", role: "status" }), _jsx("p", { children: "Loading run artifacts\u2026" })] });
-    if (error)
-        return _jsx("main", { className: "container app-state", children: _jsxs("section", { className: "card", role: "alert", children: [_jsx("h1", { children: "Run artifacts unavailable" }), _jsx("p", { children: error }), _jsxs("p", { children: ["Run ", _jsx("code", { children: "python demo.py" }), " to create a governed demo artifact bundle."] })] }) });
-    if (!artifacts)
-        return _jsx("main", { className: "container app-state", children: _jsx("p", { role: "status", children: "No run data was provided." }) });
-    return (_jsxs("main", { className: "container", children: [_jsxs("header", { className: "header", children: [_jsxs("div", { children: [_jsx("p", { className: "app-kicker", children: "BAGO \u00B7 Governed Knowledge Agent" }), _jsx("h1", { children: "Agentic Data Lab" })] }), _jsx("span", { className: `badge ${artifacts.summary.status === 'PASS' ? 'success' : 'error'}`, children: artifacts.summary.status })] }), _jsx("button", { className: "inspector-home", type: "button", "aria-current": activeTab === 'inspector' ? 'page' : undefined, onClick: () => setActiveTab('inspector'), children: "Decision Inspector" }), activeTab === 'inspector' && _jsx(DecisionInspector, { artifacts: artifacts }), _jsxs("details", { className: "portfolio-views", children: [_jsx("summary", { children: "Other portfolio views" }), _jsx("nav", { className: "tabs", "aria-label": "Other portfolio views", children: portfolioViews.map((view) => _jsx("button", { className: `tab ${activeTab === view.id ? 'active' : ''}`, onClick: () => setActiveTab(view.id), children: view.label }, view.id)) }), activeTab === 'builder' && _jsx(AgentBuilder, { onAgentCreated: handleDemoRun }), activeTab === 'chat' && _jsx(AgentChat, {}), activeTab === 'runner' && _jsx(AgentRunner, {}), activeTab === 'control' && _jsx(Control, { onDemoRun: handleDemoRun }), activeTab === 'jobs' && _jsx(JobHistory, {}), activeTab === 'summary' && _jsx(Summary, { data: artifacts }), activeTab === 'retrieval' && _jsx(Retrieval, { data: artifacts }), activeTab === 'authorization' && _jsx(Authorization, { data: artifacts }), activeTab === 'trace' && _jsx(Trace, { data: artifacts }), activeTab === 'evaluation' && _jsx(Evaluation, { data: artifacts })] })] }));
+        setActiveDataView('inspector');
+        setDataLayerOpen(true);
+    }, []);
+    const navigateFromChat = useCallback((view) => {
+        const tab = view === 'traces' ? 'trace' : view;
+        if (isDataView(tab)) {
+            setActiveDataView(tab);
+            setDataLayerOpen(true);
+        }
+        else if (tab === 'provider_settings') {
+            setSettingsOpen(true);
+        }
+        else {
+            setActiveInteractionView(tab);
+        }
+    }, []);
+    const openSettings = useCallback(() => setSettingsOpen(true), []);
+    const openInspect = useCallback(() => setDataLayerOpen(true), []);
+    useEffect(() => {
+        const dialog = dataLayerRef.current;
+        if (!dialog)
+            return;
+        if (dataLayerOpen && !dialog.open)
+            dialog.showModal();
+        if (!dataLayerOpen && dialog.open)
+            dialog.close();
+    }, [dataLayerOpen]);
+    useEffect(() => {
+        const dialog = settingsDialogRef.current;
+        if (!dialog)
+            return;
+        if (settingsOpen && !dialog.open)
+            dialog.showModal();
+        if (!settingsOpen && dialog.open)
+            dialog.close();
+    }, [settingsOpen]);
+    const activeInteractionLabel = interactionNavigation.find((item) => item.id === activeInteractionView)?.label ?? 'Workspace';
+    return (_jsxs("div", { className: `app-shell ${activeInteractionView === 'chat' ? 'app-shell--chat' : ''} ${sidebarCollapsed ? 'app-shell--sidebar-collapsed' : ''}`, children: [_jsxs("aside", { id: "workspace-sidebar-content", className: `workspace-sidebar ${activeInteractionView === 'chat' ? 'workspace-sidebar--chat' : ''} ${sidebarCollapsed ? 'workspace-sidebar--collapsed' : ''}`, "aria-label": "Workspace sidebar", children: [_jsxs("div", { className: "workspace-sidebar-brand", children: [_jsx("img", { className: "workspace-sidebar-logo", src: "/brand/BAGO_logotipo_horizontal.svg", alt: "BAGO" }), _jsx("img", { className: "workspace-sidebar-symbol", src: "/brand/BAGO_simbolo_negativo.svg", alt: "", "aria-hidden": "true" })] }), _jsx("nav", { className: "primary-navigation", "aria-label": "Interaction layer", children: _jsxs("div", { className: "navigation-group", children: [interactionNavigation.map((item) => (_jsxs("button", { type: "button", className: `navigation-item ${activeInteractionView === item.id ? 'active' : ''}`, "aria-label": item.label, title: sidebarCollapsed ? item.label : undefined, "aria-current": activeInteractionView === item.id ? 'page' : undefined, onClick: () => setActiveInteractionView(item.id), children: [_jsx("span", { className: "navigation-item-icon", "aria-hidden": "true", children: interactionIcons[item.id] }), _jsx("span", { children: item.label })] }, item.id))), _jsxs("button", { type: "button", className: `navigation-item ${dataLayerOpen ? 'active' : ''}`, "aria-label": "Open Inspect", title: sidebarCollapsed ? 'Inspect' : undefined, "aria-pressed": dataLayerOpen, "aria-haspopup": "dialog", "aria-controls": "data-layer", onClick: openInspect, children: [_jsx("span", { className: "navigation-item-icon", "aria-hidden": "true", children: "\u25EB" }), _jsx("span", { children: "Inspect" })] })] }) }), _jsxs("footer", { className: "workspace-sidebar-footer", children: [_jsxs("button", { type: "button", className: "navigation-item settings-trigger", "aria-label": "Open settings", title: sidebarCollapsed ? 'Settings' : undefined, "aria-haspopup": "dialog", "aria-expanded": settingsOpen, "aria-controls": "settings-layer", onClick: openSettings, children: [_jsx("span", { className: "navigation-item-icon", "aria-hidden": "true", children: "\u2699" }), _jsx("span", { children: "Settings" })] }), _jsx("button", { type: "button", className: "sidebar-collapse-button", "aria-label": sidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar', "aria-expanded": !sidebarCollapsed, "aria-controls": "workspace-sidebar-content", title: sidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar', onClick: () => setSidebarCollapsed((collapsed) => !collapsed), children: _jsx("span", { "aria-hidden": "true", children: sidebarCollapsed ? '›' : '‹' }) })] })] }), _jsx("div", { className: "app-main", children: _jsxs("main", { className: `app-view ${activeInteractionView === 'chat' ? 'app-view--chat' : ''}`, "aria-label": `${activeInteractionLabel} view`, children: [activeInteractionView === 'chat' && _jsx(AgentChat, { onNavigate: navigateFromChat, onOpenProviderSettings: openSettings }), activeInteractionView === 'capabilities' && _jsx(CapabilityManager, {}), activeInteractionView === 'builder' && _jsx(AgentBuilder, { onAgentCreated: () => setDemoRefresh((previous) => previous + 1) }), activeInteractionView === 'runner' && _jsx(AgentRunner, {}), activeInteractionView === 'evaluation_lab' && _jsx(AgentEvaluationLab, {}), activeInteractionView === 'control' && _jsx(Control, { onDemoRun: handleDemoRun })] }) }), _jsxs("dialog", { ref: settingsDialogRef, id: "settings-layer", className: "settings-layer", "aria-labelledby": "settings-layer-title", onCancel: () => setSettingsOpen(false), onClose: () => setSettingsOpen(false), children: [_jsxs("header", { className: "settings-layer-header", children: [_jsxs("div", { children: [_jsx("p", { className: "app-kicker", children: "Preferences" }), _jsx("h2", { id: "settings-layer-title", children: "Settings" })] }), _jsx("button", { type: "button", className: "settings-layer-close", autoFocus: true, onClick: () => setSettingsOpen(false), "aria-label": "Close settings", children: _jsx("span", { "aria-hidden": "true", children: "\u00D7" }) })] }), _jsxs("div", { className: "settings-layer-layout", children: [_jsxs("nav", { className: "settings-layer-navigation", "aria-label": "Settings sections", children: [_jsx("span", { className: "navigation-caption", children: "Configuration" }), _jsxs("button", { type: "button", className: "navigation-item active", "aria-current": "page", children: [_jsx("span", { className: "navigation-item-icon", "aria-hidden": "true", children: "\u25C9" }), _jsx("span", { children: "Provider & models" })] }), _jsx("p", { className: "settings-navigation-note", children: "Connection, authentication and model selection" })] }), _jsx("section", { className: "settings-layer-content", "aria-label": "Provider and model settings", children: _jsx(ProviderSettings, {}) })] })] }), _jsxs("dialog", { ref: dataLayerRef, id: "data-layer", className: "data-layer", "aria-labelledby": "data-layer-title", onCancel: () => setDataLayerOpen(false), onClose: () => setDataLayerOpen(false), children: [_jsxs("header", { className: "data-layer-header", children: [_jsxs("div", { className: "data-layer-heading", children: [_jsx("p", { className: "app-kicker", children: "Inspect" }), _jsx("h2", { id: "data-layer-title", children: dataNavigation.find((item) => item.id === activeDataView)?.label ?? 'Data layer' })] }), _jsx("button", { type: "button", className: "settings-layer-close", "aria-label": "Back to Workspace", title: "Back to Workspace", autoFocus: true, onClick: () => setDataLayerOpen(false), children: _jsx("span", { "aria-hidden": "true", children: "\u00D7" }) })] }), _jsxs("div", { className: "data-layer-layout", children: [_jsxs("nav", { className: "data-layer-navigation", "aria-label": "Data views", children: [_jsx("span", { className: "navigation-caption", children: "Observe" }), dataNavigation.map((item) => (_jsx("button", { type: "button", className: `navigation-item ${activeDataView === item.id ? 'active' : ''}`, "aria-current": activeDataView === item.id ? 'page' : undefined, onClick: () => setActiveDataView(item.id), children: item.label }, item.id)))] }), _jsx("section", { className: "data-layer-content", "aria-label": `${dataNavigation.find((item) => item.id === activeDataView)?.label ?? 'Data'} view`, children: activeDataView === 'jobs' ? _jsx(JobHistory, {}) : loadingArtifacts
+                                    ? _jsxs("div", { className: "app-view-state", role: "status", children: [_jsx("span", { className: "spinner" }), _jsx("p", { children: "Loading portfolio artifacts\u2026" })] })
+                                    : artifactError || !artifacts
+                                        ? _jsxs("section", { className: "artifact-unavailable", role: "status", children: [_jsx("p", { className: "app-kicker", children: "Portfolio evidence" }), _jsx("h2", { children: "Artifacts are not available yet" }), _jsx("p", { children: artifactError ?? 'No artifact bundle was returned.' }), _jsx("p", { children: "Run a governed demo from the Control view to create its artifact bundle." }), _jsx("button", { type: "button", className: "navigation-item active", onClick: () => { setDataLayerOpen(false); setActiveInteractionView('control'); }, children: "Open Control" })] })
+                                        : _jsxs(_Fragment, { children: [activeDataView === 'inspector' && _jsx(DecisionInspector, { artifacts: artifacts }), activeDataView === 'summary' && _jsx(Summary, { data: artifacts }), activeDataView === 'retrieval' && _jsx(Retrieval, { data: artifacts }), activeDataView === 'authorization' && _jsx(Authorization, { data: artifacts }), activeDataView === 'trace' && _jsx(Trace, { data: artifacts }), activeDataView === 'evaluation' && _jsx(Evaluation, { data: artifacts })] }) })] })] })] }));
 }
 export default App;

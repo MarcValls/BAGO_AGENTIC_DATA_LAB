@@ -44,10 +44,13 @@ from src.agent_tools.workspace_read import (
     MAX_TOOL_ROUNDS,
     READ_WORKSPACE_FILE,
     READ_WORKSPACE_TOOL,
+    WORKSPACE_READ_AUTHORIZATIONS,
+    normalize_workspace_path,
     read_workspace_file,
 )
 from src.observability.local_trace import LocalTrace, TraceEvent, TraceKind
 from src.observability.otel_bridge import export_local_trace_to_otlp
+from src.sandbox import SandboxError
 
 # `src.evaluation.local_evals` retains a legacy absolute `observability` import.
 # Add the source root before dynamically loading the evaluation package.
@@ -227,7 +230,7 @@ class ControlChatRequest(BaseModel):
     view: Literal["inspector", "builder", "chat", "runner", "control", "jobs", "traces", "summary", "retrieval", "authorization", "evaluation", "provider_settings"] | None = None
     conversation_id: str
     revision: int = Field(ge=0)
-    allow_workspace_read: bool = False
+    workspace_read_authorization_id: str | None = Field(default=None, max_length=128)
 
 
 class AgentChatRequest(BaseModel):
@@ -236,7 +239,17 @@ class AgentChatRequest(BaseModel):
     message: str = Field(min_length=1, max_length=8000)
     conversation_id: str
     revision: int = Field(ge=0)
-    allow_workspace_read: bool = False
+    workspace_read_authorization_id: str | None = Field(default=None, max_length=128)
+
+
+class WorkspaceReadAuthorizationRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    owner_kind: Literal["assistant", "agent"]
+    owner_id: str = Field(min_length=1, max_length=128)
+    conversation_id: str
+    revision: int = Field(ge=0)
+    paths: list[str] = Field(min_length=1, max_length=20)
 
 
 class ConversationCreateRequest(BaseModel):
@@ -414,7 +427,7 @@ def _load_artifacts() -> dict[str, Any]:
 
 def _load_team_status() -> dict[str, Any]:
     """Read a sanitized snapshot of the local teamctl coordination state."""
-    team_dir = REPO_ROOT / ".bago/team/runtime"
+    team_dir = REPO_ROOT / ".codex-team"
     state_path = team_dir / "state.json"
     events_path = team_dir / "events.jsonl"
 
@@ -1048,11 +1061,12 @@ def _selected_model_id() -> str:
     return model_id
 
 
-def _workspace_read_instructions(enabled: bool) -> str:
+def _workspace_read_instructions(enabled: bool, authorized_paths: list[str] | None = None) -> str:
     if not enabled:
         return "For this message, project-file reading is not enabled. Do not claim to have read files."
     return (
-        "For this message the user enabled read-only project-file access. This narrowly overrides "
+        "For this message the user authorized read-only access to exactly these project-relative paths: "
+        + json.dumps(authorized_paths or [], ensure_ascii=False) + ". This narrowly overrides "
         "any earlier blanket prohibition on reading files or using tools; it does not override any "
         "other instruction or grant another capability. You may use only the "
         "read_workspace_file tool, with a project-relative path, when needed to answer the user's "
@@ -1066,9 +1080,11 @@ def _workspace_read_instructions(enabled: bool) -> str:
 async def _chat_with_workspace_read(
     model_id: str,
     messages: list[dict[str, Any]],
-) -> tuple[str, list[dict[str, Any]]]:
+    authorized_paths: list[str],
+) -> tuple[str, list[dict[str, Any]], list[dict[str, Any]]]:
     """Run a bounded Ollama tool loop with exactly one read-only workspace tool."""
     sources: list[dict[str, Any]] = []
+    read_events: list[dict[str, Any]] = []
     calls_used = 0
     for round_index in range(MAX_TOOL_ROUNDS):
         turn = await asyncio.to_thread(
@@ -1083,7 +1099,7 @@ async def _chat_with_workspace_read(
             answer = turn.get("content")
             if not isinstance(answer, str) or not answer.strip():
                 raise ollama.ProviderError("empty_model_response", "Ollama returned no assistant response.")
-            return answer.strip(), sources
+            return answer.strip(), sources, read_events
 
         assistant_turn = {key: turn[key] for key in ("content", "tool_calls") if key in turn}
         assistant_turn["role"] = "assistant"
@@ -1095,16 +1111,28 @@ async def _chat_with_workspace_read(
             arguments = function.get("arguments", {})
             if calls_used >= MAX_TOOL_CALLS_PER_TURN:
                 result = {"ok": False, "error": "The per-message file-read limit has been reached."}
+                if tool_name == READ_WORKSPACE_FILE:
+                    raw_arguments = arguments
+                    if isinstance(raw_arguments, str):
+                        try:
+                            raw_arguments = json.loads(raw_arguments)
+                        except (TypeError, ValueError):
+                            raw_arguments = {}
+                    raw_path = raw_arguments.get("path") if isinstance(raw_arguments, dict) else None
+                    read_events.append({"decision": "DENY", "path": normalize_workspace_path(raw_path), "reason_code": "TOOL_CALL_LIMIT", "attempt": calls_used + 1})
             elif tool_name != READ_WORKSPACE_FILE:
                 result = {"ok": False, "error": "That tool is not available in this chat."}
                 calls_used += 1
             else:
-                result, source = read_workspace_file(REPO_ROOT, arguments)
+                result, receipt = read_workspace_file(REPO_ROOT, arguments, authorized_paths)
                 calls_used += 1
-                if source:
-                    receipt = (source["path"], source["start_line"], source["end_line"])
-                    if not any((item["path"], item["start_line"], item["end_line"]) == receipt for item in sources):
-                        sources.append(source)
+                if receipt:
+                    receipt["attempt"] = calls_used
+                    read_events.append(receipt)
+                    if receipt.get("decision") == "ALLOW":
+                        identity = (receipt["path"], receipt["start_line"], receipt["end_line"], receipt["content_sha256"])
+                        if not any((item["path"], item["start_line"], item["end_line"], item["content_sha256"]) == identity for item in sources):
+                            sources.append(receipt)
             messages.append({
                 "role": "tool",
                 "tool_name": str(tool_name or "unknown_tool"),
@@ -1115,7 +1143,7 @@ async def _chat_with_workspace_read(
             # Ask for a final answer with tools removed once the bounded loop
             # is exhausted; this prevents another file read in this turn.
             answer = await asyncio.to_thread(ollama.chat, model_id, messages)
-            return answer, sources
+            return answer, sources, read_events
 
     raise ollama.ProviderError("tool_loop_incomplete", "The chat could not complete its response.")
 
@@ -1125,6 +1153,34 @@ def _conversation_error(error: Exception) -> HTTPException:
     if isinstance(error, ConversationConflict):
         return HTTPException(status_code=409, detail={"code": "conversation_revision_conflict", "message": "This conversation changed elsewhere. Reload it and try again."})
     return HTTPException(status_code=422, detail={"code": "invalid_conversation", "message": "Conversation request is invalid."})
+
+
+@app.post("/api/workspace-read/authorizations")
+async def create_workspace_read_authorization(request: WorkspaceReadAuthorizationRequest) -> dict[str, Any]:
+    """Issue a one-turn read permit after binding it to the current chat revision."""
+    conversation = _owned_conversation(request.conversation_id, request.owner_kind, request.owner_id)
+    if conversation["revision"] != request.revision:
+        raise _conversation_error(ConversationConflict(request.conversation_id))
+    try:
+        return WORKSPACE_READ_AUTHORIZATIONS.issue(
+            REPO_ROOT, owner_kind=request.owner_kind, owner_id=request.owner_id,
+            conversation_id=request.conversation_id, revision=request.revision, paths=request.paths,
+        )
+    except (OSError, ValueError, SandboxError):
+        raise HTTPException(status_code=422, detail={"code": "invalid_read_scope", "message": "Choose existing, readable project files within the per-file limits."}) from None
+
+
+def _consume_workspace_read_authorization(token: str | None, *, owner_kind: str, owner_id: str,
+                                          conversation_id: str, revision: int) -> list[str]:
+    if not token:
+        return []
+    paths = WORKSPACE_READ_AUTHORIZATIONS.consume(
+        token, owner_kind=owner_kind, owner_id=owner_id,
+        conversation_id=conversation_id, revision=revision,
+    )
+    if paths is None:
+        raise HTTPException(status_code=403, detail={"code": "read_authorization_invalid", "message": "Read authorization expired, was already used, or belongs to another chat revision."})
+    return paths
 
 
 def _owned_conversation(conversation_id: str, owner_kind: OwnerKind, owner_id: str) -> dict[str, Any]:
@@ -1310,6 +1366,10 @@ async def control_chat(request: ControlChatRequest) -> dict[str, Any]:
     conversation = _owned_conversation(request.conversation_id, "assistant", "app-assistant")
     if conversation["revision"] != request.revision:
         raise _conversation_error(ConversationConflict(request.conversation_id))
+    authorized_paths = _consume_workspace_read_authorization(
+        request.workspace_read_authorization_id, owner_kind="assistant", owner_id="app-assistant",
+        conversation_id=request.conversation_id, revision=request.revision,
+    )
     history = CONVERSATIONS.history(request.conversation_id)
     try:
         user_message = CONVERSATIONS.append_message(request.conversation_id, request.revision, "user", request.message or request.operation)
@@ -1322,6 +1382,8 @@ async def control_chat(request: ControlChatRequest) -> dict[str, Any]:
         references: dict[str, Any] = {}
         if payload.get("sources"):
             references["sources"] = payload["sources"]
+        if payload.get("read_events"):
+            references["read_events"] = payload["read_events"]
         CONVERSATIONS.append_message(request.conversation_id, revision, "assistant", assistant_message, references)
         saved = CONVERSATIONS.get(request.conversation_id)
         return {"operation": operation, "assistant_message": assistant_message, "conversation_id": request.conversation_id, "revision": saved["revision"], "conversation": saved, **payload}
@@ -1391,22 +1453,23 @@ async def control_chat(request: ControlChatRequest) -> dict[str, Any]:
             "When the user asks to create or design an agent, the app can generate an editable draft; it is saved only after the user reviews it and explicitly chooses Create agent. "
             "Never claim that agent creation is unavailable, and never claim the draft has been saved before that confirmation. "
             "The user can select a configured agent and chat with it. Do not claim that this chat starts a governed job or changes project files. "
-            "You cannot start jobs or modify files. You may read bounded text files from this workspace only when the user enables read access for this message; cite the returned sources and do not claim inspection without them. "
-            "When asked to perform work, explain whether you can help by drafting an agent, chatting with a selected agent, or reading enabled workspace files, and state any unavailable execution capability accurately. "
-            + _workspace_read_instructions(request.allow_workspace_read)
+            "You cannot start jobs or modify files. You may read bounded text files from this workspace only when the user authorizes exact paths for this message; cite the returned sources and do not claim inspection without them. "
+            "When asked to perform work, explain whether you can help by drafting an agent, chatting with a selected agent, or reading authorized workspace files, and state any unavailable execution capability accurately. "
+            + _workspace_read_instructions(bool(authorized_paths), authorized_paths)
         )},
         *history[-30:],
         {"role": "user", "content": request.message.strip()},
     ]
     sources: list[dict[str, Any]] = []
+    read_events: list[dict[str, Any]] = []
     try:
-        if request.allow_workspace_read:
-            answer, sources = await _chat_with_workspace_read(model_id, messages)
+        if authorized_paths:
+            answer, sources, read_events = await _chat_with_workspace_read(model_id, messages, authorized_paths)
         else:
             answer = await asyncio.to_thread(ollama.chat, model_id, messages)
     except ollama.ProviderError as error:
         raise _provider_http_error(error) from None
-    return finish_turn("chat", answer, agent_draft=None, sources=sources)
+    return finish_turn("chat", answer, agent_draft=None, sources=sources, read_events=read_events)
 
 
 def _record_agent_chat_trace(
@@ -1417,6 +1480,7 @@ def _record_agent_chat_trace(
     started_at_ns: int,
     ended_at_ns: int,
     sources: list[dict[str, Any]] | None = None,
+    read_events: list[dict[str, Any]] | None = None,
 ) -> dict[str, str]:
     trace_id = "trace-" + uuid.uuid4().hex[:16]
     event_id = "event-" + uuid.uuid4().hex[:16]
@@ -1445,7 +1509,25 @@ def _record_agent_chat_trace(
         start_time_unix_nano=started_at_ns,
         end_time_unix_nano=ended_at_ns,
     )
-    local_trace = LocalTrace(trace_id=trace_id, run_id=run_id, events=(event,))
+    child_events = []
+    for index, receipt in enumerate(read_events or [], start=1):
+        child_events.append(TraceEvent(
+            event_id="event-" + uuid.uuid4().hex[:16], trace_id=trace_id, sequence=index,
+            name="workspace.read", kind=TraceKind.AUTHORIZATION,
+            status=receipt.get("decision", "DENY"), parent_event_id=event_id,
+            attributes={key: value for key, value in receipt.items() if key != "content"},
+            evidence_refs=(f"workspace://{receipt.get('path') or 'unresolved'}",),
+        ))
+    event_attributes = dict(event.attributes)
+    event_attributes["workspace_read_denied_count"] = sum(1 for item in (read_events or []) if item.get("decision") == "DENY")
+    event_attributes["workspace_read_events"] = len(read_events or [])
+    event = TraceEvent(
+        event_id=event.event_id, trace_id=event.trace_id, sequence=event.sequence, name=event.name,
+        kind=event.kind, status=event.status, parent_event_id=event.parent_event_id,
+        attributes=event_attributes, evidence_refs=event.evidence_refs,
+        start_time_unix_nano=event.start_time_unix_nano, end_time_unix_nano=event.end_time_unix_nano,
+    )
+    local_trace = LocalTrace(trace_id=trace_id, run_id=run_id, events=(event, *child_events))
 
     state = "local_only"
     jaeger_trace_id = ""
@@ -1497,13 +1579,17 @@ async def chat_with_agent(
     conversation = _owned_conversation(request.conversation_id, "agent", agent_id)
     if conversation["revision"] != request.revision:
         raise _conversation_error(ConversationConflict(request.conversation_id))
+    authorized_paths = _consume_workspace_read_authorization(
+        request.workspace_read_authorization_id, owner_kind="agent", owner_id=agent_id,
+        conversation_id=request.conversation_id, revision=request.revision,
+    )
     history = CONVERSATIONS.history(request.conversation_id)
     try:
         user_message = CONVERSATIONS.append_message(request.conversation_id, request.revision, "user", request.message.strip())
     except (ConversationConflict, ConversationNotFound) as error:
         raise _conversation_error(error) from None
     revision = user_message["revision"]
-    messages = [{"role": "system", "content": record.config.system_prompt + "\n\nYou do not have app-control, write, or command-execution capabilities in this chat. Never claim to have performed them. " + _workspace_read_instructions(request.allow_workspace_read)}]
+    messages = [{"role": "system", "content": record.config.system_prompt + "\n\nYou do not have app-control, write, or command-execution capabilities in this chat. Never claim to have performed them. " + _workspace_read_instructions(bool(authorized_paths), authorized_paths)}]
     messages.extend(history[-30:])
     messages.append({"role": "user", "content": request.message.strip()})
     # New records pin a model; legacy records may not. In that case use only
@@ -1512,9 +1598,10 @@ async def chat_with_agent(
     model_id = record.config.model_id or _selected_model_id()
     started_at_ns = time.time_ns()
     sources: list[dict[str, Any]] = []
+    read_events: list[dict[str, Any]] = []
     try:
-        if request.allow_workspace_read:
-            answer, sources = await _chat_with_workspace_read(model_id, messages)
+        if authorized_paths:
+            answer, sources, read_events = await _chat_with_workspace_read(model_id, messages, authorized_paths)
         else:
             answer = await asyncio.to_thread(ollama.chat, model_id, messages)
     except ollama.ProviderError as error:
@@ -1527,10 +1614,13 @@ async def chat_with_agent(
         started_at_ns=started_at_ns,
         ended_at_ns=time.time_ns(),
         sources=sources,
+        read_events=read_events,
     )
     references: dict[str, Any] = {"trace": trace_metadata}
     if sources:
         references["sources"] = sources
+    if read_events:
+        references["read_events"] = read_events
     try:
         CONVERSATIONS.append_message(request.conversation_id, revision, "assistant", answer, references)
     except (ConversationConflict, ConversationNotFound) as error:
@@ -1542,7 +1632,7 @@ async def chat_with_agent(
         response.headers["X-Bago-Jaeger-Trace-Id"] = trace_metadata["jaeger_trace_id"]
     if trace_metadata.get("jaeger_url"):
         response.headers["X-Bago-Jaeger-Trace-Url"] = trace_metadata["jaeger_url"]
-    return {"agent_id": agent_id, "assistant_message": answer, "source": "ollama", "sources": sources, "conversation_id": request.conversation_id, "revision": saved["revision"], "trace": trace_metadata, "conversation": saved}
+    return {"agent_id": agent_id, "assistant_message": answer, "source": "ollama", "sources": sources, "read_events": read_events, "conversation_id": request.conversation_id, "revision": saved["revision"], "trace": trace_metadata, "conversation": saved}
 
 
 # ===== API: Job History & Metrics =====

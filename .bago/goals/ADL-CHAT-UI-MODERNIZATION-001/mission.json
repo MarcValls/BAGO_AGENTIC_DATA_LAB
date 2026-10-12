@@ -1,0 +1,39 @@
+{
+  "mission_id": "ADL_CHAT_UI_MODERNIZATION_001",
+  "title": "BAGO Agent Chat UI Modernization",
+  "objective": "Modernize the visual presentation of the chat-first application without changing its behavior or governed boundaries.",
+  "max_concurrency": 1,
+  "terminal_work_items": ["W01"],
+  "work_items": [
+    {
+      "id": "W01",
+      "title": "Modernize application shell and agent chat presentation",
+      "role": "decision-ui-engineer",
+      "depends_on": [],
+      "write_scopes": [
+        "frontend/src/index.css",
+        "frontend/src/App.css",
+        "frontend/src/components/AgentChat.css"
+      ],
+      "read_scopes": [
+        "frontend/src/App.tsx",
+        "frontend/src/components/AgentChat.tsx",
+        "frontend/src/components/ProviderSettings.tsx",
+        "docs/agent-chat-control/contracts/**",
+        "docs/agent-chat-control/FINAL_STATUS.md"
+      ],
+      "deliverables": [
+        "Refined global visual foundation",
+        "Modernized application shell and chat UI styling",
+        "Responsive and keyboard-accessible presentation"
+      ],
+      "done_when": [
+        "Existing React behavior and API contracts remain unchanged",
+        "Existing governed proposal, provider, and authorization semantics remain visible and intact",
+        "The frontend build and relevant UI tests pass",
+        "README generation and consistency checks pass"
+      ],
+      "frozen_outputs": []
+    }
+  ]
+}

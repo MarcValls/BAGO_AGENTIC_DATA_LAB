@@ -1,3 +1,4 @@
+import './DecisionInspector.css'
 import { useMemo, useState } from 'react'
 import { actionBundleFromAgentRun } from '../../../adapters/action/agentRun'
 import { localTraceToTimeline } from '../../../adapters/trace/localTraceAdapter'
@@ -8,7 +9,6 @@ import { ActionReview } from '../actions/ActionReview'
 import { EvidenceExplorer } from '../evidence/EvidenceExplorer'
 import { InspectorShell, type InspectorSection } from '../shell/InspectorShell'
 import { TraceTimeline as TraceTimelineView } from '../trace/TraceTimeline'
-import './DecisionInspector.css'
 
 export interface DecisionInspectorArtifacts {
   summary: Record<string, unknown>

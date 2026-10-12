@@ -1,5 +1,5 @@
-import type { ReactNode } from 'react'
 import './InspectorState.css'
+import type { ReactNode } from 'react'
 
 export type InspectorState =
   | { status: 'loading'; message?: string }

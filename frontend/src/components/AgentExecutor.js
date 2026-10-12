@@ -1,6 +1,6 @@
 import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
 import { useState } from 'react';
-import './AgentExecutor.css';
+
 export default function AgentExecutor({ agent, onExecutionComplete }) {
     const [isRunning, setIsRunning] = useState(false);
     const [logs, setLogs] = useState([]);

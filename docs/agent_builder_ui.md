@@ -29,6 +29,16 @@ Asistente paso a paso para crear agentes:
 - Retrieval: modo hybrid/semantic/lexical, top-k
 - Sandbox: perfiles de seguridad (test_runner, restricted, isolated)
 
+### Agent Runner: distribucion adaptable
+
+El inventario de agentes ocupa todo el ancho disponible. Las tarjetas se
+distribuyen en columnas automaticas de al menos 240 px cuando hay espacio,
+incluido el movil en horizontal, y en una sola columna en pantallas estrechas.
+Los botones quedan alineados al pie de cada tarjeta y el detalle del agente
+seleccionado aparece debajo del inventario, sin limitar su altura ni introducir
+desplazamiento interno. Este ajuste visual no habilita la ejecucion de agentes:
+Run sigue deshabilitado mientras no exista una capacidad de ejecucion gobernada.
+
 ## Endpoints API Nuevos
 
 ### Demo Orchestration

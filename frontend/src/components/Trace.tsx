@@ -1,5 +1,4 @@
 import './Trace.css'
-
 interface Artifacts {
   summary: any
   agent_run: any
@@ -22,15 +21,15 @@ export default function Trace({ data }: Props) {
         <div className="grid">
           <div className="metric">
             <label>Total Events</label>
-            <div style={{ fontSize: '1.5em', fontWeight: '600' }}>{trace.event_count}</div>
+            <div>{trace.event_count}</div>
           </div>
           <div className="metric">
             <label>Cost (USD)</label>
-            <div style={{ fontSize: '1.5em', fontWeight: '600' }}>${trace.cost_usd.toFixed(2)}</div>
+            <div>${trace.cost_usd.toFixed(2)}</div>
           </div>
           <div className="metric">
             <label>Trace ID</label>
-            <div style={{ fontSize: '0.85em', wordBreak: 'break-all' }}>{trace.trace_id}</div>
+            <div>{trace.trace_id}</div>
           </div>
         </div>
       </div>
@@ -43,18 +42,18 @@ export default function Trace({ data }: Props) {
               key={idx}
               className={`timeline-item ${event.status === 'SUCCESS' || event.status === 'ALLOW' ? 'success' : 'error'}`}
             >
-              <div style={{ marginBottom: '8px' }}>
+              <div>
                 <strong>{event.name}</strong>
-                <span style={{ color: 'rgba(255, 255, 255, 0.6)', fontSize: '0.9em', marginLeft: '8px' }}>
+                <span>
                   ({event.kind})
                 </span>
               </div>
               {event.attributes && Object.entries(event.attributes).length > 0 && (
-                <details style={{ marginBottom: '8px' }}>
-                  <summary style={{ cursor: 'pointer', fontSize: '0.9em' }}>Attributes</summary>
-                  <div style={{ marginTop: '8px', fontSize: '0.85em' }}>
+                <details>
+                  <summary>Attributes</summary>
+                  <div>
                     {Object.entries(event.attributes).map(([key, value]: [string, any]) => (
-                      <div key={key} style={{ marginBottom: '4px' }}>
+                      <div key={key}>
                         <strong>{key}:</strong> {JSON.stringify(value)}
                       </div>
                     ))}
@@ -62,16 +61,16 @@ export default function Trace({ data }: Props) {
                 </details>
               )}
               {event.evidence_refs && event.evidence_refs.length > 0 && (
-                <details style={{ marginBottom: '8px' }}>
-                  <summary style={{ cursor: 'pointer', fontSize: '0.9em' }}>Evidence ({event.evidence_refs.length})</summary>
-                  <ul className="evidence-list" style={{ marginTop: '8px' }}>
+                <details>
+                  <summary>Evidence ({event.evidence_refs.length})</summary>
+                  <ul className="evidence-list">
                     {event.evidence_refs.map((ref: string, ridx: number) => (
                       <li key={ridx} className="evidence-item">{ref}</li>
                     ))}
                   </ul>
                 </details>
               )}
-              <p style={{ fontSize: '0.85em', color: 'rgba(255, 255, 255, 0.5)', margin: '4px 0 0 0' }}>
+              <p>
                 Seq: {event.sequence}
               </p>
             </div>

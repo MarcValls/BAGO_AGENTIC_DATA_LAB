@@ -1,5 +1,5 @@
-import { useState } from 'react'
 import './AgentBuilder.css'
+import { useState } from 'react'
 
 interface AgentConfig {
   name: string
@@ -142,7 +142,6 @@ export default function AgentBuilder({ onAgentCreated }: AgentBuilderProps) {
     <div className="agent-builder">
       <div className="wizard-header">
         <h2>🤖 Agent Builder</h2>
-        <p>Create and configure AI agents with governance</p>
       </div>
 
       {step === 'select' && (

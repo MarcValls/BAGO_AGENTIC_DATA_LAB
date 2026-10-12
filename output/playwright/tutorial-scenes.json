@@ -1,0 +1,74 @@
+[
+  {
+    "title": "Agentic Data Lab",
+    "caption": "Guía de uso · recorrido por la interfaz actual",
+    "narration": "Bienvenido a Agentic Data Lab. Este recorrido muestra la interfaz que está activa ahora: chat, agentes, capacidades, configuración e inspección de evidencias.",
+    "action": "intro"
+  },
+  {
+    "title": "Navegación",
+    "caption": "El panel lateral reúne las vistas y conserva su anchura al cambiar de sección.",
+    "narration": "La barra lateral reúne Chat, Capabilities, Agent Builder, Agent Runner, Evaluation Lab y Control. Inspect abre el panel de evidencias; Settings abre la configuración. El botón inferior contrae o despliega la barra.",
+    "action": "sidebar"
+  },
+  {
+    "title": "Chat, agentes y conversaciones",
+    "caption": "Abre Workspace and agents para elegir agente y revisar Recent, Archived o Trash.",
+    "narration": "En Chat, Workspace and agents despliega dos paneles: agentes y conversaciones. Selecciona un agente para dirigirle el chat. En Chats puedes revisar Recent, Archived y Trash. New empieza otra conversación; las acciones de gestión aparecen con clic derecho o manteniendo pulsado en una pantalla táctil.",
+    "action": "chat"
+  },
+  {
+    "title": "Redactar un mensaje",
+    "caption": "Enter envía; Shift más Enter añade una línea. Autoriza solo rutas concretas si hace falta leer archivos.",
+    "narration": "Escribe la consulta en el cuadro inferior. Enter envía el mensaje y Shift más Enter inserta una nueva línea. La casilla de lectura de archivos habilita el acceso solo a las rutas concretas que indiques para este turno. En este tutorial solo mostraremos el atajo; no enviaremos el texto.",
+    "action": "composer"
+  },
+  {
+    "title": "Capabilities",
+    "caption": "Consulta el efecto y el estado de cada integración; disponible no significa autorizado.",
+    "narration": "Capabilities explica qué integraciones están conectadas, cuáles no están disponibles y qué efecto tendría cada una. Disponible describe integración, no concede autorización. Las propuestas guardadas sirven para revisión y no ejecutan trabajos.",
+    "action": "capabilities"
+  },
+  {
+    "title": "Agent Builder",
+    "caption": "Elige una plantilla o crea un agente personalizado; revisa la configuración antes de guardarla.",
+    "narration": "Agent Builder ofrece plantillas y un formulario para un agente personalizado. Define nombre, descripción, tipo, instrucciones y herramientas. Preview permite revisar la configuración. Save Agent crea el agente en el backend; en este recorrido abriremos el formulario sin guardarlo.",
+    "action": "builder"
+  },
+  {
+    "title": "Agent Runner",
+    "caption": "Consulta los agentes e importa o exporta perfiles. La ejecución puede permanecer deshabilitada.",
+    "narration": "Agent Runner muestra los agentes registrados y las opciones de importación y exportación. En esta instancia Run aparece deshabilitado porque no hay una capacidad de ejecución gobernada registrada. No se inicia ninguna ejecución.",
+    "action": "runner"
+  },
+  {
+    "title": "Evaluation Lab",
+    "caption": "Define suites, casos y reglas; ejecutar envía cada prompt al proveedor configurado.",
+    "narration": "Evaluation Lab sirve para crear una suite, elegir un agente y un modelo confirmado, y escribir casos con reglas de texto que deben aparecer o no aparecer. Guardar persiste la suite. Run evaluation envía cada prompt al proveedor: revisa el modelo y los casos antes de confirmarlo.",
+    "action": "evaluation"
+  },
+  {
+    "title": "Control",
+    "caption": "Run demo inicia un proceso local; el paquete de evidencias puede escribir archivos.",
+    "narration": "Control inicia la demo por HTTP o WebSocket. La opción Write Evidence Bundle puede guardar un paquete de evidencias. Pulsa Run demo únicamente cuando quieras iniciar ese proceso. Durante esta grabación no activaremos ninguno de esos controles.",
+    "action": "control"
+  },
+  {
+    "title": "Inspect",
+    "caption": "Sigue conclusiones, trazas y evidencias de los artefactos disponibles.",
+    "narration": "Inspect abre el Decision Inspector. Sus vistas permiten revisar el historial, el resumen, la recuperación, la autorización, la traza y la evaluación de los artefactos disponibles. El identificador de ejecución ayuda a seguir el mismo caso entre vistas.",
+    "action": "inspect"
+  },
+  {
+    "title": "Settings",
+    "caption": "Configura la conexión y el modelo. Las credenciales se guardan en el backend local.",
+    "narration": "Settings reúne la conexión de Ollama, el método de autenticación y la selección de modelo. La clave se introduce como campo de solo escritura y se guarda en el almacén de credenciales del sistema. Comprueba el estado antes de usar el chat; no grabes ni compartas claves.",
+    "action": "settings"
+  },
+  {
+    "title": "Fin del recorrido",
+    "caption": "Revisa cada propuesta y confirma solo las acciones que quieras ejecutar.",
+    "narration": "Ya conoces las zonas principales. Puedes volver a Chat desde la barra lateral. Antes de enviar, guardar o ejecutar, revisa el alcance y el efecto de la acción. Este recorrido no ha enviado mensajes, guardado agentes ni iniciado procesos.",
+    "action": "closing"
+  }
+]

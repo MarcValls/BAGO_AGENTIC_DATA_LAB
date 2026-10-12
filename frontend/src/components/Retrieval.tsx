@@ -1,5 +1,4 @@
 import './Retrieval.css'
-
 interface Artifacts {
   summary: any
   agent_run: any
@@ -23,15 +22,15 @@ export default function Retrieval({ data }: Props) {
         <div className="grid">
           <div className="metric">
             <label>Hits</label>
-            <div style={{ fontSize: '1.5em', fontWeight: '600' }}>{retrieval.eligible_count || 0}</div>
+            <div>{retrieval.eligible_count || 0}</div>
           </div>
           <div className="metric">
             <label>Filtered</label>
-            <div style={{ fontSize: '1.5em', fontWeight: '600' }}>{retrieval.filtered_count || 0}</div>
+            <div>{retrieval.filtered_count || 0}</div>
           </div>
           <div className="metric">
             <label>Mode</label>
-            <div style={{ fontSize: '1em' }}>{retrieval.mode}</div>
+            <div>{retrieval.mode}</div>
           </div>
         </div>
 
@@ -47,23 +46,23 @@ export default function Retrieval({ data }: Props) {
         <h3>Retrieved Documents</h3>
         <div>
           {(retrieval.hits || []).map((hit: any, idx: number) => (
-            <div key={idx} className="card" style={{ marginLeft: '0', marginTop: '12px' }}>
+            <div key={idx} className="card">
               <div className="grid">
                 <div className="metric">
                   <label>Rank</label>
-                  <div style={{ fontSize: '1.5em', fontWeight: '600' }}>{hit.rank}</div>
+                  <div>{hit.rank}</div>
                 </div>
                 <div className="metric">
                   <label>Score</label>
-                  <div style={{ fontSize: '1.5em', fontWeight: '600' }}>{hit.score.toFixed(3)}</div>
+                  <div>{hit.score.toFixed(3)}</div>
                 </div>
                 <div className="metric">
                   <label>Lexical</label>
-                  <div style={{ fontSize: '1.5em', fontWeight: '600' }}>{hit.lexical_score.toFixed(3)}</div>
+                  <div>{hit.lexical_score.toFixed(3)}</div>
                 </div>
                 <div className="metric">
                   <label>Semantic</label>
-                  <div style={{ fontSize: '1.5em', fontWeight: '600' }}>{hit.semantic_score.toFixed(3)}</div>
+                  <div>{hit.semantic_score.toFixed(3)}</div>
                 </div>
               </div>
               <p><strong>Document:</strong> {hit.document_id}</p>
@@ -79,19 +78,19 @@ export default function Retrieval({ data }: Props) {
         <div className="grid">
           <div className="metric">
             <label>Paths Found</label>
-            <div style={{ fontSize: '1.5em', fontWeight: '600' }}>{ontology.paths?.length || 0}</div>
+            <div>{ontology.paths?.length || 0}</div>
           </div>
           <div className="metric">
             <label>Inferred Triples</label>
-            <div style={{ fontSize: '1.5em', fontWeight: '600' }}>{ontology.inferred_triples?.length || 0}</div>
+            <div>{ontology.inferred_triples?.length || 0}</div>
           </div>
           <div className="metric">
             <label>Contradictions</label>
-            <div style={{ fontSize: '1.5em', fontWeight: '600' }}>{ontology.receipt?.contradictions_found || 0}</div>
+            <div>{ontology.receipt?.contradictions_found || 0}</div>
           </div>
           <div className="metric">
             <label>Status</label>
-            <div style={{ fontSize: '1.5em', fontWeight: '600' }}>
+            <div>
               <span className={`badge ${ontology.receipt?.outcome === 'SUCCESS' ? 'success' : 'error'}`}>
                 {ontology.receipt?.outcome}
               </span>
@@ -102,7 +101,7 @@ export default function Retrieval({ data }: Props) {
         <h3>Ontology Paths</h3>
         <div>
           {(ontology.paths || []).map((path: any, idx: number) => (
-            <div key={idx} style={{ marginBottom: '16px' }}>
+            <div key={idx}>
               <div className="graph">
                 {(path.nodes || []).map((node: string, nidx: number) => (
                   <span key={nidx}>
@@ -112,15 +111,15 @@ export default function Retrieval({ data }: Props) {
                 ))}
               </div>
               {path.triples && path.triples.length > 0 && (
-                <details style={{ marginTop: '8px' }}>
+                <details>
                   <summary>Triples ({path.triples.length})</summary>
-                  <div style={{ marginTop: '8px' }}>
+                  <div>
                     {path.triples.map((triple: any, tidx: number) => (
-                      <div key={tidx} style={{ fontSize: '0.85em', marginBottom: '4px' }}>
+                      <div key={tidx}>
                         <strong>{triple.subject.split('/').pop()}</strong>
                         {' '}<em>{triple.predicate.split('/').pop()}</em>{' '}
                         <strong>{triple.object.split('/').pop()}</strong>
-                        {triple.inferred && <span style={{ color: '#fbbf24' }}> [inferred]</span>}
+                        {triple.inferred && <span> [inferred]</span>}
                       </div>
                     ))}
                   </div>
@@ -133,7 +132,7 @@ export default function Retrieval({ data }: Props) {
         <h3>SPARQL Queries</h3>
         <div>
           {(ontology.sparql_queries || []).map((query: string, idx: number) => (
-            <div key={idx} className="json-panel" style={{ marginBottom: '8px' }}>
+            <div key={idx} className="json-panel">
               {query}
             </div>
           ))}

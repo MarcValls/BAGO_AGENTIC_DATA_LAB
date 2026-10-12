@@ -1,6 +1,11 @@
-import { FormEvent, useEffect, useRef, useState } from 'react'
-import { Capability, CapabilityProposal, capabilityResponseError } from './CapabilityManager'
 import './AgentChat.css'
+import './WindowsSurface.css'
+import { FormEvent, useCallback, useEffect, useRef, useState } from 'react'
+import type { UIEvent } from 'react'
+import { createPortal } from 'react-dom'
+import { Capability, CapabilityProposal, capabilityResponseError } from './CapabilityManager'
+import WindowPanel from './WindowPanel'
+import TabStrip from './TabStrip'
 
 type AgentConfig = {
   name: string
@@ -17,14 +22,28 @@ type AgentConfig = {
 type Agent = { id: string; config: AgentConfig; created_at: string }
 type ProviderModel = { provider_id: string; model_id: string; display_name: string; source: string; availability_confidence: string }
 type MessageTrace = { localId: string; state: string; jaegerId?: string; jaegerUrl?: string }
-type WorkspaceSource = { path: string; start_line: number; end_line: number }
-type Message = { id: string; role: 'user' | 'assistant'; content: string; trace?: MessageTrace; sources?: WorkspaceSource[] }
+type WorkspaceSource = { path: string; start_line: number; end_line: number; file_sha256?: string; content_sha256?: string }
+type WorkspaceReadEvent = { decision: 'ALLOW' | 'DENY'; path: string | null; reason_code?: string; file_sha256?: string; content_sha256?: string }
+type Message = { id: string; role: 'user' | 'assistant'; content: string; trace?: MessageTrace; sources?: WorkspaceSource[]; readEvents?: WorkspaceReadEvent[] }
 type ConversationSummary = { id: string; owner_kind: 'assistant' | 'agent'; owner_id: string; title: string; status: 'active' | 'archived' | 'deleted'; updated_at: string; revision: number }
 type StoredConversation = ConversationSummary & { messages: Array<{ id: string; role: 'user' | 'assistant'; content: string; references?: { trace?: { trace_id?: string; trace_state?: string; jaeger_trace_id?: string; jaeger_url?: string }; sources?: WorkspaceSource[] } }> }
 type LibraryMode = 'active' | 'archived' | 'deleted'
 type ControlOperation = 'chat' | 'help' | 'list_agents' | 'draft_agent' | 'navigate' | 'list_capabilities' | 'propose_capability'
 type ExistingView = 'inspector' | 'builder' | 'chat' | 'runner' | 'control' | 'jobs' | 'traces' | 'summary' | 'retrieval' | 'authorization' | 'evaluation' | 'evaluation_lab' | 'provider_settings' | 'capabilities'
 type CapabilityDraft = { capabilities: Capability[]; capabilityId: string; summary: string; requestedScope: string; conversationId: string | null }
+
+const scrollbarHideTimers = new WeakMap<HTMLElement, number>()
+
+function revealScrollbarWhileScrolling(event: UIEvent<HTMLElement>) {
+  const element = event.target as HTMLElement
+  element.classList.add('is-scrolling')
+  const existingTimer = scrollbarHideTimers.get(element)
+  if (existingTimer !== undefined) window.clearTimeout(existingTimer)
+  scrollbarHideTimers.set(element, window.setTimeout(() => {
+    element.classList.remove('is-scrolling')
+    scrollbarHideTimers.delete(element)
+  }, 700))
+}
 
 interface AgentChatProps {
   onNavigate: (view: ExistingView) => void
@@ -90,11 +109,13 @@ export default function AgentChat({ onNavigate, onOpenProviderSettings }: AgentC
   const [messages, setMessages] = useState<Message[]>([])
   const [activeConversation, setActiveConversation] = useState<StoredConversation | null>(null)
   const [conversationList, setConversationList] = useState<ConversationSummary[]>([])
+  const [conversationContextMenu, setConversationContextMenu] = useState<{ conversation: ConversationSummary; x: number; y: number } | null>(null)
   const [libraryMode, setLibraryMode] = useState<LibraryMode>('active')
   const [libraryError, setLibraryError] = useState('')
   const [loadingConversation, setLoadingConversation] = useState(false)
   const [input, setInput] = useState('')
   const [allowWorkspaceRead, setAllowWorkspaceRead] = useState(false)
+  const [workspaceReadPaths, setWorkspaceReadPaths] = useState('')
   const [sending, setSending] = useState(false)
   const [error, setError] = useState('')
   const [draft, setDraft] = useState<AgentConfig | null>(null)
@@ -106,22 +127,49 @@ export default function AgentChat({ onNavigate, onOpenProviderSettings }: AgentC
   const [capabilityDraft, setCapabilityDraft] = useState<CapabilityDraft | null>(null)
   const [capabilityProposals, setCapabilityProposals] = useState<CapabilityProposal[]>([])
   const [capabilityBusy, setCapabilityBusy] = useState(false)
+  const [agentPanelTarget, setAgentPanelTarget] = useState<HTMLDivElement | null>(null)
   const messagesEndRef = useRef<HTMLDivElement>(null)
+  const contextMenuRef = useRef<HTMLDivElement>(null)
+  const longPressTimerRef = useRef<number | null>(null)
+  const longPressTriggeredRef = useRef(false)
+  const agentRefreshAtRef = useRef(0)
+  const agentRefreshInFlightRef = useRef<Promise<void> | null>(null)
+  const agentsLoadedRef = useRef(false)
 
-  const refreshAgents = async () => {
-    setAgentsState('loading')
+  const refreshAgents = useCallback(async ({ background = false }: { background?: boolean } = {}) => {
+    const inFlight = agentRefreshInFlightRef.current
+    if (inFlight) return inFlight
+    if (!background) setAgentsState('loading')
+    agentRefreshAtRef.current = Date.now()
+    const request = (async () => {
+      try {
+        const response = await fetch('/api/agents/list')
+        if (!response.ok) throw new Error(await responseError(response))
+        const data = await response.json()
+        const nextAgents = Array.isArray(data.agents) ? data.agents as Agent[] : []
+        setAgents(nextAgents)
+        setSelectedAgent((current) => current ? nextAgents.find((agent) => agent.id === current.id) ?? current : null)
+        agentsLoadedRef.current = true
+        setInventoryWarning(data.warning_count
+          ? `${data.warning_count} stored agent record(s) could not be loaded.`
+          : '')
+        setAgentsState('ready')
+      } catch (cause) {
+        if (background && agentsLoadedRef.current) {
+          setInventoryWarning('Could not refresh the agent list. Showing the last loaded list.')
+        } else {
+          setAgentsState('error')
+          setError(cause instanceof Error ? cause.message : 'Agent inventory could not be loaded.')
+        }
+      }
+    })()
+    agentRefreshInFlightRef.current = request
     try {
-      const response = await fetch('/api/agents/list')
-      if (!response.ok) throw new Error(await responseError(response))
-      const data = await response.json()
-      setAgents(Array.isArray(data.agents) ? data.agents : [])
-      setInventoryWarning(data.warning_count ? `${data.warning_count} stored agent record(s) could not be loaded.` : '')
-      setAgentsState('ready')
-    } catch (cause) {
-      setAgentsState('error')
-      setError(cause instanceof Error ? cause.message : 'Agent inventory could not be loaded.')
+      await request
+    } finally {
+      if (agentRefreshInFlightRef.current === request) agentRefreshInFlightRef.current = null
     }
-  }
+  }, [])
 
   const ownerKind = selectedAgent ? 'agent' : 'assistant'
   const ownerId = selectedAgent?.id ?? 'app-assistant'
@@ -136,6 +184,7 @@ export default function AgentChat({ onNavigate, onOpenProviderSettings }: AgentC
         content: message.content,
         ...(trace?.trace_id ? { trace: { localId: trace.trace_id, state: trace.trace_state || 'unknown', jaegerId: trace.jaeger_trace_id, jaegerUrl: trace.jaeger_url } } : {}),
         ...(message.references?.sources?.length ? { sources: message.references.sources } : {}),
+        ...(Array.isArray((message.references as any)?.read_events) ? { readEvents: (message.references as any).read_events } : {}),
       }
     }))
   }
@@ -167,10 +216,42 @@ export default function AgentChat({ onNavigate, onOpenProviderSettings }: AgentC
     }
   }
 
-  useEffect(() => { void refreshAgents() }, [])
+  useEffect(() => { void refreshAgents() }, [refreshAgents])
+  useEffect(() => {
+    const refreshIfStale = () => {
+      if (document.visibilityState !== 'visible' || Date.now() - agentRefreshAtRef.current < 30_000) return
+      void refreshAgents({ background: true })
+    }
+    document.addEventListener('visibilitychange', refreshIfStale)
+    window.addEventListener('focus', refreshIfStale)
+    return () => {
+      document.removeEventListener('visibilitychange', refreshIfStale)
+      window.removeEventListener('focus', refreshIfStale)
+    }
+  }, [refreshAgents])
   useEffect(() => { void refreshConversationList() }, [ownerKind, ownerId, libraryMode])
   useEffect(() => { void refreshConversationProposals(activeConversation?.id ?? null) }, [activeConversation?.id])
   useEffect(() => { messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' }) }, [messages])
+  useEffect(() => {
+    if (!conversationContextMenu) return
+    contextMenuRef.current?.querySelector<HTMLButtonElement>('button')?.focus()
+    const dismiss = (event: PointerEvent) => {
+      if (event.target instanceof Element && event.target.closest('[data-conversation-context-menu]')) return
+      setConversationContextMenu(null)
+    }
+    const dismissOnEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setConversationContextMenu(null)
+    }
+    document.addEventListener('pointerdown', dismiss)
+    document.addEventListener('keydown', dismissOnEscape)
+    return () => {
+      document.removeEventListener('pointerdown', dismiss)
+      document.removeEventListener('keydown', dismissOnEscape)
+    }
+  }, [conversationContextMenu])
+  useEffect(() => () => {
+    if (longPressTimerRef.current !== null) window.clearTimeout(longPressTimerRef.current)
+  }, [])
 
   const startConversation = async () => {
     setLibraryError('')
@@ -205,20 +286,22 @@ export default function AgentChat({ onNavigate, onOpenProviderSettings }: AgentC
     } finally { setLoadingConversation(false) }
   }
 
-  const manageConversation = async (action: 'rename' | 'archive' | 'delete' | 'restore') => {
-    if (!activeConversation) return
-    const title = action === 'rename' ? window.prompt('Conversation title', activeConversation.title) : null
+  const manageConversation = async (action: 'rename' | 'archive' | 'delete' | 'restore', target: ConversationSummary | StoredConversation | null = activeConversation) => {
+    if (!target) return
+    const title = action === 'rename' ? window.prompt('Conversation title', target.title) : null
     if (action === 'rename' && title === null) return
-    const route = action === 'rename' ? `/api/conversations/${activeConversation.id}` : `/api/conversations/${activeConversation.id}/${action}`
+    const route = action === 'rename' ? `/api/conversations/${target.id}` : `/api/conversations/${target.id}/${action}`
     const method = action === 'rename' ? 'PATCH' : 'POST'
-    const body = action === 'rename' ? { revision: activeConversation.revision, title } : { revision: activeConversation.revision }
+    const body = action === 'rename' ? { revision: target.revision, title } : { revision: target.revision }
     try {
       const response = await fetch(route, { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) })
       if (!response.ok) throw new Error(await responseError(response))
       if (action === 'delete') {
-        setActiveConversation(null); setMessages([]); setLibraryMode('deleted')
+        if (activeConversation?.id === target.id) { setActiveConversation(null); setMessages([]) }
+        setLibraryMode('deleted')
       } else {
-        applyConversation(await response.json() as StoredConversation)
+        const updated = await response.json() as StoredConversation
+        if (activeConversation?.id === target.id) applyConversation(updated)
         if (action === 'archive') setLibraryMode('archived')
         if (action === 'restore') setLibraryMode('active')
       }
@@ -227,6 +310,21 @@ export default function AgentChat({ onNavigate, onOpenProviderSettings }: AgentC
       setLibraryError(cause instanceof Error ? cause.message : 'Conversation could not be updated.')
       if (cause instanceof Error && cause.message.includes('changed elsewhere')) await refreshConversationList()
     }
+  }
+
+  const showConversationContextMenu = (conversation: ConversationSummary, x: number, y: number) => {
+    const menuWidth = 184
+    const menuHeight = conversation.status === 'active' ? 132 : conversation.status === 'archived' ? 104 : 56
+    setConversationContextMenu({
+      conversation,
+      x: Math.max(8, Math.min(x, window.innerWidth - menuWidth - 8)),
+      y: Math.max(8, Math.min(y, window.innerHeight - menuHeight - 8)),
+    })
+  }
+
+  const cancelConversationLongPress = () => {
+    if (longPressTimerRef.current !== null) window.clearTimeout(longPressTimerRef.current)
+    longPressTimerRef.current = null
   }
 
   async function refreshConversationProposals(conversationId: string | null) {
@@ -348,24 +446,39 @@ export default function AgentChat({ onNavigate, onOpenProviderSettings }: AgentC
         return
       }
       setMessages((previous) => [...previous, { id: idFor(), role: 'user', content }])
+      let workspaceReadAuthorizationId: string | undefined
+      if (readFilesForThisMessage) {
+        const paths = workspaceReadPaths.split(/\r?\n/).map((path) => path.trim()).filter(Boolean)
+        if (!paths.length) throw new Error('Enter the exact project-relative file paths to authorize, one per line.')
+        const authorizationResponse = await fetch('/api/workspace-read/authorizations', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ owner_kind: ownerKind, owner_id: ownerId, conversation_id: conversation.id, revision: conversation.revision, paths }),
+        })
+        if (!authorizationResponse.ok) throw new Error(await responseError(authorizationResponse))
+        const authorization = await authorizationResponse.json()
+        workspaceReadAuthorizationId = authorization.authorization_id
+      }
       let response: Response
       let data: any
       let intent: ReturnType<typeof inferIntent> | null = null
       if (selectedAgent) {
         response = await fetch(`/api/agents/${encodeURIComponent(selectedAgent.id)}/chat`, {
           method: 'POST', headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ message: content, conversation_id: conversation.id, revision: conversation.revision, allow_workspace_read: readFilesForThisMessage }),
+          body: JSON.stringify({ message: content, conversation_id: conversation.id, revision: conversation.revision, ...(workspaceReadAuthorizationId ? { workspace_read_authorization_id: workspaceReadAuthorizationId } : {}) }),
         })
       } else {
         intent = localCapabilityIntent ?? inferIntent(content)
         response = await fetch('/api/chat/control', {
           method: 'POST', headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ operation: intent.operation, message: content, conversation_id: conversation.id, revision: conversation.revision, allow_workspace_read: readFilesForThisMessage, ...(intent.view ? { view: intent.view } : {}) }),
+          body: JSON.stringify({ operation: intent.operation, message: content, conversation_id: conversation.id, revision: conversation.revision, ...(workspaceReadAuthorizationId ? { workspace_read_authorization_id: workspaceReadAuthorizationId } : {}), ...(intent.view ? { view: intent.view } : {}) }),
         })
       }
       if (!response.ok) throw new Error(await responseError(response))
       data = await response.json()
       if (selectedAgent && (data.source !== 'ollama' || typeof data.assistant_message !== 'string')) throw new Error('The server did not confirm a live Ollama response.')
+      if (Array.isArray(data.read_events) && data.read_events.length) {
+        setMessages((previous) => [...previous, { id: idFor(), role: 'assistant', content: '', readEvents: data.read_events }])
+      }
       if (!data.conversation || !Array.isArray(data.conversation.messages)) throw new Error('The server did not return the saved conversation.')
       applyConversation(data.conversation as StoredConversation)
       if (data.operation === 'list_agents') {
@@ -444,54 +557,97 @@ export default function AgentChat({ onNavigate, onOpenProviderSettings }: AgentC
     setDraftModelsError('')
   }
 
-  const openControlChat = () => { setSelectedAgent(null); setAllowWorkspaceRead(false); setDraft(null); setDraftModels([]); setDraftModelsError(''); setCapabilityDraft(null); setCapabilityProposals([]); setError('') }
-  const selectAgent = (agent: Agent) => { setSelectedAgent(agent); setAllowWorkspaceRead(false); setDraft(null); setDraftModels([]); setDraftModelsError(''); setCapabilityDraft(null); setCapabilityProposals([]); setError('') }
+  const openControlChat = () => { setSelectedAgent(null); setAllowWorkspaceRead(false); setWorkspaceReadPaths(''); setDraft(null); setDraftModels([]); setDraftModelsError(''); setCapabilityDraft(null); setCapabilityProposals([]); setError('') }
+  const selectAgent = (agent: Agent) => { setSelectedAgent(agent); setAllowWorkspaceRead(false); setWorkspaceReadPaths(''); setDraft(null); setDraftModels([]); setDraftModelsError(''); setCapabilityDraft(null); setCapabilityProposals([]); setError('') }
 
   return (
-    <section className="control-chat" aria-label="Agent and application chat">
-      <aside className="control-chat-sidebar" aria-label="Agent inventory">
-        <div className="chat-sidebar-heading"><div><p className="section-eyebrow">Workspace</p><h2>Agents</h2></div><button type="button" className="icon-button" onClick={() => void refreshAgents()} aria-label="Refresh agent list" title="Refresh agent list">↻</button></div>
-        <button type="button" className={`control-agent-option ${selectedAgent === null ? 'selected' : ''}`} onClick={openControlChat}>
-          <strong>App assistant</strong><span>Chat, list agents, create drafts, navigate</span>
-        </button>
-        <div className="agent-list-label"><span>Your application agents</span><span>{agentsState === 'ready' ? agents.length : '—'}</span></div>
-        {agentsState === 'loading' && <p className="muted-state" role="status">Loading agents…</p>}
-        {agentsState === 'error' && <p className="inline-error">Agent inventory unavailable.</p>}
-        {agentsState === 'ready' && agents.length === 0 && <p className="muted-state">No agents created yet. Ask the app assistant to create one.</p>}
-        <div className="control-agent-list">
-          {agents.map((agent) => <button key={agent.id} type="button" className={`control-agent-option ${selectedAgent?.id === agent.id ? 'selected' : ''}`} onClick={() => selectAgent(agent)}>
-            <strong>{agent.config.name}</strong><span>{agent.config.type} · {agent.config.model_id || 'Sin modelo asignado'}</span><span>{agent.config.description}</span>
-          </button>)}
-        </div>
-        {inventoryWarning && <p className="warning-state" role="status">{inventoryWarning}</p>}
-        <section className="conversation-library" aria-label="Conversation library">
-          <div className="conversation-library-heading"><strong>Chats</strong><button type="button" onClick={() => void startConversation()}>New</button></div>
-          <div className="conversation-library-tabs" role="group" aria-label="Conversation status">
-            {(['active', 'archived', 'deleted'] as LibraryMode[]).map((mode) => <button key={mode} type="button" className={libraryMode === mode ? 'selected' : ''} onClick={() => setLibraryMode(mode)}>{mode === 'active' ? 'Recent' : mode === 'archived' ? 'Archived' : 'Trash'}</button>)}
-          </div>
-          {loadingConversation && <p className="muted-state" role="status">Opening conversation.</p>}
-          {libraryError && <p className="inline-error" role="alert">{libraryError}</p>}
-          {conversationList.length === 0 && !libraryError && <p className="muted-state">No {libraryMode === 'active' ? 'recent' : libraryMode} chats for this owner.</p>}
-          <div className="conversation-library-list">
-            {conversationList.map((conversation) => <button key={conversation.id} type="button" className={`conversation-library-item ${activeConversation?.id === conversation.id ? 'selected' : ''}`} onClick={() => conversation.status === 'deleted' ? (setActiveConversation({ ...conversation, messages: [] }), setMessages([])) : void openConversation(conversation.id)}>
-              <strong>{conversation.title}</strong><span>{new Date(conversation.updated_at).toLocaleString()}</span>
-            </button>)}
-          </div>
-          {activeConversation && <div className="conversation-library-actions">
-            {activeConversation.status !== 'deleted' && <button type="button" onClick={() => void manageConversation('rename')}>Rename</button>}
-            {activeConversation.status === 'active' && <button type="button" onClick={() => void manageConversation('archive')}>Archive</button>}
-            {activeConversation.status !== 'deleted' && <button type="button" onClick={() => void manageConversation('delete')}>Move to trash</button>}
-            {activeConversation.status !== 'active' && <button type="button" onClick={() => void manageConversation('restore')}>Restore</button>}
-          </div>}
-        </section>
-        <button className="provider-shortcut" type="button" onClick={onOpenProviderSettings}>Configure Ollama provider <span aria-hidden="true">→</span></button>
-      </aside>
-
-      <div className="control-chat-main">
-        <header className="control-chat-header"><div><p className="section-eyebrow">{selectedAgent ? 'Agent conversation' : 'Control plane'}</p><h2>{selectedAgent?.config.name ?? 'How can I help?'}</h2><p>{activeConversation?.title || (selectedAgent ? selectedAgent.config.description : 'Ask about your agents, propose a new agent, or open a view.')}</p></div><span className="chat-mode-badge">{selectedAgent ? selectedAgent.config.model_id || 'Sin modelo asignado' : 'Ollama assistant'}</span></header>
+    <section className="control-chat" aria-label="Agent and application chat" onScrollCapture={revealScrollbarWhileScrolling}>
+      {agentPanelTarget && createPortal(
+        <details className="chat-agent-panel">
+          <summary>Workspace and agents <span>{agentsState === 'ready' ? agents.length : '—'}</span></summary>
+          <aside className="control-chat-sidebar" aria-label="Agent inventory">
+            <section className="chat-sidebar-pane chat-sidebar-agents" aria-labelledby="chat-agents-title">
+              <div className="chat-sidebar-heading"><div><h2 id="chat-agents-title">Agents</h2></div></div>
+              <button type="button" className={`control-agent-option ${selectedAgent === null ? 'selected' : ''}`} onClick={openControlChat}><strong>App assistant</strong><span>Chat, list agents, create drafts, navigate</span></button>
+              <div className="agent-list-label"><span>Your application agents</span><span>{agentsState === 'ready' ? agents.length : '—'}</span></div>
+              {agentsState === 'loading' && <p className="muted-state" role="status">Loading agents…</p>}
+              {agentsState === 'error' && <p className="inline-error">Agent inventory unavailable.</p>}
+              {agentsState === 'ready' && agents.length === 0 && <p className="muted-state">No agents created yet. Ask the app assistant to create one.</p>}
+              <div className="control-agent-list">{agents.map((agent) => <button key={agent.id} type="button" className={`control-agent-option ${selectedAgent?.id === agent.id ? 'selected' : ''}`} onClick={() => selectAgent(agent)}><strong>{agent.config.name}</strong><span>{agent.config.type} · {agent.config.model_id || 'Sin modelo asignado'}</span><span>{agent.config.description}</span></button>)}</div>
+              {inventoryWarning && <p className="warning-state" role="status">{inventoryWarning}</p>}
+            </section>
+            <section className="chat-sidebar-pane conversation-library" aria-label="Conversation library">
+              <div className="conversation-library-heading"><strong>Chats</strong></div>
+              <TabStrip<LibraryMode> label="Conversation status" value={libraryMode} onChange={setLibraryMode} items={[{ id: 'active', label: 'Recent' }, { id: 'archived', label: 'Archived' }, { id: 'deleted', label: 'Trash' }]} />
+              {loadingConversation && <p className="muted-state" role="status">Opening conversation…</p>}
+              {libraryError && <p className="inline-error" role="alert">{libraryError}</p>}
+              {conversationList.length === 0 && !libraryError && <p className="muted-state">No {libraryMode === 'active' ? 'recent' : libraryMode} chats for this owner.</p>}
+              <div className="conversation-library-list">{conversationList.map((conversation) => <button
+                key={conversation.id}
+                type="button"
+                className={`conversation-library-item ${activeConversation?.id === conversation.id ? 'selected' : ''}`}
+                onClick={(event) => {
+                  if (longPressTriggeredRef.current) { event.preventDefault(); longPressTriggeredRef.current = false; return }
+                  setConversationContextMenu(null)
+                  if (conversation.status === 'deleted') { setActiveConversation({ ...conversation, messages: [] }); setMessages([]) }
+                  else void openConversation(conversation.id)
+                }}
+                onContextMenu={(event) => { event.preventDefault(); cancelConversationLongPress(); showConversationContextMenu(conversation, event.clientX, event.clientY) }}
+                onPointerDown={(event) => {
+                  if (event.pointerType !== 'touch') return
+                  cancelConversationLongPress()
+                  longPressTriggeredRef.current = false
+                  const { clientX, clientY } = event
+                  longPressTimerRef.current = window.setTimeout(() => {
+                    longPressTriggeredRef.current = true
+                    showConversationContextMenu(conversation, clientX, clientY)
+                  }, 550)
+                }}
+                onPointerUp={cancelConversationLongPress}
+                onPointerCancel={cancelConversationLongPress}
+                onPointerLeave={cancelConversationLongPress}
+                onKeyDown={(event) => {
+                  if (event.key !== 'ContextMenu' && !(event.shiftKey && event.key === 'F10')) return
+                  event.preventDefault()
+                  const bounds = event.currentTarget.getBoundingClientRect()
+                  showConversationContextMenu(conversation, bounds.left, bounds.bottom)
+                }}
+              ><strong>{conversation.title}</strong><span>{new Date(conversation.updated_at).toLocaleString()}</span></button>)}</div>
+              <div className="conversation-library-footer"><button className="conversation-library-new" type="button" onClick={() => void startConversation()}>New</button></div>
+              {conversationContextMenu && <div
+                ref={contextMenuRef}
+                className="conversation-context-menu"
+                data-conversation-context-menu
+                role="menu"
+                aria-label={`Actions for ${conversationContextMenu.conversation.title}`}
+                style={{ left: conversationContextMenu.x, top: conversationContextMenu.y }}
+                onKeyDown={(event) => {
+                  if (event.key !== 'ArrowDown' && event.key !== 'ArrowUp') return
+                  event.preventDefault()
+                  const items = Array.from(event.currentTarget.querySelectorAll<HTMLButtonElement>('button'))
+                  const currentIndex = items.indexOf(document.activeElement as HTMLButtonElement)
+                  const direction = event.key === 'ArrowDown' ? 1 : -1
+                  items[(currentIndex + direction + items.length) % items.length]?.focus()
+                }}
+              >
+                {conversationContextMenu.conversation.status !== 'deleted' && <button type="button" role="menuitem" onClick={() => { const { conversation } = conversationContextMenu; setConversationContextMenu(null); void manageConversation('rename', conversation) }}>Rename</button>}
+                {conversationContextMenu.conversation.status === 'active' && <button type="button" role="menuitem" onClick={() => { const { conversation } = conversationContextMenu; setConversationContextMenu(null); void manageConversation('archive', conversation) }}>Archive</button>}
+                {conversationContextMenu.conversation.status !== 'deleted' && <button type="button" role="menuitem" onClick={() => { const { conversation } = conversationContextMenu; setConversationContextMenu(null); void manageConversation('delete', conversation) }}>Move to trash</button>}
+                {conversationContextMenu.conversation.status !== 'active' && <button type="button" role="menuitem" onClick={() => { const { conversation } = conversationContextMenu; setConversationContextMenu(null); void manageConversation('restore', conversation) }}>Restore</button>}
+              </div>}
+            </section>
+          </aside>
+        </details>,
+        agentPanelTarget,
+      )}
+      <WindowPanel
+        title={selectedAgent?.config.name ?? activeConversation?.title ?? 'How can I help?'}
+        className="control-chat-main control-chat-window"
+        hideTitlebar
+      >
         <div className="control-chat-messages" aria-live="polite">
           {messages.length === 0 && <div className="chat-welcome"><div className="welcome-mark" aria-hidden="true">✳</div><h3>{selectedAgent ? `Chat with ${selectedAgent.config.name}` : 'Your workspace, through chat'}</h3><p>{selectedAgent ? 'Messages are sent to this agent through the configured Ollama provider.' : 'The assistant can list your application agents, draft one for your review, and navigate to supported views.'}</p>{!selectedAgent && <div className="prompt-suggestions"><button type="button" onClick={() => setInput('Lista mis agentes')}>List my agents</button><button type="button" onClick={() => setInput('Quiero crear un agente para…')}>Create an agent</button><button type="button" onClick={() => setInput('Abre el Decision Inspector')}>Open the Inspector</button></div>}</div>}
-          {messages.map((message) => <article key={message.id} className={`control-message control-message-${message.role}`}><span className="message-speaker">{message.role === 'user' ? 'You' : selectedAgent?.config.name ?? 'Assistant'}</span><div className="control-message-content">{message.content}</div>{message.sources?.length ? <div className="message-sources" aria-label="Project files read"><strong>Project files read</strong><ul>{message.sources.map((source) => <li key={`${source.path}:${source.start_line}-${source.end_line}`}><code>{source.path}:{source.start_line}-{source.end_line}</code></li>)}</ul></div> : null}{message.trace && <div className="message-trace" aria-label="Execution trace evidence"><span>Trace {message.trace.state}</span><code>Local: {message.trace.localId}</code>{message.trace.jaegerId && <code>Jaeger: {message.trace.jaegerId}</code>}{message.trace.jaegerUrl && <a href={message.trace.jaegerUrl} target="_blank" rel="noreferrer">Open in Jaeger</a>}</div>}</article>)}
+          {messages.map((message) => <article key={message.id} className={`control-message control-message-${message.role}`}><span className="message-speaker">{message.role === 'user' ? 'You' : selectedAgent?.config.name ?? 'Assistant'}</span>{message.content && <div className="control-message-content">{message.content}</div>}{message.sources?.length ? <div className="message-sources" aria-label="Project files read"><strong>Project files read</strong><ul>{message.sources.map((source) => <li key={`${source.path}:${source.start_line}-${source.end_line}`}><code>{source.path}:{source.start_line}-{source.end_line}</code>{source.content_sha256 && <small> SHA-256 {source.content_sha256}</small>}</li>)}</ul></div> : null}{message.readEvents?.length ? <div className="message-sources" aria-label="Read authorization events"><strong>Read authorization events</strong><ul>{message.readEvents.map((event, index) => <li key={`${event.path}:${index}`}><code>{event.decision} {event.path || '(unresolved path)'} {event.reason_code ? `· ${event.reason_code}` : ''}</code></li>)}</ul></div> : null}{message.trace && <div className="message-trace" aria-label="Execution trace evidence"><span>Trace {message.trace.state}</span><code>Local: {message.trace.localId}</code>{message.trace.jaegerId && <code>Jaeger: {message.trace.jaegerId}</code>}{message.trace.jaegerUrl && <a href={message.trace.jaegerUrl} target="_blank" rel="noreferrer">Open in Jaeger</a>}</div>}</article>)}
           {capabilityDraft && <section className="capability-chat-card" aria-labelledby="capability-draft-title"><div className="draft-heading"><div><p className="section-eyebrow">Proposal review</p><h3 id="capability-draft-title">Review before saving</h3></div><span className="draft-status">Not saved</span></div><label>Exact backend capability<select value={capabilityDraft.capabilityId} onChange={(event) => setCapabilityDraft({ ...capabilityDraft, capabilityId: event.target.value })} disabled={capabilityBusy}><option value="">Choose a catalog entry</option>{capabilityDraft.capabilities.map((item) => <option key={item.id} value={item.id}>{item.id} · {item.status} · {item.effect}</option>)}</select></label>{capabilityDraft.capabilityId && <p className="capability-chat-selected">{capabilityDraft.capabilities.find((item) => item.id === capabilityDraft.capabilityId)?.summary}</p>}<label>Request summary<input value={capabilityDraft.summary} maxLength={500} onChange={(event) => setCapabilityDraft({ ...capabilityDraft, summary: event.target.value })} disabled={capabilityBusy} /></label><label>Requested scope<textarea value={capabilityDraft.requestedScope} maxLength={1000} rows={3} placeholder="Describe the exact scope to review" onChange={(event) => setCapabilityDraft({ ...capabilityDraft, requestedScope: event.target.value })} disabled={capabilityBusy} /></label><p>This only saves a review proposal. It does not authorize a capability or run a job.</p><div className="draft-actions"><button type="button" className="secondary-action" onClick={() => setCapabilityDraft(null)} disabled={capabilityBusy}>Discard</button><button type="button" className="primary-action" onClick={() => void saveCapabilityProposal()} disabled={capabilityBusy || !capabilityDraft.capabilityId || !capabilityDraft.summary.trim() || !capabilityDraft.requestedScope.trim()}>{capabilityBusy ? 'Saving…' : 'Save proposal'}</button></div></section>}
           {capabilityProposals.map((proposal) => <article className="capability-chat-saved" key={proposal.id}><div><strong>{proposal.capability_id}</strong><span>{proposal.status} · revision {proposal.revision}</span></div><p>{proposal.summary}</p><p><strong>Requested scope:</strong> {proposal.requested_scope}</p><code>{proposal.id}</code>{proposal.status === 'PENDING_REVIEW' && <button type="button" className="secondary-action" onClick={() => void cancelChatProposal(proposal)} disabled={capabilityBusy}>Cancel proposal</button>}</article>)}
           {draft && <section className="agent-draft-card" aria-labelledby="draft-title"><div className="draft-heading"><div><p className="section-eyebrow">AI-assisted draft</p><h3 id="draft-title">Review and edit before saving</h3></div><span className="draft-status">Not created</span></div><div className="draft-fields"><label>Name<input value={draft.name} maxLength={120} onChange={(event) => setDraft({ ...draft, name: event.target.value })} disabled={creatingDraft} /></label><label>Description<textarea value={draft.description} maxLength={1000} rows={2} onChange={(event) => setDraft({ ...draft, description: event.target.value })} disabled={creatingDraft} /></label><label>Agent type<select value={draft.type} onChange={(event) => setDraft({ ...draft, type: event.target.value as AgentConfig['type'] })} disabled={creatingDraft}><option value="rag">RAG</option><option value="tool">Tool</option><option value="multi-agent">Multi-agent</option></select></label><label>Confirmed Ollama model<select value={draft.model_id ?? ''} onChange={(event) => setDraft({ ...draft, provider_id: 'ollama-cloud', model_id: event.target.value })} disabled={creatingDraft || loadingDraftModels || draftModels.length === 0}><option value="">{loadingDraftModels ? 'Loading models…' : 'Select a confirmed model'}</option>{draftModels.map((model) => <option key={model.model_id} value={model.model_id}>{model.display_name} · {model.source}</option>)}</select></label><label className="draft-prompt-field">System prompt<textarea value={draft.system_prompt} maxLength={12000} rows={6} onChange={(event) => setDraft({ ...draft, system_prompt: event.target.value })} disabled={creatingDraft} /></label></div><p className="draft-model-note" role={draftModelsError ? 'alert' : 'status'}>{draftModelsError || (loadingDraftModels ? 'Checking models from the configured backend…' : 'Model choices come from the configured provider and are not inferred from a public catalog.')}{draftModelsError && <button type="button" onClick={onOpenProviderSettings}>Open provider settings</button>}</p><details className="draft-advanced"><summary>Advanced details</summary><p><strong>Tools:</strong> {draft.tools.length ? draft.tools.join(', ') : 'No tools selected'}</p><p>Creating this profile does not grant tool execution or app-control permissions.</p></details><div className="draft-actions"><button type="button" className="secondary-action" onClick={cancelDraft} disabled={creatingDraft}>Cancel proposal</button><button type="button" className="primary-action" onClick={() => void createDraft()} disabled={creatingDraft || loadingDraftModels || draftModels.length === 0 || !draft.name.trim() || !draft.description.trim() || !draft.system_prompt.trim() || draft.provider_id !== 'ollama-cloud' || !draft.model_id?.trim() || !draftModels.some((model) => model.model_id === draft.model_id)}>{creatingDraft ? 'Creating…' : 'Create agent'}</button></div></section>}
@@ -500,8 +656,13 @@ export default function AgentChat({ onNavigate, onOpenProviderSettings }: AgentC
           {sending && <p className="muted-state" role="status">Waiting for Ollama…</p>}
           <div ref={messagesEndRef} />
         </div>
-        <form className="control-chat-composer" onSubmit={(event) => void sendMessage(event)}><label className="visually-hidden" htmlFor="control-chat-input">Message the assistant or selected agent</label><textarea id="control-chat-input" rows={2} value={input} onChange={(event) => setInput(event.target.value)} placeholder={activeConversation?.status && activeConversation.status !== 'active' ? 'Restore this conversation or start a new one to continue.' : selectedAgent ? `Message ${selectedAgent.config.name}.` : 'Ask a question, list agents, create an agent, or open a view.'} disabled={sending || Boolean(activeConversation && activeConversation.status !== 'active')} /><div className="chat-composer-actions"><label className="workspace-read-toggle"><input type="checkbox" checked={allowWorkspaceRead} onChange={(event) => setAllowWorkspaceRead(event.target.checked)} disabled={sending || Boolean(activeConversation && activeConversation.status !== 'active')} /><span>Allow read-only project files for this message <small>Selected text is sent to Ollama Cloud</small></span></label><button className="primary-action" type="submit" disabled={sending || !input.trim() || Boolean(activeConversation && activeConversation.status !== 'active')}>{sending ? 'Sending.' : 'Send'}</button></div><p>When enabled, chat can read bounded text files in this project and shows the lines it used. It cannot write files or run jobs.</p></form>
-      </div>
+        <form className="control-chat-composer" onSubmit={(event) => void sendMessage(event)}><label className="visually-hidden" htmlFor="control-chat-input">Message the assistant or selected agent</label><textarea id="control-chat-input" rows={2} value={input} onChange={(event) => setInput(event.target.value)} onKeyDown={(event) => {
+          if (event.key !== 'Enter' || event.shiftKey || event.nativeEvent.isComposing || event.repeat) return
+          event.preventDefault()
+          void sendMessage()
+        }} placeholder={activeConversation?.status && activeConversation.status !== 'active' ? 'Restore this conversation or start a new one to continue.' : selectedAgent ? `Message ${selectedAgent.config.name}.` : 'Ask a question, list agents, create an agent, or open a view.'} disabled={sending || Boolean(activeConversation && activeConversation.status !== 'active')} /><div className="chat-composer-actions"><label className="workspace-read-toggle"><input type="checkbox" checked={allowWorkspaceRead} onChange={(event) => setAllowWorkspaceRead(event.target.checked)} disabled={sending || Boolean(activeConversation && activeConversation.status !== 'active')} /><span>Authorize exact project files for this message <small>Only the paths below, once, for this conversation turn</small></span></label><button className="primary-action" type="submit" disabled={sending || !input.trim() || Boolean(activeConversation && activeConversation.status !== 'active')}>{sending ? 'Sending.' : 'Send'}</button></div>{allowWorkspaceRead && <label className="workspace-read-paths">Project-relative paths, one per line<textarea rows={3} value={workspaceReadPaths} onChange={(event) => setWorkspaceReadPaths(event.target.value)} placeholder={'src/api/server.py\nsrc/agent_tools/workspace_read.py'} disabled={sending} /></label>}</form>
+        <div className="chat-agent-panel-slot" ref={setAgentPanelTarget} />
+      </WindowPanel>
     </section>
   )
 }

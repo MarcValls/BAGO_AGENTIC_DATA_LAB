@@ -1,6 +1,6 @@
+import './TraceTimeline.css'
 import type { TraceTimeline as TraceTimelineData, TraceTimelineEvent } from '../../../contracts/trace/trace'
 import { InspectorStateView, type InspectorState } from '../shared/InspectorState'
-import './TraceTimeline.css'
 
 export interface TraceTimelineProps {
   timeline?: TraceTimelineData | null

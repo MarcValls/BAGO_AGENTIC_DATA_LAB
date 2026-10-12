@@ -1,7 +1,7 @@
+import './InspectorShell.css'
 import { useState, type ReactNode } from 'react'
 import type { DecisionConclusion } from '../../../contracts/decision/evidence'
 import { InspectorStateView, type InspectorState } from '../shared/InspectorState'
-import './InspectorShell.css'
 
 export type InspectorSection = 'conclusion' | 'claims' | 'evidence' | 'provenance'
 export type InspectorSectionContent = Partial<Record<InspectorSection, ReactNode>>

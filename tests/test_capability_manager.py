@@ -164,10 +164,11 @@ def test_arbitrary_model_tool_output_cannot_create_a_capability_proposal(monkeyp
     ])
     monkeypatch.setattr(server.ollama, "chat_turn", lambda *args, **kwargs: next(responses))
 
-    answer, sources = asyncio.run(server._chat_with_workspace_read(
-        "gemma4:31b", [{"role": "user", "content": "Enable agent execution"}],
+    answer, sources, read_events = asyncio.run(server._chat_with_workspace_read(
+        "gemma4:31b", [{"role": "user", "content": "Enable agent execution"}], [],
     ))
 
     assert answer == "I cannot create that proposal from model output."
     assert sources == []
+    assert read_events == []
     assert store.list_proposals() == []

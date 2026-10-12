@@ -1,5 +1,4 @@
 import './Summary.css'
-
 interface Artifacts {
   summary: any
   agent_run: any
@@ -20,7 +19,7 @@ export default function Summary({ data }: Props) {
       <div className="grid">
         <div className="metric">
           <label>Status</label>
-          <div style={{ fontSize: '1.5em', fontWeight: '600' }}>
+          <div>
             <span className={`badge ${s.status === 'PASS' ? 'success' : 'error'}`}>
               {s.status}
             </span>
@@ -28,31 +27,31 @@ export default function Summary({ data }: Props) {
         </div>
         <div className="metric">
           <label>Case</label>
-          <div style={{ fontSize: '1em' }}>{s.case}</div>
+          <div>{s.case}</div>
         </div>
         <div className="metric">
           <label>Client</label>
-          <div style={{ fontSize: '1em' }}>{s.client}</div>
+          <div>{s.client}</div>
         </div>
         <div className="metric">
           <label>Tests Passed</label>
-          <div style={{ fontSize: '1.5em', fontWeight: '600' }}>{s.evaluation_checks?.filter((c: any) => c.passed).length || 0} / {s.evaluation_checks?.length || 0}</div>
+          <div>{s.evaluation_checks?.filter((c: any) => c.passed).length || 0} / {s.evaluation_checks?.length || 0}</div>
         </div>
         <div className="metric">
           <label>Cost (USD)</label>
-          <div style={{ fontSize: '1.5em', fontWeight: '600' }}>${s.cost_usd.toFixed(2)}</div>
+          <div>${s.cost_usd.toFixed(2)}</div>
         </div>
         <div className="metric">
           <label>Retrieval Hits</label>
-          <div style={{ fontSize: '1.5em', fontWeight: '600' }}>{s.retrieval_hits}</div>
+          <div>{s.retrieval_hits}</div>
         </div>
         <div className="metric">
           <label>Ontology Paths</label>
-          <div style={{ fontSize: '1.5em', fontWeight: '600' }}>{s.ontology_paths}</div>
+          <div>{s.ontology_paths}</div>
         </div>
         <div className="metric">
           <label>Ontology Status</label>
-          <div style={{ fontSize: '1.5em', fontWeight: '600' }}>
+          <div>
             <span className={`badge ${s.ontology_outcome === 'SUCCESS' ? 'success' : 'error'}`}>
               {s.ontology_outcome}
             </span>
@@ -60,7 +59,7 @@ export default function Summary({ data }: Props) {
         </div>
         <div className="metric">
           <label>Sandbox Status</label>
-          <div style={{ fontSize: '1.5em', fontWeight: '600' }}>
+          <div>
             <span className={`badge ${s.sandbox_status === 'SUCCESS' ? 'success' : 'error'}`}>
               {s.sandbox_status}
             </span>
@@ -68,7 +67,7 @@ export default function Summary({ data }: Props) {
         </div>
         <div className="metric">
           <label>Trace Events</label>
-          <div style={{ fontSize: '1.5em', fontWeight: '600' }}>{s.trace_events}</div>
+          <div>{s.trace_events}</div>
         </div>
       </div>
 
@@ -95,12 +94,12 @@ export default function Summary({ data }: Props) {
         <h3>Scope</h3>
         <p>{s.scope}</p>
         {s.aws_live !== 'VERIFIED' && (
-          <p style={{ fontSize: '0.9em', color: 'rgba(255, 255, 255, 0.6)' }}>
+          <p>
             AWS Live: {s.aws_live}
           </p>
         )}
         {s.openmetadata_live !== 'VERIFIED' && (
-          <p style={{ fontSize: '0.9em', color: 'rgba(255, 255, 255, 0.6)' }}>
+          <p>
             OpenMetadata Live: {s.openmetadata_live}
           </p>
         )}

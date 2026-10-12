@@ -1,7 +1,7 @@
 import { Fragment as _Fragment, jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
+import './InspectorShell.css';
 import { useState } from 'react';
 import { InspectorStateView } from '../shared/InspectorState';
-import './InspectorShell.css';
 export function selectConclusion(items, id) {
     return id == null ? undefined : items.find(item => item.id === id);
 }

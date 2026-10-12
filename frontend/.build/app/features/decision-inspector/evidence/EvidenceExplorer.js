@@ -1,8 +1,8 @@
 import { Fragment as _Fragment, jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
+import './EvidenceExplorer.css';
 import { useMemo, useState } from 'react';
 import { assessEvidenceFreshness } from '../../../contracts/decision/evidence';
 import { EvidenceSupportStatus, InspectorStateView, freshnessLabel } from '../shared/InspectorState';
-import './EvidenceExplorer.css';
 const valueOrMissing = (value) => value || 'Not provided';
 function claimSupport(claim, evidenceById) {
     if (claim.evidence.length === 0)

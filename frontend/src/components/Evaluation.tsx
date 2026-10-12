@@ -1,5 +1,4 @@
 import './Evaluation.css'
-
 interface Artifacts {
   summary: any
   agent_run: any
@@ -30,15 +29,15 @@ export default function Evaluation({ data }: Props) {
           </div>
           <div className="metric">
             <label>Score</label>
-            <div style={{ fontSize: '1.5em', fontWeight: '600' }}>{(evaluation.score * 100).toFixed(0)}%</div>
+            <div>{(evaluation.score * 100).toFixed(0)}%</div>
           </div>
           <div className="metric">
             <label>Cost (USD)</label>
-            <div style={{ fontSize: '1.5em', fontWeight: '600' }}>${evaluation.cost_usd.toFixed(2)}</div>
+            <div>${evaluation.cost_usd.toFixed(2)}</div>
           </div>
           <div className="metric">
             <label>Checks Passed</label>
-            <div style={{ fontSize: '1.5em', fontWeight: '600' }}>{evaluation.checks?.filter((c: any) => c.passed).length || 0} / {evaluation.checks?.length || 0}</div>
+            <div>{evaluation.checks?.filter((c: any) => c.passed).length || 0} / {evaluation.checks?.length || 0}</div>
           </div>
         </div>
       </div>
@@ -49,13 +48,13 @@ export default function Evaluation({ data }: Props) {
           {(evaluation.checks || []).map((check: any, idx: number) => (
             <div key={idx} className={`timeline-item ${check.passed ? 'success' : 'error'}`}>
               <strong>{check.name}</strong>
-              <p style={{ margin: '4px 0 0 0', fontSize: '0.9em', color: 'rgba(255, 255, 255, 0.8)' }}>
+              <p>
                 {check.detail}
               </p>
               {check.evidence_refs && check.evidence_refs.length > 0 && (
-                <details style={{ marginTop: '8px' }}>
-                  <summary style={{ cursor: 'pointer', fontSize: '0.9em' }}>Evidence ({check.evidence_refs.length})</summary>
-                  <ul className="evidence-list" style={{ marginTop: '8px' }}>
+                <details>
+                  <summary>Evidence ({check.evidence_refs.length})</summary>
+                  <ul className="evidence-list">
                     {check.evidence_refs.map((ref: string, ridx: number) => (
                       <li key={ridx} className="evidence-item">{ref}</li>
                     ))}
@@ -69,7 +68,7 @@ export default function Evaluation({ data }: Props) {
 
       <div className="card">
         <h2>What Was Validated</h2>
-        <ul style={{ marginLeft: '20px' }}>
+        <ul>
           <li>✓ Trace root event exists</li>
           <li>✓ All governance workflow stages present (intent → retrieval → authorization → execution → verification)</li>
           <li>✓ Retrieval hits are linked to citations</li>
@@ -85,7 +84,7 @@ export default function Evaluation({ data }: Props) {
         <p>
           A <strong>PASS</strong> evaluation means:
         </p>
-        <ul style={{ marginLeft: '20px' }}>
+        <ul>
           <li>The governed workflow executed end-to-end</li>
           <li>All evidence artifacts are properly linked</li>
           <li>No tool executed without an explicit permit</li>

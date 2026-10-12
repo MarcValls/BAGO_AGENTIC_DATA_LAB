@@ -3,7 +3,6 @@
 .capability-manager-header h2, .capability-section-heading h3 { margin: 0; }
 .capability-manager-header p:not(.section-eyebrow) { margin: 6px 0 0; color: #9aadc2; font-size: .84rem; }
 .capability-manager .section-eyebrow { color: #87a0bb; }
-.capability-authority-notice { margin: 0; padding: 11px 13px; color: #bcd8f3; border: 1px solid #345374; border-radius: 10px; background: #11243a; font-size: .8rem; line-height: 1.5; }
 .capability-state, .capability-error { margin: 0; color: #9aadc2; font-size: .84rem; line-height: 1.5; }
 .capability-error { padding: 11px 13px; color: #ffc0c0; border: 1px solid #713f48; border-radius: 9px; background: #321e26; }
 .capability-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr)); gap: 12px; }
@@ -23,10 +22,15 @@
 .capability-card summary { cursor: pointer; }
 .capability-card pre { max-height: 220px; overflow: auto; padding: 9px; color: #bfd2e6; border-radius: 7px; background: #0a1421; font-size: .65rem; white-space: pre-wrap; overflow-wrap: anywhere; }
 .capability-proposals { display: flex; flex-direction: column; gap: 10px; padding-top: 17px; border-top: 1px solid #26364b; }
-.capability-section-heading > span { color: #94abc2; font-size: .75rem; }
+.capability-proposals.is-empty { gap: 0; padding-top: 10px; }
+.capability-proposals.is-empty .capability-proposal-list { display: none; }
+.capability-section-title { display: flex; align-items: center; gap: 8px; }
+.capability-section-title > span { color: #94abc2; font-size: .72rem; }
+.capability-empty-proposals { margin: 0 0 0 auto; color: #9aadc2; font-size: .76rem; line-height: 1.4; text-align: right; }
+.capability-empty-proposals span { color: #7f96af; }
 .capability-proposal-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr)); gap: 10px; }
 .capability-proposal h4 { margin-bottom: 4px; }
 .capability-proposal > p { margin: 8px 0; }
 .capability-proposal-meta { color: #8197ae !important; font-size: .68rem !important; }
 .capability-footer { margin: 0; padding-top: 12px; color: #8399b0; border-top: 1px solid #26364b; font-size: .72rem; line-height: 1.45; }
-@media (max-width: 600px) { .capability-manager-header { align-items: flex-start; } .capability-card dl { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 600px) { .capability-manager-header { align-items: flex-start; } .capability-card dl { grid-template-columns: 1fr 1fr; } .capability-proposals.is-empty .capability-section-heading { align-items: flex-start; flex-direction: column; gap: 5px; } .capability-empty-proposals { margin-left: 0; text-align: left; } }

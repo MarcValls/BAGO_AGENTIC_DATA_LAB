@@ -1,7 +1,7 @@
+import './EvidenceExplorer.css'
 import { useMemo, useState } from 'react'
 import { assessEvidenceFreshness, type DecisionConclusion, type DecisionClaim, type DecisionEvidence, type ExpectedEvidenceSnapshot, type EvidenceFreshness } from '../../../contracts/decision/evidence'
 import { EvidenceSupportStatus, InspectorStateView, freshnessLabel, type EvidenceSupport, type InspectorState } from '../shared/InspectorState'
-import './EvidenceExplorer.css'
 
 export interface EvidenceExplorerProps {
   conclusion: DecisionConclusion

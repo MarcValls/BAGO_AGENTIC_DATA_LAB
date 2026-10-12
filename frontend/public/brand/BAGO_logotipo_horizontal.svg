@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -1.75 200 51.35" role="img" aria-label="BAGO">
+  <title>BAGO - logotipo horizontal</title>
+  <g fill="#F2EFEA">
+    <path d="M135 0H764C1100 0 1276 175 1276 411C1276 632 1118 764 950 772V787C1103 821 1218 930 1218 1107C1218 1330 1053 1490 726 1490H135ZM440 251V655H712C865 655 962 565 962 440C962 327 883 251 704 251ZM440 864V1241H687C830 1241 909 1167 909 1058C909 938 812 864 681 864Z" transform="translate(14 45) scale(.02832 -.02832)"/>
+    <path d="M49 0H386L497 346H1026L1141 0H1480L958 1490H558ZM573 585 616 719C661 869 705 1046 755 1251C807 1048 854 872 902 719L947 585Z" transform="translate(52.374 45) scale(.02832 -.02832)"/>
+    <path d="M795 -20C1169 -20 1438 217 1438 608V794H818V562H1142C1137 371 1009 251 797 251C558 251 404 430 404 746C404 1062 563 1239 793 1239C959 1239 1071 1152 1113 1010H1423C1381 1304 1123 1510 788 1510C396 1510 94 1226 94 743C94 272 377 -20 795 -20Z" transform="translate(95.676 45) scale(.02832 -.02832)"/>
+  </g>
+  <g transform="translate(-19.7 -5.28) translate(181 29.2) scale(.907) translate(-181 -29.2)">
+    <path d="M 181.963 11.125 A 18.4 18.4 0 0 1 199.375 28.537" fill="none" stroke="#447B9D" stroke-width="9.3" stroke-linecap="butt"/>
+    <path d="M 199.330 31.104 A 18.4 18.4 0 0 1 181.963 47.875" fill="none" stroke="#F2EFEA" stroke-width="9.3" stroke-linecap="butt"/>
+    <path d="M 180.037 47.875 A 18.4 18.4 0 0 1 180.037 11.125" fill="none" stroke="#F2EFEA" stroke-width="9.3" stroke-linecap="butt"/>
+    <path d="M 181.000 6.300 V 15.200 M 181.000 43.900 V 52.100" stroke="#F2EFEA" stroke-width="2" stroke-linecap="square" fill="none"/>
+  </g>
+</svg>

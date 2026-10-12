@@ -1,5 +1,5 @@
-import { FormEvent, useCallback, useEffect, useMemo, useState } from 'react'
 import './AgentEvaluationLab.css'
+import { FormEvent, useCallback, useEffect, useMemo, useState } from 'react'
 
 type Agent = { id: string; config: { name: string; provider_id?: string | null; model_id?: string | null } }
 type Model = { model_id: string; display_name?: string }
@@ -95,11 +95,10 @@ export default function AgentEvaluationLab() {
 
   const currentAgent = useMemo(() => agents.find((agent) => agent.id === agentId), [agents, agentId])
 
-  if (loading) return <section className="evaluation-lab" aria-labelledby="evaluation-lab-title"><p role="status">Loading evaluation workspace…</p></section>
+  if (loading) return <section className="evaluation-lab" aria-label="Agent Evaluation Lab"><p role="status">Loading evaluation workspace…</p></section>
   if (unavailable) return <section className="evaluation-lab" aria-labelledby="evaluation-lab-title"><p className="eval-kicker">Workspace</p><h2 id="evaluation-lab-title">Agent Evaluation Lab</h2><div className="eval-state eval-error" role="alert"><strong>Evaluation service unavailable</strong><p>{error}</p><button type="button" onClick={() => void refresh()}>Retry</button></div></section>
 
-  return <section className="evaluation-lab" aria-labelledby="evaluation-lab-title">
-    <header className="eval-header"><div><p className="eval-kicker">Workspace · deterministic checks</p><h2 id="evaluation-lab-title">Agent Evaluation Lab</h2><p>Compare an existing agent against saved cases. Checks are explicit substring rules, not a general quality score.</p></div><button type="button" onClick={() => void refresh()} disabled={busy || saving}>Refresh</button></header>
+  return <section className="evaluation-lab" aria-label="Agent Evaluation Lab">
     {error && <div className="eval-state eval-error" role="alert"><strong>Request could not be completed</strong><p>{error}</p><button type="button" onClick={() => setError('')}>Dismiss</button></div>}
     <div className="eval-layout">
       <aside className="eval-suites" aria-label="Saved evaluation suites"><div className="eval-section-heading"><h3>Suites</h3><button type="button" onClick={startNewSuite}>New suite</button></div>
