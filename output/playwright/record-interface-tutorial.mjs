@@ -28,28 +28,41 @@ function wavInfo(filename) {
   let channels = data.readUInt16LE(22)
   let bits = data.readUInt16LE(34)
   let dataBytes = 0
+  let dataOffset = 44
   for (let offset = 12; offset + 8 <= data.length;) {
     const chunk = data.toString('ascii', offset, offset + 4)
     const size = data.readUInt32LE(offset + 4)
-    if (chunk === 'data') { dataBytes = size; break }
+    if (chunk === 'data') { dataBytes = size; dataOffset = offset + 8; break }
     offset += 8 + size + (size % 2)
   }
   const bytesPerSecond = sampleRate * channels * bits / 8
-  return { data, sampleRate, channels, bits, dataBytes, duration: dataBytes / bytesPerSecond }
+  return { data, sampleRate, channels, bits, dataBytes, dataOffset, duration: dataBytes / bytesPerSecond }
 }
 
 const voiceFiles = scenes.map((_, index) => path.join(voiceDir, `scene-${String(index + 1).padStart(2, '0')}.wav`))
 const voiceInfo = voiceFiles.map(wavInfo)
-const silence = Buffer.alloc(Math.round(voiceInfo[0].sampleRate * voiceInfo[0].channels * voiceInfo[0].bits / 8 * pauseSeconds))
-const silenceStart = Buffer.alloc(Math.round(voiceInfo[0].sampleRate * voiceInfo[0].channels * voiceInfo[0].bits / 8 * introSilence))
+const blockAlign = voiceInfo[0].channels * voiceInfo[0].bits / 8
+const silence = Buffer.alloc(Math.round(voiceInfo[0].sampleRate * blockAlign * pauseSeconds / blockAlign) * blockAlign)
+const silenceStart = Buffer.alloc(Math.round(voiceInfo[0].sampleRate * blockAlign * introSilence / blockAlign) * blockAlign)
 const audioParts = [silenceStart]
 for (let index = 0; index < voiceInfo.length; index += 1) {
-  audioParts.push(voiceInfo[index].data.subarray(44, 44 + voiceInfo[index].dataBytes))
+  audioParts.push(voiceInfo[index].data.subarray(voiceInfo[index].dataOffset, voiceInfo[index].dataOffset + voiceInfo[index].dataBytes))
   if (index < voiceInfo.length - 1) audioParts.push(silence)
 }
-const audioHeader = Buffer.from(voiceInfo[0].data.subarray(0, 44))
+const audioHeader = Buffer.alloc(44)
 const audioDataBytes = audioParts.reduce((total, part) => total + part.length, 0)
+audioHeader.write('RIFF', 0)
 audioHeader.writeUInt32LE(36 + audioDataBytes, 4)
+audioHeader.write('WAVE', 8)
+audioHeader.write('fmt ', 12)
+audioHeader.writeUInt32LE(16, 16)
+audioHeader.writeUInt16LE(1, 20)
+audioHeader.writeUInt16LE(voiceInfo[0].channels, 22)
+audioHeader.writeUInt32LE(voiceInfo[0].sampleRate, 24)
+audioHeader.writeUInt32LE(voiceInfo[0].sampleRate * voiceInfo[0].channels * voiceInfo[0].bits / 8, 28)
+audioHeader.writeUInt16LE(voiceInfo[0].channels * voiceInfo[0].bits / 8, 32)
+audioHeader.writeUInt16LE(voiceInfo[0].bits, 34)
+audioHeader.write('data', 36)
 audioHeader.writeUInt32LE(audioDataBytes, 40)
 fs.writeFileSync(audioPath, Buffer.concat([audioHeader, ...audioParts]))
 

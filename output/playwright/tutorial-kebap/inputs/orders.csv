@@ -1,0 +1,5 @@
+booking_id,branch,service,scheduled_at,fulfillment,promised_at,completed_at,delivery_fee_eur,status
+K-901,CENTRO,delivery,2026-10-09T19:00:00+02:00,delivery,2026-10-09T19:30:00+02:00,2026-10-09T20:12:00+02:00,2.50,delivered
+K-902,NORTE,delivery,2026-10-09T19:10:00+02:00,delivery,2026-10-09T19:40:00+02:00,2026-10-09T20:10:00+02:00,2.00,delivered
+K-903,ESTACION,pollo_durum,2026-10-09T20:00:00+02:00,pickup,2026-10-09T20:25:00+02:00,2026-10-09T21:30:00+02:00,0.00,picked_up
+K-904,CENTRO,falafel,2026-10-09T21:00:00+02:00,delivery,2026-10-09T21:30:00+02:00,,2.50,in_preparation

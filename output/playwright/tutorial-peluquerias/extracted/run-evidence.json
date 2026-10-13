@@ -1,0 +1,85 @@
+{
+  "status": "VERIFIED",
+  "fictional_demo": true,
+  "provider": "ollama-cloud",
+  "model_id": "gemma4:31b",
+  "runs": [
+    {
+      "agent_id": "agent_71760f9e6f9e41a39861941fb99dc2df",
+      "conversation_id": "conv_7c6ffa61b40346b9adb06733bb6c892d",
+      "trace": {
+        "trace_id": "trace-6332470cfc374235",
+        "trace_state": "local_only"
+      },
+      "sources": [
+        {
+          "path": "output/playwright/tutorial-peluquerias/inputs/appointments.csv",
+          "start_line": 1,
+          "end_line": 5,
+          "decision": "ALLOW",
+          "file_sha256": "898f386a66ec9f24114917358b85ee5a28f22c98cf1f1b276feca2ae675c1191",
+          "content_sha256": "af567711e820ce595b98830352957d14beabd377cc26bc1f86564ce352ea76fe",
+          "attempt": 1
+        }
+      ]
+    },
+    {
+      "agent_id": "agent_87d367135165440f9fe1e45106e15af9",
+      "conversation_id": "conv_bce85a2b896b4ed5b803671765a6f992",
+      "trace": {
+        "trace_id": "trace-a36dc9b360cf4254",
+        "trace_state": "local_only"
+      },
+      "sources": [
+        {
+          "path": "output/playwright/tutorial-peluquerias/inputs/policy.md",
+          "start_line": 1,
+          "end_line": 7,
+          "decision": "ALLOW",
+          "file_sha256": "ca0cac54a1b78865aba2cfecea4286dc8ad7fba95741c2f8893e6af86923e7fc",
+          "content_sha256": "be51872263c45fb2f4dbaae057ae17175f6d378cabf5e91730b8e5159f9f5a7d",
+          "attempt": 1
+        },
+        {
+          "path": "output/playwright/tutorial-peluquerias/inputs/qa-expected.md",
+          "start_line": 1,
+          "end_line": 6,
+          "decision": "ALLOW",
+          "file_sha256": "9a5e1e23ae4cff7e274281a3135f3bb2b427b3df8dcfb750d59db954da4c0a61",
+          "content_sha256": "ba8b895f89ab08e6e118852663f447bdbd4e032a6bb9f41b204146f53f2236e5",
+          "attempt": 2
+        },
+        {
+          "path": "output/playwright/tutorial-peluquerias/inputs/appointments.csv",
+          "start_line": 1,
+          "end_line": 5,
+          "decision": "ALLOW",
+          "file_sha256": "898f386a66ec9f24114917358b85ee5a28f22c98cf1f1b276feca2ae675c1191",
+          "content_sha256": "af567711e820ce595b98830352957d14beabd377cc26bc1f86564ce352ea76fe",
+          "attempt": 3
+        }
+      ]
+    }
+  ],
+  "validation": {
+    "ids": [
+      "S-501",
+      "S-502",
+      "S-503",
+      "S-504"
+    ],
+    "decisions": [
+      "NO_REFUND",
+      "PARTIAL_RETENTION",
+      "REFUND",
+      "DEPOSIT_FORFEIT"
+    ],
+    "refund_eur": [
+      0.0,
+      15.0,
+      20.0,
+      0.0
+    ],
+    "actions_executed": []
+  }
+}

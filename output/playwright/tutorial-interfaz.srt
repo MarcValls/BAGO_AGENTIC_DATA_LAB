@@ -1,83 +1,109 @@
 1
-00:00:02,200 --> 00:00:12,455
-Bienvenida a Agentic Data Lab. En este
-recorrido veremos las zonas principales y
-distinguiremos las acciones de consulta de las
-que requieren confirmación.
+00:00:02,200 --> 00:00:14,952
+Bienvenido a Agentic Data Lab. Este recorrido
+muestra la interfaz que está activa ahora:
+chat, agentes, capacidades, configuración e
+inspección de evidencias.
 
 2
-00:00:12,805 --> 00:00:23,112
-La barra lateral reúne las vistas. Su anchura
-permanece fija al cambiar de pestaña. El botón
-inferior la pliega y la vuelve a desplegar.
+00:00:15,302 --> 00:00:32,846
+La barra lateral reúne Chat, Capabilities,
+Agent Builder, Agent Runner, Evaluation Lab y
+Control. Inspect abre el panel de evidencias;
+Settings abre la configuración. El botón
+inferior contrae o despliega la barra.
 
 3
-00:00:23,462 --> 00:00:37,324
-Abre Workspace and agents para elegir el
-asistente o uno de tus agentes. Chats permite
-volver a conversaciones recientes, archivadas
-o en la papelera. New empieza otra
-conversación.
+00:00:33,196 --> 00:00:56,505
+En Chat, Workspace and agents despliega dos
+paneles: agentes y conversaciones. Selecciona
+un agente para dirigirle el chat. En Chats
+puedes revisar Recent, Archived y Trash. New
+empieza otra conversación; las acciones de
+gestión aparecen con clic derecho o
+manteniendo pulsado en una pantalla táctil.
 
 4
-00:00:37,674 --> 00:00:54,069
-Escribe en el cuadro. Enter envía y Shift más
-Enter crea otra línea. Si necesitas leer
-archivos, habilita la autorización e indica
-solo las rutas necesarias para ese turno. En
-este tutorial no enviaremos el ejemplo.
+00:00:56,855 --> 00:01:16,850
+Escribe la consulta en el cuadro inferior.
+Enter envía el mensaje y Shift más Enter
+inserta una nueva línea. La casilla de lectura
+de archivos habilita el acceso solo a las
+rutas concretas que indiques para este turno.
+En este tutorial solo mostraremos el atajo; no
+enviaremos el texto.
 
 5
-00:00:54,419 --> 00:01:06,414
-Capabilities muestra las integraciones y
-propuestas registradas. Disponible o conectado
-describe el estado de integración; no concede
-permiso para ejecutar una acción.
+00:01:17,200 --> 00:01:34,949
+Capabilities explica qué integraciones están
+conectadas, cuáles no están disponibles y qué
+efecto tendría cada una. Disponible describe
+integración, no concede autorización. Las
+propuestas guardadas sirven para revisión y no
+ejecutan trabajos.
 
 6
-00:01:06,764 --> 00:01:20,112
-En Agent Builder puedes partir de una
-plantilla o crear un perfil. Revisa nombre,
-descripción, modelo e instrucciones. Create
-agent guarda solo cuando confirmas.
+00:01:35,299 --> 00:01:57,306
+Agent Builder ofrece plantillas y un
+formulario para un agente personalizado.
+Define nombre, descripción, tipo,
+instrucciones y herramientas. Preview permite
+revisar la configuración. Save Agent crea el
+agente en el backend; en este recorrido
+abriremos el formulario sin guardarlo.
 
 7
-00:01:20,462 --> 00:01:31,700
-Agent Runner muestra los perfiles y permite
-importar o exportar configuraciones. La
-ejecución se habilita solo cuando existe una
-capacidad gobernada registrada.
+00:01:57,656 --> 00:02:13,456
+Agent Runner muestra los agentes registrados y
+las opciones de importación y exportación. En
+esta instancia Run aparece deshabilitado
+porque no hay una capacidad de ejecución
+gobernada registrada. No se inicia ninguna
+ejecución.
 
 8
-00:01:32,050 --> 00:01:43,479
-Evaluation Lab define suites, prompts y reglas
-de texto. Revisa el agente y el modelo. Run
-evaluation enviará cada prompt al proveedor.
+00:02:13,806 --> 00:02:34,008
+Evaluation Lab sirve para crear una suite,
+elegir un agente y un modelo confirmado, y
+escribir casos con reglas de texto que deben
+aparecer o no aparecer. Guardar persiste la
+suite. Run evaluation envía cada prompt al
+proveedor: revisa el modelo y los casos antes
+de confirmarlo.
 
 9
-00:01:43,829 --> 00:01:56,598
-Control ejecuta la demo. Run demo inicia
-python demo.py y Write Evidence Bundle puede
-escribir evidencia. Pulsa estos controles solo
-cuando quieras iniciar ese trabajo.
+00:02:34,358 --> 00:02:52,372
+Control inicia la demo por HTTP o WebSocket.
+La opción Write Evidence Bundle puede guardar
+un paquete de evidencias. Pulsa Run demo
+únicamente cuando quieras iniciar ese proceso.
+Durante esta grabación no activaremos ninguno
+de esos controles.
 
 10
-00:01:56,948 --> 00:02:08,522
-Inspect permite consultar conclusiones,
-evidencias y trazas de los artefactos
-disponibles. Navega por sus pestañas para
-seguir la información hasta su fuente.
+00:02:52,722 --> 00:03:11,724
+Inspect abre el Decision Inspector. Sus vistas
+permiten revisar el historial, el resumen, la
+recuperación, la autorización, la traza y la
+evaluación de los artefactos disponibles. El
+identificador de ejecución ayuda a seguir el
+mismo caso entre vistas.
 
 11
-00:02:08,872 --> 00:02:19,823
-Settings abre la configuración del proveedor y
-del modelo. Las credenciales se gestionan en
-el backend. No copies claves a prompts ni a
-grabaciones.
+00:03:12,074 --> 00:03:30,505
+Settings reúne la conexión de Ollama, el
+método de autenticación y la selección de
+modelo. La clave se introduce como campo de
+solo escritura y se guarda en el almacén de
+credenciales del sistema. Comprueba el estado
+antes de usar el chat; no grabes ni compartas
+claves.
 
 12
-00:02:20,173 --> 00:02:33,594
-Para terminar, usa la barra para cambiar de
-vista. Revisa cada propuesta, autorización o
-ejecución antes de confirmarla. Este recorrido
-no ha guardado ni ejecutado nada.
+00:03:30,855 --> 00:03:49,449
+Ya conoces las zonas principales. Puedes
+volver a Chat desde la barra lateral. Antes de
+enviar, guardar o ejecutar, revisa el alcance
+y el efecto de la acción. Este recorrido no ha
+enviado mensajes, guardado agentes ni iniciado
+procesos.

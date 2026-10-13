@@ -1,0 +1,166 @@
+{
+  "audio/scene-01.wav": {
+    "bytes": 561400,
+    "sha256": "633a41776000337086106bf79f850b12ccb9232d36577f0deeadc1fa5ca79ded"
+  },
+  "audio/scene-02.wav": {
+    "bytes": 580348,
+    "sha256": "3492bf104b67706b7924dce883a69a19e14ebb02a5e3e085dc92d874a0e920a8"
+  },
+  "audio/scene-03.wav": {
+    "bytes": 528774,
+    "sha256": "5a44f2f2d62f5542147dfc5a2dea54f1c827a9d4058606875cf78ecc972c7689"
+  },
+  "audio/scene-04.wav": {
+    "bytes": 530102,
+    "sha256": "370508a5dd50c293cfb4f68a62de1867294b76c69dedb2a0ad15f8de7019d6c8"
+  },
+  "audio/scene-05.wav": {
+    "bytes": 530980,
+    "sha256": "3266f75f15817400f22cc6e8f97c1470279b53724b69d2dc27f5bc26dd897066"
+  },
+  "audio/scene-06.wav": {
+    "bytes": 664110,
+    "sha256": "4c0ca86eecfe941b597d5732fea9ce09a110bec7fd8a03c5e56c43a2f104b5d0"
+  },
+  "audio/scene-07.wav": {
+    "bytes": 596198,
+    "sha256": "c01f2446e0460f56529e354b9e1fbcbcc0415acf4755d17f7b4ba636fa531b0f"
+  },
+  "audio/scene-08.wav": {
+    "bytes": 600640,
+    "sha256": "42ddf8c28904f18f3af26c9d68acbd6b0ca8d086eb7be9487d9202251ae0926b"
+  },
+  "audio/silence.wav": {
+    "bytes": 15478,
+    "sha256": "63f42afdfb454ce900c362ceed914ed07eff798a87ef7a2cca3a20c864da2e08"
+  },
+  "audio-scenes.txt": {
+    "bytes": 1748,
+    "sha256": "15314530391e86310352dc234f025256ffe4a81f3ad49899b366576948a92b15"
+  },
+  "cloud-runs/01-builder-1.png": {
+    "bytes": 88000,
+    "sha256": "02d13c9d86b70fcac021f56b4c44f998263f18b47728fc920c310d3f503933d0"
+  },
+  "cloud-runs/01-builder-2.png": {
+    "bytes": 98241,
+    "sha256": "9988111d6334ba1762b4707035d133c002e530a847a60174ba9db4c787107e5b"
+  },
+  "cloud-runs/02-created-2.png": {
+    "bytes": 71748,
+    "sha256": "c0fa0a32681890ba11267fa4cddf18e9f266d4379c20f24de7edd88ec322eb2d"
+  },
+  "cloud-runs/03-result-1.png": {
+    "bytes": 87731,
+    "sha256": "629049741dd4472c12c45b769a821039f8472e04aacd49d2df3e763d5ca821b4"
+  },
+  "cloud-runs/03-result-2.png": {
+    "bytes": 90201,
+    "sha256": "1160c15849a7b9756b313a1e635eab584fbcc983a2297d47f2002c06fe33c42e"
+  },
+  "cloud-runs/profiles.json": {
+    "bytes": 2253,
+    "sha256": "1b0aaf1690c60baa59486acd906cc9211be0f267611056468332260535c96335"
+  },
+  "cloud-runs/run-1.json": {
+    "bytes": 5855,
+    "sha256": "169d8de800ace23fd8d91c62e2ac72a5f3a7661a9051d4c336b90f9b9d7456a4"
+  },
+  "cloud-runs/run-2.json": {
+    "bytes": 9839,
+    "sha256": "54f5d792b04b95507a765a7e8290a478899dee6bf733e1991c013afdb141cb96"
+  },
+  "extracted/orders.json": {
+    "bytes": 1208,
+    "sha256": "ab6080287d3c851c599575eea17ac814bb5679563393f7e5b7b2d86653bd5249"
+  },
+  "extracted/policy-decisions.json": {
+    "bytes": 1616,
+    "sha256": "df112b35e66607b308db0bf72a4f323cf5afb46022b1d07b60a57fa9e2c3f93a"
+  },
+  "extracted/run-evidence.json": {
+    "bytes": 5137,
+    "sha256": "bce9b232f688a51d3b4a71b385bba3e40d9375c645f253fe781768ee2a4a7e39"
+  },
+  "inputs/orders.csv": {
+    "bytes": 357,
+    "sha256": "016acee85ee5afdb23eaf13caf3f664417e1398b5bba3aad8ff6e991e6a3d1e3"
+  },
+  "inputs/policy.md": {
+    "bytes": 596,
+    "sha256": "cbab7cedb2312a3f964598e4763f22ff74743607d352b2e3b9cf19ecf3435c80"
+  },
+  "inputs/qa-expected.md": {
+    "bytes": 448,
+    "sha256": "7f1385a197175561f8832fd2568fbc58df5348f79a75410eb6134189da74fe74"
+  },
+  "make-local-voice.ps1": {
+    "bytes": 774,
+    "sha256": "0c15b9797444fc33a72bc89affc693665991e9c192d8a84f778f459caab54638"
+  },
+  "narration.json": {
+    "bytes": 1526,
+    "sha256": "f403d0cc586714641c015a14109e5f9d4fc915b1af6578e4ac1c7957877466e9"
+  },
+  "narration.wav": {
+    "bytes": 4700300,
+    "sha256": "35973fcdaeeb3853b3d66eb2dd838a9de3f38e504032fad62b9245c056dd65ae"
+  },
+  "package_tutorial.py": {
+    "bytes": 13689,
+    "sha256": "d40a9a6cb93bbccbfcb92c831a47288480a20fc722d1f480634aed0f9441f396"
+  },
+  "README.md": {
+    "bytes": 4392,
+    "sha256": "bde602cb75963ec6e232b7bab45fdf28a4820c5aab681d0f78bfba5287a4c183"
+  },
+  "run-cloud-tutorial.mjs": {
+    "bytes": 7062,
+    "sha256": "11a74c2e8393d0c1b27ff733c21d0566752b43cbde013a8454505d0e2e03673a"
+  },
+  "slides/scene-01.png": {
+    "bytes": 37373,
+    "sha256": "b8cc284cbaa89eb9c4ed21bd8131301bce66d8fca4c54104518fcf1c74f4f22e"
+  },
+  "slides/scene-02.png": {
+    "bytes": 86555,
+    "sha256": "116f39d1f700df6c87d6728b74901a089ef54bb04b659166f233e33cd78e4139"
+  },
+  "slides/scene-03.png": {
+    "bytes": 95543,
+    "sha256": "98d7a037172e1a0408be89db28e7924a91d86ef467749eec18a0a3ce6597b04c"
+  },
+  "slides/scene-04.png": {
+    "bytes": 55883,
+    "sha256": "760d28bd4fc1255e3e0df70d1e0ed9ae88c1caadbdbf5b74519a6b51ecf851cc"
+  },
+  "slides/scene-05.png": {
+    "bytes": 57122,
+    "sha256": "8b54048a1f55f36631ebec190803912e2ba6abd7744d668203bb0bca1e256d36"
+  },
+  "slides/scene-06.png": {
+    "bytes": 50282,
+    "sha256": "62c2202a0af5d100c6d8e4bfe00fd6c74c218b1aeebf8d216d6e4998234dd2cd"
+  },
+  "slides/scene-07.png": {
+    "bytes": 52223,
+    "sha256": "150c37fe1753b754b594457829173f914cda5a48263d842bed2070f48c08a37a"
+  },
+  "slides/scene-08.png": {
+    "bytes": 42432,
+    "sha256": "5408707d0415997a3c2246be509055e7ddb17f939669644c0e3d307e2d1492b0"
+  },
+  "tutorial-bruma-market.mp4": {
+    "bytes": 1844369,
+    "sha256": "3541a52f041029b5c79096667e3e38afcff519fd19be98e3a6763f250d92f4ee"
+  },
+  "tutorial-bruma-market.srt": {
+    "bytes": 1767,
+    "sha256": "67f2682cf24e6f94fdfee6566210653bb32c1fddb6874f92c12b9eb3133906f3"
+  },
+  "video-scenes.txt": {
+    "bytes": 1198,
+    "sha256": "4ed26a4e228bc277cbea18f2d64b7aa4dbb4bf51f7ed7c19efe5cd6cf3cabfc5"
+  }
+}

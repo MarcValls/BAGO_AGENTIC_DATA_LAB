@@ -1,0 +1,13 @@
+{
+  "capture_report": "screen-capture-report.json",
+  "javascript_errors": [],
+  "scene_count": 8,
+  "duration_expected_seconds": 146.56,
+  "ffprobe": {
+    "format": {
+      "duration": "146.560000",
+      "size": "2810741"
+    }
+  },
+  "video_sha256": "60d71e0fadfefcd9033f7fb8cf052dccc608fbafd65454496bac79638837523b"
+}

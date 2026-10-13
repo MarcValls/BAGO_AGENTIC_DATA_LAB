@@ -1,0 +1,158 @@
+{
+  "01-chat.png": {
+    "bytes": 99052,
+    "sha256": "e569b0268759b0c85f24f93b1fc6882db41cdbc856abf9194a9c6878bdd81aa1"
+  },
+  "02-summary.png": {
+    "bytes": 86834,
+    "sha256": "9c389ed13427137c86080a12479a9f50805e2064d6de0ab81cbdfaf9bba32aed"
+  },
+  "03-retrieval.png": {
+    "bytes": 79334,
+    "sha256": "af416dc9d352fd187afe452b5df1bbfce152d89d59386d7557759722a3d4e4a7"
+  },
+  "04-authorization.png": {
+    "bytes": 94025,
+    "sha256": "8223c31393c43dd4047fc7c5ea30e1e07ce12cccae5eb2b1489eb3e77ac0bf46"
+  },
+  "05-trace.png": {
+    "bytes": 80626,
+    "sha256": "c54565de913879d5f6c77a94fc3b13623a552575dac96adf129e88ab21d1b15a"
+  },
+  "06-evaluation.png": {
+    "bytes": 82619,
+    "sha256": "6867138e9b859d9eadabc8716fca1754966f9a851c47574857842fead316fd07"
+  },
+  "07-inspector.png": {
+    "bytes": 218995,
+    "sha256": "28544ead9ab64bcefa313be3498f370cfe8a17b90df690847e4da050ecc6a813"
+  },
+  "08-jobs.png": {
+    "bytes": 54291,
+    "sha256": "0235c80567c6ff47c5797aff5d4bb018505aa0f5b319d2d5f261eccd11bbe2a7"
+  },
+  "09-capabilities.png": {
+    "bytes": 90705,
+    "sha256": "37aa90852b6b7765432c144a9c518ce6716d84ea165247e68aef854af0ca1743"
+  },
+  "10-runner.png": {
+    "bytes": 89491,
+    "sha256": "ca461491a0db4961ed96099faee4b23acc82fb1ffc3bd3c1abdfc114ec00cdc0"
+  },
+  "audio/scene-01.wav": {
+    "bytes": 953056,
+    "sha256": "874df02b7dd3c73cf695a32156c588e0d433b8e3aecfe55d619d908c46a358e9"
+  },
+  "audio/scene-02.wav": {
+    "bytes": 804724,
+    "sha256": "af341abfbf8b005811dad754ce99d86645b02009232b12f76ec923c35cfc9015"
+  },
+  "audio/scene-03.wav": {
+    "bytes": 904578,
+    "sha256": "978f1a660675419beb0d40ea34a8a5e6da9bfb0471f398f23210801faf04e819"
+  },
+  "audio/scene-04.wav": {
+    "bytes": 678882,
+    "sha256": "cdb9e4a9bcb65fb59b9187d3d30d38c621a91453f8027e04fb4651e1e26cb668"
+  },
+  "audio/scene-05.wav": {
+    "bytes": 753806,
+    "sha256": "51bddca8668991ae275bb5e89271a4d05d413e1640c9b54eee608465142a450f"
+  },
+  "audio/scene-06.wav": {
+    "bytes": 770558,
+    "sha256": "5a094903b2ccc7b179dc831db428c2e09dd06a23791f80365ddcf0f2f4861ca1"
+  },
+  "audio/scene-07.wav": {
+    "bytes": 703092,
+    "sha256": "5727c57dd0b4679e2a7119954ca685b31cd6c033bb88700b7ea17fb91f40a0be"
+  },
+  "audio/scene-08.wav": {
+    "bytes": 786888,
+    "sha256": "067324edb8eed18d48c96adec829f40ae148c862fa970c06e92ca2178549808f"
+  },
+  "audio/silence.wav": {
+    "bytes": 15478,
+    "sha256": "63f42afdfb454ce900c362ceed914ed07eff798a87ef7a2cca3a20c864da2e08"
+  },
+  "audio-scenes.txt": {
+    "bytes": 1793,
+    "sha256": "571cb2bc9a6115c450fc04b13c4e1ad6ecf01da2e23c867e5d7d0ef315ed39e4"
+  },
+  "capture-screens.mjs": {
+    "bytes": 2313,
+    "sha256": "18a187bc454e74b9a3fbe5e1820c649f22c4f5979740575c0f07b23440a96664"
+  },
+  "make-local-voice.ps1": {
+    "bytes": 615,
+    "sha256": "0487dfeb9ce7d784e9f4901c17562efd1738b1bd684800b9b870e1687c34587d"
+  },
+  "narration.json": {
+    "bytes": 2095,
+    "sha256": "8640ece318802c07bcafa91aed9fea67e1a62da9ebe923c3596abc47357224d4"
+  },
+  "narration.wav": {
+    "bytes": 6463332,
+    "sha256": "745f5468fa734b5695322ecf810d9b16d2492680a79e89729e2cfc9fb83ba165"
+  },
+  "package_walkthrough.py": {
+    "bytes": 8502,
+    "sha256": "f918dc1b56b83cd273f53e415db2ffdbec01c55350282f036cfeb0fe2b059272"
+  },
+  "README.md": {
+    "bytes": 1213,
+    "sha256": "2117f9ec3cee339dfadcfffd4b49562751b2b02664573276c613420f32d220ef"
+  },
+  "scene-01.png": {
+    "bytes": 182899,
+    "sha256": "a42c2fc79de55a72040050e8812986f36220539479e0443c41368d4f3b968d2b"
+  },
+  "scene-02.png": {
+    "bytes": 150368,
+    "sha256": "b2a58066714aa697b0ce9dcd3c9542b14deb89a0a346a6a4851a6076fe373d9b"
+  },
+  "scene-03.png": {
+    "bytes": 179815,
+    "sha256": "ff983364d07507a8425d66b8a2625d3b57cb431dcfdb38a3c10fed1f2fe8f7cf"
+  },
+  "scene-04.png": {
+    "bytes": 147623,
+    "sha256": "155d5dea270156c9d810b49caf58c7894bbab34dc8b1acaa8afe1d7a5bc7a802"
+  },
+  "scene-05.png": {
+    "bytes": 154011,
+    "sha256": "7fbf69844f6a13b22e09a46abd399dc09e59926323553f6c03e469932a595f71"
+  },
+  "scene-06.png": {
+    "bytes": 315182,
+    "sha256": "168f223323b3117c966f71d17d4471c8044d20e8a2aea84f7087fa87dcde3ce4"
+  },
+  "scene-07.png": {
+    "bytes": 254123,
+    "sha256": "096c2fb54d86b81d7f3aa288eaec20b164c0378b5d35fa9129ff6d6f417ae575"
+  },
+  "scene-08.png": {
+    "bytes": 97379,
+    "sha256": "13be65de581a23fb6cef729d21e1d3596053cc93b3a6cda031e96c2c1a2afeeb"
+  },
+  "screen-capture-report.json": {
+    "bytes": 17912,
+    "sha256": "b2934b9925b5a6e171bade2903b8c63b017a383f8791894c888f3bf15feceb7a"
+  },
+  "tutorial-otras-pantallas.mp4": {
+    "bytes": 2810741,
+    "sha256": "60d71e0fadfefcd9033f7fb8cf052dccc608fbafd65454496bac79638837523b"
+  },
+  "tutorial-otras-pantallas.srt": {
+    "bytes": 2524,
+    "sha256": "36580a4d4d8d97bbc7e8aeed2930a0b1ede3480a05c37febff52c5fd73723889"
+  },
+  "video-scenes.txt": {
+    "bytes": 1162,
+    "sha256": "b3d579c651815ec89492387ea02d33082dc964f68cc80a0f7d574b07059539ac"
+  },
+  "video-verification.json": {
+    "bytes": 336,
+    "sha256": "78ee6cfb2615ee78f6fc530ec351594bf5ade1f7d109d7bcfd0cb36915617627"
+  }
+}

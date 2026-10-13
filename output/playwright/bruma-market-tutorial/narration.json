@@ -1,0 +1,10 @@
+[
+  "Creamos dos agentes para una tienda ficticia, leemos pedidos con autorización limitada y contrastamos resultados con una política de ejemplo. Todo el dataset es sintético.",
+  "En Agent Builder crea el perfil Extractor de pedidos. Define un prompt con campos cerrados, cálculo de retraso solo cuando existan ambas fechas, y valores nulos cuando falte información.",
+  "Crea un segundo perfil para revisar elegibilidad. Especifica la regla de más de veinticuatro horas, los métodos incluidos, las citas de evidencia y que no ejecute reembolsos.",
+  "Los cuatro pedidos incluyen un retraso de treinta y dos horas, uno de exactamente veinticuatro, un envío estándar y una entrega sin fecha. Así comprobamos límites y datos incompletos.",
+  "Selecciona el extractor en Chat, autoriza únicamente orders.csv y solicita el JSON. Ollama Cloud devuelve cuatro registros y el recibo local confirma la ruta y el hash del archivo leído.",
+  "El revisor marca BM-1001 elegible por siete euros con noventa. BM-1002 no pasa porque son exactamente veinticuatro horas; BM-1003 usa envío estándar; BM-1004 queda pendiente.",
+  "La aplicación guardó dos respuestas del proveedor Ollama y recibos ALLOW con hashes. Las trazas son solo locales; no hubo exportación a Jaeger ni acciones financieras.",
+  "Para adaptarlo, reemplaza el CSV y la política ficticia por fuentes aprobadas, conserva el esquema JSON, añade reglas para datos faltantes y valida cada resultado antes de conectarlo a operaciones reales."
+]

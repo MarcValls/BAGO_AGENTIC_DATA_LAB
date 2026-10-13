@@ -1,0 +1,17 @@
+file 'C:/Users/AMTEC_Terminal_1º/BAGO_AGENTIC_DATA_LAB/output/playwright/tutorial-kebap/slides/scene-01.png'
+duration 11.050
+file 'C:/Users/AMTEC_Terminal_1º/BAGO_AGENTIC_DATA_LAB/output/playwright/tutorial-kebap/slides/scene-02.png'
+duration 8.755
+file 'C:/Users/AMTEC_Terminal_1º/BAGO_AGENTIC_DATA_LAB/output/playwright/tutorial-kebap/slides/scene-03.png'
+duration 9.815
+file 'C:/Users/AMTEC_Terminal_1º/BAGO_AGENTIC_DATA_LAB/output/playwright/tutorial-kebap/slides/scene-04.png'
+duration 9.601
+file 'C:/Users/AMTEC_Terminal_1º/BAGO_AGENTIC_DATA_LAB/output/playwright/tutorial-kebap/slides/scene-05.png'
+duration 12.320
+file 'C:/Users/AMTEC_Terminal_1º/BAGO_AGENTIC_DATA_LAB/output/playwright/tutorial-kebap/slides/scene-06.png'
+duration 16.398
+file 'C:/Users/AMTEC_Terminal_1º/BAGO_AGENTIC_DATA_LAB/output/playwright/tutorial-kebap/slides/scene-07.png'
+duration 7.801
+file 'C:/Users/AMTEC_Terminal_1º/BAGO_AGENTIC_DATA_LAB/output/playwright/tutorial-kebap/slides/scene-08.png'
+duration 13.124
+file 'C:/Users/AMTEC_Terminal_1º/BAGO_AGENTIC_DATA_LAB/output/playwright/tutorial-kebap/slides/scene-08.png'

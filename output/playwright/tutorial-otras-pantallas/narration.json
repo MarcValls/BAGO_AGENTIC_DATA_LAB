@@ -1,0 +1,10 @@
+[
+  "La pantalla Summary agrupa el estado del caso ficticio Bruma Market. Aquí la interfaz muestra siete comprobaciones, dos resultados de recuperación y quince eventos de traza. Son artefactos de una demo precargada; PASS no certifica una operación real ni una conexión activa a AWS.",
+  "Retrieval and Ontology enseña cómo se filtraron documentos, qué fragmentos se recuperaron y qué citas los respaldan. La misma vista presenta rutas y consultas de ontología. En esta demo son resultados ya guardados, no una búsqueda nueva.",
+  "Authorization reúne propuestas de herramientas, permisos y recibos del proveedor y del sandbox. Sirve para revisar el límite entre una propuesta y su ejecución. Los recibos visibles pertenecen al paquete de demostración; no los tomes como actividad nueva de esta grabación.",
+  "Trace muestra quince eventos ordenados, sus identificadores y referencias de evidencia. La vista permite desplegar atributos y referencias por evento. La pantalla es una traza local del paquete de demo y no está exportada a una plataforma cloud.",
+  "Evaluation presenta siete comprobaciones, su puntuación y las referencias de respaldo. El PASS refleja únicamente esos artefactos y reglas de demo. Para validar un negocio real habría que contrastar las reglas y los datos de entrada con sus responsables.",
+  "Decision Inspector conecta una conclusión con claims, evidencia, procedencia, traza y acciones propuestas. Los claims no se inventan a partir del texto de respuesta: la interfaz distingue lo que aportó la fuente de lo que puede comprobarse.",
+  "Capabilities lista operaciones reconocidas por la app y su disponibilidad. Es una pantalla útil para saber qué herramientas están expuestas antes de diseñar un agente; disponibilidad no significa que una ejecución haya ocurrido.",
+  "Job History devuelve cero trabajos y muestra “No jobs yet”. Agent Runner, en cambio, indica que la ejecución gobernada no está disponible. Así que el caso de Bruma que vimos antes vive como paquete de artefactos, no como un job registrado aquí."
+]

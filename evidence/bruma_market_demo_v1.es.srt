@@ -1,0 +1,31 @@
+1
+00:00:00,000 --> 00:00:08,500
+Bruma Market es un cliente ficticio. La demostración usa fixtures locales y no contiene datos personales.
+
+2
+00:00:08,500 --> 00:00:17,000
+La consulta pide una decisión concreta: qué regla aplica a un envío exprés retrasado y qué evidencia la valida.
+
+3
+00:00:17,000 --> 00:00:25,500
+La recuperación local encuentra dos fragmentos: la política vigente y el recibo de QA asociado.
+
+4
+00:00:25,500 --> 00:00:34,000
+La respuesta indica el reembolso del coste del envío y enlaza la política vigente con la validación de QA.
+
+5
+00:00:34,000 --> 00:00:42,500
+Las referencias apuntan a la política v2 y al recibo de QA. Una traza local enlaza las etapas del recorrido.
+
+6
+00:00:42,500 --> 00:00:51,000
+La ejecución observada usa un sandbox local de pruebas y deniega la red. No se realiza ninguna llamada a AWS.
+
+7
+00:00:51,000 --> 00:00:59,500
+La evaluación local registra PASS: comprueba estructura y enlaces de gobernanza; no mide la calidad general de un modelo.
+
+8
+00:00:59,500 --> 00:01:08,000
+Caso ficticio basado en la evidencia local del proyecto. Los servicios remotos permanecen sin ejecutar.

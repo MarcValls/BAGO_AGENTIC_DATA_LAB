@@ -1,0 +1,158 @@
+{
+  "audio/scene-01.wav": {
+    "bytes": 471918,
+    "sha256": "90e5a47e423eb317bfb586dbdda81d31076698e59f6a3f3b657c3eacdaf0f057"
+  },
+  "audio/scene-02.wav": {
+    "bytes": 370716,
+    "sha256": "c2ee37119123a67d75ee13ebf8ff8927fc764c8bfcfa6c87abab706e78b0794f"
+  },
+  "audio/scene-03.wav": {
+    "bytes": 417462,
+    "sha256": "296842a5e1532461c2ee98e960bbb9dcf4a52c6a7611aeaba1d0dc816044349d"
+  },
+  "audio/scene-04.wav": {
+    "bytes": 408014,
+    "sha256": "6cff97a07ac7c7fd1a2982fa8404565c58eb464d52f8aab3c156ab5b99378b41"
+  },
+  "audio/scene-05.wav": {
+    "bytes": 527922,
+    "sha256": "6bc55d1fe6ac1246f961682578044c720606cf988f22ec9ca0552bb792fc90b0"
+  },
+  "audio/scene-06.wav": {
+    "bytes": 707764,
+    "sha256": "1f560a7c0d5d8d0ab72098e37f21a76f41cd78af3f6f71f081776602c7be9cfe"
+  },
+  "audio/scene-07.wav": {
+    "bytes": 328644,
+    "sha256": "35a68a13c4aa00fd85c99c737e521c088dc15d400007e28d3c0a3535b0c45e4d"
+  },
+  "audio/scene-08.wav": {
+    "bytes": 563382,
+    "sha256": "dcc95293767b9ef6cad3a12c183bc184860360175adb969d34ce468b4f4a4637"
+  },
+  "audio/silence.wav": {
+    "bytes": 15478,
+    "sha256": "63f42afdfb454ce900c362ceed914ed07eff798a87ef7a2cca3a20c864da2e08"
+  },
+  "audio-scenes.txt": {
+    "bytes": 1643,
+    "sha256": "013d3bc13762bd28d8804abfe33d515fba86f06f6e66f42f034fe33a42a7c47b"
+  },
+  "cloud-runs/builder-extractor.png": {
+    "bytes": 88257,
+    "sha256": "1262f6e2e6bde6d77431ddb9423e50010ea156fe31831489fa91fefc05e21ccd"
+  },
+  "cloud-runs/builder-reviewer.png": {
+    "bytes": 77107,
+    "sha256": "0b428191c857e6c292331b4f6995905e0f36c89b58a3154df750c8858f0beca8"
+  },
+  "cloud-runs/profiles.json": {
+    "bytes": 2109,
+    "sha256": "a06ed79d57aaaab1ec6a7f6e31e3928df79961a85b61cb119220fb41f221ccfb"
+  },
+  "cloud-runs/result-1.png": {
+    "bytes": 86646,
+    "sha256": "e9d50202cfe3f7bfbe5a54f964d3afdfb673d2fa531a73ca9bd8b0df2c96bed8"
+  },
+  "cloud-runs/result-2.png": {
+    "bytes": 86289,
+    "sha256": "a17700bdfd896e34d53c3b968d8687e90771427884b67e11565b5906829520eb"
+  },
+  "cloud-runs/run-1.json": {
+    "bytes": 6092,
+    "sha256": "c229f3c56b108112712c32d775425d18316a2136e2b9a249e87850371dba63c6"
+  },
+  "cloud-runs/run-2.json": {
+    "bytes": 10049,
+    "sha256": "eb4f00a1ee77fe714378c10fdaf4d51a50e145f0e8f59d30c68eecc0ed76bf4d"
+  },
+  "demo.json": {
+    "bytes": 2278,
+    "sha256": "a0aa19a7df0673c4b30fc4197ed13e0361331e935200aae9ee782712bd32f7ac"
+  },
+  "extracted/decisions.json": {
+    "bytes": 1585,
+    "sha256": "c7d494936db2e7a6884acfa1886f25530dd7b66490998d8a46dccdc6356647f2"
+  },
+  "extracted/orders.json": {
+    "bytes": 1316,
+    "sha256": "5642b34b68bc0ddbe298d0ee9e567ad027fb0829f745ffe4d758197244e3a973"
+  },
+  "extracted/run-evidence.json": {
+    "bytes": 2629,
+    "sha256": "0d7c229fd49908162ec412267e1e2ad1658b04a18b8753cd483695527ea6fc71"
+  },
+  "inputs/orders.csv": {
+    "bytes": 578,
+    "sha256": "0040bc0e57591e06081df1b8658ea350da4ead8b3f8cc4618b8061c4e0ee3886"
+  },
+  "inputs/policy.md": {
+    "bytes": 489,
+    "sha256": "c387f89e131f6c34d568fa4ab7b579fa1561500000a4094f14426dbef14d6b60"
+  },
+  "inputs/qa-expected.md": {
+    "bytes": 254,
+    "sha256": "62d573dd5898e4266d3f159fad072a4d0c8f9250a5668c3223ec16a9df35e84e"
+  },
+  "make-local-voice.ps1": {
+    "bytes": 615,
+    "sha256": "0487dfeb9ce7d784e9f4901c17562efd1738b1bd684800b9b870e1687c34587d"
+  },
+  "narration.json": {
+    "bytes": 1188,
+    "sha256": "2085912fd0458cc82459180fda384a9510b30a7c3409c5eae9aa3aa1c85749ea"
+  },
+  "narration.wav": {
+    "bytes": 3903570,
+    "sha256": "4de16e29cdf25b7528f7f6deab32a468d085433f7f145cef7be71076fe4c4575"
+  },
+  "README.md": {
+    "bytes": 2304,
+    "sha256": "fb76a2ccc23ba183968ffb4512cab8d05c36e2c5600650f54a578cc9dc5e65a0"
+  },
+  "slides/scene-01.png": {
+    "bytes": 34507,
+    "sha256": "1976e94283f7ff8a9dfea2e4809dd5c961f7cb3842fed2ad27472b17629b90ea"
+  },
+  "slides/scene-02.png": {
+    "bytes": 84795,
+    "sha256": "7c6e173e514f86127a14117ccb21b06a5b8dc3a83c659e54081e3351104b3519"
+  },
+  "slides/scene-03.png": {
+    "bytes": 74221,
+    "sha256": "86830b3e0f25318c844f3b68d0d4491a61bb93b1c389d2e2b9e4aa5f61504b23"
+  },
+  "slides/scene-04.png": {
+    "bytes": 46828,
+    "sha256": "42a80d19e87171e6d709acff150e8344abcf7f5c76d33d118b32a3b6b2fe50a4"
+  },
+  "slides/scene-05.png": {
+    "bytes": 54321,
+    "sha256": "d715e963bad5b9ac6bdb45a096988d431fed13af0e324a546a475ecdd76d989c"
+  },
+  "slides/scene-06.png": {
+    "bytes": 57975,
+    "sha256": "7a74b49d697080eeb49a4b7676968f294a09f9981468a0fef741d898fc5f9eb1"
+  },
+  "slides/scene-07.png": {
+    "bytes": 63681,
+    "sha256": "528d40bbbab064ea78ba1d14a70869b73e53049c2ec75ff10fa9948b12edd335"
+  },
+  "slides/scene-08.png": {
+    "bytes": 44775,
+    "sha256": "1acf59b90b430bb1abed8cdfde2f16c4f8612dd7613486aa6689c3f61dea253a"
+  },
+  "tutorial-kebap.mp4": {
+    "bytes": 1519685,
+    "sha256": "1539ad4996aa81923c8dfc485df91df9096ac76a3b9a7c1add1f46d278d39be5"
+  },
+  "tutorial-kebap.srt": {
+    "bytes": 1429,
+    "sha256": "234a383d214e97397c345b68b8d0f90eb8eed29cc3124c71b79d4c6131897d42"
+  },
+  "video-scenes.txt": {
+    "bytes": 1131,
+    "sha256": "7e0cdd26daae7012d2ff39793d0298ed7d393268706f83951af018b6a6f6f76c"
+  }
+}

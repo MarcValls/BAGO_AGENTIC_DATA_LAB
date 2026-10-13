@@ -1,0 +1,17 @@
+file 'C:/Users/AMTEC_Terminal_1º/BAGO_AGENTIC_DATA_LAB/output/playwright/bruma-market-tutorial/slides/scene-01.png'
+duration 13.079
+file 'C:/Users/AMTEC_Terminal_1º/BAGO_AGENTIC_DATA_LAB/output/playwright/bruma-market-tutorial/slides/scene-02.png'
+duration 13.509
+file 'C:/Users/AMTEC_Terminal_1º/BAGO_AGENTIC_DATA_LAB/output/playwright/bruma-market-tutorial/slides/scene-03.png'
+duration 12.339
+file 'C:/Users/AMTEC_Terminal_1º/BAGO_AGENTIC_DATA_LAB/output/playwright/bruma-market-tutorial/slides/scene-04.png'
+duration 12.369
+file 'C:/Users/AMTEC_Terminal_1º/BAGO_AGENTIC_DATA_LAB/output/playwright/bruma-market-tutorial/slides/scene-05.png'
+duration 12.389
+file 'C:/Users/AMTEC_Terminal_1º/BAGO_AGENTIC_DATA_LAB/output/playwright/bruma-market-tutorial/slides/scene-06.png'
+duration 15.408
+file 'C:/Users/AMTEC_Terminal_1º/BAGO_AGENTIC_DATA_LAB/output/playwright/bruma-market-tutorial/slides/scene-07.png'
+duration 13.868
+file 'C:/Users/AMTEC_Terminal_1º/BAGO_AGENTIC_DATA_LAB/output/playwright/bruma-market-tutorial/slides/scene-08.png'
+duration 13.969
+file 'C:/Users/AMTEC_Terminal_1º/BAGO_AGENTIC_DATA_LAB/output/playwright/bruma-market-tutorial/slides/scene-08.png'

@@ -1,0 +1,5 @@
+booking_id,branch,service,start_local,status,service_total_eur,deposit_eur
+S-501,MAD-CENTRO,corte_color,2026-10-08T10:00:00+02:00,completed,68.00,20.00
+S-502,BCN-EIXAMPLE,corte,2026-10-08T11:30:00+02:00,cancelled_4h_before,45.00,30.00
+S-503,MAD-NORTE,color,2026-10-08T12:00:00+02:00,cancelled_24h_before,82.00,20.00
+S-504,BCN-EIXAMPLE,peinado,2026-10-08T13:00:00+02:00,no_show,35.00,25.00

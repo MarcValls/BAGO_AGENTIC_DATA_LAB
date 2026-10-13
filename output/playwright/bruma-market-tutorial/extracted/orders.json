@@ -1,0 +1,44 @@
+{
+  "orders": [
+    {
+      "order_id": "BM-1001",
+      "shipping_method": "express",
+      "shipping_fee_eur": 7.9,
+      "promised_at_utc": "2026-10-03T10:00:00Z",
+      "delivered_at_utc": "2026-10-04T18:00:00Z",
+      "delay_hours": 32,
+      "status": "delivered",
+      "evidence_paths": []
+    },
+    {
+      "order_id": "BM-1002",
+      "shipping_method": "express",
+      "shipping_fee_eur": 5.95,
+      "promised_at_utc": "2026-10-04T10:00:00Z",
+      "delivered_at_utc": "2026-10-05T10:00:00Z",
+      "delay_hours": 24,
+      "status": "delivered",
+      "evidence_paths": []
+    },
+    {
+      "order_id": "BM-1003",
+      "shipping_method": "standard",
+      "shipping_fee_eur": 0.0,
+      "promised_at_utc": "2026-10-03T12:00:00Z",
+      "delivered_at_utc": "2026-10-05T12:00:00Z",
+      "delay_hours": 48,
+      "status": "delivered",
+      "evidence_paths": []
+    },
+    {
+      "order_id": "BM-1004",
+      "shipping_method": "express",
+      "shipping_fee_eur": 9.1,
+      "promised_at_utc": "2026-10-05T09:00:00Z",
+      "delivered_at_utc": null,
+      "delay_hours": null,
+      "status": "in_transit",
+      "evidence_paths": []
+    }
+  ]
+}

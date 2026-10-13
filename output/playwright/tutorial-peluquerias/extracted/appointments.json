@@ -1,0 +1,44 @@
+{
+  "appointments": [
+    {
+      "booking_id": "S-501",
+      "branch": "MAD-CENTRO",
+      "service": "corte_color",
+      "start_local": "2026-10-08T10:00:00+02:00",
+      "status": "completed",
+      "service_total_eur": 68.0,
+      "deposit_eur": 20.0,
+      "evidence_paths": []
+    },
+    {
+      "booking_id": "S-502",
+      "branch": "BCN-EIXAMPLE",
+      "service": "corte",
+      "start_local": "2026-10-08T11:30:00+02:00",
+      "status": "cancelled_4h_before",
+      "service_total_eur": 45.0,
+      "deposit_eur": 30.0,
+      "evidence_paths": []
+    },
+    {
+      "booking_id": "S-503",
+      "branch": "MAD-NORTE",
+      "service": "color",
+      "start_local": "2026-10-08T12:00:00+02:00",
+      "status": "cancelled_24h_before",
+      "service_total_eur": 82.0,
+      "deposit_eur": 20.0,
+      "evidence_paths": []
+    },
+    {
+      "booking_id": "S-504",
+      "branch": "BCN-EIXAMPLE",
+      "service": "peinado",
+      "start_local": "2026-10-08T13:00:00+02:00",
+      "status": "no_show",
+      "service_total_eur": 35.0,
+      "deposit_eur": 25.0,
+      "evidence_paths": []
+    }
+  ]
+}

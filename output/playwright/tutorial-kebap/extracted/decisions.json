@@ -1,0 +1,45 @@
+{
+  "decisions": [
+    {
+      "booking_id": "K-901",
+      "decision": "ELIGIBLE",
+      "refund_delivery_fee_eur": 2.5,
+      "reason": "Delivery delayed by 42 minutes (promised 19:30, completed 20:12), which is > 30 minutes.",
+      "evidence_paths": [
+        "output/playwright/tutorial-kebap/inputs/orders.csv:2",
+        "output/playwright/tutorial-kebap/inputs/policy.md:2"
+      ]
+    },
+    {
+      "booking_id": "K-902",
+      "decision": "NOT_ELIGIBLE",
+      "refund_delivery_fee_eur": null,
+      "reason": "Delivery delayed by exactly 30 minutes (promised 19:40, completed 20:10), which does not meet the 'more than 30 minutes' criteria.",
+      "evidence_paths": [
+        "output/playwright/tutorial-kebap/inputs/orders.csv:3",
+        "output/playwright/tutorial-kebap/inputs/policy.md:3"
+      ]
+    },
+    {
+      "booking_id": "K-903",
+      "decision": "NOT_ELIGIBLE",
+      "refund_delivery_fee_eur": null,
+      "reason": "Service type is PICKUP, which is not eligible for delivery fee refunds.",
+      "evidence_paths": [
+        "output/playwright/tutorial-kebap/inputs/orders.csv:4",
+        "output/playwright/tutorial-kebap/inputs/policy.md:4"
+      ]
+    },
+    {
+      "booking_id": "K-904",
+      "decision": "PENDING",
+      "refund_delivery_fee_eur": null,
+      "reason": "Missing completed_at timestamp.",
+      "evidence_paths": [
+        "output/playwright/tutorial-kebap/inputs/orders.csv:5",
+        "output/playwright/tutorial-kebap/inputs/policy.md:5"
+      ]
+    }
+  ],
+  "actions_executed": []
+}

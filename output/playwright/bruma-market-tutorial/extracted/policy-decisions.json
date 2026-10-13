@@ -1,0 +1,45 @@
+{
+  "decisions": [
+    {
+      "order_id": "BM-1001",
+      "decision": "ELIGIBLE",
+      "reason": "Envío EXPRESS entregado 32 horas después de la hora prometida, superando el umbral estricto de 24h.",
+      "refund_shipping_fee_eur": 7.9,
+      "evidence_paths": [
+        "output/playwright/bruma-market-tutorial/inputs/policy.md:6-7",
+        "output/playwright/bruma-market-tutorial/inputs/orders.csv:2"
+      ]
+    },
+    {
+      "order_id": "BM-1002",
+      "decision": "NOT_ELIGIBLE",
+      "reason": "Envío EXPRESS entregado exactamente 24 horas después; el umbral es estricto y requiere más de 24 horas.",
+      "refund_shipping_fee_eur": null,
+      "evidence_paths": [
+        "output/playwright/bruma-market-tutorial/inputs/policy.md:7",
+        "output/playwright/bruma-market-tutorial/inputs/orders.csv:3"
+      ]
+    },
+    {
+      "order_id": "BM-1003",
+      "decision": "NOT_ELIGIBLE",
+      "reason": "Los envíos STANDARD no tienen reembolso bajo esta regla.",
+      "refund_shipping_fee_eur": null,
+      "evidence_paths": [
+        "output/playwright/bruma-market-tutorial/inputs/policy.md:8",
+        "output/playwright/bruma-market-tutorial/inputs/orders.csv:4"
+      ]
+    },
+    {
+      "order_id": "BM-1004",
+      "decision": "PENDING",
+      "reason": "No consta la hora de entrega.",
+      "refund_shipping_fee_eur": null,
+      "evidence_paths": [
+        "output/playwright/bruma-market-tutorial/inputs/policy.md:9",
+        "output/playwright/bruma-market-tutorial/inputs/orders.csv:5"
+      ]
+    }
+  ],
+  "actions_executed": []
+}

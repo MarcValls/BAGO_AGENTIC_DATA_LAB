@@ -1,0 +1,31 @@
+1
+00:00:00,000 --> 00:00:12,729
+Tutorial de Corte y Tono, una cadena ficticia de peluquerías. Crearemos agentes para extraer reservas y evaluar una política de depósitos con datos completamente sintéticos.
+
+2
+00:00:13,079 --> 00:00:23,824
+En Agent Builder creamos el extractor. Su prompt limita la lectura a ficheros autorizados, define los campos JSON y evita solicitar nombres u otros datos personales.
+
+3
+00:00:24,174 --> 00:00:35,829
+El segundo perfil revisa depósitos. La regla distingue cancelaciones con menos de doce horas, cancelaciones más tempranas, citas completadas y ausencias.
+
+4
+00:00:36,179 --> 00:00:48,428
+El conjunto incluye dos sucursales y cuatro situaciones: servicio completado, cancelación con cuatro horas, cancelación con veinticuatro horas y ausencia.
+
+5
+00:00:48,778 --> 00:01:03,242
+El extractor devolvió cuatro reservas con sucursal, servicio, estado, precio y depósito. El recibo del runtime confirma qué CSV leyó y su huella.
+
+6
+00:01:03,592 --> 00:01:21,258
+El revisor clasificó S-501 sin devolución; S-502 con quince euros de devolución; S-503 con devolución íntegra de veinte euros; y S-504 con el depósito retenido.
+
+7
+00:01:21,608 --> 00:01:36,306
+El chat terminó a través de Ollama Cloud. El runtime guardó trazas local_only y recibos ALLOW para los datos. No se ejecutó ninguna devolución.
+
+8
+00:01:36,656 --> 00:01:50,145
+Para adaptar este patrón a una cadena real, conecta fuentes aprobadas, versiona la política, revisa citas y datos incompletos, y exige validación humana antes de pagos.

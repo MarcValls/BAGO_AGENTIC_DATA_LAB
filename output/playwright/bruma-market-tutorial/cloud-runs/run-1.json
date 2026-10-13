@@ -1,0 +1,91 @@
+{
+  "agent_id": "agent_cafff30f2cba407c9ad12aefff086f37",
+  "assistant_message": "```json\n{\n  \"orders\": [\n    {\n      \"order_id\": \"BM-1001\",\n      \"shipping_method\": \"express\",\n      \"shipping_fee_eur\": 7.9,\n      \"promised_at_utc\": \"2026-10-03T10:00:00Z\",\n      \"delivered_at_utc\": \"2026-10-04T18:00:00Z\",\n      \"delay_hours\": 32,\n      \"status\": \"delivered\",\n      \"evidence_paths\": []\n    },\n    {\n      \"order_id\": \"BM-1002\",\n      \"shipping_method\": \"express\",\n      \"shipping_fee_eur\": 5.95,\n      \"promised_at_utc\": \"2026-10-04T10:00:00Z\",\n      \"delivered_at_utc\": \"2026-10-05T10:00:00Z\",\n      \"delay_hours\": 24,\n      \"status\": \"delivered\",\n      \"evidence_paths\": []\n    },\n    {\n      \"order_id\": \"BM-1003\",\n      \"shipping_method\": \"standard\",\n      \"shipping_fee_eur\": 0.0,\n      \"promised_at_utc\": \"2026-10-03T12:00:00Z\",\n      \"delivered_at_utc\": \"2026-10-05T12:00:00Z\",\n      \"delay_hours\": 48,\n      \"status\": \"delivered\",\n      \"evidence_paths\": []\n    },\n    {\n      \"order_id\": \"BM-1004\",\n      \"shipping_method\": \"express\",\n      \"shipping_fee_eur\": 9.1,\n      \"promised_at_utc\": \"2026-10-05T09:00:00Z\",\n      \"delivered_at_utc\": null,\n      \"delay_hours\": null,\n      \"status\": \"in_transit\",\n      \"evidence_paths\": []\n    }\n  ]\n}\n```",
+  "source": "ollama",
+  "sources": [
+    {
+      "path": "output/playwright/bruma-market-tutorial/inputs/orders.csv",
+      "start_line": 1,
+      "end_line": 5,
+      "decision": "ALLOW",
+      "file_sha256": "016acee85ee5afdb23eaf13caf3f664417e1398b5bba3aad8ff6e991e6a3d1e3",
+      "content_sha256": "8288c08ce7a5ebb33c3dc38643be952f55c8d4de8248e3597360943ffacc137d",
+      "attempt": 1
+    }
+  ],
+  "read_events": [
+    {
+      "path": "output/playwright/bruma-market-tutorial/inputs/orders.csv",
+      "start_line": 1,
+      "end_line": 5,
+      "decision": "ALLOW",
+      "file_sha256": "016acee85ee5afdb23eaf13caf3f664417e1398b5bba3aad8ff6e991e6a3d1e3",
+      "content_sha256": "8288c08ce7a5ebb33c3dc38643be952f55c8d4de8248e3597360943ffacc137d",
+      "attempt": 1
+    }
+  ],
+  "conversation_id": "conv_7424b05c57014533be68d70c10b8a9b8",
+  "revision": 2,
+  "trace": {
+    "trace_id": "trace-e884fa5f23414206",
+    "trace_state": "local_only"
+  },
+  "conversation": {
+    "id": "conv_7424b05c57014533be68d70c10b8a9b8",
+    "project_id": "bago-agentic-data-lab:default",
+    "owner_kind": "agent",
+    "owner_id": "agent_cafff30f2cba407c9ad12aefff086f37",
+    "title": "Lee los pedidos y extrae todos los campos del JSON requerido. Incluye ",
+    "status": "active",
+    "created_at": "2026-10-12T20:05:56.271Z",
+    "updated_at": "2026-10-12T20:05:59.724Z",
+    "revision": 2,
+    "messages": [
+      {
+        "id": "msg_0529367a63cd4e11bf3100408e9882ae",
+        "sequence": 1,
+        "role": "user",
+        "content": "Lee los pedidos y extrae todos los campos del JSON requerido. Incluye las horas de retraso exactas y las rutas de evidencia. No decidas reembolsos.",
+        "created_at": "2026-10-12T20:05:56.318Z",
+        "status": "complete",
+        "references": {}
+      },
+      {
+        "id": "msg_4819e7289fd24af19bdbba60403ff59b",
+        "sequence": 2,
+        "role": "assistant",
+        "content": "```json\n{\n  \"orders\": [\n    {\n      \"order_id\": \"BM-1001\",\n      \"shipping_method\": \"express\",\n      \"shipping_fee_eur\": 7.9,\n      \"promised_at_utc\": \"2026-10-03T10:00:00Z\",\n      \"delivered_at_utc\": \"2026-10-04T18:00:00Z\",\n      \"delay_hours\": 32,\n      \"status\": \"delivered\",\n      \"evidence_paths\": []\n    },\n    {\n      \"order_id\": \"BM-1002\",\n      \"shipping_method\": \"express\",\n      \"shipping_fee_eur\": 5.95,\n      \"promised_at_utc\": \"2026-10-04T10:00:00Z\",\n      \"delivered_at_utc\": \"2026-10-05T10:00:00Z\",\n      \"delay_hours\": 24,\n      \"status\": \"delivered\",\n      \"evidence_paths\": []\n    },\n    {\n      \"order_id\": \"BM-1003\",\n      \"shipping_method\": \"standard\",\n      \"shipping_fee_eur\": 0.0,\n      \"promised_at_utc\": \"2026-10-03T12:00:00Z\",\n      \"delivered_at_utc\": \"2026-10-05T12:00:00Z\",\n      \"delay_hours\": 48,\n      \"status\": \"delivered\",\n      \"evidence_paths\": []\n    },\n    {\n      \"order_id\": \"BM-1004\",\n      \"shipping_method\": \"express\",\n      \"shipping_fee_eur\": 9.1,\n      \"promised_at_utc\": \"2026-10-05T09:00:00Z\",\n      \"delivered_at_utc\": null,\n      \"delay_hours\": null,\n      \"status\": \"in_transit\",\n      \"evidence_paths\": []\n    }\n  ]\n}\n```",
+        "created_at": "2026-10-12T20:05:59.724Z",
+        "status": "complete",
+        "references": {
+          "trace": {
+            "trace_id": "trace-e884fa5f23414206",
+            "trace_state": "local_only"
+          },
+          "sources": [
+            {
+              "path": "output/playwright/bruma-market-tutorial/inputs/orders.csv",
+              "start_line": 1,
+              "end_line": 5,
+              "decision": "ALLOW",
+              "file_sha256": "016acee85ee5afdb23eaf13caf3f664417e1398b5bba3aad8ff6e991e6a3d1e3",
+              "content_sha256": "8288c08ce7a5ebb33c3dc38643be952f55c8d4de8248e3597360943ffacc137d",
+              "attempt": 1
+            }
+          ],
+          "read_events": [
+            {
+              "path": "output/playwright/bruma-market-tutorial/inputs/orders.csv",
+              "start_line": 1,
+              "end_line": 5,
+              "decision": "ALLOW",
+              "file_sha256": "016acee85ee5afdb23eaf13caf3f664417e1398b5bba3aad8ff6e991e6a3d1e3",
+              "content_sha256": "8288c08ce7a5ebb33c3dc38643be952f55c8d4de8248e3597360943ffacc137d",
+              "attempt": 1
+            }
+          ]
+        }
+      }
+    ]
+  }
+}

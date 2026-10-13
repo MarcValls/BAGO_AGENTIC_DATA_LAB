@@ -1,0 +1,17 @@
+file 'C:/Users/AMTEC_Terminal_1º/BAGO_AGENTIC_DATA_LAB/output/playwright/tutorial-otras-pantallas/scene-01.png'
+duration 21.960
+file 'C:/Users/AMTEC_Terminal_1º/BAGO_AGENTIC_DATA_LAB/output/playwright/tutorial-otras-pantallas/scene-02.png'
+duration 18.597
+file 'C:/Users/AMTEC_Terminal_1º/BAGO_AGENTIC_DATA_LAB/output/playwright/tutorial-otras-pantallas/scene-03.png'
+duration 20.861
+file 'C:/Users/AMTEC_Terminal_1º/BAGO_AGENTIC_DATA_LAB/output/playwright/tutorial-otras-pantallas/scene-04.png'
+duration 15.743
+file 'C:/Users/AMTEC_Terminal_1º/BAGO_AGENTIC_DATA_LAB/output/playwright/tutorial-otras-pantallas/scene-05.png'
+duration 17.442
+file 'C:/Users/AMTEC_Terminal_1º/BAGO_AGENTIC_DATA_LAB/output/playwright/tutorial-otras-pantallas/scene-06.png'
+duration 17.822
+file 'C:/Users/AMTEC_Terminal_1º/BAGO_AGENTIC_DATA_LAB/output/playwright/tutorial-otras-pantallas/scene-07.png'
+duration 16.292
+file 'C:/Users/AMTEC_Terminal_1º/BAGO_AGENTIC_DATA_LAB/output/playwright/tutorial-otras-pantallas/scene-08.png'
+duration 18.192
+file 'C:/Users/AMTEC_Terminal_1º/BAGO_AGENTIC_DATA_LAB/output/playwright/tutorial-otras-pantallas/scene-08.png'

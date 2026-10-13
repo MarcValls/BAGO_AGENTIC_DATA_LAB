@@ -1,0 +1,48 @@
+{
+  "orders": [
+    {
+      "booking_id": "K-901",
+      "branch": "CENTRO",
+      "fulfillment": "delivery",
+      "promised_at": "2026-10-09T19:30:00+02:00",
+      "completed_at": "2026-10-09T20:12:00+02:00",
+      "delay_minutes": 42,
+      "delivery_fee_eur": 2.5,
+      "status": "delivered",
+      "evidence_paths": []
+    },
+    {
+      "booking_id": "K-902",
+      "branch": "NORTE",
+      "fulfillment": "delivery",
+      "promised_at": "2026-10-09T19:40:00+02:00",
+      "completed_at": "2026-10-09T20:10:00+02:00",
+      "delay_minutes": 30,
+      "delivery_fee_eur": 2.0,
+      "status": "delivered",
+      "evidence_paths": []
+    },
+    {
+      "booking_id": "K-903",
+      "branch": "ESTACION",
+      "fulfillment": "pickup",
+      "promised_at": "2026-10-09T20:25:00+02:00",
+      "completed_at": "2026-10-09T21:30:00+02:00",
+      "delay_minutes": 65,
+      "delivery_fee_eur": 0.0,
+      "status": "picked_up",
+      "evidence_paths": []
+    },
+    {
+      "booking_id": "K-904",
+      "branch": "CENTRO",
+      "fulfillment": "delivery",
+      "promised_at": "2026-10-09T21:30:00+02:00",
+      "completed_at": null,
+      "delay_minutes": null,
+      "delivery_fee_eur": 2.5,
+      "status": "in_preparation",
+      "evidence_paths": []
+    }
+  ]
+}

@@ -1,0 +1,10 @@
+[
+  "Tutorial de Kebap Ruta 7, una cadena ficticia. Crearemos perfiles para extraer pedidos y revisar el tiempo de reparto usando solo datos sintéticos.",
+  "En Agent Builder configuramos un extractor que devuelve los campos del pedido y calcula minutos tarde únicamente cuando constan ambas marcas horarias.",
+  "El perfil revisor aplica un SLA simple: reparto con más de treinta minutos tarde puede optar a recuperar la tarifa de envío; recogida no aplica.",
+  "El CSV cubre cuarenta y dos minutos tarde, treinta minutos exactos, una recogida y un pedido sin hora de finalización.",
+  "El extractor calculó cuarenta y dos, treinta y sesenta y cinco minutos; para el pedido abierto devolvió null. El recibo enlaza el CSV y su huella.",
+  "El revisor marcó K-901 elegible por 2,50 euros. K-902 y K-903 no son elegibles; K-904 queda pendiente. No ejecutó ninguna acción.",
+  "Las respuestas llegaron por Ollama Cloud, con eventos de lectura ALLOW y trazas local_only guardadas en el proyecto.",
+  "En una empresa real, sustituye este fixture por datos aprobados, fija los límites del SLA, contrasta resultados con QA y mantén revisión humana antes de reembolsar."
+]

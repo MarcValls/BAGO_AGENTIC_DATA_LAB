@@ -1,0 +1,61 @@
+{
+  "cost_usd": 0.0,
+  "event_count": 2,
+  "events": [
+    {
+      "attributes": {
+        "agent_id": "agent_cafff30f2cba407c9ad12aefff086f37",
+        "cost_status": "not_reported",
+        "duration_ms": 3402,
+        "model_id": "gemma4:31b",
+        "outcome": "response_received",
+        "provider_id": "ollama-cloud",
+        "workspace_read_count": 1,
+        "workspace_read_denied_count": 0,
+        "workspace_read_events": 1,
+        "workspace_read_sources": [
+          "output/playwright/bruma-market-tutorial/inputs/orders.csv:1-5"
+        ]
+      },
+      "end_time_unix_nano": 1791835559720911100,
+      "event_id": "event-08251a6ad7734470",
+      "evidence_refs": [
+        "agent://agent_cafff30f2cba407c9ad12aefff086f37"
+      ],
+      "kind": "workflow",
+      "name": "agent.chat",
+      "parent_event_id": null,
+      "sequence": 0,
+      "start_time_unix_nano": 1791835556318352900,
+      "status": "COMPLETED",
+      "trace_id": "trace-e884fa5f23414206"
+    },
+    {
+      "attributes": {
+        "attempt": 1,
+        "content_sha256": "8288c08ce7a5ebb33c3dc38643be952f55c8d4de8248e3597360943ffacc137d",
+        "decision": "ALLOW",
+        "end_line": 5,
+        "file_sha256": "016acee85ee5afdb23eaf13caf3f664417e1398b5bba3aad8ff6e991e6a3d1e3",
+        "path": "output/playwright/bruma-market-tutorial/inputs/orders.csv",
+        "start_line": 1
+      },
+      "event_id": "event-fd8df486f83e4680",
+      "evidence_refs": [
+        "workspace://output/playwright/bruma-market-tutorial/inputs/orders.csv"
+      ],
+      "kind": "authorization",
+      "name": "workspace.read",
+      "parent_event_id": "event-08251a6ad7734470",
+      "sequence": 1,
+      "status": "ALLOW",
+      "trace_id": "trace-e884fa5f23414206"
+    }
+  ],
+  "evidence_refs": [
+    "agent://agent_cafff30f2cba407c9ad12aefff086f37",
+    "workspace://output/playwright/bruma-market-tutorial/inputs/orders.csv"
+  ],
+  "run_id": "agent-chat-614a5422867b437691d3f75e8171ccf8",
+  "trace_id": "trace-e884fa5f23414206"
+}

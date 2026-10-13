@@ -48,7 +48,13 @@ function Test-LocalPortAvailable([int]$Port) {
 
 $stateDirectory = Join-Path $env:LOCALAPPDATA 'BAGO\AgentChat\instances'
 New-Item -ItemType Directory -Path $stateDirectory -Force | Out-Null
-$pathHash = [Convert]::ToHexString([System.Security.Cryptography.SHA256]::HashData([Text.Encoding]::UTF8.GetBytes($repoRoot.ToLowerInvariant()))).Substring(0, 16).ToLowerInvariant()
+$pathHasher = [System.Security.Cryptography.SHA256]::Create()
+try {
+    $pathHashBytes = $pathHasher.ComputeHash([Text.Encoding]::UTF8.GetBytes($repoRoot.ToLowerInvariant()))
+    $pathHash = ([BitConverter]::ToString($pathHashBytes) -replace '-', '').Substring(0, 16).ToLowerInvariant()
+} finally {
+    $pathHasher.Dispose()
+}
 $instanceFile = Join-Path $stateDirectory "$pathHash.json"
 $previousInstance = $null
 if (Test-Path -LiteralPath $instanceFile) {

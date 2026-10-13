@@ -1,0 +1,107 @@
+{
+  "cost_usd": 0.0,
+  "event_count": 4,
+  "events": [
+    {
+      "attributes": {
+        "agent_id": "agent_87d367135165440f9fe1e45106e15af9",
+        "cost_status": "not_reported",
+        "duration_ms": 4021,
+        "model_id": "gemma4:31b",
+        "outcome": "response_received",
+        "provider_id": "ollama-cloud",
+        "workspace_read_count": 3,
+        "workspace_read_denied_count": 0,
+        "workspace_read_events": 3,
+        "workspace_read_sources": [
+          "output/playwright/tutorial-peluquerias/inputs/policy.md:1-7",
+          "output/playwright/tutorial-peluquerias/inputs/qa-expected.md:1-6",
+          "output/playwright/tutorial-peluquerias/inputs/appointments.csv:1-5"
+        ]
+      },
+      "end_time_unix_nano": 1791860726979668900,
+      "event_id": "event-d7567c21b676433e",
+      "evidence_refs": [
+        "agent://agent_87d367135165440f9fe1e45106e15af9"
+      ],
+      "kind": "workflow",
+      "name": "agent.chat",
+      "parent_event_id": null,
+      "sequence": 0,
+      "start_time_unix_nano": 1791860722958307600,
+      "status": "COMPLETED",
+      "trace_id": "trace-a36dc9b360cf4254"
+    },
+    {
+      "attributes": {
+        "attempt": 1,
+        "content_sha256": "be51872263c45fb2f4dbaae057ae17175f6d378cabf5e91730b8e5159f9f5a7d",
+        "decision": "ALLOW",
+        "end_line": 7,
+        "file_sha256": "ca0cac54a1b78865aba2cfecea4286dc8ad7fba95741c2f8893e6af86923e7fc",
+        "path": "output/playwright/tutorial-peluquerias/inputs/policy.md",
+        "start_line": 1
+      },
+      "event_id": "event-5819d0a8a2d5415b",
+      "evidence_refs": [
+        "workspace://output/playwright/tutorial-peluquerias/inputs/policy.md"
+      ],
+      "kind": "authorization",
+      "name": "workspace.read",
+      "parent_event_id": "event-d7567c21b676433e",
+      "sequence": 1,
+      "status": "ALLOW",
+      "trace_id": "trace-a36dc9b360cf4254"
+    },
+    {
+      "attributes": {
+        "attempt": 2,
+        "content_sha256": "ba8b895f89ab08e6e118852663f447bdbd4e032a6bb9f41b204146f53f2236e5",
+        "decision": "ALLOW",
+        "end_line": 6,
+        "file_sha256": "9a5e1e23ae4cff7e274281a3135f3bb2b427b3df8dcfb750d59db954da4c0a61",
+        "path": "output/playwright/tutorial-peluquerias/inputs/qa-expected.md",
+        "start_line": 1
+      },
+      "event_id": "event-e2ade14bce37412a",
+      "evidence_refs": [
+        "workspace://output/playwright/tutorial-peluquerias/inputs/qa-expected.md"
+      ],
+      "kind": "authorization",
+      "name": "workspace.read",
+      "parent_event_id": "event-d7567c21b676433e",
+      "sequence": 2,
+      "status": "ALLOW",
+      "trace_id": "trace-a36dc9b360cf4254"
+    },
+    {
+      "attributes": {
+        "attempt": 3,
+        "content_sha256": "af567711e820ce595b98830352957d14beabd377cc26bc1f86564ce352ea76fe",
+        "decision": "ALLOW",
+        "end_line": 5,
+        "file_sha256": "898f386a66ec9f24114917358b85ee5a28f22c98cf1f1b276feca2ae675c1191",
+        "path": "output/playwright/tutorial-peluquerias/inputs/appointments.csv",
+        "start_line": 1
+      },
+      "event_id": "event-a53c1386c4614376",
+      "evidence_refs": [
+        "workspace://output/playwright/tutorial-peluquerias/inputs/appointments.csv"
+      ],
+      "kind": "authorization",
+      "name": "workspace.read",
+      "parent_event_id": "event-d7567c21b676433e",
+      "sequence": 3,
+      "status": "ALLOW",
+      "trace_id": "trace-a36dc9b360cf4254"
+    }
+  ],
+  "evidence_refs": [
+    "agent://agent_87d367135165440f9fe1e45106e15af9",
+    "workspace://output/playwright/tutorial-peluquerias/inputs/policy.md",
+    "workspace://output/playwright/tutorial-peluquerias/inputs/qa-expected.md",
+    "workspace://output/playwright/tutorial-peluquerias/inputs/appointments.csv"
+  ],
+  "run_id": "agent-chat-c1232a3336d640509816318719ffb717",
+  "trace_id": "trace-a36dc9b360cf4254"
+}

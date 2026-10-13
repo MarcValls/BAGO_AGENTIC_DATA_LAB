@@ -1,0 +1,31 @@
+1
+00:00:00,000 --> 00:00:12,729
+Creamos dos agentes para una tienda ficticia, leemos pedidos con autorización limitada y contrastamos resultados con una política de ejemplo. Todo el dataset es sintético.
+
+2
+00:00:13,079 --> 00:00:26,238
+En Agent Builder crea el perfil Extractor de pedidos. Define un prompt con campos cerrados, cálculo de retraso solo cuando existan ambas fechas, y valores nulos cuando falte información.
+
+3
+00:00:26,588 --> 00:00:38,577
+Crea un segundo perfil para revisar elegibilidad. Especifica la regla de más de veinticuatro horas, los métodos incluidos, las citas de evidencia y que no ejecute reembolsos.
+
+4
+00:00:38,927 --> 00:00:50,947
+Los cuatro pedidos incluyen un retraso de treinta y dos horas, uno de exactamente veinticuatro, un envío estándar y una entrega sin fecha. Así comprobamos límites y datos incompletos.
+
+5
+00:00:51,297 --> 00:01:03,336
+Selecciona el extractor en Chat, autoriza únicamente orders.csv y solicita el JSON. Ollama Cloud devuelve cuatro registros y el recibo local confirma la ruta y el hash del archivo leído.
+
+6
+00:01:03,686 --> 00:01:18,744
+El revisor marca BM-1001 elegible por siete euros con noventa. BM-1002 no pasa porque son exactamente veinticuatro horas; BM-1003 usa envío estándar; BM-1004 queda pendiente.
+
+7
+00:01:19,094 --> 00:01:32,612
+La aplicación guardó dos respuestas del proveedor Ollama y recibos ALLOW con hashes. Las trazas son solo locales; no hubo exportación a Jaeger ni acciones financieras.
+
+8
+00:01:32,962 --> 00:01:46,581
+Para adaptarlo, reemplaza el CSV y la política ficticia por fuentes aprobadas, conserva el esquema JSON, añade reglas para datos faltantes y valida cada resultado antes de conectarlo a operaciones reales.

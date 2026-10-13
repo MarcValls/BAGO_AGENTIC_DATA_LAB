@@ -1,0 +1,31 @@
+1
+00:00:00,000 --> 00:00:21,610
+Resumen del caso: La pantalla Summary agrupa el estado del caso ficticio Bruma Market. Aquí la interfaz muestra siete comprobaciones, dos resultados de recuperación y quince eventos de traza. Son artefactos de una demo precargada; PASS no certifica una operación real ni una conexión activa a AWS.
+
+2
+00:00:21,960 --> 00:00:40,207
+Recuperación y ontología: Retrieval and Ontology enseña cómo se filtraron documentos, qué fragmentos se recuperaron y qué citas los respaldan. La misma vista presenta rutas y consultas de ontología. En esta demo son resultados ya guardados, no una búsqueda nueva.
+
+3
+00:00:40,557 --> 00:01:01,068
+Autorización y recibos: Authorization reúne propuestas de herramientas, permisos y recibos del proveedor y del sandbox. Sirve para revisar el límite entre una propuesta y su ejecución. Los recibos visibles pertenecen al paquete de demostración; no los tomes como actividad nueva de esta grabación.
+
+4
+00:01:01,418 --> 00:01:16,811
+Traza del flujo: Trace muestra quince eventos ordenados, sus identificadores y referencias de evidencia. La vista permite desplegar atributos y referencias por evento. La pantalla es una traza local del paquete de demo y no está exportada a una plataforma cloud.
+
+5
+00:01:17,161 --> 00:01:34,253
+Evaluación de gobernanza: Evaluation presenta siete comprobaciones, su puntuación y las referencias de respaldo. El PASS refleja únicamente esos artefactos y reglas de demo. Para validar un negocio real habría que contrastar las reglas y los datos de entrada con sus responsables.
+
+6
+00:01:34,603 --> 00:01:52,075
+Decision Inspector: Decision Inspector conecta una conclusión con claims, evidencia, procedencia, traza y acciones propuestas. Los claims no se inventan a partir del texto de respuesta: la interfaz distingue lo que aportó la fuente de lo que puede comprobarse.
+
+7
+00:01:52,425 --> 00:02:08,367
+Capacidades disponibles: Capabilities lista operaciones reconocidas por la app y su disponibilidad. Es una pantalla útil para saber qué herramientas están expuestas antes de diseñar un agente; disponibilidad no significa que una ejecución haya ocurrido.
+
+8
+00:02:08,717 --> 00:02:26,559
+Historial y límite actual: Job History devuelve cero trabajos y muestra “No jobs yet”. Agent Runner, en cambio, indica que la ejecución gobernada no está disponible. Así que el caso de Bruma que vimos antes vive como paquete de artefactos, no como un job registrado aquí.

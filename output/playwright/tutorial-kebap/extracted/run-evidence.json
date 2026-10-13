@@ -1,0 +1,85 @@
+{
+  "status": "VERIFIED",
+  "fictional_demo": true,
+  "provider": "ollama-cloud",
+  "model_id": "gemma4:31b",
+  "runs": [
+    {
+      "agent_id": "agent_32e8de8d36064f09b0b5e105375047de",
+      "conversation_id": "conv_581858aa274f41b584a3c0c4a0cb1ea8",
+      "trace": {
+        "trace_id": "trace-ce0fa829f9f049fc",
+        "trace_state": "local_only"
+      },
+      "sources": [
+        {
+          "path": "output/playwright/tutorial-kebap/inputs/orders.csv",
+          "start_line": 1,
+          "end_line": 5,
+          "decision": "ALLOW",
+          "file_sha256": "0040bc0e57591e06081df1b8658ea350da4ead8b3f8cc4618b8061c4e0ee3886",
+          "content_sha256": "ce09861d65cefc382798909ed59a6bf962d8ff5616741f72657bde321add7f7d",
+          "attempt": 1
+        }
+      ]
+    },
+    {
+      "agent_id": "agent_d0e7e85a24d44618aecd4ca57d37a10c",
+      "conversation_id": "conv_6c6ba790d6a949cc914965cb156044b6",
+      "trace": {
+        "trace_id": "trace-ae2cd9c6f0364386",
+        "trace_state": "local_only"
+      },
+      "sources": [
+        {
+          "path": "output/playwright/tutorial-kebap/inputs/orders.csv",
+          "start_line": 1,
+          "end_line": 5,
+          "decision": "ALLOW",
+          "file_sha256": "0040bc0e57591e06081df1b8658ea350da4ead8b3f8cc4618b8061c4e0ee3886",
+          "content_sha256": "ce09861d65cefc382798909ed59a6bf962d8ff5616741f72657bde321add7f7d",
+          "attempt": 1
+        },
+        {
+          "path": "output/playwright/tutorial-kebap/inputs/policy.md",
+          "start_line": 1,
+          "end_line": 7,
+          "decision": "ALLOW",
+          "file_sha256": "c387f89e131f6c34d568fa4ab7b579fa1561500000a4094f14426dbef14d6b60",
+          "content_sha256": "c06250dd54fb5cca92faa712d04bdd385e8c67dfa018deb0d10f8ee0abac0fd0",
+          "attempt": 2
+        },
+        {
+          "path": "output/playwright/tutorial-kebap/inputs/qa-expected.md",
+          "start_line": 1,
+          "end_line": 6,
+          "decision": "ALLOW",
+          "file_sha256": "62d573dd5898e4266d3f159fad072a4d0c8f9250a5668c3223ec16a9df35e84e",
+          "content_sha256": "a3ad8ece9dbb93b6aa36051703963caf7e92523bdb8693085288fb7f5e76315e",
+          "attempt": 3
+        }
+      ]
+    }
+  ],
+  "validation": {
+    "ids": [
+      "K-901",
+      "K-902",
+      "K-903",
+      "K-904"
+    ],
+    "decisions": [
+      "ELIGIBLE",
+      "NOT_ELIGIBLE",
+      "NOT_ELIGIBLE",
+      "PENDING"
+    ],
+    "refund_delivery_fee_eur": [
+      2.5,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "actions_executed": []
+  }
+}

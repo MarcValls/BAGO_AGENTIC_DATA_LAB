@@ -1,0 +1,61 @@
+{
+  "cost_usd": 0.0,
+  "event_count": 2,
+  "events": [
+    {
+      "attributes": {
+        "agent_id": "agent_71760f9e6f9e41a39861941fb99dc2df",
+        "cost_status": "not_reported",
+        "duration_ms": 2851,
+        "model_id": "gemma4:31b",
+        "outcome": "response_received",
+        "provider_id": "ollama-cloud",
+        "workspace_read_count": 1,
+        "workspace_read_denied_count": 0,
+        "workspace_read_events": 1,
+        "workspace_read_sources": [
+          "output/playwright/tutorial-peluquerias/inputs/appointments.csv:1-5"
+        ]
+      },
+      "end_time_unix_nano": 1791860722378435900,
+      "event_id": "event-6b6e3093d93d4011",
+      "evidence_refs": [
+        "agent://agent_71760f9e6f9e41a39861941fb99dc2df"
+      ],
+      "kind": "workflow",
+      "name": "agent.chat",
+      "parent_event_id": null,
+      "sequence": 0,
+      "start_time_unix_nano": 1791860719526786600,
+      "status": "COMPLETED",
+      "trace_id": "trace-6332470cfc374235"
+    },
+    {
+      "attributes": {
+        "attempt": 1,
+        "content_sha256": "af567711e820ce595b98830352957d14beabd377cc26bc1f86564ce352ea76fe",
+        "decision": "ALLOW",
+        "end_line": 5,
+        "file_sha256": "898f386a66ec9f24114917358b85ee5a28f22c98cf1f1b276feca2ae675c1191",
+        "path": "output/playwright/tutorial-peluquerias/inputs/appointments.csv",
+        "start_line": 1
+      },
+      "event_id": "event-8b719a1259a6468d",
+      "evidence_refs": [
+        "workspace://output/playwright/tutorial-peluquerias/inputs/appointments.csv"
+      ],
+      "kind": "authorization",
+      "name": "workspace.read",
+      "parent_event_id": "event-6b6e3093d93d4011",
+      "sequence": 1,
+      "status": "ALLOW",
+      "trace_id": "trace-6332470cfc374235"
+    }
+  ],
+  "evidence_refs": [
+    "agent://agent_71760f9e6f9e41a39861941fb99dc2df",
+    "workspace://output/playwright/tutorial-peluquerias/inputs/appointments.csv"
+  ],
+  "run_id": "agent-chat-3f60f3e370c8462e9d0e92dfb9c0fe91",
+  "trace_id": "trace-6332470cfc374235"
+}

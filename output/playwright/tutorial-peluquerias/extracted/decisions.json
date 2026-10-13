@@ -1,0 +1,45 @@
+{
+  "decisions": [
+    {
+      "booking_id": "S-501",
+      "decision": "NO_REFUND",
+      "refund_eur": 0.0,
+      "reason": "Cita completada; según política no hay devolución.",
+      "evidence_paths": [
+        "output/playwright/tutorial-peluquerias/inputs/policy.md:6",
+        "output/playwright/tutorial-peluquerias/inputs/appointments.csv:2"
+      ]
+    },
+    {
+      "booking_id": "S-502",
+      "decision": "PARTIAL_RETENTION",
+      "refund_eur": 15.0,
+      "reason": "Cancelación con menos de 12h (4h); se retiene el 50% del depósito de 30.00 EUR.",
+      "evidence_paths": [
+        "output/playwright/tutorial-peluquerias/inputs/policy.md:3",
+        "output/playwright/tutorial-peluquerias/inputs/appointments.csv:3"
+      ]
+    },
+    {
+      "booking_id": "S-503",
+      "decision": "REFUND",
+      "refund_eur": 20.0,
+      "reason": "Cancelación con 12h o más (24h); devolución íntegra del depósito.",
+      "evidence_paths": [
+        "output/playwright/tutorial-peluquerias/inputs/policy.md:4",
+        "output/playwright/tutorial-peluquerias/inputs/appointments.csv:4"
+      ]
+    },
+    {
+      "booking_id": "S-504",
+      "decision": "DEPOSIT_FORFEIT",
+      "refund_eur": 0.0,
+      "reason": "No-show; se retiene el depósito íntegro.",
+      "evidence_paths": [
+        "output/playwright/tutorial-peluquerias/inputs/policy.md:5",
+        "output/playwright/tutorial-peluquerias/inputs/appointments.csv:5"
+      ]
+    }
+  ],
+  "actions_executed": []
+}

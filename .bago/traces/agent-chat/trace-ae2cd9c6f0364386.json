@@ -1,0 +1,107 @@
+{
+  "cost_usd": 0.0,
+  "event_count": 4,
+  "events": [
+    {
+      "attributes": {
+        "agent_id": "agent_d0e7e85a24d44618aecd4ca57d37a10c",
+        "cost_status": "not_reported",
+        "duration_ms": 20602,
+        "model_id": "gemma4:31b",
+        "outcome": "response_received",
+        "provider_id": "ollama-cloud",
+        "workspace_read_count": 3,
+        "workspace_read_denied_count": 0,
+        "workspace_read_events": 3,
+        "workspace_read_sources": [
+          "output/playwright/tutorial-kebap/inputs/orders.csv:1-5",
+          "output/playwright/tutorial-kebap/inputs/policy.md:1-7",
+          "output/playwright/tutorial-kebap/inputs/qa-expected.md:1-6"
+        ]
+      },
+      "end_time_unix_nano": 1791860762962904200,
+      "event_id": "event-7fbbdb1d03a142d7",
+      "evidence_refs": [
+        "agent://agent_d0e7e85a24d44618aecd4ca57d37a10c"
+      ],
+      "kind": "workflow",
+      "name": "agent.chat",
+      "parent_event_id": null,
+      "sequence": 0,
+      "start_time_unix_nano": 1791860742360668100,
+      "status": "COMPLETED",
+      "trace_id": "trace-ae2cd9c6f0364386"
+    },
+    {
+      "attributes": {
+        "attempt": 1,
+        "content_sha256": "ce09861d65cefc382798909ed59a6bf962d8ff5616741f72657bde321add7f7d",
+        "decision": "ALLOW",
+        "end_line": 5,
+        "file_sha256": "0040bc0e57591e06081df1b8658ea350da4ead8b3f8cc4618b8061c4e0ee3886",
+        "path": "output/playwright/tutorial-kebap/inputs/orders.csv",
+        "start_line": 1
+      },
+      "event_id": "event-165d13d9292f4128",
+      "evidence_refs": [
+        "workspace://output/playwright/tutorial-kebap/inputs/orders.csv"
+      ],
+      "kind": "authorization",
+      "name": "workspace.read",
+      "parent_event_id": "event-7fbbdb1d03a142d7",
+      "sequence": 1,
+      "status": "ALLOW",
+      "trace_id": "trace-ae2cd9c6f0364386"
+    },
+    {
+      "attributes": {
+        "attempt": 2,
+        "content_sha256": "c06250dd54fb5cca92faa712d04bdd385e8c67dfa018deb0d10f8ee0abac0fd0",
+        "decision": "ALLOW",
+        "end_line": 7,
+        "file_sha256": "c387f89e131f6c34d568fa4ab7b579fa1561500000a4094f14426dbef14d6b60",
+        "path": "output/playwright/tutorial-kebap/inputs/policy.md",
+        "start_line": 1
+      },
+      "event_id": "event-b97c5915bbac4d71",
+      "evidence_refs": [
+        "workspace://output/playwright/tutorial-kebap/inputs/policy.md"
+      ],
+      "kind": "authorization",
+      "name": "workspace.read",
+      "parent_event_id": "event-7fbbdb1d03a142d7",
+      "sequence": 2,
+      "status": "ALLOW",
+      "trace_id": "trace-ae2cd9c6f0364386"
+    },
+    {
+      "attributes": {
+        "attempt": 3,
+        "content_sha256": "a3ad8ece9dbb93b6aa36051703963caf7e92523bdb8693085288fb7f5e76315e",
+        "decision": "ALLOW",
+        "end_line": 6,
+        "file_sha256": "62d573dd5898e4266d3f159fad072a4d0c8f9250a5668c3223ec16a9df35e84e",
+        "path": "output/playwright/tutorial-kebap/inputs/qa-expected.md",
+        "start_line": 1
+      },
+      "event_id": "event-639d19e2856f47e2",
+      "evidence_refs": [
+        "workspace://output/playwright/tutorial-kebap/inputs/qa-expected.md"
+      ],
+      "kind": "authorization",
+      "name": "workspace.read",
+      "parent_event_id": "event-7fbbdb1d03a142d7",
+      "sequence": 3,
+      "status": "ALLOW",
+      "trace_id": "trace-ae2cd9c6f0364386"
+    }
+  ],
+  "evidence_refs": [
+    "agent://agent_d0e7e85a24d44618aecd4ca57d37a10c",
+    "workspace://output/playwright/tutorial-kebap/inputs/orders.csv",
+    "workspace://output/playwright/tutorial-kebap/inputs/policy.md",
+    "workspace://output/playwright/tutorial-kebap/inputs/qa-expected.md"
+  ],
+  "run_id": "agent-chat-86be8224077e493b9908fe9eb5b3f9cb",
+  "trace_id": "trace-ae2cd9c6f0364386"
+}

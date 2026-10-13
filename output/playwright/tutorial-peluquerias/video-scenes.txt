@@ -1,0 +1,17 @@
+file 'C:/Users/AMTEC_Terminal_1º/BAGO_AGENTIC_DATA_LAB/output/playwright/tutorial-peluquerias/slides/scene-01.png'
+duration 13.079
+file 'C:/Users/AMTEC_Terminal_1º/BAGO_AGENTIC_DATA_LAB/output/playwright/tutorial-peluquerias/slides/scene-02.png'
+duration 11.095
+file 'C:/Users/AMTEC_Terminal_1º/BAGO_AGENTIC_DATA_LAB/output/playwright/tutorial-peluquerias/slides/scene-03.png'
+duration 12.005
+file 'C:/Users/AMTEC_Terminal_1º/BAGO_AGENTIC_DATA_LAB/output/playwright/tutorial-peluquerias/slides/scene-04.png'
+duration 12.599
+file 'C:/Users/AMTEC_Terminal_1º/BAGO_AGENTIC_DATA_LAB/output/playwright/tutorial-peluquerias/slides/scene-05.png'
+duration 14.814
+file 'C:/Users/AMTEC_Terminal_1º/BAGO_AGENTIC_DATA_LAB/output/playwright/tutorial-peluquerias/slides/scene-06.png'
+duration 18.016
+file 'C:/Users/AMTEC_Terminal_1º/BAGO_AGENTIC_DATA_LAB/output/playwright/tutorial-peluquerias/slides/scene-07.png'
+duration 15.048
+file 'C:/Users/AMTEC_Terminal_1º/BAGO_AGENTIC_DATA_LAB/output/playwright/tutorial-peluquerias/slides/scene-08.png'
+duration 13.839
+file 'C:/Users/AMTEC_Terminal_1º/BAGO_AGENTIC_DATA_LAB/output/playwright/tutorial-peluquerias/slides/scene-08.png'

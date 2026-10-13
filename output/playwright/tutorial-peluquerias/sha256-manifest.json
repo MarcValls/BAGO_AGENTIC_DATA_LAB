@@ -1,0 +1,158 @@
+{
+  "audio/scene-01.wav": {
+    "bytes": 561398,
+    "sha256": "9a3bf254ea437f2ae169931b8f37ca2b60d7d5b048f9334e5aff7440fbce6e8c"
+  },
+  "audio/scene-02.wav": {
+    "bytes": 473906,
+    "sha256": "6a0c7d79d7eac6a77b1aa5b7fe4002b986e4be1e71f212011002b2b754ecfe66"
+  },
+  "audio/scene-03.wav": {
+    "bytes": 514016,
+    "sha256": "68574bd199cd2d25053ba8f83e244ebc0bb74aad11c98e7d2efc4d77fc38647a"
+  },
+  "audio/scene-04.wav": {
+    "bytes": 540226,
+    "sha256": "04cbfae90dc880baa85cc481e3b30515f696b1ed2f8839344ddccfc6c1cbaa4b"
+  },
+  "audio/scene-05.wav": {
+    "bytes": 637900,
+    "sha256": "660c1a9c99103e9ddaae9b82112f18ad4d7eb0c94a7ae037f6430913a806ab5a"
+  },
+  "audio/scene-06.wav": {
+    "bytes": 779128,
+    "sha256": "b0244aa6384e5836725bbfdb4e46a2e47acecf4fce68a702c997e444ef93c8a1"
+  },
+  "audio/scene-07.wav": {
+    "bytes": 648220,
+    "sha256": "0e8de79bd07b55569d781b8424109530d0d45cf4d43f64d3c3c5350bb0f1b810"
+  },
+  "audio/scene-08.wav": {
+    "bytes": 594918,
+    "sha256": "43f56d4dd18cd9c28fe55c0bc7076c57329789b07dac1b1f905dddd2e3586857"
+  },
+  "audio/silence.wav": {
+    "bytes": 15478,
+    "sha256": "63f42afdfb454ce900c362ceed914ed07eff798a87ef7a2cca3a20c864da2e08"
+  },
+  "audio-scenes.txt": {
+    "bytes": 1733,
+    "sha256": "f122e182a7f13f025dc0d71b1562081f5c1c8c84801744f7eb7d2450a4f0dd58"
+  },
+  "cloud-runs/builder-extractor.png": {
+    "bytes": 87542,
+    "sha256": "b4649b4ab99cfb39999cfdf7e8472add97668dcdd7863edd2a48833198bc06da"
+  },
+  "cloud-runs/builder-reviewer.png": {
+    "bytes": 90563,
+    "sha256": "ab48d24efe7ef1c500b2d05789b992d0af891feaccac739873de25b4a19948c4"
+  },
+  "cloud-runs/profiles.json": {
+    "bytes": 2209,
+    "sha256": "deb03339100087189e2f4a10ceef97bab846fed4e2ad219e5f56e32e2fa23545"
+  },
+  "cloud-runs/result-1.png": {
+    "bytes": 84653,
+    "sha256": "49c31364a629793c5b0e76d8a335cb93be7512de35df35a119f34e43714255b5"
+  },
+  "cloud-runs/result-2.png": {
+    "bytes": 86756,
+    "sha256": "cdf1459c71ce25e286e28646d4008cd493171c09b61c4f930b2215de6c426660"
+  },
+  "cloud-runs/run-1.json": {
+    "bytes": 5804,
+    "sha256": "4f730acf4d06998b5981de0ef4d28fa4009bbbbe1d7aab51c30e0ce9911ebcd3"
+  },
+  "cloud-runs/run-2.json": {
+    "bytes": 9676,
+    "sha256": "5b429d57cad93bbd7d145298629a2c4476349b8333223f187fc2fbd30a1e0604"
+  },
+  "demo.json": {
+    "bytes": 2345,
+    "sha256": "8da04c93397d52aec4348b720d46ca1198f6b0ae7a9fd5c723ba252db3d1fad1"
+  },
+  "extracted/appointments.json": {
+    "bytes": 1157,
+    "sha256": "0d3330a9cb94ea350f15b1db770ebb84c95d40cdc195f5666d177c56f123abd3"
+  },
+  "extracted/decisions.json": {
+    "bytes": 1538,
+    "sha256": "56750a6dc0c3a329bb10b58824bbcf13ceba89d0bd3877332432c5037fce5ebc"
+  },
+  "extracted/run-evidence.json": {
+    "bytes": 2662,
+    "sha256": "13063166e5c2ad40c7e936e45080da5b4675cc535f4453ff04167db974d274a6"
+  },
+  "inputs/appointments.csv": {
+    "bytes": 390,
+    "sha256": "898f386a66ec9f24114917358b85ee5a28f22c98cf1f1b276feca2ae675c1191"
+  },
+  "inputs/policy.md": {
+    "bytes": 375,
+    "sha256": "ca0cac54a1b78865aba2cfecea4286dc8ad7fba95741c2f8893e6af86923e7fc"
+  },
+  "inputs/qa-expected.md": {
+    "bytes": 254,
+    "sha256": "9a5e1e23ae4cff7e274281a3135f3bb2b427b3df8dcfb750d59db954da4c0a61"
+  },
+  "make-local-voice.ps1": {
+    "bytes": 615,
+    "sha256": "0487dfeb9ce7d784e9f4901c17562efd1738b1bd684800b9b870e1687c34587d"
+  },
+  "narration.json": {
+    "bytes": 1348,
+    "sha256": "b27d4aada5f9d9d1602fea2a79167354fe5bf84b6a486aacb37706a8ff8d6ad9"
+  },
+  "narration.wav": {
+    "bytes": 4857460,
+    "sha256": "a94e766b9ccfd7cc2f321d3ec159fb2c36bdc32e9cfe34a492b7f17da23737a1"
+  },
+  "README.md": {
+    "bytes": 2364,
+    "sha256": "f831bae82bb3493a08bddf6be57df68b9c5649a1a9abad54b1f6101e7d5c3b6d"
+  },
+  "slides/scene-01.png": {
+    "bytes": 32368,
+    "sha256": "a077ad99feedb2b0c22be8cc6f8bcdbbdebb720e423dadc4560f6c14550cdac0"
+  },
+  "slides/scene-02.png": {
+    "bytes": 83925,
+    "sha256": "0df0d0bad32c294f742902aa0923e73f5bc19235cfc5eff554515067d839e3b1"
+  },
+  "slides/scene-03.png": {
+    "bytes": 86628,
+    "sha256": "db266f47b3376fbc3cb6b10f0c00a37e40efe0d2e52598582c587e89a3c96300"
+  },
+  "slides/scene-04.png": {
+    "bytes": 46119,
+    "sha256": "fa625a585360f85db18686a9261a8598b242395fe7121a6586c5760252ade0a1"
+  },
+  "slides/scene-05.png": {
+    "bytes": 58334,
+    "sha256": "074851a35651d758d19823c485531721a18c367b1c44a00e8604173d84fb17c1"
+  },
+  "slides/scene-06.png": {
+    "bytes": 56718,
+    "sha256": "3bb5e95a372b5867ac1b69b01c1c7b355c61b645c17ce501d4103f76bb9c86bb"
+  },
+  "slides/scene-07.png": {
+    "bytes": 62143,
+    "sha256": "f9849dc38eba158263d6e522195645421fbe1deb6dd9d7b6704c7324a67c8954"
+  },
+  "slides/scene-08.png": {
+    "bytes": 44775,
+    "sha256": "1acf59b90b430bb1abed8cdfde2f16c4f8612dd7613486aa6689c3f61dea253a"
+  },
+  "tutorial-peluquerias.mp4": {
+    "bytes": 1942846,
+    "sha256": "6cb60d2c4e1349f059261441ac52736bd2ebb65e419cb5bac64c7dc3c04e3da0"
+  },
+  "tutorial-peluquerias.srt": {
+    "bytes": 1589,
+    "sha256": "83453ce1a483dd49396e6321c9a942c46709a0775250660f9c1fc7eafa8b295c"
+  },
+  "video-scenes.txt": {
+    "bytes": 1189,
+    "sha256": "6242b6968112c2f3a402955a19be55d4eeb03208607afd899fa3d8da127cc861"
+  }
+}

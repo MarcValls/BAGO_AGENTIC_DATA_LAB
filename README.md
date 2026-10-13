@@ -419,6 +419,10 @@ La tabla se genera desde `.bago/canon/JOB_SKILL_MATRIX.md`; actualiza allí los 
 - `evidence/bago_canon_compliance_review.md`
 - `evidence/bago_etl_vs_bedrock_kb_comparison.md`
 - `evidence/bedrock_provider_benchmark.md`
+- `evidence/bruma_market_demo_v1.es.srt`
+- `evidence/bruma_market_demo_v1.md`
+- `evidence/bruma_market_demo_v1.mp4`
+- `evidence/bruma_market_demo_v1.mp4.sha256`
 - `evidence/l1-governed-execution-20261010/FULL_SUITE.txt`
 - `evidence/l1-governed-execution-20261010/L1_TESTS.txt`
 - `evidence/l1-governed-execution-20261010/README_CHECK.txt`
@@ -527,6 +531,7 @@ La tabla se genera desde `.bago/canon/JOB_SKILL_MATRIX.md`; actualiza allí los 
 - `scripts/generate_l9_agent_evidence.py`
 - `scripts/generate_ontology_proposal.py`
 - `scripts/local_mcp_server.py`
+- `scripts/render_bruma_market_demo_video.py`
 - `scripts/render_mcp_evidence_video.py`
 - `scripts/render_portfolio_demo_video.py`
 - `scripts/run_l12_observability_evidence.py`

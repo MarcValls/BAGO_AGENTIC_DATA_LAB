@@ -1,0 +1,5 @@
+order_id,shipping_method,shipping_fee_eur,promised_at_utc,delivered_at_utc,status
+BM-1001,express,7.90,2026-10-03T10:00:00Z,2026-10-04T18:00:00Z,delivered
+BM-1002,express,5.95,2026-10-04T10:00:00Z,2026-10-05T10:00:00Z,delivered
+BM-1003,standard,0.00,2026-10-03T12:00:00Z,2026-10-05T12:00:00Z,delivered
+BM-1004,express,9.10,2026-10-05T09:00:00Z,,in_transit
