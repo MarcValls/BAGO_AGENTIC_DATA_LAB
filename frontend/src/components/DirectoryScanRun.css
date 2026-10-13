@@ -1,11 +1,11 @@
-.control-container { display: grid; grid-template-columns: minmax(0, 1fr) 290px; gap: 20px; }
-.control-panel { grid-column: 1; min-width: 0; }
-.control-sidebar { grid-column: 2; display: flex; flex-direction: column; gap: 16px; }
-.control-sidebar .card { padding: 16px; border: 1px solid rgba(255,255,255,.1); border-radius: 10px; background: rgba(0,0,0,.2); }
-.control-sidebar h2 { margin: 0 0 12px; font-size: .95rem; }
-.control-sidebar p, .control-sidebar li { color: #9fb1c6; font-size: .8rem; line-height: 1.55; }
-.control-sidebar ul { margin: 0; padding-left: 18px; }
-.control-sidebar li + li { margin-top: 7px; }
+.directory-scan-run { display: grid; grid-template-columns: minmax(0, 1fr) 290px; gap: 20px; }
+.directory-scan-panel { grid-column: 1; min-width: 0; }
+.directory-scan-sidebar { grid-column: 2; display: flex; flex-direction: column; gap: 16px; }
+.directory-scan-sidebar .card { padding: 16px; border: 1px solid rgba(255,255,255,.1); border-radius: 10px; background: rgba(0,0,0,.2); }
+.directory-scan-sidebar h2 { margin: 0 0 12px; font-size: .95rem; }
+.directory-scan-sidebar p, .directory-scan-sidebar li { color: #9fb1c6; font-size: .8rem; line-height: 1.55; }
+.directory-scan-sidebar ul { margin: 0; padding-left: 18px; }
+.directory-scan-sidebar li + li { margin-top: 7px; }
 .code-scan-form { display: grid; gap: 12px; padding: 18px; border: 1px solid rgba(255,255,255,.1); border-radius: 10px; background: rgba(0,0,0,.18); }
 .code-scan-form > label:first-child { color: #dce8f6; font-size: .84rem; font-weight: 650; }
 .code-scan-form > input { width: 100%; min-height: 42px; padding: 10px 12px; border: 1px solid #34465d; border-radius: 7px; outline: none; color: #ecf4ff; background: #0b1421; font: inherit; }
@@ -42,5 +42,5 @@
 .code-scan-method summary { color: #c6d5e5; cursor: pointer; }
 .code-scan-method p { margin: 9px 0; line-height: 1.5; }
 .code-scan-method ul { padding-left: 18px; line-height: 1.5; }
-@media (max-width: 1024px) { .control-container { grid-template-columns: 1fr; } .control-sidebar { grid-column: 1; display: grid; grid-template-columns: repeat(auto-fit,minmax(220px,1fr)); } }
+@media (max-width: 1024px) { .directory-scan-run { grid-template-columns: 1fr; } .directory-scan-sidebar { grid-column: 1; display: grid; grid-template-columns: repeat(auto-fit,minmax(220px,1fr)); } }
 @media (max-width: 620px) { .code-scan-metrics { grid-template-columns: repeat(2,minmax(0,1fr)); } .code-scan-result-heading { align-items: flex-start; } .code-scan-count { font-size: .68rem; } }

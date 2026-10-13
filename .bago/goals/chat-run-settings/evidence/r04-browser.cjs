@@ -1,0 +1,41 @@
+async (page) => {
+ const results=[]; const check=(name,value)=>{results.push({name,pass:!!value});if(!value)throw new Error(name)};
+ check('settings radio baseline default',await page.getByRole('radio',{name:/^Baseline/}).isChecked());
+ const meta=await (await page.request.get('http://127.0.0.1:8081/api/chat/context')).json();
+ check('real context bound live main',meta.workspace_root==='C:\\Users\\AMTEC_Terminal_1º\\BAGO_AGENTIC_DATA_LAB');
+ check('actual external conversation database',meta.paths.find(x=>x.id==='conversations').path.includes('AppData\\Local\\BAGO\\AgenticDataLab\\conversations\\library.sqlite3'));
+ check('metadata no contents',!JSON.stringify(meta).includes('content_sha256')&&!('contents' in meta));
+ await page.getByRole('radio',{name:/^BAGO5 experimental/}).check();
+ await page.getByRole('button',{name:'Close settings',exact:true}).click();
+ await page.reload();await page.getByRole('button',{name:'Open cognition and context settings'}).waitFor();
+ check('mode persists reload',(await page.getByRole('button',{name:'Open cognition and context settings'}).innerText()).includes('BAGO5'));
+ check('one composer checkbox',await page.locator('.chat-composer-actions input[type=checkbox]').count()===1);
+ check('no Control sidebar',await page.getByRole('navigation',{name:'Interaction layer'}).getByRole('button',{name:'Control',exact:true}).count()===0);
+ const requests=[];
+ await page.route('**/api/conversations',async route=>{if(route.request().method()==='POST'){await route.fulfill({status:200,json:{id:'r04-mock',revision:0,status:'active',title:'R04 mock',owner_kind:'assistant',owner_id:'app-assistant'}})}else await route.continue()});
+ await page.route('**/api/chat/control',async route=>{requests.push({url:route.request().url(),body:route.request().postDataJSON()});await route.fulfill({status:503,json:{detail:'R04 simulated provider failure'}})});
+ await page.route('**/api/agents/*/chat',async route=>{requests.push({url:route.request().url(),body:route.request().postDataJSON()});await route.fulfill({status:503,json:{detail:'R04 simulated provider failure'}})});
+ await page.getByRole('textbox',{name:'Message the assistant or selected agent'}).fill('Explain how a cache works in two sentences.');await page.getByRole('button',{name:'Send',exact:true}).click();
+ await page.getByRole('alert').filter({hasText:'R04 simulated provider failure'}).waitFor();
+ check('assistant supplied BAGO5',requests.at(-1).body.cognitive_mode==='bago5'&&requests.at(-1).url.endsWith('/api/chat/control'));
+ check('no workspace authorization on ordinary chat',!requests.at(-1).body.workspace_read_authorization_id&&!requests.at(-1).body.workspace_scan_authorization_id);
+ await page.getByText('Workspace and agents',{exact:false}).click();
+ const agents=await (await page.request.get('http://127.0.0.1:8081/api/agents/list')).json();const agent=agents.agents[0];
+ await page.getByRole('button').filter({has:page.getByText(agent.config.name,{exact:true})}).click();
+ await page.getByRole('textbox',{name:'Message the assistant or selected agent'}).fill('Explain how a cache works in two sentences.');await page.getByRole('button',{name:'Send',exact:true}).click();
+ await page.getByRole('alert').filter({hasText:'R04 simulated provider failure'}).waitFor();
+ check('agent supplied BAGO5',requests.at(-1).body.cognitive_mode==='bago5'&&requests.at(-1).url.includes('/api/agents/'));
+ await page.getByRole('button',{name:'Agent Runs',exact:true}).click();
+ const scan=page.getByRole('button',{name:'Scan for duplicate code',exact:true});await scan.waitFor();check('scan disabled without path and consent',await scan.isDisabled());
+ const directory=page.getByRole('textbox',{name:'Project-relative source directory'});await directory.fill('src');check('path without consent disabled',await scan.isDisabled());
+ const consent=page.getByRole('checkbox',{name:'Authorize one read-only scan of this exact directory for this run.'});await consent.check();check('path consent enables',await scan.isEnabled());
+ await directory.fill('tests');check('directory edit clears consent',!(await consent.isChecked())&&await scan.isDisabled());await consent.check();
+ await page.route('**/api/workspace-scan/authorizations',route=>route.fulfill({status:200,json:{authorization_id:'r04-mock'}}));
+ await page.route('**/api/workspace-scan/run',route=>route.fulfill({status:503,json:{detail:'R04 simulated scan failure'}}));
+ await scan.click();await page.getByRole('alert').filter({hasText:'R04 simulated scan failure'}).waitFor();check('failed attempt clears consent',!(await consent.isChecked()));check('failure no complete receipt',await page.getByText('Read-only scan complete',{exact:true}).count()===0);
+ check('generic execution unavailable',await page.getByRole('button',{name:'Run unavailable',exact:true}).count()>0);
+ for(const button of await page.getByRole('button',{name:'Run unavailable',exact:true}).all())check('generic run disabled',await button.isDisabled());
+ await page.screenshot({path:'.bago/goals/chat-run-settings/evidence/r04-agent-runs.png',fullPage:true});
+ console.log(JSON.stringify({results,requests,meta},null,2));
+}
+

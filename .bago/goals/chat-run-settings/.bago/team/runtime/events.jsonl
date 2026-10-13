@@ -1,0 +1,11 @@
+{"at": "2026-10-13T06:20:37+00:00", "kind": "MISSION_INIT", "mission_id": "ADL_CHAT_RUN_SETTINGS_V1", "mission_sha256": "88aad6fe0a38011426c21184cb15927efa2ae5929c2c61961c76c7f39ea82d0a"}
+{"agent": "root", "at": "2026-10-13T06:20:37+00:00", "kind": "CLAIM", "role": "team-orchestrator", "work_id": "R01"}
+{"at": "2026-10-13T06:20:49+00:00", "kind": "HANDOFF_DONE", "payload_sha256": "48678458997c32a7e43a4ed2d762f11c90f4dddc0dc03c280c56e8a5ec59c927", "work_id": "R01"}
+{"agent": "ui_placement", "at": "2026-10-13T06:21:27+00:00", "kind": "CLAIM", "role": "decision-ui-engineer", "work_id": "R02"}
+{"agent": "context_metadata", "at": "2026-10-13T06:21:46+00:00", "kind": "CLAIM", "role": "evidence-provenance-engineer", "work_id": "R03"}
+{"at": "2026-10-13T06:24:06+00:00", "kind": "HANDOFF_DONE", "payload_sha256": "0d978718841af13ed2ab8ae77c2ad0b59710aa51c6358c56fda25cd3cfdcabb7", "work_id": "R03"}
+{"at": "2026-10-13T06:28:03+00:00", "kind": "HANDOFF_DONE", "payload_sha256": "7e2ac5d4656fee022da7035f5dbefde243a9dc59a32a2372c2a6dfd3cde60843", "work_id": "R02"}
+{"agent": "placement_verifier", "at": "2026-10-13T06:30:11+00:00", "kind": "CLAIM", "role": "verification-engineer", "work_id": "R04"}
+{"at": "2026-10-13T06:37:12+00:00", "kind": "HANDOFF_DONE", "payload_sha256": "082cc03a208f21d89771bdb863fcab566c6365ed26d5ba100915407eae886a89", "work_id": "R04"}
+{"agent": "root", "at": "2026-10-13T06:37:44+00:00", "kind": "CLAIM", "role": "team-orchestrator", "work_id": "W12"}
+{"at": "2026-10-13T06:39:40+00:00", "kind": "HANDOFF_DONE", "payload_sha256": "e04c87642fd76f8fc3df85a9c904cc6eec1d90ff5dc76b363a788b17a6cb94ce", "work_id": "W12"}

@@ -1,0 +1,10 @@
+{
+  "schema": "bago.goal_status.v1",
+  "goal": "chat-run-settings",
+  "status": "VALIDATED",
+  "verification": "234 full-suite tests; frontend build; generated README/check; source/served artifact binding; R04 independent placement review P0=0/P1=0; bounded NOT_RUN items explicit.",
+  "live_root": "C:\\Users\\AMTEC_Terminal_1\u00ba\\BAGO_AGENTIC_DATA_LAB",
+  "live_head": "4e6673a9f5c26ccccf24dc09739702b65d78ca4c",
+  "base_head": "d760c5aea9b678ee1f723b6825f79f1f055de7be",
+  "changes": "Uncommitted task changes applied to live main; unrelated concurrent provider edits preserved."
+}

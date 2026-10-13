@@ -1,0 +1,21 @@
+{
+  "base": "d760c5aea9b678ee1f723b6825f79f1f055de7be",
+  "live_head": "4e6673a9f5c26ccccf24dc09739702b65d78ca4c",
+  "live_root": "C:\\Users\\AMTEC_Terminal_1\u00ba\\BAGO_AGENTIC_DATA_LAB",
+  "source_sha256": {
+    "frontend/src/App.tsx": "e201dbe6e47e09d1124904abec2f414c7adf303b07bdf35216845ba952ab0a92",
+    "frontend/src/components/AgentChat.tsx": "a5990193baf6f5d7bf542caac59676f2857292d0120e36a7ff5c060270fa9509",
+    "frontend/src/components/AgentChat.css": "b4c7297647485228f77727f820605c43a15a918bb75b32c066b71b83e5c34eb7",
+    "frontend/src/components/AgentRunner.tsx": "4f62d9404a1a66853f48020bfe888d267c3b85cc9ff412b8af3addd613ac81e0",
+    "frontend/src/components/CognitionSettings.tsx": "3acb74dd93a0222f0138153fc9e75968389c4aaae5d66cbbde55d9a0e478191a",
+    "frontend/src/components/CognitionSettings.css": "df11ef1b2656a3b8100cefa9d0492b48613151c0bda52eba459cb72e2f6c9fde",
+    "frontend/src/components/DirectoryScanRun.tsx": "22f71ba88be6733f96b93beadb38fff251126519d5f24dbfb469bff3c7296d1e",
+    "frontend/src/components/DirectoryScanRun.css": "262deca65e5221d116f4aef38043c8cb406d57110b76daf1bd1f1139ee91a1bd",
+    "src/api/server.py": "182bba3431abcabb17875616f256d6ff396ec76eccb3c07cf46f7e125cb8aec5",
+    "tests/test_chat_context.py": "c30f6e39d3593e3c802a4266f509663eed89f6b1640e90be909196cffbff375b"
+  },
+  "served_assets": {
+    "/assets/index-fa31b7eb.js": "c5f2fcc64f1d8ea1749bb76b1af10ac8365737165b7742f3c2690966fd65c7c4",
+    "/assets/index-58c4d3ee.css": "58c4d3ee14fc36f17644eeb78cb826adda3353b68f31a7bcaaac5c396691dd4e"
+  }
+}

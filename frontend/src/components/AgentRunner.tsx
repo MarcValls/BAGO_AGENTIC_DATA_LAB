@@ -1,4 +1,5 @@
 import './AgentRunner.css'
+import DirectoryScanRun from './DirectoryScanRun'
 import { useState, useEffect } from 'react'
 
 interface Agent {
@@ -154,11 +155,14 @@ export default function AgentRunner() {
   }
 
   if (loading) {
-    return <div className="agent-runner">Loading agents...</div>
+    return <div className="agent-runner"><h1>Agent Runs</h1><DirectoryScanRun /><p role="status">Loading agent profiles…</p></div>
   }
 
   return (
     <div className="agent-runner">
+      <h1>Agent Runs</h1>
+      <DirectoryScanRun />
+      <h2>Agent profiles</h2>
       {notification && (
         <div className={`notification notification-${notification.type}`}>
           {notification.message}

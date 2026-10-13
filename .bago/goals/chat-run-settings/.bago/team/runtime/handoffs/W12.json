@@ -1,0 +1,62 @@
+{
+  "changed_files": [
+    ".bago/goals/chat-run-settings/evidence/VERIFICATION.md",
+    ".bago/goals/chat-run-settings/evidence/source_snapshot.json",
+    ".bago/goals/chat-run-settings/status.json",
+    ".bago/runtime/ACTIVE_HANDOFF.md",
+    "README.md"
+  ],
+  "next_consumers": [],
+  "outputs": [
+    {
+      "path": "evidence/VERIFICATION.md",
+      "sha256": "03323cfd74af9ad5c02f81faa5509260810276658d92e74f50d800c5fba626ae"
+    },
+    {
+      "path": "evidence/source_snapshot.json",
+      "sha256": "01d27b6507b7c63221b80e3db6942444d587eab349ca00481a2c37e7427ba718"
+    },
+    {
+      "path": "status.json",
+      "sha256": "08b332f5578f514f32d5f3199ce8901ab7b30a2012aae29dee52650fb7c0a94f"
+    }
+  ],
+  "payload_sha256": "e04c87642fd76f8fc3df85a9c904cc6eec1d90ff5dc76b363a788b17a6cb94ce",
+  "residual_risks": [
+    "NOT_RUN live model inference: provider secure credential storage unavailable.",
+    "NOT_RUN browser fleeting loading-state assertion and unrelated pre-existing Inspector adversarial scenarios.",
+    "Paths are read-only metadata; generic agent profile execution remains unavailable.",
+    "Concurrent ProviderSettings edits and their rebuilt artifacts preserved; task changes uncommitted."
+  ],
+  "role": "team-orchestrator",
+  "status": "DONE",
+  "verification": [
+    {
+      "command": "python .bago/team/kit/scripts/teamctl.py --root .bago/goals/chat-run-settings verify (R01-R04)",
+      "result": "PASS"
+    },
+    {
+      "command": "python scripts/generate_dynamic_readme.py (live main)",
+      "facts": "234 tests",
+      "result": "PASS"
+    },
+    {
+      "command": "python scripts/generate_dynamic_readme.py --check --skip-tests (live main)",
+      "result": "PASS"
+    },
+    {
+      "command": "npm run build (isolated R02 candidate)",
+      "result": "PASS"
+    },
+    {
+      "command": "git diff --check after closure evidence",
+      "result": "PASS"
+    },
+    {
+      "command": "Live8081 final HTML/JS/CSS SHA256 versus disk; exact task source equality; R04 independent final bundle smoke",
+      "facts": "P0=0 P1=0, final console0 errors/warnings",
+      "result": "PASS"
+    }
+  ],
+  "work_id": "W12"
+}

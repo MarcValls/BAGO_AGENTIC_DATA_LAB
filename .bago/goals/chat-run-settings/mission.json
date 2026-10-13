@@ -1,0 +1,119 @@
+{
+  "mission_id": "ADL_CHAT_RUN_SETTINGS_V1",
+  "derived_from": ".bago/team/kit/missions/agent-decision-inspector.json",
+  "title": "ADL chat, task runs and cognition settings",
+  "objective": "Move directory scanning to Agent Runs; keep only one-use file reading in chat; make persistent cognition and actual context/memory locations inspectable in Settings.",
+  "max_concurrency": 2,
+  "terminal_work_items": [
+    "W12"
+  ],
+  "work_items": [
+    {
+      "id": "R01",
+      "title": "Freeze placement and existing contracts",
+      "role": "team-orchestrator",
+      "depends_on": [],
+      "write_scopes": [
+        ".bago/goals/chat-run-settings/**"
+      ],
+      "read_scopes": [
+        "**"
+      ],
+      "deliverables": [
+        "Freeze placement and existing contracts"
+      ],
+      "done_when": [
+        "Materialized implementation/evidence and checks PASS"
+      ],
+      "frozen_outputs": []
+    },
+    {
+      "id": "R02",
+      "title": "Implement chat, settings and task run placement",
+      "role": "decision-ui-engineer",
+      "depends_on": [
+        "R01"
+      ],
+      "write_scopes": [
+        "frontend/src/**"
+      ],
+      "read_scopes": [
+        "**"
+      ],
+      "deliverables": [
+        "Implement chat, settings and task run placement"
+      ],
+      "done_when": [
+        "Materialized implementation/evidence and checks PASS"
+      ],
+      "frozen_outputs": []
+    },
+    {
+      "id": "R03",
+      "title": "Expose actual workspace context locations",
+      "role": "evidence-provenance-engineer",
+      "depends_on": [
+        "R01"
+      ],
+      "write_scopes": [
+        "src/api/server.py",
+        "tests/test_chat_context.py"
+      ],
+      "read_scopes": [
+        "**"
+      ],
+      "deliverables": [
+        "Expose actual workspace context locations"
+      ],
+      "done_when": [
+        "Materialized implementation/evidence and checks PASS"
+      ],
+      "frozen_outputs": []
+    },
+    {
+      "id": "R04",
+      "title": "Independent verification of new placement",
+      "role": "verification-engineer",
+      "depends_on": [
+        "R02",
+        "R03"
+      ],
+      "write_scopes": [
+        ".bago/goals/chat-run-settings/evidence/**"
+      ],
+      "read_scopes": [
+        "**"
+      ],
+      "deliverables": [
+        "Independent verification of new placement"
+      ],
+      "done_when": [
+        "Materialized implementation/evidence and checks PASS"
+      ],
+      "frozen_outputs": []
+    },
+    {
+      "id": "W12",
+      "title": "Terminal task gate",
+      "role": "team-orchestrator",
+      "depends_on": [
+        "R04"
+      ],
+      "write_scopes": [
+        ".bago/goals/chat-run-settings/**",
+        ".bago/runtime/ACTIVE_HANDOFF.md",
+        "README.md"
+      ],
+      "read_scopes": [
+        "**"
+      ],
+      "deliverables": [
+        "Terminal task gate"
+      ],
+      "done_when": [
+        "Materialized implementation/evidence and checks PASS"
+      ],
+      "frozen_outputs": []
+    }
+  ]
+}

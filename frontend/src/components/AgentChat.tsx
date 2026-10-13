@@ -62,6 +62,8 @@ function revealScrollbarWhileScrolling(event: UIEvent<HTMLElement>) {
 interface AgentChatProps {
   onNavigate: (view: ExistingView) => void
   onOpenProviderSettings: () => void
+  onOpenCognitionSettings: () => void
+  cognitiveMode: 'baseline' | 'bago5'
 }
 
 const idFor = () => `${Date.now()}-${Math.random().toString(16).slice(2)}`
@@ -96,7 +98,7 @@ function inferIntent(message: string): { operation: ControlOperation; view?: Exi
     [/\b(inspector|decisiones)\b/, 'inspector'],
     [/\b(builder|creaci[oó]n de agentes)\b/, 'builder'],
     [/\b(chat)\b/, 'chat'],
-    [/\b(runner|ejecutor)\b/, 'runner'],
+    [/\b(agent runs|runner|ejecutor)\b/, 'runner'],
     [/\b(control)\b/, 'control'],
     [/\b(jobs?|trabajos|historial)\b/, 'jobs'],
     [/\b(traces?|trazas)\b/, 'traces'],
@@ -115,7 +117,7 @@ function inferIntent(message: string): { operation: ControlOperation; view?: Exi
   return { operation: 'chat' }
 }
 
-export default function AgentChat({ onNavigate, onOpenProviderSettings }: AgentChatProps) {
+export default function AgentChat({ onNavigate, onOpenProviderSettings, onOpenCognitionSettings, cognitiveMode }: AgentChatProps) {
   const [agents, setAgents] = useState<Agent[]>([])
   const [agentsState, setAgentsState] = useState<'loading' | 'ready' | 'error'>('loading')
   const [inventoryWarning, setInventoryWarning] = useState('')
@@ -130,9 +132,6 @@ export default function AgentChat({ onNavigate, onOpenProviderSettings }: AgentC
   const [input, setInput] = useState('')
   const [allowWorkspaceRead, setAllowWorkspaceRead] = useState(false)
   const [workspaceReadPaths, setWorkspaceReadPaths] = useState('')
-  const [allowCodeDuplicateScan, setAllowCodeDuplicateScan] = useState(false)
-  const [workspaceScanDirectories, setWorkspaceScanDirectories] = useState('')
-  const [applyBago5Cognition, setApplyBago5Cognition] = useState(false)
   const [sending, setSending] = useState(false)
   const [error, setError] = useState('')
   const [draft, setDraft] = useState<AgentConfig | null>(null)
@@ -433,10 +432,6 @@ export default function AgentChat({ onNavigate, onOpenProviderSettings }: AgentC
     setDraft(null)
     const readFilesForThisMessage = allowWorkspaceRead
     setAllowWorkspaceRead(false)
-    const scanDirectoriesForThisMessage = allowCodeDuplicateScan
-    setAllowCodeDuplicateScan(false)
-    const useBago5CognitionForThisMessage = applyBago5Cognition
-    setApplyBago5Cognition(false)
     setSending(true)
     let attemptedConversation: StoredConversation | null = null
     try {
@@ -469,7 +464,6 @@ export default function AgentChat({ onNavigate, onOpenProviderSettings }: AgentC
       }
       setMessages((previous) => [...previous, { id: idFor(), role: 'user', content }])
       let workspaceReadAuthorizationId: string | undefined
-      let workspaceScanAuthorizationId: string | undefined
       if (readFilesForThisMessage) {
         const paths = workspaceReadPaths.split(/\r?\n/).map((path) => path.trim()).filter(Boolean)
         if (!paths.length) throw new Error('Enter the exact project-relative file paths to authorize, one per line.')
@@ -481,29 +475,19 @@ export default function AgentChat({ onNavigate, onOpenProviderSettings }: AgentC
         const authorization = await authorizationResponse.json()
         workspaceReadAuthorizationId = authorization.authorization_id
       }
-      if (scanDirectoriesForThisMessage) {
-        const directories = workspaceScanDirectories.split(/\r?\n/).map((path) => path.trim()).filter(Boolean)
-        if (!directories.length) throw new Error('Enter the exact project-relative directory paths to scan, one per line.')
-        const authorizationResponse = await fetch('/api/workspace-scan/authorizations', {
-          method: 'POST', headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ owner_kind: ownerKind, owner_id: ownerId, conversation_id: conversation.id, revision: conversation.revision, directories }),
-        })
-        if (!authorizationResponse.ok) throw new Error(await responseError(authorizationResponse))
-        workspaceScanAuthorizationId = (await authorizationResponse.json()).authorization_id
-      }
       let response: Response
       let data: any
       let intent: ReturnType<typeof inferIntent> | null = null
       if (selectedAgent) {
         response = await fetch(`/api/agents/${encodeURIComponent(selectedAgent.id)}/chat`, {
           method: 'POST', headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ message: content, conversation_id: conversation.id, revision: conversation.revision, cognitive_mode: useBago5CognitionForThisMessage ? 'bago5' : 'baseline', ...(workspaceReadAuthorizationId ? { workspace_read_authorization_id: workspaceReadAuthorizationId } : {}), ...(workspaceScanAuthorizationId ? { workspace_scan_authorization_id: workspaceScanAuthorizationId } : {}) }),
+          body: JSON.stringify({ message: content, conversation_id: conversation.id, revision: conversation.revision, cognitive_mode: cognitiveMode, ...(workspaceReadAuthorizationId ? { workspace_read_authorization_id: workspaceReadAuthorizationId } : {}) }),
         })
       } else {
         intent = localCapabilityIntent ?? inferIntent(content)
         response = await fetch('/api/chat/control', {
           method: 'POST', headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ operation: intent.operation, message: content, conversation_id: conversation.id, revision: conversation.revision, ...(intent.operation === 'chat' ? { cognitive_mode: useBago5CognitionForThisMessage ? 'bago5' : 'baseline' } : {}), ...(workspaceReadAuthorizationId ? { workspace_read_authorization_id: workspaceReadAuthorizationId } : {}), ...(workspaceScanAuthorizationId ? { workspace_scan_authorization_id: workspaceScanAuthorizationId } : {}), ...(intent.view ? { view: intent.view } : {}) }),
+          body: JSON.stringify({ operation: intent.operation, message: content, conversation_id: conversation.id, revision: conversation.revision, ...(intent.operation === 'chat' ? { cognitive_mode: cognitiveMode } : {}), ...(workspaceReadAuthorizationId ? { workspace_read_authorization_id: workspaceReadAuthorizationId } : {}), ...(intent.view ? { view: intent.view } : {}) }),
         })
       }
       if (!response.ok) throw new Error(await responseError(response))
@@ -678,6 +662,7 @@ export default function AgentChat({ onNavigate, onOpenProviderSettings }: AgentC
         className="control-chat-main control-chat-window"
         hideTitlebar
       >
+        <div className="chat-mode-header"><button type="button" onClick={onOpenCognitionSettings} aria-label="Open cognition and context settings">Cognition: {cognitiveMode === 'bago5' ? 'BAGO5 experimental' : 'Baseline'} <span aria-hidden="true">↗</span></button></div>
         <div className="control-chat-messages" aria-live="polite">
           {messages.length === 0 && <div className="chat-welcome"><div className="welcome-mark" aria-hidden="true">✳</div><h3>{selectedAgent ? `Chat with ${selectedAgent.config.name}` : 'Your workspace, through chat'}</h3><p>{selectedAgent ? 'Messages are sent to this agent through the configured Ollama provider.' : 'The assistant can list your application agents, draft one for your review, and navigate to supported views.'}</p>{!selectedAgent && <div className="prompt-suggestions"><button type="button" onClick={() => setInput('Lista mis agentes')}>List my agents</button><button type="button" onClick={() => setInput('Quiero crear un agente para…')}>Create an agent</button><button type="button" onClick={() => setInput('Abre el Decision Inspector')}>Open the Inspector</button></div>}</div>}
           {messages.map((message) => <article key={message.id} className={`control-message control-message-${message.role}`}><span className="message-speaker">{message.role === 'user' ? 'You' : selectedAgent?.config.name ?? 'Assistant'}</span>{message.content && <div className="control-message-content">{message.content}</div>}{message.cognitiveTrace && <CognitiveContextPanel trace={message.cognitiveTrace} />}{message.sources?.length ? <div className="message-sources" aria-label="Project files read"><strong>Project files read</strong><ul>{message.sources.map((source) => <li key={`${source.path}:${source.start_line}-${source.end_line}`}><code>{source.path}:{source.start_line}-{source.end_line}</code>{source.content_sha256 && <small> SHA-256 {source.content_sha256}</small>}</li>)}</ul></div> : null}{message.readEvents?.length ? <div className="message-sources" aria-label="Read-only analysis evidence"><strong>Read-only analysis evidence</strong><ul>{message.readEvents.map((event, index) => <li key={`${event.path}:${index}`}><code>{event.decision} {event.path || '(unresolved path)'} {event.reason_code ? `· ${event.reason_code}` : ''}</code>{event.kind === 'directory_code_scan' && <small>{` · ${event.files_scanned ?? 0} files · ${event.lines_scanned ?? 0} lines · ${event.finding_count ?? 0} findings${event.truncated ? ' · capped' : ''} · manifest SHA-256 ${event.manifest_sha256 ?? 'unavailable'}`}</small>}</li>)}</ul></div> : null}{message.trace && <div className="message-trace" aria-label="Execution trace evidence"><span>Trace {message.trace.state}</span><code>Local: {message.trace.localId}</code>{message.trace.jaegerId && <code>Jaeger: {message.trace.jaegerId}</code>}{message.trace.jaegerUrl && <a href={message.trace.jaegerUrl} target="_blank" rel="noreferrer">Open in Jaeger</a>}</div>}</article>)}
@@ -693,7 +678,7 @@ export default function AgentChat({ onNavigate, onOpenProviderSettings }: AgentC
           if (event.key !== 'Enter' || event.shiftKey || event.nativeEvent.isComposing || event.repeat) return
           event.preventDefault()
           void sendMessage()
-        }} placeholder={activeConversation?.status && activeConversation.status !== 'active' ? 'Restore this conversation or start a new one to continue.' : selectedAgent ? `Message ${selectedAgent.config.name}.` : 'Ask a question, list agents, create an agent, or open a view.'} disabled={sending || Boolean(activeConversation && activeConversation.status !== 'active')} /><div className="chat-composer-actions"><label className="workspace-read-toggle"><input type="checkbox" checked={allowWorkspaceRead} onChange={(event) => setAllowWorkspaceRead(event.target.checked)} disabled={sending || Boolean(activeConversation && activeConversation.status !== 'active')} /><span>Authorize exact project files for this message <small>Only the paths below, once, for this conversation turn</small></span></label><label className="workspace-read-toggle"><input type="checkbox" checked={allowCodeDuplicateScan} onChange={(event) => setAllowCodeDuplicateScan(event.target.checked)} disabled={sending || Boolean(activeConversation && activeConversation.status !== 'active')} /><span>Scan a project directory for duplicate code <small>Read-only, one use for this conversation turn</small></span></label><label className="workspace-read-toggle workspace-cognition-toggle"><input type="checkbox" checked={applyBago5Cognition} onChange={(event) => setApplyBago5Cognition(event.target.checked)} disabled={sending || Boolean(activeConversation && activeConversation.status !== 'active')} /><span>Apply experimental BAGO5 cognition to next model reply <small>Baseline is the default. Repeat in a fresh conversation for a cleaner comparison; visible focus is not hidden reasoning.</small></span></label><button className="primary-action" type="submit" disabled={sending || !input.trim() || Boolean(activeConversation && activeConversation.status !== 'active')}>{sending ? 'Sending.' : 'Send'}</button></div>{allowWorkspaceRead && <label className="workspace-read-paths">Project-relative file paths, one per line<textarea rows={3} value={workspaceReadPaths} onChange={(event) => setWorkspaceReadPaths(event.target.value)} placeholder={'src/api/server.py\nsrc/agent_tools/workspace_read.py'} disabled={sending} /></label>}{allowCodeDuplicateScan && <label className="workspace-read-paths">Exact project-relative directories, one per line<textarea rows={2} value={workspaceScanDirectories} onChange={(event) => setWorkspaceScanDirectories(event.target.value)} placeholder={'src'} disabled={sending} /></label>}</form>
+        }} placeholder={activeConversation?.status && activeConversation.status !== 'active' ? 'Restore this conversation or start a new one to continue.' : selectedAgent ? `Message ${selectedAgent.config.name}.` : 'Ask a question, list agents, create an agent, or open a view.'} disabled={sending || Boolean(activeConversation && activeConversation.status !== 'active')} /><div className="chat-composer-actions"><label className="workspace-read-toggle"><input type="checkbox" checked={allowWorkspaceRead} onChange={(event) => setAllowWorkspaceRead(event.target.checked)} disabled={sending || Boolean(activeConversation && activeConversation.status !== 'active')} /><span>Authorize exact project files for this message <small>Only the paths below, once, for this conversation turn</small></span></label><button className="primary-action" type="submit" disabled={sending || !input.trim() || Boolean(activeConversation && activeConversation.status !== 'active')}>{sending ? 'Sending.' : 'Send'}</button></div>{allowWorkspaceRead && <label className="workspace-read-paths">Project-relative file paths, one per line<textarea rows={3} value={workspaceReadPaths} onChange={(event) => setWorkspaceReadPaths(event.target.value)} placeholder={'src/api/server.py\nsrc/agent_tools/workspace_read.py'} disabled={sending} /></label>}</form>
         <div className="chat-agent-panel-slot" ref={setAgentPanelTarget} />
       </WindowPanel>
     </section>

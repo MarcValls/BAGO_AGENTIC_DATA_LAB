@@ -1,0 +1,50 @@
+{
+  "changed_files": [
+    "src/api/server.py",
+    "tests/test_chat_context.py"
+  ],
+  "next_consumers": [
+    "R04"
+  ],
+  "outputs": [
+    {
+      "contract_id": "adl-chat-context-metadata-v1",
+      "endpoint": "GET /api/chat/context",
+      "fields": [
+        "workspace_root",
+        "cognition",
+        "paths",
+        "memory"
+      ],
+      "memory_kind": "conversation_history",
+      "path": "../../../src/api/server.py",
+      "path_ids": [
+        "project-context",
+        "project-state",
+        "active-handoff",
+        "conversations",
+        "cognition-traces"
+      ],
+      "sha256": "182bba3431abcabb17875616f256d6ff396ec76eccb3c07cf46f7e125cb8aec5",
+      "source_binding": "Runtime REPO_ROOT, CONVERSATIONS.database_path, AGENT_CHAT_TRACE_DIR and cognition module constants"
+    }
+  ],
+  "payload_sha256": "0d978718841af13ed2ab8ae77c2ad0b59710aa51c6358c56fda25cd3cfdcabb7",
+  "residual_risks": [
+    "General and cross-project memory engines are explicitly unsupported in this chat; metadata is a point-in-time existence snapshot, not proof of content integrity or model prompt ingestion."
+  ],
+  "role": "evidence-provenance-engineer",
+  "status": "DONE",
+  "verification": [
+    {
+      "command": "python -m pytest tests/test_chat_context.py -q -p no:cacheprovider --basetemp=.pytest-tmp-chat-context",
+      "evidence": "2 passed; bound temporary root and actual configured database override; absent paths not created; no file reads or database connection; credentials and private content not disclosed",
+      "result": "PASS"
+    },
+    {
+      "command": "git diff --check -- src/api/server.py tests/test_chat_context.py",
+      "result": "PASS"
+    }
+  ],
+  "work_id": "R03"
+}

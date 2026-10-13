@@ -1,7 +1,4 @@
 .provider-settings { max-width: 980px; margin: 0 auto; padding: 18px 0 40px; }
-.provider-page-heading { display: flex; justify-content: space-between; align-items: flex-end; gap: 20px; margin-bottom: 20px; }
-.provider-page-heading h1 { margin: 0; font-size: clamp(1.6rem, 4vw, 2.2rem); }
-.provider-page-heading p:not(.provider-eyebrow) { margin: 8px 0 0; color: #9aadc2; }
 .provider-eyebrow { margin: 0 0 6px; color: #87a0bb; font-size: .7rem; font-weight: 750; letter-spacing: .1em; text-transform: uppercase; }
 .provider-status-card, .provider-card { margin-bottom: 15px; padding: 20px; border: 1px solid #2b3d53; border-radius: 15px; background: #111e2e; }
 .provider-status-card > div:first-child { display: flex; align-items: center; gap: 12px; }
@@ -46,7 +43,6 @@
 .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
 
 @media (max-width: 650px) {
-  .provider-page-heading { align-items: flex-start; flex-direction: column; }
   .auth-choice-group { grid-template-columns: 1fr; }
   .provider-card, .provider-status-card { padding: 16px; }
   .model-controls { align-items: stretch; flex-direction: column; }

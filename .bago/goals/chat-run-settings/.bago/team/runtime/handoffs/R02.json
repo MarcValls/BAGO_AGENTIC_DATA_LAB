@@ -1,0 +1,102 @@
+{
+  "changed_files": [
+    "frontend/src/App.tsx",
+    "frontend/src/components/AgentChat.tsx",
+    "frontend/src/components/AgentChat.css",
+    "frontend/src/components/AgentRunner.tsx",
+    "frontend/src/components/Control.tsx",
+    "frontend/src/components/Control.css",
+    "frontend/src/components/DirectoryScanRun.tsx",
+    "frontend/src/components/DirectoryScanRun.css",
+    "frontend/src/components/CognitionSettings.tsx",
+    "frontend/src/components/CognitionSettings.css"
+  ],
+  "next_consumers": [
+    "R04"
+  ],
+  "outputs": [
+    {
+      "behavior": [
+        "Agent Runs owns bounded local directory scan with per-run authorization; generic profile Run remains unavailable.",
+        "Chat composer has only exact-file one-use authorization; scan authorizations removed from chat request construction.",
+        "Persistent browser cognition mode defaults baseline and is explicitly passed to both chat model endpoints.",
+        "Chat header displays mode and links to Cognition & context settings.",
+        "Settings render loading/error/empty and configured paths with actual presence; no editable backend locations.",
+        "Response cognition evidence remains attached to stored messages.",
+        "Legacy control navigation resolves runner.",
+        "Scan consent cleared on scope edits and every validated attempt."
+      ],
+      "contract_id": "chat-run-settings-ui-v1",
+      "source_fingerprints": [
+        {
+          "path": "frontend/src/App.tsx",
+          "sha256": "e201dbe6e47e09d1124904abec2f414c7adf303b07bdf35216845ba952ab0a92"
+        },
+        {
+          "path": "frontend/src/components/AgentChat.tsx",
+          "sha256": "a5990193baf6f5d7bf542caac59676f2857292d0120e36a7ff5c060270fa9509"
+        },
+        {
+          "path": "frontend/src/components/AgentChat.css",
+          "sha256": "b4c7297647485228f77727f820605c43a15a918bb75b32c066b71b83e5c34eb7"
+        },
+        {
+          "path": "frontend/src/components/AgentRunner.tsx",
+          "sha256": "4f62d9404a1a66853f48020bfe888d267c3b85cc9ff412b8af3addd613ac81e0"
+        },
+        {
+          "path": "frontend/src/components/DirectoryScanRun.tsx",
+          "sha256": "22f71ba88be6733f96b93beadb38fff251126519d5f24dbfb469bff3c7296d1e"
+        },
+        {
+          "path": "frontend/src/components/DirectoryScanRun.css",
+          "sha256": "262deca65e5221d116f4aef38043c8cb406d57110b76daf1bd1f1139ee91a1bd"
+        },
+        {
+          "path": "frontend/src/components/CognitionSettings.tsx",
+          "sha256": "3acb74dd93a0222f0138153fc9e75968389c4aaae5d66cbbde55d9a0e478191a"
+        },
+        {
+          "path": "frontend/src/components/CognitionSettings.css",
+          "sha256": "df11ef1b2656a3b8100cefa9d0492b48613151c0bda52eba459cb72e2f6c9fde"
+        },
+        {
+          "path": "frontend/dist/index.html",
+          "sha256": "ad7166539ccd2109f75030189bf24f7e4af53e6835e263031144cf63e2f60933"
+        },
+        {
+          "path": "frontend/dist/assets/index-10e3c7f0.js",
+          "sha256": "d7081c18e1e067a2583f6dec62dc00068d4d439a890aee8b995100af411f8a54"
+        },
+        {
+          "path": "frontend/dist/assets/index-31081d7f.css",
+          "sha256": "31081d7f5665db6b612e7ad8b0d8f2220255d972b132465ad384d17a66978248"
+        }
+      ]
+    }
+  ],
+  "payload_sha256": "7e2ac5d4656fee022da7035f5dbefde243a9dc59a32a2372c2a6dfd3cde60843",
+  "residual_risks": [
+    "Independent rendered browser checks (loading/error/normal/empty settings, mode persistence, exact-file only composer, local scan execution and generic unavailable state) delegated to R04.",
+    "No actual provider inference requested or run; previous live provider unavailable.",
+    "Root owns generated dist integration; tracked .build outputs restored."
+  ],
+  "role": "decision-ui-engineer",
+  "status": "DONE",
+  "verification": [
+    {
+      "command": "npm ci --no-audit --no-fund",
+      "result": "PASS"
+    },
+    {
+      "command": "npm run build (after final consent reset change)",
+      "evidence": "tsc -b and vite build; 139 modules; index-10e3c7f0.js / index-31081d7f.css",
+      "result": "PASS"
+    },
+    {
+      "command": "git diff --check",
+      "result": "PASS"
+    }
+  ],
+  "work_id": "R02"
+}

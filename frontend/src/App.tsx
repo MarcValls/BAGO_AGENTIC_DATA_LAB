@@ -6,7 +6,6 @@ import Retrieval from './components/Retrieval'
 import Authorization from './components/Authorization'
 import Trace from './components/Trace'
 import Evaluation from './components/Evaluation'
-import Control from './components/Control'
 import AgentBuilder from './components/AgentBuilder'
 import AgentRunner from './components/AgentRunner'
 import AgentChat from './components/AgentChat'
@@ -14,6 +13,7 @@ import CapabilityManager from './components/CapabilityManager'
 import JobHistory from './components/JobHistory'
 import AgentEvaluationLab from './components/AgentEvaluationLab'
 import ProviderSettings from './components/ProviderSettings'
+import CognitionSettings, { readCognitiveMode, type CognitiveMode } from './components/CognitionSettings'
 import { DecisionInspector } from './features/decision-inspector'
 
 interface Artifacts {
@@ -33,9 +33,8 @@ const navigation: Array<{ id: AppView; label: string; layer: 'interaction' | 'da
   { id: 'chat', label: 'Chat', layer: 'interaction' },
   { id: 'capabilities', label: 'Capabilities', layer: 'interaction' },
   { id: 'builder', label: 'Agent Builder', layer: 'interaction' },
-  { id: 'runner', label: 'Agent Runner', layer: 'interaction' },
+  { id: 'runner', label: 'Agent Runs', layer: 'interaction' },
   { id: 'evaluation_lab', label: 'Agent Evaluation Lab', layer: 'interaction' },
-  { id: 'control', label: 'Control', layer: 'interaction' },
   { id: 'inspector', label: 'Decision Inspector', layer: 'data' },
   { id: 'jobs', label: 'Job History', layer: 'data' },
   { id: 'summary', label: 'Summary', layer: 'data' },
@@ -69,6 +68,8 @@ function App() {
   const [activeDataView, setActiveDataView] = useState<DataView>('inspector')
   const [dataLayerOpen, setDataLayerOpen] = useState(false)
   const [settingsOpen, setSettingsOpen] = useState(false)
+  const [settingsSection, setSettingsSection] = useState<'provider' | 'cognition'>('provider')
+  const [cognitiveMode, setCognitiveMode] = useState<CognitiveMode>(readCognitiveMode)
   const [demoRefresh, setDemoRefresh] = useState(0)
   const dataLayerRef = useRef<HTMLDialogElement>(null)
   const settingsDialogRef = useRef<HTMLDialogElement>(null)
@@ -89,11 +90,12 @@ function App() {
   }, [demoRefresh])
 
   const navigateFromChat = useCallback((view: AssistantView) => {
-    const tab: AppView = view === 'traces' ? 'trace' : view
+    const tab: AppView = view === 'traces' ? 'trace' : view === 'control' ? 'runner' : view
     if (isDataView(tab)) {
       setActiveDataView(tab)
       setDataLayerOpen(true)
     } else if (tab === 'provider_settings') {
+      setSettingsSection('provider')
       setSettingsOpen(true)
     } else {
       setActiveInteractionView(tab)
@@ -101,6 +103,8 @@ function App() {
   }, [])
 
   const openSettings = useCallback(() => setSettingsOpen(true), [])
+  const openProviderSettings = useCallback(() => { setSettingsSection('provider'); setSettingsOpen(true) }, [])
+  const openCognitionSettings = useCallback(() => { setSettingsSection('cognition'); setSettingsOpen(true) }, [])
   const openInspect = useCallback(() => setDataLayerOpen(true), [])
 
   useEffect(() => {
@@ -190,12 +194,11 @@ function App() {
 
       <div className="app-main">
         <main className={`app-view ${activeInteractionView === 'chat' ? 'app-view--chat' : ''}`} aria-label={`${activeInteractionLabel} view`}>
-          {activeInteractionView === 'chat' && <AgentChat onNavigate={navigateFromChat} onOpenProviderSettings={openSettings} />}
+          {activeInteractionView === 'chat' && <AgentChat onNavigate={navigateFromChat} onOpenProviderSettings={openProviderSettings} onOpenCognitionSettings={openCognitionSettings} cognitiveMode={cognitiveMode} />}
           {activeInteractionView === 'capabilities' && <CapabilityManager />}
           {activeInteractionView === 'builder' && <AgentBuilder onAgentCreated={() => setDemoRefresh((previous) => previous + 1)} />}
           {activeInteractionView === 'runner' && <AgentRunner />}
           {activeInteractionView === 'evaluation_lab' && <AgentEvaluationLab />}
-          {activeInteractionView === 'control' && <Control />}
         </main>
       </div>
 
@@ -216,14 +219,11 @@ function App() {
         <div className="settings-layer-layout">
           <nav className="settings-layer-navigation" aria-label="Settings sections">
             <span className="navigation-caption">Configuration</span>
-            <button type="button" className="navigation-item active" aria-current="page">
-              <span className="navigation-item-icon" aria-hidden="true">◉</span>
-              <span>Provider & models</span>
-            </button>
-            <p className="settings-navigation-note">Connection, authentication and model selection</p>
+            <button type="button" className={`navigation-item ${settingsSection === 'provider' ? 'active' : ''}`} aria-current={settingsSection === 'provider' ? 'page' : undefined} onClick={() => setSettingsSection('provider')}>Provider & models</button>
+            <button type="button" className={`navigation-item ${settingsSection === 'cognition' ? 'active' : ''}`} aria-current={settingsSection === 'cognition' ? 'page' : undefined} onClick={() => setSettingsSection('cognition')}>Cognition & context</button>
           </nav>
-          <section className="settings-layer-content" aria-label="Provider and model settings">
-            <ProviderSettings />
+          <section className="settings-layer-content" aria-label={settingsSection === 'provider' ? 'Provider and model settings' : 'Cognition and context settings'}>
+            {settingsSection === 'provider' ? <ProviderSettings /> : <CognitionSettings mode={cognitiveMode} onModeChange={setCognitiveMode} />}
           </section>
         </div>
       </dialog>
@@ -273,7 +273,7 @@ function App() {
             {activeDataView === 'jobs' ? <JobHistory /> : loadingArtifacts
               ? <div className="app-view-state" role="status"><span className="spinner" /><p>Loading portfolio artifacts…</p></div>
               : artifactError || !artifacts
-                ? <section className="artifact-unavailable" role="status"><p className="app-kicker">Portfolio evidence</p><h2>Artifacts are not available yet</h2><p>{artifactError ?? 'No artifact bundle was returned.'}</p><p>Run a governed demo from the Control view to create its artifact bundle.</p><button type="button" className="navigation-item active" onClick={() => { setDataLayerOpen(false); setActiveInteractionView('control') }}>Open Control</button></section>
+                ? <section className="artifact-unavailable" role="status"><p className="app-kicker">Portfolio evidence</p><h2>Artifacts are not available yet</h2><p>{artifactError ?? 'No artifact bundle was returned.'}</p><p>No portfolio artifact bundle is available. Directory scan reports are shown in Agent Runs.</p><button type="button" className="navigation-item active" onClick={() => { setDataLayerOpen(false); setActiveInteractionView('runner') }}>Open Agent Runs</button></section>
                 : <>
                   {activeDataView === 'inspector' && <DecisionInspector artifacts={artifacts} />}
                   {activeDataView === 'summary' && <Summary data={artifacts} />}

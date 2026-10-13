@@ -1,0 +1,58 @@
+{
+  "work_id": "W12",
+  "role": "team-orchestrator",
+  "status": "DONE",
+  "changed_files": [
+    ".bago/goals/chat-run-settings/evidence/VERIFICATION.md",
+    ".bago/goals/chat-run-settings/evidence/source_snapshot.json",
+    ".bago/goals/chat-run-settings/status.json",
+    ".bago/runtime/ACTIVE_HANDOFF.md",
+    "README.md"
+  ],
+  "outputs": [
+    {
+      "path": "evidence/VERIFICATION.md"
+    },
+    {
+      "path": "evidence/source_snapshot.json"
+    },
+    {
+      "path": "status.json"
+    }
+  ],
+  "verification": [
+    {
+      "command": "python .bago/team/kit/scripts/teamctl.py --root .bago/goals/chat-run-settings verify (R01-R04)",
+      "result": "PASS"
+    },
+    {
+      "command": "python scripts/generate_dynamic_readme.py (live main)",
+      "result": "PASS",
+      "facts": "234 tests"
+    },
+    {
+      "command": "python scripts/generate_dynamic_readme.py --check --skip-tests (live main)",
+      "result": "PASS"
+    },
+    {
+      "command": "npm run build (isolated R02 candidate)",
+      "result": "PASS"
+    },
+    {
+      "command": "git diff --check after closure evidence",
+      "result": "PASS"
+    },
+    {
+      "command": "Live8081 final HTML/JS/CSS SHA256 versus disk; exact task source equality; R04 independent final bundle smoke",
+      "result": "PASS",
+      "facts": "P0=0 P1=0, final console0 errors/warnings"
+    }
+  ],
+  "residual_risks": [
+    "NOT_RUN live model inference: provider secure credential storage unavailable.",
+    "NOT_RUN browser fleeting loading-state assertion and unrelated pre-existing Inspector adversarial scenarios.",
+    "Paths are read-only metadata; generic agent profile execution remains unavailable.",
+    "Concurrent ProviderSettings edits and their rebuilt artifacts preserved; task changes uncommitted."
+  ],
+  "next_consumers": []
+}

@@ -1,0 +1,159 @@
+{
+  "created_at": "2026-10-13T06:20:37+00:00",
+  "mission": {
+    "derived_from": ".bago/team/kit/missions/agent-decision-inspector.json",
+    "max_concurrency": 2,
+    "mission_id": "ADL_CHAT_RUN_SETTINGS_V1",
+    "objective": "Move directory scanning to Agent Runs; keep only one-use file reading in chat; make persistent cognition and actual context/memory locations inspectable in Settings.",
+    "terminal_work_items": [
+      "W12"
+    ],
+    "title": "ADL chat, task runs and cognition settings",
+    "work_items": [
+      {
+        "deliverables": [
+          "Freeze placement and existing contracts"
+        ],
+        "depends_on": [],
+        "done_when": [
+          "Materialized implementation/evidence and checks PASS"
+        ],
+        "frozen_outputs": [],
+        "id": "R01",
+        "read_scopes": [
+          "**"
+        ],
+        "role": "team-orchestrator",
+        "title": "Freeze placement and existing contracts",
+        "write_scopes": [
+          ".bago/goals/chat-run-settings/**"
+        ]
+      },
+      {
+        "deliverables": [
+          "Implement chat, settings and task run placement"
+        ],
+        "depends_on": [
+          "R01"
+        ],
+        "done_when": [
+          "Materialized implementation/evidence and checks PASS"
+        ],
+        "frozen_outputs": [],
+        "id": "R02",
+        "read_scopes": [
+          "**"
+        ],
+        "role": "decision-ui-engineer",
+        "title": "Implement chat, settings and task run placement",
+        "write_scopes": [
+          "frontend/src/**"
+        ]
+      },
+      {
+        "deliverables": [
+          "Expose actual workspace context locations"
+        ],
+        "depends_on": [
+          "R01"
+        ],
+        "done_when": [
+          "Materialized implementation/evidence and checks PASS"
+        ],
+        "frozen_outputs": [],
+        "id": "R03",
+        "read_scopes": [
+          "**"
+        ],
+        "role": "evidence-provenance-engineer",
+        "title": "Expose actual workspace context locations",
+        "write_scopes": [
+          "src/api/server.py",
+          "tests/test_chat_context.py"
+        ]
+      },
+      {
+        "deliverables": [
+          "Independent verification of new placement"
+        ],
+        "depends_on": [
+          "R02",
+          "R03"
+        ],
+        "done_when": [
+          "Materialized implementation/evidence and checks PASS"
+        ],
+        "frozen_outputs": [],
+        "id": "R04",
+        "read_scopes": [
+          "**"
+        ],
+        "role": "verification-engineer",
+        "title": "Independent verification of new placement",
+        "write_scopes": [
+          ".bago/goals/chat-run-settings/evidence/**"
+        ]
+      },
+      {
+        "deliverables": [
+          "Terminal task gate"
+        ],
+        "depends_on": [
+          "R04"
+        ],
+        "done_when": [
+          "Materialized implementation/evidence and checks PASS"
+        ],
+        "frozen_outputs": [],
+        "id": "W12",
+        "read_scopes": [
+          "**"
+        ],
+        "role": "team-orchestrator",
+        "title": "Terminal task gate",
+        "write_scopes": [
+          ".bago/goals/chat-run-settings/**",
+          ".bago/runtime/ACTIVE_HANDOFF.md",
+          "README.md"
+        ]
+      }
+    ]
+  },
+  "mission_sha256": "88aad6fe0a38011426c21184cb15927efa2ae5929c2c61961c76c7f39ea82d0a",
+  "mission_source": "C:\\Users\\AMTEC_Terminal_1º\\AppData\\Local\\Temp\\ADL_chat_run_settings_20261013\\.bago\\goals\\chat-run-settings\\mission.json",
+  "protocol_version": "0.1.0",
+  "terminal_gate": "DONE",
+  "updated_at": "2026-10-13T06:39:40+00:00",
+  "work_status": {
+    "R01": {
+      "agent": "root",
+      "claimed_at": "2026-10-13T06:20:37+00:00",
+      "done_at": "2026-10-13T06:20:49+00:00",
+      "status": "DONE"
+    },
+    "R02": {
+      "agent": "ui_placement",
+      "claimed_at": "2026-10-13T06:21:27+00:00",
+      "done_at": "2026-10-13T06:28:03+00:00",
+      "status": "DONE"
+    },
+    "R03": {
+      "agent": "context_metadata",
+      "claimed_at": "2026-10-13T06:21:46+00:00",
+      "done_at": "2026-10-13T06:24:06+00:00",
+      "status": "DONE"
+    },
+    "R04": {
+      "agent": "placement_verifier",
+      "claimed_at": "2026-10-13T06:30:11+00:00",
+      "done_at": "2026-10-13T06:37:12+00:00",
+      "status": "DONE"
+    },
+    "W12": {
+      "agent": "root",
+      "claimed_at": "2026-10-13T06:37:44+00:00",
+      "done_at": "2026-10-13T06:39:40+00:00",
+      "status": "DONE"
+    }
+  }
+}

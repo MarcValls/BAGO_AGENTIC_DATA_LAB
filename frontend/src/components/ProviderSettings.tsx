@@ -123,7 +123,6 @@ export default function ProviderSettings() {
 
   return (
     <main className="provider-settings">
-      <header className="provider-page-heading"><div><p className="provider-eyebrow">Model connection</p><h1>Ollama provider</h1><p>Choose how this app connects to Ollama. Credentials stay on the backend.</p></div><button className="provider-secondary" type="button" onClick={() => void loadStatus()} disabled={loading}>Refresh status</button></header>
       <section className="provider-status-card" aria-live="polite"><div><span className={`provider-status-dot ${status?.state ?? 'unknown'}`} /><div><p className="provider-eyebrow">Current status</p><strong>{loading ? 'Loading status…' : status ? stateLabels[status.state] ?? status.state : 'Status unavailable'}</strong></div></div><div className="provider-status-meta"><span>Auth: {status?.auth_mode === 'api_key' ? 'API key' : status?.auth_mode === 'local_cli' ? 'Local CLI session' : 'Not selected'}</span><span>Model: {status?.model_id ?? 'Not selected'}</span></div>{status?.message && <p className="provider-inline-warning">{status.message}</p>}{status?.runtime_mode === 'container' && <p className="provider-inline-warning">This container cannot safely access the host credential store or host Ollama service. Start the app on this computer with <code>scripts/run-local-ui.ps1</code>.</p>}</section>
 
       <form className="provider-card" onSubmit={(event) => void saveConfiguration(event)}>

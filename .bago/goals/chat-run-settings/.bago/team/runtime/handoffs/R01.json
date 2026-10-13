@@ -1,0 +1,32 @@
+{
+  "changed_files": [
+    ".bago/goals/chat-run-settings/goal.md",
+    ".bago/goals/chat-run-settings/placement.md",
+    ".bago/goals/chat-run-settings/mission.json"
+  ],
+  "next_consumers": [
+    "R02",
+    "R03"
+  ],
+  "outputs": [
+    {
+      "contract_id": "chat-run-settings-placement-v1",
+      "frozen": true,
+      "path": "placement.md",
+      "sha256": "324d6826614e8b5c695575edbb01a074766d417143e3e5188c88a98147ccbb57"
+    }
+  ],
+  "payload_sha256": "48678458997c32a7e43a4ed2d762f11c90f4dddc0dc03c280c56e8a5ec59c927",
+  "residual_risks": [
+    "Live provider unavailable in previous evidence; model inference not required for placement."
+  ],
+  "role": "team-orchestrator",
+  "status": "DONE",
+  "verification": [
+    {
+      "command": "git branch/HEAD/status; inspect existing chat/runner/control/settings/API; git fetch origin main",
+      "result": "PASS"
+    }
+  ],
+  "work_id": "R01"
+}

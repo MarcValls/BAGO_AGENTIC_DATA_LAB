@@ -1,4 +1,4 @@
-import './Control.css'
+import './DirectoryScanRun.css'
 import './WindowsSurface.css'
 import { FormEvent, useState } from 'react'
 import WindowPanel from './WindowPanel'
@@ -36,7 +36,7 @@ function locationLabel(location: ScanLocation): string {
   return `${location.path}:${location.start_line}-${location.end_line}`
 }
 
-export default function Control() {
+export default function DirectoryScanRun() {
   const [directory, setDirectory] = useState('')
   const [authorized, setAuthorized] = useState(false)
   const [scanning, setScanning] = useState(false)
@@ -48,6 +48,7 @@ export default function Control() {
     const target = directory.trim().replace(/\\/g, '/')
     if (!target) { setError('Enter one exact project-relative directory.'); return }
     if (!authorized) { setError('Authorize one read-only scan of this directory before running it.'); return }
+    setAuthorized(false)
     setScanning(true)
     setError('')
     setOutcome(null)
@@ -73,7 +74,6 @@ export default function Control() {
       if (!data.result?.ok) { setError((data.result as ScanReport & { error?: string })?.error ?? 'The authorized directory could not be scanned.'); return }
       if (!data.result || typeof data.result.finding_count !== 'number' || !data.receipt?.manifest_sha256) throw new Error('The scanner returned an incomplete report.')
       setOutcome(data)
-      setAuthorized(false)
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : 'The directory scan failed.')
     } finally {
@@ -82,11 +82,11 @@ export default function Control() {
   }
 
   return (
-    <div className="control-container">
-      <WindowPanel title="Code duplicate scanner" description="Inspect one project directory with a bounded, read-only local analysis." className="control-panel">
+    <div className="directory-scan-run">
+      <WindowPanel title="Code duplicate scanner" description="Inspect one project directory with a bounded, read-only local analysis." className="directory-scan-panel">
         <form className="code-scan-form" onSubmit={(event) => void runScan(event)}>
           <label htmlFor="code-scan-directory">Project-relative source directory</label>
-          <input id="code-scan-directory" value={directory} maxLength={512} onChange={(event) => setDirectory(event.target.value)} placeholder="src" disabled={scanning} autoComplete="off" />
+          <input id="code-scan-directory" value={directory} maxLength={512} onChange={(event) => { setDirectory(event.target.value); setAuthorized(false) }} placeholder="src" disabled={scanning} autoComplete="off" />
           <label className="code-scan-consent">
             <input type="checkbox" checked={authorized} onChange={(event) => setAuthorized(event.target.checked)} disabled={scanning} />
             <span>Authorize one read-only scan of this exact directory for this run.</span>
@@ -119,7 +119,7 @@ export default function Control() {
         </section>}
       </WindowPanel>
 
-      <aside className="control-sidebar" aria-label="Scanner limits">
+      <aside className="directory-scan-sidebar" aria-label="Scanner limits">
         <section className="card"><h2>Scan boundaries</h2><ul>
           <li>One exact authorized project-relative directory per run</li>
           <li>Read-only; no source contents sent to a model</li>

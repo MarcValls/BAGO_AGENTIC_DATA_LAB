@@ -54,7 +54,10 @@ from src.agent_tools.code_duplicates import (
     WORKSPACE_DIRECTORY_AUTHORIZATIONS,
     scan_code_duplicates,
 )
-from src.cognition.bago5_chat import baseline_chat_context, build_chat_cognition
+from src.cognition.bago5_chat import (
+    MAX_EXPANSIONS, MAX_FOCUS_UNITS, MAX_HOPS, PROFILE,
+    baseline_chat_context, build_chat_cognition,
+)
 from src.observability.local_trace import LocalTrace, TraceEvent, TraceKind
 from src.observability.otel_bridge import export_local_trace_to_otlp
 from src.sandbox import SandboxError
@@ -1422,6 +1425,40 @@ def _capability_proposal_error(error: Exception) -> HTTPException:
     if isinstance(error, CapabilityProposalConflict):
         return HTTPException(status_code=409, detail={"code": "proposal_revision_conflict", "message": "Proposal is no longer pending or its revision changed."})
     return HTTPException(status_code=422, detail={"code": "invalid_capability_proposal", "message": "Capability proposal is invalid."})
+
+
+@app.get("/api/chat/context")
+async def chat_context() -> dict[str, Any]:
+    """Report bound locations without opening their contents or granting reads."""
+    locations = (
+        ("project-context", "Project context", REPO_ROOT / ".bago/context/PROJECT_CONTEXT.md",
+         "Project context ledger; listing a location does not load it into a model prompt."),
+        ("project-state", "Project state", REPO_ROOT / ".bago/state/PROJECT_STATE.json",
+         "Recorded project state and verification scope."),
+        ("active-handoff", "Active handoff", REPO_ROOT / ".bago/runtime/ACTIVE_HANDOFF.md",
+         "Local continuity handoff for repository work."),
+        ("conversations", "Conversation history", CONVERSATIONS.database_path,
+         "Saved chat messages; the selected conversation supplies chat history."),
+        ("cognition-traces", "Cognitive traces", AGENT_CHAT_TRACE_DIR / "cognition",
+         "Local cognitive focus metadata recorded for model chat turns."),
+    )
+    paths = [
+        {"id": location_id, "label": label, "path": str(path.resolve()),
+         "state": "present" if path.exists() else "absent", "purpose": purpose}
+        for location_id, label, path, purpose in locations
+    ]
+    return {
+        "workspace_root": str(REPO_ROOT.resolve()),
+        "cognition": {"profile": PROFILE, "capacity": MAX_FOCUS_UNITS,
+                      "max_hops": MAX_HOPS, "max_expansions": MAX_EXPANSIONS},
+        "paths": paths,
+        "memory": {
+            "kind": "conversation_history",
+            "state": paths[3]["state"],
+            "description": "Memory available to chat is saved conversation history. "
+                           "General or cross-project memory engines are not connected to this chat.",
+        },
+    }
 
 
 @app.get("/api/capabilities")

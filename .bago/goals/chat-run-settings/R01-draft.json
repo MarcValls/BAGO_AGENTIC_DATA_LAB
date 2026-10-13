@@ -1,0 +1,30 @@
+{
+  "work_id": "R01",
+  "role": "team-orchestrator",
+  "status": "DONE",
+  "changed_files": [
+    ".bago/goals/chat-run-settings/goal.md",
+    ".bago/goals/chat-run-settings/placement.md",
+    ".bago/goals/chat-run-settings/mission.json"
+  ],
+  "outputs": [
+    {
+      "path": "placement.md",
+      "contract_id": "chat-run-settings-placement-v1",
+      "frozen": true
+    }
+  ],
+  "verification": [
+    {
+      "command": "git branch/HEAD/status; inspect existing chat/runner/control/settings/API; git fetch origin main",
+      "result": "PASS"
+    }
+  ],
+  "residual_risks": [
+    "Live provider unavailable in previous evidence; model inference not required for placement."
+  ],
+  "next_consumers": [
+    "R02",
+    "R03"
+  ]
+}

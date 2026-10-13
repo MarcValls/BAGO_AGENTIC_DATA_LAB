@@ -1,0 +1,10 @@
+{
+  "work_id": "R04",
+  "role": "verification-engineer",
+  "status": "DONE",
+  "changed_files": [".bago/goals/chat-run-settings/evidence/R04-review.md", ".bago/goals/chat-run-settings/evidence/R04-handoff.json", ".bago/goals/chat-run-settings/evidence/r04-browser.cjs", ".bago/goals/chat-run-settings/evidence/r04-states.cjs", ".bago/goals/chat-run-settings/evidence/r04-errors.cjs", ".bago/goals/chat-run-settings/evidence/r04-agent-runs.png", ".bago/goals/chat-run-settings/evidence/r04-cognition-settings.png", ".bago/goals/chat-run-settings/evidence/r04-final-settings.png"],
+  "outputs": [{"contract_id": "adl-placement-independent-review-v1", "path": "evidence/R04-review.md", "verdict": "PASS", "P0": 0, "P1": 0, "P2": 0, "live_bundle": "index-fa31b7eb.js"}],
+  "verification": [{"command": "Playwright CLI live 8081 placement, mocked requests/failures, storage denial, final fresh bundle and console", "result": "PASS", "evidence": "R04-review.md and screenshots"}],
+  "residual_risks": ["Live inference NOT_RUN; no real writes performed by browser", "Loading timing-sensitive dynamic assertion NOT_RUN to completion; source state exists", "Pre-existing Inspector adversarial contracts outside bounded placement review NOT_RUN"],
+  "next_consumers": ["W12"]
+}
