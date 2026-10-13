@@ -88,12 +88,6 @@ function App() {
     void fetchArtifacts()
   }, [demoRefresh])
 
-  const handleDemoRun = useCallback(() => {
-    setDemoRefresh((previous) => previous + 1)
-    setActiveDataView('inspector')
-    setDataLayerOpen(true)
-  }, [])
-
   const navigateFromChat = useCallback((view: AssistantView) => {
     const tab: AppView = view === 'traces' ? 'trace' : view
     if (isDataView(tab)) {
@@ -201,7 +195,7 @@ function App() {
           {activeInteractionView === 'builder' && <AgentBuilder onAgentCreated={() => setDemoRefresh((previous) => previous + 1)} />}
           {activeInteractionView === 'runner' && <AgentRunner />}
           {activeInteractionView === 'evaluation_lab' && <AgentEvaluationLab />}
-          {activeInteractionView === 'control' && <Control onDemoRun={handleDemoRun} />}
+          {activeInteractionView === 'control' && <Control />}
         </main>
       </div>
 

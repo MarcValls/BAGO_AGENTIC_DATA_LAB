@@ -74,6 +74,17 @@ def capability_catalog(workspace_root: Path | str) -> dict[str, Any]:
             "source_paths": ["src/agent_tools/workspace_read.py", "src/api/server.py"],
         },
         {
+            "id": "workspace.scan_duplicates",
+            "name": "Scan authorized code directory for duplicates",
+            "provider": "BAGO local code scanner",
+            "effect": "READ",
+            "status": "AVAILABLE",
+            "integration": "CONNECTED",
+            "summary": "Scans one exact user-authorized project directory locally from Control or agent chat; emits file hashes and line references without sending source contents, writing, or executing code.",
+            "limits": {"requires_user_opt_in": True, "max_directories_per_turn": 5, "max_files": 300, "max_file_bytes": 262144, "max_total_bytes": 10485760, "max_lines_per_file": 20000, "max_total_lines": 150000, "max_findings": 200, "read_only": True},
+            "source_paths": ["src/agent_tools/code_duplicates.py", "src/api/server.py"],
+        },
+        {
             "id": "agent.evaluate",
             "name": "Evaluate an existing agent",
             "provider": "Configured Ollama provider",

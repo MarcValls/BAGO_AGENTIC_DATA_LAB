@@ -86,7 +86,7 @@
 .control-chat-composer textarea:focus { border-color: #6c96c7; box-shadow: 0 0 0 3px rgba(87, 138, 196, .15); }
 .control-chat-composer .primary-action { display: block; margin: 9px 0 0 auto; }
 .control-chat-composer > p { margin: 7px 0 0; color: #8297ae; font-size: .7rem; }
-.chat-composer-actions { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 9px; }
+.chat-composer-actions { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; margin-top: 9px; }
 .control-chat-composer .chat-composer-actions .primary-action { flex: 0 0 auto; margin: 0; }
 .workspace-read-toggle { display: flex; align-items: flex-start; gap: 8px; color: #b9cadc; font-size: .74rem; line-height: 1.4; cursor: pointer; }
 .workspace-read-toggle input { flex: 0 0 auto; margin: 2px 0 0; accent-color: #67a4e8; }
@@ -94,6 +94,17 @@
 .message-sources { margin-top: 10px; padding: 9px 11px; color: #9eb8d4; border: 1px solid #2c4969; border-radius: 9px; background: #102137; font-size: .73rem; }
 .message-sources ul { margin: 5px 0 0; padding-left: 18px; }
 .message-sources code { color: #c4dbf4; overflow-wrap: anywhere; }
+.message-cognition { margin-top: 9px; padding: 10px 12px; color: #a8bbcf; border: 1px solid #34445b; border-radius: 10px; background: #111b2a; font-size: .72rem; }
+.message-cognition-bago5 { border-color: #59619a; background: linear-gradient(135deg, #191d36, #122238); }
+.message-cognition-heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; color: #d6def5; }
+.message-cognition-heading span { color: #9aa7e8; font-size: .64rem; text-transform: uppercase; letter-spacing: .07em; }
+.message-cognition p { margin: 6px 0; line-height: 1.45; }
+.message-cognition ul { display: flex; flex-wrap: wrap; gap: 5px; margin: 7px 0; padding: 0; list-style: none; }
+.message-cognition li { display: inline-flex; align-items: center; gap: 7px; padding: 4px 7px; border: 1px solid #3b4d68; border-radius: 999px; background: #17283b; }
+.message-cognition li code { color: #c5d6f4; font-size: .65rem; }
+.message-cognition > small { display: block; margin-top: 4px; color: #899ab7; overflow-wrap: anywhere; }
+.workspace-cognition-toggle { flex: 1 0 100%; }
+.workspace-cognition-toggle input { accent-color: #9a91f2; }
 .capability-chat-card, .capability-chat-saved { max-width: 800px; margin: 16px auto; padding: 16px; border: 1px solid #52769e; border-radius: 13px; background: #122238; }
 .capability-chat-card .draft-heading { margin-bottom: 12px; }
 .capability-chat-card h3 { margin: 0; font-size: 1rem; }
