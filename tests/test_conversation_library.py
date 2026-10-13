@@ -65,6 +65,7 @@ def test_app_assistant_uses_saved_history_and_returns_saved_turn(monkeypatch, tm
     store = ConversationStore(tmp_path / "library.sqlite3")
     conversation = store.create("assistant", "app-assistant")
     monkeypatch.setattr(server, "CONVERSATIONS", store)
+    monkeypatch.setattr(server, "AGENT_CHAT_TRACE_DIR", tmp_path / "traces")
     monkeypatch.setattr(server, "_selected_model_id", lambda: "gemma4:31b-cloud")
     calls = []
     answers = iter(["First answer", "Second answer"])

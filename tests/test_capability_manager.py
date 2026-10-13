@@ -29,6 +29,9 @@ def test_catalog_reports_connected_and_unavailable_capabilities_truthfully(tmp_p
     assert by_id["workspace.read_text"]["status"] == "AVAILABLE"
     assert by_id["workspace.read_text"]["limits"]["requires_user_opt_in"] is True
     assert by_id["workspace.read_text"]["limits"]["read_only"] is True
+    assert by_id["workspace.scan_duplicates"]["status"] == "AVAILABLE"
+    assert by_id["workspace.scan_duplicates"]["limits"]["read_only"] is True
+    assert by_id["workspace.scan_duplicates"]["limits"]["max_total_lines"] == 150000
     assert by_id["mcp.execute"]["integration"] == "MODULE_PRESENT_NOT_CONNECTED"
     assert by_id["sandbox.execute"]["status"] == "UNAVAILABLE"
     assert by_id["agent.run"]["integration"] == "FAIL_CLOSED"
@@ -111,7 +114,7 @@ def test_capability_api_lists_and_persists_proposals_without_execution(monkeypat
     catalog_response = client.get("/api/capabilities")
     assert catalog_response.status_code == 200
     assert {item["id"] for item in catalog_response.json()["capabilities"]} == {
-        "workspace.read_text", "agent.evaluate", "mcp.execute", "sandbox.execute", "agent.run",
+        "workspace.read_text", "workspace.scan_duplicates", "agent.evaluate", "mcp.execute", "sandbox.execute", "agent.run",
     }
 
     created = client.post("/api/capabilities/proposals", json={

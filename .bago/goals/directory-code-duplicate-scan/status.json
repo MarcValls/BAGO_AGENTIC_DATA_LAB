@@ -1,0 +1,8 @@
+{
+  "schema": "bago.goal_status.v1",
+  "goal": "directory-code-duplicate-scan",
+  "status": "VALIDATED",
+  "verification": "PASS: 226 full-suite tests; focused 28; frontend build; README generation and check; py_compile and diff check; live 8081 API/catalog/bundle; rendered Control scan fixture with manifest and trace",
+  "branch": "codex/adl-directory-duplicate-scan-20261013",
+  "base_head": "ac8bdf1b19f587a5ae553f13e846c7d41e1e507b"
+}

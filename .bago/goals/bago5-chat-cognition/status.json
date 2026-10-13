@@ -1,0 +1,10 @@
+{
+  "schema": "bago.goal_status.v1",
+  "goal": "bago5-chat-cognition",
+  "status": "VALIDATED",
+  "verification": "PASS: 232 full-suite tests; focused 13; frontend build; README generation/check; py_compile/diff check; live 8081 served bundle; mocked UI and API cognitive-mode checks. Live-model inference NOT_RUN: secure credential storage unavailable.",
+  "branch": "codex/adl-directory-duplicate-scan-20261013",
+  "base_head": "ac8bdf1b19f587a5ae553f13e846c7d41e1e507b",
+  "source_project": "E:\\proyectos curriculum\\BAGO5_DEV\\BAGO5.0",
+  "source_head": "aa383c8266935c2f346a1464ad3200f055731c16"
+}
