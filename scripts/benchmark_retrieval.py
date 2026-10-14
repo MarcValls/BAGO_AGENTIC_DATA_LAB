@@ -37,6 +37,7 @@ class BenchmarkResult:
     rerank: bool
     filter_name: str
     top_k: int
+    query_count: int
     recall: float
     precision: float
     mrr: float
@@ -66,92 +67,148 @@ def _chunk(
 
 
 def build_benchmark_corpus() -> list[RetrievalChunk]:
-    """Use a small labelled corpus so metrics do not depend on a cloud model."""
+    """Build a labelled corpus with hard negatives and no external model."""
 
-    return [
-        _chunk(
-            "auth-permit",
-            "A canonical Permit authorizes an Execution through the gateway.",
-            domain="governance",
-            authority=AuthorityLevel.CANONICAL,
+    records = [
+        (
+            "permit-effect",
+            "A valid permit grants authority for one operation; the gateway checks it before the operation executes.",
+            "governance",
+            AuthorityLevel.CANONICAL,
         ),
-        _chunk(
-            "auth-boundary",
-            "The AuthorizationBoundary validates action limits before effects.",
-            domain="governance",
-            authority=AuthorityLevel.CANONICAL,
+        (
+            "action-scope",
+            "The authorization boundary rejects actions outside the permitted scope before any external effect.",
+            "governance",
+            AuthorityLevel.CANONICAL,
         ),
-        _chunk(
-            "retrieval-hybrid",
-            "Hybrid retrieval combines BM25 lexical matching with semantic embeddings.",
-            domain="retrieval",
-            authority=AuthorityLevel.VERIFIED,
+        (
+            "approval-step",
+            "Record explicit human approval before an irreversible operation or external state change.",
+            "governance",
+            AuthorityLevel.CANONICAL,
         ),
-        _chunk(
-            "retrieval-rerank",
-            "A reranker improves the final context order after candidate retrieval.",
-            domain="retrieval",
-            authority=AuthorityLevel.VERIFIED,
+        (
+            "current-revision",
+            "Only current verified policy revisions may justify a change; superseded rules cannot authorize it.",
+            "governance",
+            AuthorityLevel.CANONICAL,
         ),
-        _chunk(
+        (
+            "denied-permit",
+            "A denied permit blocks the requested operation and records the rejected effect.",
+            "governance",
+            AuthorityLevel.CANONICAL,
+        ),
+        (
             "evidence-lineage",
-            "Evidence maps every claim to a chunk, source and revision.",
-            domain="evidence",
-            authority=AuthorityLevel.VERIFIED,
+            "An evidence receipt links each claim to its chunk, source URI and exact revision.",
+            "evidence",
+            AuthorityLevel.VERIFIED,
         ),
-        _chunk(
-            "evidence-receipt",
-            "Receipts record the actual outcome and evidence references.",
-            domain="evidence",
-            authority=AuthorityLevel.VERIFIED,
+        (
+            "etl-dedupe",
+            "The ETL pipeline hashes normalized content to detect duplicates and avoid ingesting it twice.",
+            "etl",
+            AuthorityLevel.VERIFIED,
         ),
-        _chunk(
-            "etl-idempotency",
-            "Content hashing makes ETL ingestion idempotent and deduplicated.",
-            domain="etl",
-            authority=AuthorityLevel.VERIFIED,
+        (
+            "mcp-effects",
+            "MCP tool registration records effect classification so external side effects can be governed.",
+            "mcp",
+            AuthorityLevel.VERIFIED,
         ),
-        _chunk(
-            "mcp-registration",
-            "MCP tools need explicit registration and effect classification.",
-            domain="mcp",
-            authority=AuthorityLevel.PROPOSED,
+        (
+            "chunk-overlap",
+            "The chunker repeats a bounded tail from one text segment at the start of the next segment.",
+            "etl",
+            AuthorityLevel.VERIFIED,
         ),
-        _chunk(
-            "bedrock-provider",
-            "A Bedrock provider adapter must preserve timeout and receipt boundaries.",
-            domain="providers",
-            authority=AuthorityLevel.PROPOSED,
+        (
+            "hybrid-fusion",
+            "Hybrid retrieval fuses keyword BM25 and vector candidates before ranking the final list.",
+            "retrieval",
+            AuthorityLevel.VERIFIED,
         ),
-        _chunk(
-            "superseded-policy",
-            "An old policy is superseded and must not be used as current authority.",
-            domain="governance",
-            authority=AuthorityLevel.CANONICAL,
-            validity=ValidityStatus.SUPERSEDED,
+        (
+            "semantic-retrieval",
+            "The semantic index compares query and document vectors to retrieve related passages.",
+            "retrieval",
+            AuthorityLevel.VERIFIED,
         ),
-        _chunk(
-            "career-market",
-            "The portfolio roadmap maps skills to AI engineering vacancies.",
-            domain="career",
-            authority=AuthorityLevel.PROPOSED,
+        (
+            "provider-timeout",
+            "Provider adapters enforce request timeouts and preserve a receipt for each invocation.",
+            "providers",
+            AuthorityLevel.PROPOSED,
         ),
-        _chunk(
-            "testing-contract",
-            "CRIT P0 tests protect governed execution contracts.",
-            domain="testing",
-            authority=AuthorityLevel.VERIFIED,
-        ),
+        # Hard negatives deliberately share query vocabulary without answering the labelled question.
+        ("permit-template", "A portfolio template explains how to request a permit for an operation; it does not grant authority.", "career", AuthorityLevel.PROPOSED),
+        ("scope-report", "The monthly report measures the scope of completed gateway operations and external effects.", "analytics", AuthorityLevel.VERIFIED),
+        ("approval-training", "Training material describes approval workflows and irreversible changes in a sample environment.", "training", AuthorityLevel.PROPOSED),
+        ("policy-archive", "The policy archive stores revisions and superseded rules for historical comparison only.", "archive", AuthorityLevel.VERIFIED),
+        ("permit-audit", "Auditors review permit requests, operation records, and gateway logs after execution.", "audit", AuthorityLevel.VERIFIED),
+        ("receipt-storage", "Receipts are stored with timestamps and outcome codes for later inspection.", "evidence", AuthorityLevel.VERIFIED),
+        ("etl-schedule", "A local scheduler starts the ETL pipeline each weekday and records job status.", "etl", AuthorityLevel.VERIFIED),
+        ("hash-collision", "A content hash is useful for indexing but collisions require checking the original document.", "etl", AuthorityLevel.VERIFIED),
+        ("mcp-transport", "MCP uses a transport protocol to exchange tool descriptions and invocation messages.", "mcp", AuthorityLevel.VERIFIED),
+        ("tool-effects-guide", "A guide lists common side effects of writing files, sending messages, and updating records.", "mcp", AuthorityLevel.VERIFIED),
+        ("text-boundaries", "Text segmentation splits a long report at paragraph boundaries without adding repeated text.", "etl", AuthorityLevel.VERIFIED),
+        ("chunk-size", "The chunker limits each text segment to a configured maximum number of characters.", "etl", AuthorityLevel.VERIFIED),
+        ("bm25-guide", "BM25 ranks documents from lexical term frequency and corpus document frequency.", "retrieval", AuthorityLevel.VERIFIED),
+        ("vector-guide", "Vector search compares embeddings to find passages with similar representations.", "retrieval", AuthorityLevel.VERIFIED),
+        ("rerank-guide", "A reranker sorts candidate passages after retrieval using an additional relevance score.", "retrieval", AuthorityLevel.VERIFIED),
+        ("cloud-timeouts", "Cloud networking guidance recommends retries, timeouts, and circuit breakers for remote calls.", "providers", AuthorityLevel.PROPOSED),
+        ("interview-roadmap", "The career roadmap lists AI engineering skills, interviews and portfolio milestones.", "career", AuthorityLevel.PROPOSED),
+        ("database-index", "Database indexes accelerate lookups over document identifiers and metadata fields.", "storage", AuthorityLevel.VERIFIED),
+        ("release-notes", "Release notes summarize features, resolved defects, and compatibility changes.", "product", AuthorityLevel.VERIFIED),
+        ("market-report", "Market analysis compares current demand for data and artificial intelligence roles.", "career", AuthorityLevel.PROPOSED),
+        ("test-report", "The test report records passed cases, skipped cases, and known limitations.", "testing", AuthorityLevel.VERIFIED),
+    ]
+    return [
+        _chunk(chunk_id, content, domain=domain, authority=authority)
+        for chunk_id, content, domain, authority in records
     ]
 
 
 def benchmark_cases() -> tuple[BenchmarkCase, ...]:
     return (
-        BenchmarkCase("permit authorizes execution", frozenset({"auth-permit"})),
-        BenchmarkCase("metadata hybrid semantic retrieval", frozenset({"retrieval-hybrid"})),
-        BenchmarkCase("claim source revision evidence", frozenset({"evidence-lineage"})),
-        BenchmarkCase("idempotent content hash ingestion", frozenset({"etl-idempotency"})),
-        BenchmarkCase("registered MCP tools", frozenset({"mcp-registration"})),
+        BenchmarkCase(
+            "what grants authority for a specific operation at the gateway",
+            frozenset({"permit-effect"}),
+        ),
+        BenchmarkCase(
+            "how are actions outside authorization limits rejected before external changes",
+            frozenset({"action-scope", "denied-permit"}),
+        ),
+        BenchmarkCase(
+            "which human decision must precede an irreversible state change",
+            frozenset({"approval-step"}),
+        ),
+        BenchmarkCase(
+            "can outdated rules justify a change under the current policy",
+            frozenset({"current-revision"}),
+        ),
+        BenchmarkCase(
+            "trace this claim back to its exact source version",
+            frozenset({"evidence-lineage"}),
+        ),
+        BenchmarkCase(
+            "avoid storing the same input document more than once",
+            frozenset({"etl-dedupe"}),
+        ),
+        BenchmarkCase(
+            "how are tool calls that modify outside systems categorized",
+            frozenset({"mcp-effects"}),
+        ),
+        BenchmarkCase(
+            "keep repeated context where adjacent text segments meet",
+            frozenset({"chunk-overlap"}),
+        ),
+        BenchmarkCase(
+            "combine exact terms and related concepts into a unified ranking",
+            frozenset({"hybrid-fusion", "semantic-retrieval"}),
+        ),
     )
 
 
@@ -171,9 +228,10 @@ def _metrics(response: RetrievalResponse, relevant_ids: frozenset[str]) -> tuple
 def run_benchmark(
     chunks: Iterable[RetrievalChunk] | None = None,
     *,
-    top_ks: Sequence[int] = (10, 25, 50, 100),
+    top_ks: Sequence[int] = (1, 3),
 ) -> list[BenchmarkResult]:
-    retriever = GovernedRAG(chunks or build_benchmark_corpus())
+    corpus = tuple(chunks) if chunks is not None else tuple(build_benchmark_corpus())
+    retriever = GovernedRAG(corpus)
     filters: Mapping[str, MetadataFilter] = {
         "all-current": MetadataFilter(),
         "canonical-governance": MetadataFilter(
@@ -183,6 +241,14 @@ def run_benchmark(
     }
     results: list[BenchmarkResult] = []
     for filter_name, metadata_filter in filters.items():
+        eligible_ids = {
+            chunk.chunk_id for chunk in corpus if metadata_filter.allows(chunk)
+        }
+        cases = [
+            (case, case.relevant_ids & eligible_ids)
+            for case in benchmark_cases()
+        ]
+        cases = [(case, relevant_ids) for case, relevant_ids in cases if relevant_ids]
         for mode in RetrievalMode:
             for rerank in (False, True):
                 for top_k in top_ks:
@@ -195,9 +261,9 @@ def run_benchmark(
                                 metadata_filter=metadata_filter,
                                 rerank=rerank,
                             ),
-                            case.relevant_ids,
+                            relevant_ids,
                         )
-                        for case in benchmark_cases()
+                        for case, relevant_ids in cases
                     ]
                     results.append(
                         BenchmarkResult(
@@ -205,6 +271,7 @@ def run_benchmark(
                             rerank=rerank,
                             filter_name=filter_name,
                             top_k=top_k,
+                            query_count=len(metrics),
                             recall=mean(item[0] for item in metrics),
                             precision=mean(item[1] for item in metrics),
                             mrr=mean(item[2] for item in metrics),
@@ -230,21 +297,22 @@ def render_benchmark(results: Sequence[BenchmarkResult]) -> str:
         "",
         "- lexical BM25-like retrieval vs deterministic hash-semantic retrieval",
         "- hybrid score fusion with deterministic reranking on/off",
-        "- top-k values 10, 25, 50 and 100",
+        "- top-k values 1 and 3, chosen to expose ranking misses",
         "- current-all vs canonical-governance metadata filtering",
-        "- metrics: mean Recall@k, Precision@k and MRR@k over five labelled queries",
+        "- metrics: Recall@1, Recall@3, Precision@k and MRR@k over difficult labelled queries",
+        "- each filter is scored only against relevant evidence that survives that filter",
         "",
         f"Generated at: `{generated}`",
         "",
         "## Results",
         "",
-        "| Filter | Mode | Rerank | k | Recall | Precision | MRR |",
-        "|---|---|---:|---:|---:|---:|---:|",
+        "| Filter | Mode | Rerank | k | Queries | Recall@k | Precision@k | MRR@k |",
+        "|---|---|---:|---:|---:|---:|---:|---:|",
     ]
     for result in results:
         lines.append(
             f"| {result.filter_name} | {result.mode.value} | "
-            f"{'yes' if result.rerank else 'no'} | {result.top_k} | "
+            f"{'yes' if result.rerank else 'no'} | {result.top_k} | {result.query_count} | "
             f"{_pct(result.recall)} | {_pct(result.precision)} | {_pct(result.mrr)} |"
         )
     lines.extend(

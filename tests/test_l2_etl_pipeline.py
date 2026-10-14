@@ -64,13 +64,19 @@ class TestL2ETLPipeline:
     def test_chunk_overlap_preserved(self, pipeline, test_doc_long):
         """CRIT P0: Overlap entre chunks se preserva"""
         r = pipeline.ingest_file(str(test_doc_long))
-        if r.chunks_created < 2:
-            pytest.skip(f"Need 2+ chunks, got {r.chunks_created}")
+        assert r.status == ValidationStatus.VALID
+        assert r.chunks_created >= 2, f"Expected 2+ chunks, got {r.chunks_created}"
         conn = sqlite3.connect(pipeline.db_path)
         cur = conn.cursor()
-        cur.execute("SELECT start_offset, end_offset FROM chunks WHERE document_id=? ORDER BY chunk_index", (r.source_id,))
+        cur.execute("SELECT DISTINCT document_id FROM chunks")
+        document_ids = [row[0] for row in cur.fetchall()]
+        assert len(document_ids) == 1, f"Expected one ingested document, got {document_ids}"
+        cur.execute(
+            "SELECT start_offset, end_offset FROM chunks WHERE document_id=? ORDER BY chunk_index",
+            (document_ids[0],),
+        )
         chunks = cur.fetchall()
         conn.close()
-        # Verificar overlap en offsets
+        assert len(chunks) == r.chunks_created >= 2
         for i in range(len(chunks) - 1):
-            assert chunks[i+1][0] < chunks[i][1], f"No overlap {i}->{i+1}"
+            assert chunks[i + 1][0] < chunks[i][1], f"No overlap {i}->{i + 1}"
