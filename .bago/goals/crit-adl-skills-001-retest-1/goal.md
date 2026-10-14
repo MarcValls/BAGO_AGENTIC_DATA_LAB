@@ -1,6 +1,6 @@
 # CRIT-ADL-SKILLS-001-RETEST-1
 
-Status: `PREPARED`
+Status: `VALIDATED`
 
 ## Objective
 
@@ -25,4 +25,7 @@ the three skill levels within the evidence scope, and obtain a green full CI run
 
 - Fetched `origin/main` before branching: `a066792f4ad878ded812cda0220fc1a4c0925289`.
 - Candidate branch: `codex/crit-adl-skills-001-retest-1`.
-- Candidate commit and remote CI result: pending.
+- Candidate implementation commit: `b042984d9d4b365153ff2fcf201dddc32fe39857`.
+- Full GitHub Actions CI run `38622554443`: `SUCCESS`, 248 tests passed; all later
+  demo, vector-store, OpenMetadata, Jaeger, compile and video-check steps passed.
+- README consistency run `38622553897`: `SUCCESS`.

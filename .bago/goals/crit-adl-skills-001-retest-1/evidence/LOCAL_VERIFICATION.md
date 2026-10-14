@@ -48,5 +48,16 @@ three entries.
 - `python -m pytest tests/test_l2_etl_pipeline.py tests/test_retrieval_benchmark.py tests/test_dynamic_readme.py -q` — 12 passed.
 - `git diff --check` — PASS.
 
-GitHub Actions for the candidate commit is still `NOT_RUN`; this goal remains
-`PREPARED` until the candidate workflow run is observed.
+## GitHub Actions verification
+
+For implementation commit
+`b042984d9d4b365153ff2fcf201dddc32fe39857`:
+
+- [Full CI run 38622554443](https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/actions/runs/38622554443)
+  — `SUCCESS`. The suite step reports `248 passed in 97.10s`; the new ffmpeg
+  install step succeeded, as did all later demo, vector-store, OpenMetadata,
+  Jaeger, compile and read-only portfolio-video checks.
+- [README consistency run 38622553897](https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/actions/runs/38622553897)
+  — `SUCCESS`.
+
+The acceptance criteria in `goal.md` are satisfied for this candidate commit.
