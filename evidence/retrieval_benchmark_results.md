@@ -8,64 +8,41 @@ benchmark, not a claim of production embedding quality.
 
 - lexical BM25-like retrieval vs deterministic hash-semantic retrieval
 - hybrid score fusion with deterministic reranking on/off
-- top-k values 10, 25, 50 and 100
+- top-k values 1 and 3, chosen to expose ranking misses
 - current-all vs canonical-governance metadata filtering
-- metrics: mean Recall@k, Precision@k and MRR@k over five labelled queries
+- metrics: Recall@1, Recall@3, Precision@k and MRR@k over difficult labelled queries
+- each filter is scored only against relevant evidence that survives that filter
 
-Generated at: `2026-09-21T22:49:13.820156Z`
+Generated at: `2026-10-14T19:10:52.622277Z`
 
 ## Results
 
-| Filter | Mode | Rerank | k | Recall | Precision | MRR |
-|---|---|---:|---:|---:|---:|---:|
-| all-current | lexical | no | 10 | 100.0% | 10.0% | 100.0% |
-| all-current | lexical | no | 25 | 100.0% | 9.1% | 100.0% |
-| all-current | lexical | no | 50 | 100.0% | 9.1% | 100.0% |
-| all-current | lexical | no | 100 | 100.0% | 9.1% | 100.0% |
-| all-current | lexical | yes | 10 | 100.0% | 10.0% | 100.0% |
-| all-current | lexical | yes | 25 | 100.0% | 9.1% | 100.0% |
-| all-current | lexical | yes | 50 | 100.0% | 9.1% | 100.0% |
-| all-current | lexical | yes | 100 | 100.0% | 9.1% | 100.0% |
-| all-current | semantic | no | 10 | 100.0% | 10.0% | 100.0% |
-| all-current | semantic | no | 25 | 100.0% | 9.1% | 100.0% |
-| all-current | semantic | no | 50 | 100.0% | 9.1% | 100.0% |
-| all-current | semantic | no | 100 | 100.0% | 9.1% | 100.0% |
-| all-current | semantic | yes | 10 | 100.0% | 10.0% | 100.0% |
-| all-current | semantic | yes | 25 | 100.0% | 9.1% | 100.0% |
-| all-current | semantic | yes | 50 | 100.0% | 9.1% | 100.0% |
-| all-current | semantic | yes | 100 | 100.0% | 9.1% | 100.0% |
-| all-current | hybrid | no | 10 | 100.0% | 10.0% | 100.0% |
-| all-current | hybrid | no | 25 | 100.0% | 9.1% | 100.0% |
-| all-current | hybrid | no | 50 | 100.0% | 9.1% | 100.0% |
-| all-current | hybrid | no | 100 | 100.0% | 9.1% | 100.0% |
-| all-current | hybrid | yes | 10 | 100.0% | 10.0% | 100.0% |
-| all-current | hybrid | yes | 25 | 100.0% | 9.1% | 100.0% |
-| all-current | hybrid | yes | 50 | 100.0% | 9.1% | 100.0% |
-| all-current | hybrid | yes | 100 | 100.0% | 9.1% | 100.0% |
-| canonical-governance | lexical | no | 10 | 20.0% | 10.0% | 20.0% |
-| canonical-governance | lexical | no | 25 | 20.0% | 10.0% | 20.0% |
-| canonical-governance | lexical | no | 50 | 20.0% | 10.0% | 20.0% |
-| canonical-governance | lexical | no | 100 | 20.0% | 10.0% | 20.0% |
-| canonical-governance | lexical | yes | 10 | 20.0% | 10.0% | 20.0% |
-| canonical-governance | lexical | yes | 25 | 20.0% | 10.0% | 20.0% |
-| canonical-governance | lexical | yes | 50 | 20.0% | 10.0% | 20.0% |
-| canonical-governance | lexical | yes | 100 | 20.0% | 10.0% | 20.0% |
-| canonical-governance | semantic | no | 10 | 20.0% | 10.0% | 20.0% |
-| canonical-governance | semantic | no | 25 | 20.0% | 10.0% | 20.0% |
-| canonical-governance | semantic | no | 50 | 20.0% | 10.0% | 20.0% |
-| canonical-governance | semantic | no | 100 | 20.0% | 10.0% | 20.0% |
-| canonical-governance | semantic | yes | 10 | 20.0% | 10.0% | 20.0% |
-| canonical-governance | semantic | yes | 25 | 20.0% | 10.0% | 20.0% |
-| canonical-governance | semantic | yes | 50 | 20.0% | 10.0% | 20.0% |
-| canonical-governance | semantic | yes | 100 | 20.0% | 10.0% | 20.0% |
-| canonical-governance | hybrid | no | 10 | 20.0% | 10.0% | 20.0% |
-| canonical-governance | hybrid | no | 25 | 20.0% | 10.0% | 20.0% |
-| canonical-governance | hybrid | no | 50 | 20.0% | 10.0% | 20.0% |
-| canonical-governance | hybrid | no | 100 | 20.0% | 10.0% | 20.0% |
-| canonical-governance | hybrid | yes | 10 | 20.0% | 10.0% | 20.0% |
-| canonical-governance | hybrid | yes | 25 | 20.0% | 10.0% | 20.0% |
-| canonical-governance | hybrid | yes | 50 | 20.0% | 10.0% | 20.0% |
-| canonical-governance | hybrid | yes | 100 | 20.0% | 10.0% | 20.0% |
+| Filter | Mode | Rerank | k | Queries | Recall@k | Precision@k | MRR@k |
+|---|---|---:|---:|---:|---:|---:|---:|
+| all-current | lexical | no | 1 | 9 | 66.7% | 77.8% | 77.8% |
+| all-current | lexical | no | 3 | 9 | 88.9% | 37.0% | 81.5% |
+| all-current | lexical | yes | 1 | 9 | 66.7% | 77.8% | 77.8% |
+| all-current | lexical | yes | 3 | 9 | 88.9% | 37.0% | 81.5% |
+| all-current | semantic | no | 1 | 9 | 50.0% | 55.6% | 55.6% |
+| all-current | semantic | no | 3 | 9 | 72.2% | 25.9% | 66.7% |
+| all-current | semantic | yes | 1 | 9 | 61.1% | 66.7% | 66.7% |
+| all-current | semantic | yes | 3 | 9 | 77.8% | 29.6% | 75.9% |
+| all-current | hybrid | no | 1 | 9 | 66.7% | 77.8% | 77.8% |
+| all-current | hybrid | no | 3 | 9 | 100.0% | 40.7% | 87.0% |
+| all-current | hybrid | yes | 1 | 9 | 66.7% | 77.8% | 77.8% |
+| all-current | hybrid | yes | 3 | 9 | 100.0% | 40.7% | 87.0% |
+| canonical-governance | lexical | no | 1 | 4 | 87.5% | 100.0% | 100.0% |
+| canonical-governance | lexical | no | 3 | 4 | 100.0% | 41.7% | 100.0% |
+| canonical-governance | lexical | yes | 1 | 4 | 87.5% | 100.0% | 100.0% |
+| canonical-governance | lexical | yes | 3 | 4 | 100.0% | 41.7% | 100.0% |
+| canonical-governance | semantic | no | 1 | 4 | 87.5% | 100.0% | 100.0% |
+| canonical-governance | semantic | no | 3 | 4 | 100.0% | 41.7% | 100.0% |
+| canonical-governance | semantic | yes | 1 | 4 | 87.5% | 100.0% | 100.0% |
+| canonical-governance | semantic | yes | 3 | 4 | 100.0% | 41.7% | 100.0% |
+| canonical-governance | hybrid | no | 1 | 4 | 87.5% | 100.0% | 100.0% |
+| canonical-governance | hybrid | no | 3 | 4 | 100.0% | 41.7% | 100.0% |
+| canonical-governance | hybrid | yes | 1 | 4 | 87.5% | 100.0% | 100.0% |
+| canonical-governance | hybrid | yes | 3 | 4 | 100.0% | 41.7% | 100.0% |
 
 ## Governance interpretation
 

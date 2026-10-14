@@ -74,6 +74,17 @@ def test_readme_inventory_and_market_tables_are_discovered():
     assert any(row[0] == "Arquitectura de sistemas" for row in soft_skills)
 
 
+def test_ci_installs_video_runtime_before_running_full_suite():
+    workflow = (ROOT / ".github" / "workflows" / "ci.yml").read_text(encoding="utf-8")
+    test_dependencies = (ROOT / "requirements-test.txt").read_text(encoding="utf-8")
+
+    assert "Pillow==12.2.0" in test_dependencies
+    assert "sudo apt-get install --yes ffmpeg" in workflow
+    assert workflow.index("sudo apt-get install --yes ffmpeg") < workflow.index(
+        "run: python -m pytest tests -q"
+    )
+
+
 def test_rendered_readme_contains_dynamic_contract_and_l10_artifacts():
     manifest = _read_json(ROOT / "docs" / "readme_manifest.json")
     rendered = render_readme(

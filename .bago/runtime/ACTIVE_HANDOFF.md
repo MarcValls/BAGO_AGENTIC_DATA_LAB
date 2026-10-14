@@ -1,13 +1,26 @@
 # Active handoff
 
-Goal: `.bago/goals/provider-cognition-repair/goal.md`
+Goal: `.bago/goals/crit-adl-skills-001-retest-1/goal.md`
 
-Status: `VALIDATED` for live Ollama inference through BAGO5 chat, chat width and Agent Runs profile/title placement. Final source snapshot is uncommitted on main at HEAD `18b07ac9088ecf7ba32fb4c39c6112f1bb0eb631`; the user-owned provider configuration change is preserved.
+Status: `VALIDATED`; local and remote verification are recorded in
+`.bago/goals/crit-adl-skills-001-retest-1/evidence/LOCAL_VERIFICATION.md`.
 
-Live runtime: `127.0.0.1:8081`, process Python311 `-m src.api.server`. Ollama `gemma4:31b` state `ready`. Real BAGO5 conversation `conv_6b0896b186234333ba28fb1706ab2ee8` returned `ADL BAGO5 conectado`; persisted prompt-focus trace `trace-2c53f77c1f3d4b75` is bounded cognition metadata and is not hidden model reasoning.
+Candidate branch: `codex/crit-adl-skills-001-retest-1`, based on freshly fetched
+`origin/main` at `a066792f4ad878ded812cda0220fc1a4c0925289`.
 
-UI result: chat main panel consumes available width (measured at 1920x1080, 1280x800 and 800x700). Agent profiles remain in Agent Runs under the scanner; redundant `Agent Runs` page heading is removed while the useful `Agent profiles` subheading remains. Served JS/CSS hashes match disk. Independent review is PASS, P0=0, P1=0; report and screenshots are under `.bago/goals/provider-cognition-repair/evidence/`.
+Implemented: fixed L2's overlap test to assert persisted chunks and actual
+adjacent overlap; expanded the L4 deterministic benchmark and reported policy-
+aware Recall@1/Recall@3/MRR; corrected Hybrid retrieval, ETL and Data pipelines
+levels in the canonical skill matrix and regenerated README; CI installs
+`ffmpeg` before pytest and tests that dependency ordering.
 
-Closure: frontend production build PASS; full repository suite PASS (247 tests) through `python scripts/generate_dynamic_readme.py`; generated README consistency PASS through `python scripts/generate_dynamic_readme.py --check --skip-tests`; team mission handoffs and terminal gate PASS.
+Local verification: full suite 248 passed via README generation; focused L2,
+L4 benchmark and CI contract checks 12 passed; README consistency PASS;
+`git diff --check` PASS.
 
-Residual: P2 focus chips show scores without human-readable labels. General Agent Runs execution stays unavailable and disabled. No credential was written into evidence or chat.
+Remote verification: full CI run `38622554443` and README consistency run
+`38622553897` both passed on implementation commit
+`b042984d9d4b365153ff2fcf201dddc32fe39857`. The full suite reported 248 passed
+in 97.10 seconds and all later workflow steps succeeded. The previous failure
+was run `38608531292` on base commit `a066792f`; its three pytest failures were
+caused by missing `ffmpeg` after Pillow installation succeeded.
