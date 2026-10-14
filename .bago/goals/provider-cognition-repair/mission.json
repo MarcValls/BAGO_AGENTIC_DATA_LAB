@@ -1,0 +1,119 @@
+{
+  "mission_id": "PROVIDER_COGNITION_REPAIR_V1",
+  "derived_from": ".bago/team/kit/missions/agent-decision-inspector.json",
+  "objective": "Repair exact runtime credential dependency, accurate provider status, and route BAGO5 experimental conversation through the configured provider.",
+  "max_concurrency": 2,
+  "terminal_work_items": [
+    "W12"
+  ],
+  "work_items": [
+    {
+      "id": "R01",
+      "title": "Freeze provider failure evidence and repair contract",
+      "role": "team-orchestrator",
+      "depends_on": [],
+      "write_scopes": [
+        ".bago/goals/provider-cognition-repair/**"
+      ],
+      "read_scopes": [
+        "**"
+      ],
+      "deliverables": [
+        "Freeze provider failure evidence and repair contract"
+      ],
+      "done_when": [
+        "Materialized checks PASS, failures accurately reported"
+      ],
+      "frozen_outputs": []
+    },
+    {
+      "id": "R02",
+      "title": "Repair provider readiness and experimental help routing",
+      "role": "evidence-provenance-engineer",
+      "depends_on": [
+        "R01"
+      ],
+      "write_scopes": [
+        "src/api/server.py",
+        "src/providers/ollama.py",
+        "tests/test_provider_cognition_repair.py"
+      ],
+      "read_scopes": [
+        "**"
+      ],
+      "deliverables": [
+        "Repair provider readiness and experimental help routing"
+      ],
+      "done_when": [
+        "Materialized checks PASS, failures accurately reported"
+      ],
+      "frozen_outputs": []
+    },
+    {
+      "id": "R03",
+      "title": "Route experimental greetings to actual chat",
+      "role": "decision-ui-engineer",
+      "depends_on": [
+        "R01"
+      ],
+      "write_scopes": [
+        "frontend/src/components/AgentChat.tsx"
+      ],
+      "read_scopes": [
+        "**"
+      ],
+      "deliverables": [
+        "Route experimental greetings to actual chat"
+      ],
+      "done_when": [
+        "Materialized checks PASS, failures accurately reported"
+      ],
+      "frozen_outputs": []
+    },
+    {
+      "id": "R04",
+      "title": "Independently verify provider/cognition repair",
+      "role": "verification-engineer",
+      "depends_on": [
+        "R02",
+        "R03"
+      ],
+      "write_scopes": [
+        ".bago/goals/provider-cognition-repair/evidence/**"
+      ],
+      "read_scopes": [
+        "**"
+      ],
+      "deliverables": [
+        "Independently verify provider/cognition repair"
+      ],
+      "done_when": [
+        "Materialized checks PASS, failures accurately reported"
+      ],
+      "frozen_outputs": []
+    },
+    {
+      "id": "W12",
+      "title": "Terminal repair gate",
+      "role": "team-orchestrator",
+      "depends_on": [
+        "R04"
+      ],
+      "write_scopes": [
+        ".bago/goals/provider-cognition-repair/**",
+        ".bago/runtime/ACTIVE_HANDOFF.md",
+        "README.md"
+      ],
+      "read_scopes": [
+        "**"
+      ],
+      "deliverables": [
+        "Terminal repair gate"
+      ],
+      "done_when": [
+        "Materialized checks PASS, failures accurately reported"
+      ],
+      "frozen_outputs": []
+    }
+  ]
+}

@@ -3,7 +3,7 @@
 [![CI](https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/actions/workflows/ci.yml/badge.svg)](https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/actions/workflows/ci.yml)
 [![GitHub](https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/actions/workflows/readme-consistency.yml/badge.svg)](https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/actions/workflows/readme-consistency.yml)
 [![Branch](https://img.shields.io/badge/branch-main-green)](https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/tree/main)
-[![Tests](https://img.shields.io/badge/tests-234%2F234%20passing-brightgreen)](https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/actions)
+[![Tests](https://img.shields.io/badge/tests-247%2F247%20passing-brightgreen)](https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/actions)
 [![License](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 
 > Laboratorio experimental para desarrollar capacidades de AI Engineering con gobernanza BAGO.
@@ -86,7 +86,7 @@ Profundiza en las fases L0-L15 en el [roadmap](#roadmap-detectado), o consulta [
 
 | Métrica | Valor |
 |---|---|
-| Tests ejecutados | **234/234** |
+| Tests ejecutados | **247/247** |
 | Rama pública | `main` |
 | Estado actualizado | 2026-10-10 |
 | Fase actual | **L15 · OpenTelemetry + Jaeger Local Live** · VERIFIED (local live) |
@@ -410,6 +410,7 @@ La tabla se genera desde `.bago/canon/JOB_SKILL_MATRIX.md`; actualiza allí los 
 - `tests/test_one_command_demo.py` (2 checks)
 - `tests/test_ontology_generator.py` (7 checks)
 - `tests/test_openmetadata_adapter.py` (22 checks)
+- `tests/test_provider_cognition_repair.py` (5 checks)
 - `tests/test_public_e2e_demo.py` (5 checks)
 - `tests/test_render_portfolio_demo_video.py` (3 checks)
 - `tests/test_retrieval_accuracy.py` (9 checks)

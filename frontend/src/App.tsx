@@ -12,7 +12,7 @@ import AgentChat from './components/AgentChat'
 import CapabilityManager from './components/CapabilityManager'
 import JobHistory from './components/JobHistory'
 import AgentEvaluationLab from './components/AgentEvaluationLab'
-import ProviderSettings from './components/ProviderSettings'
+import ProviderSettings, { type ProviderStatusSummary } from './components/ProviderSettings'
 import CognitionSettings, { readCognitiveMode, type CognitiveMode } from './components/CognitionSettings'
 import { DecisionInspector } from './features/decision-inspector'
 
@@ -59,6 +59,26 @@ function isDataView(view: AppView): view is DataView {
   return dataNavigation.some((item) => item.id === view)
 }
 
+function useScrollActivity() {
+  const [scrolling, setScrolling] = useState(false)
+  const idleTimer = useRef<number | null>(null)
+
+  const onScroll = useCallback(() => {
+    setScrolling(true)
+    if (idleTimer.current !== null) window.clearTimeout(idleTimer.current)
+    idleTimer.current = window.setTimeout(() => {
+      idleTimer.current = null
+      setScrolling(false)
+    }, 700)
+  }, [])
+
+  useEffect(() => () => {
+    if (idleTimer.current !== null) window.clearTimeout(idleTimer.current)
+  }, [])
+
+  return { scrolling, onScroll }
+}
+
 function App() {
   const [artifacts, setArtifacts] = useState<Artifacts | null>(null)
   const [loadingArtifacts, setLoadingArtifacts] = useState(true)
@@ -69,10 +89,24 @@ function App() {
   const [dataLayerOpen, setDataLayerOpen] = useState(false)
   const [settingsOpen, setSettingsOpen] = useState(false)
   const [settingsSection, setSettingsSection] = useState<'provider' | 'cognition'>('provider')
+  const [providerNavStatus, setProviderNavStatus] = useState<ProviderStatusSummary | null>(null)
   const [cognitiveMode, setCognitiveMode] = useState<CognitiveMode>(readCognitiveMode)
   const [demoRefresh, setDemoRefresh] = useState(0)
   const dataLayerRef = useRef<HTMLDialogElement>(null)
   const settingsDialogRef = useRef<HTMLDialogElement>(null)
+  const appScroll = useScrollActivity()
+  const settingsScroll = useScrollActivity()
+  const dataScroll = useScrollActivity()
+
+  useEffect(() => {
+    if (!settingsOpen) return
+    const controller = new AbortController()
+    void fetch('/api/providers/ollama/status', { signal: controller.signal }).then(async (response) => {
+      if (!response.ok) return
+      setProviderNavStatus(await response.json() as ProviderStatusSummary)
+    }).catch(() => { /* Retain the last known provider summary if the status endpoint is unavailable. */ })
+    return () => controller.abort()
+  }, [settingsOpen])
 
   useEffect(() => {
     const fetchArtifacts = async () => {
@@ -193,7 +227,7 @@ function App() {
       </aside>
 
       <div className="app-main">
-        <main className={`app-view ${activeInteractionView === 'chat' ? 'app-view--chat' : ''}`} aria-label={`${activeInteractionLabel} view`}>
+        <main className={`app-view ${activeInteractionView === 'chat' ? 'app-view--chat' : ''} ${appScroll.scrolling ? 'scroll-active' : ''}`} aria-label={`${activeInteractionLabel} view`} tabIndex={0} onScroll={appScroll.onScroll}>
           {activeInteractionView === 'chat' && <AgentChat onNavigate={navigateFromChat} onOpenProviderSettings={openProviderSettings} onOpenCognitionSettings={openCognitionSettings} cognitiveMode={cognitiveMode} />}
           {activeInteractionView === 'capabilities' && <CapabilityManager />}
           {activeInteractionView === 'builder' && <AgentBuilder onAgentCreated={() => setDemoRefresh((previous) => previous + 1)} />}
@@ -221,9 +255,13 @@ function App() {
             <span className="navigation-caption">Configuration</span>
             <button type="button" className={`navigation-item ${settingsSection === 'provider' ? 'active' : ''}`} aria-current={settingsSection === 'provider' ? 'page' : undefined} onClick={() => setSettingsSection('provider')}>Provider & models</button>
             <button type="button" className={`navigation-item ${settingsSection === 'cognition' ? 'active' : ''}`} aria-current={settingsSection === 'cognition' ? 'page' : undefined} onClick={() => setSettingsSection('cognition')}>Cognition & context</button>
+            <div className="settings-provider-summary" aria-live="polite" aria-label={`Auth: ${providerNavStatus?.auth_mode === 'api_key' ? 'API key' : providerNavStatus?.auth_mode === 'local_cli' ? 'Local CLI session' : 'Not selected'}`}>
+              <span aria-hidden="true" className={`provider-status-dot ${providerNavStatus?.state ?? 'unknown'}`} />
+              <span>Auth: {providerNavStatus?.auth_mode === 'api_key' ? 'API key' : providerNavStatus?.auth_mode === 'local_cli' ? 'Local CLI session' : 'Not selected'}</span>
+            </div>
           </nav>
-          <section className="settings-layer-content" aria-label={settingsSection === 'provider' ? 'Provider and model settings' : 'Cognition and context settings'}>
-            {settingsSection === 'provider' ? <ProviderSettings /> : <CognitionSettings mode={cognitiveMode} onModeChange={setCognitiveMode} />}
+          <section className={`settings-layer-content ${settingsScroll.scrolling ? 'scroll-active' : ''}`} aria-label={settingsSection === 'provider' ? 'Provider and model settings' : 'Cognition and context settings'} tabIndex={0} onScroll={settingsScroll.onScroll}>
+            {settingsSection === 'provider' ? <ProviderSettings onStatusChange={setProviderNavStatus} /> : <CognitionSettings mode={cognitiveMode} onModeChange={setCognitiveMode} />}
           </section>
         </div>
       </dialog>
@@ -269,7 +307,7 @@ function App() {
             ))}
           </nav>
 
-          <section className="data-layer-content" aria-label={`${dataNavigation.find((item) => item.id === activeDataView)?.label ?? 'Data'} view`}>
+          <section className={`data-layer-content ${dataScroll.scrolling ? 'scroll-active' : ''}`} aria-label={`${dataNavigation.find((item) => item.id === activeDataView)?.label ?? 'Data'} view`} tabIndex={0} onScroll={dataScroll.onScroll}>
             {activeDataView === 'jobs' ? <JobHistory /> : loadingArtifacts
               ? <div className="app-view-state" role="status"><span className="spinner" /><p>Loading portfolio artifacts…</p></div>
               : artifactError || !artifacts

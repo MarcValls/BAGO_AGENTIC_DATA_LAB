@@ -1,14 +1,9 @@
 .provider-settings { max-width: 980px; margin: 0 auto; padding: 18px 0 40px; }
-.provider-eyebrow { margin: 0 0 6px; color: #87a0bb; font-size: .7rem; font-weight: 750; letter-spacing: .1em; text-transform: uppercase; }
-.provider-status-card, .provider-card { margin-bottom: 15px; padding: 20px; border: 1px solid #2b3d53; border-radius: 15px; background: #111e2e; }
-.provider-status-card > div:first-child { display: flex; align-items: center; gap: 12px; }
-.provider-status-card strong { font-size: 1rem; }
+.provider-card { margin-bottom: 15px; padding: 20px; border: 1px solid #2b3d53; border-radius: 15px; background: #111e2e; }
 .provider-status-dot { width: 11px; height: 11px; flex: 0 0 auto; border-radius: 99px; background: #8b9bad; box-shadow: 0 0 0 4px rgba(139, 155, 173, .13); }
 .provider-status-dot.ready { background: #48c98b; box-shadow: 0 0 0 4px rgba(72, 201, 139, .12); }
 .provider-status-dot.configured_unverified { background: #edbd5a; box-shadow: 0 0 0 4px rgba(237, 189, 90, .12); }
 .provider-status-dot.needs_authentication, .provider-status-dot.error, .provider-status-dot.local_service_unavailable { background: #ed7a7a; box-shadow: 0 0 0 4px rgba(237, 122, 122, .12); }
-.provider-status-meta { display: flex; flex-wrap: wrap; gap: 9px 20px; margin: 15px 0 0 23px; color: #9fb1c4; font-size: .8rem; }
-.provider-inline-warning { margin: 12px 0 0 23px; color: #f0c575; font-size: .82rem; }
 .provider-section-heading { display: flex; gap: 12px; align-items: flex-start; margin-bottom: 18px; }
 .provider-step { display: grid; width: 29px; height: 29px; flex: 0 0 auto; place-items: center; border: 1px solid #476c97; border-radius: 9px; color: #b7d1f2; background: #1b314c; font-size: .8rem; font-weight: 700; }
 .provider-section-heading h2 { margin: 0; font-size: 1.05rem; }
@@ -44,7 +39,7 @@
 
 @media (max-width: 650px) {
   .auth-choice-group { grid-template-columns: 1fr; }
-  .provider-card, .provider-status-card { padding: 16px; }
+  .provider-card { padding: 16px; }
   .model-controls { align-items: stretch; flex-direction: column; }
   .model-controls > button { align-self: flex-start; }
 }

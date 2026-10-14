@@ -83,7 +83,7 @@ export default function DirectoryScanRun() {
 
   return (
     <div className="directory-scan-run">
-      <WindowPanel title="Code duplicate scanner" description="Inspect one project directory with a bounded, read-only local analysis." className="directory-scan-panel">
+      <WindowPanel title="Code duplicate scanner" description="Inspect one project directory with a bounded, read-only local analysis." className="directory-scan-panel" hideTitlebar>
         <form className="code-scan-form" onSubmit={(event) => void runScan(event)}>
           <label htmlFor="code-scan-directory">Project-relative source directory</label>
           <input id="code-scan-directory" value={directory} maxLength={512} onChange={(event) => { setDirectory(event.target.value); setAuthorized(false) }} placeholder="src" disabled={scanning} autoComplete="off" />

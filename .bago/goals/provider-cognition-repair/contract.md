@@ -1,0 +1,6 @@
+# Frozen repair contract
+
+Readiness: _selected_model_id admits only configured_unverified/ready with selected model. If configured model exists but credential/storage/service failed, propagate safe actual status message/state instead of Configure an Ollama model. Distinguish missing model and missing authentication.
+Failed authentication: provider remembers a real authentication_failed from a model call until settings are saved or a successful call occurs; status exposes needs_authentication with safe message, no secret. Preserve existing keyring-only storage and selected auth mode; do not invent fallback credentials or read CLI auth files. Reset success readiness on failed generation.
+Experimental help: when cognitive_mode=bago5 and operation=help, run normal model chat with BAGO5 context; frontend inferred help/greeting routes chat in experimental mode and sends cognitive_mode. Baseline local help stays compatible. Explicit app navigation/list/create/capability operations retain their real existing route.
+No schema breaking change: request enums stay baseline/bago5. Regression tests cover configured model plus provider errors and BAGO5 help actually calls chat/stores trace, baseline help local, failed-auth status and reset on save/success.

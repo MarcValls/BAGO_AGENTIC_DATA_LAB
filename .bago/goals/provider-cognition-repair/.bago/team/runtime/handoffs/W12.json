@@ -1,0 +1,47 @@
+{
+  "changed_files": [
+    ".bago/goals/provider-cognition-repair/goal.md",
+    ".bago/goals/provider-cognition-repair/evidence/W12-closure.md",
+    ".bago/runtime/ACTIVE_HANDOFF.md",
+    "README.md"
+  ],
+  "next_consumers": [],
+  "outputs": [
+    {
+      "acceptance": "Real BAGO5 provider response, ready status, full-width served chat and preserved Agent Runs profile placement independently verified.",
+      "path": "evidence/W12-closure.md",
+      "sha256": "d9ce8c3498adbbc5ff6610cd45fe0a4f6a5ffe7ee734eb29bd95cf2478bbcd83",
+      "status": "VALIDATED"
+    }
+  ],
+  "payload_sha256": "3646d630703b8473fc94b7e43b54056daa5624135efdeb51e0134117a341629a",
+  "residual_risks": [
+    "P2 cognitive focus scores lack human-readable labels; detail is recorded in R04 review.",
+    "Generic Agent Runs execution remains unavailable and disabled."
+  ],
+  "role": "team-orchestrator",
+  "status": "DONE",
+  "verification": [
+    {
+      "command": "npm run build (frontend)",
+      "result": "PASS"
+    },
+    {
+      "command": "python scripts/generate_dynamic_readme.py",
+      "result": "PASS: 247 tests"
+    },
+    {
+      "command": "python scripts/generate_dynamic_readme.py --check --skip-tests",
+      "result": "PASS: 247 tests"
+    },
+    {
+      "command": "Independent R04 live verification and served asset fingerprints",
+      "result": "PASS: P0=0, P1=0; P2=1 documented"
+    },
+    {
+      "command": "Final git diff --check",
+      "result": "PASS"
+    }
+  ],
+  "work_id": "W12"
+}

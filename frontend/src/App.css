@@ -78,10 +78,16 @@
 .workspace-sidebar--collapsed .navigation-item-icon { width: 22px; flex: 0 0 22px; }
 .workspace-sidebar-footer { display: flex; align-items: center; gap: 4px; margin-top: auto; padding-top: 6px; border-top: 1px solid #34485f; }
 .workspace-sidebar-footer .settings-trigger { height: 32px; min-width: 0; min-height: 32px; flex: 1 1 0; padding: 4px 10px; }
-.app-main { display: grid; min-width: 0; min-height: 0; grid-template-rows: minmax(0, 1fr); }
-.app-view { min-height: 0; overflow: auto; }
+.app-main { display: grid; min-width: 0; min-height: 0; grid-template-rows: minmax(0, 1fr); overflow: hidden; }
+.app-view { min-width: 0; min-height: 0; overflow-x: hidden; overflow-y: auto; overscroll-behavior: contain; scrollbar-width: thin; scrollbar-color: transparent transparent; }
+.app-view::-webkit-scrollbar, .data-layer-content::-webkit-scrollbar, .settings-layer-content::-webkit-scrollbar { width: 8px; height: 8px; }
+.app-view::-webkit-scrollbar-track, .data-layer-content::-webkit-scrollbar-track, .settings-layer-content::-webkit-scrollbar-track { background: transparent; }
+.app-view::-webkit-scrollbar-thumb, .data-layer-content::-webkit-scrollbar-thumb, .settings-layer-content::-webkit-scrollbar-thumb { border: 2px solid transparent; border-radius: 8px; background: transparent; background-clip: padding-box; transition: background-color .18s ease; }
+.app-view.scroll-active, .data-layer-content.scroll-active, .settings-layer-content.scroll-active { scrollbar-color: #607c9c transparent; }
+.app-view.scroll-active::-webkit-scrollbar-thumb, .data-layer-content.scroll-active::-webkit-scrollbar-thumb, .settings-layer-content.scroll-active::-webkit-scrollbar-thumb { background-color: #607c9c; }
 .app-view--chat { overflow: hidden; }
 .app-view--chat > .control-chat { display: flex; width: 100%; height: 100%; min-height: 0; border: 0; border-radius: 0; box-shadow: none; }
+.app-view--chat > .control-chat > .control-chat-main { width: 100%; min-width: 0; flex: 1 1 0; }
 .app-kicker { margin: 0 0 3px; color: #88a2bf; font-size: .67rem; font-weight: 750; letter-spacing: .1em; text-transform: uppercase; }
 .data-layer, .settings-layer {
   width: min(1180px, calc(100vw - 32px));
@@ -104,7 +110,10 @@
 .data-layer-navigation, .settings-layer-navigation { display: flex; min-height: 0; flex-direction: column; gap: 3px; overflow: auto; padding: 12px 9px; border-right: 1px solid #26364b; background: #101d2d; }
 .data-layer-navigation .navigation-caption, .settings-layer-navigation .navigation-caption { padding: 4px 8px; font-size: .64rem; }
 .data-layer-navigation .navigation-item, .settings-layer-navigation .navigation-item { text-align: left; }
-.data-layer-content, .settings-layer-content { min-width: 0; min-height: 0; overflow: auto; padding: 14px; }
+.settings-provider-summary { display: flex; min-width: 0; flex: 0 0 auto; align-items: center; gap: 9px; margin-top: auto; padding: 12px 8px 2px; border-top: 1px solid #26364b; color: #a7b9cd; font-size: .72rem; }
+.settings-layer-navigation .settings-provider-summary .provider-status-dot { width: 9px; height: 9px; }
+.settings-provider-summary > span:last-child { overflow-wrap: anywhere; }
+.data-layer-content, .settings-layer-content { min-width: 0; min-height: 0; overflow: auto; overscroll-behavior: contain; scrollbar-width: thin; scrollbar-color: transparent transparent; padding: 14px; }
 .settings-layer-close { min-height: 32px; padding: 5px 9px; border: 1px solid #405773; border-radius: 4px; background: #1a2a3e; color: #dce7f2; font-size: .75rem; }
 .header-provider-link { padding: 8px 11px; color: #c0d5ed; border: 1px solid #344a64; border-radius: 9px; background: #142237; font-size: .76rem; }
 .header-provider-link:hover { border-color: #6b8eb7; }
@@ -153,6 +162,7 @@
   .data-layer-navigation, .settings-layer-navigation { flex-direction: row; gap: 3px; overflow-x: auto; overflow-y: hidden; padding: 5px 7px; border-right: 0; border-bottom: 1px solid #26364b; }
   .data-layer-navigation .navigation-caption, .settings-layer-navigation .navigation-caption { display: none; }
   .data-layer-navigation .navigation-item, .settings-layer-navigation .navigation-item { flex: 0 0 auto; padding: 6px 8px; white-space: nowrap; }
+  .settings-layer-navigation .settings-provider-summary { margin: 0 0 0 auto; padding: 4px 8px; border-top: 0; white-space: nowrap; }
   .data-layer-content, .settings-layer-content { padding: 10px; }
   .history-header { align-items: stretch; flex-direction: column; gap: 8px; }
   .history-header h2 { font-size: 1rem; white-space: nowrap; }

@@ -1,0 +1,27 @@
+{
+  "changed_files": [
+    ".bago/goals/provider-cognition-repair/goal.md",
+    ".bago/goals/provider-cognition-repair/contract.md",
+    ".bago/goals/provider-cognition-repair/mission.json"
+  ],
+  "outputs": [
+    {
+      "path": "contract.md",
+      "frozen": true
+    }
+  ],
+  "verification": [
+    {
+      "command": "Actual Python311 import/package diagnostic, install pinned keyring25.6.0, Windows backend metadata, live status/models, actual BAGO5 chat response401",
+      "result": "PASS",
+      "facts": "Diagnosis verified; generation failed authentication, not successful."
+    }
+  ],
+  "residual_risks": [
+    "Valid user credential required; user configuration request pending."
+  ],
+  "next_consumers": [
+    "R02",
+    "R03"
+  ]
+}

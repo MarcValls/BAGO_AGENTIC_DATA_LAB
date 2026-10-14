@@ -1,0 +1,10 @@
+{
+  "work_id": "R04",
+  "role": "verification-engineer",
+  "status": "DONE",
+  "changed_files": [".bago/goals/provider-cognition-repair/evidence/R04-review.md", ".bago/goals/provider-cognition-repair/evidence/R04-handoff.json", ".bago/goals/provider-cognition-repair/evidence/r04-live.cjs", ".bago/goals/provider-cognition-repair/evidence/r04-chat-1920.png", ".bago/goals/provider-cognition-repair/evidence/r04-runs-1920.png"],
+  "outputs": [{"contract_id":"provider-cognition-independent-review-v1", "path":"evidence/R04-review.md", "verdict":"PASS", "P0":0, "P1":0, "P2":1, "conversation_id":"conv_6b0896b186234333ba28fb1706ab2ee8", "trace_id":"trace-2c53f77c1f3d4b75", "live_js":"index-89a1a15f.js", "live_css":"index-1c9e7a7d.css"}],
+  "verification": [{"command":"Read-only live provider status, persisted conversation and local cognitive trace", "result":"PASS"}, {"command":"Playwright CLI1920x1080 chat measurements, Agent Runs profile placement, redundant title absence, console", "result":"PASS"}, {"command":"HTTP asset SHA-256 compared with disk; final source fingerprints; git diff --check", "result":"PASS"}],
+  "residual_risks": ["P2 persisted focus chips lack human labels; trace/profile remain visible", "New inference/auth failure injection NOT_RUN by R04; prior real inference verified through persisted result", "Full closure tests and README generation owned by parent"],
+  "next_consumers": ["W12"]
+}

@@ -96,7 +96,7 @@ def _read_config() -> dict[str, str] | None:
 
 
 def save_config(auth_mode: Literal["api_key", "local_cli"], model_id: str | None, api_key: str | None) -> dict[str, Any]:
-    global _last_successful_model_call, _last_successful_at
+    global _last_successful_model_call, _last_successful_at, _authentication_failed
     _require_supported_runtime()
     if model_id:
         model_id = validate_model_id(model_id)
@@ -129,6 +129,7 @@ def save_config(auth_mode: Literal["api_key", "local_cli"], model_id: str | None
             os.unlink(temp_name)
     _last_successful_model_call = None
     _last_successful_at = None
+    _authentication_failed = False
     return status()
 
 
@@ -145,6 +146,7 @@ def _get_api_key(required: bool = True) -> str | None:
 
 
 _last_successful_model_call: str | None = None
+_authentication_failed = False
 
 
 def status() -> dict[str, Any]:
@@ -162,6 +164,8 @@ def status() -> dict[str, Any]:
         return {"provider_id": PROVIDER_ID, "state": "not_configured", "runtime_mode": "host", "auth_mode": None, "model_id": None}
     mode = config["auth_mode"]
     base = {"provider_id": PROVIDER_ID, "runtime_mode": "host", "auth_mode": mode, "model_id": config.get("model_id")}
+    if _authentication_failed:
+        return {**base, "state": "needs_authentication", "message": "Ollama rejected the configured authentication. Update the provider settings."}
     if mode == "api_key":
         try:
             key_present = bool(_get_api_key(required=False))
@@ -265,14 +269,19 @@ def chat_turn(
     tools: list[dict[str, Any]] | None = None,
 ) -> dict[str, Any]:
     """Return one structured Ollama message, including any native tool calls."""
-    global _last_successful_model_call, _last_successful_at
+    global _last_successful_model_call, _last_successful_at, _authentication_failed
     model_id = validate_model_id(model_id)
     _last_successful_model_call = None
     _last_successful_at = None
     payload: dict[str, Any] = {"model": model_id, "messages": messages, "stream": False}
     if tools:
         payload["tools"] = tools
-    response = _request("POST", "/chat", payload=payload, timeout=120)
+    try:
+        response = _request("POST", "/chat", payload=payload, timeout=120)
+    except ProviderError as error:
+        if error.code == "authentication_failed":
+            _authentication_failed = True
+        raise
     message = response.get("message")
     if not isinstance(message, dict):
         raise ProviderError("empty_model_response", "Ollama returned no assistant response.")
@@ -284,13 +293,17 @@ def chat_turn(
         raise ProviderError("empty_model_response", "Ollama returned no assistant response.")
     _last_successful_model_call = model_id
     _last_successful_at = utc_now()
+    _authentication_failed = False
     return message
 
 
 def chat(model_id: str, messages: list[dict[str, Any]]) -> str:
     """Text-only convenience API retained for callers without tools."""
+    global _last_successful_model_call, _last_successful_at
     message = chat_turn(model_id, messages)
     content = message.get("content")
     if not isinstance(content, str) or not content.strip():
+        _last_successful_model_call = None
+        _last_successful_at = None
         raise ProviderError("empty_model_response", "Ollama returned no assistant response.")
     return content.strip()

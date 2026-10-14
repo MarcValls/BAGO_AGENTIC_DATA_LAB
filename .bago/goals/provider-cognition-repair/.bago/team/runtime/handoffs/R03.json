@@ -1,0 +1,48 @@
+{
+  "changed_files": [
+    "frontend/src/components/AgentChat.tsx"
+  ],
+  "next_consumers": [
+    "R04"
+  ],
+  "outputs": [
+    {
+      "behavior": "Inferred greeting/help becomes model chat only for BAGO5; both inferIntent call sites receive actual selected mode. Baseline and explicit navigation/list/create/capability operations preserved.",
+      "build_assets": [
+        "index-12af2bba.js",
+        "index-58c4d3ee.css"
+      ],
+      "path": "frontend/src/components/AgentChat.tsx",
+      "sha256": "604e89854c77d9f3fcf4bf182c9af08e6cce21797bad8269f4c73cda0e39b6cf"
+    }
+  ],
+  "payload_sha256": "7c01aca41fe8dc97709e6d81985fff37c1c114969763a724cfa484c64b1bf112",
+  "residual_risks": [
+    "Live inference and authentication verification delegated to root/R04.",
+    "Temporary check first attempted unsupported TypeScript7 transpile API, then executed source-extracted function with annotations removed successfully.",
+    "Root owns generated dist output; tracked .build restored."
+  ],
+  "role": "decision-ui-engineer",
+  "status": "DONE",
+  "verification": [
+    {
+      "command": "npm ci --no-audit --no-fund",
+      "result": "PASS"
+    },
+    {
+      "command": "npm run build",
+      "evidence": "tsc -b and vite build; 139 modules",
+      "result": "PASS"
+    },
+    {
+      "command": "Node source-extracted inferIntent check after stripping only TypeScript annotations",
+      "evidence": "3 inferred help pairs baseline/BAGO5; 5 explicit operation compatibility pairs; both call sites pass mode",
+      "result": "PASS"
+    },
+    {
+      "command": "git diff --check",
+      "result": "PASS"
+    }
+  ],
+  "work_id": "R03"
+}

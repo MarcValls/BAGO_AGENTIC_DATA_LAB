@@ -7,15 +7,32 @@
 .cognition-mode input { margin-top: 4px; accent-color: #78b2f0; }
 .cognition-mode small, .context-summary small { display: block; margin-top: 4px; color: #9fb1c6; line-height: 1.5; }
 .cognition-note { font-size: .85rem; color: #9fb1c6; }
-.context-locations { margin-top: 30px; }
+.cognition-status { padding: 9px 12px; border: 1px solid #397654; border-radius: 7px; color: #b7f0cd; background: #102a20; font-size: .85rem; }
+.context-locations { margin-top: 20px; }
+.context-locations > summary { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 9px 0; color: #b4c5d8; cursor: pointer; list-style: none; }
+.context-locations > summary::-webkit-details-marker { display: none; }
+.context-locations > summary::after { content: '+'; margin-left: auto; color: #8198b1; }
+.context-locations[open] > summary::after { content: '−'; }
+.context-locations > summary strong { font-size: .82rem; font-weight: 600; }
+.context-locations > summary span { color: #7f96ae; font-size: .72rem; }
+.context-locations > summary:focus-visible { outline: 2px solid #78b2f0; outline-offset: 3px; }
+.context-locations-content { padding-top: 4px; }
 .context-summary { display: grid; gap: 16px; }
 .context-summary dt { font-size: .8rem; color: #9fb1c6; }
 .context-summary dd { margin: 6px 0 0; }
 .context-summary code, .context-paths code { overflow-wrap: anywhere; font-size: .8rem; }
 .context-paths { display: grid; gap: 10px; padding: 0; list-style: none; }
-.context-paths li { padding: 14px; border: 1px solid #34465d; border-radius: 8px; }
+.context-paths li { padding: 14px; border: 1px solid #34465d; border-radius: 8px; transition: border-color .15s ease, box-shadow .15s ease; }
+.context-paths li.context-path-present { border-color: #3ba66b; box-shadow: inset 3px 0 #3ba66b; }
+.context-paths li.context-path-absent { border-color: #c45252; box-shadow: inset 3px 0 #c45252; }
 .context-paths li > div { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 10px; margin-bottom: 8px; }
-.context-paths li span { font-size: .8rem; color: #9fb1c6; }
+.context-paths li span { font-size: .8rem; font-weight: 650; }
+.context-path-present > div span { color: #8fe0ae; }
+.context-path-absent > div span { color: #ff9b9b; }
+.context-path-field { display: grid; gap: 6px; margin: 8px 0; color: #9fb1c6; font-size: .8rem; }
+.context-path-field input { width: 100%; box-sizing: border-box; padding: 8px 10px; border: 1px solid #57708c; border-radius: 6px; background: #0c1725; color: #edf4ff; font: inherit; }
+.context-path-field input:focus-visible { outline: 2px solid #78b2f0; outline-offset: 2px; }
 .context-paths p { margin: 8px 0 0; font-size: .8rem; color: #9fb1c6; }
+.context-paths .context-path-error { color: #ff9b9b; }
 .cognition-settings button { padding: 8px 12px; border: 1px solid #57779e; border-radius: 6px; background: #20344e; color: #edf4ff; cursor: pointer; }
 .cognition-settings button:focus-visible, .cognition-mode input:focus-visible { outline: 2px solid #78b2f0; outline-offset: 3px; }

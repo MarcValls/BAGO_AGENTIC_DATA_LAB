@@ -1,0 +1,36 @@
+{
+  "changed_files": [
+    "src/api/server.py",
+    "src/providers/ollama.py",
+    "tests/test_provider_cognition_repair.py"
+  ],
+  "next_consumers": [
+    "R04"
+  ],
+  "outputs": [
+    {
+      "behavior": "Admission whitelist; safe provider failure detail; model selection distinct from authentication; BAGO5 help runs normal chat with trace; process-local actual generation auth-failure retained until settings save or successful call; failed text generation clears readiness",
+      "contract_id": "provider-cognition-repair-backend-v1",
+      "path": "../../../src/providers/ollama.py",
+      "sha256": "d4b5765cf6b2ad41c2fb9ba85b8855e8520b61ac4ab122bf1abfff31d68733a9"
+    }
+  ],
+  "payload_sha256": "ac2837d22b7904d4ec87257f0ef49cc80cf7d326ccf6db433646adbfc9e2d9fa",
+  "residual_risks": [
+    "Provider readiness and failed-auth memory remain process-local, consistent with existing readiness tracking. Live actual model generation and full closure checks delegated to orchestrator; focused tests use fake transport and model responses."
+  ],
+  "role": "evidence-provenance-engineer",
+  "status": "DONE",
+  "verification": [
+    {
+      "command": "python -m pytest tests/test_provider_cognition_repair.py tests/test_bago5_chat_cognition.py -q -p no:cacheprovider --basetemp=.pytest-tmp-provider-repair",
+      "facts": "19 passed (13 new repair cases and 6 cognition regressions). Actual request classification receives fake HTTP401; status remains needs_authentication across reads, resets on save and subsequent successful generation; no secrets exposed.",
+      "result": "PASS"
+    },
+    {
+      "command": "git diff --check -- src/api/server.py src/providers/ollama.py tests/test_provider_cognition_repair.py",
+      "result": "PASS"
+    }
+  ],
+  "work_id": "R02"
+}

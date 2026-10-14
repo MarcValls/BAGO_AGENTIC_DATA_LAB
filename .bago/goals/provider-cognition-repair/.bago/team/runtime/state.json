@@ -1,0 +1,159 @@
+{
+  "created_at": "2026-10-13T06:57:29+00:00",
+  "mission": {
+    "derived_from": ".bago/team/kit/missions/agent-decision-inspector.json",
+    "max_concurrency": 2,
+    "mission_id": "PROVIDER_COGNITION_REPAIR_V1",
+    "objective": "Repair exact runtime credential dependency, accurate provider status, and route BAGO5 experimental conversation through the configured provider.",
+    "terminal_work_items": [
+      "W12"
+    ],
+    "work_items": [
+      {
+        "deliverables": [
+          "Freeze provider failure evidence and repair contract"
+        ],
+        "depends_on": [],
+        "done_when": [
+          "Materialized checks PASS, failures accurately reported"
+        ],
+        "frozen_outputs": [],
+        "id": "R01",
+        "read_scopes": [
+          "**"
+        ],
+        "role": "team-orchestrator",
+        "title": "Freeze provider failure evidence and repair contract",
+        "write_scopes": [
+          ".bago/goals/provider-cognition-repair/**"
+        ]
+      },
+      {
+        "deliverables": [
+          "Repair provider readiness and experimental help routing"
+        ],
+        "depends_on": [
+          "R01"
+        ],
+        "done_when": [
+          "Materialized checks PASS, failures accurately reported"
+        ],
+        "frozen_outputs": [],
+        "id": "R02",
+        "read_scopes": [
+          "**"
+        ],
+        "role": "evidence-provenance-engineer",
+        "title": "Repair provider readiness and experimental help routing",
+        "write_scopes": [
+          "src/api/server.py",
+          "src/providers/ollama.py",
+          "tests/test_provider_cognition_repair.py"
+        ]
+      },
+      {
+        "deliverables": [
+          "Route experimental greetings to actual chat"
+        ],
+        "depends_on": [
+          "R01"
+        ],
+        "done_when": [
+          "Materialized checks PASS, failures accurately reported"
+        ],
+        "frozen_outputs": [],
+        "id": "R03",
+        "read_scopes": [
+          "**"
+        ],
+        "role": "decision-ui-engineer",
+        "title": "Route experimental greetings to actual chat",
+        "write_scopes": [
+          "frontend/src/components/AgentChat.tsx"
+        ]
+      },
+      {
+        "deliverables": [
+          "Independently verify provider/cognition repair"
+        ],
+        "depends_on": [
+          "R02",
+          "R03"
+        ],
+        "done_when": [
+          "Materialized checks PASS, failures accurately reported"
+        ],
+        "frozen_outputs": [],
+        "id": "R04",
+        "read_scopes": [
+          "**"
+        ],
+        "role": "verification-engineer",
+        "title": "Independently verify provider/cognition repair",
+        "write_scopes": [
+          ".bago/goals/provider-cognition-repair/evidence/**"
+        ]
+      },
+      {
+        "deliverables": [
+          "Terminal repair gate"
+        ],
+        "depends_on": [
+          "R04"
+        ],
+        "done_when": [
+          "Materialized checks PASS, failures accurately reported"
+        ],
+        "frozen_outputs": [],
+        "id": "W12",
+        "read_scopes": [
+          "**"
+        ],
+        "role": "team-orchestrator",
+        "title": "Terminal repair gate",
+        "write_scopes": [
+          ".bago/goals/provider-cognition-repair/**",
+          ".bago/runtime/ACTIVE_HANDOFF.md",
+          "README.md"
+        ]
+      }
+    ]
+  },
+  "mission_sha256": "bb57025b2fcf71cd4a00eb2e615f15d54d4970d30ad1ad6b7b7044365d6ce4e4",
+  "mission_source": "C:\\Users\\AMTEC_Terminal_1º\\AppData\\Local\\Temp\\ADL_provider_cognition_repair_20261013\\.bago\\goals\\provider-cognition-repair\\mission.json",
+  "protocol_version": "0.1.0",
+  "terminal_gate": "DONE",
+  "updated_at": "2026-10-13T07:21:06+00:00",
+  "work_status": {
+    "R01": {
+      "agent": "root",
+      "claimed_at": "2026-10-13T06:57:29+00:00",
+      "done_at": "2026-10-13T06:57:29+00:00",
+      "status": "DONE"
+    },
+    "R02": {
+      "agent": "context_metadata",
+      "claimed_at": "2026-10-13T06:58:11+00:00",
+      "done_at": "2026-10-13T07:01:17+00:00",
+      "status": "DONE"
+    },
+    "R03": {
+      "agent": "ui_placement",
+      "claimed_at": "2026-10-13T06:58:24+00:00",
+      "done_at": "2026-10-13T07:00:38+00:00",
+      "status": "DONE"
+    },
+    "R04": {
+      "agent": "placement_verifier",
+      "claimed_at": "2026-10-13T07:13:56+00:00",
+      "done_at": "2026-10-13T07:17:04+00:00",
+      "status": "DONE"
+    },
+    "W12": {
+      "agent": "root",
+      "claimed_at": "2026-10-13T07:17:17+00:00",
+      "done_at": "2026-10-13T07:21:05+00:00",
+      "status": "DONE"
+    }
+  }
+}

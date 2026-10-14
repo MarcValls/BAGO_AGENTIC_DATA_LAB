@@ -4,6 +4,7 @@ import { FormEvent, useEffect, useState } from 'react'
 type AuthMode = 'api_key' | 'local_cli'
 type ProviderState = 'not_configured' | 'needs_authentication' | 'local_service_unavailable' | 'configured_unverified' | 'ready' | 'unsupported_runtime' | 'error'
 type ProviderStatus = { provider_id: string; state: ProviderState; runtime_mode?: 'host' | 'container'; auth_mode: AuthMode | null; model_id: string | null; message?: string; last_verified_at?: string }
+export type ProviderStatusSummary = Pick<ProviderStatus, 'state' | 'auth_mode'>
 type ProviderModel = { provider_id: string; model_id: string; display_name: string; source: string; availability_confidence: string }
 
 async function safeError(response: Response): Promise<string> {
@@ -15,17 +16,7 @@ async function safeError(response: Response): Promise<string> {
   return `Request failed (${response.status}).`
 }
 
-const stateLabels: Record<ProviderState, string> = {
-  not_configured: 'Not configured',
-  needs_authentication: 'Authentication needed',
-  local_service_unavailable: 'Local Ollama unavailable',
-  configured_unverified: 'Configured · not verified',
-  ready: 'Ready · live response verified',
-  unsupported_runtime: 'Provider setup requires the host app',
-  error: 'Provider error',
-}
-
-export default function ProviderSettings() {
+export default function ProviderSettings({ onStatusChange }: { onStatusChange?: (status: ProviderStatusSummary) => void }) {
   const [status, setStatus] = useState<ProviderStatus | null>(null)
   const [authMode, setAuthMode] = useState<AuthMode>('api_key')
   const [apiKey, setApiKey] = useState('')
@@ -39,6 +30,23 @@ export default function ProviderSettings() {
   const [notice, setNotice] = useState('')
   const [verification, setVerification] = useState('')
 
+  const fetchModels = async () => {
+    setLoadingModels(true)
+    setError('')
+    try {
+      const response = await fetch('/api/providers/ollama/models')
+      if (!response.ok) throw new Error(await safeError(response))
+      const data = await response.json()
+      const available = Array.isArray(data.models) ? data.models as ProviderModel[] : []
+      setModels(available)
+      setModelId(current => current || (available.length === 1 ? available[0].model_id : ''))
+      if (!available.length) setNotice('No models were returned for this provider configuration. Check authentication and reload the list.')
+      else setNotice(`Loaded ${available.length} model(s) from ${data.source ?? 'Ollama'}. Listing a model does not verify that your account can run it.`)
+    } catch (cause) {
+      setError(cause instanceof Error ? cause.message : 'Model list could not be loaded.')
+    } finally { setLoadingModels(false) }
+  }
+
   const loadStatus = async () => {
     setLoading(true)
     setError('')
@@ -47,8 +55,12 @@ export default function ProviderSettings() {
       if (!response.ok) throw new Error(await safeError(response))
       const data = await response.json() as ProviderStatus
       setStatus(data)
+      onStatusChange?.(data)
       if (data.auth_mode) setAuthMode(data.auth_mode)
       setModelId(data.model_id ?? '')
+      if (data.auth_mode && data.runtime_mode !== 'container' && data.state !== 'needs_authentication') {
+        await fetchModels()
+      }
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : 'Provider status could not be loaded.')
     } finally { setLoading(false) }
@@ -59,20 +71,7 @@ export default function ProviderSettings() {
       setNotice('Save the selected authentication mode and API key before loading models.')
       return
     }
-    setLoadingModels(true)
-    setError('')
-    try {
-      const response = await fetch('/api/providers/ollama/models')
-      if (!response.ok) throw new Error(await safeError(response))
-      const data = await response.json()
-      const available = Array.isArray(data.models) ? data.models as ProviderModel[] : []
-      setModels(available)
-      if (!modelId && available.length === 1) setModelId(available[0].model_id)
-      if (!available.length) setNotice('No models were returned for this provider configuration. Check authentication and reload the list.')
-      else setNotice(`Loaded ${available.length} model(s) from ${data.source ?? 'Ollama'}. Listing a model does not verify that your account can run it.`)
-    } catch (cause) {
-      setError(cause instanceof Error ? cause.message : 'Model list could not be loaded.')
-    } finally { setLoadingModels(false) }
+    await fetchModels()
   }
 
   useEffect(() => { void loadStatus() }, [])
@@ -93,6 +92,7 @@ export default function ProviderSettings() {
       if (!response.ok) throw new Error(await safeError(response))
       const data = await response.json() as ProviderStatus
       setStatus(data)
+      onStatusChange?.(data)
       setModelId(data.model_id ?? '')
       setNotice('Provider settings saved. The API key is write-only and has been cleared from this form.')
     } catch (cause) {
@@ -123,15 +123,14 @@ export default function ProviderSettings() {
 
   return (
     <main className="provider-settings">
-      <section className="provider-status-card" aria-live="polite"><div><span className={`provider-status-dot ${status?.state ?? 'unknown'}`} /><div><p className="provider-eyebrow">Current status</p><strong>{loading ? 'Loading status…' : status ? stateLabels[status.state] ?? status.state : 'Status unavailable'}</strong></div></div><div className="provider-status-meta"><span>Auth: {status?.auth_mode === 'api_key' ? 'API key' : status?.auth_mode === 'local_cli' ? 'Local CLI session' : 'Not selected'}</span><span>Model: {status?.model_id ?? 'Not selected'}</span></div>{status?.message && <p className="provider-inline-warning">{status.message}</p>}{status?.runtime_mode === 'container' && <p className="provider-inline-warning">This container cannot safely access the host credential store or host Ollama service. Start the app on this computer with <code>scripts/run-local-ui.ps1</code>.</p>}</section>
 
       <form className="provider-card" onSubmit={(event) => void saveConfiguration(event)}>
-        <div className="provider-section-heading"><span className="provider-step">1</span><div><h2>Choose authentication</h2><p>The selected mode is saved by the local backend. Ollama API calls never originate in the browser.</p></div></div>
+        <div className="provider-section-heading"><span className="provider-step">1</span><div><h2>Choose authentication</h2></div></div>
         <fieldset className="auth-choice-group" disabled={status?.runtime_mode === 'container'}><legend className="sr-only">Ollama authentication method</legend>
           <label className={`auth-choice ${authMode === 'api_key' ? 'active' : ''}`}><input type="radio" name="auth-mode" value="api_key" checked={authMode === 'api_key'} onChange={() => { setAuthMode('api_key'); setNotice(''); setError('') }} /><span><strong>Ollama Cloud API key</strong><small>Store a new key in the operating system credential store. It cannot be read back.</small></span></label>
           <label className={`auth-choice ${authMode === 'local_cli' ? 'active' : ''}`}><input type="radio" name="auth-mode" value="local_cli" checked={authMode === 'local_cli'} onChange={() => { setAuthMode('local_cli'); setApiKey(''); setNotice(''); setError('') }} /><span><strong>Local Ollama CLI session</strong><small>Use the local Ollama service and its own sign-in. This app does not read Ollama auth files.</small></span></label>
         </fieldset>
-        {authMode === 'api_key' ? <div className="provider-field"><label htmlFor="ollama-api-key">API key <span>(write-only)</span></label><input id="ollama-api-key" type="password" autoComplete="new-password" value={apiKey} onChange={(event) => setApiKey(event.target.value)} placeholder="Enter a new key to replace the stored key" spellCheck={false} /><small>The field is cleared as soon as you save. It is not stored in browser storage or chat history.</small></div> : <div className="cli-instructions"><strong>Local CLI setup</strong><ol><li>Open your own Ollama app or terminal and sign in there if needed.</li><li>Keep the Ollama local service running on its standard loopback address.</li><li>Save this mode, then reload models to check whether the local service responds.</li></ol><p>A responding local service does not by itself prove that a Cloud model can run. This app will not start sign-in or inspect CLI credentials.</p></div>}
+        {authMode === 'api_key' ? <div className="provider-field"><label htmlFor="ollama-api-key">API key <span>(write-only)</span></label><input id="ollama-api-key" type="password" autoComplete="new-password" value={apiKey} onChange={(event) => setApiKey(event.target.value)} placeholder="Enter a new key to replace the stored key" spellCheck={false} /></div> : <div className="cli-instructions"><strong>Local CLI setup</strong><ol><li>Open your own Ollama app or terminal and sign in there if needed.</li><li>Keep the Ollama local service running on its standard loopback address.</li><li>Save this mode, then reload models to check whether the local service responds.</li></ol><p>A responding local service does not by itself prove that a Cloud model can run. This app will not start sign-in or inspect CLI credentials.</p></div>}
         <button className="provider-primary" type="submit" disabled={saving || status?.runtime_mode === 'container'}>{saving ? 'Saving…' : 'Save authentication settings'}</button>
       </form>
 

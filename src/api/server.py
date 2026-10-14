@@ -106,6 +106,10 @@ class DemoRequest(BaseModel):
     json_output: bool = False
 
 
+class ContextPathCheckRequest(BaseModel):
+    path: str = Field(min_length=1, max_length=2048)
+
+
 class DemoRunResponse(BaseModel):
     status: str
     exit_code: int
@@ -1089,8 +1093,21 @@ def _write_agent(config: AgentConfig) -> AgentResponse:
 def _selected_model_id() -> str:
     provider_status = ollama.status()
     model_id = provider_status.get("model_id")
-    if not model_id or provider_status.get("state") in {"not_configured", "needs_authentication", "local_service_unavailable", "error"}:
-        raise HTTPException(status_code=503, detail={"code": "provider_not_ready", "message": "Configure an Ollama model before sending a chat message."})
+    state = provider_status.get("state")
+    if state not in {"configured_unverified", "ready"}:
+        messages = {
+            "not_configured": "Configure Ollama before sending a chat message.",
+            "needs_authentication": "Ollama authentication is required. Update the provider settings.",
+            "local_service_unavailable": "The local Ollama service is unavailable.",
+            "unsupported_runtime": "Ollama chat is unavailable in this runtime. Start the host-local app.",
+        }
+        raise HTTPException(status_code=503, detail={
+            "code": "provider_not_ready", "state": state,
+            "message": provider_status.get("message") or messages.get(state, "Ollama is unavailable. Check provider settings."),
+        })
+    if not model_id:
+        raise HTTPException(status_code=503, detail={"code": "model_selection_required", "state": state,
+                                                   "message": "Choose an Ollama model in provider settings before sending a chat message."})
     return model_id
 
 
@@ -1461,6 +1478,20 @@ async def chat_context() -> dict[str, Any]:
     }
 
 
+@app.post("/api/chat/context/check-path")
+async def check_chat_context_path(body: ContextPathCheckRequest) -> dict[str, Any]:
+    """Check whether a user-selected context location exists, without reading it."""
+    try:
+        path = Path(body.path).expanduser().resolve()
+        exists = path.exists()
+        kind = "directory" if exists and path.is_dir() else "file" if exists else None
+    except (OSError, RuntimeError, ValueError):
+        exists = False
+        kind = None
+        path = Path(body.path).expanduser()
+    return {"path": str(path), "state": "present" if exists else "absent", "kind": kind}
+
+
 @app.get("/api/capabilities")
 async def list_capabilities() -> dict[str, Any]:
     return capability_catalog(REPO_ROOT)
@@ -1652,7 +1683,7 @@ async def control_chat(request: ControlChatRequest) -> dict[str, Any]:
         saved = CONVERSATIONS.get(request.conversation_id)
         return {"operation": operation, "assistant_message": assistant_message, "conversation_id": request.conversation_id, "revision": saved["revision"], "conversation": saved, **payload}
 
-    if request.operation == "help":
+    if request.operation == "help" and request.cognitive_mode == "baseline":
         spanish = bool(re.search(r"\b(hola|puedes|agentes|crear|ayuda|aplicaci[oó]n|qu[eé])\b", request.message, re.IGNORECASE))
         if spanish:
             answer = (

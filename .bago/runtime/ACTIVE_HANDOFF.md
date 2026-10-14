@@ -1,11 +1,13 @@
 # Active handoff
 
-Goal: `.bago/goals/chat-run-settings/goal.md`
+Goal: `.bago/goals/provider-cognition-repair/goal.md`
 
-Status: `VALIDATED` for placement and actual context metadata. Chat composer retains only exact-file one-use permission. Settings -> Cognition & context owns persistent baseline/BAGO5 preference and read-only actual workspace, context, conversation-history and trace locations. Agent Runs hosts the existing governed local duplicate-code scan; Control is removed from navigation and legacy navigation redirects to Agent Runs. Generic agent profile execution remains unavailable.
+Status: `VALIDATED` for live Ollama inference through BAGO5 chat, chat width and Agent Runs profile/title placement. Final source snapshot is uncommitted on main at HEAD `18b07ac9088ecf7ba32fb4c39c6112f1bb0eb631`; the user-owned provider configuration change is preserved.
 
-Candidate: isolated codex/adl-chat-run-settings-20261013 based on freshly fetched origin/main d760c5aea9b678ee1f723b6825f79f1f055de7be (already contains previous scan/cognition b5512e1). Task delta applied with file-equality/clean-worktree guards to main at 4e6673a9f5c26ccccf24dc09739702b65d78ca4c. Changes remain uncommitted and unpublished; existing local commits and concurrent unrelated ProviderSettings edits/generated build files were preserved.
+Live runtime: `127.0.0.1:8081`, process Python311 `-m src.api.server`. Ollama `gemma4:31b` state `ready`. Real BAGO5 conversation `conv_6b0896b186234333ba28fb1706ab2ee8` returned `ADL BAGO5 conectado`; persisted prompt-focus trace `trace-2c53f77c1f3d4b75` is bounded cognition metadata and is not hidden model reasoning.
 
-Verification: 234 full-suite tests; 2 focused metadata tests; frontend build; generated README/check; HTTP health/context; final served JS/CSS hashes match disk; independent R04 browser placement review P0=0/P1=0, final console0 errors/0 warnings. Current live process39304 on8081 from main root; final served assets index-fa31b7eb.js / index-58c4d3ee.css after concurrent provider rebuild.
+UI result: chat main panel consumes available width (measured at 1920x1080, 1280x800 and 800x700). Agent profiles remain in Agent Runs under the scanner; redundant `Agent Runs` page heading is removed while the useful `Agent profiles` subheading remains. Served JS/CSS hashes match disk. Independent review is PASS, P0=0, P1=0; report and screenshots are under `.bago/goals/provider-cognition-repair/evidence/`.
 
-NOT_RUN: actual model inference (secure credential storage unavailable), R04 fresh successful scan (existing tests), fleeting loading timing assertion and unrelated pre-existing Inspector adversarial cases. No model output behavior is claimed from UI mocks. Evidence and exact task source/asset binding: `.bago/goals/chat-run-settings/evidence/VERIFICATION.md`, `source_snapshot.json` and `R04-review.md`. Goal-local teamctl handoffs/terminal gate live under `.bago/goals/chat-run-settings/.bago/team/runtime/`.
+Closure: frontend production build PASS; full repository suite PASS (247 tests) through `python scripts/generate_dynamic_readme.py`; generated README consistency PASS through `python scripts/generate_dynamic_readme.py --check --skip-tests`; team mission handoffs and terminal gate PASS.
+
+Residual: P2 focus chips show scores without human-readable labels. General Agent Runs execution stays unavailable and disabled. No credential was written into evidence or chat.

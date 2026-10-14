@@ -35,7 +35,7 @@ async function responseError(response) {
     catch { /* keep a safe generic error */ }
     return `Request failed (${response.status}).`;
 }
-function inferIntent(message) {
+function inferIntent(message, cognitiveMode) {
     const text = message.toLocaleLowerCase();
     const capabilityIdMentioned = /\b(?:workspace\.read_text|mcp\.execute|sandbox\.execute|agent\.run)\b/.test(text);
     if (/\b(capabilities|capability manager|gestor de capacidades|capacidades)\b/.test(text) && /\b(abre|abrir|open|show|muestra|ir a|ve a|navega|gestiona|manager|gestor|vista)\b/.test(text))
@@ -45,7 +45,7 @@ function inferIntent(message) {
     if (/\b(capacidades|capability catalog|capabilities|estado de (?:la )?capacidad|list(?:ar)? capabilities)\b/.test(text) || (capabilityIdMentioned && /\b(estado|status|lista|listar|mostrar|show|describe|qu[eé])\b/.test(text)))
         return { operation: 'list_capabilities' };
     if (/^\s*(hola|buenas|hello|hi|hey)[!.\s]*$/.test(text) || /\b(qu[eé] puedes hacer|what can you do|capacidades del asistente|assistant capabilities)\b/.test(text) || /\b(puedes|can you|could you)\s+(crear|create|diseñar|design)\s+(un\s+|a\s+)?agentes?\s*[?!.]*$/.test(text) || /\b(no puedes|cannot|can't)\s+(crear|create)\s+agentes?\b/.test(text)) {
-        return { operation: 'help' };
+        return { operation: cognitiveMode === 'bago5' ? 'chat' : 'help' };
     }
     if (/\b(lista|listar|muestra|mostrar|qué|cu[aá]les)\b.*\b(agentes|agente)\b/.test(text) || /\b(agentes|agente)\b.*\b(lista|listar|hay|tengo)\b/.test(text)) {
         return { operation: 'list_agents' };
@@ -456,7 +456,7 @@ export default function AgentChat({ onNavigate, onOpenProviderSettings, onOpenCo
                 setActiveConversation(conversation);
             }
             attemptedConversation = conversation;
-            const localCapabilityIntent = !selectedAgent ? inferIntent(content) : null;
+            const localCapabilityIntent = !selectedAgent ? inferIntent(content, cognitiveMode) : null;
             if (localCapabilityIntent?.operation === 'list_capabilities' || localCapabilityIntent?.operation === 'propose_capability') {
                 await beginCapabilityRequest(content, localCapabilityIntent.operation, conversation.id);
                 return;
@@ -496,7 +496,7 @@ export default function AgentChat({ onNavigate, onOpenProviderSettings, onOpenCo
                 });
             }
             else {
-                intent = localCapabilityIntent ?? inferIntent(content);
+                intent = localCapabilityIntent ?? inferIntent(content, cognitiveMode);
                 response = await fetch('/api/chat/control', {
                     method: 'POST', headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ operation: intent.operation, message: content, conversation_id: conversation.id, revision: conversation.revision, ...(intent.operation === 'chat' ? { cognitive_mode: cognitiveMode } : {}), ...(workspaceReadAuthorizationId ? { workspace_read_authorization_id: workspaceReadAuthorizationId } : {}), ...(intent.view ? { view: intent.view } : {}) }),

@@ -1,0 +1,50 @@
+{
+  "changed_files": [
+    ".bago/goals/provider-cognition-repair/evidence/R04-review.md",
+    ".bago/goals/provider-cognition-repair/evidence/R04-handoff.json",
+    ".bago/goals/provider-cognition-repair/evidence/r04-live.cjs",
+    ".bago/goals/provider-cognition-repair/evidence/r04-chat-1920.png",
+    ".bago/goals/provider-cognition-repair/evidence/r04-runs-1920.png"
+  ],
+  "next_consumers": [
+    "W12"
+  ],
+  "outputs": [
+    {
+      "P0": 0,
+      "P1": 0,
+      "P2": 1,
+      "contract_id": "provider-cognition-independent-review-v1",
+      "conversation_id": "conv_6b0896b186234333ba28fb1706ab2ee8",
+      "live_css": "index-1c9e7a7d.css",
+      "live_js": "index-89a1a15f.js",
+      "path": "evidence/R04-review.md",
+      "sha256": "b86f53dc89fcb5fc08946cb5f1d6b2256f3008195afecd98d95ede44d932e3da",
+      "trace_id": "trace-2c53f77c1f3d4b75",
+      "verdict": "PASS"
+    }
+  ],
+  "payload_sha256": "3968c87e54dccfec15c3d60a21ff712aaf02894a8aa895b263eb220eb20525ec",
+  "residual_risks": [
+    "P2 persisted focus chips lack human labels; trace/profile remain visible",
+    "New inference/auth failure injection NOT_RUN by R04; prior real inference verified through persisted result",
+    "Full closure tests and README generation owned by parent"
+  ],
+  "role": "verification-engineer",
+  "status": "DONE",
+  "verification": [
+    {
+      "command": "Read-only live provider status, persisted conversation and local cognitive trace",
+      "result": "PASS"
+    },
+    {
+      "command": "Playwright CLI1920x1080 chat measurements, Agent Runs profile placement, redundant title absence, console",
+      "result": "PASS"
+    },
+    {
+      "command": "HTTP asset SHA-256 compared with disk; final source fingerprints; git diff --check",
+      "result": "PASS"
+    }
+  ],
+  "work_id": "R04"
+}
