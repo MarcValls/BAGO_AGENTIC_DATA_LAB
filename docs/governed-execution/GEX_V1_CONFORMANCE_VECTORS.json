@@ -1,0 +1,529 @@
+{
+  "contract_id": "CR-GEX-001",
+  "contract_version": "gex/v1-candidate",
+  "baseline_commit": "bdf2be825cfd16b3a9b9435efcb7c2384309cf25",
+  "status": "SPEC_ONLY_NOT_EXECUTED",
+  "meaning": "Normative oracle for independent implementation tests, not evidence of runtime behavior.",
+  "vectors": [
+    {
+      "id": "GEX-001",
+      "area": "identity",
+      "invariant": "Principal from authenticated server session",
+      "scenario": "client forges principal_id admin",
+      "expected": {
+        "decision": "DENY",
+        "max_effect_dispatches": 0,
+        "receipt": "DENIED",
+        "state": "DENIED"
+      },
+      "execution_status": "SPEC_ONLY"
+    },
+    {
+      "id": "GEX-002",
+      "area": "identity",
+      "invariant": "Workspace resolved server-side",
+      "scenario": "agent proposes foreign workspace_root",
+      "expected": {
+        "decision": "DENY",
+        "max_effect_dispatches": 0,
+        "receipt": "DENIED",
+        "state": "DENIED"
+      },
+      "execution_status": "SPEC_ONLY"
+    },
+    {
+      "id": "GEX-003",
+      "area": "identity",
+      "invariant": "Agent record comes from backend",
+      "scenario": "client supplies agent config with extra tools",
+      "expected": {
+        "decision": "DENY",
+        "max_effect_dispatches": 0,
+        "receipt": "DENIED",
+        "state": "DENIED"
+      },
+      "execution_status": "SPEC_ONLY"
+    },
+    {
+      "id": "GEX-004",
+      "area": "identity",
+      "invariant": "Unauthenticated local process has no authority",
+      "scenario": "Origin localhost but no authenticated principal",
+      "expected": {
+        "decision": "DENY",
+        "max_effect_dispatches": 0,
+        "receipt": "DENIED",
+        "state": "DENIED"
+      },
+      "execution_status": "SPEC_ONLY"
+    },
+    {
+      "id": "GEX-005",
+      "area": "registry",
+      "invariant": "Unknown tool is not invocable",
+      "scenario": "tool omitted from explicit versioned registry",
+      "expected": {
+        "decision": "DENY",
+        "max_effect_dispatches": 0,
+        "receipt": "DENIED",
+        "state": "DENIED"
+      },
+      "execution_status": "SPEC_ONLY"
+    },
+    {
+      "id": "GEX-006",
+      "area": "registry",
+      "invariant": "Discovery cannot register capability",
+      "scenario": "MCP tools/list discovers unknown write",
+      "expected": {
+        "decision": "DENY",
+        "max_effect_dispatches": 0,
+        "receipt": "DENIED",
+        "state": "DENIED"
+      },
+      "execution_status": "SPEC_ONLY"
+    },
+    {
+      "id": "GEX-007",
+      "area": "registry",
+      "invariant": "Disabled or unhealthy capability is unavailable",
+      "scenario": "registered tool status UNAVAILABLE",
+      "expected": {
+        "decision": "DENY",
+        "max_effect_dispatches": 0,
+        "receipt": "DENIED",
+        "state": "DENIED"
+      },
+      "execution_status": "SPEC_ONLY"
+    },
+    {
+      "id": "GEX-008",
+      "area": "schema",
+      "invariant": "Additional or wrong-typed parameter is denied",
+      "scenario": "new parameter after validation / unexpected field",
+      "expected": {
+        "decision": "DENY",
+        "max_effect_dispatches": 0,
+        "receipt": "DENIED",
+        "state": "DENIED"
+      },
+      "execution_status": "SPEC_ONLY"
+    },
+    {
+      "id": "GEX-009",
+      "area": "canonical",
+      "invariant": "Argument alteration changes full request digest",
+      "scenario": "approved file path changes one character",
+      "expected": {
+        "decision": "DENY",
+        "max_effect_dispatches": 0,
+        "receipt": "DENIED",
+        "state": "DENIED"
+      },
+      "execution_status": "SPEC_ONLY"
+    },
+    {
+      "id": "GEX-010",
+      "area": "canonical",
+      "invariant": "Workspace change invalidates approval",
+      "scenario": "workspace binding fingerprint changes",
+      "expected": {
+        "decision": "DENY",
+        "max_effect_dispatches": 0,
+        "receipt": "DENIED",
+        "state": "DENIED"
+      },
+      "execution_status": "SPEC_ONLY"
+    },
+    {
+      "id": "GEX-011",
+      "area": "canonical",
+      "invariant": "Tool version change invalidates approval",
+      "scenario": "capability.version increases",
+      "expected": {
+        "decision": "DENY",
+        "max_effect_dispatches": 0,
+        "receipt": "DENIED",
+        "state": "DENIED"
+      },
+      "execution_status": "SPEC_ONLY"
+    },
+    {
+      "id": "GEX-012",
+      "area": "canonical",
+      "invariant": "Policy revision change invalidates approval",
+      "scenario": "policy_digest differs at dispatch",
+      "expected": {
+        "decision": "DENY",
+        "max_effect_dispatches": 0,
+        "receipt": "DENIED",
+        "state": "DENIED"
+      },
+      "execution_status": "SPEC_ONLY"
+    },
+    {
+      "id": "GEX-013",
+      "area": "canonical",
+      "invariant": "Limits change invalidates approval",
+      "scenario": "timeout_ms increased after approval",
+      "expected": {
+        "decision": "DENY",
+        "max_effect_dispatches": 0,
+        "receipt": "DENIED",
+        "state": "DENIED"
+      },
+      "execution_status": "SPEC_ONLY"
+    },
+    {
+      "id": "GEX-014",
+      "area": "canonical",
+      "invariant": "Payload canonicalization is stable",
+      "scenario": "same I-JSON object different key order",
+      "expected": {
+        "decision": "SAME_DIGEST",
+        "max_effect_dispatches": 0,
+        "receipt": "NOT_APPLICABLE",
+        "state": "PROPOSED"
+      },
+      "execution_status": "SPEC_ONLY"
+    },
+    {
+      "id": "GEX-015",
+      "area": "canonical",
+      "invariant": "Duplicate keys and NaN are rejected",
+      "scenario": "JSON duplicate key or Infinity",
+      "expected": {
+        "decision": "DENY",
+        "max_effect_dispatches": 0,
+        "receipt": "DENIED",
+        "state": "DENIED"
+      },
+      "execution_status": "SPEC_ONLY"
+    },
+    {
+      "id": "GEX-016",
+      "area": "authorization",
+      "invariant": "READ is not implicitly autoallowed",
+      "scenario": "no matching explicit autoapproval rule",
+      "expected": {
+        "decision": "DENY",
+        "max_effect_dispatches": 0,
+        "receipt": "DENIED",
+        "state": "DENIED"
+      },
+      "execution_status": "SPEC_ONLY"
+    },
+    {
+      "id": "GEX-017",
+      "area": "approval",
+      "invariant": "Missing human approval blocks effect",
+      "scenario": "WRITE requires human; no approval",
+      "expected": {
+        "decision": "REQUIRE_HUMAN",
+        "max_effect_dispatches": 0,
+        "receipt": "PENDING",
+        "state": "AWAITING_APPROVAL"
+      },
+      "execution_status": "SPEC_ONLY"
+    },
+    {
+      "id": "GEX-018",
+      "area": "approval",
+      "invariant": "Human rejection creates durable evidence",
+      "scenario": "human rejects WRITE request",
+      "expected": {
+        "decision": "DENY",
+        "max_effect_dispatches": 0,
+        "receipt": "DENIED",
+        "state": "REJECTED"
+      },
+      "execution_status": "SPEC_ONLY"
+    },
+    {
+      "id": "GEX-019",
+      "area": "approval",
+      "invariant": "Approval binds exact operation and actor",
+      "scenario": "approval session actor differs from bound principal",
+      "expected": {
+        "decision": "DENY",
+        "max_effect_dispatches": 0,
+        "receipt": "DENIED",
+        "state": "DENIED"
+      },
+      "execution_status": "SPEC_ONLY"
+    },
+    {
+      "id": "GEX-020",
+      "area": "approval",
+      "invariant": "UI boolean is not proof of authentication",
+      "scenario": "resume approved=true without authenticated server approval",
+      "expected": {
+        "decision": "DENY",
+        "max_effect_dispatches": 0,
+        "receipt": "DENIED",
+        "state": "DENIED"
+      },
+      "execution_status": "SPEC_ONLY"
+    },
+    {
+      "id": "GEX-021",
+      "area": "permit",
+      "invariant": "Permit issuer MAC/signature must verify",
+      "scenario": "signed_by string present but signature absent or invalid",
+      "expected": {
+        "decision": "DENY",
+        "max_effect_dispatches": 0,
+        "receipt": "DENIED",
+        "state": "DENIED"
+      },
+      "execution_status": "SPEC_ONLY"
+    },
+    {
+      "id": "GEX-022",
+      "area": "permit",
+      "invariant": "Expired permit is rejected before effect",
+      "scenario": "not_before/expires_at outside trusted now",
+      "expected": {
+        "decision": "DENY",
+        "max_effect_dispatches": 0,
+        "receipt": "DENIED",
+        "state": "EXPIRED"
+      },
+      "execution_status": "SPEC_ONLY"
+    },
+    {
+      "id": "GEX-023",
+      "area": "permit",
+      "invariant": "Revocation stops dispatch",
+      "scenario": "session or permit revoked after approval",
+      "expected": {
+        "decision": "DENY",
+        "max_effect_dispatches": 0,
+        "receipt": "DENIED",
+        "state": "DENIED"
+      },
+      "execution_status": "SPEC_ONLY"
+    },
+    {
+      "id": "GEX-024",
+      "area": "permit",
+      "invariant": "Wrong request digest stops dispatch",
+      "scenario": "same request_id but mismatched parameter hash",
+      "expected": {
+        "decision": "DENY",
+        "max_effect_dispatches": 0,
+        "receipt": "DENIED",
+        "state": "DENIED"
+      },
+      "execution_status": "SPEC_ONLY"
+    },
+    {
+      "id": "GEX-025",
+      "area": "consumption",
+      "invariant": "Atomic consumption allows one worker",
+      "scenario": "two workers claim same permit simultaneously",
+      "expected": {
+        "decision": "ALLOW_ONE",
+        "max_effect_dispatches": 1,
+        "receipt": "ONE_RECEIPT_PLUS_REPLAY_DENIAL",
+        "state": "RUNNING"
+      },
+      "execution_status": "SPEC_ONLY"
+    },
+    {
+      "id": "GEX-026",
+      "area": "consumption",
+      "invariant": "Replay survives process restart",
+      "scenario": "restart worker then reuse consumed permit",
+      "expected": {
+        "decision": "DENY",
+        "max_effect_dispatches": 0,
+        "receipt": "DENIED",
+        "state": "DENIED"
+      },
+      "execution_status": "SPEC_ONLY"
+    },
+    {
+      "id": "GEX-027",
+      "area": "consumption",
+      "invariant": "No effect if durable intent fails",
+      "scenario": "transaction fails writing permit-consumed dispatch-intent",
+      "expected": {
+        "decision": "DENY",
+        "max_effect_dispatches": 0,
+        "receipt": "FAILURE",
+        "state": "FAILED"
+      },
+      "execution_status": "SPEC_ONLY"
+    },
+    {
+      "id": "GEX-028",
+      "area": "recovery",
+      "invariant": "Lost acknowledgement after effect is unresolved",
+      "scenario": "worker crashes after transport call before receipt",
+      "expected": {
+        "decision": "RECONCILE",
+        "max_effect_dispatches": 1,
+        "receipt": "UNKNOWN",
+        "state": "RECONCILIATION_REQUIRED"
+      },
+      "execution_status": "SPEC_ONLY"
+    },
+    {
+      "id": "GEX-029",
+      "area": "recovery",
+      "invariant": "Nonidempotent external effect is not retried blindly",
+      "scenario": "network timeout after external CREATE",
+      "expected": {
+        "decision": "RECONCILE",
+        "max_effect_dispatches": 1,
+        "receipt": "UNKNOWN",
+        "state": "RECONCILIATION_REQUIRED"
+      },
+      "execution_status": "SPEC_ONLY"
+    },
+    {
+      "id": "GEX-030",
+      "area": "receipt",
+      "invariant": "Success requires persisted observed effect",
+      "scenario": "tool returns SUCCESS but receipt storage unavailable",
+      "expected": {
+        "decision": "RECONCILE",
+        "max_effect_dispatches": 1,
+        "receipt": "UNKNOWN",
+        "state": "RECONCILIATION_REQUIRED"
+      },
+      "execution_status": "SPEC_ONLY"
+    },
+    {
+      "id": "GEX-031",
+      "area": "receipt",
+      "invariant": "Receipt mismatch cannot validate success",
+      "scenario": "receipt request_digest or attempt_id does not match",
+      "expected": {
+        "decision": "DENY_SUCCESS",
+        "max_effect_dispatches": 1,
+        "receipt": "MISMATCH",
+        "state": "RECONCILIATION_REQUIRED"
+      },
+      "execution_status": "SPEC_ONLY"
+    },
+    {
+      "id": "GEX-032",
+      "area": "scope",
+      "invariant": "Workspace escape is blocked",
+      "scenario": "file read resolves symlink outside bound root",
+      "expected": {
+        "decision": "DENY",
+        "max_effect_dispatches": 0,
+        "receipt": "DENIED",
+        "state": "DENIED"
+      },
+      "execution_status": "SPEC_ONLY"
+    },
+    {
+      "id": "GEX-033",
+      "area": "scope",
+      "invariant": "OS isolation is not inferred from logical sandbox",
+      "scenario": "run_tests requires OS network isolation unsupported by backend",
+      "expected": {
+        "decision": "DENY",
+        "max_effect_dispatches": 0,
+        "receipt": "DENIED",
+        "state": "DENIED"
+      },
+      "execution_status": "SPEC_ONLY"
+    },
+    {
+      "id": "GEX-034",
+      "area": "scope",
+      "invariant": "Network policy defaults to deny",
+      "scenario": "MCP adapter requests unallowlisted outbound host",
+      "expected": {
+        "decision": "DENY",
+        "max_effect_dispatches": 0,
+        "receipt": "DENIED",
+        "state": "DENIED"
+      },
+      "execution_status": "SPEC_ONLY"
+    },
+    {
+      "id": "GEX-035",
+      "area": "scope",
+      "invariant": "Arbitrary shell is unavailable",
+      "scenario": "model proposes bash -c with unbounded argv",
+      "expected": {
+        "decision": "DENY",
+        "max_effect_dispatches": 0,
+        "receipt": "DENIED",
+        "state": "DENIED"
+      },
+      "execution_status": "SPEC_ONLY"
+    },
+    {
+      "id": "GEX-036",
+      "area": "positive",
+      "invariant": "Narrow registered local READ may be dispatched once",
+      "scenario": "authenticated principal, explicit policy ALLOW, supported typed read, durable intent",
+      "expected": {
+        "decision": "ALLOW",
+        "max_effect_dispatches": 1,
+        "receipt": "SUCCESS",
+        "state": "SUCCEEDED"
+      },
+      "execution_status": "SPEC_ONLY"
+    },
+    {
+      "id": "GEX-037",
+      "area": "positive",
+      "invariant": "Approved local WRITE may be dispatched once",
+      "scenario": "approved exact fingerprint, valid permit, supported bounded write and durable intent",
+      "expected": {
+        "decision": "ALLOW",
+        "max_effect_dispatches": 1,
+        "receipt": "SUCCESS",
+        "state": "SUCCEEDED"
+      },
+      "execution_status": "SPEC_ONLY"
+    },
+    {
+      "id": "GEX-038",
+      "area": "evidence",
+      "invariant": "Proposal denial persisted without an execution attempt",
+      "scenario": "unknown tool blocked before worker launch",
+      "expected": {
+        "decision": "DENY",
+        "max_effect_dispatches": 0,
+        "receipt": "DENIED",
+        "state": "DENIED"
+      },
+      "execution_status": "SPEC_ONLY"
+    },
+    {
+      "id": "GEX-039",
+      "area": "evidence",
+      "invariant": "Trace is not substitute for receipt",
+      "scenario": "Jaeger shows span but transactional receipt missing",
+      "expected": {
+        "decision": "DENY_SUCCESS",
+        "max_effect_dispatches": 1,
+        "receipt": "UNKNOWN",
+        "state": "RECONCILIATION_REQUIRED"
+      },
+      "execution_status": "SPEC_ONLY"
+    },
+    {
+      "id": "GEX-040",
+      "area": "compatibility",
+      "invariant": "Inference-only runner never implicitly dispatches",
+      "scenario": "single-inference agent output contains tool-looking text",
+      "expected": {
+        "decision": "NO_ACTION",
+        "max_effect_dispatches": 0,
+        "receipt": "NOT_APPLICABLE",
+        "state": "NO_TOOL_RUN"
+      },
+      "execution_status": "SPEC_ONLY"
+    }
+  ]
+}
