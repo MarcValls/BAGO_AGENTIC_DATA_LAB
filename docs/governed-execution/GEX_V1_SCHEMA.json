@@ -952,7 +952,13 @@
             "TIMEOUT",
             "REPLAY_DENIED",
             "RECONCILIATION_REQUIRED",
-            "RECEIPT_PERSISTED"
+            "RECEIPT_PERSISTED",
+            "QUEUED",
+            "CLAIMED",
+            "SUCCEEDED",
+            "EXPIRED",
+            "CANCELLED",
+            "REVOKED"
           ]
         },
         "timestamp": {
@@ -963,6 +969,62 @@
           "type": "string",
           "minLength": 1,
           "maxLength": 256
+        },
+        "proposal_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "proposal_digest": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "request_digest": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "attempt_id": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 256
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "permit_id": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 256
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "sandbox_receipt_id": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 256
+            },
+            {
+              "type": "null"
+            }
+          ]
         }
       },
       "required": [
@@ -974,7 +1036,13 @@
         "event_digest",
         "kind",
         "timestamp",
-        "payload_ref"
+        "payload_ref",
+        "proposal_id",
+        "proposal_digest",
+        "request_digest",
+        "attempt_id",
+        "permit_id",
+        "sandbox_receipt_id"
       ]
     },
     "ToolProposalEnvelopeV1": {
