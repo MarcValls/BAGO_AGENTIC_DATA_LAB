@@ -31,6 +31,12 @@ Mapeo actual y diferencias:
 7. LocalToolAdapter usa ExecutionGateway y SandboxManager. MCP remoto solo por adaptador registrado, credenciales de mínimo privilegio, política explícita de egress y cuotas. Sin enforcement de aislamiento de SO/red requerido, capability UNAVAILABLE/FAIL_CLOSED; no llamar sandbox lógico "OS-isolated".
 8. EvidenceStore (transaccional + objetos referenciados) es fuente de hechos. LocalTrace/OTel/Jaeger solo proyecciones. UI/WebSocket no inventan ejecución completada.
 
+## 1A. Propuesta anterior a registro (denegación verificable)
+
+ToolProposalEnvelopeV1 lo crea el backend al recibir una propuesta del modelo, **incluso si la herramienta es desconocida**. Incluye request_id, run_id, proposal_id, agent_id cargado del servidor, principal_subject/backend-auth, workspace_binding_fingerprint, requested_tool (no confiable), raw_arguments_sha256 (bytes recibidos con límites de tamaño), received_at y proposal_digest. Este último se calcula con SHA-256 y separación de dominio ADL:GEX:PROPOSAL:v1 sobre el sobre sin el campo de digest, usando JCS. No existe permiso en esta fase.
+
+Si falla registro, esquema, autenticación, ámbito o disponibilidad, se persiste ProposalDenialReceiptV1 con proposal_digest, request_id, decision/error_code, reason y refs del evento. NO inventar capability.version ni registry_digest para poder fabricar un GEXRequestV1; en particular, proposal_digest no se trata como request_digest. Si el ledger está caído, no ejecutar y no fingir que se persistió el rechazo.
+
 ## 2. Solicitud íntegra GEXRequestV1
 
 GEXRequestV1 es un **sobre inmutable creado por el backend** que adapta sin borrar los campos del ExecutionRequest histórico; el wire-format aún no está conectado. Los campos vinculados a huella son obligatorios y no admiten null salvo donde el esquema expresamente lo permita:
@@ -90,7 +96,7 @@ No existe transición a SUCCEEDED sin (a) resultado observado por adaptador, (b)
 
 El ledger emite eventos PROPOSED, POLICY_DECIDED, APPROVAL_REQUESTED, APPROVED/REJECTED, PERMIT_ISSUED, PERMIT_CONSUMED, DISPATCH_INTENT, STARTED, EFFECT_OBSERVED, FAILED/DENIED/TIMEOUT, REPLAY_DENIED, RECONCILIATION_REQUIRED y RECEIPT_PERSISTED. Cada evento enlaza run_id, request_id, digest, proposal_id y, si existen, decision_id, approval_id, permit_id, job_id, attempt_id y sandbox_receipt_id/mcp_receipt_id. Orden por seq asignada de forma transaccional dentro de una solicitud; event_digest = SHA-256 sobre evento canónico y prev_hash; la cadena detecta modificaciones pero sin anclaje externo **no demuestra inmutabilidad ante un administrador**.
 
-ReceiptV1 requiere receipt_id, request_digest, attempt_id (o causa pre-despacho), tool/capability version, decision/approval refs, status (SUCCESS/FAILURE/DENIED/TIMEOUT/UNKNOWN), observed_effect, error taxonomy, execution-boundary identity, actual_limits, input/output digests, evidence_refs, persisted_at y origin event IDs. Para una denegación previa al despacho, permit_id/attempt_id son nulos y se usa decision_id. El ledger protege datos sensibles; las trazas públicas contienen resúmenes redactados y hashes de artefactos guardados con ACL/retención. Los recibos se incorporan a LocalTrace mediante referencias, sin convertir Jaeger en fuente de autoridad.
+ReceiptV1 (tras validación completa de GEXRequestV1) requiere receipt_id, request_digest, attempt_id (o causa pre-despacho), tool/capability version, decision/approval refs, status (SUCCESS/FAILURE/DENIED/TIMEOUT/UNKNOWN), observed_effect, error taxonomy, execution-boundary identity, actual_limits, input/output digests, evidence_refs, persisted_at y origin event IDs. Para una denegación posterior a la construcción de GEXRequestV1 pero previa al despacho, permit_id/attempt_id son nulos y se usa decision_id. Para un rechazo previo a registro/esquema, usar ProposalDenialReceiptV1 con proposal_digest, sin afirmar que existe request_digest. El ledger protege datos sensibles; las trazas públicas contienen resúmenes redactados y hashes de artefactos guardados con ACL/retención. Los recibos se incorporan a LocalTrace mediante referencias, sin convertir Jaeger en fuente de autoridad.
 
 ## 6. Gates de capacidad y despliegue
 
@@ -110,4 +116,4 @@ CR-GEX-004: decidir perfiles de aislamiento realmente provistos en Windows y egr
 CR-GEX-005: garantizar que la proyección Decision Inspector no convierta estados de la demo en autorización de producción.
 Las decisiones abiertas son bloqueantes **para disponibilidad**, no autorizan rebajar el contrato.
 
-Ver vectores de conformidad en docs/governed-execution/GEX_V1_CONFORMANCE_VECTORS.json y evaluación de brechas en docs/governed-execution/BASELINE_AND_GAPS.md.
+Ver esquema estructural (no autorización operativa) en docs/governed-execution/GEX_V1_SCHEMA.json y vectores de conformidad en docs/governed-execution/GEX_V1_CONFORMANCE_VECTORS.json y evaluación de brechas en docs/governed-execution/BASELINE_AND_GAPS.md.
