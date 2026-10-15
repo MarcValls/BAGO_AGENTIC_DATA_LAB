@@ -256,7 +256,7 @@ def test_gex_schema_does_not_mistake_mutable_state_for_signature() -> None:
         "workspace_binding_fingerprint": digest, "operation_summary_digest": digest,
         "decision": "APPROVED", "issued_at": "2026-10-15T10:00:00Z",
         "expires_at": "2026-10-15T10:02:00Z", "auth_context_ref": "context-1",
-        "evidence_ref": "evidence-1", "key_id": "kid1", "signature": "bytes-base64",
+        "evidence_ref": "evidence-1", "key_id": "kid1", "signature": "a" * 64,
         "signature_algorithm": "HMAC-SHA256"
     }
     Draft202012Validator(schema).validate(approval)
