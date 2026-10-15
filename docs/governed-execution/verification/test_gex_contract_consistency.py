@@ -75,7 +75,7 @@ def test_gex_signed_claims_and_durable_use_state_are_distinct() -> None:
     d = _read("GEX_V1_SCHEMA.json")["$defs"]
     assert "status" not in d["PermitV1"]["properties"]
     assert {"contract_version", "signature", "signature_algorithm", "key_id",
-            "request_digest", "max_uses"} <= set(d["PermitV1"]["properties"])
+            "request_digest", "max_uses", "authorization_source"} <= set(d["PermitV1"]["properties"])
     assert d["PermitV1"]["properties"]["max_uses"]["const"] == 1
     assert {"state", "uses", "db_version", "attempt_id"} <= set(d["PermitUseStateV1"]["properties"])
     assert "signature" not in d["PermitUseStateV1"]["properties"]
@@ -251,6 +251,7 @@ def test_gex_schema_does_not_mistake_mutable_state_for_signature() -> None:
     digest = "b" * 64
     approval = {
         "contract_version": "gex-approval/v1", "approval_id": "approval-1",
+        "decision_id": "decision-1",
         "request_digest": digest, "actor": "person-1", "principal_subject": "person-1",
         "workspace_binding_fingerprint": digest, "operation_summary_digest": digest,
         "decision": "APPROVED", "issued_at": "2026-10-15T10:00:00Z",
