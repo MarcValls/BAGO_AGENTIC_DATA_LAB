@@ -1,0 +1,43 @@
+name: GEX README generator evidence
+
+on:
+  push:
+    branches:
+      - codex/cr-gex-001-contract-v1-20261015
+    paths:
+      - .github/workflows/gex-readme-evidence.yml
+      - docs/governed-execution/**
+      - .bago/goals/CR-GEX-001/**
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  generator-evidence:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install ffmpeg for existing suite
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ffmpeg
+      - name: Install project test dependencies
+        run: python -m pip install -r requirements-test.txt
+      - name: Regenerate README from canonical sources and execute full suite
+        run: python scripts/generate_dynamic_readme.py
+      - name: Validate generator output
+        run: python scripts/generate_dynamic_readme.py --check --skip-tests
+      - name: Publish exact generated README bytes in public CI log
+        run: |
+          python - <<'PY'
+          import base64
+          from pathlib import Path
+          value = base64.b64encode(Path("README.md").read_bytes()).decode("ascii")
+          for index in range(0, len(value), 800):
+              print("GEX_README_B64:" + value[index:index + 800])
+          PY
