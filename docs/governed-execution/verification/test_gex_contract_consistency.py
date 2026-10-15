@@ -26,10 +26,10 @@ def test_gex_wire_schema_has_closed_required_objects() -> None:
     schema = _read("GEX_V1_SCHEMA.json")
     assert schema["$schema"] == "https://json-schema.org/draft/2020-12/schema"
     definitions = schema["$defs"]
-    assert len(schema["oneOf"]) == 10
-    assert len({item["$ref"] for item in schema["oneOf"]}) == 10
+    assert len(schema["oneOf"]) == 11
+    assert len({item["$ref"] for item in schema["oneOf"]}) == 11
     assert {"GEXRequestV1", "PermitV1", "PermitUseStateV1",
-            "ToolProposalEnvelopeV1", "ProposalDenialReceiptV1",
+            "ToolProposalEnvelopeV1", "ProposalDenialReceiptV1", "IngressDenialReceiptV1",
             "ApprovalV1", "PolicyDecisionV1", "ReceiptV1",
             "LedgerEventV1", "CapabilityRegistrationV1"} <= set(definitions)
     for name, definition in definitions.items():
@@ -263,3 +263,21 @@ def test_gex_schema_does_not_mistake_mutable_state_for_signature() -> None:
     approval["signature_algorithm"] = "none"
     with pytest.raises(ValidationError):
         Draft202012Validator(schema).validate(approval)
+
+def test_gex_ingress_denial_has_no_fictitious_principal() -> None:
+    definitions = _read("GEX_V1_SCHEMA.json")["$defs"]
+    ingress = definitions["IngressDenialReceiptV1"]["properties"]
+    assert {"ingress_id", "raw_request_sha256", "prev_ingress_hash",
+            "ingress_event_digest", "reason_code"} <= set(ingress)
+    assert not {"request_id", "proposal_digest", "principal_subject",
+                "workspace_binding_fingerprint"} & set(ingress)
+
+
+def test_gex_preconsumption_rechecks_and_approver_separation() -> None:
+    states = _read("GEX_V1_STATE_MACHINE.json")["transitions"]
+    arcs = {(edge["from"], edge["to"]) for edge in states}
+    assert {("QUEUED", "DENIED"), ("CLAIMED", "DENIED"),
+            ("CLAIMED", "EXPIRED"), ("CLAIMED", "RECONCILIATION_REQUIRED")} <= arcs
+    vectors = {v["id"]: v for v in _read("GEX_V1_CONFORMANCE_VECTORS.json")["vectors"]}
+    assert "not necessarily requesting principal" in vectors["GEX-019"]["invariant"]
+    assert vectors["GEX-004"]["expected"]["receipt"] == "INGRESS_DENIAL_RECEIPT"
