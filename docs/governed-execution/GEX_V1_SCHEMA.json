@@ -25,6 +25,12 @@
     },
     {
       "$ref": "#/$defs/LedgerEventV1"
+    },
+    {
+      "$ref": "#/$defs/ToolProposalEnvelopeV1"
+    },
+    {
+      "$ref": "#/$defs/ProposalDenialReceiptV1"
     }
   ],
   "$defs": {
@@ -389,7 +395,14 @@
           "maxLength": 256
         },
         "constraints_effective": {
-          "$ref": "#/$defs/Constraints"
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Constraints"
+            },
+            {
+              "type": "null"
+            }
+          ]
         },
         "timestamp": {
           "type": "string",
@@ -774,9 +787,16 @@
           "maxLength": 256
         },
         "capability_version": {
-          "type": "string",
-          "minLength": 1,
-          "maxLength": 256
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 256
+            },
+            {
+              "type": "null"
+            }
+          ]
         },
         "status": {
           "enum": [
@@ -803,12 +823,26 @@
           ]
         },
         "execution_boundary_id": {
-          "type": "string",
-          "minLength": 1,
-          "maxLength": 256
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 256
+            },
+            {
+              "type": "null"
+            }
+          ]
         },
         "actual_limits": {
-          "$ref": "#/$defs/Constraints"
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Constraints"
+            },
+            {
+              "type": "null"
+            }
+          ]
         },
         "input_sha256": {
           "type": "string",
@@ -947,6 +981,146 @@
         "kind",
         "timestamp",
         "payload_ref"
+      ]
+    },
+    "ToolProposalEnvelopeV1": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "request_id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "run_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "proposal_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "agent_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "principal_subject": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "workspace_binding_fingerprint": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "requested_tool": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "raw_arguments_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "received_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "proposal_digest": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        }
+      },
+      "required": [
+        "request_id",
+        "run_id",
+        "proposal_id",
+        "agent_id",
+        "principal_subject",
+        "workspace_binding_fingerprint",
+        "requested_tool",
+        "raw_arguments_sha256",
+        "received_at",
+        "proposal_digest"
+      ]
+    },
+    "ProposalDenialReceiptV1": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "receipt_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "request_id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "run_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "proposal_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "proposal_digest": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "requested_tool": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "reason_code": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "decision": {
+          "const": "DENY"
+        },
+        "evidence_refs": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256
+          },
+          "uniqueItems": true
+        },
+        "origin_event_ids": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256
+          },
+          "uniqueItems": true
+        },
+        "persisted_at": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "receipt_id",
+        "request_id",
+        "run_id",
+        "proposal_id",
+        "proposal_digest",
+        "requested_tool",
+        "reason_code",
+        "decision",
+        "evidence_refs",
+        "origin_event_ids",
+        "persisted_at"
       ]
     }
   }
