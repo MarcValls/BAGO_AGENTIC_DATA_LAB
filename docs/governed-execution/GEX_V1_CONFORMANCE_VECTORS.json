@@ -546,7 +546,8 @@
         "evidence_ref": "evidence-fixture-001",
         "key_id": "test-approval-hmac-v1",
         "signature_algorithm": "HMAC-SHA256",
-        "signature": "0d28f0d389aa4fc7b7fcce55d8c0bdecb22e0f4d5f31f32613d350ffedaebd85"
+        "signature": "7aac2531a13968f29e2333dd56e98780f139942f5ba4be3e54d75818fa6ec196",
+        "decision_id": "decision-fixture-001"
       }
     },
     {
@@ -583,7 +584,12 @@
         "not_before": "2026-01-02T03:04:05Z",
         "expires_at": "2026-01-02T03:09:05Z",
         "max_uses": 1,
-        "signature": "361e9c8ce86c16e10fab68840591cbe0dcac3a8b4af1a28b49b5001435931a05"
+        "signature": "842d576c3f7e601864707be9576abf85e116148e6b4ad2dfe0213906d8cdec7c",
+        "authorization_source": {
+          "decision_id": "decision-fixture-001",
+          "approval_id": "approval-fixture-001",
+          "auto_rule_id": null
+        }
       }
     }
   ]
