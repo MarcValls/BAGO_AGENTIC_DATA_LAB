@@ -626,7 +626,7 @@ skills: `.bago/canon/JOB_SKILL_MATRIX.md`; manifiesto: `docs/readme_manifest.jso
 
 ### `portfolio-demo-v1` — 2026-10-02
 
-**Portfolio Demo v1**
+#### Portfolio Demo v1
 
 L0..L15 VERIFIED local + zero-cost rule. Snapshot for CV/LinkedIn.
 
