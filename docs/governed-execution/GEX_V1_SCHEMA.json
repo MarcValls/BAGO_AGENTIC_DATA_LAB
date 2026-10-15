@@ -31,6 +31,9 @@
     },
     {
       "$ref": "#/$defs/ProposalDenialReceiptV1"
+    },
+    {
+      "$ref": "#/$defs/PermitUseStateV1"
     }
   ],
   "$defs": {
@@ -604,14 +607,6 @@
         },
         "max_uses": {
           "const": 1
-        },
-        "status": {
-          "enum": [
-            "ISSUED",
-            "CONSUMED",
-            "REVOKED",
-            "EXPIRED"
-          ]
         }
       },
       "required": [
@@ -636,8 +631,7 @@
         "issued_at",
         "not_before",
         "expires_at",
-        "max_uses",
-        "status"
+        "max_uses"
       ]
     },
     "CapabilityRegistrationV1": {
@@ -1121,6 +1115,70 @@
         "evidence_refs",
         "origin_event_ids",
         "persisted_at"
+      ]
+    },
+    "PermitUseStateV1": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "permit_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "request_digest": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "state": {
+          "enum": [
+            "ISSUED",
+            "CONSUMED",
+            "REVOKED",
+            "EXPIRED"
+          ]
+        },
+        "uses": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "db_version": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "consumed_at": {
+          "anyOf": [
+            {
+              "type": "string",
+              "format": "date-time"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "attempt_id": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 256
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "permit_id",
+        "request_digest",
+        "state",
+        "uses",
+        "db_version",
+        "consumed_at",
+        "attempt_id"
       ]
     }
   }
