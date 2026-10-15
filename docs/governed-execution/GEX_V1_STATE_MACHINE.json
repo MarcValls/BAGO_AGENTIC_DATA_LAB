@@ -187,7 +187,34 @@
       "required_events": [
         "RECONCILIATION_REQUIRED"
       ]
+    },
+    {
+      "from": "QUEUED",
+      "to": "DENIED",
+      "guard": "dispatch_revalidation_fails_before_consumption",
+      "required_events": [
+        "DENIED",
+        "RECEIPT_PERSISTED"
+      ]
+    },
+    {
+      "from": "CLAIMED",
+      "to": "DENIED",
+      "guard": "post_claim_pre_consumption_authority_or_policy_invalid",
+      "required_events": [
+        "DENIED",
+        "RECEIPT_PERSISTED"
+      ]
+    },
+    {
+      "from": "CLAIMED",
+      "to": "EXPIRED",
+      "guard": "post_claim_pre_consumption_permit_expired",
+      "required_events": [
+        "EXPIRED",
+        "RECEIPT_PERSISTED"
+      ]
     }
   ],
-  "note": "Store-down is an external fail-closed response and cannot assert any persisted transition/receipt. Permit-use ISSUED->CONSUMED is an additional atomic CAS state machine."
+  "note": "Store-down is an external fail-closed response and cannot assert any persisted transition/receipt. Permit-use ISSUED->CONSUMED is an additional atomic CAS state machine. CLAIMED->RECONCILIATION_REQUIRED is mandatory when a committed DISPATCH_INTENT has occurred but RUNNING/event storage is interrupted."
 }
