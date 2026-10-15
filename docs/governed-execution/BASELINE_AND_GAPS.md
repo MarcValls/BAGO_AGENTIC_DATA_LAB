@@ -42,9 +42,15 @@ sequenceDiagram
   API->>API: autenticar; cargar agente; resolver workspace
   API->>P: tarea sin permisos de tool
   P-->>API: ToolProposal (sin ejecución)
+  API->>DB: ToolProposalEnvelopeV1 + proposal_digest
   API->>R: lookup capability versionada + esquema
   R-->>API: descriptor explícito / unavailable
-  API->>DB: GEXRequestV1 + digest + PROPOSED
+  API->>API: validar registro, disponibilidad y argumentos contra esquema
+  break Registro no resuelto, capability no disponible o esquema inválido
+    API->>DB: ProposalDenialReceiptV1 + evento DENIED (proposal_digest)
+    API-->>U: denegación; sin permiso ni ejecución
+  end
+  API->>DB: GEXRequestV1 validado + request_digest + PROPOSED
   API->>A: evaluar principal/agente/workspace/tool/args/efecto
   A->>DB: POLICY_DECIDED (incl. deny)
   opt REQUIRE_HUMAN
