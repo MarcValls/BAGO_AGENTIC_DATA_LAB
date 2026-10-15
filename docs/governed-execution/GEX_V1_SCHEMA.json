@@ -501,6 +501,11 @@
             "HMAC-SHA256",
             "Ed25519"
           ]
+        },
+        "decision_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
         }
       },
       "required": [
@@ -518,7 +523,8 @@
         "evidence_ref",
         "key_id",
         "signature",
-        "signature_algorithm"
+        "signature_algorithm",
+        "decision_id"
       ],
       "allOf": [
         {
@@ -665,6 +671,46 @@
         },
         "max_uses": {
           "const": 1
+        },
+        "authorization_source": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "decision_id": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 256
+            },
+            "approval_id": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 256
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "auto_rule_id": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 256
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          },
+          "required": [
+            "decision_id",
+            "approval_id",
+            "auto_rule_id"
+          ]
         }
       },
       "required": [
@@ -690,7 +736,8 @@
         "issued_at",
         "not_before",
         "expires_at",
-        "max_uses"
+        "max_uses",
+        "authorization_source"
       ],
       "allOf": [
         {
