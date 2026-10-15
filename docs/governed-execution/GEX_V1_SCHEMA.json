@@ -34,6 +34,9 @@
     },
     {
       "$ref": "#/$defs/PermitUseStateV1"
+    },
+    {
+      "$ref": "#/$defs/IngressDenialReceiptV1"
     }
   ],
   "$defs": {
@@ -1182,6 +1185,54 @@
               "type": "null"
             }
           ]
+        },
+        "decision_id": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 256
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "approval_id": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 256
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "job_id": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 256
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "boundary_receipt_id": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 256
+            },
+            {
+              "type": "null"
+            }
+          ]
         }
       },
       "required": [
@@ -1200,7 +1251,11 @@
         "request_digest",
         "attempt_id",
         "permit_id",
-        "sandbox_receipt_id"
+        "sandbox_receipt_id",
+        "decision_id",
+        "approval_id",
+        "job_id",
+        "boundary_receipt_id"
       ]
     },
     "ToolProposalEnvelopeV1": {
@@ -1417,6 +1472,78 @@
         "db_version",
         "consumed_at",
         "attempt_id"
+      ]
+    },
+    "IngressDenialReceiptV1": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "contract_version": {
+          "const": "gex-ingress-denial/v1"
+        },
+        "receipt_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "ingress_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "raw_request_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "decision": {
+          "const": "DENY"
+        },
+        "reason_code": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "received_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "persisted_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "ledger_event_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "prev_ingress_hash": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "ingress_event_digest": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        }
+      },
+      "required": [
+        "contract_version",
+        "receipt_id",
+        "ingress_id",
+        "raw_request_sha256",
+        "decision",
+        "reason_code",
+        "received_at",
+        "persisted_at",
+        "ledger_event_id",
+        "prev_ingress_hash",
+        "ingress_event_digest"
       ]
     }
   }
