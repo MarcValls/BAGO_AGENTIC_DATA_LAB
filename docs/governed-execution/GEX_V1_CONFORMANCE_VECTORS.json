@@ -221,7 +221,7 @@
       "expected": {
         "decision": "REQUIRE_HUMAN",
         "max_effect_dispatches": 0,
-        "receipt": "PENDING",
+        "receipt": "APPROVAL_REQUESTED_EVENT",
         "state": "AWAITING_APPROVAL"
       },
       "execution_status": "SPEC_ONLY"
@@ -347,12 +347,12 @@
       "id": "GEX-027",
       "area": "consumption",
       "invariant": "No effect if durable intent fails",
-      "scenario": "transaction fails writing permit-consumed dispatch-intent",
+      "scenario": "transaction to reserve permit + DISPATCH_INTENT aborts (storage unavailable)",
       "expected": {
         "decision": "DENY",
         "max_effect_dispatches": 0,
-        "receipt": "FAILURE",
-        "state": "FAILED"
+        "receipt": "UNPERSISTED_DENIAL_NOT_CLAIMED",
+        "state": "STORE_UNAVAILABLE_FAIL_CLOSED"
       },
       "execution_status": "SPEC_ONLY"
     },
