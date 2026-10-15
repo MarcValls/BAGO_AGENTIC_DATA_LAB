@@ -17,6 +17,7 @@ Cerrar el contrato normativo de identidad, solicitud inmutable, digest, registro
 Added:
 - docs/governed-execution/GEX_V1_NORMATIVE_CONTRACT.md
 - docs/governed-execution/GEX_V1_CONFORMANCE_VECTORS.json
+- docs/governed-execution/GEX_V1_SCHEMA.json
 - docs/governed-execution/BASELINE_AND_GAPS.md
 - .bago/goals/CR-GEX-001/goal.md
 
@@ -33,6 +34,7 @@ Source inspected via connected GitHub read API on main (not a local worktree). O
 - [x] Legacy boundaries mapped to exact source.
 - [x] Normative security semantics specified, including irreversible changes and failure states.
 - [x] 40 positive/negative SPEC_ONLY vectors materialized.
+- [x] 9 structural wire schemas documented, without runtime authority.
 - [ ] Independent contract retest validates cross-field completeness, RFC 8785 interoperability, identities/signatures, CAS races and transition completeness.
 - [ ] CR-GEX-002/003/004/005 dependencies resolved or explicitly closed with fail-closed profiles.
 - [ ] teamctl verify and mission-specific validated handoff.
@@ -52,6 +54,7 @@ Source inspected via connected GitHub read API on main (not a local worktree). O
 Static code evidence: docs/governed-execution/BASELINE_AND_GAPS.md.
 Contract: docs/governed-execution/GEX_V1_NORMATIVE_CONTRACT.md.
 Spec oracle: docs/governed-execution/GEX_V1_CONFORMANCE_VECTORS.json.
+Structural schema: docs/governed-execution/GEX_V1_SCHEMA.json.
 No full local checkout or ability to run teamctl/test/README generator from GitHub connector: NOT_RUN. Do not claim FROZEN, VERIFIED, VALIDATED or new tool execution AVAILABLE.
 
 ## Next consumer
