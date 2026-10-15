@@ -1,203 +1,115 @@
-# Manual para dummies: cómo leer una ejecución
+# Manual para leer una ejecución en BAGO Agentic Data Lab
 
-**Clase 01 · Marc Valls**
+Manual 01 · edición 1.3 · actualizado el 15 de octubre de 2026
 
-## CLASE 01  ·  CÓMO LEER UNA EJECUCIÓN
+Esta guía explica cómo inspeccionar una ejecución del laboratorio, seguir su LocalTrace y revisar propuestas y recibos. La interfaz de inspección es de solo lectura: no autoriza ni ejecuta acciones.
 
-| PREGUNTA DE ENTRADA¿Cómo sé qué hizo un agente y qué evidencia respalda su respuesta?Una ruta visual: decisión, traza, acción y recibo. |
-| --- |
+## 1. Iniciar la aplicacion
 
-En esta clase aprenderás a reconocer los identificadores, seguir los eventos y comprobar si una acción tiene un recibo válido.
+Desde la raíz del repositorio, ejecuta en PowerShell:
 
-| DECISION | TRACE | ACTIONS | JAEGER |
-| --- | --- | --- | --- |
+```powershell
+scripts\run-local-ui.ps1
+```
 
-Repositorio: C:\Users\AMTEC_Terminal_1º\BAGO_AGENTIC_DATA_LAB
+El launcher compila la interfaz, inicia la API local y abre la aplicación. Usa `http://127.0.0.1` y selecciona un puerto libre entre 8080 y 9000; abre la dirección que lanza el propio script. Si faltan paquetes, sigue `docs/agent-chat-control/LOCAL_SETUP.md`. El launcher no configura credenciales ni realiza una llamada a un modelo.
 
-Decision Inspector: http://127.0.0.1:8082
+Para abrir el inspector, selecciona **Inspect** en la barra lateral y luego **Decision Inspector**. Se abre una capa de inspección sobre el espacio de trabajo. Si el paquete de evidencias no está disponible, la interfaz lo indica; no inventa una ejecución.
 
-Jaeger local: http://localhost:16686
+> Esta aplicacion tambien ofrece Chat, Capabilities, Agent Builder, Agent Runs y Agent Evaluation Lab. Ver una entrada en el catalogo, conversar con un agente o abrir una ejecucion no demuestra por si solo que un trabajo se completara. Para leer el alcance de la demo gobernada, consulta `portfolio/README.md`.
 
-Documentación: docs/decision-inspector dentro del repositorio
+## 2. Leer decisión, claims y evidencia
 
-### ANTES DE EMPEZAR
+Anota el `run_id` mostrado en Decision Inspector. Comprueba la pregunta, la respuesta fuente y el estado de la ejecucion.
 
-| 01  Identifica el Run ID de la ejecución. | 02  Distingue respuesta, evidencia y claims. |
+Los contadores resumen referencias de evidencia, claims estructurados, eventos de traza y acciones propuestas. Una referencia recuperada indica que un documento o fragmento fue consultado; no demuestra por sí sola una frase de la respuesta. La interfaz no extrae claims del texto ni deduce relaciones claim-evidencia. Cuando la fuente no aporta esos datos, se muestran como no disponibles.
+
+Las vistas **Conclusion**, **Claims**, **Evidence** y **Provenance** separan el texto fuente de las relaciones que la fuente registró. `Freshness not established` significa que no hay datos suficientes para comparar la revisión o snapshot.
+
+![Captura de referencia de la vista Decision Inspector](MANUAL_PARA_DUMMIES_assets/overview.png)
+
+*Captura del recorrido validado el 8 de octubre de 2026. Sirve para localizar elementos; puede no coincidir con el aspecto de la interfaz actual.*
+
+## 3. Seguir LocalTrace
+
+En el inspector, abre **Trace**. Revisa el `trace_id`, el `run_id`, la secuencia de eventos y las referencias disponibles. Una secuencia indica orden. Solo un `parent_event_id` registrado por la fuente expresa la relacion padre-hijo; no infieras causalidad adicional.
+
+No confundas estos identificadores:
+
+| Identificador | Que identifica |
 | --- | --- |
-| 03  Lee los eventos de Trace en orden. | 04  Comprueba autorización, ejecución y recibo. |
+| `run_id` | La ejecucion del agente. |
+| LocalTrace `trace_id` | El registro local de eventos. |
+| Jaeger trace ID | La traza que un Jaeger local consulto. Puede tener un valor diferente. |
 
-> **Cómo usar este manual.** Lee, observa, practica y verifica antes de avanzar.
+La interfaz no enlaza automaticamente el identificador de Jaeger al trace local. Si no aparece un dato, registralo como no proporcionado.
 
-> **Aviso.** La interfaz es de solo lectura: no aprueba ni ejecuta acciones.
+![Captura de referencia de la cronologia](MANUAL_PARA_DUMMIES_assets/trace.png)
 
-### LECCIÓN 01  ·  OBSERVAR
+*Captura de referencia del 8 de octubre de 2026; la secuencia y los IDs cambian en cada ejecucion.*
 
-## Leer la decisión
+## 4. Revisar acciones y recibos
 
-Abre http://127.0.0.1:8082. La primera vista resume una ejecución real. Anota el Run ID para saber qué ejecución estás mirando.
+En **Actions**, lee cada propuesta y distingue sus estados:
 
-Los contadores muestran cuánta evidencia recuperó la ejecución, si hay claims estructurados, cuántos eventos de traza llegaron y cuántas acciones aparecen.
+1. **Propuesta:** describe una intencion.
+2. **Decision de autorizacion:** indica si se permitio o denego una solicitud.
+3. **Ejecucion:** requiere evidencia de que el efecto o llamada ocurrio.
+4. **Recibo:** registra el resultado y debe poder asociarse a la misma ejecucion.
 
-![Captura: overview](MANUAL_PARA_DUMMIES_assets/overview.png)
+Un permiso `ALLOW` no prueba que algo se ejecutara. Un estado `SUCCESS` sin recibo asociado no basta para verificar el resultado. El inspector asocia recibos solo cuando el `run_id` explicito coincide; un recibo sin identidad o de otro run queda sin verificar. Esa coincidencia es una comprobacion de identidad declarada por la fuente, no una firma criptografica.
 
-*Vista Decision: resumen de ejecución, evidencias y claims disponibles.*
+![Captura de referencia de acciones y recibos](MANUAL_PARA_DUMMIES_assets/actions.png)
 
-### Cómo interpretar esta pantalla
+*Captura de referencia del 8 de octubre de 2026. Consulta los IDs y estados de la ejecucion que tengas abierta.*
 
-•  La respuesta es el texto producido por la ejecución.
+## 5. Consultar Jaeger (opcional)
 
-•  Una referencia recuperada es un documento consultado; no demuestra por sí sola que apoye una frase concreta.
-
-•  “Structured claims: Not provided” significa que la fuente no separó la respuesta en afirmaciones verificables.
-
-•  Si falta el vínculo claim→evidencia, el Inspector lo deja indicado. No inventa la relación.
-
-### LECCIÓN 02  ·  SEGUIR
-
-## Leer la cronología
-
-Selecciona Trace en la barra superior. Cada tarjeta representa un evento de LocalTrace. El número de secuencia indica el orden. La relación padre solo expresa causalidad cuando la fuente la registró.
-
-![Captura: trace](MANUAL_PARA_DUMMIES_assets/trace.png)
-
-*Vista Trace: primeros eventos de la cronología LocalTrace.*
-
-### Tres identificadores
-
-run_id: identifica la ejecución del agente.
-
-LocalTrace trace_id: identifica el registro local de eventos.
-
-Jaeger trace ID: identifica la traza que Jaeger indexó. En esta validación: 04b58bb123bb6cc94a8cc0d60c7145ae.
-
-> **Aviso.** La pantalla dice que no hay correlación directa con Jaeger en este payload. El grafo existe, pero el Inspector no tiene un enlace automático entre ambos IDs.
-
-### LECCIÓN 03  ·  COMPROBAR
-
-## Revisar acciones y recibos
-
-Selecciona Actions. Lee los estados de arriba abajo: capacidad, elegibilidad, autorización, disponibilidad, ejecución y recibo. Cada uno responde a una pregunta distinta.
-
-![Captura: actions](MANUAL_PARA_DUMMIES_assets/actions.png)
-
-*Vista Actions: autorización, ejecución y recibos.*
-
-### Regla práctica
-
-•  Una propuesta dice qué se podría hacer. No significa que esté autorizado.
-
-•  Una autorización no demuestra que la acción se ejecutó.
-
-•  Para confirmar ejecución hace falta un recibo asociado a la misma ejecución.
-
-•  Si al recibo le falta run_id o pertenece a otro run, no se acepta como éxito verificado.
-
-> **Ejemplo.** Ejemplo: “SUCCESS” sin un recibo válido se muestra como “unverified”.
-
-### LECCIÓN 04  ·  LOCALIZAR
-
-## Encontrar el grafo en Jaeger
-
-Abre http://localhost:16686. Es otra pantalla: busca y dibuja los spans que recibió el colector local.
-
-Búsqueda directa: pega 04b58bb123bb6cc94a8cc0d60c7145ae en “Lookup by Trace ID”.
-
-Búsqueda por servicio: elige bago-agentic-data-lab, selecciona agent.run y pulsa Find Traces.
-
-![Captura: jaeger](MANUAL_PARA_DUMMIES_assets/jaeger.png)
-
-*Grafo real de la traza local en Jaeger.*
-
-### Qué demuestra este grafo
-
-•  Jaeger encontró la traza local.
-
-•  Se enviaron 15 spans y Jaeger observó 15.
-
-•  Los nodos son spans; las flechas muestran su relación en la traza.
-
-•  Esto no demuestra envío a AWS ni a un colector remoto.
-
-### LECCIÓN 05  ·  PRACTICAR
-
-## Repetir el recorrido
-
-### La demostración registrada
-
-LocalTrace trace-5b385699ffda0529 se proyectó por OTLP/HTTP a Jaeger. Jaeger encontró la traza 04b58bb123bb6cc94a8cc0d60c7145ae y observó sus 15 spans. El informe está en evidence/l15_otel_jaeger_live.md.
-
-### Repite la lectura
-
-1. Abre el Inspector y anota Run ID.
-
-2. Mira los contadores. Si claims dice “Not provided”, no hay claims estructurados.
-
-3. Abre Trace; anota trace_id y revisa el orden y los avisos.
-
-4. Abre Actions; comprueba el recibo y su run_id.
-
-5. Abre Jaeger y busca el ID de Jaeger del informe. Una ejecución nueva tendrá IDs distintos.
-
-6. Compara las operaciones y los spans encontrados.
-
-> **Clave.** Conclusión correcta: “Jaeger recibió y mostró esta traza local”. No afirmes que el Inspector enlaza automáticamente con Jaeger o que la traza llegó a AWS.
-
-### Si una página no abre
-
-### Decision Inspector
-
-Desde PowerShell, comprueba el servicio:
-
-```powershell
-Invoke-RestMethod http://127.0.0.1:8082/api/health
-````
-
-La respuesta esperada contiene status “ok”. Si el servicio está detenido y sus dependencias instaladas, desde la raíz del repo:
-
-```powershell
-python -m uvicorn src.api.server:app --host 127.0.0.1 --port 8082
-````
-
-### Jaeger
-
-Desde la raíz del repo, inicia Jaeger local con Docker Compose:
+Jaeger es una proyeccion local de observabilidad; LocalTrace sigue siendo la fuente de evidencia de trazas del proyecto. Para reproducir la validacion local documentada, se necesita Docker disponible:
 
 ```powershell
 docker compose -p bago-otel -f infra/observability/docker-compose.yml up -d
-````
+python scripts/run_l15_otel_live_validation.py --check
+```
 
-Después abre http://localhost:16686.
+Abre `http://localhost:16686` y consulta el Trace ID que imprima la ejecución actual. No reutilices un ID de una captura anterior para una nueva ejecución. Al terminar, puedes parar el servicio:
 
-## Glosario rápido
+```powershell
+docker compose -p bago-otel -f infra/observability/docker-compose.yml down
+```
 
-Ejecución o run: operación completa del agente, identificada por run_id.
+La validación versionada del 8 de octubre observó 15 spans en Jaeger para aquella traza. Es evidencia histórica de esa ejecución, no una comprobación del estado actual de Docker, AWS o colectores remotos. El recorrido local no acredita envío remoto.
 
-Claim: afirmación concreta que se revisa frente a evidencia.
+![Captura de referencia de Jaeger](MANUAL_PARA_DUMMIES_assets/jaeger.png)
 
-Evidencia: documento, fragmento o referencia recuperada.
+*Captura historica. El grafo y los identificadores variaran al reproducir el flujo.*
 
-LocalTrace: registro local de eventos; es la fuente de trazabilidad de este proyecto.
+## Practica de lectura
 
-Span: una operación individual dibujada como nodo en Jaeger.
+Con una ejecución disponible, anota:
 
-OTLP: transporte usado para enviar spans a Jaeger.
+- `run_id` y estado de la ejecucion.
+- Numero de referencias y si hay claims estructurados.
+- `trace_id`, numero de eventos y cualquier evento padre informado.
+- Propuestas, decisiones de autorizacion, efectos observados y recibos.
+- Si el `run_id` del recibo coincide con el del agente.
+- Si consultaste Jaeger: su Trace ID y el numero de spans observados.
 
-Recibo: registro del resultado de una acción.
+Escribe conclusiones limitadas a lo observado. Por ejemplo: “El recibo declara el mismo `run_id` que esta ejecución y muestra resultado SUCCESS”. Evita afirmar que una fuente apoya una claim si el vínculo no está registrado, o que Jaeger recibió la traza si no repetiste la consulta.
 
-## Límites conocidos
+## Si algo no aparece
 
-•  La ejecución actual no tiene claims ni relaciones claim→evidencia estructuradas.
+- **La interfaz no abre:** usa la URL que abrió `scripts/run-local-ui.ps1`; el puerto puede variar. Revisa `docs/agent-chat-control/LOCAL_SETUP.md` y los logs locales del launcher.
+- **No hay paquete de evidencias:** el inspector lo indicará y ofrecerá abrir **Agent Runs**. La ausencia del paquete no demuestra que haya ocurrido una ejecución.
+- **No aparecen claims, revision o soporte:** la fuente no proporciono esos datos; no los infieras de una cita o del texto de respuesta.
+- **Jaeger no abre:** verifica que Docker esté activo y ejecuta el comando de Compose anterior. Si no se reproduce, deja el resultado como no verificado.
 
-•  La UI no muestra un enlace directo al Jaeger trace ID.
+## Glosario y limites
 
-•  La demostración cubre Jaeger local; AWS y colectores remotos quedan fuera de este recorrido.
+- **Claim:** afirmacion estructurada, aportada por la fuente.
+- **Evidencia:** referencia a documento o fragmento consultado.
+- **LocalTrace:** registro local de eventos de una ejecucion.
+- **Span:** operacion representada en una traza de Jaeger.
+- **Recibo:** registro del resultado declarado por una operacion.
 
-•  La navegación accesible con lector de pantalla requiere una revisión específica.
-
-### COMPRUEBA LO APRENDIDO
-
-| ☐  Puedo distinguir run_id de Jaeger trace ID.☐  Puedo explicar por qué una cita no demuestra por sí sola una claim.☐  Puedo comprobar que el recibo pertenece al mismo run. |
-| --- |
-
-| IDEA FINAL  ·  Identifica la ejecución, sigue su traza y exige un recibo válido antes de dar una acción por confirmada. |
-| --- |
+Las capturas se tomaron el 8 de octubre de 2026 y se conservan para orientar la lectura; no se pudieron refrescar porque la aplicación y Jaeger no estaban activos al preparar esta edición. Esta guía actualiza rutas de acceso, comandos y límites con el código y la documentación del repositorio a 15 de octubre de 2026. No certifica una nueva ejecución, un nuevo recibo ni disponibilidad remota.

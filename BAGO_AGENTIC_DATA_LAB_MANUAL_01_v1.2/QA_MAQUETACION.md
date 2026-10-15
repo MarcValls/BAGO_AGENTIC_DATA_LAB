@@ -1,17 +1,21 @@
-# Auditoría editorial · BAGO Agentic Data Lab Manual 01 v1.2
+# Revisión editorial y de maquetación · Manual 01 edición 1.3
 
-- `PASS`: pertenencia editorial corregida a **BAGO AGENTIC DATA LAB**.
-- `PASS`: 9 páginas A4, PDF renderizado a imagen página a página.
-- `PASS`: 4 capturas originales conservadas sin modificación.
-- `PASS`: recortes proceden de los originales mediante Pillow crop(), identificados en el PDF.
-- `PASS`: manuscrito original Markdown y cuatro capturas tienen contenido byte a byte idéntico a la edición anterior.
-- `PASS`: cinco lecciones comienzan en página propia.
-- `PASS`: ninguna caja de texto interior fuera de los límites físicos de página.
-- `PASS`: ausencia de la marca IA. LA PREGUNTA en el PDF entregado.
-- `PASS`: identificación BAGO Agentic Data Lab visible en portada y cabeceras.
-- `PASS`: continuidad textual interior, sin cambios detectados en contenido al excluir cabeceras/pies.
-- `PASS`: páginas 3 a 6 contienen imágenes incrustadas de las cuatro pantallas.
+## Alcance revisado
 
-**No evaluado:** ejecución real del agente, validez independiente de los recibos, accesibilidad exhaustiva, disponibilidad de AWS, estado remoto de servicios. La terminología y los ejemplos se mantienen conforme al manuscrito fuente.
+- Rutas, controles y límites contrastados con `frontend/src/App.tsx`, `frontend/src/features/decision-inspector/`, `scripts/run-local-ui.ps1`, `docs/agent-chat-control/LOCAL_SETUP.md` y `docs/decision-inspector/FINAL_STATUS.md`.
+- Se retiraron el puerto fijo 8082, la URL de repositorio personal, los IDs de ejecución presentados como actuales y los claims de UI ajenos al estado actual.
+- La validación de 15 spans queda identificada como evidencia histórica del 8 de octubre de 2026.
+- Se mantienen las cuatro capturas de esa fecha, señaladas como referencias visuales históricas.
+- La interfaz y Jaeger no estaban activos durante esta edición; no se afirma una nueva captura, ejecución, traza o prueba live.
 
-**Veredicto:** `EDITORIAL PASS / PROJECT_IDENTITY CORRECTED / PDF 9 PAGES / NO INTERIOR OVERFLOW`.
+## Verificación mecánica
+
+El generador crea HTML, PDF, hoja de contacto, manifest y hashes. Después de ejecutar `python build_manual.py`, comprobar:
+
+- número de páginas, texto extraído y contenido requerido en el PDF;
+- render visual de todas las páginas y ausencia de texto cortado o solapado;
+- coincidencia de hashes en `SHA256SUMS.txt` y rutas listadas en `MANIFEST.json`.
+
+## Estado
+
+La revisión editorial está preparada. El estado final de maquetación se declara solo después de inspeccionar el PDF generado y la hoja de contacto de esta edición.
