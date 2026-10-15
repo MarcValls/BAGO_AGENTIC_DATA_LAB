@@ -3,6 +3,7 @@
 ## ✅ Completed Features
 
 ### 1. **Agent Builder Wizard** (4-step)
+
 - ✅ Template selection (RAG Basic, Multi-Tool)
 - ✅ Custom agent configuration
 - ✅ Preview before saving
@@ -10,6 +11,7 @@
 - ✅ Created agents list with badges
 
 ### 2. **Control Panel**
+
 - ✅ Execute demo with WebSocket (live logs)
 - ✅ HTTP fallback for demo execution
 - ✅ Options: evidence bundle, JSON output
@@ -17,6 +19,7 @@
 - ✅ Status indicators (idle/running/success/error)
 
 ### 3. **Job History**
+
 - ✅ Table with filtering (all/demo/agent)
 - ✅ Auto-refresh every 5 seconds
 - ✅ Detail panel with full logs
@@ -24,6 +27,7 @@
 - ✅ Cost, duration, exit code tracking
 
 ### 4. **Job Tracking Backend**
+
 - ✅ FastAPI `JobExecution` model
 - ✅ Persistent storage in `jobs/history/`
 - ✅ WebSocket agent execution endpoint
@@ -31,6 +35,7 @@
 - ✅ Metrics aggregation (`/api/agents/{id}/metrics`)
 
 ### 5. **UI Tabs** (8 Total)
+
 1. 🤖 Agent Builder
 2. 🚀 Control Panel
 3. 📊 Job History
@@ -43,6 +48,7 @@
 ## API Endpoints
 
 ### Demo Orchestration
+
 ```
 POST   /api/demo/run              Demo execution (HTTP) with job tracking
 WS     /ws/demo/run               Demo execution (WebSocket) with streaming
@@ -50,6 +56,7 @@ GET    /api/demo/status           Check demo artifact status
 ```
 
 ### Agent Management
+
 ```
 POST   /api/agents/create         Create new agent
 GET    /api/agents/list           List all agents
@@ -58,6 +65,7 @@ GET    /api/agents/{agent_id}/metrics  Agent performance metrics
 ```
 
 ### Job History
+
 ```
 GET    /api/jobs/list             List all jobs (paginated)
 GET    /api/jobs/{job_id}         Get specific job details
@@ -67,6 +75,7 @@ WS     /ws/agents/run             Execute agent (WebSocket streaming)
 ## Data Models
 
 ### JobExecution
+
 ```python
 job_id: str              # job_<uuid>
 agent_id: str | None     # agent_<hash> or None for demos
@@ -83,6 +92,7 @@ metrics: dict | None     # retrieval_hits, tools_used, etc.
 ```
 
 ### AgentMetrics (Aggregated)
+
 ```python
 agent_id: str
 total_runs: int
@@ -115,18 +125,21 @@ demo_output/latest/
 ## Docker Stack
 
 **Image**: `bago-portfolio:latest`
+
 - Multi-stage build (Node 20 → Python 3.11)
 - Frontend: React build artifacts
 - Backend: FastAPI + Uvicorn
 - Volume: `demo_output/latest/` (read-only)
 
 **Compose Services**:
+
 - `api`: FastAPI on `localhost:8080`
 - `jaeger`: Optional trace visualization on `localhost:16687`
 
 ## Frontend Architecture
 
 **Components**:
+
 - `App.tsx` — main router with 8 tabs
 - `AgentBuilder.tsx` — wizard for agent creation
 - `Control.tsx` — demo execution + logs
@@ -142,7 +155,7 @@ demo_output/latest/
 ## Features Implemented ✅
 
 | Feature | Status | Notes |
-|---------|--------|-------|
+| --------- | -------- | ------- |
 | Agent Builder Wizard | ✅ Complete | 4 steps, templates, persistence |
 | Control Panel | ✅ Complete | WebSocket + HTTP, live logs |
 | Job History | ✅ Complete | Table, filtering, detail view |
@@ -156,12 +169,14 @@ demo_output/latest/
 ## Pending Features
 
 ### High Priority
+
 - [ ] Agent execution triggering (use existing `/ws/agents/run`)
 - [ ] Export agents as ZIP
 - [ ] Import agents from ZIP
 - [ ] GitHub Actions workflow dispatch from UI
 
 ### Nice-to-have
+
 - [ ] Performance dashboards (Chart.js)
 - [ ] Alert notifications (toast/snackbar)
 - [ ] WebSocket heartbeat (ping/pong)
@@ -205,6 +220,7 @@ curl http://localhost:8080/api/jobs/list
 ## Summary
 
 **What Was Built:**
+
 - Complete React UI with 8 tabs and responsive dark theme
 - FastAPI backend with job tracking and metrics
 - WebSocket support for real-time demo execution
@@ -212,18 +228,21 @@ curl http://localhost:8080/api/jobs/list
 - Job history with filtering and detailed view
 
 **What's Ready to Use:**
+
 - Agent builder (save agents)
 - Control panel (execute demo, see logs)
 - Job tracking (see all executions)
 - Metrics (success rate, cost, duration)
 
 **What Still Needs Work:**
+
 - Trigger agent execution (WebSocket handler exists, UI trigger pending)
 - Export/import agents
 - CI/CD integration
 - Performance charts
 
 **Lines of Code:**
+
 - Frontend: ~3,500 lines (React/TypeScript)
 - Backend: ~500 lines (FastAPI additions)
 - CSS: ~2,000 lines (styling)

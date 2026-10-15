@@ -74,7 +74,18 @@ def test_readme_inventory_and_market_tables_are_discovered():
     assert any(row[0] == "Arquitectura de sistemas" for row in soft_skills)
 
 
-def test_rendered_readme_contains_dynamic_contract_and_l10_artifacts():
+def test_ci_installs_video_runtime_before_running_full_suite():
+    workflow = (ROOT / ".github" / "workflows" / "ci.yml").read_text(encoding="utf-8")
+    test_dependencies = (ROOT / "requirements-test.txt").read_text(encoding="utf-8")
+
+    assert "Pillow==12.2.0" in test_dependencies
+    assert "sudo apt-get install --yes ffmpeg" in workflow
+    assert workflow.index("sudo apt-get install --yes ffmpeg") < workflow.index(
+        "run: python -m pytest tests -q"
+    )
+
+
+def test_rendered_readme_is_compact_scope_bound_and_does_not_claim_collected_tests_pass():
     manifest = _read_json(ROOT / "docs" / "readme_manifest.json")
     rendered = render_readme(
         manifest=manifest,
@@ -82,82 +93,28 @@ def test_rendered_readme_contains_dynamic_contract_and_l10_artifacts():
         passing_tests=collected_test_count(),
     )
 
-    assert "README.md es un artefacto generado" in rendered
-    assert chr(96) * 3 + "mermaid" in rendered
-    assert chr(96) * 3 + "bash" in rendered
-    assert "docs/readme_manifest.json" in rendered
-    assert "src/metadata/ontology_engine.py" in rendered
-    assert "tests/test_l10_ontology_engine.py" in rendered
-    assert "src/sandbox/backend.py" in rendered
-    assert "tests/test_sandbox.py" in rendered
-    assert "evidence/sandbox_local_restricted.md" in rendered
-    assert "## Infraestructura reproducible" in rendered
-    assert "infra/openmetadata/docker-compose.yml" in rendered
-    assert "scripts/run_l8_openmetadata_live_validation.py" in rendered
-    assert "scripts/run_sandbox_local_validation.py" in rendered
-    assert "src/observability/local_trace.py" in rendered
-    assert "src/evaluation/local_evals.py" in rendered
-    assert "tests/test_l12_observability.py" in rendered
-    assert "evidence/l12_observability_evals.md" in rendered
-    assert "docs/observability_evals.md" in rendered
-    assert "scripts/run_l12_observability_evidence.py" in rendered
-    assert "scripts/run_public_e2e_demo.py" in rendered
-    assert "tests/test_public_e2e_demo.py" in rendered
-    assert "evidence/public_e2e_demo.md" in rendered
-    assert "docs/public_e2e_demo.md" in rendered
-    assert "requirements.txt" in rendered
-    assert ".github/workflows/ci.yml" in rendered
-    assert "python scripts/run_public_e2e_demo.py --check" in rendered
+    assert len(rendered.splitlines()) < 180
+    assert "BAGO Agentic Data Lab" in rendered
     assert "python demo.py" in rendered
-    assert "[portfolio/README.md](portfolio/README.md)" in rendered
-    assert "## Tutorial para usuarios nuevos" in rendered
-    assert "campo de API key aparece censurado" in rendered
-    assert "gemma4:31b" in rendered
-    assert "kimi-k2.6" in rendered
-    assert "respuesta real de Ollama Cloud" in rendered
-    assert "docs/agent-chat-control/assets/ADL_videotutorial_primer_usuario.mp4" in rendered
-    assert "docs/agent-chat-control/assets/trace-c7ec5fcc40284a42.json" in rendered
-    assert "output/tutorial/sample-note.txt" in rendered
-    assert "src/retrieval/sqlite_vector_store.py" in rendered
-    assert "tests/test_sqlite_vector_store.py" in rendered
-    assert "evidence/l14_vector_store.md" in rendered
-    assert "docs/local_vector_store.md" in rendered
-    assert "scripts/run_l14_vector_store_validation.py --check" in rendered
-    assert "src/observability/otel_bridge.py" in rendered
-    assert "tests/test_l15_otel_bridge.py" in rendered
+    assert "docs/one_command_demo.md" in rendered
+    assert "README.md` es un artefacto generado" in rendered
+    assert "docs/readme_manifest.json" in rendered
+    assert "Último resultado completo de CI registrado" in rendered
+    assert "38665463586" in rendered
+    assert "ff9292fe4340a2bdab9658a2e804579fa4ef8fb0" in rendered
+    assert "This result does not cover later changes" in rendered
+    assert "NOT_RUN" in rendered
+    assert "2026-10-08" in rendered
+    assert "docs/agent-chat-control/TUTORIAL_PRIMER_USO.md" in rendered
     assert "evidence/l15_otel_jaeger_live.md" in rendered
-    assert "docs/otel_jaeger.md" in rendered
-    assert "infra/observability/docker-compose.yml" in rendered
-    assert "scripts/run_l15_otel_live_validation.py --check" in rendered
-    assert "## Monitor local del equipo Codex" in rendered
-    assert "http://localhost:5173/team-monitor.html" in rendered
-    assert "python -m src.api.server" in rendered
-    assert "python -m pip install -r requirements.txt fastapi uvicorn" in rendered
-    assert "no toda la actividad interna de la extensión Codex" in rendered
-    assert "scripts/run_l6_aws_free_tier_validation.py --profile bago-free" in rendered
-    assert "python scripts/generate_dynamic_readme.py --check --skip-tests" in rendered
-    assert "Estado actualizado" in rendered
-    assert "| Fase actual | **L15 · OpenTelemetry + Jaeger Local Live** · VERIFIED (local live) |" in rendered
-    assert "| L1 | VALIDATED (local governed graph evidence) | — | LangGraph Governed Execution | 14 | 4 |" in rendered
-    assert "| L10 | VERIFIED (local) | BAGO / portfolio | Governed Ontology Engine | 4 | 2 |" in rendered
-    assert "| L11 | VERIFIED (local) | BAGO / secure execution | Governed Sandbox Layer | 14 | 3 |" in rendered
-    assert "| L12 | VERIFIED (local) | BAGO / portfolio | Local Observability & Evals | 5 | 3 |" in rendered
-    assert "| L13 | VERIFIED (local) | BAGO / portfolio | Public E2E Demo & CI | 5 | 2 |" in rendered
-    assert "| L14 | VERIFIED (local) | BAGO / portfolio | Governed Local Vector Store | 4 | 2 |" in rendered
-    assert "| L15 | VERIFIED (local live) | BAGO / portfolio | OpenTelemetry + Jaeger Local Live | 4 | 2 |" in rendered
-    assert "| Skill | Demanda | Nivel actual | Nivel objetivo | Primera evidencia | Entrevista |" in rendered
-    assert "La tabla se genera desde `.bago/canon/JOB_SKILL_MATRIX.md`; actualiza allí los datos." in rendered
-    assert "se mantiene fuera del README" not in rendered
-    assert "| RAG | Muy Alta | 🟡 Basic | 🎯 Advanced | L4 governed RAG | L4 completado |" in rendered
-    assert "## Skills estratégicas" in rendered
-    assert "| Arquitectura de sistemas | ✅ Fuerte | ✅ Mantener | AGENTS.md, CANON_BAGO |" in rendered
-    assert ".bago/canon/STATE.md" in rendered
-    assert "[BAGO context](.bago/INDEX.md)" in rendered
-    assert ".github/agents/bago-sync-agent.agent.md" in rendered
-    assert "scripts/bago_sync_agent.py" in rendered
-    assert "## Catálogo de agentes" in rendered
-    assert "| `07-sincronizacion` |" in rendered
-
+    assert "state.json" not in rendered
+    assert "203 test cases" not in rendered
+    assert "248/248" not in rendered
+    assert "tests-248" not in rendered
+    assert "![Tests]" not in rendered
+    assert "run_l6_aws_free_tier_validation.py" not in rendered
+    assert "Inventario real del checkout" not in rendered
+    assert "Fit técnico" not in rendered
 
 def test_mermaid_labels_are_quoted_for_github_parser():
     manifest = _read_json(ROOT / "docs" / "readme_manifest.json")
@@ -168,5 +125,5 @@ def test_mermaid_labels_are_quoted_for_github_parser():
     )
 
     assert 'L0["L0 Baseline & Lab Contract (COMPLETE)"]' in rendered
-    assert 'RAG["Governed RAG"]' in rendered
+    assert 'L1["L1 LangGraph Governed Execution (VALIDATED (local governed graph evidence))"]' in rendered
     assert "L0[L0 Baseline & Lab Contract (COMPLETE)]" not in rendered

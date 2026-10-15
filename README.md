@@ -3,7 +3,7 @@
 [![CI](https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/actions/workflows/ci.yml/badge.svg)](https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/actions/workflows/ci.yml)
 [![GitHub](https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/actions/workflows/readme-consistency.yml/badge.svg)](https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/actions/workflows/readme-consistency.yml)
 [![Branch](https://img.shields.io/badge/branch-main-green)](https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/tree/main)
-[![Tests](https://img.shields.io/badge/tests-247%2F247%20passing-brightgreen)](https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/actions)
+[![Tests](https://img.shields.io/badge/tests-248%2F248%20passing-brightgreen)](https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/actions)
 [![License](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 
 > Laboratorio experimental para desarrollar capacidades de AI Engineering con gobernanza BAGO.
@@ -85,8 +85,8 @@ Profundiza en las fases L0-L15 en el [roadmap](#roadmap-detectado), o consulta [
 ## Estado actual
 
 | Métrica | Valor |
-|---|---|
-| Tests ejecutados | **247/247** |
+| --- | --- |
+| Tests ejecutados | **248/248** |
 | Rama pública | `main` |
 | Estado actualizado | 2026-10-10 |
 | Fase actual | **L15 · OpenTelemetry + Jaeger Local Live** · VERIFIED (local live) |
@@ -113,6 +113,7 @@ Example question: ¿Qué sustituye a la política anterior y qué evidencia la v
 Expected fixture result: `PASS`; 2 retrieval hits, 15 trace events, evaluation score 1.0. Run-specific IDs/hashes may vary.
 
 Artifacts in `demo_output/`:
+
 - `summary.json`
 - `agent_run.json`
 - `receipts.json`
@@ -128,7 +129,7 @@ The injected provider is a fixture, not an AWS call; this local demo does not pr
 El contexto del proyecto y el mapa de autoridad están centralizados en [BAGO context](.bago/INDEX.md). El README proyecta estos documentos; no los sustituye ni los edita.
 
 | Documento | Función | Estado |
-|---|---|---|
+| --- | --- | --- |
 | `.bago/canon/STATE.md` | estado operativo actual | PRESENTE |
 | `.bago/canon/LAB_CONTRACT.md` | contrato del laboratorio | PRESENTE |
 | `.bago/canon/ARCHITECTURE.md` | arquitectura y límites | PRESENTE |
@@ -146,7 +147,7 @@ El contexto del proyecto y el mapa de autoridad están centralizados en [BAGO co
 La sincronización operativa está separada del catálogo de copias de referencia.
 
 | Componente | Estado | Función |
-|---|---|---|
+| --- | --- | --- |
 | `.github/agents/bago-sync-agent.agent.md` | PRESENTE | Definición del agente: contrato operativo |
 | `scripts/bago_sync_agent.py` | PRESENTE | Ejecutor gobernado: commit, push, PR y merge con receipts |
 | `docs/bago-sync-agent.md` | PRESENTE | Documentación: uso y límites |
@@ -159,7 +160,7 @@ Alcance: `reference-only` · activación: `none`.
 El catálogo es de referencia; la definición operativa sigue en `.github/agents`.
 
 | Grupo | Archivos | Responsabilidad |
-|---|---:|---|
+| --- | ---: | --- |
 | `01-gobierno-orquestacion` | 11 | arranque, contexto, coordinación y entrega |
 | `02-exploracion-arquitectura` | 13 | exploración, arquitectura, modularidad y archivo |
 | `03-backend-contratos` | 4 | backend y contratos frontend-backend |
@@ -208,7 +209,7 @@ flowchart LR
 ```
 
 | Fase | Estado | Objetivo | Descripción | Tests | Evidencia/docs |
-|---|---|---|---|---:|---:|
+| --- | --- | --- | --- | ---: | ---: |
 | L0 | COMPLETE | — | Baseline & Lab Contract | 0 | 6 |
 | L1 | VALIDATED (local governed graph evidence) | — | LangGraph Governed Execution | 14 | 4 |
 | L2 | VALIDATED | — | ETL / Data Pipeline | 4 | 1 |
@@ -275,7 +276,7 @@ Pipeline actual:
 La tabla se extrae de .bago/canon/LAB_CONTRACT.md; no se duplica manualmente aquí.
 
 | Empresa | Rol | Fit | Gap principal | Timeline |
-|---|---|---:|---|---|
+| --- | --- | ---: | --- | --- |
 | Tuio | Forward Deployed AI Engineer | ~96% | Seniority (~5 años) | 4-5 semanas |
 | Orbitant | AI Engineer | ~91% | LangGraph + Cloud | 2-3 semanas |
 | Devoteam | GCP AI Engineer (Gemini) | ~87% → 93% | Vertex AI / GCP | 6-7 semanas |
@@ -286,7 +287,7 @@ La tabla se extrae de .bago/canon/LAB_CONTRACT.md; no se duplica manualmente aqu
 La tabla se genera desde `.bago/canon/JOB_SKILL_MATRIX.md`; actualiza allí los datos.
 
 | Skill | Demanda | Nivel actual | Nivel objetivo | Primera evidencia | Entrevista |
-|---|---|---|---|---|---|
+| --- | --- | --- | --- | --- | --- |
 | Python | Alta | ✅ Senior | ✅ Senior | BAGO backend | ✅ Sí |
 | REST APIs | Alta | ✅ Senior | ✅ Senior | BAGO FastAPI | ✅ Sí |
 | LangGraph | Very High | Implemented locally | Proficient | Integrated StateGraph + exact approval + governed RAG/gateway/sandbox/receipt/LocalTrace | L1 VALIDATED in local scope; identity, durability and OS isolation are not claimed |
@@ -295,11 +296,11 @@ La tabla se genera desde `.bago/canon/JOB_SKILL_MATRIX.md`; actualiza allí los 
 | Tool use | Muy Alta | ✅ Implementado | 🎯 Proficient | BAGO tools + MCP receipts | L5 baseline |
 | MCP | Muy Alta | ✅ Baseline gobernado | 🎯 Proficient | L5 MCP adapter + video | L5 baseline |
 | RAG | Muy Alta | 🟡 Basic | 🎯 Advanced | L4 governed RAG | L4 completado |
-| Hybrid retrieval | Alta | ❌ None | 🎯 Proficient | L4 benchmarks | L4 completado |
+| Hybrid retrieval | Alta | 🟡 Implemented locally; deterministic benchmark is limited | 🎯 Proficient | 32-document offline corpus; 9 labelled queries; Recall@1/@3 and MRR | Synthetic baseline only; production embeddings and broader relevance validation remain |
 | Embeddings | Alta | 🟢 Deterministic local | 🎯 Implementado | HashEmbedding + SQLiteVectorStore | L14 local |
 | Vector DB | Alta | 🟢 Local persistent | 🎯 Proficient | SQLiteVectorStore + GovernedRAG reload | L14 local; distributed service separate |
-| ETL | Alta | ❌ None | 🎯 Proficient | L2 pipeline | L2 completado |
-| Data pipelines | Alta | ❌ None | 🎯 Implementado | L2 end-to-end | L2 completado |
+| ETL | Alta | 🟡 Implemented locally; coverage partial | 🎯 Proficient | L2 source-to-SQLite pipeline; deduplication, receipts and enforced chunk-overlap test | Local pipeline verified; partial-failure and transaction recovery coverage remains |
+| Data pipelines | Alta | 🟡 Implemented locally; local/document scope | 🎯 Implementado | L2 ingestion consumed by L4 SQLite retrieval adapter | No evidence yet for scheduled recovery or distributed processing |
 | Metadata/Ontology | Media | 🟢 Implementado | 🎯 Proficient | L3 schema + L10 engine | L10 local |
 | RDF / SPARQL / Knowledge Graphs | Alta | 🟢 Baseline local | 🎯 Proficient | L10 RDF/Turtle + SPARQL + inference | L10 local; triplestore live separado |
 | Lineage | Media | 🟢 Implementado | 🎯 Proficient | L3 relations + L10 paths | L10 local |
@@ -321,7 +322,7 @@ La tabla se genera desde `.bago/canon/JOB_SKILL_MATRIX.md`; actualiza allí los 
 La tabla se genera desde `.bago/canon/JOB_SKILL_MATRIX.md`; actualiza allí los datos.
 
 | Skill | Nivel actual | Nivel objetivo | Evidencia |
-|---|---|---|---|
+| --- | --- | --- | --- |
 | Arquitectura de sistemas | ✅ Fuerte | ✅ Mantener | AGENTS.md, CANON_BAGO |
 | Diseño de contratos | ✅ Fuerte | ✅ Mantener | BAGO contracts |
 | Documentación técnica | ✅ Fuerte | ✅ Mantener | Este repo |
@@ -395,7 +396,7 @@ La tabla se genera desde `.bago/canon/JOB_SKILL_MATRIX.md`; actualiza allí los 
 - `tests/test_chat_context.py` (2 checks)
 - `tests/test_code_duplicates.py` (8 checks)
 - `tests/test_conversation_library.py` (5 checks)
-- `tests/test_dynamic_readme.py` (4 checks)
+- `tests/test_dynamic_readme.py` (5 checks)
 - `tests/test_l10_ontology_engine.py` (4 checks)
 - `tests/test_l12_observability.py` (5 checks)
 - `tests/test_l15_otel_bridge.py` (4 checks)
@@ -626,7 +627,7 @@ skills: `.bago/canon/JOB_SKILL_MATRIX.md`; manifiesto: `docs/readme_manifest.jso
 
 ### `portfolio-demo-v1` — 2026-10-02
 
-**Portfolio Demo v1**
+#### Portfolio Demo v1
 
 L0..L15 VERIFIED local + zero-cost rule. Snapshot for CV/LinkedIn.
 

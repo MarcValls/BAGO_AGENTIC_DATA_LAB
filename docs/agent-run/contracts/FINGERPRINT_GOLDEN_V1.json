@@ -1,0 +1,73 @@
+{
+  "schema": "adl-gex-fingerprint-golden-v1",
+  "status": "SPECIFICATION_FIXTURE_NOT_RUNTIME_PROOF",
+  "canonicalization": "RFC8785 JCS (fixture restricted to ASCII string/integer/boolean I-JSON)",
+  "prefix_escaped": "ADL-GEX-REQUEST-v1\\n",
+  "request_envelope": {
+    "agent": {
+      "agent_id": "agent-01"
+    },
+    "effect": {
+      "resource": "fixture-alpha",
+      "type": "READ"
+    },
+    "issued_at": "2026-10-15T10:00:00Z",
+    "limits": {
+      "filesystem_scope": "fixture-alpha",
+      "max_output_bytes": 4096,
+      "network": "deny",
+      "timeout_ms": 1000
+    },
+    "nonce": "nonce-001",
+    "policy": {
+      "digest": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+      "id": "default-deny",
+      "revision": "policy-01"
+    },
+    "principal": {
+      "authz_epoch": "rev-17",
+      "identity_provider": "test-auth",
+      "principal_id": "user-01",
+      "session_auth_id": "auth-01"
+    },
+    "request": {
+      "context_revision": "ctx-01",
+      "effect_type": "READ",
+      "parameters": {
+        "fixture_id": "fixture-alpha"
+      },
+      "proposed_by": "agent-01",
+      "request_id": "req-001",
+      "timestamp": "2026-10-15T10:00:00Z",
+      "tool_name": "workspace.read_fixture"
+    },
+    "request_id": "req-001",
+    "run_id": "run-001",
+    "schema_version": "adl-gex-request-v1",
+    "tool": {
+      "adapter_id": "local-restricted",
+      "registry_revision": "reg-01",
+      "schema_digest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+      "tool_id": "workspace.read_fixture",
+      "version": "1.0.0"
+    },
+    "trace_id": "trace-001",
+    "valid_until": "2026-10-15T10:02:00Z",
+    "workspace": {
+      "binding_fingerprint": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "branch": "main",
+      "commit_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "context_revision": "ctx-01",
+      "repository_identity": "example/ADL",
+      "root": "/fixture",
+      "workspace_id": "ws-01"
+    }
+  },
+  "expected_sha256_hex": "e651dafcfa5ff53278483d0a8c14b28ee9989d8ba7736842dc6a62b73842898b",
+  "mutation": {
+    "path": "request.parameters.fixture_id",
+    "value": "fixture-beta",
+    "expected_sha256_hex": "eaca9cf83b136d7c02b1a55a943e9c380e9690b4a8bea0f9590dfa1f503e808a",
+    "expect": "FINGERPRINT_MISMATCH"
+  }
+}
