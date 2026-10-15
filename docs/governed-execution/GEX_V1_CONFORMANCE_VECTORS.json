@@ -48,11 +48,11 @@
       "id": "GEX-004",
       "area": "identity",
       "invariant": "Unauthenticated local process has no authority",
-      "scenario": "Origin localhost but no authenticated principal",
+      "scenario": "Unauthenticated local connection has no backend-resolved principal or workspace; represent only as an ingress denial",
       "expected": {
         "decision": "DENY",
         "max_effect_dispatches": 0,
-        "receipt": "DENIED",
+        "receipt": "INGRESS_DENIAL_RECEIPT",
         "state": "DENIED"
       },
       "execution_status": "SPEC_ONLY"
@@ -242,8 +242,8 @@
     {
       "id": "GEX-019",
       "area": "approval",
-      "invariant": "Approval binds exact operation and actor",
-      "scenario": "authenticated approval-session actor does not match ApprovalV1.actor",
+      "invariant": "Approval actor must match verified authenticated approver, not necessarily requesting principal",
+      "scenario": "ApprovalV1.actor is forged or disagrees with actor of authenticated approval channel",
       "expected": {
         "decision": "DENY",
         "max_effect_dispatches": 0,
