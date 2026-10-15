@@ -20,6 +20,7 @@ Added:
 - docs/governed-execution/GEX_V1_SCHEMA.json
 - docs/governed-execution/GEX_V1_STATE_MACHINE.json
 - docs/governed-execution/CR_GEX_002_005_RESOLUTIONS.md
+- docs/governed-execution/CRIT_ADL_GOVERNED_EXECUTION_001.md
 - docs/governed-execution/verification/test_gex_contract_consistency.py
 - .github/workflows/gex-contract-consistency.yml
 - .github/workflows/gex-readme-evidence.yml
@@ -38,7 +39,7 @@ Source inspected via connected GitHub read API on main (not a local worktree). O
 
 - [x] Legacy boundaries mapped to exact source.
 - [x] Normative security semantics specified, including irreversible changes and failure states.
-- [x] 40 positive/negative SPEC_ONLY vectors materialized.
+- [x] 40 positive/negative SPEC_ONLY vectors materialized, with HMAC fixtures for approval/permit.
 - [x] 11 structural wire schemas documented, without runtime authority.
 - [ ] Independent contract retest validates cross-field completeness, RFC 8785 interoperability, identities/signatures, CAS races and transition completeness.
 - [x] CR-GEX-002/003/004/005 architecture decided with explicit fail-closed profiles; execution controls remain unimplemented.
@@ -75,3 +76,6 @@ Independent governance/action verifier: resolve CR-GEX-002/003/004/005, check th
 - Independent full-contract approval, teamctl handoff, runtime vertical slice, failure-injection tests and CRIT closure remain PENDING/NOT_RUN.
 
 **Stop gate:** Do not FREEZE or enable tool execution on /ws/agents/run while an independent P1 remains unresolved or fail-closed production controls are absent.
+
+- Isolated contract consistency GitHub Actions run 38726959879 for commit a841186918a810e2c85c240c3f752b6aaa02b903: PASS (spec tests). Independent reviewer clearance and runtime tests still required.
+- New gate report: docs/governed-execution/CRIT_ADL_GOVERNED_EXECUTION_001.md, preliminary NO_GO; no runtime promotion.
