@@ -40,7 +40,11 @@ sequenceDiagram
 
   U->>API: agent.run (cuando se habilite)
   API->>API: autenticar; cargar agente; resolver workspace
-  API->>P: tarea sin permisos de tool
+  alt identidad o workspace NO verificables
+    API->>DB: IngressDenialReceiptV1 + evento de ingreso
+    API-->>U: DENIED sin request_id ni proposal_id
+  else identidad/workspace verificados
+    API->>P: tarea sin permisos de tool
   P-->>API: ToolProposal (sin ejecución)
   API->>DB: ToolProposalEnvelopeV1 + proposal_digest
   API->>R: lookup capability versionada + esquema
@@ -70,6 +74,7 @@ sequenceDiagram
   end
   DB-->>API: estado persistido y refs de evidencia
   API-->>U: evento WS (no autoridad de ejecución)
+  end
 ~~~
 
 ## Hallazgos por severidad (P0/P1/P2)
