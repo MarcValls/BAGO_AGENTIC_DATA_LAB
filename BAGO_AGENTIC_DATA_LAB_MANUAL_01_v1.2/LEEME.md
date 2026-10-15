@@ -1,42 +1,19 @@
-# BAGO AGENTIC DATA LAB · Manual 01 · edición v1.2
+# BAGO Agentic Data Lab · Manual 01 · edición 1.3
 
-## Titularidad y finalidad
+Actualizado el 15 de octubre de 2026. Esta edición revisa la ruta actual de acceso a Decision Inspector, el launcher local, el recorrido de evidencias y recibos, y la reproducción opcional de Jaeger.
 
-Este manual pertenece al proyecto **BAGO AGENTIC DATA LAB**, no al proyecto educativo IA. LA PREGUNTA. La maquetación anterior se utilizó como punto de partida visual, pero la presente edición identifica correctamente el producto y su ámbito de uso.
+## Archivos
 
-**Título:** Manual para dummies: cómo leer una ejecución.
+- `BAGO_ADL_MANUAL_COMO_LEER_UNA_EJECUCION_v1.3.pdf`: documento final.
+- `MANUAL_PARA_DUMMIES.md`: fuente editorial.
+- `manual.html`, `estilos.css`, `build_manual.py`: fuente HTML, estilos y generador.
+- `MANUAL_PARA_DUMMIES_assets/`: capturas de referencia tomadas el 8 de octubre de 2026.
+- `PREVIEW_CONTACT_SHEET.png`: vista de todas las páginas del PDF.
+- `QA_MAQUETACION.md`: controles de maquetación y límites de revisión.
+- `MANIFEST.json`, `SHA256SUMS.txt`: inventario y hashes del paquete.
 
-**Alcance:** uso didáctico de Decision Inspector, LocalTrace, Actions, recibos y Jaeger local. Las cinco lecciones y el manuscrito fuente se mantienen sin cambios doctrinales.
+## Reproducir
 
-## Qué contiene
+Desde esta carpeta ejecuta `python build_manual.py`. Requiere Pillow y PyMuPDF para crear la hoja de contacto. Para PDF usa WeasyPrint si está instalado; de lo contrario usa Microsoft Edge en modo headless.
 
-- `BAGO_ADL_MANUAL_COMO_LEER_UNA_EJECUCION_v1.2.pdf`: manual final, 9 páginas A4.
-- `PREVIEW_CONTACT_SHEET.png`: todas las páginas para revisión visual.
-- `MANUAL_PARA_DUMMIES.md`: fuente original preservada byte a byte.
-- `manual.html`, `estilos.css`, `build_manual.py`, `requirements.txt`: edición reproducible.
-- `MANUAL_PARA_DUMMIES_assets/`: cuatro capturas originales completas.
-- `overview_recorte.png`, `trace_recorte.png`, `actions_recorte.png`, `jaeger_recorte.png`: recortes exactos incluidos en el PDF.
-- `QA_MAQUETACION.md`: controles editoriales y límites de validación.
-- `MANIFEST.json`, `SHA256SUMS.txt`: inventario y huellas de archivos.
-
-## Reproducción
-
-Desde la carpeta de este paquete:
-
-1. `python -m pip install -r requirements.txt`
-2. `python build_manual.py`
-
-La reproducción depende de que haya disponibles las mismas fuentes o fuentes métricamente equivalentes; después debe comprobarse la salida visual.
-
-## Qué cambia frente a la versión editorial anterior
-
-- Propietario documental y nombre de entrega: **BAGO AGENTIC DATA LAB**.
-- Portada, cabeceras, metadatos y paleta: alineados con la identidad oscura/azul del producto.
-- Capturas, datos técnicos, recorrido, advertencias y comandos: sin alteración.
-- El manual deja de presentarse como material perteneciente a IA. LA PREGUNTA.
-
-## Límite de evidencia
-
-La revisión certifica exclusivamente la maquetación. No certifica nuevas ejecuciones, autorizaciones, recibos, servicios remotos ni envíos a AWS.
-
-**Estado:** edición corregida lista para sustituir el PDF anterior.
+Las capturas no se pudieron refrescar: la aplicación y Jaeger no estaban activos al preparar esta edición. El contenido operativo se contrastó con el código y la documentación del repositorio a 15 de octubre de 2026. La guía no afirma que se haya ejecutado una nueva demo ni una nueva validación de Jaeger.
