@@ -85,7 +85,7 @@ Profundiza en las fases L0-L15 en el [roadmap](#roadmap-detectado), o consulta [
 ## Estado actual
 
 | Métrica | Valor |
-|---|---|
+| --- | --- |
 | Tests ejecutados | **248/248** |
 | Rama pública | `main` |
 | Estado actualizado | 2026-10-10 |
@@ -113,6 +113,7 @@ Example question: ¿Qué sustituye a la política anterior y qué evidencia la v
 Expected fixture result: `PASS`; 2 retrieval hits, 15 trace events, evaluation score 1.0. Run-specific IDs/hashes may vary.
 
 Artifacts in `demo_output/`:
+
 - `summary.json`
 - `agent_run.json`
 - `receipts.json`
@@ -128,7 +129,7 @@ The injected provider is a fixture, not an AWS call; this local demo does not pr
 El contexto del proyecto y el mapa de autoridad están centralizados en [BAGO context](.bago/INDEX.md). El README proyecta estos documentos; no los sustituye ni los edita.
 
 | Documento | Función | Estado |
-|---|---|---|
+| --- | --- | --- |
 | `.bago/canon/STATE.md` | estado operativo actual | PRESENTE |
 | `.bago/canon/LAB_CONTRACT.md` | contrato del laboratorio | PRESENTE |
 | `.bago/canon/ARCHITECTURE.md` | arquitectura y límites | PRESENTE |
@@ -146,7 +147,7 @@ El contexto del proyecto y el mapa de autoridad están centralizados en [BAGO co
 La sincronización operativa está separada del catálogo de copias de referencia.
 
 | Componente | Estado | Función |
-|---|---|---|
+| --- | --- | --- |
 | `.github/agents/bago-sync-agent.agent.md` | PRESENTE | Definición del agente: contrato operativo |
 | `scripts/bago_sync_agent.py` | PRESENTE | Ejecutor gobernado: commit, push, PR y merge con receipts |
 | `docs/bago-sync-agent.md` | PRESENTE | Documentación: uso y límites |
@@ -159,7 +160,7 @@ Alcance: `reference-only` · activación: `none`.
 El catálogo es de referencia; la definición operativa sigue en `.github/agents`.
 
 | Grupo | Archivos | Responsabilidad |
-|---|---:|---|
+| --- | ---: | --- |
 | `01-gobierno-orquestacion` | 11 | arranque, contexto, coordinación y entrega |
 | `02-exploracion-arquitectura` | 13 | exploración, arquitectura, modularidad y archivo |
 | `03-backend-contratos` | 4 | backend y contratos frontend-backend |
@@ -208,7 +209,7 @@ flowchart LR
 ```
 
 | Fase | Estado | Objetivo | Descripción | Tests | Evidencia/docs |
-|---|---|---|---|---:|---:|
+| --- | --- | --- | --- | ---: | ---: |
 | L0 | COMPLETE | — | Baseline & Lab Contract | 0 | 6 |
 | L1 | VALIDATED (local governed graph evidence) | — | LangGraph Governed Execution | 14 | 4 |
 | L2 | VALIDATED | — | ETL / Data Pipeline | 4 | 1 |
@@ -275,7 +276,7 @@ Pipeline actual:
 La tabla se extrae de .bago/canon/LAB_CONTRACT.md; no se duplica manualmente aquí.
 
 | Empresa | Rol | Fit | Gap principal | Timeline |
-|---|---|---:|---|---|
+| --- | --- | ---: | --- | --- |
 | Tuio | Forward Deployed AI Engineer | ~96% | Seniority (~5 años) | 4-5 semanas |
 | Orbitant | AI Engineer | ~91% | LangGraph + Cloud | 2-3 semanas |
 | Devoteam | GCP AI Engineer (Gemini) | ~87% → 93% | Vertex AI / GCP | 6-7 semanas |
@@ -286,7 +287,7 @@ La tabla se extrae de .bago/canon/LAB_CONTRACT.md; no se duplica manualmente aqu
 La tabla se genera desde `.bago/canon/JOB_SKILL_MATRIX.md`; actualiza allí los datos.
 
 | Skill | Demanda | Nivel actual | Nivel objetivo | Primera evidencia | Entrevista |
-|---|---|---|---|---|---|
+| --- | --- | --- | --- | --- | --- |
 | Python | Alta | ✅ Senior | ✅ Senior | BAGO backend | ✅ Sí |
 | REST APIs | Alta | ✅ Senior | ✅ Senior | BAGO FastAPI | ✅ Sí |
 | LangGraph | Very High | Implemented locally | Proficient | Integrated StateGraph + exact approval + governed RAG/gateway/sandbox/receipt/LocalTrace | L1 VALIDATED in local scope; identity, durability and OS isolation are not claimed |
@@ -321,7 +322,7 @@ La tabla se genera desde `.bago/canon/JOB_SKILL_MATRIX.md`; actualiza allí los 
 La tabla se genera desde `.bago/canon/JOB_SKILL_MATRIX.md`; actualiza allí los datos.
 
 | Skill | Nivel actual | Nivel objetivo | Evidencia |
-|---|---|---|---|
+| --- | --- | --- | --- |
 | Arquitectura de sistemas | ✅ Fuerte | ✅ Mantener | AGENTS.md, CANON_BAGO |
 | Diseño de contratos | ✅ Fuerte | ✅ Mantener | BAGO contracts |
 | Documentación técnica | ✅ Fuerte | ✅ Mantener | Este repo |
