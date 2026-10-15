@@ -1,0 +1,71 @@
+{
+  "files": [
+    {
+      "path": "DISTRIBUTION_README.md",
+      "sha256": "46dbfbcab3cbac40150f17502850745f7a627e9ea89310b2bcdd53595320021f"
+    },
+    {
+      "path": "install.ps1",
+      "sha256": "15925f763994e193847423a6740ec474812ec8ddc38865e167aa92badb356a17"
+    },
+    {
+      "path": "README.md",
+      "sha256": "42b7f732de594ac0361fc1294c53a771d50858b61ef264f738e1020f095db052"
+    },
+    {
+      "path": "skills/bago-app-game-development/agents/openai.yaml",
+      "sha256": "b6d10c66922089da21dcf12f9559f50ecdf59c589c88d9007da8513afd0a4236"
+    },
+    {
+      "path": "skills/bago-app-game-development/references/application-workflow.md",
+      "sha256": "4c765c0342c39379502789ea02425781f9118576b2a01f20b9739c2f922ea4f7"
+    },
+    {
+      "path": "skills/bago-app-game-development/references/game-workflow.md",
+      "sha256": "db45adbb14b5184c1baf4c9fee69a39d002abe1b5b43ebc9cc31b2c42cd52903"
+    },
+    {
+      "path": "skills/bago-app-game-development/references/quality-and-verification.md",
+      "sha256": "725cf8c6c011de447d08a5eca3e83a69e600c549674ef48d51582fbc61e7da09"
+    },
+    {
+      "path": "skills/bago-app-game-development/references/tool-routing.md",
+      "sha256": "6bca18c012a876ed13bbed1876d3e8d4d4da6b9a46a75c7a4f9c0fd61f5ba58e"
+    },
+    {
+      "path": "skills/bago-app-game-development/SKILL.md",
+      "sha256": "9858235f94d7bfbf08a2be807ce55261df8fb7ed7dcda01bcea2d88bfb7c0ea2"
+    },
+    {
+      "path": "tools/build_distribution.py",
+      "sha256": "18d697428548366fa6452eda252fdddfddc4391c8fec950526e1ebb959f91bd0"
+    },
+    {
+      "path": "tools/build_installer.py",
+      "sha256": "2b58d597803bde792f6fdbc02b6b6fd44ebcc9a85c776fc28adc470aa5038991"
+    },
+    {
+      "path": "tools/install_skill.py",
+      "sha256": "ccb74b336973626b9f196c88c72e6c7133727ba10d669da5f86e6a01a34db227"
+    },
+    {
+      "path": "tools/project_inventory.py",
+      "sha256": "90f7b7c0e69566181c4dce326eac19b4c73ae18dc76648620ac5ce09eb9597ea"
+    },
+    {
+      "path": "tools/refresh_manifest.py",
+      "sha256": "06294f54bedfc66dc91d1aa7285c816a2a6fb6311bc359be24c520442fa87f62"
+    },
+    {
+      "path": "tools/test_project_inventory.py",
+      "sha256": "30eb31005a9f8a05d12a370eb2a11b831178470bdb32befca8b0f66334ede00f"
+    },
+    {
+      "path": "tools/verify_package.py",
+      "sha256": "de5c898ead984e25f7f6c0b311c8a39eae34fa528a5264a035f4b5da253942b5"
+    }
+  ],
+  "name": "bago-app-game-development",
+  "schema": "bago.codex.application-game-package.v1",
+  "version": "1.0.0"
+}

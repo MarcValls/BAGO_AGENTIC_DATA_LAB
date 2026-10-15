@@ -1,0 +1,42 @@
+{
+  "cost_usd": 0.0,
+  "event_count": 1,
+  "events": [
+    {
+      "attributes": {
+        "capacity": 0,
+        "content_persisted": false,
+        "conversation_id": "conv_eeae305085854fdca0bdc4f299c5f60e",
+        "expansions": 0,
+        "focus": [],
+        "focus_count": 0,
+        "max_hops": 0,
+        "method": "baseline",
+        "mode": "baseline",
+        "model_id": "gemma4:31b",
+        "owner_id": "agent_78f9cfd1",
+        "owner_kind": "agent",
+        "profile": null
+      },
+      "end_time_unix_nano": 1792065662443510100,
+      "event_id": "event-7ad913a9c6234855",
+      "evidence_refs": [
+        "conversation://conv_eeae305085854fdca0bdc4f299c5f60e",
+        "model://gemma4:31b"
+      ],
+      "kind": "reasoning",
+      "name": "chat.cognitive_context",
+      "parent_event_id": null,
+      "sequence": 0,
+      "start_time_unix_nano": 1792065662443510100,
+      "status": "COMPLETED",
+      "trace_id": "trace-282bd866115e48c3"
+    }
+  ],
+  "evidence_refs": [
+    "conversation://conv_eeae305085854fdca0bdc4f299c5f60e",
+    "model://gemma4:31b"
+  ],
+  "run_id": "chat-cognition-8c42b94c866542eba4844cdc28720c6f",
+  "trace_id": "trace-282bd866115e48c3"
+}

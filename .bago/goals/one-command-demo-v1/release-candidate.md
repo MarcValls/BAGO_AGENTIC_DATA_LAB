@@ -15,7 +15,7 @@
 - **License:** MIT present.
 - **Local paths/secrets scan:** no user home path, AWS key marker, TODO/FIXME in release/demo docs or canonical artifacts.
 - **Working tree:** only `.bago/goals/` internal untracked goal state; release candidate files are committed.
-- **Release notes:** `RELEASE_NOTES_DEMO_V1.md`.
+- **Release notes:** `docs/releases/RELEASE_NOTES_DEMO_V1.md`.
 
 ## Blockers/priorities
 

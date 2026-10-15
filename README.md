@@ -138,7 +138,7 @@ El contexto del proyecto y el mapa de autoridad están centralizados en [BAGO co
 | `docs/cv_linkedin/portfolio-demo-v1.md` | snapshot freeze portfolio-demo-v1 (CV/LinkedIn) | PRESENTE |
 | `docs/one_command_demo.md` | quickstart and artifact contract for one-command governed demo | PRESENTE |
 | `docs/one_command_demo_walkthrough.md` | canonical demo explanations and artifact walkthrough | PRESENTE |
-| `RELEASE_NOTES_DEMO_V1.md` | frozen one-command demo v1.0.0 release notes | PRESENTE |
+| `docs/releases/RELEASE_NOTES_DEMO_V1.md` | frozen one-command demo v1.0.0 release notes | PRESENTE |
 | `VERSION` | current repository version | PRESENTE |
 
 ## Agente de sincronización
@@ -519,6 +519,7 @@ La tabla se genera desde `.bago/canon/JOB_SKILL_MATRIX.md`; actualiza allí los 
 - `docs/portfolio_ui.md`
 - `docs/public_e2e_demo.md`
 - `docs/readme_generation.md`
+- `docs/releases/RELEASE_NOTES_DEMO_V1.md`
 - `docs/sandbox_manager.md`
 - `docs/submodule-candidates.md`
 - `docs/workspace_binding.md`

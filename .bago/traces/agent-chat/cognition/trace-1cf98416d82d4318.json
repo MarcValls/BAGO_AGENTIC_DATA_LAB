@@ -1,0 +1,53 @@
+{
+  "cost_usd": 0.0,
+  "event_count": 1,
+  "events": [
+    {
+      "attributes": {
+        "capacity": 6,
+        "content_persisted": false,
+        "conversation_id": "conv_eeae305085854fdca0bdc4f299c5f60e",
+        "expansions": 1,
+        "focus": [
+          {
+            "id": "need.current_turn",
+            "kind": "need",
+            "score": 1.0
+          },
+          {
+            "id": "strategy.direct",
+            "kind": "strategy",
+            "score": 0.65
+          }
+        ],
+        "focus_count": 2,
+        "max_hops": 2,
+        "method": "deterministic_lexical_cues_bounded_weighted_attention",
+        "mode": "bago5",
+        "model_id": "gemma4:31b",
+        "owner_id": "agent_78f9cfd1",
+        "owner_kind": "agent",
+        "profile": "BAGO5_CHAT_COGNITION_V0.1"
+      },
+      "end_time_unix_nano": 1792065562983598400,
+      "event_id": "event-73417bcb8e394e18",
+      "evidence_refs": [
+        "conversation://conv_eeae305085854fdca0bdc4f299c5f60e",
+        "model://gemma4:31b"
+      ],
+      "kind": "reasoning",
+      "name": "chat.cognitive_context",
+      "parent_event_id": null,
+      "sequence": 0,
+      "start_time_unix_nano": 1792065562983598400,
+      "status": "COMPLETED",
+      "trace_id": "trace-1cf98416d82d4318"
+    }
+  ],
+  "evidence_refs": [
+    "conversation://conv_eeae305085854fdca0bdc4f299c5f60e",
+    "model://gemma4:31b"
+  ],
+  "run_id": "chat-cognition-f76725b0827145ed8b221ad4617bc824",
+  "trace_id": "trace-1cf98416d82d4318"
+}
