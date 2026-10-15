@@ -197,3 +197,68 @@ def test_gex_legacy_agent_run_remains_closed() -> None:
     assert "execution_unavailable" in agent_runner
     assert "1008" in agent_runner
     assert "gateway.execute" not in agent_runner
+
+def test_gex_draft202012_schema_is_valid_and_rejects_incomplete_inputs() -> None:
+    # This validates structure, not authorization, canonicalization or signatures.
+    from jsonschema import Draft202012Validator, ValidationError
+
+    schema = _read("GEX_V1_SCHEMA.json")
+    Draft202012Validator.check_schema(schema)
+    digest = "a" * 64
+    request = {
+        "contract_version": "gex-request/v1",
+        "request_id": "123e4567-e89b-42d3-a456-426614174000",
+        "run_id": "run-1",
+        "proposal_id": "proposal-1",
+        "principal": {"issuer": "host", "subject": "uid-1",
+                      "session_binding": digest, "auth_strength": "verified"},
+        "agent": {"agent_id": "agent-1", "config_digest": digest, "revision": "1"},
+        "workspace": {"workspace_id": "workspace-1", "binding_fingerprint": digest,
+                      "repository_identity": "example/repo", "branch": "main",
+                      "commit_sha": "a" * 40, "context_revision": "1",
+                      "root_identity": "backend-owned"},
+        "capability": {"id": "filesystem.read", "version": "1",
+                       "registry_digest": digest, "schema_digest": digest,
+                       "executor_kind": "local", "effect": "READ"},
+        "operation": {"arguments": {"path": "fixture.txt"},
+                      "target": "workspace-relative", "effect_scope": "read-one-file"},
+        "constraints": {"sandbox_profile": "read_only_agent", "network": "deny",
+                        "timeout_ms": 2000, "max_output_bytes": 65536,
+                        "write_scope": "none", "egress_allowlist": []},
+        "policy": {"revision": "1", "policy_digest": digest},
+        "context_revision": "1", "proposed_at": "2026-10-15T10:00:00Z",
+        "expires_at": "2026-10-15T10:02:00Z", "nonce": "random-1"
+    }
+    Draft202012Validator(schema).validate(request)
+
+    tampered = json.loads(json.dumps(request))
+    tampered["principal"].pop("session_binding")
+    with pytest.raises(ValidationError):
+        Draft202012Validator(schema).validate(tampered)
+    unregistered_schema = json.loads(json.dumps(request))
+    unregistered_schema["operation"]["unexpected"] = "ignored?"
+    with pytest.raises(ValidationError):
+        Draft202012Validator(schema).validate(unregistered_schema)
+    forged = json.loads(json.dumps(request))
+    forged["principal"]["auth_strength"] = "unverified"
+    with pytest.raises(ValidationError):
+        Draft202012Validator(schema).validate(forged)
+
+
+def test_gex_schema_does_not_mistake_mutable_state_for_signature() -> None:
+    from jsonschema import Draft202012Validator, ValidationError
+    schema = _read("GEX_V1_SCHEMA.json")
+    digest = "b" * 64
+    approval = {
+        "contract_version": "gex-approval/v1", "approval_id": "approval-1",
+        "request_digest": digest, "actor": "person-1", "principal_subject": "person-1",
+        "workspace_binding_fingerprint": digest, "operation_summary_digest": digest,
+        "decision": "APPROVED", "issued_at": "2026-10-15T10:00:00Z",
+        "expires_at": "2026-10-15T10:02:00Z", "auth_context_ref": "context-1",
+        "evidence_ref": "evidence-1", "key_id": "kid1", "signature": "bytes-base64",
+        "signature_algorithm": "HMAC-SHA256"
+    }
+    Draft202012Validator(schema).validate(approval)
+    approval["signature_algorithm"] = "none"
+    with pytest.raises(ValidationError):
+        Draft202012Validator(schema).validate(approval)
