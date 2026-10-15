@@ -1,0 +1,220 @@
+{
+  "contract": "gex-state/v1-candidate",
+  "status": "PREPARED_NOT_EXECUTED",
+  "initial": "PROPOSED",
+  "terminal": [
+    "DENIED",
+    "REJECTED",
+    "EXPIRED",
+    "CANCELLED",
+    "SUCCEEDED",
+    "FAILED",
+    "RECONCILIATION_REQUIRED"
+  ],
+  "states": [
+    "PROPOSED",
+    "AWAITING_APPROVAL",
+    "APPROVED",
+    "QUEUED",
+    "CLAIMED",
+    "RUNNING",
+    "DENIED",
+    "REJECTED",
+    "EXPIRED",
+    "CANCELLED",
+    "SUCCEEDED",
+    "FAILED",
+    "RECONCILIATION_REQUIRED"
+  ],
+  "transitions": [
+    {
+      "from": "PROPOSED",
+      "to": "DENIED",
+      "guard": "deny_pre_effect",
+      "required_events": [
+        "POLICY_DECIDED",
+        "DENIED",
+        "RECEIPT_PERSISTED"
+      ]
+    },
+    {
+      "from": "PROPOSED",
+      "to": "AWAITING_APPROVAL",
+      "guard": "policy_require_human",
+      "required_events": [
+        "POLICY_DECIDED",
+        "APPROVAL_REQUESTED"
+      ]
+    },
+    {
+      "from": "PROPOSED",
+      "to": "APPROVED",
+      "guard": "explicit_narrow_auto_policy_allow",
+      "required_events": [
+        "POLICY_DECIDED",
+        "PERMIT_ISSUED"
+      ]
+    },
+    {
+      "from": "AWAITING_APPROVAL",
+      "to": "APPROVED",
+      "guard": "authenticated_matching_approval",
+      "required_events": [
+        "APPROVED",
+        "PERMIT_ISSUED"
+      ]
+    },
+    {
+      "from": "AWAITING_APPROVAL",
+      "to": "REJECTED",
+      "guard": "human_rejected",
+      "required_events": [
+        "REJECTED",
+        "RECEIPT_PERSISTED"
+      ]
+    },
+    {
+      "from": "AWAITING_APPROVAL",
+      "to": "EXPIRED",
+      "guard": "approval_ttl_expired",
+      "required_events": [
+        "EXPIRED",
+        "RECEIPT_PERSISTED"
+      ]
+    },
+    {
+      "from": "APPROVED",
+      "to": "QUEUED",
+      "guard": "permit_signed_and_job_persisted",
+      "required_events": [
+        "QUEUED"
+      ]
+    },
+    {
+      "from": "APPROVED",
+      "to": "CANCELLED",
+      "guard": "user_cancels_before_dispatch",
+      "required_events": [
+        "CANCELLED",
+        "RECEIPT_PERSISTED"
+      ]
+    },
+    {
+      "from": "APPROVED",
+      "to": "EXPIRED",
+      "guard": "permit_expires_before_dispatch",
+      "required_events": [
+        "EXPIRED",
+        "RECEIPT_PERSISTED"
+      ]
+    },
+    {
+      "from": "QUEUED",
+      "to": "CLAIMED",
+      "guard": "worker_claims_lease",
+      "required_events": [
+        "CLAIMED"
+      ]
+    },
+    {
+      "from": "QUEUED",
+      "to": "CANCELLED",
+      "guard": "user_cancels_before_dispatch",
+      "required_events": [
+        "CANCELLED",
+        "RECEIPT_PERSISTED"
+      ]
+    },
+    {
+      "from": "QUEUED",
+      "to": "EXPIRED",
+      "guard": "permit_expires_before_dispatch",
+      "required_events": [
+        "EXPIRED",
+        "RECEIPT_PERSISTED"
+      ]
+    },
+    {
+      "from": "CLAIMED",
+      "to": "RUNNING",
+      "guard": "atomic_permit_consume_and_dispatch_intent",
+      "required_events": [
+        "PERMIT_CONSUMED",
+        "DISPATCH_INTENT",
+        "STARTED"
+      ]
+    },
+    {
+      "from": "CLAIMED",
+      "to": "FAILED",
+      "guard": "proven_no_effect_before_dispatch",
+      "required_events": [
+        "FAILED",
+        "RECEIPT_PERSISTED"
+      ]
+    },
+    {
+      "from": "CLAIMED",
+      "to": "RECONCILIATION_REQUIRED",
+      "guard": "lease_lost_with_uncertain_effect",
+      "required_events": [
+        "RECONCILIATION_REQUIRED"
+      ]
+    },
+    {
+      "from": "RUNNING",
+      "to": "SUCCEEDED",
+      "guard": "observed_effect_and_receipt_persisted_atomically",
+      "required_events": [
+        "EFFECT_OBSERVED",
+        "RECEIPT_PERSISTED",
+        "SUCCEEDED"
+      ]
+    },
+    {
+      "from": "RUNNING",
+      "to": "FAILED",
+      "guard": "proven_failure_and_receipt_persisted",
+      "required_events": [
+        "FAILED",
+        "RECEIPT_PERSISTED"
+      ]
+    },
+    {
+      "from": "RUNNING",
+      "to": "RECONCILIATION_REQUIRED",
+      "guard": "post_dispatch_effect_uncertain_or_receipt_persistence_failed",
+      "required_events": [
+        "RECONCILIATION_REQUIRED"
+      ]
+    },
+    {
+      "from": "QUEUED",
+      "to": "DENIED",
+      "guard": "dispatch_revalidation_fails_before_consumption",
+      "required_events": [
+        "DENIED",
+        "RECEIPT_PERSISTED"
+      ]
+    },
+    {
+      "from": "CLAIMED",
+      "to": "DENIED",
+      "guard": "post_claim_pre_consumption_authority_or_policy_invalid",
+      "required_events": [
+        "DENIED",
+        "RECEIPT_PERSISTED"
+      ]
+    },
+    {
+      "from": "CLAIMED",
+      "to": "EXPIRED",
+      "guard": "post_claim_pre_consumption_permit_expired",
+      "required_events": [
+        "EXPIRED",
+        "RECEIPT_PERSISTED"
+      ]
+    }
+  ],
+  "note": "Store-down is an external fail-closed response and cannot assert any persisted transition/receipt. Permit-use ISSUED->CONSUMED is an additional atomic CAS state machine. CLAIMED->RECONCILIATION_REQUIRED is mandatory when a committed DISPATCH_INTENT has occurred but RUNNING/event storage is interrupted."
+}

@@ -1,118 +1,43 @@
 # 🧪 BAGO Agentic Data Lab
 
 [![CI](https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/actions/workflows/ci.yml/badge.svg)](https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/actions/workflows/ci.yml)
-[![GitHub](https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/actions/workflows/readme-consistency.yml/badge.svg)](https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/actions/workflows/readme-consistency.yml)
+[![README consistency](https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/actions/workflows/readme-consistency.yml/badge.svg)](https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/actions/workflows/readme-consistency.yml)
 [![Branch](https://img.shields.io/badge/branch-main-green)](https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/tree/main)
-[![Tests](https://img.shields.io/badge/tests-248%2F248%20passing-brightgreen)](https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/actions)
 [![License](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 
 > Laboratorio experimental para desarrollar capacidades de AI Engineering con gobernanza BAGO.
-> Este documento se genera desde el estado y los artefactos del repositorio.
+> README generado desde fuentes canónicas y artefactos del checkout.
 
-## El problema
+## Qué es
 
-Un agente empresarial necesita demostrar de dónde viene la respuesta, qué la autoriza y qué efecto ocurrió. Una salida plausible del modelo no demuestra ninguno de esos hechos.
+Un laboratorio para construir agentes cuya evidencia, permisos y efectos puedan inspeccionarse. Una respuesta del modelo, por sí sola, no demuestra autorización ni ejecución.
 
-## Arquitectura en una mirada
+## Demo local
 
-```text
-CONOCIMIENTO → EVIDENCIA → RELACIONES → PROPUESTA → AUTORIZACIÓN → EJECUCIÓN RESTRINGIDA → RECIBO → TRACE → EVALUACIÓN
-```
-
-El modelo propone; BAGO controla si la propuesta cruza a un efecto. La ruta local reproducible registra 15 spans y conserva los límites entre propuesta, permiso y ejecución.
-
-## Ejecuta la demo
-
-La extracción de producto reutiliza los componentes L0–L15 existentes; no
-introduce una arquitectura de agente paralela. Ver [portfolio/README.md](portfolio/README.md).
+La demo principal usa fixtures locales y no llama a AWS ni a otros proveedores externos.
 
 ```bash
+python -m pip install -r requirements.txt
 python demo.py
 ```
 
-El comando materializa summary, agent run, receipts, trace y evaluation en
-`demo_output/latest/` sin convertir esa proyección en fuente canónica.
+La guía explica la instalación en Windows y POSIX, los artefactos y sus límites: [demo de una orden](docs/one_command_demo.md) · [recorrido de artefactos](docs/one_command_demo_walkthrough.md).
 
-## Tutorial para usuarios nuevos
+## Estado del proyecto
 
-Guía visual narrada en español para recorrer el chat, los agentes y los ajustes del proveedor.
-La pantalla completa de configuración se conserva; el campo de API key aparece censurado.
-La guía distingue el modelo global del asistente (`gemma4:31b`) del modelo fijado al agente lector (`kimi-k2.6`).
-La traza enlazada registra una lectura acotada y respuesta real de Ollama Cloud; no acredita una auditoría del código ni ejecución de trabajos.
-
-- Vídeo: [`MP4`](docs/agent-chat-control/assets/ADL_videotutorial_primer_usuario.mp4)
-- Subtítulos: [`SRT`](docs/agent-chat-control/assets/ADL_videotutorial_primer_usuario.es.srt)
-- Guía y límites: [`TUTORIAL_PRIMER_USO.md`](docs/agent-chat-control/TUTORIAL_PRIMER_USO.md)
-- LocalTrace: [`trace-c7ec5fcc40284a42.json`](docs/agent-chat-control/assets/trace-c7ec5fcc40284a42.json)
-- Archivo de ejemplo: [`sample-note.txt`](output/tutorial/sample-note.txt)
-
-## Evidencia de ejecución
-
-La evidencia versionada de L15 registra el trace consultado en Jaeger: [resultado y trace ID](evidence/l15_otel_jaeger_live.md). El demo produce `trace.json`, recibos y evaluación determinista; Jaeger es una proyección local, no autoridad de ejecución.
-
-### See it in action
-
-Vista real del trace L15 en Jaeger: 15 spans conectan retrieval, propuesta, permiso, ejecución y recibos.
-
-![Jaeger trace graph for the governed BAGO demo](portfolio/assets/jaeger-trace-graph.png)
-
-Trace ID: `04b58bb123bb6cc94a8cc0d60c7145ae` · 15 spans · validado localmente el 2026-10-08. La [evidencia L15 versionada](evidence/l15_otel_jaeger_live.md) es accesible desde GitHub; la UI de Jaeger solo está disponible al reproducirla en local.
-
-### Reproduce el trace en local
-
-Requiere Docker. Este recorrido inicia Jaeger, exporta y consulta el trace, y detiene el servicio al terminar:
-
-```bash
-docker compose -p bago-otel -f infra/observability/docker-compose.yml up -d
-python scripts/run_l15_otel_live_validation.py --check
-docker compose -p bago-otel -f infra/observability/docker-compose.yml down
-```
-
-Guía detallada: [L15 OpenTelemetry + Jaeger](docs/otel_jaeger.md).
-
-## Monitor local del equipo Codex
-
-Para observar en vivo las tareas y eventos que registra la coordinación local, instala las dependencias backend con `python -m pip install -r requirements.txt fastapi uvicorn`, y ejecuta la API y el frontend en dos terminales:
-
-```bash
-python -m src.api.server
-```
-
-En otra terminal, entra en `frontend`, ejecuta `npm install` y después `npm run dev`. Abre [http://localhost:5173/team-monitor.html](http://localhost:5173/team-monitor.html). La página consulta `/api/team/status` cada cuatro segundos; el estado mostrado procede de `.bago/team/runtime/state.json` y `.bago/team/runtime/events.jsonl`. Solo refleja eventos registrados por teamctl, no toda la actividad interna de la extensión Codex.
-
-Profundiza en las fases L0-L15 en el [roadmap](#roadmap-detectado), o consulta [.bago/canon/STATE.md](.bago/canon/STATE.md) para el alcance canónico y [portfolio/README.md](portfolio/README.md) para la presentación del producto.
-
-## Estado actual
-
-| Métrica | Valor |
-| --- | --- |
-| Tests ejecutados | **248/248** |
+| Campo | Valor |
+|---|---|
 | Rama pública | `main` |
-| Estado actualizado | 2026-10-10 |
+| Resumen actualizado | 2026-10-15 |
 | Fase actual | **L15 · OpenTelemetry + Jaeger Local Live** · VERIFIED (local live) |
-| Siguiente bloque | do not make additional cloud calls under the zero-cost rule; confirm a later billing record manually only if zero-dollar charging must be claimed, and keep streaming, Knowledge Base and remote integrations separately scoped |
-| Estado declarado | VERIFIED for the local RDF/Turtle materialization, bounded SPARQL subset, deterministic inference, contradiction constraints, RAG seed handoff, the real local OpenMetadata 1.12.6 validation, the local restricted sandbox execution boundary, the local trace/evaluation chain, the public zero-cost E2E demo executed by the same CI contract, the persistent local SQLite vector index consumed by GovernedRAG and the local OpenTelemetry → Jaeger trace projection; one bounded live AWS Bedrock `Converse` call through the governed adapter is `VERIFIED`; a separate read-only AWS Free Tier check observes an active `FREE` account plan with USD 100.00 remaining at validation time; AWS `ConverseStream`, Bedrock Knowledge Base, remote OpenMetadata, commercetools live integrations remain `NOT_RUN`, while zero-dollar billing for the Bedrock call remains `NOT_PROVEN`; GitHub issue #14 is separately executed and verified under human authorization, and the local human-reviewed checkpoint is recorded in `evidence/bago_canon_compliance_review.md`. |
+| Siguiente bloque declarado | do not make additional cloud calls under the zero-cost rule; confirm a later billing record manually only if zero-dollar charging must be claimed, and keep streaming, Knowledge Base and remote integrations separately scoped |
+| Último resultado completo de CI registrado | GitHub Actions run [38665463586](https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/actions/runs/38665463586) completed successfully on commit `ff9292fe4340a2bdab9658a2e804579fa4ef8fb0` (2026-10-15). Its complete test-suite step and README check both succeeded. This result does not cover later changes. |
 
-El estado público se limita a lo que existe en el checkout y a la evidencia
-referenciada. Cada superficie AWS, OpenMetadata u otra integración externa
-conserva en .bago/canon/STATE.md su alcance exacto: VERIFIED, NOT_RUN o NOT_PROVEN.
-El commit, push y merge de este snapshot son operaciones separadas.
+**Alcance declarado:** VERIFIED for the local RDF/Turtle materialization, bounded SPARQL subset, deterministic inference, contradiction constraints, RAG seed handoff, the real local OpenMetadata 1.12.6 validation, the local restricted sandbox execution boundary, the local trace/evaluation chain, the public zero-cost E2E demo executed by the same CI contract, the persistent local SQLite vector index consumed by GovernedRAG and the local OpenTelemetry → Jaeger trace projection; one bounded live AWS Bedrock `Converse` call through the governed adapter is `VERIFIED`; a separate read-only AWS Free Tier check observes an active `FREE` account plan with USD 100.00 remaining at validation time; AWS `ConverseStream`, Bedrock Knowledge Base, remote OpenMetadata, commercetools live integrations remain `NOT_RUN`, while zero-dollar billing for the Bedrock call remains `NOT_PROVEN`; GitHub issue #14 is separately executed and verified under human authorization, and the local human-reviewed checkpoint is recorded in `evidence/bago_canon_compliance_review.md`.
 
-## One-Command Governed Knowledge Agent Demo
+La fecha corresponde a la actualización del resumen. Cada observación externa conserva la fecha y el alcance de su evidencia; este README no representa una consulta en vivo.
 
-A deterministic, credential-free local demonstration of the existing governed-agent path; it composes fixtures, typed execution, receipts, trace and structural evaluation without contacting external services.
-
-```text
-QUESTION → AGENT → GOVERNED RETRIEVAL → EXECUTION → RECEIPTS → TRACE → EVALUATION
-```
-
-**Run:** `python demo.py` (Python 3.11+, after `python -m pip install -r requirements.txt`).
-
-Example question: ¿Qué sustituye a la política anterior y qué evidencia la valida?
-
-Expected fixture result: `PASS`; 2 retrieval hits, 15 trace events, evaluation score 1.0. Run-specific IDs/hashes may vary.
-
-Artifacts in `demo_output/`:
+## Arquitectura y fases
 
 - `summary.json`
 - `agent_run.json`
@@ -208,49 +133,32 @@ flowchart LR
     L14 --> L15
 ```
 
-| Fase | Estado | Objetivo | Descripción | Tests | Evidencia/docs |
-| --- | --- | --- | --- | ---: | ---: |
-| L0 | COMPLETE | — | Baseline & Lab Contract | 0 | 6 |
-| L1 | VALIDATED (local governed graph evidence) | — | LangGraph Governed Execution | 14 | 4 |
-| L2 | VALIDATED | — | ETL / Data Pipeline | 4 | 1 |
-| L3 | VERIFIED | — | Metadata & Ontology | 25 | 2 |
-| L4 | VERIFIED | Orbitant | Governed RAG | 12 | 2 |
-| L5 | VERIFIED | Orbitant | MCP con gobernanza | 7 | 3 |
-| L6 | VERIFIED (live Converse + Free Plan observed) | Tuio | AWS Bedrock Provider | 10 | 4 |
-| L7 | VERIFIED (offline) | Devoteam | Bedrock Knowledge Base | 10 | 2 |
-| L8 | VERIFIED (local live) | Devoteam | Metadata Catalog | 22 | 3 |
-| L9 | VERIFIED (offline) | commercetools | End-to-End Governed Agent | 7 | 3 |
-| L10 | VERIFIED (local) | BAGO / portfolio | Governed Ontology Engine | 4 | 2 |
-| L11 | VERIFIED (local) | BAGO / secure execution | Governed Sandbox Layer | 14 | 3 |
-| L12 | VERIFIED (local) | BAGO / portfolio | Local Observability & Evals | 5 | 3 |
-| L13 | VERIFIED (local) | BAGO / portfolio | Public E2E Demo & CI | 5 | 2 |
-| L14 | VERIFIED (local) | BAGO / portfolio | Governed Local Vector Store | 4 | 2 |
-| L15 | VERIFIED (local live) | BAGO / portfolio | OpenTelemetry + Jaeger Local Live | 4 | 2 |
+La tabla muestra estados declarados en el manifiesto del proyecto; consulta las fuentes canónicas para conocer el alcance comprobado.
 
-## Arquitectura actual
+| Fase | Estado declarado | Objetivo | Área |
+|---|---|---|---|
+| L0 | COMPLETE | — | Baseline & Lab Contract |
+| L1 | VALIDATED (local governed graph evidence) | — | LangGraph Governed Execution |
+| L2 | VALIDATED | — | ETL / Data Pipeline |
+| L3 | VERIFIED | — | Metadata & Ontology |
+| L4 | VERIFIED | Orbitant | Governed RAG |
+| L5 | VERIFIED | Orbitant | MCP con gobernanza |
+| L6 | VERIFIED (live Converse + Free Plan observed) | Tuio | AWS Bedrock Provider |
+| L7 | VERIFIED (offline) | Devoteam | Bedrock Knowledge Base |
+| L8 | VERIFIED (local live) | Devoteam | Metadata Catalog |
+| L9 | VERIFIED (offline) | commercetools | End-to-End Governed Agent |
+| L10 | VERIFIED (local) | BAGO / portfolio | Governed Ontology Engine |
+| L11 | VERIFIED (local) | BAGO / secure execution | Governed Sandbox Layer |
+| L12 | VERIFIED (local) | BAGO / portfolio | Local Observability & Evals |
+| L13 | VERIFIED (local) | BAGO / portfolio | Public E2E Demo & CI |
+| L14 | VERIFIED (local) | BAGO / portfolio | Governed Local Vector Store |
+| L15 | VERIFIED (local live) | BAGO / portfolio | OpenTelemetry + Jaeger Local Live |
 
-**Principio:** LangGraph propone → BAGO autoriza → ExecutionGateway → SandboxManager → Receipt → LocalTrace → Eval.
+## Evidencia y límites
 
-```mermaid
-flowchart LR
-    RAG["Governed RAG"]
-    RDF["RDF/Turtle"]
-    SPARQL["SPARQL local"]
-    INFERENCE["Inference"]
-    CONSTRAINTS["Constraints"]
-    LLM["LLM context"]
-    GATEWAY["ExecutionGateway"]
-    SANDBOX["SandboxManager"]
-    RECEIPT["Receipt"]
-    RAG --> RDF
-    RDF --> SPARQL
-    SPARQL --> INFERENCE
-    INFERENCE --> CONSTRAINTS
-    CONSTRAINTS --> LLM
-    LLM --> GATEWAY
-    GATEWAY --> SANDBOX
-    SANDBOX --> RECEIPT
-```
+- [Verificación L15 con Jaeger local](evidence/l15_otel_jaeger_live.md): resultado fechado del 2026-10-08; es evidencia histórica local, no disponibilidad actual del servicio.
+- [Último resultado completo de CI](https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/actions/runs/38665463586): estado y SHA del commit verificados en `STATE.md`; no cubre cambios posteriores.
+- [Límites operativos actuales](.bago/canon/STATE.md): AWS, OpenMetadata remoto y commercetools mantienen su alcance `NOT_RUN` o `NOT_PROVEN` donde corresponde.
 
 Pipeline actual:
 
@@ -566,29 +474,9 @@ La tabla se genera desde `.bago/canon/JOB_SKILL_MATRIX.md`; actualiza allí los 
 ## Comandos reproducibles
 
 ```bash
-python demo.py
-bash scripts/install_demo.sh
-.venv/bin/python scripts/bago.py demo
-source .venv/bin/activate
-python scripts/bago.py demo --json
-python scripts/bago.py demo --write-evidence
-python -m pip install -r requirements.txt
-python demo.py
 python -m pytest tests -q
-python scripts/generate_dynamic_readme.py
 python scripts/generate_dynamic_readme.py --check --skip-tests
 python scripts/run_public_e2e_demo.py --check
-python scripts/run_public_e2e_demo.py --write-evidence
-python scripts/run_l14_vector_store_validation.py --check
-python scripts/run_l14_vector_store_validation.py --write-evidence
-docker compose -p bago-otel -f infra/observability/docker-compose.yml up -d
-python scripts/run_l15_otel_live_validation.py --check
-python scripts/run_l15_otel_live_validation.py --write-evidence
-docker compose -p bago-otel -f infra/observability/docker-compose.yml down
-python scripts/run_l6_aws_free_tier_validation.py --profile bago-free --region us-east-1 --write-evidence
-docker compose -p bago-openmetadata -f infra/openmetadata/docker-compose.yml up -d
-python scripts/run_l8_openmetadata_live_validation.py
-python scripts/run_sandbox_local_validation.py
 ```
 
 Tests por fase:

@@ -1,0 +1,1550 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/blob/main/docs/governed-execution/GEX_V1_SCHEMA.json",
+  "title": "GEX v1 contract wire schemas — PREPARED / NOT_DEPLOYED",
+  "description": "Structural validation only. JCS digest, signature, time order, policy, reference consistency, CAS and ledger state transitions require semantic implementation and conformance tests.",
+  "type": "object",
+  "oneOf": [
+    {
+      "$ref": "#/$defs/GEXRequestV1"
+    },
+    {
+      "$ref": "#/$defs/PolicyDecisionV1"
+    },
+    {
+      "$ref": "#/$defs/ApprovalV1"
+    },
+    {
+      "$ref": "#/$defs/PermitV1"
+    },
+    {
+      "$ref": "#/$defs/CapabilityRegistrationV1"
+    },
+    {
+      "$ref": "#/$defs/ReceiptV1"
+    },
+    {
+      "$ref": "#/$defs/LedgerEventV1"
+    },
+    {
+      "$ref": "#/$defs/ToolProposalEnvelopeV1"
+    },
+    {
+      "$ref": "#/$defs/ProposalDenialReceiptV1"
+    },
+    {
+      "$ref": "#/$defs/PermitUseStateV1"
+    },
+    {
+      "$ref": "#/$defs/IngressDenialReceiptV1"
+    }
+  ],
+  "$defs": {
+    "Principal": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "issuer": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "subject": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "session_binding": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "auth_strength": {
+          "const": "verified"
+        }
+      },
+      "required": [
+        "issuer",
+        "subject",
+        "session_binding",
+        "auth_strength"
+      ]
+    },
+    "Agent": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "agent_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "config_digest": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "revision": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        }
+      },
+      "required": [
+        "agent_id",
+        "config_digest",
+        "revision"
+      ]
+    },
+    "Workspace": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "workspace_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "binding_fingerprint": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "repository_identity": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "branch": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "commit_sha": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{40,64}$"
+        },
+        "context_revision": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "root_identity": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        }
+      },
+      "required": [
+        "workspace_id",
+        "binding_fingerprint",
+        "repository_identity",
+        "branch",
+        "commit_sha",
+        "context_revision",
+        "root_identity"
+      ]
+    },
+    "Capability": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "version": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "registry_digest": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "schema_digest": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "executor_kind": {
+          "enum": [
+            "local",
+            "mcp"
+          ]
+        },
+        "effect": {
+          "enum": [
+            "READ",
+            "WRITE",
+            "CREATE",
+            "DELETE",
+            "EXTERNAL_API",
+            "EXTERNAL_TOOL"
+          ]
+        }
+      },
+      "required": [
+        "id",
+        "version",
+        "registry_digest",
+        "schema_digest",
+        "executor_kind",
+        "effect"
+      ]
+    },
+    "Operation": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "arguments": {
+          "type": "object"
+        },
+        "target": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "effect_scope": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        }
+      },
+      "required": [
+        "arguments",
+        "target",
+        "effect_scope"
+      ]
+    },
+    "Constraints": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "sandbox_profile": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "network": {
+          "enum": [
+            "deny",
+            "allowlist"
+          ]
+        },
+        "timeout_ms": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 3600000
+        },
+        "max_output_bytes": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "write_scope": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "egress_allowlist": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256
+          },
+          "uniqueItems": true
+        }
+      },
+      "required": [
+        "sandbox_profile",
+        "network",
+        "timeout_ms",
+        "max_output_bytes",
+        "write_scope",
+        "egress_allowlist"
+      ]
+    },
+    "PolicyRevision": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "revision": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "policy_digest": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        }
+      },
+      "required": [
+        "revision",
+        "policy_digest"
+      ]
+    },
+    "GEXRequestV1": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "contract_version": {
+          "const": "gex-request/v1"
+        },
+        "request_id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "run_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "proposal_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "principal": {
+          "$ref": "#/$defs/Principal"
+        },
+        "agent": {
+          "$ref": "#/$defs/Agent"
+        },
+        "workspace": {
+          "$ref": "#/$defs/Workspace"
+        },
+        "capability": {
+          "$ref": "#/$defs/Capability"
+        },
+        "operation": {
+          "$ref": "#/$defs/Operation"
+        },
+        "constraints": {
+          "$ref": "#/$defs/Constraints"
+        },
+        "policy": {
+          "$ref": "#/$defs/PolicyRevision"
+        },
+        "context_revision": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "proposed_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "expires_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "nonce": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        }
+      },
+      "required": [
+        "contract_version",
+        "request_id",
+        "run_id",
+        "proposal_id",
+        "principal",
+        "agent",
+        "workspace",
+        "capability",
+        "operation",
+        "constraints",
+        "policy",
+        "context_revision",
+        "proposed_at",
+        "expires_at",
+        "nonce"
+      ]
+    },
+    "PolicyDecisionV1": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "contract_version": {
+          "const": "gex-policy-decision/v1"
+        },
+        "decision_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "request_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "request_digest": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "policy_revision": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "actor": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "result": {
+          "enum": [
+            "ALLOW",
+            "DENY",
+            "REQUIRE_HUMAN"
+          ]
+        },
+        "reason_code": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "constraints_effective": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Constraints"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "timestamp": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "contract_version",
+        "decision_id",
+        "request_id",
+        "request_digest",
+        "policy_revision",
+        "actor",
+        "result",
+        "reason_code",
+        "constraints_effective",
+        "timestamp"
+      ]
+    },
+    "ApprovalV1": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "contract_version": {
+          "const": "gex-approval/v1"
+        },
+        "approval_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "request_digest": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "actor": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "principal_subject": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "workspace_binding_fingerprint": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "operation_summary_digest": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "decision": {
+          "enum": [
+            "APPROVED",
+            "REJECTED"
+          ]
+        },
+        "issued_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "expires_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "auth_context_ref": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "evidence_ref": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "key_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "signature": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "signature_algorithm": {
+          "enum": [
+            "HMAC-SHA256",
+            "Ed25519"
+          ]
+        },
+        "decision_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        }
+      },
+      "required": [
+        "contract_version",
+        "approval_id",
+        "request_digest",
+        "actor",
+        "principal_subject",
+        "workspace_binding_fingerprint",
+        "operation_summary_digest",
+        "decision",
+        "issued_at",
+        "expires_at",
+        "auth_context_ref",
+        "evidence_ref",
+        "key_id",
+        "signature",
+        "signature_algorithm",
+        "decision_id"
+      ],
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "signature_algorithm": {
+                "const": "HMAC-SHA256"
+              }
+            },
+            "required": [
+              "signature_algorithm"
+            ]
+          },
+          "then": {
+            "properties": {
+              "signature": {
+                "pattern": "^[0-9a-f]{64}$"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "signature_algorithm": {
+                "const": "Ed25519"
+              }
+            },
+            "required": [
+              "signature_algorithm"
+            ]
+          },
+          "then": {
+            "properties": {
+              "signature": {
+                "pattern": "^[A-Za-z0-9_-]{86}$"
+              }
+            }
+          }
+        }
+      ]
+    },
+    "PermitV1": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "contract_version": {
+          "const": "gex-permit/v1"
+        },
+        "permit_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "request_digest": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "principal_subject": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "session_binding": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "agent_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "agent_config_digest": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "workspace_binding_fingerprint": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "capability_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "capability_version": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "registry_digest": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "effect_scope": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "operation_digest": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "policy_revision": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "constraints_effective": {
+          "$ref": "#/$defs/Constraints"
+        },
+        "issuer": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "key_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "signature": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "signature_algorithm": {
+          "enum": [
+            "HMAC-SHA256",
+            "Ed25519"
+          ]
+        },
+        "issued_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "not_before": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "expires_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "max_uses": {
+          "const": 1
+        },
+        "authorization_source": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "decision_id": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 256
+            },
+            "approval_id": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 256
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "auto_rule_id": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 256
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          },
+          "required": [
+            "decision_id",
+            "approval_id",
+            "auto_rule_id"
+          ]
+        }
+      },
+      "required": [
+        "contract_version",
+        "permit_id",
+        "request_digest",
+        "principal_subject",
+        "session_binding",
+        "agent_id",
+        "agent_config_digest",
+        "workspace_binding_fingerprint",
+        "capability_id",
+        "capability_version",
+        "registry_digest",
+        "effect_scope",
+        "operation_digest",
+        "policy_revision",
+        "constraints_effective",
+        "issuer",
+        "key_id",
+        "signature",
+        "signature_algorithm",
+        "issued_at",
+        "not_before",
+        "expires_at",
+        "max_uses",
+        "authorization_source"
+      ],
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "signature_algorithm": {
+                "const": "HMAC-SHA256"
+              }
+            },
+            "required": [
+              "signature_algorithm"
+            ]
+          },
+          "then": {
+            "properties": {
+              "signature": {
+                "pattern": "^[0-9a-f]{64}$"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "signature_algorithm": {
+                "const": "Ed25519"
+              }
+            },
+            "required": [
+              "signature_algorithm"
+            ]
+          },
+          "then": {
+            "properties": {
+              "signature": {
+                "pattern": "^[A-Za-z0-9_-]{86}$"
+              }
+            }
+          }
+        }
+      ]
+    },
+    "CapabilityRegistrationV1": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "contract_version": {
+          "const": "gex-capability/v1"
+        },
+        "capability_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "capability_version": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "registry_digest": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "input_schema_digest": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "effect": {
+          "enum": [
+            "READ",
+            "WRITE",
+            "CREATE",
+            "DELETE",
+            "EXTERNAL_API",
+            "EXTERNAL_TOOL"
+          ]
+        },
+        "executor_kind": {
+          "enum": [
+            "local",
+            "mcp"
+          ]
+        },
+        "sandbox_profile": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "network_policy": {
+          "enum": [
+            "deny",
+            "allowlist"
+          ]
+        },
+        "max_timeout_ms": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "max_output_bytes": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "health": {
+          "enum": [
+            "HEALTHY",
+            "UNHEALTHY",
+            "UNKNOWN"
+          ]
+        },
+        "status": {
+          "enum": [
+            "ENABLED",
+            "DISABLED",
+            "UNAVAILABLE"
+          ]
+        }
+      },
+      "required": [
+        "contract_version",
+        "capability_id",
+        "capability_version",
+        "registry_digest",
+        "input_schema_digest",
+        "effect",
+        "executor_kind",
+        "sandbox_profile",
+        "network_policy",
+        "max_timeout_ms",
+        "max_output_bytes",
+        "health",
+        "status"
+      ]
+    },
+    "ReceiptV1": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "contract_version": {
+          "const": "gex-receipt/v1"
+        },
+        "receipt_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "request_digest": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "attempt_id": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 256
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "decision_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "approval_id": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 256
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "permit_id": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 256
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "capability_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "capability_version": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 256
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "status": {
+          "enum": [
+            "SUCCESS",
+            "FAILURE",
+            "DENIED",
+            "TIMEOUT",
+            "UNKNOWN"
+          ]
+        },
+        "observed_effect": {
+          "type": "object"
+        },
+        "error_code": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 256
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "execution_boundary_id": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 256
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "actual_limits": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Constraints"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "input_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "output_sha256": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "evidence_refs": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256
+          },
+          "uniqueItems": true
+        },
+        "persisted_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "origin_event_ids": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256
+          },
+          "uniqueItems": true
+        }
+      },
+      "required": [
+        "contract_version",
+        "receipt_id",
+        "request_digest",
+        "attempt_id",
+        "decision_id",
+        "approval_id",
+        "permit_id",
+        "capability_id",
+        "capability_version",
+        "status",
+        "observed_effect",
+        "error_code",
+        "execution_boundary_id",
+        "actual_limits",
+        "input_sha256",
+        "output_sha256",
+        "evidence_refs",
+        "persisted_at",
+        "origin_event_ids"
+      ]
+    },
+    "LedgerEventV1": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "contract_version": {
+          "const": "gex-ledger-event/v1"
+        },
+        "event_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "request_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "run_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "seq": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "prev_hash": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "event_digest": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "kind": {
+          "enum": [
+            "PROPOSED",
+            "POLICY_DECIDED",
+            "APPROVAL_REQUESTED",
+            "APPROVED",
+            "REJECTED",
+            "PERMIT_ISSUED",
+            "PERMIT_CONSUMED",
+            "DISPATCH_INTENT",
+            "STARTED",
+            "EFFECT_OBSERVED",
+            "FAILED",
+            "DENIED",
+            "TIMEOUT",
+            "REPLAY_DENIED",
+            "RECONCILIATION_REQUIRED",
+            "RECEIPT_PERSISTED",
+            "QUEUED",
+            "CLAIMED",
+            "SUCCEEDED",
+            "EXPIRED",
+            "CANCELLED",
+            "REVOKED"
+          ]
+        },
+        "timestamp": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "payload_ref": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "proposal_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "proposal_digest": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "request_digest": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "attempt_id": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 256
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "permit_id": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 256
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "sandbox_receipt_id": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 256
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "decision_id": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 256
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "approval_id": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 256
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "job_id": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 256
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "boundary_receipt_id": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 256
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "contract_version",
+        "event_id",
+        "request_id",
+        "run_id",
+        "seq",
+        "prev_hash",
+        "event_digest",
+        "kind",
+        "timestamp",
+        "payload_ref",
+        "proposal_id",
+        "proposal_digest",
+        "request_digest",
+        "attempt_id",
+        "permit_id",
+        "sandbox_receipt_id",
+        "decision_id",
+        "approval_id",
+        "job_id",
+        "boundary_receipt_id"
+      ]
+    },
+    "ToolProposalEnvelopeV1": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "contract_version": {
+          "const": "gex-proposal/v1"
+        },
+        "request_id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "run_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "proposal_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "agent_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "principal_subject": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "workspace_binding_fingerprint": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "requested_tool": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "raw_arguments_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "received_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "proposal_digest": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        }
+      },
+      "required": [
+        "contract_version",
+        "request_id",
+        "run_id",
+        "proposal_id",
+        "agent_id",
+        "principal_subject",
+        "workspace_binding_fingerprint",
+        "requested_tool",
+        "raw_arguments_sha256",
+        "received_at",
+        "proposal_digest"
+      ]
+    },
+    "ProposalDenialReceiptV1": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "contract_version": {
+          "const": "gex-proposal-denial/v1"
+        },
+        "receipt_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "request_id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "run_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "proposal_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "proposal_digest": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "requested_tool": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "reason_code": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "decision": {
+          "const": "DENY"
+        },
+        "evidence_refs": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256
+          },
+          "uniqueItems": true
+        },
+        "origin_event_ids": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256
+          },
+          "uniqueItems": true
+        },
+        "persisted_at": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "contract_version",
+        "receipt_id",
+        "request_id",
+        "run_id",
+        "proposal_id",
+        "proposal_digest",
+        "requested_tool",
+        "reason_code",
+        "decision",
+        "evidence_refs",
+        "origin_event_ids",
+        "persisted_at"
+      ]
+    },
+    "PermitUseStateV1": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "contract_version": {
+          "const": "gex-permit-use/v1"
+        },
+        "permit_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "request_digest": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "state": {
+          "enum": [
+            "ISSUED",
+            "CONSUMED",
+            "REVOKED",
+            "EXPIRED"
+          ]
+        },
+        "uses": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "db_version": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "consumed_at": {
+          "anyOf": [
+            {
+              "type": "string",
+              "format": "date-time"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "attempt_id": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 256
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "contract_version",
+        "permit_id",
+        "request_digest",
+        "state",
+        "uses",
+        "db_version",
+        "consumed_at",
+        "attempt_id"
+      ]
+    },
+    "IngressDenialReceiptV1": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "contract_version": {
+          "const": "gex-ingress-denial/v1"
+        },
+        "receipt_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "ingress_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "raw_request_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "decision": {
+          "const": "DENY"
+        },
+        "reason_code": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "received_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "persisted_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "ledger_event_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "prev_ingress_hash": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "ingress_event_digest": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        }
+      },
+      "required": [
+        "contract_version",
+        "receipt_id",
+        "ingress_id",
+        "raw_request_sha256",
+        "decision",
+        "reason_code",
+        "received_at",
+        "persisted_at",
+        "ledger_event_id",
+        "prev_ingress_hash",
+        "ingress_event_digest"
+      ]
+    }
+  }
+}
