@@ -34,7 +34,7 @@ Source inspected via connected GitHub read API on main (not a local worktree). O
 - [x] Legacy boundaries mapped to exact source.
 - [x] Normative security semantics specified, including irreversible changes and failure states.
 - [x] 40 positive/negative SPEC_ONLY vectors materialized.
-- [x] 9 structural wire schemas documented, without runtime authority.
+- [x] 10 structural wire schemas documented, without runtime authority.
 - [ ] Independent contract retest validates cross-field completeness, RFC 8785 interoperability, identities/signatures, CAS races and transition completeness.
 - [ ] CR-GEX-002/003/004/005 dependencies resolved or explicitly closed with fail-closed profiles.
 - [ ] teamctl verify and mission-specific validated handoff.
