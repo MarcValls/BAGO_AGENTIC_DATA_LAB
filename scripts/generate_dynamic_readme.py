@@ -146,7 +146,7 @@ def parse_state() -> dict[str, str]:
         "current_phase": field("Current phase"),
         "status": status,
         "status_label": status_match.group(1) if status_match else "NOT_DECLARED",
-        "tests": field("Tests"),
+        "tests": field("Latest CI full-suite record"),
         "next_phase": field("Next phase"),
     }
 
@@ -284,42 +284,28 @@ def _files_under(
 
 def _render_phase_table(phases: list[dict[str, Any]]) -> str:
     lines = [
-        "| Fase | Estado | Objetivo | Descripción | Tests | Evidencia/docs |",
-        "|---|---|---|---|---:|---:|",
+        "| Fase | Estado declarado | Objetivo | Área |",
+        "|---|---|---|---|",
     ]
     for phase in phases:
-        test_count = sum(
-            _test_function_count(REPO_ROOT / match)
-            for check in phase["checks"]
-            if check["kind"] == "tests"
-            for match in check["matches"]
-        )
-        evidence_count = sum(
-            len(check["matches"])
-            for check in phase["checks"]
-            if check["kind"] in {"evidence", "contract"}
-        )
         lines.append(
             f"| {_cell(phase['id'])} | {_cell(phase['status'])} | "
-            f"{_cell(phase.get('target', '—'))} | {_cell(phase['name'])} | "
-            f"{test_count} | {evidence_count} |"
+            f"{_cell(phase.get('target', '-'))} | {_cell(phase['name'])} |"
         )
     return "\n".join(lines)
 
-
 def _render_canonical_documents(manifest: dict[str, Any]) -> str:
     lines = [
-        "| Documento | Función | Estado |",
+        "| Documento | Función | Estado en este checkout |",
         "|---|---|---|",
     ]
     for document in manifest.get("canonical_documents", []):
         path = str(document["path"])
         state = "PRESENTE" if (REPO_ROOT / path).is_file() else "FALTA"
         lines.append(
-            f"| {_inline(path)} | {_cell(document['role'])} | {_cell(state)} |"
+            f"| [{_inline(path)}]({path}) | {_cell(document['role'])} | {_cell(state)} |"
         )
     return "\n".join(lines) or "No hay documentos canónicos declarados."
-
 
 def _render_one_command_demo(manifest: dict[str, Any]) -> str:
     config = manifest.get("one_command_demo", {})
@@ -584,273 +570,125 @@ def render_readme(
     state: dict[str, str],
     passing_tests: int,
 ) -> str:
+    # Kept in the public helper signature for existing callers. Test outcomes
+    # come from the exact CI record in STATE.md, never from test collection.
     project = manifest["project"]
     phases = phase_inventory(manifest, state)
-    total_tests = collected_test_count()
-    test_badge = f"tests-{passing_tests}%2F{total_tests}%20passing"
     branch = project["default_branch"]
     branch_badge = branch.replace("/", "-")
-    current_phase = next(
-        (phase for phase in phases if phase["id"] == state["current_phase"].split(" ", 1)[0]),
-        None,
-    )
-    current_status = current_phase["status"] if current_phase else state["status_label"]
+    repository = project["repository"].rstrip("/")
     ci_workflow = project.get("ci_workflow", ".github/workflows/readme-consistency.yml")
-    roles = parse_roles()
-    skills = parse_skills()
-    soft_skills = parse_soft_skills()
-    test_files = _files_under("tests", "test_*.py")
-    docs = _files_under("docs", "*.md")
-    evidence = _files_under("evidence", "*")
-    scripts = _files_under("scripts", "*.py")
-    infrastructure = _files_under(
-        "infra",
-        "*",
-        excluded_dirs=("docker-volume",),
-    )
-    source = _files_under("src", "*.py")
+    current_phase_id = state["current_phase"].split(" ", 1)[0]
+    current_phase = next((phase for phase in phases if phase["id"] == current_phase_id), None)
+    current_status = current_phase["status"] if current_phase else state["status_label"]
+    tutorial = manifest.get("first_user_tutorial", {})
+    guide = tutorial.get("guide", "docs/agent-chat-control/TUTORIAL_PRIMER_USO.md")
+    video = tutorial.get("video", "docs/agent-chat-control/assets/ADL_videotutorial_primer_usuario.mp4")
+    subtitles = tutorial.get("subtitles", "docs/agent-chat-control/assets/ADL_videotutorial_primer_usuario.es.srt")
+    trace = tutorial.get("trace", "docs/agent-chat-control/assets/trace-c7ec5fcc40284a42.json")
+    input_file = tutorial.get("input", "output/tutorial/sample-note.txt")
+    render_first_user_tutorial(manifest)  # Fail closed if a declared artifact is missing.
 
     lines = [
         f"# {project['emoji']} {project['title']}",
         "",
-        f"[![CI]({project['repository']}/actions/workflows/{ci_workflow}/badge.svg)]({project['repository']}/actions/workflows/{ci_workflow})",
-        f"[![GitHub]({project['repository']}/actions/workflows/readme-consistency.yml/badge.svg)]({project['repository']}/actions/workflows/readme-consistency.yml)",
-        f"[![Branch](https://img.shields.io/badge/branch-{branch_badge}-green)]({project['repository']}/tree/{branch})",
-        f"[![Tests](https://img.shields.io/badge/{test_badge}-brightgreen)]({project['repository']}/actions)",
+        f"[![CI]({repository}/actions/workflows/{ci_workflow}/badge.svg)]({repository}/actions/workflows/{ci_workflow})",
+        f"[![README consistency]({repository}/actions/workflows/readme-consistency.yml/badge.svg)]({repository}/actions/workflows/readme-consistency.yml)",
+        f"[![Branch](https://img.shields.io/badge/branch-{branch_badge}-green)]({repository}/tree/{branch})",
         f"[![License](https://img.shields.io/badge/license-{project['license']}-blue)](LICENSE)",
         "",
         f"> {project['description']}",
-        "> Este documento se genera desde el estado y los artefactos del repositorio.",
+        "> README generado desde fuentes canónicas y artefactos del checkout.",
         "",
-        "## El problema",
+        "## Qué es",
         "",
-        "Un agente empresarial necesita demostrar de dónde viene la respuesta, qué la autoriza y qué efecto ocurrió. Una salida plausible del modelo no demuestra ninguno de esos hechos.",
+        "Un laboratorio para construir agentes cuya evidencia, permisos y efectos puedan inspeccionarse. Una respuesta del modelo, por sí sola, no demuestra autorización ni ejecución.",
         "",
-        "## Arquitectura en una mirada",
+        "## Demo local",
         "",
-        FENCE + "text",
-        "CONOCIMIENTO → EVIDENCIA → RELACIONES → PROPUESTA → AUTORIZACIÓN → EJECUCIÓN RESTRINGIDA → RECIBO → TRACE → EVALUACIÓN",
-        FENCE,
-        "",
-        "El modelo propone; BAGO controla si la propuesta cruza a un efecto. La ruta local reproducible registra 15 spans y conserva los límites entre propuesta, permiso y ejecución.",
-        "",
-        "## Ejecuta la demo",
-        "",
-        "La extracción de producto reutiliza los componentes L0–L15 existentes; no",
-        "introduce una arquitectura de agente paralela. Ver [portfolio/README.md](portfolio/README.md).",
+        "La demo principal usa fixtures locales y no llama a AWS ni a otros proveedores externos.",
         "",
         FENCE + "bash",
+        "python -m pip install -r requirements.txt",
         "python demo.py",
         FENCE,
         "",
-        "El comando materializa summary, agent run, receipts, trace y evaluation en",
-        f"{_inline('demo_output/latest/')} sin convertir esa proyección en fuente canónica.",
+        "La guía explica la instalación en Windows y POSIX, los artefactos y sus límites: [demo de una orden](docs/one_command_demo.md) · [recorrido de artefactos](docs/one_command_demo_walkthrough.md).",
         "",
-        "## Tutorial para usuarios nuevos",
+        "## Estado del proyecto",
         "",
-        render_first_user_tutorial(manifest),
-        "",
-        "## Evidencia de ejecución",
-        "",
-        "La evidencia versionada de L15 registra el trace consultado en Jaeger: [resultado y trace ID](evidence/l15_otel_jaeger_live.md). El demo produce `trace.json`, recibos y evaluación determinista; Jaeger es una proyección local, no autoridad de ejecución.",
-        "",
-        "### See it in action",
-        "",
-        "Vista real del trace L15 en Jaeger: 15 spans conectan retrieval, propuesta, permiso, ejecución y recibos.",
-        "",
-        "![Jaeger trace graph for the governed BAGO demo](portfolio/assets/jaeger-trace-graph.png)",
-        "",
-        "Trace ID: `04b58bb123bb6cc94a8cc0d60c7145ae` · 15 spans · validado localmente el 2026-10-08. La [evidencia L15 versionada](evidence/l15_otel_jaeger_live.md) es accesible desde GitHub; la UI de Jaeger solo está disponible al reproducirla en local.",
-        "",
-        "### Reproduce el trace en local",
-        "",
-        "Requiere Docker. Este recorrido inicia Jaeger, exporta y consulta el trace, y detiene el servicio al terminar:",
-        "",
-        FENCE + "bash",
-        "docker compose -p bago-otel -f infra/observability/docker-compose.yml up -d",
-        "python scripts/run_l15_otel_live_validation.py --check",
-        "docker compose -p bago-otel -f infra/observability/docker-compose.yml down",
-        FENCE,
-        "",
-        "Guía detallada: [L15 OpenTelemetry + Jaeger](docs/otel_jaeger.md).",
-        "",
-        "## Monitor local del equipo Codex",
-        "",
-        "Para observar en vivo las tareas y eventos que registra la coordinación local, instala las dependencias backend con `python -m pip install -r requirements.txt fastapi uvicorn`, y ejecuta la API y el frontend en dos terminales:",
-        "",
-        FENCE + "bash",
-        "python -m src.api.server",
-        FENCE,
-        "",
-        "En otra terminal, entra en `frontend`, ejecuta `npm install` y después `npm run dev`. Abre [http://localhost:5173/team-monitor.html](http://localhost:5173/team-monitor.html). La página consulta `/api/team/status` cada cuatro segundos; el estado mostrado procede de `.bago/team/runtime/state.json` y `.bago/team/runtime/events.jsonl`. Solo refleja eventos registrados por teamctl, no toda la actividad interna de la extensión Codex.",
-        "",
-        "Profundiza en las fases L0-L15 en el [roadmap](#roadmap-detectado), o consulta [.bago/canon/STATE.md](.bago/canon/STATE.md) para el alcance canónico y [portfolio/README.md](portfolio/README.md) para la presentación del producto.",
-        "",
-        "## Estado actual",
-        "",
-        "| Métrica | Valor |",
+        "| Campo | Valor |",
         "|---|---|",
-        f"| Tests ejecutados | **{passing_tests}/{total_tests}** |",
         f"| Rama pública | {_inline(branch)} |",
-        f"| Estado actualizado | {_cell(state['updated'])} |",
+        f"| Resumen actualizado | {_cell(state['updated'])} |",
         f"| Fase actual | **{_cell(state['current_phase'])}** · {_cell(current_status)} |",
-        f"| Siguiente bloque | {_cell(state['next_phase'])} |",
-        f"| Estado declarado | {_cell(state['status'])} |",
+        f"| Siguiente bloque declarado | {_cell(state['next_phase'])} |",
+        f"| Último resultado completo de CI registrado | {_cell(state['tests'])} |",
         "",
-        "El estado público se limita a lo que existe en el checkout y a la evidencia",
-        "referenciada. Cada superficie AWS, OpenMetadata u otra integración externa",
-        "conserva en .bago/canon/STATE.md su alcance exacto: VERIFIED, NOT_RUN o NOT_PROVEN.",
-        "El commit, push y merge de este snapshot son operaciones separadas.",
+        f"**Alcance declarado:** {_cell(state['status'])}",
         "",
-        _render_one_command_demo(manifest),
-        "## Fuentes canónicas",
+        "La fecha corresponde a la actualización del resumen. Cada observación externa conserva la fecha y el alcance de su evidencia; este README no representa una consulta en vivo.",
         "",
-        "El contexto del proyecto y el mapa de autoridad están centralizados en [BAGO context](.bago/INDEX.md). El README proyecta estos documentos; no los sustituye ni los edita.",
+        "## Arquitectura y fases",
         "",
-        _render_canonical_documents(manifest),
-        "",
-        "## Agente de sincronización",
-        "",
-        "La sincronización operativa está separada del catálogo de copias de referencia.",
-        "",
-        _render_sync_agent(manifest),
-        "",
-        "## Catálogo de agentes",
-        "",
-        "El catálogo organizado por responsabilidad se genera desde "
-        "`agents/CATALOG_MANIFEST.json`.",
-        "",
-        _render_agent_catalog(),
-        "",
-        "## Roadmap detectado",
+        f"**Principio:** {manifest['architecture']['principle']}",
         "",
         _render_flowchart(phases),
         "",
+        "La tabla muestra estados declarados en el manifiesto del proyecto; consulta las fuentes canónicas para conocer el alcance comprobado.",
+        "",
         _render_phase_table(phases),
         "",
-        "## Arquitectura actual",
+        "## Evidencia y límites",
         "",
-        _render_architecture(manifest),
+        "- [Verificación L15 con Jaeger local](evidence/l15_otel_jaeger_live.md): resultado fechado del 2026-10-08; es evidencia histórica local, no disponibilidad actual del servicio.",
+        f"- [Último resultado completo de CI]({repository}/actions/runs/38665463586): estado y SHA del commit verificados en `STATE.md`; no cubre cambios posteriores.",
+        "- [Límites operativos actuales](.bago/canon/STATE.md): AWS, OpenMetadata remoto y commercetools mantienen su alcance `NOT_RUN` o `NOT_PROVEN` donde corresponde.",
         "",
-        "## Job market alignment",
+        "La demo local evalúa trazas y controles estructurales; no prueba calidad general de respuestas, aislamiento de producción ni integraciones cloud en vivo.",
         "",
-        "La tabla se extrae de .bago/canon/LAB_CONTRACT.md; no se duplica manualmente aquí.",
+        "## Tutorial de interfaz",
         "",
-        _render_roles(roles),
+        f"- [Guía y límites]({guide})",
+        f"- [Vídeo narrado]({video}) · [subtítulos]({subtitles})",
+        f"- [Traza de la sesión documentada]({trace}) · [archivo de ejemplo]({input_file})",
         "",
-        "## Skills evidenciadas",
+        "La grabación acredita la lectura y respuesta acotadas descritas en la guía; no una auditoría del código ni ejecución de trabajos.",
         "",
-        "La tabla se genera desde `.bago/canon/JOB_SKILL_MATRIX.md`; actualiza allí los datos.",
+        "## Fuentes canónicas",
         "",
-        _render_skills(skills),
+        _render_canonical_documents(manifest),
         "",
-        "## Skills estratégicas",
+        "- [Índice de contexto BAGO](.bago/INDEX.md)",
+        "- [Contrato del laboratorio y estimaciones de planificación](.bago/canon/LAB_CONTRACT.md)",
+        "- [Matriz de skills](.bago/canon/JOB_SKILL_MATRIX.md); sus porcentajes son estimaciones del proyecto, no evaluaciones independientes.",
+        "- [Catálogo de agentes](agents/CATALOG_MANIFEST.json), de referencia; las definiciones operativas están en `.github/agents/`.",
+        "- [Agente de sincronización: documentación](docs/bago-sync-agent.md) · [definición](.github/agents/bago-sync-agent.agent.md)",
         "",
-        "La tabla se genera desde `.bago/canon/JOB_SKILL_MATRIX.md`; actualiza allí los datos.",
-        "",
-        _render_soft_skills(soft_skills),
-        "",
-        "## Inventario real del checkout",
-        "",
-        "### Código fuente",
-        "",
-        _markdown_list(source),
-        "",
-        "### Tests",
-        "",
-        "\n".join(
-            f"- {_inline(path)} ({_test_function_count(REPO_ROOT / path)} checks)"
-            for path in test_files
-        )
-        or "- Ninguno detectado.",
-        "",
-        "### Evidencia",
-        "",
-        _markdown_list(evidence),
-        "",
-        "### Documentación",
-        "",
-        _markdown_list(docs),
-        "",
-        "### Scripts",
-        "",
-        _markdown_list(scripts),
-        "",
-        "### Infraestructura reproducible",
-        "",
-        _markdown_list(infrastructure),
-        "",
-        "### CI automática",
-        "",
-        f"- {_inline(f'.github/workflows/{ci_workflow}')} · suite, README, demo de portfolio, demo E2E, vector, Jaeger live y compile check",
-        "",
-        "## Comandos reproducibles",
+        "## Reproducción y CI",
         "",
         FENCE + "bash",
-        "python demo.py",
-        "bash scripts/install_demo.sh",
-        ".venv/bin/python scripts/bago.py demo",
-        "source .venv/bin/activate",
-        "python scripts/bago.py demo --json",
-        "python scripts/bago.py demo --write-evidence",
-        "python -m pip install -r requirements.txt",
-        "python demo.py",
         "python -m pytest tests -q",
-        "python scripts/generate_dynamic_readme.py",
         "python scripts/generate_dynamic_readme.py --check --skip-tests",
         "python scripts/run_public_e2e_demo.py --check",
-        "python scripts/run_public_e2e_demo.py --write-evidence",
-        "python scripts/run_l14_vector_store_validation.py --check",
-        "python scripts/run_l14_vector_store_validation.py --write-evidence",
-        "docker compose -p bago-otel -f infra/observability/docker-compose.yml up -d",
-        "python scripts/run_l15_otel_live_validation.py --check",
-        "python scripts/run_l15_otel_live_validation.py --write-evidence",
-        "docker compose -p bago-otel -f infra/observability/docker-compose.yml down",
-        "python scripts/run_l6_aws_free_tier_validation.py --profile bago-free --region us-east-1 --write-evidence",
-        "docker compose -p bago-openmetadata -f infra/openmetadata/docker-compose.yml up -d",
-        "python scripts/run_l8_openmetadata_live_validation.py",
-        "python scripts/run_sandbox_local_validation.py",
         FENCE,
         "",
-        "Tests por fase:",
+        "La CI completa ejecuta la suite, valida este README y comprueba las demos y servicios locales. `--check --skip-tests` solo comprueba el render y recoge casos; informa `NOT_RUN` y no acredita que pasen.",
+        "",
+        "La regla de coste cero sigue vigente: el README no propone ejecutar comprobaciones AWS. Las comprobaciones locales que escriben evidencia o arrancan Docker se describen en sus guías específicas.",
+        "",
+        "## Generación",
+        "",
+        "`README.md` es un artefacto generado. No lo edites manualmente; modifica las fuentes canónicas y ejecuta el generador.",
+        "",
+        "- [Contrato de generación y revisión](docs/readme_generation.md)",
+        "- Manifiesto de contenido: `docs/readme_manifest.json`",
+        "- [Registro congelado portfolio-demo-v1](docs/cv_linkedin/portfolio-demo-v1.md)",
+        "",
+        "MIT License · [LICENSE](LICENSE)",
         "",
     ]
-    for phase in phases:
-        phase_tests = sorted(
-            {
-                match
-                for check in phase["checks"]
-                if check["kind"] == "tests"
-                for match in check["matches"]
-            }
-        )
-        if phase_tests:
-            command = "python -m pytest " + " ".join(phase_tests) + " -q"
-            lines.append(f"- {_inline(phase['id'])}: {_inline(command)}")
-    lines.extend(
-        [
-            "",
-            "## Contrato de generación",
-            "",
-            "README.md es un artefacto generado. No editarlo manualmente.",
-            "Las decisiones estables viven en docs/readme_manifest.json y en los",
-            "documentos canónicos enlazados arriba; los inventarios, métricas,",
-            "métricas de tests y estado declarado se calculan al generar.",
-            "",
-            "- Generar: python scripts/generate_dynamic_readme.py",
-            "- Comprobar deriva: python scripts/generate_dynamic_readme.py --check --skip-tests",
-            "- Comprobar con la suite completa: python scripts/generate_dynamic_readme.py --check",
-            "",
-            f"Fuente de estado: {_inline('.bago/canon/STATE.md')}; contrato: {_inline('.bago/canon/LAB_CONTRACT.md')};",
-            f"skills: {_inline('.bago/canon/JOB_SKILL_MATRIX.md')}; manifiesto: {_inline('docs/readme_manifest.json')}.",
-            "",
-            _render_releases(manifest),
-            "MIT License — ver [LICENSE](LICENSE).",
-            "",
-        ]
-    )
     return "\n".join(lines)
-
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
@@ -862,27 +700,27 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument(
         "--skip-tests",
         action="store_true",
-        help="count test functions without executing pytest",
+        help="collect pytest cases without executing them or recording a pass result",
     )
     args = parser.parse_args(argv)
 
-    passing_tests = collected_test_count() if args.skip_tests else executed_test_count()
+    test_count = collected_test_count() if args.skip_tests else executed_test_count()
     manifest = _read_json(MANIFEST_PATH)
     state = parse_state()
     rendered = render_readme(
         manifest=manifest,
         state=state,
-        passing_tests=passing_tests,
+        passing_tests=test_count,
     )
     current = README_PATH.read_text(encoding="utf-8") if README_PATH.exists() else ""
     if args.check:
         if current != rendered:
             print("README desactualizado: ejecuta python scripts/generate_dynamic_readme.py")
             return 1
-        print(f"README verificado ({passing_tests} tests)")
+        print(f"README verificado; suite NOT_RUN ({test_count} casos recogidos)" if args.skip_tests else f"README verificado; {test_count} tests pasaron")
         return 0
     README_PATH.write_text(rendered, encoding="utf-8", newline="\n")
-    print(f"README generado: {passing_tests} tests")
+    print(f"README generado; suite NOT_RUN ({test_count} casos recogidos)" if args.skip_tests else f"README generado tras {test_count} tests pasados")
     return 0
 
 

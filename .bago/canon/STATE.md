@@ -1,6 +1,6 @@
 # Current State — BAGO Agentic Data Lab
 
-**Updated:** 2026-10-10
+**Updated:** 2026-10-15
 **Current phase:** L15 · OpenTelemetry + Jaeger Local Live
 **Status:** VERIFIED for the local RDF/Turtle materialization, bounded SPARQL
 subset, deterministic inference, contradiction constraints, RAG seed handoff,
@@ -17,7 +17,8 @@ for the Bedrock call remains `NOT_PROVEN`;
 GitHub issue #14 is separately executed and verified under human authorization,
 and the local human-reviewed checkpoint is recorded in
 `evidence/bago_canon_compliance_review.md`.
-**Tests:** 210/210 passing for local L1 candidate `f19ab7f2e1cebf5118989735227911a712c8cc05` (Python 3.14; known Pydantic V1 warning). Historical suite completa ejecutada en GitHub Actions con
+**Latest CI full-suite record:** GitHub Actions run [38665463586](https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/actions/runs/38665463586) completed successfully on commit `ff9292fe4340a2bdab9658a2e804579fa4ef8fb0` (2026-10-15). Its complete test-suite step and README check both succeeded. This result does not cover later changes.
+**Historical test records:** 210 tests passed for local L1 candidate `f19ab7f2e1cebf5118989735227911a712c8cc05` (Python 3.14; known Pydantic V1 warning). Historical suite completa ejecutada en GitHub Actions con
 Python 3.11 el 2026-10-10 para el commit `4bfd5d220a31e92d5a79ab02219a072959790467`
 (run `38063094115`). L10 aporta 4 checks offline,
 L8 aporta 13 checks de adapter más la validación live local, L9 aporta 7 checks
