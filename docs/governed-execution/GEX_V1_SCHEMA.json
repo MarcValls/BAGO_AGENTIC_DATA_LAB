@@ -519,6 +519,46 @@
         "key_id",
         "signature",
         "signature_algorithm"
+      ],
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "signature_algorithm": {
+                "const": "HMAC-SHA256"
+              }
+            },
+            "required": [
+              "signature_algorithm"
+            ]
+          },
+          "then": {
+            "properties": {
+              "signature": {
+                "pattern": "^[0-9a-f]{64}$"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "signature_algorithm": {
+                "const": "Ed25519"
+              }
+            },
+            "required": [
+              "signature_algorithm"
+            ]
+          },
+          "then": {
+            "properties": {
+              "signature": {
+                "pattern": "^[A-Za-z0-9_-]{86}$"
+              }
+            }
+          }
+        }
       ]
     },
     "PermitV1": {
@@ -651,6 +691,46 @@
         "not_before",
         "expires_at",
         "max_uses"
+      ],
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "signature_algorithm": {
+                "const": "HMAC-SHA256"
+              }
+            },
+            "required": [
+              "signature_algorithm"
+            ]
+          },
+          "then": {
+            "properties": {
+              "signature": {
+                "pattern": "^[0-9a-f]{64}$"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "signature_algorithm": {
+                "const": "Ed25519"
+              }
+            },
+            "required": [
+              "signature_algorithm"
+            ]
+          },
+          "then": {
+            "properties": {
+              "signature": {
+                "pattern": "^[A-Za-z0-9_-]{86}$"
+              }
+            }
+          }
+        }
       ]
     },
     "CapabilityRegistrationV1": {

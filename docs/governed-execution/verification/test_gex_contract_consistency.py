@@ -6,6 +6,8 @@ They are deliberately unable to declare governed execution AVAILABLE.
 
 from __future__ import annotations
 
+import hashlib
+import hmac
 import json
 from pathlib import Path
 
@@ -78,6 +80,50 @@ def test_gex_signed_claims_and_durable_use_state_are_distinct() -> None:
     assert {"state", "uses", "db_version", "attempt_id"} <= set(d["PermitUseStateV1"]["properties"])
     assert "signature" not in d["PermitUseStateV1"]["properties"]
     assert {"signature", "signature_algorithm", "request_digest", "actor"} <= set(d["ApprovalV1"]["properties"])
+
+
+def test_gex_approval_and_permit_signature_fixtures_verify() -> None:
+    schema = _read("GEX_V1_SCHEMA.json")
+    spec = _read("GEX_V1_CONFORMANCE_VECTORS.json")
+    expected_domains = {
+        "ApprovalV1": "ADL:GEX:APPROVAL:v1\n",
+        "PermitV1": "ADL:GEX:PERMIT:v1\n",
+    }
+    expected_encodings = {
+        "HMAC-SHA256": "^[0-9a-f]{64}$",
+        "Ed25519": "^[A-Za-z0-9_-]{86}$",
+    }
+    for contract_type in expected_domains:
+        branches = schema["$defs"][contract_type]["allOf"]
+        encodings = {
+            branch["if"]["properties"]["signature_algorithm"]["const"]:
+            branch["then"]["properties"]["signature"]["pattern"]
+            for branch in branches
+        }
+        assert encodings == expected_encodings
+    assert {fixture["contract_type"] for fixture in spec["signature_verification_fixtures"]} == set(expected_domains)
+    for fixture in spec["signature_verification_fixtures"]:
+        contract_type = fixture["contract_type"]
+        signed_object = fixture["signed_object"]
+        assert fixture["domain_separator"] == expected_domains[contract_type]
+        assert signed_object["signature_algorithm"] == "HMAC-SHA256"
+        assert signed_object["signature"] == hmac.new(
+            bytes.fromhex(fixture["key_hex"]),
+            fixture["domain_separator"].encode()
+            + json.dumps(
+                {key: value for key, value in signed_object.items() if key != "signature"},
+                ensure_ascii=False,
+                sort_keys=True,
+                separators=(",", ":"),
+                allow_nan=False,
+            ).encode(),
+            hashlib.sha256,
+        ).hexdigest()
+        assert set(signed_object) == set(
+            schema["$defs"][contract_type]["required"]
+        )
+        if contract_type == "PermitV1":
+            assert {"issuer", "key_id", "signature_algorithm"} <= set(signed_object)
 
 
 def test_gex_predispatch_denial_does_not_fabricate_request() -> None:

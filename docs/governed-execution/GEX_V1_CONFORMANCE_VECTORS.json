@@ -525,5 +525,66 @@
       },
       "execution_status": "SPEC_ONLY"
     }
+  ],
+  "signature_verification_fixtures": [
+    {
+      "contract_type": "ApprovalV1",
+      "domain_separator": "ADL:GEX:APPROVAL:v1\n",
+      "key_hex": "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
+      "signed_object": {
+        "contract_version": "gex-approval/v1",
+        "approval_id": "approval-fixture-001",
+        "request_digest": "0000000000000000000000000000000000000000000000000000000000000000",
+        "actor": "fixture-approver",
+        "principal_subject": "fixture-principal",
+        "workspace_binding_fingerprint": "1111111111111111111111111111111111111111111111111111111111111111",
+        "operation_summary_digest": "2222222222222222222222222222222222222222222222222222222222222222",
+        "decision": "APPROVED",
+        "issued_at": "2026-01-02T03:04:05Z",
+        "expires_at": "2026-01-02T03:09:05Z",
+        "auth_context_ref": "auth-fixture-001",
+        "evidence_ref": "evidence-fixture-001",
+        "key_id": "test-approval-hmac-v1",
+        "signature_algorithm": "HMAC-SHA256",
+        "signature": "0d28f0d389aa4fc7b7fcce55d8c0bdecb22e0f4d5f31f32613d350ffedaebd85"
+      }
+    },
+    {
+      "contract_type": "PermitV1",
+      "domain_separator": "ADL:GEX:PERMIT:v1\n",
+      "key_hex": "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
+      "signed_object": {
+        "contract_version": "gex-permit/v1",
+        "permit_id": "permit-fixture-001",
+        "request_digest": "0000000000000000000000000000000000000000000000000000000000000000",
+        "principal_subject": "fixture-principal",
+        "session_binding": "3333333333333333333333333333333333333333333333333333333333333333",
+        "agent_id": "agent-fixture-001",
+        "agent_config_digest": "4444444444444444444444444444444444444444444444444444444444444444",
+        "workspace_binding_fingerprint": "1111111111111111111111111111111111111111111111111111111111111111",
+        "capability_id": "filesystem.read",
+        "capability_version": "1",
+        "registry_digest": "5555555555555555555555555555555555555555555555555555555555555555",
+        "effect_scope": "read-one-file",
+        "operation_digest": "2222222222222222222222222222222222222222222222222222222222222222",
+        "policy_revision": "fixture-policy-v1",
+        "constraints_effective": {
+          "sandbox_profile": "read_only_agent",
+          "network": "deny",
+          "timeout_ms": 2000,
+          "max_output_bytes": 65536,
+          "write_scope": "none",
+          "egress_allowlist": []
+        },
+        "issuer": "test-issuer",
+        "key_id": "test-permit-hmac-v1",
+        "signature_algorithm": "HMAC-SHA256",
+        "issued_at": "2026-01-02T03:04:05Z",
+        "not_before": "2026-01-02T03:04:05Z",
+        "expires_at": "2026-01-02T03:09:05Z",
+        "max_uses": 1,
+        "signature": "361e9c8ce86c16e10fab68840591cbe0dcac3a8b4af1a28b49b5001435931a05"
+      }
+    }
   ]
 }
