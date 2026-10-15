@@ -82,6 +82,8 @@ El worker, **antes de cualquier efecto**, abre transacción y realiza CAS/UPDATE
 
 Una cola no proporciona exactly-once execution. Permiso de un uso garantiza **una reserva de intento autorizada**, no efecto exactamente una vez. Ante interrupción después de DISPATCH_INTENT (incluida pérdida de conexión antes de recibo) marcar RECONCILIATION_REQUIRED de forma conservadora. Nunca reintentar automáticamente efectos no idempotentes; usar claves de idempotencia remotas cuando el proveedor las soporte y consultar su estado antes de reconciliar.
 
+**Excepción inevitable: fallo del almacenamiento.** Si la transacción previa al efecto falla, la ejecución se bloquea y el control plane informa STORE_UNAVAILABLE_FAIL_CLOSED, sin fingir que existe un recibo persistido. La denegación solo puede incorporarse al ledger cuando el almacenamiento se recupere y su procedencia pueda verificarse; la telemetría volátil no se presenta como evidencia durable. Si el efecto pudo ocurrir y falla la persistencia posterior, se exige reconciliación externa y se impide anunciar SUCCESS.
+
 No existe transición a SUCCEEDED sin (a) resultado observado por adaptador, (b) recibo durable enlazado a request_digest + attempt_id, (c) comprobación de alcance y (d) persistencia de la transición. Un recibo SUCCESS aislado no es prueba de cumplimiento de la política. Si no se puede escribir el recibo tras efecto potencial, reconciliar mediante un proceso autorizado, nunca éxito presunto.
 
 ## 5. Recibos, integridad y confidencialidad
