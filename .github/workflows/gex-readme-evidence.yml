@@ -8,6 +8,11 @@ on:
       - .github/workflows/gex-readme-evidence.yml
       - docs/governed-execution/**
       - .bago/goals/CR-GEX-001/**
+  pull_request:
+    paths:
+      - .github/workflows/gex-readme-evidence.yml
+      - docs/governed-execution/**
+      - .bago/goals/CR-GEX-001/**
   workflow_dispatch:
 
 permissions:
