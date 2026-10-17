@@ -5,15 +5,16 @@
 **Status:** VERIFIED for the local RDF/Turtle materialization, bounded SPARQL
 subset, deterministic inference, contradiction constraints, RAG seed handoff,
 the real local OpenMetadata 1.12.6 validation, the local restricted sandbox
-execution boundary, the local trace/evaluation chain, the public zero-cost E2E
+execution boundary, the local trace/evaluation chain, the public fixture E2E
 demo executed by the same CI contract, the persistent local SQLite vector
 index consumed by GovernedRAG and the local OpenTelemetry → Jaeger trace
-projection; one bounded live AWS Bedrock `Converse` call through the governed
-adapter is `VERIFIED`; a separate read-only AWS Free Tier check observes an
-active `FREE` account plan with USD 100.00 remaining at validation time;
-AWS `ConverseStream`, Bedrock Knowledge Base, remote OpenMetadata,
-commercetools live integrations remain `NOT_RUN`, while zero-dollar billing
-for the Bedrock call remains `NOT_PROVEN`;
+projection. A historical bounded AWS Bedrock `Converse` call succeeded through
+the governed adapter; it does not establish current quota or billing. The
+latest read-only AWS Free Tier check observed USD 100.00 remaining, while two
+subsequent bounded `Converse` attempts failed on the daily token quota with no
+inference tokens reported. Billing/credit consumption for those failed calls
+is `NOT_PROVEN`. AWS `ConverseStream`, Bedrock Knowledge Base, remote
+OpenMetadata and commercetools live integrations remain `NOT_RUN`;
 GitHub issue #14 is separately executed and verified under human authorization,
 and the local human-reviewed checkpoint is recorded in
 `evidence/bago_canon_compliance_review.md`.
@@ -91,13 +92,15 @@ canon-compliance checkpoint backing issue #14;
 are reproducible review artifacts.
 **L6 boundary:** `Converse` and `ConverseStream` are implemented behind an
 optional boto3 client with bounded retries, error taxonomy and local quota.
-One real `Converse` call passed in `us-east-1` with
+One historical `Converse` call passed in `us-east-1` with
 `amazon.nova-lite-v1:0`, 41 total tokens and a governed receipt. The call used
 the account's root principal, so it does not validate least-privilege IAM.
-The receipt's `cost_usd: 0.0` is an adapter estimate, not a billing record;
-the separate read-only evidence observes Free account-plan coverage, but
-zero-dollar billing, `ConverseStream` and Knowledge Base live validation remain
-`NOT_PROVEN` or `NOT_RUN` as scoped.
+The latest two authorized attempts (Nova Lite and Nova Micro) were rejected
+with `Too many tokens per day`; their receipts report zero inference tokens.
+The receipt's `cost_usd: 0.0` is an adapter estimate, not a billing record.
+The separate read-only evidence observed USD 100 in Free Tier credits before
+those attempts; current billing/credit consumption for failed calls is not
+proven. `ConverseStream` and Knowledge Base live validation remain `NOT_RUN`.
 **L7 boundary:** `Retrieve` and `RetrieveAndGenerate` are implemented behind
 an optional `bedrock-agent-runtime` client with KB allowlists, metadata filters,
 citations, retries, quotas and receipts. The comparison uses a fixture, not a

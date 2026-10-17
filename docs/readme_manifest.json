@@ -37,6 +37,7 @@
     "agent_model": "kimi-k2.6",
     "credential_redaction": "API key"
   },
+  "jaeger_capture": "docs/decision-inspector/MANUAL_PARA_DUMMIES_assets/jaeger.png",
   "architecture": {
     "principle": "LangGraph propone → BAGO autoriza → ExecutionGateway → SandboxManager → Receipt → LocalTrace → Eval.",
     "pipeline": [
@@ -135,7 +136,7 @@
       "id": "L6",
       "name": "AWS Bedrock Provider",
       "target": "Tuio",
-      "status": "VERIFIED (live Converse + Free Plan observed)",
+      "status": "VERIFIED (historical live Converse; latest attempts throttled)",
       "checks": [
         {"kind": "code", "patterns": ["src/adapters/bedrock_provider_adapter.py", "scripts/run_l6_aws_free_tier_validation.py"]},
         {"kind": "tests", "patterns": ["tests/test_bedrock_integration.py"]},

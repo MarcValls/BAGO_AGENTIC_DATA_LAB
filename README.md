@@ -23,6 +23,8 @@ python demo.py
 
 La guía explica la instalación en Windows y POSIX, los artefactos y sus límites: [demo de una orden](docs/one_command_demo.md) · [recorrido de artefactos](docs/one_command_demo_walkthrough.md).
 
+**Demo gobernada:** pregunta → agente → recuperación con citas → ejecución tipada → receipts → LocalTrace → evaluación. Genera cinco JSON (`summary`, `agent_run`, `receipts`, `trace`, `evaluation`) en `demo_output/`; el proveedor es un fixture y no contacta AWS. [Contrato y requisitos](docs/one_command_demo.md) · [lectura de artefactos](docs/one_command_demo_walkthrough.md).
+
 ## Estado del proyecto
 
 | Campo | Valor |
@@ -33,7 +35,7 @@ La guía explica la instalación en Windows y POSIX, los artefactos y sus límit
 | Siguiente bloque declarado | NOT_DECLARED |
 | Último resultado completo de CI registrado | GitHub Actions run [38665463586](https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/actions/runs/38665463586) completed successfully on commit `ff9292fe4340a2bdab9658a2e804579fa4ef8fb0` (2026-10-15). Its complete test-suite step and README check both succeeded. This result does not cover later changes. |
 
-**Alcance declarado:** VERIFIED for the local RDF/Turtle materialization, bounded SPARQL subset, deterministic inference, contradiction constraints, RAG seed handoff, the real local OpenMetadata 1.12.6 validation, the local restricted sandbox execution boundary, the local trace/evaluation chain, the public zero-cost E2E demo executed by the same CI contract, the persistent local SQLite vector index consumed by GovernedRAG and the local OpenTelemetry → Jaeger trace projection; one bounded live AWS Bedrock `Converse` call through the governed adapter is `VERIFIED`; a separate read-only AWS Free Tier check observes an active `FREE` account plan with USD 100.00 remaining at validation time; AWS `ConverseStream`, Bedrock Knowledge Base, remote OpenMetadata, commercetools live integrations remain `NOT_RUN`, while zero-dollar billing for the Bedrock call remains `NOT_PROVEN`; GitHub issue #14 is separately executed and verified under human authorization, and the local human-reviewed checkpoint is recorded in `evidence/bago_canon_compliance_review.md`.
+**Alcance declarado:** VERIFIED for the local RDF/Turtle materialization, bounded SPARQL subset, deterministic inference, contradiction constraints, RAG seed handoff, the real local OpenMetadata 1.12.6 validation, the local restricted sandbox execution boundary, the local trace/evaluation chain, the public fixture E2E demo executed by the same CI contract, the persistent local SQLite vector index consumed by GovernedRAG and the local OpenTelemetry → Jaeger trace projection. A historical bounded AWS Bedrock `Converse` call succeeded through the governed adapter; it does not establish current quota or billing. The latest read-only AWS Free Tier check observed USD 100.00 remaining, while two subsequent bounded `Converse` attempts failed on the daily token quota with no inference tokens reported. Billing/credit consumption for those failed calls is `NOT_PROVEN`. AWS `ConverseStream`, Bedrock Knowledge Base, remote OpenMetadata and commercetools live integrations remain `NOT_RUN`; GitHub issue #14 is separately executed and verified under human authorization, and the local human-reviewed checkpoint is recorded in `evidence/bago_canon_compliance_review.md`.
 
 La fecha corresponde a la actualización del resumen. Cada observación externa conserva la fecha y el alcance de su evidencia; este README no representa una consulta en vivo.
 
@@ -49,7 +51,7 @@ flowchart LR
     L3["L3 Metadata & Ontology (VERIFIED)"]
     L4["L4 Governed RAG (VERIFIED)"]
     L5["L5 MCP con gobernanza (VERIFIED)"]
-    L6["L6 AWS Bedrock Provider (VERIFIED (live Converse + Free Plan observed))"]
+    L6["L6 AWS Bedrock Provider (VERIFIED (historical live Converse; latest attempts throttled))"]
     L7["L7 Bedrock Knowledge Base (VERIFIED (offline))"]
     L8["L8 Metadata Catalog (VERIFIED (local live))"]
     L9["L9 End-to-End Governed Agent (VERIFIED (offline))"]
@@ -86,7 +88,7 @@ La tabla muestra estados declarados en el manifiesto del proyecto; consulta las 
 | L3 | VERIFIED | — | Metadata & Ontology |
 | L4 | VERIFIED | Orbitant | Governed RAG |
 | L5 | VERIFIED | Orbitant | MCP con gobernanza |
-| L6 | VERIFIED (live Converse + Free Plan observed) | Tuio | AWS Bedrock Provider |
+| L6 | VERIFIED (historical live Converse; latest attempts throttled) | Tuio | AWS Bedrock Provider |
 | L7 | VERIFIED (offline) | Devoteam | Bedrock Knowledge Base |
 | L8 | VERIFIED (local live) | Devoteam | Metadata Catalog |
 | L9 | VERIFIED (offline) | commercetools | End-to-End Governed Agent |
@@ -97,11 +99,23 @@ La tabla muestra estados declarados en el manifiesto del proyecto; consulta las 
 | L14 | VERIFIED (local) | BAGO / portfolio | Governed Local Vector Store |
 | L15 | VERIFIED (local live) | BAGO / portfolio | OpenTelemetry + Jaeger Local Live |
 
+## Arquitectura y recorrido de datos
+
+**Recorrido:** RAG recupera documentos y citas → Ontology Engine materializa RDF/Turtle → SPARQL local consulta relaciones → Inference añade inversas, transitivas y simétricas → Constraints detecta endpoints, evidencia y contradicciones → El LLM recibe caminos y evidencia; no recibe autoridad implícita → ExecutionGateway exige una SandboxRequest tipada → SandboxManager materializa filesystem y proceso acotados → Receipt evidencia el resultado o la denegación → LocalTrace enlaza workflow, retrieval, permits, sandbox y receipts → Local evaluator comprueba cobertura y ausencia de efectos no autorizados → Public E2E compone las fronteras locales con fixtures deterministas → SQLiteVectorStore persiste vectores deterministas y conserva el gate de metadata → GovernedRAG puede consumir el backend semántico persistente y recargar su fingerprint → OpenTelemetry proyecta LocalTrace a Jaeger local sin conceder autoridad → GitHub Actions repite tests, README, demo, vector validation, Jaeger validation y compile checks
+
 ## Evidencia y límites
 
-- [Verificación L15 con Jaeger local](evidence/l15_otel_jaeger_live.md): resultado fechado del 2026-10-08; es evidencia histórica local, no disponibilidad actual del servicio.
+### Jaeger y OpenTelemetry (L15)
+
+La evidencia local del 2026-10-08 enlaza la traza BAGO `trace-5b385699ffda0529` con la traza consultada en Jaeger `04b58bb123bb6cc94a8cc0d60c7145ae`: 15 spans proyectados y 15 observados, 13 operaciones y estado `PASS`. La captura archivada muestra el timeline de esa traza; es evidencia histórica del resultado, no disponibilidad actual de Jaeger.
+
+![Captura de Jaeger: traza agent.run con 15 spans y relaciones padre-hijo](docs/decision-inspector/MANUAL_PARA_DUMMIES_assets/jaeger.png)
+
+[Informe y datos completos L15](evidence/l15_otel_jaeger_live.md) · [intento de captura del freeze](evidence/l15_jaeger_capture_attempt.md) · [guía para reproducir Jaeger](docs/otel_jaeger.md).
+
 - [Último resultado completo de CI](https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/actions/runs/38665463586): estado y SHA del commit verificados en `STATE.md`; no cubre cambios posteriores.
-- [Límites operativos actuales](.bago/canon/STATE.md): AWS, OpenMetadata remoto y commercetools mantienen su alcance `NOT_RUN` o `NOT_PROVEN` donde corresponde.
+- [Estado y límites AWS](.bago/canon/STATE.md): la consulta Free Tier observó USD 100 de crédito activo; los dos intentos Bedrock más recientes fueron rechazados por cuota diaria y no generaron tokens. El consumo/facturación de esos intentos no está probado.
+- [Consulta de créditos Free Tier](evidence/l6_aws_free_tier.md) · [último recibo Bedrock](evidence/l6_aws_live.md) · [intento Nova Lite](evidence/aws-live-attempts/20261018_nova_lite_throttled.md) · [intento Nova Micro](evidence/aws-live-attempts/20261018_nova_micro_throttled.md).
 
 La demo local evalúa trazas y controles estructurales; no prueba calidad general de respuestas, aislamiento de producción ni integraciones cloud en vivo.
 
@@ -112,6 +126,13 @@ La demo local evalúa trazas y controles estructurales; no prueba calidad genera
 - [Traza de la sesión documentada](docs/agent-chat-control/assets/trace-c7ec5fcc40284a42.json) · [archivo de ejemplo](output/tutorial/sample-note.txt)
 
 La grabación acredita la lectura y respuesta acotadas descritas en la guía; no una auditoría del código ni ejecución de trabajos.
+## Objetivos profesionales y skills
+
+El contrato registra 4 objetivos de rol; la matriz incluye 28 skills técnicas y 5 estratégicas. Son estimaciones del proyecto, no una evaluación independiente ni ofertas vigentes. Roles y requisitos: [.bago/canon/LAB_CONTRACT.md](.bago/canon/LAB_CONTRACT.md) · [matriz completa](.bago/canon/JOB_SKILL_MATRIX.md).
+
+## Catálogo de agentes y sincronización
+
+El [catálogo de agentes](agents/CATALOG_MANIFEST.json) es de referencia; las definiciones operativas están en `.github/agents/`. El [agente de sincronización](docs/bago-sync-agent.md) enlaza definición, ejecutor gobernado y documentación.
 
 ## Fuentes canónicas
 
@@ -145,7 +166,7 @@ python scripts/run_public_e2e_demo.py --check
 
 La CI completa ejecuta la suite, valida este README y comprueba las demos y servicios locales. `--check --skip-tests` solo comprueba el render y recoge casos; informa `NOT_RUN` y no acredita que pasen.
 
-La regla de coste cero sigue vigente: el README no propone ejecutar comprobaciones AWS. Las comprobaciones locales que escriben evidencia o arrancan Docker se describen en sus guías específicas.
+Las llamadas AWS requieren autorización explícita y evidencia de identidad, cuota y créditos disponibles. Los recibos de coste estimado no prueban facturación real; revisa el alcance actual en `STATE.md` antes de una ejecución live.
 
 ## Generación
 
