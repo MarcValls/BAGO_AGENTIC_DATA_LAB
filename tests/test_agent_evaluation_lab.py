@@ -172,6 +172,49 @@ def test_real_run_api_preserves_case_trace_correlation_redacts_payload_and_has_n
     assert not list((tmp_path / "workspace").glob("**/*"))
 
 
+def test_run_api_reports_local_trace_persistence_failure_truthfully(monkeypatch, tmp_path: Path):
+    """A provisional trace identity must not be reported as a saved LocalTrace."""
+    store = EvaluationStore(tmp_path / "workspace", tmp_path / "db.sqlite3")
+    suite = store.create_suite("trace failure", "agent_12345678", valid_cases()[:1])
+    monkeypatch.setattr(server, "EVALUATIONS", store)
+
+    # A file where the trace directory's parent should be makes mkdir fail with
+    # a real, deterministic local filesystem error while keeping all paths temp-only.
+    blocked_parent = tmp_path / "not-a-directory"
+    blocked_parent.write_text("fixture", encoding="utf-8")
+    trace_dir = blocked_parent / "traces"
+    monkeypatch.setattr(server, "EVALUATION_TRACE_DIR", trace_dir)
+    monkeypatch.setattr(server, "_load_agent", lambda _id: _agent())
+    monkeypatch.setattr(server.ollama, "status", lambda: {"provider_id": "ollama-cloud", "state": "configured_unverified"})
+    monkeypatch.setattr(server.ollama, "discover_models", lambda: {"models": [{"model_id": "gemma4:31b-cloud"}]})
+    provider_calls = []
+    monkeypatch.setattr(server.ollama, "chat", lambda *_args: provider_calls.append(True) or "A green response.")
+    monkeypatch.setattr(server, "save_job", lambda *_args, **_kwargs: pytest.fail("evaluation must not create jobs"))
+    monkeypatch.setenv("BAGO_OTEL_EXPORTER_OTLP_ENDPOINT", "")
+
+    response = TestClient(server.app).post(
+        f"/api/evaluations/suites/{suite['id']}/run",
+        json={"revision": 0, "model_id": "gemma4:31b-cloud"},
+    )
+
+    assert response.status_code == 200, response.text
+    assert len(provider_calls) == 1
+    run = response.json()["run"]
+    case = run["cases"][0]
+    trace = case["trace"]
+    assert run["status"] == "FAIL"
+    assert case["status"] == "FAIL"
+    trace_check = next(check for check in case["checks"] if check["name"] == "trace_local_saved")
+    assert trace_check["passed"] is False
+    assert trace_check["detail"] == "Local trace could not be saved."
+    assert trace["trace_state"] == "local_trace_failed"
+    assert trace["trace_id"].startswith("trace-")  # provisional identity only
+    assert not trace_dir.exists()
+    assert store.get_run(run["id"]) == run
+    client_run = TestClient(server.app).get(f"/api/evaluations/runs/{run['id']}").json()["run"]
+    assert client_run == run
+
+
 def test_stale_run_revision_is_rejected_before_provider_preflight(monkeypatch, tmp_path: Path):
     store = EvaluationStore(tmp_path / "workspace", tmp_path / "db.sqlite3")
     suite = store.create_suite("stale", "agent_12345678", valid_cases())

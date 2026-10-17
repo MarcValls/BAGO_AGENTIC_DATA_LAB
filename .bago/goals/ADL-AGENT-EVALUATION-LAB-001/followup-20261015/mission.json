@@ -1,0 +1,49 @@
+{
+  "mission_id": "ADL_AGENT_EVALUATION_TRACE_FAILURE_FOLLOWUP_20261015",
+  "title": "Agent Evaluation Lab trace failure handling follow-up",
+  "objective": "Ensure failed LocalTrace persistence is never presented as a saved trace, and prove backend/UI failure handling against the current repository state without changing the frozen Evaluation Lab contract.",
+  "max_concurrency": 2,
+  "terminal_work_items": ["W04"],
+  "work_items": [
+    {
+      "id": "W01",
+      "title": "Add backend coverage for LocalTrace persistence failure",
+      "role": "trace-observability-engineer",
+      "depends_on": [],
+      "write_scopes": ["tests/test_agent_evaluation_lab.py"],
+      "read_scopes": ["src/api/server.py", "src/evaluation/agent_lab.py", "tests/test_agent_evaluation_lab.py", "../implementation-runtime/evidence/W01_API_CONTRACT.md"],
+      "deliverables": ["A deterministic API test proving an unsaved LocalTrace fails the declared trace check and persists a truthful run result."],
+      "done_when": ["Test uses temporary SQLite and a local filesystem failure fixture", "No provider/network call or job is created", "Test distinguishes a provisional trace ID from a saved trace", "No product contract is changed"]
+    },
+    {
+      "id": "W02",
+      "title": "Render unsaved traces and provider run errors honestly",
+      "role": "decision-ui-engineer",
+      "depends_on": [],
+      "write_scopes": ["frontend/src/components/AgentEvaluationLab.tsx", "frontend/tests/ui/agent-evaluation-lab/rendered.test.mjs"],
+      "read_scopes": ["../implementation-runtime/evidence/W01_API_CONTRACT.md", "frontend/src/components/AgentEvaluationLab.tsx", "frontend/tests/ui/agent-evaluation-lab/rendered.test.mjs"],
+      "deliverables": ["UI state rendering that shows failed local trace persistence as not saved, plus rendered error-result coverage."],
+      "done_when": ["A provisional trace ID is not rendered as persisted when trace_state is local_trace_failed", "Saved local trace IDs and confirmed Jaeger links remain identity-bound", "A provider error result is visibly distinct from a deterministic assertion failure", "Tests cover failure and normal states", "No provider call occurs before explicit Run"]
+    },
+    {
+      "id": "W03",
+      "title": "Make the frontend API tests use declared tooling",
+      "role": "decision-ui-engineer",
+      "depends_on": ["W01", "W02"],
+      "write_scopes": ["frontend/tests/ui/agent-evaluation-lab/agent-evaluation-lab.test.mjs"],
+      "read_scopes": ["frontend/package.json", "frontend/src/components/AgentEvaluationLab.tsx", "frontend/tests/ui/agent-evaluation-lab/agent-evaluation-lab.test.mjs"],
+      "deliverables": ["A reproducible API-client UI test that uses the declared TypeScript compiler rather than undeclared esbuild."],
+      "done_when": ["No new package or network dependency is introduced", "The client test retains the same API assertions", "Frontend UI test command can execute after the fix"]
+    },
+    {
+      "id": "W04",
+      "title": "Verify follow-up and materialize updated product status",
+      "role": "team-orchestrator",
+      "depends_on": ["W03"],
+      "write_scopes": ["evidence/FOLLOWUP_VERIFICATION_20261015.md", "drafts/W04.json", "../status.json", "../goal.md"],
+      "read_scopes": ["../../../../src/evaluation/agent_lab.py", "../../../../src/api/server.py", "../../../../tests/test_agent_evaluation_lab.py", "../../../../frontend/src/components/AgentEvaluationLab.tsx", "../../../../frontend/tests/ui/agent-evaluation-lab/**", "../implementation-runtime/evidence/W01_API_CONTRACT.md"],
+      "deliverables": ["Focused verification bound to the observed HEAD; accurate goal status and remaining blockers."],
+      "done_when": ["Implementation and test-tooling handoffs verify", "Focused backend and frontend suites and frontend build are executed with exact outcomes", "Relevant product criteria are mapped to evidence and limits", "Product remains PARTIAL/EXECUTED unless current verification proves every criterion", "No cloud call, commit, push, merge or deployment"]
+    }
+  ]
+}

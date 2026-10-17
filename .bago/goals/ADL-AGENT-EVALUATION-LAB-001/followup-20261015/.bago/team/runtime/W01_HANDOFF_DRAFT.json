@@ -1,0 +1,40 @@
+{
+  "work_id": "W01",
+  "role": "trace-observability-engineer",
+  "status": "DONE",
+  "changed_files": [
+    "tests/test_agent_evaluation_lab.py"
+  ],
+  "outputs": [
+    {
+      "path": "tests/test_agent_evaluation_lab.py",
+      "summary": "Adds deterministic API coverage using a temporary SQLite store and an actual local filesystem mkdir failure. The response and persisted run both show trace_local_saved=false and trace_state=local_trace_failed; the provisional trace ID has no file. Ollama readiness, discovery and chat are stubbed, and job creation is forbidden."
+    }
+  ],
+  "verification": [
+    {
+      "command": ".venv\\Scripts\\python.exe -m pytest -q tests/test_agent_evaluation_lab.py -k local_trace_persistence_failure_truthfully",
+      "result": "PASS",
+      "evidence": "1 passed, 15 deselected, 1 warning in 0.97s. The stubbed chat function was used; no network/provider transport was invoked."
+    },
+    {
+      "command": "git diff --check -- tests/test_agent_evaluation_lab.py",
+      "result": "PASS",
+      "evidence": "No whitespace errors."
+    }
+  ],
+  "evidence": {
+    "test_file_sha256": "5F212046AAA6DBD72DFC36BDFED0AF39875A2FC3600B51645155823D1E2EBAF",
+    "asserted_contract": [
+      "trace_local_saved check is false with truthful failure detail",
+      "trace_state is local_trace_failed",
+      "provisional trace_id remains present but the trace directory/file was not persisted",
+      "run is persisted in SQLite and the GET run response matches the POST response",
+      "no evaluation job is created"
+    ]
+  },
+  "residual_risks": [],
+  "next_consumers": [
+    "W03"
+  ]
+}

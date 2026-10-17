@@ -119,7 +119,7 @@ export default function AgentRunner() {
     }
   }
 
-  const downloadAgentZip = async () => {
+  const downloadAgentExport = async () => {
     try {
       const response = await fetch('/api/agents/export')
       if (response.ok) {
@@ -127,7 +127,7 @@ export default function AgentRunner() {
         const url = URL.createObjectURL(blob)
         const a = document.createElement('a')
         a.href = url
-        a.download = 'agents-export.zip'
+        a.download = 'agents-export.json'
         a.click()
         URL.revokeObjectURL(url)
         showNotification('success', 'Agents exported successfully')
@@ -169,7 +169,7 @@ export default function AgentRunner() {
 
       <div className="runner-header">
         <div className="runner-actions">
-          <button onClick={downloadAgentZip} className="btn btn-secondary btn-small" aria-label="Export all agents" title="Export all agents">
+          <button onClick={downloadAgentExport} className="btn btn-secondary btn-small" aria-label="Export all agents" title="Export all agents">
             ↓ Export
           </button>
           <label className="btn btn-secondary btn-small" title="Import agents from ZIP">

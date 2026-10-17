@@ -2020,26 +2020,7 @@ async def agent_metrics(agent_id: str) -> dict[str, Any]:
     return get_agent_metrics(agent_id)
 
 
-# ===== API: Agent Export/Import =====
-
-@app.get("/api/agents/export")
-async def export_agents() -> dict[str, Any]:
-    """Export all agents as JSON (for download)."""
-    agents = []
-
-    if AGENTS_DIR.exists():
-        for agent_file in AGENTS_DIR.glob("*.json"):
-            try:
-                data = json.loads(agent_file.read_text())
-                agents.append(data)
-            except (json.JSONDecodeError, TypeError):
-                pass
-
-    return {
-        "agents": agents,
-        "export_date": datetime.utcnow().isoformat(),
-        "count": len(agents),
-    }
+# ===== API: Agent Import =====
 
 
 @app.post("/api/agents/import")

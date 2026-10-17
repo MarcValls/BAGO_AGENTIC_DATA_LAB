@@ -25,5 +25,10 @@ Current ADL already has governance/evidence checks and local traces, but those d
 - Worktree: `C:\Users\AMTEC_Terminal_1º\AppData\Local\Temp\BAGO_ADL_agent_evaluation_lab_20261010`.
 - Branch: `codex/adl-agent-evaluation-lab-20261010`.
 
-## Status
-`EXECUTED` — candidate implementation, focused checks, and one live Ollama smoke evaluation exist in the isolated worktree. Validation remains partial because full rendered-state UI coverage is incomplete; Jaeger export and frontend lint are NOT_RUN.
+## Current status (reconciled 2026-10-15)
+
+`EXECUTED`; verification remains `PARTIAL`. The current repository snapshot passed 29 focused backend tests, all 16 frontend UI tests, the production build, and the full 249-test suite. The LocalTrace persistence-failure path now reports an unsaved provisional trace honestly, and provider execution errors are distinct from assertion failures. No new Ollama request was made, so the historical live run remains the only provider evidence; no Evaluation Lab run has a verified Jaeger projection. See [status reconciliation](evidence/STATUS_RECONCILIATION_20261015.md) and [follow-up verification](followup-20261015/evidence/FOLLOWUP_VERIFICATION_20261015.md) for the snapshot identity and remaining limits.
+
+## Status at initial review (2026-10-10)
+
+The candidate implementation, focused checks, and one live Ollama smoke evaluation existed in the isolated worktree. Validation was partial because full rendered-state UI coverage was incomplete; Jaeger export and frontend lint were NOT_RUN at that point.

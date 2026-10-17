@@ -86,7 +86,8 @@ describe('Agent Evaluation Lab rendered behavior', () => {
     render(React.createElement(AgentEvaluationLab))
     assert.match(screen.getByRole('status').textContent, /Loading evaluation workspace/)
     releaseAgents(jsonResponse({ agents: [agent] }))
-    await screen.findByRole('heading', { name: 'Agent Evaluation Lab' })
+    await screen.findByText('Create a suite')
+    assert.equal(screen.queryByText('Loading evaluation workspace.'), null)
     restore()
   })
 
@@ -210,6 +211,56 @@ describe('Agent Evaluation Lab rendered behavior', () => {
     assert.equal(screen.queryByRole('link', { name: /Jaeger/ }), null)
     restore()
   })
+
+  it('labels a provisional trace ID as unsaved after LocalTrace persistence fails', async () => {
+    const failedTraceRun = {
+      ...run,
+      status: 'FAIL',
+      failed_cases: 1,
+      cases: [{
+        ...traceResult,
+        status: 'FAIL',
+        checks: [{ name: 'trace_local_saved', passed: false, detail: 'LocalTrace persistence failed.' }],
+        trace: { trace_id: 'provisional-trace-456', trace_state: 'local_trace_failed' },
+      }],
+    }
+    const restore = stubFetch(standardFetch({ runs: [failedTraceRun] }))
+    render(React.createElement(AgentEvaluationLab))
+    fireEvent.click(await screen.findByRole('button', { name: /FAIL.*Response contract/ }))
+    await screen.findByText('LocalTrace not saved.')
+    assert.ok(screen.getByText('provisional-trace-456'))
+    assert.match(screen.getByText(/Provisional trace ID/).textContent, /not persisted/)
+    assert.equal(screen.queryByText(/LocalTrace saved:/), null)
+    assert.equal(screen.queryByRole('link', { name: /Jaeger/ }), null)
+    restore()
+  })
+
+  it('renders an ERROR run as provider execution failure, distinct from assertion failure', async () => {
+    const errorRun = {
+      ...run,
+      id: 'evalrun_error',
+      status: 'ERROR',
+      passed_cases: 0,
+      failed_cases: 0,
+      error_cases: 1,
+      cases: [{
+        ...traceResult,
+        status: 'ERROR',
+        error_code: 'provider_unavailable',
+        checks: [],
+        answer_preview: '',
+        trace: { trace_state: 'unavailable' },
+      }],
+    }
+    const restore = stubFetch(standardFetch({ runs: [errorRun] }))
+    render(React.createElement(AgentEvaluationLab))
+    fireEvent.click(await screen.findByRole('button', { name: /ERROR.*Response contract/ }))
+    await screen.findByText('Evaluation run error')
+    assert.match(screen.getAllByRole('alert')[0].textContent, /provider or execution error/i)
+    assert.ok(screen.getByText(/No deterministic assertion result is available/))
+    assert.equal(screen.queryByText(/FAIL · required:/), null)
+    restore()
+  })
 })
 
 describe('Agent Runner P1-02 rendered regression', () => {
@@ -220,5 +271,35 @@ describe('Agent Runner P1-02 rendered regression', () => {
     assert.equal(runButton.disabled, true)
     assert.match(screen.getByRole('status').textContent.toLowerCase(), /no governed execution capability is registered/)
     restore()
+  })
+
+  it('downloads the JSON export with a JSON filename', async () => {
+    const requested = []
+    const restoreFetch = stubFetch(async (input) => {
+      const url = String(input)
+      requested.push(url)
+      if (url === '/api/agents/list') return jsonResponse({ agents: [] })
+      if (url === '/api/agents/export') return { ok: true, blob: async () => new Blob(['{}'], { type: 'application/json' }) }
+      throw new Error(`Unexpected request: ${url}`)
+    })
+    const originalCreateObjectURL = URL.createObjectURL
+    const originalRevokeObjectURL = URL.revokeObjectURL
+    const originalAnchorClick = window.HTMLAnchorElement.prototype.click
+    let downloadedFilename = ''
+    URL.createObjectURL = () => 'blob:agent-export'
+    URL.revokeObjectURL = () => {}
+    window.HTMLAnchorElement.prototype.click = function () { downloadedFilename = this.download }
+
+    try {
+      render(React.createElement(AgentRunner))
+      fireEvent.click(await screen.findByRole('button', { name: 'Export all agents' }))
+      await waitFor(() => assert.equal(downloadedFilename, 'agents-export.json'))
+      assert.ok(requested.includes('/api/agents/export'))
+    } finally {
+      URL.createObjectURL = originalCreateObjectURL
+      URL.revokeObjectURL = originalRevokeObjectURL
+      window.HTMLAnchorElement.prototype.click = originalAnchorClick
+      restoreFetch()
+    }
   })
 })

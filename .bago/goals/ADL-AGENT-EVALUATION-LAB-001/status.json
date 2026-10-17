@@ -7,16 +7,39 @@
   "objective": "Build a local Agent Evaluation Lab with real-provider runs, deterministic grading, persistent results, and trace/model linkage.",
   "implementation": "EXECUTED",
   "verification": "PARTIAL",
-  "live_ollama": "VERIFIED",
+  "live_ollama": "VERIFIED historically on 2026-10-10; smoke run predates final detector hardening and was not repeated",
   "test_summary": {
-    "backend": "27 passed, 1 warning",
-    "frontend_api": "5 passed",
-    "frontend_render": "1 passed (SSR initial loading state)",
-    "production_build": "PASS",
-    "lint": "NOT_RUN (eslint is not installed)",
-    "jaeger": "NOT_RUN; LocalTrace only"
+    "backend": "27 passed, 1 Python 3.14/Pydantic-v1 warning (reported for the earlier candidate snapshot; not rerun at current candidate HEAD)",
+    "frontend_api": "5 passed (reported for the earlier candidate snapshot; not rerun at current candidate HEAD)",
+    "frontend_render": "14 frontend tests reported PASS by the related auditor follow-up; includes 8 Agent Evaluation Lab rendered cases and 1 Agent Runner regression. The report does not bind execution to current candidate HEAD a5b5ef2.",
+    "production_build": "PASS reported by the related auditor follow-up; current HEAD binding not recorded",
+    "lint": "NOT_RUN (ESLint unavailable)",
+    "jaeger": "NOT_RUN for Agent Evaluation Lab runs; Jaeger evidence in the related auditor goal is for agent.chat, not an evaluation run"
   },
   "base_head": "1e4d9f930da1225ce61ce27def897f76d57a08fc",
   "candidate_source_sha256": "8c751f67b4454e3654fba0dfdb31a732775b215454d987bd58d392ba3b15a87c",
-  "candidate_worktree_state": "DIRTY_UNCOMMITTED"
+  "candidate_worktree_state": "CLEAN at observed HEAD a5b5ef29c12b4101d51fb4ea3da89f2e175758ea; historical fingerprint above describes the earlier uncommitted candidate and is not the current HEAD identity",
+  "current_candidate_observation": {
+    "observed_at": "2026-10-15",
+    "branch": "codex/adl-agent-evaluation-lab-20261010",
+    "head": "a5b5ef29c12b4101d51fb4ea3da89f2e175758ea",
+    "working_tree": "CLEAN",
+    "agent_evaluation_component_sha256": "5b2afa980f753f1b065079a97163f4e1ea5a9ee54d4c3fa03d37bb664fdf3344",
+    "rendered_ui_test_sha256": "a69fc47d857784a80c47c6a3984f15e785fae6a801f4b3a2bdd8f5ccdd0da3dc",
+    "evidence": ".bago/goals/ADL-AGENT-EVALUATION-LAB-001/evidence/STATUS_RECONCILIATION_20261015.md"
+  },
+  "current_repository_verification": {
+    "observed_at": "2026-10-15",
+    "branch": "main",
+    "head": "c7b8e2ded64d7f004e82a3a8bfd7891ce9b39490",
+    "working_tree": "modified; results bind to exact listed source hashes, not a commit",
+    "focused_backend": "29 passed, 1 Python 3.14/Pydantic-v1 compatibility warning",
+    "frontend_ui": "16 passed, 0 failed",
+    "frontend_build": "PASS; 121 modules transformed",
+    "full_suite_readme_generation": "PASS; 249 tests passed",
+    "readme_check": "PASS; --check --skip-tests (suite NOT_RUN by this check)",
+    "live_provider": "NOT_RUN in this follow-up; no additional provider request",
+    "jaeger": "NOT_RUN for Evaluation Lab run projection",
+    "evidence": ".bago/goals/ADL-AGENT-EVALUATION-LAB-001/followup-20261015/evidence/FOLLOWUP_VERIFICATION_20261015.md"
+  }
 }

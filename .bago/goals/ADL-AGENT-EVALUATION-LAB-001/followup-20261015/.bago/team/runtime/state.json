@@ -1,0 +1,151 @@
+{
+  "created_at": "2026-10-15T16:56:37+00:00",
+  "mission": {
+    "max_concurrency": 2,
+    "mission_id": "ADL_AGENT_EVALUATION_TRACE_FAILURE_FOLLOWUP_20261015",
+    "objective": "Ensure failed LocalTrace persistence is never presented as a saved trace, and prove backend/UI failure handling against the current repository state without changing the frozen Evaluation Lab contract.",
+    "terminal_work_items": [
+      "W04"
+    ],
+    "title": "Agent Evaluation Lab trace failure handling follow-up",
+    "work_items": [
+      {
+        "deliverables": [
+          "A deterministic API test proving an unsaved LocalTrace fails the declared trace check and persists a truthful run result."
+        ],
+        "depends_on": [],
+        "done_when": [
+          "Test uses temporary SQLite and a local filesystem failure fixture",
+          "No provider/network call or job is created",
+          "Test distinguishes a provisional trace ID from a saved trace",
+          "No product contract is changed"
+        ],
+        "id": "W01",
+        "read_scopes": [
+          "src/api/server.py",
+          "src/evaluation/agent_lab.py",
+          "tests/test_agent_evaluation_lab.py",
+          "../implementation-runtime/evidence/W01_API_CONTRACT.md"
+        ],
+        "role": "trace-observability-engineer",
+        "title": "Add backend coverage for LocalTrace persistence failure",
+        "write_scopes": [
+          "tests/test_agent_evaluation_lab.py"
+        ]
+      },
+      {
+        "deliverables": [
+          "UI state rendering that shows failed local trace persistence as not saved, plus rendered error-result coverage."
+        ],
+        "depends_on": [],
+        "done_when": [
+          "A provisional trace ID is not rendered as persisted when trace_state is local_trace_failed",
+          "Saved local trace IDs and confirmed Jaeger links remain identity-bound",
+          "A provider error result is visibly distinct from a deterministic assertion failure",
+          "Tests cover failure and normal states",
+          "No provider call occurs before explicit Run"
+        ],
+        "id": "W02",
+        "read_scopes": [
+          "../implementation-runtime/evidence/W01_API_CONTRACT.md",
+          "frontend/src/components/AgentEvaluationLab.tsx",
+          "frontend/tests/ui/agent-evaluation-lab/rendered.test.mjs"
+        ],
+        "role": "decision-ui-engineer",
+        "title": "Render unsaved traces and provider run errors honestly",
+        "write_scopes": [
+          "frontend/src/components/AgentEvaluationLab.tsx",
+          "frontend/tests/ui/agent-evaluation-lab/rendered.test.mjs"
+        ]
+      },
+      {
+        "deliverables": [
+          "A reproducible API-client UI test that uses the declared TypeScript compiler rather than undeclared esbuild."
+        ],
+        "depends_on": [
+          "W01",
+          "W02"
+        ],
+        "done_when": [
+          "No new package or network dependency is introduced",
+          "The client test retains the same API assertions",
+          "Frontend UI test command can execute after the fix"
+        ],
+        "id": "W03",
+        "read_scopes": [
+          "frontend/package.json",
+          "frontend/src/components/AgentEvaluationLab.tsx",
+          "frontend/tests/ui/agent-evaluation-lab/agent-evaluation-lab.test.mjs"
+        ],
+        "role": "decision-ui-engineer",
+        "title": "Make the frontend API tests use declared tooling",
+        "write_scopes": [
+          "frontend/tests/ui/agent-evaluation-lab/agent-evaluation-lab.test.mjs"
+        ]
+      },
+      {
+        "deliverables": [
+          "Focused verification bound to the observed HEAD; accurate goal status and remaining blockers."
+        ],
+        "depends_on": [
+          "W03"
+        ],
+        "done_when": [
+          "Implementation and test-tooling handoffs verify",
+          "Focused backend and frontend suites and frontend build are executed with exact outcomes",
+          "Relevant product criteria are mapped to evidence and limits",
+          "Product remains PARTIAL/EXECUTED unless current verification proves every criterion",
+          "No cloud call, commit, push, merge or deployment"
+        ],
+        "id": "W04",
+        "read_scopes": [
+          "../../../../src/evaluation/agent_lab.py",
+          "../../../../src/api/server.py",
+          "../../../../tests/test_agent_evaluation_lab.py",
+          "../../../../frontend/src/components/AgentEvaluationLab.tsx",
+          "../../../../frontend/tests/ui/agent-evaluation-lab/**",
+          "../implementation-runtime/evidence/W01_API_CONTRACT.md"
+        ],
+        "role": "team-orchestrator",
+        "title": "Verify follow-up and materialize updated product status",
+        "write_scopes": [
+          "evidence/FOLLOWUP_VERIFICATION_20261015.md",
+          "drafts/W04.json",
+          "../status.json",
+          "../goal.md"
+        ]
+      }
+    ]
+  },
+  "mission_sha256": "6980379f4100ff0f1fc8a55b6a7b3355a3ffe2d7627fdc4fb9b5b9ad162248f7",
+  "mission_source": "C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\.bago\\goals\\ADL-AGENT-EVALUATION-LAB-001\\followup-20261015\\mission.json",
+  "protocol_version": "0.1.0",
+  "terminal_gate": "DONE",
+  "updated_at": "2026-10-15T16:57:04+00:00",
+  "work_status": {
+    "W01": {
+      "agent": "trace-observability-engineer",
+      "claimed_at": "2026-10-15T16:56:52+00:00",
+      "done_at": "2026-10-15T16:56:58+00:00",
+      "status": "DONE"
+    },
+    "W02": {
+      "agent": "codex-decision-ui-engineer",
+      "claimed_at": "2026-10-15T16:56:52+00:00",
+      "done_at": "2026-10-15T16:56:58+00:00",
+      "status": "DONE"
+    },
+    "W03": {
+      "agent": "codex-decision-ui-engineer",
+      "claimed_at": "2026-10-15T16:56:58+00:00",
+      "done_at": "2026-10-15T16:56:58+00:00",
+      "status": "DONE"
+    },
+    "W04": {
+      "agent": "team-orchestrator-root",
+      "claimed_at": "2026-10-15T16:56:59+00:00",
+      "done_at": "2026-10-15T16:57:03+00:00",
+      "status": "DONE"
+    }
+  }
+}
