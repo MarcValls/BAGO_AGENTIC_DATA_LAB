@@ -1,6 +1,6 @@
 # Current State — BAGO Agentic Data Lab
 
-**Updated:** 2026-10-15
+**Updated:** 2026-10-18
 **Current phase:** L15 · OpenTelemetry + Jaeger Local Live
 **Status:** VERIFIED for the local RDF/Turtle materialization, bounded SPARQL
 subset, deterministic inference, contradiction constraints, RAG seed handoff,
@@ -28,10 +28,27 @@ checks de trace, linkage y eval determinista; L13 aporta 3 checks de demo E2E,
 composición y límites externos; L14 aporta 4 checks de persistencia, metadata
 gate, reload y backend semántico persistente; L15 aporta 3 checks de endpoint,
 parent links, evidencia inmutable y fallo del exporter.
-**Next phase:** do not make additional cloud calls under the zero-cost rule;
-confirm a later billing record manually only if zero-dollar charging must be
-claimed, and keep streaming, Knowledge Base and remote integrations separately
-scoped
+**Next phase (supersession, 2026-10-18):** the user's explicit instruction to
+remove the zero-cost stop and use their AWS promotional credits supersedes the
+2026-10-15 no-additional-cloud-calls rule. Live Bedrock use is now authorized
+for the requested evidence work, with each run bounded to one `Converse`
+request at a time, an explicit model allowlist, `maxTokens <= 64`, one attempt,
+and no SDK retries. Verify the active AWS identity and available credit before
+starting a run where the account exposes that information; stop if credentials,
+model access, or an adequate credit balance cannot be verified. Record actual
+usage and the governed receipt. Adapter `cost_usd` remains an estimate, not a
+billing or credit ledger. Do not use other providers or create other AWS
+resources under this authorization. Keep `ConverseStream`, Knowledge Bases,
+remote OpenMetadata and commercetools separately scoped and `NOT_RUN`.
+**Latest live attempt:** the read-only Free Tier API observed `FREE / ACTIVE`
+with USD 100.00 remaining and expiration 2027-03-23. Two bounded `Converse`
+attempts (Nova Lite and Nova Micro, one attempt each, no SDK retries) were
+rejected with `ThrottlingException: Too many tokens per day`; both receipts
+report zero input/output tokens and `FAILURE`. The model-backed business cases
+remain unrerun. Stop further inference until the daily quota resets or AWS
+confirms an available quota. Receipts are preserved under
+`evidence/aws-live-attempts/`; `evidence/l6_aws_live.md` records the latest
+attempt. Actual billing/credit consumption for failed requests is not proven.
 **Evidence:** `evidence/l3_ontology_graph.md` with integrity PASS and
 `evidence/retrieval_benchmark_results.md` with 48 reproducible benchmark rows;
 `evidence/mcp_governed_demo.md` with a real local stdio round trip and a
