@@ -1,0 +1,44 @@
+{
+  "changed_files": [
+    "frontend/src/components/AgentEvaluationLab.tsx",
+    "frontend/tests/ui/agent-evaluation-lab/rendered.test.mjs"
+  ],
+  "next_consumers": [
+    "W03"
+  ],
+  "outputs": [
+    {
+      "description": "UI only labels LocalTrace as saved when trace_state is saved; local_trace_failed shows not saved, a provisional ID label when present, and unavailable lookup. Confirmed Jaeger IDs and URLs remain identity-bound.",
+      "path": "frontend/src/components/AgentEvaluationLab.tsx"
+    },
+    {
+      "description": "Rendered tests cover provisional unsaved traces, provider/execution ERROR distinct from assertion failures, saved LocalTrace and confirmed Jaeger, plus the explicit Run gate. Corrected loading transition assertion to match rendered content.",
+      "path": "frontend/tests/ui/agent-evaluation-lab/rendered.test.mjs"
+    }
+  ],
+  "payload_sha256": "5b5a15b659dff82b6bfd82119491b4247001aad86352d29d5b83a649e41566ec",
+  "residual_risks": [
+    "The broader npm run test:ui command remains unverified: its agent-evaluation-lab.test.mjs file cannot import esbuild (ERR_MODULE_NOT_FOUND). Its rendered.test.mjs file was run directly and passed.",
+    "Provider ERROR presentation is covered with deterministic rendered fixtures; no live provider request was made."
+  ],
+  "role": "decision-ui-engineer",
+  "status": "DONE",
+  "verification": [
+    {
+      "command": "node --test tests/ui/agent-evaluation-lab/rendered.test.mjs",
+      "evidence": "11 tests passed, 0 failed, including loading, normal saved trace, confirmed Jaeger identity, no fabricated Jaeger link, unsaved provisional trace, ERROR run and explicit Run gate.",
+      "result": "PASS"
+    },
+    {
+      "command": "node --test --test-name-pattern=\"provisional trace ID|ERROR run|saved LocalTrace|only LocalTrace\" tests/ui/agent-evaluation-lab/rendered.test.mjs",
+      "evidence": "4 selected tests passed, 0 failed.",
+      "result": "PASS"
+    },
+    {
+      "command": "git diff --check -- frontend/src/components/AgentEvaluationLab.tsx frontend/tests/ui/agent-evaluation-lab/rendered.test.mjs",
+      "evidence": "No whitespace errors.",
+      "result": "PASS"
+    }
+  ],
+  "work_id": "W02"
+}

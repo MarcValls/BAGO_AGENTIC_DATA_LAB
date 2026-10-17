@@ -1,0 +1,17 @@
+{
+  "goal_id": "ADL-EXPORT-CI-AND-FULL-VERIFICATION-20261017",
+  "status": "VERIFIED",
+  "base_commit": "c7b8e2ded64d7f004e82a3a8bfd7891ce9b39490",
+  "candidate_head": "c7b8e2ded64d7f004e82a3a8bfd7891ce9b39490",
+  "working_tree": "modified; evidence binds to source hashes in VERIFICATION_20261017.md",
+  "acceptance": {
+    "agent_export_json_contract": "PASS",
+    "frontend_ci_tests_and_build": "PASS locally; hosted GitHub Actions NOT_RUN",
+    "clean_npm_install": "PASS",
+    "full_python_suite": "PASS, 250 tests",
+    "local_demo_and_capability_checks": "PASS within listed scopes",
+    "docker_backed_live_checks": "NOT_RUN; Docker daemon unavailable",
+    "cloud_and_provider_calls": "NOT_RUN under the project zero-cost rule"
+  },
+  "evidence": ".bago/goals/ADL-EXPORT-CI-AND-FULL-VERIFICATION-20261017/evidence/VERIFICATION_20261017.md"
+}

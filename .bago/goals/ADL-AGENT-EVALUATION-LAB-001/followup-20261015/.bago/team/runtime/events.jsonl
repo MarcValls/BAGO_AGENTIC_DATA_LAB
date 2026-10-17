@@ -1,0 +1,23 @@
+{"at": "2026-10-15T16:39:01+00:00", "kind": "MISSION_INIT", "mission_id": "ADL_AGENT_EVALUATION_TRACE_FAILURE_FOLLOWUP_20261015", "mission_sha256": "945a493f179a39696d77f1ab037342c50d1c1537a72ebf9c6f9cc8c3895e6ae2"}
+{"agent": "trace-observability-engineer", "at": "2026-10-15T16:39:27+00:00", "kind": "CLAIM", "role": "trace-observability-engineer", "work_id": "W01"}
+{"agent": "codex-decision-ui-engineer", "at": "2026-10-15T16:39:31+00:00", "kind": "CLAIM", "role": "decision-ui-engineer", "work_id": "W02"}
+{"at": "2026-10-15T16:40:56+00:00", "kind": "HANDOFF_DONE", "payload_sha256": "b6d13ec4b89a8e44f9eb5100861258a842b32bde8c6908228d4efb3bc24cb1f3", "work_id": "W01"}
+{"at": "2026-10-15T16:41:59+00:00", "kind": "HANDOFF_DONE", "payload_sha256": "5b5a15b659dff82b6bfd82119491b4247001aad86352d29d5b83a649e41566ec", "work_id": "W02"}
+{"agent": "team-orchestrator-root", "at": "2026-10-15T16:48:46+00:00", "kind": "CLAIM", "role": "team-orchestrator", "work_id": "W03"}
+{"at": "2026-10-15T16:49:55+00:00", "kind": "MISSION_INIT", "mission_id": "ADL_AGENT_EVALUATION_TRACE_FAILURE_FOLLOWUP_20261015", "mission_sha256": "2da6b96e93e88e8d6ce888368fd8bdc25522d440a9e5437e18f8aba695affe4c"}
+{"agent": "trace-observability-engineer", "at": "2026-10-15T16:49:55+00:00", "kind": "CLAIM", "role": "trace-observability-engineer", "work_id": "W01"}
+{"at": "2026-10-15T16:49:55+00:00", "kind": "HANDOFF_DONE", "payload_sha256": "b6d13ec4b89a8e44f9eb5100861258a842b32bde8c6908228d4efb3bc24cb1f3", "work_id": "W01"}
+{"agent": "codex-decision-ui-engineer", "at": "2026-10-15T16:49:55+00:00", "kind": "CLAIM", "role": "decision-ui-engineer", "work_id": "W02"}
+{"at": "2026-10-15T16:49:56+00:00", "kind": "HANDOFF_DONE", "payload_sha256": "5b5a15b659dff82b6bfd82119491b4247001aad86352d29d5b83a649e41566ec", "work_id": "W02"}
+{"agent": "codex-decision-ui-engineer", "at": "2026-10-15T16:50:29+00:00", "kind": "CLAIM", "role": "decision-ui-engineer", "work_id": "W03"}
+{"at": "2026-10-15T16:52:39+00:00", "kind": "HANDOFF_DONE", "payload_sha256": "5ae949a2727d1c346b27b761091fe67080eb8c232cf3bdc924b708ca633c2c81", "work_id": "W03"}
+{"agent": "team-orchestrator-root", "at": "2026-10-15T16:52:48+00:00", "kind": "CLAIM", "role": "team-orchestrator", "work_id": "W04"}
+{"at": "2026-10-15T16:56:37+00:00", "kind": "MISSION_INIT", "mission_id": "ADL_AGENT_EVALUATION_TRACE_FAILURE_FOLLOWUP_20261015", "mission_sha256": "6980379f4100ff0f1fc8a55b6a7b3355a3ffe2d7627fdc4fb9b5b9ad162248f7"}
+{"agent": "trace-observability-engineer", "at": "2026-10-15T16:56:52+00:00", "kind": "CLAIM", "role": "trace-observability-engineer", "work_id": "W01"}
+{"agent": "codex-decision-ui-engineer", "at": "2026-10-15T16:56:52+00:00", "kind": "CLAIM", "role": "decision-ui-engineer", "work_id": "W02"}
+{"at": "2026-10-15T16:56:58+00:00", "kind": "HANDOFF_DONE", "payload_sha256": "b6d13ec4b89a8e44f9eb5100861258a842b32bde8c6908228d4efb3bc24cb1f3", "work_id": "W01"}
+{"at": "2026-10-15T16:56:58+00:00", "kind": "HANDOFF_DONE", "payload_sha256": "5b5a15b659dff82b6bfd82119491b4247001aad86352d29d5b83a649e41566ec", "work_id": "W02"}
+{"agent": "codex-decision-ui-engineer", "at": "2026-10-15T16:56:58+00:00", "kind": "CLAIM", "role": "decision-ui-engineer", "work_id": "W03"}
+{"at": "2026-10-15T16:56:58+00:00", "kind": "HANDOFF_DONE", "payload_sha256": "5ae949a2727d1c346b27b761091fe67080eb8c232cf3bdc924b708ca633c2c81", "work_id": "W03"}
+{"agent": "team-orchestrator-root", "at": "2026-10-15T16:56:59+00:00", "kind": "CLAIM", "role": "team-orchestrator", "work_id": "W04"}
+{"at": "2026-10-15T16:57:03+00:00", "kind": "HANDOFF_DONE", "payload_sha256": "36fa2c9ee1c3ac27c885f64ee97a4ccaf852e48599512d0a389586fb928db5d3", "work_id": "W04"}

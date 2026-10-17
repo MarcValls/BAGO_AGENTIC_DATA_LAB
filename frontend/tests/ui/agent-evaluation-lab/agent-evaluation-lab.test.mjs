@@ -1,18 +1,10 @@
 import { strict as assert } from 'node:assert'
-import { readFile } from 'node:fs/promises'
-import { test } from 'node:test'
-import vm from 'node:vm'
-import { transformSync } from 'esbuild'
+import { after, test } from 'node:test'
+import { createServer } from 'vite'
 
-const source = await readFile(new URL('../../../src/components/AgentEvaluationLab.tsx', import.meta.url), 'utf8')
-const start = source.indexOf('async function jsonRequest')
-const end = source.indexOf('\nconst newCase', start)
-assert.ok(start >= 0 && end > start, 'Evaluation API client block must exist in the component')
-const clientSource = source.slice(start, end)
-const compiled = transformSync(clientSource, { loader: 'ts', format: 'cjs', target: 'es2020' }).code
-const module = { exports: {} }
-vm.runInNewContext(compiled, { module, exports: module.exports, fetch: globalThis.fetch })
-const { evaluationApi } = module.exports
+const vite = await createServer({ server: { middlewareMode: true }, appType: 'custom' })
+const { evaluationApi } = await vite.ssrLoadModule('/src/components/AgentEvaluationLab.tsx')
+after(async () => { await vite.close() })
 
 const response = (body, status = 200) => ({ ok: status >= 200 && status < 300, status, json: async () => body })
 const suite = { id: 'evalsuite_abc', name: 'Smoke', agent_id: 'agent_1234abcd', version: 1, revision: 1, cases: [{ id: 'case_1', name: 'Greeting', prompt: 'Say hi', must_include: ['hello'], must_not_include: [] }] }

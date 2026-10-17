@@ -1,0 +1,32 @@
+{
+  "changed_files": [
+    "frontend/tests/ui/agent-evaluation-lab/agent-evaluation-lab.test.mjs"
+  ],
+  "outputs": [
+    {
+      "description": "API-client tests import the declared Vite createServer and ssrLoadModule the actual AgentEvaluationLab TSX module, removing the undeclared esbuild dependency while preserving all five API assertions.",
+      "path": "frontend/tests/ui/agent-evaluation-lab/agent-evaluation-lab.test.mjs"
+    }
+  ],
+  "verification": [
+    {
+      "command": "node --test tests/ui/agent-evaluation-lab/agent-evaluation-lab.test.mjs",
+      "result": "PASS",
+      "evidence": "5 tests passed, 0 failed; inventory and model discovery, empty state, safe API errors, explicit run/revision/model binding, and suite revision assertions."
+    },
+    {
+      "command": "npm run test:ui",
+      "result": "PASS",
+      "evidence": "16 tests passed, 0 failed across both API-client and rendered UI suites; includes unsaved provisional LocalTrace status, provider ERROR differentiation, confirmed Jaeger identity, and explicit Run gate."
+    },
+    {
+      "command": "git diff --check -- frontend/tests/ui/agent-evaluation-lab/agent-evaluation-lab.test.mjs",
+      "result": "PASS",
+      "evidence": "No whitespace errors."
+    }
+  ],
+  "residual_risks": [
+    "Vite emits existing deprecation warnings about esbuild configuration; all targeted tests pass and no dependency or package manifest was changed."
+  ],
+  "next_consumers": ["W04"]
+}
