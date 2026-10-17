@@ -588,6 +588,9 @@ def render_readme(
     trace = tutorial.get("trace", "docs/agent-chat-control/assets/trace-c7ec5fcc40284a42.json")
     input_file = tutorial.get("input", "output/tutorial/sample-note.txt")
     render_first_user_tutorial(manifest)  # Fail closed if a declared artifact is missing.
+    jaeger_capture = manifest.get("jaeger_capture", "")
+    if not jaeger_capture or not (REPO_ROOT / jaeger_capture).is_file():
+        raise FileNotFoundError(f"Declared Jaeger capture is missing: {jaeger_capture or 'NOT_DECLARED'}")
 
     lines = [
         f"# {project['emoji']} {project['title']}",
@@ -615,6 +618,8 @@ def render_readme(
         "",
         "La guía explica la instalación en Windows y POSIX, los artefactos y sus límites: [demo de una orden](docs/one_command_demo.md) · [recorrido de artefactos](docs/one_command_demo_walkthrough.md).",
         "",
+        "**Demo gobernada:** pregunta → agente → recuperación con citas → ejecución tipada → receipts → LocalTrace → evaluación. Genera cinco JSON (`summary`, `agent_run`, `receipts`, `trace`, `evaluation`) en `demo_output/`; el proveedor es un fixture y no contacta AWS. [Contrato y requisitos](docs/one_command_demo.md) · [lectura de artefactos](docs/one_command_demo_walkthrough.md).",
+        "",
         "## Estado del proyecto",
         "",
         "| Campo | Valor |",
@@ -639,11 +644,23 @@ def render_readme(
         "",
         _render_phase_table(phases),
         "",
+        "## Arquitectura y recorrido de datos",
+        "",
+        "**Recorrido:** " + " → ".join(manifest["architecture"]["pipeline"]),
+        "",
         "## Evidencia y límites",
         "",
-        "- [Verificación L15 con Jaeger local](evidence/l15_otel_jaeger_live.md): resultado fechado del 2026-10-08; es evidencia histórica local, no disponibilidad actual del servicio.",
+        "### Jaeger y OpenTelemetry (L15)",
+        "",
+        "La evidencia local del 2026-10-08 enlaza la traza BAGO `trace-5b385699ffda0529` con la traza consultada en Jaeger `04b58bb123bb6cc94a8cc0d60c7145ae`: 15 spans proyectados y 15 observados, 13 operaciones y estado `PASS`. La captura archivada muestra el timeline de esa traza; es evidencia histórica del resultado, no disponibilidad actual de Jaeger.",
+        "",
+        f"![Captura de Jaeger: traza agent.run con 15 spans y relaciones padre-hijo]({jaeger_capture})",
+        "",
+        "[Informe y datos completos L15](evidence/l15_otel_jaeger_live.md) · [intento de captura del freeze](evidence/l15_jaeger_capture_attempt.md) · [guía para reproducir Jaeger](docs/otel_jaeger.md).",
+        "",
         f"- [Último resultado completo de CI]({repository}/actions/runs/38665463586): estado y SHA del commit verificados en `STATE.md`; no cubre cambios posteriores.",
-        "- [Límites operativos actuales](.bago/canon/STATE.md): AWS, OpenMetadata remoto y commercetools mantienen su alcance `NOT_RUN` o `NOT_PROVEN` donde corresponde.",
+        "- [Estado y límites AWS](.bago/canon/STATE.md): la consulta Free Tier observó USD 100 de crédito activo; los dos intentos Bedrock más recientes fueron rechazados por cuota diaria y no generaron tokens. El consumo/facturación de esos intentos no está probado.",
+        "- [Consulta de créditos Free Tier](evidence/l6_aws_free_tier.md) · [último recibo Bedrock](evidence/l6_aws_live.md) · [intento Nova Lite](evidence/aws-live-attempts/20261018_nova_lite_throttled.md) · [intento Nova Micro](evidence/aws-live-attempts/20261018_nova_micro_throttled.md).",
         "",
         "La demo local evalúa trazas y controles estructurales; no prueba calidad general de respuestas, aislamiento de producción ni integraciones cloud en vivo.",
         "",
@@ -654,6 +671,13 @@ def render_readme(
         f"- [Traza de la sesión documentada]({trace}) · [archivo de ejemplo]({input_file})",
         "",
         "La grabación acredita la lectura y respuesta acotadas descritas en la guía; no una auditoría del código ni ejecución de trabajos.",
+        "## Objetivos profesionales y skills",
+        "",
+        f"El contrato registra {len(parse_roles())} objetivos de rol; la matriz incluye {len(parse_skills())} skills técnicas y {len(parse_soft_skills())} estratégicas. Son estimaciones del proyecto, no una evaluación independiente ni ofertas vigentes. Roles y requisitos: [.bago/canon/LAB_CONTRACT.md](.bago/canon/LAB_CONTRACT.md) · [matriz completa](.bago/canon/JOB_SKILL_MATRIX.md).",
+        "",
+        "## Catálogo de agentes y sincronización",
+        "",
+        "El [catálogo de agentes](agents/CATALOG_MANIFEST.json) es de referencia; las definiciones operativas están en `.github/agents/`. El [agente de sincronización](docs/bago-sync-agent.md) enlaza definición, ejecutor gobernado y documentación.",
         "",
         "## Fuentes canónicas",
         "",
@@ -675,7 +699,7 @@ def render_readme(
         "",
         "La CI completa ejecuta la suite, valida este README y comprueba las demos y servicios locales. `--check --skip-tests` solo comprueba el render y recoge casos; informa `NOT_RUN` y no acredita que pasen.",
         "",
-        "La regla de coste cero sigue vigente: el README no propone ejecutar comprobaciones AWS. Las comprobaciones locales que escriben evidencia o arrancan Docker se describen en sus guías específicas.",
+        "Las llamadas AWS requieren autorización explícita y evidencia de identidad, cuota y créditos disponibles. Los recibos de coste estimado no prueban facturación real; revisa el alcance actual en `STATE.md` antes de una ejecución live.",
         "",
         "## Generación",
         "",
