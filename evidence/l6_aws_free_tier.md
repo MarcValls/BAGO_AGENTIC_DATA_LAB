@@ -1,6 +1,6 @@
 # L6 · AWS Free Tier account coverage evidence
 
-Generated: 2026-09-24T00:13:08.299947+00:00
+Generated: 2026-10-17T23:07:17.835781+00:00
 
 > Scope: read-only AWS Free Tier account-plan and usage inspection.
 > No resource was created, no model was invoked and Cost Explorer was not queried.
@@ -8,7 +8,7 @@ Generated: 2026-09-24T00:13:08.299947+00:00
 
 - Region: `us-east-1`
 - AWS account: `6100…13`
-- Git HEAD observed: `36f2641475467c27ce6f343ce493e54bf8076bcf`
+- Git HEAD observed: `7fc350044df596a0e3eff751c62b423f70885e16`
 - Worktree dirty at execution: `True`
 - Account plan: `FREE`
 - Account plan status: `ACTIVE`
