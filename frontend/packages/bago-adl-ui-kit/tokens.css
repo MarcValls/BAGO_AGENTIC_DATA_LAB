@@ -1,0 +1,31 @@
+/* BAGO ADL UI Kit — visual tokens extracted and normalized from frontend/src. */
+:root {
+  --bago-ui-bg: #0b1120;
+  --bago-ui-surface: #0d1726;
+  --bago-ui-panel: #111e2e;
+  --bago-ui-raised: #17263a;
+  --bago-ui-hover: #1b2b40;
+  --bago-ui-border: #34485f;
+  --bago-ui-border-subtle: #26364b;
+  --bago-ui-text: #e2e8f0;
+  --bago-ui-text-soft: #c4d1df;
+  --bago-ui-muted: #91a6bd;
+  --bago-ui-brand: #32679f;
+  --bago-ui-brand-hover: #3f78b3;
+  --bago-ui-focus: #84b5eb;
+  --bago-ui-success: #48c98b;
+  --bago-ui-warning: #edbd5a;
+  --bago-ui-danger: #ed7a7a;
+  --bago-ui-info: #78aee8;
+  --bago-ui-space-1: 4px;
+  --bago-ui-space-2: 8px;
+  --bago-ui-space-3: 12px;
+  --bago-ui-space-4: 16px;
+  --bago-ui-space-6: 24px;
+  --bago-ui-space-8: 32px;
+  --bago-ui-radius-sm: 4px;
+  --bago-ui-radius-md: 8px;
+  --bago-ui-radius-lg: 12px;
+  --bago-ui-shadow-panel: 0 12px 32px rgb(0 0 0 / 24%);
+  --bago-ui-font: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}

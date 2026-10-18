@@ -1,0 +1,17 @@
+{
+  "name": "@bago/adl-ui-kit",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Reusable visual tokens and React components for BAGO ADL interfaces",
+  "peerDependencies": {
+    "react": ">=18",
+    "react-dom": ">=18"
+  },
+  "sideEffects": ["*.css"],
+  "exports": {
+    ".": "./index.ts",
+    "./tokens.css": "./tokens.css",
+    "./components.css": "./components.css"
+  }
+}
