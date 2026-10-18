@@ -21,6 +21,16 @@ from generate_dynamic_readme import (  # noqa: E402
 ROOT = Path(__file__).parent.parent
 
 
+def test_checked_in_readme_matches_canonical_render():
+    rendered = render_readme(
+        manifest=_read_json(ROOT / "docs" / "readme_manifest.json"),
+        state=parse_state(),
+        passing_tests=0,
+    )
+
+    assert (ROOT / "README.md").read_text(encoding="utf-8") == rendered
+
+
 def test_readme_sources_are_real_and_state_is_parsed():
     manifest = _read_json(ROOT / "docs" / "readme_manifest.json")
     state = parse_state()
