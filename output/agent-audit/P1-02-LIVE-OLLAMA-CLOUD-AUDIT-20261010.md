@@ -16,7 +16,7 @@
 
 - Trazas: `.bago/traces/agent-chat/trace-1b479e9145e54d54.json` y `.bago/traces/agent-chat/trace-4fb5341c9bfb4f16.json`.
 - Extracto fuente reproducible: `output/agent-audit/P1-02-server-websocket-source-excerpt-v2.txt` (incluye hash del servidor y correspondencia de líneas).
-- Capturas: `.playwright-cli/page-2026-10-10T20-34-22-714Z.png` (auditoría conjunta) y `.playwright-cli/page-2026-10-10T20-38-14-835Z.png` (lectura del extracto v2 y LocalTrace).
+- Las capturas raw de esas sesiones no se incluyen en este checkout; las trazas y el extracto fuente reproducible permanecen disponibles.
 
 ## Conclusión y límite
 

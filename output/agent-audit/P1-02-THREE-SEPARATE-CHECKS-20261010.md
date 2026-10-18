@@ -14,7 +14,7 @@ La reproducción confirma el motivo y la clase de respuesta; no reutiliza ni rec
 
 Cambié a App assistant y volví a seleccionar el Frontend Auditor persistido (`agent_b5665184bed24811ad59e90c8c4fdc9f`). La vista quedó vacía antes del envío. Con lectura de workspace autorizada solo para ese mensaje, el agente leyó el extracto corto `output/agent-audit/P1-02-server-websocket-source-excerpt-v2.txt:1-25` y devolvió la respuesta con hash, endpoint, líneas fuente 1065-1084, `execution_unavailable`, no creación de job y cierre 1008.
 
-La nueva LocalTrace es `trace-594b271c44be48fa`; registra respuesta recibida, `ollama-cloud`, modelo `kimi-k2.6`, mismo agent id y una lectura del archivo. Ver `.bago/traces/agent-chat/trace-594b271c44be48fa.json` y captura `.playwright-cli/page-2026-10-10T20-42-23-312Z.png`.
+La nueva LocalTrace es `trace-594b271c44be48fa`; registra respuesta recibida, `ollama-cloud`, modelo `kimi-k2.6`, mismo agent id y una lectura del archivo. El archivo de traza se conserva en `.bago/traces/agent-chat/trace-594b271c44be48fa.json`; la captura raw de la sesión no se incluye en este checkout.
 
 ## 3. Comprobación directa del backend sin perder trazas
 

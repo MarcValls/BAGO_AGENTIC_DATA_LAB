@@ -1,6 +1,0 @@
-interface:
-  display_name: "BAGO App & Game Development"
-  short_description: "Build and verify apps and games across stacks"
-  default_prompt: "Use $bago-app-game-development to build or improve this application or game."
-policy:
-  allow_implicit_invocation: true

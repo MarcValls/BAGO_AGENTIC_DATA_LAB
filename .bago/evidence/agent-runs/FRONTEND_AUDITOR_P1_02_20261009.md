@@ -35,7 +35,7 @@ Evidence chain:
 - Jaeger was reachable at `http://127.0.0.1:16686`; service `bago-agentic-data-lab` was listed.
 - A one-hour Jaeger query returned one trace with 15 spans, but none had an operation name matching agent chat. The chat route has no LocalTrace/OpenTelemetry span creation in the inspected implementation.
 - Therefore this execution is monitored by the visible UI transcript plus source/config provenance, **not** by a Jaeger trace. The existing Jaeger trace is not attributed to this chat.
-- Screenshot of the completed visible conversation: `C:\Users\AMTEC_Terminal_1º\BAGO_AGENTIC_DATA_LAB\.playwright-cli\page-2026-10-09T16-30-56-581Z.png` (SHA-256 `97C55525DCA0C0EC149C84FD9D57FCD8EC748E1649A5189EC223CE416A99D48E`).
+- Screenshot of the completed visible conversation: `.bago/evidence/agent-runs/FRONTEND_AUDITOR_P1_02_20261009.png` (SHA-256 `97C55525DCA0C0EC149C84FD9D57FCD8EC748E1649A5189EC223CE416A99D48E`).
 - Source audit SHA-256: `EB331E30BC5F9E720CF2C714E8E02766F8488980C72413FF8B3F9F8AB1BA48BF`.
 - Persisted agent record SHA-256 at observation: `7D389F7CE3366230F688FC7289F010C1C4F8AE6F5CDD43A3B6764A2A97200260`.
 
