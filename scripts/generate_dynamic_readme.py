@@ -192,6 +192,15 @@ def parse_skills() -> list[list[str]]:
     return rows
 
 
+def parse_skill_matrix_convention() -> str:
+    """Read the technical skill matrix's symbol convention from its canon."""
+    text = (REPO_ROOT / ".bago/canon/JOB_SKILL_MATRIX.md").read_text(encoding="utf-8")
+    for line in text.splitlines():
+        if line.startswith("**Matrix convention:**"):
+            return line
+    raise ValueError("Technical skill matrix convention is missing")
+
+
 def parse_soft_skills() -> list[list[str]]:
     """Extract the strategic/soft skill table from .bago/canon/JOB_SKILL_MATRIX.md."""
     text = (REPO_ROOT / ".bago/canon/JOB_SKILL_MATRIX.md").read_text(encoding="utf-8")
@@ -582,10 +591,12 @@ def _render_roles(rows: list[list[str]]) -> str:
     return "\n".join(lines)
 
 
-def _render_skills(rows: list[list[str]]) -> str:
+def _render_skills(rows: list[list[str]], convention: str) -> str:
     if not rows:
         return "No se pudo extraer la tabla técnica desde .bago/canon/JOB_SKILL_MATRIX.md."
     lines = [
+        convention,
+        "",
         "| Skill | Demanda | Nivel actual | Nivel objetivo | Primera evidencia | Entrevista |",
         "|---|---|---|---|---|---|",
     ]
@@ -792,7 +803,7 @@ def render_readme(
         "",
         "### Skills técnicas",
         "",
-        _render_skills(parse_skills()),
+        _render_skills(parse_skills(), parse_skill_matrix_convention()),
         "",
         "### Skills estratégicas y personales",
         "",
