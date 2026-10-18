@@ -64,6 +64,9 @@ jobs:
 
   security-scan:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      security-events: write
     needs: build
     if: github.event_name != 'pull_request'
     steps:
