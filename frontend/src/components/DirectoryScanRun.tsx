@@ -20,7 +20,8 @@ type ScanReport = {
   limitations: string[]
   findings: DuplicateFinding[]
 }
-type ScanReceipt = { path: string; files_scanned: number; finding_count: number; manifest_sha256: string; duration_ms: number; truncated: boolean }
+type ScanManifestFile = { path: string; sha256: string; bytes: number }
+type ScanReceipt = { path: string; files_scanned: number; finding_count: number; manifest_sha256: string; duration_ms: number; truncated: boolean; files: ScanManifestFile[] }
 type ScanOutcome = { result: ScanReport; receipt: ScanReceipt; trace: { trace_id: string; trace_state: string }; conversation_id: string }
 
 async function responseError(response: Response): Promise<string> {
@@ -116,6 +117,14 @@ export default function DirectoryScanRun() {
             {finding.left.name && finding.right.name && <small>{finding.left.name} ↔ {finding.right.name}</small>}
           </li>)}</ol> : <p className="code-scan-empty">No matching blocks or function structures were found in the scanned files.</p>}
           <details className="code-scan-method"><summary>Detection method and limits</summary><p>{outcome.result.method.exact}.</p><p>{outcome.result.method.similar}.</p><ul>{outcome.result.limitations.map((limitation) => <li key={limitation}>{limitation}</li>)}</ul></details>
+          <section className="code-scan-files" aria-labelledby="code-scan-files-title">
+            <div className="code-scan-files-heading"><h3 id="code-scan-files-title">Scanned files</h3><span>{outcome.receipt.files.length}</span></div>
+            <p>Paths and manifest hashes only; file contents are not shown.</p>
+            {outcome.receipt.files.length ? <ul>{outcome.receipt.files.map((file) => <li key={file.path}>
+              <code>{file.path}</code>
+              <small>{file.bytes.toLocaleString()} bytes · SHA-256 {file.sha256}</small>
+            </li>)}</ul> : <p className="code-scan-empty">No files were included in the scan manifest.</p>}
+          </section>
         </section>}
       </WindowPanel>
 

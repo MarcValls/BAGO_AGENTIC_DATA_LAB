@@ -38,6 +38,16 @@
 .code-scan-findings code { overflow-wrap: anywhere; color: #9cc9fa; font-size: .72rem; }
 .code-scan-findings small { margin-top: 4px; color: #9eacc0; }
 .code-scan-empty { color: #9fb1c6; font-size: .85rem; }
+.code-scan-files { margin-top: 18px; padding-top: 14px; border-top: 1px solid rgba(255,255,255,.1); }
+.code-scan-files-heading { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+.code-scan-files-heading h3 { margin: 0; color: #dce8f6; font-size: .88rem; }
+.code-scan-files-heading span { color: #9fb1c6; font-size: .75rem; }
+.code-scan-files > p { margin: 7px 0 10px; color: #8196ad; font-size: .72rem; }
+.code-scan-files ul { display: flex; flex-direction: column; gap: 0; max-height: 320px; overflow: auto; margin: 0; padding: 0; list-style: none; }
+.code-scan-files li { display: flex; flex-direction: column; gap: 4px; padding: 9px 10px; border-bottom: 1px solid rgba(255,255,255,.07); }
+.code-scan-files li:last-child { border-bottom: 0; }
+.code-scan-files code { overflow-wrap: anywhere; color: #c8dcf2; font-size: .76rem; }
+.code-scan-files small { overflow-wrap: anywhere; color: #8297ae; font-size: .68rem; }
 .code-scan-method { margin-top: 15px; color: #9fb1c6; font-size: .76rem; }
 .code-scan-method summary { color: #c6d5e5; cursor: pointer; }
 .code-scan-method p { margin: 9px 0; line-height: 1.5; }
