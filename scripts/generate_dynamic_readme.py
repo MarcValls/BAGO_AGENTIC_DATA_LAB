@@ -762,9 +762,9 @@ def render_readme(
         "",
         "### Jaeger y OpenTelemetry (L15)",
         "",
-        "La evidencia local del 2026-10-08 enlaza la traza BAGO `trace-5b385699ffda0529` con la traza consultada en Jaeger `04b58bb123bb6cc94a8cc0d60c7145ae`: 15 spans proyectados y 15 observados, 13 operaciones y estado `PASS`. La captura archivada muestra el timeline de esa traza; es evidencia histórica del resultado, no disponibilidad actual de Jaeger.",
+        "La evidencia L15 del 2026-10-08 enlaza la traza BAGO `trace-5b385699ffda0529` con la traza consultada en Jaeger `04b58bb123bb6cc94a8cc0d60c7145ae`: 15 spans proyectados y 15 observados, 13 operaciones y estado `PASS`. La captura del grafo que acompaña la demo corresponde a otra ejecución local del 2026-10-07 (`94ee6c8d7a05b27487489a97da7480a5`), también con 15 spans; es una referencia visual y no la captura de la traza del informe L15.",
         "",
-        f"![Captura de Jaeger: traza agent.run con 15 spans y relaciones padre-hijo]({jaeger_capture})",
+        f"![Grafo de Jaeger: traza agent.run 94ee6c8d7a05b27487489a97da7480a5, 15 spans, validada localmente el 2026-10-07]({jaeger_capture})",
         "",
         "[Informe y datos completos L15](evidence/l15_otel_jaeger_live.md) · [intento de captura del freeze](evidence/l15_jaeger_capture_attempt.md) · [guía para reproducir Jaeger](docs/otel_jaeger.md).",
         "",
@@ -835,10 +835,8 @@ def render_readme(
         "MIT License · [LICENSE](LICENSE)",
         "",
     ]
-    # Keep the README's reading path close to the project's portfolio page:
-    # purpose, architecture, runnable demo, observed evidence, current state,
-    # canonical sources, roadmap and detailed inventories. Each section remains
-    # generated from the same canonical inputs; this only changes presentation.
+    # Keep one reader path: purpose, overview, runnable demo, evidence, UI,
+    # current state, project sources, roadmap and detailed architecture.
     first_section = next(i for i, line in enumerate(lines) if line.startswith("## "))
     intro, body = lines[:first_section], lines[first_section:]
     sections: dict[str, list[str]] = {}
@@ -859,10 +857,10 @@ def render_readme(
         "## Evidencia de ejecución y límites",
         "## Ver la interfaz en acción",
         "## Estado actual",
+        "## Recorrido de datos y arquitectura actual",
+        "## Roadmap y evidencia por fase",
         "## Fuentes canónicas del proyecto",
         "## Agente de sincronización y catálogo de agentes",
-        "## Roadmap y evidencia por fase",
-        "## Recorrido de datos y arquitectura actual",
         "## Alineación profesional y matriz de skills",
         "## Reproducir y verificar",
         "## Contrato de generación del README",

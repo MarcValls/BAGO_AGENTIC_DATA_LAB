@@ -37,7 +37,7 @@
     "agent_model": "kimi-k2.6",
     "credential_redaction": "API key"
   },
-  "jaeger_capture": "docs/decision-inspector/MANUAL_PARA_DUMMIES_assets/jaeger.png",
+  "jaeger_capture": "portfolio/assets/jaeger-trace-graph.png",
   "business_demo": {
     "guide": "output/playwright/bruma-market-tutorial/README.md",
     "orders": "output/playwright/bruma-market-tutorial/extracted/orders.json",
