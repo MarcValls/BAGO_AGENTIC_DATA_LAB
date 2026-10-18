@@ -294,6 +294,108 @@ def _render_phase_table(phases: list[dict[str, Any]]) -> str:
         )
     return "\n".join(lines)
 
+
+def _links(paths: list[str], *, limit: int | None = None) -> str:
+    selected = paths if limit is None else paths[:limit]
+    if not selected:
+        return "—"
+    links = " · ".join(f"[{_inline(path)}]({path})" for path in selected)
+    remainder = len(paths) - len(selected)
+    return links + (f" · (+{remainder} archivos)" if remainder else "")
+
+
+def _render_phase_evidence(phases: list[dict[str, Any]]) -> str:
+    """Render repository-discovered code, test, evidence, and artifact gaps."""
+    lines = [
+        "| Fase | Código localizado | Tests | Evidencia | Patrones sin resolver |",
+        "|---|---|---|---|---|",
+    ]
+    for phase in phases:
+        by_kind = {check["kind"]: check for check in phase.get("checks", [])}
+        code = by_kind.get("code", {}).get("matches", [])
+        tests = by_kind.get("tests", {}).get("matches", [])
+        evidence = by_kind.get("evidence", {}).get("matches", [])
+        missing = [
+            pattern
+            for check in phase.get("checks", [])
+            for pattern in check.get("missing", [])
+        ]
+        lines.append(
+            f"| {phase['id']} | {_links(code, limit=3)} | "
+            f"{_links(tests, limit=3)} | {_links(evidence, limit=4)} | "
+            f"{_cell(', '.join(missing) if missing else 'ninguno')} |"
+        )
+    return "\n".join(lines)
+
+
+def _render_business_demo(manifest: dict[str, Any]) -> str:
+    """Render the app-produced fictional Bruma order cases and provenance."""
+    config = manifest.get("business_demo", {})
+    required = (
+        "guide", "orders", "decisions", "run_evidence", "input_orders",
+        "policy", "qa", "profiles", "video", "subtitles", "hash_manifest",
+    )
+    missing = [key for key in required if not config.get(key)]
+    if missing:
+        raise ValueError("Business demo metadata is missing: " + ", ".join(missing))
+    absent = [path for path in config.values() if not (REPO_ROOT / path).is_file()]
+    if absent:
+        raise FileNotFoundError("Business demo artifacts missing: " + ", ".join(absent))
+
+    orders_data = _read_json(REPO_ROOT / config["orders"])
+    decisions_data = _read_json(REPO_ROOT / config["decisions"])
+    run_data = _read_json(REPO_ROOT / config["run_evidence"])
+    orders = {item["order_id"]: item for item in orders_data.get("orders", [])}
+    lines = [
+        "| Pedido | Envío | Retraso | Decisión registrada | Importe de envío elegible |",
+        "|---|---|---:|---|---:|",
+    ]
+    for item in decisions_data.get("decisions", []):
+        order = orders.get(item["order_id"], {})
+        delay = order.get("delay_hours")
+        delay_text = f"{delay} h" if delay is not None else "sin dato"
+        amount = item.get("refund_shipping_fee_eur")
+        amount_text = f"€{amount:.2f} (solo envío)" if amount is not None else "—"
+        lines.append(
+            f"| {item['order_id']} | {_cell(order.get('shipping_method', 'desconocido'))} | "
+            f"{delay_text} | `{item['decision']}` | {amount_text} |"
+        )
+
+    runs = run_data.get("runs", [])
+    trace_ids = [
+        run.get("trace", {}).get("trace_id", "")
+        for run in runs
+        if run.get("trace", {}).get("trace_id")
+    ]
+    sources = [source for run in run_data.get("runs", []) for source in run.get("sources", [])]
+    source_ids = sorted({source.get("file_sha256", "") for source in sources if source.get("file_sha256")})
+    order_hash = next(
+        (source.get("file_sha256") for source in sources if source.get("path") == config["input_orders"]),
+        "NOT_RECORDED",
+    )
+    no_actions = not decisions_data.get("actions_executed", [])
+    validation = run_data.get("validation", {})
+    status = run_data.get("status", "NOT_DECLARED")
+    return "\n".join(
+        [
+            "## Recorrido comercial de la app: Bruma Market",
+            "",
+            "Este tutorial usa pedidos y políticas totalmente ficticios. Documenta dos conversaciones de agentes ejecutadas en la app: un extractor produce JSON y un revisor aplica la política con evidencia autorizada. No son pedidos ni clientes reales.",
+            "",
+            *lines,
+            "",
+            f"**Ejecución registrada:** `{status}`; cuatro casos QA: `{', '.join(validation.get('decisions', []))}`; `actions_executed` vacío: `{no_actions}`. Ningún reembolso se ejecutó.",
+            f"**Trazas de las conversaciones:** {', '.join(_inline(trace_id) for trace_id in trace_ids) or 'sin ID registrado'} (`local_only`; no Jaeger export). SHA-256 del CSV autorizado: `{order_hash}`. SHA distintos presentes en recibos: {len(source_ids)}.",
+            "",
+            "La regla estricta solo cubre envíos EXPRESS con más de 24 h de retraso y devuelve únicamente la tarifa de envío. Exactamente 24 h no cumple; STANDARD no entra en la regla; sin hora de entrega queda pendiente.",
+            "",
+            f"**Revisa el tutorial:** [guía paso a paso]({config['guide']}) · [vídeo MP4]({config['video']}) · [subtítulos]({config['subtitles']}) · [hash manifest]({config['hash_manifest']}). Entradas: [CSV de pedidos]({config['input_orders']}), [política]({config['policy']}) y [QA esperado]({config['qa']}). Resultados y receipts: [extracción JSON]({config['orders']}), [decisiones]({config['decisions']}), [recibos de lectura y trazas]({config['run_evidence']}) y [perfiles/runs guardados]({config['profiles']}).",
+            "",
+            "**Límite del conjunto:** solo contiene pedidos sintéticos, política, QA y recibos de lectura. No aporta directorio de clientes, facturas ni albaranes; esos casos requieren datos y escenarios propios antes de afirmar que están demostrados.",
+            "",
+        ]
+    )
+
 def _render_canonical_documents(manifest: dict[str, Any]) -> str:
     lines = [
         "| Documento | Función | Estado en este checkout |",
@@ -644,9 +746,17 @@ def render_readme(
         "",
         _render_phase_table(phases),
         "",
+        "## Inventario de artefactos por fase",
+        "",
+        "Los enlaces de esta tabla se descubren desde los patrones declarados y el checkout actual. `—` significa que el patrón no localizó archivos; no se interpreta como prueba de inexistencia fuera de este checkout.",
+        "",
+        _render_phase_evidence(phases),
+        "",
         "## Arquitectura y recorrido de datos",
         "",
-        "**Recorrido:** " + " → ".join(manifest["architecture"]["pipeline"]),
+        _render_architecture(manifest),
+        "",
+        _render_business_demo(manifest),
         "",
         "## Evidencia y límites",
         "",
@@ -671,9 +781,22 @@ def render_readme(
         f"- [Traza de la sesión documentada]({trace}) · [archivo de ejemplo]({input_file})",
         "",
         "La grabación acredita la lectura y respuesta acotadas descritas en la guía; no una auditoría del código ni ejecución de trabajos.",
-        "## Objetivos profesionales y skills",
         "",
-        f"El contrato registra {len(parse_roles())} objetivos de rol; la matriz incluye {len(parse_skills())} skills técnicas y {len(parse_soft_skills())} estratégicas. Son estimaciones del proyecto, no una evaluación independiente ni ofertas vigentes. Roles y requisitos: [.bago/canon/LAB_CONTRACT.md](.bago/canon/LAB_CONTRACT.md) · [matriz completa](.bago/canon/JOB_SKILL_MATRIX.md).",
+        "## Vacantes objetivo y matriz completa de skills",
+        "",
+        "Datos copiados de los documentos canónicos; porcentajes, niveles, salarios y plazos son estimaciones históricas del proyecto, no evaluaciones independientes ni ofertas laborales vigentes.",
+        "",
+        "### Roles objetivo",
+        "",
+        _render_roles(parse_roles()),
+        "",
+        "### Skills técnicas",
+        "",
+        _render_skills(parse_skills()),
+        "",
+        "### Skills estratégicas y personales",
+        "",
+        _render_soft_skills(parse_soft_skills()),
         "",
         "## Catálogo de agentes y sincronización",
         "",

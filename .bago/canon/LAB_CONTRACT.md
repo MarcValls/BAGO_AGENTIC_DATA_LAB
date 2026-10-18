@@ -92,11 +92,14 @@ ExecutionRequest → AuthorizationBoundary → Permit → ExecutionGateway
    - Nunca construir claims de CV antes de existir evidencia
    - Cada milestone debe ser publicable en GitHub
 
-5. **Prioridad de coste cero para la siguiente capacidad**
-   - Preferir `coste = 0` + evidencia pública + skill repetida en ofertas +
-     mejora real de BAGO
-   - Posponer AWS live, certificaciones y servicios cloud de pago hasta contar
-     con créditos/free tier o una necesidad laboral concreta
+5. **Uso gobernado de servicios cloud y créditos**
+   - La instrucción del usuario del 2026-10-18 autoriza usar los créditos AWS
+     disponibles para evidencias acotadas de Bedrock.
+   - Verificar identidad, créditos y cuota antes de cada intento; limitar cada
+     ejecución a una llamada autorizada, registrar receipt y uso observado.
+   - No tratar el coste estimado del adaptador como factura o saldo real.
+   - Detener inferencia mientras la cuota diaria de Bedrock responda
+     `ThrottlingException`; no crear otros recursos AWS bajo esta autorización.
 
 ---
 
