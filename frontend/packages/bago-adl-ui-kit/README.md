@@ -8,6 +8,8 @@ Pack reutilizable de estilos y componentes React para mantener una imagen común
 - `components.css`: estilos aislados para los componentes del pack, con foco visible y adaptación móvil.
 - `components.tsx` / `index.ts`: `BagoButton`, `BagoPanel`, `BagoPageHeader`, `BagoMetric`, `BagoStatus`, `BagoEmptyState`, `BagoTabStrip` y `BagoDataGrid`.
 
+`BagoButton` usa `type="button"` por defecto para no enviar formularios accidentalmente; pasa `type="submit"` cuando esa sea la acción prevista. Cuando `BagoDataGrid` recibe `onSelect`, añade una columna con botones accesibles de selección y refleja la fila activa visualmente.
+
 ## Instalación manual
 
 Copia esta carpeta al proyecto React consumidor. Instala los estilos una vez en su entrada:

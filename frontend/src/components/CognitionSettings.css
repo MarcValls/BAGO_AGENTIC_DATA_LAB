@@ -36,3 +36,41 @@
 .context-paths .context-path-error { color: #ff9b9b; }
 .cognition-settings button { padding: 8px 12px; border: 1px solid #57779e; border-radius: 6px; background: #20344e; color: #edf4ff; cursor: pointer; }
 .cognition-settings button:focus-visible, .cognition-mode input:focus-visible { outline: 2px solid #78b2f0; outline-offset: 3px; }
+.workspace-settings { width: min(100%, 980px); max-width: 980px; margin: 0 auto; padding: clamp(18px, 3vw, 34px); border: 1px solid #263a52; border-radius: 18px; background: radial-gradient(ellipse at 10% 0%, #203958 0, transparent 46%), linear-gradient(145deg, #101c2a, #0b1420 68%); box-shadow: 0 24px 64px #02070d80; }
+.workspace-heading { margin-bottom: 26px; }
+.workspace-heading > span { color: #83b7f4; font-size: .68rem; font-weight: 750; letter-spacing: .15em; }
+.workspace-heading h3 { margin: 8px 0; font-size: clamp(1.5rem, 3vw, 2rem); }
+.workspace-heading p { margin: 0; color: #9eb1c7; }
+.workspace-picker { padding: 18px; border: 1px solid #39536e; border-radius: 12px; background: #111f2fdd; box-shadow: inset 0 1px #ffffff08; }
+.workspace-picker > label { display: block; margin-bottom: 8px; color: #e4effc; font-size: .84rem; font-weight: 700; }
+.workspace-path-row { display: flex; gap: 8px; }
+.workspace-path-row input { min-width: 0; flex: 1; padding: 11px 12px; border: 1px solid #47627e; border-radius: 8px; background: #09131f; color: #eaf3ff; font: .84rem ui-monospace, SFMono-Regular, Consolas, monospace; }
+.workspace-path-row input:focus-visible { outline: 2px solid #78b2f0; outline-offset: 2px; }
+.workspace-path-row button { white-space: nowrap; border-color: #456589; background: #1b3552; }
+.workspace-path-row .workspace-browse { background: #294b70; }
+.workspace-picker > small { display: block; margin-top: 10px; color: #91a7bf; line-height: 1.5; }
+.workspace-picker .cognition-status, .workspace-picker .context-path-error { margin: 12px 0 0; }
+.workspace-context { margin-top: 26px; }
+.workspace-context-intro { margin: 0 0 14px; }
+.workspace-context-intro h4 { margin: 0 0 5px; color: #f0f6ff; font-size: 1.05rem; }
+.workspace-context-intro p { margin: 0; color: #93a8be; font-size: .83rem; }
+.workspace-layers { display: grid; gap: 12px; padding: 0; margin: 0; list-style: none; counter-reset: layer; }
+.workspace-layer { position: relative; padding: 16px 18px 17px; border: 1px solid #2d435a; border-radius: 12px; background: linear-gradient(125deg, #17283a, #111d2b); }
+.workspace-layer::after { content: '↓'; position: absolute; z-index: 1; bottom: -17px; left: 27px; color: #6d95c0; font-size: 17px; }
+.workspace-layer:last-child::after { content: none; }
+.workspace-layer.layer-unavailable { border-style: dashed; border-color: #536277; background: #141d28; }
+.workspace-layer-title { display: flex; align-items: center; gap: 11px; }
+.layer-number { display: grid; width: 30px; height: 30px; place-items: center; border-radius: 9px; background: #274363; color: #a8d0ff; font-size: .7rem; font-weight: 750; }
+.layer-unavailable .layer-number { background: #303947; color: #b8c0cc; }
+.workspace-layer-title h5 { margin: 0; color: #eff6ff; font-size: .92rem; }
+.layer-state { display: inline-block; margin-top: 3px; color: #8ea5bd; font-size: .69rem; }
+.workspace-layer p { max-width: 78ch; margin: 11px 0 0; color: #afc0d3; font-size: .8rem; line-height: 1.55; }
+.workspace-sources { display: grid; gap: 7px; margin-top: 13px; }
+.workspace-source { min-width: 0; padding: 9px 11px; border: 1px solid #31485f; border-radius: 8px; background: #0c1724; }
+.workspace-source > div { display: flex; justify-content: space-between; gap: 10px; color: #c8d7e8; font-size: .75rem; }
+.workspace-source > div span { color: #8fe0ae; font-size: .7rem; }
+.workspace-source.absent > div span { color: #ffaf9f; }
+.workspace-source code { display: block; margin-top: 6px; overflow: hidden; color: #89a2bc; font-size: .68rem; text-overflow: ellipsis; white-space: nowrap; }
+.workspace-source.active { margin-top: 12px; border-color: #4c79a5; background: #11243a; }
+.workspace-context details > summary { cursor: pointer; }
+@media (max-width: 640px) { .workspace-settings { padding: 16px; border-radius: 12px; } .workspace-path-row { flex-wrap: wrap; } .workspace-path-row input { flex-basis: 100%; } .workspace-path-row button { flex: 1; } .workspace-layer { padding: 14px; } }

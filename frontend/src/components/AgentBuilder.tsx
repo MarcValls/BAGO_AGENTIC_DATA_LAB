@@ -1,21 +1,27 @@
 import './AgentBuilder.css'
 import { useState } from 'react'
 
-interface AgentConfig {
+export interface AgentConfig {
   name: string
   description: string
   type: 'rag' | 'tool' | 'multi-agent'
   system_prompt: string
+  provider_id?: 'ollama-cloud' | null
+  model_id?: string | null
   tools: string[]
   retrieval_config?: {
     mode: 'hybrid' | 'semantic' | 'lexical'
     top_k: number
-  }
+  } | null
   sandbox_profile?: string
 }
 
 interface AgentBuilderProps {
   onAgentCreated?: (agent: AgentConfig) => void
+  onBack?: () => void
+  initialAgent?: AgentConfig
+  agentId?: string
+  inline?: boolean
 }
 
 const TOOL_OPTIONS = [
@@ -26,59 +32,20 @@ const TOOL_OPTIONS = [
   { id: 'sandbox.run', label: 'Sandbox Execution' },
 ]
 
-const AGENT_TEMPLATES: Record<string, AgentConfig> = {
-  'rag-basic': {
-    name: 'Basic RAG Agent',
-    description: 'Simple retrieval-augmented generation agent',
-    type: 'rag',
-    system_prompt: 'You are a helpful assistant that answers questions based on retrieved context.',
-    tools: ['retrieval.search', 'bedrock.converse'],
-    retrieval_config: { mode: 'hybrid', top_k: 5 },
-  },
-  'multi-tool': {
-    name: 'Multi-Tool Agent',
-    description: 'Agent with multiple tool capabilities',
-    type: 'multi-agent',
-    system_prompt: 'You are an intelligent agent with access to multiple tools. Use them appropriately.',
-    tools: ['retrieval.search', 'bedrock.converse', 'ontology.query', 'mcp.execute'],
-    sandbox_profile: 'test_runner',
-  },
-}
-
-export default function AgentBuilder({ onAgentCreated }: AgentBuilderProps) {
-  const [step, setStep] = useState<'select' | 'configure' | 'preview' | 'complete'>('select')
-  const [agent, setAgent] = useState<AgentConfig>({
+export default function AgentBuilder({ onAgentCreated, onBack, initialAgent, agentId, inline = false }: AgentBuilderProps) {
+  const editing = Boolean(agentId)
+  const [step, setStep] = useState<'configure' | 'preview' | 'complete'>('configure')
+  const [agent, setAgent] = useState<AgentConfig>(initialAgent ? { ...initialAgent } : {
     name: '',
     description: '',
     type: 'rag',
     system_prompt: '',
     tools: [],
   })
-  const [selectedTemplate, setSelectedTemplate] = useState<string | null>(null)
   const [createdAgents, setCreatedAgents] = useState<AgentConfig[]>([])
   const [saving, setSaving] = useState(false)
   const [saveStatus, setSaveStatus] = useState<'idle' | 'success' | 'error'>('idle')
-
-  const loadTemplate = (templateId: string) => {
-    const template = AGENT_TEMPLATES[templateId as keyof typeof AGENT_TEMPLATES]
-    if (template) {
-      setAgent({ ...template })
-      setSelectedTemplate(templateId)
-      setStep('configure')
-    }
-  }
-
-  const startCustom = () => {
-    setAgent({
-      name: '',
-      description: '',
-      type: 'rag',
-      system_prompt: '',
-      tools: [],
-    })
-    setSelectedTemplate(null)
-    setStep('configure')
-  }
+  const [saveError, setSaveError] = useState('')
 
   const updateAgent = (updates: Partial<AgentConfig>) => {
     setAgent((prev) => ({ ...prev, ...updates }))
@@ -100,9 +67,10 @@ export default function AgentBuilder({ onAgentCreated }: AgentBuilderProps) {
     }
 
     setSaving(true)
+    setSaveError('')
     try {
-      const response = await fetch('/api/agents/create', {
-        method: 'POST',
+      const response = await fetch(editing ? `/api/agents/${encodeURIComponent(agentId as string)}` : '/api/agents/create', {
+        method: editing ? 'PUT' : 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(agent),
       })
@@ -115,18 +83,20 @@ export default function AgentBuilder({ onAgentCreated }: AgentBuilderProps) {
           if (onAgentCreated) onAgentCreated(agent)
         }, 1000)
       } else {
+        const body = await response.json().catch(() => null) as { detail?: { message?: string } } | null
+        setSaveError(body?.detail?.message || `The profile could not be saved (${response.status}).`)
         setSaveStatus('error')
       }
     } catch (error) {
       setSaveStatus('error')
-      console.error('Error saving agent:', error)
+      setSaveError(error instanceof Error ? error.message : 'The profile could not be saved.')
     } finally {
       setSaving(false)
     }
   }
 
   const reset = () => {
-    setStep('select')
+    setStep('configure')
     setAgent({
       name: '',
       description: '',
@@ -134,44 +104,19 @@ export default function AgentBuilder({ onAgentCreated }: AgentBuilderProps) {
       system_prompt: '',
       tools: [],
     })
-    setSelectedTemplate(null)
     setSaveStatus('idle')
+    setSaveError('')
   }
 
   return (
-    <div className="agent-builder">
-      <div className="wizard-header">
-        <h2>🤖 Agent Builder</h2>
-      </div>
-
-      {step === 'select' && (
-        <div className="wizard-step">
-          <h3>Choose a Starting Point</h3>
-
-          <div className="templates-grid">
-            {Object.entries(AGENT_TEMPLATES).map(([id, template]) => (
-              <div key={id} className="template-card" onClick={() => loadTemplate(id)}>
-                <h4>{template.name}</h4>
-                <p>{template.description}</p>
-                <div className="template-meta">
-                  <span className="badge">{template.type}</span>
-                  <span className="badge">{template.tools.length} tools</span>
-                </div>
-              </div>
-            ))}
-          </div>
-
-          <div className="separator">— or —</div>
-
-          <button onClick={startCustom} className="btn btn-secondary btn-large">
-            ✏️ Create Custom Agent
-          </button>
-        </div>
-      )}
+    <div className={`agent-builder${inline ? ' agent-builder-inline' : ''}`}>
+      {(!inline || editing) && <div className="wizard-header">
+        <h2>{editing ? 'Edit agent' : '🤖 Agent Builder'}</h2>
+      </div>}
 
       {step === 'configure' && (
         <div className="wizard-step">
-          <h3>Configure Agent</h3>
+          <h3>{editing ? 'Agent profile' : 'Configure Agent'}</h3>
 
           <div className="form-group">
             <label>Agent Name *</label>
@@ -239,9 +184,7 @@ export default function AgentBuilder({ onAgentCreated }: AgentBuilderProps) {
             <button onClick={() => setStep('preview')} className="btn btn-primary btn-large">
               ➜ Preview
             </button>
-            <button onClick={() => setStep('select')} className="btn btn-secondary">
-              Back
-            </button>
+            {(!inline || editing) && <button type="button" onClick={onBack} className="btn btn-secondary">{editing ? 'Cancel' : 'Back'}</button>}
           </div>
         </div>
       )}
@@ -282,7 +225,7 @@ export default function AgentBuilder({ onAgentCreated }: AgentBuilderProps) {
               disabled={saving || !agent.name}
               className={`btn btn-primary btn-large ${saving ? 'disabled' : ''}`}
             >
-              {saving ? '⏳ Saving...' : '💾 Save Agent'}
+              {saving ? '⏳ Saving...' : editing ? 'Save changes' : '💾 Save Agent'}
             </button>
             <button onClick={() => setStep('configure')} className="btn btn-secondary">
               Back
@@ -293,7 +236,7 @@ export default function AgentBuilder({ onAgentCreated }: AgentBuilderProps) {
             <div className="status-message success">✓ Agent saved successfully!</div>
           )}
           {saveStatus === 'error' && (
-            <div className="status-message error">✗ Error saving agent. Try again.</div>
+            <div className="status-message error" role="alert">✗ {saveError || 'Error saving agent. Try again.'}</div>
           )}
         </div>
       )}
@@ -302,7 +245,7 @@ export default function AgentBuilder({ onAgentCreated }: AgentBuilderProps) {
         <div className="wizard-step">
           <div className="completion-panel">
             <div className="completion-icon">✓</div>
-            <h3>Agent Created!</h3>
+            <h3>{editing ? 'Changes saved' : 'Agent Created!'}</h3>
             <p className="agent-name">{agent.name}</p>
 
             <div className="completion-details">

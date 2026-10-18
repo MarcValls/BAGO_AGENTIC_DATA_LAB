@@ -1,15 +1,19 @@
 import './AgentRunner.css'
-import DirectoryScanRun from './DirectoryScanRun'
 import { useState, useEffect } from 'react'
+import AgentBuilder, { type AgentConfig } from './AgentBuilder'
 
 interface Agent {
   id: string
   config: {
     name: string
     description: string
-    type: string
+    type: AgentConfig['type']
     system_prompt: string
     tools: string[]
+    provider_id?: AgentConfig['provider_id']
+    model_id?: AgentConfig['model_id']
+    retrieval_config?: AgentConfig['retrieval_config']
+    sandbox_profile?: string
   }
   created_at: string
 }
@@ -29,6 +33,7 @@ export default function AgentRunner() {
   const [agents, setAgents] = useState<Agent[]>([])
   const [loading, setLoading] = useState(true)
   const [selectedAgent, setSelectedAgent] = useState<Agent | null>(null)
+  const [editingAgent, setEditingAgent] = useState(false)
   const [isRunning, setIsRunning] = useState(false)
   const [logs, setLogs] = useState<string[]>([])
   const [result, setResult] = useState<ExecutionResult | null>(null)
@@ -155,12 +160,11 @@ export default function AgentRunner() {
   }
 
   if (loading) {
-    return <div className="agent-runner"><DirectoryScanRun /><p role="status">Loading agent profiles…</p></div>
+    return <div className="agent-runner"><p role="status">Loading agent profiles…</p></div>
   }
 
   return (
     <div className="agent-runner">
-      <DirectoryScanRun />
       {notification && (
         <div className={`notification notification-${notification.type}`}>
           {notification.message}
@@ -200,7 +204,17 @@ export default function AgentRunner() {
                 <div
                   key={agent.id}
                   className={`agent-item ${selectedAgent?.id === agent.id ? 'selected' : ''}`}
-                  onClick={() => setSelectedAgent(agent)}
+                  role="button"
+                  tabIndex={0}
+                  aria-label={`Open profile for ${agent.config.name}`}
+                  onClick={() => { setSelectedAgent(agent); setEditingAgent(false) }}
+                  onKeyDown={(event) => {
+                    if (event.key === 'Enter' || event.key === ' ') {
+                      event.preventDefault()
+                      setSelectedAgent(agent)
+                      setEditingAgent(false)
+                    }
+                  }}
                 >
                   <div className="agent-item-header">
                     <strong>{agent.config.name}</strong>
@@ -225,49 +239,35 @@ export default function AgentRunner() {
           )}
         </div>
 
-        {selectedAgent && (
-          <div className="execution-panel">
-            <h3>Execution: {selectedAgent.config.name}</h3>
-
-            <div className="execution-logs">
-              <h4>Logs</h4>
-              <div className="logs-box">
-                {logs.length === 0 ? (
-                  <p>Execution unavailable. No job was started.</p>
-                ) : (
-                  logs.map((line, idx) => (
-                    <div key={idx} className="log-line">
-                      {line}
-                    </div>
-                  ))
-                )}
+        {selectedAgent && <section className="agent-profile-panel" aria-label={`Agent profile: ${selectedAgent.config.name}`}>
+          {editingAgent ? <AgentBuilder
+            inline
+            agentId={selectedAgent.id}
+            initialAgent={selectedAgent.config}
+            onBack={() => setEditingAgent(false)}
+            onAgentCreated={(config) => {
+              setAgents((current) => current.map((agent) => agent.id === selectedAgent.id ? { ...agent, config } : agent))
+              setSelectedAgent((current) => current?.id === selectedAgent.id ? { ...current, config } : current)
+              setEditingAgent(false)
+              void fetchAgents()
+            }}
+          /> : <>
+            <header className="agent-profile-header">
+              <div><span className="agent-profile-kicker">AGENT PROFILE</span><h3>{selectedAgent.config.name}</h3><span className="badge">{selectedAgent.config.type}</span></div>
+              <div className="agent-profile-actions">
+                <button type="button" className="btn btn-primary btn-small" onClick={() => setEditingAgent(true)}>Edit agent</button>
+                <button type="button" className="btn btn-secondary btn-small" onClick={() => { setSelectedAgent(null); setEditingAgent(false) }}>Close</button>
               </div>
-            </div>
-
-            {result && (
-              <div className="execution-result">
-                <h4>Result</h4>
-                <div className="result-details">
-                  <div>
-                    <strong>Status:</strong> <span className={`badge badge-${result.status}`}>{result.status}</span>
-                  </div>
-                  <div>
-                    <strong>Job ID:</strong> <code>{result.job_id || 'N/A'}</code>
-                  </div>
-                  <div>
-                    <strong>Duration:</strong> {(result.duration_ms / 1000).toFixed(2)}s
-                  </div>
-                  <div>
-                    <strong>Cost:</strong> ${result.cost_usd.toFixed(4)}
-                  </div>
-                  <div>
-                    <strong>Exit code:</strong> <code>{result.exit_code ?? 'missing'}</code>
-                  </div>
-                </div>
-              </div>
-            )}
-          </div>
-        )}
+            </header>
+            <dl className="agent-profile-fields">
+              <div><dt>Description</dt><dd>{selectedAgent.config.description || 'No description provided.'}</dd></div>
+              <div><dt>Provider and model</dt><dd>{selectedAgent.config.provider_id || 'No provider recorded'} · {selectedAgent.config.model_id || 'No model assigned'}</dd></div>
+              <div><dt>Tools ({selectedAgent.config.tools.length})</dt><dd>{selectedAgent.config.tools.length ? <ul>{selectedAgent.config.tools.map((tool) => <li key={tool}><code>{tool}</code></li>)}</ul> : 'No tools assigned'}</dd></div>
+              <div className="agent-profile-prompt"><dt>System prompt</dt><dd><pre>{selectedAgent.config.system_prompt || 'No system prompt provided.'}</pre></dd></div>
+              <div><dt>Created</dt><dd><time dateTime={selectedAgent.created_at}>{new Date(selectedAgent.created_at).toLocaleString()}</time></dd></div>
+            </dl>
+          </>}
+        </section>}
       </div>
     </div>
   )

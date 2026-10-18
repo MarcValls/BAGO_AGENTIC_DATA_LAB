@@ -1,11 +1,9 @@
 import './DirectoryScanRun.css'
-import './WindowsSurface.css'
 import { FormEvent, useState } from 'react'
-import WindowPanel from './WindowPanel'
 
-type ScanLocation = { path: string; start_line: number; end_line: number; name?: string }
-type DuplicateFinding = { kind: 'exact_block' | 'similar_python_function_structure'; similarity: number | string; left: ScanLocation; right: ScanLocation }
-type ScanReport = {
+export type ScanLocation = { path: string; start_line: number; end_line: number; name?: string }
+export type DuplicateFinding = { kind: 'exact_block' | 'similar_python_function_structure'; similarity: number | string; left: ScanLocation; right: ScanLocation }
+export type ScanReport = {
   ok: boolean
   directory: string
   files_scanned: number
@@ -19,10 +17,21 @@ type ScanReport = {
   method: { exact: string; similar: string }
   limitations: string[]
   findings: DuplicateFinding[]
+  error?: string
 }
-type ScanManifestFile = { path: string; sha256: string; bytes: number }
-type ScanReceipt = { path: string; files_scanned: number; finding_count: number; manifest_sha256: string; duration_ms: number; truncated: boolean; files: ScanManifestFile[] }
-type ScanOutcome = { result: ScanReport; receipt: ScanReceipt; trace: { trace_id: string; trace_state: string }; conversation_id: string }
+export type ScanManifestFile = { path: string; sha256: string; bytes: number }
+export type ScanReceipt = { path: string; files_scanned: number; finding_count: number; manifest_sha256: string; duration_ms: number; truncated: boolean; files: ScanManifestFile[] }
+export type ScanTrace = { trace_id: string; trace_state: string }
+export type ScanOutcome = { result: ScanReport; receipt: ScanReceipt; trace: ScanTrace; conversation_id: string }
+
+type DirectoryScanRunProps = {
+  conversationId: string
+  revision: number
+  disabled?: boolean
+  showForm: boolean
+  initialOutcome?: ScanOutcome
+  onConversationUpdate: (conversation: { id: string; revision: number; status: string; [key: string]: unknown }) => void
+}
 
 async function responseError(response: Response): Promise<string> {
   try {
@@ -37,44 +46,36 @@ function locationLabel(location: ScanLocation): string {
   return `${location.path}:${location.start_line}-${location.end_line}`
 }
 
-export default function DirectoryScanRun() {
-  const [directory, setDirectory] = useState('')
+export default function DirectoryScanRun({ conversationId, revision, disabled = false, showForm, initialOutcome, onConversationUpdate }: DirectoryScanRunProps) {
+  const [directory, setDirectory] = useState('.')
   const [authorized, setAuthorized] = useState(false)
   const [scanning, setScanning] = useState(false)
   const [error, setError] = useState('')
-  const [outcome, setOutcome] = useState<ScanOutcome | null>(null)
 
   const runScan = async (event: FormEvent) => {
     event.preventDefault()
     const target = directory.trim().replace(/\\/g, '/')
-    if (!target) { setError('Enter one exact project-relative directory.'); return }
-    if (!authorized) { setError('Authorize one read-only scan of this directory before running it.'); return }
+    if (!target) { setError('Enter a project-relative directory.'); return }
+    if (!authorized) { setError('Authorize this directory before scanning.'); return }
     setAuthorized(false)
     setScanning(true)
     setError('')
-    setOutcome(null)
     try {
-      const conversationResponse = await fetch('/api/conversations', {
-        method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ owner_kind: 'assistant', owner_id: 'app-assistant', title: `Code duplicate scan: ${target}`.slice(0, 160) }),
-      })
-      if (!conversationResponse.ok) throw new Error(await responseError(conversationResponse))
-      const conversation = await conversationResponse.json()
       const authorizationResponse = await fetch('/api/workspace-scan/authorizations', {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ owner_kind: 'assistant', owner_id: 'app-assistant', conversation_id: conversation.id, revision: conversation.revision, directories: [target] }),
+        body: JSON.stringify({ owner_kind: 'assistant', owner_id: 'app-assistant', conversation_id: conversationId, revision, directories: [target] }),
       })
       if (!authorizationResponse.ok) throw new Error(await responseError(authorizationResponse))
       const authorization = await authorizationResponse.json()
       const scanResponse = await fetch('/api/workspace-scan/run', {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ conversation_id: conversation.id, revision: conversation.revision, authorization_id: authorization.authorization_id, directory: target }),
+        body: JSON.stringify({ conversation_id: conversationId, revision, authorization_id: authorization.authorization_id, directory: target }),
       })
       if (!scanResponse.ok) throw new Error(await responseError(scanResponse))
-      const data = await scanResponse.json() as ScanOutcome
-      if (!data.result?.ok) { setError((data.result as ScanReport & { error?: string })?.error ?? 'The authorized directory could not be scanned.'); return }
-      if (!data.result || typeof data.result.finding_count !== 'number' || !data.receipt?.manifest_sha256) throw new Error('The scanner returned an incomplete report.')
-      setOutcome(data)
+      const data = await scanResponse.json() as ScanOutcome & { conversation?: { id: string; revision: number; status: string; [key: string]: unknown } }
+      if (data.conversation) onConversationUpdate(data.conversation)
+      if (!data.result?.ok) { setError(data.result?.error ?? 'The authorized directory could not be scanned.'); return }
+      if (typeof data.result.finding_count !== 'number' || !data.receipt?.manifest_sha256) throw new Error('The scanner returned an incomplete report.')
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : 'The directory scan failed.')
     } finally {
@@ -83,61 +84,31 @@ export default function DirectoryScanRun() {
   }
 
   return (
-    <div className="directory-scan-run">
-      <WindowPanel title="Code duplicate scanner" description="Inspect one project directory with a bounded, read-only local analysis." className="directory-scan-panel" hideTitlebar>
-        <form className="code-scan-form" onSubmit={(event) => void runScan(event)}>
-          <label htmlFor="code-scan-directory">Project-relative source directory</label>
-          <input id="code-scan-directory" value={directory} maxLength={512} onChange={(event) => { setDirectory(event.target.value); setAuthorized(false) }} placeholder="src" disabled={scanning} autoComplete="off" />
-          <label className="code-scan-consent">
-            <input type="checkbox" checked={authorized} onChange={(event) => setAuthorized(event.target.checked)} disabled={scanning} />
-            <span>Authorize one read-only scan of this exact directory for this run.</span>
-          </label>
-          <p className="code-scan-privacy">The analyzer runs locally. Source contents stay in the workspace; no code is sent to a model, modified, or executed.</p>
-          <button type="submit" className="code-scan-submit" disabled={scanning || !directory.trim() || !authorized}>
-            {scanning ? 'Scanning directory…' : 'Scan for duplicate code'}
-          </button>
-        </form>
-        {error && <p className="code-scan-error" role="alert">{error}</p>}
-        {outcome && <section className="code-scan-results" aria-labelledby="code-scan-results-title">
-          <div className="code-scan-result-heading">
-            <div><p className="code-scan-eyebrow">Read-only scan complete</p><h2 id="code-scan-results-title">{outcome.result.directory}</h2></div>
-            <span className="code-scan-count">{outcome.result.finding_count} findings</span>
-          </div>
-          {outcome.result.truncated && <p className="code-scan-warning" role="status">The report reached a scan limit. Review the counts and run a narrower directory scan for complete coverage.</p>}
-          <dl className="code-scan-metrics">
-            <div><dt>Files scanned</dt><dd>{outcome.result.files_scanned}</dd></div>
-            <div><dt>Files skipped</dt><dd>{outcome.result.files_skipped}</dd></div>
-            <div><dt>Lines scanned</dt><dd>{outcome.result.lines_scanned.toLocaleString()}</dd></div>
-            <div><dt>Duration</dt><dd>{outcome.receipt.duration_ms} ms</dd></div>
-          </dl>
-          <div className="code-scan-manifest"><strong>Manifest SHA-256</strong><code>{outcome.result.manifest_sha256}</code><small>Trace {outcome.trace.trace_id} · {outcome.trace.trace_state} · Conversation {outcome.conversation_id}</small></div>
-          {outcome.result.findings.length ? <ol className="code-scan-findings">{outcome.result.findings.map((finding, index) => <li key={`${finding.kind}:${finding.left.path}:${finding.left.start_line}:${finding.right.path}:${finding.right.start_line}:${index}`}>
-            <strong>{finding.kind === 'exact_block' ? 'Exact repeated block' : 'Similar Python function structure'}</strong>
-            <code>{locationLabel(finding.left)} ↔ {locationLabel(finding.right)}</code>
-            {finding.left.name && finding.right.name && <small>{finding.left.name} ↔ {finding.right.name}</small>}
-          </li>)}</ol> : <p className="code-scan-empty">No matching blocks or function structures were found in the scanned files.</p>}
-          <details className="code-scan-method"><summary>Detection method and limits</summary><p>{outcome.result.method.exact}.</p><p>{outcome.result.method.similar}.</p><ul>{outcome.result.limitations.map((limitation) => <li key={limitation}>{limitation}</li>)}</ul></details>
-          <section className="code-scan-files" aria-labelledby="code-scan-files-title">
-            <div className="code-scan-files-heading"><h3 id="code-scan-files-title">Scanned files</h3><span>{outcome.receipt.files.length}</span></div>
-            <p>Paths and manifest hashes only; file contents are not shown.</p>
-            {outcome.receipt.files.length ? <ul>{outcome.receipt.files.map((file) => <li key={file.path}>
-              <code>{file.path}</code>
-              <small>{file.bytes.toLocaleString()} bytes · SHA-256 {file.sha256}</small>
-            </li>)}</ul> : <p className="code-scan-empty">No files were included in the scan manifest.</p>}
-          </section>
-        </section>}
-      </WindowPanel>
-
-      <aside className="directory-scan-sidebar" aria-label="Scanner limits">
-        <section className="card"><h2>Scan boundaries</h2><ul>
-          <li>One exact authorized project-relative directory per run</li>
-          <li>Read-only; no source contents sent to a model</li>
-          <li>Up to 300 files, 10 MiB and 150,000 lines</li>
-          <li>Up to 200 reported finding pairs</li>
-          <li>Python structural matches; exact blocks for the listed source types</li>
-        </ul></section>
-        <section className="card"><h2>Evidence</h2><p>Each run stores a single-use authorization, a file-hash manifest, line-based findings, a conversation receipt and a local trace.</p></section>
-      </aside>
-    </div>
+    <section className="directory-scan-run">
+      {showForm && <form className="code-scan-form" onSubmit={(event) => void runScan(event)}>
+        <label htmlFor="code-scan-directory">Project-relative directory</label>
+        <input id="code-scan-directory" value={directory} maxLength={512} onChange={(event) => { setDirectory(event.target.value); setAuthorized(false) }} disabled={scanning || disabled} autoComplete="off" />
+        <label className="code-scan-consent">
+          <input type="checkbox" checked={authorized} onChange={(event) => setAuthorized(event.target.checked)} disabled={scanning || disabled} />
+          <span>Authorize one read-only scan of this directory.</span>
+        </label>
+        <button type="submit" className="code-scan-submit" disabled={scanning || disabled || !directory.trim() || !authorized}>
+          {scanning ? 'Scanning…' : 'Scan duplicates'}
+        </button>
+      </form>}
+      {showForm && error && <p className="code-scan-error" role="alert">{error}</p>}
+      {initialOutcome && <section className="code-scan-results" aria-label="Duplicate-code scan results">
+        <div className="code-scan-result-heading">
+          <div><p className="code-scan-eyebrow">Read-only scan</p><h3>{initialOutcome.result.directory}</h3></div>
+          <span className="code-scan-count">{initialOutcome.result.finding_count} findings</span>
+        </div>
+        {initialOutcome.result.truncated && <p className="code-scan-warning" role="status">The report reached a scan limit. Review a narrower directory for complete coverage.</p>}
+        {initialOutcome.result.findings.length ? <ol className="code-scan-findings">{initialOutcome.result.findings.map((finding, index) => <li key={`${finding.kind}:${finding.left.path}:${finding.left.start_line}:${finding.right.path}:${finding.right.start_line}:${index}`}>
+          <strong>{finding.kind === 'exact_block' ? 'Exact repeated block' : 'Similar Python function structure'}</strong>
+          <code>{locationLabel(finding.left)} ↔ {locationLabel(finding.right)}</code>
+          {finding.left.name && finding.right.name && <small>{finding.left.name} ↔ {finding.right.name}</small>}
+        </li>)}</ol> : <p className="code-scan-empty">No matching code was found in this directory.</p>}
+      </section>}
+    </section>
   )
 }

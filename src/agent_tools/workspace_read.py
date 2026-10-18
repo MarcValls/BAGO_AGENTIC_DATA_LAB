@@ -67,16 +67,17 @@ class WorkspaceReadAuthorizations:
 
     def issue(self, workspace_root: Path | str, *, owner_kind: str, owner_id: str,
               conversation_id: str, revision: int, paths: Sequence[str], ttl_seconds: int = 300) -> dict[str, Any]:
-        canonical = validate_workspace_read_paths(workspace_root, paths)
+        bound_root = str(Path(workspace_root).resolve())
+        canonical = validate_workspace_read_paths(bound_root, paths)
         token = secrets.token_urlsafe(32)
         grant = {"owner_kind": owner_kind, "owner_id": owner_id, "conversation_id": conversation_id,
-                 "revision": revision, "paths": canonical, "expires_at": time.time() + ttl_seconds}
+                 "revision": revision, "workspace_root": bound_root, "paths": canonical, "expires_at": time.time() + ttl_seconds}
         with self._lock:
             self._grants[token] = grant
         return {"authorization_id": token, "paths": canonical, "expires_in_seconds": ttl_seconds}
 
     def consume(self, token: str, *, owner_kind: str, owner_id: str, conversation_id: str,
-                revision: int) -> list[str] | None:
+                revision: int, workspace_root: Path | str | None = None) -> list[str] | None:
         with self._lock:
             grant = self._grants.get(token)
             if not grant:
@@ -84,10 +85,13 @@ class WorkspaceReadAuthorizations:
             if grant["expires_at"] < time.time():
                 self._grants.pop(token, None)
                 return None
-            if any(grant[key] != value for key, value in {
+            expected = {
                 "owner_kind": owner_kind, "owner_id": owner_id,
                 "conversation_id": conversation_id, "revision": revision,
-            }.items()):
+            }
+            if workspace_root is not None:
+                expected["workspace_root"] = str(Path(workspace_root).resolve())
+            if any(grant[key] != value for key, value in expected.items()):
                 return None
             self._grants.pop(token, None)
             return list(grant["paths"])

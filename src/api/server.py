@@ -13,6 +13,7 @@ import os
 import re
 import subprocess
 import sys
+import threading
 import time
 import uuid
 from collections import deque
@@ -84,6 +85,63 @@ DEMO_OUTPUT_DIR = Path(__file__).resolve().parent.parent.parent / "demo_output" 
 AGENTS_DIR = Path(__file__).resolve().parent.parent.parent / "agents" / "created"
 FRONTEND_BUILD = Path(__file__).resolve().parent.parent.parent / "frontend" / "dist"
 REPO_ROOT = Path(__file__).resolve().parent.parent.parent
+_WORKSPACE_CONFIG_DIR = Path(os.environ.get("LOCALAPPDATA", Path.home())) / "BAGO" / "AgenticDataLab"
+_WORKSPACE_CONFIG_PATH = _WORKSPACE_CONFIG_DIR / "workspace.json"
+_WORKSPACE_LOCK = threading.RLock()
+
+
+def _load_workspace_root() -> Path:
+    try:
+        configured = json.loads(_WORKSPACE_CONFIG_PATH.read_text(encoding="utf-8")).get("workspace_root")
+        candidate = Path(configured).expanduser().resolve() if isinstance(configured, str) else REPO_ROOT.resolve()
+        return candidate if candidate.is_dir() else REPO_ROOT.resolve()
+    except (OSError, RuntimeError, ValueError, TypeError, json.JSONDecodeError):
+        return REPO_ROOT.resolve()
+
+
+WORKSPACE_ROOT = _load_workspace_root()
+_WORKSPACE_ROOT_PINNED = _WORKSPACE_CONFIG_PATH.is_file()
+
+
+def current_workspace_root() -> Path:
+    with _WORKSPACE_LOCK:
+        return WORKSPACE_ROOT if _WORKSPACE_ROOT_PINNED else Path(REPO_ROOT).resolve()
+
+
+def _set_workspace_root(candidate: str | Path) -> Path:
+    global WORKSPACE_ROOT, _WORKSPACE_ROOT_PINNED
+    root = Path(candidate).expanduser().resolve(strict=True)
+    if not root.is_dir():
+        raise ValueError("Choose an existing folder.")
+    with _WORKSPACE_LOCK:
+        _WORKSPACE_CONFIG_DIR.mkdir(parents=True, exist_ok=True)
+        temporary = _WORKSPACE_CONFIG_PATH.with_suffix(".json.tmp")
+        temporary.write_text(json.dumps({"workspace_root": str(root)}, ensure_ascii=False) + "\n", encoding="utf-8")
+        os.replace(temporary, _WORKSPACE_CONFIG_PATH)
+        WORKSPACE_ROOT = root
+        _WORKSPACE_ROOT_PINNED = True
+    return root
+
+
+def _pick_workspace_directory(initial: Path) -> str | None:
+    try:
+        import tkinter as tk
+        from tkinter import filedialog
+        window = tk.Tk()
+        window.withdraw()
+        window.attributes("-topmost", True)
+        try:
+            return filedialog.askdirectory(initialdir=str(initial), title="Select workspace folder", mustexist=True) or None
+        finally:
+            window.destroy()
+    except Exception as error:
+        raise RuntimeError("The Windows folder picker is unavailable in this session.") from error
+
+
+def _capability_store() -> CapabilityStore:
+    return CapabilityStore(current_workspace_root())
+
+
 AGENT_CHAT_TRACE_DIR = REPO_ROOT / ".bago" / "traces" / "agent-chat"
 CONVERSATIONS = ConversationStore()
 CAPABILITIES = CapabilityStore(REPO_ROOT)
@@ -96,6 +154,34 @@ AGENT_TOOL_ALLOWLIST = frozenset({
     "retrieval.search",
     "sandbox.run",
 })
+CONTROL_NAVIGATION_VIEWS = frozenset({
+    "inspector", "builder", "chat", "workspace", "runner", "control", "jobs", "traces", "summary",
+    "retrieval", "authorization", "evaluation", "evaluation_lab", "provider_settings",
+    "cognition_settings", "capabilities",
+})
+CONTROL_REQUEST_TOOL = {
+    "type": "function",
+    "function": {
+        "name": "resolve_control_request",
+        "description": (
+            "Interpret the user request semantically and choose one decision. Choose draft_agent when the user intends to design or start creating an agent; the app will put an editable configuration form directly in this chat and will save nothing until the user confirms creation. Choose job_history when the user wants to see or review recorded jobs; the app will show the job-history table in this chat. Choose workspace_scan when the user wants duplicate, repeated, or structurally similar code located in the current project; the app will put a bounded, read-only scan form directly in this chat and will not scan until the user chooses a directory and authorizes it. Do not choose it for general code questions, explanations, or bug investigations. Choose navigate when the user wants to reach, open, or inspect an existing app view, even if they describe its purpose without naming it. If they ask to open the agent builder or Job History as a screen, choose navigate to that view; every such request must be confirmed in chat before switching. Choose answer when they ask what, why, or how something works. Choose clarify only when the requested purpose cannot be matched or is genuinely unclear. "
+            "A question about a view is not a request to open it. Any navigate decision is only a proposal: return it to the chat as a confirmation request and never switch screens automatically. When answering or clarifying, write the user-facing reply and do not navigate. "
+            "Registered view meanings: inspector shows decisions and evidence; builder configures agents; workspace manages project and memory locations; runner opens agent runs; jobs shows job records and history; traces shows detailed execution steps; summary shows a run summary; retrieval covers retrieval and ontology; authorization covers permissions; evaluation shows checks for a completed run; evaluation_lab configures agent evaluation experiments; provider_settings configures providers, credentials, and models; cognition_settings changes reasoning mode, prompt behavior, and context; capabilities shows the capability catalog. "
+            "Examples: take me to the project workspace or project memory folder -> navigate workspace; take me to where reasoning mode is adjusted -> navigate cognition_settings; show me the recorded jobs -> job_history; open the Job History screen -> navigate jobs; show me the detailed steps of an agent run -> navigate traces; open provider and model setup -> navigate provider_settings; what does the Evaluation view do -> answer in chat. "
+            "Never invent a view or claim that navigation, job execution, provider changes, or data changes already occurred."
+        ),
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "decision": {"type": "string", "enum": ["draft_agent", "job_history", "workspace_scan", "navigate", "answer", "clarify"]},
+                "view": {"type": "string", "enum": sorted(CONTROL_NAVIGATION_VIEWS)},
+                "reply": {"type": "string"},
+            },
+            "required": ["decision", "reply"],
+            "additionalProperties": False,
+        },
+    },
+}
 
 # Ensure agents directory exists
 AGENTS_DIR.mkdir(parents=True, exist_ok=True)
@@ -192,6 +278,29 @@ def _agent_draft_retry_hint(error: Exception) -> str:
     return "The previous object failed schema validation for these fields: " + ", ".join(fields[:8]) + "."
 
 
+async def _generate_agent_draft(user_request: str, history: list[dict[str, str]], model_id: str) -> AgentConfig:
+    retry_hint = None
+    draft = None
+    context = "\n".join(f"{item['role']}: {item['content']}" for item in history[-20:] + [{"role": "user", "content": user_request}])
+    try:
+        for attempt in range(2):
+            raw = await asyncio.to_thread(ollama.chat, model_id, _agent_draft_messages(context, retry_hint))
+            try:
+                draft = _parse_agent_draft(raw, model_id)
+                break
+            except (json.JSONDecodeError, ValueError) as error:
+                if attempt == 1:
+                    raise
+                retry_hint = _agent_draft_retry_hint(error)
+        if draft is None:
+            raise ValueError("No valid agent proposal")
+    except ollama.ProviderError as error:
+        raise _provider_http_error(error) from None
+    except Exception:
+        raise HTTPException(status_code=502, detail={"code": "invalid_agent_draft", "message": "The model did not produce a valid agent proposal. No agent was created."}) from None
+    return draft
+
+
 class OllamaConfigRequest(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
@@ -241,7 +350,7 @@ class ControlChatRequest(BaseModel):
 
     operation: Literal["chat", "help", "list_agents", "draft_agent", "navigate"] = "chat"
     message: str = Field(default="", max_length=8000)
-    view: Literal["inspector", "builder", "chat", "runner", "control", "jobs", "traces", "summary", "retrieval", "authorization", "evaluation", "provider_settings"] | None = None
+    view: Literal["inspector", "builder", "chat", "workspace", "runner", "control", "jobs", "traces", "summary", "retrieval", "authorization", "evaluation", "evaluation_lab", "provider_settings", "cognition_settings", "capabilities"] | None = None
     conversation_id: str
     revision: int = Field(ge=0)
     workspace_read_authorization_id: str | None = Field(default=None, max_length=128)
@@ -1077,7 +1186,7 @@ def _write_agent(config: AgentConfig) -> AgentResponse:
     response_data = {"id": f"agent_{uuid.uuid4().hex}", "config": config.model_dump(), "created_at": datetime.utcnow().isoformat()}
     AGENTS_DIR.mkdir(parents=True, exist_ok=True)
     agent_file = AGENTS_DIR / f"{response_data['id']}.json"
-    temporary = agent_file.with_suffix(".tmp")
+    temporary = agent_file.with_name(f".{response_data['id']}.{uuid.uuid4().hex}.tmp")
     try:
         with temporary.open("x", encoding="utf-8") as stream:
             json.dump(response_data, stream, indent=2, ensure_ascii=False)
@@ -1196,30 +1305,105 @@ def _record_chat_cognition_trace(
     }
 
 
+def _control_request_from_arguments(arguments: Any) -> dict[str, str] | None:
+    if isinstance(arguments, str):
+        try:
+            arguments = json.loads(arguments)
+        except (TypeError, ValueError):
+            return None
+    if not isinstance(arguments, dict):
+        return None
+    decision = arguments.get("decision")
+    if decision == "open":
+        # Some local tool-capable models use their own label for the same
+        # explicit navigation decision. Normalize that label, then validate it.
+        decision = "navigate"
+    if decision == "navigate":
+        view = arguments.get("view")
+        if isinstance(view, str) and view in CONTROL_NAVIGATION_VIEWS:
+            return {"decision": "navigate", "view": view}
+        return {"decision": "clarify", "reply": "No pude identificar una vista registrada. Dime qué quieres encontrar."}
+    if decision not in {"draft_agent", "job_history", "workspace_scan", "answer", "clarify"}:
+        return None
+    reply = arguments.get("reply")
+    if not isinstance(reply, str) or not reply.strip():
+        return None
+    return {"decision": decision, "reply": reply.strip()}
+
+
+def _control_request_from_turn(turn: dict[str, Any]) -> dict[str, str] | None:
+    tool_calls = turn.get("tool_calls")
+    if isinstance(tool_calls, list) and tool_calls:
+        if len(tool_calls) != 1:
+            return None
+        function = tool_calls[0].get("function") if isinstance(tool_calls[0], dict) else None
+        if not isinstance(function, dict) or function.get("name") != "resolve_control_request":
+            return None
+        return _control_request_from_arguments(function.get("arguments", {}))
+
+    content = turn.get("content")
+    if not isinstance(content, str):
+        return None
+    try:
+        parsed = json.loads(content)
+    except (TypeError, ValueError):
+        return None
+    if isinstance(parsed, dict) and "decision" not in parsed and {"name", "parameters"}.issubset(parsed):
+        name = parsed.get("name")
+        parameters = parsed.get("parameters")
+        if isinstance(name, str) and name in CONTROL_NAVIGATION_VIEWS and isinstance(parameters, dict):
+            view = parameters.get("view")
+            if view == name:
+                return {"decision": "navigate", "view": view}
+        return {"decision": "clarify", "reply": "No pude resolver la solicitud. Cuéntame qué necesitas encontrar."}
+    if isinstance(parsed, dict) and "decision" in parsed:
+        resolved = _control_request_from_arguments(parsed)
+        if resolved:
+            return resolved
+        return {"decision": "clarify", "reply": "No pude resolver la solicitud. Cuéntame qué necesitas encontrar."}
+    return None
+
+
 async def _chat_with_workspace_read(
     model_id: str,
     messages: list[dict[str, Any]],
     authorized_paths: list[str],
     authorized_directories: list[str] | None = None,
-) -> tuple[str, list[dict[str, Any]], list[dict[str, Any]]]:
+    *,
+    workspace_root: Path | None = None,
+    allow_navigation: bool = False,
+) -> tuple[str, list[dict[str, Any]], list[dict[str, Any]], str | None]:
     """Run a bounded Ollama tool loop with read-only workspace tools."""
+    workspace_root = workspace_root or Path(REPO_ROOT).resolve()
     sources: list[dict[str, Any]] = []
     read_events: list[dict[str, Any]] = []
     calls_used = 0
     for round_index in range(MAX_TOOL_ROUNDS):
-        turn = await asyncio.to_thread(
-            ollama.chat_turn,
-            model_id,
-            messages,
-            tools=[READ_WORKSPACE_TOOL, SCAN_CODE_DUPLICATES_TOOL],
-        )
+        available_tools = [READ_WORKSPACE_TOOL, SCAN_CODE_DUPLICATES_TOOL]
+        if allow_navigation:
+            available_tools.append(CONTROL_REQUEST_TOOL)
+        turn_kwargs: dict[str, Any] = {"tools": available_tools}
+        if allow_navigation:
+            turn_kwargs["options"] = {"temperature": 0}
+        turn = await asyncio.to_thread(ollama.chat_turn, model_id, messages, **turn_kwargs)
         raw_calls = turn.get("tool_calls")
         tool_calls = raw_calls if isinstance(raw_calls, list) else []
         if not tool_calls:
             answer = turn.get("content")
             if not isinstance(answer, str) or not answer.strip():
                 raise ollama.ProviderError("empty_model_response", "Ollama returned no assistant response.")
-            return answer.strip(), sources, read_events
+            resolved = _control_request_from_turn(turn) if allow_navigation else None
+            if resolved and resolved["decision"] == "draft_agent":
+                return resolved["reply"], sources, read_events, "draft_agent"
+            if resolved and resolved["decision"] == "job_history":
+                return resolved["reply"], sources, read_events, "job_history"
+            if resolved and resolved["decision"] == "workspace_scan":
+                return resolved["reply"], sources, read_events, "workspace_scan"
+            if resolved and resolved["decision"] == "navigate":
+                return "Abriendo la vista solicitada.", sources, read_events, resolved["view"]
+            if resolved:
+                return resolved["reply"], sources, read_events, None
+            return answer.strip(), sources, read_events, None
 
         assistant_turn = {key: turn[key] for key in ("content", "tool_calls") if key in turn}
         assistant_turn["role"] = "assistant"
@@ -1229,7 +1413,20 @@ async def _chat_with_workspace_read(
             function = function if isinstance(function, dict) else {}
             tool_name = function.get("name")
             arguments = function.get("arguments", {})
-            if calls_used >= MAX_TOOL_CALLS_PER_TURN:
+            if tool_name == "resolve_control_request" and allow_navigation:
+                resolved = _control_request_from_arguments(arguments)
+                if resolved and resolved["decision"] == "draft_agent":
+                    return resolved["reply"], sources, read_events, "draft_agent"
+                if resolved and resolved["decision"] == "job_history":
+                    return resolved["reply"], sources, read_events, "job_history"
+                if resolved and resolved["decision"] == "workspace_scan":
+                    return resolved["reply"], sources, read_events, "workspace_scan"
+                if resolved and resolved["decision"] == "navigate":
+                    return "Abriendo la vista solicitada.", sources, read_events, resolved["view"]
+                if resolved:
+                    return resolved["reply"], sources, read_events, None
+                return "No pude identificar una vista válida. Dime qué quieres encontrar.", sources, read_events, None
+            elif calls_used >= MAX_TOOL_CALLS_PER_TURN:
                 result = {"ok": False, "error": "The per-message file-read limit has been reached."}
                 if tool_name == READ_WORKSPACE_FILE:
                     raw_arguments = arguments
@@ -1244,13 +1441,13 @@ async def _chat_with_workspace_read(
                 result = {"ok": False, "error": "That tool is not available in this chat."}
                 calls_used += 1
             elif tool_name == SCAN_CODE_DUPLICATES:
-                result, receipt = scan_code_duplicates(REPO_ROOT, arguments, authorized_directories or [])
+                result, receipt = scan_code_duplicates(workspace_root, arguments, authorized_directories or [])
                 calls_used += 1
                 if receipt:
                     receipt["attempt"] = calls_used
                     read_events.append(receipt)
             else:
-                result, receipt = read_workspace_file(REPO_ROOT, arguments, authorized_paths)
+                result, receipt = read_workspace_file(workspace_root, arguments, authorized_paths)
                 calls_used += 1
                 if receipt:
                     receipt["attempt"] = calls_used
@@ -1269,7 +1466,7 @@ async def _chat_with_workspace_read(
             # Ask for a final answer with tools removed once the bounded loop
             # is exhausted; this prevents another file read in this turn.
             answer = await asyncio.to_thread(ollama.chat, model_id, messages)
-            return answer, sources, read_events
+            return answer, sources, read_events, None
 
     raise ollama.ProviderError("tool_loop_incomplete", "The chat could not complete its response.")
 
@@ -1289,7 +1486,7 @@ async def create_workspace_read_authorization(request: WorkspaceReadAuthorizatio
         raise _conversation_error(ConversationConflict(request.conversation_id))
     try:
         return WORKSPACE_READ_AUTHORIZATIONS.issue(
-            REPO_ROOT, owner_kind=request.owner_kind, owner_id=request.owner_id,
+            current_workspace_root(), owner_kind=request.owner_kind, owner_id=request.owner_id,
             conversation_id=request.conversation_id, revision=request.revision, paths=request.paths,
         )
     except (OSError, ValueError, SandboxError):
@@ -1304,7 +1501,7 @@ async def create_workspace_scan_authorization(request: WorkspaceScanAuthorizatio
         raise _conversation_error(ConversationConflict(request.conversation_id))
     try:
         return WORKSPACE_DIRECTORY_AUTHORIZATIONS.issue(
-            REPO_ROOT, owner_kind=request.owner_kind, owner_id=request.owner_id,
+            current_workspace_root(), owner_kind=request.owner_kind, owner_id=request.owner_id,
             conversation_id=request.conversation_id, revision=request.revision, directories=request.directories,
         )
     except (OSError, ValueError, SandboxError):
@@ -1350,12 +1547,13 @@ async def run_workspace_code_scan(request: WorkspaceScanRunRequest) -> dict[str,
     """Run one deterministic local scan using an explicit single-use directory grant."""
     owner_kind = "assistant"
     owner_id = "app-assistant"
+    workspace_root = current_workspace_root()
     conversation = _owned_conversation(request.conversation_id, owner_kind, owner_id)
     if conversation["revision"] != request.revision:
         raise _conversation_error(ConversationConflict(request.conversation_id))
     directories = _consume_workspace_scan_authorization(
         request.authorization_id, owner_kind=owner_kind, owner_id=owner_id,
-        conversation_id=request.conversation_id, revision=request.revision,
+        conversation_id=request.conversation_id, revision=request.revision, workspace_root=workspace_root,
     )
     try:
         user_message = CONVERSATIONS.append_message(
@@ -1366,7 +1564,7 @@ async def run_workspace_code_scan(request: WorkspaceScanRunRequest) -> dict[str,
         raise _conversation_error(error) from None
     started_at_ns = time.time_ns()
     result, receipt = await asyncio.to_thread(
-        scan_code_duplicates, REPO_ROOT, {"directory": request.directory}, directories,
+        scan_code_duplicates, workspace_root, {"directory": request.directory}, directories,
     )
     ended_at_ns = time.time_ns()
     receipt["duration_ms"] = max(0, (ended_at_ns - started_at_ns) // 1_000_000)
@@ -1374,16 +1572,9 @@ async def run_workspace_code_scan(request: WorkspaceScanRunRequest) -> dict[str,
         _record_workspace_scan_trace, result, receipt, started_at_ns=started_at_ns, ended_at_ns=ended_at_ns,
     )
     assistant_message = (
-        f"Read-only directory scan {'completed' if result.get('ok') else 'was denied'} for {receipt.get('path') or request.directory}. "
-        f"{result.get('files_scanned', 0)} files scanned; {result.get('finding_count', 0)} findings. "
-        f"Manifest SHA-256: {result.get('manifest_sha256', 'unavailable')}."
+        f"Terminé el análisis de {receipt.get('path') or request.directory}. Revisa el resultado aquí."
+        if result.get("ok") else f"No pude analizar {receipt.get('path') or request.directory}."
     )
-    if result.get("findings"):
-        assistant_message += "\n" + "\n".join(
-            f"{finding['kind']}: {finding['left']['path']}:{finding['left']['start_line']}-{finding['left']['end_line']} "
-            f"<-> {finding['right']['path']}:{finding['right']['start_line']}-{finding['right']['end_line']}"
-            for finding in result["findings"]
-        )
     references = {"read_events": [receipt], "trace": trace, "scan_result": result}
     try:
         CONVERSATIONS.append_message(
@@ -1399,12 +1590,12 @@ async def run_workspace_code_scan(request: WorkspaceScanRunRequest) -> dict[str,
 
 
 def _consume_workspace_scan_authorization(token: str | None, *, owner_kind: str, owner_id: str,
-                                          conversation_id: str, revision: int) -> list[str]:
+                                          conversation_id: str, revision: int, workspace_root: Path) -> list[str]:
     if not token:
         return []
     directories = WORKSPACE_DIRECTORY_AUTHORIZATIONS.consume(
         token, owner_kind=owner_kind, owner_id=owner_id,
-        conversation_id=conversation_id, revision=revision,
+        conversation_id=conversation_id, revision=revision, workspace_root=workspace_root,
     )
     if directories is None:
         raise HTTPException(status_code=403, detail={"code": "scan_authorization_invalid", "message": "Directory scan authorization expired, was already used, or belongs to another chat revision."})
@@ -1412,12 +1603,12 @@ def _consume_workspace_scan_authorization(token: str | None, *, owner_kind: str,
 
 
 def _consume_workspace_read_authorization(token: str | None, *, owner_kind: str, owner_id: str,
-                                          conversation_id: str, revision: int) -> list[str]:
+                                          conversation_id: str, revision: int, workspace_root: Path) -> list[str]:
     if not token:
         return []
     paths = WORKSPACE_READ_AUTHORIZATIONS.consume(
         token, owner_kind=owner_kind, owner_id=owner_id,
-        conversation_id=conversation_id, revision=revision,
+        conversation_id=conversation_id, revision=revision, workspace_root=workspace_root,
     )
     if paths is None:
         raise HTTPException(status_code=403, detail={"code": "read_authorization_invalid", "message": "Read authorization expired, was already used, or belongs to another chat revision."})
@@ -1448,11 +1639,11 @@ def _capability_proposal_error(error: Exception) -> HTTPException:
 async def chat_context() -> dict[str, Any]:
     """Report bound locations without opening their contents or granting reads."""
     locations = (
-        ("project-context", "Project context", REPO_ROOT / ".bago/context/PROJECT_CONTEXT.md",
+        ("project-context", "Project context", current_workspace_root() / ".bago/context/PROJECT_CONTEXT.md",
          "Project context ledger; listing a location does not load it into a model prompt."),
-        ("project-state", "Project state", REPO_ROOT / ".bago/state/PROJECT_STATE.json",
+        ("project-state", "Project state", current_workspace_root() / ".bago/state/PROJECT_STATE.json",
          "Recorded project state and verification scope."),
-        ("active-handoff", "Active handoff", REPO_ROOT / ".bago/runtime/ACTIVE_HANDOFF.md",
+        ("active-handoff", "Active handoff", current_workspace_root() / ".bago/runtime/ACTIVE_HANDOFF.md",
          "Local continuity handoff for repository work."),
         ("conversations", "Conversation history", CONVERSATIONS.database_path,
          "Saved chat messages; the selected conversation supplies chat history."),
@@ -1465,7 +1656,7 @@ async def chat_context() -> dict[str, Any]:
         for location_id, label, path, purpose in locations
     ]
     return {
-        "workspace_root": str(REPO_ROOT.resolve()),
+        "workspace_root": str(current_workspace_root()),
         "cognition": {"profile": PROFILE, "capacity": MAX_FOCUS_UNITS,
                       "max_hops": MAX_HOPS, "max_expansions": MAX_EXPANSIONS},
         "paths": paths,
@@ -1476,6 +1667,29 @@ async def chat_context() -> dict[str, Any]:
                            "General or cross-project memory engines are not connected to this chat.",
         },
     }
+
+
+@app.post("/api/workspace/browse")
+async def browse_workspace() -> dict[str, Any]:
+    """Open the local folder picker and bind the selected project workspace."""
+    try:
+        selected = await asyncio.to_thread(_pick_workspace_directory, current_workspace_root())
+        if not selected:
+            return {"workspace_root": str(current_workspace_root()), "cancelled": True}
+        root = _set_workspace_root(selected)
+    except (OSError, RuntimeError, ValueError) as error:
+        raise HTTPException(status_code=503, detail={"code": "workspace_picker_unavailable", "message": str(error)}) from None
+    return {"workspace_root": str(root), "cancelled": False}
+
+
+@app.post("/api/workspace/select")
+async def select_workspace(body: ContextPathCheckRequest) -> dict[str, Any]:
+    """Bind an existing local folder entered in the Workspace path field."""
+    try:
+        root = _set_workspace_root(body.path)
+    except (OSError, RuntimeError, ValueError):
+        raise HTTPException(status_code=422, detail={"code": "invalid_workspace", "message": "Select an existing folder on this computer."}) from None
+    return {"workspace_root": str(root), "cancelled": False}
 
 
 @app.post("/api/chat/context/check-path")
@@ -1494,7 +1708,7 @@ async def check_chat_context_path(body: ContextPathCheckRequest) -> dict[str, An
 
 @app.get("/api/capabilities")
 async def list_capabilities() -> dict[str, Any]:
-    return capability_catalog(REPO_ROOT)
+    return capability_catalog(current_workspace_root())
 
 
 @app.get("/api/capabilities/proposals")
@@ -1502,7 +1716,8 @@ async def list_capability_proposals(
     status: Literal["PENDING_REVIEW", "CANCELLED", "EXPIRED", "all"] = "all",
     limit: int = Query(default=100, ge=1, le=100),
 ) -> dict[str, Any]:
-    return {"workspace_id": CAPABILITIES.workspace_id, "proposals": CAPABILITIES.list_proposals(status, limit)}
+    store = _capability_store()
+    return {"workspace_id": store.workspace_id, "proposals": store.list_proposals(status, limit)}
 
 
 @app.post("/api/capabilities/proposals")
@@ -1515,7 +1730,7 @@ async def create_capability_proposal(request: CapabilityProposalCreateRequest) -
         except ConversationNotFound as error:
             raise _conversation_error(error) from None
     try:
-        proposal = CAPABILITIES.create_proposal(
+        proposal = _capability_store().create_proposal(
             capability_id=request.capability_id,
             summary=request.summary,
             requested_scope=request.requested_scope,
@@ -1531,7 +1746,7 @@ async def cancel_capability_proposal(proposal_id: str, request: CapabilityPropos
     if not re.fullmatch(r"proposal_[0-9a-f]{32}", proposal_id):
         raise HTTPException(status_code=422, detail={"code": "invalid_proposal_id", "message": "Proposal ID is invalid."})
     try:
-        proposal = CAPABILITIES.cancel_proposal(proposal_id, request.revision)
+        proposal = _capability_store().cancel_proposal(proposal_id, request.revision)
     except (CapabilityProposalNotFound, CapabilityProposalConflict) as error:
         raise _capability_proposal_error(error) from None
     return {"proposal": proposal, "authority_notice": "Proposal cancelled; no permission, job, or execution was created."}
@@ -1616,6 +1831,33 @@ async def create_agent(request: AgentCreateRequest) -> AgentResponse:
     return _write_agent(agent_config)
 
 
+@app.put("/api/agents/{agent_id}", response_model=AgentResponse)
+async def update_agent(agent_id: str, request: AgentConfig) -> AgentResponse:
+    """Update an existing agent profile without changing its identity or provider pin."""
+    current = _load_agent(agent_id)
+    config_data = current.config.model_dump()
+    config_data.update(request.model_dump(exclude_unset=True))
+    try:
+        config = AgentConfig.model_validate(config_data)
+    except Exception:
+        raise HTTPException(status_code=422, detail={"code": "invalid_agent_config", "message": "Agent configuration is invalid."}) from None
+
+    agent_file = AGENTS_DIR / f"{agent_id}.json"
+    temporary = agent_file.with_name(f".{agent_id}.{uuid.uuid4().hex}.tmp")
+    payload = {"id": agent_id, "config": config.model_dump(), "created_at": current.created_at}
+    try:
+        with temporary.open("w", encoding="utf-8") as stream:
+            json.dump(payload, stream, indent=2, ensure_ascii=False)
+            stream.flush()
+            os.fsync(stream.fileno())
+        os.replace(temporary, agent_file)
+    except OSError:
+        if temporary.exists():
+            temporary.unlink()
+        raise HTTPException(status_code=500, detail={"code": "agent_update_failed", "message": "Agent changes could not be saved."}) from None
+    return AgentResponse.model_validate(payload)
+
+
 @app.get("/api/agents/list")
 async def list_agents() -> dict[str, Any]:
     """List all created agents."""
@@ -1655,13 +1897,14 @@ async def control_chat(request: ControlChatRequest) -> dict[str, Any]:
     conversation = _owned_conversation(request.conversation_id, "assistant", "app-assistant")
     if conversation["revision"] != request.revision:
         raise _conversation_error(ConversationConflict(request.conversation_id))
+    workspace_root = current_workspace_root()
     authorized_paths = _consume_workspace_read_authorization(
         request.workspace_read_authorization_id, owner_kind="assistant", owner_id="app-assistant",
-        conversation_id=request.conversation_id, revision=request.revision,
+        conversation_id=request.conversation_id, revision=request.revision, workspace_root=workspace_root,
     )
     authorized_directories = _consume_workspace_scan_authorization(
         request.workspace_scan_authorization_id, owner_kind="assistant", owner_id="app-assistant",
-        conversation_id=request.conversation_id, revision=request.revision,
+        conversation_id=request.conversation_id, revision=request.revision, workspace_root=workspace_root,
     )
     history = CONVERSATIONS.history(request.conversation_id)
     try:
@@ -1679,6 +1922,8 @@ async def control_chat(request: ControlChatRequest) -> dict[str, Any]:
             references["read_events"] = payload["read_events"]
         if payload.get("cognitive_trace"):
             references["cognitive_trace"] = payload["cognitive_trace"]
+        if payload.get("control_capability"):
+            references["control_capability"] = payload["control_capability"]
         CONVERSATIONS.append_message(request.conversation_id, revision, "assistant", assistant_message, references)
         saved = CONVERSATIONS.get(request.conversation_id)
         return {"operation": operation, "assistant_message": assistant_message, "conversation_id": request.conversation_id, "revision": saved["revision"], "conversation": saved, **payload}
@@ -1710,34 +1955,13 @@ async def control_chat(request: ControlChatRequest) -> dict[str, Any]:
         if request.view is None:
             raise HTTPException(status_code=422, detail={"code": "view_required", "message": "Choose one of the existing views."})
         answer = f"Opening {request.view}."
-        return finish_turn("navigate", answer, navigation={"view": request.view})
+        return finish_turn("confirm_navigation", f"¿Quieres cambiar a {request.view}?", navigation={"view": request.view})
     if not request.message.strip():
         raise HTTPException(status_code=422, detail={"code": "message_required", "message": "Enter a message."})
 
     model_id = _selected_model_id()
     if request.operation == "draft_agent":
-        try:
-            retry_hint = None
-            draft = None
-            for attempt in range(2):
-                raw = await asyncio.to_thread(
-                    ollama.chat,
-                    model_id,
-                    _agent_draft_messages("\n".join(f"{item['role']}: {item['content']}" for item in history[-20:] + [{"role": "user", "content": request.message.strip()}]), retry_hint),
-                )
-                try:
-                    draft = _parse_agent_draft(raw, model_id)
-                    break
-                except (json.JSONDecodeError, ValueError) as error:
-                    if attempt == 1:
-                        raise
-                    retry_hint = _agent_draft_retry_hint(error)
-            if draft is None:
-                raise ValueError("No valid agent proposal")
-        except ollama.ProviderError as error:
-            raise _provider_http_error(error) from None
-        except Exception:
-            raise HTTPException(status_code=502, detail={"code": "invalid_agent_draft", "message": "The model did not produce a valid agent proposal. No agent was created."}) from None
+        draft = await _generate_agent_draft(request.message.strip(), history, model_id)
         answer = "Review this proposal. It will not be saved until you choose Create agent."
         return finish_turn("draft_agent", answer, agent_draft=draft.model_dump(), created=False)
 
@@ -1749,6 +1973,10 @@ async def control_chat(request: ControlChatRequest) -> dict[str, Any]:
         {"role": "system", "content": (
             "You are BAGO Agentic Data Lab's app assistant. You can explain the application and its registered views, list configured agents, and help the user design a new agent. "
             "Reply in the language used by the user. "
+            "Interpret requests semantically; users do not need to know a command phrase or exact view label. For every turn, use resolve_control_request to choose draft_agent, job_history, workspace_scan, navigate, answer, or clarify. "
+            "Choose workspace_scan when the user wants duplicate or repeated code located in the project, in natural language. The app will show a directory field in this conversation with the project root preselected. Do not scan until the user explicitly authorizes the selected directory. Do not choose workspace_scan for a general code explanation, debugging question, or request to inspect one specific file. "
+            "Choose draft_agent when they intend to start creating or designing an agent, expressed in any natural wording; do not require a fixed phrase. Choose job_history when they want the recorded job list shown inside the current chat; choose navigate jobs only if they ask to open the Job History screen. Choose navigate builder only if they want to open that screen. Choose navigate when they want to reach another screen, including when they describe its purpose without naming it. Every navigate result must ask for confirmation in the chat before switching; never switch automatically. Choose answer for questions about what, why, or how something works. Choose clarify only if the desired purpose does not identify a registered view. The server validates registered views before requesting confirmation. "
+            "Do not claim to know live job data or that a screen has opened. "
             "When the user asks to create or design an agent, the app can generate an editable draft; it is saved only after the user reviews it and explicitly chooses Create agent. "
             "Never claim that agent creation is unavailable, and never claim the draft has been saved before that confirmation. "
             "The user can select a configured agent and chat with it. Do not claim that this chat starts a governed job or changes project files. "
@@ -1764,10 +1992,47 @@ async def control_chat(request: ControlChatRequest) -> dict[str, Any]:
     sources: list[dict[str, Any]] = []
     read_events: list[dict[str, Any]] = []
     try:
+        navigation_view: str | None = None
         if authorized_paths or authorized_directories:
-            answer, sources, read_events = await _chat_with_workspace_read(model_id, messages, authorized_paths, authorized_directories)
-        else:
+            answer, sources, read_events, navigation_view = await _chat_with_workspace_read(
+                model_id, messages, authorized_paths, authorized_directories,
+                workspace_root=workspace_root, allow_navigation=True,
+            )
+            if navigation_view == "draft_agent":
+                draft = await _generate_agent_draft(request.message.strip(), history, model_id)
+                return finish_turn("draft_agent", answer, agent_draft=draft.model_dump(), created=False)
+            if navigation_view == "job_history":
+                return finish_turn("job_history", answer)
+            if navigation_view == "workspace_scan":
+                return finish_turn("workspace_scan", answer, control_capability="workspace.scan_duplicates")
+        elif request.operation == "help":
             answer = await asyncio.to_thread(ollama.chat, model_id, messages)
+        else:
+            turn = await asyncio.to_thread(
+                ollama.chat_turn, model_id, messages,
+                tools=[CONTROL_REQUEST_TOOL], options={"temperature": 0},
+            )
+            resolved = _control_request_from_turn(turn)
+            if resolved and resolved["decision"] == "draft_agent":
+                draft = await _generate_agent_draft(request.message.strip(), history, model_id)
+                return finish_turn("draft_agent", resolved["reply"], agent_draft=draft.model_dump(), created=False)
+            if resolved and resolved["decision"] == "job_history":
+                return finish_turn("job_history", resolved["reply"])
+            if resolved and resolved["decision"] == "workspace_scan":
+                return finish_turn("workspace_scan", resolved["reply"], control_capability="workspace.scan_duplicates")
+            if resolved and resolved["decision"] == "navigate":
+                navigation_view = resolved["view"]
+            elif resolved:
+                answer = resolved["reply"]
+            else:
+                answer = turn.get("content")
+                answer = answer.strip() if isinstance(answer, str) else ""
+            if navigation_view:
+                return finish_turn("confirm_navigation", "¿Quieres cambiar de pantalla?", navigation={"view": navigation_view})
+            if not answer:
+                answer = "No pude resolver la solicitud. Cuéntame qué necesitas encontrar."
+        if navigation_view:
+            return finish_turn("confirm_navigation", "¿Quieres cambiar de pantalla?", navigation={"view": navigation_view})
     except ollama.ProviderError as error:
         raise _provider_http_error(error) from None
     cognitive_trace = await asyncio.to_thread(
@@ -1891,13 +2156,14 @@ async def chat_with_agent(
     conversation = _owned_conversation(request.conversation_id, "agent", agent_id)
     if conversation["revision"] != request.revision:
         raise _conversation_error(ConversationConflict(request.conversation_id))
+    workspace_root = current_workspace_root()
     authorized_paths = _consume_workspace_read_authorization(
         request.workspace_read_authorization_id, owner_kind="agent", owner_id=agent_id,
-        conversation_id=request.conversation_id, revision=request.revision,
+        conversation_id=request.conversation_id, revision=request.revision, workspace_root=workspace_root,
     )
     authorized_directories = _consume_workspace_scan_authorization(
         request.workspace_scan_authorization_id, owner_kind="agent", owner_id=agent_id,
-        conversation_id=request.conversation_id, revision=request.revision,
+        conversation_id=request.conversation_id, revision=request.revision, workspace_root=workspace_root,
     )
     history = CONVERSATIONS.history(request.conversation_id)
     try:
@@ -1923,7 +2189,9 @@ async def chat_with_agent(
     read_events: list[dict[str, Any]] = []
     try:
         if authorized_paths or authorized_directories:
-            answer, sources, read_events = await _chat_with_workspace_read(model_id, messages, authorized_paths, authorized_directories)
+            answer, sources, read_events, _ = await _chat_with_workspace_read(
+                model_id, messages, authorized_paths, authorized_directories, workspace_root=workspace_root,
+            )
         else:
             answer = await asyncio.to_thread(ollama.chat, model_id, messages)
     except ollama.ProviderError as error:

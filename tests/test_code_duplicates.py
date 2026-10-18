@@ -113,10 +113,11 @@ def test_chat_tool_loop_invokes_scan_and_returns_receipt(monkeypatch, tmp_path: 
         return next(turns)
 
     monkeypatch.setattr(server.ollama, "chat_turn", fake_chat_turn)
-    answer, sources, events = asyncio.run(server._chat_with_workspace_read("test-model", [], [], ["src"]))
+    answer, sources, events, navigation_view = asyncio.run(server._chat_with_workspace_read("test-model", [], [], ["src"]))
 
     assert "exact duplicate" in answer
     assert sources == []
+    assert navigation_view is None
     assert len(tool_definitions[0]) == 2
     assert events[0]["kind"] == "directory_code_scan"
     assert events[0]["files_scanned"] == 2

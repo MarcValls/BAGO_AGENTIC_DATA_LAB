@@ -267,6 +267,7 @@ def chat_turn(
     messages: list[dict[str, Any]],
     *,
     tools: list[dict[str, Any]] | None = None,
+    options: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     """Return one structured Ollama message, including any native tool calls."""
     global _last_successful_model_call, _last_successful_at, _authentication_failed
@@ -276,6 +277,8 @@ def chat_turn(
     payload: dict[str, Any] = {"model": model_id, "messages": messages, "stream": False}
     if tools:
         payload["tools"] = tools
+    if options:
+        payload["options"] = options
     try:
         response = _request("POST", "/chat", payload=payload, timeout=120)
     except ProviderError as error:

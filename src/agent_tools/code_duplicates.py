@@ -51,16 +51,17 @@ class WorkspaceDirectoryAuthorizations:
 
     def issue(self, workspace_root: Path | str, *, owner_kind: str, owner_id: str,
               conversation_id: str, revision: int, directories: Sequence[str], ttl_seconds: int = 300) -> dict[str, Any]:
-        canonical = validate_workspace_scan_directories(workspace_root, directories)
+        bound_root = str(Path(workspace_root).resolve())
+        canonical = validate_workspace_scan_directories(bound_root, directories)
         token = secrets.token_urlsafe(32)
         grant = {"owner_kind": owner_kind, "owner_id": owner_id, "conversation_id": conversation_id,
-                 "revision": revision, "directories": canonical, "expires_at": time.time() + ttl_seconds}
+                 "revision": revision, "workspace_root": bound_root, "directories": canonical, "expires_at": time.time() + ttl_seconds}
         with self._lock:
             self._grants[token] = grant
         return {"authorization_id": token, "directories": canonical, "expires_in_seconds": ttl_seconds}
 
     def consume(self, token: str, *, owner_kind: str, owner_id: str, conversation_id: str,
-                revision: int) -> list[str] | None:
+                revision: int, workspace_root: Path | str | None = None) -> list[str] | None:
         with self._lock:
             grant = self._grants.get(token)
             if not grant:
@@ -68,10 +69,13 @@ class WorkspaceDirectoryAuthorizations:
             if grant["expires_at"] < time.time():
                 self._grants.pop(token, None)
                 return None
-            if any(grant[key] != value for key, value in {
+            expected = {
                 "owner_kind": owner_kind, "owner_id": owner_id,
                 "conversation_id": conversation_id, "revision": revision,
-            }.items()):
+            }
+            if workspace_root is not None:
+                expected["workspace_root"] = str(Path(workspace_root).resolve())
+            if any(grant[key] != value for key, value in expected.items()):
                 return None
             self._grants.pop(token, None)
             return list(grant["directories"])
@@ -85,6 +89,12 @@ def _blocked_directory(parts: tuple[str, ...]) -> bool:
                for part in parts)
 
 
+def _normalize_scan_directory(value: Any) -> str | None:
+    if isinstance(value, str) and value.strip().replace("\\", "/") in {".", "./"}:
+        return "."
+    return normalize_workspace_path(value)
+
+
 def validate_workspace_scan_directories(workspace_root: Path | str, directories: Sequence[str]) -> list[str]:
     if not isinstance(directories, (list, tuple)) or not 1 <= len(directories) <= 5:
         raise ValueError("Authorize between one and five project directories.")
@@ -92,7 +102,7 @@ def validate_workspace_scan_directories(workspace_root: Path | str, directories:
     canonical: list[str] = []
     seen: set[str] = set()
     for requested in directories:
-        normalized = normalize_workspace_path(requested)
+        normalized = _normalize_scan_directory(requested)
         if normalized is None:
             raise ValueError("Directory paths must be project-relative and cannot contain traversal segments.")
         parts = tuple(PurePosixPath(normalized).parts)
@@ -142,7 +152,7 @@ def scan_code_duplicates(workspace_root: Path | str, arguments: Any,
         except (TypeError, ValueError):
             arguments = None
     requested = arguments.get("directory") if isinstance(arguments, dict) else None
-    normalized = normalize_workspace_path(requested)
+    normalized = _normalize_scan_directory(requested)
 
     def denied(message: str, code: str) -> tuple[dict[str, Any], dict[str, Any]]:
         return {"ok": False, "error": message}, {"decision": "DENY", "kind": "directory_code_scan", "path": normalized, "reason_code": code}
@@ -224,7 +234,7 @@ def scan_code_duplicates(workspace_root: Path | str, arguments: Any,
                     truncated = True
                     break
                 rel = filesystem.relative_path(safe_path)
-                if not rel.startswith(relative_root.rstrip("/") + "/"):
+                if relative_root != "." and not rel.startswith(relative_root.rstrip("/") + "/"):
                     skipped += 1
                     continue
                 files.append((rel, path, raw, text))

@@ -21,11 +21,12 @@ interface Job {
 
 interface JobHistoryProps {
   onJobSelect?: (job: Job) => void
+  inline?: boolean
 }
 
 type JobFilter = 'all' | 'demo' | 'agent'
 
-export default function JobHistory({ onJobSelect }: JobHistoryProps) {
+export default function JobHistory({ onJobSelect, inline = false }: JobHistoryProps) {
   const [jobs, setJobs] = useState<Job[]>([])
   const [loading, setLoading] = useState(true)
   const [selectedJob, setSelectedJob] = useState<Job | null>(null)
@@ -89,7 +90,7 @@ export default function JobHistory({ onJobSelect }: JobHistoryProps) {
   }))
 
   return (
-    <div className="job-history">
+    <div className={`job-history${inline ? ' job-history-inline' : ''}`}>
       <div className="history-header">
         <h2>Job History</h2>
         <TabStrip<JobFilter>

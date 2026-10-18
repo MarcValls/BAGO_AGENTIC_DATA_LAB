@@ -4,6 +4,9 @@ import { FormEvent, useCallback, useEffect, useRef, useState } from 'react'
 import type { UIEvent } from 'react'
 import { createPortal } from 'react-dom'
 import { Capability, CapabilityProposal, capabilityResponseError } from './CapabilityManager'
+import AgentBuilder from './AgentBuilder'
+import DirectoryScanRun, { type ScanOutcome, type ScanReceipt, type ScanReport, type ScanTrace } from './DirectoryScanRun'
+import JobHistory from './JobHistory'
 import WindowPanel from './WindowPanel'
 import TabStrip from './TabStrip'
 
@@ -20,17 +23,16 @@ type AgentConfig = {
 }
 
 type Agent = { id: string; config: AgentConfig; created_at: string }
-type ProviderModel = { provider_id: string; model_id: string; display_name: string; source: string; availability_confidence: string }
 type MessageTrace = { localId: string; state: string; jaegerId?: string; jaegerUrl?: string }
 type WorkspaceSource = { path: string; start_line: number; end_line: number; file_sha256?: string; content_sha256?: string }
 type WorkspaceReadEvent = { decision: 'ALLOW' | 'DENY'; kind?: string; path: string | null; reason_code?: string; file_sha256?: string; content_sha256?: string; files_scanned?: number; files_skipped?: number; bytes_scanned?: number; lines_scanned?: number; finding_count?: number; truncated?: boolean; manifest_sha256?: string }
 type CognitiveTrace = { mode: 'baseline' | 'bago5'; enabled: boolean; profile?: string | null; method?: string; focus: Array<{ id: string; kind: string; label: string; score: number }>; capacity?: number; max_hops?: number; trace_id?: string; trace_state?: string }
-type Message = { id: string; role: 'user' | 'assistant'; content: string; trace?: MessageTrace; cognitiveTrace?: CognitiveTrace; sources?: WorkspaceSource[]; readEvents?: WorkspaceReadEvent[] }
+type Message = { id: string; role: 'user' | 'assistant'; content: string; trace?: MessageTrace; cognitiveTrace?: CognitiveTrace; sources?: WorkspaceSource[]; readEvents?: WorkspaceReadEvent[]; agentBuilderDraft?: AgentConfig; inlineJobHistory?: boolean; inlineDirectoryScan?: boolean; scanOutcome?: ScanOutcome; pendingNavigation?: ExistingView; navigationDecision?: 'accepted' | 'declined' }
 type ConversationSummary = { id: string; owner_kind: 'assistant' | 'agent'; owner_id: string; title: string; status: 'active' | 'archived' | 'deleted'; updated_at: string; revision: number }
-type StoredConversation = ConversationSummary & { messages: Array<{ id: string; role: 'user' | 'assistant'; content: string; references?: { trace?: { trace_id?: string; trace_state?: string; jaeger_trace_id?: string; jaeger_url?: string }; cognitive_trace?: CognitiveTrace; sources?: WorkspaceSource[]; read_events?: WorkspaceReadEvent[] } }> }
+type StoredConversation = ConversationSummary & { messages: Array<{ id: string; role: 'user' | 'assistant'; content: string; references?: { trace?: { trace_id?: string; trace_state?: string; jaeger_trace_id?: string; jaeger_url?: string } & Partial<ScanTrace>; cognitive_trace?: CognitiveTrace; sources?: WorkspaceSource[]; read_events?: Array<WorkspaceReadEvent & Partial<ScanReceipt>>; scan_result?: ScanReport; control_capability?: string } }> }
 type LibraryMode = 'active' | 'archived' | 'deleted'
 type ControlOperation = 'chat' | 'help' | 'list_agents' | 'draft_agent' | 'navigate' | 'list_capabilities' | 'propose_capability'
-type ExistingView = 'inspector' | 'builder' | 'chat' | 'runner' | 'control' | 'jobs' | 'traces' | 'summary' | 'retrieval' | 'authorization' | 'evaluation' | 'evaluation_lab' | 'provider_settings' | 'capabilities'
+type ExistingView = 'inspector' | 'builder' | 'chat' | 'workspace' | 'runner' | 'control' | 'jobs' | 'traces' | 'summary' | 'retrieval' | 'authorization' | 'evaluation' | 'evaluation_lab' | 'provider_settings' | 'cognition_settings' | 'capabilities'
 type CapabilityDraft = { capabilities: Capability[]; capabilityId: string; summary: string; requestedScope: string; conversationId: string | null }
 
 function CognitiveContextPanel({ trace }: { trace: CognitiveTrace }) {
@@ -38,10 +40,9 @@ function CognitiveContextPanel({ trace }: { trace: CognitiveTrace }) {
   return <section className={`message-cognition${experimental ? ' message-cognition-bago5' : ''}`} aria-label="Model prompt mode and cognitive context">
     <div className="message-cognition-heading"><strong>{experimental ? 'BAGO5 cognitive focus' : 'Baseline prompt'}</strong><span>{experimental ? 'experimental' : 'comparison'}</span></div>
     {experimental ? <>
-      <p>Bounded attention cues passed to the model as prompt guidance. This is not the model’s hidden reasoning.</p>
       <ul>{trace.focus.map((item) => <li key={item.id}><span>{item.label}</span><code>{item.score.toFixed(3)}</code></li>)}</ul>
       <small>{trace.profile} · {trace.method} · capacity {trace.capacity} · {trace.max_hops} hops</small>
-    </> : <p>The model received its normal chat prompt without the BAGO5 cognitive layer.</p>}
+    </> : null}
     {trace.trace_id && <small>Local focus trace: {trace.trace_id} · {trace.trace_state}</small>}
   </section>
 }
@@ -68,6 +69,13 @@ interface AgentChatProps {
 
 const idFor = () => `${Date.now()}-${Math.random().toString(16).slice(2)}`
 
+const viewLabels: Record<ExistingView, string> = {
+  inspector: 'Decision Inspector', builder: 'Agent Builder', chat: 'Chat', workspace: 'Workspace', runner: 'Agent Runs',
+  control: 'Control', jobs: 'Job History', traces: 'Trace', summary: 'Summary', retrieval: 'Retrieval',
+  authorization: 'Authorization', evaluation: 'Evaluation', evaluation_lab: 'Agent Evaluation Lab',
+  provider_settings: 'Provider & models', cognition_settings: 'Cognition & context', capabilities: 'Capabilities',
+}
+
 async function responseError(response: Response): Promise<string> {
   try {
     const body = await response.json()
@@ -81,38 +89,13 @@ async function responseError(response: Response): Promise<string> {
 function inferIntent(message: string, cognitiveMode: 'baseline' | 'bago5'): { operation: ControlOperation; view?: ExistingView } {
   const text = message.toLocaleLowerCase()
   const capabilityIdMentioned = /\b(?:workspace\.read_text|mcp\.execute|sandbox\.execute|agent\.run)\b/.test(text)
-  if (/\b(capabilities|capability manager|gestor de capacidades|capacidades)\b/.test(text) && /\b(abre|abrir|open|show|muestra|ir a|ve a|navega|gestiona|manager|gestor|vista)\b/.test(text)) return { operation: 'navigate', view: 'capabilities' }
   if (/\b(propuesta|proponer|propose|proposal)\b/.test(text) && (/\b(capacidad|capability|acceso|access|habilitar|enable|registrar|register)\b/.test(text) || capabilityIdMentioned)) return { operation: 'propose_capability' }
-  if (/\b(capacidades|capability catalog|capabilities|estado de (?:la )?capacidad|list(?:ar)? capabilities)\b/.test(text) || (capabilityIdMentioned && /\b(estado|status|lista|listar|mostrar|show|describe|qu[eé])\b/.test(text))) return { operation: 'list_capabilities' }
+  if ((/\b(capacidades|capabilities|capability catalog)\b/.test(text) && /\b(lista|listar|list|show|muestra|mostrar|consulta|consultar|describe|describir|qu[eé]|cu[aá]les|which|status|estado)\b/.test(text)) || (capabilityIdMentioned && /\b(estado|status|lista|listar|mostrar|show|describe|qu[eé])\b/.test(text))) return { operation: 'list_capabilities' }
   if (/^\s*(hola|buenas|hello|hi|hey)[!.\s]*$/.test(text) || /\b(qu[eé] puedes hacer|what can you do|capacidades del asistente|assistant capabilities)\b/.test(text) || /\b(puedes|can you|could you)\s+(crear|create|diseñar|design)\s+(un\s+|a\s+)?agentes?\s*[?!.]*$/.test(text) || /\b(no puedes|cannot|can't)\s+(crear|create)\s+agentes?\b/.test(text)) {
     return { operation: cognitiveMode === 'bago5' ? 'chat' : 'help' }
   }
   if (/\b(lista|listar|muestra|mostrar|qué|cu[aá]les)\b.*\b(agentes|agente)\b/.test(text) || /\b(agentes|agente)\b.*\b(lista|listar|hay|tengo)\b/.test(text)) {
     return { operation: 'list_agents' }
-  }
-  if (/\b(crea|crear|diseña|diseñar|configura|configurar)\b.*\bagente\b/.test(text) || /\b(necesito|quiero)\s+(un\s+)?agente\b/.test(text)) {
-    return { operation: 'draft_agent' }
-  }
-  const destinations: Array<[RegExp, ExistingView]> = [
-    [/\b(agent evaluation lab|evaluation lab|laboratorio de evaluaci[oó]n de agentes|laboratorio de evaluaci[oó]n)\b/, 'evaluation_lab'],
-    [/\b(inspector|decisiones)\b/, 'inspector'],
-    [/\b(builder|creaci[oó]n de agentes)\b/, 'builder'],
-    [/\b(chat)\b/, 'chat'],
-    [/\b(agent runs|runner|ejecutor)\b/, 'runner'],
-    [/\b(control)\b/, 'control'],
-    [/\b(jobs?|trabajos|historial)\b/, 'jobs'],
-    [/\b(traces?|trazas)\b/, 'traces'],
-    [/\b(summary|resumen)\b/, 'summary'],
-    [/\b(retrieval|ontology|recuperaci[oó]n|ontolog[ií]a)\b/, 'retrieval'],
-    [/\b(authorization|autorizaci[oó]n)\b/, 'authorization'],
-    [/\b(evaluation|evaluaci[oó]n)\b/, 'evaluation'],
-    [/\b(provider|proveedor|ollama)\b/, 'provider_settings'],
-  ]
-  if (/\b(abre|abrir|ve a|ir a|navega|muestra la vista|ll[eé]vame|ll[eé]vame a|entra a|open|go to|show me)\b/.test(text)) {
-    const destination = destinations.find(([pattern]) => pattern.test(text))
-    if (destination) {
-      return { operation: 'navigate', view: destination[1] }
-    }
   }
   return { operation: 'chat' }
 }
@@ -134,12 +117,6 @@ export default function AgentChat({ onNavigate, onOpenProviderSettings, onOpenCo
   const [workspaceReadPaths, setWorkspaceReadPaths] = useState('')
   const [sending, setSending] = useState(false)
   const [error, setError] = useState('')
-  const [draft, setDraft] = useState<AgentConfig | null>(null)
-  const [draftModels, setDraftModels] = useState<ProviderModel[]>([])
-  const [loadingDraftModels, setLoadingDraftModels] = useState(false)
-  const [draftModelsError, setDraftModelsError] = useState('')
-  const [creatingDraft, setCreatingDraft] = useState(false)
-  const [createdNotice, setCreatedNotice] = useState('')
   const [capabilityDraft, setCapabilityDraft] = useState<CapabilityDraft | null>(null)
   const [capabilityProposals, setCapabilityProposals] = useState<CapabilityProposal[]>([])
   const [capabilityBusy, setCapabilityBusy] = useState(false)
@@ -191,17 +168,31 @@ export default function AgentChat({ onNavigate, onOpenProviderSettings, onOpenCo
   const ownerId = selectedAgent?.id ?? 'app-assistant'
 
   const applyConversation = (conversation: StoredConversation) => {
+    const inlineAgentDrafts = new Map(messages.filter((message) => message.agentBuilderDraft).map((message) => [message.id, message.agentBuilderDraft as AgentConfig]))
+    const inlineJobHistoryIds = new Set(messages.filter((message) => message.inlineJobHistory).map((message) => message.id))
+    const inlineDirectoryScanIds = new Set(messages.filter((message) => message.inlineDirectoryScan).map((message) => message.id))
+    const pendingNavigations = new Map(messages.filter((message) => message.pendingNavigation).map((message) => [message.id, { view: message.pendingNavigation as ExistingView, decision: message.navigationDecision }]))
     setActiveConversation(conversation)
     setMessages(conversation.messages.map((message) => {
       const trace = message.references?.trace
+      const scanReceipt = message.references?.read_events?.find((event) => event.kind === 'directory_code_scan')
+      const scanTrace = message.references?.trace
+      const scanOutcome = message.references?.scan_result && scanReceipt && scanTrace?.trace_id && scanTrace.trace_state
+        ? { result: message.references.scan_result, receipt: scanReceipt as ScanReceipt, trace: { trace_id: scanTrace.trace_id, trace_state: scanTrace.trace_state }, conversation_id: conversation.id }
+        : undefined
       return {
         id: message.id,
         role: message.role,
         content: message.content,
-        ...(trace?.trace_id ? { trace: { localId: trace.trace_id, state: trace.trace_state || 'unknown', jaegerId: trace.jaeger_trace_id, jaegerUrl: trace.jaeger_url } } : {}),
+        ...(inlineAgentDrafts.has(message.id) ? { agentBuilderDraft: inlineAgentDrafts.get(message.id) } : {}),
+        ...(inlineJobHistoryIds.has(message.id) ? { inlineJobHistory: true } : {}),
+        ...(message.references?.control_capability === 'workspace.scan_duplicates' || inlineDirectoryScanIds.has(message.id) ? { inlineDirectoryScan: true } : {}),
+        ...(scanOutcome ? { scanOutcome } : {}),
+        ...(pendingNavigations.has(message.id) ? { pendingNavigation: pendingNavigations.get(message.id)?.view, navigationDecision: pendingNavigations.get(message.id)?.decision } : {}),
+        ...(!scanOutcome && trace?.trace_id ? { trace: { localId: trace.trace_id, state: trace.trace_state || 'unknown', jaegerId: trace.jaeger_trace_id, jaegerUrl: trace.jaeger_url } } : {}),
         ...(message.references?.cognitive_trace ? { cognitiveTrace: message.references.cognitive_trace } : {}),
         ...(message.references?.sources?.length ? { sources: message.references.sources } : {}),
-        ...(Array.isArray((message.references as any)?.read_events) ? { readEvents: (message.references as any).read_events } : {}),
+        ...(!scanOutcome && Array.isArray((message.references as any)?.read_events) ? { readEvents: (message.references as any).read_events } : {}),
       }
     }))
   }
@@ -428,8 +419,6 @@ export default function AgentChat({ onNavigate, onOpenProviderSettings, onOpenCo
     setInput('')
     setError('')
     setLibraryError('')
-    setCreatedNotice('')
-    setDraft(null)
     const readFilesForThisMessage = allowWorkspaceRead
     setAllowWorkspaceRead(false)
     setSending(true)
@@ -450,16 +439,6 @@ export default function AgentChat({ onNavigate, onOpenProviderSettings, onOpenCo
       const localCapabilityIntent = !selectedAgent ? inferIntent(content, cognitiveMode) : null
       if (localCapabilityIntent?.operation === 'list_capabilities' || localCapabilityIntent?.operation === 'propose_capability') {
         await beginCapabilityRequest(content, localCapabilityIntent.operation, conversation.id)
-        return
-      }
-      if (localCapabilityIntent?.operation === 'navigate' && localCapabilityIntent.view === 'capabilities') {
-        setMessages((previous) => [...previous, { id: idFor(), role: 'user', content }])
-        onNavigate('capabilities')
-        return
-      }
-      if (localCapabilityIntent?.operation === 'navigate' && localCapabilityIntent.view === 'evaluation_lab') {
-        setMessages((previous) => [...previous, { id: idFor(), role: 'user', content }])
-        onNavigate('evaluation_lab')
         return
       }
       setMessages((previous) => [...previous, { id: idFor(), role: 'user', content }])
@@ -504,31 +483,33 @@ export default function AgentChat({ onNavigate, onOpenProviderSettings, onOpenCo
       } else if (data.operation === 'draft_agent') {
         if (!data.agent_draft || data.created !== false) throw new Error('The server returned an invalid or already-created proposal.')
         const proposedDraft = data.agent_draft as AgentConfig
-        setDraft(proposedDraft)
-        setDraftModels([])
-        setDraftModelsError('')
-        setLoadingDraftModels(true)
-        try {
-          const modelsResponse = await fetch('/api/providers/ollama/models')
-          if (!modelsResponse.ok) throw new Error(await responseError(modelsResponse))
-          const modelsData = await modelsResponse.json()
-          const usableModels = Array.isArray(modelsData.models)
-            ? modelsData.models.filter((model: ProviderModel) => model.provider_id === 'ollama-cloud' && model.availability_confidence === 'listed' && typeof model.model_id === 'string')
-            : []
-          setDraftModels(usableModels)
-          if (!usableModels.some((model: ProviderModel) => model.model_id === proposedDraft.model_id)) {
-            setDraft((current) => current ? { ...current, model_id: usableModels[0]?.model_id ?? '' } : current)
-          }
-          if (!usableModels.length) setDraftModelsError('No usable Ollama models were confirmed. Configure the provider, then request a new proposal.')
-        } catch (modelError) {
-          setDraftModelsError(modelError instanceof Error ? modelError.message : 'Could not load confirmed Ollama models.')
-        } finally {
-          setLoadingDraftModels(false)
-        }
-      } else if (data.operation === 'navigate') {
+        const assistantMessages = (data.conversation as StoredConversation).messages.filter((message) => message.role === 'assistant')
+        const assistantMessageId = assistantMessages[assistantMessages.length - 1]?.id
+        if (!assistantMessageId) throw new Error('The agent proposal has no matching assistant message.')
+        setMessages((previous) => previous.map((message) => message.id === assistantMessageId
+          ? { ...message, agentBuilderDraft: proposedDraft }
+          : message))
+      } else if (data.operation === 'job_history') {
+        const assistantMessages = (data.conversation as StoredConversation).messages.filter((message) => message.role === 'assistant')
+        const assistantMessageId = assistantMessages[assistantMessages.length - 1]?.id
+        if (!assistantMessageId) throw new Error('The job history request has no matching assistant message.')
+        setMessages((previous) => previous.map((message) => message.id === assistantMessageId
+          ? { ...message, inlineJobHistory: true }
+          : message))
+      } else if (data.operation === 'workspace_scan') {
+        const assistantMessages = (data.conversation as StoredConversation).messages.filter((message) => message.role === 'assistant')
+        const assistantMessageId = assistantMessages[assistantMessages.length - 1]?.id
+        if (!assistantMessageId) throw new Error('The code scan request has no matching assistant message.')
+        setMessages((previous) => previous.map((message) => message.id === assistantMessageId
+          ? { ...message, inlineDirectoryScan: true }
+          : message))
+      } else if (data.operation === 'confirm_navigation') {
         const view = data.navigation?.view as ExistingView | undefined
-        if (!view) throw new Error('The server did not identify a destination view.')
-        onNavigate(view)
+        if (!view || !(view in viewLabels)) throw new Error('The server did not identify a valid destination view.')
+        const assistantMessages = (data.conversation as StoredConversation).messages.filter((message) => message.role === 'assistant')
+        const assistantMessageId = assistantMessages[assistantMessages.length - 1]?.id
+        if (!assistantMessageId) throw new Error('The navigation confirmation has no matching assistant message.')
+        setMessages((previous) => previous.map((message) => message.id === assistantMessageId ? { ...message, pendingNavigation: view } : message))
       } else if (!selectedAgent && !['chat', 'help'].includes(data.operation)) {
         throw new Error('The server returned an unsupported chat operation.')
       }
@@ -543,62 +524,22 @@ export default function AgentChat({ onNavigate, onOpenProviderSettings, onOpenCo
     }
   }
 
-  const createDraft = async () => {
-    if (!draft || creatingDraft) return
-    if (draft.provider_id !== 'ollama-cloud' || !draft.model_id?.trim() || !draftModels.some((model) => model.model_id === draft.model_id)) {
-      setError('Choose a model confirmed by the configured Ollama provider before creating this agent.')
-      return
-    }
-    const createPayload = Object.fromEntries(Object.entries(draft).filter(([, value]) => value !== null && value !== undefined))
-    setCreatingDraft(true)
-    setError('')
-    try {
-      const response = await fetch('/api/agents/create', {
-        method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(createPayload),
-      })
-      if (!response.ok) throw new Error(await responseError(response))
-      const created = await response.json() as Agent
-      setDraft(null)
-      setCreatedNotice(`${created.config.name} was created and added to your agent list.`)
-      await refreshAgents()
-    } catch (cause) {
-      setError(cause instanceof Error ? cause.message : 'Agent creation failed.')
-    } finally {
-      setCreatingDraft(false)
-    }
-  }
-
-  const cancelDraft = () => {
-    setDraft(null)
-    setDraftModels([])
-    setDraftModelsError('')
-  }
-
-  const openControlChat = () => { setSelectedAgent(null); setAllowWorkspaceRead(false); setWorkspaceReadPaths(''); setDraft(null); setDraftModels([]); setDraftModelsError(''); setCapabilityDraft(null); setCapabilityProposals([]); setError('') }
-  const selectAgent = (agent: Agent) => { setSelectedAgent(agent); setAllowWorkspaceRead(false); setWorkspaceReadPaths(''); setDraft(null); setDraftModels([]); setDraftModelsError(''); setCapabilityDraft(null); setCapabilityProposals([]); setError('') }
+  const openControlChat = () => { setSelectedAgent(null); setAllowWorkspaceRead(false); setWorkspaceReadPaths(''); setCapabilityDraft(null); setCapabilityProposals([]); setError('') }
+  const selectAgent = (agent: Agent) => { setSelectedAgent(agent); setAllowWorkspaceRead(false); setWorkspaceReadPaths(''); setCapabilityDraft(null); setCapabilityProposals([]); setError('') }
+  const latestDirectoryScanPromptId = [...messages].reverse().find((message) => message.inlineDirectoryScan)?.id
 
   return (
     <section className="control-chat" aria-label="Agent and application chat" onScrollCapture={revealScrollbarWhileScrolling}>
       {agentPanelTarget && createPortal(
         <details className="chat-agent-panel">
-          <summary>Workspace and agents <span>{agentsState === 'ready' ? agents.length : '—'}</span></summary>
-          <aside className="control-chat-sidebar" aria-label="Agent inventory">
-            <section className="chat-sidebar-pane chat-sidebar-agents" aria-labelledby="chat-agents-title">
-              <div className="chat-sidebar-heading"><div><h2 id="chat-agents-title">Agents</h2></div></div>
-              <button type="button" className={`control-agent-option ${selectedAgent === null ? 'selected' : ''}`} onClick={openControlChat}><strong>App assistant</strong><span>Chat, list agents, create drafts, navigate</span></button>
-              <div className="agent-list-label"><span>Your application agents</span><span>{agentsState === 'ready' ? agents.length : '—'}</span></div>
-              {agentsState === 'loading' && <p className="muted-state" role="status">Loading agents…</p>}
-              {agentsState === 'error' && <p className="inline-error">Agent inventory unavailable.</p>}
-              {agentsState === 'ready' && agents.length === 0 && <p className="muted-state">No agents created yet. Ask the app assistant to create one.</p>}
-              <div className="control-agent-list">{agents.map((agent) => <button key={agent.id} type="button" className={`control-agent-option ${selectedAgent?.id === agent.id ? 'selected' : ''}`} onClick={() => selectAgent(agent)}><strong>{agent.config.name}</strong><span>{agent.config.type} · {agent.config.model_id || 'Sin modelo asignado'}</span><span>{agent.config.description}</span></button>)}</div>
-              {inventoryWarning && <p className="warning-state" role="status">{inventoryWarning}</p>}
-            </section>
+          <summary>Conversations and agents <span>{agentsState === 'ready' ? agents.length : '—'}</span></summary>
+          <aside className="control-chat-sidebar" aria-label="Orchestrator conversations and agents">
             <section className="chat-sidebar-pane conversation-library" aria-label="Conversation library">
-              <div className="conversation-library-heading"><strong>Chats</strong></div>
+              <div className="conversation-library-heading"><strong>{selectedAgent ? `Chats · ${selectedAgent.config.name}` : 'Orchestrator chats'}</strong></div>
               <TabStrip<LibraryMode> label="Conversation status" value={libraryMode} onChange={setLibraryMode} items={[{ id: 'active', label: 'Recent' }, { id: 'archived', label: 'Archived' }, { id: 'deleted', label: 'Trash' }]} />
               {loadingConversation && <p className="muted-state" role="status">Opening conversation…</p>}
               {libraryError && <p className="inline-error" role="alert">{libraryError}</p>}
-              {conversationList.length === 0 && !libraryError && <p className="muted-state">No {libraryMode === 'active' ? 'recent' : libraryMode} chats for this owner.</p>}
+              {conversationList.length === 0 && !libraryError && <p className="muted-state">No {libraryMode === 'active' ? 'recent' : libraryMode} chats {selectedAgent ? 'for this agent' : 'with the orchestrator'}.</p>}
               <div className="conversation-library-list">{conversationList.map((conversation) => <button
                 key={conversation.id}
                 type="button"
@@ -653,6 +594,22 @@ export default function AgentChat({ onNavigate, onOpenProviderSettings, onOpenCo
                 {conversationContextMenu.conversation.status !== 'active' && <button type="button" role="menuitem" onClick={() => { const { conversation } = conversationContextMenu; setConversationContextMenu(null); void manageConversation('restore', conversation) }}>Restore</button>}
               </div>}
             </section>
+            <section className="chat-sidebar-pane chat-sidebar-agents" aria-labelledby="chat-agents-title">
+              <div className="chat-sidebar-heading"><div><h2 id="chat-agents-title">Agents</h2></div></div>
+              <section className="conversation-agent-activity" aria-label="Agents participating in the selected conversation">
+                <strong>Agents in this chat</strong>
+                <p>{!selectedAgent && activeConversation?.owner_kind === 'assistant'
+                  ? 'No agent tasks are linked to this conversation yet.'
+                  : 'Select an orchestrator conversation to see its linked agent tasks.'}</p>
+              </section>
+              <button type="button" className={`control-agent-option ${selectedAgent === null ? 'selected' : ''}`} onClick={openControlChat}><strong>App assistant</strong></button>
+              <div className="agent-list-label"><span>Available agents</span><span>{agentsState === 'ready' ? agents.length : '—'}</span></div>
+              {agentsState === 'loading' && <p className="muted-state" role="status">Loading agents…</p>}
+              {agentsState === 'error' && <p className="inline-error">Agent inventory unavailable.</p>}
+              {agentsState === 'ready' && agents.length === 0 && <p className="muted-state">No agents created yet. Ask the app assistant to create one.</p>}
+              <div className="control-agent-list">{agents.map((agent) => <button key={agent.id} type="button" className={`control-agent-option ${selectedAgent?.id === agent.id ? 'selected' : ''}`} onClick={() => selectAgent(agent)}><strong>{agent.config.name}</strong><span>{agent.config.type} · {agent.config.model_id || 'Sin modelo asignado'}</span><span>{agent.config.description}</span></button>)}</div>
+              {inventoryWarning && <p className="warning-state" role="status">{inventoryWarning}</p>}
+            </section>
           </aside>
         </details>,
         agentPanelTarget,
@@ -664,12 +621,10 @@ export default function AgentChat({ onNavigate, onOpenProviderSettings, onOpenCo
       >
         <div className="chat-mode-header"><button type="button" onClick={onOpenCognitionSettings} aria-label="Open cognition and context settings">Cognition: {cognitiveMode === 'bago5' ? 'BAGO5 experimental' : 'Baseline'} <span aria-hidden="true">↗</span></button></div>
         <div className="control-chat-messages" aria-live="polite">
-          {messages.length === 0 && <div className="chat-welcome"><div className="welcome-mark" aria-hidden="true">✳</div><h3>{selectedAgent ? `Chat with ${selectedAgent.config.name}` : 'Your workspace, through chat'}</h3><p>{selectedAgent ? 'Messages are sent to this agent through the configured Ollama provider.' : 'The assistant can list your application agents, draft one for your review, and navigate to supported views.'}</p>{!selectedAgent && <div className="prompt-suggestions"><button type="button" onClick={() => setInput('Lista mis agentes')}>List my agents</button><button type="button" onClick={() => setInput('Quiero crear un agente para…')}>Create an agent</button><button type="button" onClick={() => setInput('Abre el Decision Inspector')}>Open the Inspector</button></div>}</div>}
-          {messages.map((message) => <article key={message.id} className={`control-message control-message-${message.role}`}><span className="message-speaker">{message.role === 'user' ? 'You' : selectedAgent?.config.name ?? 'Assistant'}</span>{message.content && <div className="control-message-content">{message.content}</div>}{message.cognitiveTrace && <CognitiveContextPanel trace={message.cognitiveTrace} />}{message.sources?.length ? <div className="message-sources" aria-label="Project files read"><strong>Project files read</strong><ul>{message.sources.map((source) => <li key={`${source.path}:${source.start_line}-${source.end_line}`}><code>{source.path}:{source.start_line}-{source.end_line}</code>{source.content_sha256 && <small> SHA-256 {source.content_sha256}</small>}</li>)}</ul></div> : null}{message.readEvents?.length ? <div className="message-sources" aria-label="Read-only analysis evidence"><strong>Read-only analysis evidence</strong><ul>{message.readEvents.map((event, index) => <li key={`${event.path}:${index}`}><code>{event.decision} {event.path || '(unresolved path)'} {event.reason_code ? `· ${event.reason_code}` : ''}</code>{event.kind === 'directory_code_scan' && <small>{` · ${event.files_scanned ?? 0} files · ${event.lines_scanned ?? 0} lines · ${event.finding_count ?? 0} findings${event.truncated ? ' · capped' : ''} · manifest SHA-256 ${event.manifest_sha256 ?? 'unavailable'}`}</small>}</li>)}</ul></div> : null}{message.trace && <div className="message-trace" aria-label="Execution trace evidence"><span>Trace {message.trace.state}</span><code>Local: {message.trace.localId}</code>{message.trace.jaegerId && <code>Jaeger: {message.trace.jaegerId}</code>}{message.trace.jaegerUrl && <a href={message.trace.jaegerUrl} target="_blank" rel="noreferrer">Open in Jaeger</a>}</div>}</article>)}
-          {capabilityDraft && <section className="capability-chat-card" aria-labelledby="capability-draft-title"><div className="draft-heading"><div><p className="section-eyebrow">Proposal review</p><h3 id="capability-draft-title">Review before saving</h3></div><span className="draft-status">Not saved</span></div><label>Exact backend capability<select value={capabilityDraft.capabilityId} onChange={(event) => setCapabilityDraft({ ...capabilityDraft, capabilityId: event.target.value })} disabled={capabilityBusy}><option value="">Choose a catalog entry</option>{capabilityDraft.capabilities.map((item) => <option key={item.id} value={item.id}>{item.id} · {item.status} · {item.effect}</option>)}</select></label>{capabilityDraft.capabilityId && <p className="capability-chat-selected">{capabilityDraft.capabilities.find((item) => item.id === capabilityDraft.capabilityId)?.summary}</p>}<label>Request summary<input value={capabilityDraft.summary} maxLength={500} onChange={(event) => setCapabilityDraft({ ...capabilityDraft, summary: event.target.value })} disabled={capabilityBusy} /></label><label>Requested scope<textarea value={capabilityDraft.requestedScope} maxLength={1000} rows={3} placeholder="Describe the exact scope to review" onChange={(event) => setCapabilityDraft({ ...capabilityDraft, requestedScope: event.target.value })} disabled={capabilityBusy} /></label><p>This only saves a review proposal. It does not authorize a capability or run a job.</p><div className="draft-actions"><button type="button" className="secondary-action" onClick={() => setCapabilityDraft(null)} disabled={capabilityBusy}>Discard</button><button type="button" className="primary-action" onClick={() => void saveCapabilityProposal()} disabled={capabilityBusy || !capabilityDraft.capabilityId || !capabilityDraft.summary.trim() || !capabilityDraft.requestedScope.trim()}>{capabilityBusy ? 'Saving…' : 'Save proposal'}</button></div></section>}
+          {messages.length === 0 && <div className="chat-welcome"><div className="welcome-mark" aria-hidden="true">✳</div><h3>{selectedAgent ? `Chat with ${selectedAgent.config.name}` : 'Your workspace, through chat'}</h3>{!selectedAgent && <div className="prompt-suggestions"><button type="button" onClick={() => setInput('Lista mis agentes')}>List my agents</button><button type="button" onClick={() => setInput('Quiero crear un agente para…')}>Create an agent</button><button type="button" onClick={() => setInput('Abre el Decision Inspector')}>Open the Inspector</button></div>}</div>}
+          {messages.map((message) => <article key={message.id} className={`control-message control-message-${message.role}`}><span className="message-speaker">{message.role === 'user' ? 'You' : selectedAgent?.config.name ?? 'Assistant'}</span>{message.content && <div className="control-message-content">{message.content}</div>}{message.agentBuilderDraft && <AgentBuilder key={message.id} inline initialAgent={message.agentBuilderDraft} onAgentCreated={() => void refreshAgents()} />}{message.inlineJobHistory && <JobHistory key={message.id} inline />}{message.inlineDirectoryScan && message.id === latestDirectoryScanPromptId && !selectedAgent && activeConversation?.owner_kind === 'assistant' && <DirectoryScanRun key={`scan-form-${message.id}`} conversationId={activeConversation.id} revision={activeConversation.revision} disabled={activeConversation.status !== 'active'} showForm onConversationUpdate={(conversation) => applyConversation(conversation as StoredConversation)} />}{message.scanOutcome && activeConversation?.owner_kind === 'assistant' && <DirectoryScanRun key={`scan-results-${message.id}`} conversationId={activeConversation.id} revision={activeConversation.revision} showForm={false} initialOutcome={message.scanOutcome} onConversationUpdate={(conversation) => applyConversation(conversation as StoredConversation)} />}{message.pendingNavigation && <section className="chat-navigation-confirmation" aria-label="Confirm screen change"><p>¿Quieres cambiar a <strong>{viewLabels[message.pendingNavigation]}</strong>?</p>{message.navigationDecision === 'accepted' ? <span role="status">Cambiando de pantalla…</span> : message.navigationDecision === 'declined' ? <span role="status">Seguimos en el chat.</span> : <div className="draft-actions"><button type="button" className="secondary-action" onClick={() => setMessages((previous) => previous.map((item) => item.id === message.id ? { ...item, navigationDecision: 'declined' } : item))}>Seguir en el chat</button><button type="button" className="primary-action" onClick={() => { setMessages((previous) => previous.map((item) => item.id === message.id ? { ...item, navigationDecision: 'accepted' } : item)); onNavigate(message.pendingNavigation as ExistingView) }}>Sí, cambiar de pantalla</button></div>}</section>}{message.cognitiveTrace && <CognitiveContextPanel trace={message.cognitiveTrace} />}{message.sources?.length ? <div className="message-sources" aria-label="Project files read"><strong>Project files read</strong><ul>{message.sources.map((source) => <li key={`${source.path}:${source.start_line}-${source.end_line}`}><code>{source.path}:{source.start_line}-{source.end_line}</code>{source.content_sha256 && <small> SHA-256 {source.content_sha256}</small>}</li>)}</ul></div> : null}{message.readEvents?.length ? <div className="message-sources" aria-label="Read-only analysis evidence"><strong>Read-only analysis evidence</strong><ul>{message.readEvents.map((event, index) => <li key={`${event.path}:${index}`}><code>{event.decision} {event.path || '(unresolved path)'} {event.reason_code ? `· ${event.reason_code}` : ''}</code>{event.kind === 'directory_code_scan' && <small>{` · ${event.files_scanned ?? 0} files · ${event.lines_scanned ?? 0} lines · ${event.finding_count ?? 0} findings${event.truncated ? ' · capped' : ''} · manifest SHA-256 ${event.manifest_sha256 ?? 'unavailable'}`}</small>}</li>)}</ul></div> : null}{message.trace && <div className="message-trace" aria-label="Execution trace evidence"><span>Trace {message.trace.state}</span><code>Local: {message.trace.localId}</code>{message.trace.jaegerId && <code>Jaeger: {message.trace.jaegerId}</code>}{message.trace.jaegerUrl && <a href={message.trace.jaegerUrl} target="_blank" rel="noreferrer">Open in Jaeger</a>}</div>}</article>)}
+          {capabilityDraft && <section className="capability-chat-card" aria-labelledby="capability-draft-title"><div className="draft-heading"><div><p className="section-eyebrow">Proposal review</p><h3 id="capability-draft-title">Review before saving</h3></div><span className="draft-status">Not saved</span></div><label>Capability<select value={capabilityDraft.capabilityId} onChange={(event) => setCapabilityDraft({ ...capabilityDraft, capabilityId: event.target.value })} disabled={capabilityBusy}><option value="">Choose a catalog entry</option>{capabilityDraft.capabilities.map((item) => <option key={item.id} value={item.id}>{item.id} · {item.status} · {item.effect}</option>)}</select></label>{capabilityDraft.capabilityId && <p className="capability-chat-selected">{capabilityDraft.capabilities.find((item) => item.id === capabilityDraft.capabilityId)?.summary}</p>}<label>Request summary<input value={capabilityDraft.summary} maxLength={500} onChange={(event) => setCapabilityDraft({ ...capabilityDraft, summary: event.target.value })} disabled={capabilityBusy} /></label><label>Requested scope<textarea value={capabilityDraft.requestedScope} maxLength={1000} rows={3} onChange={(event) => setCapabilityDraft({ ...capabilityDraft, requestedScope: event.target.value })} disabled={capabilityBusy} /></label><div className="draft-actions"><button type="button" className="secondary-action" onClick={() => setCapabilityDraft(null)} disabled={capabilityBusy}>Discard</button><button type="button" className="primary-action" onClick={() => void saveCapabilityProposal()} disabled={capabilityBusy || !capabilityDraft.capabilityId || !capabilityDraft.summary.trim() || !capabilityDraft.requestedScope.trim()}>{capabilityBusy ? 'Saving…' : 'Save proposal'}</button></div></section>}
           {capabilityProposals.map((proposal) => <article className="capability-chat-saved" key={proposal.id}><div><strong>{proposal.capability_id}</strong><span>{proposal.status} · revision {proposal.revision}</span></div><p>{proposal.summary}</p><p><strong>Requested scope:</strong> {proposal.requested_scope}</p><code>{proposal.id}</code>{proposal.status === 'PENDING_REVIEW' && <button type="button" className="secondary-action" onClick={() => void cancelChatProposal(proposal)} disabled={capabilityBusy}>Cancel proposal</button>}</article>)}
-          {draft && <section className="agent-draft-card" aria-labelledby="draft-title"><div className="draft-heading"><div><p className="section-eyebrow">AI-assisted draft</p><h3 id="draft-title">Review and edit before saving</h3></div><span className="draft-status">Not created</span></div><div className="draft-fields"><label>Name<input value={draft.name} maxLength={120} onChange={(event) => setDraft({ ...draft, name: event.target.value })} disabled={creatingDraft} /></label><label>Description<textarea value={draft.description} maxLength={1000} rows={2} onChange={(event) => setDraft({ ...draft, description: event.target.value })} disabled={creatingDraft} /></label><label>Agent type<select value={draft.type} onChange={(event) => setDraft({ ...draft, type: event.target.value as AgentConfig['type'] })} disabled={creatingDraft}><option value="rag">RAG</option><option value="tool">Tool</option><option value="multi-agent">Multi-agent</option></select></label><label>Confirmed Ollama model<select value={draft.model_id ?? ''} onChange={(event) => setDraft({ ...draft, provider_id: 'ollama-cloud', model_id: event.target.value })} disabled={creatingDraft || loadingDraftModels || draftModels.length === 0}><option value="">{loadingDraftModels ? 'Loading models…' : 'Select a confirmed model'}</option>{draftModels.map((model) => <option key={model.model_id} value={model.model_id}>{model.display_name} · {model.source}</option>)}</select></label><label className="draft-prompt-field">System prompt<textarea value={draft.system_prompt} maxLength={12000} rows={6} onChange={(event) => setDraft({ ...draft, system_prompt: event.target.value })} disabled={creatingDraft} /></label></div><p className="draft-model-note" role={draftModelsError ? 'alert' : 'status'}>{draftModelsError || (loadingDraftModels ? 'Checking models from the configured backend…' : 'Model choices come from the configured provider and are not inferred from a public catalog.')}{draftModelsError && <button type="button" onClick={onOpenProviderSettings}>Open provider settings</button>}</p><details className="draft-advanced"><summary>Advanced details</summary><p><strong>Tools:</strong> {draft.tools.length ? draft.tools.join(', ') : 'No tools selected'}</p><p>Creating this profile does not grant tool execution or app-control permissions.</p></details><div className="draft-actions"><button type="button" className="secondary-action" onClick={cancelDraft} disabled={creatingDraft}>Cancel proposal</button><button type="button" className="primary-action" onClick={() => void createDraft()} disabled={creatingDraft || loadingDraftModels || draftModels.length === 0 || !draft.name.trim() || !draft.description.trim() || !draft.system_prompt.trim() || draft.provider_id !== 'ollama-cloud' || !draft.model_id?.trim() || !draftModels.some((model) => model.model_id === draft.model_id)}>{creatingDraft ? 'Creating…' : 'Create agent'}</button></div></section>}
-          {createdNotice && <p className="success-state" role="status">{createdNotice}</p>}
           {error && <p className="chat-error" role="alert">{error}{error.toLowerCase().includes('ollama') || error.toLowerCase().includes('provider') ? <button type="button" onClick={onOpenProviderSettings}>Open provider settings</button> : null}</p>}
           {sending && <p className="muted-state" role="status">Waiting for Ollama…</p>}
           <div ref={messagesEndRef} />
@@ -678,7 +633,7 @@ export default function AgentChat({ onNavigate, onOpenProviderSettings, onOpenCo
           if (event.key !== 'Enter' || event.shiftKey || event.nativeEvent.isComposing || event.repeat) return
           event.preventDefault()
           void sendMessage()
-        }} placeholder={activeConversation?.status && activeConversation.status !== 'active' ? 'Restore this conversation or start a new one to continue.' : selectedAgent ? `Message ${selectedAgent.config.name}.` : 'Ask a question, list agents, create an agent, or open a view.'} disabled={sending || Boolean(activeConversation && activeConversation.status !== 'active')} /><div className="chat-composer-actions"><label className="workspace-read-toggle"><input type="checkbox" checked={allowWorkspaceRead} onChange={(event) => setAllowWorkspaceRead(event.target.checked)} disabled={sending || Boolean(activeConversation && activeConversation.status !== 'active')} /><span>Authorize exact project files for this message <small>Only the paths below, once, for this conversation turn</small></span></label><button className="primary-action" type="submit" disabled={sending || !input.trim() || Boolean(activeConversation && activeConversation.status !== 'active')}>{sending ? 'Sending.' : 'Send'}</button></div>{allowWorkspaceRead && <label className="workspace-read-paths">Project-relative file paths, one per line<textarea rows={3} value={workspaceReadPaths} onChange={(event) => setWorkspaceReadPaths(event.target.value)} placeholder={'src/api/server.py\nsrc/agent_tools/workspace_read.py'} disabled={sending} /></label>}</form>
+        }} placeholder={activeConversation?.status && activeConversation.status !== 'active' ? 'Restore or start a new conversation.' : selectedAgent ? `Message ${selectedAgent.config.name}.` : 'Message the assistant…'} disabled={sending || Boolean(activeConversation && activeConversation.status !== 'active')} /><div className="chat-composer-actions"><label className="workspace-read-toggle"><input type="checkbox" checked={allowWorkspaceRead} onChange={(event) => setAllowWorkspaceRead(event.target.checked)} disabled={sending || Boolean(activeConversation && activeConversation.status !== 'active')} /><span>Allow project file reads</span></label><button className="primary-action" type="submit" disabled={sending || !input.trim() || Boolean(activeConversation && activeConversation.status !== 'active')}>{sending ? 'Sending.' : 'Send'}</button></div>{allowWorkspaceRead && <label className="workspace-read-paths">Project-relative paths<textarea rows={3} value={workspaceReadPaths} onChange={(event) => setWorkspaceReadPaths(event.target.value)} placeholder={'src/api/server.py\nsrc/agent_tools/workspace_read.py'} disabled={sending} /></label>}</form>
         <div className="chat-agent-panel-slot" ref={setAgentPanelTarget} />
       </WindowPanel>
     </section>

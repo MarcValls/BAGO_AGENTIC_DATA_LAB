@@ -24,13 +24,14 @@ interface Artifacts {
   evaluation: any
 }
 
-type AppView = 'chat' | 'capabilities' | 'provider_settings' | 'inspector' | 'builder' | 'runner' | 'control' | 'jobs' | 'summary' | 'retrieval' | 'authorization' | 'trace' | 'evaluation' | 'evaluation_lab'
+type AppView = 'chat' | 'workspace' | 'capabilities' | 'provider_settings' | 'inspector' | 'builder' | 'runner' | 'control' | 'jobs' | 'summary' | 'retrieval' | 'authorization' | 'trace' | 'evaluation' | 'evaluation_lab'
 type DataView = Extract<AppView, 'inspector' | 'jobs' | 'summary' | 'retrieval' | 'authorization' | 'trace' | 'evaluation'>
 type InteractionView = Exclude<AppView, DataView | 'provider_settings'>
-type AssistantView = 'inspector' | 'builder' | 'chat' | 'runner' | 'control' | 'jobs' | 'traces' | 'summary' | 'retrieval' | 'authorization' | 'evaluation' | 'evaluation_lab' | 'provider_settings' | 'capabilities'
+type AssistantView = 'inspector' | 'builder' | 'chat' | 'workspace' | 'runner' | 'control' | 'jobs' | 'traces' | 'summary' | 'retrieval' | 'authorization' | 'evaluation' | 'evaluation_lab' | 'provider_settings' | 'cognition_settings' | 'capabilities'
 
 const navigation: Array<{ id: AppView; label: string; layer: 'interaction' | 'data' }> = [
   { id: 'chat', label: 'Chat', layer: 'interaction' },
+  { id: 'workspace', label: 'Workspace', layer: 'interaction' },
   { id: 'capabilities', label: 'Capabilities', layer: 'interaction' },
   { id: 'builder', label: 'Agent Builder', layer: 'interaction' },
   { id: 'runner', label: 'Agent Runs', layer: 'interaction' },
@@ -48,6 +49,7 @@ const interactionNavigation = navigation.filter((item) => item.layer === 'intera
 const dataNavigation = navigation.filter((item) => item.layer === 'data')
 const interactionIcons: Record<InteractionView, string> = {
   chat: '◌',
+  workspace: '▣',
   capabilities: '◇',
   builder: '⊞',
   runner: '▷',
@@ -124,6 +126,11 @@ function App() {
   }, [demoRefresh])
 
   const navigateFromChat = useCallback((view: AssistantView) => {
+    if (view === 'cognition_settings') {
+      setSettingsSection('cognition')
+      setSettingsOpen(true)
+      return
+    }
     const tab: AppView = view === 'traces' ? 'trace' : view === 'control' ? 'runner' : view
     if (isDataView(tab)) {
       setActiveDataView(tab)
@@ -229,8 +236,9 @@ function App() {
       <div className="app-main">
         <main className={`app-view ${activeInteractionView === 'chat' ? 'app-view--chat' : ''} ${appScroll.scrolling ? 'scroll-active' : ''}`} aria-label={`${activeInteractionLabel} view`} tabIndex={0} onScroll={appScroll.onScroll}>
           {activeInteractionView === 'chat' && <AgentChat onNavigate={navigateFromChat} onOpenProviderSettings={openProviderSettings} onOpenCognitionSettings={openCognitionSettings} cognitiveMode={cognitiveMode} />}
+          {activeInteractionView === 'workspace' && <CognitionSettings mode={cognitiveMode} onModeChange={setCognitiveMode} workspaceOnly />}
           {activeInteractionView === 'capabilities' && <CapabilityManager />}
-          {activeInteractionView === 'builder' && <AgentBuilder onAgentCreated={() => setDemoRefresh((previous) => previous + 1)} />}
+          {activeInteractionView === 'builder' && <AgentBuilder onBack={() => setActiveInteractionView('chat')} onAgentCreated={() => setDemoRefresh((previous) => previous + 1)} />}
           {activeInteractionView === 'runner' && <AgentRunner />}
           {activeInteractionView === 'evaluation_lab' && <AgentEvaluationLab />}
         </main>
@@ -261,7 +269,7 @@ function App() {
             </div>
           </nav>
           <section className={`settings-layer-content ${settingsScroll.scrolling ? 'scroll-active' : ''}`} aria-label={settingsSection === 'provider' ? 'Provider and model settings' : 'Cognition and context settings'} tabIndex={0} onScroll={settingsScroll.onScroll}>
-            {settingsSection === 'provider' ? <ProviderSettings onStatusChange={setProviderNavStatus} /> : <CognitionSettings mode={cognitiveMode} onModeChange={setCognitiveMode} />}
+            {settingsSection === 'provider' ? <ProviderSettings onStatusChange={setProviderNavStatus} /> : <CognitionSettings mode={cognitiveMode} onModeChange={setCognitiveMode} showWorkspaceLocations={false} />}
           </section>
         </div>
       </dialog>

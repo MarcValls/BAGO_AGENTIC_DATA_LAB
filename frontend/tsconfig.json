@@ -20,5 +20,6 @@
     "tsBuildInfoFile": ".build/app.tsbuildinfo"
   },
   "include": ["src"],
+  "exclude": ["src/ui-kit-preview.tsx"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

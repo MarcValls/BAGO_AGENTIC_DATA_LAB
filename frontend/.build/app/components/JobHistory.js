@@ -4,7 +4,7 @@ import './WindowsSurface.css';
 import { useState, useEffect } from 'react';
 import DataGrid from './DataGrid';
 import TabStrip from './TabStrip';
-export default function JobHistory({ onJobSelect }) {
+export default function JobHistory({ onJobSelect, inline = false }) {
     const [jobs, setJobs] = useState([]);
     const [loading, setLoading] = useState(true);
     const [selectedJob, setSelectedJob] = useState(null);
@@ -63,7 +63,7 @@ export default function JobHistory({ onJobSelect }) {
             _jsx("span", { className: "date-cell", children: formatDate(job.created_at) }, "created"),
         ],
     }));
-    return (_jsxs("div", { className: "job-history", children: [_jsxs("div", { className: "history-header", children: [_jsx("h2", { children: "Job History" }), _jsx(TabStrip, { label: "Job type filter", value: filter, onChange: setFilter, items: [
+    return (_jsxs("div", { className: `job-history${inline ? ' job-history-inline' : ''}`, children: [_jsxs("div", { className: "history-header", children: [_jsx("h2", { children: "Job History" }), _jsx(TabStrip, { label: "Job type filter", value: filter, onChange: setFilter, items: [
                             { id: 'all', label: `All (${jobs.length})` },
                             { id: 'demo', label: `Demo (${jobs.filter((j) => j.job_type === 'demo').length})` },
                             { id: 'agent', label: `Agent (${jobs.filter((j) => j.job_type === 'agent').length})` },

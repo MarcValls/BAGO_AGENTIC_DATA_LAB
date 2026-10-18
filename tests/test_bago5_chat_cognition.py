@@ -51,7 +51,12 @@ def test_app_chat_applies_and_persists_bago5_context_and_focus_trace(monkeypatch
     monkeypatch.setattr(server, "AGENT_CHAT_TRACE_DIR", tmp_path / "traces")
     monkeypatch.setattr(server, "_selected_model_id", lambda: "test-model")
     calls = []
-    monkeypatch.setattr(server.ollama, "chat", lambda model, messages: calls.append((model, messages)) or "Comparison answer")
+    def fake_chat_turn(model, messages, *, tools, options=None):
+        calls.append((model, messages, tools, options))
+        return {"tool_calls": [{"function": {"name": "resolve_control_request", "arguments": {
+            "decision": "answer", "reply": "Comparison answer",
+        }}}]}
+    monkeypatch.setattr(server.ollama, "chat_turn", fake_chat_turn)
 
     result = asyncio.run(server.control_chat(server.ControlChatRequest(
         operation="chat", message="Compare these options with evidence", conversation_id=conversation["id"],

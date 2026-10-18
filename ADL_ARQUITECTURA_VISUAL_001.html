@@ -1,0 +1,273 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ADL — Arquitectura visual del orquestador y foco</title>
+<style>
+:root{--ink:#172638;--sub:#52647a;--stroke:#dce4ef;--blue:#2e64aa;--violet:#694fa5;--green:#187a69;--amber:#a96610;--bg:#f6f8fb}*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);font:16px/1.57 'Segoe UI',Arial,sans-serif;color:var(--ink)}
+.top{position:sticky;z-index:20;top:0;background:#fffdfef5;border-bottom:1px solid var(--stroke);backdrop-filter:blur(10px)}.top-inner{max-width:1440px;margin:auto;display:flex;align-items:center;justify-content:space-between;padding:15px 24px;gap:30px}.brand{font-weight:800;color:#17335b;letter-spacing:.07em;font-size:15px}nav{display:flex;gap:20px;flex-wrap:wrap}nav a{text-decoration:none;color:var(--sub);font-size:13px;font-weight:650}nav a:hover{color:var(--blue)}.page{max-width:1440px;margin:auto;padding:34px 24px 72px}h1{font-size:clamp(32px,4.2vw,56px);line-height:1.12;max-width:900px;letter-spacing:-.04em;margin:15px 0 17px}h2{font-size:30px;letter-spacing:-.035em;margin:0 0 10px}h3{margin:0 0 10px;font-size:18px}p{color:var(--sub);margin:7px 0 12px}.lead{font-size:20px;max-width:1050px;line-height:1.65}.eyebrow{font-size:12px;font-weight:800;color:var(--blue);letter-spacing:.18em;text-transform:uppercase}.status{display:inline-block;font-size:12px;border:1px solid #c8d2dd;padding:5px 9px;border-radius:5px;margin-left:12px;background:white;color:#52647a;font-weight:750}.hero{background:#fff;border:1px solid var(--stroke);padding:38px 42px;position:relative;overflow:hidden}.hero:after{content:'';position:absolute;top:0;right:0;width:8px;height:100%;background:linear-gradient(var(--blue),var(--violet),var(--green))}.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:19px}.metric{min-height:122px;background:white;padding:19px 17px;border:1px solid var(--stroke);border-left:4px solid var(--blue);display:flex;flex-direction:column;gap:2px}.metric:nth-child(2){border-left-color:var(--violet)}.metric:nth-child(3){border-left-color:var(--amber)}.metric:nth-child(4){border-left-color:var(--green)}.metric-mark{font-weight:800;font-size:11px;letter-spacing:.12em;color:var(--sub)}.metric strong{font-size:20px;letter-spacing:-.02em}.metric span{font-size:13px;color:var(--sub)}.panel{background:white;border:1px solid var(--stroke);margin-top:26px;padding:28px}.intro{display:flex;gap:20px;align-items:end;justify-content:space-between;flex-wrap:wrap;margin-bottom:16px}.intro p{max-width:890px}.diagram{background:#f7f9fc;border:1px solid var(--stroke);overflow:auto}.diagram svg{display:block;width:100%;height:auto;min-width:800px}.notice{border-left:4px solid var(--violet);padding:13px 18px;background:#f4f1fc;color:#3d3457;margin-top:15px}.notice strong{color:#2f2944}.table-scroll{width:100%;overflow-x:auto}table{width:100%;border-collapse:collapse;min-width:720px;font-size:14px;text-align:left}th{background:#edf2f8;font-size:12px;letter-spacing:.04em;color:#35516e;text-transform:uppercase;padding:14px 15px;border-bottom:1px solid #cdd8e6}td{border-bottom:1px solid #e5eaf1;padding:15px;vertical-align:top}td:first-child{font-weight:740;color:var(--ink);width:21%}tr:last-child td{border-bottom:none}.twocol{display:grid;grid-template-columns:1fr 1fr;gap:22px}.mini{border:1px solid var(--stroke);padding:24px;background:#fff}.mini h3{font-size:19px}.mini p{margin-top:8px}.chip{display:inline-block;background:#eff2f8;border:1px solid #d8e0eb;color:#344c67;border-radius:4px;padding:4px 10px;font-size:12px;font-weight:700;margin:5px 5px 0 0}.chip.violet{background:#f3efff;color:#694fa5;border-color:#ded4f0}.chip.green{background:#ebf7f1;color:#187a69;border-color:#bfe2d3}.chip.amber{background:#fff3e0;color:#a96610;border-color:#f0d4aa}.rules{display:grid;grid-template-columns:repeat(2,1fr);gap:11px;list-style:none;padding:0}.rules li{padding:16px 16px 16px 44px;position:relative;background:#f8fafc;border:1px solid var(--stroke);min-height:78px}.rules li:before{content:'✓';position:absolute;left:16px;top:13px;color:#187a69;font-weight:800;font-size:20px}.closing{background:#17345a;color:white;padding:30px 35px;margin-top:30px;border-left:7px solid #77aadf}.closing h2{color:white}.closing p{color:#d6e4f3}footer{font-size:13px;color:#6a7b8d;margin-top:28px}@media(max-width:900px){.metrics{grid-template-columns:repeat(2,1fr)}.twocol{grid-template-columns:1fr}.rules{grid-template-columns:1fr}.top-inner{flex-direction:column;align-items:flex-start}.hero{padding:25px}}@media print{.top{position:static}.page{padding:10px}.panel{break-inside:avoid}.diagram svg{min-width:0}body{background:white}}
+</style></head><body><header class="top"><div class="top-inner"><div class="brand">ADL  /  ARQUITECTURA DE EXPERIENCIA</div><nav><a href="#mapa">Mapa</a><a href="#responsabilidades">Responsabilidades</a><a href="#foco">Foco</a><a href="#flujo">Recorrido</a><a href="#contratos">Contratos</a><a href="#verificacion">Verificación</a></nav></div></header>
+<main class="page"><section class="hero"><div class="eyebrow">Propuesta arquitectónica · 18 octubre 2026 <span class="status">NO IMPLEMENTADO / NO VERIFICADO</span></div><h1>Chat orquestador <span style="color:#694fa5">y foco contextual</span></h1><p class="lead">El chat general permanece como interlocutor del sistema. El orquestador coordina múltiples agentes y trabajos; el foco señala sobre qué entidad u operación desea intervenir el usuario, sin transferir autoridad ni abandonar la conversación.</p><div><span class="chip">Chat permanente</span><span class="chip violet">Foco reversible</span><span class="chip amber">Ejecución gobernada</span><span class="chip green">Evidencia independiente</span></div></section>
+<section class="metrics"><div class="metric"><div class="metric-mark">01 · INTERFAZ</div><strong>1 chat general</strong><span>No cambia de identidad al usar agentes.</span></div><div class="metric"><div class="metric-mark">02 · ATENCIÓN</div><strong>Foco dinámico</strong><span>Referente del usuario, no límite del orquestador.</span></div><div class="metric"><div class="metric-mark">03 · TRABAJO</div><strong>N operaciones</strong><span>Agentes paralelos con contextos independientes.</span></div><div class="metric"><div class="metric-mark">04 · RESULTADO</div><strong>Evidencia</strong><span>Evaluación independiente de las afirmaciones.</span></div></section>
+<section class="panel" id="mapa"><div class="intro"><div><div class="eyebrow">Mapa estructural</div><h2>Relaciones del orquestador</h2><p>Los componentes gráficos operan sobre servicios y estado común. El foco resuelve referencias; los trabajos se despachan mediante controles separados y ADL contrasta sus resultados.</p></div></div><div class="diagram"><svg xmlns="http://www.w3.org/2000/svg" width="1750" height="1250" viewBox="0 0 1750 1250" role="img" aria-label="ADL arquitectura de relaciones entre chat, orquestador, foco, ejecución gobernada y evaluación">
+<defs>
+<filter id="shadow" x="-20%" y="-25%" width="150%" height="170%"><feDropShadow dx="0" dy="4" stdDeviation="8" flood-color="#233B58" flood-opacity="0.08"/></filter>
+<marker id="arrow" markerWidth="9" markerHeight="9" refX="7.6" refY="4.5" orient="auto"><path d="M 0 0 L 9 4.5 L 0 9 z" fill="#879BB3"/></marker>
+<marker id="arrowBlue" markerWidth="9" markerHeight="9" refX="7.6" refY="4.5" orient="auto"><path d="M 0 0 L 9 4.5 L 0 9 z" fill="#2E64AA"/></marker>
+</defs>
+<rect x="0" y="0" width="1750" height="1250" fill="#F7F9FC"/>
+<text x="65" y="57" font-size="21" fill="#2E64AA" font-family="Segoe UI, Arial, sans-serif" font-weight="700" text-anchor="start" letter-spacing="1.2">01  /  MAPA DE RELACIONES</text>
+<text x="65" y="96" font-size="25" fill="#172638" font-family="Segoe UI, Arial, sans-serif" font-weight="700" text-anchor="start">Un orquestador permanente. Múltiples trabajos. Una interfaz coherente.</text>
+<rect x="1435" y="40" width="255" height="44" rx="6" fill="#EDF1F6" stroke="#53657A" stroke-width="1.2"/>
+<text x="1562.5" y="67.0" font-size="15" fill="#53657A" font-family="Segoe UI, Arial, sans-serif" font-weight="700" text-anchor="middle">PROPUESTO · NO VERIFICADO</text>
+<rect x="725" y="134" width="300" height="70" rx="9" fill="#FFFFFF" stroke="#D6E0EB" stroke-width="1.4" filter="url(#shadow)"/>
+<rect x="725" y="134" width="7" height="70" rx="2" fill="#53657A" stroke="#53657A" stroke-width="0"/>
+<rect x="743" y="150" width="7" height="7" rx="2" fill="#53657A" stroke="#53657A" stroke-width="0"/>
+<text x="764" y="168" font-size="19" fill="#172638" font-family="Segoe UI, Arial, sans-serif" font-weight="700" text-anchor="start">USUARIO</text>
+<path d="M 875 204 V 245" fill="none" stroke="#2E64AA" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"  marker-end="url(#arrowBlue)"/>
+<rect x="525" y="249" width="700" height="118" rx="9" fill="#FFFFFF" stroke="#D6E0EB" stroke-width="1.4" filter="url(#shadow)"/>
+<rect x="525" y="249" width="7" height="118" rx="2" fill="#2E64AA" stroke="#2E64AA" stroke-width="0"/>
+<rect x="543" y="265" width="7" height="7" rx="2" fill="#2E64AA" stroke="#2E64AA" stroke-width="0"/>
+<text x="564" y="286" font-size="22" fill="#172638" font-family="Segoe UI, Arial, sans-serif" font-weight="700" text-anchor="start">CHAT GENERAL · ADL</text>
+<text x="551" y="315" font-size="17" fill="#52647A" font-family="Segoe UI, Arial, sans-serif" font-weight="400" text-anchor="start">Interacción permanente con el orquestador</text>
+<text x="551" y="339" font-size="17" fill="#52647A" font-family="Segoe UI, Arial, sans-serif" font-weight="400" text-anchor="start">Presenta componentes reales y estados de operación</text>
+<rect x="1101" y="262" width="110" height="30" rx="5" fill="#EAF3FF" stroke="#2E64AA" stroke-width="1"/>
+<text x="1156" y="283" font-size="13" fill="#2E64AA" font-family="Segoe UI, Arial, sans-serif" font-weight="700" text-anchor="middle" letter-spacing=".5">INTERFAZ</text>
+<rect x="75" y="252" width="370" height="112" rx="9" fill="#FFFFFF" stroke="#D6E0EB" stroke-width="1.4" filter="url(#shadow)"/>
+<rect x="75" y="252" width="7" height="112" rx="2" fill="#2E64AA" stroke="#2E64AA" stroke-width="0"/>
+<rect x="93" y="268" width="7" height="7" rx="2" fill="#2E64AA" stroke="#2E64AA" stroke-width="0"/>
+<text x="114" y="286" font-size="19" fill="#172638" font-family="Segoe UI, Arial, sans-serif" font-weight="700" text-anchor="start">COMPONENTES UI REALES</text>
+<text x="101" y="308" font-size="16" fill="#52647A" font-family="Segoe UI, Arial, sans-serif" font-weight="400" text-anchor="start">Ficha · Editor · Inspector</text>
+<text x="101" y="330" font-size="16" fill="#52647A" font-family="Segoe UI, Arial, sans-serif" font-weight="400" text-anchor="start">Compartidos con otras pantallas</text>
+<rect x="1305" y="252" width="360" height="112" rx="9" fill="#FFFFFF" stroke="#D6E0EB" stroke-width="1.4" filter="url(#shadow)"/>
+<rect x="1305" y="252" width="7" height="112" rx="2" fill="#53657A" stroke="#53657A" stroke-width="0"/>
+<rect x="1323" y="268" width="7" height="7" rx="2" fill="#53657A" stroke="#53657A" stroke-width="0"/>
+<text x="1344" y="286" font-size="19" fill="#172638" font-family="Segoe UI, Arial, sans-serif" font-weight="700" text-anchor="start">PANEL DE ACTIVIDAD</text>
+<text x="1331" y="308" font-size="16" fill="#52647A" font-family="Segoe UI, Arial, sans-serif" font-weight="400" text-anchor="start">Tareas paralelas · Avisos</text>
+<text x="1331" y="330" font-size="16" fill="#52647A" font-family="Segoe UI, Arial, sans-serif" font-weight="400" text-anchor="start">Progreso independiente del foco</text>
+<path d="M 445 311 H 522" fill="none" stroke="#2E64AA" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"  marker-end="url(#arrowBlue)"/>
+<path d="M 1227 311 H 1303" fill="none" stroke="#879BB3" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"  marker-end="url(#arrow)"/>
+<path d="M 875 367 V 428" fill="none" stroke="#2E64AA" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"  marker-end="url(#arrowBlue)"/>
+<rect x="525" y="432" width="700" height="155" rx="9" fill="#FFFFFF" stroke="#D6E0EB" stroke-width="1.4" filter="url(#shadow)"/>
+<rect x="525" y="432" width="7" height="155" rx="2" fill="#2E64AA" stroke="#2E64AA" stroke-width="0"/>
+<rect x="543" y="448" width="7" height="7" rx="2" fill="#2E64AA" stroke="#2E64AA" stroke-width="0"/>
+<text x="564" y="469" font-size="22" fill="#172638" font-family="Segoe UI, Arial, sans-serif" font-weight="700" text-anchor="start">ORQUESTADOR ADL</text>
+<text x="551" y="498" font-size="17" fill="#52647A" font-family="Segoe UI, Arial, sans-serif" font-weight="400" text-anchor="start">Interpreta solicitudes, coordina capacidades y delega trabajo</text>
+<text x="551" y="522" font-size="17" fill="#52647A" font-family="Segoe UI, Arial, sans-serif" font-weight="400" text-anchor="start">Mantiene visión global, aunque la interacción tenga un foco</text>
+<text x="551" y="546" font-size="17" fill="#52647A" font-family="Segoe UI, Arial, sans-serif" font-weight="400" text-anchor="start">No ejecuta efectos por el solo hecho de proponerlos</text>
+<rect x="1101" y="445" width="110" height="30" rx="5" fill="#EAF3FF" stroke="#2E64AA" stroke-width="1"/>
+<text x="1156" y="466" font-size="13" fill="#2E64AA" font-family="Segoe UI, Arial, sans-serif" font-weight="700" text-anchor="middle" letter-spacing=".5">CENTRO</text>
+<path d="M 685 587 V 612 H 285 V 650" fill="none" stroke="#879BB3" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"  marker-end="url(#arrow)"/>
+<path d="M 875 587 V 650" fill="none" stroke="#2E64AA" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"  marker-end="url(#arrowBlue)"/>
+<path d="M 1060 587 V 612 H 1465 V 650" fill="none" stroke="#879BB3" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"  marker-end="url(#arrow)"/>
+<rect x="65" y="655" width="440" height="159" rx="9" fill="#FFFFFF" stroke="#D6E0EB" stroke-width="1.4" filter="url(#shadow)"/>
+<rect x="65" y="655" width="7" height="159" rx="2" fill="#694FA5" stroke="#694FA5" stroke-width="0"/>
+<rect x="83" y="671" width="7" height="7" rx="2" fill="#694FA5" stroke="#694FA5" stroke-width="0"/>
+<text x="104" y="692" font-size="22" fill="#172638" font-family="Segoe UI, Arial, sans-serif" font-weight="700" text-anchor="start">RESOLUCIÓN DE FOCO</text>
+<text x="91" y="721" font-size="17" fill="#52647A" font-family="Segoe UI, Arial, sans-serif" font-weight="400" text-anchor="start">Referente preferente de la intervención</text>
+<text x="91" y="745" font-size="17" fill="#52647A" font-family="Segoe UI, Arial, sans-serif" font-weight="400" text-anchor="start">Recuperación selectiva de contexto</text>
+<text x="91" y="769" font-size="17" fill="#52647A" font-family="Segoe UI, Arial, sans-serif" font-weight="400" text-anchor="start">Sin cambiar identidad ni permisos</text>
+<rect x="381" y="668" width="110" height="30" rx="5" fill="#F3EFFF" stroke="#694FA5" stroke-width="1"/>
+<text x="436" y="689" font-size="13" fill="#694FA5" font-family="Segoe UI, Arial, sans-serif" font-weight="700" text-anchor="middle" letter-spacing=".5">ATENCIÓN</text>
+<rect x="655" y="655" width="440" height="159" rx="9" fill="#FFFFFF" stroke="#D6E0EB" stroke-width="1.4" filter="url(#shadow)"/>
+<rect x="655" y="655" width="7" height="159" rx="2" fill="#53657A" stroke="#53657A" stroke-width="0"/>
+<rect x="673" y="671" width="7" height="7" rx="2" fill="#53657A" stroke="#53657A" stroke-width="0"/>
+<text x="694" y="692" font-size="22" fill="#172638" font-family="Segoe UI, Arial, sans-serif" font-weight="700" text-anchor="start">REGISTRO DE TRABAJOS</text>
+<text x="681" y="721" font-size="17" fill="#52647A" font-family="Segoe UI, Arial, sans-serif" font-weight="400" text-anchor="start">Tareas, agentes y ejecuciones asociados</text>
+<text x="681" y="745" font-size="17" fill="#52647A" font-family="Segoe UI, Arial, sans-serif" font-weight="400" text-anchor="start">Destinatarios fijados antes del envío</text>
+<text x="681" y="769" font-size="17" fill="#52647A" font-family="Segoe UI, Arial, sans-serif" font-weight="400" text-anchor="start">Estado de N trabajos concurrentes</text>
+<rect x="971" y="668" width="110" height="30" rx="5" fill="#EDF1F6" stroke="#53657A" stroke-width="1"/>
+<text x="1026" y="689" font-size="13" fill="#53657A" font-family="Segoe UI, Arial, sans-serif" font-weight="700" text-anchor="middle" letter-spacing=".5">CONTROL</text>
+<rect x="1245" y="655" width="440" height="159" rx="9" fill="#FFFFFF" stroke="#D6E0EB" stroke-width="1.4" filter="url(#shadow)"/>
+<rect x="1245" y="655" width="7" height="159" rx="2" fill="#187A69" stroke="#187A69" stroke-width="0"/>
+<rect x="1263" y="671" width="7" height="7" rx="2" fill="#187A69" stroke="#187A69" stroke-width="0"/>
+<text x="1284" y="692" font-size="22" fill="#172638" font-family="Segoe UI, Arial, sans-serif" font-weight="700" text-anchor="start">DOMINIO Y ESTADO</text>
+<text x="1271" y="721" font-size="17" fill="#52647A" font-family="Segoe UI, Arial, sans-serif" font-weight="400" text-anchor="start">Agentes · proyectos · configuraciones</text>
+<text x="1271" y="745" font-size="17" fill="#52647A" font-family="Segoe UI, Arial, sans-serif" font-weight="400" text-anchor="start">Borradores compartidos y validación</text>
+<text x="1271" y="769" font-size="17" fill="#52647A" font-family="Segoe UI, Arial, sans-serif" font-weight="400" text-anchor="start">Identidades, relaciones y revisiones</text>
+<rect x="1561" y="668" width="110" height="30" rx="5" fill="#E9F8F2" stroke="#187A69" stroke-width="1"/>
+<text x="1616" y="689" font-size="13" fill="#187A69" font-family="Segoe UI, Arial, sans-serif" font-weight="700" text-anchor="middle" letter-spacing=".5">FUENTE</text>
+<path d="M 875 814 V 881" fill="none" stroke="#2E64AA" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"  marker-end="url(#arrowBlue)"/>
+<rect x="600" y="887" width="550" height="111" rx="9" fill="#FFFFFF" stroke="#D6E0EB" stroke-width="1.4" filter="url(#shadow)"/>
+<rect x="600" y="887" width="7" height="111" rx="2" fill="#A96610" stroke="#A96610" stroke-width="0"/>
+<rect x="618" y="903" width="7" height="7" rx="2" fill="#A96610" stroke="#A96610" stroke-width="0"/>
+<text x="639" y="924" font-size="22" fill="#172638" font-family="Segoe UI, Arial, sans-serif" font-weight="700" text-anchor="start">EJECUCIÓN GOBERNADA</text>
+<text x="626" y="953" font-size="17" fill="#52647A" font-family="Segoe UI, Arial, sans-serif" font-weight="400" text-anchor="start">Validación · política · aprobación · autorización</text>
+<text x="626" y="977" font-size="17" fill="#52647A" font-family="Segoe UI, Arial, sans-serif" font-weight="400" text-anchor="start">Objetivo inmutable · límites · despacho</text>
+<rect x="1026" y="900" width="110" height="30" rx="5" fill="#FFF4E4" stroke="#A96610" stroke-width="1"/>
+<text x="1081" y="921" font-size="13" fill="#A96610" font-family="Segoe UI, Arial, sans-serif" font-weight="700" text-anchor="middle" letter-spacing=".5">BARRERA</text>
+<path d="M 815 998 V 1035 H 300 V 1055" fill="none" stroke="#879BB3" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"  marker-end="url(#arrow)"/>
+<path d="M 955 998 V 1035 H 840 V 1055" fill="none" stroke="#879BB3" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"  marker-end="url(#arrow)"/>
+<rect x="65" y="1060" width="470" height="125" rx="9" fill="#FFFFFF" stroke="#D6E0EB" stroke-width="1.4" filter="url(#shadow)"/>
+<rect x="65" y="1060" width="7" height="125" rx="2" fill="#53657A" stroke="#53657A" stroke-width="0"/>
+<rect x="83" y="1076" width="7" height="7" rx="2" fill="#53657A" stroke="#53657A" stroke-width="0"/>
+<text x="104" y="1094" font-size="19" fill="#172638" font-family="Segoe UI, Arial, sans-serif" font-weight="700" text-anchor="start">AGENTES DELEGADOS</text>
+<text x="91" y="1116" font-size="16" fill="#52647A" font-family="Segoe UI, Arial, sans-serif" font-weight="400" text-anchor="start">Contextos de trabajo separados</text>
+<text x="91" y="1138" font-size="16" fill="#52647A" font-family="Segoe UI, Arial, sans-serif" font-weight="400" text-anchor="start">Ejecución de tareas en segundo plano</text>
+<rect x="600" y="1060" width="470" height="125" rx="9" fill="#FFFFFF" stroke="#D6E0EB" stroke-width="1.4" filter="url(#shadow)"/>
+<rect x="600" y="1060" width="7" height="125" rx="2" fill="#A96610" stroke="#A96610" stroke-width="0"/>
+<rect x="618" y="1076" width="7" height="7" rx="2" fill="#A96610" stroke="#A96610" stroke-width="0"/>
+<text x="639" y="1094" font-size="19" fill="#172638" font-family="Segoe UI, Arial, sans-serif" font-weight="700" text-anchor="start">HERRAMIENTAS Y EJECUTORES</text>
+<text x="626" y="1116" font-size="16" fill="#52647A" font-family="Segoe UI, Arial, sans-serif" font-weight="400" text-anchor="start">Solo efectos autorizados</text>
+<text x="626" y="1138" font-size="16" fill="#52647A" font-family="Segoe UI, Arial, sans-serif" font-weight="400" text-anchor="start">Recibos y trazas por operación</text>
+<rect x="1215" y="1060" width="470" height="125" rx="9" fill="#FFFFFF" stroke="#D6E0EB" stroke-width="1.4" filter="url(#shadow)"/>
+<rect x="1215" y="1060" width="7" height="125" rx="2" fill="#187A69" stroke="#187A69" stroke-width="0"/>
+<rect x="1233" y="1076" width="7" height="7" rx="2" fill="#187A69" stroke="#187A69" stroke-width="0"/>
+<text x="1254" y="1094" font-size="19" fill="#172638" font-family="Segoe UI, Arial, sans-serif" font-weight="700" text-anchor="start">EVALUACIÓN Y EVIDENCIAS ADL</text>
+<text x="1241" y="1116" font-size="16" fill="#52647A" font-family="Segoe UI, Arial, sans-serif" font-weight="400" text-anchor="start">Pruebas · recibos · trazas · dictámenes</text>
+<text x="1241" y="1138" font-size="16" fill="#52647A" font-family="Segoe UI, Arial, sans-serif" font-weight="400" text-anchor="start">También admite resultados externos</text>
+<path d="M 535 1126 H 600" fill="none" stroke="#879BB3" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"  marker-end="url(#arrow)"/>
+<path d="M 1070 1126 H 1210" fill="none" stroke="#2E64AA" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"  marker-end="url(#arrowBlue)"/>
+<path d="M 1685 1126 H 1710 V 508 H 1229" fill="none" stroke="#879BB3" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="7 6" marker-end="url(#arrow)"/>
+<text x="1530" y="1043" font-size="15" fill="#187A69" font-family="Segoe UI, Arial, sans-serif" font-weight="700" text-anchor="start">verifica</text>
+<text x="1434" y="125" font-size="14" fill="#52647A" font-family="Segoe UI, Arial, sans-serif" font-weight="700" text-anchor="start" letter-spacing="1.1">RETORNO DE RESULTADOS</text>
+</svg></div><div class="notice"><strong>Frontera de arquitectura:</strong> foco ≠ entidad ≠ selección visual ≠ autorización ≠ ejecución. Los agentes son trabajadores delegados; ADL también puede comprobar resultados externos sin agentes.</div></section>
+<section class="panel" id="responsabilidades"><div class="eyebrow">Responsabilidades</div><h2>Quién hace qué, y qué no debe hacer</h2><div class="table-scroll"><table><thead><tr><th>Componente lógico</th><th>Responsabilidad</th><th>Límite contractual</th></tr></thead><tbody><tr><td>Chat general</td><td>Conversación única; integra componentes, avisos y resultados.</td><td>No cambia de identidad por usar agentes.</td></tr><tr><td>Orquestador</td><td>Interpreta, coordina trabajos, consulta capacidades y resume con procedencia.</td><td>No convierte propuestas en permisos.</td></tr><tr><td>Resolutor de foco</td><td>Determina el referente pertinente de cada intervención.</td><td>No obliga a una vinculación permanente.</td></tr><tr><td>Servicio de contexto</td><td>Recupera selectivamente datos y relaciones autorizados.</td><td>Conocer una ruta o entidad no concede acceso.</td></tr><tr><td>Componentes compartidos</td><td>Misma ficha/editor en chat y pantallas especializadas.</td><td>No duplica configuración, borradores ni validaciones.</td></tr><tr><td>Dominio y estado</td><td>Identidad y persistencia de agentes, proyectos y configuraciones.</td><td>No depende de la superficie que inició el cambio.</td></tr><tr><td>Registro de trabajos</td><td>Relaciona tareas, agentes, ejecuciones y su estado.</td><td>No equivale al estado de la conversación.</td></tr><tr><td>Ejecución gobernada</td><td>Fija objetivo, verifica política y autoriza el despacho.</td><td>No interpreta el foco como autorización.</td></tr><tr><td>Evaluación ADL</td><td>Contrasta trazas, pruebas y resultados con evidencias.</td><td>No confunde afirmaciones de agentes con verificación.</td></tr></tbody></table></div></section>
+<section class="panel" id="foco"><div class="eyebrow">Atención contextual</div><h2>Separar la conversación del foco y del destino</h2><p>«Enfocar» no significa cambiar de interlocutor ni poner toda la aplicación en modo agente. Significa priorizar una referencia cuando sea pertinente; el objetivo de una acción se fija de forma independiente.</p><div class="diagram"><svg xmlns="http://www.w3.org/2000/svg" width="1750" height="820" viewBox="0 0 1750 820" role="img" aria-label="ADL separación entre conversación, foco, selección y acción autorizada">
+<defs>
+<filter id="shadow" x="-20%" y="-25%" width="150%" height="170%"><feDropShadow dx="0" dy="4" stdDeviation="8" flood-color="#233B58" flood-opacity="0.08"/></filter>
+<marker id="arrow" markerWidth="9" markerHeight="9" refX="7.6" refY="4.5" orient="auto"><path d="M 0 0 L 9 4.5 L 0 9 z" fill="#879BB3"/></marker>
+<marker id="arrowBlue" markerWidth="9" markerHeight="9" refX="7.6" refY="4.5" orient="auto"><path d="M 0 0 L 9 4.5 L 0 9 z" fill="#2E64AA"/></marker>
+</defs>
+<rect x="0" y="0" width="1750" height="820" fill="#F7F9FC"/>
+<text x="64" y="57" font-size="21" fill="#694FA5" font-family="Segoe UI, Arial, sans-serif" font-weight="700" text-anchor="start" letter-spacing="1.2">02  /  SEMÁNTICA DEL FOCO</text>
+<text x="64" y="98" font-size="25" fill="#172638" font-family="Segoe UI, Arial, sans-serif" font-weight="700" text-anchor="start">El foco cambia la referencia de trabajo; no cambia la identidad del chat.</text>
+<rect x="175" y="148" width="1400" height="102" rx="9" fill="#FFFFFF" stroke="#D6E0EB" stroke-width="1.4" filter="url(#shadow)"/>
+<rect x="175" y="148" width="7" height="102" rx="2" fill="#2E64AA" stroke="#2E64AA" stroke-width="0"/>
+<rect x="193" y="164" width="7" height="7" rx="2" fill="#2E64AA" stroke="#2E64AA" stroke-width="0"/>
+<text x="214" y="185" font-size="22" fill="#172638" font-family="Segoe UI, Arial, sans-serif" font-weight="700" text-anchor="start">ADL · ORQUESTADOR  /  CONVERSACIÓN GENERAL</text>
+<text x="201" y="214" font-size="17" fill="#52647A" font-family="Segoe UI, Arial, sans-serif" font-weight="400" text-anchor="start">Identidad conversacional permanente · supervisión de todos los trabajos</text>
+<rect x="1451" y="161" width="110" height="30" rx="5" fill="#EAF3FF" stroke="#2E64AA" stroke-width="1"/>
+<text x="1506" y="182" font-size="13" fill="#2E64AA" font-family="Segoe UI, Arial, sans-serif" font-weight="700" text-anchor="middle" letter-spacing=".5">ESTABLE</text>
+<rect x="58" y="341" width="325" height="170" rx="9" fill="#FFFFFF" stroke="#D6E0EB" stroke-width="1.4" filter="url(#shadow)"/>
+<rect x="58" y="341" width="7" height="170" rx="2" fill="#53657A" stroke="#53657A" stroke-width="0"/>
+<rect x="76" y="357" width="7" height="7" rx="2" fill="#53657A" stroke="#53657A" stroke-width="0"/>
+<text x="97" y="375" font-size="19" fill="#172638" font-family="Segoe UI, Arial, sans-serif" font-weight="700" text-anchor="start">MENCIÓN / SELECCIÓN</text>
+<text x="84" y="397" font-size="16" fill="#52647A" font-family="Segoe UI, Arial, sans-serif" font-weight="400" text-anchor="start">Puedo citar o abrir una ficha</text>
+<text x="84" y="419" font-size="16" fill="#52647A" font-family="Segoe UI, Arial, sans-serif" font-weight="400" text-anchor="start">sin fijar el foco.</text>
+<rect x="494" y="341" width="325" height="170" rx="9" fill="#FFFFFF" stroke="#D6E0EB" stroke-width="1.4" filter="url(#shadow)"/>
+<rect x="494" y="341" width="7" height="170" rx="2" fill="#694FA5" stroke="#694FA5" stroke-width="0"/>
+<rect x="512" y="357" width="7" height="7" rx="2" fill="#694FA5" stroke="#694FA5" stroke-width="0"/>
+<text x="533" y="375" font-size="19" fill="#172638" font-family="Segoe UI, Arial, sans-serif" font-weight="700" text-anchor="start">FOCO CONVERSACIONAL</text>
+<text x="520" y="397" font-size="16" fill="#52647A" font-family="Segoe UI, Arial, sans-serif" font-weight="400" text-anchor="start">Referente prioritario para</text>
+<text x="520" y="419" font-size="16" fill="#52647A" font-family="Segoe UI, Arial, sans-serif" font-weight="400" text-anchor="start">interpretar una instrucción.</text>
+<rect x="930" y="341" width="325" height="170" rx="9" fill="#FFFFFF" stroke="#D6E0EB" stroke-width="1.4" filter="url(#shadow)"/>
+<rect x="930" y="341" width="7" height="170" rx="2" fill="#2E64AA" stroke="#2E64AA" stroke-width="0"/>
+<rect x="948" y="357" width="7" height="7" rx="2" fill="#2E64AA" stroke="#2E64AA" stroke-width="0"/>
+<text x="969" y="375" font-size="19" fill="#172638" font-family="Segoe UI, Arial, sans-serif" font-weight="700" text-anchor="start">DESTINO DE ACCIÓN</text>
+<text x="956" y="397" font-size="16" fill="#52647A" font-family="Segoe UI, Arial, sans-serif" font-weight="400" text-anchor="start">Identidad exacta del objetivo</text>
+<text x="956" y="419" font-size="16" fill="#52647A" font-family="Segoe UI, Arial, sans-serif" font-weight="400" text-anchor="start">ligada a la solicitud.</text>
+<rect x="1366" y="341" width="325" height="170" rx="9" fill="#FFFFFF" stroke="#D6E0EB" stroke-width="1.4" filter="url(#shadow)"/>
+<rect x="1366" y="341" width="7" height="170" rx="2" fill="#A96610" stroke="#A96610" stroke-width="0"/>
+<rect x="1384" y="357" width="7" height="7" rx="2" fill="#A96610" stroke="#A96610" stroke-width="0"/>
+<text x="1405" y="375" font-size="19" fill="#172638" font-family="Segoe UI, Arial, sans-serif" font-weight="700" text-anchor="start">AUTORIZACIÓN</text>
+<text x="1392" y="397" font-size="16" fill="#52647A" font-family="Segoe UI, Arial, sans-serif" font-weight="400" text-anchor="start">Permisos y política válidos</text>
+<text x="1392" y="419" font-size="16" fill="#52647A" font-family="Segoe UI, Arial, sans-serif" font-weight="400" text-anchor="start">antes de producir efectos.</text>
+<text x="439" y="434" font-size="34" fill="#694FA5" font-family="Segoe UI, Arial, sans-serif" font-weight="700" text-anchor="middle">≠</text>
+<text x="875" y="434" font-size="34" fill="#694FA5" font-family="Segoe UI, Arial, sans-serif" font-weight="700" text-anchor="middle">≠</text>
+<path d="M 1255 425 H 1360" fill="none" stroke="#879BB3" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"  marker-end="url(#arrow)"/>
+<text x="1309" y="402" font-size="15" fill="#52647A" font-family="Segoe UI, Arial, sans-serif" font-weight="700" text-anchor="middle">requiere control</text>
+<path d="M 875 250 V 297 H 219 V 339" fill="none" stroke="#879BB3" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"  marker-end="url(#arrow)"/>
+<path d="M 875 297 V 339" fill="none" stroke="#2E64AA" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"  marker-end="url(#arrowBlue)"/>
+<path d="M 875 297 H 1092 V 339" fill="none" stroke="#879BB3" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"  marker-end="url(#arrow)"/>
+<text x="64" y="590" font-size="16" fill="#52647A" font-family="Segoe UI, Arial, sans-serif" font-weight="700" text-anchor="start" letter-spacing="1.1">ESCENARIO</text>
+<rect x="58" y="611" width="1634" height="128" rx="9" fill="#FFFFFF" stroke="#DCE5EF" stroke-width="1.4"/>
+<rect x="85" y="638" width="290" height="45" rx="6" fill="#F3EFFF" stroke="#694FA5" stroke-width="1.2"/>
+<text x="230.0" y="665.5" font-size="15" fill="#694FA5" font-family="Segoe UI, Arial, sans-serif" font-weight="700" text-anchor="middle">«Enfoca Inspector»</text>
+<text x="391" y="666" font-size="30" fill="#52647A" font-family="Segoe UI, Arial, sans-serif" font-weight="700" text-anchor="start">→</text>
+<rect x="446" y="638" width="356" height="45" rx="6" fill="#F3EFFF" stroke="#694FA5" stroke-width="1.2"/>
+<text x="624.0" y="665.5" font-size="15" fill="#694FA5" font-family="Segoe UI, Arial, sans-serif" font-weight="700" text-anchor="middle">«Enséñame RUN-024»</text>
+<text x="820" y="666" font-size="30" fill="#52647A" font-family="Segoe UI, Arial, sans-serif" font-weight="700" text-anchor="start">→</text>
+<rect x="874" y="638" width="310" height="45" rx="6" fill="#EAF3FF" stroke="#2E64AA" stroke-width="1.2"/>
+<text x="1029.0" y="665.5" font-size="15" fill="#2E64AA" font-family="Segoe UI, Arial, sans-serif" font-weight="700" text-anchor="middle">«Crea otro proyecto»</text>
+<text x="1204" y="666" font-size="30" fill="#52647A" font-family="Segoe UI, Arial, sans-serif" font-weight="700" text-anchor="start">→</text>
+<rect x="1258" y="638" width="398" height="45" rx="6" fill="#E9F8F2" stroke="#187A69" stroke-width="1.2"/>
+<text x="1457.0" y="665.5" font-size="15" fill="#187A69" font-family="Segoe UI, Arial, sans-serif" font-weight="700" text-anchor="middle">Intención explícita prevalece</text>
+<text x="86" y="714" font-size="17" fill="#52647A" font-family="Segoe UI, Arial, sans-serif" font-weight="400" text-anchor="start">El foco ayuda a resolver referencias ambiguas, pero nunca bloquea una intención nueva ni transfiere permisos.</text>
+</svg></div><div style="margin-top:23px"><div class="table-scroll"><table><thead><tr><th>Concepto</th><th>Ejemplo</th><th>Regla</th></tr></thead><tbody><tr><td>Identidad del chat</td><td>ADL · Orquestador</td><td>Permanece general durante toda la sesión.</td></tr><tr><td>Mención</td><td>«He hablado del Inspector»</td><td>No implica seleccionar, enfocar ni consultar datos.</td></tr><tr><td>Selección visual</td><td>«He abierto la ficha RUN-024»</td><td>No fija por sí sola el referente conversacional.</td></tr><tr><td>Foco</td><td>«Ahora nos centramos en RUN-024»</td><td>Ayuda a resolver referencias elípticas; es reversible.</td></tr><tr><td>Destino de acción</td><td>«Ejecuta pruebas sobre el agente X»</td><td>Queda vinculado a la solicitud antes de ejecutarse.</td></tr><tr><td>Autoridad</td><td>Grant / aprobación / política</td><td>Es independiente de la identidad y del foco.</td></tr></tbody></table></div></div></section>
+<section class="panel"><div class="eyebrow">Superficies compartidas</div><h2>La misma capacidad, dos formas de utilizarla</h2><div class="twocol"><div class="mini"><h3>Dentro del chat</h3><p>El usuario negocia las funciones de un agente. ADL presenta su <strong>ficha real</strong> con un borrador editable. Los cambios manuales y conversacionales actualizan el mismo estado.</p><span class="chip violet">Edición bidireccional</span><span class="chip">Contexto selectivo</span></div><div class="mini"><h3>En la pantalla especializada</h3><p>La biblioteca de agentes abre exactamente ese mismo editor y las mismas validaciones. Las pantallas Summary, Retrieval, Authorization, Trace y Evaluation conservan su responsabilidad.</p><span class="chip green">Reutilización real</span><span class="chip">Sin duplicidades</span></div></div></section>
+<section class="panel" id="flujo"><div class="eyebrow">Flujo de extremo a extremo</div><h2>De la negociación a la comprobación</h2><div class="diagram"><svg xmlns="http://www.w3.org/2000/svg" width="1750" height="780" viewBox="0 0 1750 780" role="img" aria-label="ADL flujo de creación y delegación con ficha compartida y agentes trabajando en segundo plano">
+<defs>
+<filter id="shadow" x="-20%" y="-25%" width="150%" height="170%"><feDropShadow dx="0" dy="4" stdDeviation="8" flood-color="#233B58" flood-opacity="0.08"/></filter>
+<marker id="arrow" markerWidth="9" markerHeight="9" refX="7.6" refY="4.5" orient="auto"><path d="M 0 0 L 9 4.5 L 0 9 z" fill="#879BB3"/></marker>
+<marker id="arrowBlue" markerWidth="9" markerHeight="9" refX="7.6" refY="4.5" orient="auto"><path d="M 0 0 L 9 4.5 L 0 9 z" fill="#2E64AA"/></marker>
+</defs>
+<rect x="0" y="0" width="1750" height="780" fill="#F7F9FC"/>
+<text x="64" y="56" font-size="21" fill="#187A69" font-family="Segoe UI, Arial, sans-serif" font-weight="700" text-anchor="start" letter-spacing="1.1">03  /  RECORRIDO FUNCIONAL</text>
+<text x="64" y="97" font-size="25" fill="#172638" font-family="Segoe UI, Arial, sans-serif" font-weight="700" text-anchor="start">Una operación demostrable, de la conversación a la evidencia.</text>
+<rect x="64" y="218" width="218" height="185" rx="9" fill="#FFFFFF" stroke="#D6E0EB" stroke-width="1.4" filter="url(#shadow)"/>
+<rect x="64" y="218" width="7" height="185" rx="2" fill="#2E64AA" stroke="#2E64AA" stroke-width="0"/>
+<rect x="82" y="234" width="7" height="7" rx="2" fill="#2E64AA" stroke="#2E64AA" stroke-width="0"/>
+<text x="103" y="252" font-size="19" fill="#172638" font-family="Segoe UI, Arial, sans-serif" font-weight="700" text-anchor="start">NEGOCIAR</text>
+<text x="90" y="274" font-size="16" fill="#52647A" font-family="Segoe UI, Arial, sans-serif" font-weight="400" text-anchor="start">Funciones y</text>
+<text x="90" y="296" font-size="16" fill="#52647A" font-family="Segoe UI, Arial, sans-serif" font-weight="400" text-anchor="start">capacidades</text>
+<rect x="81" y="175" width="54" height="31" rx="6" fill="#EAF3FF" stroke="#2E64AA" stroke-width="1.2"/>
+<text x="108.0" y="195.5" font-size="15" fill="#2E64AA" font-family="Segoe UI, Arial, sans-serif" font-weight="700" text-anchor="middle">01</text>
+<path d="M 283 310 H 299" fill="none" stroke="#2E64AA" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"  marker-end="url(#arrowBlue)"/>
+<rect x="302" y="218" width="218" height="185" rx="9" fill="#FFFFFF" stroke="#D6E0EB" stroke-width="1.4" filter="url(#shadow)"/>
+<rect x="302" y="218" width="7" height="185" rx="2" fill="#2E64AA" stroke="#2E64AA" stroke-width="0"/>
+<rect x="320" y="234" width="7" height="7" rx="2" fill="#2E64AA" stroke="#2E64AA" stroke-width="0"/>
+<text x="341" y="252" font-size="19" fill="#172638" font-family="Segoe UI, Arial, sans-serif" font-weight="700" text-anchor="start">EDITAR</text>
+<text x="328" y="274" font-size="16" fill="#52647A" font-family="Segoe UI, Arial, sans-serif" font-weight="400" text-anchor="start">Ficha única y</text>
+<text x="328" y="296" font-size="16" fill="#52647A" font-family="Segoe UI, Arial, sans-serif" font-weight="400" text-anchor="start">borrador común</text>
+<rect x="319" y="175" width="54" height="31" rx="6" fill="#EAF3FF" stroke="#2E64AA" stroke-width="1.2"/>
+<text x="346.0" y="195.5" font-size="15" fill="#2E64AA" font-family="Segoe UI, Arial, sans-serif" font-weight="700" text-anchor="middle">02</text>
+<path d="M 521 310 H 537" fill="none" stroke="#2E64AA" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"  marker-end="url(#arrowBlue)"/>
+<rect x="540" y="218" width="218" height="185" rx="9" fill="#FFFFFF" stroke="#D6E0EB" stroke-width="1.4" filter="url(#shadow)"/>
+<rect x="540" y="218" width="7" height="185" rx="2" fill="#187A69" stroke="#187A69" stroke-width="0"/>
+<rect x="558" y="234" width="7" height="7" rx="2" fill="#187A69" stroke="#187A69" stroke-width="0"/>
+<text x="579" y="252" font-size="19" fill="#172638" font-family="Segoe UI, Arial, sans-serif" font-weight="700" text-anchor="start">VALIDAR</text>
+<text x="566" y="274" font-size="16" fill="#52647A" font-family="Segoe UI, Arial, sans-serif" font-weight="400" text-anchor="start">Controles y</text>
+<text x="566" y="296" font-size="16" fill="#52647A" font-family="Segoe UI, Arial, sans-serif" font-weight="400" text-anchor="start">confirmación</text>
+<rect x="557" y="175" width="54" height="31" rx="6" fill="#E9F8F2" stroke="#187A69" stroke-width="1.2"/>
+<text x="584.0" y="195.5" font-size="15" fill="#187A69" font-family="Segoe UI, Arial, sans-serif" font-weight="700" text-anchor="middle">03</text>
+<path d="M 759 310 H 775" fill="none" stroke="#2E64AA" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"  marker-end="url(#arrowBlue)"/>
+<rect x="778" y="218" width="218" height="185" rx="9" fill="#FFFFFF" stroke="#D6E0EB" stroke-width="1.4" filter="url(#shadow)"/>
+<rect x="778" y="218" width="7" height="185" rx="2" fill="#187A69" stroke="#187A69" stroke-width="0"/>
+<rect x="796" y="234" width="7" height="7" rx="2" fill="#187A69" stroke="#187A69" stroke-width="0"/>
+<text x="817" y="252" font-size="19" fill="#172638" font-family="Segoe UI, Arial, sans-serif" font-weight="700" text-anchor="start">CREAR</text>
+<text x="804" y="274" font-size="16" fill="#52647A" font-family="Segoe UI, Arial, sans-serif" font-weight="400" text-anchor="start">Identidad del</text>
+<text x="804" y="296" font-size="16" fill="#52647A" font-family="Segoe UI, Arial, sans-serif" font-weight="400" text-anchor="start">agente</text>
+<rect x="795" y="175" width="54" height="31" rx="6" fill="#E9F8F2" stroke="#187A69" stroke-width="1.2"/>
+<text x="822.0" y="195.5" font-size="15" fill="#187A69" font-family="Segoe UI, Arial, sans-serif" font-weight="700" text-anchor="middle">04</text>
+<path d="M 997 310 H 1013" fill="none" stroke="#879BB3" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"  marker-end="url(#arrow)"/>
+<rect x="1016" y="218" width="218" height="185" rx="9" fill="#FFFFFF" stroke="#D6E0EB" stroke-width="1.4" filter="url(#shadow)"/>
+<rect x="1016" y="218" width="7" height="185" rx="2" fill="#A96610" stroke="#A96610" stroke-width="0"/>
+<rect x="1034" y="234" width="7" height="7" rx="2" fill="#A96610" stroke="#A96610" stroke-width="0"/>
+<text x="1055" y="252" font-size="19" fill="#172638" font-family="Segoe UI, Arial, sans-serif" font-weight="700" text-anchor="start">DELEGAR</text>
+<text x="1042" y="274" font-size="16" fill="#52647A" font-family="Segoe UI, Arial, sans-serif" font-weight="400" text-anchor="start">Objetivo fijo y</text>
+<text x="1042" y="296" font-size="16" fill="#52647A" font-family="Segoe UI, Arial, sans-serif" font-weight="400" text-anchor="start">autorización</text>
+<rect x="1033" y="175" width="54" height="31" rx="6" fill="#FFF4E4" stroke="#A96610" stroke-width="1.2"/>
+<text x="1060.0" y="195.5" font-size="15" fill="#A96610" font-family="Segoe UI, Arial, sans-serif" font-weight="700" text-anchor="middle">05</text>
+<path d="M 1235 310 H 1251" fill="none" stroke="#879BB3" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"  marker-end="url(#arrow)"/>
+<rect x="1254" y="218" width="218" height="185" rx="9" fill="#FFFFFF" stroke="#D6E0EB" stroke-width="1.4" filter="url(#shadow)"/>
+<rect x="1254" y="218" width="7" height="185" rx="2" fill="#53657A" stroke="#53657A" stroke-width="0"/>
+<rect x="1272" y="234" width="7" height="7" rx="2" fill="#53657A" stroke="#53657A" stroke-width="0"/>
+<text x="1293" y="252" font-size="19" fill="#172638" font-family="Segoe UI, Arial, sans-serif" font-weight="700" text-anchor="start">EJECUTAR</text>
+<text x="1280" y="274" font-size="16" fill="#52647A" font-family="Segoe UI, Arial, sans-serif" font-weight="400" text-anchor="start">Agente en</text>
+<text x="1280" y="296" font-size="16" fill="#52647A" font-family="Segoe UI, Arial, sans-serif" font-weight="400" text-anchor="start">segundo plano</text>
+<rect x="1271" y="175" width="54" height="31" rx="6" fill="#EDF1F6" stroke="#53657A" stroke-width="1.2"/>
+<text x="1298.0" y="195.5" font-size="15" fill="#53657A" font-family="Segoe UI, Arial, sans-serif" font-weight="700" text-anchor="middle">06</text>
+<path d="M 1473 310 H 1489" fill="none" stroke="#879BB3" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"  marker-end="url(#arrow)"/>
+<rect x="1492" y="218" width="218" height="185" rx="9" fill="#FFFFFF" stroke="#D6E0EB" stroke-width="1.4" filter="url(#shadow)"/>
+<rect x="1492" y="218" width="7" height="185" rx="2" fill="#187A69" stroke="#187A69" stroke-width="0"/>
+<rect x="1510" y="234" width="7" height="7" rx="2" fill="#187A69" stroke="#187A69" stroke-width="0"/>
+<text x="1531" y="252" font-size="19" fill="#172638" font-family="Segoe UI, Arial, sans-serif" font-weight="700" text-anchor="start">COMPROBAR</text>
+<text x="1518" y="274" font-size="16" fill="#52647A" font-family="Segoe UI, Arial, sans-serif" font-weight="400" text-anchor="start">Trazas, pruebas</text>
+<text x="1518" y="296" font-size="16" fill="#52647A" font-family="Segoe UI, Arial, sans-serif" font-weight="400" text-anchor="start">y evidencia</text>
+<rect x="1509" y="175" width="54" height="31" rx="6" fill="#E9F8F2" stroke="#187A69" stroke-width="1.2"/>
+<text x="1536.0" y="195.5" font-size="15" fill="#187A69" font-family="Segoe UI, Arial, sans-serif" font-weight="700" text-anchor="middle">07</text>
+<rect x="64" y="485" width="1618" height="154" rx="9" fill="#FFFFFF" stroke="#D6E0EB" stroke-width="1.4"/>
+<text x="90" y="525" font-size="17" fill="#53657A" font-family="Segoe UI, Arial, sans-serif" font-weight="700" text-anchor="start" letter-spacing=".8">EN PARALELO</text>
+<rect x="91" y="545" width="340" height="43" rx="6" fill="#EAF3FF" stroke="#2E64AA" stroke-width="1.2"/>
+<text x="261.0" y="571.5" font-size="15" fill="#2E64AA" font-family="Segoe UI, Arial, sans-serif" font-weight="700" text-anchor="middle">Trabajo A · Inspector ejecutando</text>
+<rect x="455" y="545" width="350" height="43" rx="6" fill="#EAF3FF" stroke="#2E64AA" stroke-width="1.2"/>
+<text x="630.0" y="571.5" font-size="15" fill="#2E64AA" font-family="Segoe UI, Arial, sans-serif" font-weight="700" text-anchor="middle">Trabajo B · Evaluador ejecutando</text>
+<rect x="829" y="545" width="390" height="43" rx="6" fill="#FFF4E4" stroke="#A96610" stroke-width="1.2"/>
+<text x="1024.0" y="571.5" font-size="15" fill="#A96610" font-family="Segoe UI, Arial, sans-serif" font-weight="700" text-anchor="middle">Trabajo C · Pendiente de autorización</text>
+<rect x="1242" y="545" width="408" height="43" rx="6" fill="#E9F8F2" stroke="#187A69" stroke-width="1.2"/>
+<text x="1446.0" y="571.5" font-size="15" fill="#187A69" font-family="Segoe UI, Arial, sans-serif" font-weight="700" text-anchor="middle">Chat general · Disponible</text>
+<text x="90" y="612" font-size="17" fill="#52647A" font-family="Segoe UI, Arial, sans-serif" font-weight="400" text-anchor="start">Cambiar el foco o conversar sobre otro asunto no cancela ni redirige ninguna ejecución iniciada.</text>
+<text x="64" y="711" font-size="19" fill="#172638" font-family="Segoe UI, Arial, sans-serif" font-weight="600" text-anchor="start">Demostración mínima: ficha reutilizada + foco contextual + delegación gobernada + evaluación independiente.</text>
+</svg></div><p style="margin-top:14px">El orquestador mantiene otras tareas activas aunque se cambie de foco o se inicie una conversación sobre otro asunto. La nueva intención explícita tiene prioridad sobre la referencia anterior.</p></section>
+<section class="panel" id="contratos"><div class="eyebrow">Diseño previo a implementación</div><h2>Seis contratos de responsabilidad</h2><div class="table-scroll"><table><thead><tr><th>ID</th><th>Contrato</th><th>Debe cerrar</th></tr></thead><tbody><tr><td>C-01</td><td>Identidad y relaciones</td><td>Conversación, agente, proyecto, tarea, ejecución, evidencia.</td></tr><tr><td>C-02</td><td>Foco contextual</td><td>Prioridad, explicitud, ambigüedad, reversión y concurrencia.</td></tr><tr><td>C-03</td><td>Componente y borrador común</td><td>Edición bidireccional, revisión y persistencia validada.</td></tr><tr><td>C-04</td><td>Delegación gobernada</td><td>Solicitud tipada, objetivo fijo, autorización, ejecución, recibos.</td></tr><tr><td>C-05</td><td>Contexto y seguridad</td><td>Recuperación selectiva; permisos por fuente e intención.</td></tr><tr><td>C-06</td><td>Observabilidad y evidencia</td><td>Vínculos entre trabajos, trazas, pruebas y dictámenes.</td></tr></tbody></table></div><h3 style="margin-top:28px">Invariantes que no se pueden perder</h3><ul class="rules"><li>El chat principal sigue perteneciendo a ADL, nunca a un agente de segundo plano.</li><li>El foco es una referencia interpretativa, no una frontera de permisos.</li><li>Una instrucción explícita nueva prevalece sobre el foco anterior.</li><li>Una acción con efectos fija su destinatario antes de pedir autorización.</li><li>El trabajo de agentes continúa aunque cambie el foco del usuario.</li><li>Una ficha embebida y una ficha convencional editan el mismo borrador/versionado.</li><li>La evaluación de ADL permanece independiente y también sirve para componentes externos.</li><li>Los resultados se etiquetan PROPUESTO, IMPLEMENTADO o VERIFICADO según su evidencia.</li></ul></section>
+<section class="panel" id="verificacion"><div class="eyebrow">Vertical demostrable</div><h2>Secuencia de materialización y pruebas</h2><div class="table-scroll"><table><thead><tr><th>Paso</th><th>Capacidad</th><th>Criterio de trabajo</th></tr></thead><tbody><tr><td>01</td><td>Inventario real</td><td>Localizar chat, agentes, formularios, autorización, ejecución y evidencias.</td></tr><tr><td>02</td><td>Editor común</td><td>Insertar la ficha del agente en chat; probar edición bidireccional.</td></tr><tr><td>03</td><td>Resolver foco</td><td>Permitir foco en agente y ejecución sin alterar conversación general.</td></tr><tr><td>04</td><td>Delegación segura</td><td>Vincular destinatario y autorizar ejecución antes del despacho.</td></tr><tr><td>05</td><td>Concurrencia y evidencia</td><td>Mostrar múltiples trabajos, inspección de resultados y pruebas.</td></tr><tr><td>06</td><td>Retest diferencial</td><td>Comprobar aislamiento, anti-redirección y ausencia de regresiones.</td></tr></tbody></table></div><div class="notice"><strong>Sin afirmaciones de implementación:</strong> el documento describe el comportamiento deseado. Para declarar una pieza IMPLEMENTADA o VERIFICADA hay que inspeccionar el repositorio, ejecutar pruebas y conservar sus evidencias.</div></section>
+<section class="closing"><h2>Síntesis arquitectónica</h2><p>ADL mantiene <strong>un chat permanente</strong>, <strong>un orquestador global</strong> y <strong>una referencia de trabajo que puede variar</strong>. Los agentes ejecutan tareas separadas; la interfaz muestra componentes reales y el sistema de autorización gobierna sus efectos. La verificación de ADL permanece independiente de los agentes.</p><p style="font-size:14px;margin-top:15px">Estado del documento: PROPUESTO · No supone cambios en el repositorio ni contratos FROZEN.</p></section><footer>ADL / Arquitectura visual 001 · Presentación autónoma, sin servicios externos ni dependencias de red. Diagramas vectoriales incluidos.</footer></main></body></html>

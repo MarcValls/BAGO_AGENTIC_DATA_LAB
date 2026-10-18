@@ -69,7 +69,12 @@ def test_app_assistant_uses_saved_history_and_returns_saved_turn(monkeypatch, tm
     monkeypatch.setattr(server, "_selected_model_id", lambda: "gemma4:31b-cloud")
     calls = []
     answers = iter(["First answer", "Second answer"])
-    monkeypatch.setattr(server.ollama, "chat", lambda model, messages: calls.append(messages) or next(answers))
+    def fake_chat_turn(model, messages, *, tools, options=None):
+        calls.append((model, messages, tools, options))
+        return {"tool_calls": [{"function": {"name": "resolve_control_request", "arguments": {
+            "decision": "answer", "reply": next(answers),
+        }}}]}
+    monkeypatch.setattr(server.ollama, "chat_turn", fake_chat_turn)
 
     first = asyncio.run(server.control_chat(server.ControlChatRequest(
         operation="chat", message="Remember this phrase", conversation_id=conversation["id"], revision=0,
@@ -82,9 +87,9 @@ def test_app_assistant_uses_saved_history_and_returns_saved_turn(monkeypatch, tm
     assert [message["content"] for message in second["conversation"]["messages"]] == [
         "Remember this phrase", "First answer", "What phrase?", "Second answer",
     ]
-    assert any(item == {"role": "assistant", "content": "First answer"} for item in calls[1])
-    assert any(item == {"role": "user", "content": "Remember this phrase"} for item in calls[1])
-    system_prompt = calls[0][0]["content"]
+    assert any(item == {"role": "assistant", "content": "First answer"} for item in calls[1][1])
+    assert any(item == {"role": "user", "content": "Remember this phrase"} for item in calls[1][1])
+    system_prompt = calls[0][1][0]["content"]
     assert "help the user design a new agent" in system_prompt
     assert "it is saved only after the user reviews it and explicitly chooses Create agent" in system_prompt
     assert "Never claim that agent creation is unavailable" in system_prompt

@@ -1,8 +1,8 @@
-import type { ButtonHTMLAttributes, HTMLAttributes, KeyboardEvent, ReactNode } from 'react'
+import type { ButtonHTMLAttributes, HTMLAttributes, ReactNode } from 'react'
 
 export type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'danger'
-export function BagoButton({ variant = 'secondary', className = '', ...props }: ButtonHTMLAttributes<HTMLButtonElement> & { variant?: ButtonVariant }) {
-  return <button {...props} className={`bago-ui-button bago-ui-button--${variant} ${className}`.trim()} />
+export function BagoButton({ variant = 'secondary', type = 'button', className = '', ...props }: ButtonHTMLAttributes<HTMLButtonElement> & { variant?: ButtonVariant }) {
+  return <button {...props} type={type} className={`bago-ui-button bago-ui-button--${variant} ${className}`.trim()} />
 }
 
 export function BagoPanel({ className = '', ...props }: HTMLAttributes<HTMLElement>) {
@@ -33,6 +33,8 @@ export function BagoTabStrip<T extends string>({ label, items, value, onChange }
 
 export interface BagoGridRow { id: string; cells: ReactNode[] }
 export function BagoDataGrid({ label, columns, rows, selectedId, onSelect }: { label: string; columns: string[]; rows: BagoGridRow[]; selectedId?: string; onSelect?: (id: string) => void }) {
-  const activate = (event: KeyboardEvent<HTMLTableRowElement>, id: string) => { if ((event.key === 'Enter' || event.key === ' ') && onSelect) { event.preventDefault(); onSelect(id) } }
-  return <div className="bago-ui-grid-scroll" role="region" aria-label={label} tabIndex={0}><table className="bago-ui-grid"><thead><tr>{columns.map((column) => <th key={column} scope="col">{column}</th>)}</tr></thead><tbody>{rows.map((row) => <tr key={row.id} aria-selected={onSelect ? selectedId === row.id : undefined} tabIndex={onSelect ? 0 : undefined} onClick={onSelect ? () => onSelect(row.id) : undefined} onKeyDown={onSelect ? (event) => activate(event, row.id) : undefined}>{row.cells.map((cell, index) => <td key={`${row.id}:${index}`}>{cell}</td>)}</tr>)}</tbody></table></div>
+  return <div className="bago-ui-grid-scroll" role="region" aria-label={`${label} table region`} tabIndex={0}><table className="bago-ui-grid" aria-label={label}><thead><tr>{columns.map((column) => <th key={column} scope="col">{column}</th>)}{onSelect && <th scope="col"><span className="bago-ui-sr-only">Select row</span></th>}</tr></thead><tbody>{rows.map((row) => {
+    const isSelected = selectedId === row.id
+    return <tr key={row.id} data-selected={onSelect && isSelected ? 'true' : undefined}>{row.cells.map((cell, index) => <td key={`${row.id}:${index}`}>{cell}</td>)}{onSelect && <td><button type="button" className="bago-ui-grid-select" aria-label={`${isSelected ? 'Selected' : 'Select'} row ${row.id}`} aria-pressed={isSelected} onClick={() => onSelect(row.id)}>{isSelected ? 'Selected' : 'Select'}</button></td>}</tr>
+  })}</tbody></table></div>
 }

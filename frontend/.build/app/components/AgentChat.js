@@ -4,11 +4,14 @@ import './WindowsSurface.css';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { capabilityResponseError } from './CapabilityManager';
+import AgentBuilder from './AgentBuilder';
+import DirectoryScanRun from './DirectoryScanRun';
+import JobHistory from './JobHistory';
 import WindowPanel from './WindowPanel';
 import TabStrip from './TabStrip';
 function CognitiveContextPanel({ trace }) {
     const experimental = trace.mode === 'bago5';
-    return _jsxs("section", { className: `message-cognition${experimental ? ' message-cognition-bago5' : ''}`, "aria-label": "Model prompt mode and cognitive context", children: [_jsxs("div", { className: "message-cognition-heading", children: [_jsx("strong", { children: experimental ? 'BAGO5 cognitive focus' : 'Baseline prompt' }), _jsx("span", { children: experimental ? 'experimental' : 'comparison' })] }), experimental ? _jsxs(_Fragment, { children: [_jsx("p", { children: "Bounded attention cues passed to the model as prompt guidance. This is not the model\u2019s hidden reasoning." }), _jsx("ul", { children: trace.focus.map((item) => _jsxs("li", { children: [_jsx("span", { children: item.label }), _jsx("code", { children: item.score.toFixed(3) })] }, item.id)) }), _jsxs("small", { children: [trace.profile, " \u00B7 ", trace.method, " \u00B7 capacity ", trace.capacity, " \u00B7 ", trace.max_hops, " hops"] })] }) : _jsx("p", { children: "The model received its normal chat prompt without the BAGO5 cognitive layer." }), trace.trace_id && _jsxs("small", { children: ["Local focus trace: ", trace.trace_id, " \u00B7 ", trace.trace_state] })] });
+    return _jsxs("section", { className: `message-cognition${experimental ? ' message-cognition-bago5' : ''}`, "aria-label": "Model prompt mode and cognitive context", children: [_jsxs("div", { className: "message-cognition-heading", children: [_jsx("strong", { children: experimental ? 'BAGO5 cognitive focus' : 'Baseline prompt' }), _jsx("span", { children: experimental ? 'experimental' : 'comparison' })] }), experimental ? _jsxs(_Fragment, { children: [_jsx("ul", { children: trace.focus.map((item) => _jsxs("li", { children: [_jsx("span", { children: item.label }), _jsx("code", { children: item.score.toFixed(3) })] }, item.id)) }), _jsxs("small", { children: [trace.profile, " \u00B7 ", trace.method, " \u00B7 capacity ", trace.capacity, " \u00B7 ", trace.max_hops, " hops"] })] }) : null, trace.trace_id && _jsxs("small", { children: ["Local focus trace: ", trace.trace_id, " \u00B7 ", trace.trace_state] })] });
 }
 const scrollbarHideTimers = new WeakMap();
 function revealScrollbarWhileScrolling(event) {
@@ -23,6 +26,12 @@ function revealScrollbarWhileScrolling(event) {
     }, 700));
 }
 const idFor = () => `${Date.now()}-${Math.random().toString(16).slice(2)}`;
+const viewLabels = {
+    inspector: 'Decision Inspector', builder: 'Agent Builder', chat: 'Chat', workspace: 'Workspace', runner: 'Agent Runs',
+    control: 'Control', jobs: 'Job History', traces: 'Trace', summary: 'Summary', retrieval: 'Retrieval',
+    authorization: 'Authorization', evaluation: 'Evaluation', evaluation_lab: 'Agent Evaluation Lab',
+    provider_settings: 'Provider & models', cognition_settings: 'Cognition & context', capabilities: 'Capabilities',
+};
 async function responseError(response) {
     try {
         const body = await response.json();
@@ -38,41 +47,15 @@ async function responseError(response) {
 function inferIntent(message, cognitiveMode) {
     const text = message.toLocaleLowerCase();
     const capabilityIdMentioned = /\b(?:workspace\.read_text|mcp\.execute|sandbox\.execute|agent\.run)\b/.test(text);
-    if (/\b(capabilities|capability manager|gestor de capacidades|capacidades)\b/.test(text) && /\b(abre|abrir|open|show|muestra|ir a|ve a|navega|gestiona|manager|gestor|vista)\b/.test(text))
-        return { operation: 'navigate', view: 'capabilities' };
     if (/\b(propuesta|proponer|propose|proposal)\b/.test(text) && (/\b(capacidad|capability|acceso|access|habilitar|enable|registrar|register)\b/.test(text) || capabilityIdMentioned))
         return { operation: 'propose_capability' };
-    if (/\b(capacidades|capability catalog|capabilities|estado de (?:la )?capacidad|list(?:ar)? capabilities)\b/.test(text) || (capabilityIdMentioned && /\b(estado|status|lista|listar|mostrar|show|describe|qu[eé])\b/.test(text)))
+    if ((/\b(capacidades|capabilities|capability catalog)\b/.test(text) && /\b(lista|listar|list|show|muestra|mostrar|consulta|consultar|describe|describir|qu[eé]|cu[aá]les|which|status|estado)\b/.test(text)) || (capabilityIdMentioned && /\b(estado|status|lista|listar|mostrar|show|describe|qu[eé])\b/.test(text)))
         return { operation: 'list_capabilities' };
     if (/^\s*(hola|buenas|hello|hi|hey)[!.\s]*$/.test(text) || /\b(qu[eé] puedes hacer|what can you do|capacidades del asistente|assistant capabilities)\b/.test(text) || /\b(puedes|can you|could you)\s+(crear|create|diseñar|design)\s+(un\s+|a\s+)?agentes?\s*[?!.]*$/.test(text) || /\b(no puedes|cannot|can't)\s+(crear|create)\s+agentes?\b/.test(text)) {
         return { operation: cognitiveMode === 'bago5' ? 'chat' : 'help' };
     }
     if (/\b(lista|listar|muestra|mostrar|qué|cu[aá]les)\b.*\b(agentes|agente)\b/.test(text) || /\b(agentes|agente)\b.*\b(lista|listar|hay|tengo)\b/.test(text)) {
         return { operation: 'list_agents' };
-    }
-    if (/\b(crea|crear|diseña|diseñar|configura|configurar)\b.*\bagente\b/.test(text) || /\b(necesito|quiero)\s+(un\s+)?agente\b/.test(text)) {
-        return { operation: 'draft_agent' };
-    }
-    const destinations = [
-        [/\b(agent evaluation lab|evaluation lab|laboratorio de evaluaci[oó]n de agentes|laboratorio de evaluaci[oó]n)\b/, 'evaluation_lab'],
-        [/\b(inspector|decisiones)\b/, 'inspector'],
-        [/\b(builder|creaci[oó]n de agentes)\b/, 'builder'],
-        [/\b(chat)\b/, 'chat'],
-        [/\b(agent runs|runner|ejecutor)\b/, 'runner'],
-        [/\b(control)\b/, 'control'],
-        [/\b(jobs?|trabajos|historial)\b/, 'jobs'],
-        [/\b(traces?|trazas)\b/, 'traces'],
-        [/\b(summary|resumen)\b/, 'summary'],
-        [/\b(retrieval|ontology|recuperaci[oó]n|ontolog[ií]a)\b/, 'retrieval'],
-        [/\b(authorization|autorizaci[oó]n)\b/, 'authorization'],
-        [/\b(evaluation|evaluaci[oó]n)\b/, 'evaluation'],
-        [/\b(provider|proveedor|ollama)\b/, 'provider_settings'],
-    ];
-    if (/\b(abre|abrir|ve a|ir a|navega|muestra la vista|ll[eé]vame|ll[eé]vame a|entra a|open|go to|show me)\b/.test(text)) {
-        const destination = destinations.find(([pattern]) => pattern.test(text));
-        if (destination) {
-            return { operation: 'navigate', view: destination[1] };
-        }
     }
     return { operation: 'chat' };
 }
@@ -93,12 +76,6 @@ export default function AgentChat({ onNavigate, onOpenProviderSettings, onOpenCo
     const [workspaceReadPaths, setWorkspaceReadPaths] = useState('');
     const [sending, setSending] = useState(false);
     const [error, setError] = useState('');
-    const [draft, setDraft] = useState(null);
-    const [draftModels, setDraftModels] = useState([]);
-    const [loadingDraftModels, setLoadingDraftModels] = useState(false);
-    const [draftModelsError, setDraftModelsError] = useState('');
-    const [creatingDraft, setCreatingDraft] = useState(false);
-    const [createdNotice, setCreatedNotice] = useState('');
     const [capabilityDraft, setCapabilityDraft] = useState(null);
     const [capabilityProposals, setCapabilityProposals] = useState([]);
     const [capabilityBusy, setCapabilityBusy] = useState(false);
@@ -154,17 +131,31 @@ export default function AgentChat({ onNavigate, onOpenProviderSettings, onOpenCo
     const ownerKind = selectedAgent ? 'agent' : 'assistant';
     const ownerId = selectedAgent?.id ?? 'app-assistant';
     const applyConversation = (conversation) => {
+        const inlineAgentDrafts = new Map(messages.filter((message) => message.agentBuilderDraft).map((message) => [message.id, message.agentBuilderDraft]));
+        const inlineJobHistoryIds = new Set(messages.filter((message) => message.inlineJobHistory).map((message) => message.id));
+        const inlineDirectoryScanIds = new Set(messages.filter((message) => message.inlineDirectoryScan).map((message) => message.id));
+        const pendingNavigations = new Map(messages.filter((message) => message.pendingNavigation).map((message) => [message.id, { view: message.pendingNavigation, decision: message.navigationDecision }]));
         setActiveConversation(conversation);
         setMessages(conversation.messages.map((message) => {
             const trace = message.references?.trace;
+            const scanReceipt = message.references?.read_events?.find((event) => event.kind === 'directory_code_scan');
+            const scanTrace = message.references?.trace;
+            const scanOutcome = message.references?.scan_result && scanReceipt && scanTrace?.trace_id && scanTrace.trace_state
+                ? { result: message.references.scan_result, receipt: scanReceipt, trace: { trace_id: scanTrace.trace_id, trace_state: scanTrace.trace_state }, conversation_id: conversation.id }
+                : undefined;
             return {
                 id: message.id,
                 role: message.role,
                 content: message.content,
-                ...(trace?.trace_id ? { trace: { localId: trace.trace_id, state: trace.trace_state || 'unknown', jaegerId: trace.jaeger_trace_id, jaegerUrl: trace.jaeger_url } } : {}),
+                ...(inlineAgentDrafts.has(message.id) ? { agentBuilderDraft: inlineAgentDrafts.get(message.id) } : {}),
+                ...(inlineJobHistoryIds.has(message.id) ? { inlineJobHistory: true } : {}),
+                ...(message.references?.control_capability === 'workspace.scan_duplicates' || inlineDirectoryScanIds.has(message.id) ? { inlineDirectoryScan: true } : {}),
+                ...(scanOutcome ? { scanOutcome } : {}),
+                ...(pendingNavigations.has(message.id) ? { pendingNavigation: pendingNavigations.get(message.id)?.view, navigationDecision: pendingNavigations.get(message.id)?.decision } : {}),
+                ...(!scanOutcome && trace?.trace_id ? { trace: { localId: trace.trace_id, state: trace.trace_state || 'unknown', jaegerId: trace.jaeger_trace_id, jaegerUrl: trace.jaeger_url } } : {}),
                 ...(message.references?.cognitive_trace ? { cognitiveTrace: message.references.cognitive_trace } : {}),
                 ...(message.references?.sources?.length ? { sources: message.references.sources } : {}),
-                ...(Array.isArray(message.references?.read_events) ? { readEvents: message.references.read_events } : {}),
+                ...(!scanOutcome && Array.isArray(message.references?.read_events) ? { readEvents: message.references.read_events } : {}),
             };
         }));
     };
@@ -436,8 +427,6 @@ export default function AgentChat({ onNavigate, onOpenProviderSettings, onOpenCo
         setInput('');
         setError('');
         setLibraryError('');
-        setCreatedNotice('');
-        setDraft(null);
         const readFilesForThisMessage = allowWorkspaceRead;
         setAllowWorkspaceRead(false);
         setSending(true);
@@ -459,16 +448,6 @@ export default function AgentChat({ onNavigate, onOpenProviderSettings, onOpenCo
             const localCapabilityIntent = !selectedAgent ? inferIntent(content, cognitiveMode) : null;
             if (localCapabilityIntent?.operation === 'list_capabilities' || localCapabilityIntent?.operation === 'propose_capability') {
                 await beginCapabilityRequest(content, localCapabilityIntent.operation, conversation.id);
-                return;
-            }
-            if (localCapabilityIntent?.operation === 'navigate' && localCapabilityIntent.view === 'capabilities') {
-                setMessages((previous) => [...previous, { id: idFor(), role: 'user', content }]);
-                onNavigate('capabilities');
-                return;
-            }
-            if (localCapabilityIntent?.operation === 'navigate' && localCapabilityIntent.view === 'evaluation_lab') {
-                setMessages((previous) => [...previous, { id: idFor(), role: 'user', content }]);
-                onNavigate('evaluation_lab');
                 return;
             }
             setMessages((previous) => [...previous, { id: idFor(), role: 'user', content }]);
@@ -521,37 +500,41 @@ export default function AgentChat({ onNavigate, onOpenProviderSettings, onOpenCo
                 if (!data.agent_draft || data.created !== false)
                     throw new Error('The server returned an invalid or already-created proposal.');
                 const proposedDraft = data.agent_draft;
-                setDraft(proposedDraft);
-                setDraftModels([]);
-                setDraftModelsError('');
-                setLoadingDraftModels(true);
-                try {
-                    const modelsResponse = await fetch('/api/providers/ollama/models');
-                    if (!modelsResponse.ok)
-                        throw new Error(await responseError(modelsResponse));
-                    const modelsData = await modelsResponse.json();
-                    const usableModels = Array.isArray(modelsData.models)
-                        ? modelsData.models.filter((model) => model.provider_id === 'ollama-cloud' && model.availability_confidence === 'listed' && typeof model.model_id === 'string')
-                        : [];
-                    setDraftModels(usableModels);
-                    if (!usableModels.some((model) => model.model_id === proposedDraft.model_id)) {
-                        setDraft((current) => current ? { ...current, model_id: usableModels[0]?.model_id ?? '' } : current);
-                    }
-                    if (!usableModels.length)
-                        setDraftModelsError('No usable Ollama models were confirmed. Configure the provider, then request a new proposal.');
-                }
-                catch (modelError) {
-                    setDraftModelsError(modelError instanceof Error ? modelError.message : 'Could not load confirmed Ollama models.');
-                }
-                finally {
-                    setLoadingDraftModels(false);
-                }
+                const assistantMessages = data.conversation.messages.filter((message) => message.role === 'assistant');
+                const assistantMessageId = assistantMessages[assistantMessages.length - 1]?.id;
+                if (!assistantMessageId)
+                    throw new Error('The agent proposal has no matching assistant message.');
+                setMessages((previous) => previous.map((message) => message.id === assistantMessageId
+                    ? { ...message, agentBuilderDraft: proposedDraft }
+                    : message));
             }
-            else if (data.operation === 'navigate') {
+            else if (data.operation === 'job_history') {
+                const assistantMessages = data.conversation.messages.filter((message) => message.role === 'assistant');
+                const assistantMessageId = assistantMessages[assistantMessages.length - 1]?.id;
+                if (!assistantMessageId)
+                    throw new Error('The job history request has no matching assistant message.');
+                setMessages((previous) => previous.map((message) => message.id === assistantMessageId
+                    ? { ...message, inlineJobHistory: true }
+                    : message));
+            }
+            else if (data.operation === 'workspace_scan') {
+                const assistantMessages = data.conversation.messages.filter((message) => message.role === 'assistant');
+                const assistantMessageId = assistantMessages[assistantMessages.length - 1]?.id;
+                if (!assistantMessageId)
+                    throw new Error('The code scan request has no matching assistant message.');
+                setMessages((previous) => previous.map((message) => message.id === assistantMessageId
+                    ? { ...message, inlineDirectoryScan: true }
+                    : message));
+            }
+            else if (data.operation === 'confirm_navigation') {
                 const view = data.navigation?.view;
-                if (!view)
-                    throw new Error('The server did not identify a destination view.');
-                onNavigate(view);
+                if (!view || !(view in viewLabels))
+                    throw new Error('The server did not identify a valid destination view.');
+                const assistantMessages = data.conversation.messages.filter((message) => message.role === 'assistant');
+                const assistantMessageId = assistantMessages[assistantMessages.length - 1]?.id;
+                if (!assistantMessageId)
+                    throw new Error('The navigation confirmation has no matching assistant message.');
+                setMessages((previous) => previous.map((message) => message.id === assistantMessageId ? { ...message, pendingNavigation: view } : message));
             }
             else if (!selectedAgent && !['chat', 'help'].includes(data.operation)) {
                 throw new Error('The server returned an unsupported chat operation.');
@@ -570,42 +553,10 @@ export default function AgentChat({ onNavigate, onOpenProviderSettings, onOpenCo
             setSending(false);
         }
     };
-    const createDraft = async () => {
-        if (!draft || creatingDraft)
-            return;
-        if (draft.provider_id !== 'ollama-cloud' || !draft.model_id?.trim() || !draftModels.some((model) => model.model_id === draft.model_id)) {
-            setError('Choose a model confirmed by the configured Ollama provider before creating this agent.');
-            return;
-        }
-        const createPayload = Object.fromEntries(Object.entries(draft).filter(([, value]) => value !== null && value !== undefined));
-        setCreatingDraft(true);
-        setError('');
-        try {
-            const response = await fetch('/api/agents/create', {
-                method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(createPayload),
-            });
-            if (!response.ok)
-                throw new Error(await responseError(response));
-            const created = await response.json();
-            setDraft(null);
-            setCreatedNotice(`${created.config.name} was created and added to your agent list.`);
-            await refreshAgents();
-        }
-        catch (cause) {
-            setError(cause instanceof Error ? cause.message : 'Agent creation failed.');
-        }
-        finally {
-            setCreatingDraft(false);
-        }
-    };
-    const cancelDraft = () => {
-        setDraft(null);
-        setDraftModels([]);
-        setDraftModelsError('');
-    };
-    const openControlChat = () => { setSelectedAgent(null); setAllowWorkspaceRead(false); setWorkspaceReadPaths(''); setDraft(null); setDraftModels([]); setDraftModelsError(''); setCapabilityDraft(null); setCapabilityProposals([]); setError(''); };
-    const selectAgent = (agent) => { setSelectedAgent(agent); setAllowWorkspaceRead(false); setWorkspaceReadPaths(''); setDraft(null); setDraftModels([]); setDraftModelsError(''); setCapabilityDraft(null); setCapabilityProposals([]); setError(''); };
-    return (_jsxs("section", { className: "control-chat", "aria-label": "Agent and application chat", onScrollCapture: revealScrollbarWhileScrolling, children: [agentPanelTarget && createPortal(_jsxs("details", { className: "chat-agent-panel", children: [_jsxs("summary", { children: ["Workspace and agents ", _jsx("span", { children: agentsState === 'ready' ? agents.length : '—' })] }), _jsxs("aside", { className: "control-chat-sidebar", "aria-label": "Agent inventory", children: [_jsxs("section", { className: "chat-sidebar-pane chat-sidebar-agents", "aria-labelledby": "chat-agents-title", children: [_jsx("div", { className: "chat-sidebar-heading", children: _jsx("div", { children: _jsx("h2", { id: "chat-agents-title", children: "Agents" }) }) }), _jsxs("button", { type: "button", className: `control-agent-option ${selectedAgent === null ? 'selected' : ''}`, onClick: openControlChat, children: [_jsx("strong", { children: "App assistant" }), _jsx("span", { children: "Chat, list agents, create drafts, navigate" })] }), _jsxs("div", { className: "agent-list-label", children: [_jsx("span", { children: "Your application agents" }), _jsx("span", { children: agentsState === 'ready' ? agents.length : '—' })] }), agentsState === 'loading' && _jsx("p", { className: "muted-state", role: "status", children: "Loading agents\u2026" }), agentsState === 'error' && _jsx("p", { className: "inline-error", children: "Agent inventory unavailable." }), agentsState === 'ready' && agents.length === 0 && _jsx("p", { className: "muted-state", children: "No agents created yet. Ask the app assistant to create one." }), _jsx("div", { className: "control-agent-list", children: agents.map((agent) => _jsxs("button", { type: "button", className: `control-agent-option ${selectedAgent?.id === agent.id ? 'selected' : ''}`, onClick: () => selectAgent(agent), children: [_jsx("strong", { children: agent.config.name }), _jsxs("span", { children: [agent.config.type, " \u00B7 ", agent.config.model_id || 'Sin modelo asignado'] }), _jsx("span", { children: agent.config.description })] }, agent.id)) }), inventoryWarning && _jsx("p", { className: "warning-state", role: "status", children: inventoryWarning })] }), _jsxs("section", { className: "chat-sidebar-pane conversation-library", "aria-label": "Conversation library", children: [_jsx("div", { className: "conversation-library-heading", children: _jsx("strong", { children: "Chats" }) }), _jsx(TabStrip, { label: "Conversation status", value: libraryMode, onChange: setLibraryMode, items: [{ id: 'active', label: 'Recent' }, { id: 'archived', label: 'Archived' }, { id: 'deleted', label: 'Trash' }] }), loadingConversation && _jsx("p", { className: "muted-state", role: "status", children: "Opening conversation\u2026" }), libraryError && _jsx("p", { className: "inline-error", role: "alert", children: libraryError }), conversationList.length === 0 && !libraryError && _jsxs("p", { className: "muted-state", children: ["No ", libraryMode === 'active' ? 'recent' : libraryMode, " chats for this owner."] }), _jsx("div", { className: "conversation-library-list", children: conversationList.map((conversation) => _jsxs("button", { type: "button", className: `conversation-library-item ${activeConversation?.id === conversation.id ? 'selected' : ''}`, onClick: (event) => {
+    const openControlChat = () => { setSelectedAgent(null); setAllowWorkspaceRead(false); setWorkspaceReadPaths(''); setCapabilityDraft(null); setCapabilityProposals([]); setError(''); };
+    const selectAgent = (agent) => { setSelectedAgent(agent); setAllowWorkspaceRead(false); setWorkspaceReadPaths(''); setCapabilityDraft(null); setCapabilityProposals([]); setError(''); };
+    const latestDirectoryScanPromptId = [...messages].reverse().find((message) => message.inlineDirectoryScan)?.id;
+    return (_jsxs("section", { className: "control-chat", "aria-label": "Agent and application chat", onScrollCapture: revealScrollbarWhileScrolling, children: [agentPanelTarget && createPortal(_jsxs("details", { className: "chat-agent-panel", children: [_jsxs("summary", { children: ["Conversations and agents ", _jsx("span", { children: agentsState === 'ready' ? agents.length : '—' })] }), _jsxs("aside", { className: "control-chat-sidebar", "aria-label": "Orchestrator conversations and agents", children: [_jsxs("section", { className: "chat-sidebar-pane conversation-library", "aria-label": "Conversation library", children: [_jsx("div", { className: "conversation-library-heading", children: _jsx("strong", { children: selectedAgent ? `Chats · ${selectedAgent.config.name}` : 'Orchestrator chats' }) }), _jsx(TabStrip, { label: "Conversation status", value: libraryMode, onChange: setLibraryMode, items: [{ id: 'active', label: 'Recent' }, { id: 'archived', label: 'Archived' }, { id: 'deleted', label: 'Trash' }] }), loadingConversation && _jsx("p", { className: "muted-state", role: "status", children: "Opening conversation\u2026" }), libraryError && _jsx("p", { className: "inline-error", role: "alert", children: libraryError }), conversationList.length === 0 && !libraryError && _jsxs("p", { className: "muted-state", children: ["No ", libraryMode === 'active' ? 'recent' : libraryMode, " chats ", selectedAgent ? 'for this agent' : 'with the orchestrator', "."] }), _jsx("div", { className: "conversation-library-list", children: conversationList.map((conversation) => _jsxs("button", { type: "button", className: `conversation-library-item ${activeConversation?.id === conversation.id ? 'selected' : ''}`, onClick: (event) => {
                                                 if (longPressTriggeredRef.current) {
                                                     event.preventDefault();
                                                     longPressTriggeredRef.current = false;
@@ -642,10 +593,12 @@ export default function AgentChat({ onNavigate, onOpenProviderSettings, onOpenCo
                                             const currentIndex = items.indexOf(document.activeElement);
                                             const direction = event.key === 'ArrowDown' ? 1 : -1;
                                             items[(currentIndex + direction + items.length) % items.length]?.focus();
-                                        }, children: [conversationContextMenu.conversation.status !== 'deleted' && _jsx("button", { type: "button", role: "menuitem", onClick: () => { const { conversation } = conversationContextMenu; setConversationContextMenu(null); void manageConversation('rename', conversation); }, children: "Rename" }), conversationContextMenu.conversation.status === 'active' && _jsx("button", { type: "button", role: "menuitem", onClick: () => { const { conversation } = conversationContextMenu; setConversationContextMenu(null); void manageConversation('archive', conversation); }, children: "Archive" }), conversationContextMenu.conversation.status !== 'deleted' && _jsx("button", { type: "button", role: "menuitem", onClick: () => { const { conversation } = conversationContextMenu; setConversationContextMenu(null); void manageConversation('delete', conversation); }, children: "Move to trash" }), conversationContextMenu.conversation.status !== 'active' && _jsx("button", { type: "button", role: "menuitem", onClick: () => { const { conversation } = conversationContextMenu; setConversationContextMenu(null); void manageConversation('restore', conversation); }, children: "Restore" })] })] })] })] }), agentPanelTarget), _jsxs(WindowPanel, { title: selectedAgent?.config.name ?? activeConversation?.title ?? 'How can I help?', className: "control-chat-main control-chat-window", hideTitlebar: true, children: [_jsx("div", { className: "chat-mode-header", children: _jsxs("button", { type: "button", onClick: onOpenCognitionSettings, "aria-label": "Open cognition and context settings", children: ["Cognition: ", cognitiveMode === 'bago5' ? 'BAGO5 experimental' : 'Baseline', " ", _jsx("span", { "aria-hidden": "true", children: "\u2197" })] }) }), _jsxs("div", { className: "control-chat-messages", "aria-live": "polite", children: [messages.length === 0 && _jsxs("div", { className: "chat-welcome", children: [_jsx("div", { className: "welcome-mark", "aria-hidden": "true", children: "\u2733" }), _jsx("h3", { children: selectedAgent ? `Chat with ${selectedAgent.config.name}` : 'Your workspace, through chat' }), _jsx("p", { children: selectedAgent ? 'Messages are sent to this agent through the configured Ollama provider.' : 'The assistant can list your application agents, draft one for your review, and navigate to supported views.' }), !selectedAgent && _jsxs("div", { className: "prompt-suggestions", children: [_jsx("button", { type: "button", onClick: () => setInput('Lista mis agentes'), children: "List my agents" }), _jsx("button", { type: "button", onClick: () => setInput('Quiero crear un agente para…'), children: "Create an agent" }), _jsx("button", { type: "button", onClick: () => setInput('Abre el Decision Inspector'), children: "Open the Inspector" })] })] }), messages.map((message) => _jsxs("article", { className: `control-message control-message-${message.role}`, children: [_jsx("span", { className: "message-speaker", children: message.role === 'user' ? 'You' : selectedAgent?.config.name ?? 'Assistant' }), message.content && _jsx("div", { className: "control-message-content", children: message.content }), message.cognitiveTrace && _jsx(CognitiveContextPanel, { trace: message.cognitiveTrace }), message.sources?.length ? _jsxs("div", { className: "message-sources", "aria-label": "Project files read", children: [_jsx("strong", { children: "Project files read" }), _jsx("ul", { children: message.sources.map((source) => _jsxs("li", { children: [_jsxs("code", { children: [source.path, ":", source.start_line, "-", source.end_line] }), source.content_sha256 && _jsxs("small", { children: [" SHA-256 ", source.content_sha256] })] }, `${source.path}:${source.start_line}-${source.end_line}`)) })] }) : null, message.readEvents?.length ? _jsxs("div", { className: "message-sources", "aria-label": "Read-only analysis evidence", children: [_jsx("strong", { children: "Read-only analysis evidence" }), _jsx("ul", { children: message.readEvents.map((event, index) => _jsxs("li", { children: [_jsxs("code", { children: [event.decision, " ", event.path || '(unresolved path)', " ", event.reason_code ? `· ${event.reason_code}` : ''] }), event.kind === 'directory_code_scan' && _jsx("small", { children: ` · ${event.files_scanned ?? 0} files · ${event.lines_scanned ?? 0} lines · ${event.finding_count ?? 0} findings${event.truncated ? ' · capped' : ''} · manifest SHA-256 ${event.manifest_sha256 ?? 'unavailable'}` })] }, `${event.path}:${index}`)) })] }) : null, message.trace && _jsxs("div", { className: "message-trace", "aria-label": "Execution trace evidence", children: [_jsxs("span", { children: ["Trace ", message.trace.state] }), _jsxs("code", { children: ["Local: ", message.trace.localId] }), message.trace.jaegerId && _jsxs("code", { children: ["Jaeger: ", message.trace.jaegerId] }), message.trace.jaegerUrl && _jsx("a", { href: message.trace.jaegerUrl, target: "_blank", rel: "noreferrer", children: "Open in Jaeger" })] })] }, message.id)), capabilityDraft && _jsxs("section", { className: "capability-chat-card", "aria-labelledby": "capability-draft-title", children: [_jsxs("div", { className: "draft-heading", children: [_jsxs("div", { children: [_jsx("p", { className: "section-eyebrow", children: "Proposal review" }), _jsx("h3", { id: "capability-draft-title", children: "Review before saving" })] }), _jsx("span", { className: "draft-status", children: "Not saved" })] }), _jsxs("label", { children: ["Exact backend capability", _jsxs("select", { value: capabilityDraft.capabilityId, onChange: (event) => setCapabilityDraft({ ...capabilityDraft, capabilityId: event.target.value }), disabled: capabilityBusy, children: [_jsx("option", { value: "", children: "Choose a catalog entry" }), capabilityDraft.capabilities.map((item) => _jsxs("option", { value: item.id, children: [item.id, " \u00B7 ", item.status, " \u00B7 ", item.effect] }, item.id))] })] }), capabilityDraft.capabilityId && _jsx("p", { className: "capability-chat-selected", children: capabilityDraft.capabilities.find((item) => item.id === capabilityDraft.capabilityId)?.summary }), _jsxs("label", { children: ["Request summary", _jsx("input", { value: capabilityDraft.summary, maxLength: 500, onChange: (event) => setCapabilityDraft({ ...capabilityDraft, summary: event.target.value }), disabled: capabilityBusy })] }), _jsxs("label", { children: ["Requested scope", _jsx("textarea", { value: capabilityDraft.requestedScope, maxLength: 1000, rows: 3, placeholder: "Describe the exact scope to review", onChange: (event) => setCapabilityDraft({ ...capabilityDraft, requestedScope: event.target.value }), disabled: capabilityBusy })] }), _jsx("p", { children: "This only saves a review proposal. It does not authorize a capability or run a job." }), _jsxs("div", { className: "draft-actions", children: [_jsx("button", { type: "button", className: "secondary-action", onClick: () => setCapabilityDraft(null), disabled: capabilityBusy, children: "Discard" }), _jsx("button", { type: "button", className: "primary-action", onClick: () => void saveCapabilityProposal(), disabled: capabilityBusy || !capabilityDraft.capabilityId || !capabilityDraft.summary.trim() || !capabilityDraft.requestedScope.trim(), children: capabilityBusy ? 'Saving…' : 'Save proposal' })] })] }), capabilityProposals.map((proposal) => _jsxs("article", { className: "capability-chat-saved", children: [_jsxs("div", { children: [_jsx("strong", { children: proposal.capability_id }), _jsxs("span", { children: [proposal.status, " \u00B7 revision ", proposal.revision] })] }), _jsx("p", { children: proposal.summary }), _jsxs("p", { children: [_jsx("strong", { children: "Requested scope:" }), " ", proposal.requested_scope] }), _jsx("code", { children: proposal.id }), proposal.status === 'PENDING_REVIEW' && _jsx("button", { type: "button", className: "secondary-action", onClick: () => void cancelChatProposal(proposal), disabled: capabilityBusy, children: "Cancel proposal" })] }, proposal.id)), draft && _jsxs("section", { className: "agent-draft-card", "aria-labelledby": "draft-title", children: [_jsxs("div", { className: "draft-heading", children: [_jsxs("div", { children: [_jsx("p", { className: "section-eyebrow", children: "AI-assisted draft" }), _jsx("h3", { id: "draft-title", children: "Review and edit before saving" })] }), _jsx("span", { className: "draft-status", children: "Not created" })] }), _jsxs("div", { className: "draft-fields", children: [_jsxs("label", { children: ["Name", _jsx("input", { value: draft.name, maxLength: 120, onChange: (event) => setDraft({ ...draft, name: event.target.value }), disabled: creatingDraft })] }), _jsxs("label", { children: ["Description", _jsx("textarea", { value: draft.description, maxLength: 1000, rows: 2, onChange: (event) => setDraft({ ...draft, description: event.target.value }), disabled: creatingDraft })] }), _jsxs("label", { children: ["Agent type", _jsxs("select", { value: draft.type, onChange: (event) => setDraft({ ...draft, type: event.target.value }), disabled: creatingDraft, children: [_jsx("option", { value: "rag", children: "RAG" }), _jsx("option", { value: "tool", children: "Tool" }), _jsx("option", { value: "multi-agent", children: "Multi-agent" })] })] }), _jsxs("label", { children: ["Confirmed Ollama model", _jsxs("select", { value: draft.model_id ?? '', onChange: (event) => setDraft({ ...draft, provider_id: 'ollama-cloud', model_id: event.target.value }), disabled: creatingDraft || loadingDraftModels || draftModels.length === 0, children: [_jsx("option", { value: "", children: loadingDraftModels ? 'Loading models…' : 'Select a confirmed model' }), draftModels.map((model) => _jsxs("option", { value: model.model_id, children: [model.display_name, " \u00B7 ", model.source] }, model.model_id))] })] }), _jsxs("label", { className: "draft-prompt-field", children: ["System prompt", _jsx("textarea", { value: draft.system_prompt, maxLength: 12000, rows: 6, onChange: (event) => setDraft({ ...draft, system_prompt: event.target.value }), disabled: creatingDraft })] })] }), _jsxs("p", { className: "draft-model-note", role: draftModelsError ? 'alert' : 'status', children: [draftModelsError || (loadingDraftModels ? 'Checking models from the configured backend…' : 'Model choices come from the configured provider and are not inferred from a public catalog.'), draftModelsError && _jsx("button", { type: "button", onClick: onOpenProviderSettings, children: "Open provider settings" })] }), _jsxs("details", { className: "draft-advanced", children: [_jsx("summary", { children: "Advanced details" }), _jsxs("p", { children: [_jsx("strong", { children: "Tools:" }), " ", draft.tools.length ? draft.tools.join(', ') : 'No tools selected'] }), _jsx("p", { children: "Creating this profile does not grant tool execution or app-control permissions." })] }), _jsxs("div", { className: "draft-actions", children: [_jsx("button", { type: "button", className: "secondary-action", onClick: cancelDraft, disabled: creatingDraft, children: "Cancel proposal" }), _jsx("button", { type: "button", className: "primary-action", onClick: () => void createDraft(), disabled: creatingDraft || loadingDraftModels || draftModels.length === 0 || !draft.name.trim() || !draft.description.trim() || !draft.system_prompt.trim() || draft.provider_id !== 'ollama-cloud' || !draft.model_id?.trim() || !draftModels.some((model) => model.model_id === draft.model_id), children: creatingDraft ? 'Creating…' : 'Create agent' })] })] }), createdNotice && _jsx("p", { className: "success-state", role: "status", children: createdNotice }), error && _jsxs("p", { className: "chat-error", role: "alert", children: [error, error.toLowerCase().includes('ollama') || error.toLowerCase().includes('provider') ? _jsx("button", { type: "button", onClick: onOpenProviderSettings, children: "Open provider settings" }) : null] }), sending && _jsx("p", { className: "muted-state", role: "status", children: "Waiting for Ollama\u2026" }), _jsx("div", { ref: messagesEndRef })] }), _jsxs("form", { className: "control-chat-composer", onSubmit: (event) => void sendMessage(event), children: [_jsx("label", { className: "visually-hidden", htmlFor: "control-chat-input", children: "Message the assistant or selected agent" }), _jsx("textarea", { id: "control-chat-input", rows: 2, value: input, onChange: (event) => setInput(event.target.value), onKeyDown: (event) => {
+                                        }, children: [conversationContextMenu.conversation.status !== 'deleted' && _jsx("button", { type: "button", role: "menuitem", onClick: () => { const { conversation } = conversationContextMenu; setConversationContextMenu(null); void manageConversation('rename', conversation); }, children: "Rename" }), conversationContextMenu.conversation.status === 'active' && _jsx("button", { type: "button", role: "menuitem", onClick: () => { const { conversation } = conversationContextMenu; setConversationContextMenu(null); void manageConversation('archive', conversation); }, children: "Archive" }), conversationContextMenu.conversation.status !== 'deleted' && _jsx("button", { type: "button", role: "menuitem", onClick: () => { const { conversation } = conversationContextMenu; setConversationContextMenu(null); void manageConversation('delete', conversation); }, children: "Move to trash" }), conversationContextMenu.conversation.status !== 'active' && _jsx("button", { type: "button", role: "menuitem", onClick: () => { const { conversation } = conversationContextMenu; setConversationContextMenu(null); void manageConversation('restore', conversation); }, children: "Restore" })] })] }), _jsxs("section", { className: "chat-sidebar-pane chat-sidebar-agents", "aria-labelledby": "chat-agents-title", children: [_jsx("div", { className: "chat-sidebar-heading", children: _jsx("div", { children: _jsx("h2", { id: "chat-agents-title", children: "Agents" }) }) }), _jsxs("section", { className: "conversation-agent-activity", "aria-label": "Agents participating in the selected conversation", children: [_jsx("strong", { children: "Agents in this chat" }), _jsx("p", { children: !selectedAgent && activeConversation?.owner_kind === 'assistant'
+                                                    ? 'No agent tasks are linked to this conversation yet.'
+                                                    : 'Select an orchestrator conversation to see its linked agent tasks.' })] }), _jsx("button", { type: "button", className: `control-agent-option ${selectedAgent === null ? 'selected' : ''}`, onClick: openControlChat, children: _jsx("strong", { children: "App assistant" }) }), _jsxs("div", { className: "agent-list-label", children: [_jsx("span", { children: "Available agents" }), _jsx("span", { children: agentsState === 'ready' ? agents.length : '—' })] }), agentsState === 'loading' && _jsx("p", { className: "muted-state", role: "status", children: "Loading agents\u2026" }), agentsState === 'error' && _jsx("p", { className: "inline-error", children: "Agent inventory unavailable." }), agentsState === 'ready' && agents.length === 0 && _jsx("p", { className: "muted-state", children: "No agents created yet. Ask the app assistant to create one." }), _jsx("div", { className: "control-agent-list", children: agents.map((agent) => _jsxs("button", { type: "button", className: `control-agent-option ${selectedAgent?.id === agent.id ? 'selected' : ''}`, onClick: () => selectAgent(agent), children: [_jsx("strong", { children: agent.config.name }), _jsxs("span", { children: [agent.config.type, " \u00B7 ", agent.config.model_id || 'Sin modelo asignado'] }), _jsx("span", { children: agent.config.description })] }, agent.id)) }), inventoryWarning && _jsx("p", { className: "warning-state", role: "status", children: inventoryWarning })] })] })] }), agentPanelTarget), _jsxs(WindowPanel, { title: selectedAgent?.config.name ?? activeConversation?.title ?? 'How can I help?', className: "control-chat-main control-chat-window", hideTitlebar: true, children: [_jsx("div", { className: "chat-mode-header", children: _jsxs("button", { type: "button", onClick: onOpenCognitionSettings, "aria-label": "Open cognition and context settings", children: ["Cognition: ", cognitiveMode === 'bago5' ? 'BAGO5 experimental' : 'Baseline', " ", _jsx("span", { "aria-hidden": "true", children: "\u2197" })] }) }), _jsxs("div", { className: "control-chat-messages", "aria-live": "polite", children: [messages.length === 0 && _jsxs("div", { className: "chat-welcome", children: [_jsx("div", { className: "welcome-mark", "aria-hidden": "true", children: "\u2733" }), _jsx("h3", { children: selectedAgent ? `Chat with ${selectedAgent.config.name}` : 'Your workspace, through chat' }), !selectedAgent && _jsxs("div", { className: "prompt-suggestions", children: [_jsx("button", { type: "button", onClick: () => setInput('Lista mis agentes'), children: "List my agents" }), _jsx("button", { type: "button", onClick: () => setInput('Quiero crear un agente para…'), children: "Create an agent" }), _jsx("button", { type: "button", onClick: () => setInput('Abre el Decision Inspector'), children: "Open the Inspector" })] })] }), messages.map((message) => _jsxs("article", { className: `control-message control-message-${message.role}`, children: [_jsx("span", { className: "message-speaker", children: message.role === 'user' ? 'You' : selectedAgent?.config.name ?? 'Assistant' }), message.content && _jsx("div", { className: "control-message-content", children: message.content }), message.agentBuilderDraft && _jsx(AgentBuilder, { inline: true, initialAgent: message.agentBuilderDraft, onAgentCreated: () => void refreshAgents() }, message.id), message.inlineJobHistory && _jsx(JobHistory, { inline: true }, message.id), message.inlineDirectoryScan && message.id === latestDirectoryScanPromptId && !selectedAgent && activeConversation?.owner_kind === 'assistant' && _jsx(DirectoryScanRun, { conversationId: activeConversation.id, revision: activeConversation.revision, disabled: activeConversation.status !== 'active', showForm: true, onConversationUpdate: (conversation) => applyConversation(conversation) }, `scan-form-${message.id}`), message.scanOutcome && activeConversation?.owner_kind === 'assistant' && _jsx(DirectoryScanRun, { conversationId: activeConversation.id, revision: activeConversation.revision, showForm: false, initialOutcome: message.scanOutcome, onConversationUpdate: (conversation) => applyConversation(conversation) }, `scan-results-${message.id}`), message.pendingNavigation && _jsxs("section", { className: "chat-navigation-confirmation", "aria-label": "Confirm screen change", children: [_jsxs("p", { children: ["\u00BFQuieres cambiar a ", _jsx("strong", { children: viewLabels[message.pendingNavigation] }), "?"] }), message.navigationDecision === 'accepted' ? _jsx("span", { role: "status", children: "Cambiando de pantalla\u2026" }) : message.navigationDecision === 'declined' ? _jsx("span", { role: "status", children: "Seguimos en el chat." }) : _jsxs("div", { className: "draft-actions", children: [_jsx("button", { type: "button", className: "secondary-action", onClick: () => setMessages((previous) => previous.map((item) => item.id === message.id ? { ...item, navigationDecision: 'declined' } : item)), children: "Seguir en el chat" }), _jsx("button", { type: "button", className: "primary-action", onClick: () => { setMessages((previous) => previous.map((item) => item.id === message.id ? { ...item, navigationDecision: 'accepted' } : item)); onNavigate(message.pendingNavigation); }, children: "S\u00ED, cambiar de pantalla" })] })] }), message.cognitiveTrace && _jsx(CognitiveContextPanel, { trace: message.cognitiveTrace }), message.sources?.length ? _jsxs("div", { className: "message-sources", "aria-label": "Project files read", children: [_jsx("strong", { children: "Project files read" }), _jsx("ul", { children: message.sources.map((source) => _jsxs("li", { children: [_jsxs("code", { children: [source.path, ":", source.start_line, "-", source.end_line] }), source.content_sha256 && _jsxs("small", { children: [" SHA-256 ", source.content_sha256] })] }, `${source.path}:${source.start_line}-${source.end_line}`)) })] }) : null, message.readEvents?.length ? _jsxs("div", { className: "message-sources", "aria-label": "Read-only analysis evidence", children: [_jsx("strong", { children: "Read-only analysis evidence" }), _jsx("ul", { children: message.readEvents.map((event, index) => _jsxs("li", { children: [_jsxs("code", { children: [event.decision, " ", event.path || '(unresolved path)', " ", event.reason_code ? `· ${event.reason_code}` : ''] }), event.kind === 'directory_code_scan' && _jsx("small", { children: ` · ${event.files_scanned ?? 0} files · ${event.lines_scanned ?? 0} lines · ${event.finding_count ?? 0} findings${event.truncated ? ' · capped' : ''} · manifest SHA-256 ${event.manifest_sha256 ?? 'unavailable'}` })] }, `${event.path}:${index}`)) })] }) : null, message.trace && _jsxs("div", { className: "message-trace", "aria-label": "Execution trace evidence", children: [_jsxs("span", { children: ["Trace ", message.trace.state] }), _jsxs("code", { children: ["Local: ", message.trace.localId] }), message.trace.jaegerId && _jsxs("code", { children: ["Jaeger: ", message.trace.jaegerId] }), message.trace.jaegerUrl && _jsx("a", { href: message.trace.jaegerUrl, target: "_blank", rel: "noreferrer", children: "Open in Jaeger" })] })] }, message.id)), capabilityDraft && _jsxs("section", { className: "capability-chat-card", "aria-labelledby": "capability-draft-title", children: [_jsxs("div", { className: "draft-heading", children: [_jsxs("div", { children: [_jsx("p", { className: "section-eyebrow", children: "Proposal review" }), _jsx("h3", { id: "capability-draft-title", children: "Review before saving" })] }), _jsx("span", { className: "draft-status", children: "Not saved" })] }), _jsxs("label", { children: ["Capability", _jsxs("select", { value: capabilityDraft.capabilityId, onChange: (event) => setCapabilityDraft({ ...capabilityDraft, capabilityId: event.target.value }), disabled: capabilityBusy, children: [_jsx("option", { value: "", children: "Choose a catalog entry" }), capabilityDraft.capabilities.map((item) => _jsxs("option", { value: item.id, children: [item.id, " \u00B7 ", item.status, " \u00B7 ", item.effect] }, item.id))] })] }), capabilityDraft.capabilityId && _jsx("p", { className: "capability-chat-selected", children: capabilityDraft.capabilities.find((item) => item.id === capabilityDraft.capabilityId)?.summary }), _jsxs("label", { children: ["Request summary", _jsx("input", { value: capabilityDraft.summary, maxLength: 500, onChange: (event) => setCapabilityDraft({ ...capabilityDraft, summary: event.target.value }), disabled: capabilityBusy })] }), _jsxs("label", { children: ["Requested scope", _jsx("textarea", { value: capabilityDraft.requestedScope, maxLength: 1000, rows: 3, onChange: (event) => setCapabilityDraft({ ...capabilityDraft, requestedScope: event.target.value }), disabled: capabilityBusy })] }), _jsxs("div", { className: "draft-actions", children: [_jsx("button", { type: "button", className: "secondary-action", onClick: () => setCapabilityDraft(null), disabled: capabilityBusy, children: "Discard" }), _jsx("button", { type: "button", className: "primary-action", onClick: () => void saveCapabilityProposal(), disabled: capabilityBusy || !capabilityDraft.capabilityId || !capabilityDraft.summary.trim() || !capabilityDraft.requestedScope.trim(), children: capabilityBusy ? 'Saving…' : 'Save proposal' })] })] }), capabilityProposals.map((proposal) => _jsxs("article", { className: "capability-chat-saved", children: [_jsxs("div", { children: [_jsx("strong", { children: proposal.capability_id }), _jsxs("span", { children: [proposal.status, " \u00B7 revision ", proposal.revision] })] }), _jsx("p", { children: proposal.summary }), _jsxs("p", { children: [_jsx("strong", { children: "Requested scope:" }), " ", proposal.requested_scope] }), _jsx("code", { children: proposal.id }), proposal.status === 'PENDING_REVIEW' && _jsx("button", { type: "button", className: "secondary-action", onClick: () => void cancelChatProposal(proposal), disabled: capabilityBusy, children: "Cancel proposal" })] }, proposal.id)), error && _jsxs("p", { className: "chat-error", role: "alert", children: [error, error.toLowerCase().includes('ollama') || error.toLowerCase().includes('provider') ? _jsx("button", { type: "button", onClick: onOpenProviderSettings, children: "Open provider settings" }) : null] }), sending && _jsx("p", { className: "muted-state", role: "status", children: "Waiting for Ollama\u2026" }), _jsx("div", { ref: messagesEndRef })] }), _jsxs("form", { className: "control-chat-composer", onSubmit: (event) => void sendMessage(event), children: [_jsx("label", { className: "visually-hidden", htmlFor: "control-chat-input", children: "Message the assistant or selected agent" }), _jsx("textarea", { id: "control-chat-input", rows: 2, value: input, onChange: (event) => setInput(event.target.value), onKeyDown: (event) => {
                                     if (event.key !== 'Enter' || event.shiftKey || event.nativeEvent.isComposing || event.repeat)
                                         return;
                                     event.preventDefault();
                                     void sendMessage();
-                                }, placeholder: activeConversation?.status && activeConversation.status !== 'active' ? 'Restore this conversation or start a new one to continue.' : selectedAgent ? `Message ${selectedAgent.config.name}.` : 'Ask a question, list agents, create an agent, or open a view.', disabled: sending || Boolean(activeConversation && activeConversation.status !== 'active') }), _jsxs("div", { className: "chat-composer-actions", children: [_jsxs("label", { className: "workspace-read-toggle", children: [_jsx("input", { type: "checkbox", checked: allowWorkspaceRead, onChange: (event) => setAllowWorkspaceRead(event.target.checked), disabled: sending || Boolean(activeConversation && activeConversation.status !== 'active') }), _jsxs("span", { children: ["Authorize exact project files for this message ", _jsx("small", { children: "Only the paths below, once, for this conversation turn" })] })] }), _jsx("button", { className: "primary-action", type: "submit", disabled: sending || !input.trim() || Boolean(activeConversation && activeConversation.status !== 'active'), children: sending ? 'Sending.' : 'Send' })] }), allowWorkspaceRead && _jsxs("label", { className: "workspace-read-paths", children: ["Project-relative file paths, one per line", _jsx("textarea", { rows: 3, value: workspaceReadPaths, onChange: (event) => setWorkspaceReadPaths(event.target.value), placeholder: 'src/api/server.py\nsrc/agent_tools/workspace_read.py', disabled: sending })] })] }), _jsx("div", { className: "chat-agent-panel-slot", ref: setAgentPanelTarget })] })] }));
+                                }, placeholder: activeConversation?.status && activeConversation.status !== 'active' ? 'Restore or start a new conversation.' : selectedAgent ? `Message ${selectedAgent.config.name}.` : 'Message the assistant…', disabled: sending || Boolean(activeConversation && activeConversation.status !== 'active') }), _jsxs("div", { className: "chat-composer-actions", children: [_jsxs("label", { className: "workspace-read-toggle", children: [_jsx("input", { type: "checkbox", checked: allowWorkspaceRead, onChange: (event) => setAllowWorkspaceRead(event.target.checked), disabled: sending || Boolean(activeConversation && activeConversation.status !== 'active') }), _jsx("span", { children: "Allow project file reads" })] }), _jsx("button", { className: "primary-action", type: "submit", disabled: sending || !input.trim() || Boolean(activeConversation && activeConversation.status !== 'active'), children: sending ? 'Sending.' : 'Send' })] }), allowWorkspaceRead && _jsxs("label", { className: "workspace-read-paths", children: ["Project-relative paths", _jsx("textarea", { rows: 3, value: workspaceReadPaths, onChange: (event) => setWorkspaceReadPaths(event.target.value), placeholder: 'src/api/server.py\nsrc/agent_tools/workspace_read.py', disabled: sending })] })] }), _jsx("div", { className: "chat-agent-panel-slot", ref: setAgentPanelTarget })] })] }));
 }
