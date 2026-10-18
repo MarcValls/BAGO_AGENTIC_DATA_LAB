@@ -319,11 +319,8 @@ def _links(paths: list[str], *, limit: int | None = None) -> str:
 
 
 def _render_phase_evidence(phases: list[dict[str, Any]]) -> str:
-    """Render repository-discovered code, test, evidence, and artifact gaps."""
-    lines = [
-        "| Fase | Código localizado | Tests | Evidencia | Patrones sin resolver |",
-        "|---|---|---|---|---|",
-    ]
+    """Render phase evidence as readable Markdown groups without wide tables."""
+    sections: list[str] = []
     for phase in phases:
         by_kind = {check["kind"]: check for check in phase.get("checks", [])}
         code = by_kind.get("code", {}).get("matches", [])
@@ -334,12 +331,20 @@ def _render_phase_evidence(phases: list[dict[str, Any]]) -> str:
             for check in phase.get("checks", [])
             for pattern in check.get("missing", [])
         ]
-        lines.append(
-            f"| {phase['id']} | {_links(code, limit=3)} | "
-            f"{_links(tests, limit=3)} | {_links(evidence, limit=4)} | "
-            f"{_cell(', '.join(missing) if missing else 'ninguno')} |"
+        sections.append(
+            "\n".join(
+                [
+                    f"### {_cell(phase['id'])} — {_cell(phase['name'])}",
+                    f"**Estado:** {_cell(phase['status'])}",
+                    "",
+                    f"**Código localizado:** {_links(code, limit=3)}",
+                    f"**Tests:** {_links(tests, limit=3)}",
+                    f"**Evidencia:** {_links(evidence, limit=4)}",
+                    f"**Patrones sin resolver:** {_inline(', '.join(missing) if missing else 'ninguno')}",
+                ]
+            )
         )
-    return "\n".join(lines)
+    return "\n\n".join(sections)
 
 
 def _render_business_demo(manifest: dict[str, Any]) -> str:
@@ -764,7 +769,7 @@ def render_readme(
         "",
         "## Roadmap y evidencia por fase",
         "",
-        "Los enlaces de esta tabla se descubren desde los patrones declarados y el checkout actual. `—` significa que el patrón no localizó archivos; no se interpreta como prueba de inexistencia fuera de este checkout.",
+        "Cada bloque muestra los archivos localizados mediante los patrones declarados en el checkout. Los patrones sin coincidencias aparecen indicados; eso no demuestra que el recurso no exista fuera de este repositorio.",
         "",
         _render_phase_evidence(phases),
         "",
@@ -772,7 +777,7 @@ def render_readme(
         "",
         _render_architecture(manifest),
         "",
-        _render_business_demo(manifest),
+        *_render_business_demo(manifest).splitlines(),
         "",
         "## Evidencia de ejecución y límites",
         "",
@@ -874,6 +879,7 @@ def render_readme(
         "## Ver la interfaz en acción",
         "## Estado actual",
         "## Recorrido de datos y arquitectura actual",
+        "## Recorrido comercial de la app: Bruma Market",
         "## Roadmap y evidencia por fase",
         "## Fuentes canónicas del proyecto",
         "## Agente de sincronización y catálogo de agentes",

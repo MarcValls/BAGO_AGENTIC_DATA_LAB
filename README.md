@@ -167,28 +167,157 @@ Pipeline actual:
 15. OpenTelemetry proyecta LocalTrace a Jaeger local sin conceder autoridad
 16. GitHub Actions repite tests, README, demo, vector validation, Jaeger validation y compile checks
 
+## Recorrido comercial de la app: Bruma Market
+
+Este tutorial usa pedidos y políticas totalmente ficticios. Documenta dos conversaciones de agentes ejecutadas en la app: un extractor produce JSON y un revisor aplica la política con evidencia autorizada. No son pedidos ni clientes reales.
+
+| Pedido | Envío | Retraso | Decisión registrada | Importe de envío elegible |
+|---|---|---:|---|---:|
+| BM-1001 | express | 32 h | `ELIGIBLE` | €7.90 (solo envío) |
+| BM-1002 | express | 24 h | `NOT_ELIGIBLE` | — |
+| BM-1003 | standard | 48 h | `NOT_ELIGIBLE` | — |
+| BM-1004 | express | sin dato | `PENDING` | — |
+
+**Ejecución registrada:** `VERIFIED`; cuatro casos QA: `ELIGIBLE, NOT_ELIGIBLE, NOT_ELIGIBLE, PENDING`; `actions_executed` vacío: `True`. Ningún reembolso se ejecutó.
+**Trazas de las conversaciones:** `trace-e884fa5f23414206`, `trace-63cc286f9d574a38` (`local_only`; no Jaeger export). SHA-256 del CSV autorizado: `016acee85ee5afdb23eaf13caf3f664417e1398b5bba3aad8ff6e991e6a3d1e3`. SHA distintos presentes en recibos: 3.
+
+La regla estricta solo cubre envíos EXPRESS con más de 24 h de retraso y devuelve únicamente la tarifa de envío. Exactamente 24 h no cumple; STANDARD no entra en la regla; sin hora de entrega queda pendiente.
+
+**Revisa el tutorial:** [guía paso a paso](output/playwright/bruma-market-tutorial/README.md) · [vídeo MP4](output/playwright/bruma-market-tutorial/tutorial-bruma-market.mp4) · [subtítulos](output/playwright/bruma-market-tutorial/tutorial-bruma-market.srt) · [hash manifest](output/playwright/bruma-market-tutorial/sha256-manifest.json). Entradas: [CSV de pedidos](output/playwright/bruma-market-tutorial/inputs/orders.csv), [política](output/playwright/bruma-market-tutorial/inputs/policy.md) y [QA esperado](output/playwright/bruma-market-tutorial/inputs/qa-expected.md). Resultados y receipts: [extracción JSON](output/playwright/bruma-market-tutorial/extracted/orders.json), [decisiones](output/playwright/bruma-market-tutorial/extracted/policy-decisions.json), [recibos de lectura y trazas](output/playwright/bruma-market-tutorial/extracted/run-evidence.json) y [perfiles/runs guardados](output/playwright/bruma-market-tutorial/cloud-runs/profiles.json).
+
+**Límite del conjunto:** solo contiene pedidos sintéticos, política, QA y recibos de lectura. No aporta directorio de clientes, facturas ni albaranes; esos casos requieren datos y escenarios propios antes de afirmar que están demostrados.
+
 ## Roadmap y evidencia por fase
 
-Los enlaces de esta tabla se descubren desde los patrones declarados y el checkout actual. `—` significa que el patrón no localizó archivos; no se interpreta como prueba de inexistencia fuera de este checkout.
+Cada bloque muestra los archivos localizados mediante los patrones declarados en el checkout. Los patrones sin coincidencias aparecen indicados; eso no demuestra que el recurso no exista fuera de este repositorio.
 
-| Fase | Código localizado | Tests | Evidencia | Patrones sin resolver |
-|---|---|---|---|---|
-| L0 | — | — | — | ninguno |
-| L1 | [`src/orchestration/governed_execution.py`](src/orchestration/governed_execution.py) · [`src/orchestration/state_graph.py`](src/orchestration/state_graph.py) | [`tests/test_l1_governance.py`](tests/test_l1_governance.py) · [`tests/test_l1_integrated_graph.py`](tests/test_l1_integrated_graph.py) | [`evidence/l1-governed-execution-completion-20261010/L1_DEMO_RECEIPTS.json`](evidence/l1-governed-execution-completion-20261010/L1_DEMO_RECEIPTS.json) · [`evidence/l1-governed-execution-completion-20261010/L1_DEMO_TRANSCRIPT.md`](evidence/l1-governed-execution-completion-20261010/L1_DEMO_TRANSCRIPT.md) · [`evidence/l1-governed-execution-completion-20261010/L1_VALIDATION.md`](evidence/l1-governed-execution-completion-20261010/L1_VALIDATION.md) · [`evidence/l1_governed_execution_20261010.md`](evidence/l1_governed_execution_20261010.md) | ninguno |
-| L2 | [`src/etl/pipeline.py`](src/etl/pipeline.py) | [`tests/test_l2_etl_pipeline.py`](tests/test_l2_etl_pipeline.py) | [`l2_etl_metadata.db`](l2_etl_metadata.db) | ninguno |
-| L3 | [`src/metadata/ontology.py`](src/metadata/ontology.py) · [`src/metadata/ontology_generator.py`](src/metadata/ontology_generator.py) · [`src/metadata/schema.py`](src/metadata/schema.py) | [`tests/test_l3_evidence.py`](tests/test_l3_evidence.py) · [`tests/test_l3_ontology.py`](tests/test_l3_ontology.py) · [`tests/test_metadata_schema.py`](tests/test_metadata_schema.py) · (+1 archivos) | [`docs/ontology_generator.md`](docs/ontology_generator.md) · [`evidence/l3_ontology_graph.md`](evidence/l3_ontology_graph.md) | ninguno |
-| L4 | [`src/retrieval/governed_rag.py`](src/retrieval/governed_rag.py) | [`tests/test_retrieval_accuracy.py`](tests/test_retrieval_accuracy.py) · [`tests/test_retrieval_benchmark.py`](tests/test_retrieval_benchmark.py) | [`docs/governed_rag.md`](docs/governed_rag.md) · [`evidence/retrieval_benchmark_results.md`](evidence/retrieval_benchmark_results.md) | ninguno |
-| L5 | [`src/adapters/mcp_adapter.py`](src/adapters/mcp_adapter.py) | [`tests/test_mcp_governance.py`](tests/test_mcp_governance.py) | [`docs/mcp_governance.md`](docs/mcp_governance.md) · [`evidence/mcp_governed_demo.md`](evidence/mcp_governed_demo.md) · [`evidence/mcp_governed_demo.mp4`](evidence/mcp_governed_demo.mp4) | ninguno |
-| L6 | [`scripts/run_l6_aws_free_tier_validation.py`](scripts/run_l6_aws_free_tier_validation.py) · [`src/adapters/bedrock_provider_adapter.py`](src/adapters/bedrock_provider_adapter.py) | [`tests/test_bedrock_integration.py`](tests/test_bedrock_integration.py) | [`docs/aws_bedrock_setup.md`](docs/aws_bedrock_setup.md) · [`evidence/bedrock_provider_benchmark.md`](evidence/bedrock_provider_benchmark.md) · [`evidence/l6_aws_free_tier.md`](evidence/l6_aws_free_tier.md) · [`evidence/l6_aws_live.md`](evidence/l6_aws_live.md) | ninguno |
-| L7 | [`src/adapters/bedrock_kb_adapter.py`](src/adapters/bedrock_kb_adapter.py) | [`tests/test_bedrock_kb_adapter.py`](tests/test_bedrock_kb_adapter.py) | [`docs/bedrock_knowledge_base.md`](docs/bedrock_knowledge_base.md) · [`evidence/bago_etl_vs_bedrock_kb_comparison.md`](evidence/bago_etl_vs_bedrock_kb_comparison.md) | ninguno |
-| L8 | [`infra/openmetadata/docker-compose.yml`](infra/openmetadata/docker-compose.yml) · [`scripts/run_l8_openmetadata_live_validation.py`](scripts/run_l8_openmetadata_live_validation.py) · [`src/adapters/openmetadata_adapter.py`](src/adapters/openmetadata_adapter.py) | [`tests/test_openmetadata_adapter.py`](tests/test_openmetadata_adapter.py) | [`docs/openmetadata_catalog.md`](docs/openmetadata_catalog.md) · [`evidence/l8_openmetadata_catalog.md`](evidence/l8_openmetadata_catalog.md) · [`evidence/l8_openmetadata_live.md`](evidence/l8_openmetadata_live.md) | ninguno |
-| L9 | [`src/agent/governed_knowledge_agent.py`](src/agent/governed_knowledge_agent.py) | [`tests/test_l9_end_to_end_agent.py`](tests/test_l9_end_to_end_agent.py) | [`docs/commercetools_capstone.md`](docs/commercetools_capstone.md) · [`evidence/l9_authorized_actions_20260922.md`](evidence/l9_authorized_actions_20260922.md) · [`evidence/l9_commercetools_agent.md`](evidence/l9_commercetools_agent.md) | ninguno |
-| L10 | [`scripts/generate_l10_ontology_evidence.py`](scripts/generate_l10_ontology_evidence.py) · [`src/agent/governed_knowledge_agent.py`](src/agent/governed_knowledge_agent.py) · [`src/metadata/ontology_engine.py`](src/metadata/ontology_engine.py) | [`tests/test_l10_ontology_engine.py`](tests/test_l10_ontology_engine.py) | [`docs/ontology_engine.md`](docs/ontology_engine.md) · [`evidence/l10_ontology_engine.md`](evidence/l10_ontology_engine.md) | ninguno |
-| L11 | [`src/execution/gateway.py`](src/execution/gateway.py) · [`src/sandbox/__init__.py`](src/sandbox/__init__.py) · [`src/sandbox/backend.py`](src/sandbox/backend.py) · (+6 archivos) | [`tests/test_sandbox.py`](tests/test_sandbox.py) | [`docs/sandbox_manager.md`](docs/sandbox_manager.md) · [`evidence/sandbox_local_restricted.md`](evidence/sandbox_local_restricted.md) · [`scripts/run_sandbox_local_validation.py`](scripts/run_sandbox_local_validation.py) | ninguno |
-| L12 | [`src/evaluation/__init__.py`](src/evaluation/__init__.py) · [`src/evaluation/agent_lab.py`](src/evaluation/agent_lab.py) · [`src/evaluation/local_evals.py`](src/evaluation/local_evals.py) · (+3 archivos) | [`tests/test_l12_observability.py`](tests/test_l12_observability.py) | [`docs/observability_evals.md`](docs/observability_evals.md) · [`evidence/l12_observability_evals.md`](evidence/l12_observability_evals.md) · [`scripts/run_l12_observability_evidence.py`](scripts/run_l12_observability_evidence.py) | ninguno |
-| L13 | [`.github/workflows/ci.yml`](.github/workflows/ci.yml) · [`demo.py`](demo.py) · [`portfolio/README.md`](portfolio/README.md) · (+4 archivos) | [`tests/test_public_e2e_demo.py`](tests/test_public_e2e_demo.py) | [`docs/public_e2e_demo.md`](docs/public_e2e_demo.md) · [`evidence/public_e2e_demo.md`](evidence/public_e2e_demo.md) | ninguno |
-| L14 | [`scripts/run_l14_vector_store_validation.py`](scripts/run_l14_vector_store_validation.py) · [`src/retrieval/sqlite_vector_store.py`](src/retrieval/sqlite_vector_store.py) | [`tests/test_sqlite_vector_store.py`](tests/test_sqlite_vector_store.py) | [`docs/local_vector_store.md`](docs/local_vector_store.md) · [`evidence/l14_vector_store.md`](evidence/l14_vector_store.md) | ninguno |
-| L15 | [`infra/observability/docker-compose.yml`](infra/observability/docker-compose.yml) · [`scripts/run_l15_otel_live_validation.py`](scripts/run_l15_otel_live_validation.py) · [`src/observability/otel_bridge.py`](src/observability/otel_bridge.py) | [`tests/test_l15_otel_bridge.py`](tests/test_l15_otel_bridge.py) | [`docs/otel_jaeger.md`](docs/otel_jaeger.md) · [`evidence/l15_otel_jaeger_live.md`](evidence/l15_otel_jaeger_live.md) | ninguno |
+### L0 — Baseline & Lab Contract
+**Estado:** COMPLETE
+
+**Código localizado:** —
+**Tests:** —
+**Evidencia:** —
+**Patrones sin resolver:** `ninguno`
+
+### L1 — LangGraph Governed Execution
+**Estado:** VALIDATED (local governed graph evidence)
+
+**Código localizado:** [`src/orchestration/governed_execution.py`](src/orchestration/governed_execution.py) · [`src/orchestration/state_graph.py`](src/orchestration/state_graph.py)
+**Tests:** [`tests/test_l1_governance.py`](tests/test_l1_governance.py) · [`tests/test_l1_integrated_graph.py`](tests/test_l1_integrated_graph.py)
+**Evidencia:** [`evidence/l1-governed-execution-completion-20261010/L1_DEMO_RECEIPTS.json`](evidence/l1-governed-execution-completion-20261010/L1_DEMO_RECEIPTS.json) · [`evidence/l1-governed-execution-completion-20261010/L1_DEMO_TRANSCRIPT.md`](evidence/l1-governed-execution-completion-20261010/L1_DEMO_TRANSCRIPT.md) · [`evidence/l1-governed-execution-completion-20261010/L1_VALIDATION.md`](evidence/l1-governed-execution-completion-20261010/L1_VALIDATION.md) · [`evidence/l1_governed_execution_20261010.md`](evidence/l1_governed_execution_20261010.md)
+**Patrones sin resolver:** `ninguno`
+
+### L2 — ETL / Data Pipeline
+**Estado:** VALIDATED
+
+**Código localizado:** [`src/etl/pipeline.py`](src/etl/pipeline.py)
+**Tests:** [`tests/test_l2_etl_pipeline.py`](tests/test_l2_etl_pipeline.py)
+**Evidencia:** [`l2_etl_metadata.db`](l2_etl_metadata.db)
+**Patrones sin resolver:** `ninguno`
+
+### L3 — Metadata & Ontology
+**Estado:** VERIFIED
+
+**Código localizado:** [`src/metadata/ontology.py`](src/metadata/ontology.py) · [`src/metadata/ontology_generator.py`](src/metadata/ontology_generator.py) · [`src/metadata/schema.py`](src/metadata/schema.py)
+**Tests:** [`tests/test_l3_evidence.py`](tests/test_l3_evidence.py) · [`tests/test_l3_ontology.py`](tests/test_l3_ontology.py) · [`tests/test_metadata_schema.py`](tests/test_metadata_schema.py) · (+1 archivos)
+**Evidencia:** [`docs/ontology_generator.md`](docs/ontology_generator.md) · [`evidence/l3_ontology_graph.md`](evidence/l3_ontology_graph.md)
+**Patrones sin resolver:** `ninguno`
+
+### L4 — Governed RAG
+**Estado:** VERIFIED
+
+**Código localizado:** [`src/retrieval/governed_rag.py`](src/retrieval/governed_rag.py)
+**Tests:** [`tests/test_retrieval_accuracy.py`](tests/test_retrieval_accuracy.py) · [`tests/test_retrieval_benchmark.py`](tests/test_retrieval_benchmark.py)
+**Evidencia:** [`docs/governed_rag.md`](docs/governed_rag.md) · [`evidence/retrieval_benchmark_results.md`](evidence/retrieval_benchmark_results.md)
+**Patrones sin resolver:** `ninguno`
+
+### L5 — MCP con gobernanza
+**Estado:** VERIFIED
+
+**Código localizado:** [`src/adapters/mcp_adapter.py`](src/adapters/mcp_adapter.py)
+**Tests:** [`tests/test_mcp_governance.py`](tests/test_mcp_governance.py)
+**Evidencia:** [`docs/mcp_governance.md`](docs/mcp_governance.md) · [`evidence/mcp_governed_demo.md`](evidence/mcp_governed_demo.md) · [`evidence/mcp_governed_demo.mp4`](evidence/mcp_governed_demo.mp4)
+**Patrones sin resolver:** `ninguno`
+
+### L6 — AWS Bedrock Provider
+**Estado:** VERIFIED (historical live Converse; latest attempts throttled)
+
+**Código localizado:** [`scripts/run_l6_aws_free_tier_validation.py`](scripts/run_l6_aws_free_tier_validation.py) · [`src/adapters/bedrock_provider_adapter.py`](src/adapters/bedrock_provider_adapter.py)
+**Tests:** [`tests/test_bedrock_integration.py`](tests/test_bedrock_integration.py)
+**Evidencia:** [`docs/aws_bedrock_setup.md`](docs/aws_bedrock_setup.md) · [`evidence/bedrock_provider_benchmark.md`](evidence/bedrock_provider_benchmark.md) · [`evidence/l6_aws_free_tier.md`](evidence/l6_aws_free_tier.md) · [`evidence/l6_aws_live.md`](evidence/l6_aws_live.md)
+**Patrones sin resolver:** `ninguno`
+
+### L7 — Bedrock Knowledge Base
+**Estado:** VERIFIED (offline)
+
+**Código localizado:** [`src/adapters/bedrock_kb_adapter.py`](src/adapters/bedrock_kb_adapter.py)
+**Tests:** [`tests/test_bedrock_kb_adapter.py`](tests/test_bedrock_kb_adapter.py)
+**Evidencia:** [`docs/bedrock_knowledge_base.md`](docs/bedrock_knowledge_base.md) · [`evidence/bago_etl_vs_bedrock_kb_comparison.md`](evidence/bago_etl_vs_bedrock_kb_comparison.md)
+**Patrones sin resolver:** `ninguno`
+
+### L8 — Metadata Catalog
+**Estado:** VERIFIED (local live)
+
+**Código localizado:** [`infra/openmetadata/docker-compose.yml`](infra/openmetadata/docker-compose.yml) · [`scripts/run_l8_openmetadata_live_validation.py`](scripts/run_l8_openmetadata_live_validation.py) · [`src/adapters/openmetadata_adapter.py`](src/adapters/openmetadata_adapter.py)
+**Tests:** [`tests/test_openmetadata_adapter.py`](tests/test_openmetadata_adapter.py)
+**Evidencia:** [`docs/openmetadata_catalog.md`](docs/openmetadata_catalog.md) · [`evidence/l8_openmetadata_catalog.md`](evidence/l8_openmetadata_catalog.md) · [`evidence/l8_openmetadata_live.md`](evidence/l8_openmetadata_live.md)
+**Patrones sin resolver:** `ninguno`
+
+### L9 — End-to-End Governed Agent
+**Estado:** VERIFIED (offline)
+
+**Código localizado:** [`src/agent/governed_knowledge_agent.py`](src/agent/governed_knowledge_agent.py)
+**Tests:** [`tests/test_l9_end_to_end_agent.py`](tests/test_l9_end_to_end_agent.py)
+**Evidencia:** [`docs/commercetools_capstone.md`](docs/commercetools_capstone.md) · [`evidence/l9_authorized_actions_20260922.md`](evidence/l9_authorized_actions_20260922.md) · [`evidence/l9_commercetools_agent.md`](evidence/l9_commercetools_agent.md)
+**Patrones sin resolver:** `ninguno`
+
+### L10 — Governed Ontology Engine
+**Estado:** VERIFIED (local)
+
+**Código localizado:** [`scripts/generate_l10_ontology_evidence.py`](scripts/generate_l10_ontology_evidence.py) · [`src/agent/governed_knowledge_agent.py`](src/agent/governed_knowledge_agent.py) · [`src/metadata/ontology_engine.py`](src/metadata/ontology_engine.py)
+**Tests:** [`tests/test_l10_ontology_engine.py`](tests/test_l10_ontology_engine.py)
+**Evidencia:** [`docs/ontology_engine.md`](docs/ontology_engine.md) · [`evidence/l10_ontology_engine.md`](evidence/l10_ontology_engine.md)
+**Patrones sin resolver:** `ninguno`
+
+### L11 — Governed Sandbox Layer
+**Estado:** VERIFIED (local)
+
+**Código localizado:** [`src/execution/gateway.py`](src/execution/gateway.py) · [`src/sandbox/__init__.py`](src/sandbox/__init__.py) · [`src/sandbox/backend.py`](src/sandbox/backend.py) · (+6 archivos)
+**Tests:** [`tests/test_sandbox.py`](tests/test_sandbox.py)
+**Evidencia:** [`docs/sandbox_manager.md`](docs/sandbox_manager.md) · [`evidence/sandbox_local_restricted.md`](evidence/sandbox_local_restricted.md) · [`scripts/run_sandbox_local_validation.py`](scripts/run_sandbox_local_validation.py)
+**Patrones sin resolver:** `ninguno`
+
+### L12 — Local Observability & Evals
+**Estado:** VERIFIED (local)
+
+**Código localizado:** [`src/evaluation/__init__.py`](src/evaluation/__init__.py) · [`src/evaluation/agent_lab.py`](src/evaluation/agent_lab.py) · [`src/evaluation/local_evals.py`](src/evaluation/local_evals.py) · (+3 archivos)
+**Tests:** [`tests/test_l12_observability.py`](tests/test_l12_observability.py)
+**Evidencia:** [`docs/observability_evals.md`](docs/observability_evals.md) · [`evidence/l12_observability_evals.md`](evidence/l12_observability_evals.md) · [`scripts/run_l12_observability_evidence.py`](scripts/run_l12_observability_evidence.py)
+**Patrones sin resolver:** `ninguno`
+
+### L13 — Public E2E Demo & CI
+**Estado:** VERIFIED (local)
+
+**Código localizado:** [`.github/workflows/ci.yml`](.github/workflows/ci.yml) · [`demo.py`](demo.py) · [`portfolio/README.md`](portfolio/README.md) · (+4 archivos)
+**Tests:** [`tests/test_public_e2e_demo.py`](tests/test_public_e2e_demo.py)
+**Evidencia:** [`docs/public_e2e_demo.md`](docs/public_e2e_demo.md) · [`evidence/public_e2e_demo.md`](evidence/public_e2e_demo.md)
+**Patrones sin resolver:** `ninguno`
+
+### L14 — Governed Local Vector Store
+**Estado:** VERIFIED (local)
+
+**Código localizado:** [`scripts/run_l14_vector_store_validation.py`](scripts/run_l14_vector_store_validation.py) · [`src/retrieval/sqlite_vector_store.py`](src/retrieval/sqlite_vector_store.py)
+**Tests:** [`tests/test_sqlite_vector_store.py`](tests/test_sqlite_vector_store.py)
+**Evidencia:** [`docs/local_vector_store.md`](docs/local_vector_store.md) · [`evidence/l14_vector_store.md`](evidence/l14_vector_store.md)
+**Patrones sin resolver:** `ninguno`
+
+### L15 — OpenTelemetry + Jaeger Local Live
+**Estado:** VERIFIED (local live)
+
+**Código localizado:** [`infra/observability/docker-compose.yml`](infra/observability/docker-compose.yml) · [`scripts/run_l15_otel_live_validation.py`](scripts/run_l15_otel_live_validation.py) · [`src/observability/otel_bridge.py`](src/observability/otel_bridge.py)
+**Tests:** [`tests/test_l15_otel_bridge.py`](tests/test_l15_otel_bridge.py)
+**Evidencia:** [`docs/otel_jaeger.md`](docs/otel_jaeger.md) · [`evidence/l15_otel_jaeger_live.md`](evidence/l15_otel_jaeger_live.md)
+**Patrones sin resolver:** `ninguno`
 
 ## Fuentes canónicas del proyecto
 

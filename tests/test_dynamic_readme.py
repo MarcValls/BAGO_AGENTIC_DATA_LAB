@@ -103,7 +103,7 @@ def test_rendered_readme_is_comprehensive_scope_bound_and_does_not_claim_collect
         passing_tests=collected_test_count(),
     )
 
-    assert len(rendered.splitlines()) < 380
+    assert len(rendered.splitlines()) < 450
     assert "BAGO Agentic Data Lab" in rendered
     assert "python demo.py" in rendered
     assert "docs/one_command_demo.md" in rendered
@@ -120,6 +120,10 @@ def test_rendered_readme_is_comprehensive_scope_bound_and_does_not_claim_collect
     assert "![Grafo de Jaeger: traza agent.run 94ee6c8d7a05b27487489a97da7480a5" in rendered
     assert "portfolio/assets/jaeger-trace-graph.png" in rendered
     assert "## Roadmap y evidencia por fase" in rendered
+    assert "| Fase | Código localizado | Tests | Evidencia | Patrones sin resolver |" not in rendered
+    assert "### L1 — LangGraph Governed Execution" in rendered
+    assert "**Patrones sin resolver:**" in rendered
+    assert "<details>" not in rendered
     assert "## Recorrido comercial de la app: Bruma Market" in rendered
     assert "BM-1001" in rendered and "BM-1004" in rendered
     assert "actions_executed" in rendered
