@@ -172,6 +172,11 @@ def parse_roles() -> list[list[str]]:
     return rows
 
 
+def _is_table_separator(line: str) -> bool:
+    cells = [cell.strip() for cell in line.strip().strip("|").split("|")]
+    return bool(cells) and all(re.fullmatch(r":?-{3,}:?", cell) for cell in cells)
+
+
 def parse_skills() -> list[list[str]]:
     """Extract the technical skill table from .bago/canon/JOB_SKILL_MATRIX.md."""
     text = (REPO_ROOT / ".bago/canon/JOB_SKILL_MATRIX.md").read_text(encoding="utf-8")
@@ -182,7 +187,7 @@ def parse_skills() -> list[list[str]]:
     for line in section.splitlines():
         if (
             not line.startswith("|")
-            or line.startswith("|---")
+            or _is_table_separator(line)
             or line.startswith("| Skill")
         ):
             continue
@@ -212,7 +217,7 @@ def parse_soft_skills() -> list[list[str]]:
     for line in section.splitlines():
         if (
             not line.startswith("|")
-            or line.startswith("|---")
+            or _is_table_separator(line)
             or line.startswith("| Skill")
         ):
             continue

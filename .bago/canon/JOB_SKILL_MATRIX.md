@@ -10,10 +10,10 @@
 **Gap principal:** Seniority (~5 años requeridos)  
 **Timeline objetivo:** 4-5 semanas (completar L1-L6)
 
-#### Requisitos vs Mi Estado
+#### Requisitos vs Mi Estado — Tuio
 
 | Requisito | Estado | Evidence | Gap |
-|-----------|--------|----------|-----|
+| --- | --- | --- | --- |
 | Agentes y orchestration | L1 local validated | StateGraph + GovernedRAG + Gateway/Sandbox + LocalTrace | production identity and durable runtime remain separate |
 | Tool calling / APIs | ✅ Conocido | BAGO backend | — |
 | MCP | ✅ Baseline gobernado | mcp_adapter.py + local stdio demo + video | Tool-use cloud end-to-end |
@@ -34,10 +34,10 @@
 **Gaps:** LangGraph/LangChain, cloud, Docker/K8s  
 **Timeline objetivo:** 2-3 semanas (completar L1-L4)
 
-#### Requisitos vs Mi Estado
+#### Requisitos vs Mi Estado — Orbitant
 
 | Requisito | Estado | Evidence | Gap |
-|-----------|--------|----------|-----|
+| --- | --- | --- | --- |
 | Sistemas LLM en producción | 🟡 Parcial | BAGO runtime | L1-L4 |
 | Agentes y pipelines | 🟡 En diseño | — | L1-L2 |
 | Python | ✅ Fuerte | BAGO backend | — |
@@ -59,10 +59,10 @@
 **Gaps principales:** Vertex AI / GCP específico  
 **Timeline objetivo:** 6-7 semanas (completar L1-L7)
 
-#### Requisitos vs Mi Estado
+#### Requisitos vs Mi Estado — Devoteam
 
 | Requisito | Estado | Evidence | Gap |
-|-----------|--------|----------|-----|
+| --- | --- | --- | --- |
 | Python | ✅ Fuerte | BAGO backend | — |
 | LLMs | ✅ Provider baseline | Bedrock Converse/Stream offline | Live model evaluation |
 | Bedrock Knowledge Bases | ✅ Baseline offline gobernado | Retrieve/Generate + citations + ETL comparison | Live KB ingestion and relevance |
@@ -86,10 +86,10 @@
 **Viabilidad:** ~55% (seniority gap fuerte)  
 **Timeline:** Stretch goal (aplicar tras L9 completo)
 
-#### Requisitos vs Mi Estado
+#### Requisitos vs Mi Estado — commercetools
 
 | Requisito | Estado | Evidence | Gap |
-|-----------|--------|----------|-----|
+| --- | --- | --- | --- |
 | Agent loops | ✅ Diseñado | BAGO session | — |
 | Tool use | ✅ Diseñado | BAGO tools | — |
 | Business-rule enforcement | ✅ Fuerte | BAGO governance | — |
@@ -106,11 +106,13 @@
 ## Estrategia de Candidatura
 
 ### Wave 1 (2-3 semanas) — Orbitant
+
 - Completar L0-L4
 - GitHub repo público con L1-L4 evidence
 - Aplicar destacando BAGO governance + RAG implementado
 
 ### Wave 2 (4-5 semanas) — Tuio
+
 - [x] Completar L6 offline (Bedrock; L5 MCP baseline ya verificado)
 - [x] Validar L6 `Converse` contra cuenta AWS real (credenciales, model access y receipt)
 - [x] Confirmar cuenta AWS `FREE/ACTIVE` y créditos restantes mediante API Free Tier de solo lectura
@@ -119,6 +121,7 @@
 - Aplicar aunque seniority sea gap; portfolio como compensación
 
 ### Wave 3 (6-7 semanas) — Devoteam
+
 - [x] Completar L7 offline (Bedrock KB + comparación ETL)
 - [x] Completar L8 offline (Metadata Catalog + lineage + quality)
 - [x] Ejecutar L8 live local contra OpenMetadata Docker con cleanup y receipts
@@ -128,6 +131,7 @@
 - Aplicar destacando adaptabilidad multi-cloud
 
 ### Wave 4 (10 semanas) — commercetools (stretch)
+
 - [x] L9 offline completo (end-to-end governed agent)
 - [x] Tres escenarios reproducibles con RAG, MCP y Bedrock fixture
 - [ ] Validación live de APIs commercetools/AWS/GitHub (`NOT_RUN`)
@@ -142,7 +146,7 @@
 **Matrix convention:** Market demand uses Muy alta, Alta and Media. Current-level colors describe evidence maturity: 🟢 implemented or evidenced locally; 🟡 practical baseline, partial evidence or bounded scope; 🟠 historical evidence or external constraint; 🔵 designed capability without an implementation claim. 🎯 marks the target level. Colors describe evidence scope, not professional proficiency. The final column records evidence scope and remaining limits.
 
 | Skill | Market Demand | Current Level | Target Level | First Evidence | Interview Ready |
-|-------|---------------|---------------|--------------|----------------|-----------------|
+| --- | --- | --- | --- | --- | --- |
 | Python | Alta | 🟢 Senior | 🎯 Senior | BAGO backend | ✅ Sí |
 | REST APIs | Alta | 🟢 Senior | 🎯 Senior | BAGO FastAPI | ✅ Sí |
 | LangGraph | Muy alta | 🟢 Implementado localmente | 🎯 Proficient | Integrated StateGraph + exact approval + governed RAG/gateway/sandbox/receipt/LocalTrace | L1 VALIDATED in local scope; identity, durability and OS isolation are not claimed |
@@ -172,12 +176,10 @@
 | Auditability | Alta | 🔵 Diseñado | 🎯 Implementado | Recibos de adapters/sandbox; L1 no fabrica recibos si no hay gateway | L1 evidencia parcial |
 | Docker/K8s | Media | 🟡 Docker Compose local | 🎯 Basic | OpenMetadata Compose + reproducible healthcheck | L8 local |
 
-
-
 ### Soft Skills / Strategic
 
 | Skill | Current | Target | Evidence |
-|-------|---------|--------|----------|
+| --- | --- | --- | --- |
 | Arquitectura de sistemas | ✅ Fuerte | ✅ Mantener | AGENTS.md, CANON_BAGO |
 | Diseño de contratos | ✅ Fuerte | ✅ Mantener | BAGO contracts |
 | Documentación técnica | ✅ Fuerte | ✅ Mantener | Este repo |
@@ -238,6 +240,7 @@
 
 **Objetivo:** L0 completo + L1 iniciado  
 **Completado:**
+
 - [ ] .bago/canon/LAB_CONTRACT.md
 - [ ] .bago/canon/ARCHITECTURE.md
 - [ ] .bago/canon/ROADMAP.md
