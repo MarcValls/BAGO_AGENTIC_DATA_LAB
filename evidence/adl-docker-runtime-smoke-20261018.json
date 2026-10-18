@@ -1,0 +1,29 @@
+{
+  "evidence_id": "ADL-DOCKER-RUNTIME-SMOKE-20261018",
+  "status": "VERIFIED",
+  "executed_at": "2026-10-18T00:50:05.8720084Z",
+  "repository": "MarcValls/BAGO_AGENTIC_DATA_LAB",
+  "source_commit": "599764dbe0e6008f7b2eb9cbedd605c9a711aee9",
+  "commands": [
+    "docker compose -f docker-compose.ui.yml config --quiet",
+    "docker compose -f docker-compose.ui.yml build api",
+    "docker run -d --rm -e BAGO_API_HOST=0.0.0.0 -e BAGO_RUNTIME_MODE=container -p 127.0.0.1::8080 bago-portfolio:latest",
+    "GET /api/health",
+    "GET /"
+  ],
+  "image_digest": "sha256:8ab045811b6fcdb8c5201edca0fe8cc3fb310d97ff6351365cc57f3b575f3ae0",
+  "runtime_container": "ad601e748ee1bcb32a2cbbccff9e5b785969a47d1aa284f8bedec758a7d4c089",
+  "published_binding": "127.0.0.1:58768 -> container:8080",
+  "health_result": "HTTP 200; {\"status\":\"ok\"}",
+  "ui_result": "HTTP 200",
+  "cleanup": "container stopped; launched with --rm",
+  "scope": "ADL Docker image build and local HTTP smoke only",
+  "not_proven": [
+    "agent.run execution",
+    "OS isolation suitability for untrusted tools",
+    "authentication and signed permits",
+    "durable receipts",
+    "independent ADL postcondition verification",
+    "production availability"
+  ]
+}
