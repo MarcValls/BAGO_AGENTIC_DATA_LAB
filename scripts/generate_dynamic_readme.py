@@ -416,17 +416,30 @@ def _render_business_demo(manifest: dict[str, Any]) -> str:
     )
 
 def _render_canonical_documents(manifest: dict[str, Any]) -> str:
-    lines = [
-        "| Documento | Función | Estado en este checkout |",
-        "|---|---|---|",
-    ]
+    documents = []
     for document in manifest.get("canonical_documents", []):
         path = str(document["path"])
         state = "PRESENTE" if (REPO_ROOT / path).is_file() else "FALTA"
-        lines.append(
-            f"| [{_inline(path)}]({path}) | {_cell(document['role'])} | {_cell(state)} |"
-        )
-    return "\n".join(lines) or "No hay documentos canónicos declarados."
+        documents.append((path, str(document["role"]), state))
+    if not documents:
+        return "No hay documentos canónicos declarados."
+
+    present = sum(state == "PRESENTE" for _, _, state in documents)
+    missing = len(documents) - present
+    lines = [
+        "| Resultado del inventario | Total |",
+        "|---|---:|",
+        f"| Documentos declarados | {len(documents)} |",
+        f"| Encontrados en este checkout | {present} |",
+        f"| No encontrados | {missing} |",
+        "",
+        "**Documentos y función:**",
+    ]
+    lines.extend(
+        f"- [{_inline(path)}]({path}) — {_cell(role)} — **{state}**"
+        for path, role, state in documents
+    )
+    return "\n".join(lines)
 
 def _render_one_command_demo(manifest: dict[str, Any]) -> str:
     config = manifest.get("one_command_demo", {})

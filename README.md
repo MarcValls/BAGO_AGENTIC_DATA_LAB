@@ -321,19 +321,24 @@ Cada bloque muestra los archivos localizados mediante los patrones declarados en
 
 ## Fuentes canónicas del proyecto
 
-| Documento | Función | Estado en este checkout |
-|---|---|---|
-| [`.bago/canon/STATE.md`](.bago/canon/STATE.md) | estado operativo actual | PRESENTE |
-| [`.bago/canon/LAB_CONTRACT.md`](.bago/canon/LAB_CONTRACT.md) | contrato del laboratorio | PRESENTE |
-| [`.bago/canon/ARCHITECTURE.md`](.bago/canon/ARCHITECTURE.md) | arquitectura y límites | PRESENTE |
-| [`.bago/canon/ROADMAP.md`](.bago/canon/ROADMAP.md) | roadmap ejecutable | PRESENTE |
-| [`.bago/canon/LEARNING_LEDGER.md`](.bago/canon/LEARNING_LEDGER.md) | aprendizaje y evidencia | PRESENTE |
-| [`.bago/canon/JOB_SKILL_MATRIX.md`](.bago/canon/JOB_SKILL_MATRIX.md) | skills y alineación laboral | PRESENTE |
-| [`docs/cv_linkedin/portfolio-demo-v1.md`](docs/cv_linkedin/portfolio-demo-v1.md) | snapshot freeze portfolio-demo-v1 (CV/LinkedIn) | PRESENTE |
-| [`docs/one_command_demo.md`](docs/one_command_demo.md) | quickstart and artifact contract for one-command governed demo | PRESENTE |
-| [`docs/one_command_demo_walkthrough.md`](docs/one_command_demo_walkthrough.md) | canonical demo explanations and artifact walkthrough | PRESENTE |
-| [`docs/releases/RELEASE_NOTES_DEMO_V1.md`](docs/releases/RELEASE_NOTES_DEMO_V1.md) | frozen one-command demo v1.0.0 release notes | PRESENTE |
-| [`VERSION`](VERSION) | current repository version | PRESENTE |
+| Resultado del inventario | Total |
+|---|---:|
+| Documentos declarados | 11 |
+| Encontrados en este checkout | 11 |
+| No encontrados | 0 |
+
+**Documentos y función:**
+- [`.bago/canon/STATE.md`](.bago/canon/STATE.md) — estado operativo actual — **PRESENTE**
+- [`.bago/canon/LAB_CONTRACT.md`](.bago/canon/LAB_CONTRACT.md) — contrato del laboratorio — **PRESENTE**
+- [`.bago/canon/ARCHITECTURE.md`](.bago/canon/ARCHITECTURE.md) — arquitectura y límites — **PRESENTE**
+- [`.bago/canon/ROADMAP.md`](.bago/canon/ROADMAP.md) — roadmap ejecutable — **PRESENTE**
+- [`.bago/canon/LEARNING_LEDGER.md`](.bago/canon/LEARNING_LEDGER.md) — aprendizaje y evidencia — **PRESENTE**
+- [`.bago/canon/JOB_SKILL_MATRIX.md`](.bago/canon/JOB_SKILL_MATRIX.md) — skills y alineación laboral — **PRESENTE**
+- [`docs/cv_linkedin/portfolio-demo-v1.md`](docs/cv_linkedin/portfolio-demo-v1.md) — snapshot freeze portfolio-demo-v1 (CV/LinkedIn) — **PRESENTE**
+- [`docs/one_command_demo.md`](docs/one_command_demo.md) — quickstart and artifact contract for one-command governed demo — **PRESENTE**
+- [`docs/one_command_demo_walkthrough.md`](docs/one_command_demo_walkthrough.md) — canonical demo explanations and artifact walkthrough — **PRESENTE**
+- [`docs/releases/RELEASE_NOTES_DEMO_V1.md`](docs/releases/RELEASE_NOTES_DEMO_V1.md) — frozen one-command demo v1.0.0 release notes — **PRESENTE**
+- [`VERSION`](VERSION) — current repository version — **PRESENTE**
 
 - [Índice de contexto BAGO](.bago/INDEX.md)
 - [Contrato del laboratorio y estimaciones de planificación](.bago/canon/LAB_CONTRACT.md)
