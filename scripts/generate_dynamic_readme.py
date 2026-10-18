@@ -416,29 +416,51 @@ def _render_business_demo(manifest: dict[str, Any]) -> str:
     )
 
 def _render_canonical_documents(manifest: dict[str, Any]) -> str:
-    documents = []
+    groups: dict[str, list[tuple[str, str, str]]] = {
+        "Gobierno del proyecto": [],
+        "Demo y portfolio": [],
+        "Versionado": [],
+    }
     for document in manifest.get("canonical_documents", []):
         path = str(document["path"])
         state = "PRESENTE" if (REPO_ROOT / path).is_file() else "FALTA"
-        documents.append((path, str(document["role"]), state))
-    if not documents:
+        if path.startswith(".bago/canon/"):
+            group = "Gobierno del proyecto"
+        elif path == "VERSION":
+            group = "Versionado"
+        else:
+            group = "Demo y portfolio"
+        groups[group].append((path, str(document["role"]), state))
+    if not any(groups.values()):
         return "No hay documentos canónicos declarados."
 
-    present = sum(state == "PRESENTE" for _, _, state in documents)
-    missing = len(documents) - present
-    lines = [
-        "| Resultado del inventario | Total |",
-        "|---|---:|",
-        f"| Documentos declarados | {len(documents)} |",
-        f"| Encontrados en este checkout | {present} |",
-        f"| No encontrados | {missing} |",
-        "",
-        "**Documentos y función:**",
-    ]
-    lines.extend(
-        f"- [{_inline(path)}]({path}) — {_cell(role)} — **{state}**"
-        for path, role, state in documents
-    )
+    coverage = {
+        "Gobierno del proyecto": "Estado, contrato, arquitectura, roadmap, aprendizaje y skills",
+        "Demo y portfolio": "Tutoriales, walkthrough, snapshot y notas de release",
+        "Versionado": "Versión declarada del repositorio",
+    }
+    lines = ["| Área | Cobertura | Fuentes presentes / declaradas |", "|---|---|---|"]
+    for group, documents in groups.items():
+        if not documents:
+            continue
+        present = sum(state == "PRESENTE" for _, _, state in documents)
+        result = f"{present}/{len(documents)} presentes"
+        if present < len(documents):
+            result += f"; {len(documents) - present} ausente(s)"
+        lines.append(f"| {group} | {coverage[group]} | {result} |")
+    lines.append("")
+    for group, documents in groups.items():
+        if not documents:
+            continue
+        lines.extend((f"**{group}:**", ""))
+        lines.extend(
+            f"- [{_inline(path)}]({path}) — {_cell(role)}"
+            + (" — **FALTA en este checkout**" if state == "FALTA" else "")
+            for path, role, state in documents
+        )
+        lines.append("")
+    while lines and not lines[-1]:
+        lines.pop()
     return "\n".join(lines)
 
 def _render_one_command_demo(manifest: dict[str, Any]) -> str:
