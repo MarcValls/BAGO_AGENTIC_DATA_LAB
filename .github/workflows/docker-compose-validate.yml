@@ -1,0 +1,36 @@
+name: Docker Compose Validation
+
+on:
+  push:
+    paths:
+      - "docker-compose*.yml"
+      - "infra/**/docker-compose.yml"
+      - ".github/workflows/docker-compose-validate.yml"
+  pull_request:
+    paths:
+      - "docker-compose*.yml"
+      - "infra/**/docker-compose.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Validate docker-compose.ui.yml
+        run: docker compose -f docker-compose.ui.yml config --quiet
+
+      - name: Validate infra/openmetadata/docker-compose.yml
+        run: docker compose -f infra/openmetadata/docker-compose.yml config --quiet
+
+      - name: Validate infra/observability/docker-compose.yml
+        run: docker compose -f infra/observability/docker-compose.yml config --quiet
+
+      - name: Run compose config checks
+        run: |
+          echo "✓ All docker-compose.yml files validated successfully"

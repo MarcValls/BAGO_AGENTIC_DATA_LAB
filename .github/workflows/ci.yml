@@ -48,6 +48,20 @@ jobs:
         run: python scripts/run_l14_vector_store_validation.py --check
       - name: Start local OpenMetadata
         run: docker compose -p bago-openmetadata -f infra/openmetadata/docker-compose.yml up -d
+      - name: Wait for OpenMetadata to be healthy
+        run: |
+          for i in {1..60}; do
+            STATUS=$(docker compose -p bago-openmetadata -f infra/openmetadata/docker-compose.yml ps --format='table {{.Status}}' | grep -c 'healthy' || echo 0)
+            if [ "$STATUS" -gt 0 ]; then
+              echo "OpenMetadata is healthy"
+              exit 0
+            fi
+            echo "Waiting for OpenMetadata... ($i/60)"
+            sleep 2
+          done
+          echo "OpenMetadata failed to become healthy"
+          docker compose -p bago-openmetadata -f infra/openmetadata/docker-compose.yml logs
+          exit 1
       - name: Check local OpenMetadata catalog
         run: python scripts/run_l8_openmetadata_live_validation.py --check
       - name: Stop local OpenMetadata
@@ -55,6 +69,19 @@ jobs:
         run: docker compose -p bago-openmetadata -f infra/openmetadata/docker-compose.yml down -v
       - name: Start local Jaeger
         run: docker compose -p bago-otel -f infra/observability/docker-compose.yml up -d
+      - name: Wait for Jaeger to be healthy
+        run: |
+          for i in {1..30}; do
+            if curl -s http://localhost:16686/api/services >/dev/null 2>&1; then
+              echo "Jaeger is healthy"
+              exit 0
+            fi
+            echo "Waiting for Jaeger... ($i/30)"
+            sleep 2
+          done
+          echo "Jaeger failed to become healthy"
+          docker compose -p bago-otel -f infra/observability/docker-compose.yml logs
+          exit 1
       - name: Check local OpenTelemetry and Jaeger
         run: python scripts/run_l15_otel_live_validation.py --check
       - name: Stop local Jaeger

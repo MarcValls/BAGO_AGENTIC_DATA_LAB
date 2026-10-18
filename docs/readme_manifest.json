@@ -38,6 +38,19 @@
     "credential_redaction": "API key"
   },
   "jaeger_capture": "docs/decision-inspector/MANUAL_PARA_DUMMIES_assets/jaeger.png",
+  "business_demo": {
+    "guide": "output/playwright/bruma-market-tutorial/README.md",
+    "orders": "output/playwright/bruma-market-tutorial/extracted/orders.json",
+    "decisions": "output/playwright/bruma-market-tutorial/extracted/policy-decisions.json",
+    "run_evidence": "output/playwright/bruma-market-tutorial/extracted/run-evidence.json",
+    "input_orders": "output/playwright/bruma-market-tutorial/inputs/orders.csv",
+    "policy": "output/playwright/bruma-market-tutorial/inputs/policy.md",
+    "qa": "output/playwright/bruma-market-tutorial/inputs/qa-expected.md",
+    "profiles": "output/playwright/bruma-market-tutorial/cloud-runs/profiles.json",
+    "video": "output/playwright/bruma-market-tutorial/tutorial-bruma-market.mp4",
+    "subtitles": "output/playwright/bruma-market-tutorial/tutorial-bruma-market.srt",
+    "hash_manifest": "output/playwright/bruma-market-tutorial/sha256-manifest.json"
+  },
   "architecture": {
     "principle": "LangGraph propone → BAGO autoriza → ExecutionGateway → SandboxManager → Receipt → LocalTrace → Eval.",
     "pipeline": [

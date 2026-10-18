@@ -51,11 +51,13 @@ against its sources before closing work:
 | First-use video, captions, guide, input and trace | `first_user_tutorial` in `docs/readme_manifest.json` plus the referenced artifacts |
 | Jaeger screenshot and measured L15 result | `jaeger_capture` in `docs/readme_manifest.json` plus `evidence/l15_otel_jaeger_live.md` |
 | Demo artifact contract, roles and skills | `docs/readme_manifest.json`, `.bago/canon/LAB_CONTRACT.md`, `.bago/canon/JOB_SKILL_MATRIX.md`, and the linked demo guides |
+| Bruma app walkthrough, order cases, receipts and no-action boundary | `business_demo` in `docs/readme_manifest.json` plus the generated app artifacts under `output/playwright/bruma-market-tutorial/` |
+| Phase evidence inventory | `phases[].checks` in `docs/readme_manifest.json` resolved against files in the current checkout |
 
 1. Update only the source document or manifest that owns the changed fact.
 2. Ensure every declared artifact exists and every README link is repository-relative.
 3. Run `python scripts/generate_dynamic_readme.py`; this runs the complete test suite before writing. The README does not convert the collected case count into a passing claim.
 4. Read the complete `git diff -- README.md` and check dates, branch, phase/status wording, links, inventories and whether any section disappeared unexpectedly.
-   Confirm the Jaeger image renders and its 15-span / 13-operation summary matches the linked L15 evidence; confirm the role/skill totals and demo artifact names match their sources.
+   Confirm the Jaeger image renders and its 15-span / 13-operation summary matches the linked L15 evidence; check every phase inventory link and any missing-pattern marker; compare the complete role/skill tables and the four Bruma decisions to their source artifacts. Confirm the tutorial says that customer directories, invoices and delivery notes are not part of this dataset.
 5. Run `python scripts/generate_dynamic_readme.py --check --skip-tests`. This confirms reproducibility and collects cases; it does not execute tests or prove that they passed.
 6. Include both command results and the reviewed README diff in closure evidence.

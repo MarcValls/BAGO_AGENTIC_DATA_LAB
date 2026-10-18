@@ -99,9 +99,93 @@ La tabla muestra estados declarados en el manifiesto del proyecto; consulta las 
 | L14 | VERIFIED (local) | BAGO / portfolio | Governed Local Vector Store |
 | L15 | VERIFIED (local live) | BAGO / portfolio | OpenTelemetry + Jaeger Local Live |
 
+## Inventario de artefactos por fase
+
+Los enlaces de esta tabla se descubren desde los patrones declarados y el checkout actual. `—` significa que el patrón no localizó archivos; no se interpreta como prueba de inexistencia fuera de este checkout.
+
+| Fase | Código localizado | Tests | Evidencia | Patrones sin resolver |
+|---|---|---|---|---|
+| L0 | — | — | — | ninguno |
+| L1 | [`src/orchestration/governed_execution.py`](src/orchestration/governed_execution.py) · [`src/orchestration/state_graph.py`](src/orchestration/state_graph.py) | [`tests/test_l1_governance.py`](tests/test_l1_governance.py) · [`tests/test_l1_integrated_graph.py`](tests/test_l1_integrated_graph.py) | [`evidence/l1-governed-execution-completion-20261010/L1_DEMO_RECEIPTS.json`](evidence/l1-governed-execution-completion-20261010/L1_DEMO_RECEIPTS.json) · [`evidence/l1-governed-execution-completion-20261010/L1_DEMO_TRANSCRIPT.md`](evidence/l1-governed-execution-completion-20261010/L1_DEMO_TRANSCRIPT.md) · [`evidence/l1-governed-execution-completion-20261010/L1_VALIDATION.md`](evidence/l1-governed-execution-completion-20261010/L1_VALIDATION.md) · [`evidence/l1_governed_execution_20261010.md`](evidence/l1_governed_execution_20261010.md) | ninguno |
+| L2 | [`src/etl/pipeline.py`](src/etl/pipeline.py) | [`tests/test_l2_etl_pipeline.py`](tests/test_l2_etl_pipeline.py) | [`l2_etl_metadata.db`](l2_etl_metadata.db) | ninguno |
+| L3 | [`src/metadata/ontology.py`](src/metadata/ontology.py) · [`src/metadata/ontology_generator.py`](src/metadata/ontology_generator.py) · [`src/metadata/schema.py`](src/metadata/schema.py) | [`tests/test_l3_evidence.py`](tests/test_l3_evidence.py) · [`tests/test_l3_ontology.py`](tests/test_l3_ontology.py) · [`tests/test_metadata_schema.py`](tests/test_metadata_schema.py) · (+1 archivos) | [`docs/ontology_generator.md`](docs/ontology_generator.md) · [`evidence/l3_ontology_graph.md`](evidence/l3_ontology_graph.md) | ninguno |
+| L4 | [`src/retrieval/governed_rag.py`](src/retrieval/governed_rag.py) | [`tests/test_retrieval_accuracy.py`](tests/test_retrieval_accuracy.py) · [`tests/test_retrieval_benchmark.py`](tests/test_retrieval_benchmark.py) | [`docs/governed_rag.md`](docs/governed_rag.md) · [`evidence/retrieval_benchmark_results.md`](evidence/retrieval_benchmark_results.md) | ninguno |
+| L5 | [`src/adapters/mcp_adapter.py`](src/adapters/mcp_adapter.py) | [`tests/test_mcp_governance.py`](tests/test_mcp_governance.py) | [`docs/mcp_governance.md`](docs/mcp_governance.md) · [`evidence/mcp_governed_demo.md`](evidence/mcp_governed_demo.md) · [`evidence/mcp_governed_demo.mp4`](evidence/mcp_governed_demo.mp4) | ninguno |
+| L6 | [`scripts/run_l6_aws_free_tier_validation.py`](scripts/run_l6_aws_free_tier_validation.py) · [`src/adapters/bedrock_provider_adapter.py`](src/adapters/bedrock_provider_adapter.py) | [`tests/test_bedrock_integration.py`](tests/test_bedrock_integration.py) | [`docs/aws_bedrock_setup.md`](docs/aws_bedrock_setup.md) · [`evidence/bedrock_provider_benchmark.md`](evidence/bedrock_provider_benchmark.md) · [`evidence/l6_aws_free_tier.md`](evidence/l6_aws_free_tier.md) · [`evidence/l6_aws_live.md`](evidence/l6_aws_live.md) | ninguno |
+| L7 | [`src/adapters/bedrock_kb_adapter.py`](src/adapters/bedrock_kb_adapter.py) | [`tests/test_bedrock_kb_adapter.py`](tests/test_bedrock_kb_adapter.py) | [`docs/bedrock_knowledge_base.md`](docs/bedrock_knowledge_base.md) · [`evidence/bago_etl_vs_bedrock_kb_comparison.md`](evidence/bago_etl_vs_bedrock_kb_comparison.md) | ninguno |
+| L8 | [`infra/openmetadata/docker-compose.yml`](infra/openmetadata/docker-compose.yml) · [`scripts/run_l8_openmetadata_live_validation.py`](scripts/run_l8_openmetadata_live_validation.py) · [`src/adapters/openmetadata_adapter.py`](src/adapters/openmetadata_adapter.py) | [`tests/test_openmetadata_adapter.py`](tests/test_openmetadata_adapter.py) | [`docs/openmetadata_catalog.md`](docs/openmetadata_catalog.md) · [`evidence/l8_openmetadata_catalog.md`](evidence/l8_openmetadata_catalog.md) · [`evidence/l8_openmetadata_live.md`](evidence/l8_openmetadata_live.md) | ninguno |
+| L9 | [`src/agent/governed_knowledge_agent.py`](src/agent/governed_knowledge_agent.py) | [`tests/test_l9_end_to_end_agent.py`](tests/test_l9_end_to_end_agent.py) | [`docs/commercetools_capstone.md`](docs/commercetools_capstone.md) · [`evidence/l9_authorized_actions_20260922.md`](evidence/l9_authorized_actions_20260922.md) · [`evidence/l9_commercetools_agent.md`](evidence/l9_commercetools_agent.md) | ninguno |
+| L10 | [`scripts/generate_l10_ontology_evidence.py`](scripts/generate_l10_ontology_evidence.py) · [`src/agent/governed_knowledge_agent.py`](src/agent/governed_knowledge_agent.py) · [`src/metadata/ontology_engine.py`](src/metadata/ontology_engine.py) | [`tests/test_l10_ontology_engine.py`](tests/test_l10_ontology_engine.py) | [`docs/ontology_engine.md`](docs/ontology_engine.md) · [`evidence/l10_ontology_engine.md`](evidence/l10_ontology_engine.md) | ninguno |
+| L11 | [`src/execution/gateway.py`](src/execution/gateway.py) · [`src/sandbox/__init__.py`](src/sandbox/__init__.py) · [`src/sandbox/backend.py`](src/sandbox/backend.py) · (+6 archivos) | [`tests/test_sandbox.py`](tests/test_sandbox.py) | [`docs/sandbox_manager.md`](docs/sandbox_manager.md) · [`evidence/sandbox_local_restricted.md`](evidence/sandbox_local_restricted.md) · [`scripts/run_sandbox_local_validation.py`](scripts/run_sandbox_local_validation.py) | ninguno |
+| L12 | [`src/evaluation/__init__.py`](src/evaluation/__init__.py) · [`src/evaluation/agent_lab.py`](src/evaluation/agent_lab.py) · [`src/evaluation/local_evals.py`](src/evaluation/local_evals.py) · (+3 archivos) | [`tests/test_l12_observability.py`](tests/test_l12_observability.py) | [`docs/observability_evals.md`](docs/observability_evals.md) · [`evidence/l12_observability_evals.md`](evidence/l12_observability_evals.md) · [`scripts/run_l12_observability_evidence.py`](scripts/run_l12_observability_evidence.py) | ninguno |
+| L13 | [`.github/workflows/ci.yml`](.github/workflows/ci.yml) · [`demo.py`](demo.py) · [`portfolio/README.md`](portfolio/README.md) · (+4 archivos) | [`tests/test_public_e2e_demo.py`](tests/test_public_e2e_demo.py) | [`docs/public_e2e_demo.md`](docs/public_e2e_demo.md) · [`evidence/public_e2e_demo.md`](evidence/public_e2e_demo.md) | ninguno |
+| L14 | [`scripts/run_l14_vector_store_validation.py`](scripts/run_l14_vector_store_validation.py) · [`src/retrieval/sqlite_vector_store.py`](src/retrieval/sqlite_vector_store.py) | [`tests/test_sqlite_vector_store.py`](tests/test_sqlite_vector_store.py) | [`docs/local_vector_store.md`](docs/local_vector_store.md) · [`evidence/l14_vector_store.md`](evidence/l14_vector_store.md) | ninguno |
+| L15 | [`infra/observability/docker-compose.yml`](infra/observability/docker-compose.yml) · [`scripts/run_l15_otel_live_validation.py`](scripts/run_l15_otel_live_validation.py) · [`src/observability/otel_bridge.py`](src/observability/otel_bridge.py) | [`tests/test_l15_otel_bridge.py`](tests/test_l15_otel_bridge.py) | [`docs/otel_jaeger.md`](docs/otel_jaeger.md) · [`evidence/l15_otel_jaeger_live.md`](evidence/l15_otel_jaeger_live.md) | ninguno |
+
 ## Arquitectura y recorrido de datos
 
-**Recorrido:** RAG recupera documentos y citas → Ontology Engine materializa RDF/Turtle → SPARQL local consulta relaciones → Inference añade inversas, transitivas y simétricas → Constraints detecta endpoints, evidencia y contradicciones → El LLM recibe caminos y evidencia; no recibe autoridad implícita → ExecutionGateway exige una SandboxRequest tipada → SandboxManager materializa filesystem y proceso acotados → Receipt evidencia el resultado o la denegación → LocalTrace enlaza workflow, retrieval, permits, sandbox y receipts → Local evaluator comprueba cobertura y ausencia de efectos no autorizados → Public E2E compone las fronteras locales con fixtures deterministas → SQLiteVectorStore persiste vectores deterministas y conserva el gate de metadata → GovernedRAG puede consumir el backend semántico persistente y recargar su fingerprint → OpenTelemetry proyecta LocalTrace a Jaeger local sin conceder autoridad → GitHub Actions repite tests, README, demo, vector validation, Jaeger validation y compile checks
+**Principio:** LangGraph propone → BAGO autoriza → ExecutionGateway → SandboxManager → Receipt → LocalTrace → Eval.
+
+```mermaid
+flowchart LR
+    RAG["Governed RAG"]
+    RDF["RDF/Turtle"]
+    SPARQL["SPARQL local"]
+    INFERENCE["Inference"]
+    CONSTRAINTS["Constraints"]
+    LLM["LLM context"]
+    GATEWAY["ExecutionGateway"]
+    SANDBOX["SandboxManager"]
+    RECEIPT["Receipt"]
+    RAG --> RDF
+    RDF --> SPARQL
+    SPARQL --> INFERENCE
+    INFERENCE --> CONSTRAINTS
+    CONSTRAINTS --> LLM
+    LLM --> GATEWAY
+    GATEWAY --> SANDBOX
+    SANDBOX --> RECEIPT
+```
+
+Pipeline actual:
+
+1. RAG recupera documentos y citas
+2. Ontology Engine materializa RDF/Turtle
+3. SPARQL local consulta relaciones
+4. Inference añade inversas, transitivas y simétricas
+5. Constraints detecta endpoints, evidencia y contradicciones
+6. El LLM recibe caminos y evidencia; no recibe autoridad implícita
+7. ExecutionGateway exige una SandboxRequest tipada
+8. SandboxManager materializa filesystem y proceso acotados
+9. Receipt evidencia el resultado o la denegación
+10. LocalTrace enlaza workflow, retrieval, permits, sandbox y receipts
+11. Local evaluator comprueba cobertura y ausencia de efectos no autorizados
+12. Public E2E compone las fronteras locales con fixtures deterministas
+13. SQLiteVectorStore persiste vectores deterministas y conserva el gate de metadata
+14. GovernedRAG puede consumir el backend semántico persistente y recargar su fingerprint
+15. OpenTelemetry proyecta LocalTrace a Jaeger local sin conceder autoridad
+16. GitHub Actions repite tests, README, demo, vector validation, Jaeger validation y compile checks
+
+## Recorrido comercial de la app: Bruma Market
+
+Este tutorial usa pedidos y políticas totalmente ficticios. Documenta dos conversaciones de agentes ejecutadas en la app: un extractor produce JSON y un revisor aplica la política con evidencia autorizada. No son pedidos ni clientes reales.
+
+| Pedido | Envío | Retraso | Decisión registrada | Importe de envío elegible |
+|---|---|---:|---|---:|
+| BM-1001 | express | 32 h | `ELIGIBLE` | €7.90 (solo envío) |
+| BM-1002 | express | 24 h | `NOT_ELIGIBLE` | — |
+| BM-1003 | standard | 48 h | `NOT_ELIGIBLE` | — |
+| BM-1004 | express | sin dato | `PENDING` | — |
+
+**Ejecución registrada:** `VERIFIED`; cuatro casos QA: `ELIGIBLE, NOT_ELIGIBLE, NOT_ELIGIBLE, PENDING`; `actions_executed` vacío: `True`. Ningún reembolso se ejecutó.
+**Trazas de las conversaciones:** `trace-e884fa5f23414206`, `trace-63cc286f9d574a38` (`local_only`; no Jaeger export). SHA-256 del CSV autorizado: `016acee85ee5afdb23eaf13caf3f664417e1398b5bba3aad8ff6e991e6a3d1e3`. SHA distintos presentes en recibos: 3.
+
+La regla estricta solo cubre envíos EXPRESS con más de 24 h de retraso y devuelve únicamente la tarifa de envío. Exactamente 24 h no cumple; STANDARD no entra en la regla; sin hora de entrega queda pendiente.
+
+**Revisa el tutorial:** [guía paso a paso](output/playwright/bruma-market-tutorial/README.md) · [vídeo MP4](output/playwright/bruma-market-tutorial/tutorial-bruma-market.mp4) · [subtítulos](output/playwright/bruma-market-tutorial/tutorial-bruma-market.srt) · [hash manifest](output/playwright/bruma-market-tutorial/sha256-manifest.json). Entradas: [CSV de pedidos](output/playwright/bruma-market-tutorial/inputs/orders.csv), [política](output/playwright/bruma-market-tutorial/inputs/policy.md) y [QA esperado](output/playwright/bruma-market-tutorial/inputs/qa-expected.md). Resultados y receipts: [extracción JSON](output/playwright/bruma-market-tutorial/extracted/orders.json), [decisiones](output/playwright/bruma-market-tutorial/extracted/policy-decisions.json), [recibos de lectura y trazas](output/playwright/bruma-market-tutorial/extracted/run-evidence.json) y [perfiles/runs guardados](output/playwright/bruma-market-tutorial/cloud-runs/profiles.json).
+
+**Límite del conjunto:** solo contiene pedidos sintéticos, política, QA y recibos de lectura. No aporta directorio de clientes, facturas ni albaranes; esos casos requieren datos y escenarios propios antes de afirmar que están demostrados.
+
 
 ## Evidencia y límites
 
@@ -126,9 +210,62 @@ La demo local evalúa trazas y controles estructurales; no prueba calidad genera
 - [Traza de la sesión documentada](docs/agent-chat-control/assets/trace-c7ec5fcc40284a42.json) · [archivo de ejemplo](output/tutorial/sample-note.txt)
 
 La grabación acredita la lectura y respuesta acotadas descritas en la guía; no una auditoría del código ni ejecución de trabajos.
-## Objetivos profesionales y skills
 
-El contrato registra 4 objetivos de rol; la matriz incluye 28 skills técnicas y 5 estratégicas. Son estimaciones del proyecto, no una evaluación independiente ni ofertas vigentes. Roles y requisitos: [.bago/canon/LAB_CONTRACT.md](.bago/canon/LAB_CONTRACT.md) · [matriz completa](.bago/canon/JOB_SKILL_MATRIX.md).
+## Vacantes objetivo y matriz completa de skills
+
+Datos copiados de los documentos canónicos; porcentajes, niveles, salarios y plazos son estimaciones históricas del proyecto, no evaluaciones independientes ni ofertas laborales vigentes.
+
+### Roles objetivo
+
+| Empresa | Rol | Fit | Gap principal | Timeline |
+|---|---|---:|---|---|
+| Tuio | Forward Deployed AI Engineer | ~96% | Seniority (~5 años) | 4-5 semanas |
+| Orbitant | AI Engineer | ~91% | LangGraph + Cloud | 2-3 semanas |
+| Devoteam | GCP AI Engineer (Gemini) | ~87% → 93% | Vertex AI / GCP | 6-7 semanas |
+| commercetools | AI Engineer | ~97% | Seniority + LLM production | Stretch goal |
+
+### Skills técnicas
+
+| Skill | Demanda | Nivel actual | Nivel objetivo | Primera evidencia | Entrevista |
+|---|---|---|---|---|---|
+| Python | Alta | ✅ Senior | ✅ Senior | BAGO backend | ✅ Sí |
+| REST APIs | Alta | ✅ Senior | ✅ Senior | BAGO FastAPI | ✅ Sí |
+| LangGraph | Very High | Implemented locally | Proficient | Integrated StateGraph + exact approval + governed RAG/gateway/sandbox/receipt/LocalTrace | L1 VALIDATED in local scope; identity, durability and OS isolation are not claimed |
+| LangChain concepts | High | Practical baseline | Basic | StateGraph, interrupt/resume, in-memory checkpoint | L1 VALIDATED local |
+| Multi-agent systems | Muy Alta | 🟢 Reinforced | 🎯 Proficient | GovernedKnowledgeAgent + L9 evidence | L9 offline |
+| Tool use | Muy Alta | ✅ Implementado | 🎯 Proficient | BAGO tools + MCP receipts | L5 baseline |
+| MCP | Muy Alta | ✅ Baseline gobernado | 🎯 Proficient | L5 MCP adapter + video | L5 baseline |
+| RAG | Muy Alta | 🟡 Basic | 🎯 Advanced | L4 governed RAG | L4 completado |
+| Hybrid retrieval | Alta | 🟡 Implemented locally; deterministic benchmark is limited | 🎯 Proficient | 32-document offline corpus; 9 labelled queries; Recall@1/@3 and MRR | Synthetic baseline only; production embeddings and broader relevance validation remain |
+| Embeddings | Alta | 🟢 Deterministic local | 🎯 Implementado | HashEmbedding + SQLiteVectorStore | L14 local |
+| Vector DB | Alta | 🟢 Local persistent | 🎯 Proficient | SQLiteVectorStore + GovernedRAG reload | L14 local; distributed service separate |
+| ETL | Alta | 🟡 Implemented locally; coverage partial | 🎯 Proficient | L2 source-to-SQLite pipeline; deduplication, receipts and enforced chunk-overlap test | Local pipeline verified; partial-failure and transaction recovery coverage remains |
+| Data pipelines | Alta | 🟡 Implemented locally; local/document scope | 🎯 Implementado | L2 ingestion consumed by L4 SQLite retrieval adapter | No evidence yet for scheduled recovery or distributed processing |
+| Metadata/Ontology | Media | 🟢 Implementado | 🎯 Proficient | L3 schema + L10 engine | L10 local |
+| RDF / SPARQL / Knowledge Graphs | Alta | 🟢 Baseline local | 🎯 Proficient | L10 RDF/Turtle + SPARQL + inference | L10 local; triplestore live separado |
+| Lineage | Media | 🟢 Implementado | 🎯 Proficient | L3 relations + L10 paths | L10 local |
+| AWS | Alta | 🟡 Bedrock Converse live histórico; cuota diaria agotada en los últimos intentos | 🎯 Bedrock fluent | L6 adapter + receipt live + consulta Free Tier | IAM least-privilege + recuperar cuota; saldo/cargo posterior no probado |
+| Bedrock | Alta | 🟡 Converse histórico verificado; intentos actuales limitados por cuota | 🎯 Proficient | L6 Converse/Stream + receipts | Stream + evaluación de modelo y cuota disponible |
+| Bedrock Knowledge Bases | Alta | 🟡 Baseline offline | 🎯 Proficient | L7 Retrieve/Generate + citations | Live KB evaluation |
+| OpenMetadata Catalog | Media | 🟢 Local live verificado | 🎯 Proficient | L8 adapter + Docker local + lineage/quality receipts | OpenMetadata remoto |
+| IAM | Alta | 🟡 Basic | 🎯 Configurable | L6 least-privilege setup | Live policy check |
+| CI/CD | Alta | 🟢 Reproducible | 🎯 Implementado | GitHub Actions + pinned requirements + public E2E | L13 CI |
+| Evaluation | Muy Alta | 🟢 Local governance evals | 🎯 Framework | Local evaluation suites, trace/evidence linkage, and L8-L15 scenario evidence | L15 local + CI |
+| Observability | Alta | 🟢 OpenTelemetry local live | 🎯 Completo | LocalTrace + OTLP/HTTP + Jaeger Docker + parent-linked spans | L15 local; remoto separado |
+| Secure execution | Muy Alta | 🟢 Local backend verified | 🎯 Implementado | BAGO auth boundary + LocalRestrictedBackend + escape tests | L11 local |
+| Authorization | Muy Alta | ✅ Diseñado | 🎯 Implementado | L1 fail-closed gate; MCP, Bedrock y sandbox tienen límites probados por separado | L1 evidencia parcial |
+| Auditability | Alta | ✅ Diseñado | 🎯 Implementado | Recibos de adapters/sandbox; L1 no fabrica recibos si no hay gateway | L1 evidencia parcial |
+| Docker/K8s | Media | 🟡 Docker Compose local | 🎯 Basic | OpenMetadata Compose + reproducible healthcheck | L8 local |
+
+### Skills estratégicas y personales
+
+| Skill | Nivel actual | Nivel objetivo | Evidencia |
+|---|---|---|---|
+| Arquitectura de sistemas | ✅ Fuerte | ✅ Mantener | AGENTS.md, CANON_BAGO |
+| Diseño de contratos | ✅ Fuerte | ✅ Mantener | BAGO contracts |
+| Documentación técnica | ✅ Fuerte | ✅ Mantener | Este repo |
+| Análisis de trade-offs | ✅ Fuerte | ✅ Mantener | Decision records |
+| Comunicación escrita | ✅ Fuerte | ✅ Mantener | Docs claras |
 
 ## Catálogo de agentes y sincronización
 

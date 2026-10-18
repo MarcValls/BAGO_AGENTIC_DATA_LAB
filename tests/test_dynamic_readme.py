@@ -95,7 +95,7 @@ def test_ci_installs_video_runtime_before_running_full_suite():
     )
 
 
-def test_rendered_readme_is_compact_scope_bound_and_does_not_claim_collected_tests_pass():
+def test_rendered_readme_is_comprehensive_scope_bound_and_does_not_claim_collected_tests_pass():
     manifest = _read_json(ROOT / "docs" / "readme_manifest.json")
     rendered = render_readme(
         manifest=manifest,
@@ -103,7 +103,7 @@ def test_rendered_readme_is_compact_scope_bound_and_does_not_claim_collected_tes
         passing_tests=collected_test_count(),
     )
 
-    assert len(rendered.splitlines()) < 180
+    assert len(rendered.splitlines()) < 380
     assert "BAGO Agentic Data Lab" in rendered
     assert "python demo.py" in rendered
     assert "docs/one_command_demo.md" in rendered
@@ -117,12 +117,20 @@ def test_rendered_readme_is_compact_scope_bound_and_does_not_claim_collected_tes
     assert "2026-10-08" in rendered
     assert "docs/agent-chat-control/TUTORIAL_PRIMER_USO.md" in rendered
     assert "evidence/l15_otel_jaeger_live.md" in rendered
+    assert "![Captura de Jaeger" in rendered
+    assert "## Inventario de artefactos por fase" in rendered
+    assert "## Recorrido comercial de la app: Bruma Market" in rendered
+    assert "BM-1001" in rendered and "BM-1004" in rendered
+    assert "actions_executed" in rendered
+    assert "directorio de clientes, facturas ni albaranes" in rendered
+    assert "### Skills técnicas" in rendered
+    assert "RDF / SPARQL / Knowledge Graphs" in rendered
     assert "state.json" not in rendered
     assert "203 test cases" not in rendered
     assert "248/248" not in rendered
     assert "tests-248" not in rendered
     assert "![Tests]" not in rendered
-    assert "run_l6_aws_free_tier_validation.py" not in rendered
+    assert "python scripts/run_l6_aws_free_tier_validation.py" not in rendered
     assert "Inventario real del checkout" not in rendered
     assert "Fit técnico" not in rendered
 
