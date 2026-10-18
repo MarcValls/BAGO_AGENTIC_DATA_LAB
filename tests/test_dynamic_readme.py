@@ -117,7 +117,8 @@ def test_rendered_readme_is_comprehensive_scope_bound_and_does_not_claim_collect
     assert "2026-10-08" in rendered
     assert "docs/agent-chat-control/TUTORIAL_PRIMER_USO.md" in rendered
     assert "evidence/l15_otel_jaeger_live.md" in rendered
-    assert "![Captura de Jaeger" in rendered
+    assert "![Grafo de Jaeger: traza agent.run 94ee6c8d7a05b27487489a97da7480a5" in rendered
+    assert "portfolio/assets/jaeger-trace-graph.png" in rendered
     assert "## Inventario de artefactos por fase" in rendered
     assert "## Recorrido comercial de la app: Bruma Market" in rendered
     assert "BM-1001" in rendered and "BM-1004" in rendered
