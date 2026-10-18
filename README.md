@@ -8,38 +8,11 @@
 > Laboratorio experimental para desarrollar capacidades de AI Engineering con gobernanza BAGO.
 > README generado desde fuentes canónicas y artefactos del checkout.
 
-## Qué es
+## El laboratorio
 
-Un laboratorio para construir agentes cuya evidencia, permisos y efectos puedan inspeccionarse. Una respuesta del modelo, por sí sola, no demuestra autorización ni ejecución.
+Un laboratorio experimental de AI Engineering gobernada: reúne agentes, datos, recuperación, ejecución y observabilidad en un recorrido donde se puede inspeccionar qué se propuso, qué se autorizó y qué efecto quedó registrado. Una respuesta del modelo, por sí sola, no demuestra autorización ni ejecución.
 
-## Demo local
-
-La demo principal usa fixtures locales y no llama a AWS ni a otros proveedores externos.
-
-```bash
-python -m pip install -r requirements.txt
-python demo.py
-```
-
-La guía explica la instalación en Windows y POSIX, los artefactos y sus límites: [demo de una orden](docs/one_command_demo.md) · [recorrido de artefactos](docs/one_command_demo_walkthrough.md).
-
-**Demo gobernada:** pregunta → agente → recuperación con citas → ejecución tipada → receipts → LocalTrace → evaluación. Genera cinco JSON (`summary`, `agent_run`, `receipts`, `trace`, `evaluation`) en `demo_output/`; el proveedor es un fixture y no contacta AWS. [Contrato y requisitos](docs/one_command_demo.md) · [lectura de artefactos](docs/one_command_demo_walkthrough.md).
-
-## Estado del proyecto
-
-| Campo | Valor |
-|---|---|
-| Rama pública | `main` |
-| Resumen actualizado | 2026-10-18 |
-| Fase actual | **L15 · OpenTelemetry + Jaeger Local Live** · VERIFIED (local live) |
-| Siguiente bloque declarado | NOT_DECLARED |
-| Último resultado completo de CI registrado | GitHub Actions run [38665463586](https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/actions/runs/38665463586) completed successfully on commit `ff9292fe4340a2bdab9658a2e804579fa4ef8fb0` (2026-10-15). Its complete test-suite step and README check both succeeded. This result does not cover later changes. |
-
-**Alcance declarado:** VERIFIED for the local RDF/Turtle materialization, bounded SPARQL subset, deterministic inference, contradiction constraints, RAG seed handoff, the real local OpenMetadata 1.12.6 validation, the local restricted sandbox execution boundary, the local trace/evaluation chain, the public fixture E2E demo executed by the same CI contract, the persistent local SQLite vector index consumed by GovernedRAG and the local OpenTelemetry → Jaeger trace projection. A historical bounded AWS Bedrock `Converse` call succeeded through the governed adapter; it does not establish current quota or billing. The latest read-only AWS Free Tier check observed USD 100.00 remaining, while two subsequent bounded `Converse` attempts failed on the daily token quota with no inference tokens reported. Billing/credit consumption for those failed calls is `NOT_PROVEN`. AWS `ConverseStream`, Bedrock Knowledge Base, remote OpenMetadata and commercetools live integrations remain `NOT_RUN`; GitHub issue #14 is separately executed and verified under human authorization, and the local human-reviewed checkpoint is recorded in `evidence/bago_canon_compliance_review.md`.
-
-La fecha corresponde a la actualización del resumen. Cada observación externa conserva la fecha y el alcance de su evidencia; este README no representa una consulta en vivo.
-
-## Arquitectura y fases
+## Arquitectura de un vistazo
 
 **Principio:** LangGraph propone → BAGO autoriza → ExecutionGateway → SandboxManager → Receipt → LocalTrace → Eval.
 
@@ -99,7 +72,84 @@ La tabla muestra estados declarados en el manifiesto del proyecto; consulta las 
 | L14 | VERIFIED (local) | BAGO / portfolio | Governed Local Vector Store |
 | L15 | VERIFIED (local live) | BAGO / portfolio | OpenTelemetry + Jaeger Local Live |
 
-## Inventario de artefactos por fase
+## Ejecutar la demo local
+
+La demo principal usa fixtures locales y no llama a AWS ni a otros proveedores externos.
+
+```bash
+python -m pip install -r requirements.txt
+python demo.py
+```
+
+La guía explica la instalación en Windows y POSIX, los artefactos y sus límites: [demo de una orden](docs/one_command_demo.md) · [recorrido de artefactos](docs/one_command_demo_walkthrough.md).
+
+**Demo gobernada:** pregunta → agente → recuperación con citas → ejecución tipada → receipts → LocalTrace → evaluación. Genera cinco JSON (`summary`, `agent_run`, `receipts`, `trace`, `evaluation`) en `demo_output/`; el proveedor es un fixture y no contacta AWS. [Contrato y requisitos](docs/one_command_demo.md) · [lectura de artefactos](docs/one_command_demo_walkthrough.md).
+
+## Evidencia de ejecución y límites
+
+### Jaeger y OpenTelemetry (L15)
+
+La evidencia local del 2026-10-08 enlaza la traza BAGO `trace-5b385699ffda0529` con la traza consultada en Jaeger `04b58bb123bb6cc94a8cc0d60c7145ae`: 15 spans proyectados y 15 observados, 13 operaciones y estado `PASS`. La captura archivada muestra el timeline de esa traza; es evidencia histórica del resultado, no disponibilidad actual de Jaeger.
+
+![Captura de Jaeger: traza agent.run con 15 spans y relaciones padre-hijo](docs/decision-inspector/MANUAL_PARA_DUMMIES_assets/jaeger.png)
+
+[Informe y datos completos L15](evidence/l15_otel_jaeger_live.md) · [intento de captura del freeze](evidence/l15_jaeger_capture_attempt.md) · [guía para reproducir Jaeger](docs/otel_jaeger.md).
+
+- [Último resultado completo de CI](https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/actions/runs/38665463586): estado y SHA del commit verificados en `STATE.md`; no cubre cambios posteriores.
+- [Estado y límites AWS](.bago/canon/STATE.md): la consulta Free Tier observó USD 100 de crédito activo; los dos intentos Bedrock más recientes fueron rechazados por cuota diaria y no generaron tokens. El consumo/facturación de esos intentos no está probado.
+- [Consulta de créditos Free Tier](evidence/l6_aws_free_tier.md) · [último recibo Bedrock](evidence/l6_aws_live.md) · [intento Nova Lite](evidence/aws-live-attempts/20261018_nova_lite_throttled.md) · [intento Nova Micro](evidence/aws-live-attempts/20261018_nova_micro_throttled.md).
+
+La demo local evalúa trazas y controles estructurales; no prueba calidad general de respuestas, aislamiento de producción ni integraciones cloud en vivo.
+
+## Ver la interfaz en acción
+
+- [Guía y límites](docs/agent-chat-control/TUTORIAL_PRIMER_USO.md)
+- [Vídeo narrado](docs/agent-chat-control/assets/ADL_videotutorial_primer_usuario.mp4) · [subtítulos](docs/agent-chat-control/assets/ADL_videotutorial_primer_usuario.es.srt)
+- [Traza de la sesión documentada](docs/agent-chat-control/assets/trace-c7ec5fcc40284a42.json) · [archivo de ejemplo](output/tutorial/sample-note.txt)
+
+La grabación acredita la lectura y respuesta acotadas descritas en la guía; no una auditoría del código ni ejecución de trabajos.
+
+## Estado actual
+
+| Campo | Valor |
+|---|---|
+| Rama pública | `main` |
+| Resumen actualizado | 2026-10-18 |
+| Fase actual | **L15 · OpenTelemetry + Jaeger Local Live** · VERIFIED (local live) |
+| Siguiente bloque declarado | NOT_DECLARED |
+| Último resultado completo de CI registrado | GitHub Actions run [38665463586](https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/actions/runs/38665463586) completed successfully on commit `ff9292fe4340a2bdab9658a2e804579fa4ef8fb0` (2026-10-15). Its complete test-suite step and README check both succeeded. This result does not cover later changes. |
+
+**Alcance declarado:** VERIFIED for the local RDF/Turtle materialization, bounded SPARQL subset, deterministic inference, contradiction constraints, RAG seed handoff, the real local OpenMetadata 1.12.6 validation, the local restricted sandbox execution boundary, the local trace/evaluation chain, the public fixture E2E demo executed by the same CI contract, the persistent local SQLite vector index consumed by GovernedRAG and the local OpenTelemetry → Jaeger trace projection. A historical bounded AWS Bedrock `Converse` call succeeded through the governed adapter; it does not establish current quota or billing. The latest read-only AWS Free Tier check observed USD 100.00 remaining, while two subsequent bounded `Converse` attempts failed on the daily token quota with no inference tokens reported. Billing/credit consumption for those failed calls is `NOT_PROVEN`. AWS `ConverseStream`, Bedrock Knowledge Base, remote OpenMetadata and commercetools live integrations remain `NOT_RUN`; GitHub issue #14 is separately executed and verified under human authorization, and the local human-reviewed checkpoint is recorded in `evidence/bago_canon_compliance_review.md`.
+
+La fecha corresponde a la actualización del resumen. Cada observación externa conserva la fecha y el alcance de su evidencia; este README no representa una consulta en vivo.
+
+## Fuentes canónicas del proyecto
+
+| Documento | Función | Estado en este checkout |
+|---|---|---|
+| [`.bago/canon/STATE.md`](.bago/canon/STATE.md) | estado operativo actual | PRESENTE |
+| [`.bago/canon/LAB_CONTRACT.md`](.bago/canon/LAB_CONTRACT.md) | contrato del laboratorio | PRESENTE |
+| [`.bago/canon/ARCHITECTURE.md`](.bago/canon/ARCHITECTURE.md) | arquitectura y límites | PRESENTE |
+| [`.bago/canon/ROADMAP.md`](.bago/canon/ROADMAP.md) | roadmap ejecutable | PRESENTE |
+| [`.bago/canon/LEARNING_LEDGER.md`](.bago/canon/LEARNING_LEDGER.md) | aprendizaje y evidencia | PRESENTE |
+| [`.bago/canon/JOB_SKILL_MATRIX.md`](.bago/canon/JOB_SKILL_MATRIX.md) | skills y alineación laboral | PRESENTE |
+| [`docs/cv_linkedin/portfolio-demo-v1.md`](docs/cv_linkedin/portfolio-demo-v1.md) | snapshot freeze portfolio-demo-v1 (CV/LinkedIn) | PRESENTE |
+| [`docs/one_command_demo.md`](docs/one_command_demo.md) | quickstart and artifact contract for one-command governed demo | PRESENTE |
+| [`docs/one_command_demo_walkthrough.md`](docs/one_command_demo_walkthrough.md) | canonical demo explanations and artifact walkthrough | PRESENTE |
+| [`docs/releases/RELEASE_NOTES_DEMO_V1.md`](docs/releases/RELEASE_NOTES_DEMO_V1.md) | frozen one-command demo v1.0.0 release notes | PRESENTE |
+| [`VERSION`](VERSION) | current repository version | PRESENTE |
+
+- [Índice de contexto BAGO](.bago/INDEX.md)
+- [Contrato del laboratorio y estimaciones de planificación](.bago/canon/LAB_CONTRACT.md)
+- [Matriz de skills](.bago/canon/JOB_SKILL_MATRIX.md); sus porcentajes son estimaciones del proyecto, no evaluaciones independientes.
+- [Catálogo de agentes](agents/CATALOG_MANIFEST.json), de referencia; las definiciones operativas están en `.github/agents/`.
+- [Agente de sincronización: documentación](docs/bago-sync-agent.md) · [definición](.github/agents/bago-sync-agent.agent.md)
+
+## Agente de sincronización y catálogo de agentes
+
+El [catálogo de agentes](agents/CATALOG_MANIFEST.json) es de referencia; las definiciones operativas están en `.github/agents/`. El [agente de sincronización](docs/bago-sync-agent.md) enlaza definición, ejecutor gobernado y documentación.
+
+## Roadmap y evidencia por fase
 
 Los enlaces de esta tabla se descubren desde los patrones declarados y el checkout actual. `—` significa que el patrón no localizó archivos; no se interpreta como prueba de inexistencia fuera de este checkout.
 
@@ -122,7 +172,7 @@ Los enlaces de esta tabla se descubren desde los patrones declarados y el checko
 | L14 | [`scripts/run_l14_vector_store_validation.py`](scripts/run_l14_vector_store_validation.py) · [`src/retrieval/sqlite_vector_store.py`](src/retrieval/sqlite_vector_store.py) | [`tests/test_sqlite_vector_store.py`](tests/test_sqlite_vector_store.py) | [`docs/local_vector_store.md`](docs/local_vector_store.md) · [`evidence/l14_vector_store.md`](evidence/l14_vector_store.md) | ninguno |
 | L15 | [`infra/observability/docker-compose.yml`](infra/observability/docker-compose.yml) · [`scripts/run_l15_otel_live_validation.py`](scripts/run_l15_otel_live_validation.py) · [`src/observability/otel_bridge.py`](src/observability/otel_bridge.py) | [`tests/test_l15_otel_bridge.py`](tests/test_l15_otel_bridge.py) | [`docs/otel_jaeger.md`](docs/otel_jaeger.md) · [`evidence/l15_otel_jaeger_live.md`](evidence/l15_otel_jaeger_live.md) | ninguno |
 
-## Arquitectura y recorrido de datos
+## Recorrido de datos y arquitectura actual
 
 **Principio:** LangGraph propone → BAGO autoriza → ExecutionGateway → SandboxManager → Receipt → LocalTrace → Eval.
 
@@ -166,52 +216,7 @@ Pipeline actual:
 15. OpenTelemetry proyecta LocalTrace a Jaeger local sin conceder autoridad
 16. GitHub Actions repite tests, README, demo, vector validation, Jaeger validation y compile checks
 
-## Recorrido comercial de la app: Bruma Market
-
-Este tutorial usa pedidos y políticas totalmente ficticios. Documenta dos conversaciones de agentes ejecutadas en la app: un extractor produce JSON y un revisor aplica la política con evidencia autorizada. No son pedidos ni clientes reales.
-
-| Pedido | Envío | Retraso | Decisión registrada | Importe de envío elegible |
-|---|---|---:|---|---:|
-| BM-1001 | express | 32 h | `ELIGIBLE` | €7.90 (solo envío) |
-| BM-1002 | express | 24 h | `NOT_ELIGIBLE` | — |
-| BM-1003 | standard | 48 h | `NOT_ELIGIBLE` | — |
-| BM-1004 | express | sin dato | `PENDING` | — |
-
-**Ejecución registrada:** `VERIFIED`; cuatro casos QA: `ELIGIBLE, NOT_ELIGIBLE, NOT_ELIGIBLE, PENDING`; `actions_executed` vacío: `True`. Ningún reembolso se ejecutó.
-**Trazas de las conversaciones:** `trace-e884fa5f23414206`, `trace-63cc286f9d574a38` (`local_only`; no Jaeger export). SHA-256 del CSV autorizado: `016acee85ee5afdb23eaf13caf3f664417e1398b5bba3aad8ff6e991e6a3d1e3`. SHA distintos presentes en recibos: 3.
-
-La regla estricta solo cubre envíos EXPRESS con más de 24 h de retraso y devuelve únicamente la tarifa de envío. Exactamente 24 h no cumple; STANDARD no entra en la regla; sin hora de entrega queda pendiente.
-
-**Revisa el tutorial:** [guía paso a paso](output/playwright/bruma-market-tutorial/README.md) · [vídeo MP4](output/playwright/bruma-market-tutorial/tutorial-bruma-market.mp4) · [subtítulos](output/playwright/bruma-market-tutorial/tutorial-bruma-market.srt) · [hash manifest](output/playwright/bruma-market-tutorial/sha256-manifest.json). Entradas: [CSV de pedidos](output/playwright/bruma-market-tutorial/inputs/orders.csv), [política](output/playwright/bruma-market-tutorial/inputs/policy.md) y [QA esperado](output/playwright/bruma-market-tutorial/inputs/qa-expected.md). Resultados y receipts: [extracción JSON](output/playwright/bruma-market-tutorial/extracted/orders.json), [decisiones](output/playwright/bruma-market-tutorial/extracted/policy-decisions.json), [recibos de lectura y trazas](output/playwright/bruma-market-tutorial/extracted/run-evidence.json) y [perfiles/runs guardados](output/playwright/bruma-market-tutorial/cloud-runs/profiles.json).
-
-**Límite del conjunto:** solo contiene pedidos sintéticos, política, QA y recibos de lectura. No aporta directorio de clientes, facturas ni albaranes; esos casos requieren datos y escenarios propios antes de afirmar que están demostrados.
-
-
-## Evidencia y límites
-
-### Jaeger y OpenTelemetry (L15)
-
-La evidencia local del 2026-10-08 enlaza la traza BAGO `trace-5b385699ffda0529` con la traza consultada en Jaeger `04b58bb123bb6cc94a8cc0d60c7145ae`: 15 spans proyectados y 15 observados, 13 operaciones y estado `PASS`. La captura archivada muestra el timeline de esa traza; es evidencia histórica del resultado, no disponibilidad actual de Jaeger.
-
-![Captura de Jaeger: traza agent.run con 15 spans y relaciones padre-hijo](docs/decision-inspector/MANUAL_PARA_DUMMIES_assets/jaeger.png)
-
-[Informe y datos completos L15](evidence/l15_otel_jaeger_live.md) · [intento de captura del freeze](evidence/l15_jaeger_capture_attempt.md) · [guía para reproducir Jaeger](docs/otel_jaeger.md).
-
-- [Último resultado completo de CI](https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/actions/runs/38665463586): estado y SHA del commit verificados en `STATE.md`; no cubre cambios posteriores.
-- [Estado y límites AWS](.bago/canon/STATE.md): la consulta Free Tier observó USD 100 de crédito activo; los dos intentos Bedrock más recientes fueron rechazados por cuota diaria y no generaron tokens. El consumo/facturación de esos intentos no está probado.
-- [Consulta de créditos Free Tier](evidence/l6_aws_free_tier.md) · [último recibo Bedrock](evidence/l6_aws_live.md) · [intento Nova Lite](evidence/aws-live-attempts/20261018_nova_lite_throttled.md) · [intento Nova Micro](evidence/aws-live-attempts/20261018_nova_micro_throttled.md).
-
-La demo local evalúa trazas y controles estructurales; no prueba calidad general de respuestas, aislamiento de producción ni integraciones cloud en vivo.
-
-## Tutorial de interfaz
-
-- [Guía y límites](docs/agent-chat-control/TUTORIAL_PRIMER_USO.md)
-- [Vídeo narrado](docs/agent-chat-control/assets/ADL_videotutorial_primer_usuario.mp4) · [subtítulos](docs/agent-chat-control/assets/ADL_videotutorial_primer_usuario.es.srt)
-- [Traza de la sesión documentada](docs/agent-chat-control/assets/trace-c7ec5fcc40284a42.json) · [archivo de ejemplo](output/tutorial/sample-note.txt)
-
-La grabación acredita la lectura y respuesta acotadas descritas en la guía; no una auditoría del código ni ejecución de trabajos.
-
-## Vacantes objetivo y matriz completa de skills
+## Alineación profesional y matriz de skills
 
 Datos copiados de los documentos canónicos; porcentajes, niveles, salarios y plazos son estimaciones históricas del proyecto, no evaluaciones independientes ni ofertas laborales vigentes.
 
@@ -267,33 +272,7 @@ Datos copiados de los documentos canónicos; porcentajes, niveles, salarios y pl
 | Análisis de trade-offs | ✅ Fuerte | ✅ Mantener | Decision records |
 | Comunicación escrita | ✅ Fuerte | ✅ Mantener | Docs claras |
 
-## Catálogo de agentes y sincronización
-
-El [catálogo de agentes](agents/CATALOG_MANIFEST.json) es de referencia; las definiciones operativas están en `.github/agents/`. El [agente de sincronización](docs/bago-sync-agent.md) enlaza definición, ejecutor gobernado y documentación.
-
-## Fuentes canónicas
-
-| Documento | Función | Estado en este checkout |
-|---|---|---|
-| [`.bago/canon/STATE.md`](.bago/canon/STATE.md) | estado operativo actual | PRESENTE |
-| [`.bago/canon/LAB_CONTRACT.md`](.bago/canon/LAB_CONTRACT.md) | contrato del laboratorio | PRESENTE |
-| [`.bago/canon/ARCHITECTURE.md`](.bago/canon/ARCHITECTURE.md) | arquitectura y límites | PRESENTE |
-| [`.bago/canon/ROADMAP.md`](.bago/canon/ROADMAP.md) | roadmap ejecutable | PRESENTE |
-| [`.bago/canon/LEARNING_LEDGER.md`](.bago/canon/LEARNING_LEDGER.md) | aprendizaje y evidencia | PRESENTE |
-| [`.bago/canon/JOB_SKILL_MATRIX.md`](.bago/canon/JOB_SKILL_MATRIX.md) | skills y alineación laboral | PRESENTE |
-| [`docs/cv_linkedin/portfolio-demo-v1.md`](docs/cv_linkedin/portfolio-demo-v1.md) | snapshot freeze portfolio-demo-v1 (CV/LinkedIn) | PRESENTE |
-| [`docs/one_command_demo.md`](docs/one_command_demo.md) | quickstart and artifact contract for one-command governed demo | PRESENTE |
-| [`docs/one_command_demo_walkthrough.md`](docs/one_command_demo_walkthrough.md) | canonical demo explanations and artifact walkthrough | PRESENTE |
-| [`docs/releases/RELEASE_NOTES_DEMO_V1.md`](docs/releases/RELEASE_NOTES_DEMO_V1.md) | frozen one-command demo v1.0.0 release notes | PRESENTE |
-| [`VERSION`](VERSION) | current repository version | PRESENTE |
-
-- [Índice de contexto BAGO](.bago/INDEX.md)
-- [Contrato del laboratorio y estimaciones de planificación](.bago/canon/LAB_CONTRACT.md)
-- [Matriz de skills](.bago/canon/JOB_SKILL_MATRIX.md); sus porcentajes son estimaciones del proyecto, no evaluaciones independientes.
-- [Catálogo de agentes](agents/CATALOG_MANIFEST.json), de referencia; las definiciones operativas están en `.github/agents/`.
-- [Agente de sincronización: documentación](docs/bago-sync-agent.md) · [definición](.github/agents/bago-sync-agent.agent.md)
-
-## Reproducción y CI
+## Reproducir y verificar
 
 ```bash
 python -m pytest tests -q
@@ -305,7 +284,7 @@ La CI completa ejecuta la suite, valida este README y comprueba las demos y serv
 
 Las llamadas AWS requieren autorización explícita y evidencia de identidad, cuota y créditos disponibles. Los recibos de coste estimado no prueban facturación real; revisa el alcance actual en `STATE.md` antes de una ejecución live.
 
-## Generación
+## Contrato de generación del README
 
 `README.md` es un artefacto generado. No lo edites manualmente; modifica las fuentes canónicas y ejecuta el generador.
 

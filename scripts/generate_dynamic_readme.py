@@ -705,11 +705,11 @@ def render_readme(
         f"> {project['description']}",
         "> README generado desde fuentes canónicas y artefactos del checkout.",
         "",
-        "## Qué es",
+        "## El laboratorio",
         "",
-        "Un laboratorio para construir agentes cuya evidencia, permisos y efectos puedan inspeccionarse. Una respuesta del modelo, por sí sola, no demuestra autorización ni ejecución.",
+        "Un laboratorio experimental de AI Engineering gobernada: reúne agentes, datos, recuperación, ejecución y observabilidad en un recorrido donde se puede inspeccionar qué se propuso, qué se autorizó y qué efecto quedó registrado. Una respuesta del modelo, por sí sola, no demuestra autorización ni ejecución.",
         "",
-        "## Demo local",
+        "## Ejecutar la demo local",
         "",
         "La demo principal usa fixtures locales y no llama a AWS ni a otros proveedores externos.",
         "",
@@ -722,7 +722,7 @@ def render_readme(
         "",
         "**Demo gobernada:** pregunta → agente → recuperación con citas → ejecución tipada → receipts → LocalTrace → evaluación. Genera cinco JSON (`summary`, `agent_run`, `receipts`, `trace`, `evaluation`) en `demo_output/`; el proveedor es un fixture y no contacta AWS. [Contrato y requisitos](docs/one_command_demo.md) · [lectura de artefactos](docs/one_command_demo_walkthrough.md).",
         "",
-        "## Estado del proyecto",
+        "## Estado actual",
         "",
         "| Campo | Valor |",
         "|---|---|",
@@ -736,7 +736,7 @@ def render_readme(
         "",
         "La fecha corresponde a la actualización del resumen. Cada observación externa conserva la fecha y el alcance de su evidencia; este README no representa una consulta en vivo.",
         "",
-        "## Arquitectura y fases",
+        "## Arquitectura de un vistazo",
         "",
         f"**Principio:** {manifest['architecture']['principle']}",
         "",
@@ -746,19 +746,19 @@ def render_readme(
         "",
         _render_phase_table(phases),
         "",
-        "## Inventario de artefactos por fase",
+        "## Roadmap y evidencia por fase",
         "",
         "Los enlaces de esta tabla se descubren desde los patrones declarados y el checkout actual. `—` significa que el patrón no localizó archivos; no se interpreta como prueba de inexistencia fuera de este checkout.",
         "",
         _render_phase_evidence(phases),
         "",
-        "## Arquitectura y recorrido de datos",
+        "## Recorrido de datos y arquitectura actual",
         "",
         _render_architecture(manifest),
         "",
         _render_business_demo(manifest),
         "",
-        "## Evidencia y límites",
+        "## Evidencia de ejecución y límites",
         "",
         "### Jaeger y OpenTelemetry (L15)",
         "",
@@ -774,7 +774,7 @@ def render_readme(
         "",
         "La demo local evalúa trazas y controles estructurales; no prueba calidad general de respuestas, aislamiento de producción ni integraciones cloud en vivo.",
         "",
-        "## Tutorial de interfaz",
+        "## Ver la interfaz en acción",
         "",
         f"- [Guía y límites]({guide})",
         f"- [Vídeo narrado]({video}) · [subtítulos]({subtitles})",
@@ -782,7 +782,7 @@ def render_readme(
         "",
         "La grabación acredita la lectura y respuesta acotadas descritas en la guía; no una auditoría del código ni ejecución de trabajos.",
         "",
-        "## Vacantes objetivo y matriz completa de skills",
+        "## Alineación profesional y matriz de skills",
         "",
         "Datos copiados de los documentos canónicos; porcentajes, niveles, salarios y plazos son estimaciones históricas del proyecto, no evaluaciones independientes ni ofertas laborales vigentes.",
         "",
@@ -798,11 +798,11 @@ def render_readme(
         "",
         _render_soft_skills(parse_soft_skills()),
         "",
-        "## Catálogo de agentes y sincronización",
+        "## Agente de sincronización y catálogo de agentes",
         "",
         "El [catálogo de agentes](agents/CATALOG_MANIFEST.json) es de referencia; las definiciones operativas están en `.github/agents/`. El [agente de sincronización](docs/bago-sync-agent.md) enlaza definición, ejecutor gobernado y documentación.",
         "",
-        "## Fuentes canónicas",
+        "## Fuentes canónicas del proyecto",
         "",
         _render_canonical_documents(manifest),
         "",
@@ -812,7 +812,7 @@ def render_readme(
         "- [Catálogo de agentes](agents/CATALOG_MANIFEST.json), de referencia; las definiciones operativas están en `.github/agents/`.",
         "- [Agente de sincronización: documentación](docs/bago-sync-agent.md) · [definición](.github/agents/bago-sync-agent.agent.md)",
         "",
-        "## Reproducción y CI",
+        "## Reproducir y verificar",
         "",
         FENCE + "bash",
         "python -m pytest tests -q",
@@ -824,7 +824,7 @@ def render_readme(
         "",
         "Las llamadas AWS requieren autorización explícita y evidencia de identidad, cuota y créditos disponibles. Los recibos de coste estimado no prueban facturación real; revisa el alcance actual en `STATE.md` antes de una ejecución live.",
         "",
-        "## Generación",
+        "## Contrato de generación del README",
         "",
         "`README.md` es un artefacto generado. No lo edites manualmente; modifica las fuentes canónicas y ejecuta el generador.",
         "",
@@ -835,6 +835,39 @@ def render_readme(
         "MIT License · [LICENSE](LICENSE)",
         "",
     ]
+    # Keep the README's reading path close to the project's portfolio page:
+    # purpose, architecture, runnable demo, observed evidence, current state,
+    # canonical sources, roadmap and detailed inventories. Each section remains
+    # generated from the same canonical inputs; this only changes presentation.
+    first_section = next(i for i, line in enumerate(lines) if line.startswith("## "))
+    intro, body = lines[:first_section], lines[first_section:]
+    sections: dict[str, list[str]] = {}
+    current: list[str] = []
+    for line in body:
+        if line.startswith("## "):
+            if current:
+                sections[current[0]] = current
+            current = [line]
+        else:
+            current.append(line)
+    if current:
+        sections[current[0]] = current
+    section_order = [
+        "## El laboratorio",
+        "## Arquitectura de un vistazo",
+        "## Ejecutar la demo local",
+        "## Evidencia de ejecución y límites",
+        "## Ver la interfaz en acción",
+        "## Estado actual",
+        "## Fuentes canónicas del proyecto",
+        "## Agente de sincronización y catálogo de agentes",
+        "## Roadmap y evidencia por fase",
+        "## Recorrido de datos y arquitectura actual",
+        "## Alineación profesional y matriz de skills",
+        "## Reproducir y verificar",
+        "## Contrato de generación del README",
+    ]
+    lines = intro + [line for heading in section_order for line in sections[heading]]
     return "\n".join(lines)
 
 def main(argv: list[str] | None = None) -> int:
