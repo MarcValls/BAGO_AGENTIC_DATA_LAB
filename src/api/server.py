@@ -39,7 +39,7 @@ from src.capabilities import (
 )
 from src.conversations import ConversationConflict, ConversationNotFound, ConversationStore
 from src.conversations.library import OwnerKind
-from src.providers import ollama, registration
+from src.providers import ollama, registration, runtime as provider_runtime
 from src.agent_tools.workspace_read import (
     MAX_TOOL_CALLS_PER_TURN,
     MAX_TOOL_ROUNDS,
@@ -214,7 +214,7 @@ class AgentConfig(BaseModel):
     system_prompt: str = Field(min_length=1, max_length=12000)
     # Older user-created agents predate provider/model pinning. Keep them
     # readable without migrating their persisted records as a side effect.
-    provider_id: Literal["ollama-cloud"] | None = None
+    provider_id: Literal["ollama-cloud", "openai-platform", "github-copilot"] | None = None
     model_id: str | None = Field(default=None, min_length=1, max_length=128)
     tools: list[str] = Field(default_factory=list, max_length=20)
     retrieval_config: dict[str, Any] | None = None
@@ -232,10 +232,9 @@ class AgentConfig(BaseModel):
     def valid_model(cls, value: str | None) -> str | None:
         if value is None:
             return None
-        try:
-            return ollama.validate_model_id(value)
-        except ollama.ProviderError as error:
-            raise ValueError(error.message) from None
+        if not registration.MODEL_RE.fullmatch(value):
+            raise ValueError("Model identifier is invalid.")
+        return value
 
 
 def _agent_draft_messages(user_request: str, retry_hint: str | None = None) -> list[dict[str, str]]:
@@ -332,7 +331,7 @@ class AgentCreateRequest(BaseModel):
     description: str = Field(min_length=1, max_length=1000)
     type: Literal["rag", "tool", "multi-agent"]
     system_prompt: str = Field(min_length=1, max_length=12000)
-    provider_id: Literal["ollama-cloud"] | None = None
+    provider_id: Literal["ollama-cloud", "openai-platform", "github-copilot"] | None = None
     model_id: str | None = Field(default=None, max_length=128)
     tools: list[str] = Field(default_factory=list, max_length=20)
     retrieval_config: dict[str, Any] | None = None
@@ -350,10 +349,9 @@ class AgentCreateRequest(BaseModel):
     def valid_model(cls, value: str | None) -> str | None:
         if not value:
             return None
-        try:
-            return ollama.validate_model_id(value)
-        except ollama.ProviderError as error:
-            raise ValueError(error.message) from None
+        if not registration.MODEL_RE.fullmatch(value):
+            raise ValueError("Model identifier is invalid.")
+        return value
 
 
 class ControlChatRequest(BaseModel):
@@ -754,13 +752,14 @@ def health() -> dict[str, str]:
 
 # ===== API: Ollama provider configuration =====
 
-def _provider_http_error(error: ollama.ProviderError) -> HTTPException:
+def _provider_http_error(error: Any) -> HTTPException:
     status_code = 503
-    if error.code.startswith("invalid_") or error.code == "unexpected_secret":
+    code = getattr(error, "code", "provider_error")
+    if code.startswith("invalid_") or code == "unexpected_secret":
         status_code = 422
-    elif error.code in {"authentication_required", "authentication_failed"}:
+    elif code in {"authentication_required", "authentication_failed"}:
         status_code = 401
-    return HTTPException(status_code=status_code, detail={"code": error.code, "message": error.message, "state": error.status})
+    return HTTPException(status_code=status_code, detail={"code": code, "message": getattr(error, "message", "The provider request failed."), "state": getattr(error, "status", "error")})
 
 
 @app.get("/api/providers/ollama/status")
@@ -801,6 +800,25 @@ def provider_registration_status() -> dict[str, Any]:
     except registration.RegistrationError as error:
         status_code = 422 if error.code.startswith("invalid_") else 503
         raise HTTPException(status_code=status_code, detail={"code": error.code, "message": error.message, "state": error.status}) from None
+
+
+@app.get("/api/providers/available")
+def available_agent_providers() -> dict[str, Any]:
+    try:
+        providers = [{"provider_id": "ollama-cloud", "label": "Ollama", **ollama.status()}]
+        labels = {"openai-platform": "OpenAI Platform", "github-copilot": "GitHub Copilot"}
+        providers.extend({**registration.status(key), "label": label} for key, label in labels.items())
+        return {"providers": providers}
+    except (ollama.ProviderError, registration.RegistrationError) as error:
+        raise _provider_http_error(error) from None
+
+
+@app.post("/api/providers/registry/{provider_id}/verify")
+def verify_registered_provider(provider_id: str, request: OllamaVerifyRequest) -> dict[str, Any]:
+    try:
+        return provider_runtime.verify(provider_id, request.model_id)
+    except (registration.RegistrationError, provider_runtime.ProviderRuntimeError) as error:
+        raise _provider_http_error(error) from None
 
 
 @app.put("/api/providers/registry/{provider_id}")
@@ -1399,6 +1417,7 @@ async def _chat_with_workspace_read(
     authorized_paths: list[str],
     authorized_directories: list[str] | None = None,
     *,
+    provider_id: str = "ollama-cloud",
     workspace_root: Path | None = None,
     allow_navigation: bool = False,
 ) -> tuple[str, list[dict[str, Any]], list[dict[str, Any]], str | None]:
@@ -1414,7 +1433,7 @@ async def _chat_with_workspace_read(
         turn_kwargs: dict[str, Any] = {"tools": available_tools}
         if allow_navigation:
             turn_kwargs["options"] = {"temperature": 0}
-        turn = await asyncio.to_thread(ollama.chat_turn, model_id, messages, **turn_kwargs)
+        turn = await asyncio.to_thread(provider_runtime.chat_turn, provider_id, model_id, messages, **turn_kwargs)
         raw_calls = turn.get("tool_calls")
         tool_calls = raw_calls if isinstance(raw_calls, list) else []
         if not tool_calls:
@@ -1488,13 +1507,14 @@ async def _chat_with_workspace_read(
             messages.append({
                 "role": "tool",
                 "tool_name": str(tool_name or "unknown_tool"),
+                **({"tool_call_id": call["id"]} if isinstance(call, dict) and call.get("id") else {}),
                 "content": json.dumps(result, ensure_ascii=False, separators=(",", ":")),
             })
 
         if round_index == MAX_TOOL_ROUNDS - 1:
             # Ask for a final answer with tools removed once the bounded loop
             # is exhausted; this prevents another file read in this turn.
-            answer = await asyncio.to_thread(ollama.chat, model_id, messages)
+            answer = await asyncio.to_thread(provider_runtime.chat, provider_id, model_id, messages)
             return answer, sources, read_events, None
 
     raise ollama.ProviderError("tool_loop_incomplete", "The chat could not complete its response.")
@@ -1843,16 +1863,22 @@ async def restore_conversation(conversation_id: str, request: ConversationRevisi
 @app.post("/api/agents/create")
 async def create_agent(request: AgentCreateRequest) -> AgentResponse:
     """Create and save a new agent configuration."""
-    provider_status = ollama.status()
+    provider_id = request.provider_id or "ollama-cloud"
+    try:
+        provider_status = provider_runtime.status(provider_id)
+    except (registration.RegistrationError, provider_runtime.ProviderRuntimeError) as error:
+        raise _provider_http_error(error) from None
     if provider_status.get("state") not in {"configured_unverified", "ready"}:
-        raise HTTPException(status_code=409, detail={"code": "provider_not_configured", "message": "Configure and authenticate Ollama before creating an agent."})
+        raise HTTPException(status_code=409, detail={"code": "provider_not_configured", "message": "Configure the selected provider before creating an agent."})
     body = request.model_dump(exclude_none=True)
-    body["provider_id"] = request.provider_id or "ollama-cloud"
+    body["provider_id"] = provider_id
     # The legacy Builder has no model selector. In that case, use only the model
     # explicitly saved in Provider Settings; never choose the first catalog entry.
     body["model_id"] = request.model_id or provider_status.get("model_id")
     if not body["model_id"]:
-        raise HTTPException(status_code=409, detail={"code": "model_selection_required", "message": "Choose a model in Ollama Provider Settings before creating an agent."})
+        raise HTTPException(status_code=409, detail={"code": "model_selection_required", "message": "Choose a model in Provider Settings before creating an agent."})
+    if body["model_id"] != provider_status.get("model_id"):
+        raise HTTPException(status_code=409, detail={"code": "model_registration_mismatch", "message": "The agent model must match the selected provider registration."})
     try:
         agent_config = AgentConfig.model_validate(body)
     except Exception:
@@ -1862,7 +1888,7 @@ async def create_agent(request: AgentCreateRequest) -> AgentResponse:
 
 @app.put("/api/agents/{agent_id}", response_model=AgentResponse)
 async def update_agent(agent_id: str, request: AgentConfig) -> AgentResponse:
-    """Update an existing agent profile without changing its identity or provider pin."""
+    """Update a saved profile, validating an explicitly changed provider/model pair."""
     current = _load_agent(agent_id)
     config_data = current.config.model_dump()
     config_data.update(request.model_dump(exclude_unset=True))
@@ -1870,6 +1896,13 @@ async def update_agent(agent_id: str, request: AgentConfig) -> AgentResponse:
         config = AgentConfig.model_validate(config_data)
     except Exception:
         raise HTTPException(status_code=422, detail={"code": "invalid_agent_config", "message": "Agent configuration is invalid."}) from None
+    if (config.provider_id, config.model_id) != (current.config.provider_id, current.config.model_id):
+        try:
+            provider_status = provider_runtime.status(config.provider_id or "ollama-cloud")
+        except (registration.RegistrationError, provider_runtime.ProviderRuntimeError) as error:
+            raise _provider_http_error(error) from None
+        if provider_status.get("state") not in {"configured_unverified", "ready"} or not config.model_id or provider_status.get("model_id") != config.model_id:
+            raise HTTPException(status_code=409, detail={"code": "model_registration_mismatch", "message": "Select a configured provider and its saved model."})
 
     agent_file = AGENTS_DIR / f"{agent_id}.json"
     temporary = agent_file.with_name(f".{agent_id}.{uuid.uuid4().hex}.tmp")
@@ -2212,7 +2245,13 @@ async def chat_with_agent(
     # New records pin a model; legacy records may not. In that case use only
     # the explicitly selected provider model for this request, without writing
     # the fallback into the stored agent configuration.
-    model_id = record.config.model_id or _selected_model_id()
+    provider_id = record.config.provider_id or "ollama-cloud"
+    try:
+        model_id = record.config.model_id or (_selected_model_id() if provider_id == "ollama-cloud" else provider_runtime.status(provider_id).get("model_id"))
+    except (registration.RegistrationError, provider_runtime.ProviderRuntimeError) as error:
+        raise _provider_http_error(error) from None
+    if not model_id:
+        raise HTTPException(status_code=409, detail={"code": "model_selection_required", "message": "Select a model for this agent in Provider Settings."})
     started_at_ns = time.time_ns()
     sources: list[dict[str, Any]] = []
     read_events: list[dict[str, Any]] = []
@@ -2220,10 +2259,11 @@ async def chat_with_agent(
         if authorized_paths or authorized_directories:
             answer, sources, read_events, _ = await _chat_with_workspace_read(
                 model_id, messages, authorized_paths, authorized_directories, workspace_root=workspace_root,
+                provider_id=provider_id,
             )
         else:
-            answer = await asyncio.to_thread(ollama.chat, model_id, messages)
-    except ollama.ProviderError as error:
+            answer = await asyncio.to_thread(provider_runtime.chat, provider_id, model_id, messages)
+    except (ollama.ProviderError, registration.RegistrationError, provider_runtime.ProviderRuntimeError) as error:
         raise _provider_http_error(error) from None
     cognitive_trace = await asyncio.to_thread(
         _record_chat_cognition_trace,
@@ -2237,7 +2277,7 @@ async def chat_with_agent(
     trace_metadata = await asyncio.to_thread(
         _record_agent_chat_trace,
         agent_id=record.id,
-        provider_id=record.config.provider_id or "ollama-cloud",
+        provider_id=provider_id,
         model_id=model_id,
         started_at_ns=started_at_ns,
         ended_at_ns=time.time_ns(),
@@ -2261,7 +2301,7 @@ async def chat_with_agent(
         response.headers["X-Bago-Jaeger-Trace-Id"] = trace_metadata["jaeger_trace_id"]
     if trace_metadata.get("jaeger_url"):
         response.headers["X-Bago-Jaeger-Trace-Url"] = trace_metadata["jaeger_url"]
-    return {"agent_id": agent_id, "assistant_message": answer, "source": "ollama", "sources": sources, "read_events": read_events, "conversation_id": request.conversation_id, "revision": saved["revision"], "trace": trace_metadata, "cognitive_trace": cognitive_trace, "conversation": saved}
+    return {"agent_id": agent_id, "assistant_message": answer, "provider_id": provider_id, "source": "ollama" if provider_id == "ollama-cloud" else provider_id, "sources": sources, "read_events": read_events, "conversation_id": request.conversation_id, "revision": saved["revision"], "trace": trace_metadata, "cognitive_trace": cognitive_trace, "conversation": saved}
 
 
 # ===== API: Job History & Metrics =====
@@ -2379,6 +2419,7 @@ async def websocket_agent_run(websocket: WebSocket) -> None:
             workspace_root=current_workspace_root,
             provider_status=ollama.status,
             provider_chat_turn=ollama.chat_turn,
+            provider_resolver=provider_runtime.resolve,
             ber_client_factory=BerClient,
         )
         result = await asyncio.to_thread(runner.start, agent_id=message["agent_id"], task=message["task"])
@@ -2445,9 +2486,14 @@ async def websocket_agent_chat(websocket: WebSocket) -> None:
         messages = [{"role": "system", "content": record.config.system_prompt + "\n\nYou do not have live tool execution or app-control capabilities in this chat."}]
         messages.extend(history[-30:])
         messages.append({"role": "user", "content": msg["message"][:8000]})
+        provider_id = record.config.provider_id or "ollama-cloud"
         try:
-            model_id = record.config.model_id or _selected_model_id()
-        except HTTPException as error:
+            model_id = record.config.model_id or (_selected_model_id() if provider_id == "ollama-cloud" else provider_runtime.status(provider_id).get("model_id"))
+            if not model_id:
+                raise HTTPException(status_code=409, detail={"code": "model_selection_required", "message": "Select a model for this agent in Provider Settings."})
+        except (HTTPException, registration.RegistrationError, provider_runtime.ProviderRuntimeError) as error:
+            if not isinstance(error, HTTPException):
+                error = _provider_http_error(error)
             detail = error.detail if isinstance(error.detail, dict) else {}
             await websocket.send_json({
                 "type": "error",
@@ -2457,21 +2503,21 @@ async def websocket_agent_chat(websocket: WebSocket) -> None:
             return
         started_at_ns = time.time_ns()
         try:
-            answer = await asyncio.to_thread(ollama.chat, model_id, messages)
-        except ollama.ProviderError as error:
+            answer = await asyncio.to_thread(provider_runtime.chat, provider_id, model_id, messages)
+        except (ollama.ProviderError, registration.RegistrationError, provider_runtime.ProviderRuntimeError) as error:
             await websocket.send_json({"type": "error", "data": error.message, "code": error.code})
             return
         trace_metadata = await asyncio.to_thread(
             _record_agent_chat_trace,
             agent_id=record.id,
-            provider_id=record.config.provider_id or "ollama-cloud",
+            provider_id=provider_id,
             model_id=model_id,
             started_at_ns=started_at_ns,
             ended_at_ns=time.time_ns(),
         )
         saved_message = CONVERSATIONS.append_message(msg["conversation_id"], user_message["revision"], "assistant", answer, {"trace": trace_metadata})
         await websocket.send_json({"type": "chunk", "data": answer})
-        await websocket.send_json({"type": "done", "source": "ollama", "conversation_id": msg["conversation_id"], "revision": saved_message["revision"]})
+        await websocket.send_json({"type": "done", "source": provider_id, "conversation_id": msg["conversation_id"], "revision": saved_message["revision"]})
     except (ValueError, ConversationNotFound, ConversationConflict, json.JSONDecodeError):
         try:
             await websocket.send_json({"type": "error", "data": "Invalid chat request."})

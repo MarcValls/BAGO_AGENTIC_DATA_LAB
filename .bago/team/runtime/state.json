@@ -221,7 +221,7 @@
   "mission_source": "C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\.worktrees\\adl-ber-integration-20261019\\.bago\\goals\\ADL-BER-INTEGRATION-001\\AGENT_DECISION_INSPECTOR_BER_RUNNER_FOLLOWUP.json",
   "protocol_version": "0.1.0",
   "terminal_gate": "DONE",
-  "updated_at": "2026-10-19T19:43:34+00:00",
+  "updated_at": "2026-10-19T23:10:46+00:00",
   "work_status": {
     "W13": {
       "agent": "/root",

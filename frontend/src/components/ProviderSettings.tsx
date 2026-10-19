@@ -7,7 +7,7 @@ type ProviderStatus = { provider_id: string; state: ProviderState; runtime_mode?
 export type ProviderStatusSummary = Pick<ProviderStatus, 'state' | 'auth_mode'>
 type ProviderModel = { provider_id: string; model_id: string; display_name: string; source: string; availability_confidence: string }
 type RegistrationMode = 'codex_cli' | 'copilot_cli' | 'token' | 'api_key' | 'local' | 'local_cli'
-type Registration = { provider_id: string; state: string; auth_mode: RegistrationMode | null; model_id: string | null; base_url: string | null; has_credential: boolean; updated_at?: string; runtime_support?: string }
+type Registration = { provider_id: string; state: string; auth_mode: RegistrationMode | null; model_id: string | null; base_url: string | null; has_credential: boolean; updated_at?: string; last_verified_at?: string; runtime_support?: string }
 type ProviderId = 'ollama' | 'codex' | 'openai-platform' | 'github-copilot' | 'anthropic' | 'openrouter' | 'opencode'
 
 type ProviderDefinition = {
@@ -83,7 +83,7 @@ async function safeError(response: Response): Promise<string> {
 }
 
 function statusLabel(state: string | undefined): string {
-  if (state === 'ready') return 'Conectado'
+  if (state === 'ready') return 'Acceso comprobado'
   if (state === 'configured_unverified') return 'Registrado · sin verificar'
   if (state === 'needs_authentication') return 'Falta credencial'
   if (state === 'credential_store_unavailable') return 'Almacén seguro no disponible'
@@ -167,7 +167,7 @@ export default function ProviderSettings({ onStatusChange }: { onStatusChange?: 
           </div>
           {selectedProvider === 'ollama'
             ? <OllamaProviderSettings onStatusChange={summary => { setOllamaStatus(summary); onStatusChange?.(summary) }} />
-            : <ProviderRegistrationForm key={selectedProvider} provider={activeProvider} registration={registration} onSaved={updated => setRegistrations(current => ({ ...current, [selectedProvider]: updated }))} />}
+            : <ProviderRegistrationForm key={selectedProvider} provider={activeProvider} registration={registration} onRefresh={refreshRegistry} onSaved={updated => setRegistrations(current => ({ ...current, [selectedProvider]: updated }))} />}
           {registryError && <p className="provider-alert error" role="alert">{registryError}</p>}
           {loadingRegistry && <p className="provider-footnote" role="status">Cargando registros guardados…</p>}
         </section>
@@ -176,7 +176,7 @@ export default function ProviderSettings({ onStatusChange }: { onStatusChange?: 
   )
 }
 
-function ProviderRegistrationForm({ provider, registration, onSaved }: { provider: ProviderDefinition; registration?: Registration; onSaved: (registration: Registration) => void }) {
+function ProviderRegistrationForm({ provider, registration, onSaved, onRefresh }: { provider: ProviderDefinition; registration?: Registration; onSaved: (registration: Registration) => void; onRefresh: () => Promise<void> }) {
   const initialMode = registration?.auth_mode && provider.registrationModes.includes(registration.auth_mode) ? registration.auth_mode : provider.defaultMode
   const [authMode, setAuthMode] = useState<RegistrationMode>(initialMode)
   const [apiKey, setApiKey] = useState('')
@@ -185,6 +185,7 @@ function ProviderRegistrationForm({ provider, registration, onSaved }: { provide
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
   const [notice, setNotice] = useState('')
+  const [verifying, setVerifying] = useState(false)
 
   useEffect(() => {
     if (registration?.auth_mode && provider.registrationModes.includes(registration.auth_mode)) setAuthMode(registration.auth_mode)
@@ -195,6 +196,8 @@ function ProviderRegistrationForm({ provider, registration, onSaved }: { provide
   const steps = provider.steps[authMode] ?? []
   const commands = provider.commands?.[authMode] ?? []
   const needsSecret = authMode === 'api_key' || authMode === 'token'
+  const integrated = registration?.runtime_support === 'chat_and_agent_runner'
+  const unsavedChanges = authMode !== registration?.auth_mode || modelId.trim() !== (registration?.model_id || '') || baseUrl.trim() !== (registration?.base_url || '') || Boolean(apiKey)
 
   const saveRegistration = async (event: FormEvent) => {
     event.preventDefault()
@@ -213,10 +216,29 @@ function ProviderRegistrationForm({ provider, registration, onSaved }: { provide
       const result = await response.json() as Registration
       onSaved(result)
       setApiKey('')
-      setNotice('Registro guardado. La autenticación y el acceso al proveedor siguen sin verificarse.')
+      setNotice(result.runtime_support === 'chat_and_agent_runner'
+        ? 'Registro guardado. Puedes seleccionar este proveedor y modelo al crear un agente; comprueba el acceso en vivo antes de usarlo.'
+        : 'Registro guardado. Este proveedor todavía no está integrado con el chat ni con Agent Runner.')
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : 'No se pudo guardar el registro.')
     } finally { setSaving(false) }
+  }
+
+  const verifyAccess = async () => {
+    setVerifying(true); setError(''); setNotice('')
+    try {
+      const response = await fetch(`/api/providers/registry/${provider.id}/verify`, {
+        method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ model_id: modelId.trim() }),
+      })
+      if (!response.ok) throw new Error(await safeError(response))
+      const result = await response.json() as Registration
+      onSaved({ ...registration, ...result, provider_id: provider.id, model_id: modelId.trim() } as Registration)
+      setNotice('El proveedor ha respondido a la comprobación. Puedes usar este proveedor y modelo en un agente.')
+    } catch (cause) {
+      if (registration) onSaved({ ...registration, state: 'configured_unverified', last_verified_at: undefined })
+      setError(cause instanceof Error ? cause.message : 'No se pudo comprobar el acceso en vivo.')
+      await onRefresh()
+    } finally { setVerifying(false) }
   }
 
   return (
@@ -231,6 +253,7 @@ function ProviderRegistrationForm({ provider, registration, onSaved }: { provide
           tabIndex={authMode === mode ? 0 : -1}
           id={`provider-method-${mode}`}
           className={`provider-method-tab${authMode === mode ? ' active' : ''}`}
+          disabled={saving || verifying}
           onClick={() => { setAuthMode(mode); setError(''); setNotice(''); setApiKey('') }}
           onKeyDown={event => {
             const direction = event.key === 'ArrowRight' || event.key === 'ArrowDown' ? 1 : event.key === 'ArrowLeft' || event.key === 'ArrowUp' ? -1 : 0
@@ -265,18 +288,25 @@ function ProviderRegistrationForm({ provider, registration, onSaved }: { provide
       </div>}
 
       <div className="provider-field">
-        <label htmlFor={`${provider.id}-model`}>Modelo predeterminado <span>(opcional)</span></label>
-        <input id={`${provider.id}-model`} type="text" value={modelId} onChange={event => setModelId(event.target.value)} placeholder={provider.modelPlaceholder} spellCheck={false} />
+        <label htmlFor={`${provider.id}-model`}>Modelo predeterminado {!integrated && <span>(opcional)</span>}</label>
+        <input id={`${provider.id}-model`} type="text" required={integrated} disabled={saving || verifying} value={modelId} onChange={event => setModelId(event.target.value)} placeholder={provider.modelPlaceholder} spellCheck={false} />
       </div>
 
-      <div className="provider-unverified" role="note">
-        <strong>{registration?.state === 'configured_unverified' ? 'Registro guardado · pendiente de verificar' : 'El registro no confirma acceso en vivo'}</strong>
-        <p>Este formulario guarda la modalidad y los datos de registro. En esta versión, ADL aún no usa este proveedor en chat ni en ejecuciones de agentes.</p>
-      </div>
+      {integrated ? <div className={`provider-connection ${registration.state === 'ready' ? 'verified' : ''}`} role="note">
+        <strong>{registration.state === 'ready' ? 'Acceso comprobado con una respuesta real' : 'Disponible para chat de agentes y Agent Runner'}</strong>
+        <p>ADL puede usar este proveedor y modelo en el perfil del agente.{registration.last_verified_at ? ` Última respuesta comprobada: ${new Date(registration.last_verified_at).toLocaleString()}.` : ' Guarda el registro y comprueba el acceso para confirmar tus credenciales.'}</p>
+        <p>La comprobación envía una inferencia breve y puede consumir una pequeña cantidad de uso facturable.</p>
+      </div> : <div className="provider-unverified" role="note">
+        <strong>El registro no confirma acceso en vivo</strong>
+        <p>Este formulario guarda la modalidad y los datos de registro. ADL aún no usa este proveedor en chat ni en ejecuciones de agentes.</p>
+      </div>}
 
       {error && <p className="provider-alert error" role="alert">{error}</p>}
       {notice && <p className="provider-alert notice" role="status">{notice}</p>}
-      <div className="provider-form-actions"><button className="provider-primary" type="submit" disabled={saving}>{saving ? 'Guardando…' : 'Guardar registro'}</button></div>
+      {integrated && unsavedChanges && <p className="provider-footnote">Guarda los cambios para comprobar esta configuración.</p>}
+      <div className="provider-form-actions"><button className="provider-primary" type="submit" disabled={saving || verifying}>{saving ? 'Guardando…' : 'Guardar registro'}</button>
+        {integrated && <button className="provider-secondary" type="button" onClick={() => void verifyAccess()} disabled={verifying || saving || unsavedChanges || !registration.model_id || (!registration.has_credential && authMode !== 'copilot_cli')}>{verifying ? 'Comprobando acceso…' : 'Comprobar acceso en vivo'}</button>}
+      </div>
       </div>
     </form>
   )

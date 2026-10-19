@@ -1,0 +1,8 @@
+{
+  "scope": "frontend/src, scanner adapted to TS/TSX via extension set only",
+  "source_files": 36,
+  "css_files": 25,
+  "circular_imports": [],
+  "hardcoded_colors": 1,
+  "limits": "Static heuristics only; not browser or live provider proof"
+}

@@ -8,6 +8,7 @@
     "preview": "vite preview",
     "lint": "eslint src",
     "test": "vitest run tests/runtime/package-upgrade.test.tsx",
+    "test:providers": "vitest run tests/providers/provider-settings.test.tsx",
     "test:ui": "node --test tests/ui/agent-evaluation-lab/agent-evaluation-lab.test.mjs tests/ui/agent-evaluation-lab/rendered.test.mjs"
   },
   "dependencies": {

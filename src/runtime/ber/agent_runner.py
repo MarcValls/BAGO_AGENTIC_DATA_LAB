@@ -188,6 +188,7 @@ class AgentRunner:
         workspace_root: Callable[[], Path],
         provider_status: Callable[[], Mapping[str, Any]],
         provider_chat_turn: Callable[..., Mapping[str, Any]],
+        provider_resolver: Callable[[str], tuple[Callable[[], Mapping[str, Any]], Callable[..., Mapping[str, Any]]]] | None = None,
         ber_client_factory: Callable[..., Any] = BerClient,
         binding_factory: Callable[..., WorkspaceBinding] = bind_workspace,
     ) -> None:
@@ -195,6 +196,7 @@ class AgentRunner:
         self._workspace_root = workspace_root
         self._provider_status = provider_status
         self._provider_chat_turn = provider_chat_turn
+        self._provider_resolver = provider_resolver
         self._ber_client_factory = ber_client_factory
         self._binding_factory = binding_factory
         self._client: Any | None = None
@@ -217,10 +219,18 @@ class AgentRunner:
         except Exception:
             raise AgentRunnerError("agent_unavailable", "The saved agent profile could not be loaded.") from None
         config = getattr(self._agent, "config", None)
-        if config is None or getattr(config, "provider_id", None) not in {None, "ollama-cloud"}:
+        provider_id = getattr(config, "provider_id", None) if config is not None else None
+        provider_id = provider_id or "ollama-cloud"
+        if config is None or provider_id not in {"ollama-cloud", "openai-platform", "github-copilot"}:
             raise AgentRunnerError("provider_unavailable", "The saved agent provider is not available to this runner.")
+        if provider_id != "ollama-cloud" and self._provider_resolver is None:
+            raise AgentRunnerError("provider_unavailable", "This runner has no route for the saved provider.")
         try:
-            provider = self._provider_status()
+            if self._provider_resolver:
+                status_fn, chat_fn = self._provider_resolver(provider_id)
+            else:
+                status_fn, chat_fn = self._provider_status, self._provider_chat_turn
+            provider = status_fn()
         except Exception:
             raise AgentRunnerError("provider_unavailable", "The configured provider is unavailable.") from None
         if not isinstance(provider, Mapping) or provider.get("state") not in {"configured_unverified", "ready"}:
@@ -255,7 +265,7 @@ class AgentRunner:
             {"role": "user", "content": task.strip()},
         ]
         try:
-            message = self._provider_chat_turn(
+            message = chat_fn(
                 model_id,
                 messages,
                 tools=[_tool_schema()] if can_propose else None,

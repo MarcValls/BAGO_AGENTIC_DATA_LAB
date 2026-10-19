@@ -15,7 +15,7 @@ type AgentConfig = {
   description: string
   type: 'rag' | 'tool' | 'multi-agent'
   system_prompt: string
-  provider_id?: 'ollama-cloud' | null
+  provider_id?: 'ollama-cloud' | 'openai-platform' | 'github-copilot' | null
   model_id?: string | null
   tools: string[]
   retrieval_config?: { mode: 'hybrid' | 'semantic' | 'lexical'; top_k: number } | null
@@ -471,7 +471,11 @@ export default function AgentChat({ onNavigate, onOpenProviderSettings, onOpenCo
       }
       if (!response.ok) throw new Error(await responseError(response))
       data = await response.json()
-      if (selectedAgent && (data.source !== 'ollama' || typeof data.assistant_message !== 'string')) throw new Error('The server did not confirm a live Ollama response.')
+      if (selectedAgent) {
+        const provider = selectedAgent.config.provider_id || 'ollama-cloud'
+        const expectedSource = provider === 'ollama-cloud' ? 'ollama' : provider
+        if (data.source !== expectedSource || typeof data.assistant_message !== 'string') throw new Error('The server did not confirm a response from the selected provider.')
+      }
       if (Array.isArray(data.read_events) && data.read_events.length) {
         setMessages((previous) => [...previous, { id: idFor(), role: 'assistant', content: '', readEvents: data.read_events }])
       }
@@ -626,7 +630,7 @@ export default function AgentChat({ onNavigate, onOpenProviderSettings, onOpenCo
           {capabilityDraft && <section className="capability-chat-card" aria-labelledby="capability-draft-title"><div className="draft-heading"><div><p className="section-eyebrow">Proposal review</p><h3 id="capability-draft-title">Review before saving</h3></div><span className="draft-status">Not saved</span></div><label>Capability<select value={capabilityDraft.capabilityId} onChange={(event) => setCapabilityDraft({ ...capabilityDraft, capabilityId: event.target.value })} disabled={capabilityBusy}><option value="">Choose a catalog entry</option>{capabilityDraft.capabilities.map((item) => <option key={item.id} value={item.id}>{item.id} · {item.status} · {item.effect}</option>)}</select></label>{capabilityDraft.capabilityId && <p className="capability-chat-selected">{capabilityDraft.capabilities.find((item) => item.id === capabilityDraft.capabilityId)?.summary}</p>}<label>Request summary<input value={capabilityDraft.summary} maxLength={500} onChange={(event) => setCapabilityDraft({ ...capabilityDraft, summary: event.target.value })} disabled={capabilityBusy} /></label><label>Requested scope<textarea value={capabilityDraft.requestedScope} maxLength={1000} rows={3} onChange={(event) => setCapabilityDraft({ ...capabilityDraft, requestedScope: event.target.value })} disabled={capabilityBusy} /></label><div className="draft-actions"><button type="button" className="secondary-action" onClick={() => setCapabilityDraft(null)} disabled={capabilityBusy}>Discard</button><button type="button" className="primary-action" onClick={() => void saveCapabilityProposal()} disabled={capabilityBusy || !capabilityDraft.capabilityId || !capabilityDraft.summary.trim() || !capabilityDraft.requestedScope.trim()}>{capabilityBusy ? 'Saving…' : 'Save proposal'}</button></div></section>}
           {capabilityProposals.map((proposal) => <article className="capability-chat-saved" key={proposal.id}><div><strong>{proposal.capability_id}</strong><span>{proposal.status} · revision {proposal.revision}</span></div><p>{proposal.summary}</p><p><strong>Requested scope:</strong> {proposal.requested_scope}</p><code>{proposal.id}</code>{proposal.status === 'PENDING_REVIEW' && <button type="button" className="secondary-action" onClick={() => void cancelChatProposal(proposal)} disabled={capabilityBusy}>Cancel proposal</button>}</article>)}
           {error && <p className="chat-error" role="alert">{error}{error.toLowerCase().includes('ollama') || error.toLowerCase().includes('provider') ? <button type="button" onClick={onOpenProviderSettings}>Open provider settings</button> : null}</p>}
-          {sending && <p className="muted-state" role="status">Waiting for Ollama…</p>}
+          {sending && <p className="muted-state" role="status">Esperando la respuesta del proveedor…</p>}
           <div ref={messagesEndRef} />
         </div>
         <form className="control-chat-composer" onSubmit={(event) => void sendMessage(event)}><label className="visually-hidden" htmlFor="control-chat-input">Message the assistant or selected agent</label><textarea id="control-chat-input" rows={2} value={input} onChange={(event) => setInput(event.target.value)} onKeyDown={(event) => {

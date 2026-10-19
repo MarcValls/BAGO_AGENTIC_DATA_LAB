@@ -25,10 +25,11 @@ interface Artifacts {
   evaluation: any
 }
 
-type AppView = 'chat' | 'workspace' | 'capabilities' | 'provider_settings' | 'inspector' | 'ber_record' | 'builder' | 'runner' | 'control' | 'jobs' | 'summary' | 'retrieval' | 'authorization' | 'trace' | 'evaluation' | 'evaluation_lab'
+type AppView = 'chat' | 'workspace' | 'capabilities' | 'inspector' | 'ber_record' | 'builder' | 'runner' | 'control' | 'jobs' | 'summary' | 'retrieval' | 'authorization' | 'trace' | 'evaluation' | 'evaluation_lab'
 type DataView = Extract<AppView, 'inspector' | 'ber_record' | 'jobs' | 'summary' | 'retrieval' | 'authorization' | 'trace' | 'evaluation'>
 type InteractionView = Exclude<AppView, DataView>
 type AssistantView = 'inspector' | 'builder' | 'chat' | 'workspace' | 'runner' | 'control' | 'jobs' | 'traces' | 'summary' | 'retrieval' | 'authorization' | 'evaluation' | 'evaluation_lab' | 'provider_settings' | 'cognition_settings' | 'capabilities'
+type SettingsView = 'cognition' | 'providers'
 
 const navigation: Array<{ id: AppView; label: string; layer: 'interaction' | 'data' }> = [
   { id: 'chat', label: 'Chat', layer: 'interaction' },
@@ -37,7 +38,6 @@ const navigation: Array<{ id: AppView; label: string; layer: 'interaction' | 'da
   { id: 'builder', label: 'Agent Builder', layer: 'interaction' },
   { id: 'runner', label: 'Agent Runs', layer: 'interaction' },
   { id: 'evaluation_lab', label: 'Agent Evaluation Lab', layer: 'interaction' },
-  { id: 'provider_settings', label: 'Proveedores y modelos', layer: 'interaction' },
   { id: 'inspector', label: 'Decision Inspector', layer: 'data' },
   { id: 'ber_record', label: 'BER Effect Record', layer: 'data' },
   { id: 'jobs', label: 'Job History', layer: 'data' },
@@ -57,7 +57,6 @@ const interactionIcons: Record<InteractionView, string> = {
   builder: '⊞',
   runner: '▷',
   evaluation_lab: '▦',
-  provider_settings: '⇄',
   control: '⌘',
 }
 
@@ -94,6 +93,7 @@ function App() {
   const [activeDataView, setActiveDataView] = useState<DataView>('inspector')
   const [dataLayerOpen, setDataLayerOpen] = useState(false)
   const [settingsOpen, setSettingsOpen] = useState(false)
+  const [settingsView, setSettingsView] = useState<SettingsView>('cognition')
   const [cognitiveMode, setCognitiveMode] = useState<CognitiveMode>(readCognitiveMode)
   const [demoRefresh, setDemoRefresh] = useState(0)
   const dataLayerRef = useRef<HTMLDialogElement>(null)
@@ -118,7 +118,13 @@ function App() {
   }, [demoRefresh])
 
   const navigateFromChat = useCallback((view: AssistantView) => {
+    if (view === 'provider_settings') {
+      setSettingsView('providers')
+      setSettingsOpen(true)
+      return
+    }
     if (view === 'cognition_settings') {
+      setSettingsView('cognition')
       setSettingsOpen(true)
       return
     }
@@ -131,9 +137,9 @@ function App() {
     }
   }, [])
 
-  const openSettings = useCallback(() => setSettingsOpen(true), [])
-  const openProviderSettings = useCallback(() => setActiveInteractionView('provider_settings'), [])
-  const openCognitionSettings = useCallback(() => setSettingsOpen(true), [])
+  const openSettings = useCallback(() => { setSettingsView('cognition'); setSettingsOpen(true) }, [])
+  const openProviderSettings = useCallback(() => { setSettingsView('providers'); setSettingsOpen(true) }, [])
+  const openCognitionSettings = useCallback(() => { setSettingsView('cognition'); setSettingsOpen(true) }, [])
   const openInspect = useCallback(() => setDataLayerOpen(true), [])
 
   useEffect(() => {
@@ -155,7 +161,7 @@ function App() {
   const activeInteractionLabel = interactionNavigation.find((item) => item.id === activeInteractionView)?.label ?? 'Workspace'
 
   return (
-    <div className={`app-shell ${activeInteractionView === 'chat' ? 'app-shell--chat' : ''} ${activeInteractionView === 'provider_settings' ? 'app-shell--providers' : ''} ${sidebarCollapsed ? 'app-shell--sidebar-collapsed' : ''}`}>
+    <div className={`app-shell ${activeInteractionView === 'chat' ? 'app-shell--chat' : ''} ${sidebarCollapsed ? 'app-shell--sidebar-collapsed' : ''}`}>
       <aside id="workspace-sidebar-content" className={`workspace-sidebar ${activeInteractionView === 'chat' ? 'workspace-sidebar--chat' : ''} ${sidebarCollapsed ? 'workspace-sidebar--collapsed' : ''}`} aria-label="Workspace sidebar">
         <div className="workspace-sidebar-brand">
           <img className="workspace-sidebar-logo" src="/brand/BAGO_logotipo_horizontal.svg" alt="BAGO" />
@@ -224,7 +230,6 @@ function App() {
       <div className="app-main">
         <main className={`app-view ${activeInteractionView === 'chat' ? 'app-view--chat' : ''} ${appScroll.scrolling ? 'scroll-active' : ''}`} aria-label={`${activeInteractionLabel} view`} tabIndex={0} onScroll={appScroll.onScroll}>
           {activeInteractionView === 'chat' && <AgentChat onNavigate={navigateFromChat} onOpenProviderSettings={openProviderSettings} onOpenCognitionSettings={openCognitionSettings} cognitiveMode={cognitiveMode} />}
-          {activeInteractionView === 'provider_settings' && <ProviderSettings />}
           {activeInteractionView === 'workspace' && <CognitionSettings mode={cognitiveMode} onModeChange={setCognitiveMode} workspaceOnly />}
           {activeInteractionView === 'capabilities' && <CapabilityManager />}
           {activeInteractionView === 'builder' && <AgentBuilder onBack={() => setActiveInteractionView('chat')} onAgentCreated={() => setDemoRefresh((previous) => previous + 1)} />}
@@ -247,9 +252,16 @@ function App() {
             <span aria-hidden="true">×</span>
           </button>
         </header>
-        <div className="settings-layer-layout settings-layer-layout--single">
-          <section className={`settings-layer-content ${settingsScroll.scrolling ? 'scroll-active' : ''}`} aria-label="Cognition and context settings" tabIndex={0} onScroll={settingsScroll.onScroll}>
-            <CognitionSettings mode={cognitiveMode} onModeChange={setCognitiveMode} showWorkspaceLocations={false} />
+        <div className="settings-layer-layout">
+          <nav className="settings-layer-navigation" aria-label="Settings sections">
+            <span className="navigation-caption">Configure</span>
+            <button type="button" className={`navigation-item ${settingsView === 'cognition' ? 'active' : ''}`} aria-current={settingsView === 'cognition' ? 'page' : undefined} onClick={() => setSettingsView('cognition')}>Cognition and context</button>
+            <button type="button" className={`navigation-item ${settingsView === 'providers' ? 'active' : ''}`} aria-current={settingsView === 'providers' ? 'page' : undefined} onClick={() => setSettingsView('providers')}>Proveedores y modelos</button>
+          </nav>
+          <section className={`settings-layer-content ${settingsScroll.scrolling ? 'scroll-active' : ''}`} aria-label={settingsView === 'providers' ? 'Provider and model settings' : 'Cognition and context settings'} tabIndex={0} onScroll={settingsScroll.onScroll}>
+            {settingsView === 'providers'
+              ? <ProviderSettings />
+              : <CognitionSettings mode={cognitiveMode} onModeChange={setCognitiveMode} showWorkspaceLocations={false} />}
           </section>
         </div>
       </dialog>

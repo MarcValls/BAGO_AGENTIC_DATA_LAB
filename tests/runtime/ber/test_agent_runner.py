@@ -121,6 +121,29 @@ def test_rejection_and_cancellation_do_not_approve_or_execute(tmp_path: Path, de
     assert not any(name in {"approve", "execute"} for name, _ in ber.calls)
 
 
+@pytest.mark.parametrize("provider_id", ["openai-platform", "github-copilot"])
+def test_saved_provider_is_resolved_without_using_legacy_callbacks(tmp_path: Path, provider_id: str) -> None:
+    runner, ber, context = _runner(tmp_path)
+    context["profile"].config.provider_id = provider_id
+    calls = []
+    runner._provider_resolver = lambda selected: (
+        lambda: {"state": "configured_unverified", "model_id": "model-test"},
+        lambda model, messages, **kwargs: calls.append((selected, model)) or {"content": "Provider answer"},
+    )
+    result = runner.start(agent_id=context["profile"].id, task="Answer this task")
+    assert calls == [(provider_id, "model-test")]
+    assert result["answer"] == "Provider answer" and result["effect_status"] == "not_started"
+    assert not any(name in {"prepare", "approve", "execute"} for name, _ in ber.calls)
+
+
+def test_non_ollama_profile_without_dispatcher_cannot_use_legacy_callbacks(tmp_path: Path) -> None:
+    runner, ber, context = _runner(tmp_path)
+    context["profile"].config.provider_id = "github-copilot"
+    with pytest.raises(AgentRunnerError, match="no route"):
+        runner.start(agent_id=context["profile"].id, task="Answer")
+    assert ber.calls == []
+
+
 @pytest.mark.parametrize("proposal", [
     {"effect_id": "filesystem.delete", "target": {"path": "x"}, "arguments": {}},
     {"effect_id": "process.terminate", "target": {"pid": 1}, "arguments": {}},

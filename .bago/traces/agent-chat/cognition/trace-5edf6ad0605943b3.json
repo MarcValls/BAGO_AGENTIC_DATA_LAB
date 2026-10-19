@@ -1,0 +1,53 @@
+{
+  "cost_usd": 0.0,
+  "event_count": 1,
+  "events": [
+    {
+      "attributes": {
+        "capacity": 6,
+        "content_persisted": false,
+        "conversation_id": "conv_7416413423df48efb62321ca9fad69a5",
+        "expansions": 1,
+        "focus": [
+          {
+            "id": "need.current_turn",
+            "kind": "need",
+            "score": 1.0
+          },
+          {
+            "id": "strategy.direct",
+            "kind": "strategy",
+            "score": 0.65
+          }
+        ],
+        "focus_count": 2,
+        "max_hops": 2,
+        "method": "deterministic_lexical_cues_bounded_weighted_attention",
+        "mode": "bago5",
+        "model_id": "gemma4:31b",
+        "owner_id": "app-assistant",
+        "owner_kind": "assistant",
+        "profile": "BAGO5_CHAT_COGNITION_V0.1"
+      },
+      "end_time_unix_nano": 1792454092709143500,
+      "event_id": "event-8e3088b3d73741de",
+      "evidence_refs": [
+        "conversation://conv_7416413423df48efb62321ca9fad69a5",
+        "model://gemma4:31b"
+      ],
+      "kind": "reasoning",
+      "name": "chat.cognitive_context",
+      "parent_event_id": null,
+      "sequence": 0,
+      "start_time_unix_nano": 1792454092709143500,
+      "status": "COMPLETED",
+      "trace_id": "trace-5edf6ad0605943b3"
+    }
+  ],
+  "evidence_refs": [
+    "conversation://conv_7416413423df48efb62321ca9fad69a5",
+    "model://gemma4:31b"
+  ],
+  "run_id": "chat-cognition-db2ff82bfd1942f4b45ecdb520bf119a",
+  "trace_id": "trace-5edf6ad0605943b3"
+}

@@ -11,3 +11,4 @@ opentelemetry-sdk==1.44.0
 pydantic==2.12.5
 pytest==9.0.3
 requests==2.33.1
+github-copilot-sdk==0.3.0

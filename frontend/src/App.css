@@ -174,17 +174,3 @@
   .portfolio-navigation-content { grid-template-columns: 1fr; }
   .history-header .tab-strip-item { padding-inline: 5px; font-size: .68rem; }
 }
-.app-shell--providers .workspace-sidebar { border-color: #dce3ec; background: #fff; }
-.app-shell--providers .workspace-sidebar-logo,
-.app-shell--providers .workspace-sidebar-symbol { filter: brightness(0) saturate(100%); }
-.app-shell--providers .workspace-sidebar .navigation-item { color: #526176; }
-.app-shell--providers .workspace-sidebar .navigation-item:hover { border-color: #e0e8f1; color: #214f7f; background: #f5f8fc; }
-.app-shell--providers .workspace-sidebar .navigation-item.active { border-color: #c9def4; color: #174f88; background: #edf5ff; }
-.app-shell--providers .workspace-sidebar .navigation-item-icon { color: #60758e; }
-.app-shell--providers .workspace-sidebar .navigation-item.active .navigation-item-icon { color: #236bb0; }
-.app-shell--providers .workspace-sidebar-footer { border-color: #e0e6ee; }
-.app-shell--providers .workspace-sidebar-footer .settings-trigger { color: #526176; }
-.app-shell--providers .sidebar-collapse-button { color: #63738a; }
-.app-shell--providers .sidebar-collapse-button:hover,
-.app-shell--providers .sidebar-collapse-button:focus-visible { border-color: #d4deea; background: #f3f6fa; }
-.settings-layer-layout--single { grid-template-columns: minmax(0, 1fr); }

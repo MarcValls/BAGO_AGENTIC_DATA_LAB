@@ -1,9 +1,4 @@
-"""Write-only provider registration storage for the ADL settings UI.
-
-This module records provider setup metadata and keeps supplied credentials in
-an operating-system credential store. It does not authenticate to providers or
-make them available to chat/agent execution.
-"""
+"""Provider registration metadata and OS credential-store access."""
 
 from __future__ import annotations
 
@@ -12,6 +7,7 @@ import os
 import re
 import tempfile
 import threading
+from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
@@ -21,6 +17,7 @@ MODEL_RE = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$")
 SERVICE_NAME = "BAGO.AgenticDataLab.ProviderRegistration"
 REGISTRY_PATH = Path(os.environ.get("LOCALAPPDATA", Path.home())) / "BAGO" / "AgenticDataLab" / "provider-registry.json"
 _LOCK = threading.RLock()
+_runtime_failures: dict[str, tuple[str, str]] = {}
 
 PROVIDER_MODES: dict[str, set[str]] = {
     "codex": {"codex_cli"},
@@ -31,6 +28,16 @@ PROVIDER_MODES: dict[str, set[str]] = {
     "opencode": {"api_key", "local"},
 }
 SECRET_MODES = {"api_key", "token"}
+LIVE_PROVIDER_IDS = {"openai-platform", "github-copilot"}
+
+
+@dataclass(frozen=True)
+class RuntimeRegistration:
+    provider_id: str
+    model_id: str
+    auth_mode: str
+    revision: str
+    credential: str | None = field(default=None, repr=False)
 
 
 class RegistrationError(Exception):
@@ -78,8 +85,9 @@ def _read_registry() -> dict[str, dict[str, Any]]:
 
 
 def _public_status(provider_id: str, config: Any) -> dict[str, Any]:
+    support = "chat_and_agent_runner" if provider_id in LIVE_PROVIDER_IDS else "not_integrated"
     if not isinstance(config, dict) or config.get("auth_mode") not in PROVIDER_MODES[provider_id]:
-        return {"provider_id": provider_id, "state": "not_configured", "auth_mode": None, "model_id": None, "base_url": None, "has_credential": False}
+        return {"provider_id": provider_id, "state": "not_configured", "auth_mode": None, "model_id": None, "base_url": None, "has_credential": False, "runtime_support": support}
 
     mode = config["auth_mode"]
     has_credential = False
@@ -88,12 +96,19 @@ def _public_status(provider_id: str, config: Any) -> dict[str, Any]:
         try:
             has_credential = bool(_secure_keyring().get_password(SERVICE_NAME, provider_id))
             credential_store_state = "available"
-        except RegistrationError:
+        except Exception:
             credential_store_state = "unavailable"
 
     state = "configured_unverified"
     if mode in SECRET_MODES and not has_credential:
         state = "needs_authentication" if credential_store_state == "available" else "credential_store_unavailable"
+    if state == "configured_unverified" and config.get("last_verified_model_id") == config.get("model_id") and config.get("model_id"):
+        state = "ready"
+    if state == "configured_unverified" and config.get("last_error_state") == "needs_authentication":
+        state = "needs_authentication"
+    failure = _runtime_failures.get(provider_id)
+    if failure and failure[0] == config.get("updated_at", "") and state in {"ready", "configured_unverified", "needs_authentication"}:
+        state = failure[1]
     return {
         "provider_id": provider_id,
         "state": state,
@@ -103,7 +118,8 @@ def _public_status(provider_id: str, config: Any) -> dict[str, Any]:
         "has_credential": has_credential,
         "credential_store_state": credential_store_state,
         "updated_at": config.get("updated_at"),
-        "runtime_support": "not_integrated",
+        "last_verified_at": config.get("last_verified_at") if state == "ready" else None,
+        "runtime_support": support,
     }
 
 
@@ -111,6 +127,13 @@ def list_registrations() -> dict[str, Any]:
     with _LOCK:
         providers = _read_registry()
         return {"registrations": [_public_status(provider_id, providers.get(provider_id)) for provider_id in PROVIDER_MODES]}
+
+
+def status(provider_id: str) -> dict[str, Any]:
+    if provider_id not in PROVIDER_MODES:
+        raise RegistrationError("invalid_provider", "Unknown provider registration.")
+    with _LOCK:
+        return _public_status(provider_id, _read_registry().get(provider_id))
 
 
 def save_registration(
@@ -150,12 +173,15 @@ def save_registration(
                 secret = api_key.strip()
                 if len(secret) < 8 or len(secret) > 4096 or "\n" in secret or "\r" in secret:
                     raise RegistrationError("invalid_api_key", "Credential is invalid.")
-                _secure_keyring().set_password(SERVICE_NAME, provider_id, secret)
+                try:
+                    _secure_keyring().set_password(SERVICE_NAME, provider_id, secret)
+                except Exception:
+                    raise RegistrationError("secure_store_unavailable", "The operating-system credential store could not save the credential.") from None
             else:
                 try:
                     current = _secure_keyring().get_password(SERVICE_NAME, provider_id)
-                except RegistrationError:
-                    raise
+                except Exception:
+                    raise RegistrationError("secure_store_unavailable", "The operating-system credential store could not read the credential.") from None
                 if not current:
                     raise RegistrationError("authentication_required", "Provide a credential before saving this registration.", "needs_authentication")
         elif api_key:
@@ -168,16 +194,81 @@ def save_registration(
             **({"base_url": clean_url} if clean_url else {}),
             "updated_at": utc_now(),
         }
-        REGISTRY_PATH.parent.mkdir(parents=True, exist_ok=True)
-        fd, temp_name = tempfile.mkstemp(prefix="provider-registry-", suffix=".tmp", dir=str(REGISTRY_PATH.parent))
-        try:
-            with os.fdopen(fd, "w", encoding="utf-8") as stream:
-                json.dump({"schema": "adl.provider_registry.v1", "providers": providers}, stream, indent=2)
-                stream.flush()
-                os.fsync(stream.fileno())
-            os.replace(temp_name, REGISTRY_PATH)
-        finally:
-            if os.path.exists(temp_name):
-                os.unlink(temp_name)
-
+        _write_registry(providers)
         return _public_status(provider_id, providers[provider_id])
+
+
+def get_registration(provider_id: str) -> dict[str, Any]:
+    if provider_id not in LIVE_PROVIDER_IDS:
+        raise RegistrationError("provider_not_integrated", "This provider is not integrated with ADL chat.")
+    with _LOCK:
+        config = _read_registry().get(provider_id)
+        if not isinstance(config, dict):
+            raise RegistrationError("provider_not_configured", "Register this provider before using it.", "needs_authentication")
+        return dict(config)
+
+
+def runtime_binding(provider_id: str, model_id: str) -> RuntimeRegistration:
+    with _LOCK:
+        config = get_registration(provider_id)
+        mode = config.get("auth_mode")
+        if mode not in PROVIDER_MODES[provider_id]:
+            raise RegistrationError("invalid_registration_method", "Unsupported authentication method.")
+        if not model_id or config.get("model_id") != model_id:
+            raise RegistrationError("model_registration_mismatch", "Select the model saved in this provider registration.")
+        try:
+            credential = _secure_keyring().get_password(SERVICE_NAME, provider_id) if mode in SECRET_MODES else None
+        except Exception:
+            raise RegistrationError("secure_store_unavailable", "The operating-system credential store could not read the credential.") from None
+        if mode in SECRET_MODES and not credential:
+            raise RegistrationError("authentication_required", "Provide a credential before using this provider.", "needs_authentication")
+        return RuntimeRegistration(provider_id, model_id, mode, str(config.get("updated_at", "")), credential)
+
+
+def mark_verified(binding: RuntimeRegistration) -> dict[str, Any]:
+    provider_id, model_id = binding.provider_id, binding.model_id
+    if provider_id not in LIVE_PROVIDER_IDS:
+        raise RegistrationError("provider_not_integrated", "This provider is not integrated with ADL chat.")
+    with _LOCK:
+        providers = _read_registry()
+        config = providers.get(provider_id)
+        if not isinstance(config, dict) or config.get("model_id") != model_id or config.get("updated_at", "") != binding.revision:
+            raise RegistrationError("registration_changed", "The provider registration changed during the request. Check the current registration again.")
+        config = dict(config)
+        config["last_verified_model_id"] = model_id
+        config["last_verified_at"] = utc_now()
+        config.pop("last_error_state", None)
+        providers[provider_id] = config
+        _write_registry(providers)
+        _runtime_failures.pop(provider_id, None)
+        return _public_status(provider_id, config)
+
+
+def mark_failed(binding: RuntimeRegistration, state: str = "error") -> None:
+    with _LOCK:
+        failure_state = "needs_authentication" if state == "needs_authentication" else "configured_unverified"
+        _runtime_failures[binding.provider_id] = (binding.revision, failure_state)
+        providers = _read_registry()
+        config = providers.get(binding.provider_id)
+        if not isinstance(config, dict) or config.get("updated_at", "") != binding.revision:
+            return
+        config = dict(config)
+        config.pop("last_verified_model_id", None)
+        config.pop("last_verified_at", None)
+        config["last_error_state"] = failure_state
+        providers[binding.provider_id] = config
+        _write_registry(providers)
+
+
+def _write_registry(providers: dict[str, dict[str, Any]]) -> None:
+    REGISTRY_PATH.parent.mkdir(parents=True, exist_ok=True)
+    fd, temp_name = tempfile.mkstemp(prefix="provider-registry-", suffix=".tmp", dir=str(REGISTRY_PATH.parent))
+    try:
+        with os.fdopen(fd, "w", encoding="utf-8") as stream:
+            json.dump({"schema": "adl.provider_registry.v1", "providers": providers}, stream, indent=2)
+            stream.flush()
+            os.fsync(stream.fileno())
+        os.replace(temp_name, REGISTRY_PATH)
+    finally:
+        if os.path.exists(temp_name):
+            os.unlink(temp_name)

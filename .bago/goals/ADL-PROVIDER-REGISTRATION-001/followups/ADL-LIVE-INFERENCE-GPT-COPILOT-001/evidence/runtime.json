@@ -1,0 +1,30 @@
+{
+  "checked_at": "2026-10-19T23:47:53.051253+00:00",
+  "url": "http://127.0.0.1:8080",
+  "health_status": 200,
+  "health": {
+    "status": "ok"
+  },
+  "provider_status": 200,
+  "providers": [
+    {
+      "provider_id": "openai-platform",
+      "state": "not_configured",
+      "runtime_support": "chat_and_agent_runner"
+    },
+    {
+      "provider_id": "github-copilot",
+      "state": "not_configured",
+      "runtime_support": "chat_and_agent_runner"
+    }
+  ],
+  "frontend_status": 200,
+  "served_html_matches_build": true,
+  "assets": {
+    "/assets/app-B-UwhQDs.js": 200,
+    "/assets/app-BIqlm3lt.css": 200,
+    "/assets/jsx-runtime-BzuTZ3a0.js": 200
+  },
+  "live_inference": "NOT_RUN",
+  "browser_visual": "NOT_RUN - no connected browser"
+}
