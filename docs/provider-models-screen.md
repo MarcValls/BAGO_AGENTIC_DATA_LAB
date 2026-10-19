@@ -81,6 +81,7 @@ La pantalla debe partir del inventario existente de BAGO. Esta lista representa 
 | Ollama local | Servicio local / CLI | Catálogo de BAGO y ruta local de chat | Configuración local; disponibilidad por comprobar |
 | Ollama Cloud | API | Adaptador incluido en los contratos offline de proveedores | Sin conexión hasta verificar credenciales y servicio |
 | OpenAI Codex | CLI delegada | Adaptador incluido en los contratos offline de proveedores | Requiere CLI autenticada; no equivale a OpenAI Platform |
+| OpenAI Platform | API key | Descriptor separado en el catálogo BAGO | Sin conexión hasta verificar credenciales y servicio |
 | GitHub Copilot | Adaptador `copilot` | Adaptador incluido en los contratos offline de proveedores | Mostrar la modalidad de autenticación admitida por la instalación |
 | Anthropic | API | Adaptador incluido en los contratos offline de proveedores | Sin conexión hasta verificar credenciales y servicio |
 | OpenRouter | API | Adaptador incluido en los contratos offline de proveedores | Sin conexión hasta verificar credenciales y servicio |
@@ -399,3 +400,22 @@ Es el esquema más apropiado para el funcionamiento que buscamos en ADL/BAGO: re
 `PROVEEDOR REGISTRADO ≠ CONEXIÓN VERIFICADA ≠ MODELO HABILITADO ≠ MODELO AUTORIZADO PARA EJECUTAR HERRAMIENTAS`
 
 Cada estado debe gestionarse y verificarse por separado.
+
+---
+
+## Estado de implementación en ADL
+
+La pantalla actual organiza los registros en pestañas por proveedor. Cada ficha
+presenta su modalidad de alta: sesión local o clave para Ollama, Codex CLI,
+OpenAI Platform, GitHub Copilot CLI/token, Anthropic, OpenRouter y OpenCode.
+Codex CLI y OpenAI Platform son fichas separadas.
+
+El registro de proveedores que aún no tienen una ruta de ejecución en ADL se
+guarda como `configured_unverified`. Sus claves solo se escriben en el almacén
+de credenciales del sistema operativo; la API devuelve únicamente si existe
+una clave. Guardar un registro no inicia OAuth, no ejecuta una CLI, no prueba la
+conexión y no habilita ese proveedor en chat ni en ejecuciones de agentes.
+
+Ollama conserva sus llamadas existentes de estado, configuración, carga de
+modelos y comprobación no generativa. La ruta de chat de ADL continúa limitada
+a Ollama. Bedrock permanece en su ruta gobernada de RAG/agente.

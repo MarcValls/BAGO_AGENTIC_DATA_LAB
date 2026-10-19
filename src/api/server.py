@@ -39,7 +39,7 @@ from src.capabilities import (
 )
 from src.conversations import ConversationConflict, ConversationNotFound, ConversationStore
 from src.conversations.library import OwnerKind
-from src.providers import ollama
+from src.providers import ollama, registration
 from src.agent_tools.workspace_read import (
     MAX_TOOL_CALLS_PER_TURN,
     MAX_TOOL_ROUNDS,
@@ -311,6 +311,15 @@ class OllamaConfigRequest(BaseModel):
 
 class OllamaVerifyRequest(BaseModel):
     model_id: str | None = Field(default=None, max_length=128)
+
+
+class ProviderRegistrationRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    auth_mode: str = Field(min_length=1, max_length=40)
+    model_id: str | None = Field(default=None, max_length=128)
+    base_url: str | None = Field(default=None, max_length=512)
+    api_key: str | None = Field(default=None, max_length=4096)
 
 
 class AgentCreateRequest(BaseModel):
@@ -781,6 +790,24 @@ def verify_ollama(request: OllamaVerifyRequest) -> dict[str, Any]:
         return ollama.verify(request.model_id)
     except ollama.ProviderError as error:
         raise _provider_http_error(error) from None
+
+
+@app.get("/api/providers/registry")
+def provider_registration_status() -> dict[str, Any]:
+    try:
+        return registration.list_registrations()
+    except registration.RegistrationError as error:
+        status_code = 422 if error.code.startswith("invalid_") else 503
+        raise HTTPException(status_code=status_code, detail={"code": error.code, "message": error.message, "state": error.status}) from None
+
+
+@app.put("/api/providers/registry/{provider_id}")
+def save_provider_registration(provider_id: str, request: ProviderRegistrationRequest) -> dict[str, Any]:
+    try:
+        return registration.save_registration(provider_id, request.auth_mode, request.model_id, request.base_url, request.api_key)
+    except registration.RegistrationError as error:
+        status_code = 422 if error.code.startswith("invalid_") or error.code == "unexpected_secret" else 401 if error.code == "authentication_required" else 503
+        raise HTTPException(status_code=status_code, detail={"code": error.code, "message": error.message, "state": error.status}) from None
 
 
 @app.get("/api/demo/status")

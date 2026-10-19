@@ -1,0 +1,69 @@
+{
+  "schema": "bago.app_game.change_plan.v1",
+  "change_id": "ADL-PROVIDER-REGISTRATION-001",
+  "baseline_id": "provider-registration-prechange-20261019",
+  "baseline_snapshot_sha256": "1457caa6fbeca66f4aead0ba0dbcdea2ea602a4ed2d7281f41dd8c43afaf53e0",
+  "intent": "Add provider-specific registration tabs in ADL while preserving Ollama setup and preventing unsupported registrations from appearing live-ready.",
+  "change_scope": [
+    "frontend/src/components/ProviderSettings.tsx",
+    "frontend/src/components/ProviderSettings.css",
+    "src/api/server.py",
+    "src/providers/registration.py",
+    "docs/provider-models-screen.md",
+    ".bago/goals/ADL-PROVIDER-REGISTRATION-001/goal.md",
+    ".bago/goals/ADL-PROVIDER-REGISTRATION-001/plan.json",
+    ".bago/goals/ADL-PROVIDER-REGISTRATION-001/evidence/"
+  ],
+  "features": [
+    {
+      "id": "PROVIDER-TABS",
+      "assertion": "Provider settings exposes provider-specific tabs and registration methods for the catalogued providers.",
+      "check_refs": ["PROVIDER-UI-BUILD", "PROVIDER-UI-ROUTE"]
+    },
+    {
+      "id": "PROVIDER-REGISTRATION-STORE",
+      "assertion": "Registrations persist without returning API key material and remain marked unverified until an actual provider check exists.",
+      "check_refs": ["PROVIDER-REGISTRY-API", "PROVIDER-SECRET-BOUNDARY"]
+    },
+    {
+      "id": "OLLAMA-PRESERVATION",
+      "assertion": "Existing Ollama status, configuration, model listing, and non-generative verification controls remain available.",
+      "check_refs": ["OLLAMA-REGRESSION"]
+    }
+  ],
+  "preservation": {
+    "required_properties": [
+      {"capability_id": "OLLAMA-SETUP", "property_id": "STATUS-CONFIGURE-MODELS-VERIFY"},
+      {"capability_id": "OLLAMA-SECURITY", "property_id": "SECRET-WRITE-ONLY"},
+      {"capability_id": "PROVIDER-BOUNDARY", "property_id": "REGISTERED-IS-NOT-LIVE-READY"}
+    ]
+  },
+  "authorized_changes": [],
+  "tests": [
+    {"test_id": "PROVIDER-UI-BUILD", "target_type": "FEATURE", "target_id": "PROVIDER-TABS", "boundary": "BUILD", "mandatory": true, "expected": "Frontend type-check and production bundle succeed.", "command_ref": "npm run build --prefix frontend"},
+    {"test_id": "PROVIDER-UI-ROUTE", "target_type": "FEATURE", "target_id": "PROVIDER-TABS", "boundary": "VISUAL", "mandatory": true, "expected": "Each provider tab shows its own registration methods and selected-state semantics."},
+    {"test_id": "PROVIDER-REGISTRY-API", "target_type": "FEATURE", "target_id": "PROVIDER-REGISTRATION-STORE", "boundary": "INTEGRATION", "mandatory": true, "expected": "Registration create/read persists expected status and method for allowed provider IDs."},
+    {"test_id": "PROVIDER-SECRET-BOUNDARY", "target_type": "FEATURE", "target_id": "PROVIDER-REGISTRATION-STORE", "boundary": "INTEGRATION", "mandatory": true, "expected": "Secrets are accepted only by write-only fields, not written to JSON, and never returned by status responses."},
+    {"test_id": "OLLAMA-REGRESSION", "target_type": "PROPERTY", "target_id": "STATUS-CONFIGURE-MODELS-VERIFY", "boundary": "INTEGRATION", "mandatory": true, "expected": "Existing Ollama setup behavior remains available and unchanged."}
+  ],
+  "standard_first": {
+    "decision": "ADAPT",
+    "justification": "Adapt the BAGO provider registration presets and the ADL provider settings flow while using ADL's existing FastAPI, React, and operating-system keyring boundary.",
+    "candidates_considered": ["BAGO ProviderCenterModule presets", "ADL ProviderSettings and Ollama API", "New provider registration endpoint in ADL"]
+  },
+  "extensions": {
+    "capability_demonstrations": [
+      {
+        "capability_id": "ADL-PROVIDER-REGISTRATION",
+        "state": "PROPOSED",
+        "preconditions": ["ADL host UI and API are running", "A supported operating-system credential store is available for API-key modes"],
+        "steps": ["Open Provider & models", "Save GitHub Copilot CLI registration", "Save OpenAI Codex CLI registration", "Reload state and inspect only public status", "Re-open Ollama settings"],
+        "observable": "Provider forms and status through the UI, plus persisted registry metadata through the local API.",
+        "expected_result": "CLI registrations persist as configured_unverified, secrets are never returned, and Ollama remains operational.",
+        "check_refs": ["PROVIDER-UI-ROUTE", "PROVIDER-REGISTRY-API", "PROVIDER-SECRET-BOUNDARY", "OLLAMA-REGRESSION"],
+        "evidence_refs": [],
+        "limits": ["No Codex/GitHub/other new-provider live login or inference is claimed.", "No UI path executes a provider CLI or starts an OAuth flow."]
+      }
+    ]
+  }
+}
