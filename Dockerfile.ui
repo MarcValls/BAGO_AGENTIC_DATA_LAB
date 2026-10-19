@@ -13,7 +13,9 @@ COPY frontend/package*.json ./
 COPY frontend/tsconfig*.json ./
 COPY frontend/vite.config.ts ./
 COPY frontend/index.html ./
+COPY frontend/ui-kit-preview.html ./
 COPY frontend/public ./public
+COPY frontend/packages ./packages
 COPY frontend/src ./src
 RUN npm ci && npm run build
 
@@ -30,6 +32,8 @@ COPY --from=frontend-builder /app/frontend/dist frontend/dist
 
 # Copy application source
 COPY src src/
+COPY runtime/ber runtime/ber/
+COPY scripts/ber_effect_demo.py scripts/ber_effect_demo.py
 
 # Set PATH for pip-installed binaries
 ENV PATH=/root/.local/bin:$PATH \

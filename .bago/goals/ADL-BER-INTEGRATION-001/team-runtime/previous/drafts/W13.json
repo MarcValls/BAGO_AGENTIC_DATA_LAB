@@ -1,0 +1,24 @@
+{
+  "work_id": "W13",
+  "changed_files": [
+    "frontend/src/features/decision-inspector/integration/DecisionInspector.tsx",
+    "frontend/tests/ui/decision-inspector/integration/integration.test.tsx",
+    "docs/decision-inspector/verification/W13_RECEIPT_RUN_BINDING.md"
+  ],
+  "outputs": [
+    { "id": "receipt-run-binding-guard-v1", "path": "frontend/src/features/decision-inspector/integration/DecisionInspector.tsx", "frozen": false },
+    { "id": "receipt-run-identity-adversarial-fixtures-v1", "path": "frontend/tests/ui/decision-inspector/integration/integration.test.tsx", "frozen": false },
+    { "id": "w11-p1-receipt-run-binding-remediation", "path": "docs/decision-inspector/verification/W13_RECEIPT_RUN_BINDING.md", "frozen": false }
+  ],
+  "verification": [
+    { "command": "npm run build (cwd frontend)", "result": "PASS", "evidence": "TypeScript build and Vite production build completed; 124 modules transformed." },
+    { "command": "Focused compiled integration check: node --test %TEMP%\\bago-inspector-w13-20261008\\tests\\ui\\decision-inspector\\integration\\integration.test.js (CSS imports stubbed; NODE_PATH=frontend/node_modules)", "result": "PASS", "evidence": "5 tests passed, 0 failed; includes foreign-run receipt with colliding receipt_id/request_id and missing run_id in mcp/provider receipt inputs." },
+    { "command": "git diff --check -- frontend/src/features/decision-inspector/integration frontend/tests/ui/decision-inspector/integration docs/decision-inspector/verification", "result": "PASS", "evidence": "No whitespace errors in W13 scopes." },
+    { "command": "python .codex-team-kit/scripts/teamctl.py verify (before W13 handoff)", "result": "PASS", "evidence": "All dependency handoffs validate before materializing W13." }
+  ],
+  "residual_risks": [
+    "Run identity is source-supplied and checked for equality; this is not cryptographic attestation of receipt origin.",
+    "W14 independent adversarial re-verification remains pending."
+  ],
+  "next_consumers": ["W14"]
+}

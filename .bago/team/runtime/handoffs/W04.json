@@ -1,0 +1,73 @@
+{
+  "changed_files": [
+    "src/contracts/trace/trace.ts",
+    "src/adapters/trace/localTraceAdapter.ts",
+    "docs/decision-inspector/contracts/trace/decision-trace-v1.md",
+    "tests/contracts/trace/trace.test.ts"
+  ],
+  "next_consumers": [
+    "W08"
+  ],
+  "outputs": [
+    {
+      "description": "Read-only trace timeline schema with explicit independent chronology, causality and source-supplied agent/tool/proposal/request/claim/action/execution/permit/receipt identifiers.",
+      "kind": "decision-trace-contract-v1",
+      "path": "src/contracts/trace/trace.ts",
+      "sha256": "f5ed0d6fac1ba18e8052d99f620b16480b6e169f8392b2698b65daf06aef473e"
+    },
+    {
+      "description": "LocalTrace projection adapter preserving source status and redaction, sorting only by supplied sequence, and reporting duplicate/missing/mismatched trace data without deriving authority.",
+      "kind": "decision-trace-adapter-v1",
+      "path": "src/adapters/trace/localTraceAdapter.ts",
+      "sha256": "9e639a955c22f5c41ec367a1f535e063cced86ac6c96caa83ac450fb80ad5d30"
+    },
+    {
+      "description": "Frozen mapping and authority limits for the trace projection contract.",
+      "kind": "decision-trace-contract-documentation-v1",
+      "path": "docs/decision-inspector/contracts/trace/decision-trace-v1.md",
+      "sha256": "2f9ebd3cfd2cb180df86345c68d5afad3bdd0854c3778d60acdb964c9d109cdc"
+    },
+    {
+      "description": "Adversarial contract tests for ordering, causality, gaps, supplied correlations, failure/redaction pass-through, duplicates and trace identity mismatch.",
+      "kind": "decision-trace-contract-tests-v1",
+      "path": "tests/contracts/trace/trace.test.ts",
+      "sha256": "deeb62c47d6df14a7e5aec1b522d0adf2c925a1b5d38254acdac73bf2874ace2"
+    }
+  ],
+  "payload_sha256": "accb5cdfa2d5d5016be24fa47fbc6909cd13547e12cfbf76878725c18bc5e183",
+  "residual_risks": [
+    "This contract does not authenticate trace sources, validate BAGO permit or receipt signatures, prove BER execution, or establish causal truth.",
+    "The frontend's older trace contract is outside W04 write scope; W08 integration must reconcile its consumer surface to this frozen contract without treating identifiers as authority.",
+    "No live BER runtime, effect, BAGO receipt or browser UI was exercised."
+  ],
+  "role": "trace-observability-engineer",
+  "status": "DONE",
+  "verification": [
+    {
+      "command": "python .bago/team/kit/scripts/teamctl.py --root . claim W04 --agent /root/ber_trace_contract",
+      "evidence": "W04 transitioned READY -> CLAIMED before writing contract files.",
+      "result": "PASS"
+    },
+    {
+      "command": "frontend/node_modules/.bin/tsc.cmd --ignoreConfig --target ES2022 --module NodeNext --moduleResolution NodeNext --strict --esModuleInterop --skipLibCheck --types node --typeRoots frontend/node_modules/@types --outDir <system-temp>/adl-ber-trace-w04 src/contracts/trace/trace.ts src/adapters/trace/localTraceAdapter.ts tests/contracts/trace/trace.test.ts",
+      "evidence": "Strict TypeScript compilation completed with exit code 0; generated JavaScript was written outside the repository.",
+      "result": "PASS"
+    },
+    {
+      "command": "node --test <system-temp>/adl-ber-trace-w04/tests/contracts/trace/trace.test.js",
+      "evidence": "4 tests passed; 0 failed. The suite covers out-of-order events, chronology versus causality, sequence gaps, missing parents, explicit and absent correlations, failed statuses, redaction, duplicate IDs and trace ID mismatch.",
+      "result": "PASS"
+    },
+    {
+      "command": "git diff --check -- src/contracts/trace src/adapters/trace tests/contracts/trace docs/decision-inspector/contracts/trace/decision-trace-v1.md",
+      "evidence": "No whitespace errors reported in W04 scopes.",
+      "result": "PASS"
+    },
+    {
+      "command": "Static review against W01 BER_REUSE_MAP.md, W02 decision-evidence-contract-v1 and W03 BER_INSPECTOR_UX_V1.md",
+      "evidence": "Trace source envelope and event IDs remain supplied observations; claims/actions/execution/permit/receipt IDs are independently copied only from explicit source attributes, while chronology and parent causality remain separate.",
+      "result": "PASS"
+    }
+  ],
+  "work_id": "W04"
+}

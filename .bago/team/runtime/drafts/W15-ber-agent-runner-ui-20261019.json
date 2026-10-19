@@ -1,0 +1,64 @@
+{
+  "work_id": "W15",
+  "role": "decision-ui-engineer",
+  "status": "DONE",
+  "changed_files": [
+    "frontend/src/components/AgentRunner.tsx",
+    "frontend/src/components/AgentRunner.css",
+    "frontend/tests/ui/agent-runner/agent-runner.test.mjs",
+    "frontend/tests/ui/agent-evaluation-lab/rendered.test.mjs"
+  ],
+  "outputs": [
+    {
+      "id": "agent-runner-ui-v1",
+      "kind": "agent-runner-proposal-review-ui-v1",
+      "path": "frontend/src/components/AgentRunner.tsx",
+      "description": "WebSocket task start and proposal review with approve/reject/cancel decisions bound only to proposal_id, distinct authorization/execution/receipt states, exact-identity verified success, and read-only LocalTrace projection."
+    },
+    {
+      "id": "agent-runner-ui-tests-v1",
+      "kind": "agent-runner-ui-tests-v1",
+      "path": "frontend/tests/ui/agent-runner/agent-runner.test.mjs",
+      "description": "Deterministic WebSocket mock covers loading, empty, error, unsupported proposal, task answer, review, approve/reject/cancel, authorization denial, valid completion, mismatched IDs and LocalTrace."
+    }
+  ],
+  "repository_snapshot": {
+    "branch": "codex/adl-ber-integration-20261019",
+    "head": "585fe4635596b1bd253fb8ba6d5b736ebf133ee9",
+    "head_tree": "9a31954f855d3e38c371eadc145fa488813b9aec",
+    "note": "W15 consumed re-delivered W14 API/backend handoff; API contract SHA-256 070f14fd8dda84fba5c61873fda848d0351b9aedfd91865dc23eeb709ec5600d. No backend or API files were changed."
+  },
+  "verification": [
+    {
+      "command": "cd frontend; node --test tests/ui/agent-runner/agent-runner.test.mjs",
+      "evidence": "9 passed, 0 failed. Deterministic WebSocket fake confirms exact start frame, proposal_id-only decision frame, approval request binding, receipt identity checks, LocalTrace projection and non-success states.",
+      "result": "PASS"
+    },
+    {
+      "command": "npm run test:ui --prefix frontend",
+      "evidence": "17 passed, 0 failed, including updated Agent Runner regression and preserved export behavior.",
+      "result": "PASS"
+    },
+    {
+      "command": "npm run build --prefix frontend",
+      "evidence": "TypeScript project build and Vite production build completed with exit code 0; tracked generated frontend/dist/index.html was restored after the build.",
+      "result": "PASS"
+    },
+    {
+      "command": "git diff --check -- <four W15 changed files>",
+      "evidence": "No whitespace errors in W15-owned paths.",
+      "result": "PASS"
+    },
+    {
+      "command": "Static check: rg 'SandboxManager|AGENT_EXECUTION_AVAILABLE|ws/agents/chat' frontend/src/components/AgentRunner.tsx",
+      "evidence": "No legacy sandbox fallback, old execution-disable switch or chat WebSocket route found in AgentRunner.",
+      "result": "PASS"
+    }
+  ],
+  "residual_risks": [
+    "A live local backend, Ollama provider, BER authorization or filesystem/process effect was not invoked; WebSocket behavior is verified against deterministic UI fixtures only.",
+    "The browser displays the backend's redacted LocalTrace projection and labels it observational; it does not cryptographically validate BAGO receipts.",
+    "Success requires completed, verified_success true, matching run/proposal/request/effect identities, exact BAGO approval request identity when required, and non-empty receipt and BER execution IDs."
+  ],
+  "next_consumers": ["W16"]
+}

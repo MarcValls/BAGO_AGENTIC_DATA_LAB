@@ -1,0 +1,57 @@
+{
+  "changed_files": [
+    "src/api/server.py",
+    "docs/agent-chat-control/contracts/CONTROL_PLANE_V1.md"
+  ],
+  "next_consumers": [
+    "AC04",
+    "AC05"
+  ],
+  "outputs": [
+    {
+      "description": "A shared pre-accept WebSocket guard rejects missing or non-allowlisted Origin on all three websocket routes: demo execution, agent execution, and legacy agent chat.",
+      "path": "src/api/server.py",
+      "sha256": "c8b5bb35ec8bf0c1fbb3972c8be815aff70fd785e32c5ebd962a461134acfda6"
+    },
+    {
+      "description": "All WebSocket handshakes require exact match with the validated local HTTP origin allowlist.",
+      "path": "docs/agent-chat-control/contracts/CONTROL_PLANE_V1.md",
+      "sha256": "7e1ba743960ceefd783ab3a9fa333ab10c0161310c4e3c20f550c3715e5a4289"
+    }
+  ],
+  "payload_sha256": "0f4314a7f1c9a0c06beda0523f1dc2f1ade8d952c26f7113e9b23b1db72598eb",
+  "residual_risks": [
+    "Origin validation protects browser-origin requests, not hostile software already running as the local user.",
+    "No live WebSocket handshake was exercised; behavior is source-verified only."
+  ],
+  "role": "team-orchestrator",
+  "status": "DONE",
+  "verification": [
+    {
+      "command": "python -m compileall -q src/api/server.py",
+      "evidence": "Static Python compilation passed.",
+      "result": "PASS"
+    },
+    {
+      "command": "Inspect all @app.websocket handlers for the shared Origin guard before accept",
+      "evidence": "Source inspection found three WebSocket routes; each invokes _accept_local_websocket before endpoint work.",
+      "result": "PASS"
+    },
+    {
+      "command": "git diff --check",
+      "evidence": "No whitespace errors; Git emitted only line-ending warnings.",
+      "result": "PASS"
+    },
+    {
+      "command": "WebSocket client/network interaction",
+      "evidence": "The API was not launched.",
+      "result": "NOT_RUN"
+    },
+    {
+      "command": "Automated tests",
+      "evidence": "Not requested.",
+      "result": "NOT_RUN"
+    }
+  ],
+  "work_id": "AC10"
+}

@@ -1,0 +1,39 @@
+{
+  "work_id": "AC05",
+  "role": "team-orchestrator",
+  "status": "DONE",
+  "changed_files": [
+    "docs/agent-chat-control/FINAL_STATUS.md"
+  ],
+  "outputs": [
+    {
+      "description": "First-slice final state, exact candidate fingerprint, evidence index, P2 issue and NOT_RUN/runtime boundaries. Explicitly states general app control and governed job dispatch are not complete.",
+      "path": "docs/agent-chat-control/FINAL_STATUS.md",
+      "sha256": "be1069e53571fdb1ba306673ade67ac0b4f035e5992a1e024930880b01c2a05a"
+    }
+  ],
+  "verification": [
+    {
+      "command": "python plugins/bago-agent-decision-engineering-team/scripts/teamctl.py verify",
+      "result": "PASS",
+      "evidence": "Run immediately before terminal handoff; all completed work items and handoff payloads validate."
+    },
+    {
+      "command": "Review AC04 final report",
+      "result": "PASS",
+      "evidence": "Independent review bound to candidate fingerprint 1e57cd050d9940c9bb2311df384f6f3397b14229b99b3443729f86127dc9376f; zero P0/P1, one P2."
+    },
+    {
+      "command": "Live Ollama/provider readiness and broader job dispatch",
+      "result": "NOT_RUN",
+      "evidence": "No credentials, browser session, server process or model request were used; governed job dispatch remains outside this first slice."
+    }
+  ],
+  "residual_risks": [
+    "One P2 finding remains: API-key input is editable in container mode although save is disabled and backend rejects writes.",
+    "No live Ollama authentication/model response, UI session, WebSocket handshake, native launcher, or Docker runtime was executed.",
+    "Chat cannot dispatch governed jobs yet; the legacy Runner fails closed.",
+    "LAN deployment is unsupported until API authentication is implemented."
+  ],
+  "next_consumers": []
+}

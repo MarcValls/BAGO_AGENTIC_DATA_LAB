@@ -67,14 +67,21 @@ export function decisionInspectorModel(artifacts) {
         claims: [],
         evidence,
     } : undefined;
-    const trace = record(artifacts.trace);
-    const timeline = trace && typeof trace.trace_id === 'string' && typeof trace.run_id === 'string' && Array.isArray(trace.events)
+    const trace = artifacts.trace;
+    const validTraceEnvelope = trace && typeof trace.trace_id === 'string' && typeof trace.run_id === 'string' && Array.isArray(trace.events);
+    const traceBindingIssue = validTraceEnvelope && !runId
+        ? { kind: 'run_id_missing', actualRunId: trace.run_id }
+        : validTraceEnvelope && trace.run_id !== runId
+            ? { kind: 'run_id_mismatch', expectedRunId: runId, actualRunId: trace.run_id }
+            : undefined;
+    const timeline = validTraceEnvelope && runId && !traceBindingIssue
         ? localTraceToTimeline(trace)
         : undefined;
     return {
         conclusion,
         evidence,
         timeline,
+        traceBindingIssue,
         actions: actionBundleFromAgentRun(runBoundActionSource(run)),
     };
 }
@@ -104,5 +111,11 @@ export function DecisionInspector({ artifacts }) {
                     evidence: _jsx(EvidenceInventory, { evidence: model.evidence }),
                     provenance: _jsx(EvidenceExplorer, { conclusion: model.conclusion, initialClaimId: claimId }, `provenance-${claimId || 'none'}`),
                 } }, section)] }) : _jsxs("section", { className: "decision-inspector__empty", role: "status", children: [_jsx("h2", { children: "Run identity unavailable" }), _jsx("p", { children: "The source did not provide a run ID, so the inspector cannot create a stable conclusion identity." })] });
-    return _jsxs("section", { className: "decision-inspector-page", "aria-label": "BAGO decision inspector", children: [_jsxs("header", { className: "decision-inspector-page__header", children: [_jsxs("div", { children: [_jsx("p", { className: "decision-inspector__eyebrow", children: "Governed agent run" }), _jsx("h1", { children: "Decision Inspector" }), _jsx("p", { children: "Follow the source conclusion through evidence, trace, actions and receipts." }), _jsxs("code", { children: ["Run ID: ", runId] })] }), _jsx("span", { className: "decision-inspector-page__status", children: runStatus })] }), _jsx("nav", { className: "decision-inspector-page__nav", "aria-label": "Inspector views", children: views.map(item => _jsx("button", { type: "button", "aria-current": view === item.id ? 'page' : undefined, onClick: () => { setView(item.id); setActionId(undefined); }, children: item.label }, item.id)) }), view === 'overview' && conclusion, view === 'trace' && _jsx(TraceTimelineView, { timeline: model.timeline, state: model.timeline ? { status: 'ready' } : { status: 'unknown', message: 'The source did not provide a trace for this run.' }, onClaimNavigate: id => { setClaimId(id); setSection('claims'); setView('overview'); }, onActionNavigate: id => { setActionId(id); setView('actions'); } }), view === 'actions' && _jsxs(_Fragment, { children: [actionId && !selectedAction && _jsxs("p", { role: "status", children: ["Action ", actionId, " was referenced by the trace but was not included in the supplied action data."] }), _jsx(ActionReview, { bundle: actionBundle })] })] });
+    return _jsxs("section", { className: "decision-inspector-page", "aria-label": "BAGO decision inspector", children: [_jsxs("header", { className: "decision-inspector-page__header", children: [_jsxs("div", { children: [_jsx("p", { className: "decision-inspector__eyebrow", children: "Governed agent run" }), _jsx("h1", { children: "Decision Inspector" }), _jsx("p", { children: "Follow the source conclusion through evidence, trace, actions and receipts." }), _jsxs("code", { children: ["Run ID: ", runId] })] }), _jsx("span", { className: "decision-inspector-page__status", children: runStatus })] }), _jsx("nav", { className: "decision-inspector-page__nav", "aria-label": "Inspector views", children: views.map(item => _jsx("button", { type: "button", "aria-current": view === item.id ? 'page' : undefined, onClick: () => { setView(item.id); setActionId(undefined); }, children: item.label }, item.id)) }), model.traceBindingIssue && _jsx("p", { role: "status", children: model.traceBindingIssue.kind === 'run_id_missing'
+                    ? `Trace run ${model.traceBindingIssue.actualRunId} cannot be bound because the selected run has no run ID; its correlations are hidden.`
+                    : `Trace run ${model.traceBindingIssue.actualRunId} does not match selected run ${model.traceBindingIssue.expectedRunId}; its correlations are hidden.` }), view === 'overview' && conclusion, view === 'trace' && _jsx(TraceTimelineView, { timeline: model.timeline, state: model.timeline ? { status: 'ready' } : model.traceBindingIssue?.kind === 'run_id_missing'
+                    ? { status: 'unverified', message: `Trace run ${model.traceBindingIssue.actualRunId} cannot be bound because the selected run has no run ID.` }
+                    : model.traceBindingIssue
+                        ? { status: 'stale', message: `Trace run ${model.traceBindingIssue.actualRunId} does not match selected run ${model.traceBindingIssue.expectedRunId}.` }
+                        : { status: 'unknown', message: 'The source did not provide a trace for this run.' }, onClaimNavigate: id => { setClaimId(id); setSection('claims'); setView('overview'); }, onActionNavigate: id => { setActionId(id); setView('actions'); } }), view === 'actions' && _jsxs(_Fragment, { children: [actionId && !selectedAction && _jsxs("p", { role: "status", children: ["Action ", actionId, " was referenced by the trace but was not included in the supplied action data."] }), _jsx(ActionReview, { bundle: actionBundle })] })] });
 }

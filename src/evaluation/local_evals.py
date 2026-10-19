@@ -77,6 +77,64 @@ class LocalTraceEvaluator:
         }
     )
 
+    def evaluate_ber_effect(self, trace: LocalTrace) -> EvaluationReport:
+        """Evaluate one BER effect receipt without requiring an agent workflow.
+
+        This profile deliberately does not claim answer-quality or full-agent
+        workflow coverage. It verifies source identity, approval linkage,
+        request/receipt correlation, and the bounded BER effect allowlist.
+        """
+
+        events = trace.events
+        tools = [event for event in events if event.kind is TraceKind.TOOL and event.name == "ber.effect"]
+        receipts = [event for event in events if event.kind is TraceKind.RECEIPT and event.name == "ber.receipt"]
+        auth_events = [event for event in events if event.kind is TraceKind.AUTHORIZATION and event.name == "ber.authorization"]
+        refs = tuple(dict.fromkeys(ref for event in events for ref in event.evidence_refs))
+        tool = tools[0] if len(tools) == 1 else None
+        receipt = receipts[0] if len(receipts) == 1 else None
+        auth = auth_events[0] if len(auth_events) == 1 else None
+        tool_attrs = tool.attributes if tool else {}
+        receipt_attrs = receipt.attributes if receipt else {}
+        auth_attrs = auth.attributes if auth else {}
+        effect_id = str(tool_attrs.get("effect_id") or "")
+        allowed_effects = {"filesystem.read", "filesystem.write", "process.inspect", "process.execute"}
+        request_matches = bool(tool_attrs.get("request_id")) and tool_attrs.get("request_id") == tool_attrs.get("execution_request_id") == receipt_attrs.get("request_id")
+        receipt_matches = bool(tool_attrs.get("receipt_id")) and tool_attrs.get("receipt_id") == tool_attrs.get("outer_receipt_id") == receipt_attrs.get("receipt_id") == receipt_attrs.get("outer_receipt_id")
+        receipt_has_evidence = bool(receipt and receipt.evidence_refs and all(ref.startswith("ber://receipt/") for ref in receipt.evidence_refs))
+        approval_required = tool_attrs.get("approval_required") is True
+        if approval_required:
+            authorization_ok = (
+                tool_attrs.get("approval_state") == "approved"
+                and tool_attrs.get("authorization_state") == "consumed"
+                and bool(tool_attrs.get("decision_id"))
+                and bool(tool_attrs.get("proof_id"))
+                and bool(tool_attrs.get("permit_id"))
+                and tool_attrs.get("permit_id") == auth_attrs.get("permit_id")
+            )
+        else:
+            authorization_ok = effect_id == "process.inspect" and bool(tool_attrs.get("authorization_state"))
+        checks = (
+            EvaluationCheck("ber_run_identity", bool(trace.run_id) and any(event.name == "ber.effect.run" and event.attributes.get("run_id") == trace.run_id for event in events), "BER execution identity is present and bound to the trace" if trace.run_id and any(event.name == "ber.effect.run" and event.attributes.get("run_id") == trace.run_id for event in events) else "BER execution identity is missing or mismatched", refs),
+            EvaluationCheck("ber_effect_allowlist", effect_id in allowed_effects, "effect is in the bounded BER profile" if effect_id in allowed_effects else "effect is outside the bounded BER profile", refs),
+            EvaluationCheck("ber_authorization_linkage", authorization_ok, "approval and BAGO authorization identifiers are linked" if authorization_ok else "approval or BAGO authorization linkage is missing or mismatched", refs),
+            EvaluationCheck("ber_request_linkage", request_matches, "prepared, executed, and receipt request IDs match" if request_matches else "prepared, executed, and receipt request IDs do not match", refs),
+            EvaluationCheck("ber_receipt_linkage", receipt_matches and receipt_has_evidence, "BAGO receipt ID is linked to its evidence reference" if receipt_matches and receipt_has_evidence else "BAGO receipt identity or evidence reference is missing or mismatched", refs),
+            EvaluationCheck("ber_effect_count", tool is not None and receipt is not None and auth is not None, "exactly one effect, authorization, and receipt event are present" if tool is not None and receipt is not None and auth is not None else "effect, authorization, or receipt event is missing or duplicated", refs),
+            EvaluationCheck("ber_outcome", tool is not None and tool.status == "SUCCESS" and receipt is not None and receipt.status == "SUCCESS", "the effect and receipt both report success" if tool is not None and tool.status == "SUCCESS" and receipt is not None and receipt.status == "SUCCESS" else "the effect and receipt do not both report success", refs),
+        )
+        passed = sum(check.passed for check in checks)
+        score = passed / len(checks)
+        digest = hashlib.sha256(f"ber-evaluation:{trace.trace_id}".encode("utf-8")).hexdigest()[:20]
+        return EvaluationReport(
+            evaluation_id=f"ber-eval-{digest}",
+            trace_id=trace.trace_id,
+            status=EvaluationStatus.PASS if passed == len(checks) else EvaluationStatus.FAIL,
+            score=score,
+            checks=checks,
+            evidence_refs=refs,
+            cost_usd=trace.cost_usd,
+        )
+
     def evaluate(self, trace: LocalTrace, *, require_sandbox: bool = False) -> EvaluationReport:
         events = trace.events
         names = {event.name for event in events}

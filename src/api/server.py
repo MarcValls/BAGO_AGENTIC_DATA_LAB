@@ -62,6 +62,8 @@ from src.cognition.bago5_chat import (
 from src.observability.local_trace import LocalTrace, TraceEvent, TraceKind
 from src.observability.otel_bridge import export_local_trace_to_otlp
 from src.sandbox import SandboxError
+from src.runtime.ber import BerClient
+from src.runtime.ber.agent_runner import MAX_TASK_CHARS, AgentRunner, AgentRunnerError
 
 # `src.evaluation.local_evals` retains a legacy absolute `observability` import.
 # Add the source root before dynamically loading the evaluation package.
@@ -2358,20 +2360,64 @@ async def dispatch_workflow(workflow_id: str) -> dict[str, Any]:
 
 @app.websocket("/ws/agents/run")
 async def websocket_agent_run(websocket: WebSocket) -> None:
-    """Fail closed until an agent has a real governed execution path."""
+    """Run one persisted agent task through the server-owned BAGO BER boundary."""
     if not await _accept_local_websocket(websocket):
         return
+    runner: AgentRunner | None = None
     try:
-        await websocket.send_json({
-            "type": "error",
-            "code": "execution_unavailable",
-            "data": "Agent execution is unavailable: no governed execution capability is registered. No job was started or recorded.",
-        })
-    except (RuntimeError, WebSocketDisconnect):
-        pass
-    finally:
+        raw = await websocket.receive_text()
+        if len(raw) > MAX_TASK_CHARS + 1_024:
+            raise AgentRunnerError("invalid_message", "The Agent Runner start message exceeds its size limit.")
         try:
-            await websocket.close(code=1008)
+            message = json.loads(raw)
+        except json.JSONDecodeError:
+            raise AgentRunnerError("invalid_message", "The Agent Runner message must be valid JSON.") from None
+        if not isinstance(message, dict) or set(message) != {"type", "agent_id", "task"} or message.get("type") != "start":
+            raise AgentRunnerError("invalid_message", "Start with type, agent_id, and task fields only.")
+        runner = AgentRunner(
+            load_agent=_load_agent,
+            workspace_root=current_workspace_root,
+            provider_status=ollama.status,
+            provider_chat_turn=ollama.chat_turn,
+            ber_client_factory=BerClient,
+        )
+        result = await asyncio.to_thread(runner.start, agent_id=message["agent_id"], task=message["task"])
+        await websocket.send_json(result)
+        if result.get("type") == "proposal":
+            raw_decision = await websocket.receive_text()
+            if len(raw_decision) > 1_024:
+                raise AgentRunnerError("invalid_decision", "The action decision exceeds its size limit.")
+            try:
+                decision_message = json.loads(raw_decision)
+            except json.JSONDecodeError:
+                raise AgentRunnerError("invalid_decision", "The action decision must be valid JSON.") from None
+            if not isinstance(decision_message, dict) or set(decision_message) != {"type", "proposal_id", "decision"} or decision_message.get("type") != "decision":
+                raise AgentRunnerError("invalid_decision", "Send type, proposal_id, and decision fields only.")
+            connected = getattr(websocket.client_state, "name", "") == "CONNECTED"
+            outcome = await asyncio.to_thread(
+                runner.decide,
+                proposal_id=decision_message["proposal_id"],
+                decision=decision_message["decision"],
+                connected=connected,
+            )
+            await websocket.send_json(outcome)
+    except WebSocketDisconnect:
+        pass
+    except AgentRunnerError as error:
+        try:
+            await websocket.send_json({"type": "error", "code": error.code, "data": error.message})
+        except (RuntimeError, WebSocketDisconnect):
+            pass
+    except Exception:
+        try:
+            await websocket.send_json({"type": "error", "code": "agent_runner_failed", "data": "The Agent Runner could not complete this request. No unverified success is recorded."})
+        except (RuntimeError, WebSocketDisconnect):
+            pass
+    finally:
+        if runner is not None:
+            runner.close()
+        try:
+            await websocket.close(code=1000)
         except RuntimeError:
             pass
 

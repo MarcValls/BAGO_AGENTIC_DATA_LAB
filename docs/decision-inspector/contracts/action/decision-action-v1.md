@@ -4,21 +4,53 @@ Status: **PREPARED** for W05; freeze only when the teamctl handoff validates.
 
 ## Authority and source mapping
 
-This is a read-only inspection projection. `AgentRun.to_dict()` is the source for run identity, proposal ID, request ID, tool, transport, effect type, arguments, rationale, authorization decision, permit ID, `called`, outcome, receipt ID and error message. `AgentToolProposal` retains those same proposal fields. `Permit` adds signed actor, rationale, issue/expiry times and constraints, but these are not included in the serialized `AgentToolProposal`; consumers may supply the matching permit record explicitly. The adapter does not look up or mint permits.
-
-Receipts are correlated from the run's `decision_receipts`, `mcp_receipts` and optional `provider_receipt`. `MCPCallReceipt` and `BedrockCallReceipt` expose receipt/request/permit IDs, decision, execution outcome, actual effect and evidence refs. `SandboxReceipt` exposes receipt/request/permit IDs, capability, status and evidence refs. The UI model retains only supplied identifiers and fields; it does not become an authorization, execution or receipt authority.
+`src/contracts/action/action.ts` defines a read-only inspection model.
+`src/adapters/action/agentRun.ts` projects supplied ADL `AgentRun` proposal,
+authorization-decision, permit, execution and receipt fields. It does not
+authorize, execute, mint permits, verify receipt signatures or establish BER
+authority. A projected receipt is explicitly labeled `source: adl-agent-run`.
+The Inspector must keep that observation visually distinct from an
+authoritative BAGO BER receipt. Proposal display data and browser interactions
+never grant authority.
 
 ## Separate lifecycle states
 
-- **Capability** asks whether the named capability is available in a supplied capability inventory. A proposal's tool name proves only that it was requested; absent inventory yields `unknown`.
-- **Eligibility** is a supplied policy assessment. No local eligibility verdict is invented from a proposal or its risk.
-- **Authorization** maps explicit `ALLOW`, `DENY` and `REQUIRE_HUMAN` to authorized, rejected and requires-approval. Missing/other decisions remain `unknown`. Permit validity is a separate field and remains `unknown` unless a permit with both times and an explicit `asOf` is supplied. Expiry is not confused with the historical decision; revocation cannot be concluded unless a source provides it.
-- **Availability** describes transport/capability availability only when explicitly supplied. A proposal or configured transport string does not prove a reachable service.
-- **Execution** uses explicit `called` and outcome values. A success outcome without `called: true` is `unknown`; success without a matched receipt is `unverified`. Failure and partial outcomes remain visible. `called: false` with no outcome means `not_started`.
-- **Receipt** is linked by the proposal receipt ID where present, otherwise by a unique matching request ID. Request/permit mismatch is explicit. A declared but absent receipt is `missing`; no receipt relation in the source is `unknown`. A receipt outcome does not silently overwrite proposal fields.
+- `proposalState: proposed` represents intent only.
+- Capability is populated only from an explicitly supplied capability map;
+  eligibility and availability likewise require separate supplied values.
+  Missing values remain `unknown`.
+- Authorization maps only explicit `ALLOW`, `DENY` and `REQUIRE_HUMAN` values
+  to `authorized`, `rejected` and `requires_approval`. This is a recorded
+  decision, not proof of a currently valid permit or permission to execute.
+  Permit validity is independent and uses explicit issue/expiry timestamps plus
+  caller-supplied `asOf`; explicit revocation is distinct from expiry. Missing
+  authorization remains `unknown`.
+- Execution uses the supplied `called` and outcome. `SUCCESS` without
+  `called: true` is `unknown`; a called success without an identity-matched
+  receipt is `unverified`. Failure and partial outcomes remain visible.
+- Receipt correlation requires a unique supplied receipt ID, or a unique
+  request-ID candidate if the proposal did not name a receipt. A match requires
+  exact request identity; a supplied permit ID must also match exactly. When
+  both sides supply an effect, it must match too. Duplicate or conflicting
+  candidates are `mismatch`; a declared absent receipt is `missing`; no
+  correlatable identity is `unknown`.
 
-Risk is a transparent classification of effect type: `READ` is read-only, `WRITE`/`CREATE`/`DELETE` are mutating, and external effects are external. Unknown effect types stay unknown. This category is not a policy decision or numeric risk score. Approval is `required` only for an explicit `REQUIRE_HUMAN`; other cases remain unknown because `ALLOW` does not prove whether a human approved or whether policy required approval. Actor and reasons are shown only when supplied.
+Risk is a transparent classification of effect type: `READ` is read-only,
+`WRITE`/`CREATE`/`DELETE` are mutating, external effects are external, and
+unknown types remain unknown. This is not a policy verdict or numeric score.
+Approval is `required` only for an explicit `REQUIRE_HUMAN`; otherwise it stays
+unknown. Actor and reasons appear only when supplied.
 
-## Verification scope
+## Verification scope and limits
 
-The contract tests exercise unknown proposal fields, distinct lifecycle states, expired permits, denied actions, failed execution, absent/mismatched receipts, and success that remains unverified without a matched receipt. They validate structural mapping only; they do not authorize actions, check live capability availability, infer eligibility, or verify receipt signatures.
+Contract tests cover proposal state, separate lifecycle values, expired and
+revoked permits, denied actions, execution failure, absent receipts, duplicate
+or mismatched receipt identities, missing request/permit binding, and success
+that remains unverified without an exact linked receipt. These checks validate
+structural mapping only. They do not verify signatures, evaluate eligibility,
+query live capability availability, authorize actions or prove BER execution.
+
+The existing `frontend/src/contracts/action/action.ts` is a separate legacy
+copy outside W05's write scope. W05 freezes the source contract under
+`src/contracts/action/`; frontend consumers must reconcile it in their
+assigned integration scope before claiming consumption of this contract.

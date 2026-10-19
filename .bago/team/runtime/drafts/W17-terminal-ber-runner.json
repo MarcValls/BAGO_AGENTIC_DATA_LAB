@@ -1,0 +1,105 @@
+{
+  "work_id": "W17",
+  "role": "team-orchestrator",
+  "status": "DONE",
+  "changed_files": [
+    "README.md",
+    ".bago/goals/ADL-BER-INTEGRATION-001/AGENT_DECISION_INSPECTOR_BER_RUNNER_FOLLOWUP.json",
+    ".bago/goals/ADL-BER-INTEGRATION-001/plan.json",
+    ".bago/goals/ADL-BER-INTEGRATION-001/status.json",
+    ".bago/goals/ADL-BER-INTEGRATION-001/evidence/FINAL_VERIFICATION_20261019.md",
+    ".bago/goals/ADL-BER-INTEGRATION-001/evidence/STANDALONE_PACKAGE_SMOKE_20261019.md",
+    "docs/ber/AGENT_RUNNER_FINAL_STATUS.md",
+    ".bago/team/runtime/history/BER_RUNNER_FOLLOWUP_PRE_SCOPE_EXPANSION_20261019/state.json",
+    ".bago/team/runtime/history/BER_RUNNER_FOLLOWUP_PRE_SCOPE_EXPANSION_20261019/events.jsonl",
+    ".bago/team/runtime/history/BER_RUNNER_FOLLOWUP_PRE_SCOPE_EXPANSION_20261019/mission.json",
+    ".bago/team/runtime/history/BER_RUNNER_FOLLOWUP_PRE_README_SCOPE_20261019/state.json",
+    ".bago/team/runtime/history/BER_RUNNER_FOLLOWUP_PRE_README_SCOPE_20261019/events.jsonl",
+    ".bago/team/runtime/history/BER_RUNNER_FOLLOWUP_PRE_README_SCOPE_20261019/mission.json"
+  ],
+  "outputs": [
+    {
+      "id": "adl-ber-agent-runner-final-status-v1",
+      "kind": "terminal-runner-status",
+      "path": "docs/ber/AGENT_RUNNER_FINAL_STATUS.md",
+      "frozen": true,
+      "description": "Final implementation, verification scope, and explicit live-runtime limits for the ADL BER Agent Runner."
+    },
+    {
+      "id": "adl-ber-integration-final-verification-v1",
+      "kind": "candidate-bound-verification-evidence",
+      "path": ".bago/goals/ADL-BER-INTEGRATION-001/evidence/FINAL_VERIFICATION_20261019.md",
+      "frozen": true,
+      "description": "Final candidate-bound test, generated README, independent review, and local standalone smoke results."
+    },
+    {
+      "id": "adl-ber-standalone-smoke-v1",
+      "kind": "local-container-ber-smoke",
+      "path": ".bago/goals/ADL-BER-INTEGRATION-001/evidence/STANDALONE_PACKAGE_SMOKE_20261019.md",
+      "frozen": true,
+      "description": "Rebuilt local image identity, health/UI probes, pinned BER SHA, approved synthetic write receipt, and independent readback."
+    },
+    {
+      "id": "adl-generated-readme-v1",
+      "kind": "generated-readme",
+      "path": "README.md",
+      "frozen": false,
+      "description": "README rendered from canonical sources after 299 passing tests."
+    }
+  ],
+  "verification": [
+    {
+      "command": "python scripts/generate_dynamic_readme.py",
+      "result": "PASS",
+      "evidence": "README regenerated; full repository test suite completed with 299 passed."
+    },
+    {
+      "command": "python scripts/generate_dynamic_readme.py --check --skip-tests",
+      "result": "PASS",
+      "evidence": "Canonical README matches; 299 cases collected. This check itself reports tests NOT_RUN."
+    },
+    {
+      "command": "W16: python -m pytest tests/runtime/ber/test_agent_runner.py tests/runtime/ber/test_client.py tests/runtime/ber/test_observability.py tests/test_provider_cognition_repair.py -q",
+      "result": "PASS",
+      "evidence": "41 passed; existing Python 3.14/Pydantic v1 compatibility warning."
+    },
+    {
+      "command": "W16: python -m pytest tests/verification/agent-runner/test_websocket_integration.py tests/test_agent_execution_unavailable.py -q",
+      "result": "PASS",
+      "evidence": "6 passed with TestClient and fake provider/BER; no live credentials or real Runner effect."
+    },
+    {
+      "command": "node --test tests/ui/agent-runner/agent-runner.test.mjs; npm run test:ui --prefix frontend; npm run build --prefix frontend",
+      "result": "PASS",
+      "evidence": "9 Agent Runner UI tests, 17 UI tests, and TypeScript/Vite production build (129 modules)."
+    },
+    {
+      "command": "docker build -f Dockerfile.ui --tag bago-portfolio:adl-ber-integration-20261019 .",
+      "result": "PASS",
+      "evidence": "Local image sha256:b40f0f38d1cc9cca60351f1ffee15a2c123e65efe1ab4244e23b4c861a8b1acf; size 360460424 bytes; frontend build transformed 129 modules."
+    },
+    {
+      "command": "W17 loopback container smoke on 127.0.0.1:18872",
+      "result": "PASS",
+      "evidence": "API health ok; UI HTTP 200; image archive SHA matched BER lock; bago_core absent before BER extraction; approved synthetic filesystem.write receipt filesystem-write:sha256:34fa249959fb508ef6bb4b7e17d60977ef46897e84e0125d2c4298f2dd41b8af; independent readback matched. Container stopped and removed."
+    },
+    {
+      "command": "python .bago/team/kit/scripts/teamctl.py verify",
+      "result": "PASS",
+      "evidence": "W13, W14 corrective, W15, W15R and W16 handoffs validate. Historic orphan warnings AC01-AC10 and W01-W12 remain visible and preserved."
+    },
+    {
+      "command": "git diff --check",
+      "result": "PASS",
+      "evidence": "No whitespace errors. Git reports only existing LF-to-CRLF working-copy warnings."
+    }
+  ],
+  "residual_risks": [
+    "Live Ollama inference and live Agent Runner execution against real provider/BER services are NOT_RUN; W16 used deterministic fakes.",
+    "The container smoke exercised the bundled BER demo CLI, not the live Agent Runner WebSocket.",
+    "Manual keyboard and screen-reader review remains NOT_RUN; AC01-AC10 and W01-W12 historic orphan warnings remain visible.",
+    "filesystem.delete remains blocked pending canonical adapter and world-state revalidation.",
+    "No image push, publication or deployment occurred. The Docker image is a local smoke artifact only."
+  ],
+  "next_consumers": []
+}

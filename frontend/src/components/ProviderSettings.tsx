@@ -122,10 +122,10 @@ export default function ProviderSettings({ onStatusChange }: { onStatusChange?: 
   const state = selectedProvider === 'ollama' ? ollamaStatus?.state : registration?.state
 
   return (
-    <main className="provider-settings">
+    <section className="provider-settings" aria-labelledby="provider-settings-title">
       <header className="provider-settings-heading">
-        <div><h2>Proveedores y modelos</h2><p>Registra cada servicio con su propia modalidad de acceso.</p></div>
-        <button className="provider-secondary" type="button" onClick={() => void refreshRegistry()} disabled={loadingRegistry}>Actualizar registros</button>
+        <div><p className="provider-eyebrow">CONFIGURACIÓN · IA</p><h2 id="provider-settings-title">Proveedores y modelos</h2><p>Registra cada servicio, elige cómo iniciar sesión y revisa el estado de su conexión.</p></div>
+        <button className="provider-secondary" type="button" onClick={() => void refreshRegistry()} disabled={loadingRegistry}>{loadingRegistry ? 'Actualizando…' : '↻  Actualizar registros'}</button>
       </header>
 
       <div className="provider-registration-layout">
@@ -172,7 +172,7 @@ export default function ProviderSettings({ onStatusChange }: { onStatusChange?: 
           {loadingRegistry && <p className="provider-footnote" role="status">Cargando registros guardados…</p>}
         </section>
       </div>
-    </main>
+    </section>
   )
 }
 

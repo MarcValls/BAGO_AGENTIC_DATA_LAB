@@ -21,4 +21,8 @@
 .evidence-explorer__provenance dd { margin: 0; overflow-wrap: anywhere; }
 .evidence-explorer__missing p { margin: .5rem 0 0; }
 .evidence-explorer__stale-note { border-left: 3px solid #fbbf24; padding: .5rem .75rem; }
+.evidence-explorer__unlinked { margin-top: 1.25rem; padding-top: 1rem; border-top: 1px solid #475569; }
+.evidence-explorer__unlinked-list { list-style: none; padding: 0; display: grid; gap: .75rem; }
+.evidence-explorer__unlinked-list > li { border: 1px solid #475569; border-radius: .5rem; padding: .85rem; background: #172033; }
+.evidence-explorer__unlinked-list h4 { margin: 0; overflow-wrap: anywhere; }
 @media (max-width: 800px) { .evidence-explorer__layout { grid-template-columns: 1fr; } }

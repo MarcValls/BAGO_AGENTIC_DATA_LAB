@@ -405,10 +405,12 @@ Cada estado debe gestionarse y verificarse por separado.
 
 ## Estado de implementación en ADL
 
-La pantalla actual organiza los registros en pestañas por proveedor. Cada ficha
-presenta su modalidad de alta: sesión local o clave para Ollama, Codex CLI,
-OpenAI Platform, GitHub Copilot CLI/token, Anthropic, OpenRouter y OpenCode.
-Codex CLI y OpenAI Platform son fichas separadas.
+La pantalla actual es una vista propia de la navegación principal, no un panel
+dentro de Preferencias. Usa una lista de proveedores a la izquierda y una ficha
+de registro a la derecha; cada proveedor presenta sus modalidades de alta:
+sesión local o clave para Ollama, Codex CLI, OpenAI Platform, GitHub Copilot
+CLI/token, Anthropic, OpenRouter y OpenCode. Codex CLI y OpenAI Platform son
+fichas separadas.
 
 El registro de proveedores que aún no tienen una ruta de ejecución en ADL se
 guarda como `configured_unverified`. Sus claves solo se escriben en el almacén

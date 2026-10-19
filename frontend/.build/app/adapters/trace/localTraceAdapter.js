@@ -1,24 +1,54 @@
-/** Project existing LocalTrace data without inferring causality or UI/Jaeger links. */
+function suppliedId(attributes, key) {
+    const value = attributes[key];
+    return typeof value === "string" && value.trim() ? value : undefined;
+}
+function correlations(attributes) {
+    const fields = [
+        ["agentId", "agent_id"],
+        ["toolCallId", "tool_call_id"],
+        ["proposalId", "proposal_id"],
+        ["requestId", "request_id"],
+        ["claimId", "claim_id"],
+        ["actionId", "action_id"],
+        ["executionId", "execution_id"],
+        ["executionRequestId", "execution_request_id"],
+        ["permitId", "permit_id"],
+        ["receiptId", "receipt_id"],
+    ];
+    return Object.fromEntries(fields.flatMap(([target, source]) => {
+        const value = suppliedId(attributes, source);
+        return value ? [[target, value]] : [];
+    }));
+}
+/**
+ * Projects LocalTrace-like data into a timeline. It preserves source events,
+ * sorts only for chronology, and never derives identity from names/order/refs.
+ */
 export function localTraceToTimeline(source) {
-    const sorted = [...(source.events || [])].sort((a, b) => a.sequence - b.sequence);
-    const ids = new Set(sorted.map(event => event.event_id));
-    const seenIds = new Set();
+    const input = Array.isArray(source.events) ? source.events : [];
+    const sorted = input.map((event, index) => ({ event, index }))
+        .sort((left, right) => left.event.sequence - right.event.sequence || left.index - right.index);
+    const ids = new Set(input.map(event => event.event_id));
+    const seen = new Set();
     const gaps = [];
-    const events = sorted.map((event, index) => {
-        if (seenIds.has(event.event_id))
-            gaps.push({ kind: "duplicate_event_id", eventId: event.event_id, detail: "Duplicate source event identity" });
-        seenIds.add(event.event_id);
-        if (index > 0 && event.sequence > sorted[index - 1].sequence + 1) {
-            gaps.push({ kind: "sequence_gap", eventId: event.event_id, detail: `Missing sequence ${sorted[index - 1].sequence + 1} through ${event.sequence - 1}` });
+    let previousSequence;
+    const events = sorted.map(({ event }) => {
+        if (seen.has(event.event_id))
+            gaps.push({ kind: "duplicate_event_id", eventId: event.event_id, detail: "Duplicate source event identity; both events are retained" });
+        seen.add(event.event_id);
+        if (!Number.isInteger(event.sequence) || event.sequence < 0) {
+            gaps.push({ kind: "invalid_sequence", eventId: event.event_id, detail: `Invalid source sequence: ${event.sequence}` });
         }
-        const parentEventId = event.parent_event_id || undefined;
+        if (previousSequence !== undefined && Number.isInteger(event.sequence) && event.sequence > previousSequence + 1) {
+            gaps.push({ kind: "sequence_gap", eventId: event.event_id, detail: `Missing sequence ${previousSequence + 1} through ${event.sequence - 1}` });
+        }
+        previousSequence = Number.isInteger(event.sequence) ? event.sequence : previousSequence;
+        if (event.trace_id !== source.trace_id)
+            gaps.push({ kind: "trace_id_mismatch", eventId: event.event_id, detail: `Event trace ${event.trace_id} differs from envelope trace ${source.trace_id}` });
+        const parentEventId = typeof event.parent_event_id === "string" && event.parent_event_id ? event.parent_event_id : undefined;
         const parentState = !parentEventId ? "root" : ids.has(parentEventId) ? "resolved" : "missing";
         if (parentState === "missing")
             gaps.push({ kind: "missing_parent", eventId: event.event_id, detail: `Parent event ${parentEventId} is unavailable` });
-        const attributes = { ...(event.attributes || {}) };
-        const optional = (key) => typeof attributes[key] === "string" && attributes[key] ? String(attributes[key]) : undefined;
-        const proposalId = optional("proposal_id");
-        const requestId = optional("request_id");
         return {
             eventId: event.event_id,
             traceId: event.trace_id,
@@ -28,26 +58,11 @@ export function localTraceToTimeline(source) {
             status: event.status,
             ...(parentEventId ? { parentEventId } : {}),
             parentState,
-            correlation: {
-                runId: source.run_id,
-                ...(optional("agent_id") ? { agentId: optional("agent_id") } : {}),
-                ...((requestId || proposalId) ? { toolCallId: requestId || proposalId } : {}),
-                ...(optional("claim_id") ? { claimId: optional("claim_id") } : {}),
-                ...(optional("action_id") ? { actionId: optional("action_id") } : {}),
-                claimState: optional("claim_id") ? "linked" : "missing",
-                actionState: optional("action_id") ? "linked" : "missing",
-            },
-            attributes,
+            runId: source.run_id,
+            correlations: correlations(event.attributes || {}),
+            attributes: { ...(event.attributes || {}) },
             evidenceRefs: [...(event.evidence_refs || [])],
         };
     });
-    return {
-        traceId: source.trace_id,
-        runId: source.run_id,
-        events,
-        gaps,
-        chronology: "sequence",
-        causality: "parent_event_id",
-        jaegerCorrelation: "unavailable",
-    };
+    return { traceId: source.trace_id, runId: source.run_id, events, gaps, chronology: "sequence", causality: "parent_event_id" };
 }

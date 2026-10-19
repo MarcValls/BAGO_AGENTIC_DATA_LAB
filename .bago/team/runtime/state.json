@@ -1,417 +1,262 @@
 {
-  "created_at": "2026-10-09T00:34:43+00:00",
+  "created_at": "2026-10-19T19:42:01+00:00",
   "mission": {
-    "max_concurrency": 2,
-    "mission_id": "AGENT_CHAT_CONTROL_PLANE_V1",
-    "objective": "Make the chat the primary app entry point; configure Ollama Cloud through a user-selected API-key or local CLI-session mode; list agents; create an agent through a reviewed chat proposal; and chat with configured agents using Ollama Cloud, preserving BAGO authorization boundaries for all material actions.",
+    "max_concurrency": 3,
+    "mission_id": "AGENT_DECISION_INSPECTOR_BER_RUNNER_FOLLOWUP_V1",
+    "objective": "Consume the completed Agent Decision Inspector contracts and connect ADL Agent Runner to the pinned BAGO Embedded Runtime, preserving explicit proposals, user approval, BAGO receipts, ADL traces, fail-closed behavior, and blocked filesystem.delete.",
+    "parent_mission_id": "AGENT_DECISION_INSPECTOR_V1",
     "terminal_work_items": [
-      "AC05"
+      "W17"
     ],
-    "title": "Agent Chat Control Plane",
+    "title": "Governed BER Agent Runner follow-up",
     "work_items": [
       {
         "deliverables": [
-          "Provider auth-mode contract",
-          "Chat control message and agent draft contract",
-          "Explicit action authorization boundary"
+          "Runner boundary and flow",
+          "Frozen backend/frontend message contract",
+          "Explicit blocked effects and runtime limits"
         ],
         "depends_on": [],
         "done_when": [
-          "API-key and local Ollama CLI modes are distinct",
-          "Provider secrets are never returned to the browser or written into chat/session data",
-          "Agent creation is a proposal until human confirmation",
-          "Only existing, explicitly registered capabilities can be invoked",
-          "Unknown app actions remain proposals and cannot execute"
+          "Prior W01-W12 handoffs remain preserved",
+          "Only the persisted agent profile and registered BER effects can be used",
+          "Human approval is bound to one prepared request and is required for material writes and process execution",
+          "No delete, arbitrary shell, or execution-success claims without a matched BAGO receipt",
+          "Standalone package and local smoke evidence are recorded"
         ],
         "frozen_outputs": [
-          "agent-chat-control-contract-v1"
+          "adl-ber-agent-runner-api-v1"
         ],
-        "id": "AC01",
+        "id": "W13",
         "read_scopes": [
-          "src/**",
-          "frontend/src/**",
+          "src/contracts/**",
+          "src/adapters/**",
           "docs/decision-inspector/**",
-          "C:/Users/AMTEC_Terminal_1º/BAGO/frontend/src/shared/provider-catalog.ts",
-          "C:/Users/AMTEC_Terminal_1º/BAGO/frontend/src/layout/ProviderConfigModal.tsx"
+          "docs/ber/**",
+          "src/api/server.py",
+          "frontend/src/components/AgentRunner.tsx"
         ],
         "role": "team-orchestrator",
-        "title": "Freeze chat control, provider and agent proposal contracts",
+        "title": "Freeze BER Agent Runner scope and review prior mission contracts",
         "write_scopes": [
-          ".codex-team/**",
-          "docs/agent-chat-control/contracts/**",
-          "docs/agent-chat-control/coordination/archive/**"
+          ".bago/team/runtime/**",
+          ".bago/goals/ADL-BER-INTEGRATION-001/**",
+          "docs/ber/AGENT_RUNNER_SCOPE.md"
         ]
       },
       {
         "deliverables": [
-          "Provider settings/model discovery/status APIs",
-          "Server-owned Ollama API-key handling",
-          "Local CLI-session provider mode",
-          "Agent inventory and conversational draft/confirm API",
-          "Real Ollama-backed agent chat"
+          "Server-owned bounded runner",
+          "Proposal and approval messages",
+          "BER receipt-linked completion",
+          "Adversarial backend tests"
         ],
         "depends_on": [
-          "AC01"
+          "W13"
         ],
         "done_when": [
-          "Both user-selectable authentication modes are explicit and report distinct states",
-          "Secrets are handled only on the backend and are not exposed by status/list APIs",
-          "Provider or model failure returns a visible error and no simulated response",
-          "Agent draft does not create an agent until explicit confirmation",
-          "Creation validates the frozen allowlist and persists a stable unique identity",
-          "Chat config is loaded by agent ID from the server and never trusted from browser-supplied config"
+          "Client-supplied agent config is never execution authority",
+          "Unknown effects, mismatched approval, replay, denied authorization, unavailable provider/runtime, failed execution, and missing receipt all fail closed",
+          "Existing BAGO BER API remains the effect executor and source of authority/receipts",
+          "filesystem.delete remains unavailable",
+          "Tests validate no job/success is recorded before verified BER receipt"
         ],
         "frozen_outputs": [
-          "agent-chat-control-api-v1"
+          "adl-ber-agent-runner-backend-v1"
         ],
-        "id": "AC02",
+        "id": "W14",
         "read_scopes": [
-          "docs/agent-chat-control/contracts/**",
-          "src/orchestration/**",
-          "src/execution/**",
-          "src/agent/**"
+          "docs/ber/AGENT_RUNNER_SCOPE.md",
+          "src/runtime/ber/**",
+          "src/contracts/action/**",
+          "src/adapters/action/**",
+          "src/observability/**",
+          "src/providers/ollama.py"
         ],
-        "role": "team-orchestrator",
-        "title": "Implement Ollama provider configuration and governed chat APIs",
+        "role": "governance-action-engineer",
+        "title": "Implement backend Agent Runner over BER with fail-closed authorization",
         "write_scopes": [
           "src/api/server.py",
-          "src/providers/**",
-          "requirements.txt"
+          "src/runtime/ber/agent_runner.py",
+          "tests/runtime/ber/test_agent_runner.py",
+          "docs/ber/AGENT_RUNNER_API_V1.md"
         ]
       },
       {
         "deliverables": [
-          "Backward-compatible legacy ID and nullable provider/model read path",
-          "No-write migration behavior for stored legacy records"
+          "Task entry and workspace binding",
+          "Action review and explicit approval/rejection",
+          "Receipt-backed terminal status",
+          "Accessible UI tests"
         ],
         "depends_on": [
-          "AC02"
+          "W14"
         ],
         "done_when": [
-          "Valid agent_[0-9a-f]{8,32} records matching their filename appear in inventory",
-          "Missing provider/model is exposed as null and preserved on disk",
-          "Chat may use only the currently selected provider/model for that request when legacy config has no model",
-          "Malformed/untrusted stored data remains rejected or warned; new records remain 32-hex IDs"
-        ],
-        "frozen_outputs": [
-          "agent-chat-control-legacy-compat-v1"
-        ],
-        "id": "AC06",
-        "read_scopes": [
-          "agents/created/**",
-          "docs/agent-chat-control/coordination/archive/**"
-        ],
-        "role": "team-orchestrator",
-        "title": "Preserve legacy agent inventory and request-scoped model fallback",
-        "write_scopes": [
-          "src/api/server.py",
-          "docs/agent-chat-control/contracts/**",
-          ".codex-team/**"
-        ]
-      },
-      {
-        "deliverables": [
-          "Chat as app home with links to existing views",
-          "Provider setup UI with API key and Ollama CLI session choices",
-          "Agent inventory in chat",
-          "Agent draft review/confirm card",
-          "Ollama-backed agent conversation states"
-        ],
-        "depends_on": [
-          "AC01",
-          "AC02",
-          "AC06"
-        ],
-        "done_when": [
-          "The Inspector and other portfolio views remain reachable from chat-first navigation",
-          "Provider setup never persists a secret in localStorage or renders it after save",
-          "Empty, loading, configured, unauthenticated and error states are clear",
-          "The user can review or cancel an agent draft before it is created",
-          "No response is presented as live model output unless the backend call succeeded"
+          "UI displays proposed action and exact effect arguments before approval",
+          "Approval/rejection is a user action bound to the current proposal id",
+          "Unknown/error/pending states are not presented as success",
+          "Run success requires an exact receipt identity from the backend",
+          "Keyboard-accessible loading, empty, error, approval, rejection and success states pass tests"
         ],
         "frozen_outputs": [],
-        "id": "AC03",
+        "id": "W15",
         "read_scopes": [
-          "docs/agent-chat-control/contracts/**",
-          "frontend/src/components/AgentBuilder.tsx",
-          "frontend/src/features/decision-inspector/**",
-          "agents/created/**"
+          "docs/ber/AGENT_RUNNER_API_V1.md",
+          "src/contracts/action/**",
+          "src/contracts/trace/**",
+          "frontend/src/features/decision-inspector/actions/**"
         ],
         "role": "decision-ui-engineer",
-        "title": "Build chat-first shell, provider setup and conversational agent creation",
+        "title": "Connect Agent Runner UI to the governed proposal and receipt flow",
         "write_scopes": [
-          "frontend/src/App.tsx",
-          "frontend/src/App.css",
-          "frontend/src/components/AgentChat.tsx",
-          "frontend/src/components/AgentChat.css",
-          "frontend/src/components/ProviderSettings.tsx",
-          "frontend/src/components/ProviderSettings.css"
-        ]
-      },
-      {
-        "deliverables": [
-          "Loopback API default and explicit local CORS allowlist",
-          "Docker UI port bound to host loopback",
-          "LAN exposure limitation recorded in contract"
-        ],
-        "depends_on": [
-          "AC06"
-        ],
-        "done_when": [
-          "Standalone API defaults to 127.0.0.1",
-          "Docker host port is published only on 127.0.0.1 while container listener remains reachable internally",
-          "CORS no longer permits wildcard origins",
-          "Contract states LAN exposure needs an authenticated API boundary"
-        ],
-        "frozen_outputs": [
-          "agent-chat-control-local-boundary-v1"
-        ],
-        "id": "AC07",
-        "read_scopes": [
-          "docs/agent-chat-control/coordination/archive/**"
-        ],
-        "role": "team-orchestrator",
-        "title": "Restrict unauthenticated provider configuration API to host-local UI origins",
-        "write_scopes": [
-          "src/api/server.py",
-          "docker-compose.ui.yml",
-          "docs/agent-chat-control/contracts/**",
-          ".codex-team/**"
-        ]
-      },
-      {
-        "deliverables": [
-          "Fail-closed provider capability reporting for unsupported container mode",
-          "Persistent Docker agent/provider/job directories",
-          "Host-local launch path using the OS credential backend and local Ollama CLI endpoint",
-          "Updated independent review evidence"
-        ],
-        "depends_on": [
-          "AC07"
-        ],
-        "done_when": [
-          "Container mode never claims either Ollama auth mode is available when secure OS credential storage or host CLI loopback is not reachable",
-          "Provider UI visibly explains unsupported container auth and provides the local-host launch route",
-          "Container agent/provider/job data directories survive container recreation through host mounts",
-          "A Windows host-local launch script documents/prerequisite-checks the supported runtime without reading credentials",
-          "Final contract distinguishes host-local supported configuration from container limitations"
-        ],
-        "frozen_outputs": [
-          "agent-chat-control-runtime-compat-v1"
-        ],
-        "id": "AC08",
-        "read_scopes": [
-          "Dockerfile.ui",
-          "requirements.txt",
-          "agents/created/**",
-          ".bago/**"
-        ],
-        "role": "team-orchestrator",
-        "title": "Make provider and agent persistence runtime compatibility explicit",
-        "write_scopes": [
-          "src/api/server.py",
-          "src/providers/ollama.py",
-          "frontend/src/components/ProviderSettings.tsx",
-          "frontend/src/components/ProviderSettings.css",
-          "docker-compose.ui.yml",
-          "docs/agent-chat-control/contracts/**",
-          "docs/agent-chat-control/verification/**",
-          "scripts/run-local-ui.ps1",
-          ".codex-team/**",
-          "docs/agent-chat-control/LOCAL_SETUP.md"
-        ]
-      },
-      {
-        "deliverables": [
-          "Legacy Runner no longer emits simulated success/jobs",
-          "Legacy WebSocket chat uses selected configured model for agents without model binding"
-        ],
-        "depends_on": [
-          "AC08"
-        ],
-        "done_when": [
-          "Legacy Runner WebSocket returns execution_unavailable and never creates success jobs or claims successful execution",
-          "Legacy WebSocket chat resolves absent agent model from currently selected provider/model per request and does not rewrite agent record",
-          "Contract states governed execution is not available until authority/permit/receipt path exists"
-        ],
-        "frozen_outputs": [
-          "agent-chat-control-legacy-execution-v1"
-        ],
-        "id": "AC09",
-        "read_scopes": [
           "frontend/src/components/AgentRunner.tsx",
-          "src/jobs/**"
-        ],
-        "role": "team-orchestrator",
-        "title": "Fail closed legacy runner and preserve fallback in legacy agent chat",
-        "write_scopes": [
-          "src/api/server.py",
-          "docs/agent-chat-control/contracts/**",
-          ".codex-team/**"
+          "frontend/src/components/AgentRunner.css",
+          "frontend/tests/ui/agent-runner/**",
+          "frontend/tests/ui/agent-evaluation-lab/rendered.test.mjs"
         ]
       },
       {
         "deliverables": [
-          "Shared explicit allowlist check for all WebSocket handshakes",
-          "Contract evidence for browser-origin protection"
+          "Independent verification report",
+          "Adversarial test results",
+          "P0/P1/P2 classification"
         ],
         "depends_on": [
-          "AC09"
+          "W15R"
         ],
         "done_when": [
-          "Every WebSocket endpoint rejects missing or non-allowlisted Origin before accepting",
-          "Allowed browser origins are the same validated local origins as HTTP CORS",
-          "Rejected origins cannot run the demo, read agent chat, or access other WebSocket routes"
+          "Unauthorized and rejected action cases prove no material effect",
+          "Wrong/stale/replayed approval and mismatched/missing receipt cases are covered",
+          "Provider/runtime errors cannot yield success",
+          "filesystem.delete and arbitrary shell attempts are denied",
+          "No P0/P1 finding remains open; all NOT_RUN scopes are explicit"
         ],
         "frozen_outputs": [
-          "agent-chat-control-websocket-origin-v1"
+          "adl-ber-agent-runner-verification-v1"
         ],
-        "id": "AC10",
+        "id": "W16",
         "read_scopes": [
+          "src/runtime/ber/**",
+          "src/api/server.py",
           "frontend/src/components/AgentRunner.tsx",
-          "frontend/src/components/Control.tsx"
-        ],
-        "role": "team-orchestrator",
-        "title": "Validate local browser origins before accepting WebSocket connections",
-        "write_scopes": [
-          "src/api/server.py",
-          "docs/agent-chat-control/contracts/**",
-          ".codex-team/**"
-        ]
-      },
-      {
-        "deliverables": [
-          "Candidate-bound verification record",
-          "Residual risks and NOT_RUN evidence boundary"
-        ],
-        "depends_on": [
-          "AC03",
-          "AC07",
-          "AC08",
-          "AC09",
-          "AC10"
-        ],
-        "done_when": [
-          "The report binds to the exact candidate fingerprint",
-          "Provider secrets are not exposed in API response shapes",
-          "No arbitrary model tool can execute an unregistered app action",
-          "Build/static checks and any unrun checks are reported accurately",
-          "No P0/P1 issue is left unaddressed or the terminal gate is held"
-        ],
-        "frozen_outputs": [
-          "agent-chat-control-verification-v1"
-        ],
-        "id": "AC04",
-        "read_scopes": [
-          "src/**",
-          "frontend/src/**",
-          "docs/agent-chat-control/contracts/**",
-          "docs/agent-chat-control/verification/**"
+          "tests/runtime/ber/**",
+          "frontend/tests/ui/agent-runner/**",
+          "docs/ber/AGENT_RUNNER_API_V1.md"
         ],
         "role": "verification-engineer",
-        "title": "Review provider, agent-creation and chat implementation against contracts",
+        "title": "Independently verify the live runner flow and adversarial boundaries",
         "write_scopes": [
-          "docs/agent-chat-control/verification/**"
+          "tests/verification/agent-runner/**",
+          "docs/ber/AGENT_RUNNER_VERIFICATION.md"
         ]
       },
       {
         "deliverables": [
-          "Final status",
-          "Evidence index",
-          "Known limitations"
+          "Backend WebSocket regression test aligned with the governed start/error contract"
         ],
         "depends_on": [
-          "AC04"
+          "W15"
         ],
         "done_when": [
-          "All handoffs validate",
-          "The independent review has no unaddressed P0/P1 finding",
-          "Exact current model/provider readiness is distinguished from code readiness",
-          "Unrun live Ollama calls and broader app-control capabilities are explicit"
+          "The test sends a valid bounded start frame or an invalid frame and cannot wait indefinitely",
+          "Assertions match current stable error codes and fail-closed behavior",
+          "No real provider inference or BER effect is invoked"
         ],
         "frozen_outputs": [
-          "agent-chat-control-plane-v1-terminal-gate"
+          "agent-runner-websocket-start-regression-v1"
         ],
-        "id": "AC05",
+        "id": "W15R",
         "read_scopes": [
-          ".codex-team/**",
-          "docs/agent-chat-control/**",
-          "src/**",
-          "frontend/src/**"
+          "src/api/server.py",
+          "src/runtime/ber/agent_runner.py",
+          "tests/runtime/ber/test_agent_runner.py",
+          "docs/ber/AGENT_RUNNER_API_V1.md"
+        ],
+        "role": "governance-action-engineer",
+        "title": "Replace obsolete backend test for the governed WebSocket start contract",
+        "write_scopes": [
+          "tests/test_agent_execution_unavailable.py"
+        ]
+      },
+      {
+        "deliverables": [
+          "Validated handoff index",
+          "Final runner status and residual limits"
+        ],
+        "depends_on": [
+          "W16"
+        ],
+        "done_when": [
+          "W13-W16 and W15R handoffs validate",
+          "Independent verification has P0=0 and P1=0",
+          "Backend, UI, full relevant tests and standalone container smoke pass on the same candidate",
+          "Runner is enabled only with its BER-backed path and remains fail-closed for unsupported effects",
+          "No publish/deploy occurred"
+        ],
+        "frozen_outputs": [
+          "adl-ber-agent-runner-v1-terminal-gate"
+        ],
+        "id": "W17",
+        "read_scopes": [
+          ".bago/team/runtime/**",
+          "docs/ber/AGENT_RUNNER_*.md",
+          "src/runtime/ber/**",
+          "src/api/server.py",
+          "frontend/src/components/AgentRunner.tsx",
+          "tests/**"
         ],
         "role": "team-orchestrator",
-        "title": "Close the Agent Chat Control Plane mission",
+        "title": "Terminal BER Agent Runner mission gate",
         "write_scopes": [
-          ".codex-team/**",
-          "docs/agent-chat-control/FINAL_STATUS.md"
+          ".bago/team/runtime/**",
+          ".bago/goals/ADL-BER-INTEGRATION-001/**",
+          "docs/ber/AGENT_RUNNER_FINAL_STATUS.md",
+          "README.md"
         ]
       }
     ]
   },
-  "mission_sha256": "06d59e06670ce8b1e67791a6079c2a8cd1cd3ecd4fa1fa9039921ad8f0f5907a",
-  "mission_source": "C:\\Users\\AMTEC_Terminal_1º\\AppData\\Local\\Temp\\BAGO_AGENTIC_DATA_LAB_chat_control\\.codex-team\\missions\\agent-chat-control-plane-v1.json",
+  "mission_sha256": "9ee7e989b550764f0263f7f298db77585018edc2e6015eda5046d05dfe6427e3",
+  "mission_source": "C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\.worktrees\\adl-ber-integration-20261019\\.bago\\goals\\ADL-BER-INTEGRATION-001\\AGENT_DECISION_INSPECTOR_BER_RUNNER_FOLLOWUP.json",
   "protocol_version": "0.1.0",
   "terminal_gate": "DONE",
-  "updated_at": "2026-10-17T22:49:58+00:00",
+  "updated_at": "2026-10-19T19:43:34+00:00",
   "work_status": {
-    "AC01": {
-      "agent": "team-orchestrator",
-      "claimed_at": "2026-10-09T00:34:57+00:00",
-      "done_at": "2026-10-09T00:36:05+00:00",
+    "W13": {
+      "agent": "/root",
+      "claimed_at": "2026-10-19T19:42:07+00:00",
+      "done_at": "2026-10-19T19:42:07+00:00",
       "status": "DONE"
     },
-    "AC02": {
-      "agent": "/root/chat_backend",
-      "claimed_at": "2026-10-09T00:36:22+00:00",
-      "done_at": "2026-10-09T00:42:28+00:00",
+    "W14": {
+      "agent": "/root/ber_action_contract",
+      "claimed_at": "2026-10-19T19:42:07+00:00",
+      "done_at": "2026-10-19T19:42:08+00:00",
       "status": "DONE"
     },
-    "AC03": {
-      "agent": "/root/chat_ui",
-      "claimed_at": "2026-10-09T00:49:58+00:00",
-      "done_at": "2026-10-09T00:51:46+00:00",
+    "W15": {
+      "agent": "/root/ber_inspector_shell",
+      "claimed_at": "2026-10-19T19:42:08+00:00",
+      "done_at": "2026-10-19T19:42:08+00:00",
       "status": "DONE"
     },
-    "AC04": {
-      "agent": "/root/verification_followup",
-      "claimed_at": "2026-10-09T01:04:20+00:00",
-      "done_at": "2026-10-09T01:05:28+00:00",
+    "W15R": {
+      "agent": "/root/ber_action_contract",
+      "claimed_at": "2026-10-19T19:42:08+00:00",
+      "done_at": "2026-10-19T19:42:09+00:00",
       "status": "DONE"
     },
-    "AC05": {
-      "agent": "team-orchestrator",
-      "claimed_at": "2026-10-09T01:06:14+00:00",
-      "done_at": "2026-10-09T01:06:58+00:00",
+    "W16": {
+      "agent": "/root/decision_inspector_verifier",
+      "claimed_at": "2026-10-19T19:42:09+00:00",
+      "done_at": "2026-10-19T19:42:09+00:00",
       "status": "DONE"
     },
-    "AC06": {
-      "agent": "team-orchestrator",
-      "claimed_at": "2026-10-09T00:49:29+00:00",
-      "done_at": "2026-10-09T00:49:55+00:00",
-      "status": "DONE"
-    },
-    "AC07": {
-      "agent": "team-orchestrator",
-      "claimed_at": "2026-10-09T00:50:39+00:00",
-      "done_at": "2026-10-09T00:50:50+00:00",
-      "status": "DONE"
-    },
-    "AC08": {
-      "agent": "team-orchestrator",
-      "claimed_at": "2026-10-09T00:56:00+00:00",
-      "done_at": "2026-10-09T00:58:47+00:00",
-      "status": "DONE"
-    },
-    "AC09": {
-      "agent": "team-orchestrator",
-      "claimed_at": "2026-10-09T01:02:23+00:00",
-      "done_at": "2026-10-09T01:03:03+00:00",
-      "status": "DONE"
-    },
-    "AC10": {
-      "agent": "team-orchestrator",
-      "claimed_at": "2026-10-09T01:03:55+00:00",
-      "done_at": "2026-10-09T01:04:15+00:00",
+    "W17": {
+      "agent": "/root",
+      "claimed_at": "2026-10-19T19:43:07+00:00",
+      "done_at": "2026-10-19T19:43:34+00:00",
       "status": "DONE"
     }
   }

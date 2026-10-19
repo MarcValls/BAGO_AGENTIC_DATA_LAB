@@ -1,0 +1,53 @@
+{
+  "changed_files": [
+    "docs/decision-inspector/verification/W11_INDEPENDENT_VERIFICATION.md"
+  ],
+  "next_consumers": [
+    "W12"
+  ],
+  "outputs": [
+    {
+      "description": "Independent adversarial verification, finding history and resolutions, final P0/P1 classification, and verification limitations.",
+      "frozen": true,
+      "id": "decision-inspector-verification-v1",
+      "path": "docs/decision-inspector/verification/W11_INDEPENDENT_VERIFICATION.md",
+      "sha256": "0b57c91d9abfe79f37cee1049f8dbeed827576d0f3004f01ed1c951a6d2dc743"
+    }
+  ],
+  "payload_sha256": "222cce042b8a4396b4e36802c07dcd0f27663f00be83278ab80ff2b68329fa8d",
+  "residual_risks": [
+    "Manual keyboard-only and screen-reader review NOT_RUN.",
+    "Orphan handoff warnings AC01.json through AC10.json are preserved and visible.",
+    "No P0/P1 finding remains open; W12 must still perform the mission terminal checks."
+  ],
+  "role": "verification-engineer",
+  "status": "DONE",
+  "verification": [
+    {
+      "command": "npm exec --prefix frontend vitest -- run frontend/tests/ui/decision-inspector",
+      "evidence": "5 files, 30 tests passed, 0 failed.",
+      "result": "PASS"
+    },
+    {
+      "command": "npm run build --prefix frontend",
+      "evidence": "TypeScript and Vite production build passed; 127 modules transformed.",
+      "result": "PASS"
+    },
+    {
+      "command": "Temporary adversarial Vitest: run-A conclusion with run-B trace",
+      "evidence": "No timeline; mismatch expected/actual IDs visible; correlations and foreign action ID hidden.",
+      "result": "PASS"
+    },
+    {
+      "command": "Temporary interactive adversarial Vitest: AgentRun without run_id and supplied run-B trace",
+      "evidence": "No timeline; run_id_missing binding issue visible; foreign correlation hidden; Trace view displays Unverified.",
+      "result": "PASS"
+    },
+    {
+      "command": "python .bago/team/kit/scripts/teamctl.py verify",
+      "evidence": "Dependency handoffs validate; preserved orphan handoffs AC01.json through AC10.json remain warned.",
+      "result": "PASS_WITH_WARNINGS"
+    }
+  ],
+  "work_id": "W11"
+}

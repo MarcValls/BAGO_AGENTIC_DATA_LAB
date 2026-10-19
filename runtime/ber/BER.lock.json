@@ -1,0 +1,52 @@
+{
+  "artifact": "bago-embedded-runtime-0.1.0.zip",
+  "artifact_sha256": "da7960e83bd7dd8b16c7518e8019d52280b381bdf2f2fd4eb71cd74d38650f22",
+  "ber_version": "0.1.0",
+  "blocked_effects": [
+    "filesystem.delete",
+    "process.terminate"
+  ],
+  "built_at": "2026-10-19T18:51:03.100700+00:00",
+  "effects": [
+    "filesystem.read",
+    "filesystem.write",
+    "process.execute",
+    "process.inspect"
+  ],
+  "integrity_note": "SHA-256 binds these bytes; it does not establish publisher identity.",
+  "platform": "python>=3.10; any",
+  "profile_id": "bago-embedded-runtime/filesystem-process-v0.1",
+  "protocol_version": "bago.ber.ipc/v1",
+  "schema": "bago.embedded-runtime.lock.v1",
+  "source_commit": "5fb6f2f0c57f29de1b42bbb2efb4a57c86aa032d",
+  "source_dirty_at_build": true,
+  "source_files_sha256": {
+    "LICENSE": "bf7db6886166d6eed6c278f8f443912840bd22c77506f903d85d6b0ef713117b",
+    "backend/.bago/api/handlers_files.py": "57426b3bc8ce5547a8b21ff55a2586b41f0798df1307a5e58e067442ae63167d",
+    "backend/.bago/contracts/bago.effect-registry.v1.json": "ab1edad052f705ae01092b120858c876ce1ec760e88875beb89b37d55fd61f30",
+    "backend/.bago/core/authorization_boundary.py": "23d9a1bb2ecf9e27f9e3f8341a7c4629644d64a9e698a1be6273c14d1fd30b09",
+    "backend/.bago/core/effect_registry.py": "17f5756c69fee52422ccb5b57076294c0a8546e19975ec4a80177a7c0776dd9b",
+    "backend/.bago/core/execution_adapter_contract.py": "26d7f196c3facad48f71ceecf19e430f6fc435f1cd5cf16e264eca06864a9f53",
+    "backend/.bago/core/execution_adapters/filesystem.py": "6107329b1d2c4d9bff5bc42c1719470cefb5321d7266158513c7b2c90b4e2483",
+    "backend/.bago/core/execution_claims.py": "458bad22808de9287621bd31af4c449442f11fb8d7dd795331f4c2767be41887",
+    "backend/.bago/core/execution_envelope.py": "b6c22da159828b650da005de0afa9bbb7ee3f380f398cc4930eb2fa7c82604da",
+    "backend/.bago/core/execution_gateway.py": "80110859254b87462127640434af1907d7c1909b10a4ba364b6eac627752c553",
+    "backend/.bago/core/execution_request.py": "9fc2c35ff802b1a7e041c66f7f3aba57bb8b17aa08ffca2e77a11daf3adb8ca3",
+    "backend/.bago/core/filesystem_effects.py": "e2dc367dd914f7c394f2a3446f8b1c83b366805054835655e5c096529c02386b",
+    "backend/.bago/core/native_approval.py": "d69351251f90e3dfa946db70bc535e91e118d0bb22f8a0f1ed9e44988d838fa4",
+    "backend/.bago/core/runtime_observability.py": "a7babcf4e7829e4c0af563c998f353cebe3dbd5470a8c6f44a7eccbb0ba17785",
+    "backend/.bago/core/world_state_snapshot.py": "6227dbd0bafb6b742b0d0a25f058da5de4055206a8bf01de3e031b3f37c2935f",
+    "backend/bago_core/__init__.py": "4603b6294e1a053ffcafdcc536351f9c0ce5a7f72385e27b43507a584bc1f960",
+    "backend/bago_core/embedded/__init__.py": "02d35ca342d198bfb2dcaa16344360cf80ce8c88031367f7c33661c8696eb92f",
+    "backend/bago_core/embedded/manifest.py": "c241155b17fe78aee1572d84d6fd2017a7e74771e6fa9ff1401f010ff5111d8e",
+    "backend/bago_core/embedded/profile.py": "004af498ed52d08b45264fccba8f52bb3f795f2ae40d52163a86a8c6570b8006",
+    "backend/bago_core/embedded/protocol.py": "5e5b55b0d872e2bb067fea31c205efc9cc5b67b2ceae67f1283a9896307525b8",
+    "backend/bago_core/embedded/runtime.py": "8352cf078ed2fa52bb7faa76c24380be6f53756970a2f371106ba060c64831db",
+    "backend/bago_core/embedded/session.py": "2f70c55322912d740fa7a005d151eb2928b49ba2ea8e69915a2a45a53333c38d",
+    "backend/bago_core/embedded/stdio_server.py": "0731fdb3554cc46821b1f61150e5102764874b8cc638687187c54c00edebdc9d",
+    "backend/bago_core/user_state_paths.py": "a3719a50730295e1e58051fa5f9ef3ac2327e485f79948778f9931628f13aa42",
+    "backend/bago_core/versioning.py": "fbe6694c899d64211274b3c47cf7ace4aea279e2e77b46df6760523e7a8ce5b5",
+    "backend/release_version.txt": "20a66063e3ac790517587559321f9591fb8db668645239b53290ee2f7c793d3e"
+  },
+  "source_repository": "MarcValls/BAGO"
+}

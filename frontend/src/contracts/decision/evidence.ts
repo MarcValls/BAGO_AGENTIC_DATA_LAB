@@ -1,9 +1,12 @@
-/** Decision Inspector evidence contract, mapped to the existing AgentRun and retrieval artifacts. */
+/**
+ * Read-only decision/evidence projection over ADL AgentRun and RetrievalResponse.
+ * This contract records supplied observations; it is not authorization or BER authority.
+ */
 
 export type EvidenceRelation = "supports" | "contradicts" | "context_only" | "insufficient";
 export type EvidenceFreshness = "current" | "stale" | "unknown";
 
-/** Identity supplied by RetrievalResponse.EvidenceRef; absent fields stay absent. */
+/** Fields supplied by RetrievalResponse.EvidenceRef; absent provenance stays absent. */
 export interface EvidenceSnapshotIdentity {
   chunkId?: string;
   documentId?: string;
@@ -12,13 +15,13 @@ export interface EvidenceSnapshotIdentity {
 }
 
 export interface DecisionEvidence {
-  /** Stable reference, normally EvidenceRef.citation from RetrievalResponse. */
+  /** Stable reference supplied by the source adapter, commonly EvidenceRef.citation. */
   id: string;
   artifactRef?: string;
   sourceIdentity?: string;
   snapshot?: EvidenceSnapshotIdentity;
   freshness: EvidenceFreshness;
-  /** Optional digest or artifact version supplied by the source; never synthesized. */
+  /** Supplied digest/version only; this contract never computes content identity. */
   contentFingerprint?: string;
   excerpt?: string;
 }
@@ -31,7 +34,7 @@ export interface ClaimEvidenceLink {
 export interface DecisionClaim {
   id: string;
   text: string;
-  /** Explicitly empty means unsupported or evidence was not attached. */
+  /** Explicitly empty means no evidence is linked; it does not imply support. */
   evidence: ClaimEvidenceLink[];
   confidence?: number;
 }
@@ -41,38 +44,34 @@ export interface DecisionConclusion {
   id: string;
   runId?: string;
   text: string;
+  /** Claim decomposition is supplied by a consumer, never inferred from answer text. */
   claims: DecisionClaim[];
   evidence: DecisionEvidence[];
   confidence?: number;
 }
 
-export interface ExpectedEvidenceSnapshot {
-  sourceUri?: string;
-  revision?: string;
-  chunkId?: string;
-  documentId?: string;
-}
+export type ExpectedEvidenceSnapshot = EvidenceSnapshotIdentity;
 
-/** Preserve unknown freshness when there is no comparison snapshot. */
+/** Freshness is unknown unless an explicit expected identity is comparable. */
 export function assessEvidenceFreshness(
   actual: EvidenceSnapshotIdentity | undefined,
   expected: ExpectedEvidenceSnapshot | undefined,
 ): EvidenceFreshness {
   if (!actual || !expected) return "unknown";
-  const compared: Array<keyof ExpectedEvidenceSnapshot> = ["sourceUri", "revision", "chunkId", "documentId"];
-  let hasComparableIdentity = false;
-  for (const key of compared) {
+  const keys: Array<keyof EvidenceSnapshotIdentity> = ["sourceUri", "revision", "chunkId", "documentId"];
+  let compared = false;
+  for (const key of keys) {
     const expectedValue = expected[key];
     if (expectedValue === undefined || expectedValue === "") continue;
-    hasComparableIdentity = true;
+    compared = true;
     const actualValue = actual[key];
     if (actualValue === undefined || actualValue === "") return "unknown";
     if (actualValue !== expectedValue) return "stale";
   }
-  return hasComparableIdentity ? "current" : "unknown";
+  return compared ? "current" : "unknown";
 }
 
-/** Adapt a RetrievalResponse hit without guessing provenance or freshness. */
+/** Maps an actual ADL retrieval hit without inventing a source, revision or freshness. */
 export function evidenceFromRetrievalHit(hit: {
   evidence?: { citation?: string; chunk_id?: string; document_id?: string; source_uri?: string; revision?: string };
   chunk_id?: string;
@@ -95,7 +94,7 @@ export function evidenceFromRetrievalHit(hit: {
   };
 }
 
-/** Deterministic JSON representation for fingerprints and reproducible handoffs. */
+/** Stable JSON for contract fingerprints; array order remains semantically significant. */
 export function canonicalDecisionJson(value: unknown): string {
   const normalize = (item: unknown): unknown => {
     if (Array.isArray(item)) return item.map(normalize);
@@ -112,25 +111,28 @@ export function canonicalDecisionJson(value: unknown): string {
 
 export function validateDecisionConclusion(value: DecisionConclusion): string[] {
   const errors: string[] = [];
+  if (!value || typeof value !== "object") return ["conclusion must be an object"];
   if (value.schema !== "decision-conclusion/v1") errors.push("unsupported schema");
-  if (!value.id.trim()) errors.push("conclusion id is required");
-  if (!Array.isArray(value.claims) || !Array.isArray(value.evidence)) errors.push("claims and evidence must be arrays");
-  if (value.confidence !== undefined && (value.confidence < 0 || value.confidence > 1)) errors.push("conclusion confidence must be between 0 and 1");
-  const evidenceIds = new Set(value.evidence.map(item => item.id));
-  if (evidenceIds.size !== value.evidence.length) errors.push("evidence ids must be unique");
+  if (!value.id?.trim()) errors.push("conclusion id is required");
+  if (!Array.isArray(value.claims) || !Array.isArray(value.evidence)) return [...errors, "claims and evidence must be arrays"];
+  if (value.confidence !== undefined && (!Number.isFinite(value.confidence) || value.confidence < 0 || value.confidence > 1)) errors.push("conclusion confidence must be between 0 and 1");
+  const evidenceIds = new Set<string>();
+  for (const item of value.evidence) {
+    if (!item.id?.trim()) errors.push("evidence id is required");
+    else if (evidenceIds.has(item.id)) errors.push(`evidence id is duplicated: ${item.id}`);
+    evidenceIds.add(item.id);
+    if (!["current", "stale", "unknown"].includes(item.freshness)) errors.push(`evidence ${item.id} has invalid freshness`);
+  }
   const claimIds = new Set<string>();
   for (const claim of value.claims) {
-    if (!claim.id.trim() || claimIds.has(claim.id)) errors.push(`claim id is empty or duplicated: ${claim.id}`);
+    if (!claim.id?.trim() || claimIds.has(claim.id)) errors.push(`claim id is empty or duplicated: ${claim.id}`);
     claimIds.add(claim.id);
-    if (!Array.isArray(claim.evidence)) errors.push(`claim ${claim.id} evidence must be an explicit array`);
-    if (claim.confidence !== undefined && (claim.confidence < 0 || claim.confidence > 1)) errors.push(`claim ${claim.id} confidence must be between 0 and 1`);
+    if (!Array.isArray(claim.evidence)) { errors.push(`claim ${claim.id} evidence must be an explicit array`); continue; }
+    if (claim.confidence !== undefined && (!Number.isFinite(claim.confidence) || claim.confidence < 0 || claim.confidence > 1)) errors.push(`claim ${claim.id} confidence must be between 0 and 1`);
     for (const link of claim.evidence) {
       if (!evidenceIds.has(link.evidenceId)) errors.push(`claim ${claim.id} references unknown evidence ${link.evidenceId}`);
+      if (!["supports", "contradicts", "context_only", "insufficient"].includes(link.relation)) errors.push(`claim ${claim.id} has invalid evidence relation`);
     }
-  }
-  for (const item of value.evidence) {
-    if (!item.id.trim()) errors.push("evidence id is required");
-    if (!["current", "stale", "unknown"].includes(item.freshness)) errors.push(`evidence ${item.id} has invalid freshness`);
   }
   return errors;
 }

@@ -1,5 +1,4 @@
-import { strict as assert } from 'node:assert'
-import { test } from 'node:test'
+import { expect, test } from 'vitest'
 import { renderToStaticMarkup } from 'react-dom/server'
 import type { ActionInspectionBundle } from '../../../../src/contracts/action/action'
 import { actionBundleFromAgentRun } from '../../../../src/adapters/action/agentRun'
@@ -14,28 +13,54 @@ const bundle = actionBundleFromAgentRun({
   decision_receipts: [{ receipt_id: 'receipt-ok', request_id: 'req-ok', permit_id: 'permit-1', execution_outcome: 'SUCCESS', evidence_refs: ['event-9'] }],
 })
 
-test('renders source-backed proposal lifecycle and matching receipt as distinct states', () => {
+test('renders proposal, approval, execution and receipt as distinct states without action controls', () => {
   const html = renderToStaticMarkup(<ActionReview bundle={bundle} />)
-  for (const text of ['Proposed actions', 'run-action-42', 'proposal-approved', 'Proposed intent', 'Authorization', 'Authorized by recorded decision', 'Execution', 'succeeded', 'Matched receipt', 'receipt-ok', 'event-9', 'Inspect supplied arguments']) assert.ok(html.includes(text), `expected ${text}`)
-  assert.match(html, /disabled[^>]*>Approve proposal/)
-  assert.match(html, /No approval, rejection, or execution was submitted/)
+  for (const text of ['Proposed actions', 'run-action-42', 'proposal-approved', 'Proposed intent', 'Authorization decision', 'Authorized by recorded decision', 'Approval state', 'Execution', 'succeeded', 'Matched receipt', 'receipt-ok', 'event-9', 'Arguments were supplied but are hidden', 'does not grant BAGO authority']) expect(html, `expected ${text}`).toContain(text)
+  expect(html).not.toMatch(/<button[^>]*>(Approve|Reject|Request evidence)/)
+  expect(html).not.toContain('report.txt')
 })
 
 test('shows denied authorization and declared but unavailable receipt without implying execution', () => {
   const html = renderToStaticMarkup(<ActionReview bundle={bundle} />)
-  assert.match(html, /Rejected by recorded decision/)
-  assert.match(html, /Receipt link unknown/)
-  assert.match(html, /Call recorded: no/)
-  assert.doesNotMatch(html, /Execution: succeeded/)
+  expect(html).toMatch(/Rejected by recorded decision/)
+  expect(html).toMatch(/Receipt declared but unavailable/)
+  expect(html).toMatch(/Call recorded: no/)
+  expect(html).not.toMatch(/Execution: succeeded/)
 })
 
 test('missing and mismatched receipts are explicit and success without a match stays unverified', () => {
   const missing = actionBundleFromAgentRun({ run_id: 'r', proposals: [{ proposal_id: 'p', request_id: 'q', decision: 'ALLOW', called: true, outcome: 'SUCCESS', receipt_id: 'declared' }] })
   const missingHtml = renderToStaticMarkup(<ActionReview bundle={missing} />)
-  assert.match(missingHtml, /Receipt declared but unavailable/)
-  assert.match(missingHtml, /The source reports success, but it is unverified/)
+  expect(missingHtml).toMatch(/Receipt declared but unavailable/)
+  expect(missingHtml).toMatch(/The source reports success, but it is unverified/)
   const mismatch = actionBundleFromAgentRun({ run_id: 'r', proposals: [{ proposal_id: 'p', request_id: 'q', permit_id: 'permit-1', decision: 'ALLOW', called: true, outcome: 'SUCCESS' }], mcp_receipts: [{ receipt_id: 'other', request_id: 'q', permit_id: 'permit-2', execution_outcome: 'SUCCESS' }] })
-  assert.match(renderToStaticMarkup(<ActionReview bundle={mismatch} />), /Receipt mismatch/)
+  expect(renderToStaticMarkup(<ActionReview bundle={mismatch} />)).toMatch(/Receipt mismatch/)
+})
+
+test('UI rejects a claimed receipt match without exact request and permit identity', () => {
+  const unsafe = {
+    schema: 'governed-action-bundle/v1' as const,
+    actions: [{
+      schema: 'governed-action/v1' as const,
+      id: 'p',
+      proposalState: 'proposed' as const,
+      runId: 'r',
+      requestId: 'request-1',
+      effectType: 'WRITE',
+      risk: 'mutating' as const,
+      approval: 'unknown' as const,
+      capability: { state: 'unknown' as const },
+      eligibility: { state: 'unknown' as const },
+      authorization: { state: 'authorized' as const, permitValidity: 'valid' as const, permitId: 'permit-1' },
+      availability: { state: 'unknown' as const },
+      execution: { state: 'succeeded' as const, called: true, outcome: 'SUCCESS' },
+      receiptLink: { state: 'matched' as const, receiptId: 'receipt-1', receipt: { id: 'receipt-1', requestId: 'request-other', permitId: 'permit-other', outcome: 'SUCCESS', evidenceRefs: [], source: 'adl-agent-run' } },
+    }],
+  } satisfies ActionInspectionBundle
+  const html = renderToStaticMarkup(<ActionReview bundle={unsafe} />)
+  expect(html).toMatch(/Receipt mismatch/)
+  expect(html).toMatch(/Execution<\/strong><span>unverified/)
+  expect(html).toMatch(/identity-matched receipt is unavailable/)
 })
 
 test('loading, empty, error, unsupported and unknown states remain visible', () => {
@@ -46,6 +71,6 @@ test('loading, empty, error, unsupported and unknown states remain visible', () 
     renderToStaticMarkup(<ActionReview bundle={{ schema: 'unsupported' as ActionInspectionBundle['schema'], actions: [] }} />),
     renderToStaticMarkup(<ActionReview />),
   ].join('\n')
-  for (const text of ['Loading run artifacts', 'This run has no proposed actions', 'Action source failed', 'unsupported', 'Action proposal data was not provided']) assert.ok(html.includes(text), `expected ${text}`)
+  for (const text of ['Loading run artifacts', 'This run has no proposed actions', 'Action source failed', 'unsupported', 'Action proposal data was not provided']) expect(html, `expected ${text}`).toContain(text)
 })
 

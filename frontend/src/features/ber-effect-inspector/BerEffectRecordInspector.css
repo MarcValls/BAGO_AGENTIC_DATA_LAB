@@ -1,0 +1,16 @@
+.ber-effect-record { max-width: 960px; margin: 0 auto; color: #dce7f2; }
+.ber-effect-record__header { margin-bottom: 22px; }
+.ber-effect-record h1 { margin: 2px 0 8px; font-size: 1.45rem; }
+.ber-effect-record h2 { margin: 22px 0 10px; font-size: 1rem; }
+.ber-effect-record__file { display: inline-flex; flex-direction: column; gap: 7px; padding: 12px; border: 1px solid #405773; border-radius: 8px; background: #142237; color: #dce7f2; font-weight: 650; }
+.ber-effect-record__file input { max-width: 100%; color: #aebfd2; font-weight: 400; }
+.ber-effect-record__message { margin: 14px 0; padding: 10px 12px; border-left: 3px solid #6a8fb8; background: #142237; color: #c5d3e2; overflow-wrap: anywhere; }
+.ber-effect-record__message--error { border-color: #e48787; color: #ffd5d5; }
+.ber-effect-record__grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 9px; margin: 0; }
+.ber-effect-record__grid > div { min-width: 0; padding: 10px; border: 1px solid #2c4058; border-radius: 7px; background: #111e2e; }
+.ber-effect-record__grid dt { color: #9eb2ca; font-size: .72rem; }
+.ber-effect-record__grid dd { margin: 5px 0 0; overflow-wrap: anywhere; }
+.ber-effect-record__events { display: grid; gap: 7px; padding-left: 25px; }
+.ber-effect-record__events li { display: grid; grid-template-columns: minmax(120px, 1fr) auto minmax(100px, 1.2fr); gap: 10px; align-items: baseline; padding: 8px 10px; border: 1px solid #2c4058; border-radius: 6px; background: #111e2e; }
+.ber-effect-record code { overflow-wrap: anywhere; }
+@media (max-width: 600px) { .ber-effect-record__events li { grid-template-columns: 1fr; gap: 3px; } }

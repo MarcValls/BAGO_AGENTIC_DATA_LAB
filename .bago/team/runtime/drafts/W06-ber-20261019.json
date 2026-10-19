@@ -1,0 +1,51 @@
+{
+  "work_id": "W06",
+  "role": "decision-ui-engineer",
+  "status": "DONE",
+  "changed_files": [
+    "frontend/src/features/decision-inspector/shared/InspectorState.tsx",
+    "frontend/src/features/decision-inspector/shared/InspectorState.css",
+    "frontend/tests/ui/decision-inspector/shell/shell.test.tsx"
+  ],
+  "outputs": [
+    {
+      "kind": "decision-inspector-shared-status-v1",
+      "path": "frontend/src/features/decision-inspector/shared/InspectorState.tsx",
+      "description": "Deterministic live-region status messages for loading, empty, error, unsupported, partial, stale, unverified and unknown source states."
+    },
+    {
+      "kind": "decision-inspector-shell-tests-v1",
+      "path": "frontend/tests/ui/decision-inspector/shell/shell.test.tsx",
+      "description": "Shell tests cover explicit source selection, accessible native navigation, no effect controls, and distinct status announcements; interactive test selects a supplied conclusion and navigates to Evidence."
+    }
+  ],
+  "repository_snapshot": {
+    "branch": "codex/adl-ber-integration-20261019",
+    "head": "585fe4635596b1bd253fb8ba6d5b736ebf133ee9",
+    "head_tree": "9a31954f855d3e38c371eadc145fa488813b9aec",
+    "note": "W06 follows the frozen W01 snapshot; W02 and W03 dependency handoffs were read and validated before implementation."
+  },
+  "verification": [
+    {
+      "command": "npm exec --yes --package=vitest -- vitest run tests/ui/decision-inspector/shell/shell.test.tsx",
+      "evidence": "Vitest PASS: 1 test file, 6 tests passed, 0 failed, including interactive selection and section navigation in jsdom.",
+      "result": "PASS"
+    },
+    {
+      "command": "npm run build --prefix frontend",
+      "evidence": "TypeScript project build and Vite production build completed with exit code 0; generated frontend/dist/index.html was restored after the check.",
+      "result": "PASS"
+    },
+    {
+      "command": "git diff --check -- frontend/src/features/decision-inspector/shared/InspectorState.tsx frontend/src/features/decision-inspector/shared/InspectorState.css frontend/tests/ui/decision-inspector/shell/shell.test.tsx",
+      "evidence": "No whitespace errors in W06-owned source and test paths.",
+      "result": "PASS"
+    }
+  ],
+  "residual_risks": [
+    "Manual screen-reader and keyboard-only review was not run; tests verify DOM semantics and one selection/navigation interaction.",
+    "The shell remains a read-only projection. These changes add no approval, execution, deletion or BER authority.",
+    "BER runtime data, authorization and receipts are not exercised by this UI shell work item."
+  ],
+  "next_consumers": ["W07", "W08", "W09"]
+}
