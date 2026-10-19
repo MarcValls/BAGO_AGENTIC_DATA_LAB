@@ -1,5 +1,5 @@
 import { strict as assert } from 'node:assert'
-import { test } from 'node:test'
+import { test } from 'vitest'
 import { renderToStaticMarkup } from 'react-dom/server'
 import type { DecisionConclusion } from '../../../../src/contracts/decision/evidence'
 import { EvidenceExplorer } from '../../../../src/features/decision-inspector/evidence/EvidenceExplorer'
@@ -38,11 +38,28 @@ test('explicitly distinguishes unsupported, missing and contradictory claim evid
 })
 
 test('does not create claims from conclusion text when structured claims are absent', () => {
-  const noClaims = { ...conclusion, claims: [] }
+  const noClaims = { ...conclusion, claims: [], evidence: [conclusion.evidence[0]] }
   const html = renderToStaticMarkup(<EvidenceExplorer conclusion={noClaims} />)
   assert.match(html, /Claims not provided/)
   assert.match(html, /Citations are not converted into claims/)
+  assert.match(html, /Evidence without a claim link/)
+  assert.match(html, /citation-1/)
+  assert.match(html, /Claim relation: Not provided/)
   assert.doesNotMatch(html, /A source-backed claim/)
+})
+
+test('keeps unlinked references visible beside structured claims without inventing a relation', () => {
+  const withUnlinked = { ...conclusion, evidence: [
+    ...conclusion.evidence,
+    { id: 'retrieved-only', artifactRef: 'citation-unlinked', freshness: 'unknown' as const },
+  ] }
+  const html = renderToStaticMarkup(<EvidenceExplorer conclusion={withUnlinked} initialClaimId="claim-supported" />)
+  assert.match(html, /Evidence without a claim link/)
+  assert.match(html, /citation-unlinked/)
+  assert.match(html, /Source identity/)
+  assert.match(html, /Not provided/)
+  assert.match(html, /Freshness not established/)
+  assert.match(html, /Claim relation: Not provided/)
 })
 
 test('uses explicit expected snapshot for freshness and preserves stale references', () => {

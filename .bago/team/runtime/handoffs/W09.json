@@ -1,0 +1,62 @@
+{
+  "changed_files": [
+    "frontend/src/features/decision-inspector/actions/ActionReview.tsx",
+    "frontend/src/features/decision-inspector/actions/ActionReview.css",
+    "frontend/tests/ui/decision-inspector/actions/action-review.test.tsx"
+  ],
+  "next_consumers": [
+    "W10",
+    "W11"
+  ],
+  "outputs": [
+    {
+      "description": "Read-only action review with separate proposal, approval, authorization decision, permit validity, execution and receipt states; independently degrades invalid receipt links to mismatch/unverified.",
+      "kind": "decision-inspector-action-review-ui-v1",
+      "path": "frontend/src/features/decision-inspector/actions/ActionReview.tsx",
+      "sha256": "b4c56030ea4189f05c9ab10131c839dc52492fe7c186415fe093b29576b73771"
+    },
+    {
+      "description": "Responsive styling for action lifecycle and receipt status, with no effect-control styling.",
+      "kind": "decision-inspector-action-review-style-v1",
+      "path": "frontend/src/features/decision-inspector/actions/ActionReview.css",
+      "sha256": "c6bae8523e40836d0abb00ca548bb9dfa385fd249f5d71d9e8af952c38f1a0e0"
+    },
+    {
+      "description": "Five Vitest cases for normal/denied/missing/mismatched action data and loading/empty/error/unsupported/unknown UI states.",
+      "kind": "decision-inspector-action-review-tests-v1",
+      "path": "frontend/tests/ui/decision-inspector/actions/action-review.test.tsx",
+      "sha256": "de6b64bd69e0256e253bc423b42a13ad4b99810e086c92e35ce2bdd6f83a7716"
+    }
+  ],
+  "payload_sha256": "47e808e84bfd219a41d6b530b0b6519bc53fa76defb43d0b03cb9d269bdc6d98",
+  "repository_snapshot": {
+    "branch": "codex/adl-ber-integration-20261019",
+    "head": "585fe4635596b1bd253fb8ba6d5b736ebf133ee9",
+    "note": "W09 depends on validated W03, W05 and W06 handoffs; concurrent work preserved."
+  },
+  "residual_risks": [
+    "W03 read-only UX forbids action effect controls; this UI intentionally renders no approve, reject, retry or request-evidence controls despite the generic mission deliverable wording.",
+    "Frontend still imports its legacy action contract copy; W05 canonical contract is at repository root and frontend tsconfig rootDir prevents direct import from this feature scope. W10 owns the assigned frontend contract/integration bridge.",
+    "No live BER authority, execution, receipt signature validation, keyboard-only manual review or screen-reader manual review was performed."
+  ],
+  "role": "decision-ui-engineer",
+  "status": "DONE",
+  "verification": [
+    {
+      "command": "npm exec --yes --package=vitest -- vitest run tests/ui/decision-inspector/actions/action-review.test.tsx (from frontend/)",
+      "evidence": "Vitest reported 1 test file passed; 5 tests passed, 0 failed.",
+      "result": "PASS"
+    },
+    {
+      "command": "git diff --check -- frontend/src/features/decision-inspector/actions/ActionReview.tsx frontend/src/features/decision-inspector/actions/ActionReview.css frontend/tests/ui/decision-inspector/actions/action-review.test.tsx",
+      "evidence": "No whitespace errors reported for W09 paths.",
+      "result": "PASS"
+    },
+    {
+      "command": "python .bago/team/kit/scripts/teamctl.py --root . verify",
+      "evidence": "Mission handoffs validate. WARN orphan handoffs AC01.json through AC10.json remain preserved.",
+      "result": "PASS"
+    }
+  ],
+  "work_id": "W09"
+}

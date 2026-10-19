@@ -5,14 +5,27 @@ const defaultMessages = {
     empty: 'No artifacts are available for this run.',
     error: 'The requested resource could not be loaded.',
     unsupported: 'This data type is not supported by the current inspector.',
+    partial: 'Some source data was not provided or is unavailable.',
+    stale: 'The supplied source identity does not match the expected identity.',
+    unverified: 'The source did not provide enough matching identity to verify this result.',
     unknown: 'The source did not provide enough information to determine this state.',
+};
+const stateHeadings = {
+    loading: 'Loading',
+    empty: 'Nothing to inspect',
+    error: 'Unable to load',
+    unsupported: 'Unsupported data',
+    partial: 'Partial data',
+    stale: 'Stale data',
+    unverified: 'Unverified',
+    unknown: 'State unknown',
 };
 export function InspectorStateView({ state, children }) {
     if (state.status === 'ready')
         return _jsx(_Fragment, { children: children });
     const message = state.status === 'error' ? state.message : state.message || defaultMessages[state.status];
     const liveRole = state.status === 'error' ? 'alert' : 'status';
-    return (_jsxs("section", { className: `decision-inspector-state decision-inspector-state--${state.status}`, role: liveRole, "aria-live": state.status === 'error' ? 'assertive' : 'polite', children: [_jsx("h2", { children: state.status === 'loading' ? 'Loading' : state.status === 'empty' ? 'Nothing to inspect' : state.status === 'error' ? 'Unable to load' : state.status === 'unsupported' ? 'Unsupported data' : 'State unknown' }), _jsx("p", { children: message }), state.status === 'error' && state.onRetry && _jsx("button", { type: "button", onClick: state.onRetry, children: "Retry" })] }));
+    return (_jsxs("section", { className: `decision-inspector-state decision-inspector-state--${state.status}`, role: liveRole, "aria-live": state.status === 'error' ? 'assertive' : 'polite', children: [_jsx("h2", { children: stateHeadings[state.status] }), _jsx("p", { children: message }), state.status === 'error' && state.onRetry && _jsx("button", { type: "button", onClick: state.onRetry, children: "Retry" })] }));
 }
 const supportLabels = {
     supported: 'Supported by linked evidence',

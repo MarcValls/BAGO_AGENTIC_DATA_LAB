@@ -1,0 +1,16 @@
+{
+  "change_request_id": "CR-005-HANDOFF-SCHEMA-BACKWARD-COMPATIBILITY",
+  "contract_id": "bago-agent-decision-engineering-team-handoff-schema-v1",
+  "old_fingerprint": "6cf86537ed7223a6a4a7c974421767eb911c6399d6651030b58619922b4203f0",
+  "proposed_new_fingerprint": "6da35ba45ccdef4bd10639e2e704287343f2d7cecb87ed61dc2191f63cdc8149",
+  "reason": "The handoff schema accepts the current outputs shape (id/path/frozen) but rejects W01-W09 historical outputs (kind/path/sha256), even though the teamctl validator and stored payload hashes accept these completed handoffs. Add a backward-compatible alternative to validate both representations without rewriting historical handoffs.",
+  "impacted_consumers": [
+    "All 14 completed handoffs under .codex-team/handoffs/",
+    "The handoff schema copies in .codex-team-kit/protocol/ and plugins/bago-agent-decision-engineering-team/protocol/",
+    "Future handoff validators and consumers"
+  ],
+  "required_invalidations": [
+    "Validate all 14 existing handoffs against the updated schema; preserve their bytes and payload_sha256 values."
+  ],
+  "decision": "Accepted by user instruction to continue the identified cleanup; historical handoffs will remain byte-for-byte unchanged."
+}

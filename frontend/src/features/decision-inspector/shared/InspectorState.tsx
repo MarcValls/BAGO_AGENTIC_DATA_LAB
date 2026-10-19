@@ -6,6 +6,9 @@ export type InspectorState =
   | { status: 'empty'; message?: string }
   | { status: 'error'; message: string; onRetry?: () => void }
   | { status: 'unsupported'; message?: string }
+  | { status: 'partial'; message: string }
+  | { status: 'stale'; message: string }
+  | { status: 'unverified'; message: string }
   | { status: 'unknown'; message?: string }
   | { status: 'ready' }
 
@@ -14,7 +17,21 @@ const defaultMessages: Record<Exclude<InspectorState['status'], 'ready'>, string
   empty: 'No artifacts are available for this run.',
   error: 'The requested resource could not be loaded.',
   unsupported: 'This data type is not supported by the current inspector.',
+  partial: 'Some source data was not provided or is unavailable.',
+  stale: 'The supplied source identity does not match the expected identity.',
+  unverified: 'The source did not provide enough matching identity to verify this result.',
   unknown: 'The source did not provide enough information to determine this state.',
+}
+
+const stateHeadings: Record<Exclude<InspectorState['status'], 'ready'>, string> = {
+  loading: 'Loading',
+  empty: 'Nothing to inspect',
+  error: 'Unable to load',
+  unsupported: 'Unsupported data',
+  partial: 'Partial data',
+  stale: 'Stale data',
+  unverified: 'Unverified',
+  unknown: 'State unknown',
 }
 
 export function InspectorStateView({ state, children }: { state: InspectorState; children?: ReactNode }) {
@@ -24,7 +41,7 @@ export function InspectorStateView({ state, children }: { state: InspectorState;
   const liveRole = state.status === 'error' ? 'alert' : 'status'
   return (
     <section className={`decision-inspector-state decision-inspector-state--${state.status}`} role={liveRole} aria-live={state.status === 'error' ? 'assertive' : 'polite'}>
-      <h2>{state.status === 'loading' ? 'Loading' : state.status === 'empty' ? 'Nothing to inspect' : state.status === 'error' ? 'Unable to load' : state.status === 'unsupported' ? 'Unsupported data' : 'State unknown'}</h2>
+      <h2>{stateHeadings[state.status]}</h2>
       <p>{message}</p>
       {state.status === 'error' && state.onRetry && <button type="button" onClick={state.onRetry}>Retry</button>}
     </section>

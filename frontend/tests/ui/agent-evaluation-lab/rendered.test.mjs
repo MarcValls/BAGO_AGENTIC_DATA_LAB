@@ -264,13 +264,15 @@ describe('Agent Evaluation Lab rendered behavior', () => {
 })
 
 describe('Agent Runner P1-02 rendered regression', () => {
-  it('keeps Run disabled and states that governed execution is unavailable', async () => {
+  it('requires a selected profile and explicit task before a governed run can start', async () => {
     const restore = stubFetch(async () => jsonResponse({ agents: [{ id: agent.id, config: { name: 'Read only reviewer', description: 'Audit', type: 'tool', system_prompt: 'review', tools: [] } }] }))
-    render(React.createElement(AgentRunner))
-    const runButton = await screen.findByRole('button', { name: 'Run unavailable' })
-    assert.equal(runButton.disabled, true)
-    assert.match(screen.getByRole('status').textContent.toLowerCase(), /no governed execution capability is registered/)
-    restore()
+    try {
+      render(React.createElement(AgentRunner))
+      const runButton = await screen.findByRole('button', { name: 'Start task' })
+      assert.equal(runButton.disabled, true)
+      assert.equal(screen.queryByText(/Run unavailable/), null)
+      assert.equal(screen.queryByText(/legacy SandboxManager/), null)
+    } finally { restore() }
   })
 
   it('downloads the JSON export with a JSON filename', async () => {

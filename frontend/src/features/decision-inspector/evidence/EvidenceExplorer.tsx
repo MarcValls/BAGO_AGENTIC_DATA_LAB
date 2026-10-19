@@ -57,6 +57,26 @@ function EvidenceDetails({ evidence, relation, claimId, freshness }: { evidence:
   </article>
 }
 
+function UnlinkedEvidenceInventory({ evidence, linkedIds }: { evidence: DecisionEvidence[]; linkedIds: Set<string> }) {
+  const unlinked = evidence.filter(item => !linkedIds.has(item.id))
+  return <section className="evidence-explorer__unlinked" aria-label="Unlinked evidence references">
+    <h3>Evidence without a claim link</h3>
+    {unlinked.length === 0 ? <p role="status">No unlinked evidence references were supplied.</p> : <>
+      <p>These source-provided references are retained, but the source supplied no claim relation for them.</p>
+      <ul className="evidence-explorer__unlinked-list">{unlinked.map((item, index) => <li key={`${item.id}-${index}`}>
+        <h4>Evidence reference {valueOrMissing(item.id)}</h4>
+        <dl className="evidence-explorer__provenance">
+          <div><dt>Artifact reference</dt><dd><code>{valueOrMissing(item.artifactRef || item.id)}</code></dd></div>
+          <div><dt>Source identity</dt><dd><code>{valueOrMissing(item.sourceIdentity)}</code></dd></div>
+          <div><dt>Snapshot revision</dt><dd>{valueOrMissing(item.snapshot?.revision)}</dd></div>
+          <div><dt>Freshness</dt><dd>{freshnessLabel(item.freshness)}</dd></div>
+        </dl>
+        <p>Claim relation: Not provided</p>
+      </li>)}</ul>
+    </>}
+  </section>
+}
+
 export function EvidenceExplorer({ conclusion, expectedSnapshot, state = { status: 'ready' }, initialClaimId, initialEvidenceId }: EvidenceExplorerProps) {
   const [claimId, setClaimId] = useState<string | undefined>(initialClaimId)
   const [evidenceId, setEvidenceId] = useState<string | undefined>(initialEvidenceId)
@@ -68,6 +88,7 @@ export function EvidenceExplorer({ conclusion, expectedSnapshot, state = { statu
     ? assessEvidenceFreshness(selectedEvidence.snapshot, expectedSnapshot)
     : selectedEvidence.freshness)
   const noClaims = conclusion.claims.length === 0
+  const linkedEvidenceIds = new Set(conclusion.claims.flatMap(claim => claim.evidence.map(link => link.evidenceId)))
 
   return <section className="evidence-explorer" aria-labelledby="evidence-explorer-title">
     <header className="evidence-explorer__header">
@@ -77,10 +98,14 @@ export function EvidenceExplorer({ conclusion, expectedSnapshot, state = { statu
     </header>
 
     <InspectorStateView state={state}>
-      {noClaims ? <section className="evidence-explorer__empty" aria-label="Claims unavailable">
-        <h3>Claims not provided</h3>
-        <p>The source did not provide a structured claim list. Citations are not converted into claims.</p>
-      </section> : <div className="evidence-explorer__layout">
+      {noClaims ? <>
+        <section className="evidence-explorer__empty" aria-label="Claims unavailable">
+          <h3>Claims not provided</h3>
+          <p>The source did not provide a structured claim list. Citations are not converted into claims.</p>
+        </section>
+        <UnlinkedEvidenceInventory evidence={conclusion.evidence} linkedIds={linkedEvidenceIds} />
+      </> : <>
+      <div className="evidence-explorer__layout">
         <section aria-labelledby="claim-list-title">
           <h3 id="claim-list-title">Claims</h3>
           <ul className="evidence-explorer__claim-list">
@@ -128,7 +153,9 @@ export function EvidenceExplorer({ conclusion, expectedSnapshot, state = { statu
           <h3>Select a claim</h3>
           <p>No claim is selected. Choose a source-provided claim to inspect its evidence.</p>
         </section>}
-      </div>}
+      </div>
+      <UnlinkedEvidenceInventory evidence={conclusion.evidence} linkedIds={linkedEvidenceIds} />
+      </>}
     </InspectorStateView>
   </section>
 }

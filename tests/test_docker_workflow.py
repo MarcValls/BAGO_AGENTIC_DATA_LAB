@@ -19,3 +19,14 @@ def test_security_scan_has_job_scoped_sarif_upload_permissions():
         "      security-events: write\n"
     ) in security_scan
     assert "uses: github/codeql-action/upload-sarif@" in security_scan
+
+
+def test_ui_image_includes_pinned_ber_artifact_and_lock():
+    dockerfile = (ROOT / "Dockerfile.ui").read_text(encoding="utf-8")
+
+    assert "COPY frontend/ui-kit-preview.html ./" in dockerfile
+    assert "COPY frontend/packages ./packages" in dockerfile
+    assert "COPY runtime/ber runtime/ber/" in dockerfile
+    assert "COPY scripts/ber_effect_demo.py scripts/ber_effect_demo.py" in dockerfile
+    assert (ROOT / "runtime" / "ber" / "bago-embedded-runtime-0.1.0.zip").is_file()
+    assert (ROOT / "runtime" / "ber" / "BER.lock.json").is_file()

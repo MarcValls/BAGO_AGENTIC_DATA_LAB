@@ -68,7 +68,7 @@ def test_control_chat_does_not_navigate_for_explanation_decision(monkeypatch, tm
     assert captured["options"] == {"temperature": 0}
 
 
-def test_control_chat_navigates_only_after_validated_navigation_decision(monkeypatch, tmp_path):
+def test_control_chat_requests_confirmation_for_validated_navigation_decision(monkeypatch, tmp_path):
     store = ConversationStore(tmp_path / "conversations.sqlite3")
     conversation = store.create("assistant", "app-assistant")
     monkeypatch.setattr(server, "CONVERSATIONS", store)
@@ -84,8 +84,9 @@ def test_control_chat_navigates_only_after_validated_navigation_decision(monkeyp
         conversation_id=conversation["id"], revision=0,
     )))
 
-    assert result["operation"] == "navigate"
+    assert result["operation"] == "confirm_navigation"
     assert result["navigation"] == {"view": "cognition_settings"}
+    assert result["assistant_message"] == "¿Quieres cambiar de pantalla?"
 
 
 def test_ollama_chat_turn_forwards_routing_options(monkeypatch):

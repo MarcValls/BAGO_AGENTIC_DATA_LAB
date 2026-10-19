@@ -4,7 +4,7 @@ import { actionBundleFromAgentRun } from '../../../adapters/action/agentRun'
 import { localTraceToTimeline } from '../../../adapters/trace/localTraceAdapter'
 import { evidenceFromRetrievalHit, type DecisionConclusion, type DecisionEvidence } from '../../../contracts/decision/evidence'
 import type { ActionInspectionBundle } from '../../../contracts/action/action'
-import type { LocalTraceRecord, TraceTimeline } from '../../../contracts/trace/trace'
+import type { TraceSource, TraceTimeline } from '../../../contracts/trace/trace'
 import { ActionReview } from '../actions/ActionReview'
 import { EvidenceExplorer } from '../evidence/EvidenceExplorer'
 import { InspectorShell, type InspectorSection } from '../shell/InspectorShell'
@@ -14,7 +14,7 @@ export interface DecisionInspectorArtifacts {
   summary: Record<string, unknown>
   agent_run: Record<string, unknown>
   receipts: Record<string, unknown>
-  trace: LocalTraceRecord
+  trace: TraceSource
   evaluation: Record<string, unknown>
 }
 
@@ -22,6 +22,7 @@ export interface DecisionInspectorModel {
   conclusion?: DecisionConclusion
   evidence: DecisionEvidence[]
   timeline?: TraceTimeline
+  traceBindingIssue?: { kind: 'run_id_missing' | 'run_id_mismatch'; expectedRunId?: string; actualRunId: string }
   actions: ActionInspectionBundle
 }
 
@@ -89,15 +90,22 @@ export function decisionInspectorModel(artifacts: DecisionInspectorArtifacts): D
     claims: [],
     evidence,
   } : undefined
-  const trace = record(artifacts.trace)
-  const timeline = trace && typeof trace.trace_id === 'string' && typeof trace.run_id === 'string' && Array.isArray(trace.events)
-    ? localTraceToTimeline(trace as unknown as LocalTraceRecord)
+  const trace = artifacts.trace
+  const validTraceEnvelope = trace && typeof trace.trace_id === 'string' && typeof trace.run_id === 'string' && Array.isArray(trace.events)
+  const traceBindingIssue = validTraceEnvelope && !runId
+    ? { kind: 'run_id_missing' as const, actualRunId: trace.run_id }
+    : validTraceEnvelope && trace.run_id !== runId
+      ? { kind: 'run_id_mismatch' as const, expectedRunId: runId, actualRunId: trace.run_id }
+    : undefined
+  const timeline = validTraceEnvelope && runId && !traceBindingIssue
+    ? localTraceToTimeline(trace)
     : undefined
 
   return {
     conclusion,
     evidence,
     timeline,
+    traceBindingIssue,
     actions: actionBundleFromAgentRun(runBoundActionSource(run)),
   }
 }
@@ -172,10 +180,17 @@ export function DecisionInspector({ artifacts }: { artifacts: DecisionInspectorA
     <nav className="decision-inspector-page__nav" aria-label="Inspector views">
       {views.map(item => <button key={item.id} type="button" aria-current={view === item.id ? 'page' : undefined} onClick={() => { setView(item.id); setActionId(undefined) }}>{item.label}</button>)}
     </nav>
+    {model.traceBindingIssue && <p role="status">{model.traceBindingIssue.kind === 'run_id_missing'
+      ? `Trace run ${model.traceBindingIssue.actualRunId} cannot be bound because the selected run has no run ID; its correlations are hidden.`
+      : `Trace run ${model.traceBindingIssue.actualRunId} does not match selected run ${model.traceBindingIssue.expectedRunId}; its correlations are hidden.`}</p>}
     {view === 'overview' && conclusion}
     {view === 'trace' && <TraceTimelineView
       timeline={model.timeline}
-      state={model.timeline ? { status: 'ready' } : { status: 'unknown', message: 'The source did not provide a trace for this run.' }}
+      state={model.timeline ? { status: 'ready' } : model.traceBindingIssue?.kind === 'run_id_missing'
+        ? { status: 'unverified', message: `Trace run ${model.traceBindingIssue.actualRunId} cannot be bound because the selected run has no run ID.` }
+        : model.traceBindingIssue
+          ? { status: 'stale', message: `Trace run ${model.traceBindingIssue.actualRunId} does not match selected run ${model.traceBindingIssue.expectedRunId}.` }
+        : { status: 'unknown', message: 'The source did not provide a trace for this run.' }}
       onClaimNavigate={id => { setClaimId(id); setSection('claims'); setView('overview') }}
       onActionNavigate={id => { setActionId(id); setView('actions') }}
     />}

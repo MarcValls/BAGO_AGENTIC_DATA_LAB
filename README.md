@@ -290,7 +290,7 @@ Cada bloque muestra los archivos localizados mediante los patrones declarados en
 ### L12 — Local Observability & Evals
 **Estado:** VERIFIED (local)
 
-**Código localizado:** [`src/evaluation/__init__.py`](src/evaluation/__init__.py) · [`src/evaluation/agent_lab.py`](src/evaluation/agent_lab.py) · [`src/evaluation/local_evals.py`](src/evaluation/local_evals.py) · (+3 archivos)
+**Código localizado:** [`src/evaluation/__init__.py`](src/evaluation/__init__.py) · [`src/evaluation/agent_lab.py`](src/evaluation/agent_lab.py) · [`src/evaluation/local_evals.py`](src/evaluation/local_evals.py) · (+4 archivos)
 **Tests:** [`tests/test_l12_observability.py`](tests/test_l12_observability.py)
 **Evidencia:** [`docs/observability_evals.md`](docs/observability_evals.md) · [`evidence/l12_observability_evals.md`](evidence/l12_observability_evals.md) · [`scripts/run_l12_observability_evidence.py`](scripts/run_l12_observability_evidence.py)
 **Patrones sin resolver:** `ninguno`

@@ -1,0 +1,25 @@
+{
+  "change_request_id": "CR-001-FRONTEND-MISSION-SCOPES",
+  "contract_id": "agent-decision-inspector-mission-write-scopes-v1",
+  "old_fingerprint": "8f07baea4079a652f2730c8d4314e7996847edf6da343241cbc0882104487ea3",
+  "proposed_new_fingerprint": "0de7f90f5813de00953c16f4a194c274e58b5d2a1fa9ee5d41d36d04e9dde5bf",
+  "reason": "The installed mission targets src/features and src/contracts, but this repository’s running product is a React/Vite application rooted at frontend/src. W01 inventory found existing run, LocalTrace, authorization, receipt and evaluation owners to reuse.",
+  "impacted_consumers": [
+    "W02",
+    "W03",
+    "W04",
+    "W05",
+    "W06",
+    "W07",
+    "W08",
+    "W09",
+    "W10",
+    "W11",
+    "W12"
+  ],
+  "required_invalidations": [],
+  "decision": "Applied before any affected work item was claimed; W01 inventory remains valid and is preserved.",
+  "source_mission": ".codex-team-kit/missions/agent-decision-inspector.json",
+  "adapted_mission": ".codex-team/missions/agent-decision-inspector-project.json",
+  "adapted_mission_sha256": "0de7f90f5813de00953c16f4a194c274e58b5d2a1fa9ee5d41d36d04e9dde5bf"
+}

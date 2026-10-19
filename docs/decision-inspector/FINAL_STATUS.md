@@ -1,39 +1,43 @@
-# Decision Inspector — estado final
+# Decision Inspector v1 — terminal status
 
-Fecha: 2026-10-08  
-Misión: `AGENT_DECISION_INSPECTOR_V1`  
-Estado: **VALIDATED** para el gate explícito de la misión (P0=0, P1=0).
+## Verdict
 
-## Resultado
+Mission `AGENT_DECISION_INSPECTOR_V1` is **DONE** for the declared, read-only
+inspection scope. Its W01–W11 dependency handoffs validate, and independent
+verification reports **P0=0, P1 open=0**. The Inspector binds a supplied trace
+to the selected AgentRun identity; a foreign trace is hidden with a mismatch
+notice, and traces are unverified and hidden when the selected run has no
+`run_id`.
 
-La UI de Decision Inspector está integrada en la aplicación React. Presenta la conclusión fuente, evidencia recuperada, cronología LocalTrace y acciones/recibos en vistas navegables. No inventa claims ni relaciones de soporte; señala los datos ausentes. Los recibos solo pueden quedar asociados si su `run_id` explícito coincide con el `run_id` de la ejecución.
+This closes the Inspector mission only. It does not close the wider ADL/BER goal or connect BER to Agent Runner.
 
-La validación local proyectó **15/15 spans** desde LocalTrace a Jaeger y encontró la traza. Jaeger trace ID: `04b58bb123bb6cc94a8cc0d60c7145ae`. LocalTrace ID: `trace-5b385699ffda0529`. La API del inspector respondió `200` y `/api/health` devolvió `ok` en `http://127.0.0.1:8082`.
+## Evidence index
 
-## Evidencia visual
+| Claim | Evidence | Result and scope |
+|---|---|---|
+| W01–W11 work products and dependencies are materialized | `.bago/team/runtime/handoffs/W01.json` through `W11.json`; `python .bago/team/kit/scripts/teamctl.py --root . verify` | PASS. The validator retains warnings for orphan handoffs AC01–AC10. |
+| Inspector contracts and UI integrate evidence, traces, actions, authorization, and receipts | W02–W10 handoffs; `frontend/src/features/decision-inspector/integration/DecisionInspector.tsx` | PASS for the declared source-backed, read-only integration. |
+| Foreign and unbound traces cannot contribute timeline correlations | `docs/decision-inspector/verification/W11_INDEPENDENT_VERIFICATION.md`; integration regressions in `frontend/tests/ui/decision-inspector/integration/integration.test.tsx` | Independent adversarial reruns pass for run-A/run-B mismatch and missing AgentRun `run_id`. |
+| Focused UI regressions pass | `npm exec --prefix frontend vitest -- run frontend/tests/ui/decision-inspector` | 5 files, 30 tests passed. |
+| Production frontend builds | `npm run build --prefix frontend` | TypeScript and Vite build pass; 127 modules transformed. |
+| ADL BER client focused regressions pass | `python -m pytest tests/runtime/ber -q` | 4 passed; explicit start/close, artifact verification, typed-process and filesystem behaviors in this test scope. |
 
-- [Decision Inspector — resumen](../../output/playwright/decision-inspector-overview.png)
-- [Decision Inspector — cronología](../../output/playwright/decision-inspector-trace.png)
-- [Decision Inspector — acciones y recibos](../../output/playwright/decision-inspector-actions.png)
-- [Jaeger — grafo de la traza local](../../output/playwright/jaeger-localtrace-04b58bb.png)
-- [Validación LocalTrace → OTLP → Jaeger](../../evidence/l15_otel_jaeger_live.md)
+## Limitations
 
-## Verificación
+- Manual keyboard-only and screen-reader review: `NOT_RUN`.
+- The Inspector reads existing ADL AgentRun artifacts. No live BER execution result is connected to ADL API, LocalTrace, evaluation, or the Inspector.
+- L0–L15 compatibility/parity and clean-machine standalone packaging remain unverified. Docker Linux engine was unavailable at baseline.
+- Agent Runner remains fail-closed; `filesystem.delete` remains blocked.
+- Orphan handoff warnings AC01–AC10 are preserved and visible.
 
-- `npm run build` en `frontend`: **PASS**, compilación TypeScript y Vite, 124 módulos.
-- Integración Decision Inspector: **5/5 PASS**, incluidos recibos de otro run con IDs coincidentes y recibos sin `run_id`.
-- Verificación independiente W11/W14: **0 P0, 0 P1 abiertos**. W11 detectó un P1 de asociación de recibos; W13 lo corrigió y W14 confirmó el cierre con pruebas adversariales y controles positivos.
-- `python .bago/team/kit/scripts/teamctl.py verify`: **PASS** para todos los handoffs de la misión.
-- `git diff --check`: **PASS**.
+## Reproduction
 
-## Límites y pendientes
+From the ADL worktree root:
 
-- No hay `claim_id` estructurados ni vínculos claim→evidencia en la ejecución actual. La UI informa que no están disponibles; no deriva claims del texto.
-- La UI no dispone de correlación directa con el ID de Jaeger. La evidencia de Jaeger acredita la proyección backend de LocalTrace, no un enlace desde el inspector.
-- `AWS live` y `remote collector`: `NOT_RUN`.
-- Revisión manual de teclado/lector de pantalla y revisión píxel a píxel de capturas: `NOT_RUN` (P2 no bloqueante).
-- La igualdad del `run_id` es identidad aportada por la fuente, no atestación criptográfica del origen del recibo.
+```powershell
+python .bago/team/kit/scripts/teamctl.py --root . verify
+npm exec --prefix frontend vitest -- run frontend/tests/ui/decision-inspector
+npm run build --prefix frontend
+```
 
-## Índice de handoffs
-
-W01–W14 tienen handoffs validados; W12 cierra la misión. Informes independientes: [W11](verification/W11_INDEPENDENT_VERIFICATION.md), [W13](verification/W13_RECEIPT_RUN_BINDING.md), [W14](verification/W14_INDEPENDENT_RECEIPT_VERIFICATION.md).
+The independent adversarial commands and candidate details are recorded in the W11 verification report and handoff.

@@ -1,0 +1,19 @@
+{
+  "change_request_id": "CR-010-LOCAL-WEBSOCKET-ORIGIN-VALIDATION",
+  "contract_id": "agent-chat-control-contract-v1",
+  "old_fingerprint": "32c7ac19385b28214d47131167c07399ea6d4c3d69c44c3509b6e1b725713555",
+  "proposed_new_fingerprint": "7e1ba743960ceefd783ab3a9fa333ab10c0161310c4e3c20f550c3715e5a4289",
+  "reason": "Independent review found that CORS does not protect WebSocket handshakes. The unauthenticated /ws/agents/chat and /ws/demo/run routes accepted connections from arbitrary browser origins; the demo route can trigger a write-evidence run.",
+  "impacted_consumers": [
+    "AC04 independent verification",
+    "/ws/agents/chat",
+    "/ws/agents/run",
+    "/ws/demo/run",
+    "Agent Runner and Control UI websocket clients"
+  ],
+  "required_invalidations": [
+    "Add AC10 to validate the browser Origin before accepting every WebSocket endpoint.",
+    "Re-review all WebSocket routes and the exact final candidate fingerprint."
+  ],
+  "decision": "Accepted as required local-browser request-origin protection for the unauthenticated host-local API."
+}

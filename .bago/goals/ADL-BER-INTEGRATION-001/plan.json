@@ -1,0 +1,100 @@
+{
+  "schema": "adl.ber.integration.plan.v1",
+  "goal_id": "ADL-BER-INTEGRATION-001",
+  "candidate": {
+    "adl_base_sha": "585fe4635596b1bd253fb8ba6d5b736ebf133ee9",
+    "origin_main_sha": "585fe4635596b1bd253fb8ba6d5b736ebf133ee9",
+    "worktree": ".worktrees/adl-ber-integration-20261019",
+    "bago_reference_branch": "publish/worktree-groups-20261003-7f5d47a6",
+    "bago_reference_sha": "5fb6f2f0c57f29de1b42bbb2efb4a57c86aa032d",
+    "bago_reference_dirty": true,
+    "bago_version_authority": "release_version.txt",
+    "bago_refreshed_origin_main_sha": "f3804a7e9333607561d28fd5075569e725aa0bb0",
+    "bago_worktree": "C:/Users/AMTEC_Terminal_1º/BAGO/.worktrees/ber-embedded-runtime-20261019",
+    "bago_work_branch": "codex/ber-embedded-runtime-20261019",
+    "bago_worktree_base_sha": "5fb6f2f0c57f29de1b42bbb2efb4a57c86aa032d"
+  },
+  "phases": [
+    {
+      "id": "A",
+      "name": "Reconcile ADL baseline",
+      "status": "VALIDATED",
+      "evidence": "evidence/BASELINE_20261019.md"
+    },
+    {
+      "id": "B",
+      "name": "Build minimal BER from canonical BAGO source",
+      "status": "VALIDATED",
+      "evidence": "evidence/BER_ARTIFACT_AND_ADL_CLIENT_20261019.md"
+    },
+    {
+      "id": "C",
+      "name": "Integrate BerClient while retaining legacy",
+      "status": "VALIDATED_BER_CLIENT_AND_GOVERNED_AGENT_RUNNER_PATH",
+      "evidence": "docs/ber/AGENT_RUNNER_FINAL_STATUS.md"
+    },
+    {
+      "id": "D",
+      "name": "Demonstrate parity and preserve L0-L15",
+      "status": "VALIDATED",
+      "evidence": "evidence/COMPATIBILITY_AND_L0_L15_20261019.md"
+    },
+    {
+      "id": "E",
+      "name": "Make BER primary after parity",
+      "status": "VALIDATED_BOUNDED_BER_RUNNER_WITH_LIVE_LOCAL_OLLAMA_TASK_RESULT; LIVE_MUTATING_EFFECT_NOT_RUN",
+      "evidence": "docs/ber/AGENT_RUNNER_FINAL_STATUS.md"
+    },
+    {
+      "id": "F",
+      "name": "Package and verify clean-machine standalone ADL",
+      "status": "VALIDATED_FINAL_LOCAL_IMAGE_HEALTH_UI_BER_RECEIPT_AND_READBACK",
+      "evidence": "evidence/LIVE_RUNNER_AND_FINAL_PACKAGE_20261019.md"
+    },
+    {
+      "id": "G",
+      "name": "Enable governed Agent Runner",
+      "status": "VALIDATED_CODE_UI_ADVERSARIAL_REVIEW_AND_LIVE_LOCAL_OLLAMA_TASK_RESULT; LIVE_MUTATING_RUNNER_EFFECT_NOT_RUN",
+      "evidence": "evidence/LIVE_RUNNER_AND_FINAL_PACKAGE_20261019.md"
+    },
+    {
+      "id": "H",
+      "name": "Retire legacy owners only after proof",
+      "status": "NOT_STARTED_PENDING_ACCEPTED_MIGRATION"
+    }
+  ],
+  "protected_capabilities": [
+    "L0-L15",
+    "Provider Registration",
+    "Ollama",
+    "Agent Chat",
+    "Conversation Library",
+    "Decision Inspector",
+    "local sandbox",
+    "Docker packaging"
+  ],
+  "explicitly_blocked": [
+    "filesystem.delete until BAGO canonical adapter and world-state revalidation are verified"
+  ],
+  "baseline_exception": {
+    "id": "CRIT-ADL-PRE-BER-BASELINE-001/DOCKER-NONBLOCKING",
+    "status": "RESOLVED_BY_W17_LOCAL_DOCKER_SMOKE",
+    "reason": "Docker Desktop Linux engine became available for the W17 local image build and standalone BER smoke; no publish or deployment occurred.",
+    "evidence": "evidence/STANDALONE_PACKAGE_SMOKE_20261019.md"
+  },
+  "checks": {
+    "required_before_implementation": [
+      "python scripts/generate_dynamic_readme.py",
+      "npm run build --prefix frontend",
+      "python scripts/generate_dynamic_readme.py --check --skip-tests",
+      "Docker build or classified non-blocking exception"
+    ],
+    "final": [
+      "python scripts/generate_dynamic_readme.py",
+      "python scripts/generate_dynamic_readme.py --check --skip-tests",
+      "full relevant L0-L15 regression",
+      "BER manifest/SHA/protocol/lifecycle/security checks",
+      "standalone clean-machine demonstration"
+    ]
+  }
+}

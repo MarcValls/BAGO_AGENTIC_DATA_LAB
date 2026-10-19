@@ -1,0 +1,489 @@
+{
+  "created_at": "2026-10-19T16:14:03+00:00",
+  "mission": {
+    "max_concurrency": 3,
+    "mission_id": "AGENT_DECISION_INSPECTOR_V1",
+    "objective": "Build an interface that lets a human examine agent conclusions, claims, supporting evidence, provenance, confidence, traces, proposed actions, authorization state and execution receipts.",
+    "terminal_work_items": [
+      "W12"
+    ],
+    "title": "Agent Decision Inspector",
+    "work_items": [
+      {
+        "deliverables": [
+          "Repository snapshot",
+          "Reuse map",
+          "Boundary map"
+        ],
+        "depends_on": [],
+        "done_when": [
+          "HEAD/snapshot recorded",
+          "Existing evidence/receipt/trace/auth primitives mapped",
+          "No architecture invented before reuse analysis"
+        ],
+        "frozen_outputs": [
+          "decision-inspector-reuse-map-v1"
+        ],
+        "id": "W01",
+        "read_scopes": [
+          "**"
+        ],
+        "role": "team-orchestrator",
+        "title": "Freeze repository surface and identify reusable decision/evidence primitives",
+        "write_scopes": [
+          ".bago/team/runtime/**",
+          "docs/decision-inspector/inventory/**"
+        ]
+      },
+      {
+        "deliverables": [
+          "Conclusion schema",
+          "Claim-to-evidence links",
+          "Provenance contract",
+          "Contract tests"
+        ],
+        "depends_on": [
+          "W01"
+        ],
+        "done_when": [
+          "Every conclusion can decompose into claims",
+          "Every claim can link to zero or more evidence objects explicitly",
+          "Evidence provenance and snapshot identity are representable",
+          "Contract tests pass"
+        ],
+        "frozen_outputs": [
+          "decision-evidence-contract-v1"
+        ],
+        "id": "W02",
+        "read_scopes": [
+          "docs/decision-inspector/inventory/**",
+          "src/**"
+        ],
+        "role": "evidence-provenance-engineer",
+        "title": "Define conclusion, claim, evidence and provenance contracts",
+        "write_scopes": [
+          "src/contracts/decision/**",
+          "docs/decision-inspector/contracts/evidence/**",
+          "tests/contracts/evidence/**"
+        ]
+      },
+      {
+        "deliverables": [
+          "Information architecture",
+          "Drill-down flow",
+          "Error/empty/loading states",
+          "Accessibility requirements"
+        ],
+        "depends_on": [
+          "W01"
+        ],
+        "done_when": [
+          "Conclusion -> claim -> evidence -> provenance path defined",
+          "Proposed action review path defined",
+          "Uncertainty and missing evidence states are visible",
+          "Keyboard/screen-reader requirements stated"
+        ],
+        "frozen_outputs": [
+          "decision-inspector-ux-contract-v1"
+        ],
+        "id": "W03",
+        "read_scopes": [
+          "docs/decision-inspector/inventory/**",
+          "src/**"
+        ],
+        "role": "decision-ux-engineer",
+        "title": "Define decision inspection UX and interaction model",
+        "write_scopes": [
+          "docs/decision-inspector/ux/**"
+        ]
+      },
+      {
+        "deliverables": [
+          "Trace event schema",
+          "Timeline adapter",
+          "Correlation ids",
+          "Trace contract tests"
+        ],
+        "depends_on": [
+          "W02"
+        ],
+        "done_when": [
+          "Agent/tool events correlate to claims/actions",
+          "Chronology and causality are distinguishable",
+          "Unknown/missing trace data fails visibly",
+          "Tests pass"
+        ],
+        "frozen_outputs": [
+          "decision-trace-contract-v1"
+        ],
+        "id": "W04",
+        "read_scopes": [
+          "src/contracts/decision/**",
+          "src/**"
+        ],
+        "role": "trace-observability-engineer",
+        "title": "Map traces and tool calls into inspectable timeline contract",
+        "write_scopes": [
+          "src/contracts/trace/**",
+          "src/adapters/trace/**",
+          "docs/decision-inspector/contracts/trace/**",
+          "tests/contracts/trace/**"
+        ]
+      },
+      {
+        "deliverables": [
+          "Action proposal schema",
+          "Authorization state model",
+          "Approval/rejection reasons",
+          "Execution receipt mapping"
+        ],
+        "depends_on": [
+          "W02"
+        ],
+        "done_when": [
+          "Capability, eligibility, authorization, availability and execution are not conflated",
+          "Action risk/approval state is explicit",
+          "Execution receipt links back to proposal",
+          "Tests pass"
+        ],
+        "frozen_outputs": [
+          "decision-action-contract-v1"
+        ],
+        "id": "W05",
+        "read_scopes": [
+          "src/contracts/decision/**",
+          "src/**"
+        ],
+        "role": "governance-action-engineer",
+        "title": "Define proposed action, authorization and receipt inspection contract",
+        "write_scopes": [
+          "src/contracts/action/**",
+          "src/adapters/action/**",
+          "docs/decision-inspector/contracts/action/**",
+          "tests/contracts/action/**"
+        ]
+      },
+      {
+        "deliverables": [
+          "Inspector shell",
+          "Selection state",
+          "Shared status primitives",
+          "Shell tests"
+        ],
+        "depends_on": [
+          "W02",
+          "W03"
+        ],
+        "done_when": [
+          "A conclusion can be selected and navigated",
+          "Shared states render deterministically",
+          "No evidence/action/trace data is fabricated",
+          "Tests pass"
+        ],
+        "frozen_outputs": [],
+        "id": "W06",
+        "read_scopes": [
+          "src/contracts/decision/**",
+          "docs/decision-inspector/ux/**",
+          "src/**"
+        ],
+        "role": "decision-ui-engineer",
+        "title": "Build shared Decision Inspector shell and navigation",
+        "write_scopes": [
+          "src/features/decision-inspector/shell/**",
+          "src/features/decision-inspector/shared/**",
+          "tests/ui/decision-inspector/shell/**",
+          "frontend/src/features/decision-inspector/shell/**",
+          "frontend/src/features/decision-inspector/shared/**",
+          "frontend/tests/ui/decision-inspector/shell/**"
+        ]
+      },
+      {
+        "deliverables": [
+          "Claim tree",
+          "Evidence viewer",
+          "Provenance panel",
+          "Missing-evidence states"
+        ],
+        "depends_on": [
+          "W02",
+          "W03",
+          "W06"
+        ],
+        "done_when": [
+          "Claim-to-evidence relation is inspectable",
+          "Source/snapshot/provenance is visible",
+          "Unsupported claims are visibly unsupported",
+          "Tests pass"
+        ],
+        "frozen_outputs": [],
+        "id": "W07",
+        "read_scopes": [
+          "src/contracts/decision/**",
+          "docs/decision-inspector/ux/**",
+          "src/features/decision-inspector/shared/**"
+        ],
+        "role": "decision-ui-engineer",
+        "title": "Build evidence and provenance explorer",
+        "write_scopes": [
+          "src/features/decision-inspector/evidence/**",
+          "tests/ui/decision-inspector/evidence/**",
+          "frontend/src/features/decision-inspector/evidence/**",
+          "frontend/tests/ui/decision-inspector/evidence/**"
+        ]
+      },
+      {
+        "deliverables": [
+          "Trace timeline",
+          "Tool-call details",
+          "Correlation navigation"
+        ],
+        "depends_on": [
+          "W03",
+          "W04",
+          "W06"
+        ],
+        "done_when": [
+          "Timeline links to affected claim/action",
+          "Tool inputs/outputs are inspectable subject to redaction",
+          "Missing trace data is explicit",
+          "Tests pass"
+        ],
+        "frozen_outputs": [],
+        "id": "W08",
+        "read_scopes": [
+          "src/contracts/trace/**",
+          "docs/decision-inspector/ux/**",
+          "src/features/decision-inspector/shared/**"
+        ],
+        "role": "decision-ui-engineer",
+        "title": "Build trace and tool-call timeline",
+        "write_scopes": [
+          "src/features/decision-inspector/trace/**",
+          "tests/ui/decision-inspector/trace/**",
+          "frontend/src/features/decision-inspector/trace/**",
+          "frontend/tests/ui/decision-inspector/trace/**"
+        ]
+      },
+      {
+        "deliverables": [
+          "Action proposal panel",
+          "Authorization ladder",
+          "Approve/reject/request-evidence controls",
+          "Receipt viewer"
+        ],
+        "depends_on": [
+          "W03",
+          "W05",
+          "W06"
+        ],
+        "done_when": [
+          "Proposed action is distinct from executed action",
+          "Authorization state is explicit",
+          "Approval UI cannot imply execution without receipt",
+          "Tests pass"
+        ],
+        "frozen_outputs": [],
+        "id": "W09",
+        "read_scopes": [
+          "src/contracts/action/**",
+          "docs/decision-inspector/ux/**",
+          "src/features/decision-inspector/shared/**"
+        ],
+        "role": "decision-ui-engineer",
+        "title": "Build proposed action and authorization review surface",
+        "write_scopes": [
+          "src/features/decision-inspector/actions/**",
+          "tests/ui/decision-inspector/actions/**",
+          "frontend/src/features/decision-inspector/actions/**",
+          "frontend/tests/ui/decision-inspector/actions/**"
+        ]
+      },
+      {
+        "deliverables": [
+          "Integrated inspector",
+          "Cross-navigation",
+          "End-to-end fixture"
+        ],
+        "depends_on": [
+          "W07",
+          "W08",
+          "W09"
+        ],
+        "done_when": [
+          "Conclusion -> evidence -> trace -> action -> receipt traversal works",
+          "No cross-feature contract violations",
+          "Integration tests pass"
+        ],
+        "frozen_outputs": [],
+        "id": "W10",
+        "read_scopes": [
+          "src/features/decision-inspector/**",
+          "src/contracts/**"
+        ],
+        "role": "team-orchestrator",
+        "title": "Integrate evidence, trace and action surfaces",
+        "write_scopes": [
+          "src/features/decision-inspector/integration/**",
+          "src/features/decision-inspector/index.*",
+          "tests/ui/decision-inspector/integration/**",
+          "frontend/src/contracts/decision/**",
+          "frontend/src/contracts/trace/**",
+          "frontend/src/contracts/action/**",
+          "frontend/src/features/decision-inspector/integration/**",
+          "frontend/src/features/decision-inspector/index.*",
+          "frontend/tests/ui/decision-inspector/integration/**",
+          "frontend/src/features/decision-inspector/actions/ActionReview.tsx",
+          "frontend/src/adapters/action/agentRun.ts",
+          "frontend/src/adapters/trace/localTraceAdapter.ts",
+          "frontend/tests/ui/decision-inspector/actions/action-review.test.tsx",
+          "frontend/tests/ui/decision-inspector/evidence/evidence-explorer.test.tsx"
+        ]
+      },
+      {
+        "deliverables": [
+          "Verification report",
+          "Adversarial cases",
+          "P0/P1/P2 findings"
+        ],
+        "depends_on": [
+          "W10"
+        ],
+        "done_when": [
+          "Unsupported-claim case tested",
+          "Stale evidence case tested",
+          "Unauthorized action case tested",
+          "Missing receipt case tested",
+          "No P0/P1 remains open"
+        ],
+        "frozen_outputs": [
+          "decision-inspector-verification-v1"
+        ],
+        "id": "W11",
+        "read_scopes": [
+          "src/features/decision-inspector/**",
+          "src/contracts/**",
+          "tests/**",
+          ".bago/team/runtime/handoffs/**"
+        ],
+        "role": "verification-engineer",
+        "title": "Run independent verification and adversarial review",
+        "write_scopes": [
+          "tests/verification/decision-inspector/**",
+          "docs/decision-inspector/verification/**"
+        ]
+      },
+      {
+        "deliverables": [
+          "Final status",
+          "Evidence index",
+          "Known limitations"
+        ],
+        "depends_on": [
+          "W11"
+        ],
+        "done_when": [
+          "All dependency handoffs validate",
+          "Independent verification has P0=0 and P1=0",
+          "Final evidence index exists",
+          "Residual P2/NOT_RUN items are explicit"
+        ],
+        "frozen_outputs": [
+          "agent-decision-inspector-v1-terminal-gate"
+        ],
+        "id": "W12",
+        "read_scopes": [
+          ".bago/team/runtime/**",
+          "docs/decision-inspector/**",
+          "src/features/decision-inspector/**",
+          "tests/**"
+        ],
+        "role": "team-orchestrator",
+        "title": "Terminal mission gate",
+        "write_scopes": [
+          ".bago/team/runtime/**",
+          "docs/decision-inspector/FINAL_STATUS.md"
+        ]
+      }
+    ]
+  },
+  "mission_sha256": "d7b90e28d5f02dae986f15d198b76d86c4dbcfe6525fe8fa5e9fd616c12a6915",
+  "mission_source": "C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\.worktrees\\adl-ber-integration-20261019\\.bago\\team\\kit\\missions\\agent-decision-inspector.json",
+  "protocol_version": "0.1.0",
+  "terminal_gate": "DONE",
+  "updated_at": "2026-10-19T19:05:33+00:00",
+  "work_status": {
+    "W01": {
+      "agent": "/root/adl_ber_inventory",
+      "claimed_at": "2026-10-19T16:14:39+00:00",
+      "done_at": "2026-10-19T16:16:11+00:00",
+      "status": "DONE"
+    },
+    "W02": {
+      "agent": "/root/ber_evidence_contract",
+      "claimed_at": "2026-10-19T16:17:08+00:00",
+      "done_at": "2026-10-19T16:18:45+00:00",
+      "status": "DONE"
+    },
+    "W03": {
+      "agent": "/root/ber_decision_ux",
+      "claimed_at": "2026-10-19T16:17:10+00:00",
+      "done_at": "2026-10-19T16:17:58+00:00",
+      "status": "DONE"
+    },
+    "W04": {
+      "agent": "/root/ber_trace_contract",
+      "claimed_at": "2026-10-19T16:24:08+00:00",
+      "done_at": "2026-10-19T16:25:41+00:00",
+      "status": "DONE"
+    },
+    "W05": {
+      "agent": "/root/ber_action_contract",
+      "claimed_at": "2026-10-19T16:24:07+00:00",
+      "done_at": "2026-10-19T16:25:38+00:00",
+      "status": "DONE"
+    },
+    "W06": {
+      "agent": "/root/ber_inspector_shell",
+      "claimed_at": "2026-10-19T16:24:12+00:00",
+      "done_at": "2026-10-19T16:31:33+00:00",
+      "status": "DONE"
+    },
+    "W07": {
+      "agent": "/root/ber_evidence_contract",
+      "claimed_at": "2026-10-19T16:32:24+00:00",
+      "done_at": "2026-10-19T16:35:12+00:00",
+      "status": "DONE"
+    },
+    "W08": {
+      "agent": "/root/ber_trace_contract",
+      "claimed_at": "2026-10-19T16:32:24+00:00",
+      "done_at": "2026-10-19T16:36:01+00:00",
+      "status": "DONE"
+    },
+    "W09": {
+      "agent": "/root/ber_action_contract",
+      "claimed_at": "2026-10-19T16:32:24+00:00",
+      "done_at": "2026-10-19T16:35:48+00:00",
+      "status": "DONE"
+    },
+    "W10": {
+      "agent": "/root/adl_ber_inventory",
+      "claimed_at": "2026-10-19T16:36:23+00:00",
+      "done_at": "2026-10-19T16:39:29+00:00",
+      "status": "DONE"
+    },
+    "W11": {
+      "agent": "/root/decision_inspector_verifier",
+      "claimed_at": "2026-10-19T16:39:40+00:00",
+      "done_at": "2026-10-19T16:44:56+00:00",
+      "status": "DONE"
+    },
+    "W12": {
+      "agent": "/root/adl_ber_inventory",
+      "claimed_at": "2026-10-19T16:45:11+00:00",
+      "done_at": "2026-10-19T16:45:42+00:00",
+      "status": "DONE"
+    }
+  }
+}

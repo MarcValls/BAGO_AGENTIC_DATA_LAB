@@ -1,0 +1,51 @@
+{
+  "work_id": "AC06",
+  "role": "team-orchestrator",
+  "status": "DONE",
+  "changed_files": [
+    "src/api/server.py",
+    "docs/agent-chat-control/contracts/CONTROL_PLANE_V1.md"
+  ],
+  "outputs": [
+    {
+      "description": "Read existing short-ID application agent records with nullable provider/model fields; resolve missing model from the explicitly selected provider for this request only; do not migrate stored JSON.",
+      "path": "src/api/server.py",
+      "sha256": "e1f6b2abcc73a54ba254626aa65f1703cbb465cf25b80de32da7513ad69bf639"
+    },
+    {
+      "description": "CR-006 v1.1 amendment: legacy IDs are visible, missing provider/model remains null, and any chat fallback is request-scoped with no implicit record rewrite.",
+      "path": "docs/agent-chat-control/contracts/CONTROL_PLANE_V1.md",
+      "sha256": "fa2a2a74865a89a0ac6fe698680a7b85b5a687214c1ca879937a916d85b1c82e"
+    }
+  ],
+  "verification": [
+    {
+      "command": "python -m compileall -q src/api/server.py",
+      "result": "PASS",
+      "evidence": "Static compilation completed successfully for the amended backend API."
+    },
+    {
+      "command": "git diff --check",
+      "result": "PASS",
+      "evidence": "No whitespace errors in current diff."
+    },
+    {
+      "command": "Inspect persisted legacy record in isolated worktree",
+      "result": "NOT_RUN",
+      "evidence": "The target legacy record exists in the original checkout, not in this isolated worktree. It was not copied or modified; compatibility behavior is verified by code inspection only."
+    },
+    {
+      "command": "Automated tests",
+      "result": "NOT_RUN",
+      "evidence": "No tests were requested or run."
+    }
+  ],
+  "residual_risks": [
+    "No runtime test loaded or chatted with the target legacy record; final AC04 should inspect compatibility statically and bind to final candidate fingerprint.",
+    "Chat fallback requires a currently configured provider model and reports the provider error if unavailable."
+  ],
+  "next_consumers": [
+    "AC03",
+    "AC04"
+  ]
+}

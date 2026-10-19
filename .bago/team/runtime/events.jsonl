@@ -66,3 +66,75 @@
 {"at": "2026-10-09T01:06:58+00:00", "kind": "HANDOFF_DONE", "payload_sha256": "6f3857ba7dc9598c4d76e398b61c2d0a19aa6caec5d0e2bf53a997773430418e", "work_id": "AC05"}
 {"at": "2026-10-09T01:09:57+00:00", "from_agent": "team-orchestrator", "kind": "COORDINATION_NOTE", "note_kind": "INFO", "text": "Follow-up: adapted the existing BAGO AI-assisted agent creation interaction into the chat review card. The previous AC04 fingerprint/review is stale for this UI delta; follow-up evidence is docs/agent-chat-control/verification/agent-creation-assistance-followup.md. Frontend production build and git diff --check PASS; browser/Ollama/automated tests NOT_RUN.", "to_agent": "team-orchestrator"}
 {"at": "2026-10-09T11:24:54+00:00", "from_agent": "team-orchestrator", "kind": "COORDINATION_NOTE", "note_kind": "INFO", "text": "Launcher port follow-up implemented and exercised: records verified listener PID/start time plus venv parent per checkout; restarts the owned listener; selects a free port when 8080 belongs to another program; API/CORS/WebSocket origins follow selected port. Evidence: docs/agent-chat-control/verification/local-port-reuse-followup.md. Previous listener 39252 stopped and new listener 41392 reused 8081; unrelated listeners left running.", "to_agent": "team-orchestrator"}
+{"at": "2026-10-19T16:14:03+00:00", "kind": "MISSION_INIT", "mission_id": "AGENT_DECISION_INSPECTOR_V1", "mission_sha256": "d7b90e28d5f02dae986f15d198b76d86c4dbcfe6525fe8fa5e9fd616c12a6915"}
+{"agent": "/root/adl_ber_inventory", "at": "2026-10-19T16:14:39+00:00", "kind": "CLAIM", "role": "team-orchestrator", "work_id": "W01"}
+{"at": "2026-10-19T16:16:11+00:00", "kind": "HANDOFF_DONE", "payload_sha256": "9468fc750a23802eaf9dc197d4c5a84d30afd439cc08f46cc57b4c8bf2b20025", "work_id": "W01"}
+{"agent": "/root/ber_evidence_contract", "at": "2026-10-19T16:17:08+00:00", "kind": "CLAIM", "role": "evidence-provenance-engineer", "work_id": "W02"}
+{"agent": "/root/ber_decision_ux", "at": "2026-10-19T16:17:10+00:00", "kind": "CLAIM", "role": "decision-ux-engineer", "work_id": "W03"}
+{"at": "2026-10-19T16:17:58+00:00", "kind": "HANDOFF_DONE", "payload_sha256": "e15a319eb2059e813224f73a391eab144d235f5fdbeb4c933330976f48b41683", "work_id": "W03"}
+{"at": "2026-10-19T16:18:45+00:00", "kind": "HANDOFF_DONE", "payload_sha256": "e808df2e342e4136bbdf82bf0d6d40ec90c85565acbfbc02e969123bfa201e74", "work_id": "W02"}
+{"agent": "/root/ber_action_contract", "at": "2026-10-19T16:24:07+00:00", "kind": "CLAIM", "role": "governance-action-engineer", "work_id": "W05"}
+{"agent": "/root/ber_trace_contract", "at": "2026-10-19T16:24:08+00:00", "kind": "CLAIM", "role": "trace-observability-engineer", "work_id": "W04"}
+{"agent": "/root/ber_inspector_shell", "at": "2026-10-19T16:24:12+00:00", "kind": "CLAIM", "role": "decision-ui-engineer", "work_id": "W06"}
+{"at": "2026-10-19T16:25:38+00:00", "kind": "HANDOFF_DONE", "payload_sha256": "5b032b97ceab6ec9c7204281c2f953c887eb06e882b6baab4fc728a436368a0d", "work_id": "W05"}
+{"at": "2026-10-19T16:25:41+00:00", "kind": "HANDOFF_DONE", "payload_sha256": "accb5cdfa2d5d5016be24fa47fbc6909cd13547e12cfbf76878725c18bc5e183", "work_id": "W04"}
+{"at": "2026-10-19T16:31:27+00:00", "from_agent": "/root/adl_ber_inventory", "kind": "COORDINATION_NOTE", "note_kind": "CONTRACT", "text": "W06 mission scope extended with actual frontend-prefixed paths; original unprefixed globs preserved. Re-submit the existing implementation handoff against updated active mission.", "to_agent": "/root/ber_inspector_shell"}
+{"at": "2026-10-19T16:31:33+00:00", "kind": "HANDOFF_DONE", "payload_sha256": "3246bc41610e66636675310407cd1e06dc6433ff2801f8624832868468018fc7", "work_id": "W06"}
+{"agent": "/root/ber_evidence_contract", "at": "2026-10-19T16:32:24+00:00", "kind": "CLAIM", "role": "decision-ui-engineer", "work_id": "W07"}
+{"agent": "/root/ber_trace_contract", "at": "2026-10-19T16:32:24+00:00", "kind": "CLAIM", "role": "decision-ui-engineer", "work_id": "W08"}
+{"agent": "/root/ber_action_contract", "at": "2026-10-19T16:32:24+00:00", "kind": "CLAIM", "role": "decision-ui-engineer", "work_id": "W09"}
+{"at": "2026-10-19T16:33:29+00:00", "from_agent": "/root/ber_evidence_contract", "kind": "COORDINATION_NOTE", "note_kind": "RISK", "text": "W07 observes existing frontend contract mirrors differ from frozen W02/W04/W05 sources. W07 will stay in scope and preserve its existing import; W10 scope now includes frontend/src/contracts/{decision,trace,action} for explicit reconciliation before consuming those contracts. W07 must not claim source-of-truth reconciliation.", "to_agent": "/root/adl_ber_inventory"}
+{"at": "2026-10-19T16:35:06+00:00", "from_agent": "/root/ber_evidence_contract", "kind": "COORDINATION_NOTE", "note_kind": "CONTRACT", "text": "W07-W10 active and canonical mission scopes now include actual \frontend/-prefixed paths; original root-level globs remain. W07 may resubmit its accurate draft. Same path correction applies to W08-W10.", "to_agent": "/root/adl_ber_inventory"}
+{"at": "2026-10-19T16:35:12+00:00", "kind": "HANDOFF_DONE", "payload_sha256": "ae71b19a951ae08dd0c145b10c4a8bd2ac7a4bf7e5ccc3584f1a8b9530d2ac38", "work_id": "W07"}
+{"at": "2026-10-19T16:35:48+00:00", "kind": "HANDOFF_DONE", "payload_sha256": "47e808e84bfd219a41d6b530b0b6519bc53fa76defb43d0b03cb9d269bdc6d98", "work_id": "W09"}
+{"at": "2026-10-19T16:36:01+00:00", "kind": "HANDOFF_DONE", "payload_sha256": "320eecc921caeb06595c8d079a884212081b87dc0a5ed7a792b2562f60f737b6", "work_id": "W08"}
+{"at": "2026-10-19T16:36:22+00:00", "from_agent": "/root/ber_action_contract", "kind": "COORDINATION_NOTE", "note_kind": "BLOCKER", "text": "W08 full frontend build is blocked by String.replaceAll in W09 ActionReview.tsx under ES2020 lib. W10 now explicitly owns that single-path compatibility correction after W09 handoff, plus frontend contract mirror reconciliation.", "to_agent": "/root/adl_ber_inventory"}
+{"agent": "/root/adl_ber_inventory", "at": "2026-10-19T16:36:23+00:00", "kind": "CLAIM", "role": "team-orchestrator", "work_id": "W10"}
+{"at": "2026-10-19T16:38:34+00:00", "from_agent": "/root/ber_evidence_contract", "kind": "COORDINATION_NOTE", "note_kind": "RISK", "text": "W10 consolidates evidence/integration UI tests on Vitest (evidence file currently imports node:test, so a directory Vitest run reports no suite even though W07 verified it with Node's test runner). It also updates action fixtures to match the strict frozen W05 contract.", "to_agent": "/root/adl_ber_inventory"}
+{"at": "2026-10-19T16:39:29+00:00", "kind": "HANDOFF_DONE", "payload_sha256": "7437b942acd4df92ed763d3860d03d966370b8ec1c386486def807a550a13286", "work_id": "W10"}
+{"agent": "/root/decision_inspector_verifier", "at": "2026-10-19T16:39:40+00:00", "kind": "CLAIM", "role": "verification-engineer", "work_id": "W11"}
+{"at": "2026-10-19T16:42:18+00:00", "from_agent": "/root/adl_ber_inventory", "kind": "COORDINATION_NOTE", "note_kind": "INFO", "text": "W11 hallazgo P1-001 confirmado y registrado. Haré un follow-up correctivo en la integración W10, conservando scope dentro de frontend/src/features/decision-inspector/integration y sus pruebas. Después te pediré una repetición independiente de W11; no cierres W11 antes de esa repetición.", "to_agent": "/root/decision_inspector_verifier"}
+{"at": "2026-10-19T16:43:55+00:00", "from_agent": "/root/adl_ber_inventory", "kind": "COORDINATION_NOTE", "note_kind": "INFO", "text": "Follow-up final candidate añadido: traceBindingIssue bloquea ambos casos (trace.run_id ajeno y agent_run.run_id ausente); focused Vitest 5/30 y producción build PASS. Usa el estado actual de los archivos para la repetición independiente.", "to_agent": "/root/decision_inspector_verifier"}
+{"at": "2026-10-19T16:44:56+00:00", "kind": "HANDOFF_DONE", "payload_sha256": "222cce042b8a4396b4e36802c07dcd0f27663f00be83278ab80ff2b68329fa8d", "work_id": "W11"}
+{"agent": "/root/adl_ber_inventory", "at": "2026-10-19T16:45:11+00:00", "kind": "CLAIM", "role": "team-orchestrator", "work_id": "W12"}
+{"at": "2026-10-19T16:45:42+00:00", "kind": "HANDOFF_DONE", "payload_sha256": "951ed70d435d4fe74d9361c5b92318c28496b6b47b9173fe2bdabc1b8eae6419", "work_id": "W12"}
+{"at": "2026-10-19T19:07:57+00:00", "kind": "MISSION_INIT", "mission_id": "AGENT_DECISION_INSPECTOR_BER_RUNNER_FOLLOWUP_V1", "mission_sha256": "c5a13863f6315c613d0160a9b547da86b5c8fff3a63e21a4d811f826067a46e7"}
+{"agent": "/root", "at": "2026-10-19T19:08:04+00:00", "kind": "CLAIM", "role": "team-orchestrator", "work_id": "W13"}
+{"at": "2026-10-19T19:10:10+00:00", "kind": "HANDOFF_DONE", "payload_sha256": "b5744bd9419a2b211a65521e5cdbbd733a4d7ea71ee11a2be8e42a9304d52b65", "work_id": "W13"}
+{"agent": "/root/ber_action_contract", "at": "2026-10-19T19:10:25+00:00", "kind": "CLAIM", "role": "governance-action-engineer", "work_id": "W14"}
+{"at": "2026-10-19T19:19:07+00:00", "kind": "HANDOFF_DONE", "payload_sha256": "797ab6ed632055ff162715cba80e2c7b2f7c3d2c1180c7d23eac7042fa65a377", "work_id": "W14"}
+{"at": "2026-10-19T19:20:56+00:00", "from_agent": "/root/ber_action_contract", "kind": "COORDINATION_NOTE", "note_kind": "CONTRACT", "text": "W14 correction completed: proposal no longer exposes BAGO challenge_id; the value remains server-held and approve/execute use it internally. Added regression assertion and updated API example. Focused checks pass (28 tests). W14 is currently DONE, so teamctl handoff cannot replace W14 until the orchestrator reopens/claims it; W15 should remain held pending refreshed handoff.", "to_agent": "/root"}
+{"agent": "/root/ber_inspector_shell", "at": "2026-10-19T19:21:47+00:00", "kind": "CLAIM", "role": "decision-ui-engineer", "work_id": "W15"}
+{"at": "2026-10-19T19:23:37+00:00", "kind": "MISSION_INIT", "mission_id": "AGENT_DECISION_INSPECTOR_BER_RUNNER_FOLLOWUP_V1", "mission_sha256": "0d1183da61b438c0e8cb7051ef8fdd003a47295bef1262fb4978c68ac8036f39"}
+{"agent": "/root", "at": "2026-10-19T19:23:42+00:00", "kind": "CLAIM", "role": "team-orchestrator", "work_id": "W13"}
+{"at": "2026-10-19T19:23:42+00:00", "kind": "HANDOFF_DONE", "payload_sha256": "b5744bd9419a2b211a65521e5cdbbd733a4d7ea71ee11a2be8e42a9304d52b65", "work_id": "W13"}
+{"agent": "/root/ber_action_contract", "at": "2026-10-19T19:23:49+00:00", "kind": "CLAIM", "role": "governance-action-engineer", "work_id": "W14"}
+{"at": "2026-10-19T19:23:49+00:00", "kind": "HANDOFF_DONE", "payload_sha256": "72a876279c8d69b4f878f1af4f9b29da01a69d9fb1977de07fcd53d52aa1e401", "work_id": "W14"}
+{"agent": "/root/ber_inspector_shell", "at": "2026-10-19T19:24:08+00:00", "kind": "CLAIM", "role": "decision-ui-engineer", "work_id": "W15"}
+{"at": "2026-10-19T19:28:02+00:00", "kind": "HANDOFF_DONE", "payload_sha256": "64f89cb0bf5e4d8f8c335a78fa592a61bcd177183a2840b9d245f0522c7a0ba7", "work_id": "W15"}
+{"agent": "/root/decision_inspector_verifier", "at": "2026-10-19T19:28:41+00:00", "kind": "CLAIM", "role": "verification-engineer", "work_id": "W16"}
+{"at": "2026-10-19T19:33:27+00:00", "kind": "MISSION_INIT", "mission_id": "AGENT_DECISION_INSPECTOR_BER_RUNNER_FOLLOWUP_V1", "mission_sha256": "0da52c5717258d8c2e3560308825f8018c13f2ea6330e9065d16291ccf88073d"}
+{"agent": "/root", "at": "2026-10-19T19:33:35+00:00", "kind": "CLAIM", "role": "team-orchestrator", "work_id": "W13"}
+{"at": "2026-10-19T19:33:35+00:00", "kind": "HANDOFF_DONE", "payload_sha256": "b5744bd9419a2b211a65521e5cdbbd733a4d7ea71ee11a2be8e42a9304d52b65", "work_id": "W13"}
+{"agent": "/root/ber_action_contract", "at": "2026-10-19T19:33:35+00:00", "kind": "CLAIM", "role": "governance-action-engineer", "work_id": "W14"}
+{"at": "2026-10-19T19:33:35+00:00", "kind": "HANDOFF_DONE", "payload_sha256": "72a876279c8d69b4f878f1af4f9b29da01a69d9fb1977de07fcd53d52aa1e401", "work_id": "W14"}
+{"agent": "/root/ber_inspector_shell", "at": "2026-10-19T19:33:35+00:00", "kind": "CLAIM", "role": "decision-ui-engineer", "work_id": "W15"}
+{"at": "2026-10-19T19:33:36+00:00", "kind": "HANDOFF_DONE", "payload_sha256": "64f89cb0bf5e4d8f8c335a78fa592a61bcd177183a2840b9d245f0522c7a0ba7", "work_id": "W15"}
+{"agent": "/root/ber_action_contract", "at": "2026-10-19T19:33:48+00:00", "kind": "CLAIM", "role": "governance-action-engineer", "work_id": "W15R"}
+{"at": "2026-10-19T19:34:24+00:00", "kind": "HANDOFF_DONE", "payload_sha256": "fa5059d66da769852e012dbf3caf659a547148d882d8a54ed32886e7a584e057", "work_id": "W15R"}
+{"agent": "/root/decision_inspector_verifier", "at": "2026-10-19T19:34:46+00:00", "kind": "CLAIM", "role": "verification-engineer", "work_id": "W16"}
+{"at": "2026-10-19T19:36:13+00:00", "kind": "HANDOFF_DONE", "payload_sha256": "0d06537296a3dc3764ab8069cc1906c23e75a17244ad6aaef2290af80db11683", "work_id": "W16"}
+{"agent": "/root", "at": "2026-10-19T19:36:35+00:00", "kind": "CLAIM", "role": "team-orchestrator", "work_id": "W17"}
+{"at": "2026-10-19T19:42:01+00:00", "kind": "MISSION_INIT", "mission_id": "AGENT_DECISION_INSPECTOR_BER_RUNNER_FOLLOWUP_V1", "mission_sha256": "9ee7e989b550764f0263f7f298db77585018edc2e6015eda5046d05dfe6427e3"}
+{"agent": "/root", "at": "2026-10-19T19:42:07+00:00", "kind": "CLAIM", "role": "team-orchestrator", "work_id": "W13"}
+{"at": "2026-10-19T19:42:07+00:00", "kind": "HANDOFF_DONE", "payload_sha256": "a3d2ae71482547b27fc98d7f09b3b24d99989271f0c83d11a040d4aff4d12dc1", "work_id": "W13"}
+{"agent": "/root/ber_action_contract", "at": "2026-10-19T19:42:07+00:00", "kind": "CLAIM", "role": "governance-action-engineer", "work_id": "W14"}
+{"at": "2026-10-19T19:42:08+00:00", "kind": "HANDOFF_DONE", "payload_sha256": "72a876279c8d69b4f878f1af4f9b29da01a69d9fb1977de07fcd53d52aa1e401", "work_id": "W14"}
+{"agent": "/root/ber_inspector_shell", "at": "2026-10-19T19:42:08+00:00", "kind": "CLAIM", "role": "decision-ui-engineer", "work_id": "W15"}
+{"at": "2026-10-19T19:42:08+00:00", "kind": "HANDOFF_DONE", "payload_sha256": "64f89cb0bf5e4d8f8c335a78fa592a61bcd177183a2840b9d245f0522c7a0ba7", "work_id": "W15"}
+{"agent": "/root/ber_action_contract", "at": "2026-10-19T19:42:08+00:00", "kind": "CLAIM", "role": "governance-action-engineer", "work_id": "W15R"}
+{"at": "2026-10-19T19:42:09+00:00", "kind": "HANDOFF_DONE", "payload_sha256": "fa5059d66da769852e012dbf3caf659a547148d882d8a54ed32886e7a584e057", "work_id": "W15R"}
+{"agent": "/root/decision_inspector_verifier", "at": "2026-10-19T19:42:09+00:00", "kind": "CLAIM", "role": "verification-engineer", "work_id": "W16"}
+{"at": "2026-10-19T19:42:09+00:00", "kind": "HANDOFF_DONE", "payload_sha256": "0d06537296a3dc3764ab8069cc1906c23e75a17244ad6aaef2290af80db11683", "work_id": "W16"}
+{"agent": "/root", "at": "2026-10-19T19:43:07+00:00", "kind": "CLAIM", "role": "team-orchestrator", "work_id": "W17"}
+{"at": "2026-10-19T19:43:34+00:00", "kind": "HANDOFF_DONE", "payload_sha256": "b85f9fca0e4058ebe42ded4ed0d836339baacfd40a4d0530363ba58304d2fab8", "work_id": "W17"}

@@ -1,0 +1,44 @@
+{
+  "work_id": "W10",
+  "role": "team-orchestrator",
+  "status": "DONE",
+  "changed_files": [
+    "frontend/src/adapters/action/agentRun.ts",
+    "frontend/src/adapters/trace/localTraceAdapter.ts",
+    "frontend/src/contracts/action/action.ts",
+    "frontend/src/contracts/decision/evidence.ts",
+    "frontend/src/contracts/trace/trace.ts",
+    "frontend/src/features/decision-inspector/actions/ActionReview.tsx",
+    "frontend/src/features/decision-inspector/integration/DecisionInspector.tsx",
+    "frontend/tests/ui/decision-inspector/actions/action-review.test.tsx",
+    "frontend/tests/ui/decision-inspector/evidence/evidence-explorer.test.tsx",
+    "frontend/tests/ui/decision-inspector/integration/integration.test.tsx"
+  ],
+  "outputs": [
+    {
+      "kind": "decision-inspector-integrated-contract-consumers-v1",
+      "path": "frontend/src/features/decision-inspector/integration/DecisionInspector.tsx",
+      "description": "The integrated inspector binds traces to the selected AgentRun, blocks correlations when the run ID is missing or mismatched, and visibly reports the binding failure while consuming contract/adapter mirrors kept byte-identical to frozen source contracts.",
+      "sha256": "773f5843cb8c1c66dd502c0b64287ccd854ca101ee2997a9b96f414274e1033d"
+    },
+    {
+      "kind": "decision-inspector-contract-mirror-check-v1",
+      "path": "frontend/tests/ui/decision-inspector/integration/integration.test.tsx",
+      "description": "Integration checks verify the five frontend contract/adapter mirrors byte-for-byte and reject foreign-run traces and traces with no selected-run identity.",
+      "sha256": "8b87ccbb1c2eeFE0fa2655b8c004c7c1db06fc55cac0219afffd2cc7ed3676a3"
+    }
+  ],
+  "verification": [
+    {"command": "npm run build --prefix frontend", "evidence": "TypeScript project build and Vite production bundle completed successfully.", "result": "PASS"},
+    {"command": "npm exec --prefix frontend vitest -- run frontend/tests/ui/decision-inspector", "evidence": "All 5 UI files passed; 30 tests passed, 0 failed, including mismatched-run and missing-run identity cases.", "result": "PASS"},
+    {"command": "python -m pytest tests/runtime/ber -q", "evidence": "ADL BER client regression suite passed: 4 tests.", "result": "PASS"},
+    {"command": "git diff --check -- frontend/src/contracts frontend/src/adapters/action/agentRun.ts frontend/src/adapters/trace/localTraceAdapter.ts frontend/src/features/decision-inspector frontend/tests/ui/decision-inspector", "evidence": "No whitespace errors in integration and consumer paths.", "result": "PASS"},
+    {"command": "python .bago/team/kit/scripts/teamctl.py --root . verify", "evidence": "W01-W09 dependency handoffs validate; preserved AC01-AC10 orphan warnings remain.", "result": "PASS"}
+  ],
+  "residual_risks": [
+    "The Decision Inspector currently consumes ADL AgentRun artifacts; no live BER execution result is wired into the API or Runner.",
+    "The BAGO Embedded Runtime remains an explicitly managed local client; end-to-end ADL standalone packaging and L0-L15 compatibility remain unverified.",
+    "Agent Runner remains fail-closed and filesystem.delete remains blocked."
+  ],
+  "next_consumers": ["W11"]
+}

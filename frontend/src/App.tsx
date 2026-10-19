@@ -12,9 +12,10 @@ import AgentChat from './components/AgentChat'
 import CapabilityManager from './components/CapabilityManager'
 import JobHistory from './components/JobHistory'
 import AgentEvaluationLab from './components/AgentEvaluationLab'
-import ProviderSettings, { type ProviderStatusSummary } from './components/ProviderSettings'
+import ProviderSettings from './components/ProviderSettings'
 import CognitionSettings, { readCognitiveMode, type CognitiveMode } from './components/CognitionSettings'
 import { DecisionInspector } from './features/decision-inspector'
+import { BerEffectRecordInspector } from './features/ber-effect-inspector/BerEffectRecordInspector'
 
 interface Artifacts {
   summary: any
@@ -24,9 +25,9 @@ interface Artifacts {
   evaluation: any
 }
 
-type AppView = 'chat' | 'workspace' | 'capabilities' | 'provider_settings' | 'inspector' | 'builder' | 'runner' | 'control' | 'jobs' | 'summary' | 'retrieval' | 'authorization' | 'trace' | 'evaluation' | 'evaluation_lab'
-type DataView = Extract<AppView, 'inspector' | 'jobs' | 'summary' | 'retrieval' | 'authorization' | 'trace' | 'evaluation'>
-type InteractionView = Exclude<AppView, DataView | 'provider_settings'>
+type AppView = 'chat' | 'workspace' | 'capabilities' | 'provider_settings' | 'inspector' | 'ber_record' | 'builder' | 'runner' | 'control' | 'jobs' | 'summary' | 'retrieval' | 'authorization' | 'trace' | 'evaluation' | 'evaluation_lab'
+type DataView = Extract<AppView, 'inspector' | 'ber_record' | 'jobs' | 'summary' | 'retrieval' | 'authorization' | 'trace' | 'evaluation'>
+type InteractionView = Exclude<AppView, DataView>
 type AssistantView = 'inspector' | 'builder' | 'chat' | 'workspace' | 'runner' | 'control' | 'jobs' | 'traces' | 'summary' | 'retrieval' | 'authorization' | 'evaluation' | 'evaluation_lab' | 'provider_settings' | 'cognition_settings' | 'capabilities'
 
 const navigation: Array<{ id: AppView; label: string; layer: 'interaction' | 'data' }> = [
@@ -36,7 +37,9 @@ const navigation: Array<{ id: AppView; label: string; layer: 'interaction' | 'da
   { id: 'builder', label: 'Agent Builder', layer: 'interaction' },
   { id: 'runner', label: 'Agent Runs', layer: 'interaction' },
   { id: 'evaluation_lab', label: 'Agent Evaluation Lab', layer: 'interaction' },
+  { id: 'provider_settings', label: 'Proveedores y modelos', layer: 'interaction' },
   { id: 'inspector', label: 'Decision Inspector', layer: 'data' },
+  { id: 'ber_record', label: 'BER Effect Record', layer: 'data' },
   { id: 'jobs', label: 'Job History', layer: 'data' },
   { id: 'summary', label: 'Summary', layer: 'data' },
   { id: 'retrieval', label: 'Retrieval & Ontology', layer: 'data' },
@@ -54,6 +57,7 @@ const interactionIcons: Record<InteractionView, string> = {
   builder: '⊞',
   runner: '▷',
   evaluation_lab: '▦',
+  provider_settings: '⇄',
   control: '⌘',
 }
 
@@ -90,8 +94,6 @@ function App() {
   const [activeDataView, setActiveDataView] = useState<DataView>('inspector')
   const [dataLayerOpen, setDataLayerOpen] = useState(false)
   const [settingsOpen, setSettingsOpen] = useState(false)
-  const [settingsSection, setSettingsSection] = useState<'provider' | 'cognition'>('provider')
-  const [providerNavStatus, setProviderNavStatus] = useState<ProviderStatusSummary | null>(null)
   const [cognitiveMode, setCognitiveMode] = useState<CognitiveMode>(readCognitiveMode)
   const [demoRefresh, setDemoRefresh] = useState(0)
   const dataLayerRef = useRef<HTMLDialogElement>(null)
@@ -99,16 +101,6 @@ function App() {
   const appScroll = useScrollActivity()
   const settingsScroll = useScrollActivity()
   const dataScroll = useScrollActivity()
-
-  useEffect(() => {
-    if (!settingsOpen) return
-    const controller = new AbortController()
-    void fetch('/api/providers/ollama/status', { signal: controller.signal }).then(async (response) => {
-      if (!response.ok) return
-      setProviderNavStatus(await response.json() as ProviderStatusSummary)
-    }).catch(() => { /* Retain the last known provider summary if the status endpoint is unavailable. */ })
-    return () => controller.abort()
-  }, [settingsOpen])
 
   useEffect(() => {
     const fetchArtifacts = async () => {
@@ -127,7 +119,6 @@ function App() {
 
   const navigateFromChat = useCallback((view: AssistantView) => {
     if (view === 'cognition_settings') {
-      setSettingsSection('cognition')
       setSettingsOpen(true)
       return
     }
@@ -135,17 +126,14 @@ function App() {
     if (isDataView(tab)) {
       setActiveDataView(tab)
       setDataLayerOpen(true)
-    } else if (tab === 'provider_settings') {
-      setSettingsSection('provider')
-      setSettingsOpen(true)
     } else {
       setActiveInteractionView(tab)
     }
   }, [])
 
   const openSettings = useCallback(() => setSettingsOpen(true), [])
-  const openProviderSettings = useCallback(() => { setSettingsSection('provider'); setSettingsOpen(true) }, [])
-  const openCognitionSettings = useCallback(() => { setSettingsSection('cognition'); setSettingsOpen(true) }, [])
+  const openProviderSettings = useCallback(() => setActiveInteractionView('provider_settings'), [])
+  const openCognitionSettings = useCallback(() => setSettingsOpen(true), [])
   const openInspect = useCallback(() => setDataLayerOpen(true), [])
 
   useEffect(() => {
@@ -167,7 +155,7 @@ function App() {
   const activeInteractionLabel = interactionNavigation.find((item) => item.id === activeInteractionView)?.label ?? 'Workspace'
 
   return (
-    <div className={`app-shell ${activeInteractionView === 'chat' ? 'app-shell--chat' : ''} ${sidebarCollapsed ? 'app-shell--sidebar-collapsed' : ''}`}>
+    <div className={`app-shell ${activeInteractionView === 'chat' ? 'app-shell--chat' : ''} ${activeInteractionView === 'provider_settings' ? 'app-shell--providers' : ''} ${sidebarCollapsed ? 'app-shell--sidebar-collapsed' : ''}`}>
       <aside id="workspace-sidebar-content" className={`workspace-sidebar ${activeInteractionView === 'chat' ? 'workspace-sidebar--chat' : ''} ${sidebarCollapsed ? 'workspace-sidebar--collapsed' : ''}`} aria-label="Workspace sidebar">
         <div className="workspace-sidebar-brand">
           <img className="workspace-sidebar-logo" src="/brand/BAGO_logotipo_horizontal.svg" alt="BAGO" />
@@ -236,6 +224,7 @@ function App() {
       <div className="app-main">
         <main className={`app-view ${activeInteractionView === 'chat' ? 'app-view--chat' : ''} ${appScroll.scrolling ? 'scroll-active' : ''}`} aria-label={`${activeInteractionLabel} view`} tabIndex={0} onScroll={appScroll.onScroll}>
           {activeInteractionView === 'chat' && <AgentChat onNavigate={navigateFromChat} onOpenProviderSettings={openProviderSettings} onOpenCognitionSettings={openCognitionSettings} cognitiveMode={cognitiveMode} />}
+          {activeInteractionView === 'provider_settings' && <ProviderSettings />}
           {activeInteractionView === 'workspace' && <CognitionSettings mode={cognitiveMode} onModeChange={setCognitiveMode} workspaceOnly />}
           {activeInteractionView === 'capabilities' && <CapabilityManager />}
           {activeInteractionView === 'builder' && <AgentBuilder onBack={() => setActiveInteractionView('chat')} onAgentCreated={() => setDemoRefresh((previous) => previous + 1)} />}
@@ -258,18 +247,9 @@ function App() {
             <span aria-hidden="true">×</span>
           </button>
         </header>
-        <div className="settings-layer-layout">
-          <nav className="settings-layer-navigation" aria-label="Settings sections">
-            <span className="navigation-caption">Configuration</span>
-            <button type="button" className={`navigation-item ${settingsSection === 'provider' ? 'active' : ''}`} aria-current={settingsSection === 'provider' ? 'page' : undefined} onClick={() => setSettingsSection('provider')}>Provider & models</button>
-            <button type="button" className={`navigation-item ${settingsSection === 'cognition' ? 'active' : ''}`} aria-current={settingsSection === 'cognition' ? 'page' : undefined} onClick={() => setSettingsSection('cognition')}>Cognition & context</button>
-            <div className="settings-provider-summary" aria-live="polite" aria-label={`Auth: ${providerNavStatus?.auth_mode === 'api_key' ? 'API key' : providerNavStatus?.auth_mode === 'local_cli' ? 'Local CLI session' : 'Not selected'}`}>
-              <span aria-hidden="true" className={`provider-status-dot ${providerNavStatus?.state ?? 'unknown'}`} />
-              <span>Auth: {providerNavStatus?.auth_mode === 'api_key' ? 'API key' : providerNavStatus?.auth_mode === 'local_cli' ? 'Local CLI session' : 'Not selected'}</span>
-            </div>
-          </nav>
-          <section className={`settings-layer-content ${settingsScroll.scrolling ? 'scroll-active' : ''}`} aria-label={settingsSection === 'provider' ? 'Provider and model settings' : 'Cognition and context settings'} tabIndex={0} onScroll={settingsScroll.onScroll}>
-            {settingsSection === 'provider' ? <ProviderSettings onStatusChange={setProviderNavStatus} /> : <CognitionSettings mode={cognitiveMode} onModeChange={setCognitiveMode} showWorkspaceLocations={false} />}
+        <div className="settings-layer-layout settings-layer-layout--single">
+          <section className={`settings-layer-content ${settingsScroll.scrolling ? 'scroll-active' : ''}`} aria-label="Cognition and context settings" tabIndex={0} onScroll={settingsScroll.onScroll}>
+            <CognitionSettings mode={cognitiveMode} onModeChange={setCognitiveMode} showWorkspaceLocations={false} />
           </section>
         </div>
       </dialog>
@@ -316,7 +296,7 @@ function App() {
           </nav>
 
           <section className={`data-layer-content ${dataScroll.scrolling ? 'scroll-active' : ''}`} aria-label={`${dataNavigation.find((item) => item.id === activeDataView)?.label ?? 'Data'} view`} tabIndex={0} onScroll={dataScroll.onScroll}>
-            {activeDataView === 'jobs' ? <JobHistory /> : loadingArtifacts
+            {activeDataView === 'ber_record' ? <BerEffectRecordInspector /> : activeDataView === 'jobs' ? <JobHistory /> : loadingArtifacts
               ? <div className="app-view-state" role="status"><span className="spinner" /><p>Loading portfolio artifacts…</p></div>
               : artifactError || !artifacts
                 ? <section className="artifact-unavailable" role="status"><p className="app-kicker">Portfolio evidence</p><h2>Artifacts are not available yet</h2><p>{artifactError ?? 'No artifact bundle was returned.'}</p><p>No portfolio artifact bundle is available. Directory scan reports are shown in Agent Runs.</p><button type="button" className="navigation-item active" onClick={() => { setDataLayerOpen(false); setActiveInteractionView('runner') }}>Open Agent Runs</button></section>
