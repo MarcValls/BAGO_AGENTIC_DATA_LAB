@@ -104,10 +104,10 @@ La demo local evalúa trazas y controles estructurales; no prueba calidad genera
 ## Ver la interfaz en acción
 
 - [Guía y límites](docs/agent-chat-control/TUTORIAL_PRIMER_USO.md)
-- [Vídeo narrado](docs/agent-chat-control/assets/ADL_videotutorial_primer_usuario.mp4) · [subtítulos](docs/agent-chat-control/assets/ADL_videotutorial_primer_usuario.es.srt)
-- [Traza de la sesión documentada](docs/agent-chat-control/assets/trace-c7ec5fcc40284a42.json) · [archivo de ejemplo](output/tutorial/sample-note.txt)
+- [Vídeo narrado](docs/agent-chat-control/assets/ADL_videotutorial_ui_actual_2026-10-19.mp4) · [subtítulos](docs/agent-chat-control/assets/ADL_videotutorial_ui_actual_2026-10-19.es.srt)
+- [Traza de la sesión histórica](docs/agent-chat-control/assets/trace-c7ec5fcc40284a42.json) · [archivo de ejemplo histórico](output/tutorial/sample-note.txt)
 
-La grabación acredita la lectura y respuesta acotadas descritas en la guía; no una auditoría del código ni ejecución de trabajos.
+La grabación actual es una captura de UI con respuestas sintéticas y no demuestra una ejecución real. La traza y el archivo enlazados pertenecen a la sesión histórica del 2026-10-10.
 
 ## Estado actual
 

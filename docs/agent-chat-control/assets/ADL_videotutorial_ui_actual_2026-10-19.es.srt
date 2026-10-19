@@ -1,0 +1,35 @@
+1
+00:00:01,013 --> 00:00:09,278
+Esta es la interfaz actual de BAGO. El chat orquestador es el punto de partida: pide ayuda con tus palabras.
+
+2
+00:00:09,862 --> 00:00:17,263
+Pide el historial de trabajos y la tabla aparece en el chat. Los datos de este vídeo son sintéticos.
+
+3
+00:00:17,759 --> 00:00:25,335
+Describe el agente que quieres. Revisa el borrador editable; solo se crea cuando confirmas.
+
+4
+00:00:26,082 --> 00:00:33,697
+Para abrir otra zona, pídelo en el chat. BAGO muestra el destino y espera tu confirmación.
+
+5
+00:00:34,066 --> 00:00:39,291
+Workspace reúne la carpeta elegida y las capas de contexto del proyecto.
+
+6
+00:00:40,135 --> 00:00:45,615
+Pide abrir Agent Builder y confirma el cambio para llegar al formulario completo.
+
+7
+00:00:45,990 --> 00:00:53,098
+Completa los datos del agente y usa Preview para revisarlos. En este vídeo no guardamos nada.
+
+8
+00:00:53,526 --> 00:01:01,572
+Settings reúne proveedores, modelos y contexto. No se modifican credenciales ni preferencias.
+
+9
+00:01:02,055 --> 00:01:07,855
+Lo que ves es demostrativo: no hay trabajos ni agentes reales en esta grabación.

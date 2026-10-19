@@ -693,6 +693,29 @@ def render_first_user_tutorial(manifest: dict[str, Any]) -> str:
     if not tutorial:
         return "No hay un videotutorial de primer uso declarado."
 
+    if tutorial.get("evidence_mode") == "synthetic_ui_capture":
+        required_files = ("video", "subtitles", "guide", "historical_video", "historical_subtitles", "historical_trace", "historical_input")
+        missing_keys = [key for key in required_files if not tutorial.get(key)]
+        if missing_keys:
+            raise ValueError("Tutorial metadata is missing: " + ", ".join(missing_keys))
+        missing_files = [key for key in required_files if not (REPO_ROOT / tutorial[key]).is_file()]
+        if missing_files:
+            paths = ", ".join(tutorial[key] for key in missing_files)
+            raise FileNotFoundError("Tutorial artifacts missing: " + paths)
+        return "\n".join([
+            "Recorrido narrado en español sobre la UI actual, grabado con Playwright y respuestas API sintéticas en un contexto aislado.",
+            "No muestra consultas reales, respuestas de proveedor, agentes guardados ni trabajos ejecutados.",
+            "La sesión real anterior permanece separada como evidencia histórica; su traza acredita solo el alcance que contiene.",
+            "",
+            f"- Vídeo actual: [{_inline('MP4')}]({tutorial['video']})",
+            f"- Subtítulos actuales: [{_inline('SRT')}]({tutorial['subtitles']})",
+            f"- Guía: [{_inline(Path(tutorial['guide']).name)}]({tutorial['guide']})",
+            f"- Vídeo histórico: [{_inline('MP4 2026-10-10')}]({tutorial['historical_video']})",
+            f"- Subtítulos históricos: [{_inline('SRT 2026-10-10')}]({tutorial['historical_subtitles']})",
+            f"- LocalTrace histórica: [{_inline(Path(tutorial['historical_trace']).name)}]({tutorial['historical_trace']})",
+            f"- Archivo leído en la sesión histórica: [{_inline(Path(tutorial['historical_input']).name)}]({tutorial['historical_input']})",
+        ])
+
     required_files = ("video", "subtitles", "guide", "trace", "input")
     required_values = ("provider", "global_model", "agent_model", "credential_redaction")
     missing_keys = [key for key in required_files + required_values if not tutorial.get(key)]
@@ -741,10 +764,10 @@ def render_readme(
     current_status = current_phase["status"] if current_phase else state["status_label"]
     tutorial = manifest.get("first_user_tutorial", {})
     guide = tutorial.get("guide", "docs/agent-chat-control/TUTORIAL_PRIMER_USO.md")
-    video = tutorial.get("video", "docs/agent-chat-control/assets/ADL_videotutorial_primer_usuario.mp4")
-    subtitles = tutorial.get("subtitles", "docs/agent-chat-control/assets/ADL_videotutorial_primer_usuario.es.srt")
-    trace = tutorial.get("trace", "docs/agent-chat-control/assets/trace-c7ec5fcc40284a42.json")
-    input_file = tutorial.get("input", "output/tutorial/sample-note.txt")
+    video = tutorial.get("video", "docs/agent-chat-control/assets/ADL_videotutorial_ui_actual_2026-10-19.mp4")
+    subtitles = tutorial.get("subtitles", "docs/agent-chat-control/assets/ADL_videotutorial_ui_actual_2026-10-19.es.srt")
+    trace = tutorial.get("historical_trace", tutorial.get("trace", "docs/agent-chat-control/assets/trace-c7ec5fcc40284a42.json"))
+    input_file = tutorial.get("historical_input", tutorial.get("input", "output/tutorial/sample-note.txt"))
     render_first_user_tutorial(manifest)  # Fail closed if a declared artifact is missing.
     jaeger_capture = manifest.get("jaeger_capture", "")
     if not jaeger_capture or not (REPO_ROOT / jaeger_capture).is_file():
@@ -834,9 +857,9 @@ def render_readme(
         "",
         f"- [Guía y límites]({guide})",
         f"- [Vídeo narrado]({video}) · [subtítulos]({subtitles})",
-        f"- [Traza de la sesión documentada]({trace}) · [archivo de ejemplo]({input_file})",
+        f"- [Traza de la sesión histórica]({trace}) · [archivo de ejemplo histórico]({input_file})",
         "",
-        "La grabación acredita la lectura y respuesta acotadas descritas en la guía; no una auditoría del código ni ejecución de trabajos.",
+        "La grabación actual es una captura de UI con respuestas sintéticas y no demuestra una ejecución real. La traza y el archivo enlazados pertenecen a la sesión histórica del 2026-10-10.",
         "",
         "## Alineación profesional y matriz de skills",
         "",

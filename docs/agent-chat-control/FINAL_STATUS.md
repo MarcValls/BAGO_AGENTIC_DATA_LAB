@@ -59,6 +59,6 @@ El launcher recuerda el PID del listener real (incluyendo el proceso hijo que cr
 
 La nota inicial de runtime `NOT_RUN` describe la verificación de la primera entrega. En una demostración posterior, la UI local respondió a través de Ollama Cloud: el agente persistido **Frontend Auditor**, fijado a `kimi-k2.6`, leyó las líneas 1-8 de un archivo sintético y devolvió una respuesta. La LocalTrace `trace-c7ec5fcc40284a42` registra `provider_id=ollama-cloud`, `outcome=response_received` y el origen leído. El asistente global estaba configurado con `gemma4:31b`; no es el modelo fijado al agente lector.
 
-El [videotutorial](assets/ADL_videotutorial_primer_usuario.mp4) conserva la pantalla completa de ajustes y cubre el campo de API key con una máscara. La [guía y el alcance](TUTORIAL_PRIMER_USO.md) enlazan subtítulos, archivo de entrada y copia de la traza.
+El [videotutorial histórico](assets/historical/ADL_videotutorial_primer_usuario_2026-10-10.mp4) conserva la pantalla completa de ajustes y cubre el campo de API key con una máscara. La grabación corresponde a la UI del 2026-10-10; el [tutorial regenerado para la UI actual](TUTORIAL_PRIMER_USO.md) tiene su propio alcance y evidencia.
 
 Esta evidencia verifica esa lectura acotada y respuesta live. No demuestra auditoría del código del proyecto, modificación de archivos ni ejecución de jobs. La propuesta de agente que aparece en el vídeo se cancela y no se persiste.

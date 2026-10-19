@@ -1,10 +1,18 @@
 # Videotutorial de primer uso
 
-El [vídeo narrado en español](assets/ADL_videotutorial_primer_usuario.mp4) dura 95,76 segundos. Incluye subtítulos incrustados y un archivo [SRT independiente](assets/ADL_videotutorial_primer_usuario.es.srt).
+El [vídeo actual narrado en español](assets/ADL_videotutorial_ui_actual_2026-10-19.mp4) dura 68,04 segundos. Se grabó el 2026-10-19 sobre la UI actual servida en `127.0.0.1:5173`, con Playwright, narración local, subtítulos incrustados y [SRT independiente](assets/ADL_videotutorial_ui_actual_2026-10-19.es.srt). La navegación y los componentes visibles son los del frontend vigente en este checkout.
 
-Para ver las pantallas y recorridos ilustrados, consulta el [Manual visual de BAGO](MANUAL_PARA_DUMMIES_CAPTURAS.md). Incluye las 14 vistas principales y marca los resultados que son demostrativos.
+Las respuestas de API del recorrido son sintéticas e interceptadas dentro de un contexto aislado de Playwright. El historial mostrado es de demostración; no se consultaron conversaciones reales, no se guardó un agente y no se ejecutó ningún trabajo.
 
-## Recorrido
+SHA-256 del MP4 actual: `61cf2b1c85a71e0079342a887cf3201a4c9be8b5a492bb7504bd99f1878104a9`. La captura se reproduce con [`record_current_ui_tutorial.py`](../../scripts/record_current_ui_tutorial.py); sus nueve segmentos de narración local están bajo `assets/narration/ui-actual-2026-10-19/`.
+
+El [Manual visual de BAGO](MANUAL_PARA_DUMMIES_CAPTURAS.md) contiene capturas de un recorrido anterior. No se regeneró en esta tarea y no es evidencia de la UI que aparece en el vídeo actual.
+
+## Evidencia histórica: interfaz del 2026-10-10
+
+El vídeo anterior se conserva como evidencia de una sesión real de la UI antigua: [MP4 histórico](assets/historical/ADL_videotutorial_primer_usuario_2026-10-10.mp4), [SRT histórico](assets/historical/ADL_videotutorial_primer_usuario_2026-10-10.es.srt) y [LocalTrace asociada](assets/trace-c7ec5fcc40284a42.json).
+
+### Recorrido de la grabación histórica
 
 1. Bienvenida del chat y consulta del inventario de agentes.
 2. Pantalla completa de ajustes del proveedor Ollama Cloud. El estado muestra API key y `gemma4:31b`; el recuadro de credenciales queda cubierto por una máscara. No se muestra el valor de la clave.
@@ -12,13 +20,13 @@ Para ver las pantallas y recorridos ilustrados, consulta el [Manual visual de BA
 4. El asistente propone un borrador de agente usando el modelo global; la persona cancela la propuesta. No se crea un segundo agente.
 5. Navegación a Agent Builder.
 
-## Evidencia y alcance
+### Alcance de esa grabación histórica
 
 La [LocalTrace](assets/trace-c7ec5fcc40284a42.json) registra `agent.chat`, `provider_id=ollama-cloud`, `model_id=kimi-k2.6`, `outcome=response_received`, una lectura de `output/tutorial/sample-note.txt:1-8` y estado `COMPLETED`. Es evidencia local de esa lectura y respuesta. El asistente global aparece configurado con `gemma4:31b`; no debe confundirse con el modelo fijado al agente lector.
 
 La grabación demuestra una lectura acotada del archivo de ejemplo y una respuesta real del proveedor. No demuestra que Frontend Auditor auditara el código fuente del proyecto, que modificara archivos o que ejecutara un job. La propuesta cancelada tampoco crea un nuevo agente.
 
-La captura se hizo sobre la UI local de `127.0.0.1:8081`. El vídeo se produjo el 2026-10-10 y refleja ese estado de la aplicación.
+La captura histórica se hizo sobre la UI local de `127.0.0.1:8081`. El vídeo se produjo el 2026-10-10 y refleja ese estado antiguo de la aplicación. SHA-256 MP4: `77FE889B7CB7793ABF4F11118C01F9861789E6F94589A11D8E0BDA851151DDB4`; SHA-256 SRT: `4256621AC527878A7A7E0AB0C04EC2085126FB3F778A3B5B2966E850DA1B8B96`.
 
 ## Qué aparece dentro del chat
 
@@ -45,7 +53,7 @@ Las acciones con efectos —guardar un agente o una propuesta, conceder capacida
 
 ### Capturas paso a paso
 
-Estas imágenes muestran la interfaz actual con conversaciones y datos de demostración. No representan una ejecución real ni un agente guardado.
+Estas imágenes pertenecen al manual visual anterior y muestran flujos de demostración. No se actualizaron junto con el vídeo actual; no representan una ejecución real ni un agente guardado.
 
 1. El chat listo para recibir una petición.
 

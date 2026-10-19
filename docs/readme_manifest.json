@@ -27,15 +27,14 @@
     "documentation": "docs/bago-sync-agent.md"
   },
   "first_user_tutorial": {
-    "video": "docs/agent-chat-control/assets/ADL_videotutorial_primer_usuario.mp4",
-    "subtitles": "docs/agent-chat-control/assets/ADL_videotutorial_primer_usuario.es.srt",
+    "evidence_mode": "synthetic_ui_capture",
+    "video": "docs/agent-chat-control/assets/ADL_videotutorial_ui_actual_2026-10-19.mp4",
+    "subtitles": "docs/agent-chat-control/assets/ADL_videotutorial_ui_actual_2026-10-19.es.srt",
     "guide": "docs/agent-chat-control/TUTORIAL_PRIMER_USO.md",
-    "trace": "docs/agent-chat-control/assets/trace-c7ec5fcc40284a42.json",
-    "input": "output/tutorial/sample-note.txt",
-    "provider": "Ollama Cloud",
-    "global_model": "gemma4:31b",
-    "agent_model": "kimi-k2.6",
-    "credential_redaction": "API key"
+    "historical_video": "docs/agent-chat-control/assets/historical/ADL_videotutorial_primer_usuario_2026-10-10.mp4",
+    "historical_subtitles": "docs/agent-chat-control/assets/historical/ADL_videotutorial_primer_usuario_2026-10-10.es.srt",
+    "historical_trace": "docs/agent-chat-control/assets/trace-c7ec5fcc40284a42.json",
+    "historical_input": "output/tutorial/sample-note.txt"
   },
   "jaeger_capture": "portfolio/assets/jaeger-trace-graph.png",
   "business_demo": {
