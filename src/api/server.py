@@ -39,7 +39,7 @@ from src.capabilities import (
 )
 from src.conversations import ConversationConflict, ConversationNotFound, ConversationStore
 from src.conversations.library import OwnerKind
-from src.providers import ollama, registration, runtime as provider_runtime
+from src.providers import codex, ollama, registration, runtime as provider_runtime
 from src.agent_tools.workspace_read import (
     MAX_TOOL_CALLS_PER_TURN,
     MAX_TOOL_ROUNDS,
@@ -214,7 +214,7 @@ class AgentConfig(BaseModel):
     system_prompt: str = Field(min_length=1, max_length=12000)
     # Older user-created agents predate provider/model pinning. Keep them
     # readable without migrating their persisted records as a side effect.
-    provider_id: Literal["ollama-cloud", "openai-platform", "github-copilot"] | None = None
+    provider_id: Literal["ollama-cloud", "codex", "openai-platform", "github-copilot"] | None = None
     model_id: str | None = Field(default=None, min_length=1, max_length=128)
     tools: list[str] = Field(default_factory=list, max_length=20)
     retrieval_config: dict[str, Any] | None = None
@@ -260,11 +260,11 @@ def _agent_draft_messages(user_request: str, retry_hint: str | None = None) -> l
     ]
 
 
-def _parse_agent_draft(raw: str, model_id: str) -> AgentConfig:
+def _parse_agent_draft(raw: str, model_id: str, provider_id: str = "ollama-cloud") -> AgentConfig:
     data = json.loads(raw)
     if not isinstance(data, dict):
         raise ValueError("Expected JSON object")
-    data["provider_id"] = "ollama-cloud"
+    data["provider_id"] = provider_id
     data["model_id"] = model_id
     return AgentConfig.model_validate(data)
 
@@ -285,9 +285,10 @@ async def _generate_agent_draft(user_request: str, history: list[dict[str, str]]
     context = "\n".join(f"{item['role']}: {item['content']}" for item in history[-20:] + [{"role": "user", "content": user_request}])
     try:
         for attempt in range(2):
-            raw = await asyncio.to_thread(ollama.chat, model_id, _agent_draft_messages(context, retry_hint))
+            provider_id = provider_runtime.active_provider_id()
+            raw = await asyncio.to_thread(provider_runtime.chat, provider_id, model_id, _agent_draft_messages(context, retry_hint))
             try:
-                draft = _parse_agent_draft(raw, model_id)
+                draft = _parse_agent_draft(raw, model_id, provider_id)
                 break
             except (json.JSONDecodeError, ValueError) as error:
                 if attempt == 1:
@@ -295,7 +296,7 @@ async def _generate_agent_draft(user_request: str, history: list[dict[str, str]]
                 retry_hint = _agent_draft_retry_hint(error)
         if draft is None:
             raise ValueError("No valid agent proposal")
-    except ollama.ProviderError as error:
+    except (ollama.ProviderError, registration.RegistrationError, provider_runtime.ProviderRuntimeError) as error:
         raise _provider_http_error(error) from None
     except Exception:
         raise HTTPException(status_code=502, detail={"code": "invalid_agent_draft", "message": "The model did not produce a valid agent proposal. No agent was created."}) from None
@@ -331,7 +332,7 @@ class AgentCreateRequest(BaseModel):
     description: str = Field(min_length=1, max_length=1000)
     type: Literal["rag", "tool", "multi-agent"]
     system_prompt: str = Field(min_length=1, max_length=12000)
-    provider_id: Literal["ollama-cloud", "openai-platform", "github-copilot"] | None = None
+    provider_id: Literal["ollama-cloud", "codex", "openai-platform", "github-copilot"] | None = None
     model_id: str | None = Field(default=None, max_length=128)
     tools: list[str] = Field(default_factory=list, max_length=20)
     retrieval_config: dict[str, Any] | None = None

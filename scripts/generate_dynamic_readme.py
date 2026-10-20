@@ -815,9 +815,9 @@ def render_readme(
         "",
         "La fecha corresponde a la actualización del resumen. Cada observación externa conserva la fecha y el alcance de su evidencia; este README no representa una consulta en vivo.",
         "",
-        "## Arquitectura de un vistazo",
+        "## Roadmap y evidencia por fase",
         "",
-        f"**Principio:** {manifest['architecture']['principle']}",
+        "Cada bloque muestra los archivos localizados mediante los patrones declarados en el checkout. Los patrones sin coincidencias aparecen indicados; eso no demuestra que el recurso no exista fuera de este repositorio.",
         "",
         _render_flowchart(phases),
         "",
@@ -825,13 +825,9 @@ def render_readme(
         "",
         _render_phase_table(phases),
         "",
-        "## Roadmap y evidencia por fase",
-        "",
-        "Cada bloque muestra los archivos localizados mediante los patrones declarados en el checkout. Los patrones sin coincidencias aparecen indicados; eso no demuestra que el recurso no exista fuera de este repositorio.",
-        "",
         _render_phase_evidence(phases),
         "",
-        "## Recorrido de datos y arquitectura actual",
+        "## Arquitectura de un vistazo",
         "",
         _render_architecture(manifest),
         "",
@@ -914,8 +910,8 @@ def render_readme(
         "MIT License · [LICENSE](LICENSE)",
         "",
     ]
-    # Keep one reader path: purpose, overview, runnable demo, evidence, UI,
-    # current state, project sources, roadmap and detailed architecture.
+    # Keep one reader path: purpose, runnable demo, current state, architecture,
+    # evidence and references. Avoid repeating the architecture pipeline.
     first_section = next(i for i, line in enumerate(lines) if line.startswith("## "))
     intro, body = lines[:first_section], lines[first_section:]
     sections: dict[str, list[str]] = {}
@@ -931,17 +927,16 @@ def render_readme(
         sections[current[0]] = current
     section_order = [
         "## El laboratorio",
-        "## Arquitectura de un vistazo",
         "## Ejecutar la demo local",
+        "## Estado actual",
+        "## Arquitectura de un vistazo",
+        "## Recorrido comercial de la app: Bruma Market",
         "## Evidencia de ejecución y límites",
         "## Ver la interfaz en acción",
-        "## Estado actual",
-        "## Recorrido de datos y arquitectura actual",
-        "## Recorrido comercial de la app: Bruma Market",
         "## Roadmap y evidencia por fase",
-        "## Fuentes canónicas del proyecto",
-        "## Agente de sincronización y catálogo de agentes",
         "## Alineación profesional y matriz de skills",
+        "## Agente de sincronización y catálogo de agentes",
+        "## Fuentes canónicas del proyecto",
         "## Reproducir y verificar",
         "## Contrato de generación del README",
     ]

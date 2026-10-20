@@ -2,9 +2,14 @@
 from __future__ import annotations
 
 from collections.abc import Mapping
+import json
+import os
+import tempfile
 from typing import Any
 
-from src.providers import github_copilot, ollama, openai_platform, registration
+from src.providers import codex, github_copilot, ollama, openai_platform, registration
+
+SELECTION_PATH = registration.REGISTRY_PATH.with_name("active-provider.json")
 
 
 class ProviderRuntimeError(RuntimeError):
@@ -29,7 +34,43 @@ def status(provider_id: str) -> dict[str, Any]:
     item = registration.status(provider_id)
     if item.get("runtime_support") != "chat_and_agent_runner":
         raise ProviderRuntimeError("provider_unavailable", "The selected provider is not integrated with agent chat.")
+    if provider_id == "codex":
+        try:
+            session = codex.session_status()
+            item["has_session"] = session["authenticated"]
+            if not session["authenticated"]:
+                item["state"] = "needs_authentication"
+        except registration.RegistrationError as error:
+            item.update(state=error.status, message=error.message, has_session=False)
     return item
+
+
+def active_provider_id() -> str:
+    try:
+        provider_id = json.loads(SELECTION_PATH.read_text(encoding="utf-8"))["provider_id"]
+    except FileNotFoundError:
+        return "ollama-cloud"
+    except (OSError, ValueError, KeyError, TypeError):
+        raise ProviderRuntimeError("active_provider_unavailable", "No se pudo leer el proveedor seleccionado para ADL.") from None
+    if provider_id not in {"ollama-cloud", *registration.LIVE_PROVIDER_IDS}:
+        raise ProviderRuntimeError("active_provider_unavailable", "El proveedor seleccionado para ADL no está disponible.")
+    return provider_id
+
+
+def select_provider(provider_id: str) -> dict[str, Any]:
+    current = status(provider_id)
+    if current.get("state") not in {"ready", "configured_unverified"} or not current.get("model_id"):
+        raise ProviderRuntimeError("provider_not_configured", "Configura el proveedor y selecciona un modelo antes de usarlo en el chat de ADL.")
+    SELECTION_PATH.parent.mkdir(parents=True, exist_ok=True)
+    fd, temporary = tempfile.mkstemp(prefix="active-provider-", suffix=".tmp", dir=SELECTION_PATH.parent)
+    try:
+        with os.fdopen(fd, "w", encoding="utf-8") as stream:
+            json.dump({"schema": "adl.active_provider.v1", "provider_id": provider_id}, stream)
+        os.replace(temporary, SELECTION_PATH)
+    finally:
+        if os.path.exists(temporary):
+            os.unlink(temporary)
+    return {**current, "active_for_chat": True}
 
 
 def chat_turn(provider_id: str, model_id: str, messages: list[dict[str, Any]], *, require_text: bool = False, **kwargs: Any) -> Mapping[str, Any]:
@@ -42,6 +83,8 @@ def chat_turn(provider_id: str, model_id: str, messages: list[dict[str, Any]], *
             result = openai_platform.chat_turn(model_id, messages, binding=binding, **kwargs)
         elif provider_id == "github-copilot":
             result = github_copilot.chat_turn(model_id, messages, binding=binding, **kwargs)
+        elif provider_id == "codex":
+            result = codex.chat_turn(model_id, messages, binding=binding, **kwargs)
         else:
             raise ProviderRuntimeError("provider_unavailable", "This provider is not integrated with agent chat.")
         if not isinstance(result, Mapping):

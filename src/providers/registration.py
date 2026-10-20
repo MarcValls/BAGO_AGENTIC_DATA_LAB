@@ -28,7 +28,7 @@ PROVIDER_MODES: dict[str, set[str]] = {
     "opencode": {"api_key", "local"},
 }
 SECRET_MODES = {"api_key", "token"}
-LIVE_PROVIDER_IDS = {"openai-platform", "github-copilot"}
+LIVE_PROVIDER_IDS = {"codex", "openai-platform", "github-copilot"}
 
 
 @dataclass(frozen=True)
