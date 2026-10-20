@@ -1,8 +1,8 @@
 import './ProviderSettings.css'
 import { FormEvent, useEffect, useState } from 'react'
 
-type AuthMode = 'api_key' | 'local_cli'
-type ProviderState = 'not_configured' | 'needs_authentication' | 'local_service_unavailable' | 'configured_unverified' | 'ready' | 'unsupported_runtime' | 'error'
+type AuthMode = 'api_key' | 'local_cli' | 'codex_cli'
+type ProviderState = 'not_configured' | 'needs_authentication' | 'authenticated' | 'local_service_unavailable' | 'configured_unverified' | 'ready' | 'unsupported_runtime' | 'error'
 type ProviderStatus = { provider_id: string; state: ProviderState; runtime_mode?: 'host' | 'container'; auth_mode: AuthMode | null; model_id: string | null; message?: string; last_verified_at?: string }
 export type ProviderStatusSummary = Pick<ProviderStatus, 'state' | 'auth_mode'>
 type ProviderModel = { provider_id: string; model_id: string; display_name: string; source: string; availability_confidence: string }
@@ -33,10 +33,9 @@ const PROVIDERS: ProviderDefinition[] = [
     }
   },
   {
-    id: 'codex', label: 'OpenAI Codex', summary: 'Usa una sesión propia de Codex CLI; es distinta de OpenAI Platform.',
+    id: 'codex', label: 'OpenAI Codex', summary: 'Inicia sesión con ChatGPT desde ADL, igual que en la extensión Codex de Visual Studio Code.',
     registrationModes: ['codex_cli'], defaultMode: 'codex_cli', modelPlaceholder: 'gpt-5-codex',
-    steps: { codex_cli: ['Instala Codex CLI desde la distribución oficial.', 'Inicia sesión con tu cuenta desde tu terminal.', 'Comprueba el estado y guarda el modelo que quieres asociar.'] },
-    commands: { codex_cli: ['codex login', 'codex login status'] }
+    steps: { codex_cli: ['Inicia sesión con ChatGPT en el navegador.', 'Elige un modelo disponible en tu sesión de Codex.', 'Guarda el modelo para usarlo en los agentes de ADL.'] }
   },
   {
     id: 'openai-platform', label: 'OpenAI Platform', summary: 'Conexión de API facturada en OpenAI Platform, separada de Codex CLI.',
@@ -84,6 +83,7 @@ async function safeError(response: Response): Promise<string> {
 
 function statusLabel(state: string | undefined): string {
   if (state === 'ready') return 'Acceso comprobado'
+  if (state === 'authenticated') return 'Sesión iniciada'
   if (state === 'configured_unverified') return 'Registrado · sin verificar'
   if (state === 'needs_authentication') return 'Falta credencial'
   if (state === 'credential_store_unavailable') return 'Almacén seguro no disponible'
@@ -96,6 +96,7 @@ function statusLabel(state: string | undefined): string {
 export default function ProviderSettings({ onStatusChange }: { onStatusChange?: (status: ProviderStatusSummary) => void }) {
   const [selectedProvider, setSelectedProvider] = useState<ProviderId>('ollama')
   const [ollamaStatus, setOllamaStatus] = useState<ProviderStatusSummary | null>(null)
+  const [codexStatus, setCodexStatus] = useState<ProviderStatusSummary | null>(null)
   const [registrations, setRegistrations] = useState<Record<string, Registration>>({})
   const [loadingRegistry, setLoadingRegistry] = useState(true)
   const [registryError, setRegistryError] = useState('')
@@ -119,7 +120,7 @@ export default function ProviderSettings({ onStatusChange }: { onStatusChange?: 
 
   const activeProvider = PROVIDERS.find(provider => provider.id === selectedProvider) ?? PROVIDERS[0]
   const registration = registrations[selectedProvider]
-  const state = selectedProvider === 'ollama' ? ollamaStatus?.state : registration?.state
+  const state = selectedProvider === 'ollama' ? ollamaStatus?.state : selectedProvider === 'codex' ? codexStatus?.state ?? registration?.state : registration?.state
 
   return (
     <section className="provider-settings" aria-labelledby="provider-settings-title">
@@ -132,7 +133,7 @@ export default function ProviderSettings({ onStatusChange }: { onStatusChange?: 
         <nav className="provider-tabs" role="tablist" aria-label="Proveedores">
           <h3>Proveedores</h3>
           {PROVIDERS.map(provider => {
-            const providerState = provider.id === 'ollama' ? ollamaStatus?.state : registrations[provider.id]?.state
+            const providerState = provider.id === 'ollama' ? ollamaStatus?.state : provider.id === 'codex' ? codexStatus?.state ?? registrations[provider.id]?.state : registrations[provider.id]?.state
             const providerIndex = PROVIDERS.findIndex(item => item.id === provider.id)
             return <button
               key={provider.id}
@@ -167,13 +168,139 @@ export default function ProviderSettings({ onStatusChange }: { onStatusChange?: 
           </div>
           {selectedProvider === 'ollama'
             ? <OllamaProviderSettings onStatusChange={summary => { setOllamaStatus(summary); onStatusChange?.(summary) }} />
-            : <ProviderRegistrationForm key={selectedProvider} provider={activeProvider} registration={registration} onRefresh={refreshRegistry} onSaved={updated => setRegistrations(current => ({ ...current, [selectedProvider]: updated }))} />}
+            : selectedProvider === 'codex'
+              ? <CodexProviderSettings registration={registration} onStatusChange={setCodexStatus} onSaved={updated => setRegistrations(current => ({ ...current, codex: updated }))} />
+              : <ProviderRegistrationForm key={selectedProvider} provider={activeProvider} registration={registration} onRefresh={refreshRegistry} onSaved={updated => setRegistrations(current => ({ ...current, [selectedProvider]: updated }))} />}
           {registryError && <p className="provider-alert error" role="alert">{registryError}</p>}
           {loadingRegistry && <p className="provider-footnote" role="status">Cargando registros guardados…</p>}
         </section>
       </div>
     </section>
   )
+}
+
+type CodexSession = { authenticated: boolean; plan_type?: string | null; models: Array<{ model_id: string; display_name: string; is_default: boolean }> }
+type CodexLogin = { login_id: string; auth_url: string; state: 'pending' | 'completed' | 'failed' | 'expired'; error?: string | null }
+
+function CodexProviderSettings({ registration, onSaved, onStatusChange }: {
+  registration?: Registration
+  onSaved: (registration: Registration) => void
+  onStatusChange: (status: ProviderStatusSummary) => void
+}) {
+  const [session, setSession] = useState<CodexSession | null>(null)
+  const [modelId, setModelId] = useState(registration?.model_id ?? '')
+  const [loginId, setLoginId] = useState('')
+  const [authUrl, setAuthUrl] = useState('')
+  const [loading, setLoading] = useState(true)
+  const [saving, setSaving] = useState(false)
+  const [error, setError] = useState('')
+  const [notice, setNotice] = useState('')
+
+  const loadSession = async () => {
+    const response = await fetch('/api/providers/codex/session')
+    if (!response.ok) throw new Error(await safeError(response))
+    const result = await response.json() as CodexSession
+    setSession(result)
+    if (!modelId && registration?.model_id) setModelId(registration.model_id)
+    else if (!modelId && result.models.length) setModelId(result.models.find(item => item.is_default)?.model_id ?? result.models[0].model_id)
+    onStatusChange({ state: result.authenticated ? registration?.model_id ? registration.state === 'ready' ? 'ready' : 'configured_unverified' : 'authenticated' : 'needs_authentication', auth_mode: result.authenticated ? 'codex_cli' : null })
+  }
+
+  useEffect(() => {
+    void loadSession().catch(cause => setError(cause instanceof Error ? cause.message : 'No se pudo consultar la sesión de Codex.')).finally(() => setLoading(false))
+  }, [])
+
+  useEffect(() => {
+    if (!loginId) return
+    let active = true
+    const timer = window.setInterval(() => {
+      void fetch(`/api/providers/codex/login/${encodeURIComponent(loginId)}`)
+        .then(async response => {
+          if (!response.ok) throw new Error(await safeError(response))
+          return response.json() as Promise<{ state: string; error?: string | null }>
+        })
+        .then(async result => {
+          if (!active || result.state === 'pending') return
+          window.clearInterval(timer)
+          setLoginId('')
+          if (result.state !== 'completed') {
+            setError(result.error ?? 'Codex no completó el inicio de sesión.')
+            return
+          }
+          await loadSession()
+          setNotice('Sesión de Codex conectada. Elige el modelo que quieras asociar a ADL.')
+        })
+        .catch(cause => {
+          if (!active) return
+          window.clearInterval(timer)
+          setLoginId('')
+          setError(cause instanceof Error ? cause.message : 'No se pudo confirmar el inicio de sesión.')
+        })
+    }, 1200)
+    return () => { active = false; window.clearInterval(timer) }
+  }, [loginId])
+
+  const startLogin = async () => {
+    setError(''); setNotice('')
+    const authWindow = window.open('about:blank', '_blank')
+    if (authWindow) authWindow.opener = null
+    try {
+      const response = await fetch('/api/providers/codex/login', { method: 'POST' })
+      if (!response.ok) throw new Error(await safeError(response))
+      const result = await response.json() as CodexLogin
+      setLoginId(result.login_id)
+      setAuthUrl(result.auth_url)
+      if (authWindow) authWindow.location.href = result.auth_url
+      else setNotice('Permite la ventana emergente para iniciar sesión o abre el enlace de autorización que aparecerá aquí.')
+    } catch (cause) {
+      authWindow?.close()
+      setError(cause instanceof Error ? cause.message : 'No se pudo iniciar sesión con Codex.')
+    }
+  }
+
+  const saveModel = async (event: FormEvent) => {
+    event.preventDefault()
+    setSaving(true); setError(''); setNotice('')
+    try {
+      const response = await fetch('/api/providers/registry/codex', {
+        method: 'PUT', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ auth_mode: 'codex_cli', model_id: modelId }),
+      })
+      if (!response.ok) throw new Error(await safeError(response))
+      const result = await response.json() as Registration
+      onSaved(result)
+      onStatusChange({ state: result.state as ProviderState, auth_mode: 'codex_cli' })
+      setNotice('Modelo guardado. ADL usará la sesión de Codex que ya tienes autorizada en este equipo.')
+    } catch (cause) {
+      setError(cause instanceof Error ? cause.message : 'No se pudo guardar el modelo de Codex.')
+    } finally { setSaving(false) }
+  }
+
+  const authenticated = session?.authenticated === true
+  return <div className="codex-provider-settings">
+    <section className="provider-steps" aria-label="Inicio de sesión de Codex">
+      <h4>{authenticated ? 'Sesión de ChatGPT conectada' : 'Inicia sesión con Codex'}</h4>
+      <p>{authenticated
+        ? 'ADL ha detectado una sesión de Codex autorizada en este equipo.'
+        : 'ADL abrirá el navegador para autorizar tu cuenta de ChatGPT mediante el inicio de sesión oficial de Codex. No hace falta pegar una API key.'}</p>
+      {!authenticated && <button className="provider-primary" type="button" onClick={() => void startLogin()} disabled={loading || Boolean(loginId)}>{loginId ? 'Esperando autorización en el navegador…' : 'Iniciar sesión con ChatGPT'}</button>}
+      {loginId && authUrl && <p><a href={authUrl} target="_blank" rel="noreferrer">Abrir página de autorización de Codex</a></p>}
+      {authenticated && <p className="provider-footnote">Acceso de Codex detectado{session?.plan_type ? ` · plan ${session.plan_type}` : ''}. ADL no lee ni muestra tus credenciales.</p>}
+    </section>
+    {authenticated && <form className="provider-registration-form" onSubmit={event => void saveModel(event)}>
+      <label className="provider-field" htmlFor="codex-model"><span>Modelo de Codex</span>
+        <select id="codex-model" value={modelId} onChange={event => setModelId(event.target.value)} required disabled={!session.models.length || saving}>
+          {session.models.length === 0 && <option value="">El catálogo de modelos no está disponible</option>}
+          {session.models.map(model => <option key={model.model_id} value={model.model_id}>{model.display_name}{model.is_default ? ' · predeterminado' : ''}</option>)}
+        </select>
+      </label>
+      <p className="provider-footnote">El catálogo orienta la selección; el acceso a un modelo se confirma cuando Codex completa una solicitud.</p>
+      <div className="provider-form-actions"><button className="provider-primary" type="submit" disabled={saving || !modelId}>{saving ? 'Guardando…' : registration?.model_id === modelId ? 'Modelo guardado' : 'Guardar modelo'}</button></div>
+    </form>}
+    {loading && <p className="provider-footnote" role="status">Consultando Codex…</p>}
+    {error && <p className="provider-alert error" role="alert">{error}</p>}
+    {notice && <p className="provider-alert notice" role="status">{notice}</p>}
+  </div>
 }
 
 function ProviderRegistrationForm({ provider, registration, onSaved, onRefresh }: { provider: ProviderDefinition; registration?: Registration; onSaved: (registration: Registration) => void; onRefresh: () => Promise<void> }) {

@@ -45,7 +45,7 @@ def test_support_is_visible_before_registration_and_other_providers_remain_separ
         status = registration.status(provider)
         assert status["state"] == "not_configured"
         assert status["runtime_support"] == "chat_and_agent_runner"
-    assert registration.status("codex")["runtime_support"] == "not_integrated"
+    assert registration.status("codex")["runtime_support"] == "chat_and_agent_runner"
 
 
 def test_live_check_performs_inference_and_only_persists_non_secret_confirmation(registry, monkeypatch):

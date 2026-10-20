@@ -16,6 +16,7 @@ import time
 from collections import deque
 from pathlib import Path
 from typing import Any
+from urllib.parse import urlsplit
 
 from src.providers import registration
 from src.providers.tool_protocol import arguments_object
@@ -31,6 +32,8 @@ CONFIG = {
 }
 CONFIG["features"]["skip_host_skill_discovery"] = True
 TOOL_NAMES = {"sandbox.run", "read_workspace_file", "scan_code_duplicates", "resolve_control_request"}
+_LOGIN_LOCK = threading.RLock()
+_LOGIN_FLOWS: dict[str, dict[str, Any]] = {}
 
 
 def executable() -> str:
@@ -197,6 +200,64 @@ def session_status(*, include_models: bool = False) -> dict[str, Any]:
             result["models"] = [{"model_id": item["model"], "display_name": item.get("displayName", item["model"]), "is_default": item.get("isDefault", False)}
                                 for item in models if isinstance(item, dict) and isinstance(item.get("model"), str) and registration.MODEL_RE.fullmatch(item["model"])]
         return result
+
+
+def start_login() -> dict[str, str]:
+    """Start Codex's native ChatGPT browser login and keep its RPC session alive."""
+    with _LOGIN_LOCK:
+        if any(flow.get("state") == "pending" for flow in _LOGIN_FLOWS.values()):
+            raise registration.RegistrationError("codex_login_in_progress", "Ya hay un inicio de sesión de Codex en curso.")
+        client = CodexClient()
+        try:
+            result = client.request("account/login/start", {"type": "chatgpt", "codexStreamlinedLogin": True})
+            login_id, auth_url = result.get("loginId"), result.get("authUrl")
+            parsed_url = urlsplit(auth_url) if isinstance(auth_url, str) else None
+            if (result.get("type") != "chatgpt" or not isinstance(login_id, str) or not parsed_url
+                    or parsed_url.scheme != "https" or parsed_url.hostname != "auth.openai.com"):
+                raise registration.RegistrationError("codex_login_unavailable", "Codex no devolvió un flujo de inicio de sesión de ChatGPT válido.")
+        except Exception:
+            client.close()
+            raise
+        flow = {"state": "pending", "client": client, "error": None, "started_at": time.monotonic()}
+        _LOGIN_FLOWS[login_id] = flow
+        threading.Thread(target=_wait_for_login, args=(login_id, flow), daemon=True).start()
+        return {"login_id": login_id, "auth_url": auth_url, "state": "pending"}
+
+
+def _wait_for_login(login_id: str, flow: dict[str, Any]) -> None:
+    client: CodexClient = flow["client"]
+    deadline = time.monotonic() + 300
+    try:
+        while time.monotonic() < deadline:
+            event = client.notification(deadline)
+            if event.get("method") != "account/login/completed":
+                continue
+            params = event.get("params", {})
+            if params.get("loginId") not in {None, login_id}:
+                continue
+            with _LOGIN_LOCK:
+                flow["state"] = "completed" if params.get("success") is True else "failed"
+                flow["error"] = None if params.get("success") is True else "Codex no pudo completar el inicio de sesión. Vuelve a intentarlo."
+            return
+        with _LOGIN_LOCK:
+            flow["state"] = "expired"
+            flow["error"] = "El inicio de sesión de Codex venció. Inícialo de nuevo desde ADL."
+    except registration.RegistrationError:
+        with _LOGIN_LOCK:
+            flow["state"] = "failed"
+            flow["error"] = "Se interrumpió la conexión con Codex durante el inicio de sesión."
+    finally:
+        client.close()
+        with _LOGIN_LOCK:
+            flow.pop("client", None)
+
+
+def login_status(login_id: str) -> dict[str, Any]:
+    with _LOGIN_LOCK:
+        flow = _LOGIN_FLOWS.get(login_id)
+        if not flow:
+            raise registration.RegistrationError("codex_login_not_found", "No se encontró este inicio de sesión de Codex.")
+        return {"login_id": login_id, "state": flow["state"], "error": flow.get("error")}
 
 
 def chat_turn(model_id: str, messages: list[dict[str, Any]], *, tools=None, options=None, binding=None) -> dict[str, Any]:

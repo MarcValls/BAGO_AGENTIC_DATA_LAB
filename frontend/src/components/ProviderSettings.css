@@ -1,4 +1,8 @@
 .provider-settings { display: flex; min-width: 0; min-height: 100%; flex-direction: column; gap: 13px; color: #e2e8f0; }
+.codex-provider-settings { display: flex; min-width: 0; flex-direction: column; gap: 11px; }
+.codex-provider-settings .provider-steps p { margin: 7px 0 11px; color: #c1d0e0; font-size: .74rem; line-height: 1.5; }
+.codex-provider-settings .provider-steps a { color: #9dcaff; font-size: .72rem; }
+.codex-provider-settings .provider-steps button { margin-top: 10px; }
 .provider-settings-heading { display: flex; align-items: center; justify-content: space-between; gap: 14px; padding: 0 1px 11px; border-bottom: 1px solid #293b50; }
 .provider-settings-heading h2 { margin: 0; color: #e7eef7; font-size: 1rem; }
 .provider-settings-heading p { margin: 4px 0 0; color: #9eb0c5; font-size: .75rem; line-height: 1.45; }

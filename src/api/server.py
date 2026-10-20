@@ -803,11 +803,35 @@ def provider_registration_status() -> dict[str, Any]:
         raise HTTPException(status_code=status_code, detail={"code": error.code, "message": error.message, "state": error.status}) from None
 
 
+@app.get("/api/providers/codex/session")
+def codex_session_status() -> dict[str, Any]:
+    try:
+        return codex.session_status(include_models=True)
+    except registration.RegistrationError as error:
+        raise _provider_http_error(error) from None
+
+
+@app.post("/api/providers/codex/login")
+def start_codex_login() -> dict[str, str]:
+    try:
+        return codex.start_login()
+    except registration.RegistrationError as error:
+        raise _provider_http_error(error) from None
+
+
+@app.get("/api/providers/codex/login/{login_id}")
+def codex_login_status(login_id: str) -> dict[str, Any]:
+    try:
+        return codex.login_status(login_id)
+    except registration.RegistrationError as error:
+        raise _provider_http_error(error) from None
+
+
 @app.get("/api/providers/available")
 def available_agent_providers() -> dict[str, Any]:
     try:
         providers = [{"provider_id": "ollama-cloud", "label": "Ollama", **ollama.status()}]
-        labels = {"openai-platform": "OpenAI Platform", "github-copilot": "GitHub Copilot"}
+        labels = {"codex": "OpenAI Codex", "openai-platform": "OpenAI Platform", "github-copilot": "GitHub Copilot"}
         providers.extend({**registration.status(key), "label": label} for key, label in labels.items())
         return {"providers": providers}
     except (ollama.ProviderError, registration.RegistrationError) as error:
