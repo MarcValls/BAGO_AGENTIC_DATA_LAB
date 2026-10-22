@@ -1,0 +1,4 @@
+*.json -text
+*.xml -text
+*.log -text
+independent-review.md -text

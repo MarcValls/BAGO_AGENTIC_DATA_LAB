@@ -745,6 +745,104 @@ def render_first_user_tutorial(manifest: dict[str, Any]) -> str:
     )
 
 
+def _render_frontend(manifest: dict[str, Any]) -> list[str]:
+    """Describe the actual app entrypoints, not inferred provider availability."""
+    config = manifest["frontend"]
+    paths = [config[key] for key in ("entry", "package", "api", "setup_guide", "launcher")]
+    paths.extend(path for layer in config["layers"] for path in layer["sources"])
+    missing = [path for path in paths if not (REPO_ROOT / path).is_file()]
+    if missing:
+        raise FileNotFoundError("Frontend sources missing: " + ", ".join(missing))
+    package = _read_json(REPO_ROOT / config["package"])
+    for name in ("dev", "build", "test", "test:ui", "test:contracts"):
+        if not package.get("scripts", {}).get(name):
+            raise ValueError("Frontend script is missing: " + name)
+    lines = [
+        "## La aplicación frontend", "",
+        f"La app [React + TypeScript + Vite]({config['package']}) permite trabajar con agentes y datos, y abrir una capa de inspección para revisar las observaciones que devuelve la [API FastAPI]({config['api']}).", "",
+        "| Capa | Qué contiene | Fuente |", "|---|---|---|",
+    ]
+    for layer in config["layers"]:
+        links = " · ".join(
+            f"[{Path(path).parent.name if Path(path).stem == 'index' else Path(path).stem}]({path})"
+            for path in layer["sources"][:2]
+        )
+        if len(layer["sources"]) > 2:
+            links += f" (+{len(layer['sources']) - 2} fuentes en el manifiesto)"
+        lines.append(f"| {_cell(layer['name'])} | {_cell(layer['description'])} | {links} |")
+    lines.extend([
+        "", "Chat y borradores, tareas y ejecuciones tienen recorridos distintos. La disponibilidad de un modelo, proveedor o motor BER se comprueba en su recorrido; ver una pantalla no acredita que una acción se haya ejecutado.", "",
+        "**Arranque desde la raíz del repositorio**, con Python 3.11+, Node.js 22 y el entorno Python activado. `requirements-test.txt` fija las dependencias de la app y sus pruebas, incluida la API:", "",
+        FENCE + "bash", *config["start_commands"], FENCE, "",
+        "Abre <http://127.0.0.1:8080>. La API sirve `frontend/dist` después del build; la configuración de proveedores se realiza en Settings. Estos comandos describen el arranque, no una sesión iniciada por este README.", "",
+        f"En Windows, el [lanzador local]({config['launcher']}) construye la UI y selecciona un puerto libre; consulta sus [requisitos y límites]({config['setup_guide']}). Para desarrollo, `npm run dev --prefix frontend` usa Vite con proxy hacia la API local.", "",
+    ])
+    return lines
+
+
+def _verification_record(manifest: dict[str, Any]) -> tuple[str, dict[str, Any]]:
+    """Read the local identity-bound record selected by the canonical manifest."""
+    path = manifest["verification_record"]
+    relative = Path(path)
+    if relative.is_absolute() or ".." in relative.parts:
+        raise ValueError("Verification record must be repository-relative")
+    record = _read_json(REPO_ROOT / relative)
+    if record.get("schema") != "bago.readme.verification.v1":
+        raise ValueError("Unsupported README verification record schema")
+    if not record.get("recorded_at"):
+        raise ValueError("README verification record requires its observation date")
+    ci = record.get("ci", {})
+    for key in ("candidate", "completed_at", "run_url", "scope", "checks"):
+        if not ci.get(key):
+            raise ValueError("README CI record is missing " + key)
+    if not re.fullmatch(r"[a-f0-9]{40}", ci["candidate"]):
+        raise ValueError("README CI record requires an exact commit SHA")
+    for check in ci["checks"]:
+        for key in ("name", "command", "result", "summary", "evidence_url"):
+            if not check.get(key):
+                raise ValueError("README CI check is missing " + key)
+        if check["result"] not in ("PASS", "FAIL", "NOT_RUN", "SKIPPED"):
+            raise ValueError("Unsupported README check result")
+    return path, record
+
+
+def _render_verification(manifest: dict[str, Any]) -> list[str]:
+    path, record = _verification_record(manifest)
+    ci = record["ci"]
+    lines = [
+        "## Tests y verificación", "",
+        f"**Snapshot de CI:** [{ci['completed_at']}]({ci['run_url']}) · candidata `{ci['candidate']}`.",
+        f"**Alcance:** {_cell(ci['scope'])}",
+        f"Registro versionado observado el {_cell(record['recorded_at'])}: [{path}]({path}). No es una consulta en vivo ni cubre cambios posteriores a esa candidata.", "",
+        "| Batería | Resultado registrado | Evidencia |", "|---|---|---|",
+    ]
+    for check in ci["checks"]:
+        lines.append(f"| {_cell(check['name'])} | `{check['result']}` · {_cell(check['summary'])} | [{_inline(check['command'])}]({check['evidence_url']}) |")
+    lines.extend([
+        "", "<details>", "<summary>Repetir las comprobaciones en tu checkout</summary>", "",
+        FENCE + "bash", "python -m pytest tests -q", "npm test --prefix frontend",
+        "npm run test:ui --prefix frontend", "npm run test:contracts --prefix frontend",
+        "npm run build --prefix frontend", "python scripts/generate_dynamic_readme.py --check --skip-tests", FENCE, "",
+        "La colección de pytest no es una ejecución: `--check --skip-tests` informa `NOT_RUN`. El conteo de una ejecución local se imprime en terminal; no sustituye ni modifica el snapshot versionado de CI.", "", "</details>", "",
+    ])
+    historical = record.get("historical", [])
+    if historical:
+        lines.extend(["<details>", "<summary>Resultados locales e históricos, con alcance propio</summary>", ""])
+        for item in historical:
+            for key in ("label", "candidate", "observed_at", "scope", "summary", "evidence_url"):
+                if not item.get(key):
+                    raise ValueError("Historical verification record is missing " + key)
+            summary = _cell(item["summary"]).rstrip(".")
+            scope = _cell(item["scope"]).rstrip(".")
+            lines.append(f"- [{_cell(item['label'])}]({item['evidence_url']}) · {_cell(item['observed_at'])} · candidata `{item['candidate']}`: {summary}. Alcance: {scope}.")
+        lines.extend(["", "</details>", ""])
+    return lines
+
+
+def _details(summary: str, content: list[str]) -> list[str]:
+    return ["<details>", f"<summary>{summary}</summary>", "", *content, "", "</details>", ""]
+
+
 def render_readme(
     *,
     manifest: dict[str, Any],
@@ -752,7 +850,8 @@ def render_readme(
     passing_tests: int,
 ) -> str:
     # Kept in the public helper signature for existing callers. Test outcomes
-    # come from the exact CI record in STATE.md, never from test collection.
+    # come from the versioned verification record, never from test collection
+    # or a host-dependent local passing/skipped count.
     project = manifest["project"]
     phases = phase_inventory(manifest, state)
     branch = project["default_branch"]
@@ -843,8 +942,8 @@ def render_readme(
         "",
         "[Informe y datos completos L15](evidence/l15_otel_jaeger_live.md) · [intento de captura del freeze](evidence/l15_jaeger_capture_attempt.md) · [guía para reproducir Jaeger](docs/otel_jaeger.md).",
         "",
-        f"- [Último resultado completo de CI]({repository}/actions/runs/38665463586): estado y SHA del commit verificados en `STATE.md`; no cubre cambios posteriores.",
-        "- [Estado y límites AWS](.bago/canon/STATE.md): la consulta Free Tier observó USD 100 de crédito activo; los dos intentos Bedrock más recientes fueron rechazados por cuota diaria y no generaron tokens. El consumo/facturación de esos intentos no está probado.",
+        "- CI histórica: el registro fechado de `STATE.md` se conserva en el detalle del estado canónico. El snapshot de verificación anterior identifica por separado su candidata y su ejecución.",
+        "- [Estado y límites AWS](.bago/canon/STATE.md): las observaciones de crédito y cuota pertenecen a la evidencia histórica allí fechada. No son un saldo vigente ni una comprobación actual de disponibilidad o facturación.",
         "- [Consulta de créditos Free Tier](evidence/l6_aws_free_tier.md) · [último recibo Bedrock](evidence/l6_aws_live.md) · [intento Nova Lite](evidence/aws-live-attempts/20261018_nova_lite_throttled.md) · [intento Nova Micro](evidence/aws-live-attempts/20261018_nova_micro_throttled.md).",
         "",
         "La demo local evalúa trazas y controles estructurales; no prueba calidad general de respuestas, aislamiento de producción ni integraciones cloud en vivo.",
@@ -910,8 +1009,8 @@ def render_readme(
         "MIT License · [LICENSE](LICENSE)",
         "",
     ]
-    # Keep one reader path: purpose, runnable demo, current state, architecture,
-    # evidence and references. Avoid repeating the architecture pipeline.
+    # The opening path is app/use -> exact verification snapshot -> demo/design.
+    # Preserve detailed project history without making it the first screen.
     first_section = next(i for i, line in enumerate(lines) if line.startswith("## "))
     intro, body = lines[:first_section], lines[first_section:]
     sections: dict[str, list[str]] = {}
@@ -925,22 +1024,56 @@ def render_readme(
             current.append(line)
     if current:
         sections[current[0]] = current
-    section_order = [
-        "## El laboratorio",
-        "## Ejecutar la demo local",
-        "## Estado actual",
-        "## Arquitectura de un vistazo",
-        "## Recorrido comercial de la app: Bruma Market",
-        "## Evidencia de ejecución y límites",
-        "## Ver la interfaz en acción",
-        "## Roadmap y evidencia por fase",
-        "## Alineación profesional y matriz de skills",
-        "## Agente de sincronización y catálogo de agentes",
-        "## Fuentes canónicas del proyecto",
-        "## Reproducir y verificar",
-        "## Contrato de generación del README",
+    def nested(heading: str) -> list[str]:
+        return ["#" + line if line.startswith("## ") else line for line in sections[heading]]
+
+    toc = [
+        "[Propósito](#el-laboratorio) · [Aplicación frontend](#la-aplicación-frontend) · "
+        "[Tests y resultados](#tests-y-verificación) · [Demo local](#ejecutar-la-demo-local) · "
+        "[Arquitectura](#arquitectura-de-un-vistazo) · [Historial y evidencia](#historial-y-evidencia) · "
+        "[Documentación](#documentación-del-proyecto)", "",
     ]
-    lines = intro + [line for heading in section_order for line in sections[heading]]
+    architecture = [
+        "## Arquitectura de un vistazo", "",
+        f"**Principio:** {manifest['architecture']['principle']}", "",
+        "La [interfaz React](frontend/src/App.tsx) consume la [API FastAPI](src/api/server.py). "
+        "Los recorridos de agente separan propuesta, autorización, ejecución y evidencia; "
+        "los recibos y LocalTrace permiten inspeccionar las observaciones.", "",
+        "[Arquitectura canónica](.bago/canon/ARCHITECTURE.md) · "
+        "[Contratos del Decision Inspector](docs/decision-inspector/MANUAL_PARA_DUMMIES.md)", "",
+        *_details("Ver el pipeline declarado y sus fronteras", [line.replace("Pipeline actual:", "Pipeline declarado en el manifiesto:") for line in _render_architecture(manifest).splitlines()]),
+    ]
+    history = [
+        "## Historial y evidencia", "",
+        "Los bloques siguientes conservan las fuentes y fechas del proyecto. Un estado histórico "
+        "de fase, captura o integración no valida automáticamente la candidata de este README.", "",
+        *_details("Estado canónico y roadmap L0–L15", [
+            f"**Estado registrado:** {_cell(state['updated'])} · {_cell(state['current_phase'])} · `{state['status_label']}`.", "",
+            "Fuente y decisiones posteriores: [STATE.md](.bago/canon/STATE.md). Su fecha es independiente del snapshot de tests.", "",
+            f"**Declaración histórica del canon ({_cell(state['updated'])}; no es disponibilidad ni crédito vigente):** {_cell(state['status'])}", "",
+            f"**Registro histórico de CI conservado en STATE.md:** {_cell(state['tests'])}", "",
+            *nested("## Roadmap y evidencia por fase"),
+        ]),
+        *_details("Demos, grabaciones e integraciones históricas", [
+            *nested("## Recorrido comercial de la app: Bruma Market"),
+            *nested("## Evidencia de ejecución y límites"),
+            *nested("## Ver la interfaz en acción"),
+        ]),
+        *_details("Roles, skills y catálogo de agentes", [
+            *nested("## Alineación profesional y matriz de skills"),
+            *nested("## Agente de sincronización y catálogo de agentes"),
+        ]),
+    ]
+    documentation = [
+        "## Documentación del proyecto", "",
+        "[Índice BAGO](.bago/INDEX.md) · [Contrato del laboratorio](.bago/canon/LAB_CONTRACT.md) · "
+        "[Guía de la demo](docs/one_command_demo.md) · [Generación del README](docs/readme_generation.md)", "",
+        *_details("Fuentes canónicas y documentos de referencia", nested("## Fuentes canónicas del proyecto")),
+        *sections["## Contrato de generación del README"],
+    ]
+    lines = (intro + toc + sections["## El laboratorio"] + _render_frontend(manifest)
+             + _render_verification(manifest) + sections["## Ejecutar la demo local"]
+             + architecture + history + documentation)
     return "\n".join(lines)
 
 def main(argv: list[str] | None = None) -> int:

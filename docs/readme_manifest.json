@@ -2,14 +2,50 @@
   "project": {
     "title": "BAGO Agentic Data Lab",
     "emoji": "🧪",
-    "description": "Laboratorio experimental para desarrollar capacidades de AI Engineering con gobernanza BAGO.",
+    "description": "Aplicación y laboratorio de agentes, datos y ejecución gobernada: trabajar desde la interfaz e inspeccionar propuestas, autorizaciones y evidencia.",
     "repository": "https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB",
     "default_branch": "main",
     "license": "MIT",
     "ci_workflow": "ci.yml"
   },
+  "verification_record": "docs/verification/readme-status-20261022.json",
+  "frontend": {
+    "entry": "frontend/src/App.tsx",
+    "package": "frontend/package.json",
+    "api": "src/api/server.py",
+    "setup_guide": "docs/agent-chat-control/LOCAL_SETUP.md",
+    "launcher": "scripts/run-local-ui.ps1",
+    "start_commands": [
+      "python -m pip install -r requirements-test.txt",
+      "npm ci --prefix frontend",
+      "npm run build --prefix frontend",
+      "python -m src.api.server"
+    ],
+    "layers": [
+      {
+        "name": "Interacción",
+        "description": "Chat, Workspace, Capabilities, Agent Builder, Agent Runs y Agent Evaluation Lab.",
+        "sources": ["frontend/src/App.tsx", "frontend/src/components/AgentChat.tsx"]
+      },
+      {
+        "name": "Datos y tareas",
+        "description": "Tareas guardadas de agentes; ingesta y consulta con citas; revisión de ontología, calidad de catálogo y conexiones/MCP. Cada recorrido conserva sus límites de disponibilidad.",
+        "sources": ["frontend/src/components/AgentTasks.tsx", "frontend/src/components/KnowledgeIngest.tsx", "frontend/src/components/OntologyReview.tsx", "frontend/src/components/CatalogQuality.tsx", "frontend/src/components/ExternalConnections.tsx"]
+      },
+      {
+        "name": "Inspect",
+        "description": "Decision Inspector, BER Effect Record, historial y paneles de recuperación, autorización, traza y evaluación.",
+        "sources": ["frontend/src/features/decision-inspector/index.ts", "frontend/src/features/ber-effect-inspector/BerEffectRecordInspector.tsx"]
+      },
+      {
+        "name": "Settings",
+        "description": "Configuración cognitiva y de proveedores/modelos, selección de modelos y comprobaciones de disponibilidad.",
+        "sources": ["frontend/src/components/CognitionSettings.tsx", "frontend/src/components/ProviderSettings.tsx"]
+      }
+    ]
+  },
   "canonical_documents": [
-    {"path": ".bago/canon/STATE.md", "role": "estado operativo actual"},
+    {"path": ".bago/canon/STATE.md", "role": "estado canónico registrado, con fecha y alcance propios"},
     {"path": ".bago/canon/LAB_CONTRACT.md", "role": "contrato del laboratorio"},
     {"path": ".bago/canon/ARCHITECTURE.md", "role": "arquitectura y límites"},
     {"path": ".bago/canon/ROADMAP.md", "role": "roadmap ejecutable"},
