@@ -1,0 +1,22 @@
+[
+  {
+    "path": "windows-readme-validation.json",
+    "sha256": "d060c05e3a17dfa047bd27d02318d6fc719c659d84a0dc1aea36c97eab7961d9"
+  },
+  {
+    "path": "windows-full-suite.xml",
+    "sha256": "6d9820570340b789f7dd71fca0065fec992004187ad873dcf6c38f5f83072454"
+  },
+  {
+    "path": "independent-review.md",
+    "sha256": "6135585b43fc9f23f358fb91f04bf5d0c3f1329daac889bcc8d47c1bacb7164a"
+  },
+  {
+    "path": "generation.log",
+    "sha256": "73479570d552b76fe70aa4ce668a939fa5699208961b9e0dd1c1a2c27919f2d2"
+  },
+  {
+    "path": "render-check.log",
+    "sha256": "1ae43cdddc601b7c07115c1fb7047bcdc1f729dede01fce68d9dd69b12e11da8"
+  }
+]

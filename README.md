@@ -5,12 +5,77 @@
 [![Branch](https://img.shields.io/badge/branch-main-green)](https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/tree/main)
 [![License](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 
-> Laboratorio experimental para desarrollar capacidades de AI Engineering con gobernanza BAGO.
+> Aplicación y laboratorio de agentes, datos y ejecución gobernada: trabajar desde la interfaz e inspeccionar propuestas, autorizaciones y evidencia.
 > README generado desde fuentes canónicas y artefactos del checkout.
+
+[Propósito](#el-laboratorio) · [Aplicación frontend](#la-aplicación-frontend) · [Tests y resultados](#tests-y-verificación) · [Demo local](#ejecutar-la-demo-local) · [Arquitectura](#arquitectura-de-un-vistazo) · [Historial y evidencia](#historial-y-evidencia) · [Documentación](#documentación-del-proyecto)
 
 ## El laboratorio
 
 Un laboratorio experimental de AI Engineering gobernada: reúne agentes, datos, recuperación, ejecución y observabilidad en un recorrido donde se puede inspeccionar qué se propuso, qué se autorizó y qué efecto quedó registrado. Una respuesta del modelo, por sí sola, no demuestra autorización ni ejecución.
+
+## La aplicación frontend
+
+La app [React + TypeScript + Vite](frontend/package.json) permite trabajar con agentes y datos, y abrir una capa de inspección para revisar las observaciones que devuelve la [API FastAPI](src/api/server.py).
+
+| Capa | Qué contiene | Fuente |
+|---|---|---|
+| Interacción | Chat, Workspace, Capabilities, Agent Builder, Agent Runs y Agent Evaluation Lab. | [App](frontend/src/App.tsx) · [AgentChat](frontend/src/components/AgentChat.tsx) |
+| Datos y tareas | Tareas guardadas de agentes; ingesta y consulta con citas; revisión de ontología, calidad de catálogo y conexiones/MCP. Cada recorrido conserva sus límites de disponibilidad. | [AgentTasks](frontend/src/components/AgentTasks.tsx) · [KnowledgeIngest](frontend/src/components/KnowledgeIngest.tsx) (+3 fuentes en el manifiesto) |
+| Inspect | Decision Inspector, BER Effect Record, historial y paneles de recuperación, autorización, traza y evaluación. | [decision-inspector](frontend/src/features/decision-inspector/index.ts) · [BerEffectRecordInspector](frontend/src/features/ber-effect-inspector/BerEffectRecordInspector.tsx) |
+| Settings | Configuración cognitiva y de proveedores/modelos, selección de modelos y comprobaciones de disponibilidad. | [CognitionSettings](frontend/src/components/CognitionSettings.tsx) · [ProviderSettings](frontend/src/components/ProviderSettings.tsx) |
+
+Chat y borradores, tareas y ejecuciones tienen recorridos distintos. La disponibilidad de un modelo, proveedor o motor BER se comprueba en su recorrido; ver una pantalla no acredita que una acción se haya ejecutado.
+
+**Arranque desde la raíz del repositorio**, con Python 3.11+, Node.js 22 y el entorno Python activado. `requirements-test.txt` fija las dependencias de la app y sus pruebas, incluida la API:
+
+```bash
+python -m pip install -r requirements-test.txt
+npm ci --prefix frontend
+npm run build --prefix frontend
+python -m src.api.server
+```
+
+Abre <http://127.0.0.1:8080>. La API sirve `frontend/dist` después del build; la configuración de proveedores se realiza en Settings. Estos comandos describen el arranque, no una sesión iniciada por este README.
+
+En Windows, el [lanzador local](scripts/run-local-ui.ps1) construye la UI y selecciona un puerto libre; consulta sus [requisitos y límites](docs/agent-chat-control/LOCAL_SETUP.md). Para desarrollo, `npm run dev --prefix frontend` usa Vite con proxy hacia la API local.
+
+## Tests y verificación
+
+**Snapshot de CI:** [2026-10-22T16:43:10Z](https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/actions/runs/39813814372) · candidata `b0b2f2a2079019fe80e82b836e13c5580a189b70`.
+**Alcance:** CI de Ubuntu con Python 3.11 y Node 22 para este commit; su árbol coincide con el merge f253f370. No acredita cambios posteriores ni proveedores reales.
+Registro versionado observado el 2026-10-22T16:57:45.810851+00:00: [docs/verification/readme-status-20261022.json](docs/verification/readme-status-20261022.json). No es una consulta en vivo ni cubre cambios posteriores a esa candidata.
+
+| Batería | Resultado registrado | Evidencia |
+|---|---|---|
+| Backend Python | `PASS` · 539 PASS · 0 fallos · 0 omitidos | [`python -m pytest tests -q`](https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/actions/runs/39813814372/job/119950050254) |
+| Frontend Vitest | `PASS` · 14 archivos · 127 PASS | [`npm test`](https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/actions/runs/39813814372/job/119950050254) |
+| Frontend UI Node | `PASS` · 8 archivos · 49 PASS | [`npm run test:ui`](https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/actions/runs/39813814372/job/119950050254) |
+| Contratos TypeScript | `PASS` · 3 módulos · 13 PASS | [`npm run test:contracts`](https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/actions/runs/39813814372/job/119950050254) |
+| Build frontend | `PASS` · TypeScript + Vite completados | [`npm run build`](https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/actions/runs/39813814372/job/119950050254) |
+
+<details>
+<summary>Repetir las comprobaciones en tu checkout</summary>
+
+```bash
+python -m pytest tests -q
+npm test --prefix frontend
+npm run test:ui --prefix frontend
+npm run test:contracts --prefix frontend
+npm run build --prefix frontend
+python scripts/generate_dynamic_readme.py --check --skip-tests
+```
+
+La colección de pytest no es una ejecución: `--check --skip-tests` informa `NOT_RUN`. El conteo de una ejecución local se imprime en terminal; no sustituye ni modifica el snapshot versionado de CI.
+
+</details>
+
+<details>
+<summary>Resultados locales e históricos, con alcance propio</summary>
+
+- [Regresión Windows previa a la corrección Docker](docs/verification/github-update-20261022/README.md) · 2026-10-22 · candidata `f2b34e51ce2e3607490f710f60070f1e4de5759e`: Backend 536 PASS y 1 SKIP por privilegio symlink; frontend 127 / 49 / 13 PASS; build y generación README PASS. Alcance: Python 3.14, Node 24; bytes Windows identificados en el informe. No se suma a la CI y no cubre los dos tests Docker posteriores.
+
+</details>
 
 ## Ejecutar la demo local
 
@@ -25,21 +90,16 @@ La guía explica la instalación en Windows y POSIX, los artefactos y sus límit
 
 **Demo gobernada:** pregunta → agente → recuperación con citas → ejecución tipada → receipts → LocalTrace → evaluación. Genera cinco JSON (`summary`, `agent_run`, `receipts`, `trace`, `evaluation`) en `demo_output/`; el proveedor es un fixture y no contacta AWS. [Contrato y requisitos](docs/one_command_demo.md) · [lectura de artefactos](docs/one_command_demo_walkthrough.md).
 
-## Estado actual
-
-| Campo | Valor |
-|---|---|
-| Rama pública | `main` |
-| Resumen actualizado | 2026-10-18 |
-| Fase actual | **L15 · OpenTelemetry + Jaeger Local Live** · VERIFIED (local live) |
-| Siguiente bloque declarado | NOT_DECLARED |
-| Último resultado completo de CI registrado | GitHub Actions run [38665463586](https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/actions/runs/38665463586) completed successfully on commit `ff9292fe4340a2bdab9658a2e804579fa4ef8fb0` (2026-10-15). Its complete test-suite step and README check both succeeded. This result does not cover later changes. |
-
-**Alcance declarado:** VERIFIED for the local RDF/Turtle materialization, bounded SPARQL subset, deterministic inference, contradiction constraints, RAG seed handoff, the real local OpenMetadata 1.12.6 validation, the local restricted sandbox execution boundary, the local trace/evaluation chain, the public fixture E2E demo executed by the same CI contract, the persistent local SQLite vector index consumed by GovernedRAG and the local OpenTelemetry → Jaeger trace projection. A historical bounded AWS Bedrock `Converse` call succeeded through the governed adapter; it does not establish current quota or billing. The latest read-only AWS Free Tier check observed USD 100.00 remaining, while two subsequent bounded `Converse` attempts failed on the daily token quota with no inference tokens reported. Billing/credit consumption for those failed calls is `NOT_PROVEN`. AWS `ConverseStream`, Bedrock Knowledge Base, remote OpenMetadata and commercetools live integrations remain `NOT_RUN`; GitHub issue #14 is separately executed and verified under human authorization, and the local human-reviewed checkpoint is recorded in `evidence/bago_canon_compliance_review.md`.
-
-La fecha corresponde a la actualización del resumen. Cada observación externa conserva la fecha y el alcance de su evidencia; este README no representa una consulta en vivo.
-
 ## Arquitectura de un vistazo
+
+**Principio:** LangGraph propone → BAGO autoriza → ExecutionGateway → SandboxManager → Receipt → LocalTrace → Eval.
+
+La [interfaz React](frontend/src/App.tsx) consume la [API FastAPI](src/api/server.py). Los recorridos de agente separan propuesta, autorización, ejecución y evidencia; los recibos y LocalTrace permiten inspeccionar las observaciones.
+
+[Arquitectura canónica](.bago/canon/ARCHITECTURE.md) · [Contratos del Decision Inspector](docs/decision-inspector/MANUAL_PARA_DUMMIES.md)
+
+<details>
+<summary>Ver el pipeline declarado y sus fronteras</summary>
 
 **Principio:** LangGraph propone → BAGO autoriza → ExecutionGateway → SandboxManager → Receipt → LocalTrace → Eval.
 
@@ -64,7 +124,7 @@ flowchart LR
     SANDBOX --> RECEIPT
 ```
 
-Pipeline actual:
+Pipeline declarado en el manifiesto:
 
 1. RAG recupera documentos y citas
 2. Ontology Engine materializa RDF/Turtle
@@ -83,51 +143,24 @@ Pipeline actual:
 15. OpenTelemetry proyecta LocalTrace a Jaeger local sin conceder autoridad
 16. GitHub Actions repite tests, README, demo, vector validation, Jaeger validation y compile checks
 
-## Recorrido comercial de la app: Bruma Market
+</details>
 
-Este tutorial usa pedidos y políticas totalmente ficticios. Documenta dos conversaciones de agentes ejecutadas en la app: un extractor produce JSON y un revisor aplica la política con evidencia autorizada. No son pedidos ni clientes reales.
+## Historial y evidencia
 
-| Pedido | Envío | Retraso | Decisión registrada | Importe de envío elegible |
-|---|---|---:|---|---:|
-| BM-1001 | express | 32 h | `ELIGIBLE` | €7.90 (solo envío) |
-| BM-1002 | express | 24 h | `NOT_ELIGIBLE` | — |
-| BM-1003 | standard | 48 h | `NOT_ELIGIBLE` | — |
-| BM-1004 | express | sin dato | `PENDING` | — |
+Los bloques siguientes conservan las fuentes y fechas del proyecto. Un estado histórico de fase, captura o integración no valida automáticamente la candidata de este README.
 
-**Ejecución registrada:** `VERIFIED`; cuatro casos QA: `ELIGIBLE, NOT_ELIGIBLE, NOT_ELIGIBLE, PENDING`; `actions_executed` vacío: `True`. Ningún reembolso se ejecutó.
-**Trazas de las conversaciones:** `trace-e884fa5f23414206`, `trace-63cc286f9d574a38` (`local_only`; no Jaeger export). SHA-256 del CSV autorizado: `016acee85ee5afdb23eaf13caf3f664417e1398b5bba3aad8ff6e991e6a3d1e3`. SHA distintos presentes en recibos: 3.
+<details>
+<summary>Estado canónico y roadmap L0–L15</summary>
 
-La regla estricta solo cubre envíos EXPRESS con más de 24 h de retraso y devuelve únicamente la tarifa de envío. Exactamente 24 h no cumple; STANDARD no entra en la regla; sin hora de entrega queda pendiente.
+**Estado registrado:** 2026-10-18 · L15 · OpenTelemetry + Jaeger Local Live · `VERIFIED`.
 
-**Revisa el tutorial:** [guía paso a paso](output/playwright/bruma-market-tutorial/README.md) · [vídeo MP4](output/playwright/bruma-market-tutorial/tutorial-bruma-market.mp4) · [subtítulos](output/playwright/bruma-market-tutorial/tutorial-bruma-market.srt) · [hash manifest](output/playwright/bruma-market-tutorial/sha256-manifest.json). Entradas: [CSV de pedidos](output/playwright/bruma-market-tutorial/inputs/orders.csv), [política](output/playwright/bruma-market-tutorial/inputs/policy.md) y [QA esperado](output/playwright/bruma-market-tutorial/inputs/qa-expected.md). Resultados y receipts: [extracción JSON](output/playwright/bruma-market-tutorial/extracted/orders.json), [decisiones](output/playwright/bruma-market-tutorial/extracted/policy-decisions.json), [recibos de lectura y trazas](output/playwright/bruma-market-tutorial/extracted/run-evidence.json) y [perfiles/runs guardados](output/playwright/bruma-market-tutorial/cloud-runs/profiles.json).
+Fuente y decisiones posteriores: [STATE.md](.bago/canon/STATE.md). Su fecha es independiente del snapshot de tests.
 
-**Límite del conjunto:** solo contiene pedidos sintéticos, política, QA y recibos de lectura. No aporta directorio de clientes, facturas ni albaranes; esos casos requieren datos y escenarios propios antes de afirmar que están demostrados.
+**Declaración histórica del canon (2026-10-18; no es disponibilidad ni crédito vigente):** VERIFIED for the local RDF/Turtle materialization, bounded SPARQL subset, deterministic inference, contradiction constraints, RAG seed handoff, the real local OpenMetadata 1.12.6 validation, the local restricted sandbox execution boundary, the local trace/evaluation chain, the public fixture E2E demo executed by the same CI contract, the persistent local SQLite vector index consumed by GovernedRAG and the local OpenTelemetry → Jaeger trace projection. A historical bounded AWS Bedrock `Converse` call succeeded through the governed adapter; it does not establish current quota or billing. The latest read-only AWS Free Tier check observed USD 100.00 remaining, while two subsequent bounded `Converse` attempts failed on the daily token quota with no inference tokens reported. Billing/credit consumption for those failed calls is `NOT_PROVEN`. AWS `ConverseStream`, Bedrock Knowledge Base, remote OpenMetadata and commercetools live integrations remain `NOT_RUN`; GitHub issue #14 is separately executed and verified under human authorization, and the local human-reviewed checkpoint is recorded in `evidence/bago_canon_compliance_review.md`.
 
-## Evidencia de ejecución y límites
+**Registro histórico de CI conservado en STATE.md:** GitHub Actions run [38665463586](https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/actions/runs/38665463586) completed successfully on commit `ff9292fe4340a2bdab9658a2e804579fa4ef8fb0` (2026-10-15). Its complete test-suite step and README check both succeeded. This result does not cover later changes.
 
-### Jaeger y OpenTelemetry (L15)
-
-La evidencia L15 del 2026-10-08 enlaza la traza BAGO `trace-5b385699ffda0529` con la traza consultada en Jaeger `04b58bb123bb6cc94a8cc0d60c7145ae`: 15 spans proyectados y 15 observados, 13 operaciones y estado `PASS`. La captura del grafo que acompaña la demo corresponde a otra ejecución local del 2026-10-07 (`94ee6c8d7a05b27487489a97da7480a5`), también con 15 spans; es una referencia visual y no la captura de la traza del informe L15.
-
-![Grafo de Jaeger: traza agent.run 94ee6c8d7a05b27487489a97da7480a5, 15 spans, validada localmente el 2026-10-07](portfolio/assets/jaeger-trace-graph.png)
-
-[Informe y datos completos L15](evidence/l15_otel_jaeger_live.md) · [intento de captura del freeze](evidence/l15_jaeger_capture_attempt.md) · [guía para reproducir Jaeger](docs/otel_jaeger.md).
-
-- [Último resultado completo de CI](https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/actions/runs/38665463586): estado y SHA del commit verificados en `STATE.md`; no cubre cambios posteriores.
-- [Estado y límites AWS](.bago/canon/STATE.md): la consulta Free Tier observó USD 100 de crédito activo; los dos intentos Bedrock más recientes fueron rechazados por cuota diaria y no generaron tokens. El consumo/facturación de esos intentos no está probado.
-- [Consulta de créditos Free Tier](evidence/l6_aws_free_tier.md) · [último recibo Bedrock](evidence/l6_aws_live.md) · [intento Nova Lite](evidence/aws-live-attempts/20261018_nova_lite_throttled.md) · [intento Nova Micro](evidence/aws-live-attempts/20261018_nova_micro_throttled.md).
-
-La demo local evalúa trazas y controles estructurales; no prueba calidad general de respuestas, aislamiento de producción ni integraciones cloud en vivo.
-
-## Ver la interfaz en acción
-
-- [Guía y límites](docs/agent-chat-control/TUTORIAL_PRIMER_USO.md)
-- [Vídeo narrado](docs/agent-chat-control/assets/ADL_videotutorial_ui_actual_2026-10-19.mp4) · [subtítulos](docs/agent-chat-control/assets/ADL_videotutorial_ui_actual_2026-10-19.es.srt)
-- [Traza de la sesión histórica](docs/agent-chat-control/assets/trace-c7ec5fcc40284a42.json) · [archivo de ejemplo histórico](output/tutorial/sample-note.txt)
-
-La grabación actual es una captura de UI con respuestas sintéticas y no demuestra una ejecución real. La traza y el archivo enlazados pertenecen a la sesión histórica del 2026-10-10.
-
-## Roadmap y evidencia por fase
+### Roadmap y evidencia por fase
 
 Cada bloque muestra los archivos localizados mediante los patrones declarados en el checkout. Los patrones sin coincidencias aparecen indicados; eso no demuestra que el recurso no exista fuera de este repositorio.
 
@@ -315,7 +348,63 @@ La tabla muestra estados declarados en el manifiesto del proyecto; consulta las 
 **Evidencia:** [`docs/otel_jaeger.md`](docs/otel_jaeger.md) · [`evidence/l15_otel_jaeger_live.md`](evidence/l15_otel_jaeger_live.md)
 **Patrones sin resolver:** `ninguno`
 
-## Alineación profesional y matriz de skills
+
+</details>
+
+<details>
+<summary>Demos, grabaciones e integraciones históricas</summary>
+
+### Recorrido comercial de la app: Bruma Market
+
+Este tutorial usa pedidos y políticas totalmente ficticios. Documenta dos conversaciones de agentes ejecutadas en la app: un extractor produce JSON y un revisor aplica la política con evidencia autorizada. No son pedidos ni clientes reales.
+
+| Pedido | Envío | Retraso | Decisión registrada | Importe de envío elegible |
+|---|---|---:|---|---:|
+| BM-1001 | express | 32 h | `ELIGIBLE` | €7.90 (solo envío) |
+| BM-1002 | express | 24 h | `NOT_ELIGIBLE` | — |
+| BM-1003 | standard | 48 h | `NOT_ELIGIBLE` | — |
+| BM-1004 | express | sin dato | `PENDING` | — |
+
+**Ejecución registrada:** `VERIFIED`; cuatro casos QA: `ELIGIBLE, NOT_ELIGIBLE, NOT_ELIGIBLE, PENDING`; `actions_executed` vacío: `True`. Ningún reembolso se ejecutó.
+**Trazas de las conversaciones:** `trace-e884fa5f23414206`, `trace-63cc286f9d574a38` (`local_only`; no Jaeger export). SHA-256 del CSV autorizado: `016acee85ee5afdb23eaf13caf3f664417e1398b5bba3aad8ff6e991e6a3d1e3`. SHA distintos presentes en recibos: 3.
+
+La regla estricta solo cubre envíos EXPRESS con más de 24 h de retraso y devuelve únicamente la tarifa de envío. Exactamente 24 h no cumple; STANDARD no entra en la regla; sin hora de entrega queda pendiente.
+
+**Revisa el tutorial:** [guía paso a paso](output/playwright/bruma-market-tutorial/README.md) · [vídeo MP4](output/playwright/bruma-market-tutorial/tutorial-bruma-market.mp4) · [subtítulos](output/playwright/bruma-market-tutorial/tutorial-bruma-market.srt) · [hash manifest](output/playwright/bruma-market-tutorial/sha256-manifest.json). Entradas: [CSV de pedidos](output/playwright/bruma-market-tutorial/inputs/orders.csv), [política](output/playwright/bruma-market-tutorial/inputs/policy.md) y [QA esperado](output/playwright/bruma-market-tutorial/inputs/qa-expected.md). Resultados y receipts: [extracción JSON](output/playwright/bruma-market-tutorial/extracted/orders.json), [decisiones](output/playwright/bruma-market-tutorial/extracted/policy-decisions.json), [recibos de lectura y trazas](output/playwright/bruma-market-tutorial/extracted/run-evidence.json) y [perfiles/runs guardados](output/playwright/bruma-market-tutorial/cloud-runs/profiles.json).
+
+**Límite del conjunto:** solo contiene pedidos sintéticos, política, QA y recibos de lectura. No aporta directorio de clientes, facturas ni albaranes; esos casos requieren datos y escenarios propios antes de afirmar que están demostrados.
+
+### Evidencia de ejecución y límites
+
+### Jaeger y OpenTelemetry (L15)
+
+La evidencia L15 del 2026-10-08 enlaza la traza BAGO `trace-5b385699ffda0529` con la traza consultada en Jaeger `04b58bb123bb6cc94a8cc0d60c7145ae`: 15 spans proyectados y 15 observados, 13 operaciones y estado `PASS`. La captura del grafo que acompaña la demo corresponde a otra ejecución local del 2026-10-07 (`94ee6c8d7a05b27487489a97da7480a5`), también con 15 spans; es una referencia visual y no la captura de la traza del informe L15.
+
+![Grafo de Jaeger: traza agent.run 94ee6c8d7a05b27487489a97da7480a5, 15 spans, validada localmente el 2026-10-07](portfolio/assets/jaeger-trace-graph.png)
+
+[Informe y datos completos L15](evidence/l15_otel_jaeger_live.md) · [intento de captura del freeze](evidence/l15_jaeger_capture_attempt.md) · [guía para reproducir Jaeger](docs/otel_jaeger.md).
+
+- CI histórica: el registro fechado de `STATE.md` se conserva en el detalle del estado canónico. El snapshot de verificación anterior identifica por separado su candidata y su ejecución.
+- [Estado y límites AWS](.bago/canon/STATE.md): las observaciones de crédito y cuota pertenecen a la evidencia histórica allí fechada. No son un saldo vigente ni una comprobación actual de disponibilidad o facturación.
+- [Consulta de créditos Free Tier](evidence/l6_aws_free_tier.md) · [último recibo Bedrock](evidence/l6_aws_live.md) · [intento Nova Lite](evidence/aws-live-attempts/20261018_nova_lite_throttled.md) · [intento Nova Micro](evidence/aws-live-attempts/20261018_nova_micro_throttled.md).
+
+La demo local evalúa trazas y controles estructurales; no prueba calidad general de respuestas, aislamiento de producción ni integraciones cloud en vivo.
+
+### Ver la interfaz en acción
+
+- [Guía y límites](docs/agent-chat-control/TUTORIAL_PRIMER_USO.md)
+- [Vídeo narrado](docs/agent-chat-control/assets/ADL_videotutorial_ui_actual_2026-10-19.mp4) · [subtítulos](docs/agent-chat-control/assets/ADL_videotutorial_ui_actual_2026-10-19.es.srt)
+- [Traza de la sesión histórica](docs/agent-chat-control/assets/trace-c7ec5fcc40284a42.json) · [archivo de ejemplo histórico](output/tutorial/sample-note.txt)
+
+La grabación actual es una captura de UI con respuestas sintéticas y no demuestra una ejecución real. La traza y el archivo enlazados pertenecen a la sesión histórica del 2026-10-10.
+
+
+</details>
+
+<details>
+<summary>Roles, skills y catálogo de agentes</summary>
+
+### Alineación profesional y matriz de skills
 
 Datos copiados de los documentos canónicos; porcentajes, niveles, salarios y plazos son estimaciones históricas del proyecto, no evaluaciones independientes ni ofertas laborales vigentes.
 
@@ -373,11 +462,21 @@ Datos copiados de los documentos canónicos; porcentajes, niveles, salarios y pl
 | Análisis de trade-offs | ✅ Fuerte | ✅ Mantener | Decision records |
 | Comunicación escrita | ✅ Fuerte | ✅ Mantener | Docs claras |
 
-## Agente de sincronización y catálogo de agentes
+### Agente de sincronización y catálogo de agentes
 
 El [catálogo de agentes](agents/CATALOG_MANIFEST.json) es de referencia; las definiciones operativas están en `.github/agents/`. El [agente de sincronización](docs/bago-sync-agent.md) enlaza definición, ejecutor gobernado y documentación.
 
-## Fuentes canónicas del proyecto
+
+</details>
+
+## Documentación del proyecto
+
+[Índice BAGO](.bago/INDEX.md) · [Contrato del laboratorio](.bago/canon/LAB_CONTRACT.md) · [Guía de la demo](docs/one_command_demo.md) · [Generación del README](docs/readme_generation.md)
+
+<details>
+<summary>Fuentes canónicas y documentos de referencia</summary>
+
+### Fuentes canónicas del proyecto
 
 | Área | Cobertura | Fuentes presentes / declaradas |
 |---|---|---|
@@ -387,7 +486,7 @@ El [catálogo de agentes](agents/CATALOG_MANIFEST.json) es de referencia; las de
 
 **Gobierno del proyecto:**
 
-- [`.bago/canon/STATE.md`](.bago/canon/STATE.md) — estado operativo actual
+- [`.bago/canon/STATE.md`](.bago/canon/STATE.md) — estado canónico registrado, con fecha y alcance propios
 - [`.bago/canon/LAB_CONTRACT.md`](.bago/canon/LAB_CONTRACT.md) — contrato del laboratorio
 - [`.bago/canon/ARCHITECTURE.md`](.bago/canon/ARCHITECTURE.md) — arquitectura y límites
 - [`.bago/canon/ROADMAP.md`](.bago/canon/ROADMAP.md) — roadmap ejecutable
@@ -412,17 +511,8 @@ El [catálogo de agentes](agents/CATALOG_MANIFEST.json) es de referencia; las de
 - [Catálogo de agentes](agents/CATALOG_MANIFEST.json), de referencia; las definiciones operativas están en `.github/agents/`.
 - [Agente de sincronización: documentación](docs/bago-sync-agent.md) · [definición](.github/agents/bago-sync-agent.agent.md)
 
-## Reproducir y verificar
 
-```bash
-python -m pytest tests -q
-python scripts/generate_dynamic_readme.py --check --skip-tests
-python scripts/run_public_e2e_demo.py --check
-```
-
-La CI completa ejecuta la suite, valida este README y comprueba las demos y servicios locales. `--check --skip-tests` solo comprueba el render y recoge casos; informa `NOT_RUN` y no acredita que pasen.
-
-Las llamadas AWS requieren autorización explícita y evidencia de identidad, cuota y créditos disponibles. Los recibos de coste estimado no prueban facturación real; revisa el alcance actual en `STATE.md` antes de una ejecución live.
+</details>
 
 ## Contrato de generación del README
 

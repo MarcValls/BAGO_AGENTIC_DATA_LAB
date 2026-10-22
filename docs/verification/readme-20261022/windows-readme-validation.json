@@ -1,0 +1,67 @@
+{
+  "status": "PASS",
+  "candidate_base": "f253f3700990943755e63717a93d3be99f0e19fa",
+  "worktree": "C:\\Users\\AMTEC_Terminal_1\u00ba\\Desktop\\BAGO5_ADL\\.worktrees\\readme-clarity-20261022",
+  "source_sha256": {
+    "scripts/generate_dynamic_readme.py": "54c8d497d8599e628af33cf60c9a1b867b0ddb5e890695486442ba269e15312b",
+    "docs/readme_manifest.json": "3d7c554938e6611fdf043bce63381db2fc2432902db8ed1b3722413ab8889b81",
+    "docs/readme_generation.md": "3ec75ca0453bfdb0e5eb4f72504b9efe0f267dc7c9acf04796dc9f9a29f8781a",
+    "docs/verification/readme-status-20261022.json": "2f01d74b4f6f3a90b4bc788565bd9e8311513f85b61c872e80f669439c28c9ab",
+    "docs/verification/readme-20261022/ci-summary.json": "927f31209019c70321e56599ae5d25fd6c06b1f5527d30152afdd9812afbfdc1",
+    "tests/test_dynamic_readme.py": "0bd58b9d873242124c0d8877f4c7d0763a68b3f72f960ec8a11dabc7bf04272d",
+    "tests/test_readme_presentation.py": "340b142a772681c95312843fc297ad17234310cbf1442324c0e1192f555178ae"
+  },
+  "readme_sha256": "0731c7d5a88f5528861c923ed6b947c0eb8a931a2c2572e0fdc814418d131bf1",
+  "counts": {
+    "tests": 550,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 1,
+    "passed": 549
+  },
+  "commands": [
+    {
+      "label": "generate",
+      "argv": [
+        "C:\\Users\\AMTEC_Terminal_1\u00ba\\Desktop\\BAGO5_ADL\\.venv\\Scripts\\python.exe",
+        "-B",
+        "scripts/generate_dynamic_readme.py"
+      ],
+      "cwd": "C:\\Users\\AMTEC_Terminal_1\u00ba\\Desktop\\BAGO5_ADL\\.worktrees\\readme-clarity-20261022",
+      "pid": 50892,
+      "exit_code": 0,
+      "started": "2026-10-22T17:16:48.692724+00:00",
+      "finished": "2026-10-22T17:25:52.786827+00:00",
+      "extra": {
+        "PYTEST_ADDOPTS": "--basetemp=\"C:/Users/AMTEC_Terminal_1\u00ba/Desktop/BAGO5_ADL/output/rmdpytest1\" --junitxml=\"C:/Users/AMTEC_Terminal_1\u00ba/Desktop/BAGO5_ADL/.bago/goals/readme-clarity-20261022/reviews/I01/full-suite.xml\""
+      },
+      "stdout_sha256": "73479570d552b76fe70aa4ce668a939fa5699208961b9e0dd1c1a2c27919f2d2",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "check",
+      "argv": [
+        "C:\\Users\\AMTEC_Terminal_1\u00ba\\Desktop\\BAGO5_ADL\\.venv\\Scripts\\python.exe",
+        "-B",
+        "scripts/generate_dynamic_readme.py",
+        "--check",
+        "--skip-tests"
+      ],
+      "cwd": "C:\\Users\\AMTEC_Terminal_1\u00ba\\Desktop\\BAGO5_ADL\\.worktrees\\readme-clarity-20261022",
+      "pid": 60928,
+      "exit_code": 0,
+      "started": "2026-10-22T17:25:52.796296+00:00",
+      "finished": "2026-10-22T17:26:00.103760+00:00",
+      "extra": {
+        "PYTEST_ADDOPTS": ""
+      },
+      "stdout_sha256": "1ae43cdddc601b7c07115c1fb7047bcdc1f729dede01fce68d9dd69b12e11da8",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "scope": "Windows README presentation, full Python regression and generation from canonical inputs",
+  "limits": [
+    "CI numbers rendered in README belong to recorded b0b2f2a, not this documentation candidate",
+    "No frontend source change; no frontend/browser/provider execution in this gate"
+  ]
+}

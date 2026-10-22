@@ -1,6 +1,7 @@
 """Tests for the fully generated README contract."""
 
 from pathlib import Path
+import re
 import sys
 
 sys.path.insert(0, str(Path(__file__).parent.parent / "scripts"))
@@ -103,13 +104,19 @@ def test_rendered_readme_is_comprehensive_scope_bound_and_does_not_claim_collect
         passing_tests=collected_test_count(),
     )
 
-    assert len(rendered.splitlines()) < 450
+    # Preserved history is folded. Bound the reader's initial page separately
+    # from the complete Markdown so disclosure does not require deleting history.
+    visible = re.sub(r"<details>.*?</details>", "", rendered, flags=re.DOTALL)
+    assert len(visible.splitlines()) < 180
+    assert len(rendered.splitlines()) < 600
     assert "BAGO Agentic Data Lab" in rendered
     assert "python demo.py" in rendered
     assert "docs/one_command_demo.md" in rendered
     assert "README.md` es un artefacto generado" in rendered
     assert "docs/readme_manifest.json" in rendered
-    assert "Último resultado completo de CI registrado" in rendered
+    # The previous CI remains visible as history; the opening snapshot now has
+    # its own dated, candidate-bound verification record.
+    assert "Registro histórico de CI conservado en STATE.md" in rendered
     assert "38665463586" in rendered
     assert "ff9292fe4340a2bdab9658a2e804579fa4ef8fb0" in rendered
     assert "This result does not cover later changes" in rendered
@@ -119,12 +126,14 @@ def test_rendered_readme_is_comprehensive_scope_bound_and_does_not_claim_collect
     assert "evidence/l15_otel_jaeger_live.md" in rendered
     assert "![Grafo de Jaeger: traza agent.run 94ee6c8d7a05b27487489a97da7480a5" in rendered
     assert "portfolio/assets/jaeger-trace-graph.png" in rendered
-    assert "## Roadmap y evidencia por fase" in rendered
+    assert "### Roadmap y evidencia por fase" in rendered
     assert "| Fase | Código localizado | Tests | Evidencia | Patrones sin resolver |" not in rendered
     assert "### L1 — LangGraph Governed Execution" in rendered
     assert "**Patrones sin resolver:**" in rendered
-    assert "<details>" not in rendered
-    assert "## Recorrido comercial de la app: Bruma Market" in rendered
+    # Collapsible history is the requested presentation; preserving its content
+    # and balanced disclosure blocks replaces the former flat-layout rule.
+    assert rendered.count("<details>") == rendered.count("</details>") > 0
+    assert "### Recorrido comercial de la app: Bruma Market" in rendered
     assert "BM-1001" in rendered and "BM-1004" in rendered
     assert "actions_executed" in rendered
     assert "directorio de clientes, facturas ni albaranes" in rendered
