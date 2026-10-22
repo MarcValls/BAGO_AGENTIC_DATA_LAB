@@ -1,0 +1,4 @@
+demo/** -text
+*.log -text
+*.xml -text
+windows-validation.json -text

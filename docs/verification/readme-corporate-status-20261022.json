@@ -1,0 +1,82 @@
+{
+  "schema": "bago.readme.verification.v1",
+  "recorded_at": "2026-10-22T18:43:07.574831+00:00",
+  "ci": {
+    "candidate": "64a88fbc30bb1b2c0a4cd516281c71be1f65748b",
+    "completed_at": "2026-10-22T17:34:53Z",
+    "run_url": "https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/actions/runs/39823019847",
+    "scope": "CI de Ubuntu con Python 3.11 y Node 22 para el commit 64a88fbc. Evidencia heredada: no acredita cambios posteriores del README corporativo, Windows ni proveedores reales.",
+    "checks": [
+      {
+        "name": "Backend Python",
+        "command": "python -m pytest tests -q",
+        "result": "PASS",
+        "summary": "550 PASS · 0 fallos · 0 omitidos",
+        "counts": {
+          "passed": 550,
+          "failed": 0,
+          "skipped": 0
+        },
+        "evidence_url": "https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/actions/runs/39823019847/job/119978943337"
+      },
+      {
+        "name": "Frontend Vitest",
+        "command": "npm test",
+        "result": "PASS",
+        "summary": "14 archivos · 127 PASS",
+        "counts": {
+          "files": 14,
+          "passed": 127,
+          "failed": 0,
+          "skipped": 0
+        },
+        "evidence_url": "https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/actions/runs/39823019847/job/119978943337"
+      },
+      {
+        "name": "Frontend UI Node",
+        "command": "npm run test:ui",
+        "result": "PASS",
+        "summary": "8 archivos · 49 PASS",
+        "counts": {
+          "files": 8,
+          "passed": 49,
+          "failed": 0,
+          "skipped": 0
+        },
+        "evidence_url": "https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/actions/runs/39823019847/job/119978943337"
+      },
+      {
+        "name": "Contratos TypeScript",
+        "command": "npm run test:contracts",
+        "result": "PASS",
+        "summary": "3 módulos · 13 PASS",
+        "counts": {
+          "files": 3,
+          "passed": 13,
+          "failed": 0,
+          "skipped": 0
+        },
+        "evidence_url": "https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/actions/runs/39823019847/job/119978943337"
+      },
+      {
+        "name": "Build frontend",
+        "command": "npm run build",
+        "result": "PASS",
+        "summary": "TypeScript + Vite completados",
+        "counts": {},
+        "evidence_url": "https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/actions/runs/39823019847/job/119978943337"
+      }
+    ],
+    "evidence_path": "docs/verification/readme-corporate-20261022/ci-summary.json"
+  },
+  "historical": [
+    {
+      "label": "Regresión Windows previa a la corrección Docker",
+      "candidate": "f2b34e51ce2e3607490f710f60070f1e4de5759e",
+      "observed_at": "2026-10-22",
+      "scope": "Python 3.14, Node 24; bytes Windows identificados en el informe. No se suma a la CI y no cubre los dos tests Docker posteriores.",
+      "summary": "Backend 536 PASS y 1 SKIP por privilegio symlink; frontend 127 / 49 / 13 PASS; build y generación README PASS.",
+      "evidence_url": "docs/verification/github-update-20261022/README.md"
+    }
+  ]
+}

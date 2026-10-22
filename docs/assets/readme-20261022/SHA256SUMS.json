@@ -1,0 +1,36 @@
+{
+  "capture_date": "2026-10-22",
+  "method": "brave_screenshot, original unedited PNG bytes",
+  "captures": [
+    {
+      "path": "agent-builder.png",
+      "sha256": "acbb7977dc7c8555705f30185ff537adfccd0aa25171ecdc58c63a383abf5486",
+      "width": 1920,
+      "height": 978
+    },
+    {
+      "path": "chat-created.png",
+      "sha256": "04ca28a8e5a6411a7e69ed6ce24dc3966ffae156e2155c82b4bd054fd4a61b78",
+      "width": 1920,
+      "height": 978
+    },
+    {
+      "path": "chat.png",
+      "sha256": "f4906e2e39db71df67b13607b5c22ac11e73add9773a1733f6c3991c58c68062",
+      "width": 1920,
+      "height": 978
+    },
+    {
+      "path": "inspect.png",
+      "sha256": "0b8bc35772d018cee308926385ac9825fad896a00de6a1c0fe54f6499c5e30b2",
+      "width": 1920,
+      "height": 978
+    },
+    {
+      "path": "workspace.png",
+      "sha256": "e54da94b64f611f101847a8cc937441e23fd02ce159bbc74296d92d555fdf174",
+      "width": 1920,
+      "height": 978
+    }
+  ]
+}

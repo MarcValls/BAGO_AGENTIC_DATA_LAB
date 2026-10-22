@@ -1,0 +1,59 @@
+{
+  "schema": "bago.readme.chat-demonstration.v1",
+  "observed_at": "2026-10-22T18:47:05.278315+00:00",
+  "scope": "New agent, new conversations and synthetic workspace through visible Brave UI at http://127.0.0.1:8080/",
+  "runtime_source_commit": "2d521170fdf651da482b5bf9d5b229a41412a8d2",
+  "agent_id": "agent_fe4947cc99074167ae5935d421dfc7b2",
+  "conversation_id": "conv_3a8cd957b69a4ddd9026ef065405ace1",
+  "provider": "codex",
+  "model": "gpt-6-luna",
+  "trace_id": "trace-496fac766f384348",
+  "file_sha256": "7fdbb3379f3abc59ef1d3c9fa5c9ffb4c7c2abc5de93a9c038e3ca8c25716677",
+  "numbered_excerpt_sha256": "06b52e0bbf4c33e4d6cf5db09da1ff86a2e9dd38f1020b094563687b7b05338a",
+  "checks": {
+    "new_agent_saved": "PASS",
+    "new_agent_chat_response": "PASS",
+    "authorized_file_read": "PASS",
+    "file_integrity": "PASS",
+    "excerpt_integrity": "PASS",
+    "two_answers_and_citations": "PASS",
+    "automatic_current_chat_trace_in_inspect": "FAIL"
+  },
+  "findings": [
+    {
+      "id": "CHAT-DEMO-001",
+      "result": "FAIL",
+      "summary": "Inspect opens a different Bruma fixture trace, trace-5b385699ffda0529, rather than the current agent chat trace. Its PASS evaluation is not evidence for this demonstration."
+    },
+    {
+      "id": "CHAT-DEMO-002",
+      "result": "PASS",
+      "summary": "First agent save rejected model_registration_mismatch. Saving and verifying codex gpt-6-luna through Settings allowed the explicit retry."
+    },
+    {
+      "id": "CHAT-DEMO-003",
+      "result": "PASS",
+      "summary": "The SHA shown under Project files read is the numbered excerpt hash. The local trace separately records the original full file hash; both recomputed independently."
+    }
+  ],
+  "limits": [
+    "Synthetic data; no payment or general code execution demonstrated.",
+    "Mode baseline; no BAGO5 experimental adaptation claim.",
+    "Local trace reports cost_status=not_reported: cost_usd=0.0 does not prove free usage.",
+    "Observed existing root runtime and built frontend; not a fresh installation of the documentation worktree.",
+    "The initial orchestrator request required selection of a registered model."
+  ],
+  "runtime_fingerprints": {
+    "src/api/server.py": "dd46ec63245499bcdc0b4a85038e047917f2c70c7d2964ed7759a911c74e5103",
+    "frontend/dist/index.html": "44855a6faa9227ae4a13a7139ed0542db4d8e4dc3e3279f7f6a81ee647938edd",
+    "frontend/dist/assets/app-CiyZlfSW.js": "f2e60bc53d60b5d28fa8d81f41fb819d3e3cbf9971182ff02d955678170a1f72",
+    "frontend/dist/assets/jsx-runtime-BzuTZ3a0.js": "3df2c69cf46067213b57c42e2c64c78c66f35726316bc019c1ec213bd61af191",
+    "frontend/dist/assets/uiKitPreview-BPaE2lKZ.js": "defaffe27f7b4e781019d1baa4c8e4488f375c44aed71bb15f67fda3a7d09527"
+  },
+  "artifacts": {
+    "agent-created.json": "a020237a7f7efa156ebcdf5e7cfd7d21d140da73181ff1661b82c472eb7d2a0d",
+    "cognition.json": "28ee324422ee41975a29302c2b56793104f9063d18d6fef373c1a2a27221569c",
+    "DEMO.md": "7fdbb3379f3abc59ef1d3c9fa5c9ffb4c7c2abc5de93a9c038e3ca8c25716677",
+    "trace-496fac766f384348.json": "5ab80e12b391b847f5766fdde6c22592f7c4a1223ca6173cd0ed69fbcda6d987"
+  }
+}

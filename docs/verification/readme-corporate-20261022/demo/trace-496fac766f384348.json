@@ -1,0 +1,62 @@
+{
+  "cost_usd": 0.0,
+  "event_count": 2,
+  "events": [
+    {
+      "attributes": {
+        "agent_id": "agent_fe4947cc99074167ae5935d421dfc7b2",
+        "cost_status": "not_reported",
+        "duration_ms": 14613,
+        "model_id": "gpt-6-luna",
+        "outcome": "response_received",
+        "provider_id": "codex",
+        "workspace_read_count": 1,
+        "workspace_read_denied_count": 0,
+        "workspace_read_events": 1,
+        "workspace_read_sources": [
+          "DEMO.md:1-16"
+        ],
+        "workspace_scan_count": 0
+      },
+      "end_time_unix_nano": 1792694650297708600,
+      "event_id": "event-623b49298a794c78",
+      "evidence_refs": [
+        "agent://agent_fe4947cc99074167ae5935d421dfc7b2"
+      ],
+      "kind": "workflow",
+      "name": "agent.chat",
+      "parent_event_id": null,
+      "sequence": 0,
+      "start_time_unix_nano": 1792694635684404400,
+      "status": "COMPLETED",
+      "trace_id": "trace-496fac766f384348"
+    },
+    {
+      "attributes": {
+        "attempt": 1,
+        "content_sha256": "06b52e0bbf4c33e4d6cf5db09da1ff86a2e9dd38f1020b094563687b7b05338a",
+        "decision": "ALLOW",
+        "end_line": 16,
+        "file_sha256": "7fdbb3379f3abc59ef1d3c9fa5c9ffb4c7c2abc5de93a9c038e3ca8c25716677",
+        "path": "DEMO.md",
+        "start_line": 1
+      },
+      "event_id": "event-55e7270447204461",
+      "evidence_refs": [
+        "workspace://DEMO.md"
+      ],
+      "kind": "authorization",
+      "name": "workspace.read",
+      "parent_event_id": "event-623b49298a794c78",
+      "sequence": 1,
+      "status": "ALLOW",
+      "trace_id": "trace-496fac766f384348"
+    }
+  ],
+  "evidence_refs": [
+    "agent://agent_fe4947cc99074167ae5935d421dfc7b2",
+    "workspace://DEMO.md"
+  ],
+  "run_id": "agent-chat-275b18ecc8d144d2a65511a1ee31963d",
+  "trace_id": "trace-496fac766f384348"
+}
