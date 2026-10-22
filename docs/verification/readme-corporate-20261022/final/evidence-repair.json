@@ -1,0 +1,15 @@
+{
+  "status": "PASS",
+  "correction": "Removed unsupported summary field from report; candidate and completed checks unchanged.",
+  "original_run_id": "96752244671047f59699cb6af84bf593",
+  "original_process_observation_sha256": "8d0228a8247531d72583bacf3a21725597b61b6e3895c71482027a9fac05219d",
+  "original_gate_script_sha256": "e6e7d2040548a29f35b8a725ef98c9ad10e5a8df7460c7ed86c74e69ac94a8b0",
+  "counts": {
+    "tests": 554,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 1,
+    "passed": 553
+  },
+  "scope": "Evidence schema repair and independent revalidation of completed supervised execution; no duplicate test execution."
+}

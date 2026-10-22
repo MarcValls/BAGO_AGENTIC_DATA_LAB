@@ -1,0 +1,19 @@
+{
+  "execution": {
+    "argv": [
+      "C:/Users/AMTEC_Terminal_1º/Desktop/BAGO5_ADL/.venv/Scripts/python.exe",
+      "-B",
+      "C:/Users/AMTEC_Terminal_1º/Desktop/BAGO5_ADL/.bago/goals/readme-corporate-20261022/run_gate.py"
+    ],
+    "cwd": "C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\.worktrees\\readme-clarity-20261022",
+    "finished_at": "2026-10-22T19:00:15.491093+00:00",
+    "interruption": "NONE",
+    "pid": 83148,
+    "returncode": 0,
+    "run_id": "96752244671047f59699cb6af84bf593",
+    "started_at": "2026-10-22T18:51:57.166926+00:00"
+  },
+  "process_outcome": "PASS",
+  "schema": "bago.suite.process.observation.v1",
+  "supervision_error": null
+}

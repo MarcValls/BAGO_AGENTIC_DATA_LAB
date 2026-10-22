@@ -104,11 +104,11 @@ def test_rendered_readme_is_comprehensive_scope_bound_and_does_not_claim_collect
         passing_tests=collected_test_count(),
     )
 
-    # Preserved history is folded. Bound the reader's initial page separately
-    # from the complete Markdown so disclosure does not require deleting history.
+    # The principal product sections stay visible; only supplementary history
+    # is folded. The requested corporate README has no compact-page line cap.
     visible = re.sub(r"<details>.*?</details>", "", rendered, flags=re.DOTALL)
-    assert len(visible.splitlines()) < 180
-    assert len(rendered.splitlines()) < 600
+    assert len(re.findall(r"^## ", visible, re.MULTILINE)) >= 14
+    assert "**Entrada principal: Chat.**" in visible
     assert "BAGO Agentic Data Lab" in rendered
     assert "python demo.py" in rendered
     assert "docs/one_command_demo.md" in rendered
@@ -124,14 +124,13 @@ def test_rendered_readme_is_comprehensive_scope_bound_and_does_not_claim_collect
     assert "2026-10-08" in rendered
     assert "docs/agent-chat-control/TUTORIAL_PRIMER_USO.md" in rendered
     assert "evidence/l15_otel_jaeger_live.md" in rendered
-    assert "![Grafo de Jaeger: traza agent.run 94ee6c8d7a05b27487489a97da7480a5" in rendered
-    assert "portfolio/assets/jaeger-trace-graph.png" in rendered
+    # Current imagery comes from the dated gallery, not the old Jaeger image.
+    assert "portfolio/assets/jaeger-trace-graph.png" not in visible
     assert "### Roadmap y evidencia por fase" in rendered
     assert "| Fase | Código localizado | Tests | Evidencia | Patrones sin resolver |" not in rendered
     assert "### L1 — LangGraph Governed Execution" in rendered
     assert "**Patrones sin resolver:**" in rendered
-    # Collapsible history is the requested presentation; preserving its content
-    # and balanced disclosure blocks replaces the former flat-layout rule.
+    # Supplementary history can fold without hiding the product overview.
     assert rendered.count("<details>") == rendered.count("</details>") > 0
     assert "### Recorrido comercial de la app: Bruma Market" in rendered
     assert "BM-1001" in rendered and "BM-1004" in rendered

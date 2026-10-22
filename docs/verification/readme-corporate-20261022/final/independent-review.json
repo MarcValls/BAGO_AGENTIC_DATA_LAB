@@ -1,0 +1,76 @@
+{
+  "schema": "bago.readme.independent-review.v1",
+  "result": "PASS",
+  "scope_identity_declared_by_coordinator": "7572a15b64bebe005b6cdfa470c58b29497d264781cc876e9e994f365fa051c2",
+  "observed_at": "2026-10-22T18:54:15.053222+00:00",
+  "scope": "Read-only documentation review, file/anchor/hash observations; not a new runtime demo, full test run or GitHub-render verification.",
+  "readme_sha256": "e2562629dd142f9e6c8cf050d6852058e4cf88f17903c2f91891c1c8a8d337fc",
+  "source_hashes": {
+    "README.md": "e2562629dd142f9e6c8cf050d6852058e4cf88f17903c2f91891c1c8a8d337fc",
+    "docs/assets/bago-readme-banner.svg": "93df635530d4e55a45b90c12f79dced3429e5ef645fb5bd4d6a2f9f23a978bd4",
+    "docs/assets/readme-20261022/README.md": "fa45135b20dae12297f3826ce592498181cf73e815d5009c4b0e580327b2d4ab",
+    "docs/assets/readme-20261022/SHA256SUMS.json": "24b25a9e6bf65878eef8832cbd8ba64890d7e9512967d400e8a92f1945cb2ef8",
+    "docs/assets/readme-20261022/agent-builder.png": "acbb7977dc7c8555705f30185ff537adfccd0aa25171ecdc58c63a383abf5486",
+    "docs/assets/readme-20261022/chat-created.png": "04ca28a8e5a6411a7e69ed6ce24dc3966ffae156e2155c82b4bd054fd4a61b78",
+    "docs/assets/readme-20261022/chat.png": "f4906e2e39db71df67b13607b5c22ac11e73add9773a1733f6c3991c58c68062",
+    "docs/assets/readme-20261022/inspect.png": "0b8bc35772d018cee308926385ac9825fad896a00de6a1c0fe54f6499c5e30b2",
+    "docs/assets/readme-20261022/workspace.png": "e54da94b64f611f101847a8cc937441e23fd02ce159bbc74296d92d555fdf174",
+    "docs/readme_frontend.md": "40a3019fc425310298d74a99bd1544e64829f72db37ff01db862ff310a7c2efd",
+    "docs/readme_generation.md": "fbafda4ceae6b0786f61d2599f3c92d98f88a3706939569b0cf15df03cc21194",
+    "docs/readme_manifest.json": "cfed98f84aa807076a1f60fc0700a44b4abf815ee916e026a479bea7853279d2",
+    "docs/verification/readme-corporate-20261022/.gitattributes": "8ef533480113ce7b0aa6f5ceb63f67d8a454380609a9f1a3c8f445ae682c2a4e",
+    "docs/verification/readme-corporate-20261022/ci-summary.json": "fef75130de7061fb87b24c0e81b85f79e6fe8e617e240ea32d606ec154c2e649",
+    "docs/verification/readme-corporate-20261022/demo/DEMO.md": "7fdbb3379f3abc59ef1d3c9fa5c9ffb4c7c2abc5de93a9c038e3ca8c25716677",
+    "docs/verification/readme-corporate-20261022/demo/RESULT.json": "90a9a5074e97954302659509f67271c16935ef855284579eae36e45b4f377eca",
+    "docs/verification/readme-corporate-20261022/demo/agent-created.json": "a020237a7f7efa156ebcdf5e7cfd7d21d140da73181ff1661b82c472eb7d2a0d",
+    "docs/verification/readme-corporate-20261022/demo/cognition.json": "28ee324422ee41975a29302c2b56793104f9063d18d6fef373c1a2a27221569c",
+    "docs/verification/readme-corporate-20261022/demo/trace-496fac766f384348.json": "5ab80e12b391b847f5766fdde6c22592f7c4a1223ca6173cd0ed69fbcda6d987",
+    "docs/verification/readme-corporate-status-20261022.json": "78e52fee4d3035a3d978bf96b0824027d63d91065bc09d731a08a005b2823c2b",
+    "scripts/generate_dynamic_readme.py": "037b8fccdb9a98d7f36c225999b0c514b98b0ffac9b5b101ca3ccaeb3592732c",
+    "tests/test_dynamic_readme.py": "0b53d81dc38db8d46465c3336cb746049ecc89e609f75db5950d7ab6545c1ba3",
+    "tests/test_readme_presentation.py": "bfa73d30344244e47a0b34e537a0d21c4f233fe75227ef539a88017de6056a53"
+  },
+  "visible_lines": 354,
+  "raw_lines": 728,
+  "principal_visible_sections": 14,
+  "deep_links": 14,
+  "local_link_occurrences_checked": 212,
+  "link_failures": [],
+  "capture_checks": [
+    {
+      "path": "agent-builder.png",
+      "sha256_matches": true,
+      "dimensions_match": true
+    },
+    {
+      "path": "chat-created.png",
+      "sha256_matches": true,
+      "dimensions_match": true
+    },
+    {
+      "path": "chat.png",
+      "sha256_matches": true,
+      "dimensions_match": true
+    },
+    {
+      "path": "inspect.png",
+      "sha256_matches": true,
+      "dimensions_match": true
+    },
+    {
+      "path": "workspace.png",
+      "sha256_matches": true,
+      "dimensions_match": true
+    }
+  ],
+  "ci_identity_matches_summary": true,
+  "ci_is_inherited_candidate": "64a88fbc30bb1b2c0a4cd516281c71be1f65748b",
+  "product_findings_preserved": [
+    "CHAT-DEMO-001: automatic current Chat to Inspect trace selection FAIL; displayed Bruma trace is not new chat evidence"
+  ],
+  "limits": [
+    "New full generator/test/check execution is owned by root and was not run concurrently by this reviewer.",
+    "Browser-rendered README layout and live URL reachability were not independently rerun.",
+    "New untracked documentation assets must be included in publication; local link existence does not prove remote availability."
+  ]
+}

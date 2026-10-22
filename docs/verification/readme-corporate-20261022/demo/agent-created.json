@@ -1,0 +1,19 @@
+{
+  "id": "agent_fe4947cc99074167ae5935d421dfc7b2",
+  "config": {
+    "name": "BAGO Demo Chat 20261022",
+    "description": "Demostración nueva desde el chat.",
+    "type": "tool",
+    "system_prompt": "Eres un agente de revisión documental de alcance estricto. Lee únicamente el documento que el usuario autorice expresamente para cada tarea. No accedas a otros documentos, aunque parezcan relacionados. Devuelve exactamente dos puntos de resumen y sustenta cada punto citando la ruta del documento y las líneas correspondientes. Si no se proporciona una autorización inequívoca, una ruta accesible o líneas verificables, solicita esa información y no inventes contenido ni citas. No modifiques archivos ni ejecutes comandos.",
+    "provider_id": "codex",
+    "model_id": "gpt-6-luna",
+    "tools": [],
+    "retrieval_config": null,
+    "sandbox_profile": null,
+    "task": {
+      "prompt": "Leer únicamente el documento autorizado expresamente por el usuario, resumirlo en exactamente dos puntos y citar en cada punto la ruta y las líneas que sirven de evidencia. No modificar archivos ni ejecutar comandos.",
+      "dates": []
+    }
+  },
+  "created_at": "2026-10-22T18:40:34.143875"
+}

@@ -8,7 +8,19 @@
     "license": "MIT",
     "ci_workflow": "ci.yml"
   },
-  "verification_record": "docs/verification/readme-status-20261022.json",
+  "verification_record": "docs/verification/readme-corporate-status-20261022.json",
+  "presentation": {
+    "banner": "docs/assets/bago-readme-banner.svg",
+    "frontend_guide": "docs/readme_frontend.md",
+    "capture_date": "2026-10-22",
+    "capture_guide": "docs/assets/readme-20261022/README.md",
+    "captures": [
+      {"path": "docs/assets/readme-20261022/chat.png", "alt": "Respuesta real del nuevo agente BAGO Demo Chat 20261022 con lectura autorizada de DEMO.md el 22 de octubre de 2026", "caption": "Chat · respuesta nueva con gpt-6-luna: dos pedidos ficticios, una lectura autorizada y citas de DEMO.md. Traza trace-496fac766f384348."},
+      {"path": "docs/assets/readme-20261022/workspace.png", "alt": "Workspace nuevo de la demostración del 22 de octubre de 2026 con el fixture DEMO.md", "caption": "Workspace · carpeta nueva para la demostración, con datos ficticios propios y sin canon de proyecto."},
+      {"path": "docs/assets/readme-20261022/chat-created.png", "alt": "Creación real del agente desde el borrador integrado en Chat el 22 de octubre de 2026", "caption": "Chat y Agent Builder integrado · borrador, Preview y guardado del agente nuevo. El primer intento falló por model_registration_mismatch; se verificó el modelo en Settings y el segundo guardado terminó correctamente."},
+      {"path": "docs/assets/readme-20261022/inspect.png", "alt": "Inspect capturado el 22 de octubre de 2026 mostrando la traza histórica de Bruma y no la traza del nuevo chat", "caption": "Inspect · captura nueva de un artefacto anterior: muestra Bruma trace-5b385699ffda0529, distinta de la traza del chat nuevo. Hallazgo: no se observó vinculación automática desde esa conversación."}
+    ]
+  },
   "frontend": {
     "entry": "frontend/src/App.tsx",
     "package": "frontend/package.json",

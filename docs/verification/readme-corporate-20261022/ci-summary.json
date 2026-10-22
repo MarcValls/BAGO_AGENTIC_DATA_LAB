@@ -1,0 +1,169 @@
+{
+  "run_id": 39823019847,
+  "candidate": "64a88fbc30bb1b2c0a4cd516281c71be1f65748b",
+  "conclusion": "success",
+  "completed_at": "2026-10-22T17:34:53Z",
+  "run_url": "https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/actions/runs/39823019847",
+  "job_url": "https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/actions/runs/39823019847/job/119978943337",
+  "source_metadata_sha256": "bbdd39c86dca6d9f05c27581d9100e38829e64f15c70f84d8249416284c6fe8a",
+  "source_log_sha256": "b3673b90680e1681c38d37703b41f6426721daaabbac35bc1602125de0d22644",
+  "summary_lines": [
+    "verify\tRun complete test suite\t2026-10-22T17:31:01.8155234Z 550 passed in 90.40s (0:01:30)",
+    "verify\tRun frontend package tests\t2026-10-22T17:34:30.7796200Z  Test Files  14 passed (14)",
+    "verify\tRun frontend package tests\t2026-10-22T17:34:30.7796928Z       Tests  127 passed (127)",
+    "verify\tRun frontend UI tests\t2026-10-22T17:34:34.9769768Z # pass 49",
+    "verify\tRun frontend Node contract tests\t2026-10-22T17:34:41.5935362Z # pass 13",
+    "verify\tBuild frontend\t2026-10-22T17:34:42.2064046Z ✓ built in 108ms"
+  ],
+  "scope": "Evidencia heredada del candidato identificado. Los grupos se solapan; no deben sumarse como pruebas independientes.",
+  "step_conclusions": [
+    {
+      "name": "Set up job",
+      "conclusion": "success"
+    },
+    {
+      "name": "Checkout",
+      "conclusion": "success"
+    },
+    {
+      "name": "Setup Python",
+      "conclusion": "success"
+    },
+    {
+      "name": "Install ffmpeg for portfolio video checks",
+      "conclusion": "success"
+    },
+    {
+      "name": "Install reproducible dependencies",
+      "conclusion": "success"
+    },
+    {
+      "name": "Install project dependencies",
+      "conclusion": "success"
+    },
+    {
+      "name": "Run complete test suite",
+      "conclusion": "success"
+    },
+    {
+      "name": "Check generated README",
+      "conclusion": "success"
+    },
+    {
+      "name": "Check public E2E demo",
+      "conclusion": "success"
+    },
+    {
+      "name": "Check one-command portfolio demo",
+      "conclusion": "success"
+    },
+    {
+      "name": "Upload portfolio evidence bundle",
+      "conclusion": "success"
+    },
+    {
+      "name": "Check local vector store",
+      "conclusion": "success"
+    },
+    {
+      "name": "Start local OpenMetadata",
+      "conclusion": "success"
+    },
+    {
+      "name": "Wait for OpenMetadata to be healthy",
+      "conclusion": "success"
+    },
+    {
+      "name": "Check local OpenMetadata catalog",
+      "conclusion": "success"
+    },
+    {
+      "name": "Stop local OpenMetadata",
+      "conclusion": "success"
+    },
+    {
+      "name": "Start local Jaeger",
+      "conclusion": "success"
+    },
+    {
+      "name": "Wait for Jaeger to be healthy",
+      "conclusion": "success"
+    },
+    {
+      "name": "Check local OpenTelemetry and Jaeger",
+      "conclusion": "success"
+    },
+    {
+      "name": "Stop local Jaeger",
+      "conclusion": "success"
+    },
+    {
+      "name": "Compile source, scripts and root demo",
+      "conclusion": "success"
+    },
+    {
+      "name": "Setup Node.js",
+      "conclusion": "success"
+    },
+    {
+      "name": "Install frontend dependencies",
+      "conclusion": "success"
+    },
+    {
+      "name": "Verify normative governed execution contract",
+      "conclusion": "success"
+    },
+    {
+      "name": "Run independent JCS reference vectors",
+      "conclusion": "success"
+    },
+    {
+      "name": "Run frontend package tests",
+      "conclusion": "success"
+    },
+    {
+      "name": "Run frontend UI tests",
+      "conclusion": "success"
+    },
+    {
+      "name": "Verify grounded knowledge, catalog and MCP interfaces",
+      "conclusion": "success"
+    },
+    {
+      "name": "Verify provider settings",
+      "conclusion": "success"
+    },
+    {
+      "name": "Verify governed fixture action review",
+      "conclusion": "success"
+    },
+    {
+      "name": "Run frontend Node contract tests",
+      "conclusion": "success"
+    },
+    {
+      "name": "Build frontend",
+      "conclusion": "success"
+    },
+    {
+      "name": "Check portfolio demo video (read-only)",
+      "conclusion": "success"
+    },
+    {
+      "name": "Post Setup Node.js",
+      "conclusion": "success"
+    },
+    {
+      "name": "Post Setup Python",
+      "conclusion": "success"
+    },
+    {
+      "name": "Post Checkout",
+      "conclusion": "success"
+    },
+    {
+      "name": "Complete job",
+      "conclusion": "success"
+    }
+  ]
+}
