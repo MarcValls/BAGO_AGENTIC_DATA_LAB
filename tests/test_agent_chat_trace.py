@@ -73,6 +73,7 @@ def test_real_agent_tool_loop_traces_allowed_and_denied_exact_file_reads(monkeyp
     monkeypatch.setattr(server, "CONVERSATIONS", store)
     monkeypatch.setattr(server, "_load_agent", lambda _agent_id: Agent())
     monkeypatch.setattr(server, "REPO_ROOT", tmp_path)
+    monkeypatch.setattr(server, "current_workspace_root", lambda: tmp_path.resolve())
     monkeypatch.setattr(server, "AGENT_CHAT_TRACE_DIR", tmp_path / "traces")
     monkeypatch.setattr(server, "export_local_trace_to_otlp", lambda *args, **kwargs: None)
     monkeypatch.setenv("BAGO_OTEL_EXPORTER_OTLP_ENDPOINT", "")

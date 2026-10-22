@@ -1,0 +1,519 @@
+{
+  "inputs": [
+    {
+      "path": "inputs/.github/workflows/ci.yml",
+      "sha256": "e60070f4b119ebb6cfcefd7aebd6075dee81a3575d86f4c56a53d11f2bc71d44"
+    },
+    {
+      "path": "inputs/authority-sources.json",
+      "sha256": "299f0f17c6d2030d87f31c01205d6cdd36db0c268d0a4dd31ff4787687c7984d"
+    },
+    {
+      "path": "inputs/builder-checks/baseline-contracts.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "inputs/builder-checks/baseline-contracts.stdout.log",
+      "sha256": "f529734f3019d34bb07a8e732e517868a055430c07448c36a50cfc9ff2a1591e"
+    },
+    {
+      "path": "inputs/builder-checks/candidate-contracts.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "inputs/builder-checks/candidate-contracts.stdout.log",
+      "sha256": "1f67644a71bddebf93b649786cf1b9056c26582760cc8c10cf817e63d0877776"
+    },
+    {
+      "path": "inputs/builder-checks/result.json",
+      "sha256": "fc408d952825c0abd7940a4a0b89e3f293d5215d1a4a60590f4ac819db073f35"
+    },
+    {
+      "path": "inputs/builder-checks/ui-all-mjs.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "inputs/builder-checks/ui-all-mjs.stdout.log",
+      "sha256": "b3bcbd1983d2f8898a414db3b6ad87fc6d161a579443c1ab56ca8631e10cec4a"
+    },
+    {
+      "path": "inputs/builder-checks/vitest-all-tsx.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "inputs/builder-checks/vitest-all-tsx.stdout.log",
+      "sha256": "784bcb92beb7c68348d0b3bdadda1878ec597f5e6b5cb8e405d330a809c6114d"
+    },
+    {
+      "path": "inputs/frontend/package.json",
+      "sha256": "2b79daf1b88a63288e55e545b45113f5913bf4d7784c74f6601c56e0375929f3"
+    },
+    {
+      "path": "inputs/frontend/tests/contracts/action/action.test.ts",
+      "sha256": "88478ddfbdee45cab8aee7abdbed8c3417ed7ecb3fc59c740d89d77a59feccbe"
+    },
+    {
+      "path": "inputs/frontend/tests/contracts/node-contracts.test.mjs",
+      "sha256": "41746219802c1b99e9861e974ef59a7a49504f4ccefcd992bfc41399a29c21e3"
+    },
+    {
+      "path": "inputs/frontend/tests/contracts/trace/trace.test.ts",
+      "sha256": "37b928729348401ade8d89da6128a82a0a684085c0d802ed94442d6650670aad"
+    },
+    {
+      "path": "inputs/frontend/vitest.config.ts",
+      "sha256": "cf215838a63e50c26377ea7710e633993192c0f6aba7c0d956fb50abdeecf283"
+    },
+    {
+      "path": "inputs/MANIFEST.json",
+      "sha256": "46b19d56d85b089d49567ebcfc059b2e4272f164856e990a7bf21fd6b2a0a84c"
+    },
+    {
+      "path": "inputs/REPORT.md",
+      "sha256": "0ac94c72f67dc6899744a76ff0e7f42381e8cc031ea67b41a5ce63cb2573d474"
+    },
+    {
+      "path": "inputs/sealed-outputs.json",
+      "sha256": "8e3a596cbcdb7e2721a3eb19c404873879cf579379a180e7dcae071fe70eb3d1"
+    }
+  ],
+  "authority_sources": [
+    {
+      "path": "src/adapters/action/agentRun.ts",
+      "sha256": "f3fd1f4c0356e25fe23444d72beaa7e84d979ddade9bcf5f4fa5d04e94ee87f6"
+    },
+    {
+      "path": "frontend/src/adapters/action/agentRun.ts",
+      "sha256": "f3fd1f4c0356e25fe23444d72beaa7e84d979ddade9bcf5f4fa5d04e94ee87f6"
+    },
+    {
+      "path": "tests/contracts/action/action.test.ts",
+      "sha256": "1003cc9741b5ad33fb1220926b7035161fed0bcc3cbccb018be644aedba45a1d"
+    },
+    {
+      "path": "frontend/tests/contracts/action/action.test.ts",
+      "sha256": "1ab2e406ffdd32a7acc6c81b76076879a2bc38711835dd3537c5439798515690"
+    },
+    {
+      "path": "src/contracts/trace/trace.ts",
+      "sha256": "24e6ce96a6c555b0f473eb8f08a426f531059cbe59068dc809399531e0af01cf"
+    },
+    {
+      "path": "frontend/src/contracts/trace/trace.ts",
+      "sha256": "24e6ce96a6c555b0f473eb8f08a426f531059cbe59068dc809399531e0af01cf"
+    },
+    {
+      "path": "src/adapters/trace/localTraceAdapter.ts",
+      "sha256": "a2a9d99a149bc37fcb47ced587160a8c5bff420b313d14c86fb6b1bf5b25e2a1"
+    },
+    {
+      "path": "frontend/src/adapters/trace/localTraceAdapter.ts",
+      "sha256": "a2a9d99a149bc37fcb47ced587160a8c5bff420b313d14c86fb6b1bf5b25e2a1"
+    },
+    {
+      "path": "tests/contracts/trace/trace.test.ts",
+      "sha256": "b4ed8fa8a19ad2d04b10da229e842fd11fb08dc31117ada34d2ea5d462492c95"
+    },
+    {
+      "path": "frontend/tests/contracts/trace/trace.test.ts",
+      "sha256": "fe90ce8dbf7718b98d2d64fe2d4eb814184dca95196aa12edacb179bfad746f7"
+    },
+    {
+      "path": "docs/decision-inspector/contracts/action/decision-action-v1.md",
+      "sha256": "aa26436886a9b2cc43e35092cf3cd406e261eea48c85ef3697ebbe16f088a826"
+    },
+    {
+      "path": "docs/decision-inspector/contracts/trace/decision-trace-v1.md",
+      "sha256": "50140d7c325fa3fcbacf2cc488be71d41b83aa7d186183d3cff5c97c3c8fabbb"
+    }
+  ],
+  "before": {
+    "src": {
+      "App.css": "e3e1fd972440dea617c3dbb1060494c07131f79473af5acba2d9c19f1a2fd040",
+      "App.tsx": "69d94ddce1ef34b314be1d2671e77d3774f9bbe960d18b8dfa429f78ce0c4f2e",
+      "index.css": "18321ae34964bd6e5e8054960faa21a139092ec5b9103ae74783465e6d4ddd3c",
+      "main.tsx": "137e1e2b70d150a1279558f4b4c871cd6aa5293c1c259c001af5b44ae7abef2c",
+      "ui-kit-preview.css": "cf9283c08db777a16248a961f46887a0dc87114710a150e98eca3268ece61191",
+      "ui-kit-preview.tsx": "06a955267d0280c914ac680558c39d65ed98dfa258a607e94aa372c12af60427",
+      "components/AgentBuilder.css": "580f7ce04d2264985786408d5aecbb97ee4f1aa2c77776351124173c4871e409",
+      "components/AgentBuilder.tsx": "5fb4c5b194a1297b0e1cc0dda53fcdd9134c7c8f5c0dd0eaf7665ee7519be662",
+      "components/AgentChat.css": "886ca201da1324af0e40e2e9834a35987c870976c0e0db97b03a6c6b3bcadc63",
+      "components/AgentChat.tsx": "97f96f98c270178f56a5f5abf21683c0c11f94b42cd52055f20935f5d9525591",
+      "components/AgentEvaluationLab.css": "1eb5ce2e8e5ee71ae0cc3957aad2af730fc53283a401da3fb9e8e183a875b061",
+      "components/AgentEvaluationLab.tsx": "e2b2f7a0ba7230793e11a52555419e931ba3a6e3e3f9d7e9a4002f97da702f29",
+      "components/AgentExecutor.js": "dcde28585eef9ccbab405c35c44c37c0e99cdb940248b887dd5e22f9e9d300b9",
+      "components/AgentRunner.css": "ab68decd45b7079e2215f1df319ebe5a87099a597ca9590bf18130d54be9588c",
+      "components/AgentRunner.tsx": "9dd9d8f354f1df25991ac02e452afe2c383abb251bdeabc6ba423fc7e6f1b280",
+      "components/AgentTaskForm.css": "77ac321f9092ef75d8a1e96299181f847a77966062c39fb55bc6b226e5a704e0",
+      "components/AgentTaskForm.tsx": "a6d61af1c742adc28ed6ad3a3eb117a0001a33cb1f7af2e9483d74b31be42ce4",
+      "components/AgentTasks.css": "15d96fb6ba0ce2b6ad423c5b50d1fab6c6371444c4c75b6c1fdbcd1f31e24dd0",
+      "components/AgentTasks.tsx": "9d8afdf6e41c3c84fd98e876a58511ad9880336080851d8281a43b822f164921",
+      "components/Authorization.css": "eae3bb79e9c70f95e025f1a6b9555bed4d3186ad73769c83a4ed4e999f75724f",
+      "components/Authorization.tsx": "c89418e67559e4b24bdf3e76c852f13385e8636b5b6fe0a034c8cdddd7829a3d",
+      "components/CapabilityManager.css": "dccd5eae67e4c311bfa172752f94e6a2c9955c52284c7e66f52ea70f145cf807",
+      "components/CapabilityManager.tsx": "f2fa02911083637c62e4f9d929aa994aee5771c56b50190947ca692252f9fb56",
+      "components/CatalogQuality.css": "f1d53e31719688230e7fc5920fe7e7420422f37c47f324dc7e09af6224b5174b",
+      "components/CatalogQuality.tsx": "299ce9086deca2a1f6ce60db949fdd42c916f50e1c3c6525ba4bd07da40ce0da",
+      "components/ChatTools.css": "3136e2420503769279672dfae416c66589c9f190b54d4cac37e0b09951566830",
+      "components/ChatTools.tsx": "fc6b24f8a9e9b6d41bd3a830a525c4209c377d9745e8d1c46385d0f431ef0680",
+      "components/CognitionSettings.css": "1ceade149fe0d4f04c11ca1bf6bd6c0c270a84346945e31836f6d97c98cef654",
+      "components/CognitionSettings.tsx": "f2527a7e43c477fc56233a7fdd930837e7af3f202871f9c78b05826b2e8a6316",
+      "components/DataGrid.tsx": "513deac738a2e64f6f1d79a6cdcde4a4e0ffb669eb853977f71c886c0bc6d6bc",
+      "components/DirectoryScanRun.css": "a9e337f97c4a6e89cfb8de0c201ab41e29149100160d638c1b5c614d8b4463cc",
+      "components/DirectoryScanRun.tsx": "f9c491566b7fd94a300be344d8404593b5a904be3a35d821c377d5b1cb84ae50",
+      "components/Evaluation.css": "cd4478fb0afe8d6f9f589dc8862f3508ae92a328fee44f4df3a6a15697245c5d",
+      "components/Evaluation.tsx": "a89d14f34ad7b7ee8d560ba2c60a870db9ff1bd8b7f937e66f9bef59fd138924",
+      "components/ExternalConnections.css": "401e4d5f88d5dc26b518dd2ec35b881028bef11b59f915b88600db1cc8987c74",
+      "components/ExternalConnections.tsx": "cdf70d41d32059c148780f0d27b227a223c10bde6292ba81e3fa5fc8506f99c4",
+      "components/GovernedFixtureRunner.css": "88df9d32ff2d66f5118b3c9f65638e02d99274333ddacc6c4a4c3f2ca490d69a",
+      "components/GovernedFixtureRunner.tsx": "e8c061ad3d468abd9986c7355f5df611fe410e960d4bcd5e9e5e6aea4a0845fa",
+      "components/JobHistory.css": "dbce0cbd96fab9e39d92d8da2ba7e4f4da99e8a11dbc3566d85c622ae1fedc22",
+      "components/JobHistory.tsx": "30cfe11d73728dd68bca2554a55abc03e20ec61fd66ae1f84b5bc9b27aa77507",
+      "components/KnowledgeIngest.css": "299e62eed156d398a512db7ae3f4294eae6da63235e21d41499d593ef7855c73",
+      "components/KnowledgeIngest.tsx": "5af09943009f6caac478c6a2b5462a35fb8f6ddcad62bb04a07f40266a7da0ad",
+      "components/ModelAssignments.css": "72aa76a4aa8a65ee7cf96ccd2d8b411959f2e6769e4a92ee43b0b34c020d9c67",
+      "components/ModelAssignments.tsx": "d19d399c6844d163a12189d724a364e12c15f716b2ed85c524cd26db99d63a16",
+      "components/OntologyReview.css": "9285fac2471710187e1bd31f0a55b5a27b1446372fd89d9a6f9bda11d9313b51",
+      "components/OntologyReview.tsx": "63a5671cc3e1e5e057fd04e2f8c73912559adc03dbb31051b2d2e9b618eaae71",
+      "components/PerformanceMetrics.js": "7c91c7b7f656cae02014dff097292cb32c6622989ee19b415d242bf228ee0c6b",
+      "components/ProjectContextDocument.tsx": "31b7cd10bf540d862838911e5c8646868bbe6e3751c57e26f304d4e0bf9af3e9",
+      "components/ProviderSettings.css": "6be03b2e26abfc98e5464096798e84a9df87890d04f7c7bff0291e3244a7691e",
+      "components/ProviderSettings.tsx": "679f91e70e70ee6a074137b7a1aed9e09837b8d08efbdcb7f544611485ce4827",
+      "components/Retrieval.css": "ae32545622491e514d625ac035ee02183eaca1fa0fd1e9854c1d79de6bcd3684",
+      "components/Retrieval.tsx": "98ce01cdbae7743796ac278696cb06fc79a9e8b4b1697df75563ee49e765e680",
+      "components/Summary.css": "5e9fe9a467adb1c8e00b45906c2de3ada4789e8495dacd21b284d9dbad4dd00f",
+      "components/Summary.tsx": "ad1d53b2731ba1554ec5d0a5902e6bb149d8f09654fffde4cc66ddcfedc9ed10",
+      "components/TabStrip.tsx": "9410f562b71da84d559ecae3f575f99f259c35f33d776d289fe855867f911eb1",
+      "components/TerminalPane.tsx": "1e131195b69b4d6065d393e5043d4f74466666bda860329c6235dab59e833f8f",
+      "components/Trace.css": "81d868226cd0cd9fde2f75a9c94b2a169f7db496d280e9dd4779bc3916850345",
+      "components/Trace.tsx": "f6fae594fa6262c00e9cd1ef25c90fa0a1b17699658e14c871c71cedb684bcf9",
+      "components/WindowPanel.tsx": "5b968f27b57c539b562539c817704f52200d35fc2334801c01468341de1deee2",
+      "components/WindowsSurface.css": "89d4a95c8f0b6acf9056797594f25cef5b1743fda8634c040b111ac3d18ab9c1",
+      "features/ber-effect-inspector/BerEffectRecordInspector.css": "d8317b5a8005bee3b10465f93c9d126f2cfd8e09915d25dcab971db39c3b6434",
+      "features/ber-effect-inspector/BerEffectRecordInspector.tsx": "10610140c33da8ae25fa926e7948bf805171e5f9285fbf87b8e1cac2e1f2ba3b",
+      "features/decision-inspector/index.ts": "ffb04d8f66079dd279b4dcb81f3c003f8f8c82b6fb291a2477b5286ec725a5e7",
+      "features/decision-inspector/actions/ActionReview.css": "c6bae8523e40836d0abb00ca548bb9dfa385fd249f5d71d9e8af952c38f1a0e0",
+      "features/decision-inspector/actions/ActionReview.tsx": "31c82d7c34d94053ed56c2bd177f931181d5486d085519004859ea01106df918",
+      "features/decision-inspector/evidence/EvidenceExplorer.css": "2ed4f9cd7323e1a361cfe756fe01bf28d0326a3c46775d3629fa71b0e45b4274",
+      "features/decision-inspector/evidence/EvidenceExplorer.tsx": "d9f0e109421f58ae80c4e3ad5023f06c2a96248aba3ba6e8a7eb2fb8f49ae19b",
+      "features/decision-inspector/integration/DecisionInspector.css": "287f5a55e6b3b24d5f3e8cdc273b47e65712aea9fa742eaa8757ab35a658d489",
+      "features/decision-inspector/integration/DecisionInspector.tsx": "773f5843cb8c1c66dd502c0b64287ccd854ca101ee2997a9b96f414274e1033d",
+      "features/decision-inspector/shared/InspectorState.css": "953b023e5200d2498b7b2a1417628bdb38f3a074e3f55ffcd188bc30f80059bc",
+      "features/decision-inspector/shared/InspectorState.tsx": "f63baf7095e6f1edeb29e2c8fb3f744a5651ea0e7658fc4b7b068e37e318d56b",
+      "features/decision-inspector/shell/InspectorShell.css": "cb9d7e49ac065bf30bbfabe764c378aa6bd52f08e091df768272b2587f919358",
+      "features/decision-inspector/shell/InspectorShell.tsx": "5bc0246c55cc6dfd374b219cb889ec7863f00f9ecc65427d72027bd974e3b084",
+      "features/decision-inspector/trace/TraceTimeline.css": "3f377c1390fdf87ce0993cff59379d283f5ca626232cb36fe2d7357419da346d",
+      "features/decision-inspector/trace/TraceTimeline.tsx": "05a6a86af1bf43dbc5ffb545f313a8d93df79f13baaf62ac77becc794f513fcb",
+      "contracts/action/action.ts": "389a87e2fc9f0dd4890e77dd764c4cf479abba3f3af102bc608f820637399015",
+      "contracts/decision/evidence.ts": "daeef67248317015fb4a5fed861b16702de82a6747aeca45f79df0f77672bd94",
+      "contracts/trace/trace.ts": "24e6ce96a6c555b0f473eb8f08a426f531059cbe59068dc809399531e0af01cf",
+      "adapters/action/agentRun.ts": "f3fd1f4c0356e25fe23444d72beaa7e84d979ddade9bcf5f4fa5d04e94ee87f6",
+      "adapters/trace/localTraceAdapter.ts": "a2a9d99a149bc37fcb47ced587160a8c5bff420b313d14c86fb6b1bf5b25e2a1"
+    },
+    "tests": {
+      "providers/model-assignments.test.tsx": "fa570ae6afc9cdbfa94438a977ae78ff40504f0e53173fee7f9df7d8d0a9ba9c",
+      "providers/provider-settings.test.tsx": "308f3d8541a301d2d80803f4044b040a142578340020a03ab1fd068412542806",
+      "runtime/package-upgrade.test.tsx": "a5cc9583b747b461c8ee5a2696786bb922a95652b7ccfbe7789974ef33e03181",
+      "ui/agent-evaluation-lab/agent-evaluation-lab-render.test.tsx": "1cd0f30f4c9f70e69d5be4ae7ec21c0df7b7f564e4d192c671c9ee1910d68099",
+      "ui/agent-evaluation-lab/agent-evaluation-lab.test.mjs": "5eb2ed2040b467aab55f85a4d069422d9fc1139ac96953bcec32059e81366fa8",
+      "ui/agent-evaluation-lab/rendered.test.mjs": "577e23e9e2bd755da95b90cceaf4cb71985ea632c5b0271250c8121d54e73572",
+      "ui/agent-runner/agent-runner.test.mjs": "812fdb7bbf3a494523edec57dafc599dcb450305ebd363647588b2968e8af903",
+      "ui/agent-tasks/saved-tasks.test.tsx": "41a9b28c3f53f438a5f1af1a16cf1c54201b7d3c05f3adcd9c305d9efe5c3e56",
+      "ui/ber-effect-inspector/ber-effect-inspector.test.tsx": "946be65b03a7135708d8b6fb8871233234bc784fc60f819553d06f14d498f4cd",
+      "ui/capabilities/external-connections.test.tsx": "62df52e4b48491916eca29e013916fd0c7caf9081fe28239cd562d3a7df06ee6",
+      "ui/capabilities/mcp-governance.test.mjs": "750a4d5e91f8e946a349a4559292d6d3dd1aa6c1feee7b86a25ea537d85ae33b",
+      "ui/chat-shell/chat-composer.test.tsx": "3489587fbd89d3bcc1d7e676db2819ed1825fe406fb346bc73db248c5bc16618",
+      "ui/chat-shell/chat-navigation.test.mjs": "529b061efab3df1622b54bba9573cbfddfe28384b70a216911ef923af6835447",
+      "ui/governed-fixture/governed-fixture.test.tsx": "8b0f95efb255e515d8d56fbc513764d70a1bbab86ef58332704d660fbac8d5cd",
+      "ui/knowledge/catalog-quality.test.mjs": "0137e63102546477ff6dd9177d166bed23910884e2ae1e868d47f408cc9c7f18",
+      "ui/knowledge/grounded-source.test.mjs": "5b22e04f99267e7a0fa651d086a050b715038e3a5a227bb18e2e6e01c7ee9f4a",
+      "ui/knowledge/ontology-review.test.mjs": "7b66d7354d6764c0b5398821953dbe91ef420cb7e1aa9e24266a538bcf0e12df",
+      "ui/decision-inspector/actions/action-review.test.tsx": "4d63a9d5a1ec8b32327036e3139d0f2ce206180ede0f7ba2df22bf22d2b9dcc3",
+      "ui/decision-inspector/evidence/evidence-explorer.test.tsx": "44cabf291a72efba0cefb06896b67b67b386ed4fc55a25abc465aabe59bd4a8b",
+      "ui/decision-inspector/integration/integration.test.tsx": "8b87ccbb1c2eefe0fa2655b8c004c7c1db06fc55cac0219afffd2cc7ed3676a3",
+      "ui/decision-inspector/shell/shell.test.tsx": "70c2cb22886f87d6349c5c0882faaa1225321dcef13843005cb9afff7287f0a6",
+      "ui/decision-inspector/trace/trace.test.tsx": "773f84f6e81e39a31d9ac856db95de0b0bf8a1739020b57b913c5ed6676ce495",
+      "contracts/action/action.test.ts": "1ab2e406ffdd32a7acc6c81b76076879a2bc38711835dd3537c5439798515690",
+      "contracts/evidence/evidence.test.ts": "fc8c792000173f0979ad0a22a2337f63a06ab48c325ffdbf66697840873de5ea",
+      "contracts/trace/trace.test.ts": "fe90ce8dbf7718b98d2d64fe2d4eb814184dca95196aa12edacb179bfad746f7"
+    },
+    "package": "bc9bd769257f6448c4edd5713409e706bd3b1f4be3baeb04541fe97b2302b553",
+    "ci": "d213fc2f3b65657eae3925a938fbcd7f9f144a5ed583060a588df21ad6df0b69",
+    "config": "cf215838a63e50c26377ea7710e633993192c0f6aba7c0d956fb50abdeecf283",
+    "package_lock": "0cac97de9cb0b6c7c82859716424f25d20403d6866a4047437f64fb64a2e2c64"
+  },
+  "after": {
+    "src": {
+      "App.css": "e3e1fd972440dea617c3dbb1060494c07131f79473af5acba2d9c19f1a2fd040",
+      "App.tsx": "69d94ddce1ef34b314be1d2671e77d3774f9bbe960d18b8dfa429f78ce0c4f2e",
+      "index.css": "18321ae34964bd6e5e8054960faa21a139092ec5b9103ae74783465e6d4ddd3c",
+      "main.tsx": "137e1e2b70d150a1279558f4b4c871cd6aa5293c1c259c001af5b44ae7abef2c",
+      "ui-kit-preview.css": "cf9283c08db777a16248a961f46887a0dc87114710a150e98eca3268ece61191",
+      "ui-kit-preview.tsx": "06a955267d0280c914ac680558c39d65ed98dfa258a607e94aa372c12af60427",
+      "components/AgentBuilder.css": "580f7ce04d2264985786408d5aecbb97ee4f1aa2c77776351124173c4871e409",
+      "components/AgentBuilder.tsx": "5fb4c5b194a1297b0e1cc0dda53fcdd9134c7c8f5c0dd0eaf7665ee7519be662",
+      "components/AgentChat.css": "886ca201da1324af0e40e2e9834a35987c870976c0e0db97b03a6c6b3bcadc63",
+      "components/AgentChat.tsx": "97f96f98c270178f56a5f5abf21683c0c11f94b42cd52055f20935f5d9525591",
+      "components/AgentEvaluationLab.css": "1eb5ce2e8e5ee71ae0cc3957aad2af730fc53283a401da3fb9e8e183a875b061",
+      "components/AgentEvaluationLab.tsx": "e2b2f7a0ba7230793e11a52555419e931ba3a6e3e3f9d7e9a4002f97da702f29",
+      "components/AgentExecutor.js": "dcde28585eef9ccbab405c35c44c37c0e99cdb940248b887dd5e22f9e9d300b9",
+      "components/AgentRunner.css": "ab68decd45b7079e2215f1df319ebe5a87099a597ca9590bf18130d54be9588c",
+      "components/AgentRunner.tsx": "9dd9d8f354f1df25991ac02e452afe2c383abb251bdeabc6ba423fc7e6f1b280",
+      "components/AgentTaskForm.css": "77ac321f9092ef75d8a1e96299181f847a77966062c39fb55bc6b226e5a704e0",
+      "components/AgentTaskForm.tsx": "a6d61af1c742adc28ed6ad3a3eb117a0001a33cb1f7af2e9483d74b31be42ce4",
+      "components/AgentTasks.css": "15d96fb6ba0ce2b6ad423c5b50d1fab6c6371444c4c75b6c1fdbcd1f31e24dd0",
+      "components/AgentTasks.tsx": "9d8afdf6e41c3c84fd98e876a58511ad9880336080851d8281a43b822f164921",
+      "components/Authorization.css": "eae3bb79e9c70f95e025f1a6b9555bed4d3186ad73769c83a4ed4e999f75724f",
+      "components/Authorization.tsx": "c89418e67559e4b24bdf3e76c852f13385e8636b5b6fe0a034c8cdddd7829a3d",
+      "components/CapabilityManager.css": "dccd5eae67e4c311bfa172752f94e6a2c9955c52284c7e66f52ea70f145cf807",
+      "components/CapabilityManager.tsx": "f2fa02911083637c62e4f9d929aa994aee5771c56b50190947ca692252f9fb56",
+      "components/CatalogQuality.css": "f1d53e31719688230e7fc5920fe7e7420422f37c47f324dc7e09af6224b5174b",
+      "components/CatalogQuality.tsx": "299ce9086deca2a1f6ce60db949fdd42c916f50e1c3c6525ba4bd07da40ce0da",
+      "components/ChatTools.css": "3136e2420503769279672dfae416c66589c9f190b54d4cac37e0b09951566830",
+      "components/ChatTools.tsx": "fc6b24f8a9e9b6d41bd3a830a525c4209c377d9745e8d1c46385d0f431ef0680",
+      "components/CognitionSettings.css": "1ceade149fe0d4f04c11ca1bf6bd6c0c270a84346945e31836f6d97c98cef654",
+      "components/CognitionSettings.tsx": "f2527a7e43c477fc56233a7fdd930837e7af3f202871f9c78b05826b2e8a6316",
+      "components/DataGrid.tsx": "513deac738a2e64f6f1d79a6cdcde4a4e0ffb669eb853977f71c886c0bc6d6bc",
+      "components/DirectoryScanRun.css": "a9e337f97c4a6e89cfb8de0c201ab41e29149100160d638c1b5c614d8b4463cc",
+      "components/DirectoryScanRun.tsx": "f9c491566b7fd94a300be344d8404593b5a904be3a35d821c377d5b1cb84ae50",
+      "components/Evaluation.css": "cd4478fb0afe8d6f9f589dc8862f3508ae92a328fee44f4df3a6a15697245c5d",
+      "components/Evaluation.tsx": "a89d14f34ad7b7ee8d560ba2c60a870db9ff1bd8b7f937e66f9bef59fd138924",
+      "components/ExternalConnections.css": "401e4d5f88d5dc26b518dd2ec35b881028bef11b59f915b88600db1cc8987c74",
+      "components/ExternalConnections.tsx": "cdf70d41d32059c148780f0d27b227a223c10bde6292ba81e3fa5fc8506f99c4",
+      "components/GovernedFixtureRunner.css": "88df9d32ff2d66f5118b3c9f65638e02d99274333ddacc6c4a4c3f2ca490d69a",
+      "components/GovernedFixtureRunner.tsx": "e8c061ad3d468abd9986c7355f5df611fe410e960d4bcd5e9e5e6aea4a0845fa",
+      "components/JobHistory.css": "dbce0cbd96fab9e39d92d8da2ba7e4f4da99e8a11dbc3566d85c622ae1fedc22",
+      "components/JobHistory.tsx": "30cfe11d73728dd68bca2554a55abc03e20ec61fd66ae1f84b5bc9b27aa77507",
+      "components/KnowledgeIngest.css": "299e62eed156d398a512db7ae3f4294eae6da63235e21d41499d593ef7855c73",
+      "components/KnowledgeIngest.tsx": "5af09943009f6caac478c6a2b5462a35fb8f6ddcad62bb04a07f40266a7da0ad",
+      "components/ModelAssignments.css": "72aa76a4aa8a65ee7cf96ccd2d8b411959f2e6769e4a92ee43b0b34c020d9c67",
+      "components/ModelAssignments.tsx": "d19d399c6844d163a12189d724a364e12c15f716b2ed85c524cd26db99d63a16",
+      "components/OntologyReview.css": "9285fac2471710187e1bd31f0a55b5a27b1446372fd89d9a6f9bda11d9313b51",
+      "components/OntologyReview.tsx": "63a5671cc3e1e5e057fd04e2f8c73912559adc03dbb31051b2d2e9b618eaae71",
+      "components/PerformanceMetrics.js": "7c91c7b7f656cae02014dff097292cb32c6622989ee19b415d242bf228ee0c6b",
+      "components/ProjectContextDocument.tsx": "31b7cd10bf540d862838911e5c8646868bbe6e3751c57e26f304d4e0bf9af3e9",
+      "components/ProviderSettings.css": "6be03b2e26abfc98e5464096798e84a9df87890d04f7c7bff0291e3244a7691e",
+      "components/ProviderSettings.tsx": "679f91e70e70ee6a074137b7a1aed9e09837b8d08efbdcb7f544611485ce4827",
+      "components/Retrieval.css": "ae32545622491e514d625ac035ee02183eaca1fa0fd1e9854c1d79de6bcd3684",
+      "components/Retrieval.tsx": "98ce01cdbae7743796ac278696cb06fc79a9e8b4b1697df75563ee49e765e680",
+      "components/Summary.css": "5e9fe9a467adb1c8e00b45906c2de3ada4789e8495dacd21b284d9dbad4dd00f",
+      "components/Summary.tsx": "ad1d53b2731ba1554ec5d0a5902e6bb149d8f09654fffde4cc66ddcfedc9ed10",
+      "components/TabStrip.tsx": "9410f562b71da84d559ecae3f575f99f259c35f33d776d289fe855867f911eb1",
+      "components/TerminalPane.tsx": "1e131195b69b4d6065d393e5043d4f74466666bda860329c6235dab59e833f8f",
+      "components/Trace.css": "81d868226cd0cd9fde2f75a9c94b2a169f7db496d280e9dd4779bc3916850345",
+      "components/Trace.tsx": "f6fae594fa6262c00e9cd1ef25c90fa0a1b17699658e14c871c71cedb684bcf9",
+      "components/WindowPanel.tsx": "5b968f27b57c539b562539c817704f52200d35fc2334801c01468341de1deee2",
+      "components/WindowsSurface.css": "89d4a95c8f0b6acf9056797594f25cef5b1743fda8634c040b111ac3d18ab9c1",
+      "features/ber-effect-inspector/BerEffectRecordInspector.css": "d8317b5a8005bee3b10465f93c9d126f2cfd8e09915d25dcab971db39c3b6434",
+      "features/ber-effect-inspector/BerEffectRecordInspector.tsx": "10610140c33da8ae25fa926e7948bf805171e5f9285fbf87b8e1cac2e1f2ba3b",
+      "features/decision-inspector/index.ts": "ffb04d8f66079dd279b4dcb81f3c003f8f8c82b6fb291a2477b5286ec725a5e7",
+      "features/decision-inspector/actions/ActionReview.css": "c6bae8523e40836d0abb00ca548bb9dfa385fd249f5d71d9e8af952c38f1a0e0",
+      "features/decision-inspector/actions/ActionReview.tsx": "31c82d7c34d94053ed56c2bd177f931181d5486d085519004859ea01106df918",
+      "features/decision-inspector/evidence/EvidenceExplorer.css": "2ed4f9cd7323e1a361cfe756fe01bf28d0326a3c46775d3629fa71b0e45b4274",
+      "features/decision-inspector/evidence/EvidenceExplorer.tsx": "d9f0e109421f58ae80c4e3ad5023f06c2a96248aba3ba6e8a7eb2fb8f49ae19b",
+      "features/decision-inspector/integration/DecisionInspector.css": "287f5a55e6b3b24d5f3e8cdc273b47e65712aea9fa742eaa8757ab35a658d489",
+      "features/decision-inspector/integration/DecisionInspector.tsx": "773f5843cb8c1c66dd502c0b64287ccd854ca101ee2997a9b96f414274e1033d",
+      "features/decision-inspector/shared/InspectorState.css": "953b023e5200d2498b7b2a1417628bdb38f3a074e3f55ffcd188bc30f80059bc",
+      "features/decision-inspector/shared/InspectorState.tsx": "f63baf7095e6f1edeb29e2c8fb3f744a5651ea0e7658fc4b7b068e37e318d56b",
+      "features/decision-inspector/shell/InspectorShell.css": "cb9d7e49ac065bf30bbfabe764c378aa6bd52f08e091df768272b2587f919358",
+      "features/decision-inspector/shell/InspectorShell.tsx": "5bc0246c55cc6dfd374b219cb889ec7863f00f9ecc65427d72027bd974e3b084",
+      "features/decision-inspector/trace/TraceTimeline.css": "3f377c1390fdf87ce0993cff59379d283f5ca626232cb36fe2d7357419da346d",
+      "features/decision-inspector/trace/TraceTimeline.tsx": "05a6a86af1bf43dbc5ffb545f313a8d93df79f13baaf62ac77becc794f513fcb",
+      "contracts/action/action.ts": "389a87e2fc9f0dd4890e77dd764c4cf479abba3f3af102bc608f820637399015",
+      "contracts/decision/evidence.ts": "daeef67248317015fb4a5fed861b16702de82a6747aeca45f79df0f77672bd94",
+      "contracts/trace/trace.ts": "24e6ce96a6c555b0f473eb8f08a426f531059cbe59068dc809399531e0af01cf",
+      "adapters/action/agentRun.ts": "f3fd1f4c0356e25fe23444d72beaa7e84d979ddade9bcf5f4fa5d04e94ee87f6",
+      "adapters/trace/localTraceAdapter.ts": "a2a9d99a149bc37fcb47ced587160a8c5bff420b313d14c86fb6b1bf5b25e2a1"
+    },
+    "tests": {
+      "providers/model-assignments.test.tsx": "fa570ae6afc9cdbfa94438a977ae78ff40504f0e53173fee7f9df7d8d0a9ba9c",
+      "providers/provider-settings.test.tsx": "308f3d8541a301d2d80803f4044b040a142578340020a03ab1fd068412542806",
+      "runtime/package-upgrade.test.tsx": "a5cc9583b747b461c8ee5a2696786bb922a95652b7ccfbe7789974ef33e03181",
+      "ui/agent-evaluation-lab/agent-evaluation-lab-render.test.tsx": "1cd0f30f4c9f70e69d5be4ae7ec21c0df7b7f564e4d192c671c9ee1910d68099",
+      "ui/agent-evaluation-lab/agent-evaluation-lab.test.mjs": "5eb2ed2040b467aab55f85a4d069422d9fc1139ac96953bcec32059e81366fa8",
+      "ui/agent-evaluation-lab/rendered.test.mjs": "577e23e9e2bd755da95b90cceaf4cb71985ea632c5b0271250c8121d54e73572",
+      "ui/agent-runner/agent-runner.test.mjs": "812fdb7bbf3a494523edec57dafc599dcb450305ebd363647588b2968e8af903",
+      "ui/agent-tasks/saved-tasks.test.tsx": "41a9b28c3f53f438a5f1af1a16cf1c54201b7d3c05f3adcd9c305d9efe5c3e56",
+      "ui/ber-effect-inspector/ber-effect-inspector.test.tsx": "946be65b03a7135708d8b6fb8871233234bc784fc60f819553d06f14d498f4cd",
+      "ui/capabilities/external-connections.test.tsx": "62df52e4b48491916eca29e013916fd0c7caf9081fe28239cd562d3a7df06ee6",
+      "ui/capabilities/mcp-governance.test.mjs": "750a4d5e91f8e946a349a4559292d6d3dd1aa6c1feee7b86a25ea537d85ae33b",
+      "ui/chat-shell/chat-composer.test.tsx": "3489587fbd89d3bcc1d7e676db2819ed1825fe406fb346bc73db248c5bc16618",
+      "ui/chat-shell/chat-navigation.test.mjs": "529b061efab3df1622b54bba9573cbfddfe28384b70a216911ef923af6835447",
+      "ui/governed-fixture/governed-fixture.test.tsx": "8b0f95efb255e515d8d56fbc513764d70a1bbab86ef58332704d660fbac8d5cd",
+      "ui/knowledge/catalog-quality.test.mjs": "0137e63102546477ff6dd9177d166bed23910884e2ae1e868d47f408cc9c7f18",
+      "ui/knowledge/grounded-source.test.mjs": "5b22e04f99267e7a0fa651d086a050b715038e3a5a227bb18e2e6e01c7ee9f4a",
+      "ui/knowledge/ontology-review.test.mjs": "7b66d7354d6764c0b5398821953dbe91ef420cb7e1aa9e24266a538bcf0e12df",
+      "ui/decision-inspector/actions/action-review.test.tsx": "4d63a9d5a1ec8b32327036e3139d0f2ce206180ede0f7ba2df22bf22d2b9dcc3",
+      "ui/decision-inspector/evidence/evidence-explorer.test.tsx": "44cabf291a72efba0cefb06896b67b67b386ed4fc55a25abc465aabe59bd4a8b",
+      "ui/decision-inspector/integration/integration.test.tsx": "8b87ccbb1c2eefe0fa2655b8c004c7c1db06fc55cac0219afffd2cc7ed3676a3",
+      "ui/decision-inspector/shell/shell.test.tsx": "70c2cb22886f87d6349c5c0882faaa1225321dcef13843005cb9afff7287f0a6",
+      "ui/decision-inspector/trace/trace.test.tsx": "773f84f6e81e39a31d9ac856db95de0b0bf8a1739020b57b913c5ed6676ce495",
+      "contracts/action/action.test.ts": "1ab2e406ffdd32a7acc6c81b76076879a2bc38711835dd3537c5439798515690",
+      "contracts/evidence/evidence.test.ts": "fc8c792000173f0979ad0a22a2337f63a06ab48c325ffdbf66697840873de5ea",
+      "contracts/trace/trace.test.ts": "fe90ce8dbf7718b98d2d64fe2d4eb814184dca95196aa12edacb179bfad746f7"
+    },
+    "package": "bc9bd769257f6448c4edd5713409e706bd3b1f4be3baeb04541fe97b2302b553",
+    "ci": "d213fc2f3b65657eae3925a938fbcd7f9f144a5ed583060a588df21ad6df0b69",
+    "config": "cf215838a63e50c26377ea7710e633993192c0f6aba7c0d956fb50abdeecf283",
+    "package_lock": "0cac97de9cb0b6c7c82859716424f25d20403d6866a4047437f64fb64a2e2c64"
+  },
+  "unchanged": true,
+  "vitest_observed": [
+    "tests/providers/model-assignments.test.tsx",
+    "tests/providers/provider-settings.test.tsx",
+    "tests/runtime/package-upgrade.test.tsx",
+    "tests/ui/agent-evaluation-lab/agent-evaluation-lab-render.test.tsx",
+    "tests/ui/agent-tasks/saved-tasks.test.tsx",
+    "tests/ui/ber-effect-inspector/ber-effect-inspector.test.tsx",
+    "tests/ui/capabilities/external-connections.test.tsx",
+    "tests/ui/chat-shell/chat-composer.test.tsx",
+    "tests/ui/decision-inspector/actions/action-review.test.tsx",
+    "tests/ui/decision-inspector/evidence/evidence-explorer.test.tsx",
+    "tests/ui/decision-inspector/integration/integration.test.tsx",
+    "tests/ui/decision-inspector/shell/shell.test.tsx",
+    "tests/ui/decision-inspector/trace/trace.test.tsx",
+    "tests/ui/governed-fixture/governed-fixture.test.tsx"
+  ],
+  "expected": {
+    "vitest": [
+      "tests/providers/model-assignments.test.tsx",
+      "tests/providers/provider-settings.test.tsx",
+      "tests/runtime/package-upgrade.test.tsx",
+      "tests/ui/agent-evaluation-lab/agent-evaluation-lab-render.test.tsx",
+      "tests/ui/agent-tasks/saved-tasks.test.tsx",
+      "tests/ui/ber-effect-inspector/ber-effect-inspector.test.tsx",
+      "tests/ui/capabilities/external-connections.test.tsx",
+      "tests/ui/chat-shell/chat-composer.test.tsx",
+      "tests/ui/decision-inspector/actions/action-review.test.tsx",
+      "tests/ui/decision-inspector/evidence/evidence-explorer.test.tsx",
+      "tests/ui/decision-inspector/integration/integration.test.tsx",
+      "tests/ui/decision-inspector/shell/shell.test.tsx",
+      "tests/ui/decision-inspector/trace/trace.test.tsx",
+      "tests/ui/governed-fixture/governed-fixture.test.tsx"
+    ],
+    "node_ts": [
+      "tests/contracts/action/action.test.ts",
+      "tests/contracts/evidence/evidence.test.ts",
+      "tests/contracts/trace/trace.test.ts"
+    ],
+    "node_ui": [
+      "tests/ui/agent-evaluation-lab/agent-evaluation-lab.test.mjs",
+      "tests/ui/agent-evaluation-lab/rendered.test.mjs",
+      "tests/ui/agent-runner/agent-runner.test.mjs",
+      "tests/ui/capabilities/mcp-governance.test.mjs",
+      "tests/ui/chat-shell/chat-navigation.test.mjs",
+      "tests/ui/knowledge/catalog-quality.test.mjs",
+      "tests/ui/knowledge/grounded-source.test.mjs",
+      "tests/ui/knowledge/ontology-review.test.mjs"
+    ]
+  },
+  "commands": [
+    {
+      "label": "vitest",
+      "argv": [
+        "C:\\Program Files\\nodejs\\node.EXE",
+        "C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\frontend\\node_modules\\vitest\\vitest.mjs",
+        "run",
+        "--config",
+        "C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\frontend\\.publication-scope-2\\vitest.config.ts",
+        "--maxWorkers=2",
+        "--reporter=json",
+        "--outputFile",
+        "C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\.bago\\goals\\github-update-20261022\\scope-review-2\\reviews\\vitest.json"
+      ],
+      "cwd": "C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\frontend",
+      "returncode": 0,
+      "stdout_sha256": "cb992647cf6fab1546ed7f7f03a696062a96618e34e4de482849254ea83722cf",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "contracts",
+      "argv": [
+        "C:\\Program Files\\nodejs\\node.EXE",
+        "--test",
+        "C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\.bago\\goals\\github-update-20261022\\scope-review-2\\fixtures\\contracts.test.mjs"
+      ],
+      "cwd": "C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\frontend",
+      "returncode": 0,
+      "stdout_sha256": "ff84e43c97790f2ceabd76be3574f6baf4fdc942b4465260d0f302e0811a3fe6",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "ui",
+      "argv": [
+        "C:\\Program Files\\nodejs\\node.EXE",
+        "--test",
+        "--test-concurrency=2",
+        "tests/ui/agent-evaluation-lab/agent-evaluation-lab.test.mjs",
+        "tests/ui/agent-evaluation-lab/rendered.test.mjs",
+        "tests/ui/agent-runner/agent-runner.test.mjs",
+        "tests/ui/capabilities/mcp-governance.test.mjs",
+        "tests/ui/chat-shell/chat-navigation.test.mjs",
+        "tests/ui/knowledge/catalog-quality.test.mjs",
+        "tests/ui/knowledge/grounded-source.test.mjs",
+        "tests/ui/knowledge/ontology-review.test.mjs"
+      ],
+      "cwd": "C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\frontend",
+      "returncode": 0,
+      "stdout_sha256": "311b6d4df1988a517fb61c9a936d3e81cbead2a9cd77b7f7e2b77566faf220f8",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "controls",
+      "argv": [
+        "C:\\Program Files\\nodejs\\node.EXE",
+        "--test",
+        "C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\.bago\\goals\\github-update-20261022\\scope-review-2\\fixtures\\controls.test.mjs"
+      ],
+      "cwd": "C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\frontend",
+      "returncode": 0,
+      "stdout_sha256": "c31232965b3e1ff5cb7205b50ef84913725c385af9540f6f595f29aa6ea41be6",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "candidate_files": [
+    {
+      "destination": "frontend/vitest.config.ts",
+      "source": "C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\frontend\\.publication-scope-2\\vitest.config.ts",
+      "frozen": "inputs/frontend/vitest.config.ts",
+      "sha256": "cf215838a63e50c26377ea7710e633993192c0f6aba7c0d956fb50abdeecf283",
+      "active_sha256": null
+    },
+    {
+      "destination": "frontend/tests/contracts/node-contracts.test.mjs",
+      "source": "C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\frontend\\.publication-scope-2\\node-contracts.test.mjs",
+      "frozen": "inputs/frontend/tests/contracts/node-contracts.test.mjs",
+      "sha256": "41746219802c1b99e9861e974ef59a7a49504f4ccefcd992bfc41399a29c21e3",
+      "active_sha256": null
+    },
+    {
+      "destination": "frontend/package.json",
+      "source": "C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\frontend\\.publication-scope-2\\package.proposed.json",
+      "frozen": "inputs/frontend/package.json",
+      "sha256": "2b79daf1b88a63288e55e545b45113f5913bf4d7784c74f6601c56e0375929f3",
+      "active_sha256": "bc9bd769257f6448c4edd5713409e706bd3b1f4be3baeb04541fe97b2302b553"
+    },
+    {
+      "destination": ".github/workflows/ci.yml",
+      "source": "C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\frontend\\.publication-scope-2\\ci.proposed.yml",
+      "frozen": "inputs/.github/workflows/ci.yml",
+      "sha256": "e60070f4b119ebb6cfcefd7aebd6075dee81a3575d86f4c56a53d11f2bc71d44",
+      "active_sha256": "d213fc2f3b65657eae3925a938fbcd7f9f144a5ed583060a588df21ad6df0b69"
+    },
+    {
+      "destination": "frontend/tests/contracts/action/action.test.ts",
+      "source": "C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\frontend\\.publication-scope-2\\action.test.proposed.ts",
+      "frozen": "inputs/frontend/tests/contracts/action/action.test.ts",
+      "sha256": "88478ddfbdee45cab8aee7abdbed8c3417ed7ecb3fc59c740d89d77a59feccbe",
+      "active_sha256": "1ab2e406ffdd32a7acc6c81b76076879a2bc38711835dd3537c5439798515690"
+    },
+    {
+      "destination": "frontend/tests/contracts/trace/trace.test.ts",
+      "source": "C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\frontend\\.publication-scope-2\\trace.test.proposed.ts",
+      "frozen": "inputs/frontend/tests/contracts/trace/trace.test.ts",
+      "sha256": "37b928729348401ade8d89da6128a82a0a684085c0d802ed94442d6650670aad",
+      "active_sha256": "fe90ce8dbf7718b98d2d64fe2d4eb814184dca95196aa12edacb179bfad746f7"
+    }
+  ],
+  "review_loader": "Only two frozen test module sources replaced under their original IDs. Production adapters/contracts loaded unchanged through Vite SSR."
+}

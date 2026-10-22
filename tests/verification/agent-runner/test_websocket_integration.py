@@ -62,95 +62,36 @@ def _workspace(root: Path) -> Path:
     return root
 
 
-def test_websocket_uses_persisted_profile_server_challenge_and_exact_receipt(monkeypatch, tmp_path: Path) -> None:
-    workspace = _workspace(tmp_path / "workspace")
-    agent_id = "agent_fixture_0123456789"
-    profile = SimpleNamespace(config=SimpleNamespace(
-        provider_id="ollama-cloud", model_id="fixture-model", system_prompt="saved system prompt", tools=["sandbox.run"]
-    ))
-    ber_clients: list[FakeBerClient] = []
-
-    monkeypatch.setattr(server, "_load_agent", lambda requested: profile if requested == agent_id else None)
-    monkeypatch.setattr(server, "current_workspace_root", lambda: workspace)
-    monkeypatch.setattr(server.ollama, "status", lambda: {"state": "ready", "provider_id": "ollama-cloud", "model_id": "fixture-model"})
-    monkeypatch.setattr(server.ollama, "chat_turn", lambda *_args, **_kwargs: {
-        "content": "",
-        "tool_calls": [{"function": {"name": "sandbox.run", "arguments": {
-            "effect_id": "filesystem.write", "target": {"path": "reports/fixture.txt"},
-            "arguments": {"content": "fixture only", "expected_exists": False},
-        }}}],
-    })
-
-    def make_ber(**kwargs: Any) -> FakeBerClient:
-        client = FakeBerClient(**kwargs)
-        ber_clients.append(client)
-        return client
-
-    monkeypatch.setattr(server, "BerClient", make_ber)
-
+def test_legacy_websocket_is_unavailable_before_loading_profile(monkeypatch) -> None:
+    """A trusted browser origin never substitutes for GEX authentication."""
+    def forbidden(*args, **kwargs):
+        raise AssertionError("Legacy endpoint must not load provider, profile or executor")
+    monkeypatch.setattr(server, "AgentRunner", forbidden)
+    monkeypatch.setattr(server, "BerClient", forbidden)
+    monkeypatch.setattr(server, "_load_agent", forbidden)
+    monkeypatch.setattr(server.provider_runtime, "resolve", forbidden)
     with TestClient(server.app) as client:
         with client.websocket_connect("/ws/agents/run", headers={"origin": "http://127.0.0.1:8080"}) as websocket:
-            websocket.send_json({"type": "start", "agent_id": agent_id, "task": "Review the fixture."})
-            proposal = websocket.receive_json()
-            assert proposal["type"] == "proposal"
-            assert proposal["effect_status"] == "proposed"
-            assert proposal["effect_id"] == "filesystem.write"
-            assert proposal["request_id"] == "request-fixture-1"
-            assert "challenge_id" not in proposal
-            assert "permit_token" not in str(proposal)
-
-            websocket.send_json({"type": "decision", "proposal_id": proposal["proposal_id"], "decision": "approve"})
-            outcome = websocket.receive_json()
-            assert outcome["type"] == "completed"
-            assert outcome["execution"]["verified_success"] is True
-            assert outcome["request_id"] == proposal["request_id"]
-            assert outcome["execution"]["receipt_id"] == "receipt-fixture-1"
-            assert outcome["trace"]["run_id"] == "execution-fixture-1"
-            assert "challenge_id" not in str(outcome)
-            assert "permit_token" not in str(outcome)
-
-    assert len(ber_clients) == 1
-    calls = ber_clients[0].calls
-    assert ("approve", ("server-only-challenge", "ui-react")) in calls
-    assert ("execute", "server-only-challenge") in calls
-    assert calls.index(("approve", ("server-only-challenge", "ui-react"))) < calls.index(("execute", "server-only-challenge"))
-    assert ber_clients[0].closed is True
+            result = websocket.receive_json()
+            assert result["code"] == "execution_unavailable"
+            assert result["status"] == "UNAVAILABLE"
+            assert result["effect_status"] == "not_started"
+            assert websocket.receive()["code"] == 1008
 
 
-def test_websocket_disconnect_before_decision_closes_ber_without_effect(monkeypatch, tmp_path: Path) -> None:
-    workspace = _workspace(tmp_path / "disconnect-workspace")
-    agent_id = "agent_fixture_0123456789"
-    profile = SimpleNamespace(config=SimpleNamespace(
-        provider_id="ollama-cloud", model_id="fixture-model", system_prompt="saved system prompt", tools=["sandbox.run"]
-    ))
-    ber_clients: list[FakeBerClient] = []
-    monkeypatch.setattr(server, "_load_agent", lambda _requested: profile)
-    monkeypatch.setattr(server, "current_workspace_root", lambda: workspace)
-    monkeypatch.setattr(server.ollama, "status", lambda: {"state": "ready", "provider_id": "ollama-cloud", "model_id": "fixture-model"})
-    monkeypatch.setattr(server.ollama, "chat_turn", lambda *_args, **_kwargs: {
-        "content": "",
-        "tool_calls": [{"function": {"name": "sandbox.run", "arguments": {
-            "effect_id": "filesystem.write", "target": {"path": "reports/fixture.txt"},
-            "arguments": {"content": "fixture only", "expected_exists": False},
-        }}}],
-    })
-
-    def make_ber(**kwargs: Any) -> FakeBerClient:
-        client = FakeBerClient(**kwargs)
-        ber_clients.append(client)
-        return client
-
-    monkeypatch.setattr(server, "BerClient", make_ber)
+def test_legacy_websocket_origin_rejection_has_no_effect(monkeypatch) -> None:
+    from starlette.websockets import WebSocketDisconnect
+    def forbidden(*args, **kwargs):
+        raise AssertionError("An untrusted origin must not initialize execution")
+    monkeypatch.setattr(server, "AgentRunner", forbidden)
+    monkeypatch.setattr(server, "BerClient", forbidden)
     with TestClient(server.app) as client:
-        with client.websocket_connect("/ws/agents/run", headers={"origin": "http://127.0.0.1:8080"}) as websocket:
-            websocket.send_json({"type": "start", "agent_id": agent_id, "task": "Review the fixture."})
-            proposal = websocket.receive_json()
-            assert proposal["type"] == "proposal"
-            websocket.close(code=1000)
-
-    assert len(ber_clients) == 1
-    assert ber_clients[0].closed is True
-    assert not any(name in {"approve", "execute"} for name, _ in ber_clients[0].calls)
+        for headers in ({}, {"origin": "https://attacker.example"}):
+            try:
+                with client.websocket_connect("/ws/agents/run", headers=headers):
+                    raise AssertionError("Unexpected accepted untrusted origin")
+            except WebSocketDisconnect as error:
+                assert error.code == 1008
 
 
 def test_websocket_rejects_client_authored_profile_or_workspace_fields(monkeypatch) -> None:
@@ -162,7 +103,7 @@ def test_websocket_rejects_client_authored_profile_or_workspace_fields(monkeypat
         })
         result = websocket.receive_json()
     assert result["type"] == "error"
-    assert result["code"] == "invalid_message"
+    assert result["code"] == "execution_unavailable"
 
 
 def test_actual_git_head_drift_invalidates_the_bound_proposal(tmp_path: Path) -> None:

@@ -1,0 +1,84 @@
+{
+  "status": "PASS",
+  "P0": 0,
+  "P1": 0,
+  "counts": {
+    "vitest_files": 14,
+    "vitest_tests": 127,
+    "node_contracts": 13,
+    "node_ui": 49,
+    "independent_controls": 5
+  },
+  "commands": [
+    {
+      "label": "vitest",
+      "argv": [
+        "C:\\Program Files\\nodejs\\node.EXE",
+        "C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\frontend\\node_modules\\vitest\\vitest.mjs",
+        "run",
+        "--config",
+        "C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\frontend\\.publication-scope-2\\vitest.config.ts",
+        "--maxWorkers=2",
+        "--reporter=json",
+        "--outputFile",
+        "C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\.bago\\goals\\github-update-20261022\\scope-review-2\\reviews\\vitest.json"
+      ],
+      "cwd": "C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\frontend",
+      "returncode": 0,
+      "stdout_sha256": "cb992647cf6fab1546ed7f7f03a696062a96618e34e4de482849254ea83722cf",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "contracts",
+      "argv": [
+        "C:\\Program Files\\nodejs\\node.EXE",
+        "--test",
+        "C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\.bago\\goals\\github-update-20261022\\scope-review-2\\fixtures\\contracts.test.mjs"
+      ],
+      "cwd": "C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\frontend",
+      "returncode": 0,
+      "stdout_sha256": "ff84e43c97790f2ceabd76be3574f6baf4fdc942b4465260d0f302e0811a3fe6",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "ui",
+      "argv": [
+        "C:\\Program Files\\nodejs\\node.EXE",
+        "--test",
+        "--test-concurrency=2",
+        "tests/ui/agent-evaluation-lab/agent-evaluation-lab.test.mjs",
+        "tests/ui/agent-evaluation-lab/rendered.test.mjs",
+        "tests/ui/agent-runner/agent-runner.test.mjs",
+        "tests/ui/capabilities/mcp-governance.test.mjs",
+        "tests/ui/chat-shell/chat-navigation.test.mjs",
+        "tests/ui/knowledge/catalog-quality.test.mjs",
+        "tests/ui/knowledge/grounded-source.test.mjs",
+        "tests/ui/knowledge/ontology-review.test.mjs"
+      ],
+      "cwd": "C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\frontend",
+      "returncode": 0,
+      "stdout_sha256": "311b6d4df1988a517fb61c9a936d3e81cbead2a9cd77b7f7e2b77566faf220f8",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "controls",
+      "argv": [
+        "C:\\Program Files\\nodejs\\node.EXE",
+        "--test",
+        "C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\.bago\\goals\\github-update-20261022\\scope-review-2\\fixtures\\controls.test.mjs"
+      ],
+      "cwd": "C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\frontend",
+      "returncode": 0,
+      "stdout_sha256": "c31232965b3e1ff5cb7205b50ef84913725c385af9540f6f595f29aa6ea41be6",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "source_unchanged": true,
+  "active_destinations_unchanged": true,
+  "inputs_unchanged": true,
+  "scope": "Frozen six-file proposal; no active application or publication",
+  "limits": [
+    "Windows local simulated contract/UI tests, not real provider/browser/BER execution",
+    "Installed wrapper/npm/CI after application require coordinator final checks"
+  ]
+}

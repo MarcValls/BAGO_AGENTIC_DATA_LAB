@@ -1,0 +1,281 @@
+{
+  "candidate_id": "0f74f0d818f422d2a9506957e6396070300bbb77d88c602605b4fa647e7cc774",
+  "candidate_before": [
+    {
+      "path": ".bago/team/kit/LICENSE",
+      "sha256": "e9e8f3a6cced95dd4d876916303514540238c1c385d0d92b90d5f2d7bef52e75"
+    },
+    {
+      "path": ".bago/team/kit/missions/agent-decision-inspector.json",
+      "sha256": "0de61ee35df2eacc215a45ab9c9cdb90ea4767a5de2f553e6bb23e9131e12be2"
+    },
+    {
+      "path": ".bago/team/kit/protocol/COMMUNICATION.md",
+      "sha256": "a02d685b5b683db1d505662f53e0ea50738904c273d18edc47b08f8f26bc8d09"
+    },
+    {
+      "path": ".bago/team/kit/protocol/handoff.schema.json",
+      "sha256": "8e75c14a1479ceeffd75c0db5d49a2d8069feed999954b32c380648849408cea"
+    },
+    {
+      "path": ".bago/team/kit/protocol/mission.schema.json",
+      "sha256": "ba63cdf23eeca183e1c2472d51c1ae01103af4f913a57b1105e6837fbef69905"
+    },
+    {
+      "path": ".bago/team/kit/protocol/pairing_rules.json",
+      "sha256": "b849d4574d57f2f16ea0d0b579d41ad15804fd3db43249f7a110ba599dc69684"
+    },
+    {
+      "path": ".bago/team/kit/protocol/TEAM_PROTOCOL.md",
+      "sha256": "26508c678346577b26b0e98d5019c0fd096bde350189f99f2a016878759ba022"
+    },
+    {
+      "path": ".bago/team/kit/protocol/work_item.schema.json",
+      "sha256": "09bc87f8219308c70074f29728494642c11dac15ea7e6ccf3cb9dd0d73c84328"
+    },
+    {
+      "path": ".bago/team/kit/requirements.txt",
+      "sha256": "cdceb38795ad91f06f3aed720ae192b700e70efcb9c584f161340fd771be6cf1"
+    },
+    {
+      "path": ".bago/team/kit/scripts/team_safety.py",
+      "sha256": "8bf080d42be147509f8ad9e521e4ea124fa7d92a2a3fa16ebc8088a3147441d3"
+    },
+    {
+      "path": ".bago/team/kit/scripts/teamctl.py",
+      "sha256": "17ace00bb34b0b74aedb30251830ba4136fd4a9b234adff1b40d542ad7d51652"
+    },
+    {
+      "path": ".bago/team/kit/SOURCE_LOCK.json",
+      "sha256": "b45aaa8951043d1bf682f7eb25b594563b2d4b2a689b9694f8244ad2db64586f"
+    },
+    {
+      "path": ".bago/team/kit/templates/handoff-draft.example.json",
+      "sha256": "ad18dfd95c9e55bf580d9f98c39c9bcbcc9cb37c3e4d93dce4fc5975281af925"
+    },
+    {
+      "path": "plugins/bago-agent-decision-engineering-team/.codex-plugin/plugin.json",
+      "sha256": "aecedf06e5bf29350128aeb8490c5342067a2a8e08f97526d953c04da934f7a5"
+    },
+    {
+      "path": "plugins/bago-agent-decision-engineering-team/missions/agent-decision-inspector.json",
+      "sha256": "0de61ee35df2eacc215a45ab9c9cdb90ea4767a5de2f553e6bb23e9131e12be2"
+    },
+    {
+      "path": "plugins/bago-agent-decision-engineering-team/plugin.json",
+      "sha256": "67a372a04e57edd8338efb1c6d973eb9f2a439cbb9c81703ce90c8154d4fa7be"
+    },
+    {
+      "path": "plugins/bago-agent-decision-engineering-team/protocol/COMMUNICATION.md",
+      "sha256": "a02d685b5b683db1d505662f53e0ea50738904c273d18edc47b08f8f26bc8d09"
+    },
+    {
+      "path": "plugins/bago-agent-decision-engineering-team/protocol/handoff.schema.json",
+      "sha256": "8e75c14a1479ceeffd75c0db5d49a2d8069feed999954b32c380648849408cea"
+    },
+    {
+      "path": "plugins/bago-agent-decision-engineering-team/protocol/mission.schema.json",
+      "sha256": "ba63cdf23eeca183e1c2472d51c1ae01103af4f913a57b1105e6837fbef69905"
+    },
+    {
+      "path": "plugins/bago-agent-decision-engineering-team/protocol/pairing_rules.json",
+      "sha256": "b849d4574d57f2f16ea0d0b579d41ad15804fd3db43249f7a110ba599dc69684"
+    },
+    {
+      "path": "plugins/bago-agent-decision-engineering-team/protocol/TEAM_PROTOCOL.md",
+      "sha256": "26508c678346577b26b0e98d5019c0fd096bde350189f99f2a016878759ba022"
+    },
+    {
+      "path": "plugins/bago-agent-decision-engineering-team/protocol/work_item.schema.json",
+      "sha256": "09bc87f8219308c70074f29728494642c11dac15ea7e6ccf3cb9dd0d73c84328"
+    },
+    {
+      "path": "plugins/bago-agent-decision-engineering-team/scripts/teamctl.py",
+      "sha256": "d08f5e068a6567ac615dd00875475930dd190563b2cb1d413840961973591a41"
+    },
+    {
+      "path": "plugins/bago-agent-decision-engineering-team/skills/decision-ui-engineer/SKILL.md",
+      "sha256": "7974186000e5c46fb1f13848400156754367d29d05858cb2538c8255bc28e5b2"
+    },
+    {
+      "path": "plugins/bago-agent-decision-engineering-team/skills/decision-ux-engineer/SKILL.md",
+      "sha256": "8e42ac1966477ce2a8b8dd67aa27152d6473e334863451b9c023048f0b5d06cd"
+    },
+    {
+      "path": "plugins/bago-agent-decision-engineering-team/skills/evidence-provenance-engineer/SKILL.md",
+      "sha256": "79967c5eabaf8d8136a6f3fc9a85653056737a466c2c3b2ee8e0f1d7bd786bed"
+    },
+    {
+      "path": "plugins/bago-agent-decision-engineering-team/skills/governance-action-engineer/SKILL.md",
+      "sha256": "166cd6aee0f817670951d2f63024b0c8cc23c65657349098c0563adb2abfea8b"
+    },
+    {
+      "path": "plugins/bago-agent-decision-engineering-team/skills/team-orchestrator/SKILL.md",
+      "sha256": "fc2c0538ea149ed370ba31415379d31c208f18d02a12c6d5161d62f22f5d2e90"
+    },
+    {
+      "path": "plugins/bago-agent-decision-engineering-team/skills/trace-observability-engineer/SKILL.md",
+      "sha256": "1fcdaa1849d0f3edcf3b52342a4563e89323bc12033ac5906c445220b321d5a3"
+    },
+    {
+      "path": "plugins/bago-agent-decision-engineering-team/skills/verification-engineer/SKILL.md",
+      "sha256": "6379ca3d9f4df3a40f2c66f022c1c6c6f6bff094055a1e1772ae9500ab8d0e2e"
+    },
+    {
+      "path": "plugins/bago-agent-decision-engineering-team/templates/handoff-draft.example.json",
+      "sha256": "ad18dfd95c9e55bf580d9f98c39c9bcbcc9cb37c3e4d93dce4fc5975281af925"
+    },
+    {
+      "path": "tests/test_teamctl_integrity.py",
+      "sha256": "a06371d08740e75a0691063f8a53fa066b184a7579030a636e383a71d8723435"
+    }
+  ],
+  "candidate_after": [
+    {
+      "path": ".bago/team/kit/LICENSE",
+      "sha256": "e9e8f3a6cced95dd4d876916303514540238c1c385d0d92b90d5f2d7bef52e75"
+    },
+    {
+      "path": ".bago/team/kit/missions/agent-decision-inspector.json",
+      "sha256": "0de61ee35df2eacc215a45ab9c9cdb90ea4767a5de2f553e6bb23e9131e12be2"
+    },
+    {
+      "path": ".bago/team/kit/protocol/COMMUNICATION.md",
+      "sha256": "a02d685b5b683db1d505662f53e0ea50738904c273d18edc47b08f8f26bc8d09"
+    },
+    {
+      "path": ".bago/team/kit/protocol/handoff.schema.json",
+      "sha256": "8e75c14a1479ceeffd75c0db5d49a2d8069feed999954b32c380648849408cea"
+    },
+    {
+      "path": ".bago/team/kit/protocol/mission.schema.json",
+      "sha256": "ba63cdf23eeca183e1c2472d51c1ae01103af4f913a57b1105e6837fbef69905"
+    },
+    {
+      "path": ".bago/team/kit/protocol/pairing_rules.json",
+      "sha256": "b849d4574d57f2f16ea0d0b579d41ad15804fd3db43249f7a110ba599dc69684"
+    },
+    {
+      "path": ".bago/team/kit/protocol/TEAM_PROTOCOL.md",
+      "sha256": "26508c678346577b26b0e98d5019c0fd096bde350189f99f2a016878759ba022"
+    },
+    {
+      "path": ".bago/team/kit/protocol/work_item.schema.json",
+      "sha256": "09bc87f8219308c70074f29728494642c11dac15ea7e6ccf3cb9dd0d73c84328"
+    },
+    {
+      "path": ".bago/team/kit/requirements.txt",
+      "sha256": "cdceb38795ad91f06f3aed720ae192b700e70efcb9c584f161340fd771be6cf1"
+    },
+    {
+      "path": ".bago/team/kit/scripts/team_safety.py",
+      "sha256": "8bf080d42be147509f8ad9e521e4ea124fa7d92a2a3fa16ebc8088a3147441d3"
+    },
+    {
+      "path": ".bago/team/kit/scripts/teamctl.py",
+      "sha256": "17ace00bb34b0b74aedb30251830ba4136fd4a9b234adff1b40d542ad7d51652"
+    },
+    {
+      "path": ".bago/team/kit/SOURCE_LOCK.json",
+      "sha256": "b45aaa8951043d1bf682f7eb25b594563b2d4b2a689b9694f8244ad2db64586f"
+    },
+    {
+      "path": ".bago/team/kit/templates/handoff-draft.example.json",
+      "sha256": "ad18dfd95c9e55bf580d9f98c39c9bcbcc9cb37c3e4d93dce4fc5975281af925"
+    },
+    {
+      "path": "plugins/bago-agent-decision-engineering-team/.codex-plugin/plugin.json",
+      "sha256": "aecedf06e5bf29350128aeb8490c5342067a2a8e08f97526d953c04da934f7a5"
+    },
+    {
+      "path": "plugins/bago-agent-decision-engineering-team/missions/agent-decision-inspector.json",
+      "sha256": "0de61ee35df2eacc215a45ab9c9cdb90ea4767a5de2f553e6bb23e9131e12be2"
+    },
+    {
+      "path": "plugins/bago-agent-decision-engineering-team/plugin.json",
+      "sha256": "67a372a04e57edd8338efb1c6d973eb9f2a439cbb9c81703ce90c8154d4fa7be"
+    },
+    {
+      "path": "plugins/bago-agent-decision-engineering-team/protocol/COMMUNICATION.md",
+      "sha256": "a02d685b5b683db1d505662f53e0ea50738904c273d18edc47b08f8f26bc8d09"
+    },
+    {
+      "path": "plugins/bago-agent-decision-engineering-team/protocol/handoff.schema.json",
+      "sha256": "8e75c14a1479ceeffd75c0db5d49a2d8069feed999954b32c380648849408cea"
+    },
+    {
+      "path": "plugins/bago-agent-decision-engineering-team/protocol/mission.schema.json",
+      "sha256": "ba63cdf23eeca183e1c2472d51c1ae01103af4f913a57b1105e6837fbef69905"
+    },
+    {
+      "path": "plugins/bago-agent-decision-engineering-team/protocol/pairing_rules.json",
+      "sha256": "b849d4574d57f2f16ea0d0b579d41ad15804fd3db43249f7a110ba599dc69684"
+    },
+    {
+      "path": "plugins/bago-agent-decision-engineering-team/protocol/TEAM_PROTOCOL.md",
+      "sha256": "26508c678346577b26b0e98d5019c0fd096bde350189f99f2a016878759ba022"
+    },
+    {
+      "path": "plugins/bago-agent-decision-engineering-team/protocol/work_item.schema.json",
+      "sha256": "09bc87f8219308c70074f29728494642c11dac15ea7e6ccf3cb9dd0d73c84328"
+    },
+    {
+      "path": "plugins/bago-agent-decision-engineering-team/scripts/teamctl.py",
+      "sha256": "d08f5e068a6567ac615dd00875475930dd190563b2cb1d413840961973591a41"
+    },
+    {
+      "path": "plugins/bago-agent-decision-engineering-team/skills/decision-ui-engineer/SKILL.md",
+      "sha256": "7974186000e5c46fb1f13848400156754367d29d05858cb2538c8255bc28e5b2"
+    },
+    {
+      "path": "plugins/bago-agent-decision-engineering-team/skills/decision-ux-engineer/SKILL.md",
+      "sha256": "8e42ac1966477ce2a8b8dd67aa27152d6473e334863451b9c023048f0b5d06cd"
+    },
+    {
+      "path": "plugins/bago-agent-decision-engineering-team/skills/evidence-provenance-engineer/SKILL.md",
+      "sha256": "79967c5eabaf8d8136a6f3fc9a85653056737a466c2c3b2ee8e0f1d7bd786bed"
+    },
+    {
+      "path": "plugins/bago-agent-decision-engineering-team/skills/governance-action-engineer/SKILL.md",
+      "sha256": "166cd6aee0f817670951d2f63024b0c8cc23c65657349098c0563adb2abfea8b"
+    },
+    {
+      "path": "plugins/bago-agent-decision-engineering-team/skills/team-orchestrator/SKILL.md",
+      "sha256": "fc2c0538ea149ed370ba31415379d31c208f18d02a12c6d5161d62f22f5d2e90"
+    },
+    {
+      "path": "plugins/bago-agent-decision-engineering-team/skills/trace-observability-engineer/SKILL.md",
+      "sha256": "1fcdaa1849d0f3edcf3b52342a4563e89323bc12033ac5906c445220b321d5a3"
+    },
+    {
+      "path": "plugins/bago-agent-decision-engineering-team/skills/verification-engineer/SKILL.md",
+      "sha256": "6379ca3d9f4df3a40f2c66f022c1c6c6f6bff094055a1e1772ae9500ab8d0e2e"
+    },
+    {
+      "path": "plugins/bago-agent-decision-engineering-team/templates/handoff-draft.example.json",
+      "sha256": "ad18dfd95c9e55bf580d9f98c39c9bcbcc9cb37c3e4d93dce4fc5975281af925"
+    },
+    {
+      "path": "tests/test_teamctl_integrity.py",
+      "sha256": "a06371d08740e75a0691063f8a53fa066b184a7579030a636e383a71d8723435"
+    }
+  ],
+  "candidate_unchanged": true,
+  "inputs_unchanged": true,
+  "B01_outputs_still_match": true,
+  "reviewed_surfaces": [
+    "controller",
+    "team_safety",
+    "handoff.schema",
+    "mission.schema",
+    "work_item.schema",
+    "TEAM_PROTOCOL",
+    "COMMUNICATION",
+    "plugin_wrapper",
+    "plugin_contract_copies",
+    "default_mission",
+    "template",
+    "CR-P1-001"
+  ],
+  "method": "source review plus fresh subprocess CLI reconstruction; candidate read-only"
+}

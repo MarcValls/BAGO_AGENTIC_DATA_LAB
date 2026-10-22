@@ -1,0 +1,5 @@
+# Evidence hashes describe exact observed bytes, including their line endings.
+*.json -text
+*.xml -text
+*.log -text
+independent-review.md -text

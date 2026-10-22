@@ -1,0 +1,93 @@
+{
+  "status": "PASS",
+  "commands": [
+    {
+      "label": "frontend-and-contracts",
+      "argv": [
+        "C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\.venv\\Scripts\\python.exe",
+        "-B",
+        "C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\.bago\\goals\\github-update-20261022\\run_checks.py",
+        "--final",
+        "--attempt",
+        "2"
+      ],
+      "cwd": "C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL",
+      "pid": 39680,
+      "exit_code": 0,
+      "started": "2026-10-22T15:30:52.605055+00:00",
+      "finished": "2026-10-22T15:31:25.582417+00:00",
+      "extra_environment": {},
+      "stdout_sha256": "96f631933c4f4e239c69fd2c51e8571ab1527764fb35ef4ca653c847ff6e6597",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "frontend-build",
+      "argv": [
+        "C:\\Program Files\\nodejs\\npm.cmd",
+        "run",
+        "build"
+      ],
+      "cwd": "C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\frontend",
+      "pid": 17912,
+      "exit_code": 0,
+      "started": "2026-10-22T15:31:25.743851+00:00",
+      "finished": "2026-10-22T15:31:28.110541+00:00",
+      "extra_environment": {},
+      "stdout_sha256": "1eaf7c3af84a16353deb0b4d79ac4774b90686041c0acf7bbfff68b63b6ab195",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "readme-generate",
+      "argv": [
+        "C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\.venv\\Scripts\\python.exe",
+        "scripts/generate_dynamic_readme.py"
+      ],
+      "cwd": "C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL",
+      "pid": 62176,
+      "exit_code": 0,
+      "started": "2026-10-22T15:31:28.122266+00:00",
+      "finished": "2026-10-22T15:39:59.587168+00:00",
+      "extra_environment": {
+        "PYTEST_ADDOPTS": "--basetemp=\"C:/Users/AMTEC_Terminal_1º/Desktop/BAGO5_ADL/output/pubpytest2\" --junitxml=\"C:/Users/AMTEC_Terminal_1º/Desktop/BAGO5_ADL/.bago/goals/github-update-20261022/final-checks-2/backend-junit.xml\""
+      },
+      "stdout_sha256": "2398812884cc98cc482a12953906b40415a596f88a10e844f98d7d9083cf060c",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "readme-check",
+      "argv": [
+        "C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\.venv\\Scripts\\python.exe",
+        "scripts/generate_dynamic_readme.py",
+        "--check",
+        "--skip-tests"
+      ],
+      "cwd": "C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL",
+      "pid": 56036,
+      "exit_code": 0,
+      "started": "2026-10-22T15:39:59.597326+00:00",
+      "finished": "2026-10-22T15:40:06.071099+00:00",
+      "extra_environment": {
+        "PYTEST_ADDOPTS": ""
+      },
+      "stdout_sha256": "c0089b59e2485c173c413ef7a068861a1477bb9323e584cff0db2367ee19ad3a",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "environment_overrides": {
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "NO_COLOR": "1",
+    "PYTHONPATH": "C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\output\\teamctl-p1-deps-20261022;C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\output\\rd142-deps",
+    "LOCALAPPDATA": "C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\output\\pubstate2\\local",
+    "APPDATA": "C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\output\\pubstate2\\roaming",
+    "USERPROFILE": "C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\output\\pubstate2\\home",
+    "HOME": "C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\output\\pubstate2\\home",
+    "TMP": "C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\output\\pubstate2\\temp",
+    "TEMP": "C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\output\\pubstate2\\temp",
+    "BAGO_CONVERSATION_DB_PATH": "C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\output\\pubstate2\\conversations.sqlite3",
+    "BAGO_OTEL_EXPORTER_OTLP_ENDPOINT": ""
+  },
+  "verified_scope": "Active pending source; frontend tests/build, normative/JCS, complete Python suite and required README commands",
+  "limits": [
+    "Windows local execution; live providers, Docker services and Python3.11 runtime not exercised here"
+  ]
+}

@@ -1,0 +1,177 @@
+{
+  "python": "3.14.5 (tags/v3.14.5:5607950, May 10 2026, 10:43:50) [MSC v.1944 64 bit (AMD64)]",
+  "platform": "Windows-10-10.0.19045-SP0",
+  "metadata_scope": "Installed distributions visible to the final local gate overlay; not proof each distribution was exercised",
+  "packages": [
+    {
+      "package": "anyio",
+      "declared": "4.13.0",
+      "observed": "4.13.0",
+      "status": "MATCH",
+      "declaration": "requirements.txt",
+      "version_source": "distribution metadata"
+    },
+    {
+      "package": "cryptography",
+      "declared": "48.0.0",
+      "observed": "50.0.2",
+      "status": "DIFFERENT",
+      "declaration": "requirements.txt",
+      "version_source": "distribution metadata"
+    },
+    {
+      "package": "jsonschema",
+      "declared": "4.23.0",
+      "observed": "4.23.0",
+      "status": "MATCH",
+      "declaration": "requirements.txt",
+      "version_source": "distribution metadata"
+    },
+    {
+      "package": "beautifulsoup4",
+      "declared": "4.14.3",
+      "observed": "4.14.3",
+      "status": "MATCH",
+      "declaration": "requirements.txt",
+      "version_source": "distribution metadata"
+    },
+    {
+      "package": "langchain-core",
+      "declared": "1.6.3",
+      "observed": "1.6.3",
+      "status": "MATCH",
+      "declaration": "requirements.txt",
+      "version_source": "distribution metadata"
+    },
+    {
+      "package": "langgraph",
+      "declared": "1.2.11",
+      "observed": "1.2.11",
+      "status": "MATCH",
+      "declaration": "requirements.txt",
+      "version_source": "distribution metadata"
+    },
+    {
+      "package": "keyring",
+      "declared": "25.6.0",
+      "observed": "25.6.0",
+      "status": "MATCH",
+      "declaration": "requirements.txt",
+      "version_source": "distribution metadata"
+    },
+    {
+      "package": "markdown",
+      "declared": "3.10.2",
+      "observed": "3.10.2",
+      "status": "MATCH",
+      "declaration": "requirements.txt",
+      "version_source": "distribution metadata"
+    },
+    {
+      "package": "mcp",
+      "declared": "1.30.0",
+      "observed": "1.30.0",
+      "status": "MATCH",
+      "declaration": "requirements.txt",
+      "version_source": "distribution metadata"
+    },
+    {
+      "package": "opentelemetry-api",
+      "declared": "1.44.0",
+      "observed": "1.44.0",
+      "status": "MATCH",
+      "declaration": "requirements.txt",
+      "version_source": "distribution metadata"
+    },
+    {
+      "package": "opentelemetry-exporter-otlp-proto-http",
+      "declared": "1.44.0",
+      "observed": "1.44.0",
+      "status": "MATCH",
+      "declaration": "requirements.txt",
+      "version_source": "distribution metadata"
+    },
+    {
+      "package": "opentelemetry-sdk",
+      "declared": "1.44.0",
+      "observed": "1.44.0",
+      "status": "MATCH",
+      "declaration": "requirements.txt",
+      "version_source": "distribution metadata"
+    },
+    {
+      "package": "pydantic",
+      "declared": "2.12.5",
+      "observed": "2.12.5",
+      "status": "MATCH",
+      "declaration": "requirements.txt",
+      "version_source": "distribution metadata"
+    },
+    {
+      "package": "pytest",
+      "declared": "9.0.3",
+      "observed": "9.0.3",
+      "status": "MATCH",
+      "declaration": "requirements.txt",
+      "version_source": "distribution metadata"
+    },
+    {
+      "package": "requests",
+      "declared": "2.33.1",
+      "observed": "2.33.1",
+      "status": "MATCH",
+      "declaration": "requirements.txt",
+      "version_source": "distribution metadata"
+    },
+    {
+      "package": "github-copilot-sdk",
+      "declared": "0.3.0",
+      "observed": "0.3.0",
+      "status": "MATCH",
+      "declaration": "requirements.txt",
+      "version_source": "distribution metadata"
+    },
+    {
+      "package": "fastapi",
+      "declared": "0.136.1",
+      "observed": "0.136.1",
+      "status": "MATCH",
+      "declaration": "requirements-test.txt",
+      "version_source": "distribution metadata"
+    },
+    {
+      "package": "httpx",
+      "declared": "0.28.1",
+      "observed": "0.28.1",
+      "status": "MATCH",
+      "declaration": "requirements-test.txt",
+      "version_source": "distribution metadata"
+    },
+    {
+      "package": "uvicorn",
+      "declared": "0.46.0",
+      "observed": "0.46.0",
+      "status": "MATCH",
+      "declaration": "requirements-test.txt",
+      "version_source": "distribution metadata"
+    },
+    {
+      "package": "Pillow",
+      "declared": "12.2.0",
+      "observed": "12.2.0",
+      "status": "MATCH",
+      "declaration": "requirements-test.txt",
+      "version_source": "distribution metadata"
+    }
+  ],
+  "differences": [
+    {
+      "package": "cryptography",
+      "declared": "48.0.0",
+      "observed": "50.0.2",
+      "status": "DIFFERENT",
+      "declaration": "requirements.txt",
+      "version_source": "distribution metadata"
+    }
+  ]
+}

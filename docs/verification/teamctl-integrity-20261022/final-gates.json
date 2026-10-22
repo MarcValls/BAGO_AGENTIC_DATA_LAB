@@ -1,0 +1,98 @@
+{
+  "status": "PASS",
+  "candidate_id": "0f74f0d818f422d2a9506957e6396070300bbb77d88c602605b4fa647e7cc774",
+  "commands": [
+    {
+      "label": "environment",
+      "argv": [
+        "C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\.venv\\Scripts\\python.exe",
+        "-B",
+        "-c",
+        "import json,importlib.metadata as m,PIL,jsonschema;v={p:m.version(p) for p in ['jsonschema','Pillow','pytest','fastapi','httpx']}; print(json.dumps({'versions':v,'jsonschema_file':jsonschema.__file__,'Pillow_file':PIL.__file__}));assert v['jsonschema']=='4.23.0';assert v['Pillow']=='12.2.0'"
+      ],
+      "pid": 107068,
+      "started": "2026-10-22T12:30:22.887045+00:00",
+      "finished": "2026-10-22T12:30:23.291729+00:00",
+      "exit_code": 0,
+      "extra_environment": {},
+      "stdout_sha256": "5011cabb177d742705c6097f5ecedb85a45201c1dc1963f90802f438484515aa",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "active-acceptance",
+      "argv": [
+        "C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\.venv\\Scripts\\python.exe",
+        "-B",
+        "tests/test_teamctl_integrity.py",
+        "--candidate",
+        "C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL",
+        "--artifacts",
+        "C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\.bago\\goals\\teamctl-p1-repair-20261022\\repair-v2\\fixtures\\integration\\b"
+      ],
+      "pid": 11596,
+      "started": "2026-10-22T12:30:23.294351+00:00",
+      "finished": "2026-10-22T12:31:58.918922+00:00",
+      "exit_code": 0,
+      "extra_environment": {},
+      "stdout_sha256": "f6620cffb0b3e68b50705050af8cfee0beba1c21dbca55827d7074763b277c2f",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "readme-generate",
+      "argv": [
+        "C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\.venv\\Scripts\\python.exe",
+        "scripts/generate_dynamic_readme.py"
+      ],
+      "pid": 44140,
+      "started": "2026-10-22T12:31:58.922931+00:00",
+      "finished": "2026-10-22T12:40:03.905777+00:00",
+      "exit_code": 0,
+      "extra_environment": {
+        "PYTEST_ADDOPTS": "--basetemp=\"C:/Users/AMTEC_Terminal_1º/Desktop/BAGO5_ADL/output/tp1pytest2\" --junitxml=\"C:/Users/AMTEC_Terminal_1º/Desktop/BAGO5_ADL/.bago/goals/teamctl-p1-repair-20261022/repair-v2/reviews/integration/final-gates-2/full-suite.xml\""
+      },
+      "stdout_sha256": "2398812884cc98cc482a12953906b40415a596f88a10e844f98d7d9083cf060c",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "readme-check",
+      "argv": [
+        "C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\.venv\\Scripts\\python.exe",
+        "scripts/generate_dynamic_readme.py",
+        "--check",
+        "--skip-tests"
+      ],
+      "pid": 26032,
+      "started": "2026-10-22T12:40:03.916113+00:00",
+      "finished": "2026-10-22T12:40:09.649598+00:00",
+      "exit_code": 0,
+      "extra_environment": {
+        "PYTEST_ADDOPTS": ""
+      },
+      "stdout_sha256": "c0089b59e2485c173c413ef7a068861a1477bb9323e584cff0db2367ee19ad3a",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "attempt": 2,
+  "artifact_path": "fixtures/integration/b/result.json",
+  "environment_overrides": {
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "PYTHONPATH": "C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\output\\teamctl-p1-deps-20261022;C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\output\\rd142-deps",
+    "LOCALAPPDATA": "C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\output\\tp1state2\\local",
+    "APPDATA": "C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\output\\tp1state2\\roaming",
+    "USERPROFILE": "C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\output\\tp1state2\\home",
+    "HOME": "C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\output\\tp1state2\\home",
+    "TMP": "C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\output\\tp1state2\\temp",
+    "TEMP": "C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\output\\tp1state2\\temp",
+    "BAGO_CONVERSATION_DB_PATH": "C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\output\\tp1state2\\conversations.sqlite3",
+    "BAGO_OTEL_EXPORTER_OTLP_ENDPOINT": ""
+  },
+  "shared_state_unchanged": true,
+  "protected_fixtures_unchanged": true,
+  "final_candidate_bytes_match": true,
+  "readme_sha256": "6a625d9179d078959c6af3a4c086b679630da7716e218b51cef2b731a75e5957",
+  "junit": "full-suite.xml",
+  "limits": [
+    "Windows current machine only; no production provider or external service tested",
+    "Full suite skips are reported by JUnit and are not counted as PASS"
+  ]
+}

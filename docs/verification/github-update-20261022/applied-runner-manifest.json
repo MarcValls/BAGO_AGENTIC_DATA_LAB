@@ -1,0 +1,79 @@
+{
+  "status": "EXECUTED",
+  "independent_handoff_sha256": "cca01f51c3a2d763776870d03b9cf48f74cae234e95d610736e030154d6a90d7",
+  "coordination": [
+    {
+      "argv": [
+        "C:\\Users\\AMTEC_Terminal_1\u00ba\\Desktop\\BAGO5_ADL\\output\\bago-suite-repair-20261021\\work\\env\\windows-py314\\Scripts\\python.exe",
+        "-B",
+        "C:\\Users\\AMTEC_Terminal_1\u00ba\\Desktop\\BAGO5_ADL\\output\\bago-suite-repair-20261021\\i2\\bago suite\\scripts\\suite_orchestrator.py",
+        "team",
+        "--root",
+        "C:\\Users\\AMTEC_Terminal_1\u00ba\\Desktop\\BAGO5_ADL\\.bago\\goals\\github-update-20261022\\scope-review-2",
+        "verify"
+      ],
+      "exit_code": 0,
+      "stdout": "{\n  \"claim\": \"registered evidence integrity and dependency contract only\",\n  \"lifecycle\": \"ACTIVE\",\n  \"status\": \"PASS\",\n  \"terminal_gate\": \"ADMINISTRATIVE_DONE\"\n}\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "C:\\Users\\AMTEC_Terminal_1\u00ba\\Desktop\\BAGO5_ADL\\output\\bago-suite-repair-20261021\\work\\env\\windows-py314\\Scripts\\python.exe",
+        "-B",
+        "C:\\Users\\AMTEC_Terminal_1\u00ba\\Desktop\\BAGO5_ADL\\output\\bago-suite-repair-20261021\\i2\\bago suite\\scripts\\suite_orchestrator.py",
+        "team",
+        "--root",
+        "C:\\Users\\AMTEC_Terminal_1\u00ba\\Desktop\\BAGO5_ADL\\.bago\\goals\\github-update-20261022\\scope-review-2",
+        "close"
+      ],
+      "exit_code": 0,
+      "stdout": "{\n  \"deployment\": \"NOT_RUN\",\n  \"product_state\": \"SCOPED_ACCEPTANCE_PASSED\",\n  \"status\": \"PASS\",\n  \"task_state\": \"CLOSED\",\n  \"terminal_gate\": \"VALIDATED_SCOPED_TASK\"\n}\n",
+      "stderr": ""
+    }
+  ],
+  "files": [
+    {
+      "destination": "frontend/vitest.config.ts",
+      "source": "C:\\Users\\AMTEC_Terminal_1\u00ba\\Desktop\\BAGO5_ADL\\frontend\\.publication-scope-2\\vitest.config.ts",
+      "frozen": "inputs/frontend/vitest.config.ts",
+      "sha256": "cf215838a63e50c26377ea7710e633993192c0f6aba7c0d956fb50abdeecf283",
+      "active_sha256": null
+    },
+    {
+      "destination": "frontend/tests/contracts/node-contracts.test.mjs",
+      "source": "C:\\Users\\AMTEC_Terminal_1\u00ba\\Desktop\\BAGO5_ADL\\frontend\\.publication-scope-2\\node-contracts.test.mjs",
+      "frozen": "inputs/frontend/tests/contracts/node-contracts.test.mjs",
+      "sha256": "41746219802c1b99e9861e974ef59a7a49504f4ccefcd992bfc41399a29c21e3",
+      "active_sha256": null
+    },
+    {
+      "destination": "frontend/package.json",
+      "source": "C:\\Users\\AMTEC_Terminal_1\u00ba\\Desktop\\BAGO5_ADL\\frontend\\.publication-scope-2\\package.proposed.json",
+      "frozen": "inputs/frontend/package.json",
+      "sha256": "2b79daf1b88a63288e55e545b45113f5913bf4d7784c74f6601c56e0375929f3",
+      "active_sha256": "bc9bd769257f6448c4edd5713409e706bd3b1f4be3baeb04541fe97b2302b553"
+    },
+    {
+      "destination": ".github/workflows/ci.yml",
+      "source": "C:\\Users\\AMTEC_Terminal_1\u00ba\\Desktop\\BAGO5_ADL\\frontend\\.publication-scope-2\\ci.proposed.yml",
+      "frozen": "inputs/.github/workflows/ci.yml",
+      "sha256": "e60070f4b119ebb6cfcefd7aebd6075dee81a3575d86f4c56a53d11f2bc71d44",
+      "active_sha256": "d213fc2f3b65657eae3925a938fbcd7f9f144a5ed583060a588df21ad6df0b69"
+    },
+    {
+      "destination": "frontend/tests/contracts/action/action.test.ts",
+      "source": "C:\\Users\\AMTEC_Terminal_1\u00ba\\Desktop\\BAGO5_ADL\\frontend\\.publication-scope-2\\action.test.proposed.ts",
+      "frozen": "inputs/frontend/tests/contracts/action/action.test.ts",
+      "sha256": "88478ddfbdee45cab8aee7abdbed8c3417ed7ecb3fc59c740d89d77a59feccbe",
+      "active_sha256": "1ab2e406ffdd32a7acc6c81b76076879a2bc38711835dd3537c5439798515690"
+    },
+    {
+      "destination": "frontend/tests/contracts/trace/trace.test.ts",
+      "source": "C:\\Users\\AMTEC_Terminal_1\u00ba\\Desktop\\BAGO5_ADL\\frontend\\.publication-scope-2\\trace.test.proposed.ts",
+      "frozen": "inputs/frontend/tests/contracts/trace/trace.test.ts",
+      "sha256": "37b928729348401ade8d89da6128a82a0a684085c0d802ed94442d6650670aad",
+      "active_sha256": "fe90ce8dbf7718b98d2d64fe2d4eb814184dca95196aa12edacb179bfad746f7"
+    }
+  ],
+  "production_sources_changed": false
+}

@@ -106,7 +106,10 @@ def test_help_uses_model_and_persists_focus_only_when_cognition_enabled(monkeypa
     conversation = store.create("assistant", "app-assistant")
     monkeypatch.setattr(server, "CONVERSATIONS", store)
     monkeypatch.setattr(server, "AGENT_CHAT_TRACE_DIR", tmp_path / "traces")
-    monkeypatch.setattr(server, "_selected_model_id", lambda: "test-model")
+    monkeypatch.setattr(server.provider_runtime, "active_selection", lambda: {
+        "provider_id": "ollama-cloud", "model_id": "test-model",
+        "label": "Fixture Ollama", "state": "configured_unverified",
+    })
     calls = []
     monkeypatch.setattr(server.ollama, "chat", lambda model, messages: calls.append(messages) or "Experimental greeting")
     result = asyncio.run(server.control_chat(server.ControlChatRequest(

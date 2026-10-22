@@ -229,6 +229,7 @@ class Receipt:
 
 2. **Toda acción tiene receipt verificable**
    - Sin receipt = no ocurrió (para propósitos de auditoría)
+   - **Supersesión de alcance GEX v1 (CR-017):** se conserva la frase histórica anterior, pero no debe leerse como prueba de no ejecución. La ausencia de recibo significa que el efecto no está evidenciado para auditoría. Si existe `DISPATCH_INTENT` sin recibo terminal, el resultado es `UNKNOWN / RECONCILIATION_REQUIRED`, salvo que evidencia independiente pruebe que no hubo efecto. Esta regla se aplica al perfil nuevo de ejecución gobernada; no altera retrospectivamente los registros históricos.
 
 3. **Metadata obliga**
    - Documento sin provenance = rechazado
@@ -343,7 +344,7 @@ def test_bedrock_timeout_controlled_failure():
 
 ### ADR-003: Receipts como Fuente de Verdad
 
-**Decisión:** Lo que no tiene receipt no existe para propósitos de auditoría.
+**Decisión histórica:** Lo que no tiene receipt no existe para propósitos de auditoría. **Supersesión de alcance GEX v1 (CR-017):** significa únicamente “no hay evidencia durable del efecto”. No significa que el efecto no ocurriera. Tras `DISPATCH_INTENT`, la falta de recibo terminal exige `UNKNOWN / RECONCILIATION_REQUIRED`, excepto cuando evidencia independiente demuestre ausencia de efecto.
 
 **Racional:** Permite reconstrucción exacta de ejecuciones pasadas.
 

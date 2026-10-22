@@ -216,5 +216,49 @@
       ]
     }
   ],
-  "note": "Store-down is an external fail-closed response and cannot assert any persisted transition/receipt. Permit-use ISSUED->CONSUMED is an additional atomic CAS state machine. CLAIMED->RECONCILIATION_REQUIRED is mandatory when a committed DISPATCH_INTENT has occurred but RUNNING/event storage is interrupted."
+  "note": "Store-down is an external fail-closed response and cannot assert any persisted transition/receipt. Permit-use ISSUED->CONSUMED is an additional atomic CAS state machine. CLAIMED->RECONCILIATION_REQUIRED is mandatory when a committed DISPATCH_INTENT has occurred but RUNNING/event storage is interrupted.",
+  "execution_success_semantics": "SUCCEEDED means the executor observed and durably recorded its result; it does not mean independently verified success.",
+  "verification_states": [
+    "NOT_REQUESTED",
+    "PENDING",
+    "VERIFIED_SUCCESS",
+    "VERIFIED_FAILURE",
+    "INCONCLUSIVE"
+  ],
+  "verification_transitions": [
+    {
+      "from": "NOT_REQUESTED",
+      "to": "PENDING",
+      "guard": "executor_success_receipt_persisted_and_independent_verifier_scheduled",
+      "required_events": [
+        "RECEIPT_PERSISTED"
+      ]
+    },
+    {
+      "from": "PENDING",
+      "to": "VERIFIED_SUCCESS",
+      "guard": "independent_verifier_matches_receipt_request_attempt_and_postcondition",
+      "required_events": [
+        "VERIFICATION_RESULT_PERSISTED"
+      ]
+    },
+    {
+      "from": "PENDING",
+      "to": "VERIFIED_FAILURE",
+      "guard": "independent_verifier_proves_postcondition_failure",
+      "required_events": [
+        "VERIFICATION_RESULT_PERSISTED"
+      ]
+    },
+    {
+      "from": "PENDING",
+      "to": "INCONCLUSIVE",
+      "guard": "verification_evidence_missing_mismatched_or_unavailable",
+      "required_events": [
+        "VERIFICATION_RESULT_PERSISTED"
+      ]
+    }
+  ],
+  "verification_note": "Verification status is orthogonal to execution state. VERIFIED_SUCCESS never rewrites or substitutes for SUCCEEDED; SUCCEEDED alone is unverified executor observation.",
+  "receipt_absence_semantics": "Without a persisted terminal receipt, the effect is not evidenced for audit. After DISPATCH_INTENT, missing receipt means UNKNOWN / RECONCILIATION_REQUIRED unless independent evidence proves no effect."
 }

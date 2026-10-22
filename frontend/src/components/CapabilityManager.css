@@ -33,4 +33,24 @@
 .capability-proposal > p { margin: 8px 0; }
 .capability-proposal-meta { color: #8197ae !important; font-size: .68rem !important; }
 .capability-footer { margin: 0; padding-top: 12px; color: #8399b0; border-top: 1px solid #26364b; font-size: .72rem; line-height: 1.45; }
+.mcp-governance { display: flex; flex-direction: column; gap: 11px; padding-top: 17px; border-top: 1px solid #26364b; }
+.mcp-governance__header { display: flex; align-items: center; justify-content: space-between; gap: 14px; }
+.mcp-governance__header h3 { margin: 0; }
+.mcp-governance__header .section-eyebrow { margin: 0 0 4px; color: #87a0bb; font-size: .65rem; letter-spacing: .06em; text-transform: uppercase; }
+.mcp-governance__notice { max-width: 850px; margin: 0; padding: 10px 12px; color: #f1d08c; border: 1px solid #78643d; border-radius: 9px; background: #302817; font-size: .76rem; line-height: 1.5; }
+.mcp-governance__result { display: flex; flex-direction: column; gap: 10px; padding: 14px; border: 1px solid #2c4057; border-radius: 13px; background: #111e2e; }
+.mcp-governance__success { margin: 0; color: #a6e4be; font-size: .8rem; line-height: 1.5; }
+.mcp-governance__meta { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 250px), 1fr)); gap: 10px; margin: 0; }
+.mcp-governance__meta dt { margin-bottom: 3px; color: #7f96af; font-size: .65rem; text-transform: uppercase; letter-spacing: .06em; }
+.mcp-governance__meta dd { margin: 0; color: #d3dfeb; font-size: .74rem; overflow-wrap: anywhere; }
+.mcp-governance__result h4 { margin: 4px 0 0; color: #dce8f4; font-size: .84rem; }
+.mcp-governance__tools { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr)); gap: 8px; margin: 0; padding: 0; list-style: none; }
+.mcp-governance__tools li, .mcp-governance__call { display: flex; min-width: 0; flex-direction: column; gap: 5px; padding: 10px; border: 1px solid #2c4057; border-radius: 9px; background: #0d1928; color: #a7b9cc; font-size: .74rem; }
+.mcp-governance__tools code, .mcp-governance__call code { overflow-wrap: anywhere; color: #9db8d5; font-size: .67rem; }
+.mcp-governance__calls { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr)); gap: 9px; }
+.mcp-governance__call h4 { margin: 0; }
+.mcp-governance__call p { margin: 2px 0; }
+.mcp-governance__call details, .mcp-governance__result > details { color: #a9bfd6; font-size: .72rem; }
+.mcp-governance__call summary, .mcp-governance__result > details summary { cursor: pointer; }
+.mcp-governance__call pre, .mcp-governance__result > details pre { max-height: 240px; overflow: auto; padding: 9px; color: #bfd2e6; border-radius: 7px; background: #0a1421; font-size: .65rem; white-space: pre-wrap; overflow-wrap: anywhere; }
 @media (max-width: 600px) { .capability-manager-header { align-items: flex-start; } .capability-card dl { grid-template-columns: 1fr 1fr; } .capability-proposals.is-empty .capability-section-heading { align-items: flex-start; flex-direction: column; gap: 5px; } .capability-empty-proposals { margin-left: 0; text-align: left; } }

@@ -1,0 +1,6 @@
+*.json -text
+*.xml -text
+*.log -text
+*.mjs -text
+runner-repair.md -text
+independent-review.md -text

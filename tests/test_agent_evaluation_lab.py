@@ -111,7 +111,7 @@ def test_unlisted_model_is_rejected_before_inference(monkeypatch, tmp_path: Path
     suite = store.create_suite("model preflight", "agent_12345678", valid_cases())
     monkeypatch.setattr(server, "EVALUATIONS", store)
     monkeypatch.setattr(server, "_load_agent", lambda _id: _agent())
-    monkeypatch.setattr(server.ollama, "status", lambda: {"provider_id": "ollama-cloud", "state": "configured_unverified"})
+    monkeypatch.setattr(server.ollama, "status", lambda: {"provider_id": "ollama-cloud", "state": "ready", "model_id": "gemma4:31b-cloud"})
     monkeypatch.setattr(server.ollama, "discover_models", lambda: {"models": [{"model_id": "other-model"}]})
     monkeypatch.setattr(server.ollama, "chat", lambda *_args: pytest.fail("unlisted model cannot reach inference"))
     client = TestClient(server.app)
@@ -120,13 +120,31 @@ def test_unlisted_model_is_rejected_before_inference(monkeypatch, tmp_path: Path
     assert response.json()["detail"]["code"] == "model_unavailable"
 
 
+def test_unverified_but_discovered_model_is_rejected_before_inference(monkeypatch, tmp_path: Path):
+    store = EvaluationStore(tmp_path / "workspace", tmp_path / "db.sqlite3")
+    suite = store.create_suite("verification required", "agent_12345678", valid_cases())
+    monkeypatch.setattr(server, "EVALUATIONS", store)
+    monkeypatch.setattr(server, "_load_agent", lambda _id: _agent())
+    monkeypatch.setattr(server.ollama, "status", lambda: {"provider_id": "ollama-cloud", "state": "ready", "model_id": "verified-model"})
+    monkeypatch.setattr(server.ollama, "discover_models", lambda: {"models": [{"model_id": "unverified-model"}]})
+    monkeypatch.setattr(server.ollama, "chat", lambda *_args: pytest.fail("unverified model cannot reach inference"))
+
+    response = TestClient(server.app).post(
+        f"/api/evaluations/suites/{suite['id']}/run",
+        json={"revision": 0, "model_id": "unverified-model"},
+    )
+
+    assert response.status_code == 503
+    assert response.json()["detail"]["code"] == "model_not_verified"
+
+
 def test_real_run_api_preserves_case_trace_correlation_redacts_payload_and_has_no_side_effects(monkeypatch, tmp_path: Path):
     store = EvaluationStore(tmp_path / "workspace", tmp_path / "db.sqlite3")
     suite = store.create_suite("synthetic contract", "agent_12345678", valid_cases())
     monkeypatch.setattr(server, "EVALUATIONS", store)
     monkeypatch.setattr(server, "EVALUATION_TRACE_DIR", tmp_path / "traces")
     monkeypatch.setattr(server, "_load_agent", lambda _id: _agent())
-    monkeypatch.setattr(server.ollama, "status", lambda: {"provider_id": "ollama-cloud", "state": "configured_unverified"})
+    monkeypatch.setattr(server.ollama, "status", lambda: {"provider_id": "ollama-cloud", "state": "ready", "model_id": "gemma4:31b-cloud"})
     monkeypatch.setattr(server.ollama, "discover_models", lambda: {"models": [{"model_id": "gemma4:31b-cloud"}]})
     calls = []
 
@@ -185,7 +203,7 @@ def test_run_api_reports_local_trace_persistence_failure_truthfully(monkeypatch,
     trace_dir = blocked_parent / "traces"
     monkeypatch.setattr(server, "EVALUATION_TRACE_DIR", trace_dir)
     monkeypatch.setattr(server, "_load_agent", lambda _id: _agent())
-    monkeypatch.setattr(server.ollama, "status", lambda: {"provider_id": "ollama-cloud", "state": "configured_unverified"})
+    monkeypatch.setattr(server.ollama, "status", lambda: {"provider_id": "ollama-cloud", "state": "ready", "model_id": "gemma4:31b-cloud"})
     monkeypatch.setattr(server.ollama, "discover_models", lambda: {"models": [{"model_id": "gemma4:31b-cloud"}]})
     provider_calls = []
     monkeypatch.setattr(server.ollama, "chat", lambda *_args: provider_calls.append(True) or "A green response.")

@@ -46,10 +46,12 @@ afterEach(() => {
 })
 after(async () => { await server.close(); dom.window.close() })
 
-it('mounts agent and conversation navigation in the shell target and preserves its controls', async () => {
+it('mounts agent and conversation navigation in its panel and preserves authorization controls', async () => {
   const conversationRequests = []
   stubFetch(async (input) => {
     const url = String(input)
+    if (url === '/api/providers/chat-models') return response({ detail: 'Provider unavailable in this synthetic fixture' }, 503)
+    if (url === '/api/providers/selection') return response({ provider_id: null, model_id: null })
     if (url === '/api/agents/list') return response({ agents: [agent] })
     if (url.startsWith('/api/conversations?')) {
       conversationRequests.push(url)
@@ -58,34 +60,40 @@ it('mounts agent and conversation navigation in the shell target and preserves i
     throw new Error(`Unexpected request: ${url}`)
   })
 
-  const sidebarTarget = document.createElement('aside')
-  document.body.append(sidebarTarget)
   const chatTarget = document.createElement('main')
   document.body.append(chatTarget)
   let providerSettingsOpened = false
   render(React.createElement(AgentChat, {
-    sidebarTarget,
+    cognitiveMode: 'baseline',
+    onOpenCognitionSettings: () => {},
     onNavigate: () => {},
     onOpenProviderSettings: () => { providerSettingsOpened = true },
   }), { container: chatTarget })
 
-  const agentNavigation = await screen.findByRole('complementary', { name: 'Agent inventory' })
-  assert.equal(sidebarTarget.contains(agentNavigation), true)
+  const panel = chatTarget.querySelector('.chat-agent-panel')
+  assert.ok(panel)
+  assert.equal(panel.open, false)
+  fireEvent.click(panel.querySelector('summary'))
+  assert.equal(panel.open, true)
+  const agentNavigation = await screen.findByRole('complementary', { name: 'Orchestrator conversations and agents' })
+  assert.equal(chatTarget.querySelector('.chat-agent-panel-slot').contains(agentNavigation), true)
   assert.equal(chatTarget.querySelector('.control-chat-main') !== null, true)
   await screen.findByRole('button', { name: /Support agent/ })
 
-  const composerInfo = chatTarget.querySelector('.chat-composer-info')
-  assert.equal(composerInfo.open, false)
-  assert.equal(composerInfo.querySelector('p').textContent, 'Authorized files are read-only and bounded. The exact excerpt and decision are recorded with SHA-256 receipts. This chat cannot write files or run jobs.')
-  fireEvent.click(screen.getByText('About file access and privacy'))
-  assert.equal(composerInfo.open, true)
+  const authorizeReads = screen.getByRole('checkbox', { name: 'Allow project file reads' })
+  assert.equal(authorizeReads.checked, false)
+  assert.equal(screen.queryByLabelText('Project-relative paths'), null)
+  fireEvent.click(authorizeReads)
+  assert.ok(screen.getByLabelText('Project-relative paths'))
+  fireEvent.click(authorizeReads)
+  assert.equal(screen.queryByLabelText('Project-relative paths'), null)
+  fireEvent.click(await screen.findByRole('button', { name: 'Open provider settings' }))
+  assert.equal(providerSettingsOpened, true)
 
   fireEvent.click(screen.getByRole('button', { name: /Support agent/ }))
-  await waitFor(() => assert.ok(screen.getByRole('heading', { name: 'Support agent' })))
+  await waitFor(() => assert.ok(screen.getByRole('heading', { name: 'Chat with Support agent' })))
 
   fireEvent.click(screen.getByRole('button', { name: 'Archived' }))
   await waitFor(() => assert.ok(conversationRequests.some((url) => url.includes('status=archived'))))
 
-  fireEvent.click(await screen.findByRole('button', { name: 'Configure Ollama provider' }))
-  assert.equal(providerSettingsOpened, true)
 })

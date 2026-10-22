@@ -37,6 +37,9 @@
     },
     {
       "$ref": "#/$defs/IngressDenialReceiptV1"
+    },
+    {
+      "$ref": "#/$defs/VerificationResultV1"
     }
   ],
   "$defs": {
@@ -500,10 +503,7 @@
           "maxLength": 256
         },
         "signature_algorithm": {
-          "enum": [
-            "HMAC-SHA256",
-            "Ed25519"
-          ]
+          "const": "Ed25519"
         },
         "decision_id": {
           "type": "string",
@@ -528,46 +528,6 @@
         "signature",
         "signature_algorithm",
         "decision_id"
-      ],
-      "allOf": [
-        {
-          "if": {
-            "properties": {
-              "signature_algorithm": {
-                "const": "HMAC-SHA256"
-              }
-            },
-            "required": [
-              "signature_algorithm"
-            ]
-          },
-          "then": {
-            "properties": {
-              "signature": {
-                "pattern": "^[0-9a-f]{64}$"
-              }
-            }
-          }
-        },
-        {
-          "if": {
-            "properties": {
-              "signature_algorithm": {
-                "const": "Ed25519"
-              }
-            },
-            "required": [
-              "signature_algorithm"
-            ]
-          },
-          "then": {
-            "properties": {
-              "signature": {
-                "pattern": "^[A-Za-z0-9_-]{86}$"
-              }
-            }
-          }
-        }
       ]
     },
     "PermitV1": {
@@ -655,10 +615,7 @@
           "maxLength": 256
         },
         "signature_algorithm": {
-          "enum": [
-            "HMAC-SHA256",
-            "Ed25519"
-          ]
+          "const": "Ed25519"
         },
         "issued_at": {
           "type": "string",
@@ -741,46 +698,6 @@
         "expires_at",
         "max_uses",
         "authorization_source"
-      ],
-      "allOf": [
-        {
-          "if": {
-            "properties": {
-              "signature_algorithm": {
-                "const": "HMAC-SHA256"
-              }
-            },
-            "required": [
-              "signature_algorithm"
-            ]
-          },
-          "then": {
-            "properties": {
-              "signature": {
-                "pattern": "^[0-9a-f]{64}$"
-              }
-            }
-          }
-        },
-        {
-          "if": {
-            "properties": {
-              "signature_algorithm": {
-                "const": "Ed25519"
-              }
-            },
-            "required": [
-              "signature_algorithm"
-            ]
-          },
-          "then": {
-            "properties": {
-              "signature": {
-                "pattern": "^[A-Za-z0-9_-]{86}$"
-              }
-            }
-          }
-        }
       ]
     },
     "CapabilityRegistrationV1": {
@@ -1118,7 +1035,8 @@
             "SUCCEEDED",
             "EXPIRED",
             "CANCELLED",
-            "REVOKED"
+            "REVOKED",
+            "VERIFICATION_RESULT_PERSISTED"
           ]
         },
         "timestamp": {
@@ -1233,6 +1151,14 @@
               "type": "null"
             }
           ]
+        },
+        "verification_result_id": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1,
+          "maxLength": 256
         }
       },
       "required": [
@@ -1255,7 +1181,51 @@
         "decision_id",
         "approval_id",
         "job_id",
-        "boundary_receipt_id"
+        "boundary_receipt_id",
+        "verification_result_id"
+      ],
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "VERIFICATION_RESULT_PERSISTED"
+              }
+            },
+            "required": [
+              "kind"
+            ]
+          },
+          "then": {
+            "properties": {
+              "verification_result_id": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 256
+              },
+              "request_digest": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$"
+              },
+              "attempt_id": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 256
+              },
+              "boundary_receipt_id": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 256
+              }
+            },
+            "required": [
+              "verification_result_id",
+              "request_digest",
+              "attempt_id",
+              "boundary_receipt_id"
+            ]
+          }
+        }
       ]
     },
     "ToolProposalEnvelopeV1": {
@@ -1544,6 +1514,131 @@
         "ledger_event_id",
         "prev_ingress_hash",
         "ingress_event_digest"
+      ]
+    },
+    "VerificationResultV1": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "contract_version": {
+          "const": "gex-verification-result/v1"
+        },
+        "verification_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "receipt_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "receipt_digest": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "request_digest": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "attempt_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "verifier_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "verifier_version": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "outcome": {
+          "enum": [
+            "VERIFIED_SUCCESS",
+            "VERIFIED_FAILURE",
+            "INCONCLUSIVE"
+          ]
+        },
+        "postcondition_digest": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "evidence_refs": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256
+          },
+          "uniqueItems": true
+        },
+        "reason_code": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "verified_at": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "contract_version",
+        "verification_id",
+        "receipt_id",
+        "receipt_digest",
+        "request_digest",
+        "attempt_id",
+        "verifier_id",
+        "verifier_version",
+        "outcome",
+        "postcondition_digest",
+        "evidence_refs",
+        "reason_code",
+        "verified_at"
+      ],
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "outcome": {
+                "const": "VERIFIED_SUCCESS"
+              }
+            },
+            "required": [
+              "outcome"
+            ]
+          },
+          "then": {
+            "properties": {
+              "postcondition_digest": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$"
+              },
+              "evidence_refs": {
+                "type": "array",
+                "minItems": 1,
+                "items": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 256
+                },
+                "uniqueItems": true
+              }
+            },
+            "required": [
+              "postcondition_digest",
+              "evidence_refs"
+            ]
+          }
+        }
       ]
     }
   }

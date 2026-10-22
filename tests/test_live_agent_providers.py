@@ -10,7 +10,7 @@ from fastapi.testclient import TestClient
 
 from src.api import server
 from src.conversations import ConversationStore
-from src.providers import github_copilot, openai_platform, registration, runtime
+from src.providers import github_copilot, ollama, openai_platform, registration, runtime
 from src.runtime.ber.agent_runner import _tool_schema
 
 SECRET = "TEST_CREDENTIAL_NEVER_EXPOSE"
@@ -45,7 +45,7 @@ def test_support_is_visible_before_registration_and_other_providers_remain_separ
         status = registration.status(provider)
         assert status["state"] == "not_configured"
         assert status["runtime_support"] == "chat_and_agent_runner"
-    assert registration.status("codex")["runtime_support"] == "not_integrated"
+    assert registration.status("codex")["runtime_support"] == "chat_and_agent_runner"
 
 
 def test_live_check_performs_inference_and_only_persists_non_secret_confirmation(registry, monkeypatch):
@@ -66,6 +66,39 @@ def test_live_check_performs_inference_and_only_persists_non_secret_confirmation
     assert request["json"]["max_completion_tokens"] == 1024
     assert SECRET not in json.dumps(result)
     assert SECRET not in registration.REGISTRY_PATH.read_text(encoding="utf-8")
+
+
+def test_ollama_verification_runs_short_inference_and_marks_model_ready(monkeypatch):
+    monkeypatch.setattr(ollama, "_read_config", lambda: {"auth_mode": "api_key", "model_id": "gemma4:31b"})
+    monkeypatch.setattr(ollama, "discover_models", lambda: {"models": [{"model_id": "gemma4:31b"}]})
+    calls = []
+    def chat_turn(model, messages, **kwargs):
+        calls.append((model, messages, kwargs))
+        return {"content": "OK"}
+    monkeypatch.setattr(ollama, "chat_turn", chat_turn)
+
+    result = ollama.verify("gemma4:31b")
+
+    assert result["state"] == "ready"
+    assert result["model_available"] is True
+    assert result["generation_performed"] is True
+    assert result["last_verified_at"]
+    assert result["usage"] == "minimal_inference"
+    assert calls[0][0] == "gemma4:31b"
+    assert calls[0][1][-1]["content"] == "Connection check. Reply only OK."
+    assert calls[0][2]["options"] == {"num_predict": 8}
+
+
+def test_ollama_unavailable_model_does_not_run_inference(monkeypatch):
+    monkeypatch.setattr(ollama, "_read_config", lambda: {"auth_mode": "api_key", "model_id": "gemma4:31b"})
+    monkeypatch.setattr(ollama, "discover_models", lambda: {"models": []})
+    monkeypatch.setattr(ollama, "chat_turn", lambda *args, **kwargs: pytest.fail("must not infer for an unlisted model"))
+
+    result = ollama.verify("gemma4:31b")
+
+    assert result["state"] == "configured_unverified"
+    assert result["model_available"] is False
+    assert result["generation_performed"] is False
 
 
 def test_failed_authentication_removes_previous_ready_state(registry, monkeypatch):

@@ -382,7 +382,7 @@ El [catálogo de agentes](agents/CATALOG_MANIFEST.json) es de referencia; las de
 | Área | Cobertura | Fuentes presentes / declaradas |
 |---|---|---|
 | Gobierno del proyecto | Estado, contrato, arquitectura, roadmap, aprendizaje y skills | 6/6 presentes |
-| Demo y portfolio | Tutoriales, walkthrough, snapshot y notas de release | 4/4 presentes |
+| Demo y portfolio | Tutoriales, walkthrough, snapshot y notas de release | 5/5 presentes |
 | Versionado | Versión declarada del repositorio | 1/1 presentes |
 
 **Gobierno del proyecto:**
@@ -399,6 +399,7 @@ El [catálogo de agentes](agents/CATALOG_MANIFEST.json) es de referencia; las de
 - [`docs/cv_linkedin/portfolio-demo-v1.md`](docs/cv_linkedin/portfolio-demo-v1.md) — snapshot freeze portfolio-demo-v1 (CV/LinkedIn)
 - [`docs/one_command_demo.md`](docs/one_command_demo.md) — quickstart and artifact contract for one-command governed demo
 - [`docs/one_command_demo_walkthrough.md`](docs/one_command_demo_walkthrough.md) — canonical demo explanations and artifact walkthrough
+- [`docs/governed-execution/RUNTIME_FIXTURE_PROFILE.md`](docs/governed-execution/RUNTIME_FIXTURE_PROFILE.md) — perfil local GEX autenticado: configuración, fixture sintético, aprobación y recibos durables
 - [`docs/releases/RELEASE_NOTES_DEMO_V1.md`](docs/releases/RELEASE_NOTES_DEMO_V1.md) — frozen one-command demo v1.0.0 release notes
 
 **Versionado:**

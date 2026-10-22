@@ -27,7 +27,11 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
-from pydantic import BaseModel, ConfigDict, Field, field_validator
+from src.api.gex_routes import create_gex_router
+from src.api.connection_routes import create_connection_router
+from src.api.task_routes import create_task_router
+from src.agent_tasks import TaskDefinition, agent_lock
+from pydantic import BaseModel, ConfigDict, Field, SecretStr, field_validator
 
 from src.jobs import JobExecution, get_agent_metrics, list_jobs, load_job, save_job
 from src.capabilities import (
@@ -39,7 +43,10 @@ from src.capabilities import (
 )
 from src.conversations import ConversationConflict, ConversationNotFound, ConversationStore
 from src.conversations.library import OwnerKind
-from src.providers import codex, ollama, registration, runtime as provider_runtime
+from src.providers import codex, github_copilot, ollama, registration, model_policy, runtime as provider_runtime
+from src.knowledge import LocalRAGError, run_ingest_and_answer
+from src.metadata import ontology_runtime
+from src.metadata import openmetadata_runtime
 from src.agent_tools.workspace_read import (
     MAX_TOOL_CALLS_PER_TURN,
     MAX_TOOL_ROUNDS,
@@ -87,6 +94,7 @@ DEMO_OUTPUT_DIR = Path(__file__).resolve().parent.parent.parent / "demo_output" 
 AGENTS_DIR = Path(__file__).resolve().parent.parent.parent / "agents" / "created"
 FRONTEND_BUILD = Path(__file__).resolve().parent.parent.parent / "frontend" / "dist"
 REPO_ROOT = Path(__file__).resolve().parent.parent.parent
+_MCP_GOVERNANCE_EVIDENCE_DIR = REPO_ROOT / ".bago" / "traces" / "mcp-governance"
 _WORKSPACE_CONFIG_DIR = Path(os.environ.get("LOCALAPPDATA", Path.home())) / "BAGO" / "AgenticDataLab"
 _WORKSPACE_CONFIG_PATH = _WORKSPACE_CONFIG_DIR / "workspace.json"
 _WORKSPACE_LOCK = threading.RLock()
@@ -219,6 +227,7 @@ class AgentConfig(BaseModel):
     tools: list[str] = Field(default_factory=list, max_length=20)
     retrieval_config: dict[str, Any] | None = None
     sandbox_profile: str | None = Field(default=None, max_length=100)
+    task: TaskDefinition | None = None
 
     @field_validator("tools")
     @classmethod
@@ -279,13 +288,12 @@ def _agent_draft_retry_hint(error: Exception) -> str:
     return "The previous object failed schema validation for these fields: " + ", ".join(fields[:8]) + "."
 
 
-async def _generate_agent_draft(user_request: str, history: list[dict[str, str]], model_id: str) -> AgentConfig:
+async def _generate_agent_draft(user_request: str, history: list[dict[str, str]], model_id: str, provider_id: str) -> AgentConfig:
     retry_hint = None
     draft = None
     context = "\n".join(f"{item['role']}: {item['content']}" for item in history[-20:] + [{"role": "user", "content": user_request}])
     try:
         for attempt in range(2):
-            provider_id = provider_runtime.active_provider_id()
             raw = await asyncio.to_thread(provider_runtime.chat, provider_id, model_id, _agent_draft_messages(context, retry_hint))
             try:
                 draft = _parse_agent_draft(raw, model_id, provider_id)
@@ -300,6 +308,10 @@ async def _generate_agent_draft(user_request: str, history: list[dict[str, str]]
         raise _provider_http_error(error) from None
     except Exception:
         raise HTTPException(status_code=502, detail={"code": "invalid_agent_draft", "message": "The model did not produce a valid agent proposal. No agent was created."}) from None
+    try:
+        draft.provider_id, draft.model_id = model_policy.assigned(draft.type, provider_id, model_id)
+    except provider_runtime.ProviderRuntimeError as error:
+        raise _provider_http_error(error) from None
     return draft
 
 
@@ -313,6 +325,20 @@ class OllamaConfigRequest(BaseModel):
 
 class OllamaVerifyRequest(BaseModel):
     model_id: str | None = Field(default=None, max_length=128)
+
+
+class GithubCopilotModelsRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    auth_mode: Literal["copilot_cli", "token"] = "copilot_cli"
+    api_key: str | None = Field(default=None, max_length=4096)
+
+
+class CodexLoginRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    auth_mode: Literal["chatgpt", "api_key"] = "chatgpt"
+    api_key: SecretStr | None = Field(default=None, max_length=4096)
 
 
 class ProviderRegistrationRequest(BaseModel):
@@ -337,6 +363,7 @@ class AgentCreateRequest(BaseModel):
     tools: list[str] = Field(default_factory=list, max_length=20)
     retrieval_config: dict[str, Any] | None = None
     sandbox_profile: str | None = Field(default=None, max_length=100)
+    task: TaskDefinition | None = None
 
     @field_validator("tools")
     @classmethod
@@ -366,6 +393,46 @@ class ControlChatRequest(BaseModel):
     workspace_read_authorization_id: str | None = Field(default=None, max_length=128)
     workspace_scan_authorization_id: str | None = Field(default=None, max_length=128)
     cognitive_mode: Literal["baseline", "bago5"] = "baseline"
+
+
+class ProviderSelectionRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    provider_id: str = Field(min_length=1, max_length=64)
+    model_id: str = Field(min_length=1, max_length=128)
+
+
+class ModelPolicyRequest(model_policy.Policy):
+    expected_revision: str = Field(min_length=1, max_length=64)
+
+
+class KnowledgeIngestAnswerRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    path: str = Field(min_length=1, max_length=512)
+    question: str = Field(min_length=1, max_length=4000)
+    source_authority: Literal["PROPOSED", "VERIFIED"]
+    minimum_authority: Literal["PROPOSED", "VERIFIED"]
+
+
+class OpenMetadataLiveValidationRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    confirm_run: bool
+
+
+class OntologyProposalRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    path: str = Field(min_length=1, max_length=512)
+
+
+class OntologyApprovalRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    proposal_ids: list[str] = Field(min_length=1, max_length=100)
+
+
+class OntologyQueryRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    query: str = Field(min_length=1, max_length=2000)
 
 
 class AgentChatRequest(BaseModel):
@@ -493,6 +560,22 @@ class JobResponse(BaseModel):
 
 
 app = FastAPI(title="BAGO Portfolio Control", version="1.0.0")
+
+
+@app.get("/api/catalog/openmetadata/status")
+def openmetadata_status() -> dict[str, Any]:
+    return openmetadata_runtime.status()
+
+
+@app.post("/api/catalog/openmetadata/live-validation")
+def openmetadata_live_validation(request: OpenMetadataLiveValidationRequest) -> dict[str, Any]:
+    if request.confirm_run is not True:
+        raise HTTPException(status_code=422, detail={"code": "confirmation_required", "message": "Explicit confirmation is required to run the local catalog check."})
+    try:
+        return openmetadata_runtime.run_live_validation()
+    except openmetadata_runtime.OpenMetadataRuntimeError as error:
+        # Runtime errors are already normalized and never include underlying transport details.
+        raise HTTPException(status_code=422, detail={"code": "local_catalog_unavailable", "message": str(error)}) from None
 
 
 @app.exception_handler(RequestValidationError)
@@ -803,14 +886,167 @@ def provider_registration_status() -> dict[str, Any]:
         raise HTTPException(status_code=status_code, detail={"code": error.code, "message": error.message, "state": error.status}) from None
 
 
+@app.get("/api/providers/codex/session")
+def codex_session_status() -> dict[str, Any]:
+    try:
+        return codex.session_status(include_models=True)
+    except registration.RegistrationError as error:
+        raise _provider_http_error(error) from None
+
+
+@app.post("/api/providers/codex/login")
+def start_codex_login(request: CodexLoginRequest | None = None) -> dict[str, Any]:
+    try:
+        return codex.start_login(request.auth_mode, request.api_key.get_secret_value() if request.api_key else None) if request else codex.start_login()
+    except registration.RegistrationError as error:
+        raise _provider_http_error(error) from None
+
+
+@app.get("/api/providers/codex/login/{login_id}")
+def codex_login_status(login_id: str) -> dict[str, Any]:
+    try:
+        return codex.login_status(login_id)
+    except registration.RegistrationError as error:
+        raise _provider_http_error(error) from None
+
+
+@app.get("/api/providers/github-copilot/session")
+def github_copilot_session() -> dict[str, bool]:
+    try:
+        return github_copilot.auth_status()
+    except registration.RegistrationError as error:
+        raise _provider_http_error(error) from None
+
+
+@app.post("/api/providers/github-copilot/models")
+def github_copilot_models(request: GithubCopilotModelsRequest) -> dict[str, Any]:
+    try:
+        return github_copilot.discover_models(request.auth_mode, request.api_key)
+    except registration.RegistrationError as error:
+        raise _provider_http_error(error) from None
+
+
+@app.post("/api/providers/github-copilot/login")
+def start_github_copilot_login() -> dict[str, Any]:
+    try:
+        return github_copilot.start_login()
+    except registration.RegistrationError as error:
+        raise _provider_http_error(error) from None
+
+
+@app.get("/api/providers/github-copilot/login/{login_id}")
+def github_copilot_login_status(login_id: str) -> dict[str, Any]:
+    try:
+        return github_copilot.login_status(login_id)
+    except registration.RegistrationError as error:
+        raise _provider_http_error(error) from None
+
+
 @app.get("/api/providers/available")
 def available_agent_providers() -> dict[str, Any]:
     try:
         providers = [{"provider_id": "ollama-cloud", "label": "Ollama", **ollama.status()}]
-        labels = {"openai-platform": "OpenAI Platform", "github-copilot": "GitHub Copilot"}
-        providers.extend({**registration.status(key), "label": label} for key, label in labels.items())
+        labels = {"codex": "OpenAI Codex", "openai-platform": "OpenAI Platform", "github-copilot": "GitHub Copilot"}
+        providers.extend({**provider_runtime.status(key), "label": label} for key, label in labels.items())
         return {"providers": providers}
-    except (ollama.ProviderError, registration.RegistrationError) as error:
+    except (ollama.ProviderError, registration.RegistrationError, provider_runtime.ProviderRuntimeError) as error:
+        raise _provider_http_error(error) from None
+
+
+@app.get("/api/providers/selection")
+def get_provider_selection() -> dict[str, Any]:
+    try:
+        return provider_runtime.active_selection()
+    except (ollama.ProviderError, registration.RegistrationError, provider_runtime.ProviderRuntimeError) as error:
+        raise _provider_http_error(error) from None
+
+
+@app.post("/api/knowledge/ingest-and-answer")
+async def knowledge_ingest_and_answer(request: KnowledgeIngestAnswerRequest) -> dict[str, Any]:
+    """Index one explicitly selected local text file and answer from eligible evidence."""
+    try:
+        return await asyncio.to_thread(
+            run_ingest_and_answer,
+            workspace_root=current_workspace_root(),
+            path=request.path,
+            question=request.question,
+            source_authority=request.source_authority,
+            minimum_authority=request.minimum_authority,
+            active_selection=provider_runtime.active_selection,
+            generate=provider_runtime.chat,
+        )
+    except LocalRAGError as error:
+        raise HTTPException(status_code=422, detail=str(error)) from None
+    except (ollama.ProviderError, registration.RegistrationError, provider_runtime.ProviderRuntimeError) as error:
+        raise _provider_http_error(error) from None
+
+
+@app.post("/api/ontology/proposals")
+def ontology_proposals(request: OntologyProposalRequest) -> dict[str, Any]:
+    try:
+        return ontology_runtime.propose(current_workspace_root(), request.path)
+    except ontology_runtime.OntologyRuntimeError as error:
+        raise HTTPException(status_code=422, detail=str(error)) from None
+
+
+@app.post("/api/ontology/proposals/{proposal_id}/approve")
+def ontology_approve(proposal_id: str, request: OntologyApprovalRequest) -> dict[str, Any]:
+    try:
+        return ontology_runtime.approve(current_workspace_root(), proposal_id, request.proposal_ids)
+    except ontology_runtime.OntologyRuntimeError as error:
+        raise HTTPException(status_code=422, detail=str(error)) from None
+
+
+@app.post("/api/ontology/query")
+def ontology_query(request: OntologyQueryRequest) -> dict[str, Any]:
+    try:
+        return ontology_runtime.query(request.query)
+    except ontology_runtime.OntologyRuntimeError as error:
+        raise HTTPException(status_code=422, detail=str(error)) from None
+
+
+@app.get("/api/providers/model-policy")
+def get_model_policy() -> dict[str, Any]:
+    try:
+        policy, revision = model_policy.read()
+        catalog = provider_runtime.model_catalog()
+        if policy is None:
+            try:
+                selected = provider_runtime.active_selection()
+                main = model_policy.key(selected)
+            except (ollama.ProviderError, registration.RegistrationError, provider_runtime.ProviderRuntimeError):
+                main = None
+            policy = model_policy.Policy(models=[model_policy.ModelUse(provider_id=item["provider_id"], model_id=item["model_id"], chat=True, orchestrator=True, agent_types=list(model_policy.AGENT_TYPES)) for item in catalog["models"]], main_chat=main)
+        return {**policy.model_dump(), "revision": revision, "configured": revision != "none", "catalog": catalog["models"], "warnings": catalog["warnings"]}
+    except (ollama.ProviderError, registration.RegistrationError, provider_runtime.ProviderRuntimeError) as error:
+        raise _provider_http_error(error) from None
+
+
+@app.put("/api/providers/model-policy")
+def put_model_policy(request: ModelPolicyRequest) -> dict[str, Any]:
+    try:
+        policy = model_policy.Policy.model_validate(request.model_dump(exclude={"expected_revision"}))
+        return model_policy.save(policy, request.expected_revision, provider_runtime.model_catalog()["models"])
+    except (ollama.ProviderError, registration.RegistrationError, provider_runtime.ProviderRuntimeError) as error:
+        raise _provider_http_error(error) from None
+
+
+@app.get("/api/providers/chat-models")
+def chat_model_catalog() -> dict[str, Any]:
+    try:
+        catalog = provider_runtime.model_catalog()
+        policy, _ = model_policy.read()
+        catalog["models"] = [{**item, "chat_enabled": model_policy.permits(item["provider_id"], item["model_id"]), "orchestrator_enabled": model_policy.permits_orchestrator(item["provider_id"], item["model_id"]), "agent_types": next((entry.agent_types for entry in policy.models if model_policy.key(entry) == model_policy.key(item)), []) if policy else list(model_policy.AGENT_TYPES)} for item in catalog["models"]]
+        return catalog
+    except (ollama.ProviderError, registration.RegistrationError, provider_runtime.ProviderRuntimeError) as error:
+        raise _provider_http_error(error) from None
+
+
+@app.put("/api/providers/selection")
+def put_provider_selection(request: ProviderSelectionRequest) -> dict[str, Any]:
+    try:
+        return provider_runtime.select_chat_model(request.provider_id, request.model_id)
+    except (ollama.ProviderError, registration.RegistrationError, provider_runtime.ProviderRuntimeError) as error:
         raise _provider_http_error(error) from None
 
 
@@ -857,6 +1093,160 @@ def demo_status() -> dict[str, Any]:
 def team_status() -> dict[str, Any]:
     """Return a read-only snapshot for the local team monitor page."""
     return _load_team_status()
+
+
+@app.post("/api/demo/mcp-governance")
+async def run_local_mcp_governance_demo(request: Request) -> dict[str, Any]:
+    """Run the repository-owned MCP stdio fixture with a fixed allow/deny policy."""
+    raw_body = await request.body()
+    if raw_body.strip():
+        try:
+            body = json.loads(raw_body)
+        except (json.JSONDecodeError, UnicodeDecodeError):
+            raise HTTPException(status_code=422, detail="Request body must be empty.") from None
+        if body != {} or not isinstance(body, dict):
+            raise HTTPException(status_code=422, detail="Request body must be empty.")
+
+    import hashlib
+    import os
+    from datetime import datetime, timezone
+
+    from mcp import ClientSession
+    from mcp.client.stdio import StdioServerParameters, stdio_client
+    from src.adapters.mcp_adapter import GovernedMCPAdapter
+    from src.orchestration.state_graph import EffectType
+
+    run_id = f"mcp_demo_{uuid.uuid4().hex}"
+    trace_id = f"trace_{uuid.uuid4().hex}"
+    evidence_relpath = f".bago/traces/mcp-governance/{run_id}.json"
+    evidence_path = _MCP_GOVERNANCE_EVIDENCE_DIR / f"{run_id}.json"
+    tool_call_counts = {"get_lab_status": 0, "propose_lab_note": 0}
+    trace_events: list[dict[str, Any]] = []
+
+    class ObservedSession:
+        """Count the actual MCP transport boundary before forwarding calls."""
+
+        def __init__(self, session: Any) -> None:
+            self._session = session
+
+        async def call_tool(self, *, name: str, arguments: dict[str, Any]) -> Any:
+            if name in tool_call_counts:
+                tool_call_counts[name] += 1
+            trace_events.append({
+                "event_id": f"evt_{uuid.uuid4().hex[:12]}",
+                "kind": "mcp_transport_call",
+                "tool_name": name,
+                "observed_at": datetime.now(timezone.utc).isoformat(),
+            })
+            return await self._session.call_tool(name=name, arguments=arguments)
+
+    parameters = StdioServerParameters(
+        command=sys.executable,
+        args=[str(REPO_ROOT / "scripts" / "local_mcp_server.py")],
+        cwd=str(REPO_ROOT),
+    )
+    try:
+        async with stdio_client(parameters) as (read_stream, write_stream):
+            async with ClientSession(read_stream, write_stream) as session:
+                await session.initialize()
+                listed = await session.list_tools()
+                adapter = GovernedMCPAdapter("bago-local-demo")
+                descriptors = adapter.discover_tools(listed.tools)
+                expected_names = {"get_lab_status", "propose_lab_note"}
+                if {item.name for item in descriptors} != expected_names:
+                    raise RuntimeError("Local MCP fixture tool catalog did not match the fixed policy.")
+                trace_events.append({
+                    "event_id": f"evt_{uuid.uuid4().hex[:12]}",
+                    "kind": "mcp_discovery",
+                    "observed_at": datetime.now(timezone.utc).isoformat(),
+                    "tool_names": sorted(item.name for item in descriptors),
+                })
+                adapter.register_tool("get_lab_status", effect_type=EffectType.READ, approved_by="local-mcp-demo-policy")
+                adapter.register_tool("propose_lab_note", effect_type=EffectType.WRITE, approved_by="local-mcp-demo-policy")
+
+                read_request = adapter.build_execution_request(
+                    "get_lab_status", {}, proposed_by="local-mcp-demo", context_revision=run_id,
+                    request_id=f"{run_id}_read",
+                )
+                read_permit = adapter.authorize(read_request)
+                observed_session = ObservedSession(session)
+                read_receipt = await adapter.call(observed_session, read_request, read_permit)
+                trace_events.append({
+                    "event_id": f"evt_{uuid.uuid4().hex[:12]}",
+                    "kind": "mcp_governed_result",
+                    "observed_at": datetime.now(timezone.utc).isoformat(),
+                    "tool_name": "get_lab_status",
+                    "decision": read_receipt.decision.value,
+                    "receipt_id": read_receipt.receipt_id,
+                    "actual_effect": dict(read_receipt.actual_effect),
+                })
+
+                write_request = adapter.build_execution_request(
+                    "propose_lab_note", {"path": "notes/proposed.md", "content": "draft"},
+                    proposed_by="local-mcp-demo", context_revision=run_id,
+                    request_id=f"{run_id}_write",
+                )
+                write_permit = adapter.authorize(write_request)
+                write_receipt = await adapter.call(observed_session, write_request, write_permit)
+                trace_events.append({
+                    "event_id": f"evt_{uuid.uuid4().hex[:12]}",
+                    "kind": "mcp_governed_result",
+                    "observed_at": datetime.now(timezone.utc).isoformat(),
+                    "tool_name": "propose_lab_note",
+                    "decision": write_receipt.decision.value,
+                    "receipt_id": write_receipt.receipt_id,
+                    "actual_effect": dict(write_receipt.actual_effect),
+                    "transport_call_count": tool_call_counts["propose_lab_note"],
+                })
+    except HTTPException:
+        raise
+    except Exception as error:
+        raise HTTPException(status_code=502, detail=f"Local MCP fixture failed: {type(error).__name__}.") from None
+
+    registered = [
+        {"name": "get_lab_status", "effect_type": "READ"},
+        {"name": "propose_lab_note", "effect_type": "WRITE"},
+    ]
+    read_call = read_receipt.to_dict()
+    write_call = write_receipt.to_dict()
+    read_call["transport_call_count"] = tool_call_counts["get_lab_status"]
+    write_call["transport_call_count"] = tool_call_counts["propose_lab_note"]
+    successful = (
+        read_receipt.decision.value == "ALLOW"
+        and read_receipt.execution_outcome.value == "SUCCESS"
+        and read_receipt.actual_effect.get("called") is True
+        and tool_call_counts["get_lab_status"] == 1
+        and write_receipt.decision.value == "REQUIRE_HUMAN"
+        and write_receipt.actual_effect.get("called") is False
+        and tool_call_counts["propose_lab_note"] == 0
+    )
+    result: dict[str, Any] = {
+        "run_id": run_id,
+        "status": "completed" if successful else "failed",
+        "transport": "stdio",
+        "source_kind": "repository_local_fixture",
+        "server": "bago-local-demo",
+        "discovered": [{"name": item.name, "fingerprint": item.fingerprint} for item in descriptors],
+        "registered": registered,
+        "read_call": read_call,
+        "write_call": write_call,
+        "trace": {"trace_id": trace_id, "events": trace_events},
+        "transport_observation": {"tool_call_counts": tool_call_counts},
+        "evidence": {"path": evidence_relpath},
+    }
+    evidence_bytes = (json.dumps(result, ensure_ascii=False, indent=2, sort_keys=True) + "\n").encode("utf-8")
+    try:
+        evidence_path.parent.mkdir(parents=True, exist_ok=True)
+        with evidence_path.open("xb") as handle:
+            handle.write(evidence_bytes)
+            handle.flush()
+            os.fsync(handle.fileno())
+    except OSError as error:
+        raise HTTPException(status_code=500, detail=f"MCP evidence persistence failed: {type(error).__name__}.") from None
+    result["evidence"]["sha256"] = hashlib.sha256(evidence_bytes).hexdigest()
+    if not successful:
+        raise HTTPException(status_code=502, detail={"message": "MCP governance demo did not satisfy its fixed policy.", "run_id": run_id, "evidence": result["evidence"]})
+    return result
 
 
 # ===== API: Demo Execution =====
@@ -1061,6 +1451,23 @@ def _load_agent(agent_id: str) -> AgentResponse:
         raise HTTPException(status_code=500, detail="Stored agent configuration is invalid.") from None
 
 
+def _check_agent_model(config: dict[str, Any]) -> None:
+    try:
+        provider_runtime.assert_agent_model(config)
+    except (ollama.ProviderError, registration.RegistrationError, provider_runtime.ProviderRuntimeError) as error:
+        raise _provider_http_error(error) from None
+
+
+def _load_model_enabled_agent(agent_id: str) -> AgentResponse:
+    record = _load_agent(agent_id)
+    try:
+        if model_policy.read()[0] is not None:
+            _check_agent_model(record.config.model_dump())
+    except provider_runtime.ProviderRuntimeError as error:
+        raise _provider_http_error(error) from None
+    return record
+
+
 def _evaluation_trace(*, run_id: str, suite: dict[str, Any], case: dict[str, Any], agent: AgentResponse,
                       model_id: str, duration_ms: int, outcome: str, error_code: str | None = None) -> dict[str, str]:
     """Persist a redacted per-attempt trace outside the workspace."""
@@ -1167,8 +1574,10 @@ async def evaluation_run_suite(suite_id: str, request: EvaluationRunRequest) -> 
     try:
         selected_model = ollama.validate_model_id(request.model_id)
         status = ollama.status()
-        if status.get("provider_id") != "ollama-cloud" or status.get("state") not in {"ready", "configured_unverified"}:
+        if status.get("provider_id") != "ollama-cloud" or status.get("state") != "ready":
             raise ollama.ProviderError("provider_not_ready", "Configure and verify Ollama before running this suite.", status.get("state", "not_configured"))
+        if status.get("model_id") != selected_model:
+            raise ollama.ProviderError("model_not_verified", "Verify the selected Ollama model in Provider Settings before running this suite.", "configured_unverified")
         discovery = ollama.discover_models()
         model_ids = {item.get("model_id") for item in discovery.get("models", []) if isinstance(item, dict)}
         if selected_model not in model_ids:
@@ -1422,7 +1831,7 @@ async def _chat_with_workspace_read(
     workspace_root: Path | None = None,
     allow_navigation: bool = False,
 ) -> tuple[str, list[dict[str, Any]], list[dict[str, Any]], str | None]:
-    """Run a bounded Ollama tool loop with read-only workspace tools."""
+    """Run a bounded provider tool loop with read-only workspace tools."""
     workspace_root = workspace_root or Path(REPO_ROOT).resolve()
     sources: list[dict[str, Any]] = []
     read_events: list[dict[str, Any]] = []
@@ -1719,6 +2128,14 @@ async def chat_context() -> dict[str, Any]:
     }
 
 
+@app.get("/api/chat/context/document/{source_id}")
+async def project_context_document(source_id: str, workspace_root: str, response: Response) -> dict[str, Any]:
+    """Explicit UI read; never adds document text to model prompts."""
+    from src.api.project_documents import read_project_document
+    response.headers["Cache-Control"] = "no-store"
+    return await asyncio.to_thread(read_project_document, current_workspace_root(), source_id, workspace_root)
+
+
 @app.post("/api/workspace/browse")
 async def browse_workspace() -> dict[str, Any]:
     """Open the local folder picker and bind the selected project workspace."""
@@ -1865,20 +2282,28 @@ async def restore_conversation(conversation_id: str, request: ConversationRevisi
 async def create_agent(request: AgentCreateRequest) -> AgentResponse:
     """Create and save a new agent configuration."""
     provider_id = request.provider_id or "ollama-cloud"
+    assigned_model = request.model_id
     try:
+        if model_policy.read()[0] is not None:
+            if assigned_model:
+                if not model_policy.permits(provider_id, assigned_model, request.type):
+                    raise provider_runtime.ProviderRuntimeError("agent_model_disabled", "Este modelo no está activo para ese tipo de agente.")
+            else:
+                provider_id, assigned_model = model_policy.assigned(request.type, provider_id, "")
         provider_status = provider_runtime.status(provider_id)
     except (registration.RegistrationError, provider_runtime.ProviderRuntimeError) as error:
         raise _provider_http_error(error) from None
     if provider_status.get("state") not in {"configured_unverified", "ready"}:
         raise HTTPException(status_code=409, detail={"code": "provider_not_configured", "message": "Configure the selected provider before creating an agent."})
     body = request.model_dump(exclude_none=True)
+    body["task"] = request.task.model_dump() if request.task is not None else {"prompt": request.description, "dates": []}
     body["provider_id"] = provider_id
     # The legacy Builder has no model selector. In that case, use only the model
     # explicitly saved in Provider Settings; never choose the first catalog entry.
-    body["model_id"] = request.model_id or provider_status.get("model_id")
+    body["model_id"] = assigned_model or provider_status.get("model_id")
     if not body["model_id"]:
         raise HTTPException(status_code=409, detail={"code": "model_selection_required", "message": "Choose a model in Provider Settings before creating an agent."})
-    if body["model_id"] != provider_status.get("model_id"):
+    if body["model_id"] != provider_status.get("model_id") and not (model_policy.read()[0] is not None and model_policy.permits(provider_id, body["model_id"], request.type)):
         raise HTTPException(status_code=409, detail={"code": "model_registration_mismatch", "message": "The agent model must match the selected provider registration."})
     try:
         agent_config = AgentConfig.model_validate(body)
@@ -1890,6 +2315,13 @@ async def create_agent(request: AgentCreateRequest) -> AgentResponse:
 @app.put("/api/agents/{agent_id}", response_model=AgentResponse)
 async def update_agent(agent_id: str, request: AgentConfig) -> AgentResponse:
     """Update a saved profile, validating an explicitly changed provider/model pair."""
+    _load_agent(agent_id)
+    with agent_lock(AGENTS_DIR, agent_id):
+        return _update_agent_profile(agent_id, request)
+
+
+def _update_agent_profile(agent_id: str, request: AgentConfig) -> AgentResponse:
+    """Share the task writer lock so profile edits cannot erase a concurrent task."""
     current = _load_agent(agent_id)
     config_data = current.config.model_dump()
     config_data.update(request.model_dump(exclude_unset=True))
@@ -1897,12 +2329,17 @@ async def update_agent(agent_id: str, request: AgentConfig) -> AgentResponse:
         config = AgentConfig.model_validate(config_data)
     except Exception:
         raise HTTPException(status_code=422, detail={"code": "invalid_agent_config", "message": "Agent configuration is invalid."}) from None
-    if (config.provider_id, config.model_id) != (current.config.provider_id, current.config.model_id):
+    try:
+        has_policy = model_policy.read()[0] is not None
+    except provider_runtime.ProviderRuntimeError as error:
+        raise _provider_http_error(error) from None
+    if (config.provider_id, config.model_id) != (current.config.provider_id, current.config.model_id) or (has_policy and config.type != current.config.type):
         try:
             provider_status = provider_runtime.status(config.provider_id or "ollama-cloud")
+            allowed = model_policy.permits(config.provider_id or "ollama-cloud", config.model_id or "", config.type) if has_policy else provider_status.get("model_id") == config.model_id
         except (registration.RegistrationError, provider_runtime.ProviderRuntimeError) as error:
             raise _provider_http_error(error) from None
-        if provider_status.get("state") not in {"configured_unverified", "ready"} or not config.model_id or provider_status.get("model_id") != config.model_id:
+        if provider_status.get("state") not in {"configured_unverified", "ready"} or not config.model_id or not allowed:
             raise HTTPException(status_code=409, detail={"code": "model_registration_mismatch", "message": "Select a configured provider and its saved model."})
 
     agent_file = AGENTS_DIR / f"{agent_id}.json"
@@ -2022,9 +2459,13 @@ async def control_chat(request: ControlChatRequest) -> dict[str, Any]:
     if not request.message.strip():
         raise HTTPException(status_code=422, detail={"code": "message_required", "message": "Enter a message."})
 
-    model_id = _selected_model_id()
+    try:
+        selection = provider_runtime.active_selection()
+    except (ollama.ProviderError, registration.RegistrationError, provider_runtime.ProviderRuntimeError) as error:
+        raise _provider_http_error(error) from None
+    provider_id, model_id = selection["provider_id"], selection["model_id"]
     if request.operation == "draft_agent":
-        draft = await _generate_agent_draft(request.message.strip(), history, model_id)
+        draft = await _generate_agent_draft(request.message.strip(), history, model_id, provider_id)
         answer = "Review this proposal. It will not be saved until you choose Create agent."
         return finish_turn("draft_agent", answer, agent_draft=draft.model_dump(), created=False)
 
@@ -2059,25 +2500,25 @@ async def control_chat(request: ControlChatRequest) -> dict[str, Any]:
         if authorized_paths or authorized_directories:
             answer, sources, read_events, navigation_view = await _chat_with_workspace_read(
                 model_id, messages, authorized_paths, authorized_directories,
-                workspace_root=workspace_root, allow_navigation=True,
+                workspace_root=workspace_root, allow_navigation=True, provider_id=provider_id,
             )
             if navigation_view == "draft_agent":
-                draft = await _generate_agent_draft(request.message.strip(), history, model_id)
+                draft = await _generate_agent_draft(request.message.strip(), history, model_id, provider_id)
                 return finish_turn("draft_agent", answer, agent_draft=draft.model_dump(), created=False)
             if navigation_view == "job_history":
                 return finish_turn("job_history", answer)
             if navigation_view == "workspace_scan":
                 return finish_turn("workspace_scan", answer, control_capability="workspace.scan_duplicates")
         elif request.operation == "help":
-            answer = await asyncio.to_thread(ollama.chat, model_id, messages)
+            answer = await asyncio.to_thread(provider_runtime.chat, provider_id, model_id, messages)
         else:
             turn = await asyncio.to_thread(
-                ollama.chat_turn, model_id, messages,
+                provider_runtime.chat_turn, provider_id, model_id, messages,
                 tools=[CONTROL_REQUEST_TOOL], options={"temperature": 0},
             )
             resolved = _control_request_from_turn(turn)
             if resolved and resolved["decision"] == "draft_agent":
-                draft = await _generate_agent_draft(request.message.strip(), history, model_id)
+                draft = await _generate_agent_draft(request.message.strip(), history, model_id, provider_id)
                 return finish_turn("draft_agent", resolved["reply"], agent_draft=draft.model_dump(), created=False)
             if resolved and resolved["decision"] == "job_history":
                 return finish_turn("job_history", resolved["reply"])
@@ -2096,7 +2537,7 @@ async def control_chat(request: ControlChatRequest) -> dict[str, Any]:
                 answer = "No pude resolver la solicitud. Cuéntame qué necesitas encontrar."
         if navigation_view:
             return finish_turn("confirm_navigation", "¿Quieres cambiar de pantalla?", navigation={"view": navigation_view})
-    except ollama.ProviderError as error:
+    except (ollama.ProviderError, registration.RegistrationError, provider_runtime.ProviderRuntimeError) as error:
         raise _provider_http_error(error) from None
     cognitive_trace = await asyncio.to_thread(
         _record_chat_cognition_trace,
@@ -2213,7 +2654,7 @@ async def chat_with_agent(
     response: Response,
 ) -> dict[str, Any]:
     """Chat with one persisted agent; conversation history is loaded from the library."""
-    record = _load_agent(agent_id)
+    record = _load_model_enabled_agent(agent_id)
     if not request.message.strip():
         raise HTTPException(status_code=422, detail={"code": "message_required", "message": "Enter a message."})
     conversation = _owned_conversation(request.conversation_id, "agent", agent_id)
@@ -2401,65 +2842,18 @@ async def dispatch_workflow(workflow_id: str) -> dict[str, Any]:
 
 @app.websocket("/ws/agents/run")
 async def websocket_agent_run(websocket: WebSocket) -> None:
-    """Run one persisted agent task through the server-owned BAGO BER boundary."""
+    """Keep generic legacy execution closed; the fixture profile authenticates separately."""
     if not await _accept_local_websocket(websocket):
         return
-    runner: AgentRunner | None = None
     try:
-        raw = await websocket.receive_text()
-        if len(raw) > MAX_TASK_CHARS + 1_024:
-            raise AgentRunnerError("invalid_message", "The Agent Runner start message exceeds its size limit.")
-        try:
-            message = json.loads(raw)
-        except json.JSONDecodeError:
-            raise AgentRunnerError("invalid_message", "The Agent Runner message must be valid JSON.") from None
-        if not isinstance(message, dict) or set(message) != {"type", "agent_id", "task"} or message.get("type") != "start":
-            raise AgentRunnerError("invalid_message", "Start with type, agent_id, and task fields only.")
-        runner = AgentRunner(
-            load_agent=_load_agent,
-            workspace_root=current_workspace_root,
-            provider_status=ollama.status,
-            provider_chat_turn=ollama.chat_turn,
-            provider_resolver=provider_runtime.resolve,
-            ber_client_factory=BerClient,
-        )
-        result = await asyncio.to_thread(runner.start, agent_id=message["agent_id"], task=message["task"])
-        await websocket.send_json(result)
-        if result.get("type") == "proposal":
-            raw_decision = await websocket.receive_text()
-            if len(raw_decision) > 1_024:
-                raise AgentRunnerError("invalid_decision", "The action decision exceeds its size limit.")
-            try:
-                decision_message = json.loads(raw_decision)
-            except json.JSONDecodeError:
-                raise AgentRunnerError("invalid_decision", "The action decision must be valid JSON.") from None
-            if not isinstance(decision_message, dict) or set(decision_message) != {"type", "proposal_id", "decision"} or decision_message.get("type") != "decision":
-                raise AgentRunnerError("invalid_decision", "Send type, proposal_id, and decision fields only.")
-            connected = getattr(websocket.client_state, "name", "") == "CONNECTED"
-            outcome = await asyncio.to_thread(
-                runner.decide,
-                proposal_id=decision_message["proposal_id"],
-                decision=decision_message["decision"],
-                connected=connected,
-            )
-            await websocket.send_json(outcome)
-    except WebSocketDisconnect:
-        pass
-    except AgentRunnerError as error:
-        try:
-            await websocket.send_json({"type": "error", "code": error.code, "data": error.message})
-        except (RuntimeError, WebSocketDisconnect):
-            pass
-    except Exception:
-        try:
-            await websocket.send_json({"type": "error", "code": "agent_runner_failed", "data": "The Agent Runner could not complete this request. No unverified success is recorded."})
-        except (RuntimeError, WebSocketDisconnect):
-            pass
+        await websocket.send_json({
+            "type": "error", "code": "execution_unavailable", "capability": "agent.run",
+            "status": "UNAVAILABLE", "effect_status": "not_started",
+            "data": "La ejecución genérica permanece cerrada. El perfil de fixture autenticado se gestiona en /api/gex.",
+        })
     finally:
-        if runner is not None:
-            runner.close()
         try:
-            await websocket.close(code=1000)
+            await websocket.close(code=1008)
         except RuntimeError:
             pass
 
@@ -2478,7 +2872,7 @@ async def websocket_agent_chat(websocket: WebSocket) -> None:
         msg = json.loads(await websocket.receive_text())
         if not isinstance(msg, dict) or not isinstance(msg.get("agent_id"), str) or not isinstance(msg.get("message"), str) or not isinstance(msg.get("conversation_id"), str) or not isinstance(msg.get("revision"), int):
             raise ValueError("A valid agent ID, conversation ID, revision, and message are required.")
-        record = _load_agent(msg["agent_id"])
+        record = _load_model_enabled_agent(msg["agent_id"])
         conversation = _owned_conversation(msg["conversation_id"], "agent", record.id)
         if conversation["revision"] != msg["revision"]:
             raise ConversationConflict(msg["conversation_id"])
@@ -2566,6 +2960,12 @@ async def dispatch_workflow(workflow_id: str) -> dict[str, Any]:
 
 
 # ===== Serve React Frontend =====
+
+app.state.gex_trusted_origins = tuple(_cors_origins)
+app.include_router(create_gex_router(load_agent=_load_model_enabled_agent, provider_resolver=provider_runtime.resolve))
+app.include_router(create_connection_router())
+app.include_router(create_task_router(agents_dir=lambda: AGENTS_DIR, load_agent=_load_agent,
+    workspace_root=current_workspace_root, generate=lambda *args: provider_runtime.chat(*args), validate_model=_check_agent_model))
 
 if FRONTEND_BUILD.exists():
     app.mount("/", StaticFiles(directory=str(FRONTEND_BUILD), html=True), name="frontend")

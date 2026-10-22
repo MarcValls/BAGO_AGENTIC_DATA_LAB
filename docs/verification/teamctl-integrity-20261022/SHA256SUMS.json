@@ -1,0 +1,67 @@
+[
+  {
+    "path": "windows-source-manifest.json",
+    "sha256": "231bddb7e5dfbf461ffed716db33526afe61267056b34d746a48deecfdc681d7",
+    "source": ".bago/goals/teamctl-p1-repair-20261022/repair-v2/reviews/integration/FINAL_SOURCE_MANIFEST.json"
+  },
+  {
+    "path": "acceptance-matrix.json",
+    "sha256": "9b7d46b96fcec633961f0fe5d3d660b643b5a46a16d460e47de5e76178037846",
+    "source": ".bago/goals/teamctl-p1-repair-20261022/repair-v2/reviews/integration/ACCEPTANCE_MATRIX_FINAL.json"
+  },
+  {
+    "path": "active-acceptance.json",
+    "sha256": "75b9fc24561af8a64134b3a36f22c41133a1f0f9b7c763a03d477bc1295ac2b7",
+    "source": ".bago/goals/teamctl-p1-repair-20261022/repair-v2/fixtures/integration/b/result.json"
+  },
+  {
+    "path": "independent-result.json",
+    "sha256": "56deb77832386c368dfb7eca45a0a5443c21941edb581401a23e9cbe737cac29",
+    "source": ".bago/goals/teamctl-p1-repair-20261022/repair-v2/reviews/verification/result.json"
+  },
+  {
+    "path": "independent-review.md",
+    "sha256": "858c5ef0302705266f86d899c923614b98b1234eb66a9d76b7928c16b3cc8c3a",
+    "source": ".bago/goals/teamctl-p1-repair-20261022/repair-v2/reviews/verification/REPORT.md"
+  },
+  {
+    "path": "independent-cases.json",
+    "sha256": "6752023f6eed240b9efba075b3ad222fe96c58c5bb11507fd6a8b0a4e77f44e3",
+    "source": ".bago/goals/teamctl-p1-repair-20261022/repair-v2/reviews/verification/independent-cases.json"
+  },
+  {
+    "path": "independent-manifest.json",
+    "sha256": "5d694b41cf7fa04a5e9ef3455c3aadeac41e59942d70eb9ef7ebdc4ff6d36f91",
+    "source": ".bago/goals/teamctl-p1-repair-20261022/repair-v2/reviews/verification/review-manifest.json"
+  },
+  {
+    "path": "full-suite.xml",
+    "sha256": "ba777a288cea251639c0cf2bcf1b1d07ee37f3fb7257f58664ff59135ccdec19",
+    "source": ".bago/goals/teamctl-p1-repair-20261022/repair-v2/reviews/integration/final-gates-2/full-suite.xml"
+  },
+  {
+    "path": "full-suite-counts.json",
+    "sha256": "02c7c0835e2ebef8c115260dc3c4fe6f4d566f4812d92fc496061989625697da",
+    "source": ".bago/goals/teamctl-p1-repair-20261022/repair-v2/reviews/integration/FULL_SUITE_COUNTS.json"
+  },
+  {
+    "path": "final-gates.json",
+    "sha256": "4d56c954573eee0ff924615365a8d5309f2ba506697d20d38c112f803ef43a79",
+    "source": ".bago/goals/teamctl-p1-repair-20261022/repair-v2/reviews/integration/final-gates-2/RESULT.json"
+  },
+  {
+    "path": "mission-closure.json",
+    "sha256": "cc9c86a53b2748bffe206eadb84ffa0513bb547247062b8b3c79c52ed7a1bd2a",
+    "source": ".bago/goals/teamctl-p1-repair-20261022/repair-v2/reviews/integration/MISSION_CLOSURE.json"
+  },
+  {
+    "path": "readme-generate.log",
+    "sha256": "2398812884cc98cc482a12953906b40415a596f88a10e844f98d7d9083cf060c",
+    "source": ".bago/goals/teamctl-p1-repair-20261022/repair-v2/reviews/integration/final-gates-2/readme-generate.stdout.log"
+  },
+  {
+    "path": "readme-check.log",
+    "sha256": "c0089b59e2485c173c413ef7a068861a1477bb9323e584cff0db2367ee19ad3a",
+    "source": ".bago/goals/teamctl-p1-repair-20261022/repair-v2/reviews/integration/final-gates-2/readme-check.stdout.log"
+  }
+]

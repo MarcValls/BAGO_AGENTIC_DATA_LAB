@@ -107,7 +107,10 @@
 .data-layer-heading h2, .settings-layer-header h2 { margin: 0; color: #e4edf7; font-size: .95rem; }
 .data-layer-header .app-kicker, .settings-layer-header .app-kicker { margin-bottom: 2px; }
 .data-layer-layout, .settings-layer-layout { display: grid; min-width: 0; min-height: 0; height: calc(100% - 58px); grid-template-columns: 190px minmax(0, 1fr); }
+.settings-layer-layout { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto minmax(0, 1fr); }
 .data-layer-navigation, .settings-layer-navigation { display: flex; min-height: 0; flex-direction: column; gap: 3px; overflow: auto; padding: 12px 9px; border-right: 1px solid #26364b; background: #101d2d; }
+.settings-layer-navigation { flex-direction: row; align-items: center; gap: 6px; overflow-x: auto; overflow-y: hidden; padding: 8px 14px; border-right: 0; border-bottom: 1px solid #26364b; }
+.settings-layer-navigation .navigation-item { flex: 0 0 auto; min-height: 34px; border-radius: 4px; white-space: nowrap; }
 .data-layer-navigation .navigation-caption, .settings-layer-navigation .navigation-caption { padding: 4px 8px; font-size: .64rem; }
 .data-layer-navigation .navigation-item, .settings-layer-navigation .navigation-item { text-align: left; }
 .settings-provider-summary { display: flex; min-width: 0; flex: 0 0 auto; align-items: center; gap: 9px; margin-top: auto; padding: 12px 8px 2px; border-top: 1px solid #26364b; color: #a7b9cd; font-size: .72rem; }
@@ -174,3 +177,61 @@
   .portfolio-navigation-content { grid-template-columns: 1fr; }
   .history-header .tab-strip-item { padding-inline: 5px; font-size: .68rem; }
 }
+
+/* Shared surface geometry and restrained accents across ADL. */
+.app-shell {
+  --adl-accent-blue: #6b9cc5;
+  --adl-accent-teal: #70b6bc;
+  --adl-accent-violet: #a295c3;
+  --adl-accent-amber: #c0a276;
+}
+
+#root .app-shell :is(
+  section, article, aside, header, nav, form, fieldset, details, summary, dialog, pre,
+  button, select, textarea, input:not([type='radio']):not([type='checkbox']):not([type='range']):not([type='color']),
+  [role='tabpanel'], [role='dialog'],
+  [class*='-panel'], [class*='-card'], [class*='-container'], [class*='__card'],
+  .workspace-settings, .workspace-source, .context-summary > div, .context-paths > li,
+  .wizard-step, .chat-tools-options, .notification, [role='alert'],
+  .window-panel, .data-grid-scroll, .terminal-pane, .control-message, .control-message-content, .message-sources, .chat-composer-input,
+  .auth-choice, .cognition-mode > label, .badge, .metric, .provider-step,
+  .capability-status, .decision-trace__status, .decision-inspector-support,
+  .decision-inspector-page__status, .decision-inspector__content, .decision-inspector__summary,
+  .decision-inspector__summary-grid > div, .decision-inspector__inventory > li, .decision-inspector__empty,
+  .evidence-explorer__claim, .evidence-explorer__empty, .evidence-explorer__missing,
+  .decision-trace__authority, .decision-trace__correlation, .action-review__ladder, .action-review__receipt,
+  .ber-effect-record__file, .ber-effect-record__grid > div, .ber-effect-record__events li,
+  .code-scan-findings > li, .ontology-relations > li
+) { border-radius: 0; }
+
+#root .app-shell .provider-tab::after { border-radius: 0; }
+
+#root .app-shell .agent-task-editor {
+  border-top: 2px solid var(--adl-accent-blue);
+  background: #111f2f;
+}
+#root .app-shell .agent-task-history {
+  border-top: 2px solid var(--adl-accent-violet);
+  background: #161e2d;
+}
+#root .app-shell .agent-task-history h3 { color: #d2c6e9; }
+#root .app-shell .agent-task-dates {
+  border-left-color: var(--adl-accent-amber);
+  background: #1b2530;
+}
+#root .app-shell .agent-task-dates > summary { color: #ddc49e; }
+#root .app-shell .agent-task-date input[type='date'] { border-color: #75674f; }
+#root .app-shell .agent-task-run { background: #0e1927; }
+#root .app-shell .agent-task-run:has(.task-run-answered) { border-left-color: #65ad8b; }
+#root .app-shell .agent-task-run:has(.task-run-failed) { border-left-color: #c07882; }
+#root .app-shell .agent-task-run:has(.task-run-running) { border-left-color: var(--adl-accent-amber); }
+#root .app-shell .agent-tasks .primary-action { border-color: #488f98; background: #245e69; }
+#root .app-shell .agent-tasks .primary-action:hover:not(:disabled) { background: #2c707b; }
+#root .app-shell .agent-tasks-advanced { border-left-color: var(--adl-accent-violet); }
+
+#root .app-shell :is(.workspace-sources, .context-source-grid) > .project-document:nth-child(1) { border-left-color: var(--adl-accent-blue); }
+#root .app-shell :is(.workspace-sources, .context-source-grid) > .project-document:nth-child(2) { border-left-color: var(--adl-accent-violet); }
+#root .app-shell :is(.workspace-sources, .context-source-grid) > .project-document:nth-child(3) { border-left-color: var(--adl-accent-amber); }
+#root .app-shell .external-connections { border-top: 2px solid var(--adl-accent-teal); }
+#root .app-shell .external-connections > header h3 { color: #a5d2d5; }
+#root .app-shell .workspace-sidebar .navigation-item.active { box-shadow: inset 2px 0 var(--adl-accent-blue); }

@@ -1,0 +1,2 @@
+# ADL root requirements.txt already declares this version.
+jsonschema==4.23.0

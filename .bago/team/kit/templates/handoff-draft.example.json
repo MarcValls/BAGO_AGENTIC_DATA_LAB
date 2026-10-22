@@ -1,21 +1,26 @@
 {
-  "changed_files": [
-    "docs/decision-inspector/ux/interaction-model.md"
-  ],
-  "outputs": [
-    {
-      "id": "decision-inspector-ux-contract-v1",
-      "path": "docs/decision-inspector/ux/interaction-model.md",
-      "frozen": true
-    }
-  ],
+  "work_id": "W01",
+  "role": "team-orchestrator",
+  "status": "DONE",
+  "mission_id": "AGENT_DECISION_INSPECTOR_V1",
+  "candidate_id": "0000000000000000000000000000000000000000000000000000000000000000",
+  "scope_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+  "changed_files": [],
+  "outputs": [],
   "verification": [
     {
-      "command": "npm test -- decision-inspector",
+      "id": "acceptance",
+      "command": "[\"python\",\"-m\",\"pytest\"]",
       "result": "PASS",
-      "evidence": "test output or evidence path"
+      "evidence": ".bago/team/runtime/executions/REPLACE/receipt.json",
+      "execution_id": "REPLACE"
     }
   ],
-  "residual_risks": [],
-  "next_consumers": ["W06"]
+  "residual_risks": [
+    "TEMPLATE ONLY: replace identities and verification with actual inspect/run-check values"
+  ],
+  "next_consumers": [
+    "W02"
+  ],
+  "payload_sha256": "722049dc0fa854f1562dd56ba9ef31f36570e1d5629a27368c71701e89789985"
 }

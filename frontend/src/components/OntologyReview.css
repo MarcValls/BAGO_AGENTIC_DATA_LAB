@@ -1,0 +1,22 @@
+.ontology-review { max-width: 900px; margin: 16px auto 22px; padding: clamp(16px, 3vw, 28px); border: 1px solid #344b67; border-radius: 16px; background: #101d2d; color: #e4edf7; }
+.ontology-review header h2 { margin: 0 0 8px; font-size: 1.2rem; }
+.ontology-review header > p:last-child, .ontology-limit { color: #a8bbd0; font-size: .84rem; line-height: 1.55; }
+.ontology-review form { display: grid; gap: 12px; margin-top: 16px; }
+.ontology-review label { display: grid; gap: 6px; color: #c9d8e8; font-size: .8rem; font-weight: 650; }
+.ontology-review input:not([type=checkbox]), .ontology-review textarea { width: 100%; padding: 10px 11px; border: 1px solid #3a506b; border-radius: 8px; background: #0b1522; color: #e4edf7; font: inherit; }
+.ontology-review button { justify-self: start; padding: 9px 13px; border: 1px solid #526a86; border-radius: 8px; background: #1c3856; color: #eef6ff; cursor: pointer; }
+.ontology-review button:disabled { cursor: not-allowed; opacity: .55; }
+.ontology-limit { margin: 14px 0; padding: 11px 13px; border-left: 3px solid #c79d50; background: #1a2634; }
+.ontology-card, .ontology-accepted { margin-top: 16px; padding: 15px; border: 1px solid #314761; border-radius: 12px; background: #0d1826; }
+.ontology-card h3, .ontology-card h4 { margin: 0 0 9px; }
+.ontology-card dl { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 9px 18px; }
+.ontology-card dt { color: #8ea6bf; font-size: .72rem; }
+.ontology-card dd { margin: 3px 0 0; overflow-wrap: anywhere; }
+.ontology-relations { display: grid; gap: 10px; padding: 0; list-style: none; }
+.ontology-relations > li { padding: 12px; border: 1px solid #2e4258; border-radius: 8px; background: #111f30; }
+.ontology-relations label { display: flex; align-items: center; gap: 8px; }
+.ontology-relations p { margin: 9px 0 0; line-height: 1.5; overflow-wrap: anywhere; }
+.ontology-review pre { max-height: 260px; overflow: auto; white-space: pre-wrap; overflow-wrap: anywhere; color: #d8e6f5; font-size: .76rem; }
+.ontology-query { margin-top: 22px; padding-top: 16px; border-top: 1px solid #344b67; }
+.ontology-review [role=alert] { color: #ffd2d2; border: 1px solid #804b52; background: #351c24; padding: 10px; }
+@media (max-width: 640px) { .ontology-card dl { grid-template-columns: 1fr; } }

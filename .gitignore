@@ -25,3 +25,19 @@ ADL_CORE_001_IMPLEMENTATION_AND_CRIT_20261015.zip
 ADL_ACTUALIZACION_SKILLS_20261014.zip
 excluded/bago-app-game-development/
 .worktrees/
+
+# Local execution state, dependency copies and preserved candidates.
+# Reviewed portable evidence is exported under docs/verification/.
+/output/
+/.bago/goals/
+/.bago/runtime/
+/.bago/traces/
+/.bago/team/runtime/
+/agents/created/
+/codex-session-*.md
+/BAGO5_ADL_MCP_*/
+/BAGO5_ADL_MCP_LOCAL_*.zip
+/Users*BAGO5_ADLoutput*/
+/Users*BAGO5_ADL.bagogoals*full-suite.xml
+/frontend/.publication-candidate*/
+/frontend/.publication-scope*/

@@ -1,0 +1,116 @@
+[
+  {
+    "id": "A01",
+    "requirement": "Entrega válida aceptada y consumida",
+    "result": "PASS",
+    "cases": [
+      "valid_accepted_consumed_wrapper_restart"
+    ],
+    "evidence": "fixtures/integration/b/result.json",
+    "candidate_id": "0f74f0d818f422d2a9506957e6396070300bbb77d88c602605b4fa647e7cc774"
+  },
+  {
+    "id": "A02",
+    "requirement": "Salida inexistente rechazada",
+    "result": "PASS",
+    "cases": [
+      "schema_scope_identity_receipt_negatives"
+    ],
+    "evidence": "fixtures/integration/b/result.json",
+    "candidate_id": "0f74f0d818f422d2a9506957e6396070300bbb77d88c602605b4fa647e7cc774"
+  },
+  {
+    "id": "A03",
+    "requirement": "Salida modificada o eliminada invalida entrega",
+    "result": "PASS",
+    "cases": [
+      "modified_output_blocks_consumer_and_recovers",
+      "deleted_output_blocks_consumer_and_recovers"
+    ],
+    "evidence": "fixtures/integration/b/result.json",
+    "candidate_id": "0f74f0d818f422d2a9506957e6396070300bbb77d88c602605b4fa647e7cc774"
+  },
+  {
+    "id": "A04",
+    "requirement": "Hash incorrecto rechazado",
+    "result": "PASS",
+    "cases": [
+      "schema_scope_identity_receipt_negatives"
+    ],
+    "evidence": "fixtures/integration/b/result.json",
+    "candidate_id": "0f74f0d818f422d2a9506957e6396070300bbb77d88c602605b4fa647e7cc774"
+  },
+  {
+    "id": "A05",
+    "requirement": "Ruta fuera del alcance rechazada",
+    "result": "PASS",
+    "cases": [
+      "schema_scope_identity_receipt_negatives"
+    ],
+    "evidence": "fixtures/integration/b/result.json",
+    "candidate_id": "0f74f0d818f422d2a9506957e6396070300bbb77d88c602605b4fa647e7cc774"
+  },
+  {
+    "id": "A06",
+    "requirement": "PASS incompleto rechazado",
+    "result": "PASS",
+    "cases": [
+      "schema_scope_identity_receipt_negatives"
+    ],
+    "evidence": "fixtures/integration/b/result.json",
+    "candidate_id": "0f74f0d818f422d2a9506957e6396070300bbb77d88c602605b4fa647e7cc774"
+  },
+  {
+    "id": "A07",
+    "requirement": "Otra misión/candidata rechazada",
+    "result": "PASS",
+    "cases": [
+      "schema_scope_identity_receipt_negatives",
+      "foreign_receipt_rejected"
+    ],
+    "evidence": "fixtures/integration/b/result.json",
+    "candidate_id": "0f74f0d818f422d2a9506957e6396070300bbb77d88c602605b4fa647e7cc774"
+  },
+  {
+    "id": "A08",
+    "requirement": "NOT_RUN no satisface ejecución obligatoria",
+    "result": "PASS",
+    "cases": [
+      "schema_scope_identity_receipt_negatives"
+    ],
+    "evidence": "fixtures/integration/b/result.json",
+    "candidate_id": "0f74f0d818f422d2a9506957e6396070300bbb77d88c602605b4fa647e7cc774"
+  },
+  {
+    "id": "A09",
+    "requirement": "Comando sin recibo insuficiente",
+    "result": "PASS",
+    "cases": [
+      "schema_scope_identity_receipt_negatives"
+    ],
+    "evidence": "fixtures/integration/b/result.json",
+    "candidate_id": "0f74f0d818f422d2a9506957e6396070300bbb77d88c602605b4fa647e7cc774"
+  },
+  {
+    "id": "A10",
+    "requirement": "Consumidor bloqueado por dependencia inválida",
+    "result": "PASS",
+    "cases": [
+      "modified_output_blocks_consumer_and_recovers",
+      "claimed_consumer_rechecks_dependency"
+    ],
+    "evidence": "fixtures/integration/b/result.json",
+    "candidate_id": "0f74f0d818f422d2a9506957e6396070300bbb77d88c602605b4fa647e7cc774"
+  },
+  {
+    "id": "A11",
+    "requirement": "Reinicio vuelve a comprobar integridad",
+    "result": "PASS",
+    "cases": [
+      "deleted_output_blocks_consumer_and_recovers",
+      "valid_accepted_consumed_wrapper_restart"
+    ],
+    "evidence": "fixtures/integration/b/result.json",
+    "candidate_id": "0f74f0d818f422d2a9506957e6396070300bbb77d88c602605b4fa647e7cc774"
+  }
+]

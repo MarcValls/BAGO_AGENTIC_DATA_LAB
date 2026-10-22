@@ -372,15 +372,18 @@
     {
       "id": "GEX-029",
       "area": "recovery",
-      "invariant": "Nonidempotent external effect is not retried blindly",
-      "scenario": "network timeout after external CREATE",
+      "invariant": "External CREATE is unavailable under the immutable-fixture READ-only v1 profile; no dispatch may occur.",
+      "scenario": "model proposes external CREATE and the profile denies it before any network dispatch",
       "expected": {
-        "decision": "RECONCILE",
-        "max_effect_dispatches": 1,
-        "receipt": "UNKNOWN",
-        "state": "RECONCILIATION_REQUIRED"
+        "availability": "UNAVAILABLE",
+        "decision": "DENY",
+        "reason": "CAPABILITY_UNAVAILABLE_READ_ONLY_PROFILE",
+        "max_effect_dispatches": 0,
+        "receipt": "DENIED",
+        "state": "DENIED"
       },
-      "execution_status": "SPEC_ONLY"
+      "execution_status": "SPEC_ONLY",
+      "effect": "CREATE"
     },
     {
       "id": "GEX-030",
@@ -466,25 +469,30 @@
       "invariant": "Narrow registered local READ may be dispatched once",
       "scenario": "authenticated principal, explicit policy ALLOW, supported typed read, durable intent",
       "expected": {
-        "decision": "ALLOW",
+        "decision": "EXECUTOR_SUCCESS_UNVERIFIED",
         "max_effect_dispatches": 1,
         "receipt": "SUCCESS",
-        "state": "SUCCEEDED"
+        "state": "SUCCEEDED",
+        "execution_state": "SUCCEEDED",
+        "verification_state": "PENDING"
       },
       "execution_status": "SPEC_ONLY"
     },
     {
       "id": "GEX-037",
       "area": "positive",
-      "invariant": "Approved local WRITE may be dispatched once",
-      "scenario": "approved exact fingerprint, valid permit, supported bounded write and durable intent",
+      "invariant": "Mutating local WRITE is unavailable under the immutable-fixture READ-only v1 profile.",
+      "scenario": "authenticated principal and human approval are present, but capability is local WRITE under the v1 immutable fixture profile",
       "expected": {
-        "decision": "ALLOW",
-        "max_effect_dispatches": 1,
-        "receipt": "SUCCESS",
-        "state": "SUCCEEDED"
+        "availability": "UNAVAILABLE",
+        "decision": "DENY",
+        "reason": "CAPABILITY_UNAVAILABLE_READ_ONLY_PROFILE",
+        "max_effect_dispatches": 0,
+        "receipt": "DENIED",
+        "state": "DENIED"
       },
-      "execution_status": "SPEC_ONLY"
+      "execution_status": "SPEC_ONLY",
+      "effect": "WRITE"
     },
     {
       "id": "GEX-038",
@@ -502,12 +510,12 @@
     {
       "id": "GEX-039",
       "area": "evidence",
-      "invariant": "Trace is not substitute for receipt",
+      "invariant": "Missing persisted terminal receipt does not prove no effect; after dispatch intent, the outcome is unknown and requires reconciliation.",
       "scenario": "Jaeger shows span but transactional receipt missing",
       "expected": {
-        "decision": "DENY_SUCCESS",
+        "decision": "UNVERIFIED",
         "max_effect_dispatches": 1,
-        "receipt": "UNKNOWN",
+        "receipt": "MISSING_NOT_EVIDENCE_OF_NO_EFFECT",
         "state": "RECONCILIATION_REQUIRED"
       },
       "execution_status": "SPEC_ONLY"
@@ -548,7 +556,8 @@
         "signature_algorithm": "HMAC-SHA256",
         "signature": "7aac2531a13968f29e2333dd56e98780f139942f5ba4be3e54d75818fa6ec196",
         "decision_id": "decision-fixture-001"
-      }
+      },
+      "profile": "TEST_ONLY_HMAC"
     },
     {
       "contract_type": "PermitV1",
@@ -590,7 +599,296 @@
           "approval_id": "approval-fixture-001",
           "auto_rule_id": null
         }
-      }
+      },
+      "profile": "TEST_ONLY_HMAC"
     }
-  ]
+  ],
+  "verification_vectors": [
+    {
+      "id": "GEX-VFY-001",
+      "scenario": "receipt request_digest differs from expected request",
+      "expected": "INCONCLUSIVE"
+    },
+    {
+      "id": "GEX-VFY-002",
+      "scenario": "receipt attempt_id differs from expected attempt",
+      "expected": "INCONCLUSIVE"
+    },
+    {
+      "id": "GEX-VFY-003",
+      "scenario": "verification result references a different receipt id or digest",
+      "expected": "INCONCLUSIVE"
+    },
+    {
+      "id": "GEX-VFY-004",
+      "scenario": "verifier identity is not an independently registered verifier",
+      "expected": "INCONCLUSIVE"
+    },
+    {
+      "id": "GEX-VFY-005",
+      "scenario": "PermitV1 signature checked with wrong Ed25519 public key",
+      "expected": "DENY"
+    },
+    {
+      "id": "GEX-VFY-006",
+      "scenario": "one signed PermitV1 claim is tampered after signing",
+      "expected": "DENY"
+    },
+    {
+      "id": "GEX-VFY-007",
+      "scenario": "test-only HMAC PermitV1 presented to production verifier",
+      "expected": "DENY"
+    },
+    {
+      "id": "GEX-VFY-008",
+      "scenario": "VERIFIED_SUCCESS has null postcondition_digest",
+      "expected": "SCHEMA_REJECT"
+    },
+    {
+      "id": "GEX-VFY-009",
+      "scenario": "VERIFIED_SUCCESS has empty evidence_refs",
+      "expected": "SCHEMA_REJECT"
+    },
+    {
+      "id": "GEX-VFY-010",
+      "scenario": "VERIFICATION_RESULT_PERSISTED has null verification_result_id",
+      "expected": "SCHEMA_REJECT"
+    },
+    {
+      "id": "GEX-VFY-011",
+      "scenario": "VERIFICATION_RESULT_PERSISTED omits request_digest, attempt_id, or boundary_receipt_id binding",
+      "expected": "SCHEMA_REJECT"
+    }
+  ],
+  "jcs_golden_vectors": [
+    {
+      "id": "JCS-RFC8785-SECTION-3-SAMPLE",
+      "source": "RFC 8785 section 3.2.2/3.2.3/3.2.4",
+      "input": {
+        "numbers": [
+          333333333.3333333,
+          1e+30,
+          4.5,
+          0.002,
+          1e-27
+        ],
+        "string": "€$\u000f\nA'B\"\\\\\"/",
+        "literals": [
+          null,
+          true,
+          false
+        ]
+      },
+      "canonical_text": "{\"literals\":[null,true,false],\"numbers\":[333333333.3333333,1e+30,4.5,0.002,1e-27],\"string\":\"€$\\u000f\\nA'B\\\"\\\\\\\\\\\"/\"}",
+      "canonical_utf8_hex": "7b226c69746572616c73223a5b6e756c6c2c747275652c66616c73655d2c226e756d62657273223a5b3333333333333333332e333333333333332c31652b33302c342e352c302e3030322c31652d32375d2c22737472696e67223a22e282ac245c75303030665c6e4127425c225c5c5c5c5c222f227d",
+      "sha256": "2d5e01a318d0f0879ab568c4be289c8b1f64ef8921a53c6277d5e069978baacb"
+    },
+    {
+      "id": "JCS-RFC8785-UTF16-PROPERTY-ORDER",
+      "source": "RFC 8785 section 3.2.3",
+      "input": {
+        "€": "Euro Sign",
+        "\r": "Carriage Return",
+        "דּ": "Hebrew Letter Dalet With Dagesh",
+        "1": "One",
+        "😀": "Emoji: Grinning Face",
+        "": "Control",
+        "ö": "Latin Small Letter O With Diaeresis"
+      },
+      "expected_value_order": [
+        "Carriage Return",
+        "One",
+        "Control",
+        "Latin Small Letter O With Diaeresis",
+        "Euro Sign",
+        "Emoji: Grinning Face",
+        "Hebrew Letter Dalet With Dagesh"
+      ],
+      "canonical_text": "{\"\\r\":\"Carriage Return\",\"1\":\"One\",\"\":\"Control\",\"ö\":\"Latin Small Letter O With Diaeresis\",\"€\":\"Euro Sign\",\"😀\":\"Emoji: Grinning Face\",\"דּ\":\"Hebrew Letter Dalet With Dagesh\"}",
+      "canonical_utf8_hex": "7b225c72223a2243617272696167652052657475726e222c2231223a224f6e65222c22c280223a22436f6e74726f6c222c22c3b6223a224c6174696e20536d616c6c204c6574746572204f205769746820446961657265736973222c22e282ac223a224575726f205369676e222c22f09f9880223a22456d6f6a693a204772696e6e696e672046616365222c22efacb3223a22486562726577204c65747465722044616c6574205769746820446167657368227d",
+      "sha256": "5e321556d22018a9656991a9e94f77ec175fa193e52a2429d312f8419ec8b08c"
+    },
+    {
+      "id": "JCS-RFC8785-APPENDIX-B-NUMBERS",
+      "source": "RFC 8785 Appendix B",
+      "numbers": [
+        {
+          "ieee754_hex": "0000000000000000",
+          "value": 0,
+          "canonical": "0",
+          "canonical_utf8_hex": "30",
+          "sha256": "5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9"
+        },
+        {
+          "ieee754_hex": "8000000000000000",
+          "value": -0.0,
+          "canonical": "0",
+          "canonical_utf8_hex": "30",
+          "sha256": "5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9"
+        },
+        {
+          "ieee754_hex": "0000000000000001",
+          "value": 5e-324,
+          "canonical": "5e-324",
+          "canonical_utf8_hex": "35652d333234",
+          "sha256": "c46e7ca1be4c8734f373a56530787288fa2058d73d07855e9247e949f811a42a"
+        },
+        {
+          "ieee754_hex": "8000000000000001",
+          "value": -5e-324,
+          "canonical": "-5e-324",
+          "canonical_utf8_hex": "2d35652d333234",
+          "sha256": "046f4049d09944fcb2efbf2ddb0ea8f05e0204591d6d02c9106efc88190fa7f9"
+        },
+        {
+          "ieee754_hex": "7fefffffffffffff",
+          "value": 1.7976931348623157e+308,
+          "canonical": "1.7976931348623157e+308",
+          "canonical_utf8_hex": "312e37393736393331333438363233313537652b333038",
+          "sha256": "c2784e1abd6317452708f3fbf9641c16b959561bc621a1d408c23a20aa2cb585"
+        },
+        {
+          "ieee754_hex": "44b52d02c7e14af5",
+          "value": 9.999999999999997e+22,
+          "canonical": "9.999999999999997e+22",
+          "canonical_utf8_hex": "392e393939393939393939393939393937652b3232",
+          "sha256": "143eadc1fc2fe10a563df313c717399d1835652d710fa189119ff2e1d5cde33d"
+        },
+        {
+          "ieee754_hex": "44b52d02c7e14af6",
+          "value": 1e+23,
+          "canonical": "1e+23",
+          "canonical_utf8_hex": "31652b3233",
+          "sha256": "0b1af6b73e932475817f8eb620deecf21ad7570df3400a23db5c79a9001597f7"
+        },
+        {
+          "ieee754_hex": "44b52d02c7e14af7",
+          "value": 1.0000000000000001e+23,
+          "canonical": "1.0000000000000001e+23",
+          "canonical_utf8_hex": "312e30303030303030303030303030303031652b3233",
+          "sha256": "de7cb5db5ee06bf7ef5b74ebcf94cd9d7efda28125905f7ff590724953173c7b"
+        },
+        {
+          "ieee754_hex": "444b1ae4d6e2ef50",
+          "value": 1e+21,
+          "canonical": "1e+21",
+          "canonical_utf8_hex": "31652b3231",
+          "sha256": "241c4643fa70b1dcde1205b71be4e3bebb17e9f880c8e1a33d0ead6c27271d3c"
+        },
+        {
+          "ieee754_hex": "3eb0c6f7a0b5ed8c",
+          "value": 9.999999999999997e-07,
+          "canonical": "9.999999999999997e-7",
+          "canonical_utf8_hex": "392e393939393939393939393939393937652d37",
+          "sha256": "2ace34b29d30d300aeacd4f2bb83367fa186f11a3f02ed461f35f00fd741a242"
+        },
+        {
+          "ieee754_hex": "3eb0c6f7a0b5ed8d",
+          "value": 1e-06,
+          "canonical": "0.000001",
+          "canonical_utf8_hex": "302e303030303031",
+          "sha256": "159fb29a827ad04b260aa6c8ab6d8637f8f2b38af5c4f3cb49d6a21205e040f8"
+        },
+        {
+          "ieee754_hex": "43143ff3c1cb0959",
+          "value": 1424953923781206.2,
+          "canonical": "1424953923781206.2",
+          "canonical_utf8_hex": "313432343935333932333738313230362e32",
+          "sha256": "e1547479d27f057e3197d49417a1dcbe19dd8781b34fa9f83b789925943d00cb"
+        },
+        {
+          "ieee754_hex": "ffefffffffffffff",
+          "value": -1.7976931348623157e+308,
+          "canonical": "-1.7976931348623157e+308",
+          "canonical_utf8_hex": "2d312e37393736393331333438363233313537652b333038",
+          "sha256": "f0347276b171ff0c36491c912285a2833de7313d1a103a4b1be0274bfe7c021f"
+        },
+        {
+          "ieee754_hex": "4340000000000000",
+          "value": 9007199254740992,
+          "canonical": "9007199254740992",
+          "canonical_utf8_hex": "39303037313939323534373430393932",
+          "sha256": "c681da39d7273a6a24c15c9cac3a75526ff2ecf8ba4ee60346a0c70c8163bdb2"
+        },
+        {
+          "ieee754_hex": "c340000000000000",
+          "value": -9007199254740992,
+          "canonical": "-9007199254740992",
+          "canonical_utf8_hex": "2d39303037313939323534373430393932",
+          "sha256": "83e109bfd7fb4984b47a46f363627c18dbbd7e57e36b05a04cd162d304df72e9"
+        },
+        {
+          "ieee754_hex": "4430000000000000",
+          "value": 295147905179352830000,
+          "canonical": "295147905179352830000",
+          "canonical_utf8_hex": "323935313437393035313739333532383330303030",
+          "sha256": "7933ef1b34c194c7a327ef424e54282dd2872bc7bda27812f9edf7882ca340c0"
+        },
+        {
+          "ieee754_hex": "444b1ae4d6e2ef4e",
+          "value": 999999999999999700000,
+          "canonical": "999999999999999700000",
+          "canonical_utf8_hex": "393939393939393939393939393939373030303030",
+          "sha256": "dcabf7269f6bb6ec5ba8b9530825cd7ffe215d4dd26e0a237f9d753513792c07"
+        },
+        {
+          "ieee754_hex": "444b1ae4d6e2ef4f",
+          "value": 999999999999999900000,
+          "canonical": "999999999999999900000",
+          "canonical_utf8_hex": "393939393939393939393939393939393030303030",
+          "sha256": "914b4f8b4bbe2f6e7c36ad7791fc842a7516d149e694b3a71b78cee465ff6d7a"
+        },
+        {
+          "ieee754_hex": "41b3de4355555553",
+          "value": 333333333.3333332,
+          "canonical": "333333333.3333332",
+          "canonical_utf8_hex": "3333333333333333332e33333333333332",
+          "sha256": "0fdb7bafaf219ccaf278cd0c0a580473db01c774a0baafe72a07d01230ac5c6d"
+        },
+        {
+          "ieee754_hex": "41b3de4355555554",
+          "value": 333333333.33333325,
+          "canonical": "333333333.33333325",
+          "canonical_utf8_hex": "3333333333333333332e3333333333333235",
+          "sha256": "bcbe1777b7d3c91c19c7f90100c595a9b3f1d9b395567da4258baf7ac655d403"
+        },
+        {
+          "ieee754_hex": "41b3de4355555556",
+          "value": 333333333.3333334,
+          "canonical": "333333333.3333334",
+          "canonical_utf8_hex": "3333333333333333332e33333333333334",
+          "sha256": "1e099031ca0cb3cf4054688f7e2e8c95fc72828de5fa7605ce3f729e6cf79d43"
+        },
+        {
+          "ieee754_hex": "41b3de4355555557",
+          "value": 333333333.33333343,
+          "canonical": "333333333.33333343",
+          "canonical_utf8_hex": "3333333333333333332e3333333333333433",
+          "sha256": "cf68ab5e198a77538aafd967fb122a305ba1df95c9348b1fe3dff453c7f7215f"
+        },
+        {
+          "ieee754_hex": "becbf647612f3696",
+          "value": -3.3333333333333333e-06,
+          "canonical": "-0.0000033333333333333333",
+          "canonical_utf8_hex": "2d302e30303030303333333333333333333333333333333333",
+          "sha256": "4e703d4e0928e4f339d03e1fb5454ddc33db657ad735b02530d98123b4fd4b61"
+        },
+        {
+          "ieee754_hex": "41b3de4355555555",
+          "value": 333333333.3333333,
+          "canonical": "333333333.3333333",
+          "canonical_utf8_hex": "3333333333333333332e33333333333333",
+          "sha256": "6bd9be1c141028789cc35db62f1b43e80d5d4ee24d6d542e775deb16799ff4c7"
+        }
+      ]
+    }
+  ],
+  "ed25519_test_fixture": {
+    "profile": "TEST_ONLY_KNOWN_ANSWER_VECTOR_RFC8032_KEY",
+    "contract_type": "PermitV1",
+    "public_key_spki_der_hex": "302a300506032b6570032100d75a980182b10ab7d54bfed3c964073a0ee172f3daa62325af021a68f707511a",
+    "message_hex": "41444c3a4745583a5045524d49543a76310a7b22636c61696d223a22746573742d6f6e6c792066697874757265227d",
+    "signature_base64url": "aDDuOowdk8K02rL3WG0WRIuwrEq-rCZVV9jtYd3IeHbJtEvubHFVmjVOD59oIEekJkXYBZKMJmsIDp9Rz_ogDg",
+    "wrong_public_key_spki_der_hex": "302a300506032b65700321008a88e3dd7409f195fd52db2d3cba5d72ca6709bf1d94121bf3748801b40f6f5c"
+  }
 }

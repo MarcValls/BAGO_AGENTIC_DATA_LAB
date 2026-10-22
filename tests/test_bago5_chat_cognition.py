@@ -49,7 +49,10 @@ def test_app_chat_applies_and_persists_bago5_context_and_focus_trace(monkeypatch
     conversation = store.create("assistant", "app-assistant")
     monkeypatch.setattr(server, "CONVERSATIONS", store)
     monkeypatch.setattr(server, "AGENT_CHAT_TRACE_DIR", tmp_path / "traces")
-    monkeypatch.setattr(server, "_selected_model_id", lambda: "test-model")
+    monkeypatch.setattr(server.provider_runtime, "active_selection", lambda: {
+        "provider_id": "ollama-cloud", "model_id": "test-model",
+        "label": "Fixture Ollama", "state": "configured_unverified",
+    })
     calls = []
     def fake_chat_turn(model, messages, *, tools, options=None):
         calls.append((model, messages, tools, options))

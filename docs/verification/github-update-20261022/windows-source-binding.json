@@ -1,0 +1,714 @@
+{
+  "status": "PASS",
+  "files": [
+    {
+      "path": ".bago/canon/ARCHITECTURE.md",
+      "sha256": "4a7e700cffac20473822a3803da4fac73b52db2fc92a4044567ba0ddaf56beda"
+    },
+    {
+      "path": ".bago/team/kit/missions/agent-decision-inspector.json",
+      "sha256": "0de61ee35df2eacc215a45ab9c9cdb90ea4767a5de2f553e6bb23e9131e12be2"
+    },
+    {
+      "path": ".bago/team/kit/protocol/COMMUNICATION.md",
+      "sha256": "a02d685b5b683db1d505662f53e0ea50738904c273d18edc47b08f8f26bc8d09"
+    },
+    {
+      "path": ".bago/team/kit/protocol/TEAM_PROTOCOL.md",
+      "sha256": "26508c678346577b26b0e98d5019c0fd096bde350189f99f2a016878759ba022"
+    },
+    {
+      "path": ".bago/team/kit/protocol/handoff.schema.json",
+      "sha256": "8e75c14a1479ceeffd75c0db5d49a2d8069feed999954b32c380648849408cea"
+    },
+    {
+      "path": ".bago/team/kit/protocol/work_item.schema.json",
+      "sha256": "09bc87f8219308c70074f29728494642c11dac15ea7e6ccf3cb9dd0d73c84328"
+    },
+    {
+      "path": ".bago/team/kit/scripts/teamctl.py",
+      "sha256": "17ace00bb34b0b74aedb30251830ba4136fd4a9b234adff1b40d542ad7d51652"
+    },
+    {
+      "path": ".bago/team/kit/templates/handoff-draft.example.json",
+      "sha256": "ad18dfd95c9e55bf580d9f98c39c9bcbcc9cb37c3e4d93dce4fc5975281af925"
+    },
+    {
+      "path": ".github/workflows/ci.yml",
+      "sha256": "e60070f4b119ebb6cfcefd7aebd6075dee81a3575d86f4c56a53d11f2bc71d44"
+    },
+    {
+      "path": "docs/governed-execution/GEX_V1_CONFORMANCE_VECTORS.json",
+      "sha256": "b72484c1284d7e9e6edd734320b975e9e55941544768b9e428791ff92727d8f6"
+    },
+    {
+      "path": "docs/governed-execution/GEX_V1_NORMATIVE_CONTRACT.md",
+      "sha256": "208702196b234c473678b2041b12b15942a4f774d238f2e42d14b8c6f5dc08a3"
+    },
+    {
+      "path": "docs/governed-execution/GEX_V1_SCHEMA.json",
+      "sha256": "1059ceb9f13fb7452cabe46a4736c886680cd47ab16ce15ec7410ec59e781027"
+    },
+    {
+      "path": "docs/governed-execution/GEX_V1_STATE_MACHINE.json",
+      "sha256": "afbd0eef32ab18fdc2cb2999f98c0f683628bbb92ff139a65f2309a0343eb7c1"
+    },
+    {
+      "path": "docs/governed-execution/verification/test_gex_contract_consistency.py",
+      "sha256": "27e5cd2ab34c29510e6c598aab6bd0ca050574e90510757c5d4221ab849edd34"
+    },
+    {
+      "path": "docs/public_e2e_demo.md",
+      "sha256": "4c6c573ee314b4cc43ab14778de8888db759db268f044f8658e8ead8af142d17"
+    },
+    {
+      "path": "docs/readme_manifest.json",
+      "sha256": "b8c47aebe7dc1ce384a4aeea9ccd0a1d723d71c2e30a17324e4dd6c5fcbbe24e"
+    },
+    {
+      "path": "frontend/src/App.css",
+      "sha256": "e3e1fd972440dea617c3dbb1060494c07131f79473af5acba2d9c19f1a2fd040"
+    },
+    {
+      "path": "frontend/src/App.tsx",
+      "sha256": "69d94ddce1ef34b314be1d2671e77d3774f9bbe960d18b8dfa429f78ce0c4f2e"
+    },
+    {
+      "path": "frontend/src/components/AgentBuilder.tsx",
+      "sha256": "5fb4c5b194a1297b0e1cc0dda53fcdd9134c7c8f5c0dd0eaf7665ee7519be662"
+    },
+    {
+      "path": "frontend/src/components/AgentChat.css",
+      "sha256": "886ca201da1324af0e40e2e9834a35987c870976c0e0db97b03a6c6b3bcadc63"
+    },
+    {
+      "path": "frontend/src/components/AgentChat.tsx",
+      "sha256": "97f96f98c270178f56a5f5abf21683c0c11f94b42cd52055f20935f5d9525591"
+    },
+    {
+      "path": "frontend/src/components/AgentEvaluationLab.css",
+      "sha256": "1eb5ce2e8e5ee71ae0cc3957aad2af730fc53283a401da3fb9e8e183a875b061"
+    },
+    {
+      "path": "frontend/src/components/AgentEvaluationLab.tsx",
+      "sha256": "e2b2f7a0ba7230793e11a52555419e931ba3a6e3e3f9d7e9a4002f97da702f29"
+    },
+    {
+      "path": "frontend/src/components/CapabilityManager.css",
+      "sha256": "dccd5eae67e4c311bfa172752f94e6a2c9955c52284c7e66f52ea70f145cf807"
+    },
+    {
+      "path": "frontend/src/components/CapabilityManager.tsx",
+      "sha256": "f2fa02911083637c62e4f9d929aa994aee5771c56b50190947ca692252f9fb56"
+    },
+    {
+      "path": "frontend/src/components/CognitionSettings.css",
+      "sha256": "1ceade149fe0d4f04c11ca1bf6bd6c0c270a84346945e31836f6d97c98cef654"
+    },
+    {
+      "path": "frontend/src/components/CognitionSettings.tsx",
+      "sha256": "f2527a7e43c477fc56233a7fdd930837e7af3f202871f9c78b05826b2e8a6316"
+    },
+    {
+      "path": "frontend/src/components/ProviderSettings.css",
+      "sha256": "6be03b2e26abfc98e5464096798e84a9df87890d04f7c7bff0291e3244a7691e"
+    },
+    {
+      "path": "frontend/src/components/ProviderSettings.tsx",
+      "sha256": "679f91e70e70ee6a074137b7a1aed9e09837b8d08efbdcb7f544611485ce4827"
+    },
+    {
+      "path": "frontend/tests/providers/provider-settings.test.tsx",
+      "sha256": "308f3d8541a301d2d80803f4044b040a142578340020a03ab1fd068412542806"
+    },
+    {
+      "path": "frontend/tests/ui/agent-evaluation-lab/agent-evaluation-lab-render.test.tsx",
+      "sha256": "1cd0f30f4c9f70e69d5be4ae7ec21c0df7b7f564e4d192c671c9ee1910d68099"
+    },
+    {
+      "path": "frontend/tests/ui/agent-evaluation-lab/agent-evaluation-lab.test.mjs",
+      "sha256": "5eb2ed2040b467aab55f85a4d069422d9fc1139ac96953bcec32059e81366fa8"
+    },
+    {
+      "path": "frontend/tests/ui/agent-evaluation-lab/rendered.test.mjs",
+      "sha256": "577e23e9e2bd755da95b90cceaf4cb71985ea632c5b0271250c8121d54e73572"
+    },
+    {
+      "path": "frontend/tests/ui/chat-shell/chat-navigation.test.mjs",
+      "sha256": "529b061efab3df1622b54bba9573cbfddfe28384b70a216911ef923af6835447"
+    },
+    {
+      "path": "plugins/bago-agent-decision-engineering-team/missions/agent-decision-inspector.json",
+      "sha256": "0de61ee35df2eacc215a45ab9c9cdb90ea4767a5de2f553e6bb23e9131e12be2"
+    },
+    {
+      "path": "plugins/bago-agent-decision-engineering-team/protocol/COMMUNICATION.md",
+      "sha256": "a02d685b5b683db1d505662f53e0ea50738904c273d18edc47b08f8f26bc8d09"
+    },
+    {
+      "path": "plugins/bago-agent-decision-engineering-team/protocol/TEAM_PROTOCOL.md",
+      "sha256": "26508c678346577b26b0e98d5019c0fd096bde350189f99f2a016878759ba022"
+    },
+    {
+      "path": "plugins/bago-agent-decision-engineering-team/protocol/handoff.schema.json",
+      "sha256": "8e75c14a1479ceeffd75c0db5d49a2d8069feed999954b32c380648849408cea"
+    },
+    {
+      "path": "plugins/bago-agent-decision-engineering-team/protocol/work_item.schema.json",
+      "sha256": "09bc87f8219308c70074f29728494642c11dac15ea7e6ccf3cb9dd0d73c84328"
+    },
+    {
+      "path": "plugins/bago-agent-decision-engineering-team/templates/handoff-draft.example.json",
+      "sha256": "ad18dfd95c9e55bf580d9f98c39c9bcbcc9cb37c3e4d93dce4fc5975281af925"
+    },
+    {
+      "path": "requirements.txt",
+      "sha256": "593e88cba3e110f325a4740ab98fdbec88915a88a70be61eaba39d223dfdc156"
+    },
+    {
+      "path": "src/api/server.py",
+      "sha256": "dd46ec63245499bcdc0b4a85038e047917f2c70c7d2964ed7759a911c74e5103"
+    },
+    {
+      "path": "src/capabilities/manager.py",
+      "sha256": "8a585fbc44170c60c767a37eafa49d362bb703e146d0272efdcad0bf1e2df93a"
+    },
+    {
+      "path": "src/providers/codex.py",
+      "sha256": "9748e5824d4a3500f0172548507990f49ca393cfb15a699c4ecc146c40b8861f"
+    },
+    {
+      "path": "src/providers/github_copilot.py",
+      "sha256": "5757a40ba543813398da509bd1a733be40ce199760b0e4281172f22af06f60f9"
+    },
+    {
+      "path": "src/providers/ollama.py",
+      "sha256": "58bb2bf936069f621f10651c89b5d5d16bfafa023b485c23db6da2e64d5270ad"
+    },
+    {
+      "path": "src/providers/registration.py",
+      "sha256": "bac70e37ee28354c1d3666dc8e96b51a34a58aabbdb54a2ab67031a085583958"
+    },
+    {
+      "path": "src/providers/runtime.py",
+      "sha256": "9cf225d0add70dc4ae16e4217d56d062520dc1f91144cd7d9317a54de40c0ee9"
+    },
+    {
+      "path": "tests/test_agent_chat_trace.py",
+      "sha256": "1a1369fe67b06245eeb2fbbae6b97334d0f63a180c6febcc1174c2c164d9d51d"
+    },
+    {
+      "path": "tests/test_agent_draft_retry.py",
+      "sha256": "369a657a5bad12c66df6e0f733d161917ed2e479492eaa37fd0b559d21fd2954"
+    },
+    {
+      "path": "tests/test_agent_evaluation_lab.py",
+      "sha256": "c82fedf816eee10f51c560cdac6d922182b2323c8be76b7dcf5326fbc2ecfce7"
+    },
+    {
+      "path": "tests/test_agent_execution_unavailable.py",
+      "sha256": "dfccd347f50e787a0cb2fb1b417a87ae920c9f4461ae8055d71be8606ec861c3"
+    },
+    {
+      "path": "tests/test_bago5_chat_cognition.py",
+      "sha256": "99c7da6cf37c10a612a5a5e677d604f909b8ac1117906b8268dfde6ff9dcd044"
+    },
+    {
+      "path": "tests/test_chat_context.py",
+      "sha256": "6a9be9ed2d2bb36db68d2d0f9b15f5dccaa77d899b7e35871414a8dd815b955d"
+    },
+    {
+      "path": "tests/test_code_duplicates.py",
+      "sha256": "fe4f5fbd76964f46f0df38a5c2269b03495f59ca9062bc3be05768e7b3d0e44a"
+    },
+    {
+      "path": "tests/test_codex_login.py",
+      "sha256": "de357c8830c0c6fa0bced597003325d14174b3504771a05d49cf1af856779b03"
+    },
+    {
+      "path": "tests/test_conversation_library.py",
+      "sha256": "f907debb55e8667e754f834f2509a2afa38a26724f79a6d23e47d08dd38d588d"
+    },
+    {
+      "path": "tests/test_live_agent_providers.py",
+      "sha256": "ced57eb34ebca83ffb1879ad35482f16a0a463976e8f0ff414177f4da8ff43e1"
+    },
+    {
+      "path": "tests/test_provider_cognition_repair.py",
+      "sha256": "fc02cf6f77557d4a65708c8d9ba90e49f17a442533ddc33ac3c0376c6d23be1f"
+    },
+    {
+      "path": "tests/test_semantic_navigation.py",
+      "sha256": "7db286e8e5e713324b1725eef01652f53818ed8c95e2ae8f1139baecb5d8f270"
+    },
+    {
+      "path": "tests/verification/agent-runner/test_websocket_integration.py",
+      "sha256": "d0302d3b7be644bd5282cdccce24c267d8d5fe110a2fb90d420ea5b894d2fe08"
+    },
+    {
+      "path": ".bago/team/kit/LICENSE",
+      "sha256": "e9e8f3a6cced95dd4d876916303514540238c1c385d0d92b90d5f2d7bef52e75"
+    },
+    {
+      "path": ".bago/team/kit/SOURCE_LOCK.json",
+      "sha256": "b45aaa8951043d1bf682f7eb25b594563b2d4b2a689b9694f8244ad2db64586f"
+    },
+    {
+      "path": ".bago/team/kit/protocol/mission.schema.json",
+      "sha256": "ba63cdf23eeca183e1c2472d51c1ae01103af4f913a57b1105e6837fbef69905"
+    },
+    {
+      "path": ".bago/team/kit/requirements.txt",
+      "sha256": "cdceb38795ad91f06f3aed720ae192b700e70efcb9c584f161340fd771be6cf1"
+    },
+    {
+      "path": ".bago/team/kit/scripts/team_safety.py",
+      "sha256": "8bf080d42be147509f8ad9e521e4ea124fa7d92a2a3fa16ebc8088a3147441d3"
+    },
+    {
+      "path": "docs/governed-execution/RUNTIME_FIXTURE_PROFILE.md",
+      "sha256": "c3a8553762fb4ca2279e39fa684f4d9411c573163a0749224ce89230662807a0"
+    },
+    {
+      "path": "docs/governed-execution/SOURCE_FREEZE_20261018.md",
+      "sha256": "5adb86280c87088d975307de9d222d19c3b0864c100a21b926612a2af05c1fea"
+    },
+    {
+      "path": "docs/governed-execution/verification/W29_FINAL_INDEPENDENT_VERIFICATION_20261018.md",
+      "sha256": "b137c2a4b7dbc1912d82c811d6f6060e2c5f50e14d19d5cec4e87a58106aff2f"
+    },
+    {
+      "path": "docs/governed-execution/verification/contract-review/W25_GEX_FINAL_REVIEW_20261018.md",
+      "sha256": "fdcda64c1c4e8b3ff18a6bc678aa1d1bd5d6def8be966cf5791d5b8014e67f7e"
+    },
+    {
+      "path": "docs/governed-execution/verification/jcs_reference.mjs",
+      "sha256": "6582b0833581f0d0868dd0e267961b494ab484d81002a1eee7f99e9a8ba08b4e"
+    },
+    {
+      "path": "docs/verification/teamctl-integrity-20261022/.gitattributes",
+      "sha256": "fe249d6bc3bb73b61ea080041b655a90a7d6efc49ac0b8e13a246ac4f50d1b42"
+    },
+    {
+      "path": "docs/verification/teamctl-integrity-20261022/README.md",
+      "sha256": "0daa7e00707a360fa8a7503f81f0bfe732961fb32fbf56af69ef38e91b3c3d6c"
+    },
+    {
+      "path": "docs/verification/teamctl-integrity-20261022/SHA256SUMS.json",
+      "sha256": "4eb5e49234bdc34c2dc5cc6cdb71bfbf47832602dfe72c3bc268bf1c7adbdbe5"
+    },
+    {
+      "path": "docs/verification/teamctl-integrity-20261022/acceptance-matrix.json",
+      "sha256": "9b7d46b96fcec633961f0fe5d3d660b643b5a46a16d460e47de5e76178037846"
+    },
+    {
+      "path": "docs/verification/teamctl-integrity-20261022/active-acceptance.json",
+      "sha256": "75b9fc24561af8a64134b3a36f22c41133a1f0f9b7c763a03d477bc1295ac2b7"
+    },
+    {
+      "path": "docs/verification/teamctl-integrity-20261022/final-gates.json",
+      "sha256": "4d56c954573eee0ff924615365a8d5309f2ba506697d20d38c112f803ef43a79"
+    },
+    {
+      "path": "docs/verification/teamctl-integrity-20261022/full-suite-counts.json",
+      "sha256": "02c7c0835e2ebef8c115260dc3c4fe6f4d566f4812d92fc496061989625697da"
+    },
+    {
+      "path": "docs/verification/teamctl-integrity-20261022/full-suite.xml",
+      "sha256": "ba777a288cea251639c0cf2bcf1b1d07ee37f3fb7257f58664ff59135ccdec19"
+    },
+    {
+      "path": "docs/verification/teamctl-integrity-20261022/independent-cases.json",
+      "sha256": "6752023f6eed240b9efba075b3ad222fe96c58c5bb11507fd6a8b0a4e77f44e3"
+    },
+    {
+      "path": "docs/verification/teamctl-integrity-20261022/independent-manifest.json",
+      "sha256": "5d694b41cf7fa04a5e9ef3455c3aadeac41e59942d70eb9ef7ebdc4ff6d36f91"
+    },
+    {
+      "path": "docs/verification/teamctl-integrity-20261022/independent-result.json",
+      "sha256": "56deb77832386c368dfb7eca45a0a5443c21941edb581401a23e9cbe737cac29"
+    },
+    {
+      "path": "docs/verification/teamctl-integrity-20261022/independent-review.md",
+      "sha256": "858c5ef0302705266f86d899c923614b98b1234eb66a9d76b7928c16b3cc8c3a"
+    },
+    {
+      "path": "docs/verification/teamctl-integrity-20261022/mission-closure.json",
+      "sha256": "cc9c86a53b2748bffe206eadb84ffa0513bb547247062b8b3c79c52ed7a1bd2a"
+    },
+    {
+      "path": "docs/verification/teamctl-integrity-20261022/readme-check.log",
+      "sha256": "c0089b59e2485c173c413ef7a068861a1477bb9323e584cff0db2367ee19ad3a"
+    },
+    {
+      "path": "docs/verification/teamctl-integrity-20261022/readme-generate.log",
+      "sha256": "2398812884cc98cc482a12953906b40415a596f88a10e844f98d7d9083cf060c"
+    },
+    {
+      "path": "docs/verification/teamctl-integrity-20261022/windows-source-manifest.json",
+      "sha256": "231bddb7e5dfbf461ffed716db33526afe61267056b34d746a48deecfdc681d7"
+    },
+    {
+      "path": "evidence/p1-1-ontology-demo-source.md",
+      "sha256": "6ae38c9e92af701299efcda37ef576235d0873a4219bcc4276db5035aaaf9f26"
+    },
+    {
+      "path": "frontend/public/brand/anthropic.svg",
+      "sha256": "1c10881e4729127e1a86e569613d786240acae13eacfa01860be065b66260e36"
+    },
+    {
+      "path": "frontend/public/brand/github-copilot.svg",
+      "sha256": "0d34b0aa829c23094eafce1447481d56f41dde65d779121222dcf294943dd245"
+    },
+    {
+      "path": "frontend/public/brand/ollama.svg",
+      "sha256": "8d113044ac7b6a4bea46c335f8410a04976c2e6ae5beaf9fc6b823d90f8b05a0"
+    },
+    {
+      "path": "frontend/public/brand/openai.svg",
+      "sha256": "a595df6b423920c67a7f8f73c063e4bfb72d415948097b6cac063a2366bb5186"
+    },
+    {
+      "path": "frontend/public/brand/opencode.svg",
+      "sha256": "c65afefdb1eb67be19a50f715d0a7a2c19558dbf0cbdc974feb367e055cd5f58"
+    },
+    {
+      "path": "frontend/public/brand/openrouter-official.svg",
+      "sha256": "0d22462e4f2835a5a5b9000af0a55fc9238e39996100f54706e41ec45b9d1727"
+    },
+    {
+      "path": "frontend/src/components/AgentTaskForm.css",
+      "sha256": "77ac321f9092ef75d8a1e96299181f847a77966062c39fb55bc6b226e5a704e0"
+    },
+    {
+      "path": "frontend/src/components/AgentTaskForm.tsx",
+      "sha256": "a6d61af1c742adc28ed6ad3a3eb117a0001a33cb1f7af2e9483d74b31be42ce4"
+    },
+    {
+      "path": "frontend/src/components/AgentTasks.css",
+      "sha256": "15d96fb6ba0ce2b6ad423c5b50d1fab6c6371444c4c75b6c1fdbcd1f31e24dd0"
+    },
+    {
+      "path": "frontend/src/components/AgentTasks.tsx",
+      "sha256": "9d8afdf6e41c3c84fd98e876a58511ad9880336080851d8281a43b822f164921"
+    },
+    {
+      "path": "frontend/src/components/CatalogQuality.css",
+      "sha256": "f1d53e31719688230e7fc5920fe7e7420422f37c47f324dc7e09af6224b5174b"
+    },
+    {
+      "path": "frontend/src/components/CatalogQuality.tsx",
+      "sha256": "299ce9086deca2a1f6ce60db949fdd42c916f50e1c3c6525ba4bd07da40ce0da"
+    },
+    {
+      "path": "frontend/src/components/ChatTools.css",
+      "sha256": "3136e2420503769279672dfae416c66589c9f190b54d4cac37e0b09951566830"
+    },
+    {
+      "path": "frontend/src/components/ChatTools.tsx",
+      "sha256": "fc6b24f8a9e9b6d41bd3a830a525c4209c377d9745e8d1c46385d0f431ef0680"
+    },
+    {
+      "path": "frontend/src/components/ExternalConnections.css",
+      "sha256": "401e4d5f88d5dc26b518dd2ec35b881028bef11b59f915b88600db1cc8987c74"
+    },
+    {
+      "path": "frontend/src/components/ExternalConnections.tsx",
+      "sha256": "cdf70d41d32059c148780f0d27b227a223c10bde6292ba81e3fa5fc8506f99c4"
+    },
+    {
+      "path": "frontend/src/components/GovernedFixtureRunner.css",
+      "sha256": "88df9d32ff2d66f5118b3c9f65638e02d99274333ddacc6c4a4c3f2ca490d69a"
+    },
+    {
+      "path": "frontend/src/components/GovernedFixtureRunner.tsx",
+      "sha256": "e8c061ad3d468abd9986c7355f5df611fe410e960d4bcd5e9e5e6aea4a0845fa"
+    },
+    {
+      "path": "frontend/src/components/KnowledgeIngest.css",
+      "sha256": "299e62eed156d398a512db7ae3f4294eae6da63235e21d41499d593ef7855c73"
+    },
+    {
+      "path": "frontend/src/components/KnowledgeIngest.tsx",
+      "sha256": "5af09943009f6caac478c6a2b5462a35fb8f6ddcad62bb04a07f40266a7da0ad"
+    },
+    {
+      "path": "frontend/src/components/ModelAssignments.css",
+      "sha256": "72aa76a4aa8a65ee7cf96ccd2d8b411959f2e6769e4a92ee43b0b34c020d9c67"
+    },
+    {
+      "path": "frontend/src/components/ModelAssignments.tsx",
+      "sha256": "d19d399c6844d163a12189d724a364e12c15f716b2ed85c524cd26db99d63a16"
+    },
+    {
+      "path": "frontend/src/components/OntologyReview.css",
+      "sha256": "9285fac2471710187e1bd31f0a55b5a27b1446372fd89d9a6f9bda11d9313b51"
+    },
+    {
+      "path": "frontend/src/components/OntologyReview.tsx",
+      "sha256": "63a5671cc3e1e5e057fd04e2f8c73912559adc03dbb31051b2d2e9b618eaae71"
+    },
+    {
+      "path": "frontend/src/components/ProjectContextDocument.tsx",
+      "sha256": "31b7cd10bf540d862838911e5c8646868bbe6e3751c57e26f304d4e0bf9af3e9"
+    },
+    {
+      "path": "frontend/tests/providers/model-assignments.test.tsx",
+      "sha256": "fa570ae6afc9cdbfa94438a977ae78ff40504f0e53173fee7f9df7d8d0a9ba9c"
+    },
+    {
+      "path": "frontend/tests/ui/agent-tasks/saved-tasks.test.tsx",
+      "sha256": "41a9b28c3f53f438a5f1af1a16cf1c54201b7d3c05f3adcd9c305d9efe5c3e56"
+    },
+    {
+      "path": "frontend/tests/ui/capabilities/external-connections.test.tsx",
+      "sha256": "62df52e4b48491916eca29e013916fd0c7caf9081fe28239cd562d3a7df06ee6"
+    },
+    {
+      "path": "frontend/tests/ui/capabilities/mcp-governance.test.mjs",
+      "sha256": "750a4d5e91f8e946a349a4559292d6d3dd1aa6c1feee7b86a25ea537d85ae33b"
+    },
+    {
+      "path": "frontend/tests/ui/chat-shell/chat-composer.test.tsx",
+      "sha256": "3489587fbd89d3bcc1d7e676db2819ed1825fe406fb346bc73db248c5bc16618"
+    },
+    {
+      "path": "frontend/tests/ui/governed-fixture/governed-fixture.test.tsx",
+      "sha256": "8b0f95efb255e515d8d56fbc513764d70a1bbab86ef58332704d660fbac8d5cd"
+    },
+    {
+      "path": "frontend/tests/ui/knowledge/catalog-quality.test.mjs",
+      "sha256": "0137e63102546477ff6dd9177d166bed23910884e2ae1e868d47f408cc9c7f18"
+    },
+    {
+      "path": "frontend/tests/ui/knowledge/grounded-source.test.mjs",
+      "sha256": "5b22e04f99267e7a0fa651d086a050b715038e3a5a227bb18e2e6e01c7ee9f4a"
+    },
+    {
+      "path": "frontend/tests/ui/knowledge/ontology-review.test.mjs",
+      "sha256": "7b66d7354d6764c0b5398821953dbe91ef420cb7e1aa9e24266a538bcf0e12df"
+    },
+    {
+      "path": "plugins/bago-agent-decision-engineering-team/protocol/mission.schema.json",
+      "sha256": "ba63cdf23eeca183e1c2472d51c1ae01103af4f913a57b1105e6837fbef69905"
+    },
+    {
+      "path": "scripts/provision_gex_fixture.py",
+      "sha256": "2f1adb0a18a54c1bd0655ace0de3d316913bf529f4243709e11626a425200ff9"
+    },
+    {
+      "path": "src/agent_tasks/__init__.py",
+      "sha256": "451b1ce72a9ecfe39cd4e8ab4293cd015eb6ded785d5e3027c2cc6f6d1674bbc"
+    },
+    {
+      "path": "src/agent_tasks/store.py",
+      "sha256": "713ee5bc8eb204ffcbc87afac2c9d3bee946896e73ee6cf43bb6baa60683bf21"
+    },
+    {
+      "path": "src/api/connection_routes.py",
+      "sha256": "d7012639fd8fedf7e22341e949de6fdc967eb3db3cb69dc9649dfd1bb5e4b01f"
+    },
+    {
+      "path": "src/api/gex_routes.py",
+      "sha256": "b9958e2e75ba2a89d826e630a7cb75ed5d6ee2c21a72341b87db61979157815e"
+    },
+    {
+      "path": "src/api/project_documents.py",
+      "sha256": "330a49286b9e4ff55d45aa77fb15e0c66dd1ea6bb9f05b76c2da5c257d8e0585"
+    },
+    {
+      "path": "src/api/task_routes.py",
+      "sha256": "51c3737899de855f0a17abd6e165f3819c0dc5fa30692cdbc13e0bf5e255fba5"
+    },
+    {
+      "path": "src/connections/__init__.py",
+      "sha256": "533bf881c20855a0500421f063089ea03d0a44076ce9f538c4221eecd88e7a4f"
+    },
+    {
+      "path": "src/connections/security.py",
+      "sha256": "c6233d8b7e9a8f9eadb96c91d8fe6ffb885310c8c155fe507896d059e6570c9d"
+    },
+    {
+      "path": "src/connections/service.py",
+      "sha256": "9d5fcfbf87258eb7d9a51a5018ff1d8a82a2b0811abb66258cda4a7f17b10f0f"
+    },
+    {
+      "path": "src/connections/transports.py",
+      "sha256": "def21d9ac91125c37cf03cd2838ef33eb5bd44045ab9b8472c6413fabea1f3bd"
+    },
+    {
+      "path": "src/execution/adapters/__init__.py",
+      "sha256": "932d54fb6010a49abc80627ee91cf7008c3f94e2bd68e57c0bef84879287363e"
+    },
+    {
+      "path": "src/execution/adapters/fixture_observer.py",
+      "sha256": "2e3969d98fde0eef93adaaf44d595195f2de26c642afb4bf587e8a87bab3ae27"
+    },
+    {
+      "path": "src/execution/adapters/fixture_read.py",
+      "sha256": "8468e42267cab1c7f94e415a1dc05b07b7a170cc6ce66a5a5d7b9a626ef12f33"
+    },
+    {
+      "path": "src/execution/gex_control.py",
+      "sha256": "a03896ddd84a4c939ec58f876b4c7c3cd89f8e4ae0f14f98c9c888d1d075fa82"
+    },
+    {
+      "path": "src/execution/gex_service.py",
+      "sha256": "37148c30301ba5a87b42928d19089c7f300b4de2e8593ac1debc0d54a6c10204"
+    },
+    {
+      "path": "src/execution/identity/__init__.py",
+      "sha256": "b7469657a1832576a21b470ebee428c5678ab9434fbbb0c8718ffe77b9944437"
+    },
+    {
+      "path": "src/execution/identity/session.py",
+      "sha256": "4dcac248480a1aec74686aa624f3af1859102cd679be37e279339f1e8d4b93da"
+    },
+    {
+      "path": "src/execution/ledger/__init__.py",
+      "sha256": "cf3361c906bd742791f57f1a9c0b51baf51291ef3068ad4483779b8316cdbe5b"
+    },
+    {
+      "path": "src/execution/ledger/gex_event_schema.json",
+      "sha256": "1059ceb9f13fb7452cabe46a4736c886680cd47ab16ce15ec7410ec59e781027"
+    },
+    {
+      "path": "src/execution/ledger/sqlite_ledger.py",
+      "sha256": "74f65c43ce4d12ab3a6d362ced18331c90afe86e85eab3601bb36b066d75051a"
+    },
+    {
+      "path": "src/execution/permit/__init__.py",
+      "sha256": "474f7b24a795ecb8a7ffb343ffe9237bd15362ffeb399e05231aa26871dd681f"
+    },
+    {
+      "path": "src/execution/permit/permit_v1.py",
+      "sha256": "24ba7bb2a75fddbfa839eefabf51cf46bb9c805914fe22b5fed98ee09bb5b295"
+    },
+    {
+      "path": "src/knowledge/__init__.py",
+      "sha256": "615f54c170029d6a689cb1a8597491db23cb6343fedc07bee149030cb765bdfb"
+    },
+    {
+      "path": "src/knowledge/local_rag.py",
+      "sha256": "d91e8ae2c3eea9daa9153f40974f06edff8ab2352a0da3907a7e797cfa79d63c"
+    },
+    {
+      "path": "src/metadata/ontology_runtime.py",
+      "sha256": "95fd2a2e7019a3d1a69e4ef14a2a0cd04e2910c598ad1e302551fcea294270fb"
+    },
+    {
+      "path": "src/metadata/openmetadata_runtime.py",
+      "sha256": "049efe19e1bcc6c7db083ee42a343f91d746bd5c4f93f700c0aa58c8c4231901"
+    },
+    {
+      "path": "src/providers/model_policy.py",
+      "sha256": "5640418fc8e6df36ced216d1f9f16b4c70421684888e18aa3ed912af7b550a9e"
+    },
+    {
+      "path": "tests/api/test_gex_runtime.py",
+      "sha256": "7e4bedabd7faeab211ac8037e02a6437cfd7254d6f2b2a8dc2d65ee000318257"
+    },
+    {
+      "path": "tests/api/test_knowledge_ingest_answer.py",
+      "sha256": "de8674783f20802013537a5063f0a702386e81decad1657e15a0b708828be829"
+    },
+    {
+      "path": "tests/api/test_mcp_governance_demo.py",
+      "sha256": "5e7c1aba32bb2aa7f93e7a2783e737b3605452daba9147c26674847f364a2a0e"
+    },
+    {
+      "path": "tests/api/test_ontology_ui_workflow.py",
+      "sha256": "bb143dd2e739d74d0279c1fec3549ae2488abbebff6ea6aafe98e9e1e687d2f6"
+    },
+    {
+      "path": "tests/api/test_openmetadata_live_ui.py",
+      "sha256": "55155d819f1bace84c47d067200f4b619f51ba77d069ab93c8b9012e01258f5a"
+    },
+    {
+      "path": "tests/governed_execution/identity/test_session_identity.py",
+      "sha256": "b452ad3f83e2bc21ad9163b29009aedacc357f2f59ed56d4006207a5ed50fd57"
+    },
+    {
+      "path": "tests/governed_execution/integration/test_fixture_slice.py",
+      "sha256": "2532ecc54419a30d56a3fff472fb24900144fe2c959bd2f0a8952182a72bcaae"
+    },
+    {
+      "path": "tests/governed_execution/ledger/test_sqlite_ledger.py",
+      "sha256": "5beb950bd91bdb795e61549505346bf51eed0d2608566a2cc67230d7b9c07c20"
+    },
+    {
+      "path": "tests/governed_execution/permit/test_permit_v1.py",
+      "sha256": "6a321d9c6573e19c5d616b7eb92a33b8b84386c9885a68fd29a5bfb14e44c176"
+    },
+    {
+      "path": "tests/test_external_connections.py",
+      "sha256": "033fcc027d5198333fefe50547749d18aed7be76c2232fa3396b009a20e267b1"
+    },
+    {
+      "path": "tests/test_github_copilot_device_login.py",
+      "sha256": "7a6ee0aa696a96635fa36303d74beb4c408d01981ae8bfbf36c73fe8652bd06e"
+    },
+    {
+      "path": "tests/test_model_policy.py",
+      "sha256": "0aba9838f9c49786493c0f159d905a674c9a06374de3fad115fc4965601f546f"
+    },
+    {
+      "path": "tests/test_saved_agent_tasks.py",
+      "sha256": "067a97d0fcfa7fb43326875ae087fb621423ceb58ac3002b9ed852e7369fea2e"
+    },
+    {
+      "path": "tests/test_saved_agent_tasks_independent.py",
+      "sha256": "ffd7fba832691304585fe34b53d9e88d7f6740cf2b452d5c04e6556d5d953fa2"
+    },
+    {
+      "path": "tests/test_teamctl_integrity.py",
+      "sha256": "a06371d08740e75a0691063f8a53fa066b184a7579030a636e383a71d8723435"
+    },
+    {
+      "path": "tests/verification/gex_runtime/keyboard-readback.mjs",
+      "sha256": "8691ae5f5f14151ed694c33a56df9f1fc2e8aa18f167667fd3a43272a746a5c8"
+    },
+    {
+      "path": "tests/verification/gex_runtime/live-ui.mjs",
+      "sha256": "ed5f402d9cbb93aaed52cd26ddd7ca33c4613e9a98372aaed16fae28fd57e6c6"
+    },
+    {
+      "path": "tests/verification/gex_runtime/test_independent_boundary.py",
+      "sha256": "8fc15dd032950d55f9fd7beab1dca36ff849d4a6f2e79653d13d986be2131a8d"
+    },
+    {
+      "path": "tests/verification/gex_runtime/verify_live_artifacts.py",
+      "sha256": "3bf883bb10968de2aff244e84d32de8020e34ff146e167a38050a365d77bc715"
+    },
+    {
+      "path": "tools/brave-browser-mcp/README.md",
+      "sha256": "456da8c35fc917c8f542f758e55cbefa74b9be52ba2806fd7001040e2a87ea60"
+    },
+    {
+      "path": "tools/brave-browser-mcp/config.example.toml",
+      "sha256": "50039e54ed2ad81ed15d9ce41a4b9f08c8f2f3ebc2a5ad3fe7005325b30d2acf"
+    },
+    {
+      "path": "tools/brave-browser-mcp/requirements.txt",
+      "sha256": "03d1fa012f8544002aefc9e132fc5cd8327bc8c4f39ff135f7fd7b959f0862e6"
+    },
+    {
+      "path": "tools/brave-browser-mcp/server.py",
+      "sha256": "12ad6ffa8a7227394e802a75724081d3b108cc59a66309ac2e80417ddc3fe630"
+    }
+  ],
+  "reviewed_changes": {
+    "frontend/vitest.config.ts": "cf215838a63e50c26377ea7710e633993192c0f6aba7c0d956fb50abdeecf283",
+    "frontend/tests/contracts/node-contracts.test.mjs": "41746219802c1b99e9861e974ef59a7a49504f4ccefcd992bfc41399a29c21e3",
+    "frontend/package.json": "2b79daf1b88a63288e55e545b45113f5913bf4d7784c74f6601c56e0375929f3",
+    ".github/workflows/ci.yml": "e60070f4b119ebb6cfcefd7aebd6075dee81a3575d86f4c56a53d11f2bc71d44",
+    "frontend/tests/contracts/action/action.test.ts": "88478ddfbdee45cab8aee7abdbed8c3417ed7ecb3fc59c740d89d77a59feccbe",
+    "frontend/tests/contracts/trace/trace.test.ts": "37b928729348401ade8d89da6128a82a0a684085c0d802ed94442d6650670aad"
+  },
+  "excluded_from_source_binding": [
+    ".gitignore",
+    "README.md"
+  ],
+  "reason": "README generated by passing full gate; ignore rules change discovery of local artifacts only"
+}

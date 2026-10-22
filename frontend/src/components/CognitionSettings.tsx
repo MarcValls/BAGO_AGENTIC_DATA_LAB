@@ -1,15 +1,21 @@
 import './CognitionSettings.css'
 import { useEffect, useState } from 'react'
+import ProjectContextDocument from './ProjectContextDocument'
+import type { ContextLocation } from './ProjectContextDocument'
 
 export type CognitiveMode = 'baseline' | 'bago5'
 const MODE_KEY = 'adl.chat.cognitive-mode.v1'
+const PROJECT_DOCUMENT_LABELS: Record<string, string> = {
+  'project-context': 'Contexto del proyecto',
+  'project-state': 'Estado del proyecto',
+  'active-handoff': 'Continuidad',
+}
 
 export function readCognitiveMode(): CognitiveMode {
   try { return localStorage.getItem(MODE_KEY) === 'bago5' ? 'bago5' : 'baseline' }
   catch { return 'baseline' }
 }
 
-type ContextLocation = { id: string; label: string; path: string; state: 'present' | 'absent'; purpose: string }
 type ContextMetadata = {
   workspace_root: string
   cognition: { profile: string; capacity: number; max_hops: number; max_expansions: number }
@@ -65,10 +71,11 @@ export default function CognitionSettings({ mode, onModeChange, workspaceOnly = 
       } : { method: 'POST' })
       const body = await response.json() as { workspace_root?: string; cancelled?: boolean; detail?: { message?: string } }
       if (!response.ok) throw new Error(body.detail?.message || 'The workspace folder could not be selected.')
-      if (body.cancelled) { setWorkspaceNotice('Folder selection cancelled.'); return }
+      if (body.cancelled) { setWorkspaceNotice('Selección cancelada.'); return }
       if (!body.workspace_root) throw new Error('The selected folder was not returned by the server.')
       setPathDraft(body.workspace_root)
-      setWorkspaceNotice('Workspace selected. Project tools and context now use this folder.')
+      setMetadata(null)
+      setWorkspaceNotice('Carpeta seleccionada.')
       setRequest((value) => value + 1)
     } catch (cause) {
       setWorkspaceError(cause instanceof Error ? cause.message : 'The workspace folder could not be selected.')
@@ -76,59 +83,58 @@ export default function CognitionSettings({ mode, onModeChange, workspaceOnly = 
   }
 
   const location = (id: string) => metadata?.paths.find((item) => item.id === id)
-  const renderLocation = (item: ContextLocation | undefined) => item && <div className={`workspace-source ${item.state}`} key={item.id}>
+  const renderLocation = (item: ContextLocation | undefined) => item && (['project-context', 'project-state', 'active-handoff'].includes(item.id)
+    ? <ProjectContextDocument key={`${metadata?.workspace_root}:${item.id}`} item={workspaceOnly ? { ...item, label: PROJECT_DOCUMENT_LABELS[item.id] } : item} workspaceRoot={metadata!.workspace_root} />
+    : <div className={`workspace-source ${item.state}`} key={item.id}>
     <div><strong>{item.label}</strong><span>{item.state === 'present' ? 'Available' : 'Not found'}</span></div>
+    <p>{item.purpose}</p>
     <code title={item.path}>{item.path}</code>
-  </div>
+  </div>)
 
   return <div className={`cognition-settings${workspaceOnly ? ' workspace-settings' : ''}`}>
     {!workspaceOnly && <header><h3>Cognition & context</h3><p>Choose how the assistant handles new messages.</p></header>}
-    {workspaceOnly && <header className="workspace-heading"><span>PROJECT SCOPE</span><h3>Workspace</h3></header>}
+    {workspaceOnly && <header className="workspace-heading"><h3>Workspace</h3></header>}
     {!workspaceOnly && <fieldset className="cognition-mode"><legend>Chat cognition mode</legend>
       <label><input type="radio" name="cognitive-mode" value="baseline" checked={mode === 'baseline'} onChange={() => changeMode('baseline')} /><span><strong>Baseline</strong><small>Use the normal assistant or agent prompt.</small></span></label>
       <label><input type="radio" name="cognitive-mode" value="bago5" checked={mode === 'bago5'} onChange={() => changeMode('bago5')} /><span><strong>BAGO5 experimental</strong><small>Add bounded cognitive focus to the model prompt. Responses show the applied focus and trace.</small></span></label>
     </fieldset>}
     {!workspaceOnly && modeNotice && <p className="cognition-status" role="status">{modeNotice}</p>}
-    {workspaceOnly && <section className="workspace-picker" aria-label="Active workspace">
-      <label htmlFor="workspace-path">Workspace path</label>
-      <div className="workspace-path-row"><input id="workspace-path" value={pathDraft} onChange={(event) => setPathDraft(event.target.value)} onKeyDown={(event) => { if (event.key === 'Enter') void applyWorkspace('/api/workspace/select') }} placeholder="Select a project folder" disabled={workspaceBusy} />
-        <button type="button" className="workspace-browse" onClick={() => void applyWorkspace('/api/workspace/browse')} disabled={workspaceBusy}>{workspaceBusy ? 'Waiting…' : 'Browse…'}</button>
-        <button type="button" onClick={() => void applyWorkspace('/api/workspace/select')} disabled={workspaceBusy || !pathDraft.trim()}>Use folder</button>
+    {workspaceOnly && <section className="workspace-picker" aria-label="Carpeta del proyecto">
+      <label htmlFor="workspace-path">Carpeta del proyecto</label>
+      <div className="workspace-path-row"><input id="workspace-path" value={pathDraft} onChange={(event) => { setPathDraft(event.target.value); setWorkspaceNotice('') }} onKeyDown={(event) => { if (event.key === 'Enter' && !workspaceBusy && pathDraft.trim()) void applyWorkspace('/api/workspace/select') }} placeholder="Selecciona una carpeta" disabled={workspaceBusy} />
+        <button type="button" className="workspace-browse" onClick={() => void applyWorkspace('/api/workspace/browse')} disabled={workspaceBusy}>{workspaceBusy ? 'Esperando…' : 'Examinar…'}</button>
+        <button type="button" onClick={() => void applyWorkspace('/api/workspace/select')} disabled={workspaceBusy || !pathDraft.trim()}>Usar carpeta</button>
       </div>
-      <small>The path selected here scopes project files, scans and capabilities. Files are not read into chat automatically.</small>
       {workspaceNotice && <p className="cognition-status" role="status">{workspaceNotice}</p>}
       {workspaceError && <p className="context-path-error" role="alert">{workspaceError}</p>}
     </section>}
     {showWorkspaceLocations && (workspaceOnly ? <section className="context-locations workspace-context">
-      {loading && <p role="status">Loading context sources…</p>}
-      {error && <div role="alert"><p>{error}</p><button type="button" onClick={() => setRequest((value) => value + 1)}>Retry</button></div>}
+      {loading && <p role="status">Cargando…</p>}
+      {error && <div role="alert"><p>{error}</p><button type="button" onClick={() => setRequest((value) => value + 1)}>Reintentar</button></div>}
       {metadata && <>
-        <div className="workspace-context-intro"><h4>Context layers</h4><p>Each layer narrows or enriches the context below it. An unavailable source is shown clearly instead of being assumed.</p></div>
-        <ol className="workspace-layers">
-          <li className="workspace-layer layer-unavailable">
-            <div className="workspace-layer-title"><span className="layer-number">01</span><div><h5>General memory</h5><span className="layer-state">Not connected</span></div></div>
-            <p>Would hold preferences and knowledge shared across projects. It could guide project interpretation, but this chat has no general-memory source connected.</p>
-          </li>
-          <li className="workspace-layer">
-            <div className="workspace-layer-title"><span className="layer-number">02</span><div><h5>Project context</h5><span className="layer-state">Listed · not auto-loaded</span></div></div>
-            <p>Project canon and recorded state define the project’s terms and current status. They should constrain workspace interpretation; these files are currently shown as sources, not automatically added to the model prompt.</p>
-            <div className="workspace-sources">{renderLocation(location('project-context'))}{renderLocation(location('project-state'))}{renderLocation(location('active-handoff'))}</div>
-          </li>
-          <li className="workspace-layer">
-            <div className="workspace-layer-title"><span className="layer-number">03</span><div><h5>Workspace</h5><span className="layer-state">Active project boundary</span></div></div>
-            <p>The selected folder tells project tools where relative paths start. It bounds approved file reads, duplicate scans and the capability catalog; it does not grant a read by itself.</p>
-            <div className="workspace-source active"><div><strong>Selected folder</strong><span>Active</span></div><code title={metadata.workspace_root}>{metadata.workspace_root}</code></div>
-          </li>
-          <li className="workspace-layer">
-            <div className="workspace-layer-title"><span className="layer-number">04</span><div><h5>Conversation memory</h5><span className="layer-state">{metadata.memory.state === 'present' ? 'Connected' : 'Not found'}</span></div></div>
-            <p>The active conversation supplies its saved message history to the next turn. It gives immediate intent and recent decisions within this chat, subject to the project’s boundaries.</p>
-            <div className="workspace-sources">{renderLocation(location('conversations'))}</div>
-          </li>
-        </ol>
+        <h4 className="workspace-section-title">Archivos del proyecto</h4>
+        <div className="workspace-sources">{renderLocation(location('project-context'))}{renderLocation(location('project-state'))}{renderLocation(location('active-handoff'))}</div>
+        <section className="workspace-memory" aria-labelledby="workspace-memory-title">
+          <h4 id="workspace-memory-title" className="workspace-section-title">Memoria</h4>
+          <dl><div><dt>General</dt><dd className="unavailable">Sin conectar</dd></div><div><dt>Conversación</dt><dd className={metadata.memory.state === 'present' ? 'available' : 'unavailable'}>{metadata.memory.state === 'present' ? 'Disponible' : 'No disponible'}</dd></div></dl>
+        </section>
       </>}
-    </section> : <details className="context-locations"><summary id="context-locations-title"><strong>Context locations</strong><span>{metadata ? `${metadata.paths.length} locations` : 'Inspect paths and status'}</span></summary>
-      <div className="context-locations-content">{loading && <p role="status">Loading context sources…</p>}{error && <div role="alert"><p>{error}</p><button type="button" onClick={() => setRequest((value) => value + 1)}>Retry</button></div>}
-        {metadata && <dl className="context-summary"><div><dt>Project folder</dt><dd><code>{metadata.workspace_root}</code></dd></div><div><dt>Memory</dt><dd>{metadata.memory.kind === 'conversation_history' ? 'Saved conversations' : metadata.memory.kind} · {metadata.memory.state}</dd></div></dl>}
+    </section> : <details className="context-locations cognition-context" open>
+      <summary id="context-locations-title"><strong>Context and workspace</strong><span>{metadata ? `${metadata.paths.length} project sources` : 'Loading project scope'}</span></summary>
+      <div className="context-locations-content">
+        {loading && <p role="status">Loading context sources…</p>}
+        {error && <div role="alert"><p>{error}</p><button type="button" onClick={() => setRequest((value) => value + 1)}>Retry</button></div>}
+        {metadata && <>
+          <p className="cognition-context-intro">Live scope and context metadata used by ADL. Source presence is shown without loading file contents into chat.</p>
+          <dl className="context-summary cognition-context-summary">
+            <div><dt>Active workspace</dt><dd><code title={metadata.workspace_root}>{metadata.workspace_root}</code></dd></div>
+            <div><dt>Cognition profile</dt><dd>{metadata.cognition.profile}</dd></div>
+            <div><dt>Focus capacity</dt><dd>{metadata.cognition.capacity} units · {metadata.cognition.max_hops} hops · {metadata.cognition.max_expansions} expansions</dd></div>
+            <div><dt>Conversation memory</dt><dd>{metadata.memory.kind} · {metadata.memory.state}<small>{metadata.memory.description}</small></dd></div>
+          </dl>
+          <div className="context-sources-heading"><h4>Project context sources</h4><span>Despliega un archivo para leerlo</span></div>
+          <div className="context-source-grid">{metadata.paths.map((item) => renderLocation(item))}</div>
+        </>}
       </div>
     </details>)}
   </div>

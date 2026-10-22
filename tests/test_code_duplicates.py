@@ -128,6 +128,7 @@ def test_chat_tool_loop_invokes_scan_and_returns_receipt(monkeypatch, tmp_path: 
 def test_scan_authorization_endpoint_binds_directory_to_conversation(monkeypatch, tmp_path: Path) -> None:
     (tmp_path / "src").mkdir()
     monkeypatch.setattr(server, "REPO_ROOT", tmp_path)
+    monkeypatch.setattr(server, "current_workspace_root", lambda: tmp_path.resolve())
     monkeypatch.setattr(server, "CONVERSATIONS", ConversationStore(tmp_path / "conversations.sqlite3"))
     conversation = server.CONVERSATIONS.create("assistant", "app-assistant")
 
@@ -151,6 +152,7 @@ def test_control_scan_run_persists_result_receipt_and_local_trace(monkeypatch, t
     (source / "one.ts").write_text("const a = 1;\nconst b = 2;\nconst c = 3;\nconst d = 4;\nconst e = 5;\n", encoding="utf-8")
     (source / "two.ts").write_text("const a = 1;\nconst b = 2;\nconst c = 3;\nconst d = 4;\nconst e = 5;\n", encoding="utf-8")
     monkeypatch.setattr(server, "REPO_ROOT", tmp_path)
+    monkeypatch.setattr(server, "current_workspace_root", lambda: tmp_path.resolve())
     monkeypatch.setattr(server, "CONVERSATIONS", ConversationStore(tmp_path / "conversations.sqlite3"))
     conversation = server.CONVERSATIONS.create("assistant", "app-assistant")
     grant = server.WORKSPACE_DIRECTORY_AUTHORIZATIONS.issue(

@@ -16,7 +16,7 @@ test("proposal, authorization, availability and execution remain distinct", () =
   assert.equal(action.availability.state, "unknown");
   assert.equal(action.authorization.state, "requires_approval");
   assert.equal(action.execution.state, "not_started");
-  assert.equal(action.receiptLink.state, "unknown");
+  assert.equal(action.receiptLink.state, "missing");
   assert.deepEqual(validateActionBundle(bundle), []);
 });
 
@@ -59,11 +59,17 @@ test("declared missing receipt and mismatched receipt are not treated as success
   assert.equal(mismatch.actions[0].receiptLink.state, "mismatch");
 });
 
-test("receipt absence and unprovided action id stay unknown instead of being synthesized", () => {
+test("known requests expose missing receipts while unprovided identities remain unknown", () => {
   const bundle = actionBundleFromAgentRun({ proposals: [{ request_id: "r-unknown" }] });
   assert.equal(bundle.actions[0].id, undefined);
   assert.equal(bundle.actions[0].authorization.state, "unknown");
   assert.equal(bundle.actions[0].execution.state, "unknown");
-  assert.equal(bundle.actions[0].receiptLink.state, "unknown");
+  assert.equal(bundle.actions[0].receiptLink.state, "missing");
+  const unprovided = actionBundleFromAgentRun({ proposals: [{}] }).actions[0];
+  assert.equal(unprovided.receiptLink.state, "unknown");
+  assert.equal(unprovided.id, undefined);
+  const declaredSuccess = actionBundleFromAgentRun({ proposals: [{ request_id: "request-no-receipt", called: true, outcome: "SUCCESS" }] }).actions[0];
+  assert.equal(declaredSuccess.receiptLink.state, "missing");
+  assert.equal(declaredSuccess.execution.state, "unverified");
   assert.deepEqual(validateActionBundle(bundle), []);
 });

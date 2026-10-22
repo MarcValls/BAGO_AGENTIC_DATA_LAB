@@ -7,6 +7,7 @@ import { Capability, CapabilityProposal, capabilityResponseError } from './Capab
 import AgentBuilder from './AgentBuilder'
 import DirectoryScanRun, { type ScanOutcome, type ScanReceipt, type ScanReport, type ScanTrace } from './DirectoryScanRun'
 import JobHistory from './JobHistory'
+import ChatTools from './ChatTools'
 import WindowPanel from './WindowPanel'
 import TabStrip from './TabStrip'
 
@@ -23,6 +24,8 @@ type AgentConfig = {
 }
 
 type Agent = { id: string; config: AgentConfig; created_at: string }
+type ChatProvider = { provider_id: string; label: string; model_id: string; display_name?: string; state: string; chat_enabled?: boolean; orchestrator_enabled?: boolean }
+type ChatProviderSelection = { provider_id: string; model_id: string; label?: string; state?: string }
 type MessageTrace = { localId: string; state: string; jaegerId?: string; jaegerUrl?: string }
 type WorkspaceSource = { path: string; start_line: number; end_line: number; file_sha256?: string; content_sha256?: string }
 type WorkspaceReadEvent = { decision: 'ALLOW' | 'DENY'; kind?: string; path: string | null; reason_code?: string; file_sha256?: string; content_sha256?: string; files_scanned?: number; files_skipped?: number; bytes_scanned?: number; lines_scanned?: number; finding_count?: number; truncated?: boolean; manifest_sha256?: string }
@@ -113,21 +116,82 @@ export default function AgentChat({ onNavigate, onOpenProviderSettings, onOpenCo
   const [libraryError, setLibraryError] = useState('')
   const [loadingConversation, setLoadingConversation] = useState(false)
   const [input, setInput] = useState('')
+  const [messageCopyState, setMessageCopyState] = useState<{ id: string; state: 'copied' | 'failed' } | null>(null)
   const [allowWorkspaceRead, setAllowWorkspaceRead] = useState(false)
   const [workspaceReadPaths, setWorkspaceReadPaths] = useState('')
   const [sending, setSending] = useState(false)
   const [error, setError] = useState('')
+  const [chatProviders, setChatProviders] = useState<ChatProvider[]>([])
+  const [chatProviderSelection, setChatProviderSelection] = useState<ChatProviderSelection | null>(null)
+  const [savingChatProvider, setSavingChatProvider] = useState(false)
   const [capabilityDraft, setCapabilityDraft] = useState<CapabilityDraft | null>(null)
   const [capabilityProposals, setCapabilityProposals] = useState<CapabilityProposal[]>([])
   const [capabilityBusy, setCapabilityBusy] = useState(false)
   const [agentPanelTarget, setAgentPanelTarget] = useState<HTMLDivElement | null>(null)
   const messagesEndRef = useRef<HTMLDivElement>(null)
+  const composerRef = useRef<HTMLTextAreaElement>(null)
   const contextMenuRef = useRef<HTMLDivElement>(null)
   const longPressTimerRef = useRef<number | null>(null)
   const longPressTriggeredRef = useRef(false)
   const agentRefreshAtRef = useRef(0)
   const agentRefreshInFlightRef = useRef<Promise<void> | null>(null)
   const agentsLoadedRef = useRef(false)
+
+  const latestUserMessageId = [...messages].reverse().find((message) => message.role === 'user')?.id
+
+  const copyMessage = async (message: Message) => {
+    try {
+      await navigator.clipboard.writeText(message.content)
+      setMessageCopyState({ id: message.id, state: 'copied' })
+    } catch {
+      setMessageCopyState({ id: message.id, state: 'failed' })
+    }
+    window.setTimeout(() => setMessageCopyState((current) => current?.id === message.id ? null : current), 1800)
+  }
+
+  const editLatestMessage = (message: Message) => {
+    setInput(message.content)
+    composerRef.current?.focus()
+    composerRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' })
+  }
+
+  useEffect(() => {
+    let active = true
+    const load = () => { void Promise.all([
+      fetch('/api/providers/chat-models').then(async response => {
+        if (!response.ok) throw new Error(await responseError(response))
+        return response.json() as Promise<{ models?: ChatProvider[] }>
+      }),
+      fetch('/api/providers/selection').then(async response => response.ok ? response.json() as Promise<ChatProviderSelection> : null),
+    ]).then(([available, selected]) => {
+      if (!active) return
+      const usable = (available.models ?? []).filter(provider => ['ready', 'configured_unverified'].includes(provider.state) && provider.model_id && (provider.orchestrator_enabled ?? provider.chat_enabled) !== false)
+      setChatProviders(usable)
+      setChatProviderSelection(selected)
+    }).catch(cause => {
+      if (active) setError(cause instanceof Error ? cause.message : 'No se pudieron cargar los modelos del orquestador.')
+    })
+    }
+    load()
+    window.addEventListener('adl-model-policy-changed', load)
+    return () => { active = false; window.removeEventListener('adl-model-policy-changed', load) }
+  }, [])
+
+  const changeChatProvider = async (value: string) => {
+    const [provider_id, model_id] = value.split('|')
+    if (!provider_id || !model_id) return
+    setSavingChatProvider(true); setError('')
+    try {
+      const response = await fetch('/api/providers/selection', {
+        method: 'PUT', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ provider_id, model_id }),
+      })
+      if (!response.ok) throw new Error(await responseError(response))
+      setChatProviderSelection(await response.json() as ChatProviderSelection)
+    } catch (cause) {
+      setError(cause instanceof Error ? cause.message : 'No se pudo cambiar el modelo del orquestador.')
+    } finally { setSavingChatProvider(false) }
+  }
 
   const refreshAgents = useCallback(async ({ background = false }: { background?: boolean } = {}) => {
     const inFlight = agentRefreshInFlightRef.current
@@ -539,7 +603,7 @@ export default function AgentChat({ onNavigate, onOpenProviderSettings, onOpenCo
           <summary>Conversations and agents <span>{agentsState === 'ready' ? agents.length : '—'}</span></summary>
           <aside className="control-chat-sidebar" aria-label="Orchestrator conversations and agents">
             <section className="chat-sidebar-pane conversation-library" aria-label="Conversation library">
-              <div className="conversation-library-heading"><strong>{selectedAgent ? `Chats · ${selectedAgent.config.name}` : 'Orchestrator chats'}</strong></div>
+              {selectedAgent && <div className="conversation-library-heading"><strong>Chats · {selectedAgent.config.name}</strong></div>}
               <TabStrip<LibraryMode> label="Conversation status" value={libraryMode} onChange={setLibraryMode} items={[{ id: 'active', label: 'Recent' }, { id: 'archived', label: 'Archived' }, { id: 'deleted', label: 'Trash' }]} />
               {loadingConversation && <p className="muted-state" role="status">Opening conversation…</p>}
               {libraryError && <p className="inline-error" role="alert">{libraryError}</p>}
@@ -623,21 +687,32 @@ export default function AgentChat({ onNavigate, onOpenProviderSettings, onOpenCo
         className="control-chat-main control-chat-window"
         hideTitlebar
       >
-        <div className="chat-mode-header"><button type="button" onClick={onOpenCognitionSettings} aria-label="Open cognition and context settings">Cognition: {cognitiveMode === 'bago5' ? 'BAGO5 experimental' : 'Baseline'} <span aria-hidden="true">↗</span></button></div>
+        <div className="chat-mode-header">
+          <ChatTools />
+          <button type="button" onClick={onOpenCognitionSettings} aria-label="Open cognition and context settings">Cognition: {cognitiveMode === 'bago5' ? 'BAGO5 experimental' : 'Baseline'} <span aria-hidden="true">↗</span></button>
+        </div>
         <div className="control-chat-messages" aria-live="polite">
           {messages.length === 0 && <div className="chat-welcome"><div className="welcome-mark" aria-hidden="true">✳</div><h3>{selectedAgent ? `Chat with ${selectedAgent.config.name}` : 'Your workspace, through chat'}</h3>{!selectedAgent && <div className="prompt-suggestions"><button type="button" onClick={() => setInput('Lista mis agentes')}>List my agents</button><button type="button" onClick={() => setInput('Quiero crear un agente para…')}>Create an agent</button><button type="button" onClick={() => setInput('Abre el Decision Inspector')}>Open the Inspector</button></div>}</div>}
-          {messages.map((message) => <article key={message.id} className={`control-message control-message-${message.role}`}><span className="message-speaker">{message.role === 'user' ? 'You' : selectedAgent?.config.name ?? 'Assistant'}</span>{message.content && <div className="control-message-content">{message.content}</div>}{message.agentBuilderDraft && <AgentBuilder key={message.id} inline initialAgent={message.agentBuilderDraft} onAgentCreated={() => void refreshAgents()} />}{message.inlineJobHistory && <JobHistory key={message.id} inline />}{message.inlineDirectoryScan && message.id === latestDirectoryScanPromptId && !selectedAgent && activeConversation?.owner_kind === 'assistant' && <DirectoryScanRun key={`scan-form-${message.id}`} conversationId={activeConversation.id} revision={activeConversation.revision} disabled={activeConversation.status !== 'active'} showForm onConversationUpdate={(conversation) => applyConversation(conversation as StoredConversation)} />}{message.scanOutcome && activeConversation?.owner_kind === 'assistant' && <DirectoryScanRun key={`scan-results-${message.id}`} conversationId={activeConversation.id} revision={activeConversation.revision} showForm={false} initialOutcome={message.scanOutcome} onConversationUpdate={(conversation) => applyConversation(conversation as StoredConversation)} />}{message.pendingNavigation && <section className="chat-navigation-confirmation" aria-label="Confirm screen change"><p>¿Quieres cambiar a <strong>{viewLabels[message.pendingNavigation]}</strong>?</p>{message.navigationDecision === 'accepted' ? <span role="status">Cambiando de pantalla…</span> : message.navigationDecision === 'declined' ? <span role="status">Seguimos en el chat.</span> : <div className="draft-actions"><button type="button" className="secondary-action" onClick={() => setMessages((previous) => previous.map((item) => item.id === message.id ? { ...item, navigationDecision: 'declined' } : item))}>Seguir en el chat</button><button type="button" className="primary-action" onClick={() => { setMessages((previous) => previous.map((item) => item.id === message.id ? { ...item, navigationDecision: 'accepted' } : item)); onNavigate(message.pendingNavigation as ExistingView) }}>Sí, cambiar de pantalla</button></div>}</section>}{message.cognitiveTrace && <CognitiveContextPanel trace={message.cognitiveTrace} />}{message.sources?.length ? <div className="message-sources" aria-label="Project files read"><strong>Project files read</strong><ul>{message.sources.map((source) => <li key={`${source.path}:${source.start_line}-${source.end_line}`}><code>{source.path}:{source.start_line}-{source.end_line}</code>{source.content_sha256 && <small> SHA-256 {source.content_sha256}</small>}</li>)}</ul></div> : null}{message.readEvents?.length ? <div className="message-sources" aria-label="Read-only analysis evidence"><strong>Read-only analysis evidence</strong><ul>{message.readEvents.map((event, index) => <li key={`${event.path}:${index}`}><code>{event.decision} {event.path || '(unresolved path)'} {event.reason_code ? `· ${event.reason_code}` : ''}</code>{event.kind === 'directory_code_scan' && <small>{` · ${event.files_scanned ?? 0} files · ${event.lines_scanned ?? 0} lines · ${event.finding_count ?? 0} findings${event.truncated ? ' · capped' : ''} · manifest SHA-256 ${event.manifest_sha256 ?? 'unavailable'}`}</small>}</li>)}</ul></div> : null}{message.trace && <div className="message-trace" aria-label="Execution trace evidence"><span>Trace {message.trace.state}</span><code>Local: {message.trace.localId}</code>{message.trace.jaegerId && <code>Jaeger: {message.trace.jaegerId}</code>}{message.trace.jaegerUrl && <a href={message.trace.jaegerUrl} target="_blank" rel="noreferrer">Open in Jaeger</a>}</div>}</article>)}
+          {messages.map((message) => <article key={message.id} className={`control-message control-message-${message.role}`}><div className="control-message-heading"><span className="message-speaker">{message.role === 'user' ? 'You' : selectedAgent?.config.name ?? 'Assistant'}</span>{message.content && <div className="control-message-actions"><button type="button" className="message-action" onClick={() => void copyMessage(message)}>{messageCopyState?.id === message.id ? messageCopyState.state === 'copied' ? 'Copied' : 'Copy failed' : message.role === 'user' ? 'Copy message' : 'Copy response'}</button>{message.role === 'user' && message.id === latestUserMessageId && <button type="button" className="message-action" onClick={() => editLatestMessage(message)} disabled={sending || Boolean(activeConversation && activeConversation.status !== 'active')}>Edit</button>}</div>}</div>{message.content && <div className="control-message-content">{message.content}</div>}{message.agentBuilderDraft && <AgentBuilder key={message.id} inline initialAgent={message.agentBuilderDraft} onAgentCreated={() => void refreshAgents()} />}{message.inlineJobHistory && <JobHistory key={message.id} inline />}{message.inlineDirectoryScan && message.id === latestDirectoryScanPromptId && !selectedAgent && activeConversation?.owner_kind === 'assistant' && <DirectoryScanRun key={`scan-form-${message.id}`} conversationId={activeConversation.id} revision={activeConversation.revision} disabled={activeConversation.status !== 'active'} showForm onConversationUpdate={(conversation) => applyConversation(conversation as StoredConversation)} />}{message.scanOutcome && activeConversation?.owner_kind === 'assistant' && <DirectoryScanRun key={`scan-results-${message.id}`} conversationId={activeConversation.id} revision={activeConversation.revision} showForm={false} initialOutcome={message.scanOutcome} onConversationUpdate={(conversation) => applyConversation(conversation as StoredConversation)} />}{message.pendingNavigation && <section className="chat-navigation-confirmation" aria-label="Confirm screen change"><p>¿Quieres cambiar a <strong>{viewLabels[message.pendingNavigation]}</strong>?</p>{message.navigationDecision === 'accepted' ? <span role="status">Cambiando de pantalla…</span> : message.navigationDecision === 'declined' ? <span role="status">Seguimos en el chat.</span> : <div className="draft-actions"><button type="button" className="secondary-action" onClick={() => setMessages((previous) => previous.map((item) => item.id === message.id ? { ...item, navigationDecision: 'declined' } : item))}>Seguir en el chat</button><button type="button" className="primary-action" onClick={() => { setMessages((previous) => previous.map((item) => item.id === message.id ? { ...item, navigationDecision: 'accepted' } : item)); onNavigate(message.pendingNavigation as ExistingView) }}>Sí, cambiar de pantalla</button></div>}</section>}{message.cognitiveTrace && <CognitiveContextPanel trace={message.cognitiveTrace} />}{message.sources?.length ? <div className="message-sources" aria-label="Project files read"><strong>Project files read</strong><ul>{message.sources.map((source) => <li key={`${source.path}:${source.start_line}-${source.end_line}`}><code>{source.path}:{source.start_line}-{source.end_line}</code>{source.content_sha256 && <small> SHA-256 {source.content_sha256}</small>}</li>)}</ul></div> : null}{message.readEvents?.length ? <div className="message-sources" aria-label="Read-only analysis evidence"><strong>Read-only analysis evidence</strong><ul>{message.readEvents.map((event, index) => <li key={`${event.path}:${index}`}><code>{event.decision} {event.path || '(unresolved path)'} {event.reason_code ? `· ${event.reason_code}` : ''}</code>{event.kind === 'directory_code_scan' && <small>{` · ${event.files_scanned ?? 0} files · ${event.lines_scanned ?? 0} lines · ${event.finding_count ?? 0} findings${event.truncated ? ' · capped' : ''} · manifest SHA-256 ${event.manifest_sha256 ?? 'unavailable'}`}</small>}</li>)}</ul></div> : null}{message.trace && <div className="message-trace" aria-label="Execution trace evidence"><span>Trace {message.trace.state}</span><code>Local: {message.trace.localId}</code>{message.trace.jaegerId && <code>Jaeger: {message.trace.jaegerId}</code>}{message.trace.jaegerUrl && <a href={message.trace.jaegerUrl} target="_blank" rel="noreferrer">Open in Jaeger</a>}</div>}</article>)}
           {capabilityDraft && <section className="capability-chat-card" aria-labelledby="capability-draft-title"><div className="draft-heading"><div><p className="section-eyebrow">Proposal review</p><h3 id="capability-draft-title">Review before saving</h3></div><span className="draft-status">Not saved</span></div><label>Capability<select value={capabilityDraft.capabilityId} onChange={(event) => setCapabilityDraft({ ...capabilityDraft, capabilityId: event.target.value })} disabled={capabilityBusy}><option value="">Choose a catalog entry</option>{capabilityDraft.capabilities.map((item) => <option key={item.id} value={item.id}>{item.id} · {item.status} · {item.effect}</option>)}</select></label>{capabilityDraft.capabilityId && <p className="capability-chat-selected">{capabilityDraft.capabilities.find((item) => item.id === capabilityDraft.capabilityId)?.summary}</p>}<label>Request summary<input value={capabilityDraft.summary} maxLength={500} onChange={(event) => setCapabilityDraft({ ...capabilityDraft, summary: event.target.value })} disabled={capabilityBusy} /></label><label>Requested scope<textarea value={capabilityDraft.requestedScope} maxLength={1000} rows={3} onChange={(event) => setCapabilityDraft({ ...capabilityDraft, requestedScope: event.target.value })} disabled={capabilityBusy} /></label><div className="draft-actions"><button type="button" className="secondary-action" onClick={() => setCapabilityDraft(null)} disabled={capabilityBusy}>Discard</button><button type="button" className="primary-action" onClick={() => void saveCapabilityProposal()} disabled={capabilityBusy || !capabilityDraft.capabilityId || !capabilityDraft.summary.trim() || !capabilityDraft.requestedScope.trim()}>{capabilityBusy ? 'Saving…' : 'Save proposal'}</button></div></section>}
           {capabilityProposals.map((proposal) => <article className="capability-chat-saved" key={proposal.id}><div><strong>{proposal.capability_id}</strong><span>{proposal.status} · revision {proposal.revision}</span></div><p>{proposal.summary}</p><p><strong>Requested scope:</strong> {proposal.requested_scope}</p><code>{proposal.id}</code>{proposal.status === 'PENDING_REVIEW' && <button type="button" className="secondary-action" onClick={() => void cancelChatProposal(proposal)} disabled={capabilityBusy}>Cancel proposal</button>}</article>)}
           {error && <p className="chat-error" role="alert">{error}{error.toLowerCase().includes('ollama') || error.toLowerCase().includes('provider') ? <button type="button" onClick={onOpenProviderSettings}>Open provider settings</button> : null}</p>}
           {sending && <p className="muted-state" role="status">Esperando la respuesta del proveedor…</p>}
           <div ref={messagesEndRef} />
         </div>
-        <form className="control-chat-composer" onSubmit={(event) => void sendMessage(event)}><label className="visually-hidden" htmlFor="control-chat-input">Message the assistant or selected agent</label><textarea id="control-chat-input" rows={2} value={input} onChange={(event) => setInput(event.target.value)} onKeyDown={(event) => {
+        <form className="control-chat-composer" onSubmit={(event) => void sendMessage(event)}><label className="visually-hidden" htmlFor="control-chat-input">Message the assistant or selected agent</label><div className="chat-composer-input"><textarea ref={composerRef} id="control-chat-input" rows={2} value={input} onChange={(event) => setInput(event.target.value)} onKeyDown={(event) => {
           if (event.key !== 'Enter' || event.shiftKey || event.nativeEvent.isComposing || event.repeat) return
           event.preventDefault()
           void sendMessage()
-        }} placeholder={activeConversation?.status && activeConversation.status !== 'active' ? 'Restore or start a new conversation.' : selectedAgent ? `Message ${selectedAgent.config.name}.` : 'Message the assistant…'} disabled={sending || Boolean(activeConversation && activeConversation.status !== 'active')} /><div className="chat-composer-actions"><label className="workspace-read-toggle"><input type="checkbox" checked={allowWorkspaceRead} onChange={(event) => setAllowWorkspaceRead(event.target.checked)} disabled={sending || Boolean(activeConversation && activeConversation.status !== 'active')} /><span>Allow project file reads</span></label><button className="primary-action" type="submit" disabled={sending || !input.trim() || Boolean(activeConversation && activeConversation.status !== 'active')}>{sending ? 'Sending.' : 'Send'}</button></div>{allowWorkspaceRead && <label className="workspace-read-paths">Project-relative paths<textarea rows={3} value={workspaceReadPaths} onChange={(event) => setWorkspaceReadPaths(event.target.value)} placeholder={'src/api/server.py\nsrc/agent_tools/workspace_read.py'} disabled={sending} /></label>}</form>
+        }} placeholder={activeConversation?.status && activeConversation.status !== 'active' ? 'Restore or start a new conversation.' : selectedAgent ? `Message ${selectedAgent.config.name}.` : 'Message the assistant…'} disabled={sending || Boolean(activeConversation && activeConversation.status !== 'active')} />
+            <button className="primary-action" type="submit" disabled={sending || !input.trim() || Boolean(activeConversation && activeConversation.status !== 'active')}>{sending ? 'Sending.' : 'Send'}</button>
+          </div>
+          <div className="chat-composer-actions">
+            <label className="workspace-read-toggle"><input type="checkbox" checked={allowWorkspaceRead} onChange={(event) => setAllowWorkspaceRead(event.target.checked)} disabled={sending || Boolean(activeConversation && activeConversation.status !== 'active')} /><span>Allow project file reads</span></label>
+            {!selectedAgent && <label className="chat-provider-picker"><span className="visually-hidden">Modelo del orquestador</span><select aria-label="Modelo del orquestador" value={chatProviderSelection ? `${chatProviderSelection.provider_id}|${chatProviderSelection.model_id}` : ''} onChange={event => void changeChatProvider(event.target.value)} disabled={savingChatProvider || chatProviders.length === 0}><option value="" disabled>{chatProviders.length ? 'Selecciona un modelo' : 'Configura un proveedor'}</option>{chatProviders.map(provider => <option key={`${provider.provider_id}|${provider.model_id}`} value={`${provider.provider_id}|${provider.model_id}`}>{provider.label} · {provider.display_name ?? provider.model_id}{provider.state === 'configured_unverified' ? ' · sin verificar' : ''}</option>)}</select></label>}
+          </div>
+          {allowWorkspaceRead && <label className="workspace-read-paths">Project-relative paths<textarea rows={3} value={workspaceReadPaths} onChange={(event) => setWorkspaceReadPaths(event.target.value)} placeholder={'src/api/server.py\nsrc/agent_tools/workspace_read.py'} disabled={sending} /></label>}
+        </form>
         <div className="chat-agent-panel-slot" ref={setAgentPanelTarget} />
       </WindowPanel>
     </section>

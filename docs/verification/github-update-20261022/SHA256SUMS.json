@@ -1,0 +1,70 @@
+[
+  {
+    "path": "final-gates.json",
+    "sha256": "3252c584d4beb435b1b3f787a8c2e6c8bfbf72f5f42003d5bdfdc56fc0e2aed6"
+  },
+  {
+    "path": "frontend-checks.json",
+    "sha256": "986925bc0ef6e6bb2071a66f1ec2b7820bdd55f68870b4e604a65d8f00759584"
+  },
+  {
+    "path": "backend-junit.xml",
+    "sha256": "c0e36b7c385257c35be12bfa90dfe436c51c52456b857fb7029e0bbe649c9e80"
+  },
+  {
+    "path": "runner-repair.md",
+    "sha256": "0ac94c72f67dc6899744a76ff0e7f42381e8cc031ea67b41a5ce63cb2573d474"
+  },
+  {
+    "path": "independent-review.md",
+    "sha256": "0b6d9a9bf45da2fe76899d29f28589c4557db7ef5bb460dca2931e4f58b04ef9"
+  },
+  {
+    "path": "applied-runner-manifest.json",
+    "sha256": "a5aae8f910028dcb0cd9b463833d90d0bf594e38d1c1dfa2cc919ed5f08167c9"
+  },
+  {
+    "path": "independent-result.json",
+    "sha256": "cd1062ffde4dc50c17c0a87981acdee21d929d6580d7cd06c6c8097ac96e53f0"
+  },
+  {
+    "path": "independent-manifest.json",
+    "sha256": "7f0b3850f8393480b7141b399cd20cf504f080f27b9d33522a0399e48367bacf"
+  },
+  {
+    "path": "independent-controls.mjs",
+    "sha256": "46420f3a13f21fc3980bb99d886f681a2d6c36afcc5c7e068ead8d334b198814"
+  },
+  {
+    "path": "windows-source-binding.json",
+    "sha256": "76beeaf88bafc389d6d2b9bfac3fa64d0497b2abdd33b8620971efb191816593"
+  },
+  {
+    "path": "environment-dependencies.json",
+    "sha256": "350cd676b78f1a5417207e2ab410ba8f69b24435e55efb9f7becf7181abfd3f5"
+  },
+  {
+    "path": "vitest.log",
+    "sha256": "79cf9b6cfed8f75b5eda5a4b1252251b134a31ee06424c51273b5e7e6ce0f9c9"
+  },
+  {
+    "path": "node-ui-tests.log",
+    "sha256": "dcea97b8110196491c58496aded2015591528aac2c530d96ae2952f86bf891d9"
+  },
+  {
+    "path": "node-contract-tests.log",
+    "sha256": "2494378c6748cf3885c1952209b9fd708db21bcb1f22cf456cd3086c19e9add3"
+  },
+  {
+    "path": "frontend-build.log",
+    "sha256": "1eaf7c3af84a16353deb0b4d79ac4774b90686041c0acf7bbfff68b63b6ab195"
+  },
+  {
+    "path": "readme-generate.log",
+    "sha256": "2398812884cc98cc482a12953906b40415a596f88a10e844f98d7d9083cf060c"
+  },
+  {
+    "path": "readme-check.log",
+    "sha256": "c0089b59e2485c173c413ef7a068861a1477bb9323e584cff0db2367ee19ad3a"
+  }
+]

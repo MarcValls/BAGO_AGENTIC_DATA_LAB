@@ -1,14 +1,16 @@
 import './AgentBuilder.css'
 import { useCallback, useEffect, useState } from 'react'
+import AgentTaskForm, { taskError, type TaskDefinition } from './AgentTaskForm'
 
 export interface AgentConfig {
   name: string
   description: string
   type: 'rag' | 'tool' | 'multi-agent'
   system_prompt: string
-  provider_id?: 'ollama-cloud' | 'openai-platform' | 'github-copilot' | null
+  provider_id?: 'ollama-cloud' | 'codex' | 'openai-platform' | 'github-copilot' | null
   model_id?: string | null
   tools: string[]
+  task?: TaskDefinition | null
   retrieval_config?: {
     mode: 'hybrid' | 'semantic' | 'lexical'
     top_k: number
@@ -31,17 +33,18 @@ const TOOL_OPTIONS = [
   { id: 'retrieval.search', label: 'Retrieval Search' },
   { id: 'sandbox.run', label: 'Sandbox Execution' },
 ]
-type AvailableProvider = { provider_id: NonNullable<AgentConfig['provider_id']>; label?: string; state: string; model_id: string | null }
+type AvailableProvider = { provider_id: NonNullable<AgentConfig['provider_id']>; label?: string; state: string; model_id: string | null; agent_types?: string[] }
 
 export default function AgentBuilder({ onAgentCreated, onBack, initialAgent, agentId, inline = false }: AgentBuilderProps) {
   const editing = Boolean(agentId)
   const [step, setStep] = useState<'configure' | 'preview' | 'complete'>('configure')
-  const [agent, setAgent] = useState<AgentConfig>(initialAgent ? { ...initialAgent } : {
+  const [agent, setAgent] = useState<AgentConfig>(initialAgent ? { ...initialAgent, task: initialAgent.task ? { ...initialAgent.task, dates: initialAgent.task.dates.map(date => ({ ...date })) } : { prompt: initialAgent.description, dates: [] } } : {
     name: '',
     description: '',
     type: 'rag',
     system_prompt: '',
     tools: [],
+    task: { prompt: '', dates: [] },
   })
   const [createdAgents, setCreatedAgents] = useState<AgentConfig[]>([])
   const [saving, setSaving] = useState(false)
@@ -54,11 +57,11 @@ export default function AgentBuilder({ onAgentCreated, onBack, initialAgent, age
     setProvidersLoading(true)
     setProviderError('')
     try {
-      const response = await fetch('/api/providers/available', { signal })
+      const response = await fetch('/api/providers/chat-models', { signal })
       if (!response.ok) throw new Error('No se pudo cargar el registro de proveedores.')
       const data = await response.json()
-      if (!Array.isArray(data?.providers)) throw new Error('El servidor no devolvió los proveedores disponibles.')
-      if (!signal?.aborted) setProviders(data.providers)
+      if (!Array.isArray(data?.models)) throw new Error('El servidor no devolvió los proveedores disponibles.')
+      if (!signal?.aborted) setProviders(data.models)
     } catch (cause) {
       if (!signal?.aborted) setProviderError(cause instanceof Error ? cause.message : 'No se pudieron cargar los proveedores.')
     } finally { if (!signal?.aborted) setProvidersLoading(false) }
@@ -68,8 +71,10 @@ export default function AgentBuilder({ onAgentCreated, onBack, initialAgent, age
     void loadProviders(controller.signal)
     return () => controller.abort()
   }, [loadProviders])
-  const selectedProviderId = agent.provider_id || 'ollama-cloud'
-  const selectedProvider = providers.find(provider => provider.provider_id === selectedProviderId)
+  const eligibleModels = providers.filter(provider => !provider.agent_types || provider.agent_types.includes(agent.type))
+  const selectedProviderId = agent.provider_id || eligibleModels[0]?.provider_id || 'ollama-cloud'
+  const selectedProvider = eligibleModels.find(provider => provider.provider_id === selectedProviderId && (!agent.model_id || provider.model_id === agent.model_id))
+  const providerOptions = eligibleModels.filter((provider, index, items) => items.findIndex(item => item.provider_id === provider.provider_id) === index)
 
   const updateAgent = (updates: Partial<AgentConfig>) => {
     setAgent((prev) => ({ ...prev, ...updates }))
@@ -85,8 +90,9 @@ export default function AgentBuilder({ onAgentCreated, onBack, initialAgent, age
   }
 
   const saveAgent = async () => {
-    if (!agent.name || !agent.description) {
+    if (!agent.name || !agent.description || !agent.task || taskError(agent.task)) {
       setSaveStatus('error')
+      setSaveError(!agent.task ? 'Escribe una tarea.' : taskError(agent.task))
       return
     }
 
@@ -131,6 +137,7 @@ export default function AgentBuilder({ onAgentCreated, onBack, initialAgent, age
       type: 'rag',
       system_prompt: '',
       tools: [],
+      task: { prompt: '', dates: [] },
     })
     setSaveStatus('idle')
     setSaveError('')
@@ -169,10 +176,14 @@ export default function AgentBuilder({ onAgentCreated, onBack, initialAgent, age
           </div>
 
           <div className="form-group">
+            <AgentTaskForm value={agent.task || { prompt: agent.description, dates: [] }} onChange={task => updateAgent({ task })} />
+          </div>
+
+          <div className="form-group">
             <label>Agent Type</label>
             <select
               value={agent.type}
-              onChange={(e) => updateAgent({ type: e.target.value as any })}
+              onChange={(e) => updateAgent(editing ? { type: e.target.value as AgentConfig['type'] } : { type: e.target.value as AgentConfig['type'], provider_id: null, model_id: null })}
               className="form-select"
             >
               <option value="rag">RAG (Retrieval-Augmented Generation)</option>
@@ -186,21 +197,21 @@ export default function AgentBuilder({ onAgentCreated, onBack, initialAgent, age
             {providersLoading && <p role="status">Cargando proveedores…</p>}
             {providerError && <div role="alert"><p>{providerError}</p><button type="button" className="btn btn-secondary" onClick={() => void loadProviders()}>Reintentar</button></div>}
             <select id="agent-provider" value={selectedProviderId} disabled={providersLoading || Boolean(providerError)} className="form-select" onChange={event => {
-              const next = providers.find(provider => provider.provider_id === event.target.value)
+              const next = eligibleModels.find(provider => provider.provider_id === event.target.value)
               if (next) updateAgent({ provider_id: next.provider_id, model_id: next.model_id })
             }}>
-              {!providers.length && <option value={selectedProviderId}>{providersLoading ? 'Cargando…' : 'Sin proveedores disponibles'}</option>}
-              {providers.map(provider => <option key={provider.provider_id} value={provider.provider_id} disabled={!['ready', 'configured_unverified'].includes(provider.state) || !provider.model_id}>
+              {!providerOptions.length && <option value={selectedProviderId}>{providersLoading ? 'Cargando…' : 'Sin proveedores disponibles'}</option>}
+              {providerOptions.map(provider => <option key={provider.provider_id} value={provider.provider_id} disabled={!['ready', 'configured_unverified'].includes(provider.state) || !provider.model_id}>
                 {provider.label || (provider.provider_id === 'ollama-cloud' ? 'Ollama' : provider.provider_id === 'openai-platform' ? 'OpenAI Platform' : 'GitHub Copilot')} · {provider.state === 'ready' ? 'acceso comprobado' : provider.state === 'configured_unverified' ? 'registrado, sin comprobar' : 'configura primero'}
               </option>)}
             </select>
           </div>
           <div className="form-group">
             <label htmlFor="agent-model">Modelo</label>
-            <select id="agent-model" value={agent.model_id || selectedProvider?.model_id || ''} className="form-select" disabled={!selectedProvider?.model_id}
+            <select id="agent-model" value={agent.model_id || selectedProvider?.model_id || ''} className="form-select" disabled={!eligibleModels.some(item => item.provider_id === selectedProviderId && item.model_id)}
               onChange={event => updateAgent({ provider_id: selectedProviderId, model_id: event.target.value })}>
-              {selectedProvider?.model_id && <option value={selectedProvider.model_id}>{selectedProvider.model_id}</option>}
-              {agent.model_id && agent.model_id !== selectedProvider?.model_id && <option value={agent.model_id}>{agent.model_id} (perfil guardado)</option>}
+              {eligibleModels.filter(item => item.provider_id === selectedProviderId && item.model_id).map(item => <option key={item.model_id} value={item.model_id!}>{item.model_id}</option>)}
+              {editing && agent.model_id && !eligibleModels.some(item => item.provider_id === selectedProviderId && item.model_id === agent.model_id) && <option value={agent.model_id}>{agent.model_id} (perfil guardado)</option>}
               {!selectedProvider?.model_id && <option value="">Configura un modelo en Provider Settings</option>}
             </select>
           </div>
@@ -233,7 +244,7 @@ export default function AgentBuilder({ onAgentCreated, onBack, initialAgent, age
           </div>
 
           <div className="button-group">
-            <button onClick={() => setStep('preview')} className="btn btn-primary btn-large">
+            <button onClick={() => setStep('preview')} disabled={!agent.task || Boolean(taskError(agent.task)) || (!editing && !selectedProvider)} className="btn btn-primary btn-large">
               ➜ Preview
             </button>
             {(!inline || editing) && <button type="button" onClick={onBack} className="btn btn-secondary">{editing ? 'Cancel' : 'Back'}</button>}
@@ -252,6 +263,7 @@ export default function AgentBuilder({ onAgentCreated, onBack, initialAgent, age
             <div className="preview-field">
               <strong>Description:</strong> {agent.description}
             </div>
+            <div className="preview-field"><strong>Tarea:</strong><div className="preview-code">{agent.task?.prompt}</div>{agent.task?.dates.map(date => <div key={date.key}>{date.label}: {date.value}</div>)}</div>
             <div className="preview-field">
               <strong>Type:</strong> <span className="badge">{agent.type}</span>
             </div>
@@ -275,7 +287,7 @@ export default function AgentBuilder({ onAgentCreated, onBack, initialAgent, age
           <div className="button-group">
             <button
               onClick={saveAgent}
-              disabled={saving || !agent.name}
+              disabled={saving || !agent.name || !agent.task || Boolean(taskError(agent.task))}
               className={`btn btn-primary btn-large ${saving ? 'disabled' : ''}`}
             >
               {saving ? '⏳ Saving...' : editing ? 'Save changes' : '💾 Save Agent'}

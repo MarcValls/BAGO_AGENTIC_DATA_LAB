@@ -1,0 +1,26 @@
+.external-connections { border: 1px solid #31465e; border-radius: 6px; padding: 14px; margin-bottom: 18px; min-width: 0; color: #dce8f5; }
+.external-connections header h3 { margin: 0 0 6px; }
+.external-connections p { margin: 6px 0; font-size: 13px; line-height: 1.45; overflow-wrap: anywhere; }
+.external-connections-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.3fr); gap: 14px; margin-top: 12px; }
+.external-connections form, .external-connection-operation { min-width: 0; }
+.external-connections fieldset { display: flex; flex-direction: column; align-items: stretch; gap: 9px; min-width: 0; margin: 0; padding: 12px; border: 1px solid #31465e; border-radius: 4px; }
+.external-connections legend { font-weight: 600; font-size: 14px; padding: 0 5px; }
+.external-connections label { display: flex; flex-direction: column; gap: 4px; font-size: 13px; min-width: 0; }
+.external-connections input:not([type=checkbox]), .external-connections select, .external-connections textarea { box-sizing: border-box; width: 100%; min-width: 0; background: #0b1523; border: 1px solid #3e536a; border-radius: 4px; padding: 7px; color: #edf4fc; font: inherit; }
+.external-connections textarea { resize: vertical; min-height: 80px; font-family: monospace; }
+.external-connections .external-check { flex-direction: row; align-items: flex-start; gap: 7px; line-height: 1.4; }
+.external-check input { flex: 0 0 auto; margin: 2px 0 0; }
+.external-connections button { align-self: flex-start; white-space: normal; min-height: 32px; }
+.external-connections button:disabled { opacity: .55; }
+.external-connections-error { color: #ffb5b5; }
+.external-connection-state { color: #b4d6ee; }
+.external-connections details { min-width: 0; border-left: 3px solid #537a9a; padding-left: 8px; font-size: 13px; }
+.external-connections summary { cursor: pointer; }
+.external-connections pre { white-space: pre-wrap; overflow-wrap: anywhere; max-height: 300px; overflow: auto; font-size: 12px; }
+.external-invocation { margin-top: 14px; padding-top: 12px; border-top: 1px solid #31465e; }
+.external-invocation h4 { margin: 0 0 10px; }
+.external-invocation dl { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; font-size: 12px; }
+.external-invocation dl div { min-width: 0; }
+.external-invocation dt { color: #9db4cc; }
+.external-invocation dd { margin: 3px 0 0; overflow-wrap: anywhere; }
+@media (max-width: 760px) { .external-connections-grid, .external-invocation dl { grid-template-columns: minmax(0, 1fr); } .external-connections { padding: 10px; } }

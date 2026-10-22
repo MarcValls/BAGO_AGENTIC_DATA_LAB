@@ -66,7 +66,10 @@ def test_app_assistant_uses_saved_history_and_returns_saved_turn(monkeypatch, tm
     conversation = store.create("assistant", "app-assistant")
     monkeypatch.setattr(server, "CONVERSATIONS", store)
     monkeypatch.setattr(server, "AGENT_CHAT_TRACE_DIR", tmp_path / "traces")
-    monkeypatch.setattr(server, "_selected_model_id", lambda: "gemma4:31b-cloud")
+    monkeypatch.setattr(server.provider_runtime, "active_selection", lambda: {
+        "provider_id": "ollama-cloud", "model_id": "gemma4:31b-cloud",
+        "label": "Fixture Ollama", "state": "configured_unverified",
+    })
     calls = []
     answers = iter(["First answer", "Second answer"])
     def fake_chat_turn(model, messages, *, tools, options=None):

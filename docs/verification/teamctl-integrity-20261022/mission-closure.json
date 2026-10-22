@@ -1,0 +1,47 @@
+[
+  {
+    "argv": [
+      "C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\output\\bago-suite-repair-20261021\\work\\env\\windows-py314\\Scripts\\python.exe",
+      "-B",
+      "C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\output\\bago-suite-repair-20261021\\i2\\bago suite\\scripts\\suite_orchestrator.py",
+      "team",
+      "--root",
+      "C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\.bago\\goals\\teamctl-p1-repair-20261022\\repair-v2",
+      "handoff",
+      "I01",
+      "--file",
+      "C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\.bago\\goals\\teamctl-p1-repair-20261022\\repair-v2\\reviews\\integration\\handoff.json"
+    ],
+    "exit_code": 0,
+    "stdout": "{\n  \"product_validation\": \"NOT_IMPLIED\",\n  \"status\": \"PASS\",\n  \"terminal_gate\": \"ADMINISTRATIVE_DONE\",\n  \"work_id\": \"I01\"\n}\n",
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\output\\bago-suite-repair-20261021\\work\\env\\windows-py314\\Scripts\\python.exe",
+      "-B",
+      "C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\output\\bago-suite-repair-20261021\\i2\\bago suite\\scripts\\suite_orchestrator.py",
+      "team",
+      "--root",
+      "C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\.bago\\goals\\teamctl-p1-repair-20261022\\repair-v2",
+      "verify"
+    ],
+    "exit_code": 0,
+    "stdout": "{\n  \"claim\": \"registered evidence integrity and dependency contract only\",\n  \"lifecycle\": \"ACTIVE\",\n  \"status\": \"PASS\",\n  \"terminal_gate\": \"ADMINISTRATIVE_DONE\"\n}\n",
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\output\\bago-suite-repair-20261021\\work\\env\\windows-py314\\Scripts\\python.exe",
+      "-B",
+      "C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\output\\bago-suite-repair-20261021\\i2\\bago suite\\scripts\\suite_orchestrator.py",
+      "team",
+      "--root",
+      "C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\.bago\\goals\\teamctl-p1-repair-20261022\\repair-v2",
+      "close"
+    ],
+    "exit_code": 0,
+    "stdout": "{\n  \"deployment\": \"NOT_RUN\",\n  \"product_state\": \"SCOPED_ACCEPTANCE_PASSED\",\n  \"status\": \"PASS\",\n  \"task_state\": \"CLOSED\",\n  \"terminal_gate\": \"VALIDATED_SCOPED_TASK\"\n}\n",
+    "stderr": ""
+  }
+]

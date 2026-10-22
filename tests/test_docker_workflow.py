@@ -6,6 +6,29 @@ from pathlib import Path
 ROOT = Path(__file__).parent.parent
 
 
+def test_image_sha_tag_uses_event_independent_default_prefix():
+    workflow = (ROOT / ".github" / "workflows" / "docker-build.yml").read_text(
+        encoding="utf-8"
+    )
+
+    assert "            type=sha\n" in workflow
+    assert "prefix={{branch}}" not in workflow
+
+
+def test_pull_request_build_does_not_export_registry_cache():
+    workflow = (ROOT / ".github" / "workflows" / "docker-build.yml").read_text(
+        encoding="utf-8"
+    )
+    build, _ = workflow.split("  security-scan:\n", 1)
+
+    assert (
+        "          cache-to: ${{ github.event_name != 'pull_request' && "
+        "format('type=registry,ref={0}/{1}:buildcache,mode=max', env.REGISTRY, "
+        "steps.normalize_image.outputs.image_name) || '' }}\n"
+    ) in build
+    assert "          push: ${{ github.event_name != 'pull_request' }}" in build
+
+
 def test_security_scan_has_job_scoped_sarif_upload_permissions():
     workflow = (ROOT / ".github" / "workflows" / "docker-build.yml").read_text(
         encoding="utf-8"

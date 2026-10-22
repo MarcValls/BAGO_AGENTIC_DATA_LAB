@@ -12,6 +12,7 @@ def test_context_reports_bound_locations_without_creating_missing_paths(monkeypa
     database = tmp_path / "outside-workspace" / "history.sqlite3"
     trace_root = tmp_path / "configured-traces"
     monkeypatch.setattr(server, "REPO_ROOT", workspace)
+    monkeypatch.setattr(server, "current_workspace_root", lambda: workspace.resolve())
     monkeypatch.setattr(server, "CONVERSATIONS", ConversationStore(database))
     monkeypatch.setattr(server, "AGENT_CHAT_TRACE_DIR", trace_root)
     monkeypatch.setenv("BAGO_CONVERSATION_DB_PATH", str(tmp_path / "unused.sqlite3"))
@@ -59,6 +60,7 @@ def test_context_checks_presence_without_disclosing_contents_or_provider_credent
     trace_root = tmp_path / "traces"
     (trace_root / "cognition").mkdir(parents=True)
     monkeypatch.setattr(server, "REPO_ROOT", workspace)
+    monkeypatch.setattr(server, "current_workspace_root", lambda: workspace.resolve())
     monkeypatch.setattr(server, "CONVERSATIONS", ConversationStore(database))
     monkeypatch.setattr(server, "AGENT_CHAT_TRACE_DIR", trace_root)
     monkeypatch.setenv("OLLAMA_API_KEY", "PRIVATE_PROVIDER_SENTINEL")

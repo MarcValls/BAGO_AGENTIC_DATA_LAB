@@ -1,9 +1,9 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
 import { localTraceToTimeline } from "../../../src/adapters/trace/localTraceAdapter";
-import { validateTraceTimeline, type LocalTraceRecord } from "../../../src/contracts/trace/trace";
+import { validateTraceTimeline, type TraceSource } from "../../../src/contracts/trace/trace";
 
-const source = (): LocalTraceRecord => ({
+const source = (): TraceSource => ({
   trace_id: "trace-1", run_id: "run-1",
   events: [
     { event_id: "child", trace_id: "trace-1", sequence: 2, name: "tool_call", kind: "tool", status: "ERROR", parent_event_id: "absent", attributes: { request_id: "req-1", payload: "[REDACTED]" }, evidence_refs: [] },
@@ -24,12 +24,13 @@ test("sequence chronology is sorted independently from parent causality and repo
 test("correlations remain absent unless explicitly supplied; failures and redaction pass through", () => {
   const timeline = localTraceToTimeline(source());
   const event = timeline.events[1];
-  assert.equal(event.correlation.toolCallId, "req-1");
-  assert.equal(event.correlation.claimState, "missing");
-  assert.equal(event.correlation.actionState, "missing");
+  assert.equal(event.correlations.requestId, "req-1");
+  assert.equal(event.correlations.toolCallId, undefined);
+  assert.equal(event.correlations.claimId, undefined);
+  assert.equal(event.correlations.actionId, undefined);
   assert.equal(event.attributes.payload, "[REDACTED]");
   assert.equal(event.status, "ERROR");
-  assert.equal(timeline.jaegerCorrelation, "unavailable");
+  assert.equal(timeline.runId, "run-1");
 });
 
 test("duplicate identities are retained and made visible rather than silently deduplicated", () => {
@@ -45,8 +46,7 @@ test("explicit claim and action correlation is carried without inference", () =>
   const value = source();
   value.events[0].attributes = { claim_id: "claim-7", action_id: "action-2" };
   const event = localTraceToTimeline(value).events.find(item => item.eventId === "child")!;
-  assert.equal(event.correlation.claimId, "claim-7");
-  assert.equal(event.correlation.claimState, "linked");
-  assert.equal(event.correlation.actionId, "action-2");
-  assert.equal(event.correlation.actionState, "linked");
+  assert.equal(event.correlations.claimId, "claim-7");
+  assert.equal(event.correlations.actionId, "action-2");
+  assert.equal(event.correlations.toolCallId, undefined);
 });
