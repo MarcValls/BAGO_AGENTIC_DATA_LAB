@@ -250,16 +250,48 @@ def discover_models() -> dict[str, Any]:
 
 
 def verify(model_id: str | None = None) -> dict[str, Any]:
-    """Non-generative verification; no inference tokens are consumed."""
+    """Verify actual model access with one short inference."""
+    global _last_successful_model_call, _last_successful_at
     config = _read_config()
     if not config:
         raise ProviderError("not_configured", "Configure Ollama before verification.", "not_configured")
-    models = discover_models()
     selected = validate_model_id(model_id or config.get("model_id") or "") if (model_id or config.get("model_id")) else None
-    found = selected is not None and any(m["model_id"] == selected for m in models["models"])
-    if selected and not found:
+    if not selected:
+        raise ProviderError("model_required", "Choose and save an Ollama model before verification.", "configured_unverified")
+    if selected != config.get("model_id"):
+        raise ProviderError("model_registration_mismatch", "Save the selected Ollama model before checking access.", "configured_unverified")
+    _last_successful_model_call = None
+    _last_successful_at = None
+    models = discover_models()
+    found = any(item["model_id"] == selected for item in models["models"])
+    if not found:
         return {"provider_id": PROVIDER_ID, "state": "configured_unverified", "model_id": selected, "model_available": False, "generation_performed": False}
-    return {"provider_id": PROVIDER_ID, "state": "configured_unverified", "model_id": selected, "model_available": found if selected else None, "generation_performed": False}
+
+    message = chat_turn(
+        selected,
+        [
+            {"role": "system", "content": "Reply with the single word OK."},
+            {"role": "user", "content": "Connection check. Reply only OK."},
+        ],
+        options={"num_predict": 8},
+    )
+    content = message.get("content") if isinstance(message, dict) else None
+    if not isinstance(content, str) or not content.strip():
+        _last_successful_model_call = None
+        _last_successful_at = None
+        raise ProviderError("empty_model_response", "Ollama returned no response to the live check.")
+    verified_at = _last_successful_at or utc_now()
+    _last_successful_model_call = selected
+    _last_successful_at = verified_at
+    return {
+        "provider_id": PROVIDER_ID,
+        "state": "ready",
+        "model_id": selected,
+        "model_available": True,
+        "generation_performed": True,
+        "usage": "minimal_inference",
+        "last_verified_at": verified_at,
+    }
 
 
 def chat_turn(

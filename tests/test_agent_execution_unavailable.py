@@ -5,7 +5,7 @@ import src.api.server as server
 from src.api.server import app
 
 
-def test_agent_runner_websocket_rejects_malformed_start_before_provider_or_ber(monkeypatch):
+def test_agent_runner_websocket_remains_closed_before_provider_or_ber(monkeypatch):
     client = TestClient(app)
 
     def unexpected_runner(*_args, **_kwargs):
@@ -22,4 +22,4 @@ def test_agent_runner_websocket_rejects_malformed_start_before_provider_or_ber(m
         message = websocket.receive_json()
 
     assert message["type"] == "error"
-    assert message["code"] == "invalid_message"
+    assert message["code"] == "execution_unavailable"

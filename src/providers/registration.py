@@ -208,6 +208,25 @@ def get_registration(provider_id: str) -> dict[str, Any]:
         return dict(config)
 
 
+def saved_credential(provider_id: str) -> str | None:
+    """Read a saved credential for an internal provider adapter only.
+
+    Callers must never return or log this value through an API response.
+    """
+    if provider_id not in PROVIDER_MODES:
+        raise RegistrationError("invalid_provider", "Unknown provider registration.")
+    with _LOCK:
+        config = _read_registry().get(provider_id)
+        if not isinstance(config, dict) or config.get("auth_mode") not in SECRET_MODES:
+            return None
+        try:
+            return _secure_keyring().get_password(SERVICE_NAME, provider_id)
+        except RegistrationError:
+            raise
+        except Exception:
+            raise RegistrationError("secure_store_unavailable", "The operating-system credential store could not read the credential.") from None
+
+
 def runtime_binding(provider_id: str, model_id: str) -> RuntimeRegistration:
     with _LOCK:
         config = get_registration(provider_id)

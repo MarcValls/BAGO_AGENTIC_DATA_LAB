@@ -1,0 +1,16 @@
+
+> bago-portfolio-ui@1.0.0 test
+> vitest run --maxWorkers=2
+
+
+ RUN  v5.0.4 C:/Users/AMTEC_Terminal_1º/Desktop/BAGO5_ADL/frontend
+
+
+ Test Files  14 passed (14)
+      Tests  127 passed (127)
+   Start at  17:30:54
+   Duration  14.25s (tests 44%, environment 31%, import 16%, transform 9%, worker 1%)
+
+    Isolate  14 workers spawned · ~787ms startup each (spawn + environment, per file)
+             at least ~4.72s faster with isolate: false — reuses workers across files instead of one per file
+

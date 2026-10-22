@@ -1,11 +1,14 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "bago://codex-team/handoff.schema.json",
+  "$id": "bago://adl/team/handoff.v3.schema.json",
   "type": "object",
   "required": [
     "work_id",
     "role",
     "status",
+    "mission_id",
+    "candidate_id",
+    "scope_sha256",
     "changed_files",
     "outputs",
     "verification",
@@ -13,70 +16,88 @@
     "next_consumers",
     "payload_sha256"
   ],
+  "$defs": {
+    "digest": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "text": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "\\S"
+    },
+    "paths": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/text"
+      },
+      "uniqueItems": true
+    }
+  },
   "properties": {
     "work_id": {
-      "type": "string",
-      "minLength": 1
+      "$ref": "#/$defs/text"
     },
     "role": {
-      "type": "string",
-      "minLength": 1
+      "$ref": "#/$defs/text"
     },
     "status": {
       "const": "DONE"
     },
+    "mission_id": {
+      "$ref": "#/$defs/text"
+    },
+    "candidate_id": {
+      "$ref": "#/$defs/digest"
+    },
+    "scope_sha256": {
+      "$ref": "#/$defs/digest"
+    },
     "changed_files": {
-      "type": "array",
-      "items": {
-        "type": "string"
-      },
-      "uniqueItems": true
+      "$ref": "#/$defs/paths"
+    },
+    "reviewed_paths": {
+      "$ref": "#/$defs/paths"
     },
     "outputs": {
       "type": "array",
       "items": {
         "type": "object",
+        "required": [
+          "path",
+          "sha256"
+        ],
         "anyOf": [
           {
             "required": [
-              "kind",
-              "path",
-              "sha256"
-            ],
-            "properties": {
-              "kind": {
-                "type": "string"
-              },
-              "path": {
-                "type": "string"
-              },
-              "sha256": {
-                "type": "string"
-              }
-            }
+              "kind"
+            ]
           },
           {
             "required": [
               "id",
-              "path",
               "frozen"
-            ],
-            "properties": {
-              "id": {
-                "type": "string"
-              },
-              "path": {
-                "type": "string"
-              },
-              "frozen": {
-                "type": "boolean"
-              },
-              "sha256": {
-                "type": "string"
-              }
-            }
+            ]
           }
-        ]
+        ],
+        "properties": {
+          "kind": {
+            "$ref": "#/$defs/text"
+          },
+          "id": {
+            "$ref": "#/$defs/text"
+          },
+          "frozen": {
+            "type": "boolean"
+          },
+          "path": {
+            "$ref": "#/$defs/text"
+          },
+          "sha256": {
+            "$ref": "#/$defs/digest"
+          }
+        },
+        "additionalProperties": false
       }
     },
     "verification": {
@@ -85,12 +106,18 @@
       "items": {
         "type": "object",
         "required": [
+          "id",
           "command",
-          "result"
+          "result",
+          "evidence",
+          "execution_id"
         ],
         "properties": {
+          "id": {
+            "$ref": "#/$defs/text"
+          },
           "command": {
-            "type": "string"
+            "$ref": "#/$defs/text"
           },
           "result": {
             "enum": [
@@ -104,8 +131,84 @@
               "string",
               "null"
             ]
+          },
+          "execution_id": {
+            "type": [
+              "string",
+              "null"
+            ]
           }
-        }
+        },
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "result": {
+                  "enum": [
+                    "PASS",
+                    "FAIL"
+                  ]
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "evidence": {
+                  "$ref": "#/$defs/text"
+                },
+                "execution_id": {
+                  "$ref": "#/$defs/text"
+                }
+              }
+            }
+          }
+        ],
+        "additionalProperties": false
+      }
+    },
+    "findings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "severity",
+          "scope",
+          "status",
+          "affects_correction"
+        ],
+        "properties": {
+          "id": {
+            "$ref": "#/$defs/text"
+          },
+          "severity": {
+            "enum": [
+              "P0",
+              "P1",
+              "P2"
+            ]
+          },
+          "scope": {
+            "enum": [
+              "PRODUCT",
+              "EVIDENCE",
+              "COVERAGE"
+            ]
+          },
+          "status": {
+            "enum": [
+              "OPEN",
+              "CLOSED"
+            ]
+          },
+          "affects_correction": {
+            "type": "boolean"
+          },
+          "description": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
       }
     },
     "residual_risks": {
@@ -115,16 +218,11 @@
       }
     },
     "next_consumers": {
-      "type": "array",
-      "items": {
-        "type": "string"
-      },
-      "uniqueItems": true
+      "$ref": "#/$defs/paths"
     },
     "payload_sha256": {
-      "type": "string",
-      "pattern": "^[a-f0-9]{64}$"
+      "$ref": "#/$defs/digest"
     }
   },
-  "additionalProperties": true
+  "additionalProperties": false
 }

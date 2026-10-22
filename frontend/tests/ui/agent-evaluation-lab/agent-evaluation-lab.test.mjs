@@ -12,12 +12,13 @@ const run = { id: 'evalrun_1', suite_id: suite.id, suite_version: 1, suite_name:
 
 test('normal inventory and model discovery use configured APIs and preserve returned identities', async () => {
   const calls = []
-  const stub = async (url, init) => { calls.push([url, init]); if (url.endsWith('/agents/list')) return response({ agents: [{ id: suite.agent_id, config: { name: 'Assistant' } }] }); if (url.endsWith('/models')) return response({ models: [{ model_id: run.model_id }] }); if (url.endsWith('/suites')) return response({ suites: [suite] }); return response({ runs: [run] }) }
+  const stub = async (url, init) => { calls.push([url, init]); if (url.endsWith('/agents/list')) return response({ agents: [{ id: suite.agent_id, config: { name: 'Assistant' } }] }); if (url.endsWith('/models')) return response({ models: [{ model_id: run.model_id }] }); if (url.endsWith('/status')) return response({ state: 'ready', model_id: run.model_id }); if (url.endsWith('/suites')) return response({ suites: [suite] }); return response({ runs: [run] }) }
   assert.equal((await evaluationApi.agents(stub)).agents[0].id, suite.agent_id)
   assert.equal((await evaluationApi.models(stub)).models[0].model_id, run.model_id)
+  assert.equal((await evaluationApi.providerStatus(stub)).model_id, run.model_id)
   assert.equal((await evaluationApi.suites(stub)).suites[0].version, 1)
   assert.equal((await evaluationApi.runs(stub)).runs[0].id, run.id)
-  assert.equal(calls.length, 4)
+  assert.equal(calls.length, 5)
 })
 
 test('empty suites and history stay empty without fabricating examples', async () => {

@@ -1,0 +1,73 @@
+{
+  "status": "PASS",
+  "commands": [
+    {
+      "label": "vitest",
+      "argv": [
+        "C:\\Program Files\\nodejs\\npm.cmd",
+        "test",
+        "--",
+        "--maxWorkers=2"
+      ],
+      "cwd": "C:\\Users\\AMTEC_Terminal_1\u00ba\\Desktop\\BAGO5_ADL\\frontend",
+      "exit_code": 0,
+      "started": "2026-10-22T15:30:52.801113+00:00",
+      "finished": "2026-10-22T15:31:09.186305+00:00"
+    },
+    {
+      "label": "node-ui-tests",
+      "argv": [
+        "C:\\Program Files\\nodejs\\npm.cmd",
+        "run",
+        "test:ui"
+      ],
+      "cwd": "C:\\Users\\AMTEC_Terminal_1\u00ba\\Desktop\\BAGO5_ADL\\frontend",
+      "exit_code": 0,
+      "started": "2026-10-22T15:31:09.197690+00:00",
+      "finished": "2026-10-22T15:31:19.757907+00:00"
+    },
+    {
+      "label": "node-contract-tests",
+      "argv": [
+        "C:\\Program Files\\nodejs\\npm.cmd",
+        "run",
+        "test:contracts"
+      ],
+      "cwd": "C:\\Users\\AMTEC_Terminal_1\u00ba\\Desktop\\BAGO5_ADL\\frontend",
+      "exit_code": 0,
+      "started": "2026-10-22T15:31:19.766079+00:00",
+      "finished": "2026-10-22T15:31:21.750140+00:00"
+    },
+    {
+      "label": "normative-contract",
+      "argv": [
+        "C:\\Users\\AMTEC_Terminal_1\u00ba\\Desktop\\BAGO5_ADL\\.venv\\Scripts\\python.exe",
+        "-B",
+        "-m",
+        "pytest",
+        "docs/governed-execution/verification/test_gex_contract_consistency.py",
+        "-q"
+      ],
+      "cwd": "C:\\Users\\AMTEC_Terminal_1\u00ba\\Desktop\\BAGO5_ADL",
+      "exit_code": 0,
+      "started": "2026-10-22T15:31:21.751012+00:00",
+      "finished": "2026-10-22T15:31:24.880661+00:00"
+    },
+    {
+      "label": "jcs-reference",
+      "argv": [
+        "node",
+        "docs/governed-execution/verification/jcs_reference.mjs",
+        "docs/governed-execution/GEX_V1_CONFORMANCE_VECTORS.json"
+      ],
+      "cwd": "C:\\Users\\AMTEC_Terminal_1\u00ba\\Desktop\\BAGO5_ADL",
+      "exit_code": 0,
+      "started": "2026-10-22T15:31:24.881541+00:00",
+      "finished": "2026-10-22T15:31:24.959565+00:00"
+    }
+  ],
+  "python311_syntax_errors": [],
+  "limits": [
+    "Local tests only; not a real provider, browser session, Docker deployment or Python3.11 runtime execution"
+  ]
+}

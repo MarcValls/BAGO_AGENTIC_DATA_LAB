@@ -1,0 +1,23 @@
+.catalog-quality { max-width: 900px; margin: 16px auto 22px; padding: clamp(16px, 3vw, 28px); border: 1px solid #344b67; border-radius: 16px; background: #101d2d; color: #e4edf7; }
+.catalog-quality header h2 { margin: 0 0 8px; font-size: 1.2rem; }
+.catalog-quality header > p:last-child, .catalog-quality-limit { color: #a8bbd0; font-size: .84rem; line-height: 1.55; }
+.catalog-quality-limit { padding: 11px 13px; border-left: 3px solid #c79d50; background: #1a2634; }
+.catalog-quality-service, .catalog-quality-error { padding: 11px 13px; border-radius: 8px; background: #351c24; color: #ffd2d2; }
+.catalog-quality-service.is-available { background: #142b45; color: #b9d5f3; }
+.catalog-quality-confirm { display: grid; gap: 12px; margin: 16px 0; }
+.catalog-quality-confirm label { display: flex; align-items: flex-start; gap: 9px; line-height: 1.5; }
+.catalog-quality-confirm input { margin-top: 4px; }
+.catalog-quality-confirm button { justify-self: start; padding: 10px 14px; border: 1px solid #537ba5; border-radius: 8px; background: #20436a; color: #fff; font: inherit; cursor: pointer; }
+.catalog-quality-confirm button:disabled { cursor: not-allowed; opacity: .55; }
+.catalog-quality-result { margin-top: 18px; padding: 16px; border: 1px solid #314761; border-radius: 12px; background: #0d1826; }
+.catalog-quality-result h3 { margin-top: 0; }
+.catalog-quality-result dl { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.catalog-quality-result dt { color: #8ea6bf; font-size: .75rem; }
+.catalog-quality-result dd { margin: 3px 0; overflow-wrap: anywhere; }
+.catalog-quality-result pre { overflow: auto; white-space: pre-wrap; overflow-wrap: anywhere; }
+.catalog-quality-checks, .catalog-quality-receipts { display: grid; gap: 10px; padding: 0; list-style: none; }
+.catalog-quality-checks li, .catalog-quality-receipts li { padding: 12px; border: 1px solid #2e4258; border-radius: 8px; }
+.catalog-quality-checks h5 { margin: 0 0 6px; }
+.catalog-quality-checks p { margin: 5px 0; overflow-wrap: anywhere; }
+.catalog-pass { color: #90ddb0; }.catalog-fail { color: #ffb0aa; }
+@media (max-width: 640px) { .catalog-quality-result dl { grid-template-columns: 1fr; } }

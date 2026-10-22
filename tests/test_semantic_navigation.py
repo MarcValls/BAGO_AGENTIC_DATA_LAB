@@ -45,7 +45,10 @@ def test_control_chat_does_not_navigate_for_explanation_decision(monkeypatch, tm
     store = ConversationStore(tmp_path / "conversations.sqlite3")
     conversation = store.create("assistant", "app-assistant")
     monkeypatch.setattr(server, "CONVERSATIONS", store)
-    monkeypatch.setattr(server, "_selected_model_id", lambda: "test-local-model")
+    monkeypatch.setattr(server.provider_runtime, "active_selection", lambda: {
+        "provider_id": "ollama-cloud", "model_id": "test-local-model",
+        "label": "Fixture Ollama", "state": "configured_unverified",
+    })
     monkeypatch.setattr(server, "_record_chat_cognition_trace", lambda **_kwargs: {"trace_id": "trace-test"})
     captured = {}
     def fake_chat_turn(*_args, **kwargs):
@@ -72,7 +75,10 @@ def test_control_chat_requests_confirmation_for_validated_navigation_decision(mo
     store = ConversationStore(tmp_path / "conversations.sqlite3")
     conversation = store.create("assistant", "app-assistant")
     monkeypatch.setattr(server, "CONVERSATIONS", store)
-    monkeypatch.setattr(server, "_selected_model_id", lambda: "test-local-model")
+    monkeypatch.setattr(server.provider_runtime, "active_selection", lambda: {
+        "provider_id": "ollama-cloud", "model_id": "test-local-model",
+        "label": "Fixture Ollama", "state": "configured_unverified",
+    })
     monkeypatch.setattr(server.ollama, "chat_turn", lambda *_args, **_kwargs: {
         "tool_calls": [{"function": {"name": "resolve_control_request", "arguments": {
             "decision": "navigate", "view": "cognition_settings", "reply": ""

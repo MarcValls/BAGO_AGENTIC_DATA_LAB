@@ -23,7 +23,10 @@ def _valid_proposal():
 def test_draft_retries_invalid_json_once_and_returns_unpersisted_proposal(monkeypatch, tmp_path):
     outputs = iter(["Here is the agent.", _valid_proposal()])
     calls = []
-    monkeypatch.setattr(server, "_selected_model_id", lambda: "gemma4:31b-cloud")
+    monkeypatch.setattr(server.provider_runtime, "active_selection", lambda: {
+        "provider_id": "ollama-cloud", "model_id": "gemma4:31b-cloud",
+        "label": "Fixture Ollama", "state": "configured_unverified",
+    })
     monkeypatch.setattr(server.ollama, "chat", lambda model, messages: calls.append(messages) or next(outputs))
     store = ConversationStore(tmp_path / "conversations.sqlite3")
     conversation = store.create("assistant", "app-assistant")
@@ -42,7 +45,10 @@ def test_draft_retries_invalid_json_once_and_returns_unpersisted_proposal(monkey
 
 def test_draft_rejects_invalid_proposal_after_one_retry(monkeypatch, tmp_path):
     calls = []
-    monkeypatch.setattr(server, "_selected_model_id", lambda: "gemma4:31b-cloud")
+    monkeypatch.setattr(server.provider_runtime, "active_selection", lambda: {
+        "provider_id": "ollama-cloud", "model_id": "gemma4:31b-cloud",
+        "label": "Fixture Ollama", "state": "configured_unverified",
+    })
     monkeypatch.setattr(server.ollama, "chat", lambda model, messages: calls.append(messages) or "not json")
     store = ConversationStore(tmp_path / "conversations.sqlite3")
     conversation = store.create("assistant", "app-assistant")

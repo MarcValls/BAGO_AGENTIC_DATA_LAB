@@ -31,6 +31,13 @@
       ],
       "frozen_outputs": [
         "decision-inspector-reuse-map-v1"
+      ],
+      "output_scopes": [
+        ".bago/team/runtime/**",
+        "docs/decision-inspector/inventory/**"
+      ],
+      "required_checks": [
+        "acceptance"
       ]
     },
     {
@@ -63,6 +70,14 @@
       ],
       "frozen_outputs": [
         "decision-evidence-contract-v1"
+      ],
+      "output_scopes": [
+        "src/contracts/decision/**",
+        "docs/decision-inspector/contracts/evidence/**",
+        "tests/contracts/evidence/**"
+      ],
+      "required_checks": [
+        "acceptance"
       ]
     },
     {
@@ -93,6 +108,12 @@
       ],
       "frozen_outputs": [
         "decision-inspector-ux-contract-v1"
+      ],
+      "output_scopes": [
+        "docs/decision-inspector/ux/**"
+      ],
+      "required_checks": [
+        "acceptance"
       ]
     },
     {
@@ -126,6 +147,15 @@
       ],
       "frozen_outputs": [
         "decision-trace-contract-v1"
+      ],
+      "output_scopes": [
+        "src/contracts/trace/**",
+        "src/adapters/trace/**",
+        "docs/decision-inspector/contracts/trace/**",
+        "tests/contracts/trace/**"
+      ],
+      "required_checks": [
+        "acceptance"
       ]
     },
     {
@@ -159,6 +189,15 @@
       ],
       "frozen_outputs": [
         "decision-action-contract-v1"
+      ],
+      "output_scopes": [
+        "src/contracts/action/**",
+        "src/adapters/action/**",
+        "docs/decision-inspector/contracts/action/**",
+        "tests/contracts/action/**"
+      ],
+      "required_checks": [
+        "acceptance"
       ]
     },
     {
@@ -194,7 +233,18 @@
         "No evidence/action/trace data is fabricated",
         "Tests pass"
       ],
-      "frozen_outputs": []
+      "frozen_outputs": [],
+      "output_scopes": [
+        "src/features/decision-inspector/shell/**",
+        "src/features/decision-inspector/shared/**",
+        "tests/ui/decision-inspector/shell/**",
+        "frontend/src/features/decision-inspector/shell/**",
+        "frontend/src/features/decision-inspector/shared/**",
+        "frontend/tests/ui/decision-inspector/shell/**"
+      ],
+      "required_checks": [
+        "acceptance"
+      ]
     },
     {
       "id": "W07",
@@ -228,7 +278,16 @@
         "Unsupported claims are visibly unsupported",
         "Tests pass"
       ],
-      "frozen_outputs": []
+      "frozen_outputs": [],
+      "output_scopes": [
+        "src/features/decision-inspector/evidence/**",
+        "tests/ui/decision-inspector/evidence/**",
+        "frontend/src/features/decision-inspector/evidence/**",
+        "frontend/tests/ui/decision-inspector/evidence/**"
+      ],
+      "required_checks": [
+        "acceptance"
+      ]
     },
     {
       "id": "W08",
@@ -261,7 +320,16 @@
         "Missing trace data is explicit",
         "Tests pass"
       ],
-      "frozen_outputs": []
+      "frozen_outputs": [],
+      "output_scopes": [
+        "src/features/decision-inspector/trace/**",
+        "tests/ui/decision-inspector/trace/**",
+        "frontend/src/features/decision-inspector/trace/**",
+        "frontend/tests/ui/decision-inspector/trace/**"
+      ],
+      "required_checks": [
+        "acceptance"
+      ]
     },
     {
       "id": "W09",
@@ -295,7 +363,16 @@
         "Approval UI cannot imply execution without receipt",
         "Tests pass"
       ],
-      "frozen_outputs": []
+      "frozen_outputs": [],
+      "output_scopes": [
+        "src/features/decision-inspector/actions/**",
+        "tests/ui/decision-inspector/actions/**",
+        "frontend/src/features/decision-inspector/actions/**",
+        "frontend/tests/ui/decision-inspector/actions/**"
+      ],
+      "required_checks": [
+        "acceptance"
+      ]
     },
     {
       "id": "W10",
@@ -336,7 +413,26 @@
         "No cross-feature contract violations",
         "Integration tests pass"
       ],
-      "frozen_outputs": []
+      "frozen_outputs": [],
+      "output_scopes": [
+        "src/features/decision-inspector/integration/**",
+        "src/features/decision-inspector/index.*",
+        "tests/ui/decision-inspector/integration/**",
+        "frontend/src/contracts/decision/**",
+        "frontend/src/contracts/trace/**",
+        "frontend/src/contracts/action/**",
+        "frontend/src/features/decision-inspector/integration/**",
+        "frontend/src/features/decision-inspector/index.*",
+        "frontend/tests/ui/decision-inspector/integration/**",
+        "frontend/src/features/decision-inspector/actions/ActionReview.tsx",
+        "frontend/src/adapters/action/agentRun.ts",
+        "frontend/src/adapters/trace/localTraceAdapter.ts",
+        "frontend/tests/ui/decision-inspector/actions/action-review.test.tsx",
+        "frontend/tests/ui/decision-inspector/evidence/evidence-explorer.test.tsx"
+      ],
+      "required_checks": [
+        "acceptance"
+      ]
     },
     {
       "id": "W11",
@@ -369,6 +465,13 @@
       ],
       "frozen_outputs": [
         "decision-inspector-verification-v1"
+      ],
+      "output_scopes": [
+        "tests/verification/decision-inspector/**",
+        "docs/decision-inspector/verification/**"
+      ],
+      "required_checks": [
+        "acceptance"
       ]
     },
     {
@@ -401,7 +504,15 @@
       ],
       "frozen_outputs": [
         "agent-decision-inspector-v1-terminal-gate"
+      ],
+      "output_scopes": [
+        ".bago/team/runtime/**",
+        "docs/decision-inspector/FINAL_STATUS.md"
+      ],
+      "required_checks": [
+        "acceptance"
       ]
     }
-  ]
+  ],
+  "operation": "REPAIR"
 }

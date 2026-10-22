@@ -10,16 +10,20 @@ cliente real ni se conectan a servicios externos.
 
 ## Instalar y ejecutar
 
-Requisito: Python 3.11+. Desde la raíz del checkout, la ruta de portfolio es un
-solo comando y funciona tanto en Windows como en macOS/Linux:
+Requisito: Python 3.11+ y las dependencias de `requirements.txt` instaladas en
+el entorno Python activo. La [guía de instalación](one_command_demo.md) incluye
+los pasos desde un clon limpio para Windows y macOS/Linux. Con ese entorno
+preparado, ejecutar desde la raíz:
 
 ```bash
 python demo.py
 ```
 
-El launcher crea o reutiliza `.venv`, instala las dependencias fijadas cuando
-hace falta, ejecuta la demo existente y escribe el bundle revisable en
-`demo_output/latest/`.
+El launcher usa el entorno activo, ejecuta la demo y escribe los cinco
+artefactos JSON en `demo_output/`. Para elegir otro destino, usar
+`python demo.py --artifacts-dir <directorio>`. La instalación inicial puede
+necesitar acceso a los paquetes; la ejecución con dependencias instaladas usa
+fixtures locales y no requiere servicios externos.
 
 La ruta Bash anterior sigue disponible para uso manual:
 

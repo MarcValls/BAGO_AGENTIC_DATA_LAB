@@ -1,6 +1,6 @@
-"""Use the user's existing Codex ChatGPT login through the official app-server.
+"""Use Codex's official ChatGPT and API-key login through its app-server.
 
-ADL never reads, copies or returns Codex credentials. Native tools are disabled;
+Codex owns credential persistence; ADL never returns stored credentials. Native tools are disabled;
 the model returns text or structured proposals for the existing ADL boundary.
 """
 from __future__ import annotations
@@ -53,7 +53,7 @@ def executable() -> str:
 
 
 class CodexClient:
-    """Bounded synchronous JSON-RPC connection; no credentials in messages/logs."""
+    """Bounded synchronous JSON-RPC connection; RPC payloads are never logged."""
 
     def __init__(self) -> None:
         self._directory = tempfile.TemporaryDirectory(prefix="adl-codex-")
@@ -187,9 +187,11 @@ class CodexClient:
 
 def _account(client: CodexClient) -> dict[str, Any]:
     account = client.request("account/read", {"refreshToken": False}).get("account")
-    authenticated = isinstance(account, dict) and account.get("type") == "chatgpt"
-    return {"authenticated": authenticated, "auth_mode": "chatgpt" if authenticated else None,
-            "plan_type": account.get("planType") if authenticated else None}
+    account_type = account.get("type") if isinstance(account, dict) else None
+    authenticated = account_type in {"chatgpt", "apiKey"}
+    return {"authenticated": authenticated,
+            "auth_mode": {"chatgpt": "chatgpt", "apiKey": "api_key"}.get(account_type),
+            "plan_type": account.get("planType") if account_type == "chatgpt" else None}
 
 
 def session_status(*, include_models: bool = False) -> dict[str, Any]:
@@ -202,26 +204,56 @@ def session_status(*, include_models: bool = False) -> dict[str, Any]:
         return result
 
 
-def start_login() -> dict[str, str]:
-    """Start Codex's native ChatGPT browser login and keep its RPC session alive."""
+def start_login(auth_mode: str = "chatgpt", api_key: str | None = None) -> dict[str, Any]:
+    """Delegate both sign-in methods to the same native account/login API."""
+    if auth_mode not in {"chatgpt", "api_key"}:
+        raise registration.RegistrationError("invalid_auth_mode", "Método de inicio de sesión no válido.")
+    if auth_mode == "api_key":
+        api_key = (api_key or "").strip()
+        if not 8 <= len(api_key) <= 4096 or "\n" in api_key or "\r" in api_key:
+            raise registration.RegistrationError("invalid_api_key", "Introduce una API key válida.")
+    elif api_key is not None:
+        raise registration.RegistrationError("unexpected_secret", "El inicio de sesión con ChatGPT no acepta una API key.")
     with _LOGIN_LOCK:
         if any(flow.get("state") == "pending" for flow in _LOGIN_FLOWS.values()):
             raise registration.RegistrationError("codex_login_in_progress", "Ya hay un inicio de sesión de Codex en curso.")
         client = CodexClient()
         try:
-            result = client.request("account/login/start", {"type": "chatgpt", "codexStreamlinedLogin": True})
+            params = ({"type": "apiKey", "apiKey": api_key} if auth_mode == "api_key"
+                      else {"type": "chatgpt", "codexStreamlinedLogin": True, "useHostedLoginSuccessPage": True})
+            result = client.request("account/login/start", params)
+            if auth_mode == "api_key":
+                if result.get("type") != "apiKey" or _account(client).get("auth_mode") != "api_key":
+                    raise registration.RegistrationError("codex_login_failed", "Codex no confirmó el acceso mediante API key.")
+                updated = _reset_model_verification()
+                client.close()
+                return {"state": "completed", **({"registration": updated} if updated else {})}
             login_id, auth_url = result.get("loginId"), result.get("authUrl")
-            parsed_url = urlsplit(auth_url) if isinstance(auth_url, str) else None
+            try:
+                parsed_url = urlsplit(auth_url) if isinstance(auth_url, str) else None
+                auth_port = parsed_url.port if parsed_url else None
+            except ValueError:
+                raise registration.RegistrationError("codex_login_unavailable", "Codex no devolvió un flujo de inicio de sesión de ChatGPT válido.") from None
             if (result.get("type") != "chatgpt" or not isinstance(login_id, str) or not parsed_url
-                    or parsed_url.scheme != "https" or parsed_url.hostname != "auth.openai.com"):
+                    or parsed_url.scheme != "https" or parsed_url.hostname not in {"auth.openai.com", "chatgpt.com"}
+                    or parsed_url.username or parsed_url.password or auth_port not in {None, 443}):
                 raise registration.RegistrationError("codex_login_unavailable", "Codex no devolvió un flujo de inicio de sesión de ChatGPT válido.")
+            updated = _reset_model_verification()
         except Exception:
             client.close()
             raise
         flow = {"state": "pending", "client": client, "error": None, "started_at": time.monotonic()}
         _LOGIN_FLOWS[login_id] = flow
         threading.Thread(target=_wait_for_login, args=(login_id, flow), daemon=True).start()
-        return {"login_id": login_id, "auth_url": auth_url, "state": "pending"}
+        return {"login_id": login_id, "auth_url": auth_url, "state": "pending", **({"registration": updated} if updated else {})}
+
+
+def _reset_model_verification() -> dict[str, Any] | None:
+    """A new account must not inherit another account's successful inference."""
+    current = registration.status("codex")
+    if current.get("auth_mode") == "codex_cli":
+        return registration.save_registration("codex", "codex_cli", current.get("model_id"), None, None)
+    return None
 
 
 def _wait_for_login(login_id: str, flow: dict[str, Any]) -> None:
@@ -275,7 +307,7 @@ def chat_turn(model_id: str, messages: list[dict[str, Any]], *, tools=None, opti
     history = [item for item in messages if item.get("role") != "system"][-32:]
     with CodexClient() as client:
         if not _account(client)["authenticated"]:
-            raise registration.RegistrationError("authentication_required", "ADL no detecta una sesión ChatGPT de Codex en este contexto de usuario.", "needs_authentication")
+            raise registration.RegistrationError("authentication_required", "Inicia sesión en Codex con ChatGPT o una API key.", "needs_authentication")
         thread = client.request("thread/start", {"model": model_id, "modelProvider": "openai", "allowProviderModelFallback": False,
                                                  "cwd": client.cwd, "sandbox": "read-only", "approvalPolicy": "untrusted", "approvalsReviewer": "user",
                                                  "ephemeral": True, "developerInstructions": instructions, "config": CONFIG})

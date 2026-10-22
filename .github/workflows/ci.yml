@@ -98,11 +98,27 @@ jobs:
       - name: Install frontend dependencies
         run: npm ci
         working-directory: frontend
+      - name: Verify normative governed execution contract
+        run: python -m pytest docs/governed-execution/verification/test_gex_contract_consistency.py -q
+      - name: Run independent JCS reference vectors
+        run: node docs/governed-execution/verification/jcs_reference.mjs docs/governed-execution/GEX_V1_CONFORMANCE_VECTORS.json
       - name: Run frontend package tests
         run: npm test
         working-directory: frontend
       - name: Run frontend UI tests
         run: npm run test:ui
+        working-directory: frontend
+      - name: Verify grounded knowledge, catalog and MCP interfaces
+        run: node --test tests/ui/knowledge/grounded-source.test.mjs tests/ui/knowledge/ontology-review.test.mjs tests/ui/knowledge/catalog-quality.test.mjs tests/ui/capabilities/mcp-governance.test.mjs
+        working-directory: frontend
+      - name: Verify provider settings
+        run: npm run test:providers
+        working-directory: frontend
+      - name: Verify governed fixture action review
+        run: npx vitest run tests/ui/governed-fixture/governed-fixture.test.tsx
+        working-directory: frontend
+      - name: Run frontend Node contract tests
+        run: npm run test:contracts
         working-directory: frontend
       - name: Build frontend
         run: npm run build

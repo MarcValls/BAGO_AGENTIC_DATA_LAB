@@ -7,7 +7,8 @@ import Authorization from './components/Authorization'
 import Trace from './components/Trace'
 import Evaluation from './components/Evaluation'
 import AgentBuilder from './components/AgentBuilder'
-import AgentRunner from './components/AgentRunner'
+import GovernedFixtureRunner from './components/GovernedFixtureRunner'
+import AgentTasks from './components/AgentTasks'
 import AgentChat from './components/AgentChat'
 import CapabilityManager from './components/CapabilityManager'
 import JobHistory from './components/JobHistory'
@@ -96,6 +97,7 @@ function App() {
   const [settingsView, setSettingsView] = useState<SettingsView>('cognition')
   const [cognitiveMode, setCognitiveMode] = useState<CognitiveMode>(readCognitiveMode)
   const [demoRefresh, setDemoRefresh] = useState(0)
+  const [advancedRunsOpen, setAdvancedRunsOpen] = useState(false)
   const dataLayerRef = useRef<HTMLDialogElement>(null)
   const settingsDialogRef = useRef<HTMLDialogElement>(null)
   const appScroll = useScrollActivity()
@@ -233,7 +235,7 @@ function App() {
           {activeInteractionView === 'workspace' && <CognitionSettings mode={cognitiveMode} onModeChange={setCognitiveMode} workspaceOnly />}
           {activeInteractionView === 'capabilities' && <CapabilityManager />}
           {activeInteractionView === 'builder' && <AgentBuilder onBack={() => setActiveInteractionView('chat')} onAgentCreated={() => setDemoRefresh((previous) => previous + 1)} />}
-          {activeInteractionView === 'runner' && <AgentRunner />}
+          {activeInteractionView === 'runner' && <><AgentTasks /><details className="agent-tasks-advanced" open={advancedRunsOpen} onToggle={event => setAdvancedRunsOpen(event.currentTarget.open)}><summary>Avanzado · ejecución gobernada de demostración</summary>{advancedRunsOpen && <GovernedFixtureRunner apiBase={window.location.origin} />}</details></>}
           {activeInteractionView === 'evaluation_lab' && <AgentEvaluationLab />}
         </main>
       </div>
@@ -261,7 +263,7 @@ function App() {
           <section className={`settings-layer-content ${settingsScroll.scrolling ? 'scroll-active' : ''}`} aria-label={settingsView === 'providers' ? 'Provider and model settings' : 'Cognition and context settings'} tabIndex={0} onScroll={settingsScroll.onScroll}>
             {settingsView === 'providers'
               ? <ProviderSettings />
-              : <CognitionSettings mode={cognitiveMode} onModeChange={setCognitiveMode} showWorkspaceLocations={false} />}
+              : <CognitionSettings mode={cognitiveMode} onModeChange={setCognitiveMode} showWorkspaceLocations />}
           </section>
         </div>
       </dialog>

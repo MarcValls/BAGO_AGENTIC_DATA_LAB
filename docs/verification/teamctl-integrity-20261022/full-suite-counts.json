@@ -1,0 +1,14 @@
+{
+  "counts": {
+    "passed": 536,
+    "skipped": 1,
+    "failed": 0,
+    "errors": 0
+  },
+  "skipped": [
+    {
+      "name": "test_symlink_source_is_rejected",
+      "reason": "symlink creation is not permitted on this Windows host: [WinError 1314] El cliente no dispone de un privilegio requerido: 'C:\\\\Users\\\\AMTEC_Terminal_1º\\\\Desktop\\\\BAGO5_ADL\\\\output\\\\tp1pytest2\\\\test_symlink_source_is_rejecte0\\\\outside.md' -> 'C:\\\\Users\\\\AMTEC_Terminal_1º\\\\Desktop\\\\BAGO5_ADL\\\\output\\\\tp1pytest2\\\\test_symlink_source_is_rejecte0\\\\workspace\\\\alias.md'"
+    }
+  ]
+}

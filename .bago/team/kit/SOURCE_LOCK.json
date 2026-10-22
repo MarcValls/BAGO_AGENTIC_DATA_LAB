@@ -1,0 +1,30 @@
+{
+  "schema": "bago.adl.teamctl.source.v1",
+  "license": "MIT; included LICENSE",
+  "canonical_owner": ".bago/team/kit/scripts/teamctl.py",
+  "source_project": "BAGO5_ADL via bounded Suite repair derivation",
+  "files": [
+    {
+      "source": "frozen suite-kit/scripts/teamctl.py",
+      "sha256": "a75d190e5ec39b075ac9d5aad95ea7f28eff3fa2c8ed089030d7bcd9683d229f"
+    },
+    {
+      "source": "suite/scripts/suite_safety.py",
+      "sha256": "302b93c3a52b3736de988454cdaf9ead3f6569c03db374a673932ba0a7c27ef3"
+    },
+    {
+      "source": "ADL canonical baseline",
+      "sha256": "df6b7034a50ffc8a2fa000f429cccba8914f7adf9dbe602aab072b5ec75a4165"
+    },
+    {
+      "source": "previous prepared correction",
+      "sha256": "b33b52aa8c15de78912a7968e95b4139f8f85b4ba2c16f3e05262cfb642006e2"
+    }
+  ],
+  "adaptation": [
+    "ADL-local explicit identity paths; no Suite install paths/identity",
+    "Read-only legacy status/inspect; modern gates never infer missing evidence",
+    "Full mission/handoff schema, managed receipts and recursive consumption gates"
+  ],
+  "identity_policy": "SHA256 of sorted path/SHA rows for the finite IDENTITY_PATHS constant; excludes runtime/tests/evidence"
+}
