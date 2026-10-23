@@ -1,3 +1,6 @@
+import {setLocale,t} from '../../../../src/i18n'
+import {beforeEach as beforeLocaleExpectation} from 'vitest'
+beforeLocaleExpectation(() => setLocale('en'))
 // @vitest-environment jsdom
 import { strict as assert } from 'node:assert'
 import { fireEvent, render, screen } from '@testing-library/react'
@@ -58,9 +61,9 @@ test('user can select a supplied conclusion and navigate its sections', () => {
   fireEvent.click(screen.getByRole('button', { name: 'Source-provided answer' }))
   assert.equal(onConclusionSelect.mock.calls[0]?.[0], 'c-1')
   assert.equal(screen.getByRole('button', { name: 'Source-provided answer' }).getAttribute('aria-current'), 'true')
-  fireEvent.click(screen.getByRole('button', { name: 'Evidence' }))
-  assert.ok(screen.getByRole('heading', { name: 'Evidence' }))
-  assert.match(screen.getByLabelText('Current location').textContent ?? '', /Evidence/)
+  fireEvent.click(screen.getByRole('button', { name: t('core.Retrieval.evidence_03867a') }))
+  assert.ok(screen.getByRole('heading', { name: t('core.Retrieval.evidence_03867a') }))
+  assert.match(screen.getByLabelText(t('agents.InspectorShell.current_location')).textContent ?? '', /Evidence/)
 })
 
 test('unsupported claims never receive a supported presentation by default', () => {

@@ -1,0 +1,15 @@
+{
+  "source_candidate": "contacts-service-0.1.0-RC1",
+  "source_sha256": "08df4f9ea61f579f735fb3c264439a85abdebd27bd251d52ad77d4e27acc3e69",
+  "derived_candidate": "contacts-service-0.1.1-RC1",
+  "derived_sha256": "01c2d22ceed56fce41e1350a6fe78c46d31ae187f25ff13d279f761c06330972",
+  "source_preserved": "history/UPSTREAM_SOURCE.py",
+  "changes": [
+    "ASCII E164 digits",
+    "reject email control characters",
+    "cancel OAuth pending and stop callback on close"
+  ],
+  "google_live": "NOT_RUN",
+  "origin": "E:\\proyectos curriculum\\PRUEBAS_ADL\\CONTACTS_SERVICE_20261022",
+  "repair_patch_sha256": "89b54bfb0df6ef89ea32182b50f52677f13847166d0b02bb5ea156ddb4f032d7"
+}

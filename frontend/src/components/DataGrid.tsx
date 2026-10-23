@@ -1,3 +1,4 @@
+import {useI18n,t,localMessage,errorMessage,apiError,formatDate,formatNumber} from '../i18n'
 import type { ReactNode, KeyboardEvent } from 'react'
 
 export interface DataGridRow {
@@ -14,6 +15,8 @@ interface DataGridProps {
 }
 
 export default function DataGrid({ label, columns, rows, selectedId, onSelect }: DataGridProps) {
+  useI18n()
+
   const activateOnEnter = (event: KeyboardEvent<HTMLTableRowElement>, id: string) => {
     if ((event.key === 'Enter' || event.key === ' ') && onSelect) {
       event.preventDefault()

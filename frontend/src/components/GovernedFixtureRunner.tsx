@@ -1,3 +1,4 @@
+import {useI18n,t,localMessage,errorMessage,apiError,formatDate,formatNumber} from '../i18n'
 import { useEffect, useRef, useState } from 'react'
 import './GovernedFixtureRunner.css'
 
@@ -24,7 +25,7 @@ const digest = (v: unknown): v is string => typeof v === 'string' && /^[a-f0-9]{
 const signature = (v: unknown) => typeof v === 'string' && /^[A-Za-z0-9_-]{86}$/.test(v)
 const json = (v: unknown) => JSON.stringify(v, null, 2)
 const child = (v: JsonObject | null, key: string): JsonObject => v && object(v[key]) ? v[key] as JsonObject : {}
-const verifiedLabel = (v: unknown) => v === true ? 'Válido (backend)' : v === false ? 'NO VÁLIDO' : 'No comprobado'
+const verifiedLabel = (v: unknown) => v === true ? t('agents.aux.GovernedFixtureRunner.valido_backend') : v === false ? t('agents.aux.GovernedFixtureRunner.no_valido') : t('agents.aux.GovernedFixtureRunner.no_comprobado')
 
 export function readGexView(value: unknown): GexRequestView | null {
   if (!object(value) || value.contract_version !== 'gex-runtime/v1' || value.synthetic !== true
@@ -96,6 +97,8 @@ export function verifiedGexSuccess(view: GexRequestView, agentId: string): boole
 }
 
 export default function GovernedFixtureRunner({ apiBase = 'http://localhost:8081', agentId }: { apiBase?: string; agentId?: string }) {
+  useI18n()
+
   const base = `${apiBase.replace(/\/$/, '')}/api/gex`
   const [selectedAgent, setSelectedAgent] = useState(agentId || '')
   const [apiKey, setApiKey] = useState('')
@@ -104,11 +107,11 @@ export default function GovernedFixtureRunner({ apiBase = 'http://localhost:8081
   const [task, setTask] = useState('Lee el resumen de cliente de la fixture sintética registrada.')
   const [requestId, setRequestId] = useState('')
   const [view, setView] = useState<GexRequestView | null>(null)
-  const [status, setStatus] = useState('Consultando disponibilidad…')
+  const [status, setStatus] = useState<any>(localMessage('agents.aux.GovernedFixtureRunner.consultando_disponibilidad'))
   const [ready, setReady] = useState(false)
   const [busy, setBusy] = useState(false)
   const busyRef = useRef(false)
-  const [error, setError] = useState('')
+  const [error, setError] = useState<any>('')
   const [uncertain, setUncertain] = useState(false)
   const [now, setNow] = useState(Date.now())
   const controllerRef = useRef<AbortController | null>(null)
@@ -121,8 +124,8 @@ export default function GovernedFixtureRunner({ apiBase = 'http://localhost:8081
       .then(async r => { const s: unknown = await r.json(); if (!mounted.current) return
         if (r.ok && object(s) && s.contract_version === 'gex-runtime/v1' && s.synthetic === true && s.capability_id === 'fixture.read') {
           setStatus(String(s.state)); setReady(s.state === 'READY')
-        } else { setStatus('Respuesta de disponibilidad no válida'); setReady(false) }
-      }).catch(() => { if (mounted.current && !c.signal.aborted) setStatus('No se pudo consultar el servicio') })
+        } else { setStatus(localMessage('agents.aux.GovernedFixtureRunner.respuesta_de_disponibilidad_no_valida')); setReady(false) }
+      }).catch(() => { if (mounted.current && !c.signal.aborted) setStatus(localMessage('agents.aux.GovernedFixtureRunner.no_se_pudo_consultar_el_servicio')) })
     const clock = window.setInterval(() => setNow(Date.now()), 1000)
     return () => {
       mounted.current = false; c.abort(); controllerRef.current?.abort(); window.clearInterval(clock)
@@ -161,7 +164,7 @@ export default function GovernedFixtureRunner({ apiBase = 'http://localhost:8081
         const durable = readGexView(detail.view)
         if (durable && (!view || durable.request_id === view.request_id)) { setView(durable); setRequestId(durable.request_id) }
         if (kind === 'APPROVED' || kind === 'REJECTED' || kind === 'CANCELLED') setUncertain(true)
-        setError(`${code}. ${detail.persisted === false ? 'Sin persistencia confirmada.' : 'Operación no confirmada.'} Recarga por ID para consultar el estado durable.`)
+        setError(localMessage(detail.persisted === false ? 'agents.aux.gexPersistenceUnconfirmed' : 'agents.aux.gexOperationUnconfirmed',{code:String(code)}))
         return
       }
       if (kind === 'session') {
@@ -170,7 +173,7 @@ export default function GovernedFixtureRunner({ apiBase = 'http://localhost:8081
         const s = data as unknown as Session; sessionRef.current = s; setSession(s); setView(null); setUncertain(false)
       } else if (kind === 'revoke') {
         clearAuth(); setView(null)
-        if (!object(data) || data.status !== 'REVOKED') setError('Revocación no confirmada por el servicio; credenciales borradas de esta vista.')
+        if (!object(data) || data.status !== 'REVOKED') setError("core.GovernedFixtureRunner.revocation_was_not_confirmed_by_the_service_f191a9")
       } else {
         const next = readGexView(data)
         const expected = kind === 'reload' ? requestId.trim() : kind === 'propose' ? null : view?.request_id
@@ -178,7 +181,7 @@ export default function GovernedFixtureRunner({ apiBase = 'http://localhost:8081
         setView(next); setRequestId(next.request_id); setUncertain(false)
       }
     } catch {
-      if (mounted.current) { setError('Respuesta no confirmada o tiempo agotado. Recarga por ID; no repitas la aprobación.'); setUncertain(true); if (kind === 'session' || kind === 'revoke') clearAuth() }
+      if (mounted.current) { setError("core.GovernedFixtureRunner.unconfirmed_response_or_timeout_reload_by_id_0d1a01"); setUncertain(true); if (kind === 'session' || kind === 'revoke') clearAuth() }
     } finally {
       window.clearTimeout(timer); busyRef.current = false
       if (kind === 'revoke' && mounted.current) clearAuth()
@@ -195,50 +198,104 @@ export default function GovernedFixtureRunner({ apiBase = 'http://localhost:8081
   const success = !!view && verifiedGexSuccess(view, session?.agent_id || selectedAgent)
 
   return <section className="governed-fixture" aria-labelledby="gex-title">
-    <header><h2 id="gex-title">Acción gobernada · lectura de fixture</h2>
-      <p>Proveedor real configurado en tu agente → propuesta → revisión humana → permiso firmado → lectura → recibo durable.</p>
-      <p className="gex-scope">Datos sintéticos: {fixtureId}. Solo lectura registrada, sin red ni escritura. Sandbox lógico; perfil local de un único proceso.</p>
-      <p role="status">Disponibilidad: {status}</p></header>
-    <fieldset disabled={busy}><legend>1. Autenticar al operador</legend>
-      <label>ID del agente guardado<input value={selectedAgent} disabled={!!session} onChange={e => setSelectedAgent(e.target.value)} autoComplete="off" spellCheck={false} /></label>
-      {!session ? <><label>Clave de operador<input type="password" value={apiKey} onChange={e => setApiKey(e.target.value)} autoComplete="off" /></label>
-        <button disabled={!ready || !apiKey || !selectedAgent.trim()} onClick={() => void action('session')}>Crear sesión</button></> : <>
-        <p>Operador: {session.principal_id} · Workspace: {session.workspace_id}</p><p>Sesión {session.session_id} · Caduca: {session.expires_at}{!sessionActive ? ' · CADUCADA' : ''}</p>
-        <button onClick={() => void action('revoke')}>Revocar y borrar sesión</button></>}
-      <p>La clave y el token permanecen en memoria de esta vista. Tras recargar, autentícate y recupera la solicitud por su ID.</p>
+    <header><h2 id="gex-title">{t("core.GovernedFixtureRunner.governed_action_fixture_read_3bc8a4")}</h2>
+      <p>{t("core.GovernedFixtureRunner.real_provider_configured_in_your_agent_proposal_6f599b")}</p>
+      <p className="gex-scope">{t("core.GovernedFixtureRunner.synthetic_data_ee56a3")}{' '}{fixtureId}{t("core.GovernedFixtureRunner.recorded_read_only_with_no_network_or_7a7714")}</p>
+      <p role="status">{t("core.GovernedFixtureRunner.availability_7f3549")}{' '}{typeof status === 'string' ? observedStateLabel(status) : errorMessage(status)}</p></header>
+    <fieldset disabled={busy}><legend>{t("core.GovernedFixtureRunner.1_authenticate_the_operator_d2c36e")}</legend>
+      <label>{t("core.GovernedFixtureRunner.saved_agent_id_b33b6d")}<input value={selectedAgent} disabled={!!session} onChange={e => setSelectedAgent(e.target.value)} autoComplete="off" spellCheck={false} /></label>
+      {!session ? <><label>{t("core.GovernedFixtureRunner.operator_key_6d4c8e")}<input type="password" value={apiKey} onChange={e => setApiKey(e.target.value)} autoComplete="off" /></label>
+        <button disabled={!ready || !apiKey || !selectedAgent.trim()} onClick={() => void action('session')}>{t("core.GovernedFixtureRunner.create_session_1ba8d2")}</button></> : <>
+        <p>{t("core.GovernedFixtureRunner.operator_92aa31")}{' '}{session.principal_id}{' '}{t("core.GovernedFixtureRunner.workspace_e32785")}{' '}{session.workspace_id}</p><p>{t("core.GovernedFixtureRunner.session_88efb2")}{' '}{session.session_id}{' '}{t("core.GovernedFixtureRunner.expires_910d30")}{' '}{session.expires_at}{!sessionActive ? t("core.GovernedFixtureRunner.expired_2cca72") : ''}</p>
+        <button onClick={() => void action('revoke')}>{t("core.GovernedFixtureRunner.revoke_and_clear_session_20dc9e")}</button></>}
+      <p>{t("core.GovernedFixtureRunner.the_key_and_token_remain_in_this_e9f849")}</p>
     </fieldset>
-    <fieldset disabled={busy || !sessionActive}><legend>2. Pedir propuesta al agente</legend>
-      <label>Tarea<textarea maxLength={4000} value={task} onChange={e => setTask(e.target.value)} /></label>
-      <button disabled={!ready || !task.trim()} onClick={() => void action('propose')}>Solicitar propuesta</button>
-      <label>ID de solicitud para recuperar<input value={requestId} maxLength={256} onChange={e => setRequestId(e.target.value)} autoComplete="off" spellCheck={false} /></label>
-      <button disabled={!requestId.trim()} onClick={() => void action('reload')}>Recargar estado durable</button>
+    <fieldset disabled={busy || !sessionActive}><legend>{t("core.GovernedFixtureRunner.2_ask_the_agent_for_a_proposal_a1ff17")}</legend>
+      <label>{t("core.GovernedFixtureRunner.task_981fc1")}<textarea maxLength={4000} value={task} onChange={e => setTask(e.target.value)} /></label>
+      <button disabled={!ready || !task.trim()} onClick={() => void action('propose')}>{t("core.GovernedFixtureRunner.request_proposal_55f373")}</button>
+      <label>{t("core.GovernedFixtureRunner.request_id_to_recover_0fcbd4")}<input value={requestId} maxLength={256} onChange={e => setRequestId(e.target.value)} autoComplete="off" spellCheck={false} /></label>
+      <button disabled={!requestId.trim()} onClick={() => void action('reload')}>{t("core.GovernedFixtureRunner.reload_durable_state_a27bb6")}</button>
     </fieldset>
-    {busy ? <p role="status">Esperando al servicio…</p> : null}
-    {error ? <p role="alert" className="gex-warning">{error}</p> : null}
-    {!view ? <p>Aún no hay una solicitud recuperada.</p> : <>
-      <article><h3>3. Revisar solicitud exacta</h3>
-        <dl><dt>Estado durable</dt><dd>{view.state}</dd><dt>Solicitud</dt><dd>{view.request_id}</dd><dt>Run / propuesta</dt><dd>{view.run_id} / {view.proposal_id}</dd>
-          <dt>Proveedor / modelo</dt><dd>{view.provider.provider_id} / {view.provider.model_id}</dd><dt>Tarea</dt><dd>{view.task}</dd><dt>Digest de solicitud completa</dt><dd>{view.request_digest || 'No registrado'}</dd>
-          <dt>Propuesta del modelo</dt><dd><pre>{json(view.proposal)}</pre></dd><dt>Capacidad / versión</dt><dd><pre>{json(child(r, 'capability'))}</pre></dd>
-          <dt>Workspace vinculado</dt><dd><pre>{json(child(r, 'workspace'))}</pre></dd><dt>Argumentos y alcance exactos</dt><dd><pre>{json(child(r, 'operation'))}</pre></dd>
-          <dt>Restricciones efectivas</dt><dd><pre>{json(child(r, 'constraints'))}</pre></dd><dt>Política y decisión</dt><dd><pre>{json({ policy: child(r, 'policy'), decision: view.policy_decision })}</pre></dd><dt>Caducidad</dt><dd>{String(r?.expires_at || 'No registrada')}</dd></dl>
-        <details><summary>Objeto completo inmutable</summary><pre>{json(r)}</pre></details>
-        {!reviewable ? <p className="gex-warning">Solicitud incompleta o integridad/alcance no comprobados. Aprobación bloqueada.</p> : null}
-        {uncertain ? <p className="gex-warning">Estado incierto: recupera el registro antes de decidir.</p> : null}
-        <div className="gex-actions"><button disabled={busy || !pending} onClick={() => void action('APPROVED')}>Aprobar solicitud exacta y ejecutar ahora</button>
-          <button disabled={busy || !pending} onClick={() => void action('REJECTED')}>Rechazar</button><button disabled={busy || !pending} onClick={() => void action('CANCELLED')}>Cancelar solicitud</button></div>
+    {busy ? <p role="status">{t("core.GovernedFixtureRunner.waiting_for_the_service_ffebe2")}</p> : null}
+    {error ? <p role="alert" className="gex-warning">{errorMessage(error)}</p> : null}
+    {!view ? <p>{t("core.GovernedFixtureRunner.no_request_has_been_recovered_yet_370186")}</p> : <>
+      <article><h3>{t("core.GovernedFixtureRunner.3_review_the_exact_request_b47ccf")}</h3>
+        <dl><dt>{t("core.GovernedFixtureRunner.durable_state_74f5f0")}</dt><dd>{observedStateLabel(view.state)}</dd><dt>{t("core.GovernedFixtureRunner.request_213b02")}</dt><dd>{view.request_id}</dd><dt>{t("core.GovernedFixtureRunner.run_proposal_0cfca2")}</dt><dd>{view.run_id} / {view.proposal_id}</dd>
+          <dt>{t("core.GovernedFixtureRunner.provider_model_68cd92")}</dt><dd>{view.provider.provider_id} / {view.provider.model_id}</dd><dt>{t("core.GovernedFixtureRunner.task_981fc1")}</dt><dd>{view.task}</dd><dt>{t("core.GovernedFixtureRunner.complete_request_digest_16bdbe")}</dt><dd>{view.request_digest || t('agents.aux.GovernedFixtureRunner.no_registrado')}</dd>
+          <dt>{t("core.GovernedFixtureRunner.model_proposal_48adef")}</dt><dd><pre>{json(view.proposal)}</pre></dd><dt>{t("core.GovernedFixtureRunner.capability_version_b4774c")}</dt><dd><pre>{json(child(r, 'capability'))}</pre></dd>
+          <dt>{t("core.GovernedFixtureRunner.bound_workspace_7fe82d")}</dt><dd><pre>{json(child(r, 'workspace'))}</pre></dd><dt>{t("core.GovernedFixtureRunner.exact_arguments_and_scope_1cff28")}</dt><dd><pre>{json(child(r, 'operation'))}</pre></dd>
+          <dt>{t("core.GovernedFixtureRunner.effective_constraints_fa36cd")}</dt><dd><pre>{json(child(r, 'constraints'))}</pre></dd><dt>{t("core.GovernedFixtureRunner.policy_and_decision_11cd1b")}</dt><dd><pre>{json({ policy: child(r, 'policy'), decision: view.policy_decision })}</pre></dd><dt>{t("core.GovernedFixtureRunner.expiry_1deb57")}</dt><dd>{String(r?.expires_at || t('agents.aux.GovernedFixtureRunner.no_registrada'))}</dd></dl>
+        <details><summary>{t("core.GovernedFixtureRunner.complete_immutable_object_1574e8")}</summary><pre>{json(r)}</pre></details>
+        {!reviewable ? <p className="gex-warning">{t("core.GovernedFixtureRunner.the_request_is_incomplete_or_its_integrity_b1cb33")}</p> : null}
+        {uncertain ? <p className="gex-warning">{t("core.GovernedFixtureRunner.uncertain_state_recover_the_record_before_deciding_b2e222")}</p> : null}
+        <div className="gex-actions"><button disabled={busy || !pending} onClick={() => void action('APPROVED')}>{t("core.GovernedFixtureRunner.approve_the_exact_request_and_execute_now_2ba732")}</button>
+          <button disabled={busy || !pending} onClick={() => void action('REJECTED')}>{t("core.GovernedFixtureRunner.reject_2a0515")}</button><button disabled={busy || !pending} onClick={() => void action('CANCELLED')}>{t("core.GovernedFixtureRunner.cancel_request_c9d980")}</button></div>
       </article>
-      <article><h3>4. Recibo y comprobación</h3>
-        <p className={success ? 'gex-success' : 'gex-warning'} role="status">{success ? 'Resultado de fixture VERIFICADO por el backend y vinculaciones comprobadas en esta vista.' : 'Sin resultado de ejecución verificado.'}</p>
-        <dl>{Object.entries(view.integrity).map(([key, value]) => <div key={key}><dt>{key}</dt><dd>{verifiedLabel(value)}</dd></div>)}</dl>
-        <p>Las firmas y la cadena las verifica el backend; esta vista comprueba la correspondencia de IDs, alcance y hashes de la fixture publicada.</p>
-        <details><summary>Aprobación firmada</summary><pre>{json(view.approval)}</pre></details><details><summary>Permiso firmado</summary><pre>{json(view.permit)}</pre></details>
-        {view.receipt ? <><dl><dt>ID del recibo</dt><dd>{view.receipt.receipt_id}</dd><dt>Intento / permiso</dt><dd>{view.receipt.attempt_id || 'No registrado'} / {view.receipt.permit_id || 'No registrado'}</dd>
-          <dt>Hash esperado de fixture</dt><dd>{fixtureSha}</dd><dt>Hash del ejecutor</dt><dd>{view.receipt.executor_output_sha256 || 'No registrado'}</dd><dt>Hash del observador independiente</dt><dd>{view.receipt.observed_sha256 || 'No registrado'}</dd><dt>Persistido</dt><dd>{view.receipt.persisted_at}</dd></dl>
-          <details><summary>Recibo completo y salida sintética</summary><pre>{json(view.receipt)}</pre></details></> : <p>No hay recibo persistido disponible.</p>}
-        {view.error ? <p className="gex-warning">Código del resultado: {/^[A-Z0-9_]{1,80}$/.test(view.error.code) ? view.error.code : 'ERROR'}</p> : null}
+      <article><h3>{t("core.GovernedFixtureRunner.4_receipt_and_verification_b35599")}</h3>
+        <p className={success ? 'gex-success' : 'gex-warning'} role="status">{success ? t("core.GovernedFixtureRunner.fixture_result_verified_by_the_backend_with_8faff0") : t("core.GovernedFixtureRunner.no_verified_execution_result_08f253")}</p>
+        <dl>{Object.entries(view.integrity).map(([key, value]) => <div key={key}><dt>{integrityLabel(key)} <code>{key}</code></dt><dd>{verifiedLabel(value)}</dd></div>)}</dl>
+        <p>{t("core.GovernedFixtureRunner.the_backend_verifies_signatures_and_the_chain_41fee3")}</p>
+        <details><summary>{t("core.GovernedFixtureRunner.signed_approval_6cdf72")}</summary><pre>{json(view.approval)}</pre></details><details><summary>{t("core.GovernedFixtureRunner.signed_permit_0c55a4")}</summary><pre>{json(view.permit)}</pre></details>
+        {view.receipt ? <><dl><dt>{t("core.GovernedFixtureRunner.receipt_id_ffda10")}</dt><dd>{view.receipt.receipt_id}</dd><dt>{t("core.GovernedFixtureRunner.attempt_permit_f7f7c0")}</dt><dd>{view.receipt.attempt_id || t('agents.aux.GovernedFixtureRunner.no_registrado')} / {view.receipt.permit_id || t('agents.aux.GovernedFixtureRunner.no_registrado')}</dd>
+          <dt>{t("core.GovernedFixtureRunner.expected_fixture_hash_a430c7")}</dt><dd>{fixtureSha}</dd><dt>{t("core.GovernedFixtureRunner.executor_hash_736253")}</dt><dd>{view.receipt.executor_output_sha256 || t('agents.aux.GovernedFixtureRunner.no_registrado')}</dd><dt>{t("core.GovernedFixtureRunner.independent_observer_hash_f4b007")}</dt><dd>{view.receipt.observed_sha256 || t('agents.aux.GovernedFixtureRunner.no_registrado')}</dd><dt>{t("core.GovernedFixtureRunner.persisted_afc7e5")}</dt><dd>{view.receipt.persisted_at}</dd></dl>
+          <details><summary>{t("core.GovernedFixtureRunner.complete_receipt_and_synthetic_output_a1df4d")}</summary><pre>{json(view.receipt)}</pre></details></> : <p>{t("core.GovernedFixtureRunner.no_persisted_receipt_is_available_36bb53")}</p>}
+        {view.error ? <p className="gex-warning">{t("core.GovernedFixtureRunner.result_code_648154")}{' '}{/^[A-Z0-9_]{1,80}$/.test(view.error.code) ? view.error.code : 'ERROR'}</p> : null}
       </article>
-      <article><h3>Traza durable</h3>{view.events.length ? <ol>{view.events.map(e => <li key={`${e.seq}-${e.event_id}`}><strong>{e.seq} · {e.kind}</strong> · {e.timestamp}<details><summary>{e.event_id}</summary><pre>{json(e)}</pre></details></li>)}</ol> : <p>No hay eventos recuperados.</p>}</article>
+      <article><h3>{t("core.GovernedFixtureRunner.durable_trace_a3cb91")}</h3>{view.events.length ? <ol>{view.events.map(e => <li key={`${e.seq}-${e.event_id}`}><strong>{e.seq} · {e.kind}</strong> · {e.timestamp}<details><summary>{e.event_id}</summary><pre>{json(e)}</pre></details></li>)}</ol> : <p>{t("core.GovernedFixtureRunner.no_events_were_recovered_605d0c")}</p>}</article>
     </>}
   </section>
+}
+
+/** Presentation only: preserve the exact observed protocol value alongside its label. */
+function observedStateLabel(value: string): string {
+  const labels: Record<string, () => string> = {
+"running":()=>t('agents.aux.state.running'),
+"success":()=>t('agents.aux.state.success'),
+"failed":()=>t('agents.aux.state.failed'),
+"timeout":()=>t('agents.aux.state.timeout'),
+"demo":()=>t('agents.aux.state.demo'),
+"agent":()=>t('agents.aux.state.agent'),
+"PROPOSED":()=>t('agents.aux.state.PROPOSED'),
+"VERIFIED":()=>t('agents.aux.state.VERIFIED'),
+"PENDING_REVIEW":()=>t('agents.aux.state.PENDING_REVIEW'),
+"CANCELLED":()=>t('agents.aux.state.CANCELLED'),
+"EXPIRED":()=>t('agents.aux.state.EXPIRED'),
+"AVAILABLE":()=>t('agents.aux.state.AVAILABLE'),
+"UNAVAILABLE":()=>t('agents.aux.state.UNAVAILABLE'),
+"READY":()=>t('agents.aux.state.READY'),
+"NOT_READY":()=>t('agents.aux.state.NOT_READY'),
+"AWAITING_APPROVAL":()=>t('agents.aux.state.AWAITING_APPROVAL'),
+"APPROVED":()=>t('agents.aux.state.APPROVED'),
+"REJECTED":()=>t('agents.aux.state.REJECTED'),
+"SUCCEEDED":()=>t('agents.aux.state.SUCCEEDED'),
+"FAILED":()=>t('agents.aux.state.FAILED'),
+"REVOKED":()=>t('agents.aux.state.REVOKED'),
+"UNKNOWN":()=>t('agents.aux.state.UNKNOWN'),
+"PASS":()=>t('agents.aux.state.PASS'),
+"FAIL":()=>t('agents.aux.state.FAIL'),
+"ERROR":()=>t('agents.aux.state.ERROR'),
+"healthy":()=>t('agents.aux.state.healthy'),
+"unavailable":()=>t('agents.aux.state.unavailable'),
+"ALLOW":()=>t('agents.aux.state.ALLOW'),
+"DENY":()=>t('agents.aux.state.DENY'),
+"REQUIRE_HUMAN":()=>t('agents.aux.state.REQUIRE_HUMAN'),
+"SUCCESS":()=>t('agents.aux.state.SUCCESS'),
+"DENIED":()=>t('agents.aux.state.DENIED'),
+"configured":()=>t('agents.aux.state.configured'),
+"connected":()=>t('agents.aux.state.connected'),
+"present":()=>t('agents.aux.state.present'),
+"absent":()=>t('agents.aux.state.absent')
+  }
+  return Object.prototype.hasOwnProperty.call(labels,value) ? `${labels[value]()} (${value})` : t('agents.aux.state.unknownCode',{value})
+}
+
+function integrityLabel(key: string): string {
+  switch(key) {
+    case 'request_digest_valid': return t('agents.aux.gex.integrity.request_digest_valid')
+    case 'event_chain_valid': return t('agents.aux.gex.integrity.event_chain_valid')
+    case 'approval_signature_valid': return t('agents.aux.gex.integrity.approval_signature_valid')
+    case 'permit_signature_valid': return t('agents.aux.gex.integrity.permit_signature_valid')
+    case 'receipt_verified': return t('agents.aux.gex.integrity.receipt_verified')
+    default: return t('agents.aux.context.technical')
+  }
 }

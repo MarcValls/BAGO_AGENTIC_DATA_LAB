@@ -1,0 +1,93 @@
+{
+  "status": "PASS",
+  "candidate": "publication-20261024-preparation",
+  "checks": [
+    {
+      "id": "PREREADME_BOOTSTRAP",
+      "command": [
+        "python",
+        "scripts/generate_dynamic_readme.py",
+        "--skip-tests"
+      ],
+      "returncode": 0,
+      "result": "PASS",
+      "log": "docs/verification/publication-20261024/preparation/PREREADME_BOOTSTRAP.log",
+      "log_sha256": "5a394b2db877d8b8946745b8963db856f10cbb87097fad9d43a4e9f66adce1d3"
+    },
+    {
+      "id": "REPAIRED_FOCAL",
+      "command": [
+        "python",
+        "-m",
+        "pytest",
+        "tests/test_dynamic_readme.py::test_checked_in_readme_matches_canonical_render",
+        "tests/test_whatsapp_dom_transport.py",
+        "-q",
+        "--disable-warnings"
+      ],
+      "returncode": 0,
+      "result": "PASS",
+      "log": "docs/verification/publication-20261024/preparation/REPAIRED_FOCAL.log",
+      "log_sha256": "24d7f4229dc521d16f7d04f840b15c54ef7403f0c8e1af1c22f4d6f326cba804"
+    },
+    {
+      "id": "README_FULL_REPAIRED",
+      "command": [
+        "python",
+        "scripts/generate_dynamic_readme.py"
+      ],
+      "returncode": 0,
+      "result": "PASS",
+      "log": "docs/verification/publication-20261024/preparation/README_FULL_REPAIRED.log",
+      "log_sha256": "c965d49985d2f97b587d5f8a9d6552361e660c2c50e31a08349d2a6a2510d90a"
+    },
+    {
+      "id": "README_CHECK_REPAIRED",
+      "command": [
+        "python",
+        "scripts/generate_dynamic_readme.py",
+        "--check",
+        "--skip-tests"
+      ],
+      "returncode": 0,
+      "result": "PASS",
+      "log": "docs/verification/publication-20261024/preparation/README_CHECK_REPAIRED.log",
+      "log_sha256": "0c918ee4195d6de23716a7ae6be2e40d8a7ec5024c25522e1cace90e5a3fca2a"
+    },
+    {
+      "id": "SNAPSHOT_FINAL_REPAIRED",
+      "command": [
+        "python",
+        "docs/verification/publication-20261024/preparation/check_snapshot.py"
+      ],
+      "returncode": 0,
+      "result": "PASS",
+      "log": "docs/verification/publication-20261024/preparation/SNAPSHOT_FINAL_REPAIRED.log",
+      "log_sha256": "41b6cacd6dd9e5a077c4c0f58be29247a969e5be0c908d8abca08c2ff2b6e48b"
+    }
+  ],
+  "python_suite": {
+    "tests": 942,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 1,
+    "passed": 941
+  },
+  "first_attempt": {
+    "execution": "d0c9b405f3174431b5b6d1fd1b555d00",
+    "result": "FAIL",
+    "931_passed": true,
+    "failed": 10,
+    "skipped": 1,
+    "causes": [
+      "README canonical output not bootstrapped before base generator runs its own consistency test",
+      "Nine DOM fixtures lacked declared local jsdom dependency tree"
+    ],
+    "log_sha256": "86cfdaef65ce6ddf49b9b39fbc47bd977ae98b5ce0958badce56ba038443b27a"
+  },
+  "repair": "Ignored dependency junction and generated README bootstrap; product sources unchanged; second full run explicitly authorized",
+  "counting": "Do not add first-run passes or focused reruns to the second full suite count",
+  "ci": "NOT_RUN",
+  "commit_push": "NOT_RUN",
+  "browser_whatsapp_transport": "NOT_RUN"
+}

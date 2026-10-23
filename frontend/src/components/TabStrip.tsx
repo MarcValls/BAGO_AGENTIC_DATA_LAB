@@ -1,3 +1,4 @@
+import {useI18n,t,localMessage,errorMessage,apiError,formatDate,formatNumber} from '../i18n'
 import type { ReactNode } from 'react'
 
 export interface TabStripItem<T extends string> {
@@ -14,6 +15,8 @@ interface TabStripProps<T extends string> {
 
 /** A compact, controlled filter strip. It intentionally uses group semantics, not ARIA tabs. */
 export default function TabStrip<T extends string>({ label, items, value, onChange }: TabStripProps<T>) {
+  useI18n()
+
   return (
     <div className="tab-strip" role="group" aria-label={label}>
       {items.map((item) => (

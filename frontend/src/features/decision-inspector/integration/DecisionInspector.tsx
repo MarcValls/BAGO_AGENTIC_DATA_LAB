@@ -1,3 +1,4 @@
+import {useI18n, t, formatDate, formatNumber, apiError, errorMessage} from '../../../i18n'
 import './DecisionInspector.css'
 import { useMemo, useState } from 'react'
 import { actionBundleFromAgentRun } from '../../../adapters/action/agentRun'
@@ -113,50 +114,52 @@ export function decisionInspectorModel(artifacts: DecisionInspectorArtifacts): D
 type InspectorView = 'overview' | 'trace' | 'actions'
 
 const views: Array<{ id: InspectorView; label: string }> = [
-  { id: 'overview', label: 'Decision' },
-  { id: 'trace', label: 'Trace' },
-  { id: 'actions', label: 'Actions' },
+  { id: 'overview', get label() { return t('agents.DecisionInspector.decision') } },
+  { id: 'trace', get label() { return t('agents.DecisionInspector.trace') } },
+  { id: 'actions', get label() { return t('agents.DecisionInspector.actions') } },
 ]
 
 function EvidenceInventory({ evidence }: { evidence: DecisionEvidence[] }) {
-  if (evidence.length === 0) return <p role="status">No citation or retrieval evidence was provided by this run.</p>
-  return <section className="decision-inspector__inventory" aria-label="Retrieved evidence references">
-    <p>These references were retrieved for the run. The source did not provide structured claim links, so support is not inferred.</p>
+  useI18n()
+  if (evidence.length === 0) return <p role="status">{t('agents.DecisionInspector.no_citation_or_retrieval_evidence_was_provided_by_this_run')}</p>
+  return <section className="decision-inspector__inventory" aria-label={t('agents.DecisionInspector.retrieved_evidence_references')}>
+    <p>{t('agents.DecisionInspector.these_references_were_retrieved_for_the_run_the_source_did_not_provide')}</p>
     <ul>{evidence.map((item, index) => <li key={`${item.id}-${index}`}>
-      <h3>Reference {index + 1}</h3>
-      <p><code>{item.artifactRef || item.id || 'Reference not provided'}</code></p>
+      <h3>{t('agents.inspector.referenceNumber',{count:formatNumber(index+1)})}</h3>
+      <p><code>{item.artifactRef || item.id || t('agents.DecisionInspector.reference_not_provided')}</code></p>
       <dl>
-        <div><dt>Source</dt><dd><code>{item.sourceIdentity || item.snapshot?.sourceUri || 'Not provided'}</code></dd></div>
-        <div><dt>Revision</dt><dd>{item.snapshot?.revision || 'Not provided'}</dd></div>
-        <div><dt>Freshness</dt><dd>{item.freshness === 'unknown' ? 'Not established' : item.freshness}</dd></div>
-        <div><dt>Claim relation</dt><dd>Not provided</dd></div>
+        <div><dt>{t('agents.DecisionInspector.source')}</dt><dd><code>{item.sourceIdentity || item.snapshot?.sourceUri || t('agents.AgentRunner.not_provided')}</code></dd></div>
+        <div><dt>{t('agents.DecisionInspector.revision')}</dt><dd>{item.snapshot?.revision || t('agents.AgentRunner.not_provided')}</dd></div>
+        <div><dt>{t('agents.EvidenceExplorer.freshness')}</dt><dd>{item.freshness === 'unknown' ? t('agents.ActionReview.not_established') : item.freshness}</dd></div>
+        <div><dt>{t('agents.DecisionInspector.claim_relation')}</dt><dd>{t('agents.AgentRunner.not_provided')}</dd></div>
       </dl>
     </li>)}</ul>
   </section>
 }
 
 export function DecisionInspector({ artifacts }: { artifacts: DecisionInspectorArtifacts }) {
+  useI18n()
   const [view, setView] = useState<InspectorView>('overview')
   const [section, setSection] = useState<InspectorSection>('conclusion')
   const [claimId, setClaimId] = useState<string | undefined>()
   const [actionId, setActionId] = useState<string | undefined>()
   const model = useMemo(() => decisionInspectorModel(artifacts), [artifacts])
-  const runId = model.conclusion?.runId || 'Not provided'
+  const runId = model.conclusion?.runId || t('agents.AgentRunner.not_provided')
   const selectedAction = actionId ? model.actions.actions.find(action => action.id === actionId) : undefined
   const actionBundle = selectedAction ? { ...model.actions, actions: [selectedAction] } : model.actions
-  const runStatus = text(artifacts.agent_run.status) || 'Not provided'
+  const runStatus = text(artifacts.agent_run.status) || t('agents.AgentRunner.not_provided')
 
   const conclusion = model.conclusion ? <>
-    <section className="decision-inspector__summary" aria-label="Agent conclusion">
-      <p className="decision-inspector__eyebrow">Source supplied conclusion · run {runId}</p>
-      <h2>{text(artifacts.agent_run.query) || 'Query not provided'}</h2>
-      <p className="decision-inspector__answer">{model.conclusion.text || 'Conclusion text not provided.'}</p>
+    <section className="decision-inspector__summary" aria-label={t('agents.DecisionInspector.agent_conclusion')}>
+      <p className="decision-inspector__eyebrow">{t('agents.DecisionInspector.source_supplied_conclusion_run')} {runId}</p>
+      <h2>{text(artifacts.agent_run.query) || t('agents.DecisionInspector.query_not_provided')}</h2>
+      <p className="decision-inspector__answer">{model.conclusion.text || t('agents.DecisionInspector.conclusion_text_not_provided')}</p>
     </section>
     <div className="decision-inspector__summary-grid">
-      <div><span>Evidence references</span><strong>{model.evidence.length}</strong></div>
-      <div><span>Structured claims</span><strong>{model.conclusion.claims.length ? model.conclusion.claims.length : 'Not provided'}</strong></div>
-      <div><span>Trace events</span><strong>{model.timeline?.events.length ?? 'Not provided'}</strong></div>
-      <div><span>Proposed actions</span><strong>{model.actions.actions.length}</strong></div>
+      <div><span>{t('agents.DecisionInspector.evidence_references')}</span><strong>{model.evidence.length}</strong></div>
+      <div><span>{t('agents.DecisionInspector.structured_claims')}</span><strong>{model.conclusion.claims.length ? model.conclusion.claims.length : t('agents.AgentRunner.not_provided')}</strong></div>
+      <div><span>{t('agents.DecisionInspector.trace_events')}</span><strong>{model.timeline?.events.length ?? t('agents.AgentRunner.not_provided')}</strong></div>
+      <div><span>{t('agents.ActionReview.proposed_actions')}</span><strong>{model.actions.actions.length}</strong></div>
     </div>
     <InspectorShell
       key={section}
@@ -164,38 +167,38 @@ export function DecisionInspector({ artifacts }: { artifacts: DecisionInspectorA
       selectedConclusionId={model.conclusion.id}
       initialSection={section}
       sections={{
-        conclusion: <div className="decision-inspector__answer-detail"><h3>Conclusion source</h3><p>The answer above is the source supplied by this run.</p><p>Claims are not derived from answer text or citations.</p></div>,
+        conclusion: <div className="decision-inspector__answer-detail"><h3>{t('agents.DecisionInspector.conclusion_source')}</h3><p>{t('agents.DecisionInspector.the_answer_above_is_the_source_supplied_by_this_run')}</p><p>{t('agents.DecisionInspector.claims_are_not_derived_from_answer_text_or_citations')}</p></div>,
         claims: <EvidenceExplorer key={`claims-${claimId || 'none'}`} conclusion={model.conclusion} initialClaimId={claimId} />,
         evidence: <EvidenceInventory evidence={model.evidence} />,
         provenance: <EvidenceExplorer key={`provenance-${claimId || 'none'}`} conclusion={model.conclusion} initialClaimId={claimId} />,
       }}
     />
-  </> : <section className="decision-inspector__empty" role="status"><h2>Run identity unavailable</h2><p>The source did not provide a run ID, so the inspector cannot create a stable conclusion identity.</p></section>
+  </> : <section className="decision-inspector__empty" role="status"><h2>{t('agents.DecisionInspector.run_identity_unavailable')}</h2><p>{t('agents.DecisionInspector.the_source_did_not_provide_a_run_id_so_the_inspector_cannot_create_a_s')}</p></section>
 
-  return <section className="decision-inspector-page" aria-label="BAGO decision inspector">
+  return <section className="decision-inspector-page" aria-label={t('agents.DecisionInspector.bago_decision_inspector')}>
     <header className="decision-inspector-page__header">
-      <div><p className="decision-inspector__eyebrow">Governed agent run</p><h1>Decision Inspector</h1><p>Follow the source conclusion through evidence, trace, actions and receipts.</p><code>Run ID: {runId}</code></div>
+      <div><p className="decision-inspector__eyebrow">{t('agents.DecisionInspector.governed_agent_run')}</p><h1>{t('agents.DecisionInspector.decision_inspector')}</h1><p>{t('agents.DecisionInspector.follow_the_source_conclusion_through_evidence_trace_actions_and_receip')}</p><code>{t('agents.ActionReview.run_id')} {runId}</code></div>
       <span className="decision-inspector-page__status">{runStatus}</span>
     </header>
-    <nav className="decision-inspector-page__nav" aria-label="Inspector views">
+    <nav className="decision-inspector-page__nav" aria-label={t('agents.DecisionInspector.inspector_views')}>
       {views.map(item => <button key={item.id} type="button" aria-current={view === item.id ? 'page' : undefined} onClick={() => { setView(item.id); setActionId(undefined) }}>{item.label}</button>)}
     </nav>
     {model.traceBindingIssue && <p role="status">{model.traceBindingIssue.kind === 'run_id_missing'
-      ? `Trace run ${model.traceBindingIssue.actualRunId} cannot be bound because the selected run has no run ID; its correlations are hidden.`
-      : `Trace run ${model.traceBindingIssue.actualRunId} does not match selected run ${model.traceBindingIssue.expectedRunId}; its correlations are hidden.`}</p>}
+      ? t('agents.DecisionInspector.trace_run_p0_cannot_be_bound_because_the_selected_run_has_no_run_id_it', {p0: model.traceBindingIssue.actualRunId})
+      : t('agents.DecisionInspector.trace_run_p0_does_not_match_selected_run_p1_its_correlations_are_hidde', {p0: model.traceBindingIssue.actualRunId, p1: model.traceBindingIssue.expectedRunId})}</p>}
     {view === 'overview' && conclusion}
     {view === 'trace' && <TraceTimelineView
       timeline={model.timeline}
       state={model.timeline ? { status: 'ready' } : model.traceBindingIssue?.kind === 'run_id_missing'
-        ? { status: 'unverified', message: `Trace run ${model.traceBindingIssue.actualRunId} cannot be bound because the selected run has no run ID.` }
+        ? { status: 'unverified', message: t('agents.DecisionInspector.trace_run_p0_cannot_be_bound_because_the_selected_run_has_no_run_id', {p0: model.traceBindingIssue.actualRunId}) }
         : model.traceBindingIssue
-          ? { status: 'stale', message: `Trace run ${model.traceBindingIssue.actualRunId} does not match selected run ${model.traceBindingIssue.expectedRunId}.` }
-        : { status: 'unknown', message: 'The source did not provide a trace for this run.' }}
+          ? { status: 'stale', message: t('agents.DecisionInspector.trace_run_p0_does_not_match_selected_run_p1', {p0: model.traceBindingIssue.actualRunId, p1: model.traceBindingIssue.expectedRunId}) }
+        : { status: 'unknown', message: t('agents.DecisionInspector.the_source_did_not_provide_a_trace_for_this_run') }}
       onClaimNavigate={id => { setClaimId(id); setSection('claims'); setView('overview') }}
       onActionNavigate={id => { setActionId(id); setView('actions') }}
     />}
     {view === 'actions' && <>
-      {actionId && !selectedAction && <p role="status">Action {actionId} was referenced by the trace but was not included in the supplied action data.</p>}
+      {actionId && !selectedAction && <p role="status">{t('agents.DecisionInspector.action')} {actionId} {t('agents.DecisionInspector.was_referenced_by_the_trace_but_was_not_included_in_the_supplied_actio')}</p>}
       <ActionReview bundle={actionBundle} />
     </>}
   </section>

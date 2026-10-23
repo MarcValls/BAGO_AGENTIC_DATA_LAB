@@ -1,0 +1,32 @@
+{
+  "change": "Created ignored frontend/node_modules junction to already-tested RC10 dependency tree; shared dependency files were not modified",
+  "target_identity": "integrated-services-20261023/.venv/chat-markdown-node/node_modules",
+  "modules": [
+    {
+      "module": "jsdom",
+      "expected": "22.1.0",
+      "installed": "22.1.0"
+    },
+    {
+      "module": "react",
+      "expected": "19.3.0",
+      "installed": "19.3.0"
+    },
+    {
+      "module": "react-dom",
+      "expected": "19.3.0",
+      "installed": "19.3.0"
+    },
+    {
+      "module": "react-markdown",
+      "expected": "10.1.0",
+      "installed": "10.1.0"
+    },
+    {
+      "module": "remark-gfm",
+      "expected": "4.0.1",
+      "installed": "4.0.1"
+    }
+  ],
+  "initial_junction_relative_target_attempt": "Rejected by Windows, no junction created; resolved absolute target then succeeded"
+}

@@ -1,3 +1,4 @@
+import {useI18n,t,localMessage,errorMessage,apiError,formatDate,formatNumber} from '../i18n'
 import { Fragment, useEffect, useState } from 'react'
 import type { ReactNode } from 'react'
 
@@ -5,11 +6,15 @@ export type ContextLocation = { id: string; label: string; path: string; state: 
 type Document = { id: string; workspace_root: string; path: string; format: 'json' | 'markdown'; content: string; size_bytes: number; sha256: string }
 
 function InlineText({ text }: { text: string }) {
+  useI18n()
+
   return <>{text.split(/(`[^`]+`|\*\*[^*]+\*\*)/g).map((part, i) => part.startsWith('`')
     ? <code key={i}>{part.slice(1, -1)}</code> : part.startsWith('**') ? <strong key={i}>{part.slice(2, -2)}</strong> : <Fragment key={i}>{part}</Fragment>)}</>
 }
 
 function MarkdownBlocks({ lines }: { lines: string[] }) {
+  useI18n()
+
   const blocks: ReactNode[] = []
   for (let i = 0; i < lines.length;) {
     const line = lines[i]
@@ -45,6 +50,8 @@ function MarkdownBlocks({ lines }: { lines: string[] }) {
 }
 
 function MarkdownDocument({ content }: { content: string }) {
+  useI18n()
+
   const sections: { title: string; lines: string[] }[] = []
   let section = { title: '', lines: [] as string[] }
   let fence = ''
@@ -58,38 +65,44 @@ function MarkdownDocument({ content }: { content: string }) {
     } else section.lines.push(line)
   }
   if (section.title || section.lines.some(text => text.trim())) sections.push(section)
-  if (sections.length === 0) return <p>El archivo está vacío.</p>
+  if (sections.length === 0) return <p>{t("core.ProjectContextDocument.the_file_is_empty_139da2")}</p>
   return <div className="project-document-markdown">{sections.map((item, i) => item.title
     ? <details className="project-document-section" key={i} open><summary><InlineText text={item.title} /></summary><MarkdownBlocks lines={item.lines} /></details>
     : <div key={i}><MarkdownBlocks lines={item.lines} /></div>)}</div>
 }
 
 function JsonValue({ value, depth = 0 }: { value: unknown; depth?: number }) {
+  useI18n()
+
   if (value === null || typeof value !== 'object') return <span className={`project-json-${typeof value}`}>{value === null ? 'null' : String(value)}</span>
-  if (depth >= 12) return <span>Estructura profunda. Consulta el texto original.</span>
+  if (depth >= 12) return <span>{t("core.ProjectContextDocument.deep_structure_consult_the_original_text_30f125")}</span>
   const entries = Object.entries(value)
   if (entries.length === 0) return <code>{Array.isArray(value) ? '[]' : '{}'}</code>
   return <dl className="project-json-tree">{entries.map(([key, child]) => <div key={key}>
-    <dt>{Array.isArray(value) ? `Elemento ${Number(key) + 1}` : key}</dt>
+    <dt>{Array.isArray(value) ? t('agents.aux.ProjectContextDocument.elemento_p0',{p0:Number(key) + 1}) : key}</dt>
     <dd>{child !== null && typeof child === 'object'
-      ? <details className="project-document-section" open={depth < 1}><summary>{Array.isArray(child) ? 'Lista' : 'Objeto'} · {Object.keys(child).length} campos</summary><JsonValue value={child} depth={depth + 1} /></details>
+      ? <details className="project-document-section" open={depth < 1}><summary>{Array.isArray(child) ? t("core.ProjectContextDocument.list_5e77e1") : t("core.ProjectContextDocument.object_b8bedc")} · {t('agents.aux.fieldsCount',{count:formatNumber(Object.keys(child).length)})}</summary><JsonValue value={child} depth={depth + 1} /></details>
       : <JsonValue value={child} depth={depth + 1} />}</dd>
   </div>)}</dl>
 }
 
 function StructuredDocument({ document }: { document: Document }) {
+  useI18n()
+
   if (document.format === 'markdown') return <MarkdownDocument content={document.content} />
   let parsed: unknown
   try { parsed = JSON.parse(document.content) }
-  catch { return <><p role="alert">El JSON no es válido. Puedes revisar el texto original.</p><pre>{document.content}</pre></> }
+  catch { return <><p role="alert">{t("core.ProjectContextDocument.the_json_is_invalid_you_can_review_17a3bb")}</p><pre>{document.content}</pre></> }
   return <JsonValue value={parsed} />
 }
 
 export default function ProjectContextDocument({ item, workspaceRoot }: { item: ContextLocation; workspaceRoot: string }) {
+  useI18n()
+
   const [expanded, setExpanded] = useState(false)
   const [document, setDocument] = useState<Document | null>(null)
   const [loading, setLoading] = useState(false)
-  const [error, setError] = useState('')
+  const [error, setError] = useState<any>('')
   const [missing, setMissing] = useState(item.state === 'absent')
   const [request, setRequest] = useState(0)
 
@@ -101,22 +114,31 @@ export default function ProjectContextDocument({ item, workspaceRoot }: { item: 
       .then(async response => {
         const body = await response.json()
         if (controller.signal.aborted) return
-        if (!response.ok) { setMissing(body.detail?.code === 'document_not_found'); throw new Error(body.detail?.message || 'No se pudo cargar el archivo.') }
-        if (body.id !== item.id || body.workspace_root !== workspaceRoot || typeof body.content !== 'string' || !['markdown', 'json'].includes(body.format)) throw new Error('El documento no corresponde al proyecto seleccionado.')
+        if (!response.ok) { setMissing(body.detail?.code === 'document_not_found'); throw apiError(body,response.status,'agents') }
+        if (body.id !== item.id || body.workspace_root !== workspaceRoot || typeof body.content !== 'string' || !['markdown', 'json'].includes(body.format)) throw localMessage("core.ProjectContextDocument.the_document_does_not_belong_to_the_ed0529")
         setDocument(body as Document); setMissing(false)
-      }).catch((cause: unknown) => { if (!controller.signal.aborted) setError(cause instanceof Error ? cause.message : 'No se pudo cargar el archivo.') })
+      }).catch((cause: unknown) => { if (!controller.signal.aborted) setError(cause instanceof Error ? cause : localMessage('agents.aux.ProjectContextDocument.no_se_pudo_cargar_el_archivo')) })
       .finally(() => { if (!controller.signal.aborted) setLoading(false) })
     return () => controller.abort()
   }, [expanded, request, workspaceRoot, item.id])
 
   return <details className={`workspace-source project-document ${missing ? 'absent' : 'present'}`} onToggle={event => { if (event.target === event.currentTarget) setExpanded(event.currentTarget.open) }}>
-    <summary><strong>{item.label}</strong><span>{missing ? 'No encontrado' : 'Disponible'}</span></summary>
+    <summary><strong>{documentLabel(item.id)}</strong><span>{missing ? t("core.ProjectContextDocument.not_found_003cb1") : t("core.ProjectContextDocument.available_f4e4f6")}</span></summary>
     <code className="project-document-path" title={item.path}>{item.path}</code>
     {expanded && <div className="project-document-content">
-      <div className="project-document-toolbar"><span>Vista de lectura</span><button type="button" disabled={loading} onClick={() => setRequest(value => value + 1)}>Actualizar</button></div>
-      {loading && <p role="status">Leyendo archivo…</p>}
-      {error && <p role={missing ? 'status' : 'alert'}>{error}</p>}
-      {document && <><StructuredDocument document={document} /><details className="project-document-raw"><summary>Texto original</summary><pre>{document.content}</pre></details></>}
+      <div className="project-document-toolbar"><span>{t("core.ProjectContextDocument.reading_view_fb78d6")}</span><button type="button" disabled={loading} onClick={() => setRequest(value => value + 1)}>{t("core.ProjectContextDocument.refresh_fe5f66")}</button></div>
+      {loading && <p role="status">{t("core.ProjectContextDocument.reading_file_14f452")}</p>}
+      {error && <p role={missing ? 'status' : 'alert'}>{errorMessage(error)}</p>}
+      {document && <><StructuredDocument document={document} /><details className="project-document-raw"><summary>{t("core.ProjectContextDocument.original_text_5e1ee9")}</summary><pre>{document.content}</pre></details></>}
     </div>}
   </details>
+}
+
+function documentLabel(id: string): string {
+  switch(id) {
+    case 'project-context': return t('agents.aux.CognitionSettings.contexto_del_proyecto')
+    case 'project-state': return t('agents.aux.CognitionSettings.estado_del_proyecto')
+    case 'active-handoff': return t('agents.aux.CognitionSettings.continuidad')
+    default: return t('agents.aux.context.unknown',{id})
+  }
 }

@@ -1,6 +1,8 @@
 // @vitest-environment jsdom
 import React from 'react'
-import { afterEach, expect, it, vi } from 'vitest'
+import {resetLocaleForTests,setLocale,t} from '../../../src/i18n'
+beforeEach(()=>{localStorage.clear();resetLocaleForTests();setLocale('en')})
+import { beforeEach, afterEach, expect, it, vi } from 'vitest'
 import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react'
 import AgentChat from '../../../src/components/AgentChat'
 

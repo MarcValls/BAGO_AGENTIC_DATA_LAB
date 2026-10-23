@@ -1,3 +1,4 @@
+import {useI18n,t,localMessage,errorMessage,apiError,formatDate,formatNumber,stateLabel} from '../i18n'
 import './Retrieval.css'
 interface Artifacts {
   summary: any
@@ -12,29 +13,31 @@ interface Props {
 }
 
 export default function Retrieval({ data }: Props) {
+  useI18n()
+
   const retrieval = data.agent_run.retrieval || {}
   const ontology = data.agent_run.ontology || {}
 
   return (
     <div>
       <div className="card">
-        <h2>Retrieval Pipeline</h2>
+        <h2>{t("core.Retrieval.retrieval_pipeline_4a9ff2")}</h2>
         <div className="grid">
           <div className="metric">
-            <label>Hits</label>
+            <label>{t("core.Retrieval.hits_f0dcee")}</label>
             <div>{retrieval.eligible_count || 0}</div>
           </div>
           <div className="metric">
-            <label>Filtered</label>
+            <label>{t("core.Retrieval.filtered_0ba993")}</label>
             <div>{retrieval.filtered_count || 0}</div>
           </div>
           <div className="metric">
-            <label>Mode</label>
-            <div>{retrieval.mode}</div>
+            <label>{t("core.Retrieval.mode_5e23ec")}</label>
+            <div>{stateLabel(retrieval.mode)}</div>
           </div>
         </div>
 
-        <h3>Pipeline Steps</h3>
+        <h3>{t("core.Retrieval.pipeline_steps_662901")}</h3>
         <div className="timeline">
           {(retrieval.pipeline || []).map((step: string, idx: number) => (
             <div key={idx} className="timeline-item success">
@@ -43,62 +46,62 @@ export default function Retrieval({ data }: Props) {
           ))}
         </div>
 
-        <h3>Retrieved Documents</h3>
+        <h3>{t("core.Retrieval.retrieved_documents_0a980e")}</h3>
         <div>
           {(retrieval.hits || []).map((hit: any, idx: number) => (
             <div key={idx} className="card">
               <div className="grid">
                 <div className="metric">
-                  <label>Rank</label>
+                  <label>{t("core.Retrieval.rank_a4130d")}</label>
                   <div>{hit.rank}</div>
                 </div>
                 <div className="metric">
-                  <label>Score</label>
-                  <div>{hit.score.toFixed(3)}</div>
+                  <label>{t("core.Retrieval.score_38e5a4")}</label>
+                  <div>{formatNumber(hit.score,{minimumFractionDigits:3,maximumFractionDigits:3})}</div>
                 </div>
                 <div className="metric">
-                  <label>Lexical</label>
-                  <div>{hit.lexical_score.toFixed(3)}</div>
+                  <label>{t("core.Retrieval.lexical_e77f54")}</label>
+                  <div>{formatNumber(hit.lexical_score,{minimumFractionDigits:3,maximumFractionDigits:3})}</div>
                 </div>
                 <div className="metric">
-                  <label>Semantic</label>
-                  <div>{hit.semantic_score.toFixed(3)}</div>
+                  <label>{t("core.Retrieval.semantic_9c11c9")}</label>
+                  <div>{formatNumber(hit.semantic_score,{minimumFractionDigits:3,maximumFractionDigits:3})}</div>
                 </div>
               </div>
-              <p><strong>Document:</strong> {hit.document_id}</p>
-              <p><strong>Chunk:</strong> {hit.chunk_id}</p>
-              <p><strong>Citation:</strong> {hit.evidence?.citation}</p>
+              <p><strong>{t("core.Retrieval.document_8954d7")}</strong> {hit.document_id}</p>
+              <p><strong>{t("core.Retrieval.chunk_96d2e8")}</strong> {hit.chunk_id}</p>
+              <p><strong>{t("core.Retrieval.citation_674dc9")}</strong> {hit.evidence?.citation}</p>
             </div>
           ))}
         </div>
       </div>
 
       <div className="card">
-        <h2>Ontology Engine (RDF/SPARQL)</h2>
+        <h2>{t("core.Retrieval.ontology_engine_rdf_sparql_e0a95a")}</h2>
         <div className="grid">
           <div className="metric">
-            <label>Paths Found</label>
+            <label>{t("core.Retrieval.paths_found_af5412")}</label>
             <div>{ontology.paths?.length || 0}</div>
           </div>
           <div className="metric">
-            <label>Inferred Triples</label>
+            <label>{t("core.Retrieval.inferred_triples_46561f")}</label>
             <div>{ontology.inferred_triples?.length || 0}</div>
           </div>
           <div className="metric">
-            <label>Contradictions</label>
+            <label>{t("core.Retrieval.contradictions_c1c93b")}</label>
             <div>{ontology.receipt?.contradictions_found || 0}</div>
           </div>
           <div className="metric">
-            <label>Status</label>
+            <label>{t("core.Retrieval.status_920e41")}</label>
             <div>
               <span className={`badge ${ontology.receipt?.outcome === 'SUCCESS' ? 'success' : 'error'}`}>
-                {ontology.receipt?.outcome}
+                {stateLabel(ontology.receipt?.outcome)}
               </span>
             </div>
           </div>
         </div>
 
-        <h3>Ontology Paths</h3>
+        <h3>{t("core.Retrieval.ontology_paths_a345f9")}</h3>
         <div>
           {(ontology.paths || []).map((path: any, idx: number) => (
             <div key={idx}>
@@ -112,14 +115,14 @@ export default function Retrieval({ data }: Props) {
               </div>
               {path.triples && path.triples.length > 0 && (
                 <details>
-                  <summary>Triples ({path.triples.length})</summary>
+                  <summary>{t("core.presentation.triplesCount",{count:formatNumber(path.triples.length)})}</summary>
                   <div>
                     {path.triples.map((triple: any, tidx: number) => (
                       <div key={tidx}>
                         <strong>{triple.subject.split('/').pop()}</strong>
                         {' '}<em>{triple.predicate.split('/').pop()}</em>{' '}
                         <strong>{triple.object.split('/').pop()}</strong>
-                        {triple.inferred && <span> [inferred]</span>}
+                        {triple.inferred && <span>{' '}{t("core.Retrieval.inferred_12d7c7")}</span>}
                       </div>
                     ))}
                   </div>
@@ -129,7 +132,7 @@ export default function Retrieval({ data }: Props) {
           ))}
         </div>
 
-        <h3>SPARQL Queries</h3>
+        <h3>{t("core.Retrieval.sparql_queries_138d7c")}</h3>
         <div>
           {(ontology.sparql_queries || []).map((query: string, idx: number) => (
             <div key={idx} className="json-panel">
@@ -138,7 +141,7 @@ export default function Retrieval({ data }: Props) {
           ))}
         </div>
 
-        <h3>Evidence</h3>
+        <h3>{t("core.Retrieval.evidence_03867a")}</h3>
         <ul className="evidence-list">
           {(ontology.evidence_refs || []).map((ref: string, idx: number) => (
             <li key={idx} className="evidence-item">{ref}</li>

@@ -23,6 +23,9 @@ const React = await import('react')
 const testing = await import('@testing-library/react')
 const { cleanup, fireEvent, render, screen, waitFor } = testing
 const { default: AgentEvaluationLab } = await server.ssrLoadModule('/src/components/AgentEvaluationLab.tsx')
+const {setLocale,t} = await server.ssrLoadModule('/src/i18n/index.ts')
+setLocale('en') // Explicit English expectation; product default remains Spanish.
+
 const { default: AgentRunner } = await server.ssrLoadModule('/src/components/AgentRunner.tsx')
 
 const suite = {
@@ -124,7 +127,7 @@ describe('Agent Evaluation Lab rendered behavior', () => {
     const restore = stubFetch(standardFetch({ failureUrl: '/api/evaluations/suites', failureStatus: 404, failureMessage: 'Evaluation service not found.' }))
     render(React.createElement(AgentEvaluationLab))
     await screen.findByText('Evaluation service unavailable')
-    assert.ok(screen.getByText('Evaluation service not found.'))
+    assert.ok(screen.getByText(/Evaluation service not found./))
     assert.ok(getByButtonName('Retry'))
     restore()
   })
@@ -202,12 +205,12 @@ describe('Agent Evaluation Lab rendered behavior', () => {
     fireEvent.click(getByButtonName('New suite'))
     assert.ok(screen.getByLabelText('Suite name'))
     fireEvent.click(getByButtonName(/PASS.*Response contract/))
-    await screen.findByRole('heading', { name: /PASS · Response contract v1/ })
+    await screen.findByRole('heading', { name: /Passed \(PASS\) · Response contract v1/ })
     assert.equal(screen.queryByLabelText('Suite name'), null)
     assert.equal(screen.queryByRole('heading', { name: 'Run review' }), null)
     fireEvent.click(getByButtonName(/Response contract.*1 cases/))
     assert.ok(screen.getByRole('heading', { name: 'Run review' }))
-    assert.equal(screen.queryByRole('heading', { name: /PASS · Response contract v1/ }), null)
+    assert.equal(screen.queryByRole('heading', { name: /Passed \(PASS\) · Response contract v1/ }), null)
     fireEvent.click(getByButtonName('Edit suite'))
     fireEvent.change(screen.getByLabelText('Suite name'), { target: { value: 'Unsaved change' } })
     fireEvent.click(getByButtonName('Cancel'))
@@ -232,7 +235,7 @@ describe('Agent Evaluation Lab rendered behavior', () => {
     await waitFor(() => assert.equal(runButton.disabled, false))
     assert.equal(calls.some(([url]) => url.endsWith('/run')), false)
     fireEvent.click(runButton)
-    await screen.findByRole('heading', { name: /PASS · Response contract v1/ })
+    await screen.findByRole('heading', { name: /Passed \(PASS\) · Response contract v1/ })
     assert.ok(screen.getByText('local-trace-abc'))
     const link = screen.getByRole('link', { name: /Open confirmed trace jaeger-123/ })
     assert.equal(link.href, 'http://localhost:16686/trace/jaeger-123')

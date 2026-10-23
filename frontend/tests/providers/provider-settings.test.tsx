@@ -1,6 +1,7 @@
 // @vitest-environment jsdom
 import React from 'react'
-import { afterEach, describe, expect, it, vi } from 'vitest'
+import {resetLocaleForTests} from '../../src/i18n'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { cleanup, fireEvent, render, screen, waitFor, within } from '@testing-library/react'
 import ProviderSettings from '../../src/components/ProviderSettings'
 import AgentBuilder from '../../src/components/AgentBuilder'
@@ -8,6 +9,8 @@ import AgentBuilder from '../../src/components/AgentBuilder'
 const response = (body: unknown, status = 200) => ({ ok: status < 400, status, json: async () => body })
 const unconfigured = { provider_id: 'openai-platform', state: 'not_configured', model_id: null, auth_mode: null, has_credential: false, base_url: null, runtime_support: 'chat_and_agent_runner' }
 const configured = { ...unconfigured, state: 'configured_unverified', model_id: 'gpt-test', auth_mode: 'api_key', has_credential: true, updated_at: '2026-10-20T10:00:00Z' }
+
+beforeEach(()=>{localStorage.clear();resetLocaleForTests()})
 
 afterEach(() => { cleanup(); vi.unstubAllGlobals(); vi.restoreAllMocks() })
 
@@ -33,10 +36,10 @@ describe('Provider settings behavior with simulated API responses', () => {
     render(<ProviderSettings />)
     const providerTab = screen.getByRole('tab', { name: /Ollama/ })
     await waitFor(() => expect(providerTab.className).toContain('unavailable'))
-    fireEvent.change(screen.getByLabelText(/API key/, { selector: 'input[type=password]' }), { target: { value: 'OLLAMA_KEY_FIXTURE' } })
+    fireEvent.change(screen.getByLabelText(/Clave API/, { selector: 'input[type=password]' }), { target: { value: 'OLLAMA_KEY_FIXTURE' } })
     fireEvent.click(screen.getByRole('button', { name: 'Guardar acceso', exact: true }))
 
-    expect(await screen.findByText('23 modelos encontrados. Comprueba el acceso al elegido.')).toBeTruthy()
+    expect(await screen.findByText('Se encontraron 23 modelos. Comprueba el acceso al elegido.')).toBeTruthy()
     await waitFor(() => expect(providerTab.className).toContain('usable'))
     expect(within(providerTab).getByRole('status').getAttribute('aria-label')).toBe('REGISTRADO · ACTIVADO')
   })
@@ -63,15 +66,15 @@ describe('Provider settings behavior with simulated API responses', () => {
       throw new Error(`Unexpected request: ${url}`)
     }))
     render(<ProviderSettings />)
-    await screen.findByText('2 modelos encontrados. Comprueba el acceso al elegido.')
+    await screen.findByText('Se encontraron 2 modelos. Comprueba el acceso al elegido.')
     fireEvent.click(within(screen.getByRole('tablist', { name: 'Configuración de Ollama' })).getByRole('tab', { name: 'Modelo', exact: true }))
     const panel = within(screen.getByRole('tabpanel', { name: 'Modelo', exact: true }))
     const selectedModel = scenario === 'unchanged' ? 'model-a' : 'model-b'
     fireEvent.change(panel.getByRole('combobox'), { target: { value: selectedModel } })
     expect(screen.queryByRole('button', { name: 'Guardar modelo', exact: true })).toBeNull()
     fireEvent.click(panel.getByRole('button', { name: 'Guardar y comprobar acceso', exact: true }))
-    if (scenario === 'save-failed') await screen.findByText('No se pudo guardar el modelo.')
-    else if (scenario === 'verify-failed') await screen.findByText('Acceso rechazado.')
+    if (scenario === 'save-failed') await screen.findByText(/No se pudo guardar el modelo\./)
+    else if (scenario === 'verify-failed') await screen.findByText(/Acceso rechazado\./)
     else await screen.findByText(`Acceso comprobado: ${selectedModel}.`)
     const save = '/api/providers/ollama/config', verify = '/api/providers/ollama/verify'
     expect(mutations.map(item => item.url)).toEqual(scenario === 'unchanged' ? [verify] : scenario === 'save-failed' ? [save] : [save, verify])
@@ -90,8 +93,8 @@ describe('Provider settings behavior with simulated API responses', () => {
       throw new Error(`Unexpected request: ${url}`)
     }))
     render(<ProviderSettings />)
-    await screen.findByText('1 modelos encontrados. Comprueba el acceso al elegido.')
-    const key = screen.getByLabelText(/API key/, { selector: 'input[type=password]' }) as HTMLInputElement
+    await screen.findByText('Se encontraron 1 modelos. Comprueba el acceso al elegido.')
+    const key = screen.getByLabelText(/Clave API/, { selector: 'input[type=password]' }) as HTMLInputElement
     fireEvent.change(key, { target: { value: 'UNSAVED_KEY_FIXTURE' } })
     fireEvent.click(within(screen.getByRole('tablist', { name: 'Configuración de Ollama' })).getByRole('tab', { name: 'Modelo', exact: true }))
     fireEvent.click(screen.getByRole('button', { name: 'Guardar y comprobar acceso', exact: true }))
@@ -121,8 +124,8 @@ describe('Provider settings behavior with simulated API responses', () => {
     const model = tabs.getByRole('tab', { name: 'Modelo', exact: true })
     const accessPanel = screen.getByRole('tabpanel', { name: 'Acceso', exact: true })
     expect(screen.queryByRole('tabpanel', { name: 'Modelo', exact: true })).toBeNull()
-    const key = within(accessPanel).getByLabelText(/API key/, { selector: 'input[type=password]' }) as HTMLInputElement
-    await screen.findByText('2 modelos encontrados. Comprueba el acceso al elegido.')
+    const key = within(accessPanel).getByLabelText(/Clave API/, { selector: 'input[type=password]' }) as HTMLInputElement
+    await screen.findByText('Se encontraron 2 modelos. Comprueba el acceso al elegido.')
     fireEvent.change(key, { target: { value: 'UNSAVED_KEY_FIXTURE' } })
     fireEvent.click(model)
     expect(screen.queryByRole('tabpanel', { name: 'Acceso', exact: true })).toBeNull()
@@ -158,13 +161,13 @@ describe('Provider settings behavior with simulated API responses', () => {
     render(<ProviderSettings />)
     fireEvent.click(screen.getByRole('tab', { name: /OpenAI/ }))
     const codex = within(screen.getByRole('region', { name: 'ChatGPT / Codex' }))
-    await waitFor(() => expect((codex.getByRole('radio', { name: 'API key' }) as HTMLInputElement).disabled).toBe(false))
-    fireEvent.click(codex.getByRole('radio', { name: 'API key' }))
-    fireEvent.change(codex.getByLabelText('API key de Codex'), { target: { value: 'CODEX_KEY_FIXTURE' } })
-    fireEvent.click(codex.getByRole('button', { name: 'Conectar API key a Codex' }))
-    expect(await codex.findByText('API key conectada a Codex.')).toBeTruthy()
+    await waitFor(() => expect((codex.getByRole('radio', { name: 'Clave API' }) as HTMLInputElement).disabled).toBe(false))
+    fireEvent.click(codex.getByRole('radio', { name: 'Clave API' }))
+    fireEvent.change(codex.getByLabelText('Clave API de Codex'), { target: { value: 'CODEX_KEY_FIXTURE' } })
+    fireEvent.click(codex.getByRole('button', { name: 'Conectar clave API a Codex' }))
+    expect(await codex.findByText('Clave API conectada a Codex.')).toBeTruthy()
     expect(calls).toEqual([{ auth_mode: 'api_key', api_key: 'CODEX_KEY_FIXTURE' }])
-    expect((codex.getByLabelText('API key de Codex') as HTMLInputElement).value).toBe('')
+    expect((codex.getByLabelText('Clave API de Codex') as HTMLInputElement).value).toBe('')
     expect(codex.getByLabelText('Modelo de Codex')).toBeTruthy()
     expect(codex.getByText('La prueba consume uso facturable de API.')).toBeTruthy()
     expect(popup).not.toHaveBeenCalled()
@@ -220,19 +223,19 @@ describe('Provider settings behavior with simulated API responses', () => {
       throw new Error(`Unexpected request: ${url}`)
     }))
     render(<ProviderSettings />)
-    await waitFor(() => expect(screen.queryByText('Cargando registros guardados…')).toBeNull())
+    await waitFor(() => expect(screen.queryByText('Cargando registros guardados.')).toBeNull())
     expect(screen.getAllByRole('status', { name: 'NO REGISTRADO · NO DISPONIBLE' }).length).toBeGreaterThan(0)
     expect(document.querySelectorAll('.provider-tab small')).toHaveLength(0)
     fireEvent.click(screen.getByRole('tab', { name: /OpenAI/ }))
-    expect(await screen.findByText('Disponible para chat de agentes y Agent Runner')).toBeTruthy()
+    expect(await screen.findByText('Disponible para chat de agentes y ejecuciones de agentes')).toBeTruthy()
     expect(screen.queryByText('El registro no confirma acceso en vivo')).toBeNull()
     const saveAndVerify = screen.getByRole('button', { name: 'Guardar y comprobar acceso' }) as HTMLButtonElement
-    fireEvent.change(screen.getByLabelText(/API key/, { selector: 'input[type=password]' }), { target: { value: 'TEST_SECRET_WRITE_ONLY' } })
+    fireEvent.change(screen.getByLabelText(/Clave API/, { selector: 'input[type=password]' }), { target: { value: 'TEST_SECRET_WRITE_ONLY' } })
     fireEvent.change(screen.getByLabelText('Modelo predeterminado'), { target: { value: 'gpt-test' } })
     fireEvent.click(saveAndVerify)
     await waitFor(() => expect(finishVerification).toBeDefined())
     expect(requests[0].body.api_key).toBe('TEST_SECRET_WRITE_ONLY')
-    expect((screen.getByLabelText(/API key/, { selector: 'input[type=password]' }) as HTMLInputElement).value).toBe('')
+    expect((screen.getByLabelText(/Clave API/, { selector: 'input[type=password]' }) as HTMLInputElement).value).toBe('')
     expect(screen.queryByText(/Acceso comprobado para OpenAI Platform/)).toBeNull()
     expect(screen.getByRole('button', { name: /Comprobando acceso/ })).toBeTruthy()
     expect(screen.queryByText(/Acceso comprobado para OpenAI Platform/)).toBeNull()
@@ -257,9 +260,9 @@ describe('Provider settings behavior with simulated API responses', () => {
     await screen.findByText(/respuesta comprobada:/)
     await waitFor(() => expect((screen.getByLabelText('Modelo predeterminado') as HTMLInputElement).value).toBe('gpt-test'))
     fireEvent.click(screen.getByRole('button', { name: 'Guardar y comprobar acceso' }))
-    expect(await screen.findByText('La credencial fue rechazada.')).toBeTruthy()
+    expect(await screen.findByText(/La credencial fue rechazada\./)).toBeTruthy()
     await waitFor(() => expect(screen.queryByText(/respuesta comprobada:/)).toBeNull())
-    expect(screen.getByText('Disponible para chat de agentes y Agent Runner')).toBeTruthy()
+    expect(screen.getByText('Disponible para chat de agentes y ejecuciones de agentes')).toBeTruthy()
   })
 
   it('groups OpenAI in one tab and keeps ChatGPT and API credentials bound to their own registrations', async () => {
@@ -278,7 +281,7 @@ describe('Provider settings behavior with simulated API responses', () => {
       throw new Error(`Unexpected request: ${url}`)
     }))
     render(<ProviderSettings />)
-    await waitFor(() => expect(screen.queryByText('Cargando registros guardados…')).toBeNull())
+    await waitFor(() => expect(screen.queryByText('Cargando registros guardados.')).toBeNull())
     const tabs = within(screen.getByRole('tablist', { name: 'Proveedores' }))
     expect(tabs.getAllByRole('tab')).toHaveLength(6)
     expect(tabs.queryByRole('tab', { name: /OpenAI Platform/ })).toBeNull()
@@ -287,9 +290,9 @@ describe('Provider settings behavior with simulated API responses', () => {
     const platform = within(screen.getByRole('region', { name: 'OpenAI Platform' }))
     const codexModel = await chatgpt.findByLabelText('Modelo de Codex') as HTMLSelectElement
     expect(codexModel.value).toBe('codex-test')
-    expect(chatgpt.queryByLabelText(/API key/, { selector: 'input[type=password]' })).toBeNull()
+    expect(chatgpt.queryByLabelText(/Clave API/, { selector: 'input[type=password]' })).toBeNull()
     expect((platform.getByLabelText('Modelo predeterminado') as HTMLInputElement).value).toBe('')
-    fireEvent.change(platform.getByLabelText(/API key/, { selector: 'input' }), { target: { value: 'PLATFORM_KEY_FIXTURE' } })
+    fireEvent.change(platform.getByLabelText(/Clave API/, { selector: 'input' }), { target: { value: 'PLATFORM_KEY_FIXTURE' } })
     fireEvent.change(platform.getByLabelText('Modelo predeterminado'), { target: { value: 'gpt-test' } })
     fireEvent.click(platform.getByRole('button', { name: 'Guardar y comprobar acceso' }))
     await platform.findByText(/Acceso comprobado para OpenAI Platform/)
@@ -299,7 +302,7 @@ describe('Provider settings behavior with simulated API responses', () => {
     expect(requests[0].url).toBe('/api/providers/registry/openai-platform')
     expect(requests[0].body).toMatchObject({ auth_mode: 'api_key', model_id: 'gpt-test', api_key: 'PLATFORM_KEY_FIXTURE' })
     expect(requests[1]).toEqual({ url: '/api/providers/registry/codex', body: { auth_mode: 'codex_cli', model_id: 'codex-test' } })
-    expect((platform.getByLabelText(/API key/, { selector: 'input' }) as HTMLInputElement).value).toBe('')
+    expect((platform.getByLabelText(/Clave API/, { selector: 'input' }) as HTMLInputElement).value).toBe('')
     expect((platform.getByLabelText('Modelo predeterminado') as HTMLInputElement).value).toBe('gpt-test')
   })
 })
@@ -314,9 +317,9 @@ describe('Agent provider selection with simulated API responses', () => {
     }))
     render(<AgentBuilder agentId="agent_legacy" initialAgent={{ name: 'Renamed legacy', description: 'Review', system_prompt: 'Review only', type: 'tool', tools: [] }} />)
     await waitFor(() => expect(screen.queryByText('Cargando proveedores…')).toBeNull())
-    fireEvent.click(screen.getByRole('button', { name: /Preview/ }))
-    fireEvent.click(screen.getByRole('button', { name: 'Save changes' }))
-    await screen.findByText(/Agent saved successfully/)
+    fireEvent.click(screen.getByRole('button', { name: /Vista previa/ }))
+    fireEvent.click(screen.getByRole('button', { name: 'Guardar cambios' }))
+    await screen.findByText(/Agente guardado/)
     expect(payload.provider_id).toBeUndefined()
     expect(payload.model_id).toBeUndefined()
   })
@@ -342,9 +345,9 @@ describe('Agent provider selection with simulated API responses', () => {
     await waitFor(() => expect((screen.getByLabelText('Proveedor') as HTMLSelectElement).disabled).toBe(false))
     fireEvent.change(screen.getByLabelText('Proveedor'), { target: { value: 'github-copilot' } })
     expect((screen.getByLabelText('Modelo') as HTMLSelectElement).value).toBe('copilot-model')
-    fireEvent.click(screen.getByRole('button', { name: /Preview/ }))
-    fireEvent.click(screen.getByRole('button', { name: /Save Agent/ }))
-    await screen.findByText(/Agent saved successfully/)
+    fireEvent.click(screen.getByRole('button', { name: /Vista previa/ }))
+    fireEvent.click(screen.getByRole('button', { name: /Guardar agente/ }))
+    await screen.findByText(/Agente guardado/)
     expect(saved.provider_id).toBe('github-copilot')
     expect(saved.model_id).toBe('copilot-model')
   })

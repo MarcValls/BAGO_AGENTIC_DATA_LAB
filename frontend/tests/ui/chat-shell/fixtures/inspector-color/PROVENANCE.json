@@ -1,0 +1,26 @@
+{
+  "purpose": "Fixed public CSS baselines preceding COLOR_INSPECTOR; exact preservation regression fixtures. No provider or user data.",
+  "files": [
+    {
+      "fixture": "AgentChat.css",
+      "source": "docs/inspect-exit-20261023/color-inspector/before/frontend/src/components/AgentChat.css",
+      "original_product_path": "frontend/src/components/AgentChat.css",
+      "sha256": "a84fe9402bfc9cc3d28cca2ab048dcb852a53e9ac7f1b15f7cf8fba4164c2490",
+      "bytes": 24042
+    },
+    {
+      "fixture": "App.css",
+      "source": "docs/inspect-exit-20261023/color-inspector/before/frontend/src/App.css",
+      "original_product_path": "frontend/src/App.css",
+      "sha256": "12fbb0443eb8868fd636a77c91704bad61d6603febb500327d0ea0d3733e4a46",
+      "bytes": 22751
+    },
+    {
+      "fixture": "ChatInspection.css",
+      "source": "docs/inspect-exit-20261023/color-inspector/before/frontend/src/components/ChatInspection.css",
+      "original_product_path": "frontend/src/components/ChatInspection.css",
+      "sha256": "03867c6c30f59d47f25d734e525938d243913f7d2fa5b5a328019ffb9ee292dd",
+      "bytes": 4203
+    }
+  ]
+}

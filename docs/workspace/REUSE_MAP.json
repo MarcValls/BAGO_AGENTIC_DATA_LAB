@@ -1,0 +1,111 @@
+{
+  "search_strategy": "Functional searches for Git commit/diff/merge, trash/restore, read/write and context bootstrap across local MarcValls checkouts, hidden sources included",
+  "local_roots_searched": [
+    "C:\\Users\\AMTEC_Terminal_1\u00ba\\BAGO",
+    "C:/Users/AMTEC_Terminal_1\u00ba/bago_fw",
+    "E:/proyectos curriculum/BAGO5_DEV",
+    "E:/proyectos curriculum/BAGO_LAYERED_CHANGE_ENGINE",
+    "C:/Users/AMTEC_Terminal_1\u00ba/gestor-con-bago"
+  ],
+  "sources": [
+    {
+      "repository": "https://github.com/MarcValls/BAGO",
+      "checkout": "C:\\Users\\AMTEC_Terminal_1\u00ba\\BAGO",
+      "head": "5fb6f2f0c57f29de1b42bbb2efb4a57c86aa032d",
+      "path": "plugins/bago-github-admin/mcp/github_repository_admin.py",
+      "sha256": "a2b83688d91d8202483c4a94a03337b75b5aaf562b15b34fb8ad5a5e275ec6a9",
+      "head_blob": "f55c745633b4713712536d9de11e37e2d61e771e",
+      "worktree_status": "",
+      "license": "MIT; repository LICENSE copied as THIRD_PARTY_LICENSE_BAGO.txt",
+      "functionality": "Repository creation, GitHub API, validate_name/normalize_visibility",
+      "decision": "REUSE_PURE_VALIDATORS; retain remote executor as identified optional dependency, not executed"
+    },
+    {
+      "repository": "https://github.com/MarcValls/BAGO",
+      "checkout": "C:\\Users\\AMTEC_Terminal_1\u00ba\\BAGO",
+      "head": "5fb6f2f0c57f29de1b42bbb2efb4a57c86aa032d",
+      "path": "backend/.bago/core/filesystem_effects.py",
+      "sha256": "acbf920640fb10bdce8babfe8a214c766c27c96004410e7fb7663fa6b45f1537",
+      "head_blob": "039e334dbbd9f5533252d78b586b2c3ed0453c1a",
+      "worktree_status": "",
+      "license": "MIT; repository LICENSE copied as THIRD_PARTY_LICENSE_BAGO.txt",
+      "functionality": "Scoped read/write, atomic replace, readback SHA",
+      "decision": "EXTRACT_ATOMIC_PRIMITIVE; replace manager/gateway coupling with explicit standalone root and confirmations"
+    },
+    {
+      "repository": "https://github.com/MarcValls/BAGO",
+      "checkout": "C:\\Users\\AMTEC_Terminal_1\u00ba\\BAGO",
+      "head": "5fb6f2f0c57f29de1b42bbb2efb4a57c86aa032d",
+      "path": "backend/.bago/tools/project_memory.py",
+      "sha256": "03890dc232bd63d3ef94cbf36003ae614a6a8e587fff0ec981b33ecf7173c479",
+      "head_blob": "b1db3703c6a3c1a9e30f736c134b6c48cbfaf7ad",
+      "worktree_status": "",
+      "license": "MIT; repository LICENSE copied as THIRD_PARTY_LICENSE_BAGO.txt",
+      "functionality": "Project bootstrap preserving files",
+      "decision": "REFERENCE_ONLY; imports _path_helper,bago_utils,directory_context,workspace_binding; schema differs"
+    },
+    {
+      "repository": "https://github.com/MarcValls/BAGO",
+      "checkout": "C:\\Users\\AMTEC_Terminal_1\u00ba\\BAGO",
+      "head": "5fb6f2f0c57f29de1b42bbb2efb4a57c86aa032d",
+      "path": ".bago/bin/bago.py",
+      "sha256": "f91fb08d7ec43a7f2fa80c1fcdf03e690b9d7a957e6f88aae4e6438052360441",
+      "head_blob": "32d6fcaf1f25ca19e9e6b50af9bfd6f918b216f2",
+      "worktree_status": "M .bago/bin/bago.py",
+      "license": "MIT; repository LICENSE copied as THIRD_PARTY_LICENSE_BAGO.txt",
+      "functionality": "Project context/state/handoff layout and Git fingerprint",
+      "decision": "EXTEND_LAYOUT_AND_INVARIANTS; wrapper binds its own checkout; do not import runtime"
+    },
+    {
+      "repository": "https://github.com/MarcValls/BAGO",
+      "checkout": "C:\\Users\\AMTEC_Terminal_1\u00ba\\BAGO",
+      "head": "5fb6f2f0c57f29de1b42bbb2efb4a57c86aa032d",
+      "path": "backend/bago_core/candidate_identity.py",
+      "sha256": "7f0d82c497e6ef9116491e67fdf9e96b96adc58782f4b90bc64980721fe08a2f",
+      "head_blob": "4308a88c8e4bd82c5fc44ef2c112bf2744e5f9a5",
+      "worktree_status": "",
+      "license": "MIT; repository LICENSE copied as THIRD_PARTY_LICENSE_BAGO.txt",
+      "functionality": "Candidate Git status/diff fingerprint",
+      "decision": "REFERENCE_ONLY; requires server_effects.inspect_process and CandidateIdentity"
+    },
+    {
+      "repository": "https://github.com/MarcValls/BAGO",
+      "checkout": "C:\\Users\\AMTEC_Terminal_1\u00ba\\BAGO",
+      "head": "5fb6f2f0c57f29de1b42bbb2efb4a57c86aa032d",
+      "path": "backend/.bago/tools/commit_readiness.py",
+      "sha256": "65bf83d1570803f1fb7b35309c62ce613e57e224e1718d1f24f8388ff89e6abb",
+      "head_blob": "21c9e78faae64f556f1ae3c132baddb07ec2331d",
+      "worktree_status": "",
+      "license": "MIT; repository LICENSE copied as THIRD_PARTY_LICENSE_BAGO.txt",
+      "functionality": "Staged inspection and conflict marker detection",
+      "decision": "REUSE_REGEX_ONLY; CLI execution gateway dependencies not copied"
+    },
+    {
+      "repository": "https://github.com/MarcValls/BAGO",
+      "checkout": "C:\\Users\\AMTEC_Terminal_1\u00ba\\BAGO",
+      "head": "5fb6f2f0c57f29de1b42bbb2efb4a57c86aa032d",
+      "path": "backend/bago_core/execution/staging_workspace.py",
+      "sha256": "a51d598dce972d636e0b70378179f82b1a6c318a21e855961eedf23eaec5ac7b",
+      "head_blob": "9fd4318f2e3667f1685274b1d22089257b5f3f08",
+      "worktree_status": "",
+      "license": "MIT; repository LICENSE copied as THIRD_PARTY_LICENSE_BAGO.txt",
+      "functionality": "Isolated copies with forbidden paths and symlink skipping",
+      "decision": "REFERENCE_ONLY; staging/cleanup lifecycle differs from persistent user workspace"
+    }
+  ],
+  "gaps_in_inspected_sources": [
+    "No directly reusable generic file trash/restore with optimistic revisions found in inspected source set",
+    "No standalone local selective-stage/commit owner with index preservation found in inspected source set",
+    "PR/merge execution intentionally remains proposed; existing repository-create executor is not evidence of a PR/merge adapter"
+  ],
+  "search_limits": "Bounded local source search, not a claim that every MarcValls repository or branch was exhaustively searched. Parent coordinates remote repository inventory.",
+  "original_scaffold": "Written before reuse-priority steering arrived; paused immediately and adjusted after this inventory",
+  "remote_mutations": false,
+  "remote_followup": {
+    "local_historical_bago_head": "5fb6f2f0c57f29de1b42bbb2efb4a57c86aa032d",
+    "remote_source_bago_head": "f3804a7e9333607561d28fd5075569e725aa0bb0",
+    "auth": "AUTH_EXTRACTION.json",
+    "git_sync": "SYNC_EXTRACTION.json",
+    "decision": "Canonical ADL sync-agent pure policy/receipts reused and extended for local-only new workspace; remote auth parser reused from newer BAGO, no runtime imports"
+  }
+}

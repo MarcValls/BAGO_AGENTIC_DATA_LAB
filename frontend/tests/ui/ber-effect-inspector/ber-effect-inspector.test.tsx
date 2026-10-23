@@ -1,3 +1,6 @@
+import {setLocale,t} from '../../../src/i18n'
+import {beforeEach as beforeLocaleExpectation} from 'vitest'
+beforeLocaleExpectation(() => setLocale('en'))
 // @vitest-environment jsdom
 import { strict as assert } from 'node:assert'
 import { test } from 'vitest'
@@ -68,7 +71,7 @@ test('imports the selected JSON and renders receipt/trace metadata without effec
   render(<BerEffectRecordInspector />)
   const file = new File([JSON.stringify(record)], 'ber-effect.json', { type: 'application/json' })
   Object.defineProperty(file, 'text', { value: async () => JSON.stringify(record) })
-  fireEvent.change(screen.getByLabelText('Choose BER effect JSON'), { target: { files: [file] } })
+  fireEvent.change(screen.getByLabelText(t('agents.BerEffectRecordInspector.choose_ber_effect_json')), { target: { files: [file] } })
 
   assert.ok(await screen.findByText('ber-effect.json'))
   assert.ok(screen.getByText('receipt-1'))

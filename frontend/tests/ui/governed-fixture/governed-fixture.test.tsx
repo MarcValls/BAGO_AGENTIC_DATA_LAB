@@ -1,3 +1,6 @@
+import {setLocale,t} from '../../../src/i18n'
+import {beforeEach as beforeLocaleExpectation} from 'vitest'
+beforeLocaleExpectation(() => setLocale('es'))
 // @vitest-environment jsdom
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { act, cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react'
@@ -52,13 +55,13 @@ beforeEach(() => {
 afterEach(() => { cleanup(); vi.useRealTimers(); vi.restoreAllMocks(); vi.unstubAllGlobals() })
 async function login() {
   render(<GovernedFixtureRunner apiBase="http://localhost:8081" agentId="agent_demo" />)
-  await waitFor(() => expect(screen.getByRole('button', { name: 'Crear sesión' }).hasAttribute('disabled')).toBe(true))
-  await screen.findByText('Disponibilidad: READY')
-  fireEvent.change(screen.getByLabelText('Clave de operador'), { target: { value: 'secret-operator' } })
-  fireEvent.click(screen.getByRole('button', { name: 'Crear sesión' }))
-  await screen.findByRole('button', { name: 'Revocar y borrar sesión' })
+  await waitFor(() => expect(screen.getByRole('button', { name: t('core.GovernedFixtureRunner.create_session_1ba8d2') }).hasAttribute('disabled')).toBe(true))
+  await screen.findByText('Disponibilidad: Preparado (READY)')
+  fireEvent.change(screen.getByLabelText(t('core.GovernedFixtureRunner.operator_key_6d4c8e')), { target: { value: 'secret-operator' } })
+  fireEvent.click(screen.getByRole('button', { name: t('core.GovernedFixtureRunner.create_session_1ba8d2') }))
+  await screen.findByRole('button', { name: t('core.GovernedFixtureRunner.revoke_and_clear_session_20dc9e') })
 }
-async function propose() { await login(); fireEvent.click(screen.getByRole('button', { name: 'Solicitar propuesta' })); await screen.findByText('AWAITING_APPROVAL') }
+async function propose() { await login(); fireEvent.click(screen.getByRole('button', { name: t('core.GovernedFixtureRunner.request_proposal_55f373') })); await screen.findByText('Pendiente de aprobación (AWAITING_APPROVAL)') }
 
 describe('GEX UI consistency guards (deterministic simulated API)', () => {
   it('requires exact request envelope and backend-verified full authority/receipt binding', () => {
@@ -80,7 +83,7 @@ describe('GEX UI consistency guards (deterministic simulated API)', () => {
     const storage = vi.spyOn(Storage.prototype, 'setItem')
     await propose()
     expect(screen.queryByDisplayValue('secret-operator')).toBeNull()
-    for (const label of ['Workspace vinculado', 'Restricciones efectivas', 'Caducidad', 'Argumentos y alcance exactos', 'Digest de solicitud completa', 'Política y decisión']) expect(screen.getByText(label)).toBeTruthy()
+    for (const label of ['Espacio de trabajo vinculado', 'Restricciones efectivas', 'Caducidad', 'Argumentos y alcance exactos', t('core.GovernedFixtureRunner.complete_request_digest_16bdbe'), 'Política y decisión']) expect(screen.getByText(label)).toBeTruthy()
     const create = calls.find(c => c.url.endsWith('/sessions'))!
     expect(JSON.parse(String(create.init?.body))).toEqual({ agent_id: 'agent_demo' })
     expect((create.init?.headers as Record<string, string>).Authorization).toBe('Bearer secret-operator')
@@ -88,8 +91,8 @@ describe('GEX UI consistency guards (deterministic simulated API)', () => {
     expect((p.init?.headers as Record<string, string>)['X-GEX-Agent-ID']).toBe('agent_demo')
     expect((p.init?.headers as Record<string, string>).Authorization).toBe('Bearer secret-session')
     expect(Object.keys(JSON.parse(String(p.init?.body)))).toEqual(['task'])
-    fireEvent.click(screen.getByRole('button', { name: 'Aprobar solicitud exacta y ejecutar ahora' }))
-    await screen.findByText('Resultado de fixture VERIFICADO por el backend y vinculaciones comprobadas en esta vista.')
+    fireEvent.click(screen.getByRole('button', { name: t('core.GovernedFixtureRunner.approve_the_exact_request_and_execute_now_2ba732') }))
+    await screen.findByText(t('core.GovernedFixtureRunner.fixture_result_verified_by_the_backend_with_8faff0'))
     const d = calls.find(c => c.url.endsWith('/decision'))!
     expect(JSON.parse(String(d.init?.body))).toEqual({ request_digest: h, decision: 'APPROVED', reason: 'Apruebo la solicitud exacta mostrada y su ejecución ahora.' })
     expect(screen.getByText('receipt-1')).toBeTruthy()
@@ -99,14 +102,14 @@ describe('GEX UI consistency guards (deterministic simulated API)', () => {
   })
   it.each(['REJECTED', 'CANCELLED'] as const)('persists explicit %s decision without a success claim', async decision => {
     await propose(); fetcher.mockImplementationOnce((_url: string, init: RequestInit) => { const v = pending(); v.state = decision; expect(JSON.parse(String(init.body)).decision).toBe(decision); return response(v) })
-    fireEvent.click(screen.getByRole('button', { name: decision === 'REJECTED' ? 'Rechazar' : 'Cancelar solicitud' }))
-    await screen.findByText(decision)
-    expect(screen.getByText('Sin resultado de ejecución verificado.')).toBeTruthy()
+    fireEvent.click(screen.getByRole('button', { name: decision === 'REJECTED' ? t('core.GovernedFixtureRunner.reject_2a0515') : t('core.GovernedFixtureRunner.cancel_request_c9d980') }))
+    await screen.findByText(decision === 'REJECTED' ? 'Rechazada (REJECTED)' : 'Cancelada (CANCELLED)')
+    expect(screen.getByText(t('core.GovernedFixtureRunner.no_verified_execution_result_08f253'))).toBeTruthy()
   })
   it('blocks duplicate decisions while awaiting the server and blocks retry after timeout/transport failure', async () => {
     await propose(); let reject!: (e: Error) => void
     fetcher.mockImplementationOnce(() => new Promise((_resolve, r) => { reject = r }))
-    const button = screen.getByRole('button', { name: 'Aprobar solicitud exacta y ejecutar ahora' })
+    const button = screen.getByRole('button', { name: t('core.GovernedFixtureRunner.approve_the_exact_request_and_execute_now_2ba732') })
     fireEvent.click(button); fireEvent.click(button)
     expect(calls.filter(c => c.url.endsWith('/decision'))).toHaveLength(0) // override records separately below
     expect(fetcher.mock.calls.filter(c => String(c[0]).endsWith('/decision'))).toHaveLength(1)
@@ -114,7 +117,7 @@ describe('GEX UI consistency guards (deterministic simulated API)', () => {
     await screen.findByRole('alert')
     expect(button.hasAttribute('disabled')).toBe(true)
     expect(screen.getByRole('alert').textContent).not.toContain('secret')
-    fireEvent.click(screen.getByRole('button', { name: 'Recargar estado durable' }))
+    fireEvent.click(screen.getByRole('button', { name: t('core.GovernedFixtureRunner.reload_durable_state_a27bb6') }))
     await waitFor(() => expect(button.hasAttribute('disabled')).toBe(false))
     const read = calls.find(c => c.url.endsWith('/requests/request-1'))!
     expect(read.init?.method).toBe('GET')
@@ -125,11 +128,11 @@ describe('GEX UI consistency guards (deterministic simulated API)', () => {
     fetcher.mockImplementationOnce((_url: string, init: RequestInit) => new Promise((_resolve, reject) => {
       init.signal!.addEventListener('abort', () => reject(new DOMException('aborted', 'AbortError')))
     }))
-    fireEvent.click(screen.getByRole('button', { name: 'Aprobar solicitud exacta y ejecutar ahora' }))
-    expect(screen.getByText('Esperando al servicio…')).toBeTruthy()
+    fireEvent.click(screen.getByRole('button', { name: t('core.GovernedFixtureRunner.approve_the_exact_request_and_execute_now_2ba732') }))
+    expect(screen.getByText(t('core.GovernedFixtureRunner.waiting_for_the_service_ffebe2'))).toBeTruthy()
     await act(async () => { await vi.advanceTimersByTimeAsync(30001) })
     expect(screen.getByRole('alert').textContent).toContain('tiempo agotado')
-    expect(screen.getByRole('button', { name: 'Aprobar solicitud exacta y ejecutar ahora' }).hasAttribute('disabled')).toBe(true)
+    expect(screen.getByRole('button', { name: t('core.GovernedFixtureRunner.approve_the_exact_request_and_execute_now_2ba732') }).hasAttribute('disabled')).toBe(true)
     expect(fetcher.mock.calls.filter(c => String(c[0]).endsWith('/decision'))).toHaveLength(1)
   })
   it.each(['expired', 'foreign', 'unsupported'] as const)('blocks approval for %s requests', async reason => {
@@ -140,46 +143,47 @@ describe('GEX UI consistency guards (deterministic simulated API)', () => {
       if (reason === 'unsupported') v.request!.operation = { arguments: { fixture_id: 'arbitrary-file' }, target: 'registered-immutable-fixture', effect_scope: 'read:fixture:sample' }
       return response(v, 201)
     })
-    fireEvent.click(screen.getByRole('button', { name: 'Solicitar propuesta' }))
-    await screen.findByText('AWAITING_APPROVAL')
-    expect(screen.getByRole('button', { name: 'Aprobar solicitud exacta y ejecutar ahora' }).hasAttribute('disabled')).toBe(true)
+    fireEvent.click(screen.getByRole('button', { name: t('core.GovernedFixtureRunner.request_proposal_55f373') }))
+    await screen.findByText('Pendiente de aprobación (AWAITING_APPROVAL)')
+    expect(screen.getByRole('button', { name: t('core.GovernedFixtureRunner.approve_the_exact_request_and_execute_now_2ba732') }).hasAttribute('disabled')).toBe(true)
   })
   it.each([401, 409, 503])('renders HTTP %s without synthesizing persistence or success', async code => {
     await propose()
     fetcher.mockImplementationOnce(() => response({ detail: { code: code === 401 ? 'AUTH_INVALID' : code === 409 ? 'PERMIT_REPLAY' : 'STORE_UNAVAILABLE_FAIL_CLOSED', message: 'secret-session', persisted: false } }, code))
-    fireEvent.click(screen.getByRole('button', { name: 'Aprobar solicitud exacta y ejecutar ahora' }))
+    fireEvent.click(screen.getByRole('button', { name: t('core.GovernedFixtureRunner.approve_the_exact_request_and_execute_now_2ba732') }))
     await screen.findByRole('alert')
     expect(screen.getByRole('alert').textContent).toContain('Sin persistencia confirmada')
     expect(screen.getByRole('alert').textContent).not.toContain('secret-session')
-    if (code === 401) expect(screen.getByLabelText('Clave de operador')).toBeTruthy()
-    expect(screen.getByRole('button', { name: 'Aprobar solicitud exacta y ejecutar ahora' }).hasAttribute('disabled')).toBe(true)
+    if (code === 401) expect(screen.getByLabelText(t('core.GovernedFixtureRunner.operator_key_6d4c8e'))).toBeTruthy()
+    expect(screen.getByRole('button', { name: t('core.GovernedFixtureRunner.approve_the_exact_request_and_execute_now_2ba732') }).hasAttribute('disabled')).toBe(true)
   })
   it.each(['missing', 'mismatch', 'integrity'] as const)('renders an unverified result for %s receipt evidence', async failure => {
     await propose()
     fetcher.mockImplementationOnce(() => { const v = complete(); if (failure === 'missing') v.receipt = null; if (failure === 'mismatch') v.receipt!.observed_sha256 = h; if (failure === 'integrity') v.integrity.permit_signature_valid = null; return response(v) })
-    fireEvent.click(screen.getByRole('button', { name: 'Aprobar solicitud exacta y ejecutar ahora' }))
-    await screen.findByText('SUCCEEDED')
-    expect(screen.getByText('Sin resultado de ejecución verificado.')).toBeTruthy()
+    fireEvent.click(screen.getByRole('button', { name: t('core.GovernedFixtureRunner.approve_the_exact_request_and_execute_now_2ba732') }))
+    await screen.findByText('Éxito informado (SUCCEEDED)')
+    expect(screen.getByText(t('core.GovernedFixtureRunner.no_verified_execution_result_08f253'))).toBeTruthy()
     expect(screen.queryByText(/^Resultado de fixture VERIFICADO/)).toBeNull()
   })
   it('clears session locally even when revoke fails and attempts revoke on unmount', async () => {
     await login(); fetcher.mockImplementationOnce(() => response({ detail: { code: 'STORE_UNAVAILABLE_FAIL_CLOSED', persisted: false } }, 503))
-    fireEvent.click(screen.getByRole('button', { name: 'Revocar y borrar sesión' }))
-    await screen.findByLabelText('Clave de operador')
-    expect((screen.getByLabelText('Clave de operador') as HTMLInputElement).value).toBe('')
+    fireEvent.click(screen.getByRole('button', { name: t('core.GovernedFixtureRunner.revoke_and_clear_session_20dc9e') }))
+    await screen.findByLabelText(t('core.GovernedFixtureRunner.operator_key_6d4c8e'))
+    expect((screen.getByLabelText(t('core.GovernedFixtureRunner.operator_key_6d4c8e')) as HTMLInputElement).value).toBe('')
     cleanup(); await login(); cleanup()
     expect(calls.some(c => c.url.endsWith('/sessions/current') && c.init?.keepalive === true)).toBe(true)
   })
   it('keeps unavailable and malformed responses closed and rejects mismatched recovered ID', async () => {
     await propose()
-    fireEvent.change(screen.getByLabelText('ID de solicitud para recuperar'), { target: { value: 'different' } })
-    fireEvent.click(screen.getByRole('button', { name: 'Recargar estado durable' }))
+    fireEvent.change(screen.getByLabelText(t('core.GovernedFixtureRunner.request_id_to_recover_0fcbd4')), { target: { value: 'different' } })
+    fireEvent.click(screen.getByRole('button', { name: t('core.GovernedFixtureRunner.reload_durable_state_a27bb6') }))
     await screen.findByRole('alert')
-    expect(screen.getByRole('button', { name: 'Aprobar solicitud exacta y ejecutar ahora' }).hasAttribute('disabled')).toBe(true)
+    expect(screen.getByRole('button', { name: t('core.GovernedFixtureRunner.approve_the_exact_request_and_execute_now_2ba732') }).hasAttribute('disabled')).toBe(true)
     cleanup()
     fetcher.mockImplementationOnce(() => response({ state: 'READY' }))
     render(<GovernedFixtureRunner />)
     await screen.findByText('Disponibilidad: Respuesta de disponibilidad no válida')
-    expect(screen.getByRole('button', { name: 'Crear sesión' }).hasAttribute('disabled')).toBe(true)
+    expect(screen.getByRole('button', { name: t('core.GovernedFixtureRunner.create_session_1ba8d2') }).hasAttribute('disabled')).toBe(true)
   })
 })
+

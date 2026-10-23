@@ -4,6 +4,9 @@ import { createServer } from 'vite'
 
 const vite = await createServer({ server: { middlewareMode: true }, appType: 'custom' })
 const { evaluationApi } = await vite.ssrLoadModule('/src/components/AgentEvaluationLab.tsx')
+const {setLocale,t} = await vite.ssrLoadModule('/src/i18n/index.ts')
+setLocale('en') // Explicit English expectation; product default remains Spanish.
+
 after(async () => { await vite.close() })
 
 const response = (body, status = 200) => ({ ok: status >= 200 && status < 300, status, json: async () => body })

@@ -10,6 +10,9 @@ const server = await createServer({ server: { middlewareMode: true }, appType: '
 const React = await import('react')
 const { act, cleanup, fireEvent, render, screen } = await import('@testing-library/react')
 const { default: CatalogQuality } = await server.ssrLoadModule('/src/components/CatalogQuality.tsx')
+const {setLocale} = await server.ssrLoadModule('/src/i18n/index.ts')
+setLocale('en') // Explicit English expectation; product default remains Spanish.
+
 
 const status = { state: 'healthy', configured: true, healthy: true, service_kind: 'local_openmetadata' }
 const receipts = [
@@ -43,7 +46,7 @@ describe('Local OpenMetadata catalog-quality route', () => {
       assert.equal(button.disabled, true)
       fireEvent.click(button)
       assert.equal(stub.calls.some(call => call.init.method === 'POST'), false)
-      fireEvent.click(screen.getByLabelText(/Confirmo ejecutar/))
+      fireEvent.click(screen.getByLabelText(/I confirm running validation/))
       fireEvent.click(button)
       assert.equal(stub.calls.filter(call => call.init.method === 'POST').length, 1)
       assert.deepEqual(JSON.parse(stub.calls.find(call => call.init.method === 'POST').init.body), { confirm_run: true })
@@ -54,14 +57,14 @@ describe('Local OpenMetadata catalog-quality route', () => {
     const stub = stubFetch(async url => url.endsWith('/status') ? response(status) : response(result))
     try {
       render(React.createElement(CatalogQuality)); await flush()
-      fireEvent.click(screen.getByLabelText(/Confirmo ejecutar/))
+      fireEvent.click(screen.getByLabelText(/I confirm running validation/))
       fireEvent.click(screen.getByRole('button', { name: 'Run local OpenMetadata catalog check' }))
-      assert.ok(await screen.findByRole('region', { name: 'Resultado de la validación del catálogo' }))
+      assert.ok(await screen.findByRole('region', { name: 'Catalog validation result' }))
       for (const label of ['search', 'lineage', 'owner', 'schema', 'quality', 'governance']) assert.ok(screen.getByText(label, { exact: true }))
       for (const receipt of receipts) assert.ok(screen.getByText(receipt.receipt_id))
       assert.ok(screen.getByText('REQUIRE_HUMAN'))
       assert.ok(screen.getAllByText('PASS', { exact: true }).length >= 1)
-      assert.match(document.querySelector('.catalog-quality-limit').textContent, /no inicia un análisis continuo/i)
+      assert.match(document.querySelector('.catalog-quality-limit').textContent, /does not start continuous/i)
     } finally { stub.restore() }
   })
 
@@ -69,8 +72,8 @@ describe('Local OpenMetadata catalog-quality route', () => {
     const stub = stubFetch(async () => response({ state: 'unavailable', configured: false, healthy: false, service_kind: 'local_openmetadata' }))
     try {
       render(React.createElement(CatalogQuality)); await flush()
-      assert.match(screen.getByRole('status').textContent, /no configurado o no disponible/i)
-      fireEvent.click(screen.getByLabelText(/Confirmo ejecutar/))
+      assert.match(screen.getByRole('status').textContent, /not configured or unavailable/i)
+      fireEvent.click(screen.getByLabelText(/I confirm running validation/))
       assert.equal(screen.getByRole('button', { name: 'Run local OpenMetadata catalog check' }).disabled, true)
       assert.equal(stub.calls.some(call => call.init.method === 'POST'), false)
     } finally { stub.restore() }
@@ -81,15 +84,15 @@ describe('Local OpenMetadata catalog-quality route', () => {
     try {
       render(React.createElement(CatalogQuality));
       assert.match((await screen.findByRole('alert')).textContent, /health unavailable/)
-      assert.equal(screen.queryByRole('region', { name: 'Resultado de la validación del catálogo' }), null)
+      assert.equal(screen.queryByRole('region', { name: 'Catalog validation result' }), null)
     } finally { unavailable.restore() }
     cleanup()
     const failed = stubFetch(async url => url.endsWith('/status') ? response(status) : response({ detail: { message: 'validation failed safely' } }, 503))
     try {
       render(React.createElement(CatalogQuality)); await flush()
-      fireEvent.click(screen.getByLabelText(/Confirmo ejecutar/)); fireEvent.click(screen.getByRole('button', { name: 'Run local OpenMetadata catalog check' }))
+      fireEvent.click(screen.getByLabelText(/I confirm running validation/)); fireEvent.click(screen.getByRole('button', { name: 'Run local OpenMetadata catalog check' }))
       assert.match((await screen.findByRole('alert')).textContent, /validation failed safely/)
-      assert.equal(screen.queryByRole('region', { name: 'Resultado de la validación del catálogo' }), null)
+      assert.equal(screen.queryByRole('region', { name: 'Catalog validation result' }), null)
     } finally { failed.restore() }
   })
 
@@ -98,10 +101,10 @@ describe('Local OpenMetadata catalog-quality route', () => {
     const stub = stubFetch(async url => url.endsWith('/status') ? response(status) : response(failedCleanup))
     try {
       render(React.createElement(CatalogQuality)); await flush()
-      fireEvent.click(screen.getByLabelText(/Confirmo ejecutar/)); fireEvent.click(screen.getByRole('button', { name: 'Run local OpenMetadata catalog check' }))
+      fireEvent.click(screen.getByLabelText(/I confirm running validation/)); fireEvent.click(screen.getByRole('button', { name: 'Run local OpenMetadata catalog check' }))
       assert.ok(await screen.findByRole('alert'))
       assert.match(document.querySelector('.catalog-quality-result').textContent, /PARTIAL/)
-      assert.match(document.querySelector('.catalog-quality-result').textContent, /limpieza no quedó confirmada/i)
+      assert.match(document.querySelector('.catalog-quality-result').textContent, /Cleanup was not confirmed/i)
     } finally { stub.restore() }
   })
 })

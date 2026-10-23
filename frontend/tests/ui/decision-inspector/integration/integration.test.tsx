@@ -1,3 +1,6 @@
+import {setLocale,t} from '../../../../src/i18n'
+import {beforeEach as beforeLocaleExpectation} from 'vitest'
+beforeLocaleExpectation(() => setLocale('en'))
 import { strict as assert } from 'node:assert'
 import { readFileSync } from 'node:fs'
 import { test } from 'vitest'

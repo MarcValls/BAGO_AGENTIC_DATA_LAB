@@ -51,7 +51,7 @@
 
 .jobs-grid {
   display: grid;
-  grid-template-columns: 1fr 400px;
+  grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
   gap: 20px;
 }
 
@@ -164,7 +164,7 @@
   border-radius: 8px;
   padding: 16px;
   overflow-y: auto;
-  max-height: 600px;
+  max-height: none;
 }
 
 .job-detail h3 {
@@ -245,7 +245,7 @@
   padding: 8px;
   font-family: monospace;
   font-size: 0.75em;
-  max-height: 150px;
+  max-height: none;
   overflow-y: auto;
   color: #d1d5db;
 }
@@ -266,7 +266,7 @@
   }
 
   .job-detail {
-    max-height: 400px;
+    max-height: none;
   }
 }
 
@@ -276,3 +276,6 @@
 .jobs-grid { gap: 12px; }
 .job-row { cursor: pointer; }
 .job-row:focus-visible { outline: 2px solid #84b5eb; outline-offset: -2px; }
+.job-history, .jobs-grid, .jobs-list, .job-detail, .log-panel { min-width: 0; min-height: 0; }
+.jobs-grid { flex: 1 0 auto; }
+.jobs-list { overflow: auto; }
