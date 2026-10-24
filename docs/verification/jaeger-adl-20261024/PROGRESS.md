@@ -15,9 +15,9 @@ Los recibos permanecen locales: esta rama no los adjunta ni permite reproducir a
 ## Pendiente y bloqueos
 - El helper y los handlers de herramientas tienen una candidata PREPARED no aplicada: dev_efcdc3ae08314fc5a0f11685231817cd, patch ba4093130665808403b2bee62fc4b3f40ebd20a5908e891d9c9ffa7b7d07761e.
 - Faltan asociación por invocación, compatibilidad de proyecciones, pruebas finales, revisión y aplicación desde el chat.
-- Barra derecha: corrección solicitada a panel pegado al borde, WS e historial colapsables y reparto 50/50. Hay un P1 observado: una regla CSS posiciona todos los botones como la pestaña lateral e intercepta clics. No promover esa interfaz.
+- Barra derecha R3: P1 de botones solapados corregido localmente. CSS SHA-256 298461905772ca6dfd74667a7f0e53d1a1f282a64c41443a2a500176b6ff50da; 18 tests y build PASS, 18 tests independientes PASS. QA real: reparto 50/50, plegado, borrador, Escape/foco y cero mutaciones HTTP. Gate R3 cerrado en ese alcance. R4 de estilo, color y espaciado solicitado y en preparación; aún sin código publicado.
 - Inspector: refactor local con checks anteriores, pendiente de verificación visual y de integración final.
-- Tareas: propuesta Editar/Ejecutar, Revisar/Evaluar, Historial. Revisar debe conservar el resultado existente; lanzar nuevas pruebas será una acción explícita distinta. Implementación pendiente.
+- Tareas: propuesta Editar/Ejecutar, Revisar/Evaluar, Historial. El usuario precisa corregir la interpretación declarada del modelo después de responder si no captó la intención. Conservar resultado original y vincular corrección humana a nueva revisión; repetir ejecución y lanzar pruebas son acciones explícitas separadas. Implementación pendiente.
 - Historial de trabajos consulta /api/jobs/list; comprobación actual HTTP 200 con jobs vacío. No agrega conversaciones, task-runs ni evaluaciones.
 - B5-M00 es preparación parcial de lectura, no activación de la mutación.
 - Misión documental final, concurrencia, recuperación, README generado con suite completa final y gate independiente: pendientes. Ningún PASS anterior sustituye estos gates.
