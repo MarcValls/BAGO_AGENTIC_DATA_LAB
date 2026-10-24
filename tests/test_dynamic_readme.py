@@ -4,8 +4,11 @@ from pathlib import Path
 import re
 import sys
 
+import pytest
+
 sys.path.insert(0, str(Path(__file__).parent.parent / "scripts"))
 
+import generate_dynamic_readme as generator  # noqa: E402
 from generate_dynamic_readme import (  # noqa: E402
     _read_json,
     collected_test_count,
@@ -30,6 +33,38 @@ def test_checked_in_readme_matches_canonical_render():
     )
 
     assert (ROOT / "README.md").read_text(encoding="utf-8") == rendered
+
+
+@pytest.mark.parametrize(
+    ("content", "expected_status"),
+    [("canonical", 0), ("stale", 1), ("missing", 1)],
+)
+def test_readme_ci_check_is_read_only(
+    tmp_path, monkeypatch, capsys, content, expected_status
+):
+    readme = tmp_path / "README.md"
+    if content != "missing":
+        text = (ROOT / "README.md").read_text(encoding="utf-8")
+        if content == "stale":
+            text += "\nStale generated content.\n"
+        readme.write_text(text, encoding="utf-8")
+    before = readme.read_bytes() if readme.exists() else None
+    monkeypatch.setattr(generator, "README_PATH", readme)
+    monkeypatch.setattr(generator, "collected_test_count", lambda: 248)
+
+    def unexpected_execution():
+        pytest.fail("--skip-tests must not execute the suite")
+
+    monkeypatch.setattr(generator, "executed_test_count", unexpected_execution)
+
+    assert generator.main(["--check", "--skip-tests"]) == expected_status
+    output = capsys.readouterr().out
+    if expected_status == 0:
+        assert "suite NOT_RUN (248 casos recogidos)" in output
+    else:
+        assert "README desactualizado" in output
+        assert "python scripts/generate_dynamic_readme.py" in output
+    assert (readme.read_bytes() if readme.exists() else None) == before
 
 
 def test_readme_sources_are_real_and_state_is_parsed():
