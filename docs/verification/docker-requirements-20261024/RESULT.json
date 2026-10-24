@@ -1,0 +1,18 @@
+{
+  "status": "PASS",
+  "command": [
+    "C:\\Users\\AMTEC_Terminal_1\u00ba\\Desktop\\BAGO5_ADL\\.worktrees\\integrated-services-20261023\\.venv\\Scripts\\python.exe",
+    "-B",
+    "-m",
+    "pytest",
+    "tests/test_docker_workflow.py",
+    "-q"
+  ],
+  "returncode": 0,
+  "closed": true,
+  "log": "AFTER.log",
+  "sha256": "da7b6b66e15079670aa7b20c17067ba09c6bb0ece94701fe205e95796fdceb8e",
+  "before": "BEFORE.log:1failed4passed; processcode not independently recorded because original shell printed tail",
+  "hosted_run": "40044305962: missing requirements-whatsapp.txt",
+  "actual_docker_build": "NOT_RUN: next hosted run"
+}
