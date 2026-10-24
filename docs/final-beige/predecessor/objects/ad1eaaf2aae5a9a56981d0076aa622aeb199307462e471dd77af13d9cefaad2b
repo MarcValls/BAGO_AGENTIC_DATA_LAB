@@ -1,0 +1,133 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+          cache-dependency-path: |
+            requirements.txt
+            requirements-test.txt
+      - name: Install ffmpeg for portfolio video checks
+        run: |
+          sudo apt-get update
+          sudo apt-get install --yes ffmpeg
+      - name: Install reproducible dependencies
+        run: python -m pip install --upgrade pip
+      - name: Install project dependencies
+        run: python -m pip install -r requirements-test.txt
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - name: Install frontend dependencies
+        run: npm ci
+        working-directory: frontend
+      - name: Run complete test suite
+        run: python -m pytest tests -q
+      - name: Check generated README
+        run: python scripts/generate_dynamic_readme.py --check --skip-tests
+      - name: Check public E2E demo
+        run: python scripts/run_public_e2e_demo.py --check
+      - name: Check one-command portfolio demo
+        run: python demo.py --no-bootstrap --artifacts-dir demo_output/ci
+      - name: Upload portfolio evidence bundle
+        uses: actions/upload-artifact@v4
+        with:
+          name: governed-agent-demo-evidence
+          path: demo_output/ci
+      - name: Check local vector store
+        run: python scripts/run_l14_vector_store_validation.py --check
+      - name: Start local OpenMetadata
+        run: docker compose -p bago-openmetadata -f infra/openmetadata/docker-compose.yml up -d
+      - name: Wait for OpenMetadata to be healthy
+        run: |
+          for i in {1..60}; do
+            STATUS=$(docker compose -p bago-openmetadata -f infra/openmetadata/docker-compose.yml ps --format='table {{.Status}}' | grep -c 'healthy' || echo 0)
+            if [ "$STATUS" -gt 0 ]; then
+              echo "OpenMetadata is healthy"
+              exit 0
+            fi
+            echo "Waiting for OpenMetadata... ($i/60)"
+            sleep 2
+          done
+          echo "OpenMetadata failed to become healthy"
+          docker compose -p bago-openmetadata -f infra/openmetadata/docker-compose.yml logs
+          exit 1
+      - name: Check local OpenMetadata catalog
+        run: python scripts/run_l8_openmetadata_live_validation.py --check
+      - name: Stop local OpenMetadata
+        if: always()
+        run: docker compose -p bago-openmetadata -f infra/openmetadata/docker-compose.yml down -v
+      - name: Start local Jaeger
+        run: docker compose -p bago-otel -f infra/observability/docker-compose.yml up -d
+      - name: Wait for Jaeger to be healthy
+        run: |
+          for i in {1..30}; do
+            if curl -s http://localhost:16686/api/services >/dev/null 2>&1; then
+              echo "Jaeger is healthy"
+              exit 0
+            fi
+            echo "Waiting for Jaeger... ($i/30)"
+            sleep 2
+          done
+          echo "Jaeger failed to become healthy"
+          docker compose -p bago-otel -f infra/observability/docker-compose.yml logs
+          exit 1
+      - name: Check local OpenTelemetry and Jaeger
+        run: python scripts/run_l15_otel_live_validation.py --check
+      - name: Stop local Jaeger
+        if: always()
+        run: docker compose -p bago-otel -f infra/observability/docker-compose.yml down -v
+      - name: Compile source, scripts and root demo
+        run: python -m compileall -q src scripts demo.py
+      - name: Verify normative governed execution contract
+        run: python -m pytest docs/governed-execution/verification/test_gex_contract_consistency.py -q
+      - name: Run independent JCS reference vectors
+        run: node docs/governed-execution/verification/jcs_reference.mjs docs/governed-execution/GEX_V1_CONFORMANCE_VECTORS.json
+      - name: Run frontend package tests
+        run: npm test
+        working-directory: frontend
+      - name: Run frontend UI tests
+        run: npm run test:ui
+        working-directory: frontend
+      - name: Verify grounded knowledge, catalog and MCP interfaces
+        run: node --test tests/ui/knowledge/grounded-source.test.mjs tests/ui/knowledge/ontology-review.test.mjs tests/ui/knowledge/catalog-quality.test.mjs tests/ui/capabilities/mcp-governance.test.mjs
+        working-directory: frontend
+      - name: Verify provider settings
+        run: npm run test:providers
+        working-directory: frontend
+      - name: Verify governed fixture action review
+        run: npx vitest run tests/ui/governed-fixture/governed-fixture.test.tsx
+        working-directory: frontend
+      - name: Run frontend Node contract tests
+        run: npm run test:contracts
+        working-directory: frontend
+      - name: Build frontend
+        run: npm run build
+        working-directory: frontend
+      - name: Check portfolio demo video (read-only)
+        continue-on-error: true
+        run: |
+          if command -v ffmpeg >/dev/null 2>&1; then
+            python scripts/render_portfolio_demo_video.py --check
+          else
+            echo "ffmpeg not available on this runner; skipping portfolio video check"
+          fi

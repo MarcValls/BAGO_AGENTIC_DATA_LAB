@@ -96,7 +96,7 @@ function StructuredDocument({ document }: { document: Document }) {
   return <JsonValue value={parsed} />
 }
 
-export default function ProjectContextDocument({ item, workspaceRoot }: { item: ContextLocation; workspaceRoot: string }) {
+export default function ProjectContextDocument({ item, workspaceRoot, compactPath = false }: { item: ContextLocation; workspaceRoot: string; compactPath?: boolean }) {
   useI18n()
 
   const [expanded, setExpanded] = useState(false)
@@ -124,7 +124,7 @@ export default function ProjectContextDocument({ item, workspaceRoot }: { item: 
 
   return <details className={`workspace-source project-document ${missing ? 'absent' : 'present'}`} onToggle={event => { if (event.target === event.currentTarget) setExpanded(event.currentTarget.open) }}>
     <summary><strong>{documentLabel(item.id)}</strong><span>{missing ? t("core.ProjectContextDocument.not_found_003cb1") : t("core.ProjectContextDocument.available_f4e4f6")}</span></summary>
-    <code className="project-document-path" title={item.path}>{item.path}</code>
+    <code className={`project-document-path${compactPath ? ' context-location-path' : ''}`} tabIndex={compactPath ? 0 : undefined} title={item.path}>{item.path}</code>
     {expanded && <div className="project-document-content">
       <div className="project-document-toolbar"><span>{t("core.ProjectContextDocument.reading_view_fb78d6")}</span><button type="button" disabled={loading} onClick={() => setRequest(value => value + 1)}>{t("core.ProjectContextDocument.refresh_fe5f66")}</button></div>
       {loading && <p role="status">{t("core.ProjectContextDocument.reading_file_14f452")}</p>}

@@ -1,0 +1,29 @@
+{
+  "proof": {
+    "Cognition_only_import_optin_attributes": true,
+    "ProjectDocument_only_optional_default_false_presentation": true,
+    "frozen_BS_App_Workspace_CognitionCSS_preserved": true
+  },
+  "preserved": [
+    {
+      "path": "frontend/src/App.tsx",
+      "sha256": "1c02afd9eb2089dc32e26d81ccedfcc09a4fdbd92c416f980cf0b7a06fc6412e"
+    },
+    {
+      "path": "frontend/src/App.css",
+      "sha256": "5aabb6c16fde081d2f3bf2ac8fb4c8a469346b1fcf7138d373ebcafc91043555"
+    },
+    {
+      "path": "frontend/src/NavigationOrder.css",
+      "sha256": "46d3d5e5b35814126dff63a42d63e0e3f9c24294e8cf5e8ca33ea51b2544aac6"
+    },
+    {
+      "path": "frontend/src/components/CognitionSettings.css",
+      "sha256": "3e14e57ca68776bd5b0b434437c1daeff38e9091813d14de17b0b8965de38cb5"
+    },
+    {
+      "path": "frontend/src/components/WorkspaceManager.tsx",
+      "sha256": "f022742369a23b9920a8d30afec9ef323c3cb435b56056b4dd6b39b978c549d8"
+    }
+  ]
+}

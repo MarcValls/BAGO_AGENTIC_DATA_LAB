@@ -1,0 +1,67 @@
+ Image bago-dev-frontend:beige-settings-20261024-rc14-rc1 Building 
+#1 [internal] load local bake definitions
+#1 reading from stdin 643B 0.1s done
+#1 DONE 0.1s
+
+#2 [internal] load build definition from frontend.Dockerfile
+#2 transferring dockerfile: 794B done
+#2 DONE 0.0s
+
+#3 [internal] load metadata for docker.io/library/node:22-bookworm-slim@sha256:de170b39439eb0e5a3444ad7d60b015614a381e10fecae2e30ec9e735122f38d
+#3 DONE 0.1s
+
+#4 [internal] load .dockerignore
+#4 transferring context: 2B done
+#4 DONE 0.0s
+
+#5 [internal] load build context
+#5 ...
+
+#6 [1/9] FROM docker.io/library/node:22-bookworm-slim@sha256:de170b39439eb0e5a3444ad7d60b015614a381e10fecae2e30ec9e735122f38d
+#6 resolve docker.io/library/node:22-bookworm-slim@sha256:de170b39439eb0e5a3444ad7d60b015614a381e10fecae2e30ec9e735122f38d 0.2s done
+#6 DONE 0.2s
+
+#5 [internal] load build context
+#5 transferring context: 3.59MB 0.7s done
+#5 DONE 0.8s
+
+#7 [2/9] WORKDIR /workspace/frontend
+#7 CACHED
+
+#8 [3/9] COPY context-public/repository/frontend/package.json context-public/repository/frontend/package-lock.json ./
+#8 CACHED
+
+#9 [4/9] RUN npm ci --no-audit --no-fund
+#9 CACHED
+
+#10 [5/9] COPY context-public/repository/frontend/ ./
+#10 DONE 0.3s
+
+#11 [6/9] COPY context-public/repository/src/ /workspace/src/
+#11 DONE 0.2s
+
+#12 [7/9] COPY context-public/repository/docs/ /workspace/docs/
+#12 DONE 0.1s
+
+#13 [8/9] RUN chown -R node:node /workspace
+#13 DONE 26.6s
+
+#14 [9/9] COPY --chown=node:node docker/vite.dev.config.mjs ./docker-vite.config.mjs
+#14 DONE 0.2s
+
+#15 exporting to image
+#15 exporting layers
+#15 exporting layers 7.2s done
+#15 exporting manifest sha256:b1f6a48c931a914537bf7b333cedfc90c9c0132f98f7205ba46e1f017061f46c 0.0s done
+#15 exporting config sha256:375fdbe8d99ddab578da8332d21a6e1f8da5ec04448a790377e06de1cac271ad 0.0s done
+#15 exporting attestation manifest sha256:489b32409956bfe2aab4cbee24bfa2f5c7422d3034a698f749899223b25c6a9f
+#15 exporting attestation manifest sha256:489b32409956bfe2aab4cbee24bfa2f5c7422d3034a698f749899223b25c6a9f 0.0s done
+#15 exporting manifest list sha256:7032f44562747bbeaf4ebe64b021b724cb313e11b33248ba3b383ff2e0c6f5e8 0.0s done
+#15 naming to docker.io/library/bago-dev-frontend:beige-settings-20261024-rc14-rc1 done
+#15 unpacking to docker.io/library/bago-dev-frontend:beige-settings-20261024-rc14-rc1
+#15 unpacking to docker.io/library/bago-dev-frontend:beige-settings-20261024-rc14-rc1 3.1s done
+#15 DONE 10.5s
+
+#16 resolving provenance for metadata file
+#16 DONE 0.1s
+ Image bago-dev-frontend:beige-settings-20261024-rc14-rc1 Built 

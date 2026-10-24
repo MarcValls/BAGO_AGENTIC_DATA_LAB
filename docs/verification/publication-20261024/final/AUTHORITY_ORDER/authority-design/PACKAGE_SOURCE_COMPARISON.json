@@ -1,0 +1,75 @@
+{
+  "kind": "Local L source evidence; not a live package version attestation",
+  "items": [
+    {
+      "id": "workspace.read_text",
+      "local_package_sources": {
+        "src/agent_tools/workspace_read.py": {
+          "exists": true,
+          "sha256": "672b51586eafabb7a19232b8483bbadb620000a4053374b0dca301a668260610"
+        },
+        "src/api/server.py": {
+          "exists": true,
+          "sha256": "7c297d7b942b3f7d98ce40dd3e47a8e3786567b26248571fb45617160b77b652"
+        }
+      }
+    },
+    {
+      "id": "workspace.scan_duplicates",
+      "local_package_sources": {
+        "src/agent_tools/code_duplicates.py": {
+          "exists": true,
+          "sha256": "6651293675deca8a3f34b551662dd5751cd0091d27f5515731c070f18dc4ccfc"
+        },
+        "src/api/server.py": {
+          "exists": true,
+          "sha256": "7c297d7b942b3f7d98ce40dd3e47a8e3786567b26248571fb45617160b77b652"
+        }
+      }
+    },
+    {
+      "id": "agent.evaluate",
+      "local_package_sources": {
+        "src/evaluation/agent_lab.py": {
+          "exists": true,
+          "sha256": "ecfc3baf02fa0d4bd9bbf5cb3643820ad6f192b5a18127339fc465b1cceccabc"
+        },
+        "src/api/server.py": {
+          "exists": true,
+          "sha256": "7c297d7b942b3f7d98ce40dd3e47a8e3786567b26248571fb45617160b77b652"
+        }
+      }
+    },
+    {
+      "id": "mcp.execute",
+      "local_package_sources": {
+        "src/adapters/mcp_adapter.py": {
+          "exists": true,
+          "sha256": "ef22a50a0e5b3464b47536f67f581880b124d71b8cd8b9b90f85234fc76db5be"
+        }
+      }
+    },
+    {
+      "id": "sandbox.execute",
+      "local_package_sources": {
+        "src/execution/gateway.py": {
+          "exists": true,
+          "sha256": "543d840857931ff69b41530fd6b8fe8ea6276039e21661bc0ba197d080fe1e26"
+        },
+        "src/sandbox/manager.py": {
+          "exists": true,
+          "sha256": "07b24bf62cab172b65c58652177076c3080bd4d333d31325f28af747817173ae"
+        }
+      }
+    },
+    {
+      "id": "agent.run",
+      "local_package_sources": {
+        "src/api/server.py": {
+          "exists": true,
+          "sha256": "7c297d7b942b3f7d98ce40dd3e47a8e3786567b26248571fb45617160b77b652"
+        }
+      }
+    }
+  ]
+}

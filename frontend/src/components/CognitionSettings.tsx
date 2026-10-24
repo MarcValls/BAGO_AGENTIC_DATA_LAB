@@ -1,5 +1,6 @@
 import {useI18n,t,localMessage,errorMessage,apiError,formatDate,formatNumber} from '../i18n'
 import './CognitionSettings.css'
+import './ContextReadability.css'
 import { useEffect, useState } from 'react'
 import ProjectContextDocument from './ProjectContextDocument'
 import type { ContextLocation } from './ProjectContextDocument'
@@ -89,11 +90,11 @@ export default function CognitionSettings({ mode, onModeChange, workspaceOnly = 
 
   const location = (id: string) => metadata?.paths.find((item) => item.id === id)
   const renderLocation = (item: ContextLocation | undefined) => item && (['project-context', 'project-state', 'active-handoff'].includes(item.id)
-    ? <ProjectContextDocument key={`${metadata?.workspace_root}:${item.id}`} item={{ ...item, label: PROJECT_DOCUMENT_LABELS[item.id] }} workspaceRoot={metadata!.workspace_root} />
+    ? <ProjectContextDocument key={`${metadata?.workspace_root}:${item.id}`} item={{ ...item, label: PROJECT_DOCUMENT_LABELS[item.id] }} workspaceRoot={metadata!.workspace_root} compactPath={!workspaceOnly} />
     : <div className={`workspace-source ${item.state}`} key={item.id}>
     <div><strong>{PROJECT_DOCUMENT_LABELS[item.id] || t('agents.aux.context.unknown',{id:item.id})}</strong><span>{item.state === 'present' ? t("core.CognitionSettings.available_e67444") : t("core.CognitionSettings.not_found_e3ebaa")}</span></div>
     <p>{contextPurpose(item.id)}</p><details><summary>{t('agents.aux.context.technical')}</summary><pre>{JSON.stringify({id:item.id,label:item.label,purpose:item.purpose},null,2)}</pre></details>
-    <code title={item.path}>{item.path}</code>
+    <code className={workspaceOnly ? undefined : 'context-location-path'} tabIndex={workspaceOnly ? undefined : 0} title={item.path}>{item.path}</code>
   </div>)
 
   return <div className={`cognition-settings${workspaceOnly ? ' workspace-settings' : ''}`}>
@@ -132,7 +133,7 @@ export default function CognitionSettings({ mode, onModeChange, workspaceOnly = 
         {metadata && <>
           <p className="cognition-context-intro">{t("core.CognitionSettings.live_scope_and_context_metadata_used_by_b3daa3")}</p>
           <dl className="context-summary cognition-context-summary">
-            <div><dt>{t("core.CognitionSettings.active_workspace_68971a")}</dt><dd><code title={metadata.workspace_root}>{metadata.workspace_root}</code></dd></div>
+            <div><dt>{t("core.CognitionSettings.active_workspace_68971a")}</dt><dd><code className="context-location-path" tabIndex={0} title={metadata.workspace_root}>{metadata.workspace_root}</code></dd></div>
             <div><dt>{t("core.CognitionSettings.cognition_profile_2ecb9f")}</dt><dd>{metadata.cognition.profile}</dd></div>
             <div><dt>{t("core.CognitionSettings.focus_capacity_922ae3")}</dt><dd>{t('agents.aux.focusCapacity',{capacity:formatNumber(metadata.cognition.capacity),hops:formatNumber(metadata.cognition.max_hops),expansions:formatNumber(metadata.cognition.max_expansions)})}</dd></div>
             <div><dt>{t("core.CognitionSettings.conversation_memory_230741")}</dt><dd>{metadata.memory.kind === 'conversation_history' ? t('agents.aux.context.memoryKind') : metadata.memory.kind} · {observedStateLabel(metadata.memory.state)}<small>{metadata.memory.kind === 'conversation_history' ? t('agents.aux.context.memoryDescription') : metadata.memory.description}</small></dd></div>

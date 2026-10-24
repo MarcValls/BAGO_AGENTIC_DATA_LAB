@@ -1,0 +1,98 @@
+{
+  "id": "CR-PF01-FINAL-SUCCESSOR",
+  "base_commit": "165d01588bf86944d99dd5c8d9c632fa2736dc29",
+  "reason": "Explicit root successor: CI prerequisites, byte identity and separately verified visual navigation",
+  "impacted_consumers": [
+    "PF02",
+    "root publication index/PR"
+  ],
+  "historical_consumers": [
+    "PP01",
+    "PP02"
+  ],
+  "required_invalidations": "PP handoffs remain immutable historical evidence for P1. Never revalidate changed final sources through old PP handoffs; PF01/PF02 establish new evidence. Python execution inherited only on unchanged complete source list.",
+  "changes": [
+    {
+      "path": ".github/workflows/ci.yml",
+      "old_sha256": "25f9eb9d8f64cb3cf9777496bda41c684b4aa8d3ce6810b9a1130b01b53c986a",
+      "new_sha256": "ad1eaaf2aae5a9a56981d0076aa622aeb199307462e471dd77af13d9cefaad2b",
+      "change": "Move existing Setup Node.js and Install frontend dependencies blocks before pytest; no step/permission edits"
+    },
+    {
+      "path": ".gitattributes",
+      "old_sha256": null,
+      "new_sha256": "66190c742d64e3fd5d39f8e335fd88396ea9dc77224a18e7196ef45a72fcd26a",
+      "change": "Only eleven explicit -text paths; no global filter changes"
+    },
+    {
+      "path": "frontend/src/App.tsx",
+      "old_sha256": "76ad4ef53a4ac5639fc0a2067ad8dbe70b687354cb860b1e42e425f8764a6f87",
+      "new_sha256": "c5e1d2b5d5254ff5bce7a17f474b9a36ac380bed5243900ecc2fb368027a4ca7",
+      "state": "IMPORTED_HR01_FROZEN"
+    },
+    {
+      "path": "frontend/src/App.css",
+      "old_sha256": "5aabb6c16fde081d2f3bf2ac8fb4c8a469346b1fcf7138d373ebcafc91043555",
+      "new_sha256": "5aabb6c16fde081d2f3bf2ac8fb4c8a469346b1fcf7138d373ebcafc91043555",
+      "state": "IMPORTED_HR01_FROZEN"
+    },
+    {
+      "path": "frontend/src/NavigationOrder.css",
+      "old_sha256": null,
+      "new_sha256": "a01c44d55ceeb60d5982488965d10ded070983ad6cfe144df4b8a9a98f1dd01c",
+      "state": "IMPORTED_HR01_FROZEN"
+    },
+    {
+      "path": "frontend/tests/ui/communications/navigation-control-order.test.tsx",
+      "old_sha256": null,
+      "new_sha256": "00a268fdb1f16626e98112f3fee2b34f3dd6ba26dab2ebbfef283310c6137942",
+      "state": "IMPORTED_HR01_FROZEN"
+    }
+  ],
+  "raw_pins": [
+    {
+      "path": "frontend/src/App.css",
+      "sha256": "5aabb6c16fde081d2f3bf2ac8fb4c8a469346b1fcf7138d373ebcafc91043555"
+    },
+    {
+      "path": "frontend/src/components/AgentChat.css",
+      "sha256": "4ea750ea095acd1baf09dbd49655adedb9a26084ab41d16b415e3ef394516f15"
+    },
+    {
+      "path": "frontend/src/components/ChatInspection.css",
+      "sha256": "10fd27a6243b57b9bea0006d650903e44c41b53d4801a6715e772a0633035317"
+    },
+    {
+      "path": "frontend/tests/ui/chat-shell/fixtures/inspector-color/AgentChat.css",
+      "sha256": "a84fe9402bfc9cc3d28cca2ab048dcb852a53e9ac7f1b15f7cf8fba4164c2490"
+    },
+    {
+      "path": "frontend/tests/ui/chat-shell/fixtures/inspector-color/App.css",
+      "sha256": "12fbb0443eb8868fd636a77c91704bad61d6603febb500327d0ea0d3733e4a46"
+    },
+    {
+      "path": "frontend/tests/ui/chat-shell/fixtures/inspector-color/ChatInspection.css",
+      "sha256": "03867c6c30f59d47f25d734e525938d243913f7d2fa5b5a328019ffb9ee292dd"
+    },
+    {
+      "path": "src/workspace_sdk/auth_primitives.py",
+      "sha256": "440ca7b234326dda4107bc060754c10f9286cc5cd7877880dc2da9719784f368"
+    },
+    {
+      "path": "src/workspace_sdk/reference/workspace_service_0_1_0_RC1.py",
+      "sha256": "5265e768d408975f67ffcff69e21d5923b1b147ede59177a782afb365737f066"
+    },
+    {
+      "path": "src/workspace_sdk/reused_primitives.py",
+      "sha256": "2c765bbe6f8fc8d1e5fdfbedea1c764426aae9cd367ae4c88aad302c12c70460"
+    },
+    {
+      "path": "src/workspace_sdk/sync_primitives.py",
+      "sha256": "dcaf42d40969f969b797550c7023eb073c45032493b5b0285446935eb50b602b"
+    },
+    {
+      "path": "src/workspace_sdk/workspace_service.py",
+      "sha256": "fc16247d6cf1e2023196d91d2391dde86603abc08ff83cd3c876dbf7fbcb88bc"
+    }
+  ]
+}

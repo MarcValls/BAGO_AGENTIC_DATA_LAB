@@ -1,5 +1,6 @@
 import {useI18n,t,localMessage,errorMessage,apiError,formatDate,formatNumber} from './i18n'
 import './App.css'
+import './NavigationOrder.css'
 import LanguageSelector from './i18n/LanguageSelector'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import axios from 'axios'
@@ -47,11 +48,11 @@ type AssistantView = 'communications' | 'whatsapp_settings' | 'inspector' | 'bui
 type SettingsView = 'cognition' | 'providers' | 'whatsapp'
 
 const navigation: Array<{ id: AppView; label: string; layer: 'interaction' | 'data' }> = [
-  { id: 'chat', get label(){return t("core.App.chat_460b3a")}, layer: 'interaction' },
-  ...COMMUNICATION_SECTIONS.map(section=>({id:section.id,get label(){return section.label},layer:'interaction' as const})),
   { id: 'workspace', get label(){return t("core.App.workspace_87bb59")}, layer: 'interaction' },
-  { id: 'capabilities', get label(){return t("core.App.capabilities_9460f1")}, layer: 'interaction' },
+  { id: 'chat', get label(){return t("core.App.chat_460b3a")}, layer: 'interaction' },
   ...AGENT_SECTIONS.map(section => ({ id: section.id, get label(){return section.label}, layer: 'interaction' as const })),
+  { id: 'capabilities', get label(){return t("core.App.capabilities_9460f1")}, layer: 'interaction' },
+  ...COMMUNICATION_SECTIONS.map(section=>({id:section.id,get label(){return section.label},layer:'interaction' as const})),
   { id: 'inspector', get label(){return t("core.App.decision_inspector_2bc4a6")}, layer: 'data' },
   { id: 'ber_record', get label(){return t("core.App.ber_effect_record_76c485")}, layer: 'data' },
   { id: 'jobs', get label(){return t("core.App.job_history_17be0b")}, layer: 'data' },
@@ -219,7 +220,7 @@ function App() {
         </div>
         <nav className="primary-navigation" aria-label={t("core.App.interaction_layer_b8f1ed")}>
           <div className="navigation-group">
-            {interactionNavigation.filter(item => !isAgentSection(item.id)&&item.id!=='contacts'&&item.id!=='communications_history').map((item) => item.id==='communications' ? <CommunicationsNavigation key={item.id} activeView={activeInteractionView} collapsed={sidebarCollapsed} onExpandSidebar={()=>setSidebarCollapsed(false)} onNavigate={navigateCommunications}/> : (
+            {interactionNavigation.filter(item => (!isAgentSection(item.id)||item.id==='agents')&&item.id!=='contacts'&&item.id!=='communications_history').map((item) => item.id==='agents' ? <AgentNavigation key={item.id} activeView={activeInteractionView} collapsed={sidebarCollapsed} onExpandSidebar={() => setSidebarCollapsed(false)} onNavigate={view => setActiveInteractionView(view)} /> : item.id==='communications' ? <CommunicationsNavigation key={item.id} activeView={activeInteractionView} collapsed={sidebarCollapsed} onExpandSidebar={()=>setSidebarCollapsed(false)} onNavigate={navigateCommunications}/> : (
               <button
                 key={item.id}
                 type="button"
@@ -233,7 +234,6 @@ function App() {
                 <span>{item.label}</span>
               </button>
             ))}
-            <AgentNavigation activeView={activeInteractionView} collapsed={sidebarCollapsed} onExpandSidebar={() => setSidebarCollapsed(false)} onNavigate={view => setActiveInteractionView(view)} />
             <button
               type="button"
               className={`navigation-item ${dataLayerOpen ? 'active' : ''}`}

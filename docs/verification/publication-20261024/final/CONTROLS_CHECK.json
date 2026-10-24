@@ -1,0 +1,39 @@
+{
+  "status": "PASS",
+  "errors": [],
+  "protected_sources": 233,
+  "python_suite": {
+    "status": "INHERITED_UNCHANGED_WORKING_TREE",
+    "passed": 941,
+    "skipped": 1,
+    "execution": "45204dcac9b246ee82ecbdd9d6684622",
+    "fresh_full": "NOT_RUN: explicit bounded successor authorization, all Python/requirements/scripts and README inputs unchanged"
+  },
+  "workflow": {
+    "existing_steps": 32,
+    "only_reordered": true,
+    "syntax": "PASS: PyYAML parses workflow",
+    "hosted_ci": "NOT_RUN"
+  },
+  "attributes": {
+    "pins": 11,
+    "effective_git_output": [
+      "frontend/src/App.css: text: unset",
+      "frontend/src/components/AgentChat.css: text: unset",
+      "frontend/src/components/ChatInspection.css: text: unset",
+      "frontend/tests/ui/chat-shell/fixtures/inspector-color/AgentChat.css: text: unset",
+      "frontend/tests/ui/chat-shell/fixtures/inspector-color/App.css: text: unset",
+      "frontend/tests/ui/chat-shell/fixtures/inspector-color/ChatInspection.css: text: unset",
+      "src/workspace_sdk/auth_primitives.py: text: unset",
+      "src/workspace_sdk/reference/workspace_service_0_1_0_RC1.py: text: unset",
+      "src/workspace_sdk/reused_primitives.py: text: unset",
+      "src/workspace_sdk/sync_primitives.py: text: unset",
+      "src/workspace_sdk/workspace_service.py: text: unset"
+    ]
+  },
+  "ui": {
+    "source": "HR01 freeze",
+    "files": 4
+  },
+  "destination": "PREPARED draft PR candidate, no remote mutation"
+}

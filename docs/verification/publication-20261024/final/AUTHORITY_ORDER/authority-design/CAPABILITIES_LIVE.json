@@ -1,0 +1,121 @@
+{
+  "operation": "READ_ONLY_GET",
+  "url": "http://127.0.0.1:8093/api/capabilities",
+  "started_at": "2026-10-23T23:05:50.284005+00:00",
+  "finished_at": "2026-10-23T23:05:50.349715+00:00",
+  "http_status": 200,
+  "content_type": "application/json",
+  "response_sha256": "f44bee49faa838f4a870ac90deb259d7240d297fe7263fb7e93161fb29d80a14",
+  "workspace_id": "workspace_cbf27f425e9af6bce043b36a63300dcf",
+  "generated_at": "2026-10-23T23:05:50.346Z",
+  "authority_notice": "Catalog status describes integration only. It does not grant authorization or enable execution.",
+  "count": 6,
+  "capabilities": [
+    {
+      "id": "workspace.read_text",
+      "status": "AVAILABLE",
+      "integration": "CONNECTED",
+      "source_available": false,
+      "source_fingerprints": {
+        "src/agent_tools/workspace_read.py": null,
+        "src/api/server.py": null
+      },
+      "fingerprint": "84fdcca959d6f7db32c1c701c0455a0a99c9b18647ff9a02c73c54d478be133a",
+      "effect": "READ",
+      "limits": {
+        "requires_user_opt_in": true,
+        "max_file_bytes": 262144,
+        "max_lines": 250,
+        "read_only": true
+      }
+    },
+    {
+      "id": "workspace.scan_duplicates",
+      "status": "AVAILABLE",
+      "integration": "CONNECTED",
+      "source_available": false,
+      "source_fingerprints": {
+        "src/agent_tools/code_duplicates.py": null,
+        "src/api/server.py": null
+      },
+      "fingerprint": "fc55b21b0262800d609fe723c5ba144fe77ef2b6e2c0518e0aa2b8690609036d",
+      "effect": "READ",
+      "limits": {
+        "requires_user_opt_in": true,
+        "max_directories_per_turn": 5,
+        "max_files": 300,
+        "max_file_bytes": 262144,
+        "max_total_bytes": 10485760,
+        "max_lines_per_file": 20000,
+        "max_total_lines": 150000,
+        "max_findings": 200,
+        "read_only": true
+      }
+    },
+    {
+      "id": "agent.evaluate",
+      "status": "AVAILABLE",
+      "integration": "CONNECTED",
+      "source_available": false,
+      "source_fingerprints": {
+        "src/evaluation/agent_lab.py": null,
+        "src/api/server.py": null
+      },
+      "fingerprint": "fbf86c1d10490eaa31729440871fd9df1adc1197fe4a7461db142d3f995f0a48",
+      "effect": "MODEL_INFERENCE",
+      "limits": {
+        "requires_explicit_run": true,
+        "max_cases": 10,
+        "tools": false,
+        "creates_jobs": false,
+        "workspace_writes": false,
+        "cost_status": "not_reported"
+      }
+    },
+    {
+      "id": "mcp.execute",
+      "status": "UNAVAILABLE",
+      "integration": "MODULE_PRESENT_NOT_CONNECTED",
+      "source_available": false,
+      "source_fingerprints": {
+        "src/adapters/mcp_adapter.py": null
+      },
+      "fingerprint": "65ea991198a05378787d0674a42fefc9101e70edadf8d81fc938910a86f7667e",
+      "effect": "EXTERNAL_ACTION",
+      "limits": {
+        "invocation_available": false
+      }
+    },
+    {
+      "id": "sandbox.execute",
+      "status": "UNAVAILABLE",
+      "integration": "MODULE_PRESENT_NOT_CONNECTED",
+      "source_available": false,
+      "source_fingerprints": {
+        "src/execution/gateway.py": null,
+        "src/sandbox/manager.py": null
+      },
+      "fingerprint": "efe66f5c9286a18e788426f460c36bff9b88b6320dd5ce2ed7c65570c048bdca",
+      "effect": "EXECUTE",
+      "limits": {
+        "invocation_available": false
+      }
+    },
+    {
+      "id": "agent.run",
+      "status": "UNAVAILABLE",
+      "integration": "FAIL_CLOSED",
+      "source_available": false,
+      "source_fingerprints": {
+        "src/api/server.py": null
+      },
+      "fingerprint": "b40251eacf0c153bde0834563155950b59779f4916285a0ae5230f7b095be970",
+      "effect": "EXECUTE",
+      "limits": {
+        "invocation_available": false,
+        "creates_jobs": false
+      }
+    }
+  ],
+  "scope": "IDs/status/source availability only; no context paths, contacts, credentials or model calls requested"
+}

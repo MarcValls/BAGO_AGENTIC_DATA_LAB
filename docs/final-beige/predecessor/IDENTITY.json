@@ -1,0 +1,92 @@
+{
+  "mission": "BAGO_PUBLICATION_FINAL_20261024",
+  "status": "SUPERSEDED_BY_EXPLICIT_USER_PREFERENCE_NOT_INVALIDATED_HISTORY",
+  "PF01": "DONE",
+  "PF02": "READY_ARCHIVED_NOT_EXECUTED",
+  "terminal": "OPEN_ARCHIVED",
+  "runtime_files": [
+    {
+      "path": ".lock",
+      "sha256": "5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9"
+    },
+    {
+      "path": "events.jsonl",
+      "sha256": "daea70b97024e724882030bbeddd43c831d14be8df08398271899e8345c9aa3e"
+    },
+    {
+      "path": "executions/0455282be4cf442f81ce7079cca644c6/receipt.json",
+      "sha256": "fde3440f5635f1066aa00c93e8d020ce67e6f4f4b5d3e5075e98972850a12bbf"
+    },
+    {
+      "path": "executions/0455282be4cf442f81ce7079cca644c6/stderr.log",
+      "sha256": "5e72affd5fd0ee8b2a1acabd1c8b34fea2cb4c09647104536d02071b982ed713"
+    },
+    {
+      "path": "executions/0455282be4cf442f81ce7079cca644c6/stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "executions/3806b78ad34341c5a0a72c8860612122/receipt.json",
+      "sha256": "e232260dba6b79b826e87fb95eee00645a641af4d72e170010dd870167227399"
+    },
+    {
+      "path": "executions/3806b78ad34341c5a0a72c8860612122/stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "executions/3806b78ad34341c5a0a72c8860612122/stdout.log",
+      "sha256": "ceb0997d12e9039377ad4e4f7481420496177fd5b5bd27c1d83432127d275301"
+    },
+    {
+      "path": "handoffs/PF01.json",
+      "sha256": "664f84194fabbd7f6315c3bb0b03e3b6ca10a8b297499e9ebbaa03ae83770bd8"
+    },
+    {
+      "path": "state.json",
+      "sha256": "fa2f788636cd5e284597a57b4fdefa321308d1c84eeda09851d3fc3d266be1d5"
+    }
+  ],
+  "sources": [
+    {
+      "path": "frontend/src/App.tsx",
+      "sha256": "c5e1d2b5d5254ff5bce7a17f474b9a36ac380bed5243900ecc2fb368027a4ca7",
+      "snapshot": "docs/final-beige/predecessor/objects/c5e1d2b5d5254ff5bce7a17f474b9a36ac380bed5243900ecc2fb368027a4ca7"
+    },
+    {
+      "path": "frontend/src/NavigationOrder.css",
+      "sha256": "a01c44d55ceeb60d5982488965d10ded070983ad6cfe144df4b8a9a98f1dd01c",
+      "snapshot": "docs/final-beige/predecessor/objects/a01c44d55ceeb60d5982488965d10ded070983ad6cfe144df4b8a9a98f1dd01c"
+    },
+    {
+      "path": "frontend/tests/ui/communications/navigation-control-order.test.tsx",
+      "sha256": "00a268fdb1f16626e98112f3fee2b34f3dd6ba26dab2ebbfef283310c6137942",
+      "snapshot": "docs/final-beige/predecessor/objects/00a268fdb1f16626e98112f3fee2b34f3dd6ba26dab2ebbfef283310c6137942"
+    },
+    {
+      "path": ".github/workflows/ci.yml",
+      "sha256": "ad1eaaf2aae5a9a56981d0076aa622aeb199307462e471dd77af13d9cefaad2b",
+      "snapshot": "docs/final-beige/predecessor/objects/ad1eaaf2aae5a9a56981d0076aa622aeb199307462e471dd77af13d9cefaad2b"
+    },
+    {
+      "path": ".gitattributes",
+      "sha256": "66190c742d64e3fd5d39f8e335fd88396ea9dc77224a18e7196ef45a72fcd26a",
+      "snapshot": "docs/final-beige/predecessor/objects/66190c742d64e3fd5d39f8e335fd88396ea9dc77224a18e7196ef45a72fcd26a"
+    },
+    {
+      "path": "frontend/src/App.css",
+      "sha256": "5aabb6c16fde081d2f3bf2ac8fb4c8a469346b1fcf7138d373ebcafc91043555",
+      "snapshot": "docs/final-beige/predecessor/objects/5aabb6c16fde081d2f3bf2ac8fb4c8a469346b1fcf7138d373ebcafc91043555"
+    },
+    {
+      "path": "docs/verification/publication-20261024/final/handoff.json",
+      "sha256": "888c17d97388243f6a62fa515a8690200eb45c15bd078f4419df65ddf06bcf7e",
+      "snapshot": "docs/final-beige/predecessor/objects/888c17d97388243f6a62fa515a8690200eb45c15bd078f4419df65ddf06bcf7e"
+    },
+    {
+      "path": "docs/verification/publication-20261024/final/PUBLIC_FILES.json",
+      "sha256": "d398649be34353d57fcd451321a6dfc2552c08e9f94f2842733097fa543a6c22",
+      "snapshot": "docs/final-beige/predecessor/objects/d398649be34353d57fcd451321a6dfc2552c08e9f94f2842733097fa543a6c22"
+    }
+  ],
+  "required_change": "RC13 stays historical; beige footer preference requires PFB new evidence. Do not re-sign prior handoffs."
+}

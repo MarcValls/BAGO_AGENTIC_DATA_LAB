@@ -1,0 +1,78 @@
+{
+  "kind": "Read-only L source identities, not live backend attestation",
+  "captured_at": "2026-10-23T23:08:39.514526+00:00",
+  "files": [
+    {
+      "path": "src/capabilities/manager.py",
+      "sha256": "8a585fbc44170c60c767a37eafa49d362bb703e146d0272efdcad0bf1e2df93a"
+    },
+    {
+      "path": "src/api/server.py",
+      "sha256": "7c297d7b942b3f7d98ce40dd3e47a8e3786567b26248571fb45617160b77b652"
+    },
+    {
+      "path": "frontend/src/components/CapabilityManager.tsx",
+      "sha256": "aa8f765502a545dcc6a98e38051e58eabee78eb64714f22c011e239c73edb47e"
+    },
+    {
+      "path": "frontend/src/components/AgentBuilder.tsx",
+      "sha256": "0aef6f45d78812756089e99c25461907e1061492cc4fc844da9fdcced18ce1ab"
+    },
+    {
+      "path": "src/agent_tools/workspace_read.py",
+      "sha256": "672b51586eafabb7a19232b8483bbadb620000a4053374b0dca301a668260610"
+    },
+    {
+      "path": "src/agent_tools/code_duplicates.py",
+      "sha256": "6651293675deca8a3f34b551662dd5751cd0091d27f5515731c070f18dc4ccfc"
+    },
+    {
+      "path": "src/web_research/core.py",
+      "sha256": "3ac18e9861a401cded75844e9a5336db9d62709f7ca30a3793562f58c894e45b"
+    },
+    {
+      "path": "src/runtime/ber/agent_runner.py",
+      "sha256": "dbff959d6a8d956f430b9a9a4882fdc6286ff8ca57f16659e5a1487f7c413368"
+    },
+    {
+      "path": "src/api/task_routes.py",
+      "sha256": "1b51718268c1d245c7f8265b9b6c32ddbb093483c89640508bbecd82dfa937f5"
+    },
+    {
+      "path": "src/api/communication_routes.py",
+      "sha256": "75aa10a3ca2ef1f9280f595c244655e142e3cf4532553ec73c18de2b21a77845"
+    },
+    {
+      "path": "src/communications/service.py",
+      "sha256": "de04665fee760ea2862ef00c7860d04fe94ddc13220c6ae5fd1a0f08cab8da6a"
+    },
+    {
+      "path": "src/api/whatsapp_routes.py",
+      "sha256": "b73f67030c02540949367688098a8f79364fdf1a186f1d24991c91b70cb0db11"
+    },
+    {
+      "path": "src/api/contacts_routes.py",
+      "sha256": "9bfb0231dfa2aca6d35f99c0df96bd5f8f06ebd4ecc32d8842fc2112f1efd6db"
+    },
+    {
+      "path": "src/api/connection_routes.py",
+      "sha256": "e807a3da24e270f3db138c554e79de74bbb192e63bf29ceb036707af684781fd"
+    },
+    {
+      "path": "src/connections/service.py",
+      "sha256": "b1dab33fe0ecf7305a8a50336225e33fbe5a7c1455ef03d03e9cfeac8449ea52"
+    },
+    {
+      "path": "src/workspace_sdk/workspace_service.py",
+      "sha256": "fc16247d6cf1e2023196d91d2391dde86603abc08ff83cd3c876dbf7fbcb88bc"
+    },
+    {
+      "path": "src/api/gex_routes.py",
+      "sha256": "aceb0e5083f782efd1add8a986977910b5e57973d32f0994f178173dd1cedf29"
+    },
+    {
+      "path": "frontend/src/App.tsx",
+      "sha256": "76ad4ef53a4ac5639fc0a2067ad8dbe70b687354cb860b1e42e425f8764a6f87"
+    }
+  ]
+}

@@ -1,0 +1,237 @@
+ Network bago-dev-beige-settings-20261024-rc14_default Creating 
+ Network bago-dev-beige-settings-20261024-rc14_default Creating 
+ Network bago-dev-beige-settings-20261024-rc14_default Created 
+ Network bago-dev-beige-settings-20261024-rc14_default Created 
+ Container bago-dev-beige-settings-20261024-rc14-frontend-test-run-0a108458f23b Creating 
+ Container bago-dev-beige-settings-20261024-rc14-frontend-test-run-0a108458f23b Created 
+
+> bago-portfolio-ui@1.0.0 build
+> tsc -b && vite build
+
+vite v8.3.4 building client environment for production...
+transforming...
+✓ 431 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                          0.74 kB │ gzip:   0.42 kB
+dist/ui-kit-preview.html                 0.74 kB │ gzip:   0.42 kB
+dist/assets/uiKitPreview-BXNbx56n.css   10.14 kB │ gzip:   2.67 kB
+dist/assets/app-Bcu-0UIh.css           170.72 kB │ gzip:  31.94 kB
+dist/assets/uiKitPreview-BOaX4Gki.js     7.73 kB │ gzip:   2.46 kB
+dist/assets/jsx-runtime-m3dJAGn0.js    220.10 kB │ gzip:  68.84 kB
+dist/assets/app-BpAX3i3V.js            966.09 kB │ gzip: 248.91 kB
+
+✓ built in 625ms
+[plugin builtin:vite-reporter] 
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rolldownOptions.output.codeSplitting to improve chunking: https://rolldown.rs/reference/OutputOptions.codeSplitting
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+npm notice
+npm notice New major version of npm available! 10.9.9 -> 12.2.1
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.2.1
+npm notice To update run: npm install -g npm@12.2.1
+npm notice
+
+> bago-portfolio-ui@1.0.0 test
+> vitest run --reporter=default
+
+
+[1m[30m[46m RUN [49m[39m[22m [36mv5.0.4 [39m[90m/workspace/frontend[39m
+
+ [32m✓[39m tests/agent-workspace-write/review.test.tsx [2m([22m[2m26 tests[22m[2m)[22m[33m 1855[2mms[22m[39m
+ [32m✓[39m tests/i18n/agents/auxiliary.test.tsx [2m([22m[2m14 tests[22m[2m)[22m[33m 1892[2mms[22m[39m
+   [33m[2m✓[22m[39m maps all known context IDs and memory UI without reading documents or refetching on locale[33m 372[2mms[22m[39m
+   [33m[2m✓[22m[39m changes a saved mode notice reactively without issuing a second selection or clearing the folder draft[33m 333[2mms[22m[39m
+ [32m✓[39m tests/i18n/agents/agents.test.tsx [2m([22m[2m22 tests[22m[2m)[22m[33m 1907[2mms[22m[39m
+   [33m[2m✓[22m[39m shows four zero counters without an execution combobox or demo fallback[33m 449[2mms[22m[39m
+ [32m✓[39m tests/ui/capabilities/external-connections.test.tsx [2m([22m[2m22 tests[22m[2m)[22m[33m 4006[2mms[22m[39m
+   [32m✓[39m External connections rendered controls with deterministic API fixtures [2m(22)[22m
+     [33m[2m✓[22m[39m loads configuration without contacting tools and selecting tools does not invoke[33m 396[2mms[22m[39m
+ [32m✓[39m tests/ui/governed-fixture/governed-fixture.test.tsx [2m([22m[2m17 tests[22m[2m)[22m[33m 4788[2mms[22m[39m
+   [32m✓[39m GEX UI consistency guards (deterministic simulated API) [2m(17)[22m
+     [33m[2m✓[22m[39m sends auth only in headers, exact task/decision bodies and displays review and durable verified receipt[33m 547[2mms[22m[39m
+     [33m[2m✓[22m[39m persists explicit REJECTED decision without a success claim[33m 390[2mms[22m[39m
+     [33m[2m✓[22m[39m blocks duplicate decisions while awaiting the server and blocks retry after timeout/transport failure[33m 443[2mms[22m[39m
+     [33m[2m✓[22m[39m treats a real abort timeout as uncertain and never retries approval automatically[33m 433[2mms[22m[39m
+     [33m[2m✓[22m[39m blocks approval for foreign requests[33m 303[2mms[22m[39m
+     [33m[2m✓[22m[39m renders HTTP 401 without synthesizing persistence or success[33m 397[2mms[22m[39m
+     [33m[2m✓[22m[39m keeps unavailable and malformed responses closed and rejects mismatched recovered ID[33m 354[2mms[22m[39m
+ [32m✓[39m tests/providers/provider-settings.test.tsx [2m([22m[2m14 tests[22m[2m)[22m[33m 5222[2mms[22m[39m
+   [32m✓[39m Provider settings behavior with simulated API responses [2m(12)[22m
+     [33m[2m✓[22m[39m marks Ollama as registered after saving its key even when no model is selected[33m 809[2mms[22m[39m
+     [33m[2m✓[22m[39m logs Codex in through its native API-key endpoint and clears the password field[33m 382[2mms[22m[39m
+     [33m[2m✓[22m[39m opens the official ChatGPT authorization URL and waits for login completion[33m 1400[2mms[22m[39m
+     [33m[2m✓[22m[39m shows integration before registration, saves a write-only key, and waits for a real verification response[33m 364[2mms[22m[39m
+ [32m✓[39m tests/ui/agent-tasks/saved-tasks.test.tsx [2m([22m[2m35 tests[22m[2m)[22m[33m 5474[2mms[22m[39m
+   [33m[2m✓[22m[39m loads saved task without inference and requires saving changed dates before an explicit run[33m 755[2mms[22m[39m
+   [33m[2m✓[22m[39m prepares a historical copy, preserves source through date edits and save, and renders history dates readonly[33m 386[2mms[22m[39m
+   [33m[2m✓[22m[39m reloads the saved date and prompt after leaving and reopening the screen[33m 356[2mms[22m[39m
+[90mstderr[2m | tests/web-research/public-web-chat.test.tsx[2m > [22m[2mbinds the explicit one-turn grant to exact owner, conversation and revision before sending
+[22m[39mEncountered two children with the same key, `reply`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.
+
+ [32m✓[39m tests/i18n/commerce/commerce.test.tsx [2m([22m[2m10 tests[22m[2m)[22m[33m 1925[2mms[22m[39m
+   [32m✓[39m commerce presentation catalogs and live preference [2m(10)[22m
+     [33m[2m✓[22m[39m preserves contact form values and selected tab without refetching on language change[33m 558[2mms[22m[39m
+     [33m[2m✓[22m[39m preserves a project creation review and its approval while translating its parameterized scope[33m 336[2mms[22m[39m
+ [32m✓[39m tests/ui/chat-shell/message-actions.test.tsx [2m([22m[2m11 tests[22m[2m)[22m[33m 2889[2mms[22m[39m
+   [33m[2m✓[22m[39m frames author, content and inline actions together for each exact message; only latest user is editable[33m 500[2mms[22m[39m
+   [33m[2m✓[22m[39m switching the contextual target cannot retain an old user edit action[33m 319[2mms[22m[39m
+   [33m[2m✓[22m[39m discards menu on a different conversation and on agent selection before a stale action can run[33m 473[2mms[22m[39m
+   [33m[2m✓[22m[39m keeps clipboard failures attached to their original message and supports EN labels without altering payload[33m 385[2mms[22m[39m
+ [32m✓[39m tests/ui/agent-management/agent-management.test.tsx [2m([22m[2m9 tests[22m[2m)[22m[33m 2509[2mms[22m[39m
+   [32m✓[39m Gestión de agentes con API [2m(9)[22m
+     [33m[2m✓[22m[39m only changes provider/model after explicit selection and preserves unavailable saved identities[33m 533[2mms[22m[39m
+     [33m[2m✓[22m[39m requires review and explicit checkbox before DELETE with exact hash[33m 380[2mms[22m[39m
+     [33m[2m✓[22m[39m blocks active work and keeps profile on conflict[33m 327[2mms[22m[39m
+ [32m✓[39m tests/inspection/chat-inspection.test.tsx [2m([22m[2m29 tests[22m[2m)[22m[33m 2663[2mms[22m[39m
+   [33m[2m✓[22m[39m switches conversation inspection panes without refetching or inventing authorization/evaluation[33m 796[2mms[22m[39m
+   [33m[2m✓[22m[39m real AgentChat emits current conversation and per-message inspect identity[33m 500[2mms[22m[39m
+   [33m[2m✓[22m[39m AgentChat ignores a late previously selected conversation response[33m 481[2mms[22m[39m
+ [32m✓[39m tests/ui/communications/communications-navigation.test.tsx [2m([22m[2m6 tests[22m[2m)[22m[33m 2525[2mms[22m[39m
+   [33m[2m✓[22m[39m parent disclosure opens exactly three native children without navigating or activating a destination[33m 494[2mms[22m[39m
+   [33m[2m✓[22m[39m App removes flat duplicates, avoids mounting screens on disclosure, and preserves both mounted editors across its three routes[33m 1010[2mms[22m[39m
+   [33m[2m✓[22m[39m reuses chat links and passes a fresh explicit contact request without clearing an existing draft identity or message[33m 583[2mms[22m[39m
+ [32m✓[39m tests/web-research/public-web-chat.test.tsx [2m([22m[2m18 tests[22m[2m)[22m[33m 6350[2mms[22m[39m
+   [33m[2m✓[22m[39m does not authorize on mount or infer web permission from the message[33m 580[2mms[22m[39m
+   [33m[2m✓[22m[39m binds the explicit one-turn grant to exact owner, conversation and revision before sending[33m 884[2mms[22m[39m
+   [33m[2m✓[22m[39m preserves independent project-file permission alongside web permission[33m 390[2mms[22m[39m
+   [33m[2m✓[22m[39m rejects invalid entry scope before requesting authorization: https://www.sollutia.com:8443/[33m 402[2mms[22m[39m
+   [33m[2m✓[22m[39m rejects invalid entry scope before requesting authorization: not a URL[33m 324[2mms[22m[39m
+   [33m[2m✓[22m[39m does not send the turn when grant response is denied or malformed[33m 474[2mms[22m[39m
+   [33m[2m✓[22m[39m does not send the turn when grant response is denied or malformed[33m 346[2mms[22m[39m
+   [33m[2m✓[22m[39m clears consent on owner switch and grants only to the selected saved agent[33m 488[2mms[22m[39m
+   [33m[2m✓[22m[39m clears the editable scope and consent when switching conversations of the same owner[33m 387[2mms[22m[39m
+   [33m[2m✓[22m[39m deduplicates entry URLs and displays both origins without broadening the server grant[33m 352[2mms[22m[39m
+ [32m✓[39m tests/providers/provider-i18n.test.tsx [2m([22m[2m9 tests[22m[2m)[22m[33m 2851[2mms[22m[39m
+   [32m✓[39m provider settings bilingual completion with simulated API only [2m(9)[22m
+     [33m[2m✓[22m[39m translates the full Anthropic registration steps without remount or locale requests[33m 537[2mms[22m[39m
+     [33m[2m✓[22m[39m translates all three Platform steps under the grouped OpenAI tab[33m 351[2mms[22m[39m
+     [33m[2m✓[22m[39m formats last verification in the selected locale without repeating provider work[33m 525[2mms[22m[39m
+     [33m[2m✓[22m[39m preserves assignment roles, primary selection and filter, then submits original protocol enums[33m 492[2mms[22m[39m
+ [32m✓[39m tests/service-tabs/service-tabs.test.tsx [2m([22m[2m7 tests[22m[2m)[22m[33m 2201[2mms[22m[39m
+   [33m[2m✓[22m[39m moves focus and selected state with arrows, wrap, Home and End while linking exact panels[33m 332[2mms[22m[39m
+   [33m[2m✓[22m[39m preserves message, calendar and review confirmation across externally selected message and history sections without sending[33m 378[2mms[22m[39m
+   [33m[2m✓[22m[39m preserves selected project and dirty file across areas; exposes one context panel and exact file controls[33m 1010[2mms[22m[39m
+ [32m✓[39m tests/web-research/failed-chat-evidence.test.tsx [2m([22m[2m16 tests[22m[2m)[22m[33m 7661[2mms[22m[39m
+   [33m[2m✓[22m[39m restores persisted failed turn sources and trace after HTTP failure, keeping the original error[33m 1244[2mms[22m[39m
+   [33m[2m✓[22m[39m does not import unrelated or unconfirmed evidence: wrong conversation[33m 604[2mms[22m[39m
+   [33m[2m✓[22m[39m does not import unrelated or unconfirmed evidence: wrong owner[33m 557[2mms[22m[39m
+   [33m[2m✓[22m[39m does not import unrelated or unconfirmed evidence: wrong owner kind[33m 392[2mms[22m[39m
+   [33m[2m✓[22m[39m does not import unrelated or unconfirmed evidence: wrong GET conversation[33m 384[2mms[22m[39m
+   [33m[2m✓[22m[39m does not import unrelated or unconfirmed evidence: wrong revision[33m 311[2mms[22m[39m
+   [33m[2m✓[22m[39m does not import unrelated or unconfirmed evidence: wrong trace[33m 303[2mms[22m[39m
+   [33m[2m✓[22m[39m does not import unrelated or unconfirmed evidence: not a failed message[33m 389[2mms[22m[39m
+   [33m[2m✓[22m[39m does not import unrelated or unconfirmed evidence: missing persistence[33m 319[2mms[22m[39m
+   [33m[2m✓[22m[39m does not import unrelated or unconfirmed evidence: missing failure DTO[33m 388[2mms[22m[39m
+   [33m[2m✓[22m[39m ignores late failed response after selecting another conversation[33m 596[2mms[22m[39m
+   [33m[2m✓[22m[39m ignores late evidence refresh after selecting another conversation[33m 356[2mms[22m[39m
+   [33m[2m✓[22m[39m keeps previous sources and provider error when the evidence GET itself fails[33m 332[2mms[22m[39m
+   [33m[2m✓[22m[39m restores a persisted failed message without inventing a trace when trace persistence failed[33m 531[2mms[22m[39m
+   [33m[2m✓[22m[39m binds failure recovery to the selected agent owner and preserves inspect identity[33m 689[2mms[22m[39m
+ [32m✓[39m tests/chat-markdown/assistant-markdown.test.tsx [2m([22m[2m19 tests[22m[2m)[22m[33m 2425[2mms[22m[39m
+   [33m[2m✓[22m[39m renders GFM as semantic headings, lists, emphasis, code and a locally scrollable table[33m 569[2mms[22m[39m
+   [33m[2m✓[22m[39m real AgentChat formats assistant content while keeping user text plain and copy byte-for-byte[33m 804[2mms[22m[39m
+   [33m[2m✓[22m[39m real AgentChat preserves FAILED state, source metadata and per-message Inspect identity[33m 602[2mms[22m[39m
+ [32m✓[39m tests/service-tabs/communications-sections.test.tsx [2m([22m[2m11 tests[22m[2m)[22m[33m 2676[2mms[22m[39m
+   [33m[2m✓[22m[39m defaults to Message; removes top tabs and embedded Contacts; mounts library only in Message[33m 656[2mms[22m[39m
+   [33m[2m✓[22m[39m preserves saved review on navigation; preserves dirty message, attachments and calendar and revokes review on edit[33m 1009[2mms[22m[39m
+   [33m[2m✓[22m[39m accepts a newly requested contact without resetting dirty message or schedule[33m 371[2mms[22m[39m
+ [32m✓[39m tests/ui/decision-inspector/integration/integration.test.tsx [2m([22m[2m9 tests[22m[2m)[22m[32m 135[2mms[22m[39m
+ [32m✓[39m tests/contacts/contacts.test.tsx [2m([22m[2m7 tests[22m[2m)[22m[33m 3310[2mms[22m[39m
+   [32m✓[39m Contacts UI — simulated API, no Google account or external sends [2m(7)[22m
+     [33m[2m✓[22m[39m shows loading, empty agenda and unconfigured Google distinctly[33m 900[2mms[22m[39m
+     [33m[2m✓[22m[39m saves an edited contact using its current revision[33m 969[2mms[22m[39m
+     [33m[2m✓[22m[39m requires separate confirmation before deleting and preserves edit after a conflict[33m 450[2mms[22m[39m
+     [33m[2m✓[22m[39m imports only explicitly selected rows and requires re-review when selection changes[33m 570[2mms[22m[39m
+ [32m✓[39m tests/inspection/inspect-presentation.test.tsx [2m([22m[2m7 tests[22m[2m)[22m[33m 1179[2mms[22m[39m
+   [33m[2m✓[22m[39m separates full conversation identity, execution selector, trace, integrity and original technical bytes[33m 407[2mms[22m[39m
+ [32m✓[39m tests/ui/communications/communications.test.tsx [2m([22m[2m6 tests[22m[2m)[22m[33m 2099[2mms[22m[39m
+   [33m[2m✓[22m[39m shows loading then empty state; network error is visible[33m 337[2mms[22m[39m
+   [33m[2m✓[22m[39m preserves local message on 409 and blocks confirmation until resolving and saving[33m 419[2mms[22m[39m
+   [33m[2m✓[22m[39m rehydrates the persisted orchestrator draft reference in chat and opens the same ID full screen[33m 703[2mms[22m[39m
+ [32m✓[39m tests/ui/chat-shell/panel-height.test.tsx [2m([22m[2m5 tests[22m[2m)[22m[33m 922[2mms[22m[39m
+   [33m[2m✓[22m[39m preserves native collapse/open, draft and enabled composer without requests that mutate application state[33m 596[2mms[22m[39m
+ [32m✓[39m tests/ui/chat-shell/visual-system.test.tsx [2m([22m[2m24 tests[22m[2m)[22m[32m 51[2mms[22m[39m
+ [32m✓[39m tests/layout-space/space-contract.test.tsx [2m([22m[2m19 tests[22m[2m)[22m[33m 2699[2mms[22m[39m
+   [33m[2m✓[22m[39m gives the communications work surface the available width without a page cap[33m 947[2mms[22m[39m
+ [32m✓[39m tests/i18n/core/locale.test.tsx [2m([22m[2m8 tests[22m[2m)[22m[33m 625[2mms[22m[39m
+   [33m[2m✓[22m[39m has exact key and placeholder parity across the complete ES/EN catalogs[33m 327[2mms[22m[39m
+ [32m✓[39m tests/agent-workspace-write/chat.test.tsx [2m([22m[2m11 tests[22m[2m)[22m[33m 6785[2mms[22m[39m
+   [33m[2m✓[22m[39m selected agent requires opt-in each turn independently of web, preserves Markdown and never autoapplies a returned proposal[33m 2091[2mms[22m[39m
+   [33m[2m✓[22m[39m does not infer proposal authorization from a request without the per-turn checkbox[33m 548[2mms[22m[39m
+   [33m[2m✓[22m[39m restores the trusted summary into the same review card with only a read request[33m 604[2mms[22m[39m
+   [33m[2m✓[22m[39m rejects persisted foreign or malformed summary without SDK action[33m 627[2mms[22m[39m
+   [33m[2m✓[22m[39m rejects persisted foreign or malformed summary without SDK action[33m 576[2mms[22m[39m
+   [33m[2m✓[22m[39m rejects persisted foreign or malformed summary without SDK action[33m 455[2mms[22m[39m
+   [33m[2m✓[22m[39m rejects persisted foreign or malformed summary without SDK action[33m 360[2mms[22m[39m
+   [33m[2m✓[22m[39m does not trust a proposal reference attached to a user message[33m 336[2mms[22m[39m
+   [33m[2m✓[22m[39m switching back to assistant clears the selected-agent proposal permission[33m 519[2mms[22m[39m
+   [33m[2m✓[22m[39m restores a persisted partial proposal alongside FAILED state and its own Inspect identity[33m 371[2mms[22m[39m
+ [32m✓[39m tests/ui/decision-inspector/evidence/evidence-explorer.test.tsx [2m([22m[2m6 tests[22m[2m)[22m[32m 111[2mms[22m[39m
+ [32m✓[39m tests/ui/chat-shell/panel-fullscreen.test.tsx [2m([22m[2m8 tests[22m[2m)[22m[33m 2415[2mms[22m[39m
+   [33m[2m✓[22m[39m New closes library, clears the new composer and focuses it after verified creation for assistant[33m 621[2mms[22m[39m
+   [33m[2m✓[22m[39m New closes library, clears the new composer and focuses it after verified creation for agent[33m 415[2mms[22m[39m
+   [33m[2m✓[22m[39m ignores late creation after switching owner and prevents duplicate New while pending[33m 358[2mms[22m[39m
+ [32m✓[39m tests/ui/decision-inspector/actions/action-review.test.tsx [2m([22m[2m5 tests[22m[2m)[22m[32m 100[2mms[22m[39m
+ [32m✓[39m tests/inspection/app-correlation.test.tsx [2m([22m[2m5 tests[22m[2m)[22m[33m 2930[2mms[22m[39m
+   [33m[2m✓[22m[39m App wires Chat identity to Inspect and never fetches global artifacts until explicit historical demo choice[33m 656[2mms[22m[39m
+   [33m[2m✓[22m[39m labels Historial de trabajos as global and removes the conversation selector[33m 717[2mms[22m[39m
+   [33m[2m✓[22m[39m labels Registro de efectos BER as global and removes the conversation selector[33m 488[2mms[22m[39m
+   [33m[2m✓[22m[39m renders an original demo API diagnostic as localized text without passing an Error object to React[33m 500[2mms[22m[39m
+   [33m[2m✓[22m[39m keeps a null historical bundle explicit and localized without a raw fallback or demo fetch on open[33m 566[2mms[22m[39m
+ [32m✓[39m tests/ui/communications/navigation-control-order.test.tsx [2m([22m[2m2 tests[22m[2m)[22m[33m 2656[2mms[22m[39m
+   [33m[2m✓[22m[39m keeps Settings uniquely in its original footer and orders actual controls while retaining Chat, localized focus/draft and groups[33m 2629[2mms[22m[39m
+ [32m✓[39m tests/ui/decision-inspector/trace/trace.test.tsx [2m([22m[2m4 tests[22m[2m)[22m[33m 836[2mms[22m[39m
+   [33m[2m✓[22m[39m renders sequence chronology separately from parent causality and keeps gaps and failure visible[33m 411[2mms[22m[39m
+   [33m[2m✓[22m[39m shows distinct explicit correlation IDs and navigates only supplied claim/action identities[33m 352[2mms[22m[39m
+ [32m✓[39m tests/ui/ber-effect-inspector/ber-effect-inspector.test.tsx [2m([22m[2m4 tests[22m[2m)[22m[32m 228[2mms[22m[39m
+ [32m✓[39m tests/ui/decision-inspector/shell/shell.test.tsx [2m([22m[2m6 tests[22m[2m)[22m[33m 558[2mms[22m[39m
+   [33m[2m✓[22m[39m user can select a supplied conclusion and navigate its sections[33m 462[2mms[22m[39m
+ [32m✓[39m tests/workspace/manager.test.tsx [2m([22m[2m5 tests[22m[2m)[22m[33m 1201[2mms[22m[39m
+   [33m[2m✓[22m[39m renders the plain Git status returned after confirmed initialization[33m 397[2mms[22m[39m
+ [32m✓[39m tests/ui/agent-management/agent-navigation.test.tsx [2m([22m[2m5 tests[22m[2m)[22m[33m 924[2mms[22m[39m
+   [32m✓[39m Grupo lateral Agentes [2m(4)[22m
+     [33m[2m✓[22m[39m starts folded on global Chat, opens four reused destinations and never navigates just by unfolding[33m 463[2mms[22m[39m
+ [32m✓[39m tests/inspection/inspector-exit.test.tsx [2m([22m[2m4 tests[22m[2m)[22m[33m 1815[2mms[22m[39m
+   [33m[2m✓[22m[39m has one native Salir at the navigation foot, no inspector header X, and restores trigger focus on click[33m 829[2mms[22m[39m
+   [33m[2m✓[22m[39m retains the native cancel path used by Escape and restores focus without application effects[33m 333[2mms[22m[39m
+   [33m[2m✓[22m[39m translates Salir to Exit in place without closing or fetching and keeps Settings close unchanged[33m 470[2mms[22m[39m
+ [32m✓[39m tests/integration/contact-consumers.test.tsx [2m([22m[2m2 tests[22m[2m)[22m[33m 3415[2mms[22m[39m
+   [33m[2m✓[22m[39m manual chat tool uses real shared contacts and creates only a reviewed draft with canonical ID[33m 1504[2mms[22m[39m
+   [33m[2m✓[22m[39m full shared Contacts is reached through Communications navigation and selects a recipient without losing the message or sending[33m 1909[2mms[22m[39m
+ [32m✓[39m tests/ui/chat-shell/inspector-color.test.tsx [2m([22m[2m5 tests[22m[2m)[22m[32m 48[2mms[22m[39m
+ [32m✓[39m tests/ui/chat-shell/manage-action.test.tsx [2m([22m[2m2 tests[22m[2m)[22m[33m 478[2mms[22m[39m
+   [33m[2m✓[22m[39m keeps the same labelled native button and invokes only its supplied management action[33m 387[2mms[22m[39m
+ [32m✓[39m tests/providers/model-assignments.test.tsx [2m([22m[2m1 test[22m[2m)[22m[33m 801[2mms[22m[39m
+   [32m✓[39m Model assignments [2m(1)[22m
+     [33m[2m✓[22m[39m groups the catalog by provider and saves orchestrator and all-agent assignments independently[33m 798[2mms[22m[39m
+ [32m✓[39m tests/i18n/core/presentation.test.tsx [2m([22m[2m1 test[22m[2m)[22m[33m 1005[2mms[22m[39m
+   [33m[2m✓[22m[39m switches all historical data-view chrome while preserving evidence, original codes and unknown failures[33m 1003[2mms[22m[39m
+ [32m✓[39m tests/ui/chat-shell/conversation-trash.test.tsx [2m([22m[2m3 tests[22m[2m)[22m[33m 1424[2mms[22m[39m
+   [33m[2m✓[22m[39m shows permanent deletion only in trash, requires confirmation and clears selection after success[33m 818[2mms[22m[39m
+   [33m[2m✓[22m[39m trash context menu exposes the same confirmation; conflict keeps the item and reports error[33m 339[2mms[22m[39m
+ [32m✓[39m tests/ui/chat-shell/message-colors.test.tsx [2m([22m[2m3 tests[22m[2m)[22m[32m 46[2mms[22m[39m
+ [32m✓[39m tests/web-research/service-disclosure.test.tsx [2m([22m[2m4 tests[22m[2m)[22m[33m 686[2mms[22m[39m
+   [33m[2m✓[22m[39m offers one manual link without adding instructions to each screen[33m 363[2mms[22m[39m
+   [33m[2m✓[22m[39m passes existing context into Workspace without a duplicated sibling disclosure[33m 316[2mms[22m[39m
+ [32m✓[39m tests/ui/agent-evaluation-lab/agent-evaluation-lab-render.test.tsx [2m([22m[2m1 test[22m[2m)[22m[32m 35[2mms[22m[39m
+ [32m✓[39m tests/integration/composed-chat.test.tsx [2m([22m[2m1 test[22m[2m)[22m[33m 715[2mms[22m[39m
+   [33m[2m✓[22m[39m restores communication identity and Workspace proposal together without executing either action[33m 712[2mms[22m[39m
+ [32m✓[39m tests/ui/agent-management/agent-navigation-app.test.tsx [2m([22m[2m1 test[22m[2m)[22m[33m 1501[2mms[22m[39m
+   [33m[2m✓[22m[39m groups four destinations in the sidebar while retaining one global Chat and one management route[33m 1499[2mms[22m[39m
+ [32m✓[39m tests/ui/whatsapp/settings.test.tsx [2m([22m[2m3 tests[22m[2m)[22m[33m 350[2mms[22m[39m
+ [32m✓[39m tests/ui/chat-shell/chat-composer.test.tsx [2m([22m[2m1 test[22m[2m)[22m[33m 310[2mms[22m[39m
+   [33m[2m✓[22m[39m keeps Send inside the text field frame and preserves empty-message submission rules[33m 308[2mms[22m[39m
+ [32m✓[39m tests/i18n/core/app-language.test.tsx [2m([22m[2m1 test[22m[2m)[22m[33m 389[2mms[22m[39m
+   [33m[2m✓[22m[39m exposes the actual Settings selector in Spanish, switches ES/EN/ES without remounting or network effects[33m 387[2mms[22m[39m
+ [32m✓[39m tests/runtime/package-upgrade.test.tsx [2m([22m[2m2 tests[22m[2m)[22m[32m 29[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m53 passed[39m[22m[90m (53)[39m
+[2m      Tests [22m [1m[32m476 passed[39m[22m[90m (476)[39m
+[2m   Start at [22m 23:54:13
+[2m   Duration [22m 34.27s[2m (tests 49%, environment 28%, import 18%, transform 5%)[22m
+
+[2m    Isolate [22m [33m53 workers spawned[39m[2m · ~1.47s startup each (spawn + environment, per file)[22m
+[2m            [22m [2mat least ~9.69s faster with [22m[33misolate: false[39m[2m — reuses workers across files instead of one per file[22m
+

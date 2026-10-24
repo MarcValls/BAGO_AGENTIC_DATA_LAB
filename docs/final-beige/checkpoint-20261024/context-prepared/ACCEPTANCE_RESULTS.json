@@ -1,0 +1,38 @@
+[
+  {
+    "label": "focused",
+    "command": [
+      "C:\\Program Files\\nodejs\\npm.cmd",
+      "test",
+      "--prefix",
+      "frontend",
+      "--",
+      "tests/ui/communications/navigation-control-order.test.tsx",
+      "tests/ui/chat-shell/inspector-color.test.tsx",
+      "tests/ui/chat-shell/visual-system.test.tsx",
+      "tests/i18n/core/app-language.test.tsx",
+      "tests/i18n/agents/auxiliary.test.tsx",
+      "tests/ui/context/context-readability.test.tsx"
+    ],
+    "started_at": "2026-10-24T00:09:21.185797+00:00",
+    "finished_at": "2026-10-24T00:09:26.319026+00:00",
+    "returncode": 0,
+    "log": "docs/communications-navigation-20261024/context-readability/implementation/focused.log",
+    "sha256": "ebf12348ffa24a29c5f8da99197ecfeb7dc7a300e4c887f5c06eef41932e9a3d"
+  },
+  {
+    "label": "build",
+    "command": [
+      "C:\\Program Files\\nodejs\\npm.cmd",
+      "run",
+      "build",
+      "--prefix",
+      "frontend"
+    ],
+    "started_at": "2026-10-24T00:09:26.327816+00:00",
+    "finished_at": "2026-10-24T00:09:28.409153+00:00",
+    "returncode": 0,
+    "log": "docs/communications-navigation-20261024/context-readability/implementation/build.log",
+    "sha256": "db4b06c40b516f989ed25e288d895bcd1b21baf54bad3ce881dc02af56c51a02"
+  }
+]

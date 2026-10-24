@@ -1,0 +1,102 @@
+{
+  "state": "EVIDENCE_COPIED_PENDING_BS03",
+  "candidate": "beige-settings-20261024-rc14",
+  "archive": "BAGO_ADL_BEIGE_SETTINGS_20261024_RC14.zip",
+  "archive_sha256": "5c8e091df12201ed833f5aabeffa6f5f614a2ce36cf2056b51da99d1e7f7c2ff",
+  "public_sources": 492,
+  "zip_files": 511,
+  "snapshot_sha256": "8cf5a27256e695e4fcf9431e2034891801605f92095e9a8f6a4098e4ea61a86c",
+  "frontend_files_compared": 211,
+  "extra_frontend_sources": [],
+  "frontend": {
+    "passed": 476,
+    "build": "PASS",
+    "image": "bago-dev-frontend:beige-settings-20261024-rc14-rc1",
+    "image_id": "sha256:7032f44562747bbeaf4ebe64b021b724cb313e11b33248ba3b383ff2e0c6f5e8",
+    "canonical_result_sha256": "619ba5bec36bf86c62aafed9887bdc63ddadbb49a19204f6a9b4043b0cc110c3",
+    "closed_steps": [
+      {
+        "id": "PREFLIGHT",
+        "returncode": 0,
+        "log_sha256": "62999f382ea2cb73627e369e341c7aec598f9559ac1b9a303fc408cdb030be49"
+      },
+      {
+        "id": "DOCKER_BUILD",
+        "returncode": 0,
+        "log_sha256": "8fbc540cd6b9da32ed4cd827a0f8a32111a5f0239e11ae37d4f7e077790bc694"
+      },
+      {
+        "id": "DOCKER_TEST",
+        "returncode": 0,
+        "log_sha256": "1e268a110974acd20347ef501dae0d84f00d6d837178895a9aa3f6d4cb69b1de"
+      }
+    ]
+  },
+  "readme_L": {
+    "full_passed": 945,
+    "new_execution_in_L_not_P": true,
+    "check": "PASS_REPRODUCIBILITY_ONLY",
+    "executions_sha256": "a83dc56398e1ea35e05f482f54936e77a3041e7aa1f119d7ad118e74448e2e63"
+  },
+  "visual": {
+    "checks": 24,
+    "captures": 7,
+    "privacy": "Root and publication preparer personally inspected seven originals: no visible names, numbers, emails or QR; unchanged PNG bytes.",
+    "runtime": "Preview5193 only; no applied8093 claim"
+  },
+  "initial_preview_attempt": {
+    "state": "FAIL_PRESERVED_IN_L_ATTEMPT01",
+    "cause": "INCONCLUSIVE",
+    "observation": "Root initially blank, normal reload changed root child count0to1; no captured errors/resources. Final observation PASS with unchanged source.",
+    "diagnosis_sha256": "f8a871f21194020c42e7b46b78450f282d37c159e9b687b5335a18ef729c726c"
+  },
+  "copied_files": [
+    {
+      "path": "docs/final-beige/evidence/RC14_PUBLIC_SNAPSHOT.json",
+      "sha256": "8cf5a27256e695e4fcf9431e2034891801605f92095e9a8f6a4098e4ea61a86c"
+    },
+    {
+      "path": "docs/final-beige/evidence/DOCKER_TEST.log",
+      "sha256": "1e268a110974acd20347ef501dae0d84f00d6d837178895a9aa3f6d4cb69b1de"
+    },
+    {
+      "path": "docs/final-beige/evidence/DOCKER_BUILD.log",
+      "sha256": "8fbc540cd6b9da32ed4cd827a0f8a32111a5f0239e11ae37d4f7e077790bc694"
+    },
+    {
+      "path": "docs/final-beige/evidence/VISUAL.json",
+      "sha256": "e9f886da0a7688354dd0b0969061821d8ae92c3bc7a3651c2309098c42a9f3e6"
+    },
+    {
+      "path": "docs/final-beige/evidence/README_FULL_L.log",
+      "sha256": "6c8c41528d834e5f45e92e6a099f3e6964e911806c99a6bcb26776821f835edf"
+    },
+    {
+      "path": "docs/final-beige/evidence/README_CHECK_L.log",
+      "sha256": "2631a236820a978efcf0263b94520f51fa859f82366b6690bb0fdecb3ca41429"
+    },
+    {
+      "path": "docs/final-beige/evidence/BS02_ACCEPTANCE.json",
+      "sha256": "8901ee64b4fefb9e63199f54e09cc23bcbe222399eb434fa4ebcb05ce7c885f2"
+    },
+    {
+      "path": "docs/final-beige/evidence/BS02_HANDOFF.json",
+      "sha256": "0de80c7ca07bb6d5af5d861808b0cf2da6ea9d3d225d45e13effb7ee65b106a0"
+    },
+    {
+      "path": "docs/final-beige/evidence/PREVIEW_DIAGNOSIS.json",
+      "sha256": "f8a871f21194020c42e7b46b78450f282d37c159e9b687b5335a18ef729c726c"
+    }
+  ],
+  "pending": [
+    "BS03",
+    "PFB01 managed acceptance",
+    "PFB02 review"
+  ],
+  "limits": [
+    "Google simplified flow PROPOSED/no live OAuth",
+    "Context readability patch PROPOSED, not applied",
+    "No new capability assignments, real providers/WhatsApp or hostedCI claims",
+    "Python P941+1 stays separate from L full result; no added counts"
+  ]
+}

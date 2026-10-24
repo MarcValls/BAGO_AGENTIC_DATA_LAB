@@ -1,0 +1,12 @@
+# Preserve exact bytes required by source/provenance SHA contracts.
+/frontend/src/App.css -text
+/frontend/src/components/AgentChat.css -text
+/frontend/src/components/ChatInspection.css -text
+/frontend/tests/ui/chat-shell/fixtures/inspector-color/AgentChat.css -text
+/frontend/tests/ui/chat-shell/fixtures/inspector-color/App.css -text
+/frontend/tests/ui/chat-shell/fixtures/inspector-color/ChatInspection.css -text
+/src/workspace_sdk/auth_primitives.py -text
+/src/workspace_sdk/reference/workspace_service_0_1_0_RC1.py -text
+/src/workspace_sdk/reused_primitives.py -text
+/src/workspace_sdk/sync_primitives.py -text
+/src/workspace_sdk/workspace_service.py -text

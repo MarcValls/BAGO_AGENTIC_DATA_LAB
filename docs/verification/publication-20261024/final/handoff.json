@@ -1,0 +1,326 @@
+{
+  "work_id": "PF01",
+  "role": "team-orchestrator",
+  "status": "DONE",
+  "mission_id": "BAGO_PUBLICATION_FINAL_20261024",
+  "candidate_id": "9bdf09833dd28ab922485c21a23e0f645efb5cb812712150dd3c1b07d4f8fada",
+  "scope_sha256": "0af844db09c04531999970ed71e0bce9ed1f51245b48416d0453a7bc7cef9df9",
+  "changed_files": [
+    ".gitattributes",
+    ".github/workflows/ci.yml",
+    "docs/verification/publication-20261024/final/ACCEPTANCE.json",
+    "docs/verification/publication-20261024/final/AUTHORITY_ORDER/MANUAL_ES.md",
+    "docs/verification/publication-20261024/final/AUTHORITY_ORDER/authority-design/CAPABILITIES_LIVE.json",
+    "docs/verification/publication-20261024/final/AUTHORITY_ORDER/authority-design/CAPABILITIES_PLAN.md",
+    "docs/verification/publication-20261024/final/AUTHORITY_ORDER/authority-design/CAPABILITY_COMPONENT_HASHES.json",
+    "docs/verification/publication-20261024/final/AUTHORITY_ORDER/authority-design/PACKAGE_SOURCE_COMPARISON.json",
+    "docs/verification/publication-20261024/final/AUTHORITY_ORDER/authority-design/TOOL_CATALOG_MAP.json",
+    "docs/verification/publication-20261024/final/CHANGE_REQUEST.json",
+    "docs/verification/publication-20261024/final/CONTROLS_CHECK.json",
+    "docs/verification/publication-20261024/final/CONTROLS_FINAL.log",
+    "docs/verification/publication-20261024/final/DOCKER_BUILD.log",
+    "docs/verification/publication-20261024/final/DOCKER_TEST.log",
+    "docs/verification/publication-20261024/final/HR01_FREEZE.json",
+    "docs/verification/publication-20261024/final/HR01_IMPORT.json",
+    "docs/verification/publication-20261024/final/P1_SOURCE_BASELINE.json",
+    "docs/verification/publication-20261024/final/PUBLIC_FILES.json",
+    "docs/verification/publication-20261024/final/RC13_ADMISSION.json",
+    "docs/verification/publication-20261024/final/RC13_PUBLIC_SNAPSHOT.json",
+    "docs/verification/publication-20261024/final/README_CHECK.log",
+    "docs/verification/publication-20261024/final/REPORT.md",
+    "docs/verification/publication-20261024/final/VISUAL.json",
+    "docs/verification/publication-20261024/final/acceptance.py",
+    "docs/verification/publication-20261024/final/bootstrap.py",
+    "docs/verification/publication-20261024/final/check_controls.py",
+    "docs/verification/publication-20261024/final/finish.py",
+    "docs/verification/publication-20261024/final/import_frozen_ui.py",
+    "docs/verification/publication-20261024/final/import_rc13_evidence.py",
+    "docs/verification/publication-20261024/final/mission.json",
+    "docs/verification/publication-20261024/final/prepare_controls.py",
+    "docs/verification/publication-20261024/final/visual/01-menu-chat.png",
+    "docs/verification/publication-20261024/final/visual/02-settings.png",
+    "docs/verification/publication-20261024/final/visual/03-mensajes.png",
+    "docs/verification/publication-20261024/final/visual/04-contactos.png",
+    "docs/verification/publication-20261024/final/visual/05-menu-320.png",
+    "docs/verification/publication-20261024/final/visual/06-mensajes-320.png",
+    "docs/verification/publication-20261024/final/visual/07-contactos-320.png",
+    "frontend/src/App.css",
+    "frontend/src/App.tsx",
+    "frontend/src/NavigationOrder.css",
+    "frontend/tests/ui/communications/navigation-control-order.test.tsx"
+  ],
+  "outputs": [
+    {
+      "id": "pf01-0",
+      "path": ".gitattributes",
+      "sha256": "66190c742d64e3fd5d39f8e335fd88396ea9dc77224a18e7196ef45a72fcd26a",
+      "frozen": true
+    },
+    {
+      "id": "pf01-1",
+      "path": ".github/workflows/ci.yml",
+      "sha256": "ad1eaaf2aae5a9a56981d0076aa622aeb199307462e471dd77af13d9cefaad2b",
+      "frozen": true
+    },
+    {
+      "id": "pf01-2",
+      "path": "docs/verification/publication-20261024/final/ACCEPTANCE.json",
+      "sha256": "68056278c2a79af5424d4bea3cbb87c03b95b8af07bf5b703db5e21ebed775f4",
+      "frozen": true
+    },
+    {
+      "id": "pf01-3",
+      "path": "docs/verification/publication-20261024/final/acceptance.py",
+      "sha256": "36d9975d4263c09217ebda81201a0b41b695ed84bce589833b6c0c8bbd7cb747",
+      "frozen": true
+    },
+    {
+      "id": "pf01-4",
+      "path": "docs/verification/publication-20261024/final/AUTHORITY_ORDER/authority-design/CAPABILITIES_LIVE.json",
+      "sha256": "2ec759c8352bc97c6930034ea370a8ebfc212b677837f6e82d7139502133efd0",
+      "frozen": true
+    },
+    {
+      "id": "pf01-5",
+      "path": "docs/verification/publication-20261024/final/AUTHORITY_ORDER/authority-design/CAPABILITIES_PLAN.md",
+      "sha256": "bc489fcca3cd69d5b801990de8bf4b3293461868bbce125362d3260770ff8ea3",
+      "frozen": true
+    },
+    {
+      "id": "pf01-6",
+      "path": "docs/verification/publication-20261024/final/AUTHORITY_ORDER/authority-design/CAPABILITY_COMPONENT_HASHES.json",
+      "sha256": "7b3de698a2dfd555a9a5557d93a38a4bb292828868b5d9776b95145268a7bbb1",
+      "frozen": true
+    },
+    {
+      "id": "pf01-7",
+      "path": "docs/verification/publication-20261024/final/AUTHORITY_ORDER/authority-design/PACKAGE_SOURCE_COMPARISON.json",
+      "sha256": "c949083f32164c4ef85962431eea792c2c4fb6c4b8fb894b87761b460cd71a9b",
+      "frozen": true
+    },
+    {
+      "id": "pf01-8",
+      "path": "docs/verification/publication-20261024/final/AUTHORITY_ORDER/authority-design/TOOL_CATALOG_MAP.json",
+      "sha256": "40079813705409a6e2f27baf5cf4ea0bd5dcca1db906e5e6180b9ca3a98d04f6",
+      "frozen": true
+    },
+    {
+      "id": "pf01-9",
+      "path": "docs/verification/publication-20261024/final/AUTHORITY_ORDER/MANUAL_ES.md",
+      "sha256": "35fa42d95abb2dea0b64bb516683e6ae8d3a047fe3d655193f12a740576c1f54",
+      "frozen": true
+    },
+    {
+      "id": "pf01-10",
+      "path": "docs/verification/publication-20261024/final/bootstrap.py",
+      "sha256": "0804243311d303fe1fdc6ea99d0a8188f0bdfe747e72d8882c9c47d0d6f421fa",
+      "frozen": true
+    },
+    {
+      "id": "pf01-11",
+      "path": "docs/verification/publication-20261024/final/CHANGE_REQUEST.json",
+      "sha256": "239c9cfdb64e2cb82a5de3fda0c7bb9afc118893fe7ad42f34ef8c31fcada00a",
+      "frozen": true
+    },
+    {
+      "id": "pf01-12",
+      "path": "docs/verification/publication-20261024/final/check_controls.py",
+      "sha256": "8ee2878f229fc625009a87e0989666d00b792a1a736da5dd6f9a9be60a133e50",
+      "frozen": true
+    },
+    {
+      "id": "pf01-13",
+      "path": "docs/verification/publication-20261024/final/CONTROLS_CHECK.json",
+      "sha256": "8ab364ae1cd2f351e2686c00f9eaeb310bbc99bac07c71b586b670c5f2d6616e",
+      "frozen": true
+    },
+    {
+      "id": "pf01-14",
+      "path": "docs/verification/publication-20261024/final/CONTROLS_FINAL.log",
+      "sha256": "05be1031b5234579681e49a2c0d39e3cb464946c4aa58cc7bb3cb80a7c323434",
+      "frozen": true
+    },
+    {
+      "id": "pf01-15",
+      "path": "docs/verification/publication-20261024/final/DOCKER_BUILD.log",
+      "sha256": "b9dccea572531c6169cc479ffef88ecfe07edb2695ecb6dfa064bf9cd438e551",
+      "frozen": true
+    },
+    {
+      "id": "pf01-16",
+      "path": "docs/verification/publication-20261024/final/DOCKER_TEST.log",
+      "sha256": "f09f0605a16fb7958e116583cd4b98b3c127a84a190f3fea89cf6c7efa5f1480",
+      "frozen": true
+    },
+    {
+      "id": "pf01-17",
+      "path": "docs/verification/publication-20261024/final/finish.py",
+      "sha256": "2208f73a057c16ef91301555ba3561f64deb58c32d88da6230784fdeca548e74",
+      "frozen": true
+    },
+    {
+      "id": "pf01-18",
+      "path": "docs/verification/publication-20261024/final/HR01_FREEZE.json",
+      "sha256": "e6f5158db37249f2b02e8b0aca5376565693b33df738b8342438d67290cdc96f",
+      "frozen": true
+    },
+    {
+      "id": "pf01-19",
+      "path": "docs/verification/publication-20261024/final/HR01_IMPORT.json",
+      "sha256": "cd54734ab5855044107bce2539b8d0ac1d14b2dc3ee64006b3ee38ae5141b117",
+      "frozen": true
+    },
+    {
+      "id": "pf01-20",
+      "path": "docs/verification/publication-20261024/final/import_frozen_ui.py",
+      "sha256": "ae3178cb23fa11fa3d5aa23a8cc27bc0e2aa9eb734e1c4cade756165a08b33f2",
+      "frozen": true
+    },
+    {
+      "id": "pf01-21",
+      "path": "docs/verification/publication-20261024/final/import_rc13_evidence.py",
+      "sha256": "68ae768939f339280a9eefb44f9daf8032ab719e3bd5135e4b76afa070bf65fb",
+      "frozen": true
+    },
+    {
+      "id": "pf01-22",
+      "path": "docs/verification/publication-20261024/final/mission.json",
+      "sha256": "efb86ba1bbee6aad4b94993d5f7706c77cade01c8005edcf44432932877134db",
+      "frozen": true
+    },
+    {
+      "id": "pf01-23",
+      "path": "docs/verification/publication-20261024/final/P1_SOURCE_BASELINE.json",
+      "sha256": "4693a0606aeb0af06d89e4cc56c5c1f4587dded18ee9b3073cc661e23bade9b1",
+      "frozen": true
+    },
+    {
+      "id": "pf01-24",
+      "path": "docs/verification/publication-20261024/final/prepare_controls.py",
+      "sha256": "03ae9bc82ade91e3d5369fce3c1a5b48fb4bd7be7267f4ee06b5965cb9544d7b",
+      "frozen": true
+    },
+    {
+      "id": "pf01-25",
+      "path": "docs/verification/publication-20261024/final/RC13_ADMISSION.json",
+      "sha256": "6a4e787010d8994a71c5d3ca54c9a59c3b5293a55554fdfc17175c0f7033585e",
+      "frozen": true
+    },
+    {
+      "id": "pf01-26",
+      "path": "docs/verification/publication-20261024/final/RC13_PUBLIC_SNAPSHOT.json",
+      "sha256": "9684274534873713947bdbfe56b7cca5aed4d365110b25379e3dc297facb2d20",
+      "frozen": true
+    },
+    {
+      "id": "pf01-27",
+      "path": "docs/verification/publication-20261024/final/README_CHECK.log",
+      "sha256": "0c918ee4195d6de23716a7ae6be2e40d8a7ec5024c25522e1cace90e5a3fca2a",
+      "frozen": true
+    },
+    {
+      "id": "pf01-28",
+      "path": "docs/verification/publication-20261024/final/REPORT.md",
+      "sha256": "a320e4ec7c4f5486f5a64ca2239e8762899718e3458cf77f5696581f7ea7fafa",
+      "frozen": true
+    },
+    {
+      "id": "pf01-29",
+      "path": "docs/verification/publication-20261024/final/visual/01-menu-chat.png",
+      "sha256": "7a6096e7bb6ddfe45221ab38f439c1991702973bb9d5585d405a17eadba8c5a4",
+      "frozen": true
+    },
+    {
+      "id": "pf01-30",
+      "path": "docs/verification/publication-20261024/final/visual/02-settings.png",
+      "sha256": "830658c678e8ac366f564f414d1fe7039f67da90c78b06beec28f76bda849a27",
+      "frozen": true
+    },
+    {
+      "id": "pf01-31",
+      "path": "docs/verification/publication-20261024/final/visual/03-mensajes.png",
+      "sha256": "68485a5dbd16bed5bc119e467a540d3baa9e0affe90d7cae0fa9ddf9b143fab1",
+      "frozen": true
+    },
+    {
+      "id": "pf01-32",
+      "path": "docs/verification/publication-20261024/final/visual/04-contactos.png",
+      "sha256": "ad24ae6f937bd024ca0651597082173a146970c900ce2fd0a43ff7bb3ca91b6c",
+      "frozen": true
+    },
+    {
+      "id": "pf01-33",
+      "path": "docs/verification/publication-20261024/final/visual/05-menu-320.png",
+      "sha256": "d15362825c18999044385ba44842b3578bdcebd04b505c18fcba723a185e7c85",
+      "frozen": true
+    },
+    {
+      "id": "pf01-34",
+      "path": "docs/verification/publication-20261024/final/visual/06-mensajes-320.png",
+      "sha256": "4a147786a1dc474a78e62fc35aa48dc42476b5df0f33b380d1fd7422b5f83e52",
+      "frozen": true
+    },
+    {
+      "id": "pf01-35",
+      "path": "docs/verification/publication-20261024/final/visual/07-contactos-320.png",
+      "sha256": "694c9d569c971bfc8eae4d05534b437dac3c33137bf4b9bae085a6727702c4f7",
+      "frozen": true
+    },
+    {
+      "id": "pf01-36",
+      "path": "docs/verification/publication-20261024/final/VISUAL.json",
+      "sha256": "70a5792aa76519ac3d0eca0a4ad664ff1c436a7bdc1538da1475e54ee57b1f42",
+      "frozen": true
+    },
+    {
+      "id": "pf01-37",
+      "path": "frontend/src/App.css",
+      "sha256": "5aabb6c16fde081d2f3bf2ac8fb4c8a469346b1fcf7138d373ebcafc91043555",
+      "frozen": true
+    },
+    {
+      "id": "pf01-38",
+      "path": "frontend/src/App.tsx",
+      "sha256": "c5e1d2b5d5254ff5bce7a17f474b9a36ac380bed5243900ecc2fb368027a4ca7",
+      "frozen": true
+    },
+    {
+      "id": "pf01-39",
+      "path": "frontend/src/NavigationOrder.css",
+      "sha256": "a01c44d55ceeb60d5982488965d10ded070983ad6cfe144df4b8a9a98f1dd01c",
+      "frozen": true
+    },
+    {
+      "id": "pf01-40",
+      "path": "frontend/tests/ui/communications/navigation-control-order.test.tsx",
+      "sha256": "00a268fdb1f16626e98112f3fee2b34f3dd6ba26dab2ebbfef283310c6137942",
+      "frozen": true
+    },
+    {
+      "id": "pf01-41",
+      "path": "docs/verification/publication-20261024/final/PUBLIC_FILES.json",
+      "sha256": "d398649be34353d57fcd451321a6dfc2552c08e9f94f2842733097fa543a6c22",
+      "frozen": true
+    }
+  ],
+  "verification": [
+    {
+      "id": "acceptance",
+      "command": "[\"../integrated-services-20261023/.venv/Scripts/python.exe\",\"docs/verification/publication-20261024/final/acceptance.py\"]",
+      "result": "PASS",
+      "evidence": ".bago/team/runtime/executions/3806b78ad34341c5a0a72c8860612122/receipt.json",
+      "execution_id": "3806b78ad34341c5a0a72c8860612122"
+    }
+  ],
+  "residual_risks": [
+    "Independent PF02 and root final index/base freshness required before draft PR publication.",
+    "Python941PASS/1SKIP belongs to unchanged P1 working tree; source proof permits inheritance only.",
+    "Hosted CI, real WhatsApp/provider effects and whole-product validation NOT_RUN.",
+    "Capabilities dynamic registry/effective tool assignment remains PROPOSED.",
+    "Previous Inspector goal remains paused; historical PP handoffs retained for P1, never re-signed for final sources."
+  ],
+  "next_consumers": [
+    "PF02"
+  ],
+  "payload_sha256": "924e09142b107b4c7f69e13fc4b520479458aa2567194850b2bc0d8931d49fca"
+}
