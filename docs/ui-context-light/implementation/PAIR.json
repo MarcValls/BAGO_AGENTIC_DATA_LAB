@@ -1,0 +1,13 @@
+{
+  "status": "PASS",
+  "ready": [
+    "LI02"
+  ],
+  "batches": [
+    [
+      "LI02"
+    ]
+  ],
+  "round": 1,
+  "automatic_rounds": false
+}

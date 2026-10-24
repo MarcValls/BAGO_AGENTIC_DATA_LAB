@@ -1,0 +1,22 @@
+{
+  "status": "FROZEN",
+  "managed_execution": "18a810633e9245b29533c9b635b55b03",
+  "files": [
+    {
+      "path": "frontend/src/components/CognitionSettings.tsx",
+      "sha256": "e47771464d9806378f7282a526674b2b1b910e58177c73e64dea417b1bd861ff"
+    },
+    {
+      "path": "frontend/src/components/ContextReadability.css",
+      "sha256": "c8a01af94e6ed6ebcc823e1c641b9e949cbf2487546760b95a47330cecb242e0"
+    },
+    {
+      "path": "frontend/src/i18n/domains/common.ts",
+      "sha256": "0be756cdf96f428aeecfc08dc0617b0fcf45db32497ea7470a384223c0508551"
+    },
+    {
+      "path": "frontend/tests/ui/context/context-readability.test.tsx",
+      "sha256": "fa9e8463376aa618104394f6690801c37344002e6eb667a41c8636a91bbed263"
+    }
+  ]
+}

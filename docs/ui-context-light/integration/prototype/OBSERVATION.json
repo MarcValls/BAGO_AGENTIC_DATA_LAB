@@ -1,0 +1,336 @@
+{
+  "candidate": "context-lite-20261024-rc16",
+  "url": "http://127.0.0.1:5193/",
+  "views": [
+    {
+      "height": 281.4250183105469,
+      "width": 1920,
+      "visibleTextLength": 412,
+      "sources": 5,
+      "overflow": false,
+      "detailsOpen": false,
+      "paths": [
+        {
+          "whiteSpace": "nowrap",
+          "overflowX": "auto",
+          "tabIndex": 0,
+          "clientWidth": 1815,
+          "scrollWidth": 1815,
+          "length": 136
+        },
+        {
+          "whiteSpace": "nowrap",
+          "overflowX": "auto",
+          "tabIndex": 0,
+          "clientWidth": 338,
+          "scrollWidth": 1011,
+          "length": 169
+        },
+        {
+          "whiteSpace": "nowrap",
+          "overflowX": "auto",
+          "tabIndex": 0,
+          "clientWidth": 338,
+          "scrollWidth": 999,
+          "length": 167
+        },
+        {
+          "whiteSpace": "nowrap",
+          "overflowX": "auto",
+          "tabIndex": 0,
+          "clientWidth": 338,
+          "scrollWidth": 1005,
+          "length": 168
+        },
+        {
+          "whiteSpace": "nowrap",
+          "overflowX": "auto",
+          "tabIndex": 0,
+          "clientWidth": 1837,
+          "scrollWidth": 1837,
+          "length": 169
+        },
+        {
+          "whiteSpace": "nowrap",
+          "overflowX": "auto",
+          "tabIndex": 0,
+          "clientWidth": 1837,
+          "scrollWidth": 1837,
+          "length": 167
+        },
+        {
+          "whiteSpace": "nowrap",
+          "overflowX": "auto",
+          "tabIndex": 0,
+          "clientWidth": 1837,
+          "scrollWidth": 1837,
+          "length": 168
+        },
+        {
+          "whiteSpace": "nowrap",
+          "overflowX": "auto",
+          "tabIndex": 0,
+          "clientWidth": 1837,
+          "scrollWidth": 1837,
+          "length": 121
+        },
+        {
+          "whiteSpace": "nowrap",
+          "overflowX": "auto",
+          "tabIndex": 0,
+          "clientWidth": 1837,
+          "scrollWidth": 1837,
+          "length": 116
+        }
+      ],
+      "path": "1920.png",
+      "sha256": "06c227950f7ec94b4d4523fc443cc9fe7671623aeaa62200351aa8c6d2440a4c",
+      "privacy": "Path and input value pixels masked before saving; layout geometry unchanged"
+    },
+    {
+      "height": 340.2250061035156,
+      "width": 960,
+      "visibleTextLength": 412,
+      "sources": 5,
+      "overflow": false,
+      "detailsOpen": false,
+      "paths": [
+        {
+          "whiteSpace": "nowrap",
+          "overflowX": "auto",
+          "tabIndex": 0,
+          "clientWidth": 855,
+          "scrollWidth": 873,
+          "length": 136
+        },
+        {
+          "whiteSpace": "nowrap",
+          "overflowX": "auto",
+          "tabIndex": 0,
+          "clientWidth": 264,
+          "scrollWidth": 1011,
+          "length": 169
+        },
+        {
+          "whiteSpace": "nowrap",
+          "overflowX": "auto",
+          "tabIndex": 0,
+          "clientWidth": 264,
+          "scrollWidth": 999,
+          "length": 167
+        },
+        {
+          "whiteSpace": "nowrap",
+          "overflowX": "auto",
+          "tabIndex": 0,
+          "clientWidth": 264,
+          "scrollWidth": 1005,
+          "length": 168
+        },
+        {
+          "whiteSpace": "nowrap",
+          "overflowX": "auto",
+          "tabIndex": 0,
+          "clientWidth": 877,
+          "scrollWidth": 1208,
+          "length": 169
+        },
+        {
+          "whiteSpace": "nowrap",
+          "overflowX": "auto",
+          "tabIndex": 0,
+          "clientWidth": 877,
+          "scrollWidth": 1194,
+          "length": 167
+        },
+        {
+          "whiteSpace": "nowrap",
+          "overflowX": "auto",
+          "tabIndex": 0,
+          "clientWidth": 877,
+          "scrollWidth": 1201,
+          "length": 168
+        },
+        {
+          "whiteSpace": "nowrap",
+          "overflowX": "auto",
+          "tabIndex": 0,
+          "clientWidth": 877,
+          "scrollWidth": 877,
+          "length": 121
+        },
+        {
+          "whiteSpace": "nowrap",
+          "overflowX": "auto",
+          "tabIndex": 0,
+          "clientWidth": 877,
+          "scrollWidth": 877,
+          "length": 116
+        }
+      ],
+      "path": "960.png",
+      "sha256": "9c85a2aeb3f0c3331281620d373152ee3e8bac3941de611e262f2dd70deee1e2",
+      "privacy": "Path and input value pixels masked before saving; layout geometry unchanged"
+    },
+    {
+      "height": 511.5,
+      "width": 320,
+      "visibleTextLength": 412,
+      "sources": 5,
+      "overflow": false,
+      "detailsOpen": false,
+      "paths": [
+        {
+          "whiteSpace": "nowrap",
+          "overflowX": "auto",
+          "tabIndex": 0,
+          "clientWidth": 223,
+          "scrollWidth": 873,
+          "length": 136
+        },
+        {
+          "whiteSpace": "nowrap",
+          "overflowX": "auto",
+          "tabIndex": 0,
+          "clientWidth": 221,
+          "scrollWidth": 1011,
+          "length": 169
+        },
+        {
+          "whiteSpace": "nowrap",
+          "overflowX": "auto",
+          "tabIndex": 0,
+          "clientWidth": 221,
+          "scrollWidth": 999,
+          "length": 167
+        },
+        {
+          "whiteSpace": "nowrap",
+          "overflowX": "auto",
+          "tabIndex": 0,
+          "clientWidth": 221,
+          "scrollWidth": 1005,
+          "length": 168
+        },
+        {
+          "whiteSpace": "nowrap",
+          "overflowX": "auto",
+          "tabIndex": 0,
+          "clientWidth": 244,
+          "scrollWidth": 1208,
+          "length": 169
+        },
+        {
+          "whiteSpace": "nowrap",
+          "overflowX": "auto",
+          "tabIndex": 0,
+          "clientWidth": 244,
+          "scrollWidth": 1194,
+          "length": 167
+        },
+        {
+          "whiteSpace": "nowrap",
+          "overflowX": "auto",
+          "tabIndex": 0,
+          "clientWidth": 244,
+          "scrollWidth": 1201,
+          "length": 168
+        },
+        {
+          "whiteSpace": "nowrap",
+          "overflowX": "auto",
+          "tabIndex": 0,
+          "clientWidth": 244,
+          "scrollWidth": 865,
+          "length": 121
+        },
+        {
+          "whiteSpace": "nowrap",
+          "overflowX": "auto",
+          "tabIndex": 0,
+          "clientWidth": 244,
+          "scrollWidth": 829,
+          "length": 116
+        }
+      ],
+      "path": "320.png",
+      "sha256": "0404807132a3c964a16f6f0ec60043441bf4036e179522bb284a6fa89d29594b",
+      "privacy": "Path and input value pixels masked before saving; layout geometry unchanged"
+    }
+  ],
+  "checks": [
+    {
+      "id": "No page overflow 1920",
+      "result": "PASS"
+    },
+    {
+      "id": "Five source states 1920",
+      "result": "PASS"
+    },
+    {
+      "id": "Details closed by default 1920",
+      "result": "PASS"
+    },
+    {
+      "id": "Visible paths on one line 1920",
+      "result": "PASS"
+    },
+    {
+      "id": "No page overflow 960",
+      "result": "PASS"
+    },
+    {
+      "id": "Five source states 960",
+      "result": "PASS"
+    },
+    {
+      "id": "Details closed by default 960",
+      "result": "PASS"
+    },
+    {
+      "id": "Visible paths on one line 960",
+      "result": "PASS"
+    },
+    {
+      "id": "No page overflow 320",
+      "result": "PASS"
+    },
+    {
+      "id": "Five source states 320",
+      "result": "PASS"
+    },
+    {
+      "id": "Details closed by default 320",
+      "result": "PASS"
+    },
+    {
+      "id": "Visible paths on one line 320",
+      "result": "PASS"
+    },
+    {
+      "id": "Keyboard scroll reaches long path",
+      "result": "PASS"
+    },
+    {
+      "id": "Native Details opens by keyboard",
+      "result": "PASS"
+    },
+    {
+      "id": "Native Details closes",
+      "result": "PASS"
+    },
+    {
+      "id": "No backend mutations",
+      "result": "PASS"
+    }
+  ],
+  "context_data_sha256": "2dd74d389db37a3b3192a7fea4ac08f51eff8f527480ff9cec511f6f1277acd1",
+  "expanded_capture": {
+    "path": "details-320.png",
+    "sha256": "17e6cd8bd191411ab5cb1222f07b201028bb6b7cf454f77cea9eb231101f1100",
+    "privacy": "Path and input value pixels masked before saving; layout geometry unchanged"
+  },
+  "status": "PASS",
+  "mutations": [],
+  "scope": "Read-only UI layout, source states, accessible local path scroll and native Details; no folder selection, document consumption, provider call or Google/WhatsApp effects."
+}

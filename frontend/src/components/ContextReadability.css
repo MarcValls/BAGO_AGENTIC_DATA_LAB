@@ -1,28 +1,19 @@
-/* CL01: Settings Context and workspace only. Native document details remain native. */
-#root .app-shell .cognition-context {
-  container: context-readability / inline-size;
-}
+/* LI01: show folder and source states; secondary metadata stays in native closed Details. */
+#root .app-shell .cognition-context { container: context-readability / inline-size; }
 #root .app-shell .cognition-context .cognition-context-summary {
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  align-items: start;
+  grid-template-columns: minmax(0, 1fr);
   gap: 8px;
+  margin: 0;
 }
-#root .app-shell .cognition-context .cognition-context-summary > div {
+#root .app-shell .cognition-context .context-summary > div {
   min-width: 0;
   padding: 8px 10px;
 }
-#root .app-shell .cognition-context .cognition-context-summary > div:first-child {
-  grid-column: 1 / -1;
-}
-#root .app-shell .cognition-context .cognition-context-summary dt { margin-bottom: 4px; }
-#root .app-shell .cognition-context .cognition-context-summary dd { margin: 0; }
-#root .app-shell .cognition-context .context-sources-heading {
-  flex-wrap: wrap;
-  gap: 6px 12px;
-  margin-top: 12px;
-}
+#root .app-shell .cognition-context .context-summary dt { margin-bottom: 4px; }
+#root .app-shell .cognition-context .context-summary dd { margin: 0; }
+#root .app-shell .cognition-context .context-sources-heading { margin: 10px 0 8px; }
 #root .app-shell .cognition-context .context-source-grid {
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(5, minmax(0, 1fr));
   align-items: start;
   gap: 8px;
 }
@@ -31,30 +22,30 @@
   margin: 0;
   padding: 8px 10px;
 }
-#root .app-shell .cognition-context .project-document > summary {
-  flex-wrap: wrap;
-  gap: 6px 10px;
+#root .app-shell .cognition-context .project-document > summary,
+#root .app-shell .cognition-context .context-source-state > div { flex-wrap: wrap; gap: 6px 10px; }
+#root .app-shell .cognition-context .context-source-state > div { min-width: 0; align-items: center; }
+#root .app-shell .cognition-context .cognition-context-details { margin-top: 12px; }
+#root .app-shell .cognition-context .cognition-context-details > summary {
+  color: #d6c2a4;
+  cursor: pointer;
+  padding: 6px 0;
 }
-#root .app-shell .cognition-context .workspace-source:not(.project-document) {
-  display: grid;
-  grid-column: 1 / -1;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 2fr) auto;
-  align-items: baseline;
-  gap: 6px 12px;
+#root .app-shell .cognition-context .cognition-context-details > summary:focus-visible {
+  outline: 2px solid #d6c2a4;
+  outline-offset: 2px;
 }
-#root .app-shell .cognition-context .workspace-source:not(.project-document) > div {
+#root .app-shell .cognition-context .cognition-detail-summary {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  align-items: start;
+  gap: 8px;
+}
+#root .app-shell .cognition-context .context-source-descriptions > div {
   min-width: 0;
-  flex-wrap: wrap;
-  gap: 6px 10px;
+  padding-block: 8px;
+  border-bottom: 1px solid var(--vs-line-soft, #22394b);
 }
-#root .app-shell .cognition-context .workspace-source:not(.project-document) > p { margin: 0; }
-#root .app-shell .cognition-context .workspace-source:not(.project-document) > details[open] {
-  grid-column: 1 / -1;
-  min-width: 0;
-}
-#root .app-shell .cognition-context .workspace-source > code.context-location-path {
-  grid-column: 1 / -1;
-}
+#root .app-shell .cognition-context .context-source-descriptions dd { margin: 4px 0 0; }
 #root .app-shell .cognition-context code.context-location-path {
   display: block;
   min-width: 0;
@@ -66,14 +57,11 @@
   word-break: normal;
   text-overflow: clip;
 }
-#root .app-shell .cognition-context code.context-location-path:focus-visible {
-  outline: 2px solid #d6c2a4;
-  outline-offset: 2px;
+#root .app-shell .cognition-context code.context-location-path:focus-visible { outline: 2px solid #d6c2a4; outline-offset: 2px; }
+@container context-readability (max-width: 1200px) {
+  #root .app-shell .cognition-context .context-source-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 }
 @container context-readability (max-width: 760px) {
-  #root .app-shell .cognition-context .cognition-context-summary,
-  #root .app-shell .cognition-context .context-source-grid,
-  #root .app-shell .cognition-context .workspace-source:not(.project-document) {
-    grid-template-columns: minmax(0, 1fr);
-  }
+  #root .app-shell .cognition-context .cognition-detail-summary { grid-template-columns: minmax(0, 1fr); }
+  #root .app-shell .cognition-context .context-source-grid { grid-template-columns: minmax(0, 1fr); }
 }

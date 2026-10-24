@@ -1,0 +1,223 @@
+{
+  "candidate": "beige-settings-20261024-rc14",
+  "url": "http://127.0.0.1:8093/",
+  "views": [
+    {
+      "height": 496.4624938964844,
+      "width": 1920,
+      "visibleTextLength": 1346,
+      "sources": 5,
+      "overflow": false,
+      "detailsOpen": null,
+      "paths": [
+        {
+          "whiteSpace": "normal",
+          "overflowX": "visible",
+          "tabIndex": -1,
+          "clientWidth": 0,
+          "scrollWidth": 0,
+          "length": 136
+        },
+        {
+          "whiteSpace": "normal",
+          "overflowX": "hidden",
+          "tabIndex": -1,
+          "clientWidth": 335,
+          "scrollWidth": 335,
+          "length": 169
+        },
+        {
+          "whiteSpace": "normal",
+          "overflowX": "hidden",
+          "tabIndex": -1,
+          "clientWidth": 335,
+          "scrollWidth": 335,
+          "length": 167
+        },
+        {
+          "whiteSpace": "normal",
+          "overflowX": "hidden",
+          "tabIndex": -1,
+          "clientWidth": 335,
+          "scrollWidth": 335,
+          "length": 168
+        },
+        {
+          "whiteSpace": "normal",
+          "overflowX": "hidden",
+          "tabIndex": -1,
+          "clientWidth": 337,
+          "scrollWidth": 337,
+          "length": 121
+        },
+        {
+          "whiteSpace": "normal",
+          "overflowX": "hidden",
+          "tabIndex": -1,
+          "clientWidth": 337,
+          "scrollWidth": 337,
+          "length": 116
+        }
+      ],
+      "path": "1920.png",
+      "sha256": "d9258dd805c25bd8efca13775e7b14b456d8da8d79810fc6fea99dbac37539db",
+      "privacy": "Path and input value pixels masked before saving; layout geometry unchanged"
+    },
+    {
+      "height": 711.7625122070312,
+      "width": 960,
+      "visibleTextLength": 1346,
+      "sources": 5,
+      "overflow": false,
+      "detailsOpen": null,
+      "paths": [
+        {
+          "whiteSpace": "normal",
+          "overflowX": "visible",
+          "tabIndex": -1,
+          "clientWidth": 0,
+          "scrollWidth": 0,
+          "length": 136
+        },
+        {
+          "whiteSpace": "normal",
+          "overflowX": "hidden",
+          "tabIndex": -1,
+          "clientWidth": 404,
+          "scrollWidth": 404,
+          "length": 169
+        },
+        {
+          "whiteSpace": "normal",
+          "overflowX": "hidden",
+          "tabIndex": -1,
+          "clientWidth": 404,
+          "scrollWidth": 404,
+          "length": 167
+        },
+        {
+          "whiteSpace": "normal",
+          "overflowX": "hidden",
+          "tabIndex": -1,
+          "clientWidth": 404,
+          "scrollWidth": 404,
+          "length": 168
+        },
+        {
+          "whiteSpace": "normal",
+          "overflowX": "hidden",
+          "tabIndex": -1,
+          "clientWidth": 405,
+          "scrollWidth": 405,
+          "length": 121
+        },
+        {
+          "whiteSpace": "normal",
+          "overflowX": "hidden",
+          "tabIndex": -1,
+          "clientWidth": 405,
+          "scrollWidth": 405,
+          "length": 116
+        }
+      ],
+      "path": "960.png",
+      "sha256": "1c8e4a118fed87a911d8cdf5dc9ec488e7e0f564b84be8d4db01ab1a6b4472b0",
+      "privacy": "Path and input value pixels masked before saving; layout geometry unchanged"
+    },
+    {
+      "height": 1287.7125244140625,
+      "width": 320,
+      "visibleTextLength": 1346,
+      "sources": 5,
+      "overflow": false,
+      "detailsOpen": null,
+      "paths": [
+        {
+          "whiteSpace": "normal",
+          "overflowX": "visible",
+          "tabIndex": -1,
+          "clientWidth": 0,
+          "scrollWidth": 0,
+          "length": 136
+        },
+        {
+          "whiteSpace": "normal",
+          "overflowX": "hidden",
+          "tabIndex": -1,
+          "clientWidth": 219,
+          "scrollWidth": 219,
+          "length": 169
+        },
+        {
+          "whiteSpace": "normal",
+          "overflowX": "hidden",
+          "tabIndex": -1,
+          "clientWidth": 219,
+          "scrollWidth": 219,
+          "length": 167
+        },
+        {
+          "whiteSpace": "normal",
+          "overflowX": "hidden",
+          "tabIndex": -1,
+          "clientWidth": 219,
+          "scrollWidth": 219,
+          "length": 168
+        },
+        {
+          "whiteSpace": "normal",
+          "overflowX": "hidden",
+          "tabIndex": -1,
+          "clientWidth": 221,
+          "scrollWidth": 221,
+          "length": 121
+        },
+        {
+          "whiteSpace": "normal",
+          "overflowX": "hidden",
+          "tabIndex": -1,
+          "clientWidth": 221,
+          "scrollWidth": 221,
+          "length": 116
+        }
+      ],
+      "path": "320.png",
+      "sha256": "161601b34008e9515a60b83caaa855d508436efaaae931e77cfc562ffbab6797",
+      "privacy": "Path and input value pixels masked before saving; layout geometry unchanged"
+    }
+  ],
+  "checks": [
+    {
+      "id": "No page overflow 1920",
+      "result": "PASS"
+    },
+    {
+      "id": "Five source states 1920",
+      "result": "PASS"
+    },
+    {
+      "id": "No page overflow 960",
+      "result": "PASS"
+    },
+    {
+      "id": "Five source states 960",
+      "result": "PASS"
+    },
+    {
+      "id": "No page overflow 320",
+      "result": "PASS"
+    },
+    {
+      "id": "Five source states 320",
+      "result": "PASS"
+    },
+    {
+      "id": "No backend mutations",
+      "result": "PASS"
+    }
+  ],
+  "context_data_sha256": "2dd74d389db37a3b3192a7fea4ac08f51eff8f527480ff9cec511f6f1277acd1",
+  "status": "PASS",
+  "mutations": [],
+  "scope": "Read-only UI layout, source states, accessible local path scroll and native Details; no folder selection, document consumption, provider call or Google/WhatsApp effects."
+}

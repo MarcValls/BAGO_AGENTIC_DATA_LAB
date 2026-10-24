@@ -89,7 +89,9 @@ export default function CognitionSettings({ mode, onModeChange, workspaceOnly = 
   }
 
   const location = (id: string) => metadata?.paths.find((item) => item.id === id)
-  const renderLocation = (item: ContextLocation | undefined) => item && (['project-context', 'project-state', 'active-handoff'].includes(item.id)
+  const renderLocation = (item: ContextLocation | undefined) => item && (!workspaceOnly && !['project-context', 'project-state', 'active-handoff'].includes(item.id)
+    ? <div className={`workspace-source context-source-state ${item.state}`} key={item.id}><div><strong>{PROJECT_DOCUMENT_LABELS[item.id] || t('agents.aux.context.unknown',{id:item.id})}</strong><span>{item.state === 'present' ? t("core.CognitionSettings.available_e67444") : t("core.CognitionSettings.not_found_e3ebaa")}</span></div></div>
+    : ['project-context', 'project-state', 'active-handoff'].includes(item.id)
     ? <ProjectContextDocument key={`${metadata?.workspace_root}:${item.id}`} item={{ ...item, label: PROJECT_DOCUMENT_LABELS[item.id] }} workspaceRoot={metadata!.workspace_root} compactPath={!workspaceOnly} />
     : <div className={`workspace-source ${item.state}`} key={item.id}>
     <div><strong>{PROJECT_DOCUMENT_LABELS[item.id] || t('agents.aux.context.unknown',{id:item.id})}</strong><span>{item.state === 'present' ? t("core.CognitionSettings.available_e67444") : t("core.CognitionSettings.not_found_e3ebaa")}</span></div>
@@ -131,15 +133,24 @@ export default function CognitionSettings({ mode, onModeChange, workspaceOnly = 
         {loading && <p role="status">{t("core.CognitionSettings.loading_context_sources_4b187f")}</p>}
         {error && <div role="alert"><p>{errorMessage(error)}</p><button type="button" onClick={() => setRequest((value) => value + 1)}>{t("core.CognitionSettings.retry_942087")}</button></div>}
         {metadata && <>
-          <p className="cognition-context-intro">{t("core.CognitionSettings.live_scope_and_context_metadata_used_by_b3daa3")}</p>
           <dl className="context-summary cognition-context-summary">
             <div><dt>{t("core.CognitionSettings.active_workspace_68971a")}</dt><dd><code className="context-location-path" tabIndex={0} title={metadata.workspace_root}>{metadata.workspace_root}</code></dd></div>
+          </dl>
+          {metadata.memory.state !== 'present' && <p className="cognition-memory-state" role="status">{t("core.CognitionSettings.conversation_memory_230741")}: {observedStateLabel(metadata.memory.state)}</p>}
+          <div className="context-sources-heading"><h4>{t("core.CognitionSettings.project_context_sources_bd2939")}</h4></div>
+          <div className="context-source-grid">{metadata.paths.map((item) => renderLocation(item))}</div>
+          <details className="cognition-context-details">
+            <summary>{t('common.details')}</summary>
+            <dl className="context-summary cognition-detail-summary">
             <div><dt>{t("core.CognitionSettings.cognition_profile_2ecb9f")}</dt><dd>{metadata.cognition.profile}</dd></div>
             <div><dt>{t("core.CognitionSettings.focus_capacity_922ae3")}</dt><dd>{t('agents.aux.focusCapacity',{capacity:formatNumber(metadata.cognition.capacity),hops:formatNumber(metadata.cognition.max_hops),expansions:formatNumber(metadata.cognition.max_expansions)})}</dd></div>
             <div><dt>{t("core.CognitionSettings.conversation_memory_230741")}</dt><dd>{metadata.memory.kind === 'conversation_history' ? t('agents.aux.context.memoryKind') : metadata.memory.kind} · {observedStateLabel(metadata.memory.state)}<small>{metadata.memory.kind === 'conversation_history' ? t('agents.aux.context.memoryDescription') : metadata.memory.description}</small></dd></div>
-          </dl>
-          <div className="context-sources-heading"><h4>{t("core.CognitionSettings.project_context_sources_bd2939")}</h4><span>{t("core.CognitionSettings.expand_a_file_to_read_it_228fd5")}</span></div>
-          <div className="context-source-grid">{metadata.paths.map((item) => renderLocation(item))}</div>
+            </dl>
+            <dl className="context-source-descriptions">{metadata.paths.map(item => <div key={item.id}>
+              <dt><code>{item.id}</code></dt>
+              <dd><p>{contextPurpose(item.id)}</p><code className="context-location-path" tabIndex={0} title={item.path}>{item.path}</code><details><summary>{t('agents.aux.context.technical')}</summary><pre>{JSON.stringify({id:item.id,label:item.label,purpose:item.purpose},null,2)}</pre></details></dd>
+            </div>)}</dl>
+          </details>
         </>}
       </div>
     </details>)}

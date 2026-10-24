@@ -1,0 +1,1566 @@
+
+> bago-portfolio-ui@1.0.0 test
+> vitest run tests/ui/communications/navigation-control-order.test.tsx tests/ui/chat-shell/inspector-color.test.tsx tests/ui/chat-shell/visual-system.test.tsx tests/i18n/core/app-language.test.tsx tests/i18n/agents/auxiliary.test.tsx tests/ui/context/context-readability.test.tsx tests/i18n/core/locale.test.tsx
+
+
+ RUN  v5.0.4 C:/Users/AMTEC_Terminal_1º/Desktop/BAGO5_ADL/.worktrees/agent-chat-write-20261023/frontend
+
+ ❯ tests/i18n/agents/auxiliary.test.tsx (14 tests | 2 failed) 2735ms
+   × maps all known context IDs and memory UI without reading documents or refetching on locale 1124ms
+   × changes a saved mode notice reactively without issuing a second selection or clearing the folder draft 1029ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/i18n/agents/auxiliary.test.tsx > maps all known context IDs and memory UI without reading documents or refetching on locale
+TestingLibraryElementError: Found multiple elements with the text: Historial de conversaciones
+
+Here are the matching elements:
+
+Ignored nodes: comments, script, style
+[36m<strong>[39m
+  [0mHistorial de conversaciones[0m
+[36m</strong>[39m
+
+Ignored nodes: comments, script, style
+[36m<dt>[39m
+  [0mHistorial de conversaciones[0m
+[36m</dt>[39m
+
+(If this is intentional, then use the `*AllBy*` variant of the query (like `queryAllByText`, `getAllByText`, or `findAllByText`)).
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"cognition-settings"[39m
+    [36m>[39m
+      [36m<header>[39m
+        [36m<h3>[39m
+          [0mCognición y contexto[0m
+        [36m</h3>[39m
+        [36m<p>[39m
+          [0mElige cómo gestiona el asistente los mensajes nuevos.[0m
+        [36m</p>[39m
+      [36m</header>[39m
+      [36m<fieldset[39m
+        [33mclass[39m=[32m"cognition-mode"[39m
+      [36m>[39m
+        [36m<legend>[39m
+          [0mModo cognitivo del chat[0m
+        [36m</legend>[39m
+        [36m<label>[39m
+          [36m<input[39m
+            [33mchecked[39m=[32m""[39m
+            [33mname[39m=[32m"cognitive-mode"[39m
+            [33mtype[39m=[32m"radio"[39m
+            [33mvalue[39m=[32m"baseline"[39m
+          [36m/>[39m
+          [36m<span>[39m
+            [36m<strong>[39m
+              [0mEstándar[0m
+            [36m</strong>[39m
+            [36m<small>[39m
+              [0mUsar las instrucciones normales del asistente o agente.[0m
+            [36m</small>[39m
+          [36m</span>[39m
+        [36m</label>[39m
+        [36m<label>[39m
+          [36m<input[39m
+            [33mname[39m=[32m"cognitive-mode"[39m
+            [33mtype[39m=[32m"radio"[39m
+            [33mvalue[39m=[32m"bago5"[39m
+          [36m/>[39m
+          [36m<span>[39m
+            [36m<strong>[39m
+              [0mBAGO5 experimental[0m
+            [36m</strong>[39m
+            [36m<small>[39m
+              [0mAñadir enfoque cognitivo acotado a las instrucciones del modelo. Las respuestas muestran el enfoque aplicado y la traza.[0m
+            [36m</small>[39m
+          [36m</span>[39m
+        [36m</label>[39m
+      [36m</fieldset>[39m
+      [36m<details[39m
+        [33mclass[39m=[32m"context-locations cognition-context"[39m
+        [33mopen[39m=[32m""[39m
+      [36m>[39m
+        [36m<summary[39m
+          [33mid[39m=[32m"context-locations-title"[39m
+        [36m>[39m
+          [36m<strong>[39m
+            [0mContexto y espacio de trabajo[0m
+          [36m</strong>[39m
+          [36m<span>[39m
+            [0m5 fuentes del proyecto[0m
+          [36m</span>[39m
+        [36m</summary>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"context-locations-content"[39m
+        [36m>[39m
+          [36m<dl[39m
+            [33mclass[39m=[32m"context-summary cognition-context-summary"[39m
+          [36m>[39m
+            [36m<div>[39m
+              [36m<dt>[39m
+                [0mEspacio de trabajo activo[0m
+              [36m</dt>[39m
+              [36m<dd>[39m
+                [36m<code[39m
+                  [33mclass[39m=[32m"context-location-path"[39m
+                  [33mtabindex[39m=[32m"0"[39m
+                  [33mtitle[39m=[32m"C:/USER PROJECT"[39m
+                [36m>[39m
+                  [0mC:/USER PROJECT[0m
+                [36m</code>[39m
+              [36m</dd>[39m
+            [36m</div>[39m
+          [36m</dl>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"context-sources-heading"[39m
+          [36m>[39m
+            [36m<h4>[39m
+              [0mFuentes de contexto del proyecto[0m
+            [36m</h4>[39m
+          [36m</div>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"context-source-grid"[39m
+          [36m>[39m
+            [36m<details[39m
+              [33mclass[39m=[32m"workspace-source project-document present"[39m
+            [36m>[39m
+              [36m<summary>[39m
+                [36m<strong>[39m
+                  [0mContexto del proyecto[0m
+                [36m</strong>[39m
+                [36m<span>[39m
+                  [0mDisponible[0m
+                [36m</span>[39m
+              [36m</summary>[39m
+              [36m<code[39m
+                [33mclass[39m=[32m"project-document-path context-location-path"[39m
+                [33mtabindex[39m=[32m"0"[39m
+                [33mtitle[39m=[32m"C:/USER PROJECT/project-context"[39m
+              [36m>[39m
+                [0mC:/USER PROJECT/project-context[0m
+              [36m</code>[39m
+            [36m</details>[39m
+            [36m<details[39m
+              [33mclass[39m=[32m"workspace-source project-document present"[39m
+            [36m>[39m
+              [36m<summary>[39m
+                [36m<strong>[39m
+                  [0mEstado del proyecto[0m
+                [36m</strong>[39m
+                [36m<span>[39m
+                  [0mDisponible[0m
+                [36m</span>[39m
+              [36m</summary>[39m
+              [36m<code[39m
+                [33mclass[39m=[32m"project-document-path context-location-path"[39m
+                [33mtabindex[39m=[32m"0"[39m
+                [33mtitle[39m=[32m"C:/USER PROJECT/project-state"[39m
+              [36m>[39m
+                [0mC:/USER PROJECT/project-state[0m
+              [36m</code>[39m
+            [36m</details>[39m
+            [36m<details[39m
+              [33mclass[39m=[32m"workspace-source project-document present"[39m
+            [36m>[39m
+              [36m<summary>[39m
+                [36m<strong>[39m
+                  [0mContinuidad[0m
+                [36m</strong>[39m
+                [36m<span>[39m
+                  [0mDisponible[0m
+                [36m</span>[39m
+              [36m</summary>[39m
+              [36m<code[39m
+                [33mclass[39m=[32m"project-document-path context-location-path"[39m
+                [33mtabindex[39m=[32m"0"[39m
+                [33mtitle[39m=[32m"C:/USER PROJECT/active-handoff"[39m
+              [36m>[39m
+                [0mC:/USER PROJECT/active-handoff[0m
+              [36m</code>[39m
+            [36m</details>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"workspace-source context-source-state present"[39m
+            [36m>[39m
+              [36m<div>[39m
+                [36m<strong>[39m
+                  [0mHistorial de conversaciones[0m
+                [36m</strong>[39m
+                [36m<span>[39m
+                  [0mDisponible[0m
+                [36m</span>[39m
+              [36m</div>[39m
+            [36m</div>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"workspace-source context-source-state present"[39m
+            [36m>[39m
+              [36m<div>[39m
+                [36m<strong>[39m
+                  [0mTrazas cognitivas[0m
+                [36m</strong>[39m
+                [36m<span>[39m
+                  [0mDisponible[0m
+                [36m</span>[39m
+              [36m</div>[39m
+            [36m</div>[39m
+          [36m</div>[39m
+          [36m<details[39m
+            [33mclass[39m=[32m"cognition-context-details"[39m
+          [36m>[39m
+            [36m<summary>[39m
+              [0mDetalles[0m
+            [36m</summary>[39m
+            [36m<dl[39m
+              [33mclass[39m=[32m"context-summary cognition-detail-summary"[39m
+            [36m>[39m
+              [36m<div>[39m
+                [36m<dt>[39m
+                  [0mPerfil cognitivo[0m
+                [36m</dt>[39m
+                [36m<dd>[39m
+                  [0mbounded-original[0m
+                [36m</dd>[39m
+              [36m</div>[39m
+              [36m<div>[39m
+                [36m<dt>[39m
+                  [0mCapacidad de enfoque[0m
+                [36m</dt>[39m
+                [36m<dd>[39m
+                  [0m16 unidades · 3 saltos · 4 expansiones[0m
+                [36m</dd>[39m
+              [36m</div>[39m
+              [36m<div>[39m
+                [36m<dt>[39m
+                  [0mMemoria de la conversación[0m
+                [36m</dt>[39m
+                [36m<dd>[39m
+                  [0mHistorial de conversaciones[0m
+                  [0m · [0m
+                  [0mPresente (present)[0m
+                  [36m<small>[39m
+                    [0mLa memoria disponible para el chat es su historial guardado. Los motores de memoria general o entre proyectos no están conectados a este chat.[0m
+                  [36m</small>[39m
+                [36m</dd>[39m
+              [36m</div>[39m
+            [36m</dl>[39m
+            [36m<dl[39m
+              [33mclass[39m=[32m"context-source-descriptions"[39m
+            [36m>[39m
+              [36m<div>[39m
+                [36m<dt>[39m
+                  [0mContexto del proyecto[0m
+                [36m</dt>[39m
+                [36m<dd>[39m
+                  [36m<p>[39m
+                    [0mRegistro de contexto del proyecto; mostrar su ubicación no lo incorpora a las instrucciones del modelo.[0m
+                  [36m</p>[39m
+                  [36m<code[39m
+                    [33mclass[39m=[32m"context-location-path"[39m
+                    [33mtabindex[39m=[32m"0"[39m
+                    [33mtitle[39m=[32m"C:/USER PROJECT/project-context"[39m
+                  [36m>[39m
+                    [0mC:/USER PROJECT/project-context[0m
+                  [36m</code>[39m
+                  [36m<details>[39m
+                    [36m<summary>[39m
+                      [0mDatos técnicos originales[0m
+                    [36m</summary>[39m
+                    [36m<pre>[39m
+                      [0m{
+  "id": "project-context",
+  "label": "ORIGINAL LABEL project-context",
+  "purpose": "ORIGINAL PURPOSE project-context"
+}[0m
+                    [36m</pre>[39m
+                  [36m</details>[39m
+                [36m</dd>[39m
+              [36m</div>[39m
+              [36m<div>[39m
+                [36m<dt>[39m
+                  [0mEstado del proyecto[0m
+                [36m</dt>[39m
+                [36m<dd>[39m
+                  [36m<p>[39m
+                    [0mEstado registrado del proyecto y alcance de verificación.[0m
+                  [36m</p>[39m
+                  [36m<code[39m
+                    [33mclass[39m=[32m"context-location-path"[39m
+                    [33mtabindex[39m=[32m"0"[39m
+                    [33mtitle[39m=[32m"C:/USER PROJECT/project-state"[39m
+                  [36m>[39m
+                    [0mC:/USER PROJECT/project-state[0m
+                  [36m</code>[39m
+                  [36m<details>[39m
+                    [36m<summary>[39m
+                      [0mDatos técnicos originales[0m
+                    [36m</summary>[39m
+                    [36m<pre>[39m
+                      [0m{
+  "id": "project-state",
+  "label": "ORIGINAL LABEL project-state",
+  "purpose": "ORIGINAL PURPOSE project-state"
+}[0m
+                    [36m</pre>[39m
+                  [36m</details>[39m
+                [36m</dd>[39m
+              [36m</div>[39m
+              [36m<div>[39m
+                [36m<dt>[39m
+                  [0mContinuidad[0m
+                [36m</dt>[39m
+                [36m<dd>[39m
+                  [36m<p>[39m
+                    [0mTransferencia de continuidad local para el trabajo en el repositorio.[0m
+                  [36m</p>[39m
+                  [36m<code[39m
+                    [33mclass[39m=[32m"context-location-path"[39m
+                    [33mtabindex[39m=[32m"0"[39m
+                    [33mtitle[39m=[32m"C:/USER PROJECT/active-handoff"[39m
+                  [36m>[39m
+                    [0mC:/USER PROJECT/active-handoff[0m
+                  [36m</code>[39m
+                  [36m<details>[39m
+                    [36m<summary>[39m
+                      [0mDatos técnicos originales[0m
+                    [36m</summary>[39m
+                    [36m<pre>[39m
+                      [0m{
+  "id": "active-handoff",
+  "label": "ORIGINAL LABEL active-handoff",
+  "purpose": "ORIGINAL PURPOSE active-handoff"
+}[0m
+                    [36m</pre>[39m
+                  [36m</details>[39m
+                [36m</dd>[39m
+              [36m</div>[39m
+              [36m<div>[39m
+                [36m<dt>[39m
+                  [0mHistorial de conversaciones[0m
+                [36m</dt>[39m
+                [36m<dd>[39m
+                  [36m<p>[39m
+                    [0mMensajes guardados; la conversación seleccionada aporta el historial del chat.[0m
+                  [36m</p>[39m
+                  [36m<code[39m
+                    [33mclass[39m=[32m"context-location-path"[39m
+                    [33mtabindex[39m=[32m"0"[39m
+                    [33mtitle[39m=[32m"C:/USER PROJECT/conversations"[39m
+                  [36m>[39m
+                    [0mC:/USER PROJECT/conversations[0m
+                  [36m</code>[39m
+                  [36m<details>[39m
+                    [36m<summary>[39m
+                      [0mDatos técnicos originales[0m
+                    [36m</summary>[39m
+                    [36m<pre>[39m
+                      [0m{
+  "id": "conversations",
+  "label": "ORIGINAL LABEL conversations",
+  "purpose": "ORIGINAL PURPOSE conversations"
+}[0m
+                    [36m</pre>[39m
+                  [36m</details>[39m
+                [36m</dd>[39m
+              [36m</div>[39m
+              [36m<div>[39m
+                [36m<dt>[39m
+                  [0mTrazas cognitivas[0m
+                [36m</dt>[39m
+                [36m<dd>[39m
+                  [36m<p>[39m
+                    [0mMetadatos de foco cognitivo local registrados para los turnos del chat con modelos.[0m
+                  [36m</p>[39m
+                  [36m<code[39m
+                    [33mclass[39m=[32m"context-location-path"[39m
+                    [33mtabindex[39m=[32m"0"[39m
+                    [33mtitle[39m=[32m"C:/USER PROJECT/cognition-traces"[39m
+                  [36m>[39m
+                    [0mC:/USER PROJECT/cognition-traces[0m
+                  [36m</code>[39m
+                  [36m<details>[39m
+                    [36m<summary>[39m
+                      [0mDatos técnicos originales[0m
+                    [36m</summary>[39m
+                    [36m<pre>[39m
+                      [0m{
+  "id": "cognition-traces",
+  "label": "ORIGINAL LABEL cognition-traces",
+  "purpose": "ORIGINAL PURPOSE cognition-traces"
+}[0m
+                    [36m</pre>[39m
+                  [36m</details>[39m
+                [36m</dd>[39m
+              [36m</div>[39m
+            [36m</dl>[39m
+          [36m</details>[39m
+        [36m</div>[39m
+      [36m</details>[39m
+    [36m</div>[39m
+  [36m</div>[39m
+[36m</body>[39m
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"cognition-settings"[39m
+    [36m>[39m
+      [36m<header>[39m
+        [36m<h3>[39m
+          [0mCognición y contexto[0m
+        [36m</h3>[39m
+        [36m<p>[39m
+          [0mElige cómo gestiona el asistente los mensajes nuevos.[0m
+        [36m</p>[39m
+      [36m</header>[39m
+      [36m<fieldset[39m
+        [33mclass[39m=[32m"cognition-mode"[39m
+      [36m>[39m
+        [36m<legend>[39m
+          [0mModo cognitivo del chat[0m
+        [36m</legend>[39m
+        [36m<label>[39m
+          [36m<input[39m
+            [33mchecked[39m=[32m""[39m
+            [33mname[39m=[32m"cognitive-mode"[39m
+            [33mtype[39m=[32m"radio"[39m
+            [33mvalue[39m=[32m"baseline"[39m
+          [36m/>[39m
+          [36m<span>[39m
+            [36m<strong>[39m
+              [0mEstándar[0m
+            [36m</strong>[39m
+            [36m<small>[39m
+              [0mUsar las instrucciones normales del asistente o agente.[0m
+            [36m</small>[39m
+          [36m</span>[39m
+        [36m</label>[39m
+        [36m<label>[39m
+          [36m<input[39m
+            [33mname[39m=[32m"cognitive-mode"[39m
+            [33mtype[39m=[32m"radio"[39m
+            [33mvalue[39m=[32m"bago5"[39m
+          [36m/>[39m
+          [36m<span>[39m
+            [36m<strong>[39m
+              [0mBAGO5 experimental[0m
+            [36m</strong>[39m
+            [36m<small>[39m
+              [0mAñadir enfoque cognitivo acotado a las instrucciones del modelo. Las respuestas muestran el enfoque aplicado y la traza.[0m
+            [36m</small>[39m
+          [36m</span>[39m
+        [36m</label>[39m
+      [36m</fieldset>[39m
+      [36m<details[39m
+        [33mclass[39m=[32m"context-locations cognition-context"[39m
+        [33mopen[39m=[32m""[39m
+      [36m>[39m
+        [36m<summary[39m
+          [33mid[39m=[32m"context-locations-title"[39m
+        [36m>[39m
+          [36m<strong>[39m
+            [0mContexto y espacio de trabajo[0m
+          [36m</strong>[39m
+          [36m<span>[39m
+            [0m5 fuentes del proyecto[0m
+          [36m</span>[39m
+        [36m</summary>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"context-locations-content"[39m
+        [36m>[39m
+          [36m<dl[39m
+            [33mclass[39m=[32m"context-summary cognition-context-summary"[39m
+          [36m>[39m
+            [36m<div>[39m
+              [36m<dt>[39m
+                [0mEspacio de trabajo activo[0m
+              [36m</dt>[39m
+              [36m<dd>[39m
+                [36m<code[39m
+                  [33mclass[39m=[32m"context-location-path"[39m
+                  [33mtabindex[39m=[32m"0"[39m
+                  [33mtitle[39m=[32m"C:/USER PROJECT"[39m
+                [36m>[39m
+                  [0mC:/USER PROJECT[0m
+                [36m</code>[39m
+              [36m</dd>[39m
+            [36m</div>[39m
+          [36m</dl>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"context-sources-heading"[39m
+          [36m>[39m
+            [36m<h4>[39m
+              [0mFuentes de contexto del proyecto[0m
+            [36m</h4>[39m
+          [36m</div>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"context-source-grid"[39m
+          [36m>[39m
+            [36m<details[39m
+              [33mclass[39m=[32m"workspace-source project-document present"[39m
+            [36m>[39m
+              [36m<summary>[39m
+                [36m<strong>[39m
+                  [0mContexto del proyecto[0m
+                [36m</strong>[39m
+                [36m<span>[39m
+                  [0mDisponible[0m
+                [36m</span>[39m
+              [36m</summary>[39m
+              [36m<code[39m
+                [33mclass[39m=[32m"project-document-path context-location-path"[39m
+                [33mtabindex[39m=[32m"0"[39m
+                [33mtitle[39m=[32m"C:/USER PROJECT/project-context"[39m
+              [36m>[39m
+                [0mC:/USER PROJECT/project-context[0m
+              [36m</code>[39m
+            [36m</details>[39m
+            [36m<details[39m
+              [33mclass[39m=[32m"workspace-source project-document present"[39m
+            [36m>[39m
+              [36m<summary>[39m
+                [36m<strong>[39m
+                  [0mEstado del proyecto[0m
+                [36m</strong>[39m
+                [36m<span>[39m
+                  [0mDisponible[0m
+                [36m</span>[39m
+              [36m</summary>[39m
+              [36m<code[39m
+                [33mclass[39m=[32m"project-document-path context-location-path"[39m
+                [33mtabindex[39m=[32m"0"[39m
+                [33mtitle[39m=[32m"C:/USER PROJECT/project-state"[39m
+              [36m>[39m
+                [0mC:/USER PROJECT/project-state[0m
+              [36m</code>[39m
+            [36m</details>[39m
+            [36m<details[39m
+              [33mclass[39m=[32m"workspace-source project-document present"[39m
+            [36m>[39m
+              [36m<summary>[39m
+                [36m<strong>[39m
+                  [0mContinuidad[0m
+                [36m</strong>[39m
+                [36m<span>[39m
+                  [0mDisponible[0m
+                [36m</span>[39m
+              [36m</summary>[39m
+              [36m<code[39m
+                [33mclass[39m=[32m"project-document-path context-location-path"[39m
+                [33mtabindex[39m=[32m"0"[39m
+                [33mtitle[39m=[32m"C:/USER PROJECT/active-handoff"[39m
+              [36m>[39m
+                [0mC:/USER PROJECT/active-handoff[0m
+              [36m</code>[39m
+            [36m</details>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"workspace-source context-source-state present"[39m
+            [36m>[39m
+              [36m<div>[39m
+                [36m<strong>[39m
+                  [0mHistorial de conversaciones[0m
+                [36m</strong>[39m
+                [36m<span>[39m
+                  [0mDisponible[0m
+                [36m</span>[39m
+              [36m</div>[39m
+            [36m</div>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"workspace-source context-source-state present"[39m
+            [36m>[39m
+              [36m<div>[39m
+                [36m<strong>[39m
+                  [0mTrazas cognitivas[0m
+                [36m</strong>[39m
+                [36m<span>[39m
+                  [0mDisponible[0m
+                [36m</span>[39m
+              [36m</div>[39m
+            [36m</div>[39m
+          [36m</div>[39m
+          [36m<details[39m
+            [33mclass[39m=[32m"cognition-context-details"[39m
+          [36m>[39m
+            [36m<summary>[39m
+              [0mDetalles[0m
+            [36m</summary>[39m
+            [36m<dl[39m
+              [33mclass[39m=[32m"context-summary cognition-detail-summary"[39m
+            [36m>[39m
+              [36m<div>[39m
+                [36m<dt>[39m
+                  [0mPerfil cognitivo[0m
+                [36m</dt>[39m
+                [36m<dd>[39m
+                  [0mbounded-original[0m
+                [36m</dd>[39m
+              [36m</div>[39m
+              [36m<div>[39m
+                [36m<dt>[39m
+                  [0mCapacidad de enfoque[0m
+                [36m</dt>[39m
+                [36m<dd>[39m
+                  [0m16 unidades · 3 saltos · 4 expansiones[0m
+                [36m</dd>[39m
+              [36m</div>[39m
+              [36m<div>[39m
+                [36m<dt>[39m
+                  [0mMemoria de la conversación[0m
+                [36m</dt>[39m
+                [36m<dd>[39m
+                  [0mHistorial de conversaciones[0m
+                  [0m · [0m
+                  [0mPresente (present)[0m
+                  [36m<small>[39m
+                    [0mLa memoria disponible para el chat es su historial guardado. Los motores de memoria general o entre proyectos no están conectados a este chat.[0m
+                  [36m</small>[39m
+                [36m</dd>[39m
+              [36m</div>[39m
+            [36m</dl>[39m
+            [36m<dl[39m
+              [33mclass[39m=[32m"context-source-descriptions"[39m
+            [36m>[39m
+              [36m<div>[39m
+                [36m<dt>[39m
+                  [0mContexto del proyecto[0m
+                [36m</dt>[39m
+                [36m<dd>[39m
+                  [36m<p>[39m
+                    [0mRegistro de contexto del proyecto; mostrar su ubicación no lo incorpora a las instrucciones del modelo.[0m
+                  [36m</p>[39m
+                  [36m<code[39m
+                    [33mclass[39m=[32m"context-location-path"[39m
+                    [33mtabindex[39m=[32m"0"[39m
+                    [33mtitle[39m=[32m"C:/USER PROJECT/project-context"[39m
+                  [36m>[39m
+                    [0mC:/USER PROJECT/project-context[0m
+                  [36m</code>[39m
+                  [36m<details>[39m
+                    [36m<summary>[39m
+                      [0mDatos técnicos originales[0m
+                    [36m</summary>[39m
+                    [36m<pre>[39m
+                      [0m{
+  "id": "project-context",
+  "label": "ORIGINAL LABEL project-context",
+  "purpose": "ORIGINAL PURPOSE project-context"
+}[0m
+                    [36m</pre>[39m
+                  [36m</details>[39m
+                [36m</dd>[39m
+              [36m</div>[39m
+              [36m<div>[39m
+                [36m<dt>[39m
+                  [0mEstado del proyecto[0m
+                [36m</dt>[39m
+                [36m<dd>[39m
+                  [36m<p>[39m
+                    [0mEstado registrado del proyecto y alcance de verificación.[0m
+                  [36m</p>[39m
+                  [36m<code[39m
+                    [33mclass[39m=[32m"context-location-path"[39m
+                    [33mtabindex[39m=[32m"0"[39m
+                    [33mtitle[39m=[32m"C:/USER PROJECT/project-state"[39m
+                  [36m>[39m
+                    [0mC:/USER PROJECT/project-state[0m
+                  [36m</code>[39m
+                  [36m<details>[39m
+                    [36m<summary>[39m
+                      [0mDatos técnicos originales[0m
+                    [36m</summary>[39m
+                    [36m<pre>[39m
+                      [0m{
+  "id": "project-state",
+  "label": "ORIGINAL LABEL project-state",
+  "purpose": "ORIGINAL PURPOSE project-state"
+}[0m
+                    [36m</pre>[39m
+                  [36m</details>[39m
+                [36m</dd>[39m
+              [36m</div>[39m
+              [36m<div>[39m
+                [36m<dt>[39m
+                  [0mContinuidad[0m
+                [36m</dt>[39m
+                [36m<dd>[39m
+                  [36m<p>[39m
+                    [0mTransferencia de continuidad local para el trabajo en el repositorio.[0m
+                  [36m</p>[39m
+                  [36m<code[39m
+                    [33mclass[39m=[32m"context-location-path"[39m
+                    [33mtabindex[39m=[32m"0"[39m
+                    [33mtitle[39m=[32m"C:/USER PROJECT/active-handoff"[39m
+                  [36m>[39m
+                    [0mC:/USER PROJECT/active-handoff[0m
+                  [36m</code>[39m
+                  [36m<details>[39m
+                    [36m<summary>[39m
+                      [0mDatos técnicos originales[0m
+                    [36m</summary>[39m
+                    [36m<pre>[39m
+                      [0m{
+  "id": "active-handoff",
+  "label": "ORIGINAL LABEL active-handoff",
+  "purpose": "ORIGINAL PURPOSE active-handoff"
+}[0m
+                    [36m</pre>[39m
+                  [36m</details>[39m
+                [36m</dd>[39m
+              [36m</div>[39m
+              [36m<div>[39m
+                [36m<dt>[39m
+                  [0mHistorial de conversaciones[0m
+                [36m</dt>[39m
+                [36m<dd>[39m
+                  [36m<p>[39m
+                    [0mMensajes guardados; la conversación seleccionada aporta el historial del chat.[0m
+                  [36m</p>[39m
+                  [36m<code[39m
+                    [33mclass[39m=[32m"context-location-path"[39m
+                    [33mtabindex[39m=[32m"0"[39m
+                    [33mtitle[39m=[32m"C:/USER PROJECT/conversations"[39m
+                  [36m>[39m
+                    [0mC:/USER PROJECT/conversations[0m
+                  [36m</code>[39m
+                  [36m<details>[39m
+                    [36m<summary>[39m
+                      [0mDatos técnicos originales[0m
+                    [36m</summary>[39m
+                    [36m<pre>[39m
+                      [0m{
+  "id": "conversations",
+  "label": "ORIGINAL LABEL conversations",
+  "purpose": "ORIGINAL PURPOSE conversations"
+}[0m
+                    [36m</pre>[39m
+                  [36m</details>[39m
+                [36m</dd>[39m
+              [36m</div>[39m
+              [36m<div>[39m
+                [36m<dt>[39m
+                  [0mTrazas cognitivas[0m
+                [36m</dt>[39m
+                [36m<dd>[39m
+                  [36m<p>[39m
+                    [0mMetadatos de foco cognitivo local registrados para los turnos del chat con modelos.[0m
+                  [36m</p>[39m
+                  [36m<code[39m
+                    [33mclass[39m=[32m"context-location-path"[39m
+                    [33mtabindex[39m=[32m"0"[39m
+                    [33mtitle[39m=[32m"C:/USER PROJECT/cognition-traces"[39m
+                  [36m>[39m
+                    [0mC:/USER PROJECT/cognition-traces[0m
+                  [36m</code>[39m
+                  [36m<details>[39m
+                    [36m<summary>[39m
+                      [0mDatos técnicos originales[0m
+                    [36m</summary>[39m
+                    [36m<pre>[39m
+                      [0m{
+  "id": "cognition-traces",
+  "label": "ORIGINAL LABEL cognition-traces",
+  "purpose": "ORIGINAL PURPOSE cognition-traces"
+}[0m
+                    [36m</pre>[39m
+                  [36m</details>[39m
+                [36m</dd>[39m
+              [36m</div>[39m
+            [36m</dl>[39m
+          [36m</details>[39m
+        [36m</div>[39m
+      [36m</details>[39m
+    [36m</div>[39m
+  [36m</div>[39m
+[36m</body>[39m
+ ❯ waitForWrapper ../../integrated-services-20261023/.venv/chat-markdown-node/node_modules/@testing-library/dom/dist/wait-for.js:163:27
+ ❯ ../../integrated-services-20261023/.venv/chat-markdown-node/node_modules/@testing-library/dom/dist/query-helpers.js:86:33
+ ❯ tests/i18n/agents/auxiliary.test.tsx:24:15
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  tests/i18n/agents/auxiliary.test.tsx > changes a saved mode notice reactively without issuing a second selection or clearing the folder draft
+TestingLibraryElementError: Found multiple elements with the text: Contexto del proyecto
+
+Here are the matching elements:
+
+Ignored nodes: comments, script, style
+[36m<strong>[39m
+  [0mContexto del proyecto[0m
+[36m</strong>[39m
+
+Ignored nodes: comments, script, style
+[36m<dt>[39m
+  [0mContexto del proyecto[0m
+[36m</dt>[39m
+
+(If this is intentional, then use the `*AllBy*` variant of the query (like `queryAllByText`, `getAllByText`, or `findAllByText`)).
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"cognition-settings"[39m
+    [36m>[39m
+      [36m<header>[39m
+        [36m<h3>[39m
+          [0mCognición y contexto[0m
+        [36m</h3>[39m
+        [36m<p>[39m
+          [0mElige cómo gestiona el asistente los mensajes nuevos.[0m
+        [36m</p>[39m
+      [36m</header>[39m
+      [36m<fieldset[39m
+        [33mclass[39m=[32m"cognition-mode"[39m
+      [36m>[39m
+        [36m<legend>[39m
+          [0mModo cognitivo del chat[0m
+        [36m</legend>[39m
+        [36m<label>[39m
+          [36m<input[39m
+            [33mchecked[39m=[32m""[39m
+            [33mname[39m=[32m"cognitive-mode"[39m
+            [33mtype[39m=[32m"radio"[39m
+            [33mvalue[39m=[32m"baseline"[39m
+          [36m/>[39m
+          [36m<span>[39m
+            [36m<strong>[39m
+              [0mEstándar[0m
+            [36m</strong>[39m
+            [36m<small>[39m
+              [0mUsar las instrucciones normales del asistente o agente.[0m
+            [36m</small>[39m
+          [36m</span>[39m
+        [36m</label>[39m
+        [36m<label>[39m
+          [36m<input[39m
+            [33mname[39m=[32m"cognitive-mode"[39m
+            [33mtype[39m=[32m"radio"[39m
+            [33mvalue[39m=[32m"bago5"[39m
+          [36m/>[39m
+          [36m<span>[39m
+            [36m<strong>[39m
+              [0mBAGO5 experimental[0m
+            [36m</strong>[39m
+            [36m<small>[39m
+              [0mAñadir enfoque cognitivo acotado a las instrucciones del modelo. Las respuestas muestran el enfoque aplicado y la traza.[0m
+            [36m</small>[39m
+          [36m</span>[39m
+        [36m</label>[39m
+      [36m</fieldset>[39m
+      [36m<details[39m
+        [33mclass[39m=[32m"context-locations cognition-context"[39m
+        [33mopen[39m=[32m""[39m
+      [36m>[39m
+        [36m<summary[39m
+          [33mid[39m=[32m"context-locations-title"[39m
+        [36m>[39m
+          [36m<strong>[39m
+            [0mContexto y espacio de trabajo[0m
+          [36m</strong>[39m
+          [36m<span>[39m
+            [0m5 fuentes del proyecto[0m
+          [36m</span>[39m
+        [36m</summary>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"context-locations-content"[39m
+        [36m>[39m
+          [36m<dl[39m
+            [33mclass[39m=[32m"context-summary cognition-context-summary"[39m
+          [36m>[39m
+            [36m<div>[39m
+              [36m<dt>[39m
+                [0mEspacio de trabajo activo[0m
+              [36m</dt>[39m
+              [36m<dd>[39m
+                [36m<code[39m
+                  [33mclass[39m=[32m"context-location-path"[39m
+                  [33mtabindex[39m=[32m"0"[39m
+                  [33mtitle[39m=[32m"C:/USER PROJECT"[39m
+                [36m>[39m
+                  [0mC:/USER PROJECT[0m
+                [36m</code>[39m
+              [36m</dd>[39m
+            [36m</div>[39m
+          [36m</dl>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"context-sources-heading"[39m
+          [36m>[39m
+            [36m<h4>[39m
+              [0mFuentes de contexto del proyecto[0m
+            [36m</h4>[39m
+          [36m</div>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"context-source-grid"[39m
+          [36m>[39m
+            [36m<details[39m
+              [33mclass[39m=[32m"workspace-source project-document present"[39m
+            [36m>[39m
+              [36m<summary>[39m
+                [36m<strong>[39m
+                  [0mContexto del proyecto[0m
+                [36m</strong>[39m
+                [36m<span>[39m
+                  [0mDisponible[0m
+                [36m</span>[39m
+              [36m</summary>[39m
+              [36m<code[39m
+                [33mclass[39m=[32m"project-document-path context-location-path"[39m
+                [33mtabindex[39m=[32m"0"[39m
+                [33mtitle[39m=[32m"C:/USER PROJECT/project-context"[39m
+              [36m>[39m
+                [0mC:/USER PROJECT/project-context[0m
+              [36m</code>[39m
+            [36m</details>[39m
+            [36m<details[39m
+              [33mclass[39m=[32m"workspace-source project-document present"[39m
+            [36m>[39m
+              [36m<summary>[39m
+                [36m<strong>[39m
+                  [0mEstado del proyecto[0m
+                [36m</strong>[39m
+                [36m<span>[39m
+                  [0mDisponible[0m
+                [36m</span>[39m
+              [36m</summary>[39m
+              [36m<code[39m
+                [33mclass[39m=[32m"project-document-path context-location-path"[39m
+                [33mtabindex[39m=[32m"0"[39m
+                [33mtitle[39m=[32m"C:/USER PROJECT/project-state"[39m
+              [36m>[39m
+                [0mC:/USER PROJECT/project-state[0m
+              [36m</code>[39m
+            [36m</details>[39m
+            [36m<details[39m
+              [33mclass[39m=[32m"workspace-source project-document present"[39m
+            [36m>[39m
+              [36m<summary>[39m
+                [36m<strong>[39m
+                  [0mContinuidad[0m
+                [36m</strong>[39m
+                [36m<span>[39m
+                  [0mDisponible[0m
+                [36m</span>[39m
+              [36m</summary>[39m
+              [36m<code[39m
+                [33mclass[39m=[32m"project-document-path context-location-path"[39m
+                [33mtabindex[39m=[32m"0"[39m
+                [33mtitle[39m=[32m"C:/USER PROJECT/active-handoff"[39m
+              [36m>[39m
+                [0mC:/USER PROJECT/active-handoff[0m
+              [36m</code>[39m
+            [36m</details>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"workspace-source context-source-state present"[39m
+            [36m>[39m
+              [36m<div>[39m
+                [36m<strong>[39m
+                  [0mHistorial de conversaciones[0m
+                [36m</strong>[39m
+                [36m<span>[39m
+                  [0mDisponible[0m
+                [36m</span>[39m
+              [36m</div>[39m
+            [36m</div>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"workspace-source context-source-state present"[39m
+            [36m>[39m
+              [36m<div>[39m
+                [36m<strong>[39m
+                  [0mTrazas cognitivas[0m
+                [36m</strong>[39m
+                [36m<span>[39m
+                  [0mDisponible[0m
+                [36m</span>[39m
+              [36m</div>[39m
+            [36m</div>[39m
+          [36m</div>[39m
+          [36m<details[39m
+            [33mclass[39m=[32m"cognition-context-details"[39m
+          [36m>[39m
+            [36m<summary>[39m
+              [0mDetalles[0m
+            [36m</summary>[39m
+            [36m<dl[39m
+              [33mclass[39m=[32m"context-summary cognition-detail-summary"[39m
+            [36m>[39m
+              [36m<div>[39m
+                [36m<dt>[39m
+                  [0mPerfil cognitivo[0m
+                [36m</dt>[39m
+                [36m<dd>[39m
+                  [0mbounded-original[0m
+                [36m</dd>[39m
+              [36m</div>[39m
+              [36m<div>[39m
+                [36m<dt>[39m
+                  [0mCapacidad de enfoque[0m
+                [36m</dt>[39m
+                [36m<dd>[39m
+                  [0m16 unidades · 3 saltos · 4 expansiones[0m
+                [36m</dd>[39m
+              [36m</div>[39m
+              [36m<div>[39m
+                [36m<dt>[39m
+                  [0mMemoria de la conversación[0m
+                [36m</dt>[39m
+                [36m<dd>[39m
+                  [0mHistorial de conversaciones[0m
+                  [0m · [0m
+                  [0mPresente (present)[0m
+                  [36m<small>[39m
+                    [0mLa memoria disponible para el chat es su historial guardado. Los motores de memoria general o entre proyectos no están conectados a este chat.[0m
+                  [36m</small>[39m
+                [36m</dd>[39m
+              [36m</div>[39m
+            [36m</dl>[39m
+            [36m<dl[39m
+              [33mclass[39m=[32m"context-source-descriptions"[39m
+            [36m>[39m
+              [36m<div>[39m
+                [36m<dt>[39m
+                  [0mContexto del proyecto[0m
+                [36m</dt>[39m
+                [36m<dd>[39m
+                  [36m<p>[39m
+                    [0mRegistro de contexto del proyecto; mostrar su ubicación no lo incorpora a las instrucciones del modelo.[0m
+                  [36m</p>[39m
+                  [36m<code[39m
+                    [33mclass[39m=[32m"context-location-path"[39m
+                    [33mtabindex[39m=[32m"0"[39m
+                    [33mtitle[39m=[32m"C:/USER PROJECT/project-context"[39m
+                  [36m>[39m
+                    [0mC:/USER PROJECT/project-context[0m
+                  [36m</code>[39m
+                  [36m<details>[39m
+                    [36m<summary>[39m
+                      [0mDatos técnicos originales[0m
+                    [36m</summary>[39m
+                    [36m<pre>[39m
+                      [0m{
+  "id": "project-context",
+  "label": "ORIGINAL LABEL project-context",
+  "purpose": "ORIGINAL PURPOSE project-context"
+}[0m
+                    [36m</pre>[39m
+                  [36m</details>[39m
+                [36m</dd>[39m
+              [36m</div>[39m
+              [36m<div>[39m
+                [36m<dt>[39m
+                  [0mEstado del proyecto[0m
+                [36m</dt>[39m
+                [36m<dd>[39m
+                  [36m<p>[39m
+                    [0mEstado registrado del proyecto y alcance de verificación.[0m
+                  [36m</p>[39m
+                  [36m<code[39m
+                    [33mclass[39m=[32m"context-location-path"[39m
+                    [33mtabindex[39m=[32m"0"[39m
+                    [33mtitle[39m=[32m"C:/USER PROJECT/project-state"[39m
+                  [36m>[39m
+                    [0mC:/USER PROJECT/project-state[0m
+                  [36m</code>[39m
+                  [36m<details>[39m
+                    [36m<summary>[39m
+                      [0mDatos técnicos originales[0m
+                    [36m</summary>[39m
+                    [36m<pre>[39m
+                      [0m{
+  "id": "project-state",
+  "label": "ORIGINAL LABEL project-state",
+  "purpose": "ORIGINAL PURPOSE project-state"
+}[0m
+                    [36m</pre>[39m
+                  [36m</details>[39m
+                [36m</dd>[39m
+              [36m</div>[39m
+              [36m<div>[39m
+                [36m<dt>[39m
+                  [0mContinuidad[0m
+                [36m</dt>[39m
+                [36m<dd>[39m
+                  [36m<p>[39m
+                    [0mTransferencia de continuidad local para el trabajo en el repositorio.[0m
+                  [36m</p>[39m
+                  [36m<code[39m
+                    [33mclass[39m=[32m"context-location-path"[39m
+                    [33mtabindex[39m=[32m"0"[39m
+                    [33mtitle[39m=[32m"C:/USER PROJECT/active-handoff"[39m
+                  [36m>[39m
+                    [0mC:/USER PROJECT/active-handoff[0m
+                  [36m</code>[39m
+                  [36m<details>[39m
+                    [36m<summary>[39m
+                      [0mDatos técnicos originales[0m
+                    [36m</summary>[39m
+                    [36m<pre>[39m
+                      [0m{
+  "id": "active-handoff",
+  "label": "ORIGINAL LABEL active-handoff",
+  "purpose": "ORIGINAL PURPOSE active-handoff"
+}[0m
+                    [36m</pre>[39m
+                  [36m</details>[39m
+                [36m</dd>[39m
+              [36m</div>[39m
+              [36m<div>[39m
+                [36m<dt>[39m
+                  [0mHistorial de conversaciones[0m
+                [36m</dt>[39m
+                [36m<dd>[39m
+                  [36m<p>[39m
+                    [0mMensajes guardados; la conversación seleccionada aporta el historial del chat.[0m
+                  [36m</p>[39m
+                  [36m<code[39m
+                    [33mclass[39m=[32m"context-location-path"[39m
+                    [33mtabindex[39m=[32m"0"[39m
+                    [33mtitle[39m=[32m"C:/USER PROJECT/conversations"[39m
+                  [36m>[39m
+                    [0mC:/USER PROJECT/conversations[0m
+                  [36m</code>[39m
+                  [36m<details>[39m
+                    [36m<summary>[39m
+                      [0mDatos técnicos originales[0m
+                    [36m</summary>[39m
+                    [36m<pre>[39m
+                      [0m{
+  "id": "conversations",
+  "label": "ORIGINAL LABEL conversations",
+  "purpose": "ORIGINAL PURPOSE conversations"
+}[0m
+                    [36m</pre>[39m
+                  [36m</details>[39m
+                [36m</dd>[39m
+              [36m</div>[39m
+              [36m<div>[39m
+                [36m<dt>[39m
+                  [0mTrazas cognitivas[0m
+                [36m</dt>[39m
+                [36m<dd>[39m
+                  [36m<p>[39m
+                    [0mMetadatos de foco cognitivo local registrados para los turnos del chat con modelos.[0m
+                  [36m</p>[39m
+                  [36m<code[39m
+                    [33mclass[39m=[32m"context-location-path"[39m
+                    [33mtabindex[39m=[32m"0"[39m
+                    [33mtitle[39m=[32m"C:/USER PROJECT/cognition-traces"[39m
+                  [36m>[39m
+                    [0mC:/USER PROJECT/cognition-traces[0m
+                  [36m</code>[39m
+                  [36m<details>[39m
+                    [36m<summary>[39m
+                      [0mDatos técnicos originales[0m
+                    [36m</summary>[39m
+                    [36m<pre>[39m
+                      [0m{
+  "id": "cognition-traces",
+  "label": "ORIGINAL LABEL cognition-traces",
+  "purpose": "ORIGINAL PURPOSE cognition-traces"
+}[0m
+                    [36m</pre>[39m
+                  [36m</details>[39m
+                [36m</dd>[39m
+              [36m</div>[39m
+            [36m</dl>[39m
+          [36m</details>[39m
+        [36m</div>[39m
+      [36m</details>[39m
+    [36m</div>[39m
+  [36m</div>[39m
+[36m</body>[39m
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"cognition-settings"[39m
+    [36m>[39m
+      [36m<header>[39m
+        [36m<h3>[39m
+          [0mCognición y contexto[0m
+        [36m</h3>[39m
+        [36m<p>[39m
+          [0mElige cómo gestiona el asistente los mensajes nuevos.[0m
+        [36m</p>[39m
+      [36m</header>[39m
+      [36m<fieldset[39m
+        [33mclass[39m=[32m"cognition-mode"[39m
+      [36m>[39m
+        [36m<legend>[39m
+          [0mModo cognitivo del chat[0m
+        [36m</legend>[39m
+        [36m<label>[39m
+          [36m<input[39m
+            [33mchecked[39m=[32m""[39m
+            [33mname[39m=[32m"cognitive-mode"[39m
+            [33mtype[39m=[32m"radio"[39m
+            [33mvalue[39m=[32m"baseline"[39m
+          [36m/>[39m
+          [36m<span>[39m
+            [36m<strong>[39m
+              [0mEstándar[0m
+            [36m</strong>[39m
+            [36m<small>[39m
+              [0mUsar las instrucciones normales del asistente o agente.[0m
+            [36m</small>[39m
+          [36m</span>[39m
+        [36m</label>[39m
+        [36m<label>[39m
+          [36m<input[39m
+            [33mname[39m=[32m"cognitive-mode"[39m
+            [33mtype[39m=[32m"radio"[39m
+            [33mvalue[39m=[32m"bago5"[39m
+          [36m/>[39m
+          [36m<span>[39m
+            [36m<strong>[39m
+              [0mBAGO5 experimental[0m
+            [36m</strong>[39m
+            [36m<small>[39m
+              [0mAñadir enfoque cognitivo acotado a las instrucciones del modelo. Las respuestas muestran el enfoque aplicado y la traza.[0m
+            [36m</small>[39m
+          [36m</span>[39m
+        [36m</label>[39m
+      [36m</fieldset>[39m
+      [36m<details[39m
+        [33mclass[39m=[32m"context-locations cognition-context"[39m
+        [33mopen[39m=[32m""[39m
+      [36m>[39m
+        [36m<summary[39m
+          [33mid[39m=[32m"context-locations-title"[39m
+        [36m>[39m
+          [36m<strong>[39m
+            [0mContexto y espacio de trabajo[0m
+          [36m</strong>[39m
+          [36m<span>[39m
+            [0m5 fuentes del proyecto[0m
+          [36m</span>[39m
+        [36m</summary>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"context-locations-content"[39m
+        [36m>[39m
+          [36m<dl[39m
+            [33mclass[39m=[32m"context-summary cognition-context-summary"[39m
+          [36m>[39m
+            [36m<div>[39m
+              [36m<dt>[39m
+                [0mEspacio de trabajo activo[0m
+              [36m</dt>[39m
+              [36m<dd>[39m
+                [36m<code[39m
+                  [33mclass[39m=[32m"context-location-path"[39m
+                  [33mtabindex[39m=[32m"0"[39m
+                  [33mtitle[39m=[32m"C:/USER PROJECT"[39m
+                [36m>[39m
+                  [0mC:/USER PROJECT[0m
+                [36m</code>[39m
+              [36m</dd>[39m
+            [36m</div>[39m
+          [36m</dl>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"context-sources-heading"[39m
+          [36m>[39m
+            [36m<h4>[39m
+              [0mFuentes de contexto del proyecto[0m
+            [36m</h4>[39m
+          [36m</div>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"context-source-grid"[39m
+          [36m>[39m
+            [36m<details[39m
+              [33mclass[39m=[32m"workspace-source project-document present"[39m
+            [36m>[39m
+              [36m<summary>[39m
+                [36m<strong>[39m
+                  [0mContexto del proyecto[0m
+                [36m</strong>[39m
+                [36m<span>[39m
+                  [0mDisponible[0m
+                [36m</span>[39m
+              [36m</summary>[39m
+              [36m<code[39m
+                [33mclass[39m=[32m"project-document-path context-location-path"[39m
+                [33mtabindex[39m=[32m"0"[39m
+                [33mtitle[39m=[32m"C:/USER PROJECT/project-context"[39m
+              [36m>[39m
+                [0mC:/USER PROJECT/project-context[0m
+              [36m</code>[39m
+            [36m</details>[39m
+            [36m<details[39m
+              [33mclass[39m=[32m"workspace-source project-document present"[39m
+            [36m>[39m
+              [36m<summary>[39m
+                [36m<strong>[39m
+                  [0mEstado del proyecto[0m
+                [36m</strong>[39m
+                [36m<span>[39m
+                  [0mDisponible[0m
+                [36m</span>[39m
+              [36m</summary>[39m
+              [36m<code[39m
+                [33mclass[39m=[32m"project-document-path context-location-path"[39m
+                [33mtabindex[39m=[32m"0"[39m
+                [33mtitle[39m=[32m"C:/USER PROJECT/project-state"[39m
+              [36m>[39m
+                [0mC:/USER PROJECT/project-state[0m
+              [36m</code>[39m
+            [36m</details>[39m
+            [36m<details[39m
+              [33mclass[39m=[32m"workspace-source project-document present"[39m
+            [36m>[39m
+              [36m<summary>[39m
+                [36m<strong>[39m
+                  [0mContinuidad[0m
+                [36m</strong>[39m
+                [36m<span>[39m
+                  [0mDisponible[0m
+                [36m</span>[39m
+              [36m</summary>[39m
+              [36m<code[39m
+                [33mclass[39m=[32m"project-document-path context-location-path"[39m
+                [33mtabindex[39m=[32m"0"[39m
+                [33mtitle[39m=[32m"C:/USER PROJECT/active-handoff"[39m
+              [36m>[39m
+                [0mC:/USER PROJECT/active-handoff[0m
+              [36m</code>[39m
+            [36m</details>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"workspace-source context-source-state present"[39m
+            [36m>[39m
+              [36m<div>[39m
+                [36m<strong>[39m
+                  [0mHistorial de conversaciones[0m
+                [36m</strong>[39m
+                [36m<span>[39m
+                  [0mDisponible[0m
+                [36m</span>[39m
+              [36m</div>[39m
+            [36m</div>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"workspace-source context-source-state present"[39m
+            [36m>[39m
+              [36m<div>[39m
+                [36m<strong>[39m
+                  [0mTrazas cognitivas[0m
+                [36m</strong>[39m
+                [36m<span>[39m
+                  [0mDisponible[0m
+                [36m</span>[39m
+              [36m</div>[39m
+            [36m</div>[39m
+          [36m</div>[39m
+          [36m<details[39m
+            [33mclass[39m=[32m"cognition-context-details"[39m
+          [36m>[39m
+            [36m<summary>[39m
+              [0mDetalles[0m
+            [36m</summary>[39m
+            [36m<dl[39m
+              [33mclass[39m=[32m"context-summary cognition-detail-summary"[39m
+            [36m>[39m
+              [36m<div>[39m
+                [36m<dt>[39m
+                  [0mPerfil cognitivo[0m
+                [36m</dt>[39m
+                [36m<dd>[39m
+                  [0mbounded-original[0m
+                [36m</dd>[39m
+              [36m</div>[39m
+              [36m<div>[39m
+                [36m<dt>[39m
+                  [0mCapacidad de enfoque[0m
+                [36m</dt>[39m
+                [36m<dd>[39m
+                  [0m16 unidades · 3 saltos · 4 expansiones[0m
+                [36m</dd>[39m
+              [36m</div>[39m
+              [36m<div>[39m
+                [36m<dt>[39m
+                  [0mMemoria de la conversación[0m
+                [36m</dt>[39m
+                [36m<dd>[39m
+                  [0mHistorial de conversaciones[0m
+                  [0m · [0m
+                  [0mPresente (present)[0m
+                  [36m<small>[39m
+                    [0mLa memoria disponible para el chat es su historial guardado. Los motores de memoria general o entre proyectos no están conectados a este chat.[0m
+                  [36m</small>[39m
+                [36m</dd>[39m
+              [36m</div>[39m
+            [36m</dl>[39m
+            [36m<dl[39m
+              [33mclass[39m=[32m"context-source-descriptions"[39m
+            [36m>[39m
+              [36m<div>[39m
+                [36m<dt>[39m
+                  [0mContexto del proyecto[0m
+                [36m</dt>[39m
+                [36m<dd>[39m
+                  [36m<p>[39m
+                    [0mRegistro de contexto del proyecto; mostrar su ubicación no lo incorpora a las instrucciones del modelo.[0m
+                  [36m</p>[39m
+                  [36m<code[39m
+                    [33mclass[39m=[32m"context-location-path"[39m
+                    [33mtabindex[39m=[32m"0"[39m
+                    [33mtitle[39m=[32m"C:/USER PROJECT/project-context"[39m
+                  [36m>[39m
+                    [0mC:/USER PROJECT/project-context[0m
+                  [36m</code>[39m
+                  [36m<details>[39m
+                    [36m<summary>[39m
+                      [0mDatos técnicos originales[0m
+                    [36m</summary>[39m
+                    [36m<pre>[39m
+                      [0m{
+  "id": "project-context",
+  "label": "ORIGINAL LABEL project-context",
+  "purpose": "ORIGINAL PURPOSE project-context"
+}[0m
+                    [36m</pre>[39m
+                  [36m</details>[39m
+                [36m</dd>[39m
+              [36m</div>[39m
+              [36m<div>[39m
+                [36m<dt>[39m
+                  [0mEstado del proyecto[0m
+                [36m</dt>[39m
+                [36m<dd>[39m
+                  [36m<p>[39m
+                    [0mEstado registrado del proyecto y alcance de verificación.[0m
+                  [36m</p>[39m
+                  [36m<code[39m
+                    [33mclass[39m=[32m"context-location-path"[39m
+                    [33mtabindex[39m=[32m"0"[39m
+                    [33mtitle[39m=[32m"C:/USER PROJECT/project-state"[39m
+                  [36m>[39m
+                    [0mC:/USER PROJECT/project-state[0m
+                  [36m</code>[39m
+                  [36m<details>[39m
+                    [36m<summary>[39m
+                      [0mDatos técnicos originales[0m
+                    [36m</summary>[39m
+                    [36m<pre>[39m
+                      [0m{
+  "id": "project-state",
+  "label": "ORIGINAL LABEL project-state",
+  "purpose": "ORIGINAL PURPOSE project-state"
+}[0m
+                    [36m</pre>[39m
+                  [36m</details>[39m
+                [36m</dd>[39m
+              [36m</div>[39m
+              [36m<div>[39m
+                [36m<dt>[39m
+                  [0mContinuidad[0m
+                [36m</dt>[39m
+                [36m<dd>[39m
+                  [36m<p>[39m
+                    [0mTransferencia de continuidad local para el trabajo en el repositorio.[0m
+                  [36m</p>[39m
+                  [36m<code[39m
+                    [33mclass[39m=[32m"context-location-path"[39m
+                    [33mtabindex[39m=[32m"0"[39m
+                    [33mtitle[39m=[32m"C:/USER PROJECT/active-handoff"[39m
+                  [36m>[39m
+                    [0mC:/USER PROJECT/active-handoff[0m
+                  [36m</code>[39m
+                  [36m<details>[39m
+                    [36m<summary>[39m
+                      [0mDatos técnicos originales[0m
+                    [36m</summary>[39m
+                    [36m<pre>[39m
+                      [0m{
+  "id": "active-handoff",
+  "label": "ORIGINAL LABEL active-handoff",
+  "purpose": "ORIGINAL PURPOSE active-handoff"
+}[0m
+                    [36m</pre>[39m
+                  [36m</details>[39m
+                [36m</dd>[39m
+              [36m</div>[39m
+              [36m<div>[39m
+                [36m<dt>[39m
+                  [0mHistorial de conversaciones[0m
+                [36m</dt>[39m
+                [36m<dd>[39m
+                  [36m<p>[39m
+                    [0mMensajes guardados; la conversación seleccionada aporta el historial del chat.[0m
+                  [36m</p>[39m
+                  [36m<code[39m
+                    [33mclass[39m=[32m"context-location-path"[39m
+                    [33mtabindex[39m=[32m"0"[39m
+                    [33mtitle[39m=[32m"C:/USER PROJECT/conversations"[39m
+                  [36m>[39m
+                    [0mC:/USER PROJECT/conversations[0m
+                  [36m</code>[39m
+                  [36m<details>[39m
+                    [36m<summary>[39m
+                      [0mDatos técnicos originales[0m
+                    [36m</summary>[39m
+                    [36m<pre>[39m
+                      [0m{
+  "id": "conversations",
+  "label": "ORIGINAL LABEL conversations",
+  "purpose": "ORIGINAL PURPOSE conversations"
+}[0m
+                    [36m</pre>[39m
+                  [36m</details>[39m
+                [36m</dd>[39m
+              [36m</div>[39m
+              [36m<div>[39m
+                [36m<dt>[39m
+                  [0mTrazas cognitivas[0m
+                [36m</dt>[39m
+                [36m<dd>[39m
+                  [36m<p>[39m
+                    [0mMetadatos de foco cognitivo local registrados para los turnos del chat con modelos.[0m
+                  [36m</p>[39m
+                  [36m<code[39m
+                    [33mclass[39m=[32m"context-location-path"[39m
+                    [33mtabindex[39m=[32m"0"[39m
+                    [33mtitle[39m=[32m"C:/USER PROJECT/cognition-traces"[39m
+                  [36m>[39m
+                    [0mC:/USER PROJECT/cognition-traces[0m
+                  [36m</code>[39m
+                  [36m<details>[39m
+                    [36m<summary>[39m
+                      [0mDatos técnicos originales[0m
+                    [36m</summary>[39m
+                    [36m<pre>[39m
+                      [0m{
+  "id": "cognition-traces",
+  "label": "ORIGINAL LABEL cognition-traces",
+  "purpose": "ORIGINAL PURPOSE cognition-traces"
+}[0m
+                    [36m</pre>[39m
+                  [36m</details>[39m
+                [36m</dd>[39m
+              [36m</div>[39m
+            [36m</dl>[39m
+          [36m</details>[39m
+        [36m</div>[39m
+      [36m</details>[39m
+    [36m</div>[39m
+  [36m</div>[39m
+[36m</body>[39m
+ ❯ waitForWrapper ../../integrated-services-20261023/.venv/chat-markdown-node/node_modules/@testing-library/dom/dist/wait-for.js:163:27
+ ❯ ../../integrated-services-20261023/.venv/chat-markdown-node/node_modules/@testing-library/dom/dist/query-helpers.js:86:33
+ ❯ tests/i18n/agents/auxiliary.test.tsx:29:83
+     27| it('changes a saved mode notice reactively without issuing a second se…
+     28|  const changed=vi.fn();vi.stubGlobal('fetch',vi.fn(async()=>response(m…
+     29|  render(<CognitionSettings mode="baseline" onModeChange={changed}/>);a…
+       |                                                                                   ^
+     30|  fireEvent.click(screen.getByRole('radio',{name:/BAGO5/}));expect(chan…
+     31|  act(()=>setLocale('en'));expect(screen.getByText('BAGO5 experimental …
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed | 6 passed (7)
+      Tests  2 failed | 62 passed (64)
+   Start at  02:26:07
+   Duration  5.96s (environment 47%, tests 24%, import 20%, transform 8%)
+

@@ -1,0 +1,130 @@
+{
+  "scope": "LI01 phase snapshot; preserves composed predecessor bytes in before and exact implementation delta",
+  "files": [
+    {
+      "path": "docs/communications-navigation-20261024/context-readability-lite/implementation/ACCEPTANCE_RESULTS.json",
+      "sha256": "1a69e9593c433a3457d087a62f43394459725b4a91c535748d254dfca381ecfb",
+      "snapshot": "docs/communications-navigation-20261024/context-readability-lite/implementation/objects/1a69e9593c433a3457d087a62f43394459725b4a91c535748d254dfca381ecfb"
+    },
+    {
+      "path": "docs/communications-navigation-20261024/context-readability-lite/implementation/BEFORE.json",
+      "sha256": "5c49f3be08d1fdb6bc005691a4c43bf52c53c09197216ebe550cb37b4bc113e6",
+      "snapshot": "docs/communications-navigation-20261024/context-readability-lite/implementation/objects/5c49f3be08d1fdb6bc005691a4c43bf52c53c09197216ebe550cb37b4bc113e6"
+    },
+    {
+      "path": "docs/communications-navigation-20261024/context-readability-lite/implementation/FREEZE.json",
+      "sha256": "5681c56186d3f136f71145e341140c0e569f4730e7f9c55646a942e513436c35",
+      "snapshot": "docs/communications-navigation-20261024/context-readability-lite/implementation/objects/5681c56186d3f136f71145e341140c0e569f4730e7f9c55646a942e513436c35"
+    },
+    {
+      "path": "docs/communications-navigation-20261024/context-readability-lite/implementation/LITE_FINAL.patch",
+      "sha256": "fa9c26c184392037dae7ec297fbb414eedca31d5a94e918024b7c613f4cee614",
+      "snapshot": "docs/communications-navigation-20261024/context-readability-lite/implementation/objects/fa9c26c184392037dae7ec297fbb414eedca31d5a94e918024b7c613f4cee614"
+    },
+    {
+      "path": "docs/communications-navigation-20261024/context-readability-lite/implementation/LITE_PROTOTYPE.patch",
+      "sha256": "77568dd419d5ed018283e8cb65edd17968f16661e86c4db803090db58df26768",
+      "snapshot": "docs/communications-navigation-20261024/context-readability-lite/implementation/objects/77568dd419d5ed018283e8cb65edd17968f16661e86c4db803090db58df26768"
+    },
+    {
+      "path": "docs/communications-navigation-20261024/context-readability-lite/implementation/MANAGED_CHECK.json",
+      "sha256": "dcadab6d2649cef6ed4bde0bffbe5ea21d2bca260f7f0f42d1b31a3bb9b73b61",
+      "snapshot": "docs/communications-navigation-20261024/context-readability-lite/implementation/objects/dcadab6d2649cef6ed4bde0bffbe5ea21d2bca260f7f0f42d1b31a3bb9b73b61"
+    },
+    {
+      "path": "docs/communications-navigation-20261024/context-readability-lite/implementation/PRESERVATION_PROOF.json",
+      "sha256": "468a751ff04094b47a11c00d765b8a717163982932c076a04e1ff398c603cf84",
+      "snapshot": "docs/communications-navigation-20261024/context-readability-lite/implementation/objects/468a751ff04094b47a11c00d765b8a717163982932c076a04e1ff398c603cf84"
+    },
+    {
+      "path": "docs/communications-navigation-20261024/context-readability-lite/implementation/REPORT.md",
+      "sha256": "4d17f7250070f8e5b6d00a7c2efdc42ed95f25be6126bfbc2d1ba2ff9d4535f9",
+      "snapshot": "docs/communications-navigation-20261024/context-readability-lite/implementation/objects/4d17f7250070f8e5b6d00a7c2efdc42ed95f25be6126bfbc2d1ba2ff9d4535f9"
+    },
+    {
+      "path": "docs/communications-navigation-20261024/context-readability-lite/implementation/SOURCE_DELTA.json",
+      "sha256": "a67ff5d622d6dc8a65b940818171606eb56782c72c1d76982bc187c918350343",
+      "snapshot": "docs/communications-navigation-20261024/context-readability-lite/implementation/objects/a67ff5d622d6dc8a65b940818171606eb56782c72c1d76982bc187c918350343"
+    },
+    {
+      "path": "docs/communications-navigation-20261024/context-readability-lite/implementation/acceptance.py",
+      "sha256": "c390e77b3047ea26ede6c856ad5cb45f131ce0e678c9d17fd01d9a7d6542474c",
+      "snapshot": "docs/communications-navigation-20261024/context-readability-lite/implementation/objects/c390e77b3047ea26ede6c856ad5cb45f131ce0e678c9d17fd01d9a7d6542474c"
+    },
+    {
+      "path": "docs/communications-navigation-20261024/context-readability-lite/implementation/attempt-01-ACCEPTANCE_RESULTS.json",
+      "sha256": "79702ce1c252572dfcc44ad7561a7bd7b6cb31cc4112c18c1e583a7dbc1327a0",
+      "snapshot": "docs/communications-navigation-20261024/context-readability-lite/implementation/objects/79702ce1c252572dfcc44ad7561a7bd7b6cb31cc4112c18c1e583a7dbc1327a0"
+    },
+    {
+      "path": "docs/communications-navigation-20261024/context-readability-lite/implementation/attempt-01-MANAGED_CHECK.json",
+      "sha256": "2558754ce4235961e0aedc8235081392c74485fd0045dc1f59ef11584cf8248d",
+      "snapshot": "docs/communications-navigation-20261024/context-readability-lite/implementation/objects/2558754ce4235961e0aedc8235081392c74485fd0045dc1f59ef11584cf8248d"
+    },
+    {
+      "path": "docs/communications-navigation-20261024/context-readability-lite/implementation/attempt-01-acceptance.py",
+      "sha256": "c390e77b3047ea26ede6c856ad5cb45f131ce0e678c9d17fd01d9a7d6542474c",
+      "snapshot": "docs/communications-navigation-20261024/context-readability-lite/implementation/objects/c390e77b3047ea26ede6c856ad5cb45f131ce0e678c9d17fd01d9a7d6542474c"
+    },
+    {
+      "path": "docs/communications-navigation-20261024/context-readability-lite/implementation/attempt-01-focused.log",
+      "sha256": "2d167a5d2d5c4ca33df5df396298687d22acbdeb68aa0421e68f7fa6078a9a60",
+      "snapshot": "docs/communications-navigation-20261024/context-readability-lite/implementation/objects/2d167a5d2d5c4ca33df5df396298687d22acbdeb68aa0421e68f7fa6078a9a60"
+    },
+    {
+      "path": "docs/communications-navigation-20261024/context-readability-lite/implementation/before/frontend/src/components/CognitionSettings.tsx",
+      "sha256": "ce08f544d6fc61033500c5d85f7c216558350a78b9a45efd8a7f3249b2e75009",
+      "snapshot": "docs/communications-navigation-20261024/context-readability-lite/implementation/objects/ce08f544d6fc61033500c5d85f7c216558350a78b9a45efd8a7f3249b2e75009"
+    },
+    {
+      "path": "docs/communications-navigation-20261024/context-readability-lite/implementation/before/frontend/src/components/ContextReadability.css",
+      "sha256": "e6d893f6834fe529ca85ddfae67b0ba10ad8538093beea5dceddaba412024500",
+      "snapshot": "docs/communications-navigation-20261024/context-readability-lite/implementation/objects/e6d893f6834fe529ca85ddfae67b0ba10ad8538093beea5dceddaba412024500"
+    },
+    {
+      "path": "docs/communications-navigation-20261024/context-readability-lite/implementation/before/frontend/src/i18n/domains/common.ts",
+      "sha256": "f27f673ec928d99525e5fba15efcab92eedeb901b50d34a61dc4677ff176904f",
+      "snapshot": "docs/communications-navigation-20261024/context-readability-lite/implementation/objects/f27f673ec928d99525e5fba15efcab92eedeb901b50d34a61dc4677ff176904f"
+    },
+    {
+      "path": "docs/communications-navigation-20261024/context-readability-lite/implementation/before/frontend/tests/ui/context/context-readability.test.tsx",
+      "sha256": "e6b885c35d3dfd3cbe8a4dc1c349962d27c24297ff10ca24e7c03ec4bf0dfa05",
+      "snapshot": "docs/communications-navigation-20261024/context-readability-lite/implementation/objects/e6b885c35d3dfd3cbe8a4dc1c349962d27c24297ff10ca24e7c03ec4bf0dfa05"
+    },
+    {
+      "path": "docs/communications-navigation-20261024/context-readability-lite/implementation/build.log",
+      "sha256": "7b9ec98af8b0c9683b085f2e488c2af0976f82092e15d36988e77cfadc9caf59",
+      "snapshot": "docs/communications-navigation-20261024/context-readability-lite/implementation/objects/7b9ec98af8b0c9683b085f2e488c2af0976f82092e15d36988e77cfadc9caf59"
+    },
+    {
+      "path": "docs/communications-navigation-20261024/context-readability-lite/implementation/finish.py",
+      "sha256": "3352c28bc50ac1ba8211bb066e544b19e9b0d72d7017d7dd1d8d93fbcf9fe0e8",
+      "snapshot": "docs/communications-navigation-20261024/context-readability-lite/implementation/objects/3352c28bc50ac1ba8211bb066e544b19e9b0d72d7017d7dd1d8d93fbcf9fe0e8"
+    },
+    {
+      "path": "docs/communications-navigation-20261024/context-readability-lite/implementation/focused.log",
+      "sha256": "35410254c8e2180496baba5882179314a68cfd436c7a3ef3b449aacc430720b7",
+      "snapshot": "docs/communications-navigation-20261024/context-readability-lite/implementation/objects/35410254c8e2180496baba5882179314a68cfd436c7a3ef3b449aacc430720b7"
+    },
+    {
+      "path": "frontend/src/components/CognitionSettings.tsx",
+      "sha256": "e47771464d9806378f7282a526674b2b1b910e58177c73e64dea417b1bd861ff",
+      "snapshot": "docs/communications-navigation-20261024/context-readability-lite/implementation/objects/e47771464d9806378f7282a526674b2b1b910e58177c73e64dea417b1bd861ff"
+    },
+    {
+      "path": "frontend/src/components/ContextReadability.css",
+      "sha256": "c8a01af94e6ed6ebcc823e1c641b9e949cbf2487546760b95a47330cecb242e0",
+      "snapshot": "docs/communications-navigation-20261024/context-readability-lite/implementation/objects/c8a01af94e6ed6ebcc823e1c641b9e949cbf2487546760b95a47330cecb242e0"
+    },
+    {
+      "path": "frontend/src/i18n/domains/common.ts",
+      "sha256": "0be756cdf96f428aeecfc08dc0617b0fcf45db32497ea7470a384223c0508551",
+      "snapshot": "docs/communications-navigation-20261024/context-readability-lite/implementation/objects/0be756cdf96f428aeecfc08dc0617b0fcf45db32497ea7470a384223c0508551"
+    },
+    {
+      "path": "frontend/tests/ui/context/context-readability.test.tsx",
+      "sha256": "fa9e8463376aa618104394f6690801c37344002e6eb667a41c8636a91bbed263",
+      "snapshot": "docs/communications-navigation-20261024/context-readability-lite/implementation/objects/fa9e8463376aa618104394f6690801c37344002e6eb667a41c8636a91bbed263"
+    }
+  ]
+}
