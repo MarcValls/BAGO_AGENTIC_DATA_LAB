@@ -10,3 +10,5 @@
 /src/workspace_sdk/reused_primitives.py -text
 /src/workspace_sdk/sync_primitives.py -text
 /src/workspace_sdk/workspace_service.py -text
+# Content-addressed historical evidence must retain its recorded byte identity.
+/docs/final-beige/predecessor/objects/* -text

@@ -53,17 +53,18 @@ def index(files):
  for line in (ROOT/'.gitattributes').read_text().splitlines():
   if line and not line.startswith('#'):
    name,attribute=line.split();assert attribute=='-text';pins.append(name.lstrip('/'))
- assert len(pins)==11
+ assert len(pins)>=11
  rows=[]
  for name in staged:
   if name not in files or name not in entries:continue
   mode,blob,stage=entries[name]
   if stage!='0' or mode not in {'100644','100755'}:issues.append({'path':name,'reason':'Conflict or unsupported index mode'});continue
   raw=files[name];binary=b'\x00' in raw or Path(name).suffix.lower() in {'.png','.jpg','.jpeg','.gif','.webp','.pdf','.ico','.woff','.woff2'}
-  expected=raw if name in pins or binary else raw.replace(b'\r\n',b'\n')
+  raw_pin=git('check-attr','--cached','text','--',name).strip().endswith(b': text: unset')
+  expected=raw if raw_pin or binary else raw.replace(b'\r\n',b'\n')
   actual=git('cat-file','blob',blob)
   if actual!=expected:issues.append({'path':name,'reason':'Index differs from admitted raw-pin/binary or normalized text bytes'})
-  rows.append({'path':name,'git_blob_sha1':blob,'index_sha256':digest(actual),'working_sha256':digest(raw),'raw_pin':name in pins,'normalization_changes_bytes':raw!=expected})
+  rows.append({'path':name,'git_blob_sha1':blob,'index_sha256':digest(actual),'working_sha256':digest(raw),'raw_pin':raw_pin,'normalization_changes_bytes':raw!=expected})
  return {'status':'FAIL' if issues else 'PASS','issues':issues,'staged':len(staged),'files':rows,'scope':'Actual index blobs, not prospective hash-object examples; historical source hashes are retained without rewriting'}
 def main():
  parser=argparse.ArgumentParser(description=__doc__)

@@ -1,12 +1,12 @@
 // @vitest-environment jsdom
 import React from 'react'
 import {afterEach,beforeEach,expect,it,vi} from 'vitest'
-import {cleanup,fireEvent,render,screen,waitFor} from '@testing-library/react'
+import {act,cleanup,fireEvent,render,screen,waitFor} from '@testing-library/react'
 import {readFileSync} from 'node:fs'
 import postcss from 'postcss'
 import CognitionSettings from '../../../src/components/CognitionSettings'
 import ProjectContextDocument from '../../../src/components/ProjectContextDocument'
-import {resetLocaleForTests,t} from '../../../src/i18n'
+import {resetLocaleForTests,setLocale,t} from '../../../src/i18n'
 const root='C:/SYNTHETIC/'+('long-folder/'.repeat(20))
 const ids=['project-context','project-state','active-handoff','conversations','cognition-traces']
 const paths=ids.map(id=>({id,label:'ORIGINAL '+id,path:root+id,state:'present' as const,purpose:'ORIGINAL PURPOSE '+id}))
@@ -18,12 +18,13 @@ it('opts in only Settings long paths and retains every metadata/source value wit
  const fetch=vi.fn(async()=>response(metadata));vi.stubGlobal('fetch',fetch)
  const view=render(<CognitionSettings mode="baseline" onModeChange={vi.fn()}/>);await screen.findByText('EXACT_PROFILE')
  const scope=view.container.querySelector('.cognition-context')!
- expect(scope.querySelectorAll('.cognition-context-summary > div')).toHaveLength(4)
+ expect(scope.querySelectorAll('.cognition-context-summary > div')).toHaveLength(1)
+ expect(scope.querySelectorAll('.cognition-detail-summary > div')).toHaveLength(3)
  expect(scope.querySelectorAll('.context-source-grid > .workspace-source')).toHaveLength(5)
  const code=scope.querySelector('.cognition-context-summary code') as HTMLElement
  expect(code.textContent).toBe(root);expect(code.title).toBe(root);expect(code.tabIndex).toBe(0)
  code.focus();expect(document.activeElement).toBe(code)
- for(const path of paths){const el=Array.from(scope.querySelectorAll('.context-source-grid > .workspace-source > code')).find(el=>el.textContent===path.path) as HTMLElement;expect(el.title).toBe(path.path);expect(el.tabIndex).toBe(0);expect(el.classList.contains('context-location-path')).toBe(true)}
+ for(const path of paths){const el=Array.from(scope.querySelectorAll('code.context-location-path')).find(el=>el.textContent===path.path) as HTMLElement;expect(el.title).toBe(path.path);expect(el.tabIndex).toBe(0);expect(el.classList.contains('context-location-path')).toBe(true)}
  expect(fetch).toHaveBeenCalledExactlyOnceWith('/api/chat/context',expect.objectContaining({signal:expect.any(AbortSignal)}))
 })
 it('leaves WorkspaceOnly without new classes or path focus stops and preserves its input',async()=>{
@@ -78,4 +79,28 @@ it('scopes compact layout to Settings, preserves native details and prose, and a
  expect(css).toContain('align-items: start')
  expect(css).toContain('overflow-x: auto');expect(css).toContain('text-overflow: clip')
  expect(css).not.toMatch(/project-document-content|project-json|\.workspace-settings|\.workspace-sources/)
+})
+
+it('defaults secondary metadata/prose to one closed native Details, retains disclosure state across ES/EN without refetch',async()=>{
+ const fetch=vi.fn(async()=>response(metadata));vi.stubGlobal('fetch',fetch)
+ const view=render(<CognitionSettings mode="baseline" onModeChange={vi.fn()}/>);await screen.findByText('EXACT_PROFILE')
+ const details=view.container.querySelector('.cognition-context-details') as HTMLDetailsElement
+ expect(details.open).toBe(false);expect(details.querySelector(':scope > summary')?.textContent).toBe('Detalles')
+ expect(screen.getByText('EXACT_PROFILE').closest('details')).toBe(details)
+ expect(view.container.querySelector('.context-source-grid p')).toBeNull()
+ expect(view.container.querySelector('.context-sources-heading span')).toBeNull()
+ expect(view.container.querySelector('.cognition-context-intro')).toBeNull()
+ expect(details.querySelectorAll('.context-source-descriptions > div')).toHaveLength(5)
+ details.open=true;fireEvent(details,new Event('toggle',{bubbles:true}))
+ act(()=>setLocale('en'));expect(details.querySelector(':scope > summary')?.textContent).toBe('Details');expect(details.open).toBe(true)
+ act(()=>setLocale('es'));expect(details.open).toBe(true);expect(fetch).toHaveBeenCalledTimes(1)
+})
+it('keeps absent source and non-present/unknown memory state visible outside secondary Details',async()=>{
+ vi.stubGlobal('fetch',vi.fn(async()=>response({...metadata,paths:paths.map(p=>({...p,state:'absent'})),memory:{...metadata.memory,state:'UNEXPECTED_MEMORY_STATE'}})))
+ const view=render(<CognitionSettings mode="baseline" onModeChange={vi.fn()}/>);await screen.findByText('EXACT_PROFILE')
+ const critical=view.container.querySelector('.cognition-memory-state')!
+ expect(critical.textContent).toContain('UNEXPECTED_MEMORY_STATE');expect(critical.getAttribute('role')).toBe('status')
+ expect(critical.closest('.cognition-context-details')).toBeNull()
+ expect(view.container.querySelectorAll('.context-source-grid .absent')).toHaveLength(5)
+ for(const source of view.container.querySelectorAll('.context-source-grid .absent'))expect(source.closest('.cognition-context-details')).toBeNull()
 })

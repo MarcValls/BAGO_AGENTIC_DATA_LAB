@@ -1,0 +1,6 @@
+{
+  "state_effects_handlers_before_location_exact": true,
+  "workspace_only_markup_exact": true,
+  "observed_state_label_and_purpose_exact": true,
+  "common_only_new_details_pair": true
+}

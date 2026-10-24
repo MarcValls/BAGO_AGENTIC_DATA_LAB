@@ -1,0 +1,20 @@
+{
+  "status": "FAIL",
+  "verification": {
+    "id": "acceptance",
+    "command": "[\"C:\\\\Python314\\\\python.exe\",\"docs/communications-navigation-20261024/context-readability-lite/implementation/acceptance.py\"]",
+    "result": "FAIL",
+    "evidence": ".bago/team/runtime/executions/de9a08b2b8f94cf29f24b1e8da2a2a5f/receipt.json",
+    "execution_id": "de9a08b2b8f94cf29f24b1e8da2a2a5f"
+  },
+  "execution_id": "de9a08b2b8f94cf29f24b1e8da2a2a5f",
+  "receipt": ".bago/team/runtime/executions/de9a08b2b8f94cf29f24b1e8da2a2a5f/receipt.json",
+  "returncode": 1,
+  "outputs": [
+    {
+      "path": "docs/communications-navigation-20261024/context-readability-lite/implementation/ACCEPTANCE_RESULTS.json",
+      "sha256": "79702ce1c252572dfcc44ad7561a7bd7b6cb31cc4112c18c1e583a7dbc1327a0"
+    }
+  ],
+  "paused_during_execution": false
+}

@@ -1,4 +1,5 @@
 export const es = {
+ 'common.details':'Detalles',
  'common.applicationTitle':'BAGO · Espacio de trabajo',
  'common.exitCode':'Código de salida',
  'common.language':'Idioma de la interfaz', 'common.spanish':'Español', 'common.english':'English',
@@ -42,6 +43,7 @@ export const es = {
  'common.error.sensitive_content':'El contenido contiene datos que no se pueden procesar mediante esta operación.',
 } as const
 export const en: {[K in keyof typeof es]: string} = {
+ 'common.details':'Details',
  'common.applicationTitle':'BAGO · Workspace',
  'common.exitCode':'Exit code',
  'common.language':'Interface language', 'common.spanish':'Español', 'common.english':'English',

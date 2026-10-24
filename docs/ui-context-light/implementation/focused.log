@@ -1,0 +1,13 @@
+
+> bago-portfolio-ui@1.0.0 test
+> vitest run tests/ui/communications/navigation-control-order.test.tsx tests/ui/chat-shell/inspector-color.test.tsx tests/ui/chat-shell/visual-system.test.tsx tests/i18n/core/app-language.test.tsx tests/i18n/agents/auxiliary.test.tsx tests/ui/context/context-readability.test.tsx tests/i18n/core/locale.test.tsx
+
+
+ RUN  v5.0.4 C:/Users/AMTEC_Terminal_1º/Desktop/BAGO5_ADL/.worktrees/agent-chat-write-20261023/frontend
+
+
+ Test Files  7 passed (7)
+      Tests  64 passed (64)
+   Start at  02:26:41
+   Duration  4.63s (environment 50%, import 23%, tests 20%, transform 7%)
+
