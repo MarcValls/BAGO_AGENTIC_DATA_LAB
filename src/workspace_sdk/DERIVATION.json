@@ -1,0 +1,15 @@
+{
+  "schema": "workspace-sdk.derivation.v1",
+  "version": "0.2.0-RC1",
+  "base_version": "0.1.0-RC1",
+  "base_reference": "reference/workspace_service_0_1_0_RC1.py",
+  "base_sha256": "5265e768d408975f67ffcff69e21d5923b1b147ede59177a782afb365737f066",
+  "derived_file": "workspace_service.py",
+  "derived_sha256": "fc16247d6cf1e2023196d91d2391dde86603abc08ff83cd3c876dbf7fbcb88bc",
+  "changes": [
+    "Persistent reviewed write proposals with exact human confirmation",
+    "Durable intent and uncertain-effect recovery without automatic retry",
+    "Windows locked-byte initialization maps contention to busy before any operation"
+  ],
+  "scope": "Unsigned source integrity; behavior verified separately through API/CLI and ADL tests"
+}

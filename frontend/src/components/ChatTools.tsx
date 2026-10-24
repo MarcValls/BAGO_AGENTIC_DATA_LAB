@@ -1,17 +1,26 @@
+import {t, useI18n} from '../i18n'
 import { useEffect, useRef, useState } from 'react'
 import KnowledgeIngest from './KnowledgeIngest'
 import OntologyReview from './OntologyReview'
 import CatalogQuality from './CatalogQuality'
 import './ChatTools.css'
+import Contacts from './Contacts'
+import Communications from './Communications'
+import type { AddressContact } from '../types/contacts'
 
 const tools = [
-  { id: 'source', label: 'Consultar archivo' },
-  { id: 'relations', label: 'Relaciones de conocimiento' },
-  { id: 'catalog', label: 'Catálogo local' },
+  { id: 'contacts', get label(){return t('commerce.contacts')} },
+  { id: 'source', get label(){return t('commerce.consult_file')} },
+  { id: 'relations', get label(){return t('commerce.knowledge_relationships')} },
+  { id: 'catalog', get label(){return t('commerce.local_catalog')} },
 ] as const
 type ToolId = typeof tools[number]['id']
 
-export default function ChatTools() {
+export default function ChatTools({conversationId, onOpenCommunication}: {conversationId?: string; onOpenCommunication?: (id: string) => void}) {
+  useI18n()
+
+  const [selectedContact, setSelectedContact] = useState<AddressContact | null>(null)
+  useEffect(() => {setSelectedContact(null)}, [conversationId])
   const [activeTool, setActiveTool] = useState<ToolId | null>(null)
   const menuRef = useRef<HTMLDetailsElement>(null)
   const launcherRef = useRef<HTMLElement>(null)
@@ -47,15 +56,16 @@ export default function ChatTools() {
         launcherRef.current?.focus()
       }
     }}>
-      <summary ref={launcherRef} aria-controls="chat-tools-options">Herramientas</summary>
-      <div className="chat-tools-options" id="chat-tools-options" role="group" aria-label="Herramientas del chat">
+      <summary ref={launcherRef} aria-controls="chat-tools-options">{t('commerce.tools')}</summary>
+      <div className="chat-tools-options" id="chat-tools-options" role="group" aria-label={t('commerce.chat_tools')}>
         {tools.map(tool => <button key={tool.id} type="button" onClick={() => openTool(tool.id)}>{tool.label}</button>)}
       </div>
     </details>
-    <dialog ref={dialogRef} className="chat-tool-dialog" aria-label={selectedTool?.label ?? 'Herramientas del chat'}
+    <dialog ref={dialogRef} className="chat-tool-dialog" aria-label={selectedTool?.label ?? t('commerce.chat_tools')}
       onCancel={() => setActiveTool(null)} onClose={() => { setActiveTool(null); launcherRef.current?.focus() }}>
-      <header className="chat-tool-dialog-heading"><strong>{selectedTool?.label}</strong><button type="button" onClick={() => setActiveTool(null)} aria-label="Cerrar herramienta">Cerrar <span aria-hidden="true">×</span></button></header>
+      <header className="chat-tool-dialog-heading"><strong>{selectedTool?.label}</strong><button type="button" onClick={() => setActiveTool(null)} aria-label={t('commerce.close_tool')}>{t('commerce.close')} <span aria-hidden="true">×</span></button></header>
       <div className="chat-tool-dialog-body">
+        {activeTool === 'contacts' && <><Contacts inline onUseContact={setSelectedContact} />{selectedContact && <Communications key={selectedContact.id} inline initialContact={selectedContact} conversationId={conversationId} onOpenFull={onOpenCommunication} />}</>}
         {activeTool === 'source' && <KnowledgeIngest />}
         {activeTool === 'relations' && <OntologyReview />}
         {activeTool === 'catalog' && <CatalogQuality />}

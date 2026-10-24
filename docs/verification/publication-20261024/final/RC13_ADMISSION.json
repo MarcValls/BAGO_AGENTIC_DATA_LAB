@@ -1,0 +1,32 @@
+{
+  "status": "PASS",
+  "candidate": "navigation-control-order-20261024-rc13",
+  "archive": "BAGO_ADL_NAVIGATION_20261024_RC13.zip",
+  "archive_sha256": "32f9b1b860a308c2341afbdb9ba83898ba37fab85c8fba90f88738f3cf3c58fe",
+  "public_sources": 492,
+  "package_files": 511,
+  "snapshot_sha256": "9684274534873713947bdbfe56b7cca5aed4d365110b25379e3dc297facb2d20",
+  "frontend_source_files_compared": 211,
+  "extra_frontend_sources": [],
+  "frontend_test": {
+    "status": "INHERITED_EXACT_SOURCE_MATCH",
+    "passed": 476,
+    "files_passed": 53,
+    "build": "PASS",
+    "root_reported_process_exit": 0,
+    "root_process_session": 61459,
+    "log_sha256": "f09f0605a16fb7958e116583cd4b98b3c127a84a190f3fea89cf6c7efa5f1480",
+    "build_log_sha256": "b9dccea572531c6169cc479ffef88ecfe07edb2695ecb6dfa064bf9cd438e551"
+  },
+  "visual": {
+    "status": "INHERITED_EXACT_CANDIDATE",
+    "checks_passed": 22,
+    "captures": 7,
+    "record_sha256": "70a5792aa76519ac3d0eca0a4ad664ff1c436a7bdc1538da1475e54ee57b1f42",
+    "privacy_review": "Seven PNGs personally inspected by publication preparer; no visible names, numbers, emails or QR. Preserved original bytes and masks.",
+    "runtime": "Preview5193; no claim RC13 applied to8093"
+  },
+  "whole_product": "NOT_VALIDATED",
+  "hosted_ci": "NOT_RUN",
+  "external_effects": "NOT_RUN"
+}

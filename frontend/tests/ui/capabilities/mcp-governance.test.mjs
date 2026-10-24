@@ -17,6 +17,9 @@ const server = await createServer({ server: { middlewareMode: true }, appType: '
 const React = await import('react')
 const { act, cleanup, fireEvent, render, screen, waitFor } = await import('@testing-library/react')
 const { default: CapabilityManager } = await server.ssrLoadModule('/src/components/CapabilityManager.tsx')
+const {setLocale,t} = await server.ssrLoadModule('/src/i18n/index.ts')
+setLocale('en') // Explicit English expectation; product default remains Spanish.
+
 
 const catalog = { capabilities: [] }
 const proposals = { proposals: [] }
@@ -86,8 +89,8 @@ describe('Capability Manager local MCP governance route', () => {
     try {
       render(React.createElement(CapabilityManager))
       const button = await screen.findByRole('button', { name: 'Run local MCP fixture' })
-      assert.match(screen.getByText(/Esta demo inicia únicamente/).textContent, /Conexiones externas/)
-      assert.ok(screen.getByRole('heading', { name: 'Conexiones externas' }))
+      assert.match(screen.getByText(/This demonstration starts only/).textContent, /External connections/)
+      assert.ok(screen.getByRole('heading', { name: 'External connections' }))
       assert.equal(stub.calls.some((call) => call.method !== 'GET'), false)
       assert.equal(stub.calls.some((call) => call.url === '/api/demo/mcp-governance'), false)
       assert.equal(button.disabled, false)

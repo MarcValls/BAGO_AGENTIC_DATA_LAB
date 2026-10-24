@@ -1,0 +1,226 @@
+{
+  "candidate": "beige-settings-20261024-rc14",
+  "url": "http://127.0.0.1:5193/",
+  "checks": [
+    {
+      "id": "CSS viewport 1920",
+      "result": "PASS"
+    },
+    {
+      "id": "Default Chat preserved",
+      "result": "PASS"
+    },
+    {
+      "id": "Exactly one Settings in footer",
+      "result": "PASS"
+    },
+    {
+      "id": "Desktop Settings at bottom",
+      "result": "PASS"
+    },
+    {
+      "id": "Beige gradient and rectangular highlight",
+      "result": "PASS"
+    },
+    {
+      "id": "01-chat-settings-footer no document overflow",
+      "result": "PASS"
+    },
+    {
+      "id": "English Settings available",
+      "result": "PASS"
+    },
+    {
+      "id": "02-settings-open no document overflow",
+      "result": "PASS"
+    },
+    {
+      "id": "Native focus returns to Settings",
+      "result": "PASS"
+    },
+    {
+      "id": "03-mensajes-beige no document overflow",
+      "result": "PASS"
+    },
+    {
+      "id": "No duplicated Communications tabs",
+      "result": "PASS"
+    },
+    {
+      "id": "History reachable",
+      "result": "PASS"
+    },
+    {
+      "id": "04-contactos-beige no document overflow",
+      "result": "PASS"
+    },
+    {
+      "id": "Full Contacts remains",
+      "result": "PASS"
+    },
+    {
+      "id": "Collapsed Settings remains accessible",
+      "result": "PASS"
+    },
+    {
+      "id": "05-sidebar-collapsed no document overflow",
+      "result": "PASS"
+    },
+    {
+      "id": "CSS viewport 320",
+      "result": "PASS"
+    },
+    {
+      "id": "06-contactos-320 no document overflow",
+      "result": "PASS"
+    },
+    {
+      "id": "Narrow Settings accessible",
+      "result": "PASS"
+    },
+    {
+      "id": "Narrow language switch",
+      "result": "PASS"
+    },
+    {
+      "id": "Narrow focus return",
+      "result": "PASS"
+    },
+    {
+      "id": "07-mensajes-320 no document overflow",
+      "result": "PASS"
+    },
+    {
+      "id": "CSS viewport 1920",
+      "result": "PASS"
+    },
+    {
+      "id": "No backend mutations",
+      "result": "PASS"
+    }
+  ],
+  "captures": [
+    {
+      "url": "http://127.0.0.1:5193/",
+      "viewport": {
+        "width": 1920,
+        "height": 978
+      },
+      "overflow": false,
+      "path": "visual/01-chat-settings-footer.png",
+      "sha256": "1d6087f45933f73371359ede38403d39882846d2abc78c1a5fc7106d70e03cc3",
+      "pixels": [
+        1920,
+        978
+      ],
+      "privacy": "Private regions masked before pixels saved",
+      "at": "2026-10-23T23:57:29.932813+00:00"
+    },
+    {
+      "url": "http://127.0.0.1:5193/",
+      "viewport": {
+        "width": 1920,
+        "height": 978
+      },
+      "overflow": false,
+      "path": "visual/02-settings-open.png",
+      "sha256": "330e5de2544fe81e071f4af215e41261e7969c11a4a44e882280a6097c236102",
+      "pixels": [
+        1920,
+        978
+      ],
+      "privacy": "Private regions masked before pixels saved",
+      "at": "2026-10-23T23:57:30.287561+00:00"
+    },
+    {
+      "url": "http://127.0.0.1:5193/",
+      "viewport": {
+        "width": 1920,
+        "height": 978
+      },
+      "overflow": false,
+      "path": "visual/03-mensajes-beige.png",
+      "sha256": "c2c3fe118ef3c05a508338699502226fac28c41dc9e39eb6cd792d9f135b46f3",
+      "pixels": [
+        1920,
+        978
+      ],
+      "privacy": "Private regions masked before pixels saved",
+      "at": "2026-10-23T23:57:30.933928+00:00"
+    },
+    {
+      "url": "http://127.0.0.1:5193/",
+      "viewport": {
+        "width": 1920,
+        "height": 978
+      },
+      "overflow": false,
+      "path": "visual/04-contactos-beige.png",
+      "sha256": "d9142e5f7f549881ace242e042fa5de1f21999a8742295b27515971d0996cc7f",
+      "pixels": [
+        1920,
+        978
+      ],
+      "privacy": "Private regions masked before pixels saved",
+      "at": "2026-10-23T23:57:31.372246+00:00"
+    },
+    {
+      "url": "http://127.0.0.1:5193/",
+      "viewport": {
+        "width": 1920,
+        "height": 978
+      },
+      "overflow": false,
+      "path": "visual/05-sidebar-collapsed.png",
+      "sha256": "d5d273b8895d11e45a4505ddb93dbc5bf528642ec9cb28840288faaa4eec1979",
+      "pixels": [
+        1920,
+        978
+      ],
+      "privacy": "Private regions masked before pixels saved",
+      "at": "2026-10-23T23:57:31.757426+00:00"
+    },
+    {
+      "url": "http://127.0.0.1:5193/",
+      "viewport": {
+        "width": 320,
+        "height": 700
+      },
+      "overflow": false,
+      "path": "visual/06-contactos-320.png",
+      "sha256": "349960e2054b9f838c6a1fa705fe2c4bde6274e66cae6a965afe56c199aa0d95",
+      "pixels": [
+        320,
+        700
+      ],
+      "privacy": "Private regions masked before pixels saved",
+      "at": "2026-10-23T23:57:32.027130+00:00"
+    },
+    {
+      "url": "http://127.0.0.1:5193/",
+      "viewport": {
+        "width": 320,
+        "height": 700
+      },
+      "overflow": false,
+      "path": "visual/07-mensajes-320.png",
+      "sha256": "074519934993d5a888eddd5331554af5db4e21daf167accc2e97b80b30708ee6",
+      "pixels": [
+        320,
+        700
+      ],
+      "privacy": "Private regions masked before pixels saved",
+      "at": "2026-10-23T23:57:32.639654+00:00"
+    }
+  ],
+  "settings_style": {
+    "color": "rgb(242, 230, 212)",
+    "background": "linear-gradient(110deg, rgb(59, 51, 41), rgb(41, 39, 32))",
+    "border": "rgb(139, 118, 88)",
+    "radius": "0px",
+    "shadow": "rgb(214, 194, 164) 3px 0px 0px 0px inset"
+  },
+  "status": "PASS",
+  "mutations": [],
+  "scope": "Actual same visible tab; rectangular beige/sidebar footer/default Chat/groups/language/focus/320 and1920. No save, import, send or inference. Physical screenshot size and CSS viewport distinguished."
+}

@@ -6,6 +6,7 @@ import json
 import os
 import sqlite3
 import uuid
+from contextlib import closing
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Literal
@@ -232,6 +233,38 @@ class ConversationStore:
                     raise ConversationNotFound(conversation_id)
                 raise ConversationConflict(conversation_id)
         return self.get(conversation_id)
+
+    def permanently_delete(self, conversation_id: str, expected_revision: int, confirmed: bool = False) -> dict[str, str]:
+        """Remove only a reviewed trashed conversation and its local message refs.
+
+        This does not erase external traces, agent profiles, SQLite free pages or
+        backups. Foreign keys remain enabled and the two deletes are atomic.
+        """
+        if confirmed is not True or type(expected_revision) is not int or expected_revision < 0:
+            raise ValueError("Explicit confirmation and a nonnegative integer revision are required.")
+        with closing(self._connect()) as connection:
+            connection.execute("BEGIN IMMEDIATE")
+            try:
+                row = connection.execute(
+                    "SELECT status,revision FROM conversations WHERE id=? AND project_id=?",
+                    (conversation_id, PROJECT_ID),
+                ).fetchone()
+                if row is None:
+                    raise ConversationNotFound(conversation_id)
+                if row["status"] != "deleted" or row["revision"] != expected_revision:
+                    raise ConversationConflict(conversation_id)
+                connection.execute("DELETE FROM messages WHERE conversation_id=?", (conversation_id,))
+                changed = connection.execute(
+                    "DELETE FROM conversations WHERE id=? AND project_id=? AND status='deleted' AND revision=?",
+                    (conversation_id, PROJECT_ID, expected_revision),
+                ).rowcount
+                if changed != 1:
+                    raise ConversationConflict(conversation_id)
+                connection.commit()
+            except BaseException:
+                connection.rollback()
+                raise
+        return {"id": conversation_id, "status": "permanently_deleted"}
 
     def history(self, conversation_id: str, limit: int = 30) -> list[dict[str, str]]:
         conversation = self.get(conversation_id)

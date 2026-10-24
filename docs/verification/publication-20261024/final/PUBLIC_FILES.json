@@ -1,0 +1,210 @@
+{
+  "scope": "PF01 successor only; add to P1 committed snapshot. Working-tree bytes do not assert final Git-index identity. No runtime, dependencies or archive payload included.",
+  "files": [
+    {
+      "path": ".gitattributes",
+      "size": 673,
+      "working_tree_sha256": "66190c742d64e3fd5d39f8e335fd88396ea9dc77224a18e7196ef45a72fcd26a"
+    },
+    {
+      "path": ".github/workflows/ci.yml",
+      "size": 5613,
+      "working_tree_sha256": "ad1eaaf2aae5a9a56981d0076aa622aeb199307462e471dd77af13d9cefaad2b"
+    },
+    {
+      "path": "docs/verification/publication-20261024/final/ACCEPTANCE.json",
+      "size": 1669,
+      "working_tree_sha256": "68056278c2a79af5424d4bea3cbb87c03b95b8af07bf5b703db5e21ebed775f4"
+    },
+    {
+      "path": "docs/verification/publication-20261024/final/acceptance.py",
+      "size": 3234,
+      "working_tree_sha256": "36d9975d4263c09217ebda81201a0b41b695ed84bce589833b6c0c8bbd7cb747"
+    },
+    {
+      "path": "docs/verification/publication-20261024/final/AUTHORITY_ORDER/authority-design/CAPABILITIES_LIVE.json",
+      "size": 4006,
+      "working_tree_sha256": "2ec759c8352bc97c6930034ea370a8ebfc212b677837f6e82d7139502133efd0"
+    },
+    {
+      "path": "docs/verification/publication-20261024/final/AUTHORITY_ORDER/authority-design/CAPABILITIES_PLAN.md",
+      "size": 12447,
+      "working_tree_sha256": "bc489fcca3cd69d5b801990de8bf4b3293461868bbce125362d3260770ff8ea3"
+    },
+    {
+      "path": "docs/verification/publication-20261024/final/AUTHORITY_ORDER/authority-design/CAPABILITY_COMPONENT_HASHES.json",
+      "size": 2792,
+      "working_tree_sha256": "7b3de698a2dfd555a9a5557d93a38a4bb292828868b5d9776b95145268a7bbb1"
+    },
+    {
+      "path": "docs/verification/publication-20261024/final/AUTHORITY_ORDER/authority-design/PACKAGE_SOURCE_COMPARISON.json",
+      "size": 2292,
+      "working_tree_sha256": "c949083f32164c4ef85962431eea792c2c4fb6c4b8fb894b87761b460cd71a9b"
+    },
+    {
+      "path": "docs/verification/publication-20261024/final/AUTHORITY_ORDER/authority-design/TOOL_CATALOG_MAP.json",
+      "size": 2138,
+      "working_tree_sha256": "40079813705409a6e2f27baf5cf4ea0bd5dcca1db906e5e6180b9ca3a98d04f6"
+    },
+    {
+      "path": "docs/verification/publication-20261024/final/AUTHORITY_ORDER/MANUAL_ES.md",
+      "size": 3260,
+      "working_tree_sha256": "35fa42d95abb2dea0b64bb516683e6ae8d3a047fe3d655193f12a740576c1f54"
+    },
+    {
+      "path": "docs/verification/publication-20261024/final/bootstrap.py",
+      "size": 3610,
+      "working_tree_sha256": "0804243311d303fe1fdc6ea99d0a8188f0bdfe747e72d8882c9c47d0d6f421fa"
+    },
+    {
+      "path": "docs/verification/publication-20261024/final/CHANGE_REQUEST.json",
+      "size": 4081,
+      "working_tree_sha256": "239c9cfdb64e2cb82a5de3fda0c7bb9afc118893fe7ad42f34ef8c31fcada00a"
+    },
+    {
+      "path": "docs/verification/publication-20261024/final/check_controls.py",
+      "size": 3707,
+      "working_tree_sha256": "8ee2878f229fc625009a87e0989666d00b792a1a736da5dd6f9a9be60a133e50"
+    },
+    {
+      "path": "docs/verification/publication-20261024/final/CONTROLS_CHECK.json",
+      "size": 1509,
+      "working_tree_sha256": "8ab364ae1cd2f351e2686c00f9eaeb310bbc99bac07c71b586b670c5f2d6616e"
+    },
+    {
+      "path": "docs/verification/publication-20261024/final/CONTROLS_FINAL.log",
+      "size": 1313,
+      "working_tree_sha256": "05be1031b5234579681e49a2c0d39e3cb464946c4aa58cc7bb3cb80a7c323434"
+    },
+    {
+      "path": "docs/verification/publication-20261024/final/DOCKER_BUILD.log",
+      "size": 2619,
+      "working_tree_sha256": "b9dccea572531c6169cc479ffef88ecfe07edb2695ecb6dfa064bf9cd438e551"
+    },
+    {
+      "path": "docs/verification/publication-20261024/final/DOCKER_TEST.log",
+      "size": 18658,
+      "working_tree_sha256": "f09f0605a16fb7958e116583cd4b98b3c127a84a190f3fea89cf6c7efa5f1480"
+    },
+    {
+      "path": "docs/verification/publication-20261024/final/finish.py",
+      "size": 2825,
+      "working_tree_sha256": "2208f73a057c16ef91301555ba3561f64deb58c32d88da6230784fdeca548e74"
+    },
+    {
+      "path": "docs/verification/publication-20261024/final/HR01_FREEZE.json",
+      "size": 715,
+      "working_tree_sha256": "e6f5158db37249f2b02e8b0aca5376565693b33df738b8342438d67290cdc96f"
+    },
+    {
+      "path": "docs/verification/publication-20261024/final/HR01_IMPORT.json",
+      "size": 2996,
+      "working_tree_sha256": "cd54734ab5855044107bce2539b8d0ac1d14b2dc3ee64006b3ee38ae5141b117"
+    },
+    {
+      "path": "docs/verification/publication-20261024/final/import_frozen_ui.py",
+      "size": 2231,
+      "working_tree_sha256": "ae3178cb23fa11fa3d5aa23a8cc27bc0e2aa9eb734e1c4cade756165a08b33f2"
+    },
+    {
+      "path": "docs/verification/publication-20261024/final/import_rc13_evidence.py",
+      "size": 3328,
+      "working_tree_sha256": "68ae768939f339280a9eefb44f9daf8032ab719e3bd5135e4b76afa070bf65fb"
+    },
+    {
+      "path": "docs/verification/publication-20261024/final/mission.json",
+      "size": 2064,
+      "working_tree_sha256": "efb86ba1bbee6aad4b94993d5f7706c77cade01c8005edcf44432932877134db"
+    },
+    {
+      "path": "docs/verification/publication-20261024/final/P1_SOURCE_BASELINE.json",
+      "size": 37399,
+      "working_tree_sha256": "4693a0606aeb0af06d89e4cc56c5c1f4587dded18ee9b3073cc661e23bade9b1"
+    },
+    {
+      "path": "docs/verification/publication-20261024/final/prepare_controls.py",
+      "size": 2572,
+      "working_tree_sha256": "03ae9bc82ade91e3d5369fce3c1a5b48fb4bd7be7267f4ee06b5965cb9544d7b"
+    },
+    {
+      "path": "docs/verification/publication-20261024/final/RC13_ADMISSION.json",
+      "size": 1358,
+      "working_tree_sha256": "6a4e787010d8994a71c5d3ca54c9a59c3b5293a55554fdfc17175c0f7033585e"
+    },
+    {
+      "path": "docs/verification/publication-20261024/final/RC13_PUBLIC_SNAPSHOT.json",
+      "size": 76922,
+      "working_tree_sha256": "9684274534873713947bdbfe56b7cca5aed4d365110b25379e3dc297facb2d20"
+    },
+    {
+      "path": "docs/verification/publication-20261024/final/README_CHECK.log",
+      "size": 56,
+      "working_tree_sha256": "0c918ee4195d6de23716a7ae6be2e40d8a7ec5024c25522e1cace90e5a3fca2a"
+    },
+    {
+      "path": "docs/verification/publication-20261024/final/REPORT.md",
+      "size": 4606,
+      "working_tree_sha256": "a320e4ec7c4f5486f5a64ca2239e8762899718e3458cf77f5696581f7ea7fafa"
+    },
+    {
+      "path": "docs/verification/publication-20261024/final/visual/01-menu-chat.png",
+      "size": 24610,
+      "working_tree_sha256": "7a6096e7bb6ddfe45221ab38f439c1991702973bb9d5585d405a17eadba8c5a4"
+    },
+    {
+      "path": "docs/verification/publication-20261024/final/visual/02-settings.png",
+      "size": 36707,
+      "working_tree_sha256": "830658c678e8ac366f564f414d1fe7039f67da90c78b06beec28f76bda849a27"
+    },
+    {
+      "path": "docs/verification/publication-20261024/final/visual/03-mensajes.png",
+      "size": 61837,
+      "working_tree_sha256": "68485a5dbd16bed5bc119e467a540d3baa9e0affe90d7cae0fa9ddf9b143fab1"
+    },
+    {
+      "path": "docs/verification/publication-20261024/final/visual/04-contactos.png",
+      "size": 62836,
+      "working_tree_sha256": "ad24ae6f937bd024ca0651597082173a146970c900ce2fd0a43ff7bb3ca91b6c"
+    },
+    {
+      "path": "docs/verification/publication-20261024/final/visual/05-menu-320.png",
+      "size": 24326,
+      "working_tree_sha256": "d15362825c18999044385ba44842b3578bdcebd04b505c18fcba723a185e7c85"
+    },
+    {
+      "path": "docs/verification/publication-20261024/final/visual/06-mensajes-320.png",
+      "size": 21795,
+      "working_tree_sha256": "4a147786a1dc474a78e62fc35aa48dc42476b5df0f33b380d1fd7422b5f83e52"
+    },
+    {
+      "path": "docs/verification/publication-20261024/final/visual/07-contactos-320.png",
+      "size": 30629,
+      "working_tree_sha256": "694c9d569c971bfc8eae4d05534b437dac3c33137bf4b9bae085a6727702c4f7"
+    },
+    {
+      "path": "docs/verification/publication-20261024/final/VISUAL.json",
+      "size": 5773,
+      "working_tree_sha256": "70a5792aa76519ac3d0eca0a4ad664ff1c436a7bdc1538da1475e54ee57b1f42"
+    },
+    {
+      "path": "frontend/src/App.css",
+      "size": 24550,
+      "working_tree_sha256": "5aabb6c16fde081d2f3bf2ac8fb4c8a469346b1fcf7138d373ebcafc91043555"
+    },
+    {
+      "path": "frontend/src/App.tsx",
+      "size": 25206,
+      "working_tree_sha256": "c5e1d2b5d5254ff5bce7a17f474b9a36ac380bed5243900ecc2fb368027a4ca7"
+    },
+    {
+      "path": "frontend/src/NavigationOrder.css",
+      "size": 261,
+      "working_tree_sha256": "a01c44d55ceeb60d5982488965d10ded070983ad6cfe144df4b8a9a98f1dd01c"
+    },
+    {
+      "path": "frontend/tests/ui/communications/navigation-control-order.test.tsx",
+      "size": 5554,
+      "working_tree_sha256": "00a268fdb1f16626e98112f3fee2b34f3dd6ba26dab2ebbfef283310c6137942"
+    }
+  ]
+}

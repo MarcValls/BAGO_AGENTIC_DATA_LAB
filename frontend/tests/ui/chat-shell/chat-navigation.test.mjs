@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict'
-import { after, afterEach, it } from 'node:test'
+import { after, afterEach, beforeEach, it } from 'node:test'
 import { JSDOM } from 'jsdom'
 import { createServer } from 'vite'
 
@@ -22,6 +22,8 @@ dom.window.HTMLElement.prototype.scrollIntoView = () => {}
 const server = await createServer({ server: { middlewareMode: true }, appType: 'custom' })
 const React = await import('react')
 const { cleanup, fireEvent, render, screen, waitFor } = await import('@testing-library/react')
+const {setLocale,resetLocaleForTests}=await server.ssrLoadModule('/src/i18n/index.ts')
+beforeEach(()=>{resetLocaleForTests();setLocale('en')})
 const { default: AgentChat } = await server.ssrLoadModule('/src/components/AgentChat.tsx')
 
 const agent = {

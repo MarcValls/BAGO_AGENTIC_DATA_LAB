@@ -1,9 +1,33 @@
 """Regression tests for the Docker workflow."""
 
 from pathlib import Path
+import fnmatch
+import re
+import shlex
 
 
 ROOT = Path(__file__).parent.parent
+
+
+def test_python_builder_copies_every_included_requirements_file():
+    pending = ["requirements.txt"]
+    required = set()
+    while pending:
+        name = pending.pop()
+        if name in required:
+            continue
+        required.add(name)
+        for line in (ROOT / name).read_text(encoding="utf-8").splitlines():
+            match = re.match(r"^-r\s*(\S+)", line.strip())
+            if match:
+                pending.append((Path(name).parent / match[1]).as_posix())
+    builder = (ROOT / "Dockerfile.ui").read_text(encoding="utf-8").split("# Build frontend", 1)[0]
+    copies = []
+    for line in builder.splitlines():
+        if line.startswith("COPY "):
+            copies.extend(shlex.split(line)[1:-1])
+    missing = sorted(name for name in required if not any(fnmatch.fnmatch(name, source) for source in copies))
+    assert not missing, f"Python builder lacks recursively included requirements files: {missing}"
 
 
 def test_image_sha_tag_uses_event_independent_default_prefix():

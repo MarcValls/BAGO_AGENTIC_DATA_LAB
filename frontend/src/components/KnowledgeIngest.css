@@ -1,4 +1,4 @@
-.knowledge-ingest { max-width: 900px; margin: 16px auto 22px; padding: clamp(16px, 3vw, 28px); border: 1px solid #344b67; border-radius: 16px; background: #101d2d; color: #e4edf7; }
+.knowledge-ingest { max-width: none; margin: 16px 0 22px; padding: clamp(16px, 3vw, 28px); border: 1px solid #344b67; border-radius: 16px; background: #101d2d; color: #e4edf7; }
 .knowledge-ingest header h2 { margin: 0 0 8px; font-size: 1.2rem; }
 .knowledge-ingest header > p:last-child, .knowledge-authority-note, .knowledge-result > p { color: #a8bbd0; font-size: .84rem; line-height: 1.55; }
 .knowledge-ingest form { display: grid; gap: 13px; margin-top: 18px; }

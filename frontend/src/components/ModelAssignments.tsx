@@ -1,3 +1,5 @@
+import type {TranslationKey} from '../i18n'
+import {useI18n,t,localMessage,errorMessage,apiError,formatDate,formatNumber} from '../i18n'
 import { useEffect, useState } from 'react'
 import './ModelAssignments.css'
 
@@ -5,24 +7,26 @@ type Use = { provider_id: string; model_id: string; chat: boolean; orchestrator:
 type Model = { provider_id: string; model_id: string; display_name?: string; label: string; state: string }
 type Policy = { models: Use[]; main_chat: string | null; revision: string; catalog: Model[]; warnings?: string[] }
 const key = (item: { provider_id: string; model_id: string }) => `${item.provider_id}|${item.model_id}`
-const roles = [['rag', 'RAG'], ['tool', 'Herramientas'], ['multi-agent', 'Multiagente']]
+const roles = [['rag', "commerce.providers.retrieval_rag"], ['tool', "commerce.providers.tools"], ['multi-agent', "commerce.providers.multi_agent"]] as const
 const allRoles = roles.map(([id]) => id)
 async function body(response: Response) {
   const data = await response.json()
-  if (!response.ok) throw new Error(data.detail?.message || 'No se pudo guardar la selección de modelos.')
+  if (!response.ok) throw apiError(data,response.status,'commerce')
   return data
 }
 
 export default function ModelAssignments({ onExit }: { onExit: () => void }) {
+  useI18n()
+
   const [policy, setPolicy] = useState<Policy | null>(null)
   const [busy, setBusy] = useState(false)
-  const [error, setError] = useState('')
-  const [notice, setNotice] = useState('')
+  const [error, setError] = useState<any>('')
+  const [notice, setNotice] = useState<any>('')
   const [filter, setFilter] = useState('')
   const load = async () => {
     setBusy(true); setError(''); setNotice('')
     try { setPolicy(await body(await fetch('/api/providers/model-policy'))) }
-    catch (cause) { setError(cause instanceof Error ? cause.message : 'No se pudieron cargar los modelos.') }
+    catch (cause) { setError(cause instanceof Error ? cause : "commerce.providers.could_not_load_the_models") }
     finally { setBusy(false) }
   }
   useEffect(() => { void load() }, [])
@@ -48,9 +52,9 @@ export default function ModelAssignments({ onExit }: { onExit: () => void }) {
       const models = policy.models.map(item => ({ ...item, chat: item.orchestrator }))
       const saved = await body(await fetch('/api/providers/model-policy', { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ models, main_chat: policy.main_chat, expected_revision: policy.revision }) }))
       setPolicy({ ...policy, ...saved })
-      setNotice('Selección guardada.')
+      setNotice("core.ModelAssignments.selection_saved_47850a")
       window.dispatchEvent(new Event('adl-model-policy-changed'))
-    } catch (cause) { setError(cause instanceof Error ? cause.message : 'No se pudo guardar.') }
+    } catch (cause) { setError(cause instanceof Error ? cause : "commerce.providers.could_not_save") }
     finally { setBusy(false) }
   }
   const catalog = policy?.catalog || []
@@ -62,39 +66,39 @@ export default function ModelAssignments({ onExit }: { onExit: () => void }) {
     return result
   }, new Map<string, Model[]>())]
   const valid = policy && (!policy.models.some(item => item.orchestrator) || policy.models.some(item => item.orchestrator && key(item) === policy.main_chat))
-  return <section className="model-assignments" aria-label="Modelos activos y asignación">
-    <header><h3>Modelos activos</h3><button type="button" onClick={() => void load()} disabled={busy}>Actualizar</button></header>
+  return <section className="model-assignments" aria-label={t("core.ModelAssignments.active_models_and_assignment_f7f67b")}>
+    <header><h3>{t("core.ModelAssignments.active_models_2fdf9d")}</h3><button type="button" onClick={() => void load()} disabled={busy}>{t("core.ModelAssignments.refresh_fe5f66")}</button></header>
     <div className="model-assignments-content">
-    {error && <p role="alert">{error}</p>}{notice && <p role="status">{notice}</p>}
-    {busy && <p role="status">Cargando…</p>}
+    {error && <p role="alert">{errorMessage(error)}</p>}{notice && <p role="status">{errorMessage(notice)}</p>}
+    {busy && <p role="status">{t("core.ModelAssignments.loading_205443")}</p>}
     {policy && <>
-      <label className="model-filter">Buscar modelo<input value={filter} onChange={event => setFilter(event.target.value)} placeholder="Proveedor o modelo" /></label>
-      <p className="model-policy-hint">El chat usa los modelos marcados como orquestador. Cada modelo también puede asignarse a todos los agentes o solo a ciertos tipos.</p>
-      {groups.map(([provider, providerModels]) => <section className="model-provider-group" key={provider} aria-label={`Modelos de ${provider}`}>
-        <header><h4>{provider}</h4><span>{providerModels.length} modelos</span></header>
-        <div className="model-assignment-scroll"><table><thead><tr><th scope="col">Modelo</th><th scope="col">Orquestador</th><th scope="col">Todos los agentes</th>{roles.map(([id, label]) => <th key={id} scope="col">{label}</th>)}<th scope="col">Principal</th></tr></thead><tbody>
+      <label className="model-filter">{t("core.ModelAssignments.search_models_1d06c3")}<input value={filter} onChange={event => setFilter(event.target.value)} placeholder={t("core.ModelAssignments.provider_or_model_5ce521")} /></label>
+      <p className="model-policy-hint">{t("core.ModelAssignments.chat_uses_models_enabled_for_orchestration_each_c50cf1")}</p>
+      {groups.map(([provider, providerModels]) => <section className="model-provider-group" key={provider} aria-label={t("core.ModelAssignments.models_from_p0_030b48",{p0:String(provider)})}>
+        <header><h4>{provider}</h4><span>{t('commerce.providers.model_count',{count:formatNumber(providerModels.length)})}</span></header>
+        <div className="model-assignment-scroll"><table><thead><tr><th scope="col">{t("core.ModelAssignments.model_a5ab32")}</th><th scope="col">{t("core.ModelAssignments.orchestrator_554d5f")}</th><th scope="col">{t("core.ModelAssignments.all_agents_9a2307")}</th>{roles.map(([id, label]) => <th key={id} scope="col">{t(label as TranslationKey)}</th>)}<th scope="col">{t("core.ModelAssignments.primary_afc19f")}</th></tr></thead><tbody>
           {providerModels.map(model => {
             const id = key(model), use = policy.models.find(item => key(item) === id)
             const allAgents = allRoles.every(role => use?.agent_types.includes(role))
             const active = Boolean(use?.orchestrator || use?.agent_types.length)
             return <tr key={id} data-model={id}>
-              <th scope="row"><strong>{model.display_name || model.model_id}</strong><small><span className={active ? 'model-policy-state active' : 'model-policy-state'}>{active ? 'Activo' : 'Desactivado'}</span>{model.state === 'unavailable' ? ' · No disponible' : model.state !== 'ready' ? ' · Sin comprobar' : ''}</small></th>
-              <td><input type="checkbox" aria-label={`Orquestador · ${id}`} checked={use?.orchestrator || false} disabled={busy || (model.state === 'unavailable' && !use?.orchestrator)} onChange={event => update(model, 'orchestrator', event.target.checked)} /></td>
-              <td><input type="checkbox" aria-label={`Todos los agentes · ${id}`} checked={allAgents} disabled={busy || (model.state === 'unavailable' && !allAgents)} onChange={event => update(model, 'all_agents', event.target.checked)} /></td>
-              {roles.map(([role, label]) => <td key={role}><input type="checkbox" aria-label={`${label} · ${id}`} checked={use?.agent_types.includes(role) || false} disabled={busy || (model.state === 'unavailable' && !use?.agent_types.includes(role))} onChange={event => update(model, role, event.target.checked)} /></td>)}
-              <td><input type="radio" name="main-chat-model" aria-label={`Principal · ${id}`} checked={policy.main_chat === id} disabled={busy || !use?.orchestrator || model.state === 'unavailable'} onChange={() => { setPolicy({ ...policy, main_chat: id }); setNotice('') }} /></td>
+              <th scope="row"><strong>{model.display_name || model.model_id}</strong><small><span className={active ? 'model-policy-state active' : 'model-policy-state'}>{active ? t("core.ModelAssignments.active_723858") : t("core.ModelAssignments.disabled_e252ef")}</span>{model.state === 'unavailable' ? t("core.ModelAssignments.unavailable_2c8afe") : model.state === 'configured_unverified' ? t("core.ModelAssignments.unverified_c97e62") : model.state === 'ready' ? '' : t('commerce.providers.unknown_state',{code:model.state})}</small></th>
+              <td><input type="checkbox" aria-label={t("core.ModelAssignments.orchestrator_p0_05af57",{p0:String(id)})} checked={use?.orchestrator || false} disabled={busy || (model.state === 'unavailable' && !use?.orchestrator)} onChange={event => update(model, 'orchestrator', event.target.checked)} /></td>
+              <td><input type="checkbox" aria-label={t("core.ModelAssignments.all_agents_p0_7ee8d4",{p0:String(id)})} checked={allAgents} disabled={busy || (model.state === 'unavailable' && !allAgents)} onChange={event => update(model, 'all_agents', event.target.checked)} /></td>
+              {roles.map(([role, label]) => <td key={role}><input type="checkbox" aria-label={t("core.ModelAssignments.p0_p1_ae04d0",{p0:t(label as TranslationKey),p1:String(id)})} checked={use?.agent_types.includes(role) || false} disabled={busy || (model.state === 'unavailable' && !use?.agent_types.includes(role))} onChange={event => update(model, role, event.target.checked)} /></td>)}
+              <td><input type="radio" name="main-chat-model" aria-label={t("core.ModelAssignments.primary_p0_afd6ee",{p0:String(id)})} checked={policy.main_chat === id} disabled={busy || !use?.orchestrator || model.state === 'unavailable'} onChange={() => { setPolicy({ ...policy, main_chat: id }); setNotice('') }} /></td>
             </tr>
           })}
         </tbody></table></div>
       </section>)}
-      {!models.length && <p>No hay modelos disponibles. Configura un proveedor.</p>}
-      {!valid && <p role="status">Elige el modelo principal entre los disponibles para orquestar.</p>}
-      {policy.warnings?.map(warning => <p key={warning} role="status">{warning}</p>)}
+      {!models.length && <p>{t("core.ModelAssignments.no_models_are_available_configure_a_provider_d782b2")}</p>}
+      {!valid && <p role="status">{t("core.ModelAssignments.choose_the_primary_model_from_those_available_fd40ac")}</p>}
+      {policy.warnings?.map(warning => <p key={warning} role="status">{t('commerce.providers.original_detail')}: {warning}</p>)}
     </>}
     </div>
-    <footer className="model-assignments-actions" aria-label="Acciones de modelos activos">
-      <button type="button" className="model-assignments-save" onClick={() => void save()} disabled={busy || !valid}>Guardar</button>
-      <button type="button" onClick={onExit} disabled={busy}>Salir</button>
+    <footer className="model-assignments-actions" aria-label={t("core.ModelAssignments.active_model_actions_bdd497")}>
+      <button type="button" className="model-assignments-save" onClick={() => void save()} disabled={busy || !valid}>{t("core.ModelAssignments.save_13e51a")}</button>
+      <button type="button" onClick={onExit} disabled={busy}>{t("core.ModelAssignments.exit_93fffb")}</button>
     </footer>
   </section>
 }

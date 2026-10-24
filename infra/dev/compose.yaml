@@ -1,0 +1,94 @@
+name: bago-dev-${BAGO_DEV_CANDIDATE:-20261023}${BAGO_DEV_INSTANCE_SUFFIX:-}
+
+x-python: &python
+  image: bago-dev-python:${BAGO_DEV_CANDIDATE:-20261023}-rc1
+  build:
+    context: .
+    dockerfile: docker/python.Dockerfile
+  init: true
+  security_opt: [no-new-privileges:true]
+  cap_drop: [ALL]
+  volumes:
+    - python-test-data:/data
+    - python-results:/results
+
+x-frontend: &frontend
+  image: bago-dev-frontend:${BAGO_DEV_CANDIDATE:-20261023}-rc1
+  build:
+    context: .
+    dockerfile: docker/frontend.Dockerfile
+  init: true
+  security_opt: [no-new-privileges:true]
+  cap_drop: [ALL]
+
+services:
+  frontend:
+    <<: *frontend
+    profiles: [dev]
+    ports: ["127.0.0.1:${BAGO_DEV_FRONTEND_PORT:-5173}:5173"]
+    environment:
+      BAGO_API_PROXY_TARGET: ${BAGO_API_PROXY_TARGET:-http://host.docker.internal:8080}
+      CHOKIDAR_USEPOLLING: "true"
+    volumes:
+      - type: bind
+        source: ${BAGO_DEV_SOURCE:-./context-public/repository}/frontend/src
+        target: /workspace/frontend/src
+        read_only: true
+        bind: {create_host_path: false}
+      - type: bind
+        source: ${BAGO_DEV_SOURCE:-./context-public/repository}/frontend/public
+        target: /workspace/frontend/public
+        read_only: true
+        bind: {create_host_path: false}
+      - frontend-modules:/workspace/frontend/node_modules
+    healthcheck:
+      test: [CMD, node, -e, "fetch('http://127.0.0.1:5173/__bago_dev_health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      interval: 5s
+      timeout: 3s
+      retries: 12
+
+  python-smoke:
+    <<: *python
+    profiles: [test]
+
+  python-test:
+    <<: *python
+    profiles: [test]
+    command: [python, -m, pytest, tests/test_conversation_library.py, tests/test_l2_etl_pipeline.py, tests/test_sqlite_vector_store.py, -q, -p, no:cacheprovider, --basetemp=/data/pytest-focused, --junitxml=/results/python-focused.xml]
+
+  frontend-test:
+    <<: *frontend
+    profiles: [test]
+    command: [sh, -c, "npm run build && npm test -- --reporter=default"]
+
+  api-isolated:
+    <<: *python
+    profiles: [backend]
+    volumes:
+      - api-data:/data
+    environment:
+      BAGO_RUNTIME_MODE: container
+      BAGO_API_HOST: 0.0.0.0
+      BAGO_API_PORT: "8080"
+    ports: ["127.0.0.1:${BAGO_DEV_API_PORT:-8089}:8080"]
+    command: [python, -m, src.api.server]
+    healthcheck:
+      test: [CMD, python, -c, "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8080/api/health', timeout=2).read()"]
+      interval: 5s
+      timeout: 3s
+      retries: 12
+
+  jaeger:
+    image: jaegertracing/jaeger:2.21.0@sha256:3d0ac795ff98aa04d1be04311d2dac6c25b4bfc8322dc02e53bc5b170c5018c3
+    profiles: [observability]
+    ports:
+      - "127.0.0.1:${BAGO_DEV_JAEGER_PORT:-16689}:16686"
+      - "127.0.0.1:${BAGO_DEV_OTLP_PORT:-4329}:4318"
+    security_opt: [no-new-privileges:true]
+    cap_drop: [ALL]
+
+volumes:
+  frontend-modules:
+  python-test-data:
+  api-data:
+  python-results:

@@ -22,6 +22,9 @@ const server = await createServer({ server: { middlewareMode: true }, appType: '
 const React = await import('react')
 const { act, cleanup, fireEvent, render, screen, waitFor } = await import('@testing-library/react')
 const { default: AgentRunner } = await server.ssrLoadModule('/src/components/AgentRunner.tsx')
+const {setLocale,t} = await server.ssrLoadModule('/src/i18n/index.ts')
+setLocale('en') // Explicit English expectation; product default remains Spanish.
+
 const agent = {
   id: 'agent_review_1',
   config: {

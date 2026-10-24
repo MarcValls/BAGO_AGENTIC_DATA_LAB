@@ -1,0 +1,180 @@
+{
+  "files": [
+    {
+      "path": "src/api/agent_management_routes.py",
+      "sha256": "8aea5815719789ab064b2fc9338c60433fc6c5ed936bf2fc0c665fc700e3618c",
+      "base_exists": false
+    },
+    {
+      "path": "src/api/communication_routes.py",
+      "sha256": "75aa10a3ca2ef1f9280f595c244655e142e3cf4532553ec73c18de2b21a77845",
+      "base_exists": false
+    },
+    {
+      "path": "src/api/contacts_routes.py",
+      "sha256": "9bfb0231dfa2aca6d35f99c0df96bd5f8f06ebd4ecc32d8842fc2112f1efd6db",
+      "base_exists": false
+    },
+    {
+      "path": "src/api/server.py",
+      "sha256": "5c1dbf0593b6e1c711090c719faf3b918db4d210d5a5fdf07ea4015558ba8d90",
+      "base_exists": true
+    },
+    {
+      "path": "src/api/whatsapp_routes.py",
+      "sha256": "b73f67030c02540949367688098a8f79364fdf1a186f1d24991c91b70cb0db11",
+      "base_exists": false
+    },
+    {
+      "path": "src/api/workspaces_routes.py",
+      "sha256": "aaf1c697b4a56850b42bc89b4a2b4ba7380be63308cd0e23107b9e9c50d66e64",
+      "base_exists": false
+    },
+    {
+      "path": "src/communications/__init__.py",
+      "sha256": "e4af8534b6841606e02efde8481d9b8ec490ecbfb4b65e6270784687c397c327",
+      "base_exists": false
+    },
+    {
+      "path": "src/communications/service.py",
+      "sha256": "de04665fee760ea2862ef00c7860d04fe94ddc13220c6ae5fd1a0f08cab8da6a",
+      "base_exists": false
+    },
+    {
+      "path": "src/communications/worker.py",
+      "sha256": "942758046ebccf298fb57acd2b076646c4c7209c092a8e066e91bc2b366cb80f",
+      "base_exists": false
+    },
+    {
+      "path": "src/contacts_service/PROVENANCE.json",
+      "sha256": "e51781dfe34a6593a9569810e98b0a754ae6ee88ca924d717dfd48ebc2b6ad7f",
+      "base_exists": false
+    },
+    {
+      "path": "src/contacts_service/REPAIR.patch",
+      "sha256": "5996e630b75af332824f6c43e623646a5712b2046026a4d3ff878e8e24fff342",
+      "base_exists": false
+    },
+    {
+      "path": "src/contacts_service/__init__.py",
+      "sha256": "0c158497acd2c47b7ccf7d9462952a69a11b03ec3057c397cdf7129e8bfcb051",
+      "base_exists": false
+    },
+    {
+      "path": "src/contacts_service/core.py",
+      "sha256": "01c2d22ceed56fce41e1350a6fe78c46d31ae187f25ff13d279f761c06330972",
+      "base_exists": false
+    },
+    {
+      "path": "src/conversations/library.py",
+      "sha256": "4a43fd9a391591459aa734b893366eb2b6e61187e2a0dd787e71b05747fa2cde",
+      "base_exists": true
+    },
+    {
+      "path": "src/services/contacts_bridge.py",
+      "sha256": "ff2a12f29b167ad8290c5fe226621c34f8d3b37881cc2cfb4ff09b9c3777a00e",
+      "base_exists": false
+    },
+    {
+      "path": "src/whatsapp/__init__.py",
+      "sha256": "a4e34558c04899144753d7d77c3066e255ea54591b509061a2afc54899c87720",
+      "base_exists": false
+    },
+    {
+      "path": "src/whatsapp/cdp.py",
+      "sha256": "b6d246849a21cfd1a1f405ad51a31fb52e881ff5145365b64fff5b608700812c",
+      "base_exists": false
+    },
+    {
+      "path": "src/whatsapp/session.py",
+      "sha256": "f23b9211089d83c1d86b71197eb509ac5234d0101859bd4ae822f9297cc2c389",
+      "base_exists": false
+    },
+    {
+      "path": "src/workspace_sdk/__init__.py",
+      "sha256": "e87df8e4aac1b59c609aedafeb4ba5436b72c78491819162e2129a8750dbfee8",
+      "base_exists": false
+    },
+    {
+      "path": "src/workspace_sdk/auth_primitives.py",
+      "sha256": "440ca7b234326dda4107bc060754c10f9286cc5cd7877880dc2da9719784f368",
+      "base_exists": false
+    },
+    {
+      "path": "src/workspace_sdk/reused_primitives.py",
+      "sha256": "2c765bbe6f8fc8d1e5fdfbedea1c764426aae9cd367ae4c88aad302c12c70460",
+      "base_exists": false
+    },
+    {
+      "path": "src/workspace_sdk/sync_primitives.py",
+      "sha256": "dcaf42d40969f969b797550c7023eb073c45032493b5b0285446935eb50b602b",
+      "base_exists": false
+    },
+    {
+      "path": "src/workspace_sdk/workspace_service.py",
+      "sha256": "5265e768d408975f67ffcff69e21d5923b1b147ede59177a782afb365737f066",
+      "base_exists": false
+    },
+    {
+      "path": "tests/test_agent_management.py",
+      "sha256": "2f2fd09aa4ff5787172444a4d623eb5ab837eacc22613f92180deee24bc5da39",
+      "base_exists": false
+    },
+    {
+      "path": "tests/test_chat_communications.py",
+      "sha256": "eadd7588d48c8169974fe6c9cd17b3be60dbbdf31090a7f17f3056ec1ef7eaa0",
+      "base_exists": false
+    },
+    {
+      "path": "tests/test_communications.py",
+      "sha256": "40947dca6ec26c43ec833604ea6050795262ff30dec62a336aa87c0a225040cb",
+      "base_exists": false
+    },
+    {
+      "path": "tests/test_contacts_routes.py",
+      "sha256": "3b9fbc3fdcca7552ceed8768a286b28a1fab72cd515a40d980b3ffc4349083c0",
+      "base_exists": false
+    },
+    {
+      "path": "tests/test_conversation_permanent_delete.py",
+      "sha256": "cae4a5ae4dfeadce14bfd08b721064a6341f832a82f6196a9982ebe2cf94440a",
+      "base_exists": false
+    },
+    {
+      "path": "tests/test_integrated_services.py",
+      "sha256": "5b6a9531887c9b168e01bfb83803e61c8845789421b1fa0e6536397359dbe230",
+      "base_exists": false
+    },
+    {
+      "path": "tests/test_whatsapp_cdp_targets.py",
+      "sha256": "d52a3f9aeb07fc1fab135c6af4acf793efa04f84bcb7d83f9cbadf1a80eef141",
+      "base_exists": false
+    },
+    {
+      "path": "tests/test_whatsapp_dom_transport.py",
+      "sha256": "990e2866b1997e1eb74f88dad974ff0caa212a27dac2bbdb5f302b89afeb59e1",
+      "base_exists": false
+    },
+    {
+      "path": "tests/test_whatsapp_session.py",
+      "sha256": "e4b3085ad6c48da00be1e942ef5fc9fcc800677cefeb91373efe657995050965",
+      "base_exists": false
+    },
+    {
+      "path": "tests/test_whatsapp_transport.py",
+      "sha256": "6d9abc19ba0cbad9b93eae822229526ded7425b2116d8136b6af98320f522800",
+      "base_exists": false
+    },
+    {
+      "path": "tests/test_whatsapp_unicode.py",
+      "sha256": "2cbfce08ed5944f9b72fbcbe8ab9dcf1afcb33eca2e7a1e70042686e97288e6b",
+      "base_exists": false
+    },
+    {
+      "path": "tests/test_workspaces_routes.py",
+      "sha256": "053ed86968c47261dc7ccd52132a2d0f36d3f6943a763086907cfd26eee0ab30",
+      "base_exists": false
+    }
+  ],
+  "fingerprint": "a86dca30dfceeb7db47a14f7a263aee84aeee6332b77ff08c9ab0f6bbb5ef753"
+}

@@ -1,0 +1,33 @@
+{
+  "status": "PASS",
+  "candidate": "beige-settings-20261024-rc14",
+  "errors": [],
+  "package_sha256": "5c8e091df12201ed833f5aabeffa6f5f614a2ce36cf2056b51da99d1e7f7c2ff",
+  "snapshot_sources": 492,
+  "zip_files": 511,
+  "freeze_files": 3,
+  "docker": {
+    "frontend_passed": 476,
+    "build": "PASS",
+    "result_sha256": "619ba5bec36bf86c62aafed9887bdc63ddadbb49a19204f6a9b4043b0cc110c3"
+  },
+  "readme": {
+    "full_passed": 945,
+    "full_log_sha256": "6c8c41528d834e5f45e92e6a099f3e6964e911806c99a6bcb26776821f835edf",
+    "check": "PASS",
+    "check_log_sha256": "2631a236820a978efcf0263b94520f51fa859f82366b6690bb0fdecb3ca41429",
+    "execution_records_sha256": "a83dc56398e1ea35e05f482f54936e77a3041e7aa1f119d7ad118e74448e2e63"
+  },
+  "visual": {
+    "checks_passed": 24,
+    "captures": 7,
+    "record_sha256": "e9f886da0a7688354dd0b0969061821d8ae92c3bc7a3651c2309098c42a9f3e6"
+  },
+  "counting": "No addition of BS01 focused tests or repeated/inherited receipts",
+  "limits": [
+    "Google simplified flow remains PROPOSED; no live OAuth demonstrated.",
+    "No WhatsApp send, provider inference or new capability assignment validated.",
+    "Preview observation does not imply application to8093; BS03 gates application.",
+    "Hosted CI/publication NOT_RUN; prior Inspector goal remains paused."
+  ]
+}

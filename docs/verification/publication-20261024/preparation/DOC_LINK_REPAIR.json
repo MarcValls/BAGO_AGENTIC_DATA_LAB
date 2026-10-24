@@ -1,0 +1,6 @@
+{
+  "path": "docs/workspace/README.md",
+  "before_sha256": "892f035e25a908167396120b8bd2aa834f5ffb670ecf9127b2ccb1fdac4262f1",
+  "after_sha256": "2592e9d949c42f958985b73c58b9de7e3ea3d43da7e29902b67e22a287bea0df",
+  "reason": "HOST_DEMO.md absent in both source and base; mark pending rather than invent evidence"
+}

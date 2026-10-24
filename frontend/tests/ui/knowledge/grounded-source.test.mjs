@@ -11,6 +11,9 @@ const server = await createServer({ server: { middlewareMode: true }, appType: '
 const React = await import('react')
 const { act, cleanup, fireEvent, render, screen } = await import('@testing-library/react')
 const { default: KnowledgeIngest } = await server.ssrLoadModule('/src/components/KnowledgeIngest.tsx')
+const {setLocale} = await server.ssrLoadModule('/src/i18n/index.ts')
+setLocale('en') // Explicit English expectation; product default remains Spanish.
+
 
 const answer = {
   run_id: 'rag_run_01', status: 'answered',

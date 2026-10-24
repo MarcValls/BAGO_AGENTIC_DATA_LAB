@@ -1,3 +1,6 @@
+import {setLocale,t} from '../../../../src/i18n'
+import {beforeEach as beforeLocaleExpectation} from 'vitest'
+beforeLocaleExpectation(() => setLocale('en'))
 // @vitest-environment jsdom
 import { strict as assert } from 'node:assert'
 import { cleanup, fireEvent, render, screen } from '@testing-library/react'
@@ -33,8 +36,8 @@ test('renders sequence chronology separately from parent causality and keeps gap
   assert.match(screen.getByText(/Chronology: supplied sequence/).textContent ?? '', /Causality: explicit parent event/)
   assert.equal(screen.getByText('Sequence 1').textContent, 'Sequence 1')
   assert.equal(screen.getByText('Sequence 4').textContent, 'Sequence 4')
-  assert.ok(screen.getByText('sequence gap'))
-  assert.ok(screen.getByText('missing parent'))
+  assert.ok(screen.getByText('Sequence gap (sequence_gap)'))
+  assert.ok(screen.getByText('Missing parent (missing_parent)'))
   assert.ok(screen.getByText('Parent unavailable: missing-parent'))
   assert.ok(screen.getByText('Status: DENY'))
   assert.ok(screen.getByText(/receipt:\/\/evidence-only/))
@@ -61,12 +64,12 @@ test('preserves redaction and does not parse evidence references into receipt ID
     events: [{ event_id: 'e1', trace_id: 'trace-2', sequence: 0, name: 'tool', kind: 'tool', status: 'ERROR', attributes: { input: '[REDACTED]' }, evidence_refs: ['receipt://r-from-ref'] }],
   })
   render(<TraceTimeline timeline={eventWithoutReceipt} />)
-  fireEvent.click(screen.getByText('Inspect supplied event attributes'))
+  fireEvent.click(screen.getByText(t('agents.TraceTimeline.inspect_supplied_event_attributes')))
   assert.ok(screen.getByText('[REDACTED]'))
-  assert.ok(screen.getByText('Redaction markers are shown as received; the inspector cannot verify upstream redaction.'))
+  assert.ok(screen.getByText(t('agents.TraceTimeline.redaction_markers_are_shown_as_received_the_inspector_cannot_verify_up')))
   assert.ok(screen.queryByText('r-from-ref') === null)
-  assert.ok(screen.getByText('Claim correlation unavailable.'))
-  assert.ok(screen.getByText('Action correlation unavailable.'))
+  assert.ok(screen.getByText(t('agents.TraceTimeline.claim_correlation_unavailable')))
+  assert.ok(screen.getByText(t('agents.TraceTimeline.action_correlation_unavailable')))
 })
 
 test('distinguishes missing, empty, loading, error, unsupported and normal trace states', () => {
@@ -82,9 +85,9 @@ test('distinguishes missing, empty, loading, error, unsupported and normal trace
   }
 
   const { unmount } = render(<TraceTimeline />)
-  assert.ok(screen.getByText('Trace data was not provided by the source.'))
+  assert.ok(screen.getByText(t('agents.TraceTimeline.trace_data_was_not_provided_by_the_source')))
   unmount()
   const empty = localTraceToTimeline({ trace_id: 'empty', run_id: 'run-empty', events: [] })
   render(<TraceTimeline timeline={empty} />)
-  assert.ok(screen.getByText('This run has no trace events.'))
+  assert.ok(screen.getByText(t('agents.TraceTimeline.this_run_has_no_trace_events')))
 })

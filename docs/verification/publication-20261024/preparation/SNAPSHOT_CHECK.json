@@ -1,0 +1,1391 @@
+{
+  "status": "PASS",
+  "selected_files": 275,
+  "rc10_compared_files": 487,
+  "source_exceptions": [
+    "README.md",
+    "docs/readme_frontend.md",
+    "docs/readme_manifest.json",
+    "scripts/generate_dynamic_readme.py",
+    "tests/test_readme_presentation.py"
+  ],
+  "base_inputs": [
+    {
+      "path": "docs/readme_frontend.md",
+      "sha256": "ad0bc5b1255c5d60fcdcbc924e2968e87e9c9aad686d6afeff46a36fcc441e09",
+      "base_git_content_equal": true
+    },
+    {
+      "path": "docs/readme_manifest.json",
+      "sha256": "e110d8faf97b05ca0bc9094a41dc60bb01b03a909c8f59397f315149fbbf7552",
+      "base_git_content_equal": true
+    },
+    {
+      "path": "scripts/generate_dynamic_readme.py",
+      "sha256": "765ebf1255d3809d0a6e199d474338f84e621f5de4123cd929f8340b23bcc1b5",
+      "base_git_content_equal": true
+    },
+    {
+      "path": "tests/test_readme_presentation.py",
+      "sha256": "957aee1fc0fab89213cf6b18fbe3838e6ac9554b6bd0a867dd1350c8c114397a",
+      "base_git_content_equal": true
+    }
+  ],
+  "links": [
+    {
+      "source": "README.md",
+      "target": "docs/assets/bago-readme-banner.svg",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "target": "docs/readme_frontend.md",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "target": ".bago/canon/LAB_CONTRACT.md",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "target": ".bago/canon/ARCHITECTURE.md",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "target": "docs/readme_frontend.md",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "target": "frontend/src/App.tsx",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "target": "src/api/server.py",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "target": "docs/assets/readme-20261022/chat.png",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "target": "docs/assets/readme-20261022/workspace.png",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "target": "docs/assets/readme-20261022/chat-created.png",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "target": "docs/assets/readme-20261022/inspect.png",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "target": "docs/assets/readme-20261022/README.md",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "target": "docs/readme_frontend.md",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "target": "docs/governed_rag.md",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "target": "docs/local_vector_store.md",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "target": "docs/ontology_engine.md",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "target": "docs/openmetadata_catalog.md",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "target": "docs/mcp_governance.md",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "target": "docs/readme_frontend.md",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "target": "docs/agent_builder_ui.md",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "target": "docs/agent_evaluation_lab.md",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "target": "docs/readme_frontend.md",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "target": "docs/provider-models-screen.md",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "target": "docs/aws_bedrock_setup.md",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "target": "docs/governed-execution/GEX_V1_NORMATIVE_CONTRACT.md",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "target": "docs/governed-execution/RUNTIME_FIXTURE_PROFILE.md",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "target": "docs/ber/AGENT_RUNNER_SCOPE.md",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "target": "docs/ber/BER_EFFECT_INSPECTOR.md",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "target": "frontend/src/App.tsx",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "target": "src/api/server.py",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "target": ".bago/canon/ARCHITECTURE.md",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "target": "docs/governed-execution/GEX_V1_NORMATIVE_CONTRACT.md",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "target": "docs/observability_evals.md",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "target": ".bago/canon/ARCHITECTURE.md",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "target": "docs/one_command_demo_walkthrough.md",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "target": "docs/sandbox_manager.md",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "target": "docs/assets/readme-20261022/README.md",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "target": "docs/one_command_demo.md",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "target": "docs/one_command_demo_walkthrough.md",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "target": "docs/governed-execution/RUNTIME_FIXTURE_PROFILE.md",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "target": "output/playwright/bruma-market-tutorial/README.md",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "target": "docs/verification/readme-corporate-status-20261022.json",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "target": "docs/verification/github-update-20261022/README.md",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "target": "docs/verification/readme-corporate-status-20261022.json",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "target": "docs/readme_generation.md",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "target": "docs/verification/teamctl-integrity-20261022/README.md",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "target": "docs/agent-chat-control/LOCAL_SETUP.md",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "target": "scripts/run-local-ui.ps1",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "target": "docs/readme_frontend.md",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "target": "docs/one_command_demo.md",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "target": "docs/observability_evals.md",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "target": "docs/otel_jaeger.md",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "target": "evidence/l15_otel_jaeger_live.md",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "target": "docs/readme_frontend.md",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "target": ".bago/canon/STATE.md",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "target": ".bago/canon/ROADMAP.md",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "target": ".bago/canon/LEARNING_LEDGER.md",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "target": "docs/readme_frontend.md",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "target": "docs/agent-chat-control/LOCAL_SETUP.md",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "target": "docs/one_command_demo.md",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "target": "docs/governed-execution/GEX_V1_NORMATIVE_CONTRACT.md",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "target": "docs/ber/AGENT_RUNNER_SCOPE.md",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "target": ".bago/INDEX.md",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "target": ".bago/canon/ARCHITECTURE.md",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "target": ".bago/canon/LEARNING_LEDGER.md",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "target": ".bago/canon/JOB_SKILL_MATRIX.md",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "target": "docs/readme_generation.md",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "target": "docs/readme_manifest.json",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "target": ".bago/INDEX.md",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "target": "agents/CATALOG_MANIFEST.json",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "target": "docs/bago-sync-agent.md",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "target": "LICENSE",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "target": "docs/agent-chat-control/TUTORIAL_PRIMER_USO.md",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "target": "src/orchestration/governed_execution.py",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "target": "src/orchestration/state_graph.py",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "target": "tests/test_l1_governance.py",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "target": "tests/test_l1_integrated_graph.py",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "target": "evidence/l1-governed-execution-completion-20261010/L1_DEMO_RECEIPTS.json",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "target": "evidence/l1-governed-execution-completion-20261010/L1_DEMO_TRANSCRIPT.md",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "target": "evidence/l1-governed-execution-completion-20261010/L1_VALIDATION.md",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "target": "evidence/l1_governed_execution_20261010.md",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "target": "src/etl/pipeline.py",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "target": "tests/test_l2_etl_pipeline.py",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "target": "l2_etl_metadata.db",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "target": "src/metadata/ontology.py",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "target": "src/metadata/ontology_generator.py",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "target": "src/metadata/schema.py",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "target": "tests/test_l3_evidence.py",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "target": "tests/test_l3_ontology.py",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "target": "tests/test_metadata_schema.py",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "target": "docs/ontology_generator.md",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "target": "evidence/l3_ontology_graph.md",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "target": "src/retrieval/governed_rag.py",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "target": "tests/test_retrieval_accuracy.py",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "target": "tests/test_retrieval_benchmark.py",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "target": "docs/governed_rag.md",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "target": "evidence/retrieval_benchmark_results.md",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "target": "src/adapters/mcp_adapter.py",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "target": "tests/test_mcp_governance.py",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "target": "docs/mcp_governance.md",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "target": "evidence/mcp_governed_demo.md",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "target": "evidence/mcp_governed_demo.mp4",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "target": "scripts/run_l6_aws_free_tier_validation.py",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "target": "src/adapters/bedrock_provider_adapter.py",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "target": "tests/test_bedrock_integration.py",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "target": "docs/aws_bedrock_setup.md",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "target": "evidence/bedrock_provider_benchmark.md",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "target": "evidence/l6_aws_free_tier.md",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "target": "evidence/l6_aws_live.md",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "target": "src/adapters/bedrock_kb_adapter.py",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "target": "tests/test_bedrock_kb_adapter.py",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "target": "docs/bedrock_knowledge_base.md",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "target": "evidence/bago_etl_vs_bedrock_kb_comparison.md",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "target": "infra/openmetadata/docker-compose.yml",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "target": "scripts/run_l8_openmetadata_live_validation.py",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "target": "src/adapters/openmetadata_adapter.py",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "target": "tests/test_openmetadata_adapter.py",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "target": "docs/openmetadata_catalog.md",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "target": "evidence/l8_openmetadata_catalog.md",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "target": "evidence/l8_openmetadata_live.md",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "target": "src/agent/governed_knowledge_agent.py",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "target": "tests/test_l9_end_to_end_agent.py",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "target": "docs/commercetools_capstone.md",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "target": "evidence/l9_authorized_actions_20260922.md",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "target": "evidence/l9_commercetools_agent.md",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "target": "scripts/generate_l10_ontology_evidence.py",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "target": "src/agent/governed_knowledge_agent.py",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "target": "src/metadata/ontology_engine.py",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "target": "tests/test_l10_ontology_engine.py",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "target": "docs/ontology_engine.md",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "target": "evidence/l10_ontology_engine.md",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "target": "src/execution/gateway.py",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "target": "src/sandbox/__init__.py",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "target": "src/sandbox/backend.py",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "target": "tests/test_sandbox.py",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "target": "docs/sandbox_manager.md",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "target": "evidence/sandbox_local_restricted.md",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "target": "scripts/run_sandbox_local_validation.py",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "target": "src/evaluation/__init__.py",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "target": "src/evaluation/agent_lab.py",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "target": "src/evaluation/local_evals.py",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "target": "tests/test_l12_observability.py",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "target": "docs/observability_evals.md",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "target": "evidence/l12_observability_evals.md",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "target": "scripts/run_l12_observability_evidence.py",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "target": ".github/workflows/ci.yml",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "target": "demo.py",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "target": "portfolio/README.md",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "target": "tests/test_public_e2e_demo.py",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "target": "docs/public_e2e_demo.md",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "target": "evidence/public_e2e_demo.md",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "target": "scripts/run_l14_vector_store_validation.py",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "target": "src/retrieval/sqlite_vector_store.py",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "target": "tests/test_sqlite_vector_store.py",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "target": "docs/local_vector_store.md",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "target": "evidence/l14_vector_store.md",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "target": "infra/observability/docker-compose.yml",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "target": "scripts/run_l15_otel_live_validation.py",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "target": "src/observability/otel_bridge.py",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "target": "tests/test_l15_otel_bridge.py",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "target": "docs/otel_jaeger.md",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "target": "evidence/l15_otel_jaeger_live.md",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "target": "evidence/l6_aws_free_tier.md",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "target": "evidence/l6_aws_live.md",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "target": "evidence/aws-live-attempts/20261018_nova_lite_throttled.md",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "target": "evidence/aws-live-attempts/20261018_nova_micro_throttled.md",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "target": "output/playwright/bruma-market-tutorial/README.md",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "target": "output/playwright/bruma-market-tutorial/tutorial-bruma-market.mp4",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "target": "output/playwright/bruma-market-tutorial/tutorial-bruma-market.srt",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "target": "output/playwright/bruma-market-tutorial/sha256-manifest.json",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "target": "output/playwright/bruma-market-tutorial/inputs/orders.csv",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "target": "output/playwright/bruma-market-tutorial/inputs/policy.md",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "target": "output/playwright/bruma-market-tutorial/inputs/qa-expected.md",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "target": "output/playwright/bruma-market-tutorial/extracted/orders.json",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "target": "output/playwright/bruma-market-tutorial/extracted/policy-decisions.json",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "target": "output/playwright/bruma-market-tutorial/extracted/run-evidence.json",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "target": "output/playwright/bruma-market-tutorial/cloud-runs/profiles.json",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "target": ".bago/canon/STATE.md",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "target": ".bago/canon/LAB_CONTRACT.md",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "target": ".bago/canon/ARCHITECTURE.md",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "target": ".bago/canon/ROADMAP.md",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "target": ".bago/canon/LEARNING_LEDGER.md",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "target": ".bago/canon/JOB_SKILL_MATRIX.md",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "target": "docs/cv_linkedin/portfolio-demo-v1.md",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "target": "docs/one_command_demo.md",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "target": "docs/one_command_demo_walkthrough.md",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "target": "docs/governed-execution/RUNTIME_FIXTURE_PROFILE.md",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "target": "docs/releases/RELEASE_NOTES_DEMO_V1.md",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "target": "VERSION",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "target": "docs/readme_generation.md",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "target": "docs/readme_manifest.json",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "target": "scripts/generate_dynamic_readme.py",
+      "exists": true
+    },
+    {
+      "source": "README.md",
+      "target": "LICENSE",
+      "exists": true
+    },
+    {
+      "source": "docs/readme_frontend.md",
+      "target": "README.md",
+      "exists": true
+    },
+    {
+      "source": "docs/readme_frontend.md",
+      "target": "docs/agent-chat-control/LOCAL_SETUP.md",
+      "exists": true
+    },
+    {
+      "source": "docs/readme_frontend.md",
+      "target": "docs/verification/readme-corporate-status-20261022.json",
+      "exists": true
+    },
+    {
+      "source": "docs/readme_frontend.md",
+      "target": "frontend/src/components/AgentChat.tsx",
+      "exists": true
+    },
+    {
+      "source": "docs/readme_frontend.md",
+      "target": "frontend/src/App.tsx",
+      "exists": true
+    },
+    {
+      "source": "docs/readme_frontend.md",
+      "target": "docs/assets/readme-20261022/README.md",
+      "exists": true
+    },
+    {
+      "source": "docs/readme_frontend.md",
+      "target": "docs/assets/readme-20261022/README.md",
+      "exists": true
+    },
+    {
+      "source": "docs/readme_frontend.md",
+      "target": "frontend/src/components/AgentTasks.tsx",
+      "exists": true
+    },
+    {
+      "source": "docs/readme_frontend.md",
+      "target": "docs/agent_builder_ui.md",
+      "exists": true
+    },
+    {
+      "source": "docs/readme_frontend.md",
+      "target": "docs/agent_evaluation_lab.md",
+      "exists": true
+    },
+    {
+      "source": "docs/readme_frontend.md",
+      "target": "docs/governed_rag.md",
+      "exists": true
+    },
+    {
+      "source": "docs/readme_frontend.md",
+      "target": "docs/local_vector_store.md",
+      "exists": true
+    },
+    {
+      "source": "docs/readme_frontend.md",
+      "target": "docs/ontology_engine.md",
+      "exists": true
+    },
+    {
+      "source": "docs/readme_frontend.md",
+      "target": "docs/openmetadata_catalog.md",
+      "exists": true
+    },
+    {
+      "source": "docs/readme_frontend.md",
+      "target": "docs/mcp_governance.md",
+      "exists": true
+    },
+    {
+      "source": "docs/readme_frontend.md",
+      "target": "docs/provider-models-screen.md",
+      "exists": true
+    },
+    {
+      "source": "docs/readme_frontend.md",
+      "target": "docs/governed-execution/RUNTIME_FIXTURE_PROFILE.md",
+      "exists": true
+    },
+    {
+      "source": "docs/readme_frontend.md",
+      "target": "docs/ber/AGENT_RUNNER_SCOPE.md",
+      "exists": true
+    },
+    {
+      "source": "docs/readme_frontend.md",
+      "target": "docs/ber/AGENT_RUNNER_FINAL_STATUS.md",
+      "exists": true
+    },
+    {
+      "source": "docs/readme_frontend.md",
+      "target": "docs/observability_evals.md",
+      "exists": true
+    },
+    {
+      "source": "docs/readme_frontend.md",
+      "target": "docs/otel_jaeger.md",
+      "exists": true
+    },
+    {
+      "source": "docs/readme_frontend.md",
+      "target": "docs/agent-chat-control/LOCAL_SETUP.md",
+      "exists": true
+    },
+    {
+      "source": "docs/readme_frontend.md",
+      "target": "scripts/run-local-ui.ps1",
+      "exists": true
+    },
+    {
+      "source": "docs/readme_frontend.md",
+      "target": "docs/verification/readme-corporate-status-20261022.json",
+      "exists": true
+    },
+    {
+      "source": "docs/readme_frontend.md",
+      "target": "frontend/src/App.tsx",
+      "exists": true
+    },
+    {
+      "source": "docs/readme_frontend.md",
+      "target": "frontend/src/components/AgentChat.tsx",
+      "exists": true
+    },
+    {
+      "source": "docs/readme_frontend.md",
+      "target": "frontend/src/components/AgentBuilder.tsx",
+      "exists": true
+    },
+    {
+      "source": "docs/readme_frontend.md",
+      "target": "frontend/src/components/AgentTasks.tsx",
+      "exists": true
+    },
+    {
+      "source": "docs/readme_frontend.md",
+      "target": "frontend/src/components/ProviderSettings.tsx",
+      "exists": true
+    },
+    {
+      "source": "docs/readme_frontend.md",
+      "target": "src/api/server.py",
+      "exists": true
+    },
+    {
+      "source": "docs/readme_frontend.md",
+      "target": "frontend/package.json",
+      "exists": true
+    },
+    {
+      "source": "docs/readme_frontend.md",
+      "target": ".bago/INDEX.md",
+      "exists": true
+    },
+    {
+      "source": "docs/readme_frontend.md",
+      "target": "README.md",
+      "exists": true
+    },
+    {
+      "source": "docs/services/README.md",
+      "target": "docs/integration/CONTRACT.md",
+      "exists": true
+    },
+    {
+      "source": "docs/services/README.md",
+      "target": "docs/public-web/MANUAL.md",
+      "exists": true
+    },
+    {
+      "source": "docs/services/README.md",
+      "target": "src/web_research/README.md",
+      "exists": true
+    },
+    {
+      "source": "docs/services/README.md",
+      "target": "docs/public-web/MANUAL.md",
+      "exists": true
+    },
+    {
+      "source": "docs/services/README.md",
+      "target": "src/contacts_service/core.py",
+      "exists": true
+    },
+    {
+      "source": "docs/services/README.md",
+      "target": "docs/contacts/CONTRACT.md",
+      "exists": true
+    },
+    {
+      "source": "docs/services/README.md",
+      "target": "src/communications/service.py",
+      "exists": true
+    },
+    {
+      "source": "docs/services/README.md",
+      "target": "src/communications/worker.py",
+      "exists": true
+    },
+    {
+      "source": "docs/services/README.md",
+      "target": "docs/services/INTEGRATION.md",
+      "exists": true
+    },
+    {
+      "source": "docs/services/README.md",
+      "target": "src/whatsapp/session.py",
+      "exists": true
+    },
+    {
+      "source": "docs/services/README.md",
+      "target": "docs/whatsapp/CONTRACT.md",
+      "exists": true
+    },
+    {
+      "source": "docs/services/README.md",
+      "target": "SECURITY.md",
+      "exists": true
+    },
+    {
+      "source": "docs/services/README.md",
+      "target": "src/workspace_sdk/workspace_service.py",
+      "exists": true
+    },
+    {
+      "source": "docs/services/README.md",
+      "target": "docs/workspace/CHAT_CONTRACT.md",
+      "exists": true
+    },
+    {
+      "source": "docs/services/README.md",
+      "target": "docs/workspace/README.md",
+      "exists": true
+    },
+    {
+      "source": "docs/services/README.md",
+      "target": "docs/readme_frontend.md",
+      "exists": true
+    },
+    {
+      "source": "docs/services/README.md",
+      "target": "docs/agent-management/CONTRACT.md",
+      "exists": true
+    },
+    {
+      "source": "docs/services/README.md",
+      "target": "src/observability/chat_inspection.py",
+      "exists": true
+    },
+    {
+      "source": "docs/services/README.md",
+      "target": "docs/inspect-correlation/CONTRACT.md",
+      "exists": true
+    },
+    {
+      "source": "docs/services/README.md",
+      "target": "infra/dev/README.md",
+      "exists": true
+    },
+    {
+      "source": "docs/services/README.md",
+      "target": "SECURITY.md",
+      "exists": true
+    },
+    {
+      "source": "docs/verification/publication-20261024/REPORT.md",
+      "target": "docs/verification/publication-20261024/CONTRACT.md",
+      "exists": true
+    },
+    {
+      "source": "docs/verification/publication-20261024/REPORT.md",
+      "target": "docs/verification/publication-20261024/preparation/selection.json",
+      "exists": true
+    },
+    {
+      "source": "docs/verification/publication-20261024/REPORT.md",
+      "target": "docs/verification/publication-20261024/preparation/SOURCE_IDENTITY.json",
+      "exists": true
+    },
+    {
+      "source": "docs/verification/publication-20261024/REPORT.md",
+      "target": "docs/verification/publication-20261024/preparation/ACCEPTANCE_REPAIRED.json",
+      "exists": true
+    },
+    {
+      "source": "docs/verification/publication-20261024/REPORT.md",
+      "target": "docs/verification/publication-20261024/preparation/COPY_MANIFEST.json",
+      "exists": true
+    },
+    {
+      "source": "docs/verification/publication-20261024/REPORT.md",
+      "target": "docs/services/README.md",
+      "exists": true
+    },
+    {
+      "source": "docs/verification/publication-20261024/REPORT.md",
+      "target": "docs/public-web/MANUAL.md",
+      "exists": true
+    },
+    {
+      "source": "docs/verification/publication-20261024/REPORT.md",
+      "target": "docs/agent-write/MANUAL_ES.md",
+      "exists": true
+    },
+    {
+      "source": "docs/verification/publication-20261024/REPORT.md",
+      "target": "docs/workspace/README.md",
+      "exists": true
+    },
+    {
+      "source": "docs/verification/publication-20261024/REPORT.md",
+      "target": "docs/communications-navigation-20261024/MANUAL_ES.md",
+      "exists": true
+    },
+    {
+      "source": "docs/verification/publication-20261024/REPORT.md",
+      "target": "docs/communications-navigation-20261024/HISTORY_PATTERN_PROPOSED.md",
+      "exists": true
+    },
+    {
+      "source": "docs/verification/publication-20261024/REPORT.md",
+      "target": "docs/verification/publication-20261024/captures/MANIFEST.json",
+      "exists": true
+    },
+    {
+      "source": "docs/verification/publication-20261024/REPORT.md",
+      "target": "docs/verification/publication-20261024/captures/01-mensajes.png",
+      "exists": true
+    },
+    {
+      "source": "docs/verification/publication-20261024/REPORT.md",
+      "target": "docs/verification/publication-20261024/captures/02-historial.png",
+      "exists": true
+    },
+    {
+      "source": "docs/verification/publication-20261024/REPORT.md",
+      "target": "docs/verification/publication-20261024/captures/03-contactos.png",
+      "exists": true
+    },
+    {
+      "source": "docs/verification/publication-20261024/REPORT.md",
+      "target": "docs/verification/publication-20261024/captures/04-google.png",
+      "exists": true
+    },
+    {
+      "source": "docs/verification/publication-20261024/REPORT.md",
+      "target": "docs/verification/publication-20261024/captures/05-mensajes-320.png",
+      "exists": true
+    },
+    {
+      "source": "docs/verification/publication-20261024/REPORT.md",
+      "target": "docs/verification/publication-20261024/captures/06-historial-320.png",
+      "exists": true
+    },
+    {
+      "source": "docs/verification/publication-20261024/REPORT.md",
+      "target": "docs/verification/publication-20261024/captures/07-contactos-320.png",
+      "exists": true
+    },
+    {
+      "source": "docs/verification/publication-20261024/REPORT.md",
+      "target": "docs/verification/publication-20261024/LOCAL_DELIVERY_SUMMARY.json",
+      "exists": true
+    },
+    {
+      "source": "docs/verification/publication-20261024/REPORT.md",
+      "target": "docs/verification/publication-20261024/PENDING.md",
+      "exists": true
+    },
+    {
+      "source": "docs/verification/publication-20261024/REPORT.md",
+      "target": "docs/verification/publication-20261024/PENDING.md",
+      "exists": true
+    },
+    {
+      "source": "docs/workspace/README.md",
+      "target": "docs/workspace/CHAT_CONTRACT.md",
+      "exists": true
+    }
+  ],
+  "secret_candidates": [],
+  "over_50_mib": [],
+  "captures": 7,
+  "errors": [],
+  "limitations": "Regex secret scan is limited to selected textual files; synthetic test fixtures and local provenance metadata are intentional; no OCR, provider or live transport inference"
+}

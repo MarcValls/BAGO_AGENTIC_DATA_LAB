@@ -1,6 +1,7 @@
 // @vitest-environment jsdom
 import React from 'react'
-import { afterEach, describe, expect, it, vi } from 'vitest'
+import {resetLocaleForTests} from '../../src/i18n'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { cleanup, fireEvent, render, screen, waitFor, within } from '@testing-library/react'
 import ModelAssignments from '../../src/components/ModelAssignments'
 
@@ -11,6 +12,8 @@ const catalog = [
 ]
 const initial = { models: [], main_chat: null, revision: 'revision-1', catalog, warnings: [] }
 const response = (body: unknown, status = 200) => ({ ok: status < 400, status, json: async () => body })
+
+beforeEach(()=>{localStorage.clear();resetLocaleForTests()})
 
 afterEach(() => { cleanup(); vi.unstubAllGlobals(); vi.restoreAllMocks() })
 
@@ -34,7 +37,7 @@ describe('Model assignments', () => {
     const beta = 'ollama-cloud|beta'
     fireEvent.click(screen.getByRole('checkbox', { name: `Orquestador · ${alpha}` }))
     fireEvent.click(screen.getByRole('radio', { name: `Principal · ${alpha}` }))
-    fireEvent.click(screen.getByRole('checkbox', { name: `RAG · ${alpha}` }))
+    fireEvent.click(screen.getByRole('checkbox', { name: `Recuperación (RAG) · ${alpha}` }))
     fireEvent.click(screen.getByRole('checkbox', { name: `Todos los agentes · ${beta}` }))
     fireEvent.click(screen.getByRole('button', { name: 'Guardar' }))
     await screen.findByText('Selección guardada.')

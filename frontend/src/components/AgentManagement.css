@@ -1,0 +1,23 @@
+.agent-management { max-width: none; margin: 0; padding: 2rem; color: var(--text-primary, #ecf1f7); }
+.agent-management header { display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem; margin-bottom: 1.5rem; }
+.agent-management h1 { font-size: 2rem; margin: .3rem 0 .7rem; }
+.agent-management h2 { font-size: 1.2rem; margin: 0 0 .6rem; overflow-wrap: anywhere; }
+.agent-management p { line-height: 1.6; }
+.agent-management-search { display: grid; gap: .5rem; max-width: none; }
+.agent-management input[type=search] { padding: .8rem; background: #0c1824; color: inherit; border: 1px solid #455d76; border-radius: 6px; font: inherit; }
+.agent-management-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 330px), 1fr)); gap: 1rem; }
+.agent-management article, .agent-management-review, .agent-management-empty { border: 1px solid #3b5269; border-radius: 10px; background: #102131; padding: 1.4rem; }
+.agent-management article { display: flex; flex-direction: column; align-items: flex-start; }
+.agent-management article > code { font-size: .78rem; margin: .5rem 0 1rem; }
+.agent-management code { overflow-wrap: anywhere; }
+.agent-management-model { color: #a9c7e4; font-size: .9rem; }
+.agent-management-type { border: 1px solid #577a9c; border-radius: 20px; padding: .2rem .6rem; font-size: .8rem; }
+.agent-management-actions { display: flex; flex-wrap: wrap; gap: .55rem; margin-top: auto; }
+.agent-management button { background: #224663; color: #f2f6fa; border: 1px solid #6485a3; border-radius: 5px; padding: .65rem .85rem; font: inherit; cursor: pointer; }
+.agent-management button:disabled { opacity: .5; cursor: not-allowed; }
+.agent-management button:focus-visible, .agent-management input:focus-visible { outline: 3px solid #8bd5ff; outline-offset: 3px; }
+.agent-management .agent-management-danger { background: #472a34; border-color: #bf8296; }
+.agent-management-review { border-color: #c28a9a; margin-top: 1.5rem; }
+.agent-management-review:focus { outline: 3px solid #8bd5ff; outline-offset: 3px; scroll-margin-block: 1rem; }
+.agent-management-review label { display: flex; gap: .7rem; margin: 1rem 0; align-items: center; }
+@media(max-width: 720px) { .agent-management { padding: 1rem; } .agent-management header { flex-direction: column; } }

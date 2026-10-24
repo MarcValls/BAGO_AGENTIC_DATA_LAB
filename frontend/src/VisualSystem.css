@@ -1,0 +1,195 @@
+/* BAGO visual cohesion: finite adapters over existing surfaces. No layout or state rules. */
+#root .app-shell {
+  --vs-base: #0b1623;
+  --vs-work: #101f2e;
+  --vs-raised: #162a3b;
+  --vs-line: #30495c;
+  --vs-line-soft: #22394b;
+  --vs-text: #e3edf6;
+  --vs-muted: #abc0d0;
+  --vs-accent: #79c7da;
+  --vs-selection: #1c4054;
+  --vs-focus: #a1e5f0;
+  --vs-header: linear-gradient(105deg, #173a4e, #152e43 65%, #16383e);
+  --vs-font: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  --vs-title: 1.125rem;
+  --vs-space-title-block: 8px;
+  --vs-space-title-inline: 12px;
+  background: var(--vs-base);
+  color: var(--vs-text);
+  font-family: var(--vs-font);
+}
+/* One continuous workspace; page wrappers add no second floating frame. */
+#root .app-shell :is(.workspace-sidebar, .data-layer-navigation, .settings-layer-navigation) {
+  background: var(--vs-base);
+  border-color: var(--vs-line-soft);
+}
+#root .app-shell :is(.app-view, .data-layer-content, .settings-layer-content, .window-panel-content) {
+  background: var(--vs-work);
+}
+#root .app-shell :is(.communications, .contacts-page, .workspace-manager, .agent-management,
+  .agent-builder, .agent-tasks, .agent-runner, .evaluation-lab, .capability-manager,
+  .job-history, .provider-settings, .cognition-settings, .whatsapp-settings,
+  .model-assignments, .decision-inspector-page, .decision-inspector, .ber-effect-record) {
+  background: transparent;
+  border-color: transparent;
+  box-shadow: none;
+}
+/* Existing top-level groups keep one quiet border. No border widths are changed. */
+#root .app-shell :is(.window-panel, .card, .contacts-card, .wm-card,
+  .agent-management article, .agent-task-editor, .agent-task-history,
+  .jobs-list, .job-detail, .capability-card, .capability-proposal, .cognition-context, .provider-pane,
+  .external-connections, .agents-panel, .agent-profile-panel,
+  .workspace-write-review, .decision-inspector__content, .decision-inspector__summary,
+  .decision-inspector__empty, .evidence-explorer__claim, .decision-trace__correlation) {
+  background: var(--vs-work);
+  border-color: var(--vs-line);
+  border-radius: 0;
+  box-shadow: none;
+}
+/* Nested groups are part of their parent rather than another raised card. */
+#root .app-shell :is(.card .card, .card .metric,
+  .window-panel .data-grid-scroll, .wm-card .wm-card,
+  .decision-inspector__summary-grid > div, .decision-inspector__inventory > li,
+  .chat-inspection-counters > div, .chat-inspection-identity > div,
+  .external-connections fieldset, .communications fieldset, .contacts-list > li,
+  .communications-review fieldset, .workspace-manager fieldset) {
+  background: transparent;
+  border-color: transparent;
+  border-top-color: var(--vs-line-soft);
+  border-radius: 0;
+  box-shadow: none;
+}
+/* Reserve the shared gradient for the main chrome of a view. */
+#root .app-shell :is(.data-layer-header, .settings-layer-header,
+  .control-chat-window > .window-panel-titlebar,
+  .app-view > .communications > .communications-heading,
+  .app-view > .contacts-page > .contacts-heading,
+  .app-view > .workspace-manager > header,
+  .app-view > .agent-management > header,
+  .app-view > .agent-builder > .wizard-header,
+  .app-view > .agent-tasks > .agent-tasks-heading,
+  .app-view > .capability-manager > .external-connections > header,
+  .app-view > .agent-runner > .runner-header,
+  .data-layer-content > .job-history > .history-header) {
+  background: var(--vs-header);
+  border-color: var(--vs-line);
+  border-radius: 0;
+  box-shadow: inset 0 -1px var(--vs-accent);
+  padding-block: var(--vs-space-title-block);
+  padding-inline: var(--vs-space-title-inline);
+}
+#root .app-shell :is(.communications-heading h2, .contacts-heading h2, .workspace-manager > header h2,
+  .agent-management > header h1, .wizard-header h2, .agent-tasks-heading h2,
+  .external-connections > header h3, .runner-header h2, .history-header h2) {
+  color: var(--vs-text);
+  font-size: var(--vs-title);
+  font-weight: 650;
+}
+/* Reusable secondary headers use a line, without another gradient. */
+#root .app-shell :is(.window-panel-titlebar, .terminal-pane-titlebar,
+  .data-grid thead, .provider-settings-tabs,
+  .chat-inspection summary, .chat-inspection-execution-select,
+  .chat-agent-panel > summary, .chat-agent-panel .chat-sidebar-heading,
+  .chat-agent-panel .conversation-library-heading) {
+  background: var(--vs-work);
+  border-color: var(--vs-line);
+  box-shadow: inset 0 -1px var(--vs-line-soft);
+}
+/* Disclosure interiors use the same plane; their native marker and state remain. */
+#root .app-shell :is(.workspace-manager, .communications, .contacts-page, .agent-management) details {
+  background: transparent;
+  border-color: var(--vs-line-soft);
+  box-shadow: none;
+}
+#root .app-shell :is(.workspace-manager, .communications, .contacts-page, .agent-management) details > summary {
+  background: var(--vs-work);
+  border-color: var(--vs-line-soft);
+}
+/* Finite neutral ornaments also keep the rectangular visual language. */
+#root .app-shell :is(.welcome-mark, .chat-mode-badge, .prompt-suggestions button,
+  .contacts-card-heading > span, .agent-management-type) { border-radius: 0; }
+#root .app-shell :is(.welcome-mark, .prompt-suggestions button) {
+  background: var(--vs-work);
+  border-color: var(--vs-line);
+}
+/* Full library and quiet Manage action retain their established geometry and behavior. */
+#root .app-shell .control-chat .chat-agent-panel {
+  background: var(--vs-work);
+  border-color: var(--vs-line);
+  border-top-color: var(--vs-accent);
+  box-shadow: none;
+}
+#root .app-shell .control-chat .chat-agent-panel :is(.control-chat-sidebar, .conversation-agent-activity) {
+  background: transparent;
+  border-color: var(--vs-line-soft);
+}
+#root .app-shell .control-chat :is(.chat-composer-input, .control-chat-composer textarea) {
+  background: var(--vs-work);
+  border-color: var(--vs-line);
+  box-shadow: none;
+}
+/* Inspector identity is readable without lighting every counter and action. */
+#root .app-shell .chat-inspection-conversation {
+  background: var(--vs-work);
+  border-color: var(--vs-line);
+  border-left-color: var(--vs-accent);
+  box-shadow: none;
+}
+#root .app-shell .chat-inspection :is(button, select, .chat-inspection-technical) {
+  background: var(--vs-work);
+  border-color: var(--vs-line);
+  border-radius: 0;
+  box-shadow: none;
+}
+#root .app-shell .chat-inspection button:hover {
+  background: var(--vs-selection);
+  border-color: var(--vs-accent);
+}
+#root .app-shell .chat-inspection :is(.chat-inspection-field-label, .chat-inspection-identity dt, .chat-inspection-counters dt) {
+  color: var(--vs-muted);
+}
+#root .app-shell .data-layer :is(.inspection-source-switch, .data-layer-navigation-footer) {
+  background: var(--vs-base);
+  border-color: var(--vs-line);
+}
+#root .app-shell .data-layer .data-layer-navigation-footer .inspector-exit {
+  background: var(--vs-work);
+  border-color: var(--vs-line);
+  box-shadow: none;
+}
+#root .app-shell .data-layer .data-layer-navigation-footer .inspector-exit:hover {
+  background: var(--vs-selection);
+  border-color: var(--vs-accent);
+}
+/* Common selection is limited to navigation and library choices, never decision outcomes. */
+#root .app-shell :is(.navigation-item.active, .tab-strip-item.is-selected,
+  .service-tabs > [role='tab'][aria-selected='true'],
+  .provider-settings-tabs > button.active,
+  .inspection-source-switch > button[aria-pressed='true'],
+  .chat-agent-panel .conversation-library-item.selected,
+  .chat-agent-panel .control-agent-option.selected) {
+  background: var(--vs-selection);
+  border-color: var(--vs-accent);
+  box-shadow: inset 0 -2px var(--vs-accent);
+}
+/* Floating elements alone use the raised plane. Existing stacking and dimensions remain. */
+#root .app-shell :is(.data-layer, .settings-layer, .chat-tool-dialog,
+  .chat-message-context-menu, .conversation-context-menu, .chat-tools-options) {
+  background: var(--vs-raised);
+  border-color: var(--vs-line);
+  border-radius: 0;
+}
+#root .app-shell :is(.data-layer, .settings-layer)::backdrop { background: #050c16b8; }
+/* Keep author frame/background/edge distinctions and semantic status palettes untouched. */
+#root .app-shell .control-chat .control-message > .control-message-heading {
+  background: #16303b;
+  box-shadow: inset 0 -1px #365366;
+}
+#root .app-shell .control-chat .control-message-user > .control-message-heading {
+  background: #21344a;
+  box-shadow: inset 0 -1px #52698e;
+}
+#root .app-shell :is(button, a, input, select, textarea, summary, [tabindex]):focus-visible {
+  outline-color: var(--vs-focus);
+}

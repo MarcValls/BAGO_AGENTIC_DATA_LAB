@@ -1,3 +1,5 @@
+import {agentStateLabel} from '../../../components/AgentTaskForm'
+import {useI18n, t, formatDate, formatNumber, apiError, errorMessage} from '../../../i18n'
 import './ActionReview.css'
 import type { ActionInspectionBundle, ProposedAction } from '../../../contracts/action/action'
 import { validateActionBundle } from '../../../contracts/action/action'
@@ -9,27 +11,27 @@ export interface ActionReviewProps {
 }
 
 const authorizationLabel: Record<ProposedAction['authorization']['state'], string> = {
-  authorized: 'Authorized by recorded decision',
-  rejected: 'Rejected by recorded decision',
-  requires_approval: 'Human approval required',
-  expired: 'Authorization expired',
-  revoked: 'Authorization revoked',
-  unknown: 'Authorization state unknown',
+  get authorized() { return t('agents.ActionReview.authorized_by_recorded_decision') },
+  get rejected() { return t('agents.ActionReview.rejected_by_recorded_decision') },
+  get requires_approval() { return t('agents.ActionReview.human_approval_required') },
+  get expired() { return t('agents.ActionReview.authorization_expired') },
+  get revoked() { return t('agents.ActionReview.authorization_revoked') },
+  get unknown() { return t('agents.ActionReview.authorization_state_unknown') },
 }
 
 const receiptLabel: Record<ProposedAction['receiptLink']['state'], string> = {
-  matched: 'Matched receipt',
-  missing: 'Receipt declared but unavailable',
-  mismatch: 'Receipt mismatch',
-  unknown: 'Receipt link unknown',
+  get matched() { return t('agents.ActionReview.matched_receipt') },
+  get missing() { return t('agents.ActionReview.receipt_declared_but_unavailable') },
+  get mismatch() { return t('agents.ActionReview.receipt_mismatch') },
+  get unknown() { return t('agents.ActionReview.receipt_link_unknown') },
 }
 
 function display(value: string | undefined): string {
-  return value || 'Not provided'
+  return value || t('agents.AgentRunner.not_provided')
 }
 
 function readable(value: string | undefined): string {
-  return value ? value.replace(/_/g, ' ') : 'Unknown'
+  return value ? value.replace(/_/g, ' ') : t('agents.ActionReview.unknown')
 }
 
 /** Defend the display boundary as well as the upstream adapter's receipt link. */
@@ -45,71 +47,73 @@ function receiptState(action: ProposedAction): ProposedAction['receiptLink']['st
 
 function executionState(action: ProposedAction, linkedReceipt: ProposedAction['receiptLink']['state']): string {
   if (action.execution.state === 'succeeded' && linkedReceipt !== 'matched') return 'unverified'
-  return readable(action.execution.state)
+  return action.execution.state
 }
 
 function ReceiptDetails({ action }: { action: ProposedAction }) {
+  useI18n()
   const link = action.receiptLink
   const state = receiptState(action)
   return (
-    <section className={`action-review__receipt action-review__receipt--${state}`} aria-label="Execution receipt">
-      <h4>Receipt</h4>
+    <section className={`action-review__receipt action-review__receipt--${state}`} aria-label={t('agents.ActionReview.execution_receipt')}>
+      <h4>{t('agents.ActionReview.receipt')}</h4>
       <p><strong>{receiptLabel[state]}</strong></p>
-      {link.receiptId && <p>Receipt ID: <code>{link.receiptId}</code></p>}
-      {state === 'missing' && <p>The source declares a receipt, but no matching receipt record was provided.</p>}
-      {state === 'mismatch' && <p>The available receipt does not match the proposal identifiers. Its outcome is not accepted as this action's receipt.</p>}
-      {state === 'unknown' && <p>No receipt relationship was established from the supplied source data.</p>}
+      {link.receiptId && <p>{t('agents.ActionReview.receipt_id')} <code>{link.receiptId}</code></p>}
+      {state === 'missing' && <p>{t('agents.ActionReview.the_source_declares_a_receipt_but_no_matching_receipt_record_was_provi')}</p>}
+      {state === 'mismatch' && <p>{t('agents.ActionReview.the_available_receipt_does_not_match_the_proposal_identifiers_its_outc')}</p>}
+      {state === 'unknown' && <p>{t('agents.ActionReview.no_receipt_relationship_was_established_from_the_supplied_source_data')}</p>}
       {link.receipt && <>
-        {'source' in link.receipt && <p>Receipt source: {String(link.receipt.source)}</p>}
-        <p>Receipt outcome: {display(link.receipt.outcome)}</p>
-        <p>Request ID: <code>{display(link.receipt.requestId)}</code></p>
-        <p>Permit ID: <code>{display(link.receipt.permitId)}</code></p>
-        {link.receipt.error && <p>Receipt error: {link.receipt.error}</p>}
+        {'source' in link.receipt && <p>{t('agents.ActionReview.receipt_source')} {String(link.receipt.source)}</p>}
+        <p>{t('agents.ActionReview.receipt_outcome')} {display(link.receipt.outcome)}</p>
+        <p>{t('agents.ActionReview.request_id')} <code>{display(link.receipt.requestId)}</code></p>
+        <p>{t('agents.ActionReview.permit_id')} <code>{display(link.receipt.permitId)}</code></p>
+        {link.receipt.error && <p>{t('agents.ActionReview.receipt_error')} {link.receipt.error}</p>}
         {link.receipt.evidenceRefs.length > 0
-          ? <ul aria-label="Receipt evidence references">{link.receipt.evidenceRefs.map((ref, index) => <li key={`${ref}-${index}`}><code>{ref}</code></li>)}</ul>
-          : <p>Receipt evidence references: none provided.</p>}
+          ? <ul aria-label={t('agents.ActionReview.receipt_evidence_references')}>{link.receipt.evidenceRefs.map((ref, index) => <li key={`${ref}-${index}`}><code>{ref}</code></li>)}</ul>
+          : <p>{t('agents.ActionReview.receipt_evidence_references_none_provided')}</p>}
       </>}
-      {executionState(action, state) === 'unverified' && <p role="status">The source reports success, but it is unverified because an identity-matched receipt is unavailable.</p>}
+      {executionState(action, state) === 'unverified' && <p role="status">{t('agents.ActionReview.the_source_reports_success_but_it_is_unverified_because_an_identity_ma')}</p>}
     </section>
   )
 }
 
 function ActionCard({ action, index }: { action: ProposedAction; index: number }) {
-  const title = action.id ? `Action ${action.id}` : `Proposed action ${index + 1} (identifier not provided)`
+  useI18n()
+  const title = action.id ? t('agents.ActionReview.action_p0', {p0: action.id}) : t('agents.ActionReview.proposed_action_p0_identifier_not_provided', {p0: index + 1})
   const linkedReceipt = receiptState(action)
   return (
     <article className="action-review__card" aria-labelledby={`action-title-${index}`}>
       <header>
         <h3 id={`action-title-${index}`}>{title}</h3>
-        <p className="action-review__proposal-state">Proposed intent · display only</p>
+        <p className="action-review__proposal-state">{t('agents.ActionReview.proposed_intent_display_only')}</p>
       </header>
       <dl className="action-review__facts">
-        <div><dt>Run ID</dt><dd><code>{display(action.runId)}</code></dd></div>
-        <div><dt>Request ID</dt><dd><code>{display(action.requestId)}</code></dd></div>
-        <div><dt>Tool</dt><dd>{display(action.toolName)}</dd></div>
-        <div><dt>Transport</dt><dd>{display(action.transport)}</dd></div>
-        <div><dt>Effect type</dt><dd>{display(action.effectType)} · risk: {action.risk.replace('_', ' ')}</dd></div>
-        <div><dt>Proposal reason</dt><dd>{display(action.proposalReason)}</dd></div>
-        <div><dt>Approval state</dt><dd>{action.approval === 'required' ? 'Required by recorded decision' : action.approval === 'not_required' ? 'Not required by recorded decision' : 'Not established'}</dd></div>
+        <div><dt>{t('agents.AgentRunner.run_id')}</dt><dd><code>{display(action.runId)}</code></dd></div>
+        <div><dt>{t('agents.AgentRunner.request_id')}</dt><dd><code>{display(action.requestId)}</code></dd></div>
+        <div><dt>{t('agents.ActionReview.tool')}</dt><dd>{display(action.toolName)}</dd></div>
+        <div><dt>{t('agents.ActionReview.transport')}</dt><dd>{display(action.transport)}</dd></div>
+        <div><dt>{t('agents.ActionReview.effect_type')}</dt><dd>{display(action.effectType)} {t('agents.ActionReview.risk')} {agentStateLabel(action.risk)}</dd></div>
+        <div><dt>{t('agents.ActionReview.proposal_reason')}</dt><dd>{display(action.proposalReason)}</dd></div>
+        <div><dt>{t('agents.ActionReview.approval_state')}</dt><dd>{action.approval === 'required' ? t('agents.ActionReview.required_by_recorded_decision') : action.approval === 'not_required' ? t('agents.ActionReview.not_required_by_recorded_decision') : t('agents.ActionReview.not_established')}</dd></div>
       </dl>
-      {action.arguments && <p className="action-review__arguments-note">Arguments were supplied but are hidden here unless a source provides an explicitly redacted view.</p>}
+      {action.arguments && <p className="action-review__arguments-note">{t('agents.ActionReview.arguments_were_supplied_but_are_hidden_here_unless_a_source_provides_a')}</p>}
 
-      <section className="action-review__ladder" aria-label="Authorization and execution lifecycle">
-        <h4>Action lifecycle</h4>
+      <section className="action-review__ladder" aria-label={t('agents.ActionReview.authorization_and_execution_lifecycle')}>
+        <h4>{t('agents.ActionReview.action_lifecycle')}</h4>
         <ol>
-          <li><strong>Capability</strong><span>{action.capability.state}{action.capability.name ? ` · ${action.capability.name}` : ''}</span></li>
-          <li><strong>Eligibility</strong><span>{action.eligibility.state}{action.eligibility.reason ? ` · ${action.eligibility.reason}` : ''}</span></li>
-          <li><strong>Authorization decision</strong><span>{authorizationLabel[action.authorization.state] ?? 'Authorization state unknown'}</span>
-            <span>Permit validity: {readable(action.authorization.permitValidity)}</span>
-            <span>Permit ID: <code>{display(action.authorization.permitId)}</code></span>
-            {action.authorization.actor && <span>Actor: {action.authorization.actor}</span>}
-            {action.authorization.reason && <span>Reason: {action.authorization.reason}</span>}
+          <li><strong>{t('agents.ActionReview.capability')}</strong><span>{agentStateLabel(action.capability.state)}{action.capability.name ? ` · ${action.capability.name}` : ''}</span></li>
+          <li><strong>{t('agents.ActionReview.eligibility')}</strong><span>{agentStateLabel(action.eligibility.state)}{action.eligibility.reason ? ` · ${action.eligibility.reason}` : ''}</span></li>
+          <li><strong>{t('agents.ActionReview.authorization_decision')}</strong><span>{authorizationLabel[action.authorization.state] ?? t('agents.ActionReview.authorization_state_unknown')}</span>
+            <span>{t('agents.ActionReview.permit_validity')} {agentStateLabel(action.authorization.permitValidity || 'unknown')}</span>
+            <span>{t('agents.ActionReview.permit_id')} <code>{display(action.authorization.permitId)}</code></span>
+            {action.authorization.actor && <span>{t('agents.ActionReview.actor')} {action.authorization.actor}</span>}
+            {action.authorization.reason && <span>{t('agents.ActionReview.reason')} {action.authorization.reason}</span>}
           </li>
-          <li><strong>Availability</strong><span>{action.availability.state}{action.availability.reason ? ` · ${action.availability.reason}` : ''}</span></li>
-          <li><strong>Execution</strong><span>{executionState(action, linkedReceipt)}</span>
-            <span>Call recorded: {action.execution.called === undefined ? 'unknown' : action.execution.called ? 'yes' : 'no'}</span>
-            <span>Outcome: {display(action.execution.outcome)}</span>
-            {action.execution.error && <span>Error: {action.execution.error}</span>}
+          <li><strong>{t('agents.ActionReview.availability')}</strong><span>{agentStateLabel(action.availability.state)}{action.availability.reason ? ` · ${action.availability.reason}` : ''}</span></li>
+          <li><strong>{t('agents.ActionReview.execution')}</strong><span>{agentStateLabel(executionState(action, linkedReceipt))}</span>
+            <span>{t('agents.ActionReview.call_recorded')} {action.execution.called === undefined ? t('agents.InspectorState.state_unknown') : action.execution.called ? t('agents.boolean.yes') : t('agents.boolean.no')}</span>
+            <span>{t('agents.ActionReview.outcome')} {display(action.execution.outcome)}</span>
+            {action.execution.error && <span>{t('agents.ActionReview.error')} {action.execution.error}</span>}
           </li>
         </ol>
       </section>
@@ -121,18 +125,19 @@ function ActionCard({ action, index }: { action: ProposedAction; index: number }
 }
 
 export function ActionReview({ bundle, state = { status: 'ready' } }: ActionReviewProps) {
-  if (state.status !== 'ready') return <section className="action-review"><h2>Proposed actions</h2><InspectorStateView state={state} /></section>
-  if (!bundle) return <section className="action-review"><h2>Proposed actions</h2><InspectorStateView state={{ status: 'unknown', message: 'Action proposal data was not provided by the source.' }} /></section>
+  useI18n()
+  if (state.status !== 'ready') return <section className="action-review"><h2>{t('agents.ActionReview.proposed_actions')}</h2><InspectorStateView state={state} /></section>
+  if (!bundle) return <section className="action-review"><h2>{t('agents.ActionReview.proposed_actions')}</h2><InspectorStateView state={{ status: 'unknown', message: t('agents.ActionReview.action_proposal_data_was_not_provided_by_the_source') }} /></section>
   const errors = validateActionBundle(bundle).filter(error => !(
     error.includes('receipt') || error.includes('reports success without a matched receipt')
   ))
-  if (errors.length > 0) return <section className="action-review"><h2>Proposed actions</h2><InspectorStateView state={{ status: 'unsupported', message: `Action data is invalid or unsupported: ${errors.join('; ')}` }} /></section>
-  if (bundle.actions.length === 0) return <section className="action-review"><h2>Proposed actions</h2><InspectorStateView state={{ status: 'empty', message: 'This run has no proposed actions.' }} /></section>
+  if (errors.length > 0) return <section className="action-review"><h2>{t('agents.ActionReview.proposed_actions')}</h2><InspectorStateView state={{ status: 'unsupported', message: t('agents.ActionReview.action_data_is_invalid_or_unsupported_p0', {p0: errors.join('; ')}) }} /></section>
+  if (bundle.actions.length === 0) return <section className="action-review"><h2>{t('agents.ActionReview.proposed_actions')}</h2><InspectorStateView state={{ status: 'empty', message: t('agents.ActionReview.this_run_has_no_proposed_actions') }} /></section>
 
   return <section className="action-review" aria-labelledby="action-review-title">
     <header className="action-review__header">
-      <div><h2 id="action-review-title">Proposed actions</h2><p>Inspection only. A recorded authorization decision does not prove execution; execution is unverified without a matching receipt. This view does not grant BAGO authority.</p></div>
-      {bundle.runId && <p>Run ID: <code>{bundle.runId}</code></p>}
+      <div><h2 id="action-review-title">{t('agents.ActionReview.proposed_actions')}</h2><p>{t('agents.ActionReview.inspection_only_a_recorded_authorization_decision_does_not_prove_execu')}</p></div>
+      {bundle.runId && <p>{t('agents.ActionReview.run_id')} <code>{bundle.runId}</code></p>}
     </header>
     <div className="action-review__list">{bundle.actions.map((action, index) => <ActionCard key={action.id ?? `${action.requestId ?? 'unknown'}-${index}`} action={action} index={index} />)}</div>
   </section>

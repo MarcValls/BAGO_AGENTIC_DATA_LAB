@@ -1,0 +1,8 @@
+{
+  "candidate": "communications-navigation-20261024-rc10",
+  "archive_sha256": "412bdb290ad51f7a0608bf44064d3263aa4d932b304d12f548f2e0b6a5862496",
+  "public_snapshot_sha256": "d71b86a8c2f49d90e82f47b8d1db5c5576152779a8133adc6b2323ff029e5c0f",
+  "copied_files": 275,
+  "runtime_imported": false,
+  "historical_gallery23_imported": false
+}

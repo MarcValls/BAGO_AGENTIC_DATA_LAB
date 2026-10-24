@@ -1,0 +1,6 @@
+
+/* HN01: existing Settings control precedes navigation, including narrow layouts. */
+@media (max-width: 760px) {
+  .workspace-sidebar > .settings-trigger { grid-column: 1 / -1; grid-row: 2; }
+  .workspace-sidebar > .primary-navigation { grid-row: 3; }
+}
