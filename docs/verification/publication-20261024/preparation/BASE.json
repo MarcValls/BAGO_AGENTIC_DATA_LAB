@@ -1,0 +1,29 @@
+{
+  "base_sha": "c5a78d33fbf5da608f550c4e8809eb6a8cb1be4c",
+  "branch": "review/integrated-services-20261024",
+  "selected": 275,
+  "base_runtime_preserved_outside_delivery": true,
+  "source": "communications-navigation-20261024-rc10",
+  "base_inputs": [
+    {
+      "path": "README.md",
+      "sha256": "e2562629dd142f9e6c8cf050d6852058e4cf88f17903c2f91891c1c8a8d337fc"
+    },
+    {
+      "path": "docs/readme_frontend.md",
+      "sha256": "40a3019fc425310298d74a99bd1544e64829f72db37ff01db862ff310a7c2efd"
+    },
+    {
+      "path": "docs/readme_manifest.json",
+      "sha256": "cfed98f84aa807076a1f60fc0700a44b4abf815ee916e026a479bea7853279d2"
+    },
+    {
+      "path": "scripts/generate_dynamic_readme.py",
+      "sha256": "037b8fccdb9a98d7f36c225999b0c514b98b0ffac9b5b101ca3ccaeb3592732c"
+    },
+    {
+      "path": "tests/test_readme_presentation.py",
+      "sha256": "bfa73d30344244e47a0b34e537a0d21c4f233fe75227ef539a88017de6056a53"
+    }
+  ]
+}

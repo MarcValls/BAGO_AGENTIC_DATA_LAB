@@ -1,4 +1,4 @@
-.governed-fixture { display: flex; flex-direction: column; gap: 1.2rem; max-width: 1080px; padding: 1rem; color: var(--text-primary, #e6edf5); }
+.governed-fixture { display: flex; flex-direction: column; gap: 1.2rem; max-width: none; padding: 1rem; color: var(--text-primary, #e6edf5); }
 .governed-fixture header p { line-height: 1.6; }
 .governed-fixture fieldset, .governed-fixture article { border: 1px solid var(--border-color, #42536a); border-radius: 8px; padding: 1rem; background: var(--surface-color, #172235); min-width: 0; }
 .governed-fixture legend { padding: 0 .4rem; font-weight: 600; }
@@ -11,7 +11,7 @@
 .governed-fixture .gex-actions { display: flex; flex-wrap: wrap; gap: .7rem; margin-top: 1rem; }
 .governed-fixture dt { font-weight: 600; margin-top: .8rem; color: #c4d7ed; }
 .governed-fixture dd { margin: .3rem 0 .8rem; overflow-wrap: anywhere; }
-.governed-fixture pre { white-space: pre-wrap; overflow-wrap: anywhere; max-height: 30rem; overflow-y: auto; padding: .7rem; background: #101b2a; border-radius: 4px; }
+.governed-fixture pre { white-space: pre-wrap; overflow-wrap: anywhere; max-height: none; overflow-y: auto; padding: .7rem; background: #101b2a; border-radius: 4px; }
 .governed-fixture summary { cursor: pointer; padding: .6rem 0; overflow-wrap: anywhere; }
 .governed-fixture .gex-warning, .governed-fixture .gex-scope { color: #ffdb95; border-left: 3px solid #d5ac63; padding-left: .8rem; }
 .governed-fixture .gex-success { color: #acf2c9; border-left: 3px solid #6dce94; padding-left: .8rem; }

@@ -1,0 +1,22 @@
+{
+  "status": "FROZEN",
+  "managed_execution": "fe576649ee1242ce851bb1ac229c2fc1",
+  "files": [
+    {
+      "path": "frontend/src/App.tsx",
+      "sha256": "c5e1d2b5d5254ff5bce7a17f474b9a36ac380bed5243900ecc2fb368027a4ca7"
+    },
+    {
+      "path": "frontend/src/App.css",
+      "sha256": "5aabb6c16fde081d2f3bf2ac8fb4c8a469346b1fcf7138d373ebcafc91043555"
+    },
+    {
+      "path": "frontend/src/NavigationOrder.css",
+      "sha256": "a01c44d55ceeb60d5982488965d10ded070983ad6cfe144df4b8a9a98f1dd01c"
+    },
+    {
+      "path": "frontend/tests/ui/communications/navigation-control-order.test.tsx",
+      "sha256": "00a268fdb1f16626e98112f3fee2b34f3dd6ba26dab2ebbfef283310c6137942"
+    }
+  ]
+}

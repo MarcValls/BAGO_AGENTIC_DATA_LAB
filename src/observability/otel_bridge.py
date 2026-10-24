@@ -158,7 +158,7 @@ def _set_status(span: Span, status: str) -> None:
     normalized = status.upper()
     if normalized in {"SUCCESS", "PASS", "COMPLETED", "ALLOW"}:
         span.set_status(Status(StatusCode.OK))
-    elif normalized in {"FAILURE", "ERROR", "CONSTRAINT_VIOLATION"}:
+    elif normalized in {"FAILED", "FAILURE", "ERROR", "CONSTRAINT_VIOLATION"}:
         span.set_status(Status(StatusCode.ERROR, description=normalized))
     else:
         span.set_status(Status(StatusCode.UNSET, description=normalized))

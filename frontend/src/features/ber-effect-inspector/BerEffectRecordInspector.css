@@ -1,4 +1,4 @@
-.ber-effect-record { max-width: 960px; margin: 0 auto; color: #dce7f2; }
+.ber-effect-record { max-width: none; margin: 0; color: #dce7f2; }
 .ber-effect-record__header { margin-bottom: 22px; }
 .ber-effect-record h1 { margin: 2px 0 8px; font-size: 1.45rem; }
 .ber-effect-record h2 { margin: 22px 0 10px; font-size: 1rem; }
@@ -14,3 +14,4 @@
 .ber-effect-record__events li { display: grid; grid-template-columns: minmax(120px, 1fr) auto minmax(100px, 1.2fr); gap: 10px; align-items: baseline; padding: 8px 10px; border: 1px solid #2c4058; border-radius: 6px; background: #111e2e; }
 .ber-effect-record code { overflow-wrap: anywhere; }
 @media (max-width: 600px) { .ber-effect-record__events li { grid-template-columns: 1fr; gap: 3px; } }
+.ber-effect-record__grid { grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr)); }

@@ -1,0 +1,59 @@
+{
+  "status": "PASS",
+  "source_mission": "HR01",
+  "freeze_sha256": "e6f5158db37249f2b02e8b0aca5376565693b33df738b8342438d67290cdc96f",
+  "managed_execution": "fe576649ee1242ce851bb1ac229c2fc1",
+  "frontend_full": "WAITING_ROOT_RC13",
+  "copies": [
+    {
+      "source": "frontend/src/App.tsx",
+      "path": "frontend/src/App.tsx",
+      "sha256": "c5e1d2b5d5254ff5bce7a17f474b9a36ac380bed5243900ecc2fb368027a4ca7"
+    },
+    {
+      "source": "frontend/src/App.css",
+      "path": "frontend/src/App.css",
+      "sha256": "5aabb6c16fde081d2f3bf2ac8fb4c8a469346b1fcf7138d373ebcafc91043555"
+    },
+    {
+      "source": "frontend/src/NavigationOrder.css",
+      "path": "frontend/src/NavigationOrder.css",
+      "sha256": "a01c44d55ceeb60d5982488965d10ded070983ad6cfe144df4b8a9a98f1dd01c"
+    },
+    {
+      "source": "frontend/tests/ui/communications/navigation-control-order.test.tsx",
+      "path": "frontend/tests/ui/communications/navigation-control-order.test.tsx",
+      "sha256": "00a268fdb1f16626e98112f3fee2b34f3dd6ba26dab2ebbfef283310c6137942"
+    },
+    {
+      "source": "docs/communications-navigation-20261024/authority-order/MANUAL_ES.md",
+      "path": "docs/verification/publication-20261024/final/AUTHORITY_ORDER/MANUAL_ES.md",
+      "sha256": "35fa42d95abb2dea0b64bb516683e6ae8d3a047fe3d655193f12a740576c1f54"
+    },
+    {
+      "source": "docs/communications-navigation-20261024/authority-design/CAPABILITIES_PLAN.md",
+      "path": "docs/verification/publication-20261024/final/AUTHORITY_ORDER/authority-design/CAPABILITIES_PLAN.md",
+      "sha256": "bc489fcca3cd69d5b801990de8bf4b3293461868bbce125362d3260770ff8ea3"
+    },
+    {
+      "source": "docs/communications-navigation-20261024/authority-design/CAPABILITIES_LIVE.json",
+      "path": "docs/verification/publication-20261024/final/AUTHORITY_ORDER/authority-design/CAPABILITIES_LIVE.json",
+      "sha256": "2ec759c8352bc97c6930034ea370a8ebfc212b677837f6e82d7139502133efd0"
+    },
+    {
+      "source": "docs/communications-navigation-20261024/authority-design/PACKAGE_SOURCE_COMPARISON.json",
+      "path": "docs/verification/publication-20261024/final/AUTHORITY_ORDER/authority-design/PACKAGE_SOURCE_COMPARISON.json",
+      "sha256": "c949083f32164c4ef85962431eea792c2c4fb6c4b8fb894b87761b460cd71a9b"
+    },
+    {
+      "source": "docs/communications-navigation-20261024/authority-design/TOOL_CATALOG_MAP.json",
+      "path": "docs/verification/publication-20261024/final/AUTHORITY_ORDER/authority-design/TOOL_CATALOG_MAP.json",
+      "sha256": "40079813705409a6e2f27baf5cf4ea0bd5dcca1db906e5e6180b9ca3a98d04f6"
+    },
+    {
+      "source": "docs/communications-navigation-20261024/authority-design/CAPABILITY_COMPONENT_HASHES.json",
+      "path": "docs/verification/publication-20261024/final/AUTHORITY_ORDER/authority-design/CAPABILITY_COMPONENT_HASHES.json",
+      "sha256": "7b3de698a2dfd555a9a5557d93a38a4bb292828868b5d9776b95145268a7bbb1"
+    }
+  ]
+}

@@ -1,6 +1,6 @@
 .agent-builder {
-  max-width: 900px;
-  margin: 0 auto;
+  max-width: none;
+  margin: 0;
 }
 
 .wizard-header {
@@ -82,7 +82,7 @@
 
 .tools-list {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 200px), 1fr));
   gap: 12px;
 }
 
@@ -191,7 +191,7 @@
   font-family: monospace;
   font-size: 0.85em;
   color: #d1d5db;
-  max-height: 100px;
+  max-height: none;
   overflow-y: auto;
   word-break: break-word;
 }
@@ -293,9 +293,9 @@
   margin-bottom: 16px;
 }
 
-.agents-list {
+.agent-builder .agents-list {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr));
   gap: 12px;
 }
 
@@ -348,8 +348,8 @@
 }
 
 .execution-panel > div {
-  max-width: 900px;
-  margin: 0 auto;
+  max-width: none;
+  margin: 0;
 }
 
 .execution-panel h2 {
@@ -379,9 +379,9 @@
   margin-bottom: 16px;
 }
 
-.agents-list {
+.agent-builder .agents-list {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr));
   gap: 12px;
 }
 

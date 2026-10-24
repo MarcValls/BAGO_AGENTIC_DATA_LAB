@@ -10,6 +10,9 @@ const server = await createServer({ server: { middlewareMode: true }, appType: '
 const React = await import('react')
 const { act, cleanup, fireEvent, render, screen } = await import('@testing-library/react')
 const { default: OntologyReview } = await server.ssrLoadModule('/src/components/OntologyReview.tsx')
+const {setLocale} = await server.ssrLoadModule('/src/i18n/index.ts')
+setLocale('en') // Explicit English expectation; product default remains Spanish.
+
 
 const proposal = { proposal_id: 'batch-01', source: { path: 'docs/map.md', sha256: 'a'.repeat(64) }, entities: [{ id: 'entity-a', label: 'A' }], relations: [{ proposal_id: 'rel-01', type: 'depends_on', source_id: 'entity-a', target_id: 'entity-b', evidence: { source_path: 'docs/map.md', source_sha256: 'a'.repeat(64), line_number: 7, line: 'A depends on B.' }, validator: { status: 'PASS', reason: null } }, { proposal_id: 'rel-invalid', type: 'links_to', source_id: 'A', target_id: 'C', evidence: { line_number: 8, line: 'A links C.' }, validator: { status: 'FAIL', reason: 'Unsupported relation.' } }], receipt: { receipt_id: 'proposal-receipt' }, trace: { trace_id: 'proposal-trace' } }
 const approval = { accepted_ids: ['rel-01'], graph_fingerprint: 'graph-fp-1', receipt: { receipt_id: 'approval-receipt' }, trace: { trace_id: 'approval-trace' } }

@@ -1,0 +1,224 @@
+/* Scoped service surfaces. Decision Inspector disclosure styles are unchanged. */
+.app-shell :is(.communications, .contacts-page, .workspace-manager, .agent-management, .whatsapp-settings) {
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+  max-width: none;
+  margin-inline: 0;
+  padding: clamp(10px, 1vw, 16px);
+  overflow-wrap: anywhere;
+  container-type: inline-size;
+  container-name: service-surface;
+}
+.app-shell :is(.communications--inline, .contacts-page--inline, .workspace-manager--inline) {
+  max-width: 100%;
+  padding: 12px;
+}
+.app-shell :is(.communications-layout, .communications-editor, .contacts-workspace, .wm-files) > * {
+  min-width: 0;
+}
+.app-shell :is(.communications-heading, .contacts-heading, .contacts-card-heading, .agent-management header) {
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+.app-shell .wm-files { grid-template-columns: minmax(0, 1fr) minmax(0, 1.7fr); }
+.app-shell :is(.communications, .contacts-page, .workspace-manager, .agent-management, .whatsapp-settings) :is(input, select, textarea, button) {
+  max-width: 100%;
+}
+.app-shell :is(.workspace-manager, .agent-management) code { display: block; overflow-wrap: anywhere; }
+.app-shell :is(.workspace-manager, .communications, .contacts-page, .agent-management) details,
+.app-shell .agent-tasks-advanced,
+.app-shell .context-memory-details details,
+.app-shell .context-memory-details,
+.app-shell .control-message > details,
+.app-shell .control-message .message-trace > details {
+  box-sizing: border-box;
+  min-width: 0;
+  width: 100%;
+  padding: 0;
+  margin-block: 12px;
+  border: 1px solid #3e5a70;
+  border-radius: 6px;
+  background: #102030;
+  overflow-wrap: anywhere;
+}
+.app-shell :is(.workspace-manager, .communications, .contacts-page, .agent-management) details > summary,
+.app-shell .agent-tasks-advanced > summary,
+.app-shell .context-memory-details details > summary,
+.app-shell .context-memory-details > summary,
+.app-shell .control-message > details > summary,
+.app-shell .control-message .message-trace > details > summary {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 44px;
+  padding: 11px 14px;
+  list-style: none;
+  cursor: pointer;
+  color: #d6e9f7;
+  font-weight: 600;
+  font-size: .875rem;
+  line-height: 1.4;
+  border-radius: 5px;
+  background: #152a3d;
+}
+.app-shell :is(.workspace-manager, .communications, .contacts-page, .agent-management) details > summary::-webkit-details-marker,
+.app-shell .agent-tasks-advanced > summary::-webkit-details-marker,
+.app-shell .context-memory-details details > summary::-webkit-details-marker,
+.app-shell .context-memory-details > summary::-webkit-details-marker,
+.app-shell .control-message > details > summary::-webkit-details-marker,
+.app-shell .control-message .message-trace > details > summary::-webkit-details-marker { display: none; }
+.app-shell :is(.workspace-manager, .communications, .contacts-page, .agent-management) details > summary::after,
+.app-shell .agent-tasks-advanced > summary::after,
+.app-shell .context-memory-details details > summary::after,
+.app-shell .context-memory-details > summary::after,
+.app-shell .control-message > details > summary::after,
+.app-shell .control-message .message-trace > details > summary::after {
+  content: '';
+  flex: 0 0 8px;
+  width: 8px;
+  height: 8px;
+  margin-inline: 5px;
+  border-right: 2px solid currentColor;
+  border-bottom: 2px solid currentColor;
+  transform: rotate(-45deg);
+}
+.app-shell :is(.workspace-manager, .communications, .contacts-page, .agent-management) details[open] > summary,
+.app-shell .agent-tasks-advanced[open] > summary,
+.app-shell .context-memory-details details[open] > summary,
+.app-shell .context-memory-details[open] > summary,
+.app-shell .control-message > details[open] > summary,
+.app-shell .control-message .message-trace > details[open] > summary {
+  background: #213e55;
+  border-bottom: 1px solid #55758e;
+  border-radius: 5px 5px 0 0;
+}
+.app-shell :is(.workspace-manager, .communications, .contacts-page, .agent-management) details[open] > summary::after,
+.app-shell .agent-tasks-advanced[open] > summary::after,
+.app-shell .context-memory-details details[open] > summary::after,
+.app-shell .context-memory-details[open] > summary::after,
+.app-shell .control-message > details[open] > summary::after,
+.app-shell .control-message .message-trace > details[open] > summary::after { transform: rotate(45deg); }
+.app-shell :is(.workspace-manager, .communications, .contacts-page, .agent-management) details > summary:hover,
+.app-shell .agent-tasks-advanced > summary:hover,
+.app-shell .context-memory-details details > summary:hover,
+.app-shell .context-memory-details > summary:hover,
+.app-shell .control-message > details > summary:hover,
+.app-shell .control-message .message-trace > details > summary:hover { background: #25465e; }
+.app-shell :is(.workspace-manager, .communications, .contacts-page, .agent-management) details > summary:focus-visible,
+.app-shell .agent-tasks-advanced > summary:focus-visible,
+.app-shell .context-memory-details details > summary:focus-visible,
+.app-shell .context-memory-details > summary:focus-visible,
+.app-shell .control-message > details > summary:focus-visible,
+.app-shell .control-message .message-trace > details > summary:focus-visible {
+  outline: 3px solid #8bd5ff;
+  outline-offset: 3px;
+}
+.app-shell :is(.workspace-manager, .communications, .contacts-page, .agent-management) details > :not(summary),
+.app-shell .agent-tasks-advanced > :not(summary),
+.app-shell .context-memory-details details > :not(summary),
+.app-shell .context-memory-details > :not(summary),
+.app-shell .control-message > details > :not(summary),
+.app-shell .control-message .message-trace > details > :not(summary) { margin: 12px 14px; }
+.app-shell .workspace-sidebar a.navigation-item { text-decoration: none; }
+@container service-surface (max-width: 720px) {
+  .communications-layout, .contacts-workspace, .wm-files { grid-template-columns: minmax(0, 1fr); }
+  .communications-library { border-right: 0; border-bottom: 1px solid #354e62; padding: 0 0 16px; }
+  .contacts-list > li { flex-wrap: wrap; }
+}
+@media (max-width: 640px) {
+  .app-shell :is(.communications, .contacts-page, .workspace-manager, .agent-management, .whatsapp-settings) { padding: 12px; }
+  .app-shell :is(.contacts-card, .wm-card, .communications-review, .agent-management article) { padding: 14px; }
+}
+
+.app-shell .context-memory-details { max-width: none; margin-inline: 0; }
+.app-shell .context-memory-details > .cognition-settings { box-sizing: border-box; min-width: 0; width: auto; max-width: none; }
+
+.app-shell .context-memory-details .project-document > summary::before { content: none; }
+
+/* Phase 2: fluid panels, intrinsic heights and accessible top navigation. */
+.app-shell :is(.communications, .contacts-page, .workspace-manager, .context-memory-panel) {
+  min-width: 0;
+  min-height: 0;
+}
+.app-shell .contacts-workspace { grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); }
+.app-shell .communications-layout { grid-template-columns: minmax(0, .8fr) minmax(0, 2fr); }
+.app-shell .communications-layout[data-section]:not([data-section='message']),
+.app-shell .communications--inline .communications-layout { grid-template-columns: minmax(0, 1fr); }
+.app-shell :is(.communications, .contacts-page, .workspace-manager) [role='tabpanel'][hidden],
+.app-shell .communications-library[hidden] { display: none; }
+.app-shell .service-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  width: auto;
+  min-width: 0;
+  margin: 0 0 20px;
+  padding: 0 0 4px;
+  border-bottom: 1px solid #405b70;
+}
+.app-shell .service-tabs > [role='tab'] {
+  flex: 0 1 auto;
+  box-sizing: border-box;
+  min-width: 0;
+  min-height: 44px;
+  margin: 0;
+  padding: 10px 16px;
+  border: 1px solid transparent;
+  border-bottom: 3px solid transparent;
+  background: transparent;
+  color: #b8cfdf;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  overflow-wrap: anywhere;
+}
+.app-shell .service-tabs > [role='tab'][aria-selected='true'] {
+  border-bottom-color: #86c9e4;
+  background: #1a354a;
+  color: #f2f8fc;
+}
+.app-shell .service-tabs > [role='tab']:hover { background: #223e54; }
+.app-shell .service-tabs > [role='tab']:focus-visible,
+.app-shell :is(.communications, .contacts-page, .workspace-manager) [role='tabpanel']:focus-visible {
+  outline: 3px solid #8bd5ff;
+  outline-offset: 3px;
+}
+/* Width auto subtracts the margins from the available containing-block width. */
+.app-shell :is(details, [role='tabpanel']) > .contacts-page--inline {
+  box-sizing: border-box;
+  width: auto;
+  max-width: none;
+  min-width: 0;
+}
+.app-shell .contacts-page--inline .contacts-workspace { grid-template-columns: minmax(0, 1fr); }
+.app-shell .context-memory-panel { width: auto; max-width: none; margin: 0; border: 0; background: transparent; }
+@container service-surface (max-width: 720px) {
+  .app-shell :is(.communications-layout, .contacts-workspace, .wm-files) { grid-template-columns: minmax(0, 1fr); }
+}
+/* Full-space service panels: one shared geometry, independent of feature state. */
+.app-shell :is(.communications, .contacts-page, .workspace-manager, .agent-management, .agent-builder, .agent-tasks, .capability-manager, .whatsapp-settings, .knowledge-ingest, .ontology-review, .catalog-quality, .governed-fixture, .directory-scan-run) { width: 100%; min-width: 0; min-height: 0; max-width: none; margin-inline: 0; }
+.app-shell :is(.communications, .contacts-page, .workspace-manager, .agent-management, .agent-builder, .agent-tasks, .capability-manager, .whatsapp-settings) { padding: clamp(10px, 1vw, 16px); }
+.app-shell :is(.communications, .contacts-page, .workspace-manager) { display: flex; flex-direction: column; align-items: stretch; }
+.app-shell :is(.communications-layout, .contacts-workspace, .wm-files) { flex: 1 0 auto; min-width: 0; min-height: 0; gap: 16px; }
+.app-shell :is(.communications, .contacts-page, .workspace-manager) [role='tabpanel']:not([hidden]) { display: flex; flex: 1 0 auto; flex-direction: column; min-width: 0; min-height: 0; }
+.app-shell :is(.communications, .contacts-page, .workspace-manager) [role='tabpanel'][hidden] { display: none; }
+.app-shell :is(.contacts-card, .wm-files > .wm-card, .communications-editor, .communications-library) { display: flex; flex-direction: column; min-width: 0; min-height: 0; }
+.app-shell :is(.contacts-list, .communications-library > ul) { flex: 1 1 auto; min-height: 0; max-height: none; overflow: auto; }
+.app-shell :is(.communications-editor, .wm-files > .wm-card) label:has(textarea) { display: flex; flex: 1 0 auto; flex-direction: column; min-width: 0; min-height: 0; }
+.app-shell :is(.communications-editor, .wm-files > .wm-card) textarea { flex: 1 0 auto; min-width: 0; }
+.app-shell :is(.contacts-heading, .communications-heading, .agent-management header) p { max-inline-size: 76ch; }
+.app-shell .workspace-manager :is(pre, textarea) { min-width: 0; max-width: 100%; overflow: auto; }
+.app-shell .workspace-write-review { gap: 10px; border: 1px solid #486880; border-radius: 6px; background: #102030; }
+.app-shell .workspace-write-review .service-tabs { flex: 0 0 auto; margin-bottom: 0; }
+.app-shell .workspace-write-review [role='tabpanel']:not([hidden]) { gap: 10px; }
+.app-shell .workspace-write-review label:has(textarea) { display: flex; flex-direction: column; flex: 1 0 auto; min-width: 0; margin: 0; }
+.app-shell .workspace-write-review textarea { flex: 1 0 auto; min-width: 0; resize: vertical; font-family: ui-monospace, Consolas, monospace; }
+.app-shell .workspace-write-review pre { max-height: none; white-space: pre; overflow: auto; scrollbar-width: thin; }
+.app-shell .workspace-write-review .wm-check { display: flex; flex-direction: row; align-items: flex-start; gap: 10px; }
+.app-shell .workspace-write-review :is(button, .wm-check) { flex: 0 0 auto; align-self: flex-start; }
+.app-shell .workspace-write-review [role='alert'] { border-left: 3px solid #e0a18f; padding-inline-start: 10px; color: #ffd5c7; }
+.app-shell .workspace-write-review [role='status'] { color: #bdd9e8; }

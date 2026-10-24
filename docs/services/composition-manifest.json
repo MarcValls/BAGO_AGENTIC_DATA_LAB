@@ -1,0 +1,272 @@
+{
+  "sources": [
+    {
+      "candidate": "agents",
+      "path": "src/api/agent_management_routes.py",
+      "input_sha256": "8aea5815719789ab064b2fc9338c60433fc6c5ed936bf2fc0c665fc700e3618c",
+      "final_sha256": "8aea5815719789ab064b2fc9338c60433fc6c5ed936bf2fc0c665fc700e3618c",
+      "byte_preserved": true
+    },
+    {
+      "candidate": "agents",
+      "path": "src/api/server.py",
+      "input_sha256": "5890ee9353f1a561458c8da608dae73abc05004126dd5c23af949aac32adeb2e",
+      "final_sha256": "5c1dbf0593b6e1c711090c719faf3b918db4d210d5a5fdf07ea4015558ba8d90",
+      "byte_preserved": false
+    },
+    {
+      "candidate": "agents",
+      "path": "tests/test_agent_management.py",
+      "input_sha256": "2f2fd09aa4ff5787172444a4d623eb5ab837eacc22613f92180deee24bc5da39",
+      "final_sha256": "2f2fd09aa4ff5787172444a4d623eb5ab837eacc22613f92180deee24bc5da39",
+      "byte_preserved": true
+    },
+    {
+      "candidate": "communications",
+      "path": "src/api/communication_routes.py",
+      "input_sha256": "75aa10a3ca2ef1f9280f595c244655e142e3cf4532553ec73c18de2b21a77845",
+      "final_sha256": "75aa10a3ca2ef1f9280f595c244655e142e3cf4532553ec73c18de2b21a77845",
+      "byte_preserved": true
+    },
+    {
+      "candidate": "communications",
+      "path": "src/api/server.py",
+      "input_sha256": "e33c1530b8c6b0f087aa891baa7388666a27c322460e58bd9d5fd9bc2979ebbc",
+      "final_sha256": "5c1dbf0593b6e1c711090c719faf3b918db4d210d5a5fdf07ea4015558ba8d90",
+      "byte_preserved": false
+    },
+    {
+      "candidate": "communications",
+      "path": "src/api/whatsapp_routes.py",
+      "input_sha256": "b73f67030c02540949367688098a8f79364fdf1a186f1d24991c91b70cb0db11",
+      "final_sha256": "b73f67030c02540949367688098a8f79364fdf1a186f1d24991c91b70cb0db11",
+      "byte_preserved": true
+    },
+    {
+      "candidate": "communications",
+      "path": "src/communications/__init__.py",
+      "input_sha256": "e4af8534b6841606e02efde8481d9b8ec490ecbfb4b65e6270784687c397c327",
+      "final_sha256": "e4af8534b6841606e02efde8481d9b8ec490ecbfb4b65e6270784687c397c327",
+      "byte_preserved": true
+    },
+    {
+      "candidate": "communications",
+      "path": "src/communications/service.py",
+      "input_sha256": "52eef729e7924903a75c5627b551f3f8d97696c8c301cb417bf64d1009e7ff80",
+      "final_sha256": "de04665fee760ea2862ef00c7860d04fe94ddc13220c6ae5fd1a0f08cab8da6a",
+      "byte_preserved": false
+    },
+    {
+      "candidate": "communications",
+      "path": "src/communications/worker.py",
+      "input_sha256": "942758046ebccf298fb57acd2b076646c4c7209c092a8e066e91bc2b366cb80f",
+      "final_sha256": "942758046ebccf298fb57acd2b076646c4c7209c092a8e066e91bc2b366cb80f",
+      "byte_preserved": true
+    },
+    {
+      "candidate": "communications",
+      "path": "src/whatsapp/__init__.py",
+      "input_sha256": "a4e34558c04899144753d7d77c3066e255ea54591b509061a2afc54899c87720",
+      "final_sha256": "a4e34558c04899144753d7d77c3066e255ea54591b509061a2afc54899c87720",
+      "byte_preserved": true
+    },
+    {
+      "candidate": "communications",
+      "path": "src/whatsapp/cdp.py",
+      "input_sha256": "b6d246849a21cfd1a1f405ad51a31fb52e881ff5145365b64fff5b608700812c",
+      "final_sha256": "b6d246849a21cfd1a1f405ad51a31fb52e881ff5145365b64fff5b608700812c",
+      "byte_preserved": true
+    },
+    {
+      "candidate": "communications",
+      "path": "src/whatsapp/session.py",
+      "input_sha256": "f23b9211089d83c1d86b71197eb509ac5234d0101859bd4ae822f9297cc2c389",
+      "final_sha256": "f23b9211089d83c1d86b71197eb509ac5234d0101859bd4ae822f9297cc2c389",
+      "byte_preserved": true
+    },
+    {
+      "candidate": "communications",
+      "path": "tests/test_chat_communications.py",
+      "input_sha256": "eadd7588d48c8169974fe6c9cd17b3be60dbbdf31090a7f17f3056ec1ef7eaa0",
+      "final_sha256": "eadd7588d48c8169974fe6c9cd17b3be60dbbdf31090a7f17f3056ec1ef7eaa0",
+      "byte_preserved": true
+    },
+    {
+      "candidate": "communications",
+      "path": "tests/test_communications.py",
+      "input_sha256": "40947dca6ec26c43ec833604ea6050795262ff30dec62a336aa87c0a225040cb",
+      "final_sha256": "40947dca6ec26c43ec833604ea6050795262ff30dec62a336aa87c0a225040cb",
+      "byte_preserved": true
+    },
+    {
+      "candidate": "communications",
+      "path": "tests/test_whatsapp_cdp_targets.py",
+      "input_sha256": "d52a3f9aeb07fc1fab135c6af4acf793efa04f84bcb7d83f9cbadf1a80eef141",
+      "final_sha256": "d52a3f9aeb07fc1fab135c6af4acf793efa04f84bcb7d83f9cbadf1a80eef141",
+      "byte_preserved": true
+    },
+    {
+      "candidate": "communications",
+      "path": "tests/test_whatsapp_dom_transport.py",
+      "input_sha256": "990e2866b1997e1eb74f88dad974ff0caa212a27dac2bbdb5f302b89afeb59e1",
+      "final_sha256": "990e2866b1997e1eb74f88dad974ff0caa212a27dac2bbdb5f302b89afeb59e1",
+      "byte_preserved": true
+    },
+    {
+      "candidate": "communications",
+      "path": "tests/test_whatsapp_session.py",
+      "input_sha256": "e4b3085ad6c48da00be1e942ef5fc9fcc800677cefeb91373efe657995050965",
+      "final_sha256": "e4b3085ad6c48da00be1e942ef5fc9fcc800677cefeb91373efe657995050965",
+      "byte_preserved": true
+    },
+    {
+      "candidate": "communications",
+      "path": "tests/test_whatsapp_transport.py",
+      "input_sha256": "6d9abc19ba0cbad9b93eae822229526ded7425b2116d8136b6af98320f522800",
+      "final_sha256": "6d9abc19ba0cbad9b93eae822229526ded7425b2116d8136b6af98320f522800",
+      "byte_preserved": true
+    },
+    {
+      "candidate": "communications",
+      "path": "tests/test_whatsapp_unicode.py",
+      "input_sha256": "2cbfce08ed5944f9b72fbcbe8ab9dcf1afcb33eca2e7a1e70042686e97288e6b",
+      "final_sha256": "2cbfce08ed5944f9b72fbcbe8ab9dcf1afcb33eca2e7a1e70042686e97288e6b",
+      "byte_preserved": true
+    },
+    {
+      "candidate": "contacts",
+      "path": "src/api/contacts_routes.py",
+      "input_sha256": "f8bed7ddb2c0ecf39027ea4b6b9b97ecc0c2e9ae0521b03f1e586726ba9a6832",
+      "final_sha256": "9bfb0231dfa2aca6d35f99c0df96bd5f8f06ebd4ecc32d8842fc2112f1efd6db",
+      "byte_preserved": false
+    },
+    {
+      "candidate": "contacts",
+      "path": "src/api/server.py",
+      "input_sha256": "3693d4ca40b9f3e349b5abbb757ac89d1b0ec416caa0012988938ed84f541296",
+      "final_sha256": "5c1dbf0593b6e1c711090c719faf3b918db4d210d5a5fdf07ea4015558ba8d90",
+      "byte_preserved": false
+    },
+    {
+      "candidate": "contacts",
+      "path": "src/contacts_service/PROVENANCE.json",
+      "input_sha256": "e51781dfe34a6593a9569810e98b0a754ae6ee88ca924d717dfd48ebc2b6ad7f",
+      "final_sha256": "e51781dfe34a6593a9569810e98b0a754ae6ee88ca924d717dfd48ebc2b6ad7f",
+      "byte_preserved": true
+    },
+    {
+      "candidate": "contacts",
+      "path": "src/contacts_service/REPAIR.patch",
+      "input_sha256": "5996e630b75af332824f6c43e623646a5712b2046026a4d3ff878e8e24fff342",
+      "final_sha256": "5996e630b75af332824f6c43e623646a5712b2046026a4d3ff878e8e24fff342",
+      "byte_preserved": true
+    },
+    {
+      "candidate": "contacts",
+      "path": "src/contacts_service/__init__.py",
+      "input_sha256": "0c158497acd2c47b7ccf7d9462952a69a11b03ec3057c397cdf7129e8bfcb051",
+      "final_sha256": "0c158497acd2c47b7ccf7d9462952a69a11b03ec3057c397cdf7129e8bfcb051",
+      "byte_preserved": true
+    },
+    {
+      "candidate": "contacts",
+      "path": "src/contacts_service/core.py",
+      "input_sha256": "01c2d22ceed56fce41e1350a6fe78c46d31ae187f25ff13d279f761c06330972",
+      "final_sha256": "01c2d22ceed56fce41e1350a6fe78c46d31ae187f25ff13d279f761c06330972",
+      "byte_preserved": true
+    },
+    {
+      "candidate": "contacts",
+      "path": "tests/test_contacts_routes.py",
+      "input_sha256": "3b9fbc3fdcca7552ceed8768a286b28a1fab72cd515a40d980b3ffc4349083c0",
+      "final_sha256": "3b9fbc3fdcca7552ceed8768a286b28a1fab72cd515a40d980b3ffc4349083c0",
+      "byte_preserved": true
+    },
+    {
+      "candidate": "trash",
+      "path": "src/api/server.py",
+      "input_sha256": "c116e91ffde00011aff2322366953c2cfa18ee7876112541433523ac8dd10075",
+      "final_sha256": "5c1dbf0593b6e1c711090c719faf3b918db4d210d5a5fdf07ea4015558ba8d90",
+      "byte_preserved": false
+    },
+    {
+      "candidate": "trash",
+      "path": "src/conversations/library.py",
+      "input_sha256": "4a43fd9a391591459aa734b893366eb2b6e61187e2a0dd787e71b05747fa2cde",
+      "final_sha256": "4a43fd9a391591459aa734b893366eb2b6e61187e2a0dd787e71b05747fa2cde",
+      "byte_preserved": true
+    },
+    {
+      "candidate": "trash",
+      "path": "tests/test_conversation_permanent_delete.py",
+      "input_sha256": "cae4a5ae4dfeadce14bfd08b721064a6341f832a82f6196a9982ebe2cf94440a",
+      "final_sha256": "cae4a5ae4dfeadce14bfd08b721064a6341f832a82f6196a9982ebe2cf94440a",
+      "byte_preserved": true
+    },
+    {
+      "candidate": "workspace",
+      "path": "src/api/server.py",
+      "input_sha256": "6434b8ef1627607e50fce197297378bf0ff25bb5d1708416a73d25540c707d91",
+      "final_sha256": "5c1dbf0593b6e1c711090c719faf3b918db4d210d5a5fdf07ea4015558ba8d90",
+      "byte_preserved": false
+    },
+    {
+      "candidate": "workspace",
+      "path": "src/api/workspaces_routes.py",
+      "input_sha256": "aaf1c697b4a56850b42bc89b4a2b4ba7380be63308cd0e23107b9e9c50d66e64",
+      "final_sha256": "aaf1c697b4a56850b42bc89b4a2b4ba7380be63308cd0e23107b9e9c50d66e64",
+      "byte_preserved": true
+    },
+    {
+      "candidate": "workspace",
+      "path": "src/workspace_sdk/__init__.py",
+      "input_sha256": "e87df8e4aac1b59c609aedafeb4ba5436b72c78491819162e2129a8750dbfee8",
+      "final_sha256": "e87df8e4aac1b59c609aedafeb4ba5436b72c78491819162e2129a8750dbfee8",
+      "byte_preserved": true
+    },
+    {
+      "candidate": "workspace",
+      "path": "src/workspace_sdk/auth_primitives.py",
+      "input_sha256": "440ca7b234326dda4107bc060754c10f9286cc5cd7877880dc2da9719784f368",
+      "final_sha256": "440ca7b234326dda4107bc060754c10f9286cc5cd7877880dc2da9719784f368",
+      "byte_preserved": true
+    },
+    {
+      "candidate": "workspace",
+      "path": "src/workspace_sdk/reused_primitives.py",
+      "input_sha256": "2c765bbe6f8fc8d1e5fdfbedea1c764426aae9cd367ae4c88aad302c12c70460",
+      "final_sha256": "2c765bbe6f8fc8d1e5fdfbedea1c764426aae9cd367ae4c88aad302c12c70460",
+      "byte_preserved": true
+    },
+    {
+      "candidate": "workspace",
+      "path": "src/workspace_sdk/sync_primitives.py",
+      "input_sha256": "dcaf42d40969f969b797550c7023eb073c45032493b5b0285446935eb50b602b",
+      "final_sha256": "dcaf42d40969f969b797550c7023eb073c45032493b5b0285446935eb50b602b",
+      "byte_preserved": true
+    },
+    {
+      "candidate": "workspace",
+      "path": "src/workspace_sdk/workspace_service.py",
+      "input_sha256": "5265e768d408975f67ffcff69e21d5923b1b147ede59177a782afb365737f066",
+      "final_sha256": "5265e768d408975f67ffcff69e21d5923b1b147ede59177a782afb365737f066",
+      "byte_preserved": true
+    },
+    {
+      "candidate": "workspace",
+      "path": "tests/test_workspaces_routes.py",
+      "input_sha256": "053ed86968c47261dc7ccd52132a2d0f36d3f6943a763086907cfd26eee0ab30",
+      "final_sha256": "053ed86968c47261dc7ccd52132a2d0f36d3f6943a763086907cfd26eee0ab30",
+      "byte_preserved": true
+    }
+  ],
+  "missing_top_level_functions": {
+    "agents": [],
+    "communications": [],
+    "contacts": [],
+    "trash": [],
+    "workspace": []
+  },
+  "base": "c5a78d33fbf5da608f550c4e8809eb6a8cb1be4c",
+  "composition": "git merge-file per candidate against common base; 3 conflict regions manually unioned"
+}

@@ -1,3 +1,4 @@
+import {useI18n, t, formatDate, formatNumber, apiError, errorMessage} from '../../../i18n'
 import './InspectorState.css'
 import type { ReactNode } from 'react'
 
@@ -13,28 +14,29 @@ export type InspectorState =
   | { status: 'ready' }
 
 const defaultMessages: Record<Exclude<InspectorState['status'], 'ready'>, string> = {
-  loading: 'Loading run artifacts',
-  empty: 'No artifacts are available for this run.',
-  error: 'The requested resource could not be loaded.',
-  unsupported: 'This data type is not supported by the current inspector.',
-  partial: 'Some source data was not provided or is unavailable.',
-  stale: 'The supplied source identity does not match the expected identity.',
-  unverified: 'The source did not provide enough matching identity to verify this result.',
-  unknown: 'The source did not provide enough information to determine this state.',
+  get loading() { return t('agents.InspectorState.loading_run_artifacts') },
+  get empty() { return t('agents.InspectorState.no_artifacts_are_available_for_this_run') },
+  get error() { return t('agents.InspectorState.the_requested_resource_could_not_be_loaded') },
+  get unsupported() { return t('agents.InspectorState.this_data_type_is_not_supported_by_the_current_inspector') },
+  get partial() { return t('agents.InspectorState.some_source_data_was_not_provided_or_is_unavailable') },
+  get stale() { return t('agents.InspectorState.the_supplied_source_identity_does_not_match_the_expected_identity') },
+  get unverified() { return t('agents.InspectorState.the_source_did_not_provide_enough_matching_identity_to_verify_this_res') },
+  get unknown() { return t('agents.InspectorState.the_source_did_not_provide_enough_information_to_determine_this_state') },
 }
 
 const stateHeadings: Record<Exclude<InspectorState['status'], 'ready'>, string> = {
-  loading: 'Loading',
-  empty: 'Nothing to inspect',
-  error: 'Unable to load',
-  unsupported: 'Unsupported data',
-  partial: 'Partial data',
-  stale: 'Stale data',
-  unverified: 'Unverified',
-  unknown: 'State unknown',
+  get loading() { return t('agents.InspectorState.loading') },
+  get empty() { return t('agents.InspectorState.nothing_to_inspect') },
+  get error() { return t('agents.InspectorState.unable_to_load') },
+  get unsupported() { return t('agents.InspectorState.unsupported_data') },
+  get partial() { return t('agents.InspectorState.partial_data') },
+  get stale() { return t('agents.InspectorState.stale_data') },
+  get unverified() { return t('agents.InspectorState.unverified') },
+  get unknown() { return t('agents.InspectorState.state_unknown') },
 }
 
 export function InspectorStateView({ state, children }: { state: InspectorState; children?: ReactNode }) {
+  useI18n()
   if (state.status === 'ready') return <>{children}</>
 
   const message = state.status === 'error' ? state.message : state.message || defaultMessages[state.status]
@@ -43,7 +45,7 @@ export function InspectorStateView({ state, children }: { state: InspectorState;
     <section className={`decision-inspector-state decision-inspector-state--${state.status}`} role={liveRole} aria-live={state.status === 'error' ? 'assertive' : 'polite'}>
       <h2>{stateHeadings[state.status]}</h2>
       <p>{message}</p>
-      {state.status === 'error' && state.onRetry && <button type="button" onClick={state.onRetry}>Retry</button>}
+      {state.status === 'error' && state.onRetry && <button type="button" onClick={state.onRetry}>{t('agents.AgentEvaluationLab.retry')}</button>}
     </section>
   )
 }
@@ -51,20 +53,21 @@ export function InspectorStateView({ state, children }: { state: InspectorState;
 export type EvidenceSupport = 'supported' | 'unsupported' | 'missing' | 'stale' | 'contradictory' | 'unknown'
 
 const supportLabels: Record<EvidenceSupport, string> = {
-  supported: 'Supported by linked evidence',
-  unsupported: 'No supporting evidence linked',
-  missing: 'Referenced evidence is unavailable',
-  stale: 'Evidence is stale',
-  contradictory: 'Conflicting evidence is reported',
-  unknown: 'Evidence support is unknown',
+  get supported() { return t('agents.InspectorState.supported_by_linked_evidence') },
+  get unsupported() { return t('agents.InspectorState.no_supporting_evidence_linked') },
+  get missing() { return t('agents.InspectorState.referenced_evidence_is_unavailable') },
+  get stale() { return t('agents.InspectorState.evidence_is_stale') },
+  get contradictory() { return t('agents.InspectorState.conflicting_evidence_is_reported') },
+  get unknown() { return t('agents.InspectorState.evidence_support_is_unknown') },
 }
 
 export function EvidenceSupportStatus({ status }: { status: EvidenceSupport }) {
+  useI18n()
   return <span className={`decision-inspector-support decision-inspector-support--${status}`}>{supportLabels[status]}</span>
 }
 
 export const freshnessLabel = (freshness: 'current' | 'stale' | 'unknown'): string => ({
-  current: 'Current',
-  stale: 'Stale',
-  unknown: 'Freshness not established',
+  current: t('agents.InspectorState.current'),
+  stale: t('agents.InspectorState.stale'),
+  unknown: t('agents.InspectorState.freshness_not_established'),
 }[freshness])

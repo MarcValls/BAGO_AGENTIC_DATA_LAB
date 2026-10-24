@@ -1,0 +1,64 @@
+{
+  "mission_id": "BAGO_PUBLICATION_FINAL_20261024",
+  "operation": "PROMOTION",
+  "title": "Bounded final publication successor",
+  "objective": "Prepare CI prerequisite order, exact byte attributes and verified navigation successor; independent review before root publication",
+  "destination": "GitHub draft PR preparation only; root controls staging, commit and push",
+  "constraints": [
+    "No Python full rerun; inherit P941 only after exact source proof",
+    "No browser/provider setup or external messages",
+    "Preserve P1 historical evidence; no edits to frozen preparation/review outputs",
+    "Import UI only from frozen verified HR01 and final RC source identities",
+    "Hosted CI and whole-product validation not implied"
+  ],
+  "max_concurrency": 1,
+  "terminal_work_items": [
+    "PF02"
+  ],
+  "work_items": [
+    {
+      "id": "PF01",
+      "title": "Prepare bounded final successor and verify identities",
+      "role": "team-orchestrator",
+      "depends_on": [],
+      "read_scopes": [
+        "**"
+      ],
+      "write_scopes": [
+        ".github/workflows/ci.yml",
+        ".gitattributes",
+        "frontend/src/App.tsx",
+        "frontend/src/App.css",
+        "frontend/src/NavigationOrder.css",
+        "frontend/tests/ui/communications/navigation-control-order.test.tsx",
+        "docs/verification/publication-20261024/final/**"
+      ],
+      "output_scopes": [
+        "docs/verification/publication-20261024/final/**"
+      ],
+      "required_checks": [
+        "acceptance"
+      ]
+    },
+    {
+      "id": "PF02",
+      "title": "Independent final successor review",
+      "role": "verification-engineer",
+      "depends_on": [
+        "PF01"
+      ],
+      "read_scopes": [
+        "**"
+      ],
+      "write_scopes": [
+        "docs/verification/publication-20261024/final/review/**"
+      ],
+      "output_scopes": [
+        "docs/verification/publication-20261024/final/review/**"
+      ],
+      "required_checks": [
+        "acceptance"
+      ]
+    }
+  ]
+}

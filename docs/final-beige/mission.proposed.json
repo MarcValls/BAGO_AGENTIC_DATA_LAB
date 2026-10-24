@@ -1,0 +1,44 @@
+{
+  "mission_id": "BAGO_PUBLICATION_BEIGE_FINAL_20261024",
+  "operation": "PROMOTION",
+  "title": "Final beige preference publication successor",
+  "objective": "Import only independently accepted RC14 UI and bind inherited checks to exact final source bytes before independent draft-PR preparation review",
+  "destination": "Draft GitHub PR preparation; root controls publication, no merge",
+  "constraints": [
+    "PROPOSED only until root initializes; do not mutate current PF runtime",
+    "Wait for BS03 scoped validation and exact RC14 package/source/test/visual identities",
+    "Preserve historical PF01 RC13 handoff and source snapshots before changes",
+    "No automatic full Python rerun; inherit P941 only after all233 protected-file identities match",
+    "Preserve base README inputs and all unchanged CI/byte attributes",
+    "No provider setup, external messages, runtime data or historical gallery imports"
+  ],
+  "max_concurrency": 1,
+  "terminal_work_items": ["PFB02"],
+  "work_items": [
+    {
+      "id": "PFB01",
+      "title": "Prepare accepted RC14 publication successor",
+      "role": "team-orchestrator",
+      "depends_on": [],
+      "read_scopes": ["**"],
+      "write_scopes": [
+        "frontend/src/App.tsx",
+        "frontend/src/NavigationOrder.css",
+        "frontend/tests/ui/communications/navigation-control-order.test.tsx",
+        "docs/final-beige/**"
+      ],
+      "output_scopes": ["docs/final-beige/**"],
+      "required_checks": ["acceptance"]
+    },
+    {
+      "id": "PFB02",
+      "title": "Independent exact-source/privacy/final preference review",
+      "role": "verification-engineer",
+      "depends_on": ["PFB01"],
+      "read_scopes": ["**"],
+      "write_scopes": ["docs/final-beige/review/**"],
+      "output_scopes": ["docs/final-beige/review/**"],
+      "required_checks": ["acceptance"]
+    }
+  ]
+}

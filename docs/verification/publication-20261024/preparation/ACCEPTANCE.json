@@ -1,0 +1,33 @@
+{
+  "status": "FAIL",
+  "candidate": "publication-20261024-preparation",
+  "checks": [
+    {
+      "id": "SNAPSHOT_PRE",
+      "command": [
+        "python",
+        "docs/verification/publication-20261024/preparation/check_snapshot.py"
+      ],
+      "returncode": 0,
+      "result": "PASS",
+      "log": "docs/verification/publication-20261024/preparation/SNAPSHOT_PRE.log",
+      "log_sha256": "41b6cacd6dd9e5a077c4c0f58be29247a969e5be0c908d8abca08c2ff2b6e48b"
+    },
+    {
+      "id": "README_FULL",
+      "command": [
+        "python",
+        "scripts/generate_dynamic_readme.py"
+      ],
+      "returncode": 1,
+      "result": "FAIL",
+      "log": "docs/verification/publication-20261024/preparation/README_FULL.log",
+      "log_sha256": "86cfdaef65ce6ddf49b9b39fbc47bd977ae98b5ce0958badce56ba038443b27a"
+    }
+  ],
+  "python_suite": null,
+  "ci": "NOT_RUN",
+  "commit_push": "NOT_RUN",
+  "browser_whatsapp_transport": "NOT_RUN",
+  "scope": "Fresh publication candidate source/privacy/links and one full Python suite through base generator; frontend RC10 results remain inherited, no live-provider claim"
+}

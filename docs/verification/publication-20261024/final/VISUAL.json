@@ -1,0 +1,219 @@
+{
+  "candidate": "navigation-control-order-20261024-rc13",
+  "checks": [
+    {
+      "id": "Viewport 1920",
+      "result": "PASS"
+    },
+    {
+      "id": "Default Chat",
+      "result": "PASS"
+    },
+    {
+      "id": "Requested control order",
+      "result": "PASS"
+    },
+    {
+      "id": "One Settings control, no footer duplicate",
+      "result": "PASS"
+    },
+    {
+      "id": "01-menu-chat no document overflow",
+      "result": "PASS"
+    },
+    {
+      "id": "English control label",
+      "result": "PASS"
+    },
+    {
+      "id": "02-settings no document overflow",
+      "result": "PASS"
+    },
+    {
+      "id": "Settings focus return",
+      "result": "PASS"
+    },
+    {
+      "id": "03-mensajes no document overflow",
+      "result": "PASS"
+    },
+    {
+      "id": "No duplicate Communications tabs",
+      "result": "PASS"
+    },
+    {
+      "id": "History destination",
+      "result": "PASS"
+    },
+    {
+      "id": "04-contactos no document overflow",
+      "result": "PASS"
+    },
+    {
+      "id": "Full Contacts original",
+      "result": "PASS"
+    },
+    {
+      "id": "Agent management remains reachable",
+      "result": "PASS"
+    },
+    {
+      "id": "Viewport 320",
+      "result": "PASS"
+    },
+    {
+      "id": "05-menu-320 no document overflow",
+      "result": "PASS"
+    },
+    {
+      "id": "Narrow EN accessible",
+      "result": "PASS"
+    },
+    {
+      "id": "Narrow Settings return focus",
+      "result": "PASS"
+    },
+    {
+      "id": "06-mensajes-320 no document overflow",
+      "result": "PASS"
+    },
+    {
+      "id": "07-contactos-320 no document overflow",
+      "result": "PASS"
+    },
+    {
+      "id": "Viewport 1920",
+      "result": "PASS"
+    },
+    {
+      "id": "No backend mutations",
+      "result": "PASS"
+    }
+  ],
+  "captures": [
+    {
+      "url": "http://127.0.0.1:5193/",
+      "viewport": {
+        "width": 1920,
+        "height": 978
+      },
+      "overflow": false,
+      "path": "visual/01-menu-chat.png",
+      "sha256": "7a6096e7bb6ddfe45221ab38f439c1991702973bb9d5585d405a17eadba8c5a4",
+      "pixels": [
+        1536,
+        782
+      ],
+      "privacy": "Conversation/library and personal input/settings detail regions masked before saving",
+      "at": "2026-10-23T23:35:45.448955+00:00"
+    },
+    {
+      "url": "http://127.0.0.1:5193/",
+      "viewport": {
+        "width": 1920,
+        "height": 978
+      },
+      "overflow": false,
+      "path": "visual/02-settings.png",
+      "sha256": "830658c678e8ac366f564f414d1fe7039f67da90c78b06beec28f76bda849a27",
+      "pixels": [
+        1536,
+        782
+      ],
+      "privacy": "Conversation/library and personal input/settings detail regions masked before saving",
+      "at": "2026-10-23T23:35:45.818710+00:00"
+    },
+    {
+      "url": "http://127.0.0.1:5193/",
+      "viewport": {
+        "width": 1920,
+        "height": 978
+      },
+      "overflow": false,
+      "path": "visual/03-mensajes.png",
+      "sha256": "68485a5dbd16bed5bc119e467a540d3baa9e0affe90d7cae0fa9ddf9b143fab1",
+      "pixels": [
+        1536,
+        782
+      ],
+      "privacy": "Conversation/library and personal input/settings detail regions masked before saving",
+      "at": "2026-10-23T23:35:46.455454+00:00"
+    },
+    {
+      "url": "http://127.0.0.1:5193/",
+      "viewport": {
+        "width": 1920,
+        "height": 978
+      },
+      "overflow": false,
+      "path": "visual/04-contactos.png",
+      "sha256": "ad24ae6f937bd024ca0651597082173a146970c900ce2fd0a43ff7bb3ca91b6c",
+      "pixels": [
+        1536,
+        782
+      ],
+      "privacy": "Conversation/library and personal input/settings detail regions masked before saving",
+      "at": "2026-10-23T23:35:46.815316+00:00"
+    },
+    {
+      "url": "http://127.0.0.1:5193/",
+      "viewport": {
+        "width": 320,
+        "height": 700
+      },
+      "overflow": false,
+      "path": "visual/05-menu-320.png",
+      "sha256": "d15362825c18999044385ba44842b3578bdcebd04b505c18fcba723a185e7c85",
+      "pixels": [
+        256,
+        560
+      ],
+      "privacy": "Conversation/library and personal input/settings detail regions masked before saving",
+      "at": "2026-10-23T23:35:47.139996+00:00"
+    },
+    {
+      "url": "http://127.0.0.1:5193/",
+      "viewport": {
+        "width": 320,
+        "height": 700
+      },
+      "overflow": false,
+      "path": "visual/06-mensajes-320.png",
+      "sha256": "4a147786a1dc474a78e62fc35aa48dc42476b5df0f33b380d1fd7422b5f83e52",
+      "pixels": [
+        256,
+        560
+      ],
+      "privacy": "Conversation/library and personal input/settings detail regions masked before saving",
+      "at": "2026-10-23T23:35:47.780458+00:00"
+    },
+    {
+      "url": "http://127.0.0.1:5193/",
+      "viewport": {
+        "width": 320,
+        "height": 700
+      },
+      "overflow": false,
+      "path": "visual/07-contactos-320.png",
+      "sha256": "694c9d569c971bfc8eae4d05534b437dac3c33137bf4b9bae085a6727702c4f7",
+      "pixels": [
+        256,
+        560
+      ],
+      "privacy": "Conversation/library and personal input/settings detail regions masked before saving",
+      "at": "2026-10-23T23:35:48.031344+00:00"
+    }
+  ],
+  "order": [
+    "Configuración",
+    "Espacio de trabajo",
+    "Chat",
+    "Agentes",
+    "Capacidades",
+    "Comunicaciones",
+    "Inspector"
+  ],
+  "status": "PASS",
+  "mutations": [],
+  "scope": "Finite final RC13 visible same browser; order/default Chat/Settings localization+focus/groups and320/1920. No save/send/inference. Geometry CSS and PNG pixels separately recorded."
+}

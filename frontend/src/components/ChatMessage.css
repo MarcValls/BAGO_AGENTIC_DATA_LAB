@@ -1,0 +1,114 @@
+/* Message frame owns its author, content and actions. Role remains clear without color. */
+.control-chat .control-message {
+  box-sizing: border-box;
+  border: 1px solid #365366;
+  border-inline-start-width: 4px;
+  border-inline-start-color: #50b7b1;
+  border-radius: 0;
+  background: #101f30;
+  padding: 0;
+  overflow-wrap: anywhere;
+}
+.control-chat .control-message-user {
+  width: min(100%, 76ch);
+  margin-inline-start: auto;
+  margin-inline-end: 0;
+  border-inline-start-width: 1px;
+  border-inline-start-color: #365366;
+  border-inline-end-width: 4px;
+  border-inline-end-color: #8ea9e7;
+  background: #172b40;
+}
+.control-chat .control-message > .control-message-heading {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 16px;
+  margin: 0;
+  padding: 9px 12px;
+  border-block-end: 1px solid transparent;
+  background: linear-gradient(90deg, #50b7b180, #678ce74d, #36536640) bottom / 100% 1px no-repeat,
+    linear-gradient(100deg, #16333d, #152536 65%);
+  border-radius: 0;
+}
+.control-chat .control-message-user > .control-message-heading {
+  background: linear-gradient(90deg, #36536640, #718ed380, #8ea9e7b3) bottom / 100% 1px no-repeat,
+    linear-gradient(100deg, #172b40, #263450);
+}
+.control-chat .control-message .message-speaker {
+  color: #e4edf7;
+  font-size: .82rem;
+  font-weight: 700;
+  overflow-wrap: anywhere;
+  min-width: 0;
+}
+.control-chat .control-message-user .message-speaker { margin-inline-start: auto; }
+.control-chat .control-message .control-message-actions {
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-inline-start: auto;
+}
+.control-chat .control-message .message-action {
+  padding: 5px 8px;
+  border: 1px solid #536b82;
+  border-radius: 0;
+  background: #0c1c2c;
+  color: #d3e4f4;
+  font-size: .75rem;
+}
+.control-chat .control-message .message-action:hover:not(:disabled),
+.control-chat .control-message .message-action:focus-visible {
+  border-color: #78c9d0;
+  background: #203e50;
+  color: #f0f8ff;
+}
+.control-chat .control-message .message-action:focus-visible {
+  outline: 2px solid #91dce4;
+  outline-offset: 2px;
+}
+.control-chat .control-message > .control-message-content,
+.control-chat .control-message-user > .control-message-content {
+  margin: 0;
+  max-inline-size: none;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+}
+.control-chat .control-message:focus-visible {
+  outline: 2px solid #91dce4;
+  outline-offset: 3px;
+}
+.chat-message-context-menu {
+  position: fixed;
+  z-index: 2000;
+  box-sizing: border-box;
+  display: grid;
+  gap: 4px;
+  width: max-content;
+  max-width: calc(100vw - 16px);
+  max-height: calc(100dvh - 16px);
+  overflow: auto;
+  padding: 6px;
+  border: 1px solid #638899;
+  border-block-start: 2px solid #67c6c7;
+  border-radius: 0;
+  background: linear-gradient(135deg, #142c39, #102234 70%);
+  color: #e4edf7;
+  box-shadow: 0 8px 24px #0008;
+}
+.chat-message-context-author { padding: 4px 8px 7px; border-bottom: 1px solid #477184; font-weight: 700; overflow-wrap: anywhere; }
+.chat-message-context-menu > button {
+  padding: 8px 12px;
+  text-align: start;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  border: 1px solid transparent;
+  border-radius: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+.chat-message-context-menu > button:hover:not(:disabled),
+.chat-message-context-menu > button:focus-visible { background: #254759; outline: 2px solid #91dce4; outline-offset: -2px; }
+.chat-message-context-menu > button:disabled { opacity: .5; cursor: not-allowed; }

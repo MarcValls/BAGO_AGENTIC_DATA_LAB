@@ -1,0 +1,45 @@
+{
+  "status": "PASS",
+  "errors": [],
+  "checks": [
+    {
+      "id": "CONTROLS_FINAL",
+      "result": "PASS",
+      "returncode": 0,
+      "log": "docs/verification/publication-20261024/final/CONTROLS_FINAL.log",
+      "log_sha256": "05be1031b5234579681e49a2c0d39e3cb464946c4aa58cc7bb3cb80a7c323434"
+    },
+    {
+      "id": "README_CHECK",
+      "result": "PASS",
+      "returncode": 0,
+      "log": "docs/verification/publication-20261024/final/README_CHECK.log",
+      "log_sha256": "0c918ee4195d6de23716a7ae6be2e40d8a7ec5024c25522e1cace90e5a3fca2a"
+    }
+  ],
+  "python": {
+    "passed": 941,
+    "skipped": 1,
+    "state": "INHERITED_P1_UNCHANGED_233_FILES",
+    "execution": "45204dcac9b246ee82ecbdd9d6684622",
+    "new_full": "NOT_RUN_AUTHORIZED_SUCCESSOR"
+  },
+  "frontend": {
+    "passed": 476,
+    "state": "INHERITED_RC13_EXACT_211_FILES",
+    "build": "PASS",
+    "admission_sha256": "6a4e787010d8994a71c5d3ca54c9a59c3b5293a55554fdfc17175c0f7033585e"
+  },
+  "visual": {
+    "checks": 22,
+    "captures": 7,
+    "state": "INHERITED_RC13_PREVIEW5193",
+    "record_sha256": "70a5792aa76519ac3d0eca0a4ad664ff1c436a7bdc1538da1475e54ee57b1f42"
+  },
+  "ci_hosted": "NOT_RUN",
+  "commit_push": "NOT_RUN",
+  "whole_product": "NOT_VALIDATED",
+  "counting": "Do not add focused or inherited executions",
+  "prior_attempt": "0455282be4cf442f81ce7079cca644c6 failed before execution: acceptance runner file absent; corrected materialization, no product tests had run. Original failed receipt preserved.",
+  "parser_repair": "ANSI stripped only in importer memory to parse test summary; original logs retained unchanged."
+}

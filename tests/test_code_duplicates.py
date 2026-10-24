@@ -118,7 +118,7 @@ def test_chat_tool_loop_invokes_scan_and_returns_receipt(monkeypatch, tmp_path: 
     assert "exact duplicate" in answer
     assert sources == []
     assert navigation_view is None
-    assert len(tool_definitions[0]) == 2
+    assert [tool["function"]["name"] for tool in tool_definitions[0]] == ["scan_code_duplicates"]
     assert events[0]["kind"] == "directory_code_scan"
     assert events[0]["files_scanned"] == 2
     assert events[0]["finding_count"] >= 1

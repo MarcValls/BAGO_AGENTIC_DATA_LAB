@@ -1,0 +1,31 @@
+{
+  "classification": "INHERITED_RC10_LOCAL_DELIVERY_NOT_PUBLICATION_CANDIDATE_EXECUTION",
+  "artifacts": [
+    {
+      "artifact": "APPLIED.json",
+      "sha256": "287ece1a9334ad85dc3e7718dafd0397cee9d6de8f26ce15b556463e70330aa3",
+      "status": "PASS",
+      "candidate": "communications-navigation-20261024-rc10",
+      "at": "2026-10-23T23:00:39.512255+00:00",
+      "backend_identity_preserved": true,
+      "volume_bindings_preserved": true
+    },
+    {
+      "artifact": "POST_APPLY.json",
+      "sha256": "4e30e1e986c4429123be40b852a039f2ec4bd6d0ed2619b27b7922c844773732",
+      "status": "PASS",
+      "candidate": "communications-navigation-20261024-rc10",
+      "at": "2026-10-23T23:01:45.376411+00:00"
+    },
+    {
+      "artifact": "CLOSE.json",
+      "sha256": "f09945eba5966b918ac8c2fd870c664e7a832a9af1da6cf87d4b9785684b098e",
+      "status": "PASS",
+      "task_state": "CLOSED",
+      "product_state": "SCOPED_ACCEPTANCE_PASSED",
+      "terminal_gate": "VALIDATED_SCOPED_TASK"
+    }
+  ],
+  "scope": "Root applied RC10 frontend to8093 and observed three destinations; backend8094 and volume identity preserved; no personal contact values or raw runtime dumps imported",
+  "global_menu_authority": "PROPOSED_AND_UNDER_READ_ONLY_REVIEW_NOT_IMPLEMENTED"
+}

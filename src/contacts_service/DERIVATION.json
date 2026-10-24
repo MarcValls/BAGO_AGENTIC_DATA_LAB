@@ -1,0 +1,38 @@
+{
+  "schema": "bago.contacts.derivation.v1",
+  "operation": "I05 delegated preservation of SDK history; core and historical PROVENANCE untouched",
+  "source_root": "E:\\proyectos curriculum\\PRUEBAS_ADL\\CONTACTS_SERVICE_0.1.1_RC1",
+  "source_candidate": "contacts-service-0.1.1-RC1",
+  "core_sha256": "01c2d22ceed56fce41e1350a6fe78c46d31ae187f25ff13d279f761c06330972",
+  "historical_provenance_sha256": "e51781dfe34a6593a9569810e98b0a754ae6ee88ca924d717dfd48ebc2b6ad7f",
+  "history": [
+    {
+      "source": "E:\\proyectos curriculum\\PRUEBAS_ADL\\CONTACTS_SERVICE_0.1.1_RC1\\history\\UPSTREAM_SOURCE.py",
+      "destination": "src/contacts_service/history/UPSTREAM_SOURCE.py",
+      "sha256": "08df4f9ea61f579f735fb3c264439a85abdebd27bd251d52ad77d4e27acc3e69"
+    },
+    {
+      "source": "E:\\proyectos curriculum\\PRUEBAS_ADL\\CONTACTS_SERVICE_0.1.1_RC1\\history\\UPSTREAM_REPORT.md",
+      "destination": "src/contacts_service/history/UPSTREAM_REPORT.md",
+      "sha256": "e083368ab088a105819b827ad372ad1981bacf8af5dde4bdada35c824cae7364"
+    },
+    {
+      "source": "E:\\proyectos curriculum\\PRUEBAS_ADL\\CONTACTS_SERVICE_0.1.1_RC1\\history\\UPSTREAM_MANIFEST.json",
+      "destination": "src/contacts_service/history/UPSTREAM_MANIFEST.json",
+      "sha256": "373b1b569881d06a356fa511751cdae4e2cf374bcd7a0690ceafef6995151de2"
+    }
+  ],
+  "repair_patch": {
+    "path": "REPAIR.patch",
+    "raw_sha256": "5996e630b75af332824f6c43e623646a5712b2046026a4d3ff878e8e24fff342",
+    "lf_normalized_sha256": "89b54bfb0df6ef89ea32182b50f52677f13847166d0b02bb5ea156ddb4f032d7",
+    "historical_hash_convention": "LF normalized",
+    "bytes_changed": false
+  },
+  "license": {
+    "status": "INCONCLUSIVE",
+    "license_files_found": [],
+    "reason": "No LICENSE/NOTICE/COPYING file or license grant identified in supplied SDK RC1 or original service. ADL repository license is not evidence of upstream SDK license. No license invented or silently reassigned."
+  },
+  "live_google": "NOT_RUN"
+}

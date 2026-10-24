@@ -1,0 +1,31 @@
+/* BS01: restrained beige navigation accents; original footer/mobile placement is in App.css. */
+#root .app-shell .workspace-sidebar {
+  --nav-beige: #d6c2a4;
+  --nav-beige-line: #8b7658;
+}
+#root .app-shell .workspace-sidebar .navigation-caption,
+#root .app-shell .workspace-sidebar .navigation-item-icon {
+  color: var(--nav-beige);
+}
+#root .app-shell .workspace-sidebar .navigation-item.active,
+#root .app-shell .workspace-sidebar .navigation-item[aria-current="page"] {
+  color: #f2e6d4;
+  background: #332d28;
+  border-color: var(--nav-beige-line);
+}
+#root .app-shell .workspace-sidebar .navigation-item:focus-visible,
+#root .app-shell .workspace-sidebar .sidebar-collapse-button:focus-visible {
+  outline-color: var(--nav-beige);
+}
+#root .app-shell .workspace-sidebar .workspace-sidebar-footer .settings-trigger {
+  color: #f2e6d4;
+  background: linear-gradient(110deg, #3b3329, #292720);
+  border-color: var(--nav-beige-line);
+  border-radius: 0;
+  box-shadow: inset 3px 0 0 var(--nav-beige);
+}
+#root .app-shell .workspace-sidebar .workspace-sidebar-footer .settings-trigger:hover,
+#root .app-shell .workspace-sidebar .workspace-sidebar-footer .settings-trigger[aria-expanded="true"] {
+  background: #493e30;
+  border-color: var(--nav-beige);
+}

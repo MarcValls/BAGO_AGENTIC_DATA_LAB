@@ -1,0 +1,22 @@
+/* Same native disclosure rhythm as Agents, using the existing common visual tokens. */
+.workspace-sidebar .communications-navigation { width: 100%; }
+.workspace-sidebar .communications-navigation-toggle { font-weight: 650; }
+.workspace-sidebar .communications-navigation-chevron { margin-left: auto; font-size: .9rem; }
+.workspace-sidebar .communications-navigation-children { display: flex; flex-direction: column; gap: 3px; margin: 3px 0 7px 24px; padding-left: 8px; border-left: 1px solid var(--vs-line, #30495c); }
+.workspace-sidebar .communications-navigation-children .navigation-item { min-height: 38px; flex-basis: 38px; font-size: .8rem; padding-left: 8px; }
+.workspace-sidebar .communications-navigation.has-active-child > .communications-navigation-toggle { color: var(--vs-accent, #79c7da); }
+.workspace-sidebar .communications-navigation-children[hidden],
+.communications-section-host .communications-section-panel[hidden] { display: none; }
+.communications-section-host, .communications-section-panel { display: flex; flex-direction: column; flex: 1 0 auto; width: 100%; min-width: 0; min-height: 0; }
+.communications-section-host { background: var(--vs-work, #101f2e); }
+.communications-section-panel > :is(.communications, .contacts-page) { flex: 1 0 auto; width: 100%; min-width: 0; min-height: 0; }
+#root .app-shell .communications-section-panel > :is(.communications, .contacts-page) > :is(.communications-heading, .contacts-heading) { background: var(--vs-header); border-color: var(--vs-line); border-radius: 0; box-shadow: inset 0 -1px var(--vs-accent); padding-block: var(--vs-space-title-block); padding-inline: var(--vs-space-title-inline); }
+/* CS02 regions replace removed tab panels; retain their established flexible editor. */
+.communications-section-host .communications-editor > [role='region']:not([hidden]) { display: flex; flex: 1 0 auto; flex-direction: column; min-width: 0; min-height: 0; }
+.communications-section-host .communications-editor > [role='region'][hidden] { display: none; }
+@media (max-width: 760px) {
+ .workspace-sidebar .communications-navigation { display: flex; width: auto; flex: 0 0 auto; align-items: center; }
+ .workspace-sidebar .communications-navigation-toggle { width: auto; }
+ .workspace-sidebar .communications-navigation-children { flex-direction: row; margin: 0 4px; padding-left: 4px; }
+ .workspace-sidebar .communications-navigation-children .navigation-item { width: auto; white-space: nowrap; min-height: 44px; line-height: 1.3; }
+}

@@ -1,0 +1,51 @@
+{
+  "result": "PASS_PREPARATION_ONLY",
+  "scope": "Finite publication snapshot integrity, source lineage and evidence; not push/CI/product-wide promotion eligibility",
+  "base_sha": "c5a78d33fbf5da608f550c4e8809eb6a8cb1be4c",
+  "public_files_hashed": 291,
+  "selected_source_files": 275,
+  "pp01_outputs": 317,
+  "rc10_source_comparisons": 487,
+  "captures": 7,
+  "pinned_raw_files": 9,
+  "python_result": "941 PASS/1 SKIP recorded before collection; completed generator log941 and managed returncode0 verified",
+  "current_junit": [
+    {
+      "name": "pytest",
+      "errors": "0",
+      "failures": "0",
+      "skipped": "0",
+      "tests": "0",
+      "time": "5.441",
+      "timestamp": "2026-10-24T01:21:44.102044+02:00",
+      "hostname": "DESKTOP-1NJ5EQ8"
+    }
+  ],
+  "evidence_sha256": {
+    "docs/verification/publication-20261024/preparation/BASE.json": "12188e11926d133a412e838822811d0918931cfb23fec09914c85cbf089567c0",
+    "docs/verification/publication-20261024/preparation/PUBLIC_FILES.json": "2e79656dd259afbf0a3e5e33da9f99ff5599f6cfc0e6063d2eabb237cbc760d7",
+    "docs/verification/publication-20261024/preparation/COPY_MANIFEST.json": "4364fd4b1af846ded79211f35ea3701d76dee943f6e58aa912a207eae020bcc6",
+    "docs/verification/publication-20261024/preparation/DOC_LINK_REPAIR.json": "c0b54c91a844e1a29b8f3b1e793ed0dda5dc11b42ae29333a825ca770b243df1",
+    "docs/verification/publication-20261024/preparation/SOURCE_IDENTITY.json": "d19fc8751521918c78f2e1d5722e06d38be8debd02d307d332f1a02fc8d27876",
+    "docs/verification/publication-20261024/preparation/RC10_PUBLIC_SNAPSHOT.json": "24b554d15f1bc285f16e5acc826cc1bacfbff88495a07b39e13340d89a0e3563",
+    "docs/workspace/README.md": "2592e9d949c42f958985b73c58b9de7e3ea3d43da7e29902b67e22a287bea0df",
+    "docs/verification/publication-20261024/preparation/handoff.json": "da035a12481460962949f05c597052ea3c16581ae1f91c9e8a276f83ddbd6344",
+    "docs/verification/publication-20261024/preparation/ACCEPTANCE_REPAIRED.json": "60a7d5f411a87472800c9867efb4acf2b6ac33249cd4219f86efc9a538eab840",
+    "docs/verification/publication-20261024/preparation/README_FULL_REPAIRED.log": "c965d49985d2f97b587d5f8a9d6552361e660c2c50e31a08349d2a6a2510d90a",
+    "docs/verification/publication-20261024/preparation/README_CHECK_REPAIRED.log": "0c918ee4195d6de23716a7ae6be2e40d8a7ec5024c25522e1cace90e5a3fca2a",
+    "docs/verification/publication-20261024/preparation/ACCEPTANCE.json": "fba74d5be5af26c49a1586e789b1643718f3d47ec6232a91d8150f9760318424",
+    "docs/verification/publication-20261024/preparation/REPAIRED_FOCAL.log": "24d7f4229dc521d16f7d04f840b15c54ef7403f0c8e1af1c22f4d6f326cba804",
+    "docs/verification/publication-20261024/captures/MANIFEST.json": "c932e0e739c13e48f7a161f5a52d2b5b74f91cc48ca56806c09a24557aa4e783",
+    "docs/verification/publication-20261024/preparation/SNAPSHOT_CHECK.json": "f1465e285ce4d0a164e2bbfa43ede107280b796ab98324e0eb1479a62b83a352",
+    "docs/verification/publication-20261024/PENDING.md": "273d87ef1fb10677906e027ffb5ec0cebd9e7af091aaff3a19a7621ea70a0d40",
+    ".github/workflows/ci.yml": "25f9eb9d8f64cb3cf9777496bda41c684b4aa8d3ce6810b9a1130b01b53c986a",
+    "docs/verification/publication-20261024/preparation/NEWLINE_REVIEW.json": "ecfe1fd53afaeafbcee31ebec62c7c2a9965147a6a95d4ad466f3cdfb950114f"
+  },
+  "limits": [
+    "Push blocked by PUB-PENDING-005 until separately reviewed CI-order successor; hosted CI NOT_RUN",
+    "Junit full-suite path overwritten by collection; no retained full per-case XML, summary/log provenance explicitly separated",
+    "Frontend474 and visual36 inherited from exact RC10, not executed on this branch",
+    "Final remote-base fetch, actual index/blob/tree and pinned raw line endings remain root gates before publication",
+    "No commit/push/browser/provider/runtime changes by reviewer; Inspector prior goal remains PAUSED"
+  ]
+}

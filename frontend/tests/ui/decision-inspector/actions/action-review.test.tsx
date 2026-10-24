@@ -1,3 +1,6 @@
+import {setLocale,t} from '../../../../src/i18n'
+import {beforeEach as beforeLocaleExpectation} from 'vitest'
+beforeLocaleExpectation(() => setLocale('en'))
 import { expect, test } from 'vitest'
 import { renderToStaticMarkup } from 'react-dom/server'
 import type { ActionInspectionBundle } from '../../../../src/contracts/action/action'
@@ -59,7 +62,7 @@ test('UI rejects a claimed receipt match without exact request and permit identi
   } satisfies ActionInspectionBundle
   const html = renderToStaticMarkup(<ActionReview bundle={unsafe} />)
   expect(html).toMatch(/Receipt mismatch/)
-  expect(html).toMatch(/Execution<\/strong><span>unverified/)
+  expect(html).toMatch(/Execution<\/strong><span>Unverified \(unverified\)/)
   expect(html).toMatch(/identity-matched receipt is unavailable/)
 })
 

@@ -1,0 +1,2 @@
+# Native visible Brave automation; no browser download or shared profile.
+websockets==16.1.1

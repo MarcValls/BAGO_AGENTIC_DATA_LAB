@@ -121,7 +121,10 @@ def test_help_uses_model_and_persists_focus_only_when_cognition_enabled(monkeypa
         assert calls == []
         assert result["operation"] == "help"
         assert "cognitive_trace" not in result
-        assert not (tmp_path / "traces").exists()
+        assert not (tmp_path / "traces" / "cognition").exists()
+        control_trace=json.loads((tmp_path / "traces" / (result["trace"]["trace_id"]+".json")).read_bytes())
+        assert control_trace['events'][0]['name']=='assistant.control'
+        assert control_trace['events'][0]['attributes']['model_invoked'] is False
     else:
         assert len(calls) == 1
         assert "BAGO5 experimental cognitive context" in calls[0][0]["content"]

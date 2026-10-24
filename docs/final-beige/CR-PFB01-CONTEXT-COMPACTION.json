@@ -1,0 +1,34 @@
+{
+  "id": "CR-PFB01-CONTEXT-COMPACTION",
+  "state": "PROPOSED_PENDING_EXACT_CL_FREEZE_SCOPE",
+  "authority": "Root relayed explicit user confirmation: compact only the context block in Settings",
+  "mission": "BAGO_PUBLICATION_BEIGE_FINAL_20261024",
+  "work": "PFB01",
+  "operation": "Prepare and review same publication candidate scope amendment before PFB02 starts",
+  "reason": "User added a concrete visual preference after RC14 integration; RC14 is now historical rather than the last requested final UI",
+  "preserve": [
+    "RC14 archive/source/frontend/visual evidence unchanged",
+    "Existing PF01 RC13 handoff and archived PF02 READY",
+    "P1 Python941+1 exact233-file inheritance",
+    "CI two-step reorder and11 raw-byte pins",
+    "Beige accents and footer Settings behavior"
+  ],
+  "planned_delta": "Only approved Settings context block source/style/tests from future frozen CL; exact paths and hashes must be supplied before canonical scope amendment and import",
+  "consumers": ["PFB02"],
+  "consumer_status": "PENDING_NOT_STARTED",
+  "old_fingerprints": "RC14_EVIDENCE.json, SOURCE_IMPORT.json and predecessor/IDENTITY.json retain previous identities",
+  "new_fingerprints": "PENDING_CL_FREEZE_AND_RC15",
+  "required_actions": [
+    "Read exact CL source scope and frozen hashes",
+    "Materialize canonical teamctl scope amendment before new source writes",
+    "Retain before snapshots and record old/new hashes",
+    "Wait for finalRC15 package/frontend/visual and independent acceptance",
+    "Run finite PFB managed admission and independentPFB02; no automatic Python full"
+  ],
+  "non_claims": [
+    "No compact context implementation imported in P yet",
+    "RC14 not promoted as last-preference final",
+    "No new capabilities, Google OAuth, provider effects or permission authority changes",
+    "No stage, commit, push or merge"
+  ]
+}

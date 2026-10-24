@@ -1,0 +1,430 @@
+{
+  "work_id": "BS02",
+  "role": "team-orchestrator",
+  "status": "DONE",
+  "mission_id": "BAGO_BEIGE_SETTINGS_20261024",
+  "candidate_id": "9bdf09833dd28ab922485c21a23e0f645efb5cb812712150dd3c1b07d4f8fada",
+  "scope_sha256": "0af844db09c04531999970ed71e0bce9ed1f51245b48416d0453a7bc7cef9df9",
+  "changed_files": [
+    "docs/communications-navigation-20261024/beige-settings/integration/ACCEPTANCE.json",
+    "docs/communications-navigation-20261024/beige-settings/integration/MANAGED_CHECK.json",
+    "docs/communications-navigation-20261024/beige-settings/integration/PREVIEW_DIAGNOSIS.json",
+    "docs/communications-navigation-20261024/beige-settings/integration/PREVIEW_UP.log",
+    "docs/communications-navigation-20261024/beige-settings/integration/README_CHECK.log",
+    "docs/communications-navigation-20261024/beige-settings/integration/README_EXECUTIONS.json",
+    "docs/communications-navigation-20261024/beige-settings/integration/README_FULL.log",
+    "docs/communications-navigation-20261024/beige-settings/integration/SOURCE_SNAPSHOT.json",
+    "docs/communications-navigation-20261024/beige-settings/integration/VISUAL.json",
+    "docs/communications-navigation-20261024/beige-settings/integration/VISUAL.log",
+    "docs/communications-navigation-20261024/beige-settings/integration/attempt01/FAILURE.json",
+    "docs/communications-navigation-20261024/beige-settings/integration/attempt01/VISUAL.log",
+    "docs/communications-navigation-20261024/beige-settings/integration/diagnose_preview.py",
+    "docs/communications-navigation-20261024/beige-settings/integration/objects/03cbae6c8da83354e000ab314930d897285f76bb5e3a4e697603ae680c3d0806",
+    "docs/communications-navigation-20261024/beige-settings/integration/objects/074519934993d5a888eddd5331554af5db4e21daf167accc2e97b80b30708ee6",
+    "docs/communications-navigation-20261024/beige-settings/integration/objects/0c76b21a3b543c1a3b60ab71e43fbdc2224660336dd11ad58f0a1eb4b80159e8",
+    "docs/communications-navigation-20261024/beige-settings/integration/objects/1b2394bf2ff3b1facf8f96960cf6bda5c6613aad5cb8b5eb1cbff2fc0d29e2d0",
+    "docs/communications-navigation-20261024/beige-settings/integration/objects/1d6087f45933f73371359ede38403d39882846d2abc78c1a5fc7106d70e03cc3",
+    "docs/communications-navigation-20261024/beige-settings/integration/objects/1e268a110974acd20347ef501dae0d84f00d6d837178895a9aa3f6d4cb69b1de",
+    "docs/communications-navigation-20261024/beige-settings/integration/objects/2631a236820a978efcf0263b94520f51fa859f82366b6690bb0fdecb3ca41429",
+    "docs/communications-navigation-20261024/beige-settings/integration/objects/330e5de2544fe81e071f4af215e41261e7969c11a4a44e882280a6097c236102",
+    "docs/communications-navigation-20261024/beige-settings/integration/objects/349960e2054b9f838c6a1fa705fe2c4bde6274e66cae6a965afe56c199aa0d95",
+    "docs/communications-navigation-20261024/beige-settings/integration/objects/37f396bd15428eaf94793ece0f6808636aae8dcef4dc42d0bb866aa5efa856aa",
+    "docs/communications-navigation-20261024/beige-settings/integration/objects/619ba5bec36bf86c62aafed9887bdc63ddadbb49a19204f6a9b4043b0cc110c3",
+    "docs/communications-navigation-20261024/beige-settings/integration/objects/62999f382ea2cb73627e369e341c7aec598f9559ac1b9a303fc408cdb030be49",
+    "docs/communications-navigation-20261024/beige-settings/integration/objects/654fbf93a7902ef2800b72dff15c5b05ed420e12b5acfe9d5c2df76d17058b05",
+    "docs/communications-navigation-20261024/beige-settings/integration/objects/6c3e22f04eea9171e6b2a85545d22345212482c1cc9cf26fe116ce1e714bd98a",
+    "docs/communications-navigation-20261024/beige-settings/integration/objects/6c8c41528d834e5f45e92e6a099f3e6964e911806c99a6bcb26776821f835edf",
+    "docs/communications-navigation-20261024/beige-settings/integration/objects/718fca13152e97774cca6b6b282641945beff5d58b57b2cd2888b98aa5cde2ce",
+    "docs/communications-navigation-20261024/beige-settings/integration/objects/7779512f0df7b3988be9cc625f02e6d0adbf612ca99479f314517503e34771d4",
+    "docs/communications-navigation-20261024/beige-settings/integration/objects/8901ee64b4fefb9e63199f54e09cc23bcbe222399eb434fa4ebcb05ce7c885f2",
+    "docs/communications-navigation-20261024/beige-settings/integration/objects/8cf5a27256e695e4fcf9431e2034891801605f92095e9a8f6a4098e4ea61a86c",
+    "docs/communications-navigation-20261024/beige-settings/integration/objects/8fbc540cd6b9da32ed4cd827a0f8a32111a5f0239e11ae37d4f7e077790bc694",
+    "docs/communications-navigation-20261024/beige-settings/integration/objects/905504d4eb4cf887b1c80e1a535b115b6e1b58aed61e930ad017490864350e49",
+    "docs/communications-navigation-20261024/beige-settings/integration/objects/94d5b74756d8a25e6ac7f35824270461bd2696ef308b881724a47fe1e030c7af",
+    "docs/communications-navigation-20261024/beige-settings/integration/objects/a83dc56398e1ea35e05f482f54936e77a3041e7aa1f119d7ad118e74448e2e63",
+    "docs/communications-navigation-20261024/beige-settings/integration/objects/b376850dd2ad40ab08a24eac9c39d3905e90d6dfba4d697b1480e5b80d347479",
+    "docs/communications-navigation-20261024/beige-settings/integration/objects/c2986b5336d87f55d5e5bf5febe2685551da980306c72fcfed48426d4edaa811",
+    "docs/communications-navigation-20261024/beige-settings/integration/objects/c2c3fe118ef3c05a508338699502226fac28c41dc9e39eb6cd792d9f135b46f3",
+    "docs/communications-navigation-20261024/beige-settings/integration/objects/c9113b32e882a453c5f28ddd9252928965d59a6404d85186740afe2a0789b04b",
+    "docs/communications-navigation-20261024/beige-settings/integration/objects/d481c6d8b30b986c3280fca3c1d3aef4925e742e635558aeb10f57d3c3e9d38f",
+    "docs/communications-navigation-20261024/beige-settings/integration/objects/d5d273b8895d11e45a4505ddb93dbc5bf528642ec9cb28840288faaa4eec1979",
+    "docs/communications-navigation-20261024/beige-settings/integration/objects/d9142e5f7f549881ace242e042fa5de1f21999a8742295b27515971d0996cc7f",
+    "docs/communications-navigation-20261024/beige-settings/integration/objects/ddcccaa226bd9fb1f1400a9388d7a62548720726391e94a0a9aa1938e54f321f",
+    "docs/communications-navigation-20261024/beige-settings/integration/objects/e6fc43f78d0a496ff16a1a157c0cf76d5a8717cd6860a92d2e630251bfa39f12",
+    "docs/communications-navigation-20261024/beige-settings/integration/objects/e80bdcd0323a059f25cff3eb14ad158a78ee855f70c5fcdacd71e34ebe433997",
+    "docs/communications-navigation-20261024/beige-settings/integration/objects/e9f886da0a7688354dd0b0969061821d8ae92c3bc7a3651c2309098c42a9f3e6",
+    "docs/communications-navigation-20261024/beige-settings/integration/objects/ee1374c02f6d6f6d740cbb45f79ca6402044d1c93d92af5b7a3ed7d200056e37",
+    "docs/communications-navigation-20261024/beige-settings/integration/objects/f8a871f21194020c42e7b46b78450f282d37c159e9b687b5335a18ef729c726c",
+    "docs/communications-navigation-20261024/beige-settings/integration/observe.py",
+    "docs/communications-navigation-20261024/beige-settings/integration/visual/01-chat-settings-footer.png",
+    "docs/communications-navigation-20261024/beige-settings/integration/visual/02-settings-open.png",
+    "docs/communications-navigation-20261024/beige-settings/integration/visual/03-mensajes-beige.png",
+    "docs/communications-navigation-20261024/beige-settings/integration/visual/04-contactos-beige.png",
+    "docs/communications-navigation-20261024/beige-settings/integration/visual/05-sidebar-collapsed.png",
+    "docs/communications-navigation-20261024/beige-settings/integration/visual/06-contactos-320.png",
+    "docs/communications-navigation-20261024/beige-settings/integration/visual/07-mensajes-320.png"
+  ],
+  "outputs": [
+    {
+      "id": "BS02-output-0",
+      "path": "docs/communications-navigation-20261024/beige-settings/integration/SOURCE_SNAPSHOT.json",
+      "sha256": "aa0d1deb1be34bf1585becd822cf1a2bb2bf2b3d16025ac6b140947ab7e9c189",
+      "frozen": true
+    },
+    {
+      "id": "BS02-output-1",
+      "path": "docs/communications-navigation-20261024/beige-settings/integration/ACCEPTANCE.json",
+      "sha256": "8901ee64b4fefb9e63199f54e09cc23bcbe222399eb434fa4ebcb05ce7c885f2",
+      "frozen": true
+    },
+    {
+      "id": "BS02-output-2",
+      "path": "docs/communications-navigation-20261024/beige-settings/integration/attempt01/FAILURE.json",
+      "sha256": "1b2394bf2ff3b1facf8f96960cf6bda5c6613aad5cb8b5eb1cbff2fc0d29e2d0",
+      "frozen": true
+    },
+    {
+      "id": "BS02-output-3",
+      "path": "docs/communications-navigation-20261024/beige-settings/integration/attempt01/VISUAL.log",
+      "sha256": "905504d4eb4cf887b1c80e1a535b115b6e1b58aed61e930ad017490864350e49",
+      "frozen": true
+    },
+    {
+      "id": "BS02-output-4",
+      "path": "docs/communications-navigation-20261024/beige-settings/integration/diagnose_preview.py",
+      "sha256": "37f396bd15428eaf94793ece0f6808636aae8dcef4dc42d0bb866aa5efa856aa",
+      "frozen": true
+    },
+    {
+      "id": "BS02-output-5",
+      "path": "docs/communications-navigation-20261024/beige-settings/integration/MANAGED_CHECK.json",
+      "sha256": "e80bdcd0323a059f25cff3eb14ad158a78ee855f70c5fcdacd71e34ebe433997",
+      "frozen": true
+    },
+    {
+      "id": "BS02-output-6",
+      "path": "docs/communications-navigation-20261024/beige-settings/integration/observe.py",
+      "sha256": "e6fc43f78d0a496ff16a1a157c0cf76d5a8717cd6860a92d2e630251bfa39f12",
+      "frozen": true
+    },
+    {
+      "id": "BS02-output-7",
+      "path": "docs/communications-navigation-20261024/beige-settings/integration/PREVIEW_DIAGNOSIS.json",
+      "sha256": "f8a871f21194020c42e7b46b78450f282d37c159e9b687b5335a18ef729c726c",
+      "frozen": true
+    },
+    {
+      "id": "BS02-output-8",
+      "path": "docs/communications-navigation-20261024/beige-settings/integration/PREVIEW_UP.log",
+      "sha256": "6c3e22f04eea9171e6b2a85545d22345212482c1cc9cf26fe116ce1e714bd98a",
+      "frozen": true
+    },
+    {
+      "id": "BS02-output-9",
+      "path": "docs/communications-navigation-20261024/beige-settings/integration/README_CHECK.log",
+      "sha256": "2631a236820a978efcf0263b94520f51fa859f82366b6690bb0fdecb3ca41429",
+      "frozen": true
+    },
+    {
+      "id": "BS02-output-10",
+      "path": "docs/communications-navigation-20261024/beige-settings/integration/README_EXECUTIONS.json",
+      "sha256": "a83dc56398e1ea35e05f482f54936e77a3041e7aa1f119d7ad118e74448e2e63",
+      "frozen": true
+    },
+    {
+      "id": "BS02-output-11",
+      "path": "docs/communications-navigation-20261024/beige-settings/integration/README_FULL.log",
+      "sha256": "6c8c41528d834e5f45e92e6a099f3e6964e911806c99a6bcb26776821f835edf",
+      "frozen": true
+    },
+    {
+      "id": "BS02-output-12",
+      "path": "docs/communications-navigation-20261024/beige-settings/integration/visual/01-chat-settings-footer.png",
+      "sha256": "1d6087f45933f73371359ede38403d39882846d2abc78c1a5fc7106d70e03cc3",
+      "frozen": true
+    },
+    {
+      "id": "BS02-output-13",
+      "path": "docs/communications-navigation-20261024/beige-settings/integration/visual/02-settings-open.png",
+      "sha256": "330e5de2544fe81e071f4af215e41261e7969c11a4a44e882280a6097c236102",
+      "frozen": true
+    },
+    {
+      "id": "BS02-output-14",
+      "path": "docs/communications-navigation-20261024/beige-settings/integration/visual/03-mensajes-beige.png",
+      "sha256": "c2c3fe118ef3c05a508338699502226fac28c41dc9e39eb6cd792d9f135b46f3",
+      "frozen": true
+    },
+    {
+      "id": "BS02-output-15",
+      "path": "docs/communications-navigation-20261024/beige-settings/integration/visual/04-contactos-beige.png",
+      "sha256": "d9142e5f7f549881ace242e042fa5de1f21999a8742295b27515971d0996cc7f",
+      "frozen": true
+    },
+    {
+      "id": "BS02-output-16",
+      "path": "docs/communications-navigation-20261024/beige-settings/integration/visual/05-sidebar-collapsed.png",
+      "sha256": "d5d273b8895d11e45a4505ddb93dbc5bf528642ec9cb28840288faaa4eec1979",
+      "frozen": true
+    },
+    {
+      "id": "BS02-output-17",
+      "path": "docs/communications-navigation-20261024/beige-settings/integration/visual/06-contactos-320.png",
+      "sha256": "349960e2054b9f838c6a1fa705fe2c4bde6274e66cae6a965afe56c199aa0d95",
+      "frozen": true
+    },
+    {
+      "id": "BS02-output-18",
+      "path": "docs/communications-navigation-20261024/beige-settings/integration/visual/07-mensajes-320.png",
+      "sha256": "074519934993d5a888eddd5331554af5db4e21daf167accc2e97b80b30708ee6",
+      "frozen": true
+    },
+    {
+      "id": "BS02-output-19",
+      "path": "docs/communications-navigation-20261024/beige-settings/integration/VISUAL.json",
+      "sha256": "e9f886da0a7688354dd0b0969061821d8ae92c3bc7a3651c2309098c42a9f3e6",
+      "frozen": true
+    },
+    {
+      "id": "BS02-output-20",
+      "path": "docs/communications-navigation-20261024/beige-settings/integration/VISUAL.log",
+      "sha256": "0c76b21a3b543c1a3b60ab71e43fbdc2224660336dd11ad58f0a1eb4b80159e8",
+      "frozen": true
+    },
+    {
+      "id": "BS02-output-21",
+      "path": "docs/communications-navigation-20261024/beige-settings/integration/objects/03cbae6c8da83354e000ab314930d897285f76bb5e3a4e697603ae680c3d0806",
+      "sha256": "03cbae6c8da83354e000ab314930d897285f76bb5e3a4e697603ae680c3d0806",
+      "frozen": true
+    },
+    {
+      "id": "BS02-output-22",
+      "path": "docs/communications-navigation-20261024/beige-settings/integration/objects/074519934993d5a888eddd5331554af5db4e21daf167accc2e97b80b30708ee6",
+      "sha256": "074519934993d5a888eddd5331554af5db4e21daf167accc2e97b80b30708ee6",
+      "frozen": true
+    },
+    {
+      "id": "BS02-output-23",
+      "path": "docs/communications-navigation-20261024/beige-settings/integration/objects/0c76b21a3b543c1a3b60ab71e43fbdc2224660336dd11ad58f0a1eb4b80159e8",
+      "sha256": "0c76b21a3b543c1a3b60ab71e43fbdc2224660336dd11ad58f0a1eb4b80159e8",
+      "frozen": true
+    },
+    {
+      "id": "BS02-output-24",
+      "path": "docs/communications-navigation-20261024/beige-settings/integration/objects/1b2394bf2ff3b1facf8f96960cf6bda5c6613aad5cb8b5eb1cbff2fc0d29e2d0",
+      "sha256": "1b2394bf2ff3b1facf8f96960cf6bda5c6613aad5cb8b5eb1cbff2fc0d29e2d0",
+      "frozen": true
+    },
+    {
+      "id": "BS02-output-25",
+      "path": "docs/communications-navigation-20261024/beige-settings/integration/objects/1d6087f45933f73371359ede38403d39882846d2abc78c1a5fc7106d70e03cc3",
+      "sha256": "1d6087f45933f73371359ede38403d39882846d2abc78c1a5fc7106d70e03cc3",
+      "frozen": true
+    },
+    {
+      "id": "BS02-output-26",
+      "path": "docs/communications-navigation-20261024/beige-settings/integration/objects/1e268a110974acd20347ef501dae0d84f00d6d837178895a9aa3f6d4cb69b1de",
+      "sha256": "1e268a110974acd20347ef501dae0d84f00d6d837178895a9aa3f6d4cb69b1de",
+      "frozen": true
+    },
+    {
+      "id": "BS02-output-27",
+      "path": "docs/communications-navigation-20261024/beige-settings/integration/objects/2631a236820a978efcf0263b94520f51fa859f82366b6690bb0fdecb3ca41429",
+      "sha256": "2631a236820a978efcf0263b94520f51fa859f82366b6690bb0fdecb3ca41429",
+      "frozen": true
+    },
+    {
+      "id": "BS02-output-28",
+      "path": "docs/communications-navigation-20261024/beige-settings/integration/objects/330e5de2544fe81e071f4af215e41261e7969c11a4a44e882280a6097c236102",
+      "sha256": "330e5de2544fe81e071f4af215e41261e7969c11a4a44e882280a6097c236102",
+      "frozen": true
+    },
+    {
+      "id": "BS02-output-29",
+      "path": "docs/communications-navigation-20261024/beige-settings/integration/objects/349960e2054b9f838c6a1fa705fe2c4bde6274e66cae6a965afe56c199aa0d95",
+      "sha256": "349960e2054b9f838c6a1fa705fe2c4bde6274e66cae6a965afe56c199aa0d95",
+      "frozen": true
+    },
+    {
+      "id": "BS02-output-30",
+      "path": "docs/communications-navigation-20261024/beige-settings/integration/objects/37f396bd15428eaf94793ece0f6808636aae8dcef4dc42d0bb866aa5efa856aa",
+      "sha256": "37f396bd15428eaf94793ece0f6808636aae8dcef4dc42d0bb866aa5efa856aa",
+      "frozen": true
+    },
+    {
+      "id": "BS02-output-31",
+      "path": "docs/communications-navigation-20261024/beige-settings/integration/objects/619ba5bec36bf86c62aafed9887bdc63ddadbb49a19204f6a9b4043b0cc110c3",
+      "sha256": "619ba5bec36bf86c62aafed9887bdc63ddadbb49a19204f6a9b4043b0cc110c3",
+      "frozen": true
+    },
+    {
+      "id": "BS02-output-32",
+      "path": "docs/communications-navigation-20261024/beige-settings/integration/objects/62999f382ea2cb73627e369e341c7aec598f9559ac1b9a303fc408cdb030be49",
+      "sha256": "62999f382ea2cb73627e369e341c7aec598f9559ac1b9a303fc408cdb030be49",
+      "frozen": true
+    },
+    {
+      "id": "BS02-output-33",
+      "path": "docs/communications-navigation-20261024/beige-settings/integration/objects/654fbf93a7902ef2800b72dff15c5b05ed420e12b5acfe9d5c2df76d17058b05",
+      "sha256": "654fbf93a7902ef2800b72dff15c5b05ed420e12b5acfe9d5c2df76d17058b05",
+      "frozen": true
+    },
+    {
+      "id": "BS02-output-34",
+      "path": "docs/communications-navigation-20261024/beige-settings/integration/objects/6c3e22f04eea9171e6b2a85545d22345212482c1cc9cf26fe116ce1e714bd98a",
+      "sha256": "6c3e22f04eea9171e6b2a85545d22345212482c1cc9cf26fe116ce1e714bd98a",
+      "frozen": true
+    },
+    {
+      "id": "BS02-output-35",
+      "path": "docs/communications-navigation-20261024/beige-settings/integration/objects/6c8c41528d834e5f45e92e6a099f3e6964e911806c99a6bcb26776821f835edf",
+      "sha256": "6c8c41528d834e5f45e92e6a099f3e6964e911806c99a6bcb26776821f835edf",
+      "frozen": true
+    },
+    {
+      "id": "BS02-output-36",
+      "path": "docs/communications-navigation-20261024/beige-settings/integration/objects/718fca13152e97774cca6b6b282641945beff5d58b57b2cd2888b98aa5cde2ce",
+      "sha256": "718fca13152e97774cca6b6b282641945beff5d58b57b2cd2888b98aa5cde2ce",
+      "frozen": true
+    },
+    {
+      "id": "BS02-output-37",
+      "path": "docs/communications-navigation-20261024/beige-settings/integration/objects/7779512f0df7b3988be9cc625f02e6d0adbf612ca99479f314517503e34771d4",
+      "sha256": "7779512f0df7b3988be9cc625f02e6d0adbf612ca99479f314517503e34771d4",
+      "frozen": true
+    },
+    {
+      "id": "BS02-output-38",
+      "path": "docs/communications-navigation-20261024/beige-settings/integration/objects/8901ee64b4fefb9e63199f54e09cc23bcbe222399eb434fa4ebcb05ce7c885f2",
+      "sha256": "8901ee64b4fefb9e63199f54e09cc23bcbe222399eb434fa4ebcb05ce7c885f2",
+      "frozen": true
+    },
+    {
+      "id": "BS02-output-39",
+      "path": "docs/communications-navigation-20261024/beige-settings/integration/objects/8cf5a27256e695e4fcf9431e2034891801605f92095e9a8f6a4098e4ea61a86c",
+      "sha256": "8cf5a27256e695e4fcf9431e2034891801605f92095e9a8f6a4098e4ea61a86c",
+      "frozen": true
+    },
+    {
+      "id": "BS02-output-40",
+      "path": "docs/communications-navigation-20261024/beige-settings/integration/objects/8fbc540cd6b9da32ed4cd827a0f8a32111a5f0239e11ae37d4f7e077790bc694",
+      "sha256": "8fbc540cd6b9da32ed4cd827a0f8a32111a5f0239e11ae37d4f7e077790bc694",
+      "frozen": true
+    },
+    {
+      "id": "BS02-output-41",
+      "path": "docs/communications-navigation-20261024/beige-settings/integration/objects/905504d4eb4cf887b1c80e1a535b115b6e1b58aed61e930ad017490864350e49",
+      "sha256": "905504d4eb4cf887b1c80e1a535b115b6e1b58aed61e930ad017490864350e49",
+      "frozen": true
+    },
+    {
+      "id": "BS02-output-42",
+      "path": "docs/communications-navigation-20261024/beige-settings/integration/objects/94d5b74756d8a25e6ac7f35824270461bd2696ef308b881724a47fe1e030c7af",
+      "sha256": "94d5b74756d8a25e6ac7f35824270461bd2696ef308b881724a47fe1e030c7af",
+      "frozen": true
+    },
+    {
+      "id": "BS02-output-43",
+      "path": "docs/communications-navigation-20261024/beige-settings/integration/objects/a83dc56398e1ea35e05f482f54936e77a3041e7aa1f119d7ad118e74448e2e63",
+      "sha256": "a83dc56398e1ea35e05f482f54936e77a3041e7aa1f119d7ad118e74448e2e63",
+      "frozen": true
+    },
+    {
+      "id": "BS02-output-44",
+      "path": "docs/communications-navigation-20261024/beige-settings/integration/objects/b376850dd2ad40ab08a24eac9c39d3905e90d6dfba4d697b1480e5b80d347479",
+      "sha256": "b376850dd2ad40ab08a24eac9c39d3905e90d6dfba4d697b1480e5b80d347479",
+      "frozen": true
+    },
+    {
+      "id": "BS02-output-45",
+      "path": "docs/communications-navigation-20261024/beige-settings/integration/objects/c2986b5336d87f55d5e5bf5febe2685551da980306c72fcfed48426d4edaa811",
+      "sha256": "c2986b5336d87f55d5e5bf5febe2685551da980306c72fcfed48426d4edaa811",
+      "frozen": true
+    },
+    {
+      "id": "BS02-output-46",
+      "path": "docs/communications-navigation-20261024/beige-settings/integration/objects/c2c3fe118ef3c05a508338699502226fac28c41dc9e39eb6cd792d9f135b46f3",
+      "sha256": "c2c3fe118ef3c05a508338699502226fac28c41dc9e39eb6cd792d9f135b46f3",
+      "frozen": true
+    },
+    {
+      "id": "BS02-output-47",
+      "path": "docs/communications-navigation-20261024/beige-settings/integration/objects/c9113b32e882a453c5f28ddd9252928965d59a6404d85186740afe2a0789b04b",
+      "sha256": "c9113b32e882a453c5f28ddd9252928965d59a6404d85186740afe2a0789b04b",
+      "frozen": true
+    },
+    {
+      "id": "BS02-output-48",
+      "path": "docs/communications-navigation-20261024/beige-settings/integration/objects/d481c6d8b30b986c3280fca3c1d3aef4925e742e635558aeb10f57d3c3e9d38f",
+      "sha256": "d481c6d8b30b986c3280fca3c1d3aef4925e742e635558aeb10f57d3c3e9d38f",
+      "frozen": true
+    },
+    {
+      "id": "BS02-output-49",
+      "path": "docs/communications-navigation-20261024/beige-settings/integration/objects/d5d273b8895d11e45a4505ddb93dbc5bf528642ec9cb28840288faaa4eec1979",
+      "sha256": "d5d273b8895d11e45a4505ddb93dbc5bf528642ec9cb28840288faaa4eec1979",
+      "frozen": true
+    },
+    {
+      "id": "BS02-output-50",
+      "path": "docs/communications-navigation-20261024/beige-settings/integration/objects/d9142e5f7f549881ace242e042fa5de1f21999a8742295b27515971d0996cc7f",
+      "sha256": "d9142e5f7f549881ace242e042fa5de1f21999a8742295b27515971d0996cc7f",
+      "frozen": true
+    },
+    {
+      "id": "BS02-output-51",
+      "path": "docs/communications-navigation-20261024/beige-settings/integration/objects/ddcccaa226bd9fb1f1400a9388d7a62548720726391e94a0a9aa1938e54f321f",
+      "sha256": "ddcccaa226bd9fb1f1400a9388d7a62548720726391e94a0a9aa1938e54f321f",
+      "frozen": true
+    },
+    {
+      "id": "BS02-output-52",
+      "path": "docs/communications-navigation-20261024/beige-settings/integration/objects/e6fc43f78d0a496ff16a1a157c0cf76d5a8717cd6860a92d2e630251bfa39f12",
+      "sha256": "e6fc43f78d0a496ff16a1a157c0cf76d5a8717cd6860a92d2e630251bfa39f12",
+      "frozen": true
+    },
+    {
+      "id": "BS02-output-53",
+      "path": "docs/communications-navigation-20261024/beige-settings/integration/objects/e80bdcd0323a059f25cff3eb14ad158a78ee855f70c5fcdacd71e34ebe433997",
+      "sha256": "e80bdcd0323a059f25cff3eb14ad158a78ee855f70c5fcdacd71e34ebe433997",
+      "frozen": true
+    },
+    {
+      "id": "BS02-output-54",
+      "path": "docs/communications-navigation-20261024/beige-settings/integration/objects/e9f886da0a7688354dd0b0969061821d8ae92c3bc7a3651c2309098c42a9f3e6",
+      "sha256": "e9f886da0a7688354dd0b0969061821d8ae92c3bc7a3651c2309098c42a9f3e6",
+      "frozen": true
+    },
+    {
+      "id": "BS02-output-55",
+      "path": "docs/communications-navigation-20261024/beige-settings/integration/objects/ee1374c02f6d6f6d740cbb45f79ca6402044d1c93d92af5b7a3ed7d200056e37",
+      "sha256": "ee1374c02f6d6f6d740cbb45f79ca6402044d1c93d92af5b7a3ed7d200056e37",
+      "frozen": true
+    },
+    {
+      "id": "BS02-output-56",
+      "path": "docs/communications-navigation-20261024/beige-settings/integration/objects/f8a871f21194020c42e7b46b78450f282d37c159e9b687b5335a18ef729c726c",
+      "sha256": "f8a871f21194020c42e7b46b78450f282d37c159e9b687b5335a18ef729c726c",
+      "frozen": true
+    }
+  ],
+  "verification": [
+    {
+      "id": "acceptance",
+      "command": "[\"C:\\\\Users\\\\AMTEC_Terminal_1\u00ba\\\\Desktop\\\\BAGO5_ADL\\\\.worktrees\\\\integrated-services-20261023\\\\.venv\\\\Scripts\\\\python.exe\",\"docs/communications-navigation-20261024/beige-settings/packaging/acceptance.py\"]",
+      "result": "PASS",
+      "evidence": ".bago/team/runtime/executions/36fac4e46537443587a130706e176ee3/receipt.json",
+      "execution_id": "36fac4e46537443587a130706e176ee3"
+    }
+  ],
+  "residual_risks": [
+    "Metrics derive from ACCEPTANCE.json; do not add32 focused tests or previous candidates.",
+    "Google simplified flow remains PROPOSED, no OAuth live. WhatsApp/provider external effects NOT_RUN.",
+    "BS03 independent validation required before applying; live8093 observation separate from preview.",
+    "Prior Inspector goal remains paused; hosted CI/publication NOT_RUN."
+  ],
+  "next_consumers": [
+    "BS03"
+  ],
+  "payload_sha256": "6118aa7e13511f79d82e2d82ca155dc050b0757fde117ab7d2ab438b0f0d78d1"
+}

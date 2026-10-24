@@ -210,7 +210,7 @@ async def _async_chat(model_id: str, messages: list[dict[str, Any]], tools: list
     for schema in tools or []:
         function = schema.get("function", {})
         name = function.get("name")
-        if name not in {"sandbox.run", "read_workspace_file", "scan_code_duplicates"}:
+        if name not in {"sandbox.run", "read_workspace_file", "scan_code_duplicates", "public_web_read", "propose_workspace_write"}:
             raise registration.RegistrationError("invalid_tool_name", "This ADL tool is not available through Copilot.")
         def capture(invocation: Any, *, _name=name) -> Any:
             args = arguments_object(getattr(invocation, "arguments", None))

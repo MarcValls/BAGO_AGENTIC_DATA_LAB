@@ -1,0 +1,65 @@
+{
+  "status": "STATIC_SOURCE_MAP_NOT_EXECUTION_PROOF",
+  "symbol_note": "Current source has TOOL_OPTIONS in AgentBuilder and AGENT_TOOL_ALLOWLIST in server, not a single TOOL_CATALOG registry.",
+  "frontend_TOOL_OPTIONS": [
+    "bedrock.converse",
+    "mcp.execute",
+    "ontology.query",
+    "retrieval.search",
+    "sandbox.run"
+  ],
+  "backend_AGENT_TOOL_ALLOWLIST": [
+    "bedrock.converse",
+    "mcp.execute",
+    "ontology.query",
+    "retrieval.search",
+    "sandbox.run"
+  ],
+  "chat_turn_functions": [
+    {
+      "name": "read_workspace_file",
+      "gate": "exact file paths granted for this owner/conversation/revision/root"
+    },
+    {
+      "name": "scan_code_duplicates",
+      "gate": "exact directories granted for this owner/conversation/revision/root"
+    },
+    {
+      "name": "public_web_read",
+      "gate": "explicit public origin authorization; bounded public reader"
+    },
+    {
+      "name": "propose_workspace_write",
+      "gate": "agent chat per-turn opt-in + active root exactly SDK-owned; proposal only, apply requires separate reviewed confirmation"
+    },
+    {
+      "name": "resolve_control_request",
+      "gate": "orchestrator allow_navigation; draft/navigation routing, not generic execution"
+    }
+  ],
+  "BER_module_tool": {
+    "name": "sandbox.run",
+    "profile_gate": "config.tools contains sandbox.run",
+    "effects": [
+      "filesystem.read",
+      "filesystem.write",
+      "process.inspect",
+      "process.execute"
+    ],
+    "entry_caveat": "No AgentRunner(...) instantiation or dedicated route found in current server; module presence is not public product invocation. Legacy /ws/agents/run remains unavailable."
+  },
+  "current_runner_tasks": {
+    "api": "POST /api/agents/{agent_id}/task-runs",
+    "effect": "MODEL_INFERENCE_ONLY",
+    "tools": false,
+    "gate": "confirmed and expected task revision, model eligibility"
+  },
+  "no_calls_performed": [
+    "model inference",
+    "tool execution",
+    "connection discovery/invoke",
+    "workspace mutation",
+    "message send",
+    "credential/status reads"
+  ]
+}

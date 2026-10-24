@@ -1,4 +1,4 @@
-.ontology-review { max-width: 900px; margin: 16px auto 22px; padding: clamp(16px, 3vw, 28px); border: 1px solid #344b67; border-radius: 16px; background: #101d2d; color: #e4edf7; }
+.ontology-review { max-width: none; margin: 16px 0 22px; padding: clamp(16px, 3vw, 28px); border: 1px solid #344b67; border-radius: 16px; background: #101d2d; color: #e4edf7; }
 .ontology-review header h2 { margin: 0 0 8px; font-size: 1.2rem; }
 .ontology-review header > p:last-child, .ontology-limit { color: #a8bbd0; font-size: .84rem; line-height: 1.55; }
 .ontology-review form { display: grid; gap: 12px; margin-top: 16px; }
@@ -16,7 +16,7 @@
 .ontology-relations > li { padding: 12px; border: 1px solid #2e4258; border-radius: 8px; background: #111f30; }
 .ontology-relations label { display: flex; align-items: center; gap: 8px; }
 .ontology-relations p { margin: 9px 0 0; line-height: 1.5; overflow-wrap: anywhere; }
-.ontology-review pre { max-height: 260px; overflow: auto; white-space: pre-wrap; overflow-wrap: anywhere; color: #d8e6f5; font-size: .76rem; }
+.ontology-review pre { max-height: none; overflow: auto; white-space: pre-wrap; overflow-wrap: anywhere; color: #d8e6f5; font-size: .76rem; }
 .ontology-query { margin-top: 22px; padding-top: 16px; border-top: 1px solid #344b67; }
 .ontology-review [role=alert] { color: #ffd2d2; border: 1px solid #804b52; background: #351c24; padding: 10px; }
 @media (max-width: 640px) { .ontology-card dl { grid-template-columns: 1fr; } }

@@ -3,7 +3,7 @@
 .evidence-explorer__header h2 { margin: 0 0 .5rem; }
 .evidence-explorer__header p { margin: .35rem 0; }
 .evidence-explorer__metadata { color: #cbd5e1; font-size: .9rem; overflow-wrap: anywhere; }
-.evidence-explorer__layout { display: grid; grid-template-columns: minmax(15rem, .85fr) minmax(20rem, 1.15fr); gap: 1.25rem; align-items: start; }
+.evidence-explorer__layout { display: grid; grid-template-columns: minmax(0, .85fr) minmax(0, 1.15fr); gap: 1.25rem; align-items: start; }
 .evidence-explorer__layout h3 { margin-top: 0; }
 .evidence-explorer__claim-list, .evidence-explorer__evidence-list { list-style: none; padding: 0; margin: 0; display: grid; gap: .75rem; }
 .evidence-explorer__claim, .evidence-explorer__empty, .evidence-explorer__missing, .evidence-explorer__evidence-card { border: 1px solid #475569; border-radius: .5rem; padding: .85rem; background: #172033; }

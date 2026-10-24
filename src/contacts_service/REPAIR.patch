@@ -1,0 +1,74 @@
+--- upstream-0.1.0/contacts_service.py
++++ derived-0.1.1/contacts_service.py
+@@ -26,7 +26,7 @@
+ from urllib.request import Request, build_opener, HTTPRedirectHandler
+ from urllib.error import HTTPError, URLError
+ 
+-VERSION = "0.1.0"
++VERSION = "0.1.1-RC1"
+ SCOPE = "https://www.googleapis.com/auth/contacts.readonly"
+ AUTH_URL = "https://accounts.google.com/o/oauth2/v2/auth"
+ TOKEN_URL = "https://oauth2.googleapis.com/token"
+@@ -128,10 +128,10 @@
+         raise ServiceError("invalid_name", "Name must contain 1–200 printable characters")
+     if phone:
+         phone = re.sub(r"[\s().-]", "", phone)
+-        if not re.fullmatch(r"\+[1-9]\d{6,14}", phone):
++        if not re.fullmatch(r"\+[1-9][0-9]{6,14}", phone):
+             raise ServiceError("invalid_phone", "Phone must include an explicit E.164 country prefix")
+     if email:
+-        if len(email) > 254 or not re.fullmatch(r"[^\s@]+@[^\s@]+\.[^\s@]+", email):
++        if len(email) > 254 or any(ord(c) < 32 or ord(c) == 127 for c in email) or not re.fullmatch(r"[^\s@]+@[^\s@]+\.[^\s@]+", email):
+             raise ServiceError("invalid_email", "Invalid email")
+         email = email.casefold()
+     if not phone and not email:
+@@ -330,6 +330,7 @@
+         self.contacts, self.private, self.transport = contacts, contacts.private, transport
+         self.listeners = []
+         self.lock = threading.RLock()
++        self.closed = False
+ 
+     def status(self):
+         config = self.private.read("google-client.bin")
+@@ -363,6 +364,8 @@
+ 
+     def begin(self):
+         with self.lock:
++            if self.closed:
++                raise ServiceError("google_closed", "OAuth owner has been closed", 503)
+             config = self.private.read("google-client.bin")
+             if not config:
+                 raise ServiceError("google_not_configured", "Configure a Desktop OAuth client first", 503)
+@@ -417,6 +420,8 @@
+ 
+     def callback(self, state, code, error=""):
+         with self.lock:
++            if self.closed:
++                raise ServiceError("google_closed", "OAuth owner has been closed", 503)
+             pending = self.private.read("google-pending.bin")
+             if not pending or not hmac.compare_digest(pending["state"], state) or pending["expires_at"] <= time.time():
+                 raise ServiceError("oauth_state_invalid", "OAuth state is invalid or expired")
+@@ -499,9 +504,22 @@
+         return self.status()
+ 
+     def close(self):
+-        for server in self.listeners:
++        # Invalidate pending authorization before stopping listeners. Existing
++        # completed credentials remain; closing a host does not revoke consent.
++        failure = None
++        with self.lock:
++            self.closed = True
++            try:
++                self.private.remove("google-pending.bin")
++            except Exception as error:
++                failure = error
++            listeners = list(self.listeners)
++            self.listeners.clear()
++        for server in listeners:
+             server.shutdown()
+             server.server_close()
++        if failure is not None:
++            raise failure
+ 
+ 
+ class API:

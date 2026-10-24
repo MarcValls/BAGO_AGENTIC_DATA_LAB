@@ -1,0 +1,58 @@
+[
+  {
+    "path": "docs/verification/publication-20261024/captures/01-mensajes.png",
+    "sha256": "a2e3cdb8140ba178000fd954de7995ed0063af03343f7f94df4cd500ce67ad67",
+    "size": 62253,
+    "source_candidate": "communications-navigation-20261024-rc10",
+    "privacy": "Reviewed original capture: no visible personal contact data, credentials or QR; masked/empty forms",
+    "scope": "Observed UI only; not delivery or inference proof"
+  },
+  {
+    "path": "docs/verification/publication-20261024/captures/02-historial.png",
+    "sha256": "afad9cbdd9f3a77d814b780219138d36f7428cb2e6cad6ac9d0275489e7c8da5",
+    "size": 50053,
+    "source_candidate": "communications-navigation-20261024-rc10",
+    "privacy": "Reviewed original capture: no visible personal contact data, credentials or QR; masked/empty forms",
+    "scope": "Observed UI only; not delivery or inference proof"
+  },
+  {
+    "path": "docs/verification/publication-20261024/captures/03-contactos.png",
+    "sha256": "364975b53abc008b6066966f24d9230b8b6a01f179c739c5cb18bd30ae91171b",
+    "size": 62852,
+    "source_candidate": "communications-navigation-20261024-rc10",
+    "privacy": "Reviewed original capture: no visible personal contact data, credentials or QR; masked/empty forms",
+    "scope": "Observed UI only; not delivery or inference proof"
+  },
+  {
+    "path": "docs/verification/publication-20261024/captures/04-google.png",
+    "sha256": "27b6b5dd4071e50fc6ef604fdcfd81cd7df996ff7bfb0eac6841d2ca1faccd97",
+    "size": 61323,
+    "source_candidate": "communications-navigation-20261024-rc10",
+    "privacy": "Reviewed original capture: no visible personal contact data, credentials or QR; masked/empty forms",
+    "scope": "Observed UI only; not delivery or inference proof"
+  },
+  {
+    "path": "docs/verification/publication-20261024/captures/05-mensajes-320.png",
+    "sha256": "1671bb6c098c3bc49704447008e8611c202d6d3dd4cc682f60fb4bb4834e4e2f",
+    "size": 22247,
+    "source_candidate": "communications-navigation-20261024-rc10",
+    "privacy": "Reviewed original capture: no visible personal contact data, credentials or QR; masked/empty forms",
+    "scope": "Observed UI only; not delivery or inference proof"
+  },
+  {
+    "path": "docs/verification/publication-20261024/captures/06-historial-320.png",
+    "sha256": "aba3b80529f8197ea20ff9b43c82c90f9e00752540681e85ae7be1eccec6edee",
+    "size": 22453,
+    "source_candidate": "communications-navigation-20261024-rc10",
+    "privacy": "Reviewed original capture: no visible personal contact data, credentials or QR; masked/empty forms",
+    "scope": "Observed UI only; not delivery or inference proof"
+  },
+  {
+    "path": "docs/verification/publication-20261024/captures/07-contactos-320.png",
+    "sha256": "987d55722c503407e78763e896ddcaf9ce66149a9ce4faa0246aa27c5a224357",
+    "size": 30659,
+    "source_candidate": "communications-navigation-20261024-rc10",
+    "privacy": "Reviewed original capture: no visible personal contact data, credentials or QR; masked/empty forms",
+    "scope": "Observed UI only; not delivery or inference proof"
+  }
+]

@@ -162,7 +162,7 @@
   margin: 0 0 12px 0;
 }
 
-.agents-list {
+.agent-runner .agents-list {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr));
   gap: 12px;
@@ -275,13 +275,13 @@
 .runner-header { order: 0; justify-content: space-between; margin: 0; padding: 0 0 12px; border: 0; background: transparent; }
 .runner-header h2 { margin: 0; color: #eef6ff; }
 .agents-panel, .agent-runner__task, .agent-runner__session { min-width: 0; padding: 16px; border: 1px solid #2e4359; border-radius: 8px; background: #111f30; color: #dce7f2; }
-.agents-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 250px), 1fr)); gap: 10px; margin: 0; padding: 0; list-style: none; }
-.agents-list li { min-width: 0; border: 1px solid #314960; border-radius: 6px; background: #0c1927; }
-.agents-list li.selected { border-color: #79b7f2; }
-.agents-list button { display: grid; gap: 6px; width: 100%; min-height: 100%; padding: 12px; border: 0; background: transparent; color: inherit; text-align: left; cursor: pointer; overflow-wrap: anywhere; }
-.agents-list button[aria-pressed="true"] { box-shadow: inset 0 0 0 2px #79b7f2; }
-.agents-list button:focus-visible, .agent-runner :focus-visible { outline: 3px solid #fbbf24; outline-offset: 3px; }
-.agents-list button span { color: #a8bdd2; font-size: .84rem; }
+.agent-runner .agents-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 250px), 1fr)); gap: 10px; margin: 0; padding: 0; list-style: none; }
+.agent-runner .agents-list li { min-width: 0; border: 1px solid #314960; border-radius: 6px; background: #0c1927; }
+.agent-runner .agents-list li.selected { border-color: #79b7f2; }
+.agent-runner .agents-list button { display: grid; gap: 6px; width: 100%; min-height: 100%; padding: 12px; border: 0; background: transparent; color: inherit; text-align: left; cursor: pointer; overflow-wrap: anywhere; }
+.agent-runner .agents-list button[aria-pressed="true"] { box-shadow: inset 0 0 0 2px #79b7f2; }
+.agent-runner .agents-list button:focus-visible, .agent-runner :focus-visible { outline: 3px solid #fbbf24; outline-offset: 3px; }
+.agent-runner .agents-list button span { color: #a8bdd2; font-size: .84rem; }
 .agent-runner__error { padding: 12px; border: 1px solid #ef7777; border-radius: 6px; color: #ffe1e1; background: #351d25; }
 .agent-runner__error p { margin-top: 0; }
 .agent-runner__task { display: grid; gap: 10px; }
