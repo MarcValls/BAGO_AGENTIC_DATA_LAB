@@ -1,262 +1,151 @@
 {
-  "created_at": "2026-10-19T19:42:01+00:00",
+  "created_at": "2026-10-20T08:57:29+00:00",
   "mission": {
     "max_concurrency": 3,
-    "mission_id": "AGENT_DECISION_INSPECTOR_BER_RUNNER_FOLLOWUP_V1",
-    "objective": "Consume the completed Agent Decision Inspector contracts and connect ADL Agent Runner to the pinned BAGO Embedded Runtime, preserving explicit proposals, user approval, BAGO receipts, ADL traces, fail-closed behavior, and blocked filesystem.delete.",
-    "parent_mission_id": "AGENT_DECISION_INSPECTOR_V1",
+    "mission_id": "ADL_SAVED_AGENT_TASKS_20261020",
+    "objective": "Keep reusable agent tasks, editable future task dates, and immutable historical snapshots.",
     "terminal_work_items": [
-      "W17"
+      "T04"
     ],
-    "title": "Governed BER Agent Runner follow-up",
+    "title": "Saved agent tasks and immutable run history",
     "work_items": [
       {
         "deliverables": [
-          "Runner boundary and flow",
-          "Frozen backend/frontend message contract",
-          "Explicit blocked effects and runtime limits"
+          "Frozen task API and behavior"
         ],
         "depends_on": [],
         "done_when": [
-          "Prior W01-W12 handoffs remain preserved",
-          "Only the persisted agent profile and registered BER effects can be used",
-          "Human approval is bound to one prepared request and is required for material writes and process execution",
-          "No delete, arbitrary shell, or execution-success claims without a matched BAGO receipt",
-          "Standalone package and local smoke evidence are recorded"
+          "Actual mounted Agent Runs surface identified",
+          "Historical execution boundaries preserved"
         ],
         "frozen_outputs": [
-          "adl-ber-agent-runner-api-v1"
+          "adl-saved-agent-tasks-v1"
         ],
-        "id": "W13",
+        "id": "T01",
         "read_scopes": [
-          "src/contracts/**",
-          "src/adapters/**",
-          "docs/decision-inspector/**",
-          "docs/ber/**",
-          "src/api/server.py",
-          "frontend/src/components/AgentRunner.tsx"
+          "**"
         ],
         "role": "team-orchestrator",
-        "title": "Freeze BER Agent Runner scope and review prior mission contracts",
+        "title": "Freeze saved task and historical snapshot contract",
         "write_scopes": [
-          ".bago/team/runtime/**",
-          ".bago/goals/ADL-BER-INTEGRATION-001/**",
-          "docs/ber/AGENT_RUNNER_SCOPE.md"
+          ".bago/goals/agent-saved-tasks-20261020/**",
+          ".bago/team/runtime/**"
         ]
       },
       {
         "deliverables": [
-          "Server-owned bounded runner",
-          "Proposal and approval messages",
-          "BER receipt-linked completion",
-          "Adversarial backend tests"
+          "Task persistence and inference route",
+          "Immutable task run history",
+          "Focused contract checks"
         ],
         "depends_on": [
-          "W13"
+          "T01"
         ],
         "done_when": [
-          "Client-supplied agent config is never execution authority",
-          "Unknown effects, mismatched approval, replay, denied authorization, unavailable provider/runtime, failed execution, and missing receipt all fail closed",
-          "Existing BAGO BER API remains the effect executor and source of authority/receipts",
-          "filesystem.delete remains unavailable",
-          "Tests validate no job/success is recorded before verified BER receipt"
+          "Saved dates reach actual provider input",
+          "Old snapshots stay unchanged",
+          "No inference on metadata or save"
         ],
-        "frozen_outputs": [
-          "adl-ber-agent-runner-backend-v1"
-        ],
-        "id": "W14",
+        "id": "T02",
         "read_scopes": [
-          "docs/ber/AGENT_RUNNER_SCOPE.md",
-          "src/runtime/ber/**",
-          "src/contracts/action/**",
-          "src/adapters/action/**",
-          "src/observability/**",
-          "src/providers/ollama.py"
+          "**"
         ],
         "role": "governance-action-engineer",
-        "title": "Implement backend Agent Runner over BER with fail-closed authorization",
+        "title": "Persist agent tasks and run immutable snapshots",
         "write_scopes": [
+          "src/agent_tasks/**",
+          "src/api/task_routes.py",
           "src/api/server.py",
-          "src/runtime/ber/agent_runner.py",
-          "tests/runtime/ber/test_agent_runner.py",
-          "docs/ber/AGENT_RUNNER_API_V1.md"
+          "tests/test_saved_agent_tasks.py",
+          ".bago/goals/agent-saved-tasks-20261020/evidence/backend/**"
         ]
       },
       {
         "deliverables": [
-          "Task entry and workspace binding",
-          "Action review and explicit approval/rejection",
-          "Receipt-backed terminal status",
-          "Accessible UI tests"
+          "Required reusable task in Builder",
+          "Date editing and explicit relaunch",
+          "Read-only history in actual Agent Runs"
         ],
         "depends_on": [
-          "W14"
+          "T01"
         ],
         "done_when": [
-          "UI displays proposed action and exact effect arguments before approval",
-          "Approval/rejection is a user action bound to the current proposal id",
-          "Unknown/error/pending states are not presented as success",
-          "Run success requires an exact receipt identity from the backend",
-          "Keyboard-accessible loading, empty, error, approval, rejection and success states pass tests"
+          "Task survives reload",
+          "History never exposes editable dates",
+          "No automatic run when choosing dates or history"
         ],
-        "frozen_outputs": [],
-        "id": "W15",
+        "id": "T03",
         "read_scopes": [
-          "docs/ber/AGENT_RUNNER_API_V1.md",
-          "src/contracts/action/**",
-          "src/contracts/trace/**",
-          "frontend/src/features/decision-inspector/actions/**"
+          "**"
         ],
         "role": "decision-ui-engineer",
-        "title": "Connect Agent Runner UI to the governed proposal and receipt flow",
+        "title": "Compact reusable task editor and history UI",
         "write_scopes": [
-          "frontend/src/components/AgentRunner.tsx",
-          "frontend/src/components/AgentRunner.css",
-          "frontend/tests/ui/agent-runner/**",
-          "frontend/tests/ui/agent-evaluation-lab/rendered.test.mjs"
+          "frontend/src/components/AgentBuilder.tsx",
+          "frontend/src/components/AgentBuilder.css",
+          "frontend/src/components/AgentTaskForm.tsx",
+          "frontend/src/components/AgentTaskForm.css",
+          "frontend/src/components/AgentTasks.tsx",
+          "frontend/src/components/AgentTasks.css",
+          "frontend/src/App.tsx",
+          "frontend/tests/ui/agent-tasks/**",
+          ".bago/goals/agent-saved-tasks-20261020/evidence/ui/**"
         ]
       },
       {
         "deliverables": [
-          "Independent verification report",
-          "Adversarial test results",
-          "P0/P1/P2 classification"
+          "Candidate-bound independent verdict"
         ],
         "depends_on": [
-          "W15R"
+          "T02",
+          "T03"
         ],
         "done_when": [
-          "Unauthorized and rejected action cases prove no material effect",
-          "Wrong/stale/replayed approval and mismatched/missing receipt cases are covered",
-          "Provider/runtime errors cannot yield success",
-          "filesystem.delete and arbitrary shell attempts are denied",
-          "No P0/P1 finding remains open; all NOT_RUN scopes are explicit"
+          "P0=0 and P1=0 for feature scope",
+          "Dates change future input without changing history",
+          "UI distinguishes saved draft and executed history"
         ],
-        "frozen_outputs": [
-          "adl-ber-agent-runner-verification-v1"
-        ],
-        "id": "W16",
+        "id": "T04",
         "read_scopes": [
-          "src/runtime/ber/**",
-          "src/api/server.py",
-          "frontend/src/components/AgentRunner.tsx",
-          "tests/runtime/ber/**",
-          "frontend/tests/ui/agent-runner/**",
-          "docs/ber/AGENT_RUNNER_API_V1.md"
+          "**"
         ],
         "role": "verification-engineer",
-        "title": "Independently verify the live runner flow and adversarial boundaries",
+        "title": "Independently verify saved tasks and immutable historical dates",
         "write_scopes": [
-          "tests/verification/agent-runner/**",
-          "docs/ber/AGENT_RUNNER_VERIFICATION.md"
-        ]
-      },
-      {
-        "deliverables": [
-          "Backend WebSocket regression test aligned with the governed start/error contract"
-        ],
-        "depends_on": [
-          "W15"
-        ],
-        "done_when": [
-          "The test sends a valid bounded start frame or an invalid frame and cannot wait indefinitely",
-          "Assertions match current stable error codes and fail-closed behavior",
-          "No real provider inference or BER effect is invoked"
-        ],
-        "frozen_outputs": [
-          "agent-runner-websocket-start-regression-v1"
-        ],
-        "id": "W15R",
-        "read_scopes": [
-          "src/api/server.py",
-          "src/runtime/ber/agent_runner.py",
-          "tests/runtime/ber/test_agent_runner.py",
-          "docs/ber/AGENT_RUNNER_API_V1.md"
-        ],
-        "role": "governance-action-engineer",
-        "title": "Replace obsolete backend test for the governed WebSocket start contract",
-        "write_scopes": [
-          "tests/test_agent_execution_unavailable.py"
-        ]
-      },
-      {
-        "deliverables": [
-          "Validated handoff index",
-          "Final runner status and residual limits"
-        ],
-        "depends_on": [
-          "W16"
-        ],
-        "done_when": [
-          "W13-W16 and W15R handoffs validate",
-          "Independent verification has P0=0 and P1=0",
-          "Backend, UI, full relevant tests and standalone container smoke pass on the same candidate",
-          "Runner is enabled only with its BER-backed path and remains fail-closed for unsupported effects",
-          "No publish/deploy occurred"
-        ],
-        "frozen_outputs": [
-          "adl-ber-agent-runner-v1-terminal-gate"
-        ],
-        "id": "W17",
-        "read_scopes": [
-          ".bago/team/runtime/**",
-          "docs/ber/AGENT_RUNNER_*.md",
-          "src/runtime/ber/**",
-          "src/api/server.py",
-          "frontend/src/components/AgentRunner.tsx",
-          "tests/**"
-        ],
-        "role": "team-orchestrator",
-        "title": "Terminal BER Agent Runner mission gate",
-        "write_scopes": [
-          ".bago/team/runtime/**",
-          ".bago/goals/ADL-BER-INTEGRATION-001/**",
-          "docs/ber/AGENT_RUNNER_FINAL_STATUS.md",
-          "README.md"
+          "tests/test_saved_agent_tasks_independent.py",
+          ".bago/goals/agent-saved-tasks-20261020/evidence/verification/**"
         ]
       }
     ]
   },
-  "mission_sha256": "9ee7e989b550764f0263f7f298db77585018edc2e6015eda5046d05dfe6427e3",
-  "mission_source": "C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\.worktrees\\adl-ber-integration-20261019\\.bago\\goals\\ADL-BER-INTEGRATION-001\\AGENT_DECISION_INSPECTOR_BER_RUNNER_FOLLOWUP.json",
+  "mission_sha256": "091f0bad1d5175c82e14b5fcbdb7b6a675c9647d52125c16f91f9bf845ac5649",
+  "mission_source": "C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\.bago\\goals\\agent-saved-tasks-20261020\\mission.json",
   "protocol_version": "0.1.0",
   "terminal_gate": "DONE",
-  "updated_at": "2026-10-19T23:10:46+00:00",
+  "updated_at": "2026-10-21T15:14:51+00:00",
   "work_status": {
-    "W13": {
+    "T01": {
       "agent": "/root",
-      "claimed_at": "2026-10-19T19:42:07+00:00",
-      "done_at": "2026-10-19T19:42:07+00:00",
+      "claimed_at": "2026-10-20T08:57:30+00:00",
+      "done_at": "2026-10-20T08:57:30+00:00",
       "status": "DONE"
     },
-    "W14": {
-      "agent": "/root/ber_action_contract",
-      "claimed_at": "2026-10-19T19:42:07+00:00",
-      "done_at": "2026-10-19T19:42:08+00:00",
+    "T02": {
+      "agent": "/root/saved_task_backend",
+      "claimed_at": "2026-10-20T08:58:09+00:00",
+      "done_at": "2026-10-20T09:19:59+00:00",
       "status": "DONE"
     },
-    "W15": {
-      "agent": "/root/ber_inspector_shell",
-      "claimed_at": "2026-10-19T19:42:08+00:00",
-      "done_at": "2026-10-19T19:42:08+00:00",
+    "T03": {
+      "agent": "/root/saved_task_ui",
+      "claimed_at": "2026-10-20T08:58:23+00:00",
+      "done_at": "2026-10-20T09:21:46+00:00",
       "status": "DONE"
     },
-    "W15R": {
-      "agent": "/root/ber_action_contract",
-      "claimed_at": "2026-10-19T19:42:08+00:00",
-      "done_at": "2026-10-19T19:42:09+00:00",
-      "status": "DONE"
-    },
-    "W16": {
-      "agent": "/root/decision_inspector_verifier",
-      "claimed_at": "2026-10-19T19:42:09+00:00",
-      "done_at": "2026-10-19T19:42:09+00:00",
-      "status": "DONE"
-    },
-    "W17": {
-      "agent": "/root",
-      "claimed_at": "2026-10-19T19:43:07+00:00",
-      "done_at": "2026-10-19T19:43:34+00:00",
+    "T04": {
+      "agent": "/root/saved_task_verify",
+      "claimed_at": "2026-10-20T09:23:11+00:00",
+      "done_at": "2026-10-20T09:30:03+00:00",
       "status": "DONE"
     }
   }

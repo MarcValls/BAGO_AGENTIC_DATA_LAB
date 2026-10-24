@@ -1,59 +1,29 @@
 {
   "changed_files": [
-    "docs/decision-inspector/inventory/BER_REUSE_MAP.md",
-    ".bago/team/runtime/drafts/W01-ber-20261019.json"
+    ".bago/goals/adl-external-connections-20261020/CONTRACT.md",
+    ".bago/goals/adl-external-connections-20261020/mission.json"
   ],
   "next_consumers": [
-    "W02",
-    "W03"
+    "W03",
+    "W08"
   ],
   "outputs": [
     {
-      "description": "Frozen ADL candidate snapshot, reusable receipt/LocalTrace/Evaluation/authorization/action/inspector surfaces, and BAGO-versus-ADL ownership boundary.",
-      "kind": "decision-inspector-reuse-map-v1",
-      "path": "docs/decision-inspector/inventory/BER_REUSE_MAP.md",
-      "sha256": "b07226e18aef1e2f269c2bbab2a0b769ecea011c36da012fa2741388b8ce9bda"
+      "contract_id": "adl-external-connections-v1",
+      "path": ".bago/goals/adl-external-connections-20261020/CONTRACT.md",
+      "sha256": "15bc57b5f2cc7454e387523fcac03f9485939c303cd7d4069a34864a77dcf41f"
     }
   ],
-  "payload_sha256": "9468fc750a23802eaf9dc197d4c5a84d30afd439cc08f46cc57b4c8bf2b20025",
-  "repository_snapshot": {
-    "branch": "codex/adl-ber-integration-20261019",
-    "head": "585fe4635596b1bd253fb8ba6d5b736ebf133ee9",
-    "head_tree": "9a31954f855d3e38c371eadc145fa488813b9aec",
-    "note": "W01 inspected an already-dirty worktree. It preserved pre-existing edits to tests/test_semantic_navigation.py and .bago/team/runtime/{events.jsonl,state.json}, plus the BER goal directory."
-  },
+  "payload_sha256": "2192819556d56398993fd60ca5273228c04f3a657b8f0fda37970eba24d61e56",
   "residual_risks": [
-    "Static mapping does not establish a live BER runtime, a successful effect, BAGO receipt validity, browser behavior, or OS-level isolation.",
-    "ADL's legacy permit/receipt/sandbox types remain compatibility and observation surfaces; they must not be presented as BER authorization or execution authority.",
-    "filesystem.delete remains BLOCKED until a verified canonical BAGO delete adapter and dispatch-time world-state revalidation are available.",
-    "Old team-runtime handoffs AC01-AC10 and W01.draft.bak are pre-existing orphaned history and remain unchanged."
+    "Live external account/service access not yet checked; no new services authorized for deployment."
   ],
   "role": "team-orchestrator",
   "status": "DONE",
   "verification": [
     {
-      "command": "python .bago/team/kit/scripts/teamctl.py verify",
-      "evidence": "Pre-claim mission verification passed. Existing AC01-AC10 handoffs were reported as orphans and left untouched.",
-      "result": "PASS"
-    },
-    {
-      "command": "python .bago/team/kit/scripts/teamctl.py claim W01 --agent /root/adl_ber_inventory",
-      "evidence": "W01 transitioned READY -> CLAIMED for the assigned role before any W01 artifact was written.",
-      "result": "PASS"
-    },
-    {
-      "command": "Static source and contract review at frozen ADL HEAD 585fe4635596b1bd253fb8ba6d5b736ebf133ee9",
-      "evidence": "Read the named ADL receipt, LocalTrace, evaluation, proposal/permit, sandbox, action/evidence/trace contract, and API source files. Inspected the pinned BAGO source inventory and core class locations read-only. No code was edited.",
-      "result": "PASS"
-    },
-    {
-      "command": "Get-FileHash <mapped ADL source files> -Algorithm SHA256",
-      "evidence": "Exact SHA-256 values for ten mapped source files are recorded in BER_REUSE_MAP.md.",
-      "result": "PASS"
-    },
-    {
-      "command": "git diff --check -- docs/decision-inspector/inventory/BER_REUSE_MAP.md",
-      "evidence": "No whitespace errors in the new W01 inventory.",
+      "command": "Review existing GovernedMCPAdapter, installed MCP protocol/schema, Docker CLI and local demo routes",
+      "evidence": "Private credential, explicit authorization, transport, invocation and receipt contracts frozen before consumers start.",
       "result": "PASS"
     }
   ],

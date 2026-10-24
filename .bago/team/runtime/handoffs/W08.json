@@ -1,64 +1,80 @@
 {
   "changed_files": [
-    "frontend/src/features/decision-inspector/trace/TraceTimeline.tsx",
-    "frontend/src/features/decision-inspector/trace/TraceTimeline.css",
-    "frontend/tests/ui/decision-inspector/trace/trace.test.tsx"
+    "frontend/src/components/ExternalConnections.tsx",
+    "frontend/src/components/ExternalConnections.css",
+    "frontend/src/components/CapabilityManager.tsx",
+    "frontend/tests/ui/capabilities/external-connections.test.tsx",
+    "frontend/tests/ui/capabilities/mcp-governance.test.mjs",
+    ".bago/goals/adl-external-connections-20261020/evidence/ui/IMPLEMENTATION.md",
+    ".bago/goals/adl-external-connections-20261020/evidence/ui/rendered-tests.log",
+    ".bago/goals/adl-external-connections-20261020/evidence/ui/local-mcp-tests.log",
+    ".bago/goals/adl-external-connections-20261020/evidence/ui/build.log",
+    ".bago/goals/adl-external-connections-20261020/evidence/ui/handoff-draft.json"
   ],
   "next_consumers": [
-    "W10"
+    "W12"
   ],
   "outputs": [
     {
-      "description": "Accessible, keyboard-operable trace timeline view structurally aligned with frozen W04 trace fields. It displays sequence chronology separately from explicit parent causality; shows supplied claim/action/execution/request/permit/receipt IDs separately; offers identity-based claim/action navigation; preserves source status, attributes and redaction markers; and renders missing/error/empty states without deriving authority.",
-      "kind": "decision-inspector-trace-ui-v1",
-      "path": "frontend/src/features/decision-inspector/trace/TraceTimeline.tsx",
-      "sha256": "4eb200464cd5a05bd5ea55a7f45f2c1d38ff3b031bb9bd78fb7eb55654480f4f"
+      "path": "frontend/src/components/ExternalConnections.tsx",
+      "sha256": "cdf70d41d32059c148780f0d27b227a223c10bde6292ba81e3fa5fc8506f99c4"
     },
     {
-      "description": "Responsive styling for trace identity, gaps, event attributes, explicit correlation identifiers and visible focus.",
-      "kind": "decision-inspector-trace-ui-styles-v1",
-      "path": "frontend/src/features/decision-inspector/trace/TraceTimeline.css",
-      "sha256": "3f377c1390fdf87ce0993cff59379d283f5ca626232cb36fe2d7357419da346d"
+      "path": "frontend/src/components/ExternalConnections.css",
+      "sha256": "401e4d5f88d5dc26b518dd2ec35b881028bef11b59f915b88600db1cc8987c74"
     },
     {
-      "description": "Focused UI tests for chronology/causality, gaps, explicit correlation IDs and navigation, redaction, no receipt inference, and loading/empty/error/unsupported/missing states.",
-      "kind": "decision-inspector-trace-ui-tests-v1",
-      "path": "frontend/tests/ui/decision-inspector/trace/trace.test.tsx",
-      "sha256": "d801f2b2e68e44ccc4feb7780029f6f0b70028c95e860216a7d649bffab053d8"
+      "path": "frontend/src/components/CapabilityManager.tsx",
+      "sha256": "f2fa02911083637c62e4f9d929aa994aee5771c56b50190947ca692252f9fb56"
+    },
+    {
+      "path": "frontend/tests/ui/capabilities/external-connections.test.tsx",
+      "sha256": "62df52e4b48491916eca29e013916fd0c7caf9081fe28239cd562d3a7df06ee6"
+    },
+    {
+      "path": "frontend/tests/ui/capabilities/mcp-governance.test.mjs",
+      "sha256": "750a4d5e91f8e946a349a4559292d6d3dd1aa6c1feee7b86a25ea537d85ae33b"
+    },
+    {
+      "path": ".bago/goals/adl-external-connections-20261020/evidence/ui/IMPLEMENTATION.md",
+      "sha256": "75999302b7188e63a6265e074a71b984e77fbc5332e350483e2bbf5d1b391cfe"
+    },
+    {
+      "path": ".bago/goals/adl-external-connections-20261020/evidence/ui/rendered-tests.log",
+      "sha256": "b72f94ad4589f181728eacecb06692369ad9cf6e0ca332cc6e88c0e2e6760cf2"
+    },
+    {
+      "path": ".bago/goals/adl-external-connections-20261020/evidence/ui/local-mcp-tests.log",
+      "sha256": "79f27d62b84aae3ac20b9950c8b31a545629575818661a5e1ddd4d1299b44331"
+    },
+    {
+      "path": ".bago/goals/adl-external-connections-20261020/evidence/ui/build.log",
+      "sha256": "55710b2b87f7695b33fb356b50c60cd4576e5b1a06e46666c595afb459b4ba7c"
     }
   ],
-  "payload_sha256": "320eecc921caeb06595c8d079a884212081b87dc0a5ed7a792b2562f60f737b6",
+  "payload_sha256": "d1dc7b1f170e7359f89009817ac218015119179f0330fbda9e25b8024019bea8",
   "residual_risks": [
-    "The current DecisionInspector integration still obtains the earlier frontend trace projection; W10 must connect the canonical W04 adapter so distinct BER execution/request/permit/receipt IDs reach this component.",
-    "The full frontend build remains blocked by the W09 TypeScript library mismatch described above; the focused W08 UI tests and targeted strict type check pass.",
-    "No live BER runtime, authoritative BAGO receipt, browser accessibility review or Jaeger projection was exercised."
+    "Real external service and Docker access are not proven by component fixtures; root owns runtime integration and browser verification.",
+    "No services, images, profiles or containers installed/deployed by this UI. Existing profile is required.",
+    "Receipt proves observed call/result, not remote semantic truth or automatic agent-chat integration.",
+    "Global-suite blockers and README generation remain root-owned."
   ],
   "role": "decision-ui-engineer",
   "status": "DONE",
   "verification": [
     {
-      "command": "npm exec vitest -- run tests/ui/decision-inspector/trace/trace.test.tsx",
-      "evidence": "1 test file passed; 4 tests passed, 0 failed.",
+      "command": "cd frontend; npx vitest run tests/ui/capabilities/external-connections.test.tsx",
+      "evidence": "22 tests passed; evidence/ui/rendered-tests.log",
       "result": "PASS"
     },
     {
-      "command": "frontend/node_modules/.bin/tsc.cmd --ignoreConfig --noEmit --target ES2022 --lib ES2022,DOM,DOM.Iterable --module ESNext --moduleResolution bundler --jsx react-jsx --strict --esModuleInterop --skipLibCheck --noUncheckedSideEffectImports false --types node --typeRoots frontend/node_modules/@types src/features/decision-inspector/trace/TraceTimeline.tsx tests/ui/decision-inspector/trace/trace.test.tsx",
-      "evidence": "Targeted strict TypeScript check for W08 component/tests completed with exit code 0.",
+      "command": "cd frontend; node --test tests/ui/capabilities/mcp-governance.test.mjs",
+      "evidence": "5 tests passed; evidence/ui/local-mcp-tests.log",
       "result": "PASS"
     },
     {
-      "command": "git diff --check -- frontend/src/features/decision-inspector/trace frontend/tests/ui/decision-inspector/trace",
-      "evidence": "No whitespace errors reported in the W08 write scopes.",
-      "result": "PASS"
-    },
-    {
-      "command": "npm run build",
-      "evidence": "BLOCKED by a concurrent W09 change outside W08 scope: frontend/src/features/decision-inspector/actions/ActionReview.tsx uses String.replaceAll while frontend/tsconfig.json targets ES2020. No files outside W08 scope were modified to address it; generated frontend/.build outputs from this attempt were restored.",
-      "result": "BLOCKED"
-    },
-    {
-      "command": "Static review of W03 BER_INSPECTOR_UX_V1.md and W04 decision-trace-contract-v1 handoff",
-      "evidence": "The view treats source IDs as correlations only, never converts a correlation into authority, preserves chronology/causality separately, and leaves absent data visible. For the legacy frontend shape, the overloaded legacy toolCallId is not shown as a canonical tool-call identifier.",
+      "command": "cd frontend; npm run build",
+      "evidence": "TypeScript + Vite completed; evidence/ui/build.log",
       "result": "PASS"
     }
   ],

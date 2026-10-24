@@ -1,4 +1,27 @@
-
 [plugins."bago-agent-decision-engineering-team@local-repo"]
 enabled = true
 
+[mcp_servers.brave_browser]
+command = "C:\\Python314\\python.exe"
+args = ["tools/brave-browser-mcp/server.py"]
+cwd = "C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL"
+enabled = true
+startup_timeout_sec = 20
+tool_timeout_sec = 45
+default_tools_approval_mode = "writes"
+enabled_tools = ["brave_list_tabs", "brave_open_url", "brave_snapshot", "brave_screenshot", "brave_click", "brave_fill", "brave_press_key", "brave_reload"]
+
+[mcp_servers.brave_browser.tools.brave_open_url]
+approval_mode = "approve"
+
+[mcp_servers.brave_browser.tools.brave_click]
+approval_mode = "approve"
+
+[mcp_servers.brave_browser.tools.brave_fill]
+approval_mode = "approve"
+
+[mcp_servers.brave_browser.tools.brave_press_key]
+approval_mode = "approve"
+
+[mcp_servers.brave_browser.tools.brave_reload]
+approval_mode = "approve"
