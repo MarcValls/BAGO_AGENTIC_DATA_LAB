@@ -121,7 +121,7 @@ def test_stale_plan_rejected_before_initialization(folders, changed):
         (chosen / '.bago/context').mkdir(parents=True)
         (chosen / CONTEXT[0]).write_text('external edit', encoding='utf-8')
     elif changed == 'directory':
-        chosen.rmdir()
+        chosen.rename(chosen.with_name('original-chosen'))
         chosen.mkdir()
     elif changed == 'binding':
         runtime.update(root=chosen, revision=1)
