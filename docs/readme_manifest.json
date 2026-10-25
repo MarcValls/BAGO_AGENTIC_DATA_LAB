@@ -89,6 +89,10 @@
     {
       "path": "docs/progress/SPRINT_20261025_07.md",
       "role": "carpeta y proyecto con revisión exacta; gate acotado validado, global NO GO y cuatro fallos abiertos"
+    },
+    {
+      "path": "docs/progress/SPRINT_20261025_08.md",
+      "role": "barra de metadatos runtime y límites; verificación acotada, global NO GO, portabilidad y autoverificación pendientes"
     }
   ],
   "first_user_tutorial": {

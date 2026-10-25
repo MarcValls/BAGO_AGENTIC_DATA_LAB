@@ -712,7 +712,7 @@ El catálogo es de referencia; la definición operativa sigue en `.github/agents
 | Área | Cobertura | Fuentes presentes / declaradas |
 |---|---|---|
 | Gobierno del proyecto | Estado, contrato, arquitectura, roadmap, aprendizaje y skills | 6/6 presentes |
-| Demo y portfolio | Tutoriales, walkthrough, snapshot y notas de release | 7/7 presentes |
+| Demo y portfolio | Tutoriales, walkthrough, snapshot y notas de release | 8/8 presentes |
 | Versionado | Versión declarada del repositorio | 1/1 presentes |
 
 **Gobierno del proyecto:**
@@ -733,6 +733,7 @@ El catálogo es de referencia; la definición operativa sigue en `.github/agents
 - [`docs/releases/RELEASE_NOTES_DEMO_V1.md`](docs/releases/RELEASE_NOTES_DEMO_V1.md) — frozen one-command demo v1.0.0 release notes
 - [`docs/progress/SPRINT_20261025_06.md`](docs/progress/SPRINT_20261025_06.md) — estado del historial integrado y resultado completo de la fuente aplicada; Jaeger global OPEN
 - [`docs/progress/SPRINT_20261025_07.md`](docs/progress/SPRINT_20261025_07.md) — carpeta y proyecto con revisión exacta; gate acotado validado, global NO GO y cuatro fallos abiertos
+- [`docs/progress/SPRINT_20261025_08.md`](docs/progress/SPRINT_20261025_08.md) — barra de metadatos runtime y límites; verificación acotada, global NO GO, portabilidad y autoverificación pendientes
 
 **Versionado:**
 
