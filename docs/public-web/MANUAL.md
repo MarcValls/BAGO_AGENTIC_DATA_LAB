@@ -5,6 +5,7 @@ Guía para trabajar desde el chat y las pantallas de BAGO. Abre una sección seg
 ## Contenido
 
 - [Orientarse y empezar](#orientarse-y-empezar)
+- [Barra de estado](#barra-de-estado)
 - [Chat y lectura de páginas públicas](#chat-y-lectura-de-páginas-públicas)
 - [Historial de trabajos](#historial-de-trabajos)
 - [Revisar fuentes y ejecuciones](#revisar-fuentes-y-ejecuciones)
@@ -34,16 +35,19 @@ Las pestañas superiores separan las áreas de una pantalla. Puedes pulsarlas o 
 
 Los cambios que necesitan revisión muestran primero una propuesta o un borrador. Lee los datos, marca la confirmación y pulsa la acción final cuando estés de acuerdo. Un borrador guardado no significa que se haya enviado un mensaje ni ejecutado una operación. Las tareas conversacionales dentro del alcance pueden enviarse sin una tarjeta repetida por delegación; el host comprueba el alcance antes del turno hijo. Si el agente necesita herramientas conectadas, BAGO5 presenta una tarjeta para revisar las herramientas asignadas y autorizar el efecto y la carpeta exacta. La asignación de una herramienta no concede ese permiso.
 
-## Guías prácticas por sector
+## Barra de estado
 
-Estas guías son recorridos de trabajo y revisión, no resultados de ejecuciones. Los nombres de capacidad pueden aparecer en el catálogo; disponibilidad no confirma que estén habilitados para el agente, autorizados o conectados en el momento de uso. Abre cada guía para ver el alcance recomendado.
+Al pie de BAGO5 aparece una barra con cinco grupos. Pulsa uno para abrir sus detalles; **Cerrar detalles** o Escape lo recoge y devuelve el foco al mismo control. El panel separa el resumen observado, las tarjetas de datos y la fecha/vigencia. Las tarjetas se reparten en dos columnas en escritorio y una en móvil, con desplazamiento interno si falta espacio. Cada sección tiene un acento de color; la etiqueta de estado conserva un color independiente y su texto, por ejemplo un proveedor configurado sigue sin respuesta verificada. La barra ocupa su propia fila y no tapa el cuadro de escritura.
 
-- [Investigación de mercado: consultar fuentes públicas y contrastarlas](casos-de-uso/investigacion-mercado.md)
-- [Administración: extraer datos de documentos con referencias](casos-de-uso/administracion-documental.md)
-- [Logística: revisar inventario y discrepancias](casos-de-uso/logistica-inventario.md)
-- [Atención al cliente: preparar una comunicación revisable](casos-de-uso/atencion-cliente.md)
-- [Calidad: comprobar una operación y su evidencia](casos-de-uso/calidad-operaciones.md)
+- **Memoria** distingue el historial de conversación de la memoria general. Que el historial esté disponible sólo acredita metadatos: no demuestra que haya mensajes ni que se hayan recuperado correctamente. **General sin conectar** conserva su significado independiente.
+- **Backend** indica que la API respondió a la consulta de estado; no certifica el funcionamiento de todo el sistema.
+- **Actividad ADL** cuenta las solicitudes HTTP activas en el proceso actual de la API. Cero es un valor observado, distinto de **Sin comprobar**. El contador no representa tareas terminadas, agentes, trabajos de fondo ni la actividad de Codex.
+- **Git** muestra el repositorio local, la rama y si hay un remoto configurado, cuando pueden consultarse. Un remoto configurado no demuestra conexión ni autenticación con GitHub. Un dato no disponible no se sustituye por «sin repositorio».
+- **Proveedores** muestra los metadatos guardados del proveedor y modelo. **Configurado** o **registrado** no significa que haya conexión actual ni una respuesta verificada. La barra no envía mensajes de prueba al modelo.
 
+La consulta de metadatos se repite cada 30 segundos con la pestaña visible. Se pausa al ocultarla y se vuelve a consultar al regresar. **Actualizar** permite solicitar otra lectura; no cambia la carpeta, el proveedor, los permisos ni ejecuta tareas. Los detalles muestran la fecha de observación en UTC. Git puede conservar durante unos segundos una observación en caché con su fecha original.
+
+Si la consulta falla, se muestra el aviso y se conservan los valores anteriores con la etiqueta **Anterior**; no se presentan como una comprobación nueva. Una observación de más de un minuto también se marca como anterior. **Sin comprobar** indica que falta una lectura válida, no un fallo demostrado de ese servicio.
 
 ## Chat y lectura de páginas públicas
 
@@ -82,10 +86,6 @@ Selecciona una fila para consultar identificadores, referencia de traza y recibo
 La sección **Fuentes del historial** indica si cada fuente está disponible, ausente, parcial o no disponible. Si la cobertura es incompleta, el total sólo corresponde a los registros enumerados. Un error de conexión o formato se muestra como error; si se conservan datos anteriores, se avisa de que no se han actualizado. Puedes volver a intentarlo con **Actualizar**.
 
 ## Revisar fuentes y ejecuciones
-
-![Ejemplo de traza local abierta en Jaeger.](assets/screenshots-2026-10-26/05-jaeger-traza.png)
-
-*Ejemplo sintético de pruebas: 12 spans y 2,7 segundos. No acredita una misión larga exitosa ni que la jerarquía represente toda la causalidad de ADL.*
 
 Después de una respuesta, despliega **Fuentes web** o **Archivos consultados** para ver las referencias conservadas. Durante el desplazamiento por una conversación larga aparecen brevemente botones para saltar al principio o al final.
 

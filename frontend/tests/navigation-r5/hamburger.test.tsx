@@ -4,6 +4,7 @@ import {afterEach,beforeEach,expect,it,vi} from 'vitest'
 import {cleanup,fireEvent,render,screen,waitFor,within} from '@testing-library/react'
 import {readFileSync} from 'node:fs'
 import {resetLocaleForTests,t} from '../../src/i18n'
+import {runtimeStatusFixture} from '../runtime-status-bar/fixture'
 vi.mock('axios',()=>({default:{get:vi.fn(()=>new Promise(()=>{}))}}))
 vi.mock('../../src/components/AgentChat',()=>({default:()=>{const[draft,setDraft]=useState('UNSENT');return <textarea aria-label="Chat draft fixture" value={draft} onChange={e=>setDraft(e.target.value)}/>}}))
 vi.mock('../../src/components/CognitionSettings',()=>({default:()=> <p>Context fixture</p>,readCognitiveMode:()=> 'baseline'}))
@@ -12,12 +13,14 @@ beforeEach(()=>{
  localStorage.clear();resetLocaleForTests()
  HTMLDialogElement.prototype.showModal=function(){this.open=true}
  HTMLDialogElement.prototype.close=function(){this.open=false;this.dispatchEvent(new Event('close'))}
- vi.stubGlobal('fetch',vi.fn(async()=>({ok:true,status:200,json:async()=>({agents:[],models:[],conversations:[]})})))
+ vi.stubGlobal('fetch',vi.fn(async(url:string)=>({ok:true,status:200,json:async()=>url==='/api/runtime/status'?runtimeStatusFixture():({agents:[],models:[],conversations:[]})})))
  vi.stubGlobal('requestAnimationFrame',(fn:FrameRequestCallback)=>setTimeout(()=>fn(0),0))
 })
 afterEach(()=>{cleanup();vi.unstubAllGlobals();vi.restoreAllMocks()})
 it('retains an accessible icon rail without labels while preserving the active chat and draft',()=>{
  const view=render(<App/>),sidebar=view.container.querySelector('.workspace-sidebar') as HTMLElement
+ const initialCalls=(fetch as any).mock.calls.map(([url,init]:[string,RequestInit])=>({url,method:init?.method??'GET',body:init?.body}))
+ expect(initialCalls).toEqual([{url:'/api/runtime/status',method:'GET',body:undefined}])
  const draft=screen.getByLabelText('Chat draft fixture') as HTMLTextAreaElement
  fireEvent.change(draft,{target:{value:'ORIGINAL USER DRAFT'}})
  const toggle=screen.getByRole('button',{name:t('core.App.collapse_sidebar_aab31c')})
@@ -32,7 +35,8 @@ it('retains an accessible icon rail without labels while preserving the active c
  fireEvent.click(toggle);expect(sidebar.hidden).toBe(false)
  expect(screen.getByRole('button',{name:t('core.App.open_inspector_f351c3')})).toBeTruthy()
  expect(screen.getByRole('link',{name:t('core.App.manual_b0b9fe')})).toHaveProperty('target','_blank')
- expect((fetch as any).mock.calls).toHaveLength(0)
+ expect((fetch as any).mock.calls.map(([url,init]:[string,RequestInit])=>({url,method:init?.method??'GET',body:init?.body}))).toEqual(initialCalls)
+ expect((fetch as any).mock.calls.every(([,init]:[string,RequestInit])=>(init?.method??'GET')==='GET'&&init?.body===undefined)).toBe(true)
 })
 it('uses ArrowDown and Escape with focus restoration and preserves submenu state across folding',async()=>{
  const view=render(<App/>),sidebar=view.container.querySelector('.workspace-sidebar') as HTMLElement

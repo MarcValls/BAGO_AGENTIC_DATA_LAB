@@ -4,6 +4,7 @@ import {afterEach, beforeEach, expect, it, vi} from 'vitest'
 import {cleanup, fireEvent, render, screen, waitFor, within} from '@testing-library/react'
 import axios from 'axios'
 import {resetLocaleForTests, t} from '../../src/i18n'
+import {runtimeStatusFixture} from '../runtime-status-bar/fixture'
 vi.mock('axios', () => ({default:{get:vi.fn(() => new Promise(() => {}))}}))
 vi.mock('../../src/components/AgentChat', () => ({default:({onInspectExecution}:any) => <><input aria-label="Borrador conservado" defaultValue="BORRADOR ORIGINAL"/><button onClick={() => onInspectExecution({conversationId:'conv-owned',revision:2})}>Abrir ejecución fixture</button></>}))
 vi.mock('../../src/components/CognitionSettings', () => ({default:() => <p>Context fixture</p>, readCognitiveMode:() => 'baseline'}))
@@ -18,11 +19,14 @@ beforeEach(() => {
 })
 afterEach(() => {cleanup();vi.unstubAllGlobals();vi.restoreAllMocks();vi.clearAllMocks()})
 async function open(data=body()) {
- const fetcher=vi.fn(async()=>({ok:true,status:200,json:async()=>data}));vi.stubGlobal('fetch',fetcher)
+ const fetcher=vi.fn(async(url:string,_init?:RequestInit)=>({ok:true,status:200,json:async()=>url==='/api/runtime/status'?runtimeStatusFixture():data}));vi.stubGlobal('fetch',fetcher)
  render(<App/>);const trigger=screen.getByText('Abrir ejecución fixture');trigger.focus();fireEvent.click(trigger)
  const dialog=document.getElementById('data-layer') as HTMLDialogElement
  await waitFor(()=>expect(dialog.querySelector('.chat-inspection-execution-select')).not.toBeNull())
  await waitFor(()=>expect(dialog.querySelector('[role="status"]')?.textContent??'').not.toContain('Cargando inspección'))
+ expect(fetcher.mock.calls.filter(([url])=>url==='/api/runtime/status')).toHaveLength(1)
+ expect(fetcher.mock.calls.filter(([url])=>url!=='/api/runtime/status').map(([url])=>url)).toEqual(['/api/conversations/conv-owned/inspection?offset=0&limit=20'])
+ expect(fetcher.mock.calls.every(([,init])=>(init?.method??'GET')==='GET'&&init?.body===undefined)).toBe(true)
  return {dialog,trigger,fetcher}
 }
 it('real App embedded owns one title/context and moves metrics/events to their sections without refetch',async()=>{
@@ -43,14 +47,14 @@ it('real App embedded owns one title/context and moves metrics/events to their s
  fireEvent.click(within(nav).getByRole('button',{name:t('core.App.trace_7e14c3')}))
  expect(d.getAllByRole('table')).toHaveLength(1);expect(dialog.querySelector('.chat-inspection-counters')).toBeNull()
  for(const key of ['core.App.retrieval_ontology_608937','core.App.authorization_ca5839','core.App.evaluation_163e44'])fireEvent.click(within(nav).getByRole('button',{name:t(key)}))
- expect(d.queryByText('PASS')).toBeNull();expect(fetcher).toHaveBeenCalledTimes(1);expect(axios.get).not.toHaveBeenCalled()
+ expect(d.queryByText('PASS')).toBeNull();expect(fetcher.mock.calls.filter(([url])=>url!=='/api/runtime/status')).toHaveLength(1);expect(fetcher).toHaveBeenCalledTimes(2);expect(axios.get).not.toHaveBeenCalled()
  fireEvent.click(d.getByRole('button',{name:t('core.App.exit_inspector')}))
  expect(document.activeElement).toBe(trigger);expect((screen.getByLabelText('Borrador conservado') as HTMLInputElement).value).toBe('BORRADOR ORIGINAL')
 })
 it('keeps overview links as view navigation without effects or new fetches',async()=>{
  const {dialog,fetcher}=await open()
  fireEvent.click(within(dialog).getByRole('button',{name:t('agents.ChatInspection.traza_de_la_ejecucion')}))
- expect(within(dialog).getByRole('table')).toBeTruthy();expect(fetcher).toHaveBeenCalledTimes(1)
+ expect(within(dialog).getByRole('table')).toBeTruthy();expect(fetcher.mock.calls.filter(([url])=>url!=='/api/runtime/status')).toHaveLength(1);expect(fetcher).toHaveBeenCalledTimes(2)
 })
 it('keeps invalid trace rejection visible outside the closed context and never displays fabricated success',async()=>{
  const {dialog}=await open(body({...selected(),state:'invalid',trace:null,integrity:'not_available',sha256:null,reason:'HASH_MISMATCH'}))
@@ -73,7 +77,7 @@ it('real App demonstration keeps its own bundle and one host title without dupli
  expect(within(dialog).getAllByText('run-demo-owned')).toHaveLength(1)
  expect(dialog.querySelectorAll('h1')).toHaveLength(0)
  expect(within(dialog).getAllByRole('heading',{name:t('core.App.decision_inspector_2bc4a6')})).toHaveLength(1)
- expect(axios.get).toHaveBeenCalledExactlyOnceWith('/api/artifacts');expect(fetcher).toHaveBeenCalledTimes(1)
+ expect(axios.get).toHaveBeenCalledExactlyOnceWith('/api/artifacts');expect(fetcher.mock.calls.filter(([url])=>url!=='/api/runtime/status')).toHaveLength(1);expect(fetcher).toHaveBeenCalledTimes(2)
 })
 it('selection and paging still request the selected conversation and trace rather than stale context',async()=>{
  const secondId='trace-2222222222222222'

@@ -2689,6 +2689,19 @@ async def chat_context() -> dict[str, Any]:
     }
 
 
+from src.runtime_status import (ActivityTracker, ProviderSelectionMetadata, RuntimeActivityMiddleware,
+                                RuntimeStatus, create_runtime_status_router)
+_RUNTIME_ACTIVITY_TRACKER = ActivityTracker()
+_RUNTIME_STATUS_SERVICE = RuntimeStatus(
+    workspace_root=lambda: current_workspace_root(), context_metadata=lambda: chat_context(),
+    provider_selection=lambda: ProviderSelectionMetadata(
+        selection_path=provider_runtime.SELECTION_PATH, policy_path=model_policy.path(),
+        registry_path=registration.REGISTRY_PATH, ollama_path=ollama.CONFIG_PATH,
+        runtime_mode=os.environ.get("BAGO_RUNTIME_MODE", "host"))(), tracker=_RUNTIME_ACTIVITY_TRACKER)
+app.add_middleware(RuntimeActivityMiddleware, tracker=_RUNTIME_ACTIVITY_TRACKER)
+app.include_router(create_runtime_status_router(_RUNTIME_STATUS_SERVICE))
+
+
 @app.get("/api/chat/context/document/{source_id}")
 async def project_context_document(source_id: str, workspace_root: str, response: Response) -> dict[str, Any]:
     """Explicit UI read; never adds document text to model prompts."""

@@ -5,6 +5,7 @@ import {cleanup,fireEvent,render,screen,waitFor,within} from '@testing-library/r
 import {createHash} from 'node:crypto'
 import {readFileSync} from 'node:fs'
 import {resetLocaleForTests,t} from '../../src/i18n'
+import {runtimeStatusFixture} from '../runtime-status-bar/fixture'
 vi.mock('axios',()=>({default:{get:vi.fn(()=>new Promise(()=>{}))}}))
 vi.mock('../../src/components/AgentChat',()=>({default:({historySelection}:any)=>{const[draft,setDraft]=useState('UNSENT');return <textarea aria-label="Chat draft fixture" data-history-policy={historySelection} value={draft} onChange={e=>setDraft(e.target.value)}/>}}))
 vi.mock('../../src/components/CognitionSettings',()=>({default:()=> <p>Context fixture</p>,readCognitiveMode:()=> 'baseline'}))
@@ -13,12 +14,14 @@ beforeEach(()=>{
  localStorage.clear();resetLocaleForTests()
  HTMLDialogElement.prototype.showModal=function(){this.open=true}
  HTMLDialogElement.prototype.close=function(){this.open=false;this.dispatchEvent(new Event('close'))}
- vi.stubGlobal('fetch',vi.fn(async()=>({ok:true,status:200,json:async()=>({agents:[],models:[],conversations:[]})})))
+ vi.stubGlobal('fetch',vi.fn(async(url:string)=>({ok:true,status:200,json:async()=>url==='/api/runtime/status'?runtimeStatusFixture():({agents:[],models:[],conversations:[]})})))
  vi.stubGlobal('requestAnimationFrame',(fn:FrameRequestCallback)=>setTimeout(()=>fn(0),0))
 })
 afterEach(()=>{cleanup();vi.unstubAllGlobals();vi.restoreAllMocks()})
 it('reuses the untouched asset once, binds only O and composes explicit history in the real App',()=>{
  const view=render(<App/>),sidebar=view.container.querySelector('.workspace-sidebar') as HTMLElement
+ const initialCalls=(fetch as any).mock.calls.map(([url,init]:[string,RequestInit])=>({url,method:init?.method??'GET',body:init?.body}))
+ expect(initialCalls).toEqual([{url:'/api/runtime/status',method:'GET',body:undefined}])
  const image=screen.getByRole('img',{name:'BAGO'}),button=screen.getByRole('button',{name:t('core.App.collapse_sidebar_aab31c')})
  expect(screen.getAllByRole('img',{name:'BAGO'})).toHaveLength(1)
  expect(image.getAttribute('src')).toBe('/brand/BAGO_logotipo_horizontal.svg');expect(image.closest('button')).toBeNull()
@@ -30,7 +33,8 @@ it('reuses the untouched asset once, binds only O and composes explicit history 
  expect(screen.getByRole('button',{name:t('core.App.open_inspector_f351c3')})).toHaveProperty('title',t('core.App.inspector_e0723a'))
  expect(screen.getByRole('button',{name:t('core.App.open_settings_ca381c')})).toHaveProperty('title',t('core.App.settings_74a883'));expect(screen.getAllByRole('button').length).toBeGreaterThan(1)
  expect(screen.getByRole('img',{name:'BAGO'})).toBe(image);expect(draft.isConnected).toBe(true);expect(draft.value).toBe('ORIGINAL USER DRAFT')
- fireEvent.click(button);expect(sidebar.hidden).toBe(false);expect((fetch as any).mock.calls).toHaveLength(0)
+ fireEvent.click(button);expect(sidebar.hidden).toBe(false);expect((fetch as any).mock.calls.map(([url,init]:[string,RequestInit])=>({url,method:init?.method??'GET',body:init?.body}))).toEqual(initialCalls)
+ expect((fetch as any).mock.calls.every(([,init]:[string,RequestInit])=>(init?.method??'GET')==='GET'&&init?.body===undefined)).toBe(true)
 })
 it('preserves ArrowDown, Escape, focus, submenus and manual with the O control',async()=>{
  const view=render(<App/>),sidebar=view.container.querySelector('.workspace-sidebar') as HTMLElement

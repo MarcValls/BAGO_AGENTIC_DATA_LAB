@@ -27,6 +27,7 @@ import type {InspectionSelection} from './types/inspection'
 import CapabilityManager, {type CapabilityChatRequest, type CapabilityDestination} from './components/CapabilityManager'
 import ToolsConnectionsView from './components/ToolsConnectionsView'
 import JobHistory from './components/JobHistory'
+import RuntimeStatusBar from './components/RuntimeStatusBar'
 import AgentEvaluationLab from './components/AgentEvaluationLab'
 import Contacts from './components/Contacts'
 import ProviderSettings from './components/ProviderSettings'
@@ -398,6 +399,7 @@ function App() {
           </section>
         </div>
       </dialog>
+      <RuntimeStatusBar />
     </div>
   )
 }
