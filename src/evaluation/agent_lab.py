@@ -142,6 +142,12 @@ def config_fingerprint(config: dict[str, Any]) -> str:
 
 
 class EvaluationStore:
+    def work_history_metadata(self, limit=10000):
+        """Read run metadata and pending reservations without loading payloads."""
+        from ..work_history import evaluation_metadata
+
+        return evaluation_metadata(self.database_path, limit)
+
     """Workspace-isolated SQLite suites and immutable run snapshots."""
 
     def __init__(self, workspace_root: Path | str, database_path: Path | str | None = None) -> None:

@@ -125,6 +125,12 @@ def _now() -> str:
 
 
 class TaskStore:
+    def work_history_metadata(self, limit=10000):
+        """Read bounded run metadata without creating or migrating storage."""
+        from ..work_history import task_metadata
+
+        return task_metadata(self.database_path, limit)
+
     def __init__(self, database_path: Path | str):
         self.database_path = Path(database_path)
 

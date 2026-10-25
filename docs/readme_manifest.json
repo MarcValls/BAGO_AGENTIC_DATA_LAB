@@ -81,6 +81,10 @@
     {
       "path": "VERSION",
       "role": "current repository version"
+    },
+    {
+      "path": "docs/progress/SPRINT_20261025_06.md",
+      "role": "estado del historial integrado y resultado completo de la fuente aplicada; Jaeger global OPEN"
     }
   ],
   "first_user_tutorial": {
@@ -707,6 +711,11 @@
         "alt": "Historial de trabajos legacy vacío antes de su corrección",
         "caption": "ANTES de la corrección del Historial de trabajos: el registro legacy estaba vacío. Esto no demuestra ausencia de conversaciones, TaskRuns ni otras ejecuciones; no representa el estado posterior a la reparación.",
         "path": "docs/assets/readme-20261025/09-work-history-legacy-empty.png"
+      },
+      {
+        "alt": "Historial unificado después de la reparación: cinco fuentes disponibles, filtro Trabajo legacy vacío",
+        "caption": "DESPUÉS de la reparación del Historial: cinco fuentes disponibles y filtro Trabajo legacy explícito. El vacío corresponde sólo a esa fuente; no demuestra ausencia de tareas ni que una misión haya terminado.",
+        "path": "docs/assets/readme-20261025/10-work-history-unified-sources.png"
       }
     ],
     "carousel_gif": "docs/assets/readme-20261025/carousel.gif",

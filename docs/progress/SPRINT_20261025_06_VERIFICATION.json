@@ -1,0 +1,73 @@
+{
+  "schema": "bago.publication-history-delivery.v1",
+  "status": "VALIDATED_SCOPED_TASK",
+  "global_status": "NO_GO_OPEN",
+  "prior_public_commit": "76828e7bcf238c939dc2f6d6e155737eb5fbf3e6",
+  "backend": {
+    "candidate": "dev_1ab0dd85ad4a40da8ef636e96a7bf8d7",
+    "patch": "616e3afb210de265cb4905ce3d3a0e66c4d74730c96406d7f84e2eb4d5db9483",
+    "check_receipt": "check_4a117a894cbb47c4b354630822657921",
+    "check_passed": 308,
+    "independent_review_persisted": true,
+    "apply_receipt": "apply_512c33308a334a069d5eb82e6f247197"
+  },
+  "independent_scoped_checks": {
+    "backend_passed": 30,
+    "ui_passed": 120,
+    "typescript": "PASS",
+    "build": "PASS",
+    "live_api_and_desktop_visual": "PASS"
+  },
+  "applied_source_full_suite": {
+    "passed": 1464,
+    "failed": 4,
+    "skipped": 2,
+    "subtests_passed": 22,
+    "result": "FAIL",
+    "seconds": 593.32,
+    "scope": "Applied source checkout; publication retains three extra upstream guard cases and declared editorial derivation."
+  },
+  "failed_source_tests": [
+    "tests/test_public_web_read.py::test_control_chat_web_sources_and_trace",
+    "tests/test_public_web_repair.py::test_failure_after_each_read_outcome_preserves_correlated_failed_trace[ALLOW-assistant]",
+    "tests/test_public_web_repair.py::test_failure_after_each_read_outcome_preserves_correlated_failed_trace[DENY-assistant]",
+    "tests/test_public_web_repair.py::test_failure_after_each_read_outcome_preserves_correlated_failed_trace[FAIL-assistant]"
+  ],
+  "source_readme_full_generator": "FAIL",
+  "source_readme_reproducibility": "PASS_COLLECTION_ONLY",
+  "publication_final_full_suite": "NOT_RUN",
+  "product_sha256": {
+    "src/work_history.py": "7d85d427945af08524593e8f9133a280ab522cffcef617de0550162d72b8a620",
+    "src/agent_tasks/store.py": "516b771945a08f30146a6d52fe56c51958c92a72a5f0912347f1cd38f154e037",
+    "src/conversations/library.py": "8036ed9c8181641b1d774f2d2684c6f0376715cc4086564714fe00a0d0055c63",
+    "src/evaluation/agent_lab.py": "e1145b64a8793771b6a5b02fc092142e608a714539bcacff509a6c346f2b6606",
+    "src/services/agent_delegation.py": "7533e1185bd9e73cd25bc564bed94174b53c6830810ffbc09ddecad3494db01c",
+    "src/api/server.py": "523365e1504970f89745ee4d54f1340dce924d9cc7f54bde06ec81e3c5ad3241",
+    "tests/development_mission/test_native_failures.py": "752397a29f93258df7638c31abdf3461605b5145233323443c0af7d8ce877cd3",
+    "frontend/src/components/JobHistory.tsx": "1b7eeb99589a3b433335386d6351198a4ba7878422215d440a42ff83c792143c",
+    "frontend/src/components/JobHistory.css": "dca20e9a9393e1bae2c4d89414491755f6fab5c7e162172cb83983a2a506adda",
+    "frontend/tests/work-history/history.test.tsx": "14f129974c7ca27e1e55b72962b14d3f1fc50993258be854f72b2324772fc91d",
+    "frontend/tests/i18n/agents/auxiliary.test.tsx": "4843e86f5e0228a1a8f5396e36df7564bc16afbcc4420b2aa838ee563e5a4cf5",
+    "docs/public-web/MANUAL.md": "249ff70adb32234307bb2fbe0513417a40d88bd1f0ada54c7c59bd9a06420e65"
+  },
+  "screenshots": {
+    "originals_preserved": true,
+    "new_public_frame": "docs/assets/readme-20261025/10-work-history-unified-sources.png",
+    "scope": "Real metadata index with legacy filter deliberately selected, not evidence of task completion."
+  },
+  "private_runtime_data_included": false,
+  "publication_directed_checks": {
+    "backend_work_history": {
+      "passed": 29,
+      "skipped": 1,
+      "deselected": 59
+    },
+    "readme_whatsapp_dom_passed": 52,
+    "frontend_passed": 120,
+    "typescript_build": "PASS",
+    "readme_render": "PASS_COLLECTION_ONLY",
+    "readme_check": "PASS_COLLECTION_ONLY",
+    "full_suite": "NOT_RUN",
+    "global_status": "NO_GO_OPEN"
+  }
+}

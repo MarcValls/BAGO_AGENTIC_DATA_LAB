@@ -1,0 +1,18 @@
+{
+  "schema": "bago.public-screenshot-provenance.v2",
+  "capture_date": "2026-10-25",
+  "file": "10-work-history-unified-sources.png",
+  "sha256": "b977dc50fd12d7e8ea0b57ac5fff942d70efa0870678f4da7ccafa8ea8ae9a6b",
+  "scope": "Real UI after repair; five sources available. legacy_job deliberately selected, zero rows only in that source. No task IDs, conversation IDs, corpus, routes or task content shown.",
+  "source_kinds": [
+    "legacy_job",
+    "task_run",
+    "delegation",
+    "agent_turn",
+    "evaluation"
+  ],
+  "legacy_total": 0,
+  "other_work_verification": "Performed separately; not evidenced by this screenshot",
+  "mission_completion": "NOT_IMPLIED",
+  "image_processing": "PNG bytes copied unchanged; GIF mechanical scaled composition only"
+}

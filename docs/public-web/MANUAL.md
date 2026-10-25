@@ -6,6 +6,7 @@ Guía para trabajar desde el chat y las pantallas de BAGO. Abre una sección seg
 
 - [Orientarse y empezar](#orientarse-y-empezar)
 - [Chat y lectura de páginas públicas](#chat-y-lectura-de-páginas-públicas)
+- [Historial de trabajos](#historial-de-trabajos)
 - [Revisar fuentes y ejecuciones](#revisar-fuentes-y-ejecuciones)
 - [Agentes](#agentes)
 - [Proyectos, archivos y contexto](#proyectos-archivos-y-contexto)
@@ -58,6 +59,16 @@ El permiso permite leer páginas de los orígenes indicados. Una URL de entrada 
 **Lectura local:** la casilla **Allow project file reads** es un permiso independiente. Si la necesitas, indica las rutas relativas exactas de los archivos del proyecto. Marcar lectura web no concede lectura de archivos; ambos permisos pueden utilizarse expresamente en el mismo turno.
 
 El texto de una página puede contener instrucciones ajenas a tu tarea. Se trata como fuente externa, no como una orden tuya. Comprueba las afirmaciones antes de usarlas como resultado para un cliente.
+
+## Historial de trabajos
+
+La vista **Historial de trabajos**, también cuando aparece dentro del chat, reúne metadatos de cinco fuentes: trabajos legacy, ejecuciones de tarea, delegaciones, turnos de agente y evaluaciones. Elige una fuente para filtrar en el servidor; **Anterior**, **Siguiente** y **Primera página** recorren los registros enumerados. **Actualizar** solicita de nuevo la página actual. La vista no se recarga cada cinco segundos.
+
+Cada fila conserva la fuente, el estado exacto, el agente histórico cuando consta y su última actividad con fecha y hora UTC. **Respuesta recibida (PASSED o answered)** significa que se recibió una respuesta; no acredita que el encargo esté terminado ni que se hayan ejecutado herramientas. Los intentos fallidos y los registros relacionados se conservan por separado.
+
+Selecciona una fila para consultar identificadores, referencia de traza y recibo, fechas, duración, coste y efectos registrados. No se abren cuerpos de conversaciones ni documentos, y seleccionar no ejecuta ni repite trabajos. Un ID de traza o recibo es una referencia registrada, no una verificación nueva. **No registrado** se distingue de cero y de **No** en herramientas o escritura.
+
+La sección **Fuentes del historial** indica si cada fuente está disponible, ausente, parcial o no disponible. Si la cobertura es incompleta, el total sólo corresponde a los registros enumerados. Un error de conexión o formato se muestra como error; si se conservan datos anteriores, se avisa de que no se han actualizado. Puedes volver a intentarlo con **Actualizar**.
 
 ## Revisar fuentes y ejecuciones
 

@@ -4249,6 +4249,29 @@ async def _execute_native_agent_chat_turn(agent_id,request,response,*,recorder,n
 
 # ===== API: Job History & Metrics =====
 
+@app.get("/api/work-history")
+async def work_history_list(
+    limit: int = Query(50, ge=1, le=200),
+    offset: int = Query(0, ge=0, le=10000),
+    kind: Literal["all", "legacy_job", "task_run", "delegation", "agent_turn", "evaluation"] = "all",
+):
+    from src.agent_tasks import TaskStore
+    from src.api.task_routes import default_history_path
+    from src.work_history import work_history
+    import src.jobs as jobs_repository
+
+    return work_history(
+        jobs_directory=jobs_repository.JOBS_DIR,
+        task_store=TaskStore(default_history_path(AGENTS_DIR)),
+        conversations=CONVERSATIONS,
+        evaluations=EVALUATIONS,
+        delegations=_agent_delegations(),
+        limit=limit,
+        offset=offset,
+        kind=kind,
+    )
+
+
 @app.get("/api/jobs/list")
 async def jobs_list(limit: int = 50) -> dict[str, list[JobResponse]]:
     """List all jobs, most recent first."""
