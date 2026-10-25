@@ -3,7 +3,7 @@ FROM python:3.11-slim AS builder
 WORKDIR /app
 
 # Install build dependencies
-COPY requirements.txt requirements-whatsapp.txt ./
+COPY requirements.txt requirements-whatsapp.txt requirements-documents.txt ./
 RUN pip install --user --no-cache-dir -r requirements.txt fastapi uvicorn
 
 # Build frontend
@@ -32,6 +32,11 @@ COPY --from=frontend-builder /app/frontend/dist frontend/dist
 
 # Copy application source
 COPY src src/
+COPY tools/document-toolkit tools/document-toolkit/
+COPY tools/filesystem-toolkit tools/filesystem-toolkit/
+COPY docs/governed-execution/GEX_V1_SCHEMA.json docs/governed-execution/GEX_V1_SCHEMA.json
+COPY docs/public-web/MANUAL.md docs/public-web/MANUAL.md
+COPY docs/agent-write/MANUAL_ES.md docs/agent-write/MANUAL_ES.md
 COPY runtime/ber runtime/ber/
 COPY scripts/ber_effect_demo.py scripts/ber_effect_demo.py
 

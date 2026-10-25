@@ -13,6 +13,7 @@ import json
 import re
 import subprocess
 import sys
+from datetime import date
 from pathlib import Path
 from typing import Any
 
@@ -844,9 +845,21 @@ def _details(summary: str, content: list[str]) -> list[str]:
 
 
 def _render_current_captures(manifest: dict[str, Any]) -> list[str]:
-    """Publish only explicitly declared fresh captures and their provenance."""
+    """Publish explicitly declared captures with date-bound provenance."""
     presentation = manifest["presentation"]
-    required = [presentation["banner"], presentation["frontend_guide"], presentation["capture_guide"]]
+    capture_date = presentation.get("capture_date")
+    try:
+        parsed_capture_date = date.fromisoformat(capture_date)
+    except (TypeError, ValueError) as exc:
+        raise ValueError("Current capture date must be an ISO calendar date") from exc
+    carousel_path = presentation.get("carousel_gif")
+    viewer_path = presentation.get("carousel_html")
+    if not carousel_path or not viewer_path:
+        raise ValueError("Current presentation needs an animated carousel and an HTML viewer")
+    required = [
+        presentation["banner"], presentation["frontend_guide"],
+        presentation["capture_guide"], carousel_path, viewer_path,
+    ]
     required.extend(item["path"] for item in presentation["captures"])
     for path in required:
         relative = Path(path)
@@ -854,15 +867,40 @@ def _render_current_captures(manifest: dict[str, Any]) -> list[str]:
             raise ValueError("Presentation artifact must be repository-relative")
         if not (REPO_ROOT / relative).is_file():
             raise FileNotFoundError("Presentation artifact missing: " + path)
+    gif_bytes = (REPO_ROOT / carousel_path).read_bytes()
+    if not gif_bytes.startswith((b"GIF87a", b"GIF89a")):
+        raise ValueError("Current screenshot carousel must be a valid GIF")
+    guide_text = (REPO_ROOT / presentation["capture_guide"]).read_text(encoding="utf-8")
+    month_names = (
+        "enero", "febrero", "marzo", "abril", "mayo", "junio",
+        "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre",
+    )
+    documented_date = (
+        f"{parsed_capture_date.day} de {month_names[parsed_capture_date.month - 1]} "
+        f"de {parsed_capture_date.year}"
+    )
+    if capture_date not in guide_text and documented_date not in guide_text:
+        raise ValueError("Current capture date must appear in its provenance guide")
     lines = [
         "## La aplicación en pantalla", "",
-        f"**Capturas nuevas · {presentation['capture_date']} · Brave visible · aplicación local.** Se tomaron recorriendo las pantallas de la sesión documentada, sin reutilizar las imágenes de los tutoriales anteriores.", "",
-        "La sesión incluye creación de un agente nuevo y una respuesta real con lectura autorizada de datos ficticios. La evidencia de ese recorrido se identifica en Casos y demos. Cada imagen conserva su alcance: Inspect mostró una traza anterior de Bruma, diferente de la conversación recién ejecutada.", "",
+        f"**Capturas del recorrido documentado el {capture_date} · aplicación local en Brave visible.** Las imágenes se capturaron desde el navegador visible; las observaciones y su procedencia están descritas en la guía enlazada.", "",
+        f"El carrusel cambia de captura automáticamente. Puedes abrir el [visor HTML con controles de anterior, siguiente y pausa]({viewer_path}) o desplegar una imagen original para leerla a tamaño completo.", "",
+        f"![Carrusel de capturas actuales de BAGO ADL]({carousel_path})", "",
     ]
-    for item in presentation["captures"]:
+    for index, item in enumerate(presentation["captures"], start=1):
         if not item.get("alt") or not item.get("caption"):
             raise ValueError("Current capture needs alt text and an observation caption")
-        lines.extend([f"![{item['alt']}]({item['path']})", "", f"**{item['caption']}**", ""])
+        lines.extend([
+            "<details>",
+            f"<summary>Captura {index:02d} · {item['caption']}</summary>",
+            "",
+            f"![{item['alt']}]({item['path']})",
+            "",
+            f"**{item['caption']}**",
+            "",
+            "</details>",
+            "",
+        ])
     lines.extend([
         f"**Profundizar:** [cómo se tomaron, identidad del servidor, observaciones y hashes]({presentation['capture_guide']}) · [guía del frontend]({presentation['frontend_guide']}).", "",
     ])
@@ -1066,7 +1104,7 @@ def render_readme(
         "**Profundizar:** [fuentes canónicas](.bago/INDEX.md) · [catálogo de agentes](agents/CATALOG_MANIFEST.json) · [agente de sincronización](docs/bago-sync-agent.md) · [licencia MIT](LICENSE).", "",
         "## Apéndices y evidencia histórica", "",
         "El detalle histórico conserva trazabilidad y procedencia. Las imágenes de tutoriales anteriores siguen en sus documentos originales; la galería de esta portada contiene únicamente capturas nuevas.", "",
-        "[Tutorial histórico de primer uso](docs/agent-chat-control/TUTORIAL_PRIMER_USO.md): conserva el recorrido de UI del 2026-10-19 con respuestas API sintéticas y sus referencias a la sesión histórica del 2026-10-10. No es evidencia de una ejecución nueva ni sustituye las capturas actuales del 2026-10-22.", "",
+        f"[Tutorial histórico de primer uso](docs/agent-chat-control/TUTORIAL_PRIMER_USO.md): conserva el recorrido de UI del 2026-10-19 con respuestas API sintéticas y sus referencias a la sesión histórica del 2026-10-10. No es evidencia de una ejecución nueva ni sustituye las capturas actuales del {manifest['presentation']['capture_date']}.", "",
         *_details("Fases L0–L15: estados declarados y archivos de evidencia", [
             "### Roadmap y evidencia por fase", "",
             "Los patrones resueltos identifican archivos del checkout; su presencia no implica repetir la ejecución.", "",

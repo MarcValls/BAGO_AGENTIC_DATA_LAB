@@ -58,6 +58,25 @@ def _source_fingerprint(root: Path, relative_path: str) -> str | None:
     return hashlib.sha256(content).hexdigest()
 
 
+def agent_tool_catalog() -> list[dict[str, Any]]:
+    """The backend registry owns assignment IDs; the UI consumes these descriptors."""
+    from src.agent_tools.document_tools import descriptors
+    from src.agent_tools.filesystem_tools import descriptors as filesystem_descriptors
+    from src.agent_tools.agent_services import descriptors as delivery_descriptors
+    from src.development import descriptors as development_descriptors
+    legacy = [
+        ("bedrock.converse", "AWS Bedrock Converse", "UNAVAILABLE"),
+        ("mcp.execute", "MCP (configuración externa)", "UNAVAILABLE"),
+        ("ontology.query", "Consulta de ontología", "UNAVAILABLE"),
+        ("retrieval.search", "Búsqueda de conocimiento", "UNAVAILABLE"),
+        ("sandbox.run", "Proponer operación BER · Runner", "AVAILABLE"),
+    ]
+    return [{"id": key, "name": name, "name_en": name, "status": state,
+             "assignable": True, "summary": "Disponible en Runner BER." if key == "sandbox.run" else "No conectado al chat de agente."}
+            for key, name, state in legacy] + descriptors() + [
+                {**item,"status":item["status"].upper()} for item in filesystem_descriptors()] + delivery_descriptors() + development_descriptors()
+
+
 def capability_catalog(workspace_root: Path | str) -> dict[str, Any]:
     """Describe only the implemented wiring observed in this backend snapshot."""
     workspace_id, root = workspace_identity(workspace_root)
@@ -129,6 +148,15 @@ def capability_catalog(workspace_root: Path | str) -> dict[str, Any]:
             "source_paths": ["src/api/server.py"],
         },
     ]
+    from src.agent_tools.document_tools import descriptors
+    specifications.extend(descriptors())
+    from src.agent_tools.filesystem_tools import descriptors as filesystem_descriptors
+    from src.agent_tools.agent_services import descriptors as delivery_descriptors
+    specifications.extend({**item,"status":item["status"].upper(),"provider":"Local filesystem toolkit","integration":"CONNECTED",
+        "source_paths":["src/agent_tools/filesystem_tools.py","src/agent_tools/agent_services.py","tools/filesystem-toolkit/bago_filesystem.py"]} for item in filesystem_descriptors())
+    specifications.extend(delivery_descriptors())
+    from src.development import descriptors as development_descriptors
+    specifications.extend(development_descriptors())
     for item in specifications:
         paths = item.pop("source_paths")
         sources = {path: _source_fingerprint(root, path) for path in paths}
@@ -142,6 +170,7 @@ def capability_catalog(workspace_root: Path | str) -> dict[str, Any]:
         "workspace_id": workspace_id,
         "generated_at": _timestamp(),
         "capabilities": specifications,
+        "agent_tools": agent_tool_catalog(),
         "authority_notice": "Catalog status describes integration only. It does not grant authorization or enable execution.",
     }
 

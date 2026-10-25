@@ -1,7 +1,7 @@
 import {useI18n,t,localMessage,errorMessage,apiError,formatDate,formatNumber} from '../i18n'
+import type {TranslationKey} from '../i18n'
 import './CapabilityManager.css'
 import { useCallback, useEffect, useState } from 'react'
-import ExternalConnections from './ExternalConnections'
 
 export type Capability = {
   id: string
@@ -15,6 +15,22 @@ export type Capability = {
   source_fingerprints: Record<string, string | null>
   source_available: boolean
   fingerprint: string
+}
+
+const CAPABILITY_GROUPS: Array<{id: string; title: TranslationKey; description: TranslationKey; capabilityIds: string[]}> = [
+  {id:'documents',title:'commerce.capability_ui.group_documents',description:'commerce.capability_ui.group_documents_help',capabilityIds:['document_inventory','document_extract','document_relate','document_plan_rename','document_export']},
+  {id:'workspace',title:'commerce.capability_ui.group_workspace',description:'commerce.capability_ui.group_workspace_help',capabilityIds:['workspace.read_text','workspace.scan_duplicates','filesystem_inventory','filesystem_plan']},
+  {id:'agents',title:'commerce.capability_ui.group_agents',description:'commerce.capability_ui.group_agents_help',capabilityIds:['agent.run','agent.evaluate']},
+  {id:'development',title:'commerce.capability_ui.group_development',description:'commerce.capability_ui.group_development_help',capabilityIds:['development_read','development_inspect','development_prepare','development_revise','development_check','development_review']},
+  {id:'delivery',title:'commerce.capability_ui.group_delivery',description:'commerce.capability_ui.group_delivery_help',capabilityIds:['delivery_review','delivery_revalidate','delivery_prepare_draft']},
+  {id:'connections',title:'commerce.capability_ui.group_connections',description:'commerce.capability_ui.group_connections_help',capabilityIds:['mcp.execute','sandbox.execute']},
+]
+
+export type CapabilityDestination = 'connections' | 'builder' | 'workspace' | 'evaluation_lab'
+export type CapabilityChatRequest = {capabilityId: string; prompt: string}
+type CapabilityManagerProps = {
+  onPrepareChat?: (request: CapabilityChatRequest) => void
+  onNavigate?: (destination: CapabilityDestination) => void
 }
 
 export type CapabilityProposal = {
@@ -32,38 +48,6 @@ export type CapabilityProposal = {
   updated_at: string
 }
 
-type McpReceipt = Record<string, unknown> & { receipt_id?: string }
-type McpFixtureResult = {
-  run_id: string
-  status: string
-  transport: string
-  source_kind: string
-  server: string
-  discovered: Array<{ name: string; fingerprint: string }>
-  registered: Array<{ name: string; effect_type: string }>
-  read_call: { receipt_id: string; decision: string; actual_effect: { called: boolean }; receipt?: McpReceipt }
-  write_call: { receipt_id: string; decision: string; actual_effect: { called: boolean }; receipt?: McpReceipt }
-  trace: { trace_id: string; events: unknown[] }
-  evidence: { path: string; sha256: string }
-}
-
-function hasMcpFixtureResult(value: unknown): value is McpFixtureResult {
-  if (!value || typeof value !== 'object') return false
-  const result = value as Partial<McpFixtureResult>
-  return typeof result.run_id === 'string' && result.status === 'completed'
-    && result.transport === 'stdio' && result.source_kind === 'repository_local_fixture'
-    && result.server === 'bago-local-demo'
-    && Array.isArray(result.discovered) && result.discovered.every((tool) => typeof tool?.name === 'string' && typeof tool?.fingerprint === 'string')
-    && Array.isArray(result.registered) && result.registered.every((tool) => typeof tool?.name === 'string' && typeof tool?.effect_type === 'string')
-    && typeof result.read_call?.receipt_id === 'string' && typeof result.read_call?.decision === 'string'
-    && typeof result.read_call?.actual_effect?.called === 'boolean'
-    && typeof result.write_call?.receipt_id === 'string' && typeof result.write_call?.decision === 'string'
-    && typeof result.write_call?.actual_effect?.called === 'boolean'
-    && typeof result.trace?.trace_id === 'string'
-    && typeof result.evidence?.path === 'string' && typeof result.evidence?.sha256 === 'string'
-    && /^[a-f0-9]{64}$/i.test(result.evidence.sha256)
-}
-
 export async function capabilityResponseError(response: Response): Promise<string> {
   try {
     const body = await response.json()
@@ -78,7 +62,7 @@ async function capabilityError(response: Response): Promise<Error> {
   return apiError(await response.json().catch(() => null),response.status,'agents')
 }
 
-export default function CapabilityManager() {
+export default function CapabilityManager({onPrepareChat, onNavigate}: CapabilityManagerProps = {}) {
   useI18n()
 
   const [capabilities, setCapabilities] = useState<Capability[]>([])
@@ -86,9 +70,11 @@ export default function CapabilityManager() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<any>('')
   const [canceling, setCanceling] = useState<string | null>(null)
-  const [mcpRunning, setMcpRunning] = useState(false)
-  const [mcpError, setMcpError] = useState<any>('')
-  const [mcpResult, setMcpResult] = useState<McpFixtureResult | null>(null)
+  const capabilityGroups = [...CAPABILITY_GROUPS, {
+    id:'other', title:'commerce.capability_ui.group_other' as TranslationKey,
+    description:'commerce.capability_ui.group_other_help' as TranslationKey,
+    capabilityIds:capabilities.map((item) => item.id).filter((id) => !CAPABILITY_GROUPS.some((group) => group.capabilityIds.includes(id))),
+  }]
 
   const refresh = useCallback(async () => {
     setLoading(true)
@@ -102,7 +88,8 @@ export default function CapabilityManager() {
       if (!proposalResponse.ok) throw await capabilityError(proposalResponse)
       const catalog = await catalogResponse.json()
       const proposalData = await proposalResponse.json()
-      setCapabilities(Array.isArray(catalog.capabilities) ? catalog.capabilities : [])
+      if (!Array.isArray(catalog.capabilities) || catalog.capabilities.some((item: unknown) => !item || typeof item !== 'object' || typeof (item as Capability).id !== 'string' || typeof (item as Capability).status !== 'string' || typeof (item as Capability).effect !== 'string')) throw localMessage('commerce.capability_ui.bad_catalog')
+      setCapabilities(catalog.capabilities)
       setProposals(Array.isArray(proposalData.proposals) ? proposalData.proposals : [])
     } catch (cause) {
       setError(cause instanceof Error ? cause : localMessage('agents.aux.CapabilityManager.capability_data_could_not_be_loaded'))
@@ -128,36 +115,45 @@ export default function CapabilityManager() {
     } finally { setCanceling(null) }
   }
 
-  const runMcpFixture = async () => {
-    setMcpRunning(true)
-    setMcpError('')
-    setMcpResult(null)
-    try {
-      const response = await fetch('/api/demo/mcp-governance', {
-        method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({}),
-      })
-      if (!response.ok) throw await capabilityError(response)
-      const body: unknown = await response.json()
-      if (!hasMcpFixtureResult(body)) throw localMessage("core.CapabilityManager.the_local_mcp_fixture_returned_an_incomplete_0f0575")
-      setMcpResult(body)
-    } catch (cause) {
-      setMcpError(cause instanceof Error ? cause : localMessage('agents.aux.CapabilityManager.the_local_mcp_fixture_could_not_be_run'))
-    } finally { setMcpRunning(false) }
-  }
-
   return (
     <section className="capability-manager" aria-label={t("core.CapabilityManager.capabilities_9460f1")}>
-      <ExternalConnections />
+      <header><h2>{t('commerce.capability_ui.heading')}</h2><p>{t('commerce.capability_ui.prepare_notice')}</p></header>
       {loading && <p className="capability-state" role="status">{t("core.CapabilityManager.loading_capability_catalog_and_proposals_8fb43b")}</p>}
-      {error && <p className="capability-error" role="alert">{errorMessage(error)}</p>}
+      {error && <div className="capability-error" role="alert"><p>{errorMessage(error)}</p><button type="button" onClick={()=>void refresh()}>{t('commerce.capability_ui.retry')}</button></div>}
       {!loading && !error && capabilities.length === 0 && <p className="capability-state">{t("core.CapabilityManager.no_capability_records_were_returned_by_the_199420")}</p>}
-      {!loading && !error && capabilities.length > 0 && <div className="capability-grid">
-        {capabilities.map((capability) => <article className="capability-card" key={capability.id}>
+      {!loading && !error && capabilities.length > 0 && <p className="capability-catalog-notice">{t('commerce.capability_ui.source_notice')}</p>}
+      {!loading && !error && capabilities.length > 0 && <div className="capability-groups">
+        {capabilityGroups.map((group) => {
+          const groupCapabilities = capabilities.filter((capability) => group.capabilityIds.includes(capability.id))
+          return groupCapabilities.length === 0 ? null : <details className="capability-group" id={`capability-group-${group.id}`} key={group.id} open>
+            <summary className="capability-group-summary"><span className="capability-group-title">{t(group.title)}</span><span className="capability-group-count">{groupCapabilities.length}</span></summary>
+            <p className="capability-group-help">{t(group.description)}</p>
+            <ul className="capability-list">
+        {groupCapabilities.map((capability) => <li key={capability.id}><article className="capability-card">
           <div className="capability-card-heading"><div><h3>{capabilityPresentation(capability.id).name}</h3><code>{capability.id}</code></div><span className={`capability-status status-${capability.status.toLowerCase()}`}>{observedStateLabel(capability.status)}</span></div>
-          <p>{capabilityPresentation(capability.id).summary}</p><details><summary>{t('agents.aux.context.technical')}</summary><pre>{JSON.stringify({id:capability.id,name:capability.name,summary:capability.summary,provider:capability.provider,effect:capability.effect,integration:capability.integration,status:capability.status},null,2)}</pre></details>
-          <dl><div><dt>{t("core.CapabilityManager.effect_2252d5")}</dt><dd>{observedStateLabel(capability.effect)}</dd></div><div><dt>{t("core.CapabilityManager.provider_472590")}</dt><dd>{capabilityPresentation(capability.id).provider}</dd></div><div><dt>{t("core.CapabilityManager.integration_9a42d4")}</dt><dd>{observedStateLabel(capability.integration)}</dd></div><div><dt>{t("core.CapabilityManager.source_check_2e0156")}</dt><dd>{capability.source_available ? t("core.CapabilityManager.available_e67444") : t("core.CapabilityManager.missing_source_9800f9")}</dd></div></dl>
-          <details><summary>{t("core.CapabilityManager.limits_and_source_fingerprints_e6e898")}</summary><pre>{JSON.stringify({ limits: capability.limits, source_fingerprints: capability.source_fingerprints }, null, 2)}</pre></details>
-        </article>)}
+          <p className="capability-card-summary">{capabilityPresentation(capability.id).summary}</p>
+          <dl className="capability-metadata" aria-label={t('commerce.capability_ui.metadata')}>
+            <div className="metadata-effect"><dt>{t("core.CapabilityManager.effect_2252d5")}</dt><dd>{observedStateLabel(capability.effect)}</dd></div>
+            <div className="metadata-provider"><dt>{t("core.CapabilityManager.provider_472590")}</dt><dd>{capabilityPresentation(capability.id).provider}</dd></div>
+            <div className={`metadata-integration status-${String(capability.integration ?? 'UNKNOWN').toLowerCase()}`}><dt>{t("core.CapabilityManager.integration_9a42d4")}</dt><dd>{observedStateLabel(capability.integration ?? 'UNKNOWN')}</dd></div>
+          </dl>
+          <p className={`capability-requirement ${capability.status === 'AVAILABLE' ? 'requirement-ready' : 'requirement-review'}`}><strong>{t('commerce.capability_ui.requirements')}: </strong>{capabilityAction(capability.id) ? t(capabilityAction(capability.id)!.requirement) : t('commerce.capability_ui.unsupported')}</p>
+          <div className="capability-card-actions">
+            {capabilityAction(capability.id) ? <>
+              {capability.status === 'AVAILABLE' && capabilityAction(capability.id)!.prompt ? <button type="button" className="primary-action" disabled={!onPrepareChat} onClick={()=>onPrepareChat?.({capabilityId:capability.id,prompt:t(capabilityAction(capability.id)!.prompt!)})}>{t('commerce.capability_ui.prepare')}</button> : <span className="capability-action-state">{capability.status === 'UNAVAILABLE' ? t('commerce.capability_ui.unavailable') : t('commerce.capability_ui.unsupported')}</span>}
+              {!onPrepareChat && capability.status === 'AVAILABLE' && capabilityAction(capability.id)!.prompt && <span className="capability-action-state">{t('commerce.capability_ui.no_bridge')}</span>}
+              {capabilityAction(capability.id)!.destination && onNavigate && <button type="button" className="secondary-action" onClick={()=>onNavigate(capabilityAction(capability.id)!.destination!)}>{t(capabilityAction(capability.id)!.configuration)}</button>}
+            </> : <span className="capability-action-state">{t('commerce.capability_ui.unsupported')}</span>}
+            <details className="capability-card-details"><summary>{t('commerce.capability_ui.details')}</summary>
+              <details><summary>{t('agents.aux.context.technical')}</summary><pre>{JSON.stringify({id:capability.id,name:capability.name,summary:capability.summary,provider:capability.provider,effect:capability.effect,integration:capability.integration,status:capability.status},null,2)}</pre></details>
+              <details><summary>{t("core.CapabilityManager.limits_and_source_fingerprints_e6e898")}</summary><pre>{JSON.stringify({ limits: capability.limits, source_fingerprints: capability.source_fingerprints }, null, 2)}</pre></details>
+            </details>
+          </div>
+
+        </article></li>)}
+            </ul>
+          </details>
+        })}
       </div>}
       <section className={`capability-proposals ${!loading && !error && proposals.length === 0 ? 'is-empty' : ''}`} aria-labelledby="capability-proposals-title">
         <div className="capability-section-heading">
@@ -172,41 +168,13 @@ export default function CapabilityManager() {
           {proposal.status === 'PENDING_REVIEW' && <button type="button" className="secondary-action" disabled={canceling === proposal.id} onClick={() => void cancelProposal(proposal)}>{canceling === proposal.id ? t("core.CapabilityManager.cancelling_91b104") : t("core.CapabilityManager.cancel_proposal_15fe06")}</button>}
         </article>)}</div>
       </section>
-      <section className="mcp-governance" aria-labelledby="mcp-governance-title">
-        <div className="mcp-governance__header">
-          <div><p className="section-eyebrow">{t("core.CapabilityManager.governed_tool_access_9848ce")}</p><h3 id="mcp-governance-title">{t("core.CapabilityManager.local_mcp_fixture_467351")}</h3></div>
-          <button type="button" className="secondary-action" onClick={() => void runMcpFixture()} disabled={mcpRunning}>
-            {mcpRunning ? t("core.CapabilityManager.running_local_fixture_225d0c") : t("core.CapabilityManager.run_local_mcp_fixture_01ede0")}
-          </button>
-        </div>
-        <p className="mcp-governance__notice">{t("core.CapabilityManager.this_demonstration_starts_only_the_repository_local_98d489")}</p>
-        {mcpRunning && <p className="capability-state" role="status" aria-live="polite">{t("core.CapabilityManager.running_the_local_mcp_fixture_and_recording_8004c8")}</p>}
-        {mcpError && <p className="capability-error" role="alert">{t("core.CapabilityManager.local_mcp_fixture_failed_505b55")}{' '}{errorMessage(mcpError)}</p>}
-        {mcpResult && <div className="mcp-governance__result" role="region" aria-label={t("core.CapabilityManager.local_mcp_fixture_result_b1ed4d")}>
-          {mcpResult.read_call.decision === 'ALLOW' && mcpResult.read_call.actual_effect.called && mcpResult.write_call.decision === 'REQUIRE_HUMAN' && !mcpResult.write_call.actual_effect.called
-            ? <p className="mcp-governance__success" role="status">{t("core.CapabilityManager.local_fixture_completed_the_read_call_reached_306cc9")}</p>
-            : <p className="capability-error" role="alert">{t("core.CapabilityManager.the_fixture_returned_but_its_allow_deny_ff8f0a")}</p>}
-          <dl className="mcp-governance__meta">
-            <div><dt>{t("core.CapabilityManager.run_id_26d3e7")}</dt><dd><code>{mcpResult.run_id}</code></dd></div>
-            <div><dt>{t("core.CapabilityManager.transport_aaead4")}</dt><dd>{mcpResult.transport}</dd></div>
-            <div><dt>{t("core.CapabilityManager.fixture_source_a67722")}</dt><dd>{mcpResult.source_kind}</dd></div>
-            <div><dt>{t("core.CapabilityManager.server_aef7de")}</dt><dd>{mcpResult.server}</dd></div>
-            <div><dt>{t("core.CapabilityManager.trace_id_c4cbbc")}</dt><dd><code>{mcpResult.trace.trace_id}</code></dd></div>
-            <div><dt>{t("core.CapabilityManager.evidence_path_9aa7c3")}</dt><dd><code>{mcpResult.evidence.path}</code></dd></div>
-            <div><dt>{t("core.CapabilityManager.evidence_sha_256_5f35a7")}</dt><dd><code>{mcpResult.evidence.sha256}</code></dd></div>
-          </dl>
-          <h4>{t("core.CapabilityManager.discovered_tools_34bd08")}</h4>
-          {mcpResult.discovered.length === 0 ? <p>{t("core.CapabilityManager.no_tools_were_discovered_d5107c")}</p> : <ul className="mcp-governance__tools">{mcpResult.discovered.map((tool) => {
-            const registration = mcpResult.registered.find((item) => item.name === tool.name)
-            return <li key={`${tool.name}:${tool.fingerprint}`}><strong>{tool.name}</strong><span>{t("core.CapabilityManager.effect_6f84a2")}{' '}{registration?.effect_type ?? t('agents.aux.CapabilityManager.unknown_or_unregistered')}</span><code>{t("core.CapabilityManager.fingerprint_500d5b")}{' '}{tool.fingerprint}</code></li>
-          })}</ul>}
-          <div className="mcp-governance__calls">
-            <article className="mcp-governance__call"><h4>{t("core.CapabilityManager.read_0ef7bb")}{' '}{observedStateLabel(mcpResult.read_call.decision)}</h4><p>{t("core.CapabilityManager.actual_mcp_transport_call_ace798")}{' '}<strong>{mcpResult.read_call.actual_effect.called ? t("core.CapabilityManager.called_8c90cb") : t("core.CapabilityManager.not_called_57404b")}</strong></p><p>{t("core.CapabilityManager.receipt_id_9ba800")}{' '}<code>{mcpResult.read_call.receipt_id}</code></p><details><summary>{t("core.CapabilityManager.inspect_read_receipt_d2044f")}</summary><pre>{JSON.stringify(mcpResult.read_call.receipt ?? mcpResult.read_call, null, 2)}</pre></details></article>
-            <article className="mcp-governance__call"><h4>{t("core.CapabilityManager.write_e800c6")}{' '}{observedStateLabel(mcpResult.write_call.decision)}</h4><p>{t("core.CapabilityManager.actual_mcp_transport_call_ace798")}{' '}<strong>{mcpResult.write_call.actual_effect.called ? t("core.CapabilityManager.called_8c90cb") : t("core.CapabilityManager.not_called_57404b")}</strong></p><p>{t("core.CapabilityManager.receipt_id_9ba800")}{' '}<code>{mcpResult.write_call.receipt_id}</code></p><details><summary>{t("core.CapabilityManager.inspect_write_receipt_4a2084")}</summary><pre>{JSON.stringify(mcpResult.write_call.receipt ?? mcpResult.write_call, null, 2)}</pre></details></article>
-          </div>
-          <details><summary>{t("core.CapabilityManager.inspect_trace_events_54a42b")}</summary><pre>{JSON.stringify(mcpResult.trace.events, null, 2)}</pre></details>
-        </div>}
-      </section>
+      {capabilities.length > 0 && <details className="capability-quick-menu">
+        <summary>{t('commerce.capability_ui.quick_options')}</summary>
+        <p>{t('commerce.capability_ui.quick_options_help')}</p>
+        <nav aria-label={t('commerce.capability_ui.quick_options')}>
+          {capabilityGroups.map((group) => capabilities.some((capability) => group.capabilityIds.includes(capability.id)) && <button type="button" key={group.id} onClick={() => document.getElementById(`capability-group-${group.id}`)?.scrollIntoView({behavior:'smooth',block:'start'})}>{t(group.title)}</button>)}
+        </nav>
+      </details>}
       <p className="capability-footer">{t("core.CapabilityManager.a_proposal_records_a_request_for_review_e95b81")}</p>
     </section>
   )
@@ -270,6 +238,37 @@ function capabilityPresentation(id: string) {
     case 'mcp.execute': return {name:t('agents.aux.capability.mcp.execute.name'),provider:t('agents.aux.capability.mcp.execute.provider'),summary:t('agents.aux.capability.mcp.execute.summary')}
     case 'sandbox.execute': return {name:t('agents.aux.capability.sandbox.execute.name'),provider:t('agents.aux.capability.sandbox.execute.provider'),summary:t('agents.aux.capability.sandbox.execute.summary')}
     case 'agent.run': return {name:t('agents.aux.capability.agent.run.name'),provider:t('agents.aux.capability.agent.run.provider'),summary:t('agents.aux.capability.agent.run.summary')}
+    case 'document_inventory': return {name:t('commerce.capability_ui.document_inventory.name'),provider:t('commerce.capability_ui.provider_local'),summary:t('commerce.capability_ui.document_inventory.summary')}
+    case 'document_extract': return {name:t('commerce.capability_ui.document_extract.name'),provider:t('commerce.capability_ui.provider_local'),summary:t('commerce.capability_ui.document_extract.summary')}
+    case 'document_relate': return {name:t('commerce.capability_ui.document_relate.name'),provider:t('commerce.capability_ui.provider_local'),summary:t('commerce.capability_ui.document_relate.summary')}
+    case 'document_plan_rename': return {name:t('commerce.capability_ui.document_plan_rename.name'),provider:t('commerce.capability_ui.provider_local'),summary:t('commerce.capability_ui.document_plan_rename.summary')}
+    case 'document_export': return {name:t('commerce.capability_ui.document_export.name'),provider:t('commerce.capability_ui.provider_local'),summary:t('commerce.capability_ui.document_export.summary')}
+    case 'filesystem_inventory': return {name:t('commerce.capability_ui.filesystem_inventory.name'),provider:t('commerce.capability_ui.provider_local'),summary:t('commerce.capability_ui.filesystem_inventory.summary')}
+    case 'filesystem_plan': return {name:t('commerce.capability_ui.filesystem_plan.name'),provider:t('commerce.capability_ui.provider_local'),summary:t('commerce.capability_ui.filesystem_plan.summary')}
+    case 'delivery_review': return {name:t('commerce.capability_ui.delivery_review.name'),provider:t('commerce.capability_ui.provider_local'),summary:t('commerce.capability_ui.delivery_review.summary')}
+    case 'delivery_revalidate': return {name:t('commerce.capability_ui.delivery_revalidate.name'),provider:t('commerce.capability_ui.provider_local'),summary:t('commerce.capability_ui.delivery_revalidate.summary')}
+    case 'delivery_prepare_draft': return {name:t('commerce.capability_ui.delivery_prepare_draft.name'),provider:t('commerce.capability_ui.provider_local'),summary:t('commerce.capability_ui.delivery_prepare_draft.summary')}
+    case 'development_check': return {name:t('commerce.capability_ui.development_check.name'),provider:t('commerce.capability_ui.provider_development'),summary:t('commerce.capability_ui.development_check.summary')}
+    case 'development_inspect': return {name:t('commerce.capability_ui.development_inspect.name'),provider:t('commerce.capability_ui.provider_development'),summary:t('commerce.capability_ui.development_inspect.summary')}
+    case 'development_prepare': return {name:t('commerce.capability_ui.development_prepare.name'),provider:t('commerce.capability_ui.provider_development'),summary:t('commerce.capability_ui.development_prepare.summary')}
+    case 'development_read': return {name:t('commerce.capability_ui.development_read.name'),provider:t('commerce.capability_ui.provider_development'),summary:t('commerce.capability_ui.development_read.summary')}
+    case 'development_review': return {name:t('commerce.capability_ui.development_review.name'),provider:t('commerce.capability_ui.provider_development'),summary:t('commerce.capability_ui.development_review.summary')}
+    case 'development_revise': return {name:t('commerce.capability_ui.development_revise.name'),provider:t('commerce.capability_ui.provider_development'),summary:t('commerce.capability_ui.development_revise.summary')}
     default: return {name:t('agents.aux.capability.unknownName',{id}),provider:t('agents.aux.capability.unknownProvider'),summary:t('agents.aux.capability.unknownSummary')}
   }
+}
+
+type CapabilityAction = {requirement: TranslationKey; prompt?: TranslationKey; destination?: CapabilityDestination; configuration: TranslationKey}
+function capabilityAction(id: string): CapabilityAction | undefined {
+  const prefix = 'commerce.capability_ui.'
+  const configuration: TranslationKey = 'commerce.capability_ui.configure_agents'
+  if (id === 'workspace.read_text' || id === 'workspace.scan_duplicates') return {requirement:'commerce.capability_ui.req_workspace',prompt:(prefix+id+'.prompt') as TranslationKey,destination:'workspace',configuration:'commerce.capability_ui.configure_workspace'}
+  if (id === 'agent.evaluate') return {requirement:'commerce.capability_ui.req_evaluate',prompt:'commerce.capability_ui.agent.evaluate.prompt',destination:'evaluation_lab',configuration:'commerce.capability_ui.configure_evaluation'}
+  if (id === 'mcp.execute') return {requirement:'commerce.capability_ui.req_mcp',destination:'connections',configuration:'commerce.capability_ui.connections'}
+  if (id === 'sandbox.execute') return {requirement:'commerce.capability_ui.req_sandbox',configuration}
+  if (id === 'agent.run') return {requirement:'commerce.capability_ui.req_agent',destination:'builder',configuration}
+  const known = new Set(['document_inventory','document_extract','document_relate','document_plan_rename','document_export','filesystem_inventory','filesystem_plan','delivery_review','delivery_revalidate','delivery_prepare_draft','development_check','development_inspect','development_prepare','development_read','development_review','development_revise'])
+  if (!known.has(id)) return undefined
+  const requirement: TranslationKey = id.startsWith('document_') ? 'commerce.capability_ui.req_document' : id.startsWith('filesystem_') ? 'commerce.capability_ui.req_filesystem' : id.startsWith('delivery_') ? 'commerce.capability_ui.req_delivery' : 'commerce.capability_ui.req_development'
+  return {requirement,prompt:(prefix+id+'.prompt') as TranslationKey,destination:'builder',configuration}
 }

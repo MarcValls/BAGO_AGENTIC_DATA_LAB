@@ -1,0 +1,12 @@
+.human-correction-review { flex: 0 1 auto; min-height: 0; max-height: 48dvh; overflow: auto; overscroll-behavior: contain; margin: 0 12px 10px; padding: 14px; color: var(--bago-ui-text, #dce7f2); background: var(--bago-ui-surface, #142237); border: 1px solid #477988; border-left: 3px solid #67c9dd; border-radius: var(--bago-ui-radius-sm, 4px); font-size: .78rem; line-height: 1.5; overflow-wrap: anywhere; }
+.human-correction-review header { display: flex; gap: 10px; align-items: center; justify-content: space-between; flex-wrap: wrap; }
+.human-correction-review h3, .human-correction-review h4 { margin: 0 0 8px; }
+.human-correction-reference { color: var(--bago-ui-text-soft, #a9bfd2); }
+.human-correction-review pre { white-space: pre-wrap; overflow-wrap: anywhere; max-height: 22dvh; overflow: auto; padding: 10px; background: #0d1726; border: 1px solid #344b67; border-radius: 4px; font-size: .72rem; }
+.human-correction-review textarea { display: block; box-sizing: border-box; width: 100%; min-height: 72px; margin: 6px 0 10px; padding: 10px; resize: vertical; color: inherit; background: #0d1929; border: 1px solid #45647b; border-radius: 4px; font: inherit; }
+.human-correction-review button { min-height: 32px; padding: 8px 10px; color: inherit; background: #1a2a3e; border: 1px solid #45647b; border-radius: 4px; cursor: pointer; font: inherit; }
+.human-correction-review button:disabled { color: #aebdcb; border-color: #344555; background: #15202b; cursor: not-allowed; }
+.human-correction-review :is(button,textarea,summary):focus-visible { outline: 2px solid #9de9f1; outline-offset: 2px; }
+.human-correction-review [role="alert"] { color: #f0a1a1; }
+.human-correction-proposal { margin-top: 14px; padding-top: 12px; border-top: 1px solid #344b67; }
+@media(max-width:390px) { .human-correction-review { margin-inline: 6px; padding: 10px; max-height: 52dvh; } }

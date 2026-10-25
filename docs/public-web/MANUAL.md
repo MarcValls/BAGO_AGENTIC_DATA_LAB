@@ -19,22 +19,37 @@ Guía para trabajar desde el chat y las pantallas de BAGO. Abre una sección seg
 
 ## Orientarse y empezar
 
-La barra lateral permite cambiar entre Chat, Comunicaciones, Contactos, Workspace y Agentes. Settings reúne las conexiones y preferencias. Inspect abre la revisión de una ejecución. Manual abre esta guía en otra pestaña.
+La barra lateral permite cambiar entre Workspace, el grupo **BAGO5**, Agentes y Comunicaciones. **BAGO5** contiene **Chat**, el orquestador general con historial de conversaciones, y **Capacidades**; Agentes contiene Mis agentes, Crear agente, Ejecutar / Probar y Evaluación. Las conexiones externas se gestionan desde **Configuración → Conexiones externas**; las herramientas asignadas a cada perfil se revisan al editar ese agente. El panel **BAGO5 · Conversaciones y agentes** muestra los perfiles que realmente se usaron en la conversación abierta, no el catálogo general. Inspector abre la revisión de una ejecución. Manual abre esta guía en otra pestaña.
+
+**Capacidades** presenta una lista agrupada en Documentos, Archivos y espacio de trabajo, Agentes y evaluación, Desarrollo de BAGO ADL, Revisión y entrega, y Conexiones y ejecución. El menú plegable **Opciones rápidas**, fijo al pie de esta pantalla, permite saltar a cada grupo. Las etiquetas de color resumen efecto, proveedor e integración; el estado disponible no concede permisos. Cada capacidad conserva su explicación, requisitos, acción y detalles técnicos. Las acciones que preparan un mensaje lo añaden al borrador de BAGO5 para que lo revises; no lo envían automáticamente. Ver una capacidad o guardar una propuesta tampoco la asigna por sí solo a un agente.
+
+En **Configuración → Conexiones externas** puedes guardar una conexión y descubrir las herramientas que ofrece. Esas herramientas aparecen en la ficha de la conexión; descubrirlas no las ejecuta ni las asigna a agentes. **Agentes → Mis agentes → Editar** muestra tipo, proveedor y modelo, alcance de asignación y herramientas configuradas para ese perfil. El menú **Recursos** del compositor sirve para abrir recursos contextuales del chat y no sustituye a esos destinos.
+
+![Lista de capacidades agrupada y menú de opciones rápidas en BAGO5](images/capabilities-list-quick-menu.png)
 
 **Los bloques con flecha se pueden desplegar.** Pulsa su cabecera para ver más información y vuelve a pulsarla para recogerla. También puedes llegar con la tecla Tab y abrirlos con Enter o Espacio. El contorno resalta el control seleccionado con el teclado.
 
 Las pestañas superiores separan las áreas de una pantalla. Puedes pulsarlas o usar Tab y las flechas izquierda/derecha; Inicio y Fin llevan a la primera y última. Cambiar de pestaña conserva lo que estabas editando.
 
-Los cambios que necesitan revisión muestran primero una propuesta o un borrador. Lee los datos, marca la confirmación y pulsa la acción final cuando estés de acuerdo. Un borrador guardado no significa que se haya enviado un mensaje ni ejecutado una operación.
+Los cambios que necesitan revisión muestran primero una propuesta o un borrador. Lee los datos, marca la confirmación y pulsa la acción final cuando estés de acuerdo. Un borrador guardado no significa que se haya enviado un mensaje ni ejecutado una operación. Las tareas conversacionales dentro del alcance pueden enviarse sin una tarjeta repetida por delegación; el host comprueba el alcance antes del turno hijo. Si el agente necesita herramientas conectadas, BAGO5 presenta una tarjeta para revisar las herramientas asignadas y autorizar el efecto y la carpeta exacta. La asignación de una herramienta no concede ese permiso.
 
 ## Chat y lectura de páginas públicas
 
-1. Abre **Chat** y elige una conversación. Puedes usar el asistente de la aplicación o un agente guardado en **Conversations and agents**.
-2. Elige el modelo disponible para ese interlocutor. Si no hay ninguno, configura el proveedor en Settings.
-3. Escribe lo que quieres obtener, con una tarea concreta. Por ejemplo: «Resume los servicios descritos en esta página y cita las fuentes que hayas leído».
-4. Si necesitas consultar la web, marca **Permitir lectura web pública**.
-5. Pega una o varias URL HTTPS en **URL HTTPS de entrada · una por línea**. Se admiten hasta ocho entradas distintas. Revisa los orígenes que aparecen debajo.
-6. Pulsa **Send**. El permiso vale para ese turno, esa conversación y ese interlocutor. La casilla vuelve a quedar desmarcada.
+Si el agente devuelve una tarea por estar fuera de su alcance, BAGO5 registra la devolución, excluye a ese agente y busca otro perfil; no vuelve a asignársela en ese recorrido. Si ninguno encaja con una tarea clara, puede crear un perfil limitado a esa tarea y seleccionar las herramientas necesarias entre las que están conectadas al chat de agentes. Las herramientas no conectadas —incluido MCP genérico— no se asignan como si estuvieran disponibles. Si el perfil nuevo necesita herramientas, queda como propuesta y no inicia el turno hijo hasta que confirmes los permisos y la carpeta; si no necesita herramientas, puede ejecutar el turno conversacional tras comprobar el alcance. El alcance de tareas no concede permisos de lectura del Workspace, documentos, herramientas, desarrollo, exportación, escritura de archivos ni comunicaciones. Esas acciones conservan su autorización específica. Una devolución o una necesidad de permiso no se presenta como tarea completada.
+
+**MCP y servicios externos:** en **Configuración → Conexiones externas** puedes configurar Docker MCP, MCP HTTP o una API HTTP, descubrir herramientas y, desde esa pantalla, invocarlas con una confirmación explícita y argumentos revisados. El recibo y la traza de esa llamada pertenecen a la conexión. Actualmente, descubrir herramientas no las incorpora a **Agentes → Editar → Herramientas** ni habilita ejecución MCP desde el chat de un agente; esa integración sigue pendiente. BAGO5 no asigna credenciales ni efectos externos al crear o elegir un agente.
+
+1. Abre **BAGO5 > Chat**. El interlocutor general es **Orquestador BAGO5** y conserva un historial de conversaciones; puedes abrir manualmente una conversación anterior desde el panel de contexto. La bandeja **BAGO5 · Conversaciones y agentes** muestra los agentes utilizados en la conversación abierta.
+2. Explica tu intención al **Orquestador BAGO5**. Define en cada perfil el campo **Tareas que BAGO5 puede asignar automáticamente a este agente**. BAGO5 compara la tarea con esos alcances. Si ninguno encaja con una tarea clara, crea un perfil limitado al encargo y selecciona solo herramientas necesarias conectadas al chat. Un turno conversacional sin herramientas puede enviarse sin tarjeta repetida tras validar el alcance. Cuando la tarea necesita herramientas, revisa la tarjeta de delegación, elige la carpeta exacta y autoriza explícitamente los efectos antes de ejecutar; asignar herramientas al perfil no autoriza su uso.
+3. Elige el modelo disponible para ese interlocutor. Si no hay ninguno, configura el proveedor en Settings.
+4. Escribe lo que quieres obtener, con una tarea concreta. Por ejemplo: «Resume los servicios descritos en esta página y cita las fuentes que hayas leído».
+5. Si necesitas consultar la web, marca **Permitir lectura web pública**.
+6. Pega una o varias URL HTTPS en **URL HTTPS de entrada · una por línea**. Se admiten hasta ocho entradas distintas. Revisa los orígenes que aparecen debajo.
+7. Pulsa **Send**. El permiso vale para ese turno, esa conversación y ese interlocutor. La casilla vuelve a quedar desmarcada.
+
+Al desplazarte por una conversación larga aparecen unos segundos los botones **Ir al principio de la conversación** y **Ir al final de la conversación**.
+
+Los atajos del chat se reconocen cuando el mensaje completo pide una sola acción, por ejemplo **«Lista mis agentes»**, **«Lista capacidades»** o **«Proponer capacidad workspace.read_text»**. Una tarea que menciona agentes, capacidades, «hay» o «tengo» dentro de una explicación conserva el recorrido normal del chat; esas palabras no sustituyen tu encargo por un listado. Los atajos tampoco conceden permisos ni ejecutan herramientas. Las sugerencias sólo rellenan el borrador hasta que pulses **Enviar**.
 
 Ejemplo de entrada pública: `https://www.sollutia.com/es/empresa.html`. La disponibilidad de la página depende de su servidor.
 
@@ -46,7 +61,9 @@ El texto de una página puede contener instrucciones ajenas a tu tarea. Se trata
 
 ## Revisar fuentes y ejecuciones
 
-Después de una respuesta, despliega **Fuentes web** o **Archivos consultados** para ver las referencias conservadas. Una respuesta sin fuentes registradas no demuestra que se haya leído una página o un archivo.
+Después de una respuesta, despliega **Fuentes web** o **Archivos consultados** para ver las referencias conservadas. Durante el desplazamiento por una conversación larga aparecen brevemente botones para saltar al principio o al final.
+
+Una respuesta sin fuentes registradas no demuestra que se haya leído una página o un archivo.
 
 En las fuentes web puedes consultar:
 
@@ -75,7 +92,7 @@ En la barra lateral, despliega **Agentes** y abre **Mis agentes**. Busca por nom
 
 La eliminación de un perfil conserva sus conversaciones, trazas, evaluaciones y ejecuciones, y mantiene una copia local para recuperación. Si hay trabajo activo que impide eliminarlo, la pantalla muestra el bloqueo.
 
-El identificador está en **Identidad del perfil**. El proveedor y modelo siguen visibles para saber con qué configuración trabajas. La presencia de una herramienta en un perfil no demuestra que su servicio esté conectado ni que se haya ejecutado.
+Las fichas de agentes se muestran en una lista. Cada una separa el tipo, proveedor y modelo, alcance para asignación automática y herramientas configuradas; **Identidad del perfil** contiene el identificador. Si falta el alcance, BAGO5 no asignará tareas automáticamente a ese perfil. La presencia de una herramienta en un perfil no demuestra que su servicio esté conectado ni que se haya ejecutado.
 
 Para asignar modelos disponibles, abre Settings → proveedores → **Modelos activos**, habilita el uso que corresponda y guarda. Después elige proveedor y modelo al crear o editar el agente. La selección del modelo del orquestador en Chat es independiente de la asignación de un agente guardado.
 
@@ -91,6 +108,8 @@ Abre **Workspace**. Sus pestañas son **Proyectos**, **Archivos** y **Contexto y
 4. Marca la confirmación y pulsa **Confirmar y ejecutar**.
 5. Elige un proyecto ya existente en **Proyecto gestionado** para volver a abrirlo.
 
+La ubicación de un proyecto gestionado se construye bajo la carpeta padre configurada para proyectos. El nombre de carpeta crea una subcarpeta allí. Esta operación no usa como destino la carpeta activa elegida en **Contexto y memoria**; revisa la ruta completa antes de confirmar.
+
 Un proyecto nuevo contiene sus documentos de contexto, estado y continuidad. Esos documentos son un punto de partida, no una acreditación de pruebas superadas. Sus estados iniciales pueden indicar `PREPARED` o `NOT_RUN`.
 
 **Usar este proyecto en ADL** cambia la carpeta activa después de tu revisión. No concede automáticamente permisos de lectura al chat ni autoriza borrar archivos. La ubicación está disponible en **Ubicación del proyecto** y sigue visible al confirmar una operación.
@@ -105,9 +124,9 @@ Si hay cambios sin guardar, guárdalos o descártalos antes de cambiar de archiv
 
 ### Contexto y memoria
 
-Abre la pestaña **Contexto y memoria** en Workspace para consultar la carpeta activa y los documentos del recorrido de lectura existente. **Examinar…** permite elegir carpeta; **Usar carpeta** aplica la selección y actualiza los datos que muestra esa pantalla.
+Abre la pestaña **Contexto y memoria** en Workspace para consultar la carpeta activa y los documentos del recorrido de lectura existente. **Examinar…** permite elegir una carpeta existente; **Usar carpeta** la convierte en la carpeta activa y actualiza los datos que muestra esa pantalla. En el comportamiento actual, esta selección no crea archivos ni subcarpetas.
 
-Que un documento aparezca como no encontrado significa que no existe en esa ubicación reconocida; seleccionar una carpeta no inventa contexto o continuidad. Para consultar los documentos sembrados en la pantalla completa, primero usa el proyecto en ADL y abre **Contexto y memoria**. Una tarjeta de Workspace embebida muestra los documentos del proyecto seleccionado en esa misma pestaña. La memoria de conversación y una memoria general externa son conexiones diferentes: «Sin conectar» no se interpreta como una conexión activa.
+Que un documento aparezca como no encontrado significa que no existe en esa ubicación reconocida; seleccionar una carpeta no inventa contexto o continuidad. La creación de un proyecto gestionado sí siembra sus documentos mínimos dentro de la nueva subcarpeta, bajo la carpeta padre configurada. Vincular una carpeta existente desde **Contexto y memoria** no la convierte en un proyecto gestionado ni crea esos documentos. Para consultar los documentos sembrados en la pantalla completa, primero usa el proyecto en ADL y abre **Contexto y memoria**. Una tarjeta de Workspace embebida muestra los documentos del proyecto seleccionado en esa misma pestaña. La memoria de conversación y una memoria general externa son conexiones diferentes: «Sin conectar» no se interpreta como una conexión activa.
 
 ## Git local y planes de GitHub
 
@@ -137,13 +156,14 @@ El contacto se guarda localmente. La eliminación local no borra contactos en Go
 
 Preparación del administrador: crear un cliente OAuth de escritorio, habilitar People API y guardar el archivo JSON fuera del repositorio. No pegues tokens ni el contenido del archivo en el chat.
 
-1. Abre la pestaña **Google**, despliega **Configurar conexión con Google** e indica la ruta local de ese archivo.
-2. Guarda la configuración y pulsa **Conectar con Google**.
-3. Continúa en la ventana de Google y concede el permiso de lectura de contactos si estás de acuerdo.
-4. Vuelve y pulsa **Comprobar conexión**.
-5. Pulsa **Ver contactos para seleccionar**.
-6. Filtra y marca las filas que quieres incorporar. No se eligen contactos automáticamente. Puedes seleccionar los visibles sin avisos o quitar la selección.
-7. Revisa los avisos y duplicados, marca la confirmación y pulsa **Importar selección**.
+1. Abre **Contactos → Google** y selecciona el archivo JSON OAuth. BAGO valida y guarda localmente los datos necesarios; no conserva el archivo completo.
+2. Pulsa **Conectar con Google** y concede el permiso de solo lectura si estás de acuerdo. Elegir el archivo por sí solo no conecta la cuenta.
+3. Vuelve y pulsa **Comprobar conexión**.
+4. Pulsa **Ver contactos para seleccionar**.
+5. Filtra y marca las filas que quieres incorporar. No se eligen contactos automáticamente. Puedes seleccionar los visibles sin avisos o quitar la selección.
+6. Revisa los avisos y duplicados, marca la confirmación y pulsa **Importar selección**.
+
+Si no puedes usar el selector, abre **Configuración avanzada: escribir una ruta** e indica la ruta local del mismo archivo.
 
 Los duplicados se omiten sin sobrescribir. Una vista previa puede caducar; si ocurre, pide otra y revisa de nuevo la selección. «Autorización guardada» y «Lectura real comprobada» describen estados diferentes. Una vista previa de prueba aparece etiquetada y no demuestra conexión a tu cuenta.
 
@@ -174,6 +194,8 @@ En **Comunicaciones** tienes las pestañas **Mensaje**, **Historial** y **Contac
 Cambiar el borrador exige guardarlo y revisar otra vez. Si otra sesión lo cambió, tu texto se conserva y puedes cargar la versión actual o preparar tus cambios sobre ella.
 
 La pestaña **Historial** conserva los resultados y sus recibos. Si una operación queda como incierta, no se reintenta automáticamente: comprueba si llegó antes de preparar otra. Cancelar futuras ejecuciones no retira un mensaje que ya se haya enviado.
+
+**Limitación observada el 25/10/2026:** el transporte de BAGO puede terminar como incierto mientras el mensaje sigue sin enviar en el editor de WhatsApp. El estado incierto no demuestra ni envío ni recepción. Comprueba la conversación y el mensaje saliente exactos antes de actuar; no confirmes otra operación para repetirlo. Si una persona autorizada completa el envío directamente en WhatsApp, esa acción y su comprobación se registran por separado: el recibo incierto original de BAGO se conserva y no se presenta como un envío automático verificado.
 
 ## Experimento de lectura y revisión
 

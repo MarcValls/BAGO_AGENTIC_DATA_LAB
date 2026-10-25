@@ -144,10 +144,10 @@ describe('commerce presentation catalogs and live preference',()=>{
  })
  it('updates tool labels without replacing the open menu',()=>{
   render(<ChatTools conversationId="original" />)
-  const menu=screen.getByText('Herramientas').closest('details')!
+  const menu=screen.getByText('Recursos').closest('details')!
   menu.open=true
   switchTo('en')
-  expect(screen.getByText('Tools').closest('details')).toBe(menu)
+  expect(screen.getByText('Resources').closest('details')).toBe(menu)
   expect(menu.open).toBe(true)
   expect(screen.getByRole('button',{name:'Consult file'})).toBeTruthy()
  })
@@ -155,7 +155,7 @@ describe('commerce presentation catalogs and live preference',()=>{
   const fetcher=vi.fn(async(input:string)=>response(input.includes('chat-models')?{models:[]}:input.includes('selection')?null:input.includes('/agents/list')?{agents:[]}:{conversations:[]}))
   vi.stubGlobal('fetch',fetcher)
   render(<AgentChat onNavigate={()=>{}} onOpenProviderSettings={()=>{}} onOpenCognitionSettings={()=>{}} cognitiveMode="baseline" />)
-  await screen.findByText('Todavía no hay agentes. Pide al asistente que cree uno.')
+  await waitFor(()=>expect(fetcher.mock.calls.some(([url])=>url.includes('/agents/list'))).toBe(true))
   const editor=screen.getByLabelText('Mensaje al asistente o agente seleccionado') as HTMLTextAreaElement
   fireEvent.change(editor,{target:{value:'User prompt must stay original'}})
   fireEvent.click(screen.getByLabelText('Permitir lectura de archivos del proyecto'))

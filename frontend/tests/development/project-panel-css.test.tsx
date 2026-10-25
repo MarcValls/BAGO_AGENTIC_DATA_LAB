@@ -1,0 +1,9 @@
+// @vitest-environment jsdom
+import {readFileSync} from 'node:fs'
+import {afterEach,expect,it} from 'vitest'
+const css=readFileSync('src/components/DevelopmentPanel.css','utf8')
+afterEach(()=>{document.head.querySelectorAll('[data-css-regression]').forEach(n=>n.remove());document.body.innerHTML=''})
+function mount(){const style=document.createElement('style');style.dataset.cssRegression='true';style.textContent=css;document.head.append(style);document.body.innerHTML='<div class="development-drawer-anchor"><button class="development-drawer-tab">Proyecto</button><section class="development-drawer"><header><button class="development-drawer-close">Cerrar</button></header><details open><summary>Carpeta de trabajo</summary><button>Elegir carpeta</button></details><div class="development-drawer-body"><ul><li><button>dev_fixture PREPARED</button></li></ul><button disabled>Aplicar cambio</button></div></section></div>'}
+it('keeps close, workspace, candidate and action buttons in normal flow instead of tab geometry',()=>{mount();for(const button of document.querySelectorAll('.development-drawer button')){const style=getComputedStyle(button);expect(style.position).not.toBe('absolute');expect(style.position).not.toBe('fixed');expect(style.height).not.toBe('100%');expect(style.width).not.toBe('36px')}})
+it('retains full-height edge geometry exclusively on collapsed tab and attached panel',()=>{mount();const tab=getComputedStyle(document.querySelector('.development-drawer-tab')!);expect(tab.position).toBe('absolute');expect(tab.width).toBe('36px');expect(tab.height).toBe('100%');const panel=getComputedStyle(document.querySelector('.development-drawer')!);expect(panel.position).toBe('absolute');expect(panel.height).toBe('100%');expect(panel.boxShadow).toBe('none');expect(panel.borderRadius).toBe('0')})
+

@@ -1,0 +1,75 @@
+/* The original sidebar starts at the viewport top; its brand owns its own flow space. */
+.app-shell.app-shell--navmenu {
+  grid-template-columns: 286px minmax(0, 1fr);
+  grid-template-rows: minmax(0, 1fr);
+}
+.app-shell--navmenu > .app-navigation-shell {
+  display: flex;
+  flex-direction: column;
+  grid-column: 1;
+  grid-row: 1;
+  box-sizing: border-box;
+  min-width: 0;
+  min-height: 0;
+  gap: 12px;
+  padding: 18px 12px 4px;
+  border-right: 1px solid #26364b;
+  background: #101d2d;
+}
+.app-navigation-shell > .workspace-sidebar-brand {
+  display: flex;
+  flex: 0 0 72px;
+  height: 72px;
+  padding: 4px 7px;
+  align-items: center;
+  justify-content: center;
+}
+.workspace-sidebar-brand > .app-menu-brand { position: relative; flex: 0 0 208px; width: 208px; height: 53.404px; }
+.app-menu-brand > img.workspace-sidebar-logo { display: block; width: 208px; height: 53.404px; max-height: none; }
+.app-menu-brand > .app-menu-toggle {
+  position: absolute;
+  box-sizing: border-box;
+  left: 145.752px;
+  top: 4.6968px;
+  width: 44px;
+  height: 44px;
+  min-height: 44px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  cursor: pointer;
+  outline: none;
+  box-shadow: none;
+}
+.app-menu-brand > .app-menu-toggle:focus:not(:focus-visible) { outline: none; box-shadow: none; }
+.app-menu-brand > .app-menu-toggle:focus-visible { outline: 2px solid var(--vs-focus, #a1e5f0); outline-offset: 2px; }
+.app-navigation-shell > .workspace-sidebar { display: flex; flex: 1 1 auto; padding: 0; border: 0; }
+.app-shell--navmenu > .app-main { grid-column: 2; grid-row: 1; min-width: 0; min-height: 0; }
+/* Compact navigation retains the same destinations and the original O, without text. */
+.app-shell.app-shell--navmenu.app-shell--sidebar-collapsed { grid-template-columns: 72px minmax(0, 1fr); }
+.app-shell--navmenu.app-shell--sidebar-collapsed > .app-navigation-shell { padding-right: 8px; padding-left: 8px; }
+.app-shell--sidebar-collapsed .app-navigation-shell > .workspace-sidebar-brand { padding: 3px; }
+.app-shell--sidebar-collapsed .workspace-sidebar-brand > .app-menu-brand { flex-basis: 44px; width: 44px; height: 44px; overflow: hidden; }
+.app-shell--sidebar-collapsed .app-menu-brand > img.workspace-sidebar-logo { max-width: none; transform: translate(-145.752px, -4.6968px); }
+.app-shell--sidebar-collapsed .app-menu-brand > .app-menu-toggle { left: 0; top: 0; }
+.app-shell--sidebar-collapsed .app-menu-brand:has(> .app-menu-toggle:focus-visible) { outline: 2px solid var(--vs-focus, #a1e5f0); outline-offset: 2px; }
+.app-shell--navmenu .workspace-sidebar--collapsed .navigation-item { justify-content: center; gap: 0; padding-right: 0; padding-left: 0; }
+.app-shell--navmenu .workspace-sidebar--collapsed .navigation-item > span:not(.navigation-item-icon) { display: none; }
+.app-shell--navmenu .workspace-sidebar--collapsed .navigation-item-icon { width: 22px; flex: 0 0 22px; }
+.app-shell--navmenu .workspace-sidebar .primary-navigation { flex-direction: column; min-height: 0; overflow-x: hidden; overflow-y: auto; }
+.app-shell--navmenu .workspace-sidebar .navigation-group { flex-direction: column; width: 100%; min-width: 0; flex: 1 1 auto; }
+.app-shell--navmenu .workspace-sidebar .navigation-item { max-width: 100%; white-space: normal; overflow-wrap: anywhere; }
+.app-shell--navmenu .workspace-sidebar .workspace-sidebar-footer { display: flex; flex: 0 0 auto; }
+@media (max-width: 760px) {
+  .app-shell.app-shell--navmenu { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto minmax(0, 1fr); }
+  .app-shell--navmenu > .app-navigation-shell { max-height: 48dvh; min-height: 94px; overflow: hidden; }
+  .app-shell--navmenu > .app-main { grid-column: 1; grid-row: 2; }
+  .app-shell.app-shell--navmenu.app-shell--sidebar-collapsed { grid-template-columns: 72px minmax(0, 1fr); grid-template-rows: minmax(0, 1fr); }
+  .app-shell--navmenu.app-shell--sidebar-collapsed > .app-navigation-shell { max-height: none; }
+  .app-shell--navmenu.app-shell--sidebar-collapsed > .app-main { grid-column: 2; grid-row: 1; }
+  .app-shell--navmenu .workspace-sidebar .primary-navigation { width: 100%; flex: 1 1 auto; overflow-x: hidden; overflow-y: auto; }
+  .app-shell--navmenu .workspace-sidebar .navigation-group { gap: 4px; }
+  .app-shell--navmenu .workspace-sidebar .navigation-item { width: 100%; min-height: 36px; }
+}
