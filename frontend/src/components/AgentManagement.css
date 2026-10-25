@@ -1,23 +1,36 @@
 .agent-management { max-width: none; margin: 0; padding: 2rem; color: var(--text-primary, #ecf1f7); }
-.agent-management header { display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem; margin-bottom: 1.5rem; }
+.agent-management > header { display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem; margin-bottom: 1.5rem; }
 .agent-management h1 { font-size: 2rem; margin: .3rem 0 .7rem; }
-.agent-management h2 { font-size: 1.2rem; margin: 0 0 .6rem; overflow-wrap: anywhere; }
+.agent-management h2 { font-size: 1.2rem; margin: 0; overflow-wrap: anywhere; }
 .agent-management p { line-height: 1.6; }
-.agent-management-search { display: grid; gap: .5rem; max-width: none; }
+.agent-management-search { display: flex; flex-direction: column; gap: .5rem; max-width: none; }
 .agent-management input[type=search] { padding: .8rem; background: #0c1824; color: inherit; border: 1px solid #455d76; border-radius: 6px; font: inherit; }
-.agent-management-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 330px), 1fr)); gap: 1rem; }
-.agent-management article, .agent-management-review, .agent-management-empty { border: 1px solid #3b5269; border-radius: 10px; background: #102131; padding: 1.4rem; }
-.agent-management article { display: flex; flex-direction: column; align-items: flex-start; }
-.agent-management article > code { font-size: .78rem; margin: .5rem 0 1rem; }
+.agent-management-list { display: flex; flex-direction: column; gap: .75rem; margin: 1rem 0 0; padding: 0; list-style: none; }
+.agent-management-list > li { min-width: 0; }
+.agent-management article, .agent-management-review, .agent-management-empty { min-width: 0; border: 1px solid #3b5269; border-left: 3px solid #54799b; border-radius: 8px; background: #102131; padding: 1rem 1.1rem; }
+.agent-management-list article { display: flex; flex-direction: column; align-items: stretch; gap: .7rem; }
+.agent-management-card-heading { display: flex; justify-content: space-between; align-items: center; gap: .8rem; margin: 0 !important; }
 .agent-management code { overflow-wrap: anywhere; }
-.agent-management-model { color: #a9c7e4; font-size: .9rem; }
-.agent-management-type { border: 1px solid #577a9c; border-radius: 20px; padding: .2rem .6rem; font-size: .8rem; }
-.agent-management-actions { display: flex; flex-wrap: wrap; gap: .55rem; margin-top: auto; }
-.agent-management button { background: #224663; color: #f2f6fa; border: 1px solid #6485a3; border-radius: 5px; padding: .65rem .85rem; font: inherit; cursor: pointer; }
+.agent-management-description { margin: 0; color: #d1dce7; font-size: 1rem; font-weight: 550; line-height: 1.65; }
+.agent-management-type { border: 1px solid #66558f; border-left-width: 3px; border-radius: 5px; padding: .4rem .7rem; color: #e8e0ff; background: #211d38; font-size: .86rem; font-weight: 750; }
+.agent-management-metadata { display: flex; flex-wrap: wrap; gap: .65rem; margin: 0; }
+.agent-management-metadata > div { display: flex; min-width: min(100%, 190px); flex: 1 1 190px; flex-direction: column; justify-content: center; gap: .3rem; padding: .65rem .75rem; border: 1px solid #405b73; border-left-width: 3px; border-radius: 5px; background: #142537; }
+.agent-management-metadata .agent-meta-provider { border-color: #456b91; background: #152a40; }
+.agent-management-metadata .agent-meta-scope { border-color: #826837; background: #302719; }
+.agent-management-metadata .agent-meta-tools { border-color: #397566; background: #142e2a; }
+.agent-management-metadata dt { color: #bed0df; font-size: .76rem; font-weight: 800; letter-spacing: .04em; text-transform: uppercase; }
+.agent-management-metadata dd { margin: 0; color: #f2f6fa; font-size: .93rem; font-weight: 650; line-height: 1.5; overflow-wrap: anywhere; }
+.agent-management-metadata dd ul { display: flex; flex-wrap: wrap; gap: .35rem; margin: 0; padding: 0; list-style: none; }
+.agent-management-metadata dd li code { display: inline-block; padding: .18rem .4rem; border: 1px solid #42695f; border-radius: 4px; color: #c1eee2; background: #102520; font-size: .7rem; }
+.agent-management-identity { color: #a9c7e4; font-size: .78rem; }
+.agent-management-identity summary { cursor: pointer; }
+.agent-management-identity code { display: inline-block; margin-top: .4rem; }
+.agent-management-actions { display: flex; flex-wrap: wrap; gap: .55rem; margin-top: .2rem; }
+.agent-management button { background: #224663; color: #f2f6fa; border: 1px solid #6485a3; border-radius: 5px; padding: .65rem .85rem; font: inherit; font-weight: 650; cursor: pointer; }
 .agent-management button:disabled { opacity: .5; cursor: not-allowed; }
 .agent-management button:focus-visible, .agent-management input:focus-visible { outline: 3px solid #8bd5ff; outline-offset: 3px; }
 .agent-management .agent-management-danger { background: #472a34; border-color: #bf8296; }
 .agent-management-review { border-color: #c28a9a; margin-top: 1.5rem; }
 .agent-management-review:focus { outline: 3px solid #8bd5ff; outline-offset: 3px; scroll-margin-block: 1rem; }
 .agent-management-review label { display: flex; gap: .7rem; margin: 1rem 0; align-items: center; }
-@media(max-width: 720px) { .agent-management { padding: 1rem; } .agent-management header { flex-direction: column; } }
+@media(max-width: 720px) { .agent-management { padding: 1rem; } .agent-management > header { flex-direction: column; } .agent-management-card-heading { align-items: flex-start; flex-direction: column; } .agent-management-metadata > div { flex-basis: 145px; } }

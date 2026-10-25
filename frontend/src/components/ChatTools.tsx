@@ -56,12 +56,12 @@ export default function ChatTools({conversationId, onOpenCommunication}: {conver
         launcherRef.current?.focus()
       }
     }}>
-      <summary ref={launcherRef} aria-controls="chat-tools-options">{t('commerce.tools')}</summary>
-      <div className="chat-tools-options" id="chat-tools-options" role="group" aria-label={t('commerce.chat_tools')}>
+      <summary ref={launcherRef} aria-controls="chat-tools-options">{t('commerce.chat_resources')}</summary>
+      <div className="chat-tools-options" id="chat-tools-options" role="group" aria-label={t('commerce.chat_resources_group')}>
         {tools.map(tool => <button key={tool.id} type="button" onClick={() => openTool(tool.id)}>{tool.label}</button>)}
       </div>
     </details>
-    <dialog ref={dialogRef} className="chat-tool-dialog" aria-label={selectedTool?.label ?? t('commerce.chat_tools')}
+    <dialog ref={dialogRef} className="chat-tool-dialog" aria-label={selectedTool?.label ?? t('commerce.chat_resources_group')}
       onCancel={() => setActiveTool(null)} onClose={() => { setActiveTool(null); launcherRef.current?.focus() }}>
       <header className="chat-tool-dialog-heading"><strong>{selectedTool?.label}</strong><button type="button" onClick={() => setActiveTool(null)} aria-label={t('commerce.close_tool')}>{t('commerce.close')} <span aria-hidden="true">×</span></button></header>
       <div className="chat-tool-dialog-body">

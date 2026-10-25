@@ -1,5 +1,5 @@
 import {t, useI18n, formatDate, formatNumber, errorMessage, localMessage} from '../i18n'
-import {useEffect, useId, useRef, useState} from 'react'
+import {useEffect, useId, useRef, useState, type ChangeEvent} from 'react'
 import {contactsRequest as request, type AddressContact, type ContactPreview, type GoogleContactStatus} from '../types/contacts'
 import './Contacts.css'
 import ServiceTabs from './ServiceTabs'
@@ -24,6 +24,7 @@ export default function Contacts({inline = false, onUseContact}: Props) {
   const [deleteReviewed, setDeleteReviewed] = useState(false)
   const [google, setGoogle] = useState<GoogleContactStatus | null>(null)
   const [clientPath, setClientPath] = useState('')
+  const [clientFileName, setClientFileName] = useState('')
   const [authorization, setAuthorization] = useState('')
   const [preview, setPreview] = useState<ContactPreview | null>(null)
   const [selected, setSelected] = useState<Set<string>>(new Set())
@@ -71,6 +72,26 @@ export default function Contacts({inline = false, onUseContact}: Props) {
     choose(null); await reload(); setNotice("commerce.contact_deleted_from_the_local_address_book_google_was_not_modified")
   })
   const refreshGoogle = () => run(async () => {setGoogle(await request<GoogleContactStatus>('/google/status'))})
+  const configureGoogleFile = (event: ChangeEvent<HTMLInputElement>) => {
+    const input = event.currentTarget
+    const file = input.files?.[0]
+    if (!file) return
+    void run(async () => {
+      try {
+        if (!file.name.toLocaleLowerCase().endsWith('.json') || file.size > 65536) throw new Error('commerce.invalid_google_oauth_file')
+        const client_json: unknown = JSON.parse(await file.text())
+        if (!client_json || typeof client_json !== 'object' || Array.isArray(client_json)) throw new Error('commerce.invalid_google_oauth_file')
+        setGoogle(await request<GoogleContactStatus>('/google/configure-file', 'POST', {client_json}))
+        setClientFileName(file.name); setClientPath(''); setAuthorization('')
+        setNotice('commerce.google_oauth_file_saved_locally')
+      } catch (cause) {
+        const code = cause && typeof cause === 'object' && 'code' in cause ? cause.code : undefined
+        throw cause instanceof SyntaxError || code === 'invalid_oauth_client' ? new Error('commerce.invalid_google_oauth_file') : cause
+      } finally {
+        input.value = ''
+      }
+    })
+  }
   const connect = () => run(async () => {
     const result = await request<{authorization_url: string}>('/google/connect', 'POST', {})
     const url = new URL(result.authorization_url)
@@ -129,11 +150,18 @@ export default function Contacts({inline = false, onUseContact}: Props) {
       <span className="contacts-connection">{google === null ? t('commerce.not_checked') : !google.configured ? t('commerce.not_configured') : google.live_verified ? t('commerce.live_reading_verified') : google.connected ? t('commerce.authorization_saved_reading_not_verified') : t('commerce.disconnected')}</span></div>
       <p>{t('commerce.choose_contacts_to_import_duplicates_are_skipped')}</p>
       {google?.last_error && <div role="alert"><details><summary>{t('commerce.technical_detail')}</summary><pre>{google.last_error}</pre></details></div>}
-      <details><summary>{t('commerce.configure_google_connection')}</summary>
-        <p>{t('commerce.read_only_permission_see_the_manual_for_file_preparation')}</p>
-        <label>{t('commerce.local_desktop_oauth_file_path')}<input value={clientPath} onChange={event => setClientPath(event.target.value)} placeholder={t('commerce.absolute_path_to_google_json')} /></label>
-        <button disabled={busy || !clientPath.trim()} onClick={() => void run(async () => {setGoogle(await request<GoogleContactStatus>('/google/configure', 'POST', {client_json_path: clientPath})); setClientPath(''); setAuthorization('')})}>{t('commerce.save_google_configuration')}</button>
-      </details>
+      <section className="contacts-google-setup" aria-label={t('commerce.configure_google_connection')}>
+        <h4>{t('commerce.google_setup_title')}</h4>
+        <p>{t('commerce.google_setup_steps')}</p>
+        <label>{t('commerce.select_google_oauth_file')}<input type="file" accept=".json,application/json" disabled={busy} onChange={configureGoogleFile} /></label>
+        {clientFileName && <p role="status">{t('commerce.google_oauth_file_ready',{name:clientFileName})}</p>}
+        <p className="contacts-hint">{t('commerce.google_oauth_file_privacy')}</p>
+        <details><summary>{t('commerce.advanced_manual_google_setup')}</summary>
+          <p>{t('commerce.read_only_permission_see_the_manual_for_file_preparation')}</p>
+          <label>{t('commerce.local_desktop_oauth_file_path')}<input value={clientPath} onChange={event => setClientPath(event.target.value)} placeholder={t('commerce.absolute_path_to_google_json')} /></label>
+          <button disabled={busy || !clientPath.trim()} onClick={() => void run(async () => {setGoogle(await request<GoogleContactStatus>('/google/configure', 'POST', {client_json_path: clientPath})); setClientFileName(''); setClientPath(''); setAuthorization('')})}>{t('commerce.save_google_configuration')}</button>
+        </details>
+      </section>
       <div className="contacts-actions"><button disabled={busy || !google?.configured} onClick={() => void connect()}>{t('commerce.connect_to_google')}</button>
         <button disabled={busy} onClick={() => void refreshGoogle()}>{t('commerce.check_connection')}</button>
         <button disabled={busy || !google?.connected} onClick={() => void loadPreview()}>{t('commerce.view_contacts_to_select')}</button>

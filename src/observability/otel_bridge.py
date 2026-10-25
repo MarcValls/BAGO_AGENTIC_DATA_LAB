@@ -7,12 +7,19 @@ authorize, execute or alter a governed run.
 
 from __future__ import annotations
 
+import hashlib
 import json
 import re
+import os
+import sqlite3
+from pathlib import Path
+from collections import deque
 from dataclasses import dataclass
 from typing import Any, Mapping, Sequence
 
 from opentelemetry import trace as otel_trace
+from opentelemetry.context import Context
+from opentelemetry.sdk.trace.id_generator import IdGenerator
 from opentelemetry.sdk.resources import Resource
 from opentelemetry.sdk.trace import ReadableSpan, Span, TracerProvider
 from opentelemetry.sdk.trace.export import (
@@ -92,8 +99,14 @@ class _CapturingExporter(SpanExporter):
             for span in spans
             if span.context is not None
         )
-        self.last_result = self.delegate.export(spans)
-        return self.last_result
+        try:
+            result = self.delegate.export(spans)
+        except Exception:
+            # Do not let SDK exception logging disclose exporter payloads or secrets.
+            result = SpanExportResult.FAILURE
+        if result is not SpanExportResult.SUCCESS:
+            self.last_result = SpanExportResult.FAILURE
+        return result
 
     def shutdown(self, timeout_millis: int = 30_000) -> None:
         try:
@@ -104,7 +117,13 @@ class _CapturingExporter(SpanExporter):
             self.delegate.shutdown()
 
     def force_flush(self, timeout_millis: int = 30_000) -> bool:
-        return self.delegate.force_flush(timeout_millis=timeout_millis)
+        try:
+            flushed = self.delegate.force_flush(timeout_millis=timeout_millis)
+        except Exception:
+            flushed = False
+        if not flushed:
+            self.last_result = SpanExportResult.FAILURE
+        return flushed
 
 
 def normalize_otlp_http_endpoint(endpoint: str) -> str:
@@ -149,38 +168,117 @@ def _span_attributes(local_trace: LocalTrace, event: TraceEvent) -> dict[str, An
         "bago.evidence_refs": tuple(event.evidence_refs),
     }
     for key, value in event.attributes.items():
+        if key in ("web_read_sources", "workspace_read_sources"):
+            continue
         safe_key = _KEY_PATTERN.sub("_", str(key)).strip("_") or "attribute"
         attributes[f"bago.event.{safe_key}"] = _attribute_value(value)
+    measured = (
+        event.start_time_unix_nano is not None
+        and event.attributes.get("timing_source") != "projection"
+        and event.attributes.get("duration_measured") is not False
+    )
+    attributes["timing_source"] = "native" if measured else "projection"
+    attributes["duration_measured"] = measured
+    attributes["bago.event.timing_source"] = attributes["timing_source"]
+    attributes["bago.event.duration_measured"] = measured
     return attributes
 
 
 def _set_status(span: Span, status: str) -> None:
     normalized = status.upper()
-    if normalized in {"SUCCESS", "PASS", "COMPLETED", "ALLOW"}:
+    if normalized in {"SUCCESS", "SUCCEEDED", "PASS", "COMPLETED", "ALLOW"}:
         span.set_status(Status(StatusCode.OK))
-    elif normalized in {"FAILED", "FAILURE", "ERROR", "CONSTRAINT_VIOLATION"}:
+    elif normalized in {
+        "FAILED", "FAIL", "FAILURE", "ERROR", "CONSTRAINT_VIOLATION",
+        "DENY", "DENIED", "CANCELLED", "INCOMPLETE",
+    }:
         span.set_status(Status(StatusCode.ERROR, description=normalized))
     else:
         span.set_status(Status(StatusCode.UNSET, description=normalized))
 
 
-def export_local_trace(
+def _identity(*parts: str, size: int) -> int:
+    encoded = json.dumps(parts, ensure_ascii=True, separators=(",", ":")).encode("utf-8")
+    return int.from_bytes(hashlib.sha256(encoded).digest()[:size], "big") or 1
+
+
+class _EvidenceIds(IdGenerator):
+    """Provider-local IDs; stable identity is not exactly-once delivery."""
+
+    def __init__(self, local_trace: LocalTrace) -> None:
+        self.trace_id = _identity("bago.local-trace.v1", local_trace.trace_id, size=16)
+        self.span_id = 0
+
+    def generate_trace_id(self) -> int:
+        return self.trace_id
+
+    def generate_span_id(self) -> int:
+        return self.span_id
+
+
+def _validated_events(local_trace: LocalTrace) -> tuple[TraceEvent, ...]:
+    """Validate the entire graph before creating a provider or exporting anything."""
+
+    events: dict[str, TraceEvent] = {}
+    span_ids: set[int] = set()
+    for event in local_trace.events:
+        if event.event_id in events:
+            raise ValueError("Duplicate event ID")
+        if event.trace_id != local_trace.trace_id:
+            raise ValueError("Event trace ID does not match LocalTrace")
+        start, end = event.start_time_unix_nano, event.end_time_unix_nano
+        if (start is None) != (end is None):
+            raise ValueError("Incomplete event interval")
+        if start is not None and (
+            type(start) is not int or type(end) is not int or start < 0 or end < start
+        ):
+            raise ValueError("Invalid event interval")
+        span_id = _identity("bago.local-event.v1", local_trace.trace_id, event.event_id, size=8)
+        if span_id in span_ids:
+            raise ValueError("Event span ID collision")
+        span_ids.add(span_id)
+        events[event.event_id] = event
+
+    children: dict[str, list[str]] = {event_id: [] for event_id in events}
+    ready: deque[str] = deque()
+    for event in events.values():
+        if event.parent_event_id is None:
+            ready.append(event.event_id)
+        elif event.parent_event_id not in events:
+            raise ValueError("Missing event parent")
+        else:
+            children[event.parent_event_id].append(event.event_id)
+    ordered: list[TraceEvent] = []
+    while ready:
+        event_id = ready.popleft()
+        ordered.append(events[event_id])
+        ready.extend(children[event_id])
+    if len(ordered) != len(events):
+        raise ValueError("Event graph contains a cycle")
+    return tuple(ordered)
+
+
+def _export_local_trace_unledgered(
     local_trace: LocalTrace,
     *,
     exporter: SpanExporter,
     endpoint: str = DEFAULT_OTLP_HTTP_ENDPOINT,
     service_name: str = DEFAULT_SERVICE_NAME,
 ) -> OTelExportReceipt:
-    """Export one local trace using an injected or OTLP exporter.
+    """Project validated evidence without inheriting an ambient trace.
 
-    Parent links are reconstructed from ``TraceEvent.parent_event_id``.  The
-    function fails closed for exporter failures and never changes the source
-    ``LocalTrace``.
+    Stable IDs identify the same evidence on retries, not exactly-once storage.
+    Missing measurements describe projection time only, never executed work.
     """
 
     if not service_name.strip():
         raise ValueError("service_name is required")
     normalized_endpoint = normalize_otlp_http_endpoint(endpoint)
+    events = _validated_events(local_trace)
+    attributes_by_id = {
+        event.event_id: _span_attributes(local_trace, event) for event in events
+    }
+    ids = _EvidenceIds(local_trace)
     capturing = _CapturingExporter(exporter)
     provider = TracerProvider(
         resource=Resource.create(
@@ -190,6 +288,7 @@ def export_local_trace(
                 "bago.observability.scope": "local",
             }
         ),
+        id_generator=ids,
         shutdown_on_exit=False,
     )
     processor = SimpleSpanProcessor(capturing)
@@ -199,30 +298,35 @@ def export_local_trace(
     error = ""
 
     try:
-        for event in local_trace.events:
-            parent = spans_by_event_id.get(event.parent_event_id or "")
-            context = set_span_in_context(parent) if parent is not None else None
+        for event in events:
+            parent = spans_by_event_id.get(event.parent_event_id)
+            context = Context() if parent is None else set_span_in_context(parent, Context())
+            ids.span_id = _identity(
+                "bago.local-event.v1", local_trace.trace_id, event.event_id, size=8
+            )
             start_options: dict[str, Any] = {}
             if event.start_time_unix_nano is not None:
                 start_options["start_time"] = event.start_time_unix_nano
-            span = tracer.start_span(event.name, context=context, attributes=_span_attributes(local_trace, event), **start_options)
+            span = tracer.start_span(
+                event.name, context=context,
+                attributes=attributes_by_id[event.event_id], **start_options,
+            )
             _set_status(span, event.status)
-            if event.end_time_unix_nano is None:
-                span.end()
-            else:
-                span.end(end_time=event.end_time_unix_nano)
+            span.end(end_time=event.end_time_unix_nano)
             spans_by_event_id[event.event_id] = span
-        flushed = processor.force_flush()
-        if not flushed:
-            error = "OpenTelemetry span processor did not flush"
+        if not processor.force_flush() or not capturing.force_flush():
+            error = "OpenTelemetry exporter did not flush"
         if capturing.last_result is SpanExportResult.FAILURE:
             error = "OpenTelemetry exporter returned FAILURE"
-    except Exception as exc:  # pragma: no cover - exercised by live exporter failures
-        error = f"{type(exc).__name__}: {exc}"
+    except Exception:
+        error = "OpenTelemetry projection failed"
     finally:
-        provider.shutdown()
+        try:
+            provider.shutdown()
+        except Exception:
+            error = "OpenTelemetry exporter shutdown failed"
 
-    exported = not error and len(spans_by_event_id) == len(local_trace.events)
+    exported = not error and len(spans_by_event_id) == len(events)
     return OTelExportReceipt(
         trace_id=local_trace.trace_id,
         endpoint=normalized_endpoint,
@@ -235,12 +339,188 @@ def export_local_trace(
     )
 
 
+def _ledger_json(value: Any) -> str:
+    return json.dumps(value, ensure_ascii=True, sort_keys=True, separators=(",", ":"), allow_nan=False)
+
+
+def _ledger_hash(value: Any) -> str:
+    return hashlib.sha256(_ledger_json(value).encode("utf-8")).hexdigest()
+
+
+def _ledger_connect(path: Path) -> sqlite3.Connection:
+    connection = sqlite3.connect(path.resolve().as_uri() + "?mode=rw", uri=True, timeout=10.0)
+    try:
+        connection.execute("PRAGMA synchronous=FULL")
+        if connection.execute("PRAGMA journal_mode=DELETE").fetchone() != ("delete",):
+            raise ValueError("Unsupported ledger journal")
+        if connection.execute("PRAGMA integrity_check").fetchall() != [("ok",)]:
+            raise ValueError("Invalid ledger integrity")
+        return connection
+    except (sqlite3.Error, ValueError):
+        connection.close()
+        raise
+
+
+def _ledger_read(connection: sqlite3.Connection, trace_id: str) -> dict[str, Any] | None:
+    if connection.execute("SELECT version FROM ledger_format").fetchall() != [(1,)]:
+        raise ValueError("Invalid ledger format")
+    row = connection.execute(
+        "SELECT record, checksum FROM claims WHERE trace_id = ?", (trace_id,)
+    ).fetchone()
+    if row is None:
+        return None
+    record = json.loads(row[0])
+    if not isinstance(record, dict) or set(record) != {"binding", "state", "receipt"}:
+        raise ValueError("Invalid ledger record")
+    if _ledger_hash(record) != row[1]:
+        raise ValueError("Invalid ledger checksum")
+    if record["state"] not in {"STARTED", "SUCCESS"}:
+        raise ValueError("Invalid ledger state")
+    if record["state"] == "STARTED" and record["receipt"] is not None:
+        raise ValueError("Invalid pending receipt")
+    return record
+
+
+def _ledger_claim(path: Path, trace_id: str, binding: str) -> dict[str, Any] | None:
+    # Exclusive file creation distinguishes initialization from a damaged old DB.
+    # SQLite FULL commits, rather than POSIX directory fsync, provide durability.
+    try:
+        descriptor = os.open(path, os.O_CREAT | os.O_EXCL | os.O_WRONLY, 0o600)
+    except FileExistsError:
+        created = False
+    else:
+        os.close(descriptor)
+        created = True
+    connection = _ledger_connect(path)
+    try:
+        connection.execute("BEGIN IMMEDIATE")
+        if created:
+            connection.execute("CREATE TABLE ledger_format (version INTEGER NOT NULL)")
+            connection.execute("INSERT INTO ledger_format VALUES (1)")
+            connection.execute(
+                "CREATE TABLE claims (trace_id TEXT PRIMARY KEY NOT NULL, "
+                "record TEXT NOT NULL, checksum TEXT NOT NULL)"
+            )
+        previous = _ledger_read(connection, trace_id)
+        if previous is not None:
+            connection.rollback()
+            return previous
+        record = {"binding": binding, "state": "STARTED", "receipt": None}
+        connection.execute(
+            "INSERT INTO claims VALUES (?, ?, ?)",
+            (trace_id, _ledger_json(record), _ledger_hash(record)),
+        )
+        connection.commit()
+        return None
+    finally:
+        connection.close()
+
+
+def _ledger_finish(path: Path, trace_id: str, binding: str, receipt: OTelExportReceipt) -> None:
+    connection = _ledger_connect(path)
+    try:
+        connection.execute("BEGIN IMMEDIATE")
+        previous = _ledger_read(connection, trace_id)
+        if previous != {"binding": binding, "state": "STARTED", "receipt": None}:
+            raise ValueError("Ledger claim changed")
+        record = {"binding": binding, "state": "SUCCESS", "receipt": receipt.to_dict()}
+        connection.execute(
+            "UPDATE claims SET record = ?, checksum = ? WHERE trace_id = ?",
+            (_ledger_json(record), _ledger_hash(record), trace_id),
+        )
+        connection.commit()
+    finally:
+        connection.close()
+    # A failed readback is uncertainty, never a success-shaped fallback.
+    connection = _ledger_connect(path)
+    try:
+        if _ledger_read(connection, trace_id) != record:
+            raise ValueError("Ledger commit could not be verified")
+    finally:
+        connection.close()
+
+
+def export_local_trace(
+    local_trace: LocalTrace,
+    *,
+    exporter: SpanExporter,
+    endpoint: str = DEFAULT_OTLP_HTTP_ENDPOINT,
+    service_name: str = DEFAULT_SERVICE_NAME,
+    ledger_dir: str | os.PathLike[str] | None = None,
+) -> OTelExportReceipt:
+    """Optionally fence export attempts using a host-owned durable SQLite ledger.
+
+    STARTED is permanent unless a verified success is committed. No automatic
+    retry follows uncertainty. This is not exactly-once network delivery, nor
+    protection against a hostile writer replacing the entire ledger directory.
+    """
+    if ledger_dir is None:
+        return _export_local_trace_unledgered(
+            local_trace, exporter=exporter, endpoint=endpoint, service_name=service_name,
+        )
+    if not service_name.strip():
+        raise ValueError("service_name is required")
+    normalized_endpoint = normalize_otlp_http_endpoint(endpoint)
+    events = _validated_events(local_trace)
+    # Validate attribute conversion before claiming or creating any spans.
+    for event in events:
+        _span_attributes(local_trace, event)
+    inconclusive = OTelExportReceipt(
+        trace_id=local_trace.trace_id, endpoint=normalized_endpoint,
+        service_name=service_name, span_count=len(events), exported=False,
+        status="INCONCLUSIVE", error="Durable export unavailable or outcome uncertain",
+    )
+    try:
+        binding = _ledger_hash({
+            "version": 1, "local_trace": local_trace.to_dict(),
+            "endpoint": normalized_endpoint, "service_name": service_name,
+        })
+        directory = Path(ledger_dir)
+        directory.mkdir(parents=True, exist_ok=True)
+        path = directory / "otel-export-ledger.sqlite3"
+        previous = _ledger_claim(path, local_trace.trace_id, binding)
+        if previous is not None:
+            if previous["binding"] != binding or previous["state"] != "SUCCESS":
+                return inconclusive
+            # Validate the stored receipt against this evidence and destination.
+            expected = OTelExportReceipt(
+                trace_id=local_trace.trace_id, endpoint=normalized_endpoint,
+                service_name=service_name, span_count=len(events), exported=True,
+                status="PASS", jaeger_trace_id=(
+                    f"{_identity('bago.local-trace.v1', local_trace.trace_id, size=16):032x}"
+                    if events else None
+                ),
+            )
+            if previous["receipt"] != expected.to_dict():
+                return inconclusive
+            return expected
+    except (OSError, sqlite3.Error, ValueError, TypeError, OverflowError):
+        return inconclusive
+    try:
+        receipt = _export_local_trace_unledgered(
+            local_trace, exporter=exporter, endpoint=normalized_endpoint,
+            service_name=service_name,
+        )
+    except Exception:
+        # The delegate/SDK is an external effect boundary; retain STARTED and
+        # report uncertainty without disclosing arbitrary exception payloads.
+        return inconclusive
+    if not receipt.exported or receipt.status != "PASS":
+        return inconclusive
+    try:
+        _ledger_finish(path, local_trace.trace_id, binding, receipt)
+    except (OSError, sqlite3.Error, ValueError, TypeError, OverflowError):
+        return inconclusive
+    return receipt
+
+
 def export_local_trace_to_otlp(
     local_trace: LocalTrace,
     *,
     endpoint: str = DEFAULT_OTLP_HTTP_ENDPOINT,
     service_name: str = DEFAULT_SERVICE_NAME,
     timeout: float = 10.0,
+    ledger_dir: str | os.PathLike[str] | None = None,
 ) -> OTelExportReceipt:
     """Export one ``LocalTrace`` to an OTLP/HTTP collector."""
 
@@ -253,6 +533,7 @@ def export_local_trace_to_otlp(
         exporter=exporter,
         endpoint=normalized_endpoint,
         service_name=service_name,
+        ledger_dir=ledger_dir,
     )
 
 

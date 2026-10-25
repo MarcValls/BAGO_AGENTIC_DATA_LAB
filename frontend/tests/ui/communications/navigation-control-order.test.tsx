@@ -25,7 +25,11 @@ afterEach(()=>{cleanup();vi.unstubAllGlobals();localStorage.clear();resetLocaleF
 it('keeps Settings uniquely in its original footer and orders actual controls while retaining Chat, localized focus/draft and groups',async()=>{
  const view=render(<App/>),sidebar=view.container.querySelector('.workspace-sidebar') as HTMLElement
  const buttons=within(sidebar).getAllByRole('button')
- expect(buttons.map(b=>b.getAttribute('aria-label')||b.textContent?.trim())).toEqual(['Espacio de trabajo','Chat','Agentes','Capacidades','Comunicaciones','Abrir inspector','Abrir configuración','Contraer barra lateral'])
+ expect(buttons.map(b=>b.getAttribute('aria-label')||b.textContent?.trim())).toEqual(['Espacio de trabajo','Chat','Agentes','Capacidades','Comunicaciones','Abrir inspector','Abrir configuración'])
+ const menuToggle=screen.getByRole('button',{name:'Contraer barra lateral'})
+ expect(menuToggle.closest('.app-menu-brand')?.querySelector('img')?.getAttribute('src')).toBe('/brand/BAGO_logotipo_horizontal.svg');expect(menuToggle.getAttribute('aria-controls')).toBe(sidebar.id)
+ expect(menuToggle.compareDocumentPosition(sidebar)&Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
+ expect(sidebar.contains(menuToggle)).toBe(false)
  expect(within(sidebar).getAllByRole('button',{name:'Abrir configuración'})).toHaveLength(1)
  expect(sidebar.querySelector('footer .settings-trigger')).toBe(within(sidebar).getByRole('button',{name:'Abrir configuración'}))
  expect(sidebar.querySelector('.primary-navigation .settings-trigger')).toBeNull()

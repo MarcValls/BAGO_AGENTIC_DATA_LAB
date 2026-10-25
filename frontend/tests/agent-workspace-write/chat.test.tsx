@@ -70,7 +70,7 @@ it('does not trust a proposal reference attached to a user message',async()=>{
  const {calls}=await setup({stored:summary,role:'user'});await screen.findByRole('alert');expect(calls).toEqual([])
 })
 it('switching back to assistant clears the selected-agent proposal permission',async()=>{
- await setup();fireEvent.click(screen.getByLabelText('Proponer archivos'));fireEvent.click(screen.getByRole('button',{name:'Asistente de la aplicación'}));await screen.findByRole('region',{name:'conv-assistant'});expect(screen.queryByLabelText('Proponer archivos')).toBeNull()
+ await setup();fireEvent.click(screen.getByLabelText('Proponer archivos'));fireEvent.click(screen.getByRole('button',{name:'Orquestador BAGO5'}));await screen.findByRole('region',{name:'conv-assistant'});expect(screen.queryByLabelText('Proponer archivos')).toBeNull()
  fireEvent.click(screen.getByRole('button',{name:/Agente fixture/}));await screen.findByRole('region',{name:'Agente fixture'});expect((screen.getByLabelText('Proponer archivos') as HTMLInputElement).checked).toBe(false)
 })
 

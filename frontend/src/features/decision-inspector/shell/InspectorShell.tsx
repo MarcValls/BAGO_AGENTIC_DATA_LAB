@@ -17,6 +17,7 @@ export interface InspectorShellProps {
   onConclusionSelect?: (id: string) => void
   state?: InspectorState
   sections?: InspectorSectionContent
+  embedded?: boolean
   initialSection?: InspectorSection
 }
 
@@ -24,7 +25,7 @@ const sectionLabels: Record<InspectorSection, string> = {
   get conclusion() { return t('agents.InspectorShell.conclusion') }, get claims() { return t('agents.EvidenceExplorer.claims') }, get evidence() { return t('agents.EvidenceExplorer.evidence') }, get provenance() { return t('agents.InspectorShell.provenance') },
 }
 
-export function InspectorShell({ conclusions, selectedConclusionId, onConclusionSelect, state = { status: 'ready' }, sections = {}, initialSection = 'conclusion' }: InspectorShellProps) {
+export function InspectorShell({ conclusions, selectedConclusionId, onConclusionSelect, state = { status: 'ready' }, sections = {}, initialSection = 'conclusion', embedded = false }: InspectorShellProps) {
   useI18n()
   const [internalId, setInternalId] = useState<string | null>(null)
   const [section, setSection] = useState<InspectorSection>(initialSection)
@@ -36,14 +37,15 @@ export function InspectorShell({ conclusions, selectedConclusionId, onConclusion
     setSection('conclusion')
   }
 
+  const Surface = embedded ? 'section' : 'main'
   return (
-    <main className="decision-inspector" aria-labelledby="decision-inspector-title">
-      <header className="decision-inspector__header">
+    <Surface className="decision-inspector" aria-labelledby={embedded ? undefined : "decision-inspector-title"} aria-label={embedded ? t('agents.InspectorShell.conclusion_details') : undefined}>
+      {!embedded&&<header className="decision-inspector__header">
         <h1 id="decision-inspector-title">{t('agents.DecisionInspector.decision_inspector')}</h1>
         {selected?.runId && <p className="decision-inspector__identity"><span>{t('agents.ActionReview.run_id')}</span> <code>{selected.runId}</code></p>}
-      </header>
+      </header>}
 
-      {conclusions.length > 0 && <nav className="decision-inspector__selection" aria-label={t('agents.InspectorShell.select_a_conclusion')}>
+      {(embedded ? conclusions.length > 1 : conclusions.length > 0) && <nav className="decision-inspector__selection" aria-label={t('agents.InspectorShell.select_a_conclusion')}>
         <ul>{conclusions.map(conclusion => (
           <li key={conclusion.id}>
             <button type="button" aria-current={selected?.id === conclusion.id ? 'true' : undefined} onClick={() => choose(conclusion.id)}>
@@ -55,7 +57,7 @@ export function InspectorShell({ conclusions, selectedConclusionId, onConclusion
 
       <InspectorStateView state={conclusions.length === 0 && state.status === 'ready' ? { status: 'empty', message: t('agents.InspectorShell.no_conclusions_were_provided_by_the_source') } : state}>
         {selected ? <>
-          <p className="decision-inspector__breadcrumb" aria-label={t('agents.InspectorShell.current_location')}>{t('agents.InspectorShell.run')} {selected.runId || t('agents.AgentRunner.not_provided')} <span aria-hidden="true">›</span> {sectionLabels[section]}</p>
+          <p className="decision-inspector__breadcrumb" aria-label={t('agents.InspectorShell.current_location')}>{!embedded&&<>{t('agents.InspectorShell.run')} {selected.runId || t('agents.AgentRunner.not_provided')} <span aria-hidden="true">›</span> </>} {sectionLabels[section]}</p>
           <nav className="decision-inspector__sections" aria-label={t('agents.InspectorShell.conclusion_details')}>
             {(Object.keys(sectionLabels) as InspectorSection[]).map(key => (
               <button type="button" key={key} aria-pressed={section === key} onClick={() => setSection(key)}>{sectionLabels[key]}</button>
@@ -67,6 +69,6 @@ export function InspectorShell({ conclusions, selectedConclusionId, onConclusion
           </section>
         </> : conclusions.length > 0 && <InspectorStateView state={{ status: 'unknown', message: activeId ? t('agents.InspectorShell.conclusion_p0_was_not_found_in_the_supplied_data', {p0: activeId}) : t('agents.InspectorShell.select_a_conclusion_to_inspect_it') }} />}
       </InspectorStateView>
-    </main>
+    </Surface>
   )
 }

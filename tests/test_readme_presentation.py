@@ -1,5 +1,6 @@
 """Reader order and evidence boundaries for the generated README."""
 import copy
+from datetime import date
 import hashlib
 import importlib
 import json
@@ -103,23 +104,46 @@ def test_corporate_banner_is_self_contained_and_has_accessible_image_text():
 
 def test_gallery_uses_new_observed_captures_with_provenance_and_limits():
     presentation = manifest()["presentation"]
-    assert presentation["capture_date"] == "2026-10-22"
-    gallery = sections(visible_markdown(render()))["La aplicación en pantalla"]
+    capture_date = date.fromisoformat(presentation["capture_date"])
+    month_names = (
+        "enero", "febrero", "marzo", "abril", "mayo", "junio",
+        "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre",
+    )
+    gallery = sections(render())["La aplicación en pantalla"]
     assert "Brave visible" in gallery and presentation["capture_date"] in gallery
-    assert "respuesta real con lectura autorizada de datos ficticios" in gallery
-    assert "traza anterior de Bruma, diferente de la conversación" in gallery
-    assert len(presentation["captures"]) >= 4
+    assert "guía enlazada" in gallery
+    assert "Capturas del recorrido documentado" in gallery
+    assert "traza anterior de Bruma" not in gallery
+    assert f"![Carrusel de capturas actuales de BAGO ADL]({presentation['carousel_gif']})" in gallery
+    assert f"[visor HTML con controles de anterior, siguiente y pausa]({presentation['carousel_html']})" in gallery
+    gif = ROOT / presentation["carousel_gif"]
+    assert gif.read_bytes().startswith((b"GIF87a", b"GIF89a"))
+    viewer = (ROOT / presentation["carousel_html"]).read_text(encoding="utf-8")
+    for control in ('id="prev"', 'id="next"', 'id="play"', "ArrowLeft", "ArrowRight"):
+        assert control in viewer
+    assert len(presentation["captures"]) >= 5
     paths = [item["path"] for item in presentation["captures"]]
     assert len(paths) == len(set(paths))
+    provenance = ROOT / presentation["capture_guide"]
+    assert provenance.is_file()
+    guide_text = provenance.read_text(encoding="utf-8")
+    documented_date = (
+        f"{capture_date.day} de {month_names[capture_date.month - 1]} "
+        f"de {capture_date.year}"
+    )
+    assert documented_date in guide_text
+    assert presentation["capture_guide"] == "docs/verification/readme-captures-20261025.md"
     for item in presentation["captures"]:
-        path = ROOT / item["path"]
-        assert item["path"].startswith("docs/assets/readme-20261022/")
+        relative_path = Path(item["path"])
+        assert not relative_path.is_absolute() and ".." not in relative_path.parts
+        assert relative_path.suffix.lower() == ".png"
+        path = (ROOT / relative_path).resolve()
+        assert path.is_relative_to(ROOT.resolve()) and path.is_file()
         assert item["alt"].strip() and item["caption"].strip()
         assert path.read_bytes().startswith(b"\x89PNG\r\n\x1a\n")
         assert f"![{item['alt']}]({item['path']})" in gallery
         assert item["caption"] in gallery
-    provenance = ROOT / presentation["capture_guide"]
-    assert provenance.is_file()
+        assert relative_path.name in guide_text
     assert presentation["capture_guide"] in gallery
 
 

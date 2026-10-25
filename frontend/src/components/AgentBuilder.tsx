@@ -1,7 +1,7 @@
 import {presentAgentError} from './AgentTaskForm'
 import {agentStateLabel} from './AgentTaskForm'
 import {AgentPresentationError} from './AgentTaskForm'
-import {useI18n, t, formatDate, formatNumber, apiError, errorMessage} from '../i18n'
+import {useI18n, getLocale, t, formatDate, formatNumber, apiError, errorMessage} from '../i18n'
 import './AgentBuilder.css'
 import { useCallback, useEffect, useState } from 'react'
 import AgentTaskForm, { taskError, type TaskDefinition } from './AgentTaskForm'
@@ -9,6 +9,7 @@ import AgentTaskForm, { taskError, type TaskDefinition } from './AgentTaskForm'
 export interface AgentConfig {
   name: string
   description: string
+  task_scope?: string
   type: 'rag' | 'tool' | 'multi-agent'
   system_prompt: string
   provider_id?: 'ollama-cloud' | 'codex' | 'openai-platform' | 'github-copilot' | null
@@ -30,22 +31,41 @@ interface AgentBuilderProps {
   inline?: boolean
 }
 
-const TOOL_OPTIONS = [
-  { id: 'bedrock.converse', label: 'AWS Bedrock Converse' },
-  { id: 'mcp.execute', get label() { return t('agents.AgentBuilder.mcp_execute') } },
-  { id: 'ontology.query', get label() { return t('agents.AgentBuilder.ontology_sparql') } },
-  { id: 'retrieval.search', get label() { return t('agents.AgentBuilder.retrieval_search') } },
-  { id: 'sandbox.run', get label() { return t('agents.AgentBuilder.sandbox_execution') } },
-]
+type AgentToolOption = {id:string; name:string; name_en?:string; status:string; formats?:Record<string,{available:boolean}>}
 type AvailableProvider = { provider_id: NonNullable<AgentConfig['provider_id']>; label?: string; state: string; model_id: string | null; agent_types?: string[] }
 
 export default function AgentBuilder({ onAgentCreated, onBack, initialAgent, agentId, inline = false }: AgentBuilderProps) {
   useI18n()
+  const english = getLocale() === 'en'
+  const [toolOptions, setToolOptions] = useState<AgentToolOption[]>([])
+  const [toolCatalogError, setToolCatalogError] = useState(false)
+  const [roleTemplates,setRoleTemplates]=useState<Array<{id:string;config:AgentConfig}>>([])
+  useEffect(()=>{
+    const controller=new AbortController()
+    void fetch('/api/agent-tools/templates',{signal:controller.signal}).then(async response=>{
+      if(!response.ok)return
+      const value=await response.json()
+      if(!controller.signal.aborted&&Array.isArray(value.templates))setRoleTemplates(value.templates.filter(item=>item.config?.type==='tool'&&Array.isArray(item.config.tools)))
+    }).catch(()=>{})
+    return()=>controller.abort()
+  },[])
+  useEffect(() => {
+    const controller = new AbortController()
+    void fetch('/api/capabilities', {signal:controller.signal}).then(async response => {
+      if (!response.ok) throw new Error('catalog_unavailable')
+      const value = await response.json()
+      if (!Array.isArray(value.agent_tools) || value.agent_tools.some((item:AgentToolOption) => typeof item.id !== 'string' || typeof item.name !== 'string')) throw new Error('catalog_invalid')
+      if (!controller.signal.aborted) {setToolOptions(value.agent_tools);setToolCatalogError(false)}
+    }).catch(() => {if (!controller.signal.aborted) setToolCatalogError(true)})
+    return () => controller.abort()
+  }, [])
+  const toolLabel = (item:AgentToolOption) => english ? item.name_en || item.name : item.name
   const editing = Boolean(agentId)
   const [step, setStep] = useState<'configure' | 'preview' | 'complete'>('configure')
   const [agent, setAgent] = useState<AgentConfig>(initialAgent ? { ...initialAgent, task: initialAgent.task ? { ...initialAgent.task, dates: initialAgent.task.dates.map(date => ({ ...date })) } : { prompt: initialAgent.description, dates: [] } } : {
     name: '',
     description: '',
+    task_scope: '',
     type: 'rag',
     system_prompt: '',
     tools: [],
@@ -158,6 +178,7 @@ export default function AgentBuilder({ onAgentCreated, onBack, initialAgent, age
       {step === 'configure' && (
         <div className="wizard-step">
           <h3>{editing ? t('agents.AgentBuilder.agent_profile') : t('agents.AgentBuilder.configure_agent')}</h3>
+          {roleTemplates.map(template=><button type="button" key={template.id} onClick={()=>updateAgent({...template.config,provider_id:agent.provider_id,model_id:agent.model_id})}>{t('agentTools.useTemplate')}</button>)}
 
           <div className="form-group">
             <label>{t('agents.AgentBuilder.agent_name')}</label>
@@ -182,13 +203,22 @@ export default function AgentBuilder({ onAgentCreated, onBack, initialAgent, age
           </div>
 
           <div className="form-group">
+            <label htmlFor="agent-task-scope">{english ? 'Tasks BAGO5 may route to this agent automatically' : 'Tareas que BAGO5 puede asignar automáticamente a este agente'}</label>
+            <textarea id="agent-task-scope" value={agent.task_scope || ''} onChange={event => updateAgent({ task_scope: event.target.value })}
+              placeholder={english ? 'State the work this agent can accept and what it must return to BAGO5.' : 'Indica qué trabajos puede aceptar y cuáles debe devolver a BAGO5.'}
+              className="form-textarea" rows={3} maxLength={8000} />
+            <small>{english ? 'This scope routes conversational work. It does not authorize workspace, document, development, communication or file effects.' : 'Este alcance enruta tareas conversacionales. No autoriza el espacio de trabajo, documentos, desarrollo, comunicaciones ni efectos en archivos.'}</small>
+          </div>
+
+          <div className="form-group">
             <AgentTaskForm value={agent.task || { prompt: agent.description, dates: [] }} onChange={task => updateAgent({ task })} />
           </div>
 
           <div className="form-group">
-            <label>{t('agents.AgentBuilder.agent_type')}</label>
+            <label htmlFor="agent-type">{t('agents.AgentBuilder.agent_type')}</label>
             <select
-              value={agentStateLabel(agent.type)}
+              id="agent-type"
+              value={agent.type}
               onChange={(e) => updateAgent(editing ? { type: e.target.value as AgentConfig['type'] } : { type: e.target.value as AgentConfig['type'], provider_id: null, model_id: null })}
               className="form-select"
             >
@@ -239,17 +269,20 @@ export default function AgentBuilder({ onAgentCreated, onBack, initialAgent, age
           <div className="form-group">
             <label>{t('agents.AgentBuilder.available_tools')}</label>
             <div className="tools-list">
-              {TOOL_OPTIONS.map((tool) => (
+              {toolOptions.map((tool) => (
                 <label key={tool.id} className="checkbox-label">
                   <input
                     type="checkbox"
                     checked={agent.tools.includes(tool.id)}
+                    disabled={tool.status !== 'AVAILABLE' && !agent.tools.includes(tool.id)}
                     onChange={() => toggleTool(tool.id)}
                   />
-                  <span>{tool.label}</span>
+                  <span>{toolLabel(tool)}{tool.status !== 'AVAILABLE' && <small> · {t('agentTools.notConnected')}</small>}</span>
                 </label>
               ))}
             </div>
+            {toolCatalogError && <p role="alert">{t('agentTools.toolsUnavailable')}</p>}
+            {toolOptions.some(tool => tool.formats?.['.png']?.available === false) && <p role="status">{t('agentTools.missingOcr')}</p>}
           </div>
 
           <div className="button-group">
@@ -270,6 +303,7 @@ export default function AgentBuilder({ onAgentCreated, onBack, initialAgent, age
             <div className="preview-field">
               <strong>{t('agents.AgentBuilder.description_2')}</strong> {agent.description}
             </div>
+            <div className="preview-field"><strong>{english ? 'Automatic task scope' : 'Alcance para asignación automática'}</strong><div className="preview-code">{agent.task_scope || (english ? 'Not declared: BAGO5 will not auto-route tasks here.' : 'No declarado: BAGO5 no asignará tareas automáticamente aquí.')}</div></div>
             <div className="preview-field"><strong>{t('agents.AgentBuilder.tarea')}</strong><div className="preview-code">{agent.task?.prompt}</div>{agent.task?.dates.map(date => <div key={date.key}>{date.label}: {date.value}</div>)}</div>
             <div className="preview-field">
               <strong>{t('agents.AgentBuilder.type')}</strong> <span className="badge">{agentStateLabel(agent.type)}</span>
@@ -284,7 +318,7 @@ export default function AgentBuilder({ onAgentCreated, onBack, initialAgent, age
               <div className="tools-preview">
                 {agent.tools.map((tool) => (
                   <span key={tool} className="badge badge-tool">
-                    {TOOL_OPTIONS.find((t) => t.id === tool)?.label || tool}
+                    {toolOptions.find(item => item.id === tool) ? toolLabel(toolOptions.find(item => item.id === tool)!) : tool}
                   </span>
                 ))}
               </div>

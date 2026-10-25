@@ -343,14 +343,35 @@ class Google:
                 "last_error": observation.get("last_error")}
 
     def configure(self, data):
-        path = Path(str(data.get("client_json_path", "")))
-        if not path.is_absolute() or not path.is_file():
-            raise ServiceError("client_file_required", "An absolute external Desktop OAuth JSON path is required")
+        selected_json = data.get("client_json")
+        if selected_json is None:
+            path = Path(str(data.get("client_json_path", "")))
+            if not path.is_absolute() or not path.is_file():
+                raise ServiceError("client_file_required", "An absolute external Desktop OAuth JSON path is required")
+            try:
+                if path.stat().st_size > 65536:
+                    raise ValueError()
+                document = json.loads(path.read_text(encoding="utf-8-sig"))
+            except (OSError, ValueError):
+                raise ServiceError("invalid_oauth_client", "Expected Google Desktop OAuth client JSON with official endpoints") from None
+        else:
+            if not isinstance(selected_json, dict):
+                raise ServiceError("invalid_oauth_client", "Expected Google Desktop OAuth client JSON with official endpoints")
+            try:
+                if len(json.dumps(selected_json, ensure_ascii=False).encode("utf-8")) > 65536:
+                    raise ValueError()
+                document = selected_json
+            except (TypeError, ValueError):
+                raise ServiceError("invalid_oauth_client", "Expected Google Desktop OAuth client JSON with official endpoints") from None
         try:
-            if path.stat().st_size > 65536:
+            if not isinstance(document, dict):
                 raise ValueError()
-            config = json.loads(path.read_text(encoding="utf-8-sig"))["installed"]
+            config = document["installed"]
+            if not isinstance(config, dict):
+                raise ValueError()
             if not isinstance(config.get("client_id"), str) or not config["client_id"].endswith(".apps.googleusercontent.com"):
+                raise ValueError()
+            if not isinstance(config.get("client_secret", ""), str):
                 raise ValueError()
             if config.get("auth_uri", AUTH_URL) != AUTH_URL or config.get("token_uri", TOKEN_URL) != TOKEN_URL:
                 raise ValueError()

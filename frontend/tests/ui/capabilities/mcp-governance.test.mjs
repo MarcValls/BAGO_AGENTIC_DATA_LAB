@@ -84,13 +84,16 @@ describe('Capability Manager local MCP governance route', () => {
     } finally { globalThis.fetch = original }
   })
 
-  it('scopes the local fixture and exposes external configuration without implicit transport calls', async () => {
+  it('scopes the fixture and keeps external configuration in Settings without implicit connection or transport calls', async () => {
     const stub = stubFetch()
     try {
       render(React.createElement(CapabilityManager))
       const button = await screen.findByRole('button', { name: 'Run local MCP fixture' })
       assert.match(screen.getByText(/This demonstration starts only/).textContent, /External connections/)
-      assert.ok(screen.getByRole('heading', { name: 'External connections' }))
+      assert.ok(screen.getByRole('heading', { name: 'Local MCP fixture' }))
+      assert.equal(screen.queryByRole('heading', { name: 'External connections' }), null)
+      assert.equal(stub.calls.some((call) => call.url.startsWith('/api/connections')), false)
+      assert.deepEqual(stub.calls.map((call) => call.url), ['/api/capabilities', '/api/capabilities/proposals?status=all&limit=100'])
       assert.equal(stub.calls.some((call) => call.method !== 'GET'), false)
       assert.equal(stub.calls.some((call) => call.url === '/api/demo/mcp-governance'), false)
       assert.equal(button.disabled, false)

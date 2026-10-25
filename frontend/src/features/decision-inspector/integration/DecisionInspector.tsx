@@ -137,7 +137,7 @@ function EvidenceInventory({ evidence }: { evidence: DecisionEvidence[] }) {
   </section>
 }
 
-export function DecisionInspector({ artifacts }: { artifacts: DecisionInspectorArtifacts }) {
+export function DecisionInspector({ artifacts, embedded = false }: { artifacts: DecisionInspectorArtifacts; embedded?: boolean }) {
   useI18n()
   const [view, setView] = useState<InspectorView>('overview')
   const [section, setSection] = useState<InspectorSection>('conclusion')
@@ -151,7 +151,7 @@ export function DecisionInspector({ artifacts }: { artifacts: DecisionInspectorA
 
   const conclusion = model.conclusion ? <>
     <section className="decision-inspector__summary" aria-label={t('agents.DecisionInspector.agent_conclusion')}>
-      <p className="decision-inspector__eyebrow">{t('agents.DecisionInspector.source_supplied_conclusion_run')} {runId}</p>
+      <p className="decision-inspector__eyebrow">{t('agents.DecisionInspector.agent_conclusion')}</p>
       <h2>{text(artifacts.agent_run.query) || t('agents.DecisionInspector.query_not_provided')}</h2>
       <p className="decision-inspector__answer">{model.conclusion.text || t('agents.DecisionInspector.conclusion_text_not_provided')}</p>
     </section>
@@ -162,6 +162,7 @@ export function DecisionInspector({ artifacts }: { artifacts: DecisionInspectorA
       <div><span>{t('agents.ActionReview.proposed_actions')}</span><strong>{model.actions.actions.length}</strong></div>
     </div>
     <InspectorShell
+      embedded
       key={section}
       conclusions={[model.conclusion]}
       selectedConclusionId={model.conclusion.id}
@@ -176,10 +177,12 @@ export function DecisionInspector({ artifacts }: { artifacts: DecisionInspectorA
   </> : <section className="decision-inspector__empty" role="status"><h2>{t('agents.DecisionInspector.run_identity_unavailable')}</h2><p>{t('agents.DecisionInspector.the_source_did_not_provide_a_run_id_so_the_inspector_cannot_create_a_s')}</p></section>
 
   return <section className="decision-inspector-page" aria-label={t('agents.DecisionInspector.bago_decision_inspector')}>
-    <header className="decision-inspector-page__header">
-      <div><p className="decision-inspector__eyebrow">{t('agents.DecisionInspector.governed_agent_run')}</p><h1>{t('agents.DecisionInspector.decision_inspector')}</h1><p>{t('agents.DecisionInspector.follow_the_source_conclusion_through_evidence_trace_actions_and_receip')}</p><code>{t('agents.ActionReview.run_id')} {runId}</code></div>
+    {!embedded&&<header className="decision-inspector-page__header">
+      <div><p className="decision-inspector__eyebrow">{t('agents.DecisionInspector.governed_agent_run')}</p><h1>{t('agents.DecisionInspector.decision_inspector')}</h1><p>{t('agents.DecisionInspector.follow_the_source_conclusion_through_evidence_trace_actions_and_receip')}</p></div>
       <span className="decision-inspector-page__status">{runStatus}</span>
-    </header>
+    </header>}
+    {embedded&&<p className="decision-inspector-page__status">{runStatus}</p>}
+    <details className="decision-inspector-page__identity"><summary>{t('agents.aux.context.technical')}</summary><dl><dt>{t('agents.ActionReview.run_id')}</dt><dd><code>{runId}</code></dd></dl></details>
     <nav className="decision-inspector-page__nav" aria-label={t('agents.DecisionInspector.inspector_views')}>
       {views.map(item => <button key={item.id} type="button" aria-current={view === item.id ? 'page' : undefined} onClick={() => { setView(item.id); setActionId(undefined) }}>{item.label}</button>)}
     </nav>

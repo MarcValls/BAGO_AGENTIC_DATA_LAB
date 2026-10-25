@@ -69,15 +69,19 @@ it('ignores a late previous conversation and never requests data without selecti
  expect(screen.queryByText('event-current')).toBeNull();expect(screen.queryByText('old')).toBeNull()
 })
 it('retains builder fields, task, instructions and tool selections without refetch on locale change',async()=>{
- const fetch=vi.fn(async()=>response({models:[{provider_id:'ollama-cloud',label:'Ollama',state:'ready',model_id:'model-original'}]}));vi.stubGlobal('fetch',fetch)
+ const fetch=vi.fn(async(url:string)=>response(url==='/api/capabilities'
+  ? {agent_tools:[{id:'sandbox.run',name:'Preparar BER',name_en:'Sandbox Execution',status:'AVAILABLE'}]}
+  : url==='/api/agent-tools/templates' ? {templates:[]}
+  : {models:[{provider_id:'ollama-cloud',label:'Ollama',state:'ready',model_id:'model-original'}]}));vi.stubGlobal('fetch',fetch)
  const {container}=render(<AgentBuilder initialAgent={{name:'ORIGINAL NAME',description:'ORIGINAL DESCRIPTION',type:'rag',system_prompt:'ORIGINAL INSTRUCTIONS',tools:['sandbox.run'],task:{prompt:'ORIGINAL TASK',dates:[]}}}/>);
  await screen.findByText('Ollama · acceso comprobado')
  const name=container.querySelector('input[type="text"]') as HTMLInputElement;fireEvent.change(name,{target:{value:'Edited name'}})
  const task=screen.getByLabelText('Tarea *') as HTMLTextAreaElement
+ const callsBeforeLocale=fetch.mock.calls.length
  act(()=>setLocale('en'));expect(name.value).toBe('Edited name');expect(task.value).toBe('ORIGINAL TASK')
  expect((container.querySelectorAll('textarea')[2] as HTMLTextAreaElement).value).toBe('ORIGINAL INSTRUCTIONS')
  expect(screen.getByText('Sandbox Execution').parentElement!.querySelector('input')!.checked).toBe(true)
- expect(fetch).toHaveBeenCalledTimes(1);expect(screen.getByText('Agent Name *')).toBeTruthy()
+ expect(fetch).toHaveBeenCalledTimes(callsBeforeLocale);expect(screen.getByText('Agent Name *')).toBeTruthy()
 })
 it('keeps date payload fields and local validation unchanged while labels change',()=>{
  const update=vi.fn();render(<AgentTaskForm value={{prompt:'USER TEXT',dates:[{key:'fecha_1',label:'USER LABEL',value:'2026-10-23'}]}} onChange={update}/>);

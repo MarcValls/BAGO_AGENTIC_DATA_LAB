@@ -15,4 +15,5 @@ pytest==9.0.3
 requests==2.33.1
 github-copilot-sdk==0.3.0
 -r requirements-whatsapp.txt
+-r requirements-documents.txt
 tzdata==2026.5
