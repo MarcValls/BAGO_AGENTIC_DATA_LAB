@@ -1,0 +1,86 @@
+{
+  "schema": "bago.manual-screenshots.v1",
+  "environment": "preview local 8093 y Jaeger 16689, capturas de 2026-10-25 UTC, revisadas para manual en 2026-10-26",
+  "records": [
+    {
+      "file": "01-chat-orquestador.png",
+      "size_px": [
+        1470,
+        980
+      ],
+      "sha256": "30ec1e554b3e7e894704fe17dae63d6b05b8111a70c977fcb48b10107942ac3f",
+      "source": "captura local de interfaz, 2026-10-25 UTC; identificadores/rutas personales omitidos o redactados",
+      "limitations": {
+        "01-chat-orquestador.png": "recorte sin panel de historial; conversación en blanco",
+        "02-capacidades-completa.png": "catálogo disponible no demuestra ejecución ni permisos de sesión",
+        "03-crear-agente-herramientas-completo.png": "formulario vacío; no se guardó agente",
+        "04-workspace-proyecto-rutas-ocultas.png": "ruta y nombres cubiertos; selección global de ADL visible",
+        "05-jaeger-traza.png": "traza de prueba local sintética; 12 spans, 2.7 s; no acredita misión larga"
+      }
+    },
+    {
+      "file": "02-capacidades-completa.png",
+      "size_px": [
+        2400,
+        1223
+      ],
+      "sha256": "574090f458b41d49b37572ab5d1701bf2a895afde90809ea35d14535bfbf819d",
+      "source": "captura local de interfaz, 2026-10-25 UTC; identificadores/rutas personales omitidos o redactados",
+      "limitations": {
+        "01-chat-orquestador.png": "recorte sin panel de historial; conversación en blanco",
+        "02-capacidades-completa.png": "catálogo disponible no demuestra ejecución ni permisos de sesión",
+        "03-crear-agente-herramientas-completo.png": "formulario vacío; no se guardó agente",
+        "04-workspace-proyecto-rutas-ocultas.png": "ruta y nombres cubiertos; selección global de ADL visible",
+        "05-jaeger-traza.png": "traza de prueba local sintética; 12 spans, 2.7 s; no acredita misión larga"
+      }
+    },
+    {
+      "file": "03-crear-agente-herramientas-completo.png",
+      "size_px": [
+        2400,
+        1223
+      ],
+      "sha256": "5c96ea64b5cf34e63a3ccd4b8f784d02ba56ddf018f5e9f52b25acb0d41c1dd4",
+      "source": "captura local de interfaz, 2026-10-25 UTC; identificadores/rutas personales omitidos o redactados",
+      "limitations": {
+        "01-chat-orquestador.png": "recorte sin panel de historial; conversación en blanco",
+        "02-capacidades-completa.png": "catálogo disponible no demuestra ejecución ni permisos de sesión",
+        "03-crear-agente-herramientas-completo.png": "formulario vacío; no se guardó agente",
+        "04-workspace-proyecto-rutas-ocultas.png": "ruta y nombres cubiertos; selección global de ADL visible",
+        "05-jaeger-traza.png": "traza de prueba local sintética; 12 spans, 2.7 s; no acredita misión larga"
+      }
+    },
+    {
+      "file": "04-workspace-proyecto-rutas-ocultas.png",
+      "size_px": [
+        1800,
+        980
+      ],
+      "sha256": "7757dd573ed998e8b6cb6facbabb1732795b4b4a589e942e325e8b86637a5a0d",
+      "source": "captura local de interfaz, 2026-10-25 UTC; identificadores/rutas personales omitidos o redactados",
+      "limitations": {
+        "01-chat-orquestador.png": "recorte sin panel de historial; conversación en blanco",
+        "02-capacidades-completa.png": "catálogo disponible no demuestra ejecución ni permisos de sesión",
+        "03-crear-agente-herramientas-completo.png": "formulario vacío; no se guardó agente",
+        "04-workspace-proyecto-rutas-ocultas.png": "ruta y nombres cubiertos; selección global de ADL visible",
+        "05-jaeger-traza.png": "traza de prueba local sintética; 12 spans, 2.7 s; no acredita misión larga"
+      }
+    },
+    {
+      "file": "05-jaeger-traza.png",
+      "size_px": [
+        2400,
+        1223
+      ],
+      "sha256": "e5b8c79b04bb65ec8fbabb806aec7e9160dbe254f4645c29f2cb4ef5bf0ff6e1",
+      "source": "captura local de interfaz, 2026-10-25 UTC; identificadores/rutas personales omitidos o redactados",
+      "limitations": {
+        "01-chat-orquestador.png": "recorte sin panel de historial; conversación en blanco",
+        "02-capacidades-completa.png": "catálogo disponible no demuestra ejecución ni permisos de sesión",
+        "03-crear-agente-herramientas-completo.png": "formulario vacío; no se guardó agente",
+        "04-workspace-proyecto-rutas-ocultas.png": "ruta y nombres cubiertos; selección global de ADL visible",
+        "05-jaeger-traza.png": "traza de prueba local sintética; 12 spans, 2.7 s; no acredita misión larga"
+      }
+    }
+  ]
+}

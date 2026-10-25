@@ -5,6 +5,7 @@ Guía para trabajar desde el chat y las pantallas de BAGO. Abre una sección seg
 ## Contenido
 
 - [Orientarse y empezar](#orientarse-y-empezar)
+- [Guías prácticas por sector](#guías-prácticas-por-sector)
 - [Chat y lectura de páginas públicas](#chat-y-lectura-de-páginas-públicas)
 - [Revisar fuentes y ejecuciones](#revisar-fuentes-y-ejecuciones)
 - [Agentes](#agentes)
@@ -19,7 +20,13 @@ Guía para trabajar desde el chat y las pantallas de BAGO. Abre una sección seg
 
 ## Orientarse y empezar
 
-La barra lateral permite cambiar entre Chat, Comunicaciones, Contactos, Workspace y Agentes. Settings reúne las conexiones y preferencias. Inspect abre la revisión de una ejecución. Manual abre esta guía en otra pestaña.
+La barra lateral permite cambiar entre Workspace, el grupo **BAGO5**, Agentes y Comunicaciones. **BAGO5** contiene **Chat**, el orquestador general con historial de conversaciones, y **Capacidades**; Agentes contiene Mis agentes, Crear agente, Ejecutar / Probar y Evaluación. La asignación de herramientas se configura dentro del formulario del agente; actualmente no hay un destino lateral independiente llamado «Herramientas». El panel **BAGO5 · Conversaciones y agentes** muestra los perfiles que realmente se usaron en la conversación abierta, no el catálogo general. Inspector abre la revisión de una ejecución. Configuración reúne las preferencias y conexiones. Manual abre esta guía en otra pestaña.
+
+**Capacidades** es el catálogo del chat y de las propuestas que requieren revisión; ver una capacidad o guardar una propuesta no concede por sí solo permisos ni la asigna a un agente. La pantalla **Capacidades** cataloga funciones disponibles. En **Crear agente** puedes configurar herramientas para ese perfil. Que una capacidad figure conectada o disponible no garantiza que esté asignada, autorizada o ejecutada en esta sesión. El menú **Recursos** del compositor sirve para abrir recursos contextuales del chat y no sustituye a ninguno de esos dos destinos.
+
+![Catálogo de capacidades con requisitos de uso y estados de integración.](assets/screenshots-2026-10-26/02-capacidades-completa.png)
+
+*La disponibilidad indicada en el catálogo no equivale a permiso ni ejecución en esta sesión.*
 
 **Los bloques con flecha se pueden desplegar.** Pulsa su cabecera para ver más información y vuelve a pulsarla para recogerla. También puedes llegar con la tecla Tab y abrirlos con Enter o Espacio. El contorno resalta el control seleccionado con el teclado.
 
@@ -27,14 +34,30 @@ Las pestañas superiores separan las áreas de una pantalla. Puedes pulsarlas o 
 
 Los cambios que necesitan revisión muestran primero una propuesta o un borrador. Lee los datos, marca la confirmación y pulsa la acción final cuando estés de acuerdo. Un borrador guardado no significa que se haya enviado un mensaje ni ejecutado una operación.
 
+## Guías prácticas por sector
+
+Estas guías son recorridos de trabajo y revisión, no resultados de ejecuciones. Los nombres de capacidad pueden aparecer en el catálogo; disponibilidad no confirma que estén habilitados para el agente, autorizados o conectados en el momento de uso. Abre cada guía para ver el alcance recomendado.
+
+- [Investigación de mercado: consultar fuentes públicas y contrastarlas](casos-de-uso/investigacion-mercado.md)
+- [Administración: extraer datos de documentos con referencias](casos-de-uso/administracion-documental.md)
+- [Logística: revisar inventario y discrepancias](casos-de-uso/logistica-inventario.md)
+- [Atención al cliente: preparar una comunicación revisable](casos-de-uso/atencion-cliente.md)
+- [Calidad: comprobar una operación y su evidencia](casos-de-uso/calidad-operaciones.md)
+
 ## Chat y lectura de páginas públicas
 
-1. Abre **Chat** y elige una conversación. Puedes usar el asistente de la aplicación o un agente guardado en **Conversations and agents**.
-2. Elige el modelo disponible para ese interlocutor. Si no hay ninguno, configura el proveedor en Settings.
-3. Escribe lo que quieres obtener, con una tarea concreta. Por ejemplo: «Resume los servicios descritos en esta página y cita las fuentes que hayas leído».
-4. Si necesitas consultar la web, marca **Permitir lectura web pública**.
-5. Pega una o varias URL HTTPS en **URL HTTPS de entrada · una por línea**. Se admiten hasta ocho entradas distintas. Revisa los orígenes que aparecen debajo.
-6. Pulsa **Send**. El permiso vale para ese turno, esa conversación y ese interlocutor. La casilla vuelve a quedar desmarcada.
+![Chat general de BAGO5. El panel con conversaciones anteriores se ha excluido de la imagen.](assets/screenshots-2026-10-26/01-chat-orquestador.png)
+
+
+1. Abre **BAGO5 > Chat**. El interlocutor general es **Orquestador BAGO5** y conserva un historial de conversaciones; puedes abrir manualmente una conversación anterior desde el panel de contexto. La bandeja **BAGO5 · Conversaciones y agentes** muestra los agentes utilizados en la conversación abierta.
+2. Explica tu intención al **Orquestador BAGO5**. Puede identificar un agente guardado adecuado y preparar un trabajo delegado desde ese chat. Revisa la tarjeta de delegación y autoriza el alcance antes de que el agente ejecute; preparar una delegación no significa que se haya ejecutado.
+3. Elige el modelo disponible para ese interlocutor. Si no hay ninguno, configura el proveedor en Settings.
+4. Escribe lo que quieres obtener, con una tarea concreta. Por ejemplo: «Resume los servicios descritos en esta página y cita las fuentes que hayas leído».
+5. Si necesitas consultar la web, marca **Permitir lectura web pública**.
+6. Pega una o varias URL HTTPS en **URL HTTPS de entrada · una por línea**. Se admiten hasta ocho entradas distintas. Revisa los orígenes que aparecen debajo.
+7. Pulsa **Send**. El permiso vale para ese turno, esa conversación y ese interlocutor. La casilla vuelve a quedar desmarcada.
+
+Al desplazarte por una conversación larga aparecen unos segundos los botones **Ir al principio de la conversación** y **Ir al final de la conversación**.
 
 Ejemplo de entrada pública: `https://www.sollutia.com/es/empresa.html`. La disponibilidad de la página depende de su servidor.
 
@@ -46,7 +69,14 @@ El texto de una página puede contener instrucciones ajenas a tu tarea. Se trata
 
 ## Revisar fuentes y ejecuciones
 
-Después de una respuesta, despliega **Fuentes web** o **Archivos consultados** para ver las referencias conservadas. Una respuesta sin fuentes registradas no demuestra que se haya leído una página o un archivo.
+![Ejemplo de traza local abierta en Jaeger.](assets/screenshots-2026-10-26/05-jaeger-traza.png)
+
+*Ejemplo sintético de pruebas: 12 spans y 2,7 segundos. No acredita una misión larga exitosa ni que la jerarquía represente toda la causalidad de ADL.*
+
+
+Después de una respuesta, despliega **Fuentes web** o **Archivos consultados** para ver las referencias conservadas. Durante el desplazamiento por una conversación larga aparecen brevemente botones para saltar al principio o al final.
+
+Una respuesta sin fuentes registradas no demuestra que se haya leído una página o un archivo.
 
 En las fuentes web puedes consultar:
 
@@ -65,6 +95,11 @@ Inspect distingue **Conversación actual** de **Demo histórica**. La demo no es
 
 ## Agentes
 
+![Formulario de creación de agente sin guardar.](assets/screenshots-2026-10-26/03-crear-agente-herramientas-completo.png)
+
+*Es una captura de formulario vacío; no se creó ni se guardó ningún agente.*
+
+
 En la barra lateral, despliega **Agentes** y abre **Mis agentes**. Busca por nombre, descripción, tipo o identificador.
 
 - **Crear agente** prepara un perfil nuevo. Revisa su tarea, proveedor, modelo y herramientas antes de guardarlo.
@@ -81,15 +116,22 @@ Para asignar modelos disponibles, abre Settings → proveedores → **Modelos ac
 
 ## Proyectos, archivos y contexto
 
-Abre **Workspace**. Sus pestañas son **Proyectos**, **Archivos** y **Contexto y memoria**. En Proyectos puedes crear o seleccionar el proyecto gestionado; la selección se conserva al cambiar de área. Si falta la carpeta de proyectos, el administrador debe configurarla antes de crear uno.
+Abre **Workspace**. Sus pestañas son **Proyectos**, **Archivos** y **Contexto y memoria**. La selección de carpeta activa que muestra hoy **Contexto y memoria** es global para ADL y no crea una carpeta de trabajo independiente para cada proyecto o conversación. La separación de chats por proyecto continúa pendiente. En Proyectos puedes crear o seleccionar el proyecto gestionado; la selección se conserva al cambiar de área. Si falta la carpeta de proyectos, el administrador debe configurarla antes de crear uno.
 
 ### Crear o abrir un proyecto
+
+![Vista de Workspace para elegir la carpeta y nombrar el proyecto. La ruta y los nombres se han ocultado.](assets/screenshots-2026-10-26/04-workspace-proyecto-rutas-ocultas.png)
+
+*Captura de la interfaz local; los valores de carpeta y proyecto están redactados.*
+
 
 1. Escribe el nombre de carpeta y el título.
 2. Pulsa **Revisar creación**.
 3. Comprueba la ubicación completa y la operación. Abre **Detalles de la operación** si necesitas revisar sus datos.
 4. Marca la confirmación y pulsa **Confirmar y ejecutar**.
 5. Elige un proyecto ya existente en **Proyecto gestionado** para volver a abrirlo.
+
+La ubicación de un proyecto gestionado se construye bajo la carpeta padre configurada para proyectos. El nombre de carpeta crea una subcarpeta allí. Esta operación no usa como destino la carpeta activa elegida en **Contexto y memoria**; revisa la ruta completa antes de confirmar.
 
 Un proyecto nuevo contiene sus documentos de contexto, estado y continuidad. Esos documentos son un punto de partida, no una acreditación de pruebas superadas. Sus estados iniciales pueden indicar `PREPARED` o `NOT_RUN`.
 
@@ -105,9 +147,11 @@ Si hay cambios sin guardar, guárdalos o descártalos antes de cambiar de archiv
 
 ### Contexto y memoria
 
-Abre la pestaña **Contexto y memoria** en Workspace para consultar la carpeta activa y los documentos del recorrido de lectura existente. **Examinar…** permite elegir carpeta; **Usar carpeta** aplica la selección y actualiza los datos que muestra esa pantalla.
+Abre la pestaña **Contexto y memoria** en Workspace para consultar la carpeta activa y los documentos del recorrido de lectura existente.
 
-Que un documento aparezca como no encontrado significa que no existe en esa ubicación reconocida; seleccionar una carpeta no inventa contexto o continuidad. Para consultar los documentos sembrados en la pantalla completa, primero usa el proyecto en ADL y abre **Contexto y memoria**. Una tarjeta de Workspace embebida muestra los documentos del proyecto seleccionado en esa misma pestaña. La memoria de conversación y una memoria general externa son conexiones diferentes: «Sin conectar» no se interpreta como una conexión activa.
+**Examinar…** permite elegir una carpeta existente; **Usar carpeta** la convierte en la carpeta activa y actualiza los datos que muestra esa pantalla. En el comportamiento actual, esta selección no crea archivos ni subcarpetas.
+
+Que un documento aparezca como no encontrado significa que no existe en esa ubicación reconocida; seleccionar una carpeta no inventa contexto o continuidad. La creación de un proyecto gestionado sí siembra sus documentos mínimos dentro de la nueva subcarpeta, bajo la carpeta padre configurada. Vincular una carpeta existente desde **Contexto y memoria** no la convierte en un proyecto gestionado ni crea esos documentos. Para consultar los documentos sembrados en la pantalla completa, primero usa el proyecto en ADL y abre **Contexto y memoria**. Una tarjeta de Workspace embebida muestra los documentos del proyecto seleccionado en esa misma pestaña. La memoria de conversación y una memoria general externa son conexiones diferentes: «Sin conectar» no se interpreta como una conexión activa.
 
 ## Git local y planes de GitHub
 
@@ -131,7 +175,7 @@ Abre **Contactos → Agenda**. La pestaña **Google** contiene la conexión e im
 
 El contacto se guarda localmente. La eliminación local no borra contactos en Google ni mensajes enviados. Un contacto con correo pero sin teléfono sigue disponible en la agenda; no puede elegirse como destinatario de WhatsApp.
 
-**Preparar mensaje** lleva el mismo contacto a Comunicaciones. También puedes abrir la pestaña **Contactos** dentro de Comunicaciones o **Herramientas → Contactos** dentro del Chat. Se utiliza la misma agenda; elegir un destinatario no envía un mensaje.
+**Preparar mensaje** lleva el mismo contacto a Comunicaciones. También puedes abrir la pestaña **Contactos** dentro de Comunicaciones. En el Chat, abre **Recursos** para los recursos contextuales disponibles. Se utiliza la misma agenda; elegir un destinatario no envía un mensaje.
 
 ### Importar sólo algunos contactos de Google
 
