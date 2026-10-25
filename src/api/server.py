@@ -4552,6 +4552,15 @@ app.include_router(create_agent_delegation_router(service=_agent_delegations))
 
 from src.api.workspaces_routes import create_workspaces_router
 app.include_router(create_workspaces_router())
+from src.api.project_folder_routes import create_project_folder_router
+from src.project_folders import binding_identity as _project_folder_binding_identity
+app.include_router(create_project_folder_router(
+    workspace_root=lambda: current_workspace_root(),
+    set_workspace_root=lambda candidate: _set_workspace_root(candidate),
+    pick_directory=lambda initial: _pick_workspace_directory(initial),
+    state_directory=lambda: _WORKSPACE_CONFIG_DIR / "project-folders-v1",
+    binding_identity=lambda: _project_folder_binding_identity(_WORKSPACE_CONFIG_PATH, current_workspace_root()),
+    legacy_parent=lambda: os.getenv("BAGO_WORKSPACE_PARENT"), binding_lock=_WORKSPACE_LOCK))
 from src.api.document_tools_routes import create_document_tools_router
 app.include_router(create_document_tools_router(workspace_root=current_workspace_root, load_agent=_load_model_enabled_agent,
     owned_conversation=_owned_conversation, evidence_root=lambda: AGENT_CHAT_TRACE_DIR / "document-tools",communications=_communication_service))

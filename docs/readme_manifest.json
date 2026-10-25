@@ -85,6 +85,10 @@
     {
       "path": "docs/progress/SPRINT_20261025_06.md",
       "role": "estado del historial integrado y resultado completo de la fuente aplicada; Jaeger global OPEN"
+    },
+    {
+      "path": "docs/progress/SPRINT_20261025_07.md",
+      "role": "carpeta y proyecto con revisión exacta; gate acotado validado, global NO GO y cuatro fallos abiertos"
     }
   ],
   "first_user_tutorial": {

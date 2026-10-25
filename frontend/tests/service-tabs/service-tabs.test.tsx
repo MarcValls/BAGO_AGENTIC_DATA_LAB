@@ -52,11 +52,8 @@ it('preserves message, calendar and review confirmation across externally select
  expect(writes).toEqual([])
 })
 it('preserves selected project and dirty file across areas; exposes one context panel and exact file controls',async()=>{
- const w={id:'workspace_fixture',name:'fixture',title:'FICTICIO',root:'C:/isolated/fixture',context_files:[]};const requests:any[]=[]
- vi.stubGlobal('fetch',vi.fn(async(path:string,init?:RequestInit)=>{
-  if(init){const body=JSON.parse(String(init.body));requests.push(body);if(body.operation==='list_files')return response({files:[{path:'note.txt',sha256:'a'.repeat(64),size:4}],excluded:[]});if(body.operation==='trash_list')return response({items:[]});if(body.operation==='read')return response({path:'note.txt',sha256:'a'.repeat(64),size:4,text:'Base'})}
-  return response(path.endsWith('/config')?{configured:true,parent:'C:/isolated'}:{workspaces:[w]})
- }))
+ const {folderFixture,workspace}=await import('../project-folders/fixtures')
+ const w=workspace('C:/isolated/fixture','fixture','FICTICIO');const f=folderFixture({workspaces:[w],actions:body=>body.operation==='list_files'?{files:[{path:'note.txt',sha256:'a'.repeat(64),size:4}],excluded:[]}:body.operation==='trash_list'?{items:[]}:body.operation==='read'?{path:'note.txt',sha256:'a'.repeat(64),size:4,text:'Base'}:{}})
  render(<WorkspaceManager contextPanel={<p>Contexto actual de ADL fixture</p>}/>);await screen.findByRole('option',{name:'FICTICIO · fixture'})
  fireEvent.change(screen.getByLabelText('Proyecto gestionado'),{target:{value:w.id}})
  fireEvent.click(screen.getByRole('tab',{name:'Archivos'}));fireEvent.click(await screen.findByRole('button',{name:'note.txt'}))
@@ -66,14 +63,14 @@ it('preserves selected project and dirty file across areas; exposes one context 
  fireEvent.click(screen.getByRole('tab',{name:'Proyectos'}));expect((screen.getByLabelText('Proyecto gestionado') as HTMLSelectElement).disabled).toBe(true)
  fireEvent.click(screen.getByRole('tab',{name:'Archivos'}));expect((screen.getByLabelText('Contenido') as HTMLTextAreaElement).value).toBe('Mi edición')
  for(const tab of screen.getAllByRole('tab'))expect(document.getElementById(tab.getAttribute('aria-controls')!)).toBeTruthy()
- expect(requests.every(r=>['list_files','trash_list','read'].includes(r.operation))).toBe(true)
+ expect(f.mutations().every(r=>['list_files','trash_list','read'].includes(r.body.operation))).toBe(true)
 })
 it('keeps operation review visible and unconfirmed when switching Workspace areas',async()=>{
- vi.stubGlobal('fetch',vi.fn(async(path:string)=>response(path.endsWith('/config')?{configured:true,parent:'C:/isolated'}:{workspaces:[]})))
- render(<WorkspaceManager/>);await screen.findByLabelText('Nombre de carpeta')
- fireEvent.change(screen.getByLabelText('Nombre de carpeta'),{target:{value:'nuevo'}});fireEvent.change(screen.getByLabelText('Título del proyecto'),{target:{value:'Nuevo'}})
- fireEvent.click(screen.getByRole('button',{name:'Revisar creación'}));fireEvent.click(screen.getByRole('tab',{name:'Contexto y memoria'}))
- const review=screen.getByRole('dialog',{name:'Revisar operación del espacio de trabajo'});expect(review.textContent).toContain('C:/isolated/nuevo')
+ const {folderFixture}=await import('../project-folders/fixtures');folderFixture({root:'D:/isolated'})
+ render(<WorkspaceManager/>);await waitFor(()=>expect((screen.getByRole('button',{name:'Usar carpeta'}) as HTMLButtonElement).disabled).toBe(false))
+ fireEvent.click(screen.getByLabelText('Crear una carpeta hija'));fireEvent.change(screen.getByLabelText('Nombre de carpeta'),{target:{value:'nuevo'}});fireEvent.change(screen.getByLabelText('Título del proyecto'),{target:{value:'Nuevo'}})
+ fireEvent.click(screen.getByRole('button',{name:'Usar carpeta'}));await screen.findByRole('dialog');fireEvent.click(screen.getByRole('tab',{name:'Contexto y memoria'}))
+ const review=screen.getByRole('dialog',{name:'Revisar operación del espacio de trabajo'});expect(review.textContent).toContain('D:/isolated/nuevo')
  expect((within(review).getByRole('button',{name:'Confirmar y ejecutar'}) as HTMLButtonElement).disabled).toBe(true)
 })
 it('has scoped hidden rules and automatic width for nested contact containment, without fixed minimum containers',()=>{
