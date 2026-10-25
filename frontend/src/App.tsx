@@ -302,7 +302,7 @@ function App() {
             <div className="communications-section-panel" hidden={activeInteractionView==='contacts'}><Communications activeSection={communicationsSection} draftId={communicationsDraftId} initialContact={communicationContact}/></div>
             <div className="communications-section-panel" hidden={activeInteractionView!=='contacts'}><Contacts onUseContact={contact=>{setCommunicationContact({...contact});setCommunicationsSection('message');setActiveInteractionView('communications')}}/></div>
           </div>}
-          {activeInteractionView === 'workspace' && <WorkspaceManager onSelected={() => setWorkspaceRefresh(value => value + 1)} contextPanel={<div className="context-memory-details context-memory-panel"><CognitionSettings key={workspaceRefresh} mode={cognitiveMode} onModeChange={setCognitiveMode} workspaceOnly /></div>} />}
+          {activeInteractionView === 'workspace' && <WorkspaceManager refreshKey={workspaceRefresh} onSelected={() => setWorkspaceRefresh(value => value + 1)} contextPanel={({openProjectSelection,refreshKey})=><div className="context-memory-details context-memory-panel"><CognitionSettings key={`${workspaceRefresh}:${refreshKey}`} mode={cognitiveMode} onModeChange={setCognitiveMode} workspaceOnly onRequestWorkspaceSelection={openProjectSelection} /></div>} />}
 
           {activeInteractionView === 'capabilities' && <CapabilityManager onPrepareChat={prepareCapabilityChat} onNavigate={navigateCapability} />}
           {activeInteractionView === 'agents' && <AgentManagement onCreate={() => setActiveInteractionView('builder')} onTest={id => { setManagedAgentId(id); setActiveInteractionView('runner') }} onEvaluate={id => { setManagedAgentId(id); setActiveInteractionView('evaluation_lab') }} />}

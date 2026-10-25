@@ -7,7 +7,7 @@ import {cleanup,fireEvent,render,screen,within} from '@testing-library/react'
 import {readFileSync} from 'node:fs'
 vi.mock('axios',()=>({default:{get:vi.fn(()=>new Promise(()=>{}))}}))
 vi.mock('../../src/components/AgentChat',()=>({default:()=> <div>Chat fixture</div>}))
-vi.mock('../../src/components/WorkspaceManager',()=>({default:({contextPanel}:any)=> <section>Gestor de proyecto fixture{contextPanel}</section>}))
+vi.mock('../../src/components/WorkspaceManager',()=>({default:({contextPanel}:any)=> <section>Gestor de proyecto fixture{typeof contextPanel==='function'?contextPanel({openProjectSelection:vi.fn(),refreshKey:0}):contextPanel}</section>}))
 vi.mock('../../src/components/CognitionSettings',()=>({default:()=> <section>Contexto conservado fixture</section>,readCognitiveMode:()=> 'baseline'}))
 import App from '../../src/App'
 afterEach(()=>{cleanup();vi.unstubAllGlobals()})

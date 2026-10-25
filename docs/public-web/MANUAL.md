@@ -109,21 +109,19 @@ Para asignar modelos disponibles, abre Settings → proveedores → **Modelos ac
 
 ## Proyectos, archivos y contexto
 
-Abre **Workspace**. Sus pestañas son **Proyectos**, **Archivos** y **Contexto y memoria**. En Proyectos puedes crear o seleccionar el proyecto gestionado; la selección se conserva al cambiar de área. Si falta la carpeta de proyectos, el administrador debe configurarla antes de crear uno.
+Abre **Workspace**. Sus pestañas son **Proyectos**, **Archivos** y **Contexto y memoria**. **Proyectos** reúne la carpeta, el nombre y el título. La carpeta activa es global para ADL; no representa un aislamiento por conversación.
 
-### Crear o abrir un proyecto
+### Elegir la carpeta de un proyecto
 
-1. Escribe el nombre de carpeta y el título.
-2. Pulsa **Revisar creación**.
-3. Comprueba la ubicación completa y la operación. Abre **Detalles de la operación** si necesitas revisar sus datos.
-4. Marca la confirmación y pulsa **Confirmar y ejecutar**.
-5. Elige un proyecto ya existente en **Proyecto gestionado** para volver a abrirlo.
+1. La opción inicial **Usar esta carpeta existente** toma exactamente la carpeta activa. Puedes escribir otra ruta absoluta o pulsar **Examinar…**. Examinar sólo devuelve una selección; no cambia la carpeta activa ni crea archivos.
+2. Si quieres una subcarpeta nueva, elige explícitamente **Crear una carpeta hija**, selecciona su padre y escribe el nombre de carpeta y el título. En el modo existente no se renombra la carpeta elegida. Los metadatos de un proyecto ya registrado se conservan; la revisión muestra su nombre y título reales.
+3. Pulsa **Usar carpeta** para preparar el plan calculado por el servicio. Revisa **Destino exacto**, la carpeta activa esperada y la caducidad. Cada archivo indica el estado observado: **Falta · se creará** o **Existe · se conserva**. Los directorios técnicos están plegados y puedes desplegar su lista completa. Preparar el plan todavía no escribe ni cambia la selección; si las condiciones cambian después, el servicio rechaza el plan obsoleto.
+4. Marca la confirmación y pulsa **Confirmar y ejecutar**. La confirmación se refiere únicamente al identificador y hash de ese plan. Cambiar ruta, modo, nombre o título invalida el plan y el consentimiento, incluso si restauras después el valor anterior. **Cancelar** conserva tus borradores.
+5. Sólo después de la confirmación el servicio inicializa los mínimos ausentes y selecciona el destino. Conserva los archivos presentes sin sobrescribirlos; no crea el formato experimental `.b5ws`. Los documentos de contexto, estado y continuidad son un punto de partida, no una acreditación de pruebas superadas.
 
-La ubicación de un proyecto gestionado se construye bajo la carpeta padre configurada para proyectos. El nombre de carpeta crea una subcarpeta allí. Esta operación no usa como destino la carpeta activa elegida en **Contexto y memoria**; revisa la ruta completa antes de confirmar.
+**Proyecto gestionado** reúne proyectos registrados por la selección exacta y proyectos del servicio anterior. Abrir uno permite usar sus controles de archivos; **Usar este proyecto en ADL** prepara igualmente un plan para su raíz exacta. No concede permisos de lectura al chat ni a herramientas. No se sustituye tu carpeta elegida por una carpeta administrativa alternativa.
 
-Un proyecto nuevo contiene sus documentos de contexto, estado y continuidad. Esos documentos son un punto de partida, no una acreditación de pruebas superadas. Sus estados iniciales pueden indicar `PREPARED` o `NOT_RUN`.
-
-**Usar este proyecto en ADL** cambia la carpeta activa después de tu revisión. No concede automáticamente permisos de lectura al chat ni autoriza borrar archivos. La ubicación está disponible en **Ubicación del proyecto** y sigue visible al confirmar una operación.
+Los errores, planes caducados y conflictos no se presentan como selección completada. Si hubo un fallo parcial, consulta el **Recibo devuelto por el servicio**: la lista de archivos/directorios creados y el estado de selección son los observados por el backend. No se reintenta automáticamente ni se ejecuta de nuevo un plan antiguo.
 
 ### Archivos y papelera
 
@@ -135,9 +133,9 @@ Si hay cambios sin guardar, guárdalos o descártalos antes de cambiar de archiv
 
 ### Contexto y memoria
 
-Abre la pestaña **Contexto y memoria** en Workspace para consultar la carpeta activa y los documentos del recorrido de lectura existente. **Examinar…** permite elegir una carpeta existente; **Usar carpeta** la convierte en la carpeta activa y actualiza los datos que muestra esa pantalla. En el comportamiento actual, esta selección no crea archivos ni subcarpetas.
+Abre **Contexto y memoria** para ver la misma carpeta activa y los documentos de lectura existentes. **Editar carpeta en Proyectos** vuelve al formulario de selección; esta vista de Contexto no cambia la carpeta ni abre el selector por su cuenta.
 
-Que un documento aparezca como no encontrado significa que no existe en esa ubicación reconocida; seleccionar una carpeta no inventa contexto o continuidad. La creación de un proyecto gestionado sí siembra sus documentos mínimos dentro de la nueva subcarpeta, bajo la carpeta padre configurada. Vincular una carpeta existente desde **Contexto y memoria** no la convierte en un proyecto gestionado ni crea esos documentos. Para consultar los documentos sembrados en la pantalla completa, primero usa el proyecto en ADL y abre **Contexto y memoria**. Una tarjeta de Workspace embebida muestra los documentos del proyecto seleccionado en esa misma pestaña. La memoria de conversación y una memoria general externa son conexiones diferentes: «Sin conectar» no se interpreta como una conexión activa.
+Que un documento aparezca como no encontrado significa que no existe en esa ubicación reconocida. El plan confirmado en Proyectos puede crear únicamente los mínimos ausentes; seleccionar o abrir el panel no inventa contexto ni continuidad. La memoria de conversación y una memoria general externa son conexiones diferentes: «Sin conectar» no se interpreta como una conexión activa.
 
 ## Git local y planes de GitHub
 

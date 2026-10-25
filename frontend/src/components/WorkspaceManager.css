@@ -17,3 +17,25 @@
 .wm-error { border-left:4px solid #ff8b7e; padding:12px; background:#381f29; }
 .wm-review { border:2px solid #e0b567; background:#14273a; padding:22px; position:sticky; bottom:0; z-index:5; box-shadow:0 -10px 30px #0008; }
 @media(max-width:800px) { .wm-files { grid-template-columns:1fr; } .workspace-manager { padding:12px; } }
+
+.workspace-manager .wm-folder-path { display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
+.workspace-manager .wm-folder-path input { flex:1 1 300px; width:auto; margin-top:0; }
+.workspace-manager .wm-folder-modes { display:flex; flex-wrap:wrap; gap:16px; }
+.workspace-manager .wm-folder-modes label { display:flex; gap:8px; align-items:center; }
+.workspace-manager .wm-folder-names { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:16px; }
+.workspace-manager .wm-folder-review dl > div { display:grid; grid-template-columns:minmax(120px,.7fr) minmax(0,1.3fr); gap:12px; margin:8px 0; }
+.workspace-manager .wm-folder-review dd { margin:0; min-width:0; overflow-wrap:anywhere; }
+.workspace-manager .wm-folder-review dt { font-weight:700; }
+.workspace-manager .wm-folder-receipt { border:1px solid #54748e; padding:12px; }
+@media(max-width:700px) { .workspace-manager .wm-folder-names, .workspace-manager .wm-folder-review dl > div { grid-template-columns:minmax(0,1fr); } }
+
+.workspace-manager .wm-folder-review { max-height:calc(100vh - 120px); max-block-size:calc(100dvh - 120px); overflow-y:auto; overscroll-behavior:contain; }
+.workspace-manager .wm-folder-review h4 { margin:12px 0 6px; }
+.workspace-manager .wm-folder-plan-files { list-style:none; margin:6px 0 12px; padding:0; }
+.workspace-manager .wm-folder-plan-files li { display:flex; justify-content:space-between; flex-wrap:wrap; gap:4px 12px; padding:5px 0; border-bottom:1px solid #3c5267; line-height:1.4; }
+.workspace-manager .wm-folder-plan-files li span { font-weight:650; }
+.workspace-manager .wm-folder-directories { margin:10px 0; }
+.workspace-manager .wm-folder-review-actions { position:sticky; bottom:0; background:#14273a; padding-top:8px; border-top:1px solid #54748e; }
+
+.workspace-manager .wm-folder-modes input[type=radio] { width:auto; flex:0 0 auto; display:inline-block; margin:0; padding:0; }
+.workspace-manager .wm-folder-modes label { min-block-size:44px; max-inline-size:100%; flex:0 1 auto; box-sizing:border-box; line-height:1.4; }
