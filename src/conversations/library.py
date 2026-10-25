@@ -41,6 +41,12 @@ def _now() -> str:
 
 
 class ConversationStore:
+    def work_history_metadata(self, limit=10000):
+        """Read assistant trace metadata without loading message content."""
+        from ..work_history import conversation_metadata
+
+        return conversation_metadata(self.database_path, limit)
+
     def __init__(self, database_path: Path | str | None = None) -> None:
         self.database_path = Path(database_path) if database_path else default_database_path()
 

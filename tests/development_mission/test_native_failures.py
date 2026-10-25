@@ -619,3 +619,489 @@ def test_real_agent_provider_failure_finalizes_and_preserves_foreign_conversatio
     assert roots[0]["end_time_unix_nano"] >= roots[0]["start_time_unix_nano"]
     assert (stored_rows("conversations", foreign["id"]),
             stored_rows("messages", foreign["id"])) == foreign_before
+
+
+_WORK_HISTORY_FIELDS = {
+    "key", "kind", "id", "status", "agent_id", "agent_name",
+    "parent_conversation_id", "conversation_id", "message_id", "trace_id",
+    "receipt_id", "receipt_sha256", "created_at", "started_at", "completed_at",
+    "activity_at", "duration_ms", "cost_usd", "tools_executed", "target_written",
+    "tool_receipt_count", "related_key",
+}
+_WORK_HISTORY_RESPONSE_FIELDS = {
+    "schema", "items", "total", "limit", "offset", "has_more", "next_offset", "sources",
+}
+_WORK_HISTORY_PRIVATE = "PRIVATE_WORK_HISTORY_BODY_SENTINEL"
+
+
+def _work_history_no_effect(*args, **kwargs):
+    raise AssertionError("work history invoked an execution or mutation API")
+
+
+def _work_history_bytes(root):
+    return {str(path.relative_to(root)): path.read_bytes()
+            for path in root.rglob("*") if path.is_file()}
+
+
+def _work_history_fixture(tmp_path):
+    from src.agent_tasks import TaskStore
+    from src.conversations import ConversationStore
+    from src.evaluation.agent_lab import EvaluationStore
+    from src.services.agent_delegation import AgentDelegations
+
+    task_path = tmp_path / "tasks.sqlite3"
+    conversation_path = tmp_path / "conversations.sqlite3"
+    evaluation_path = tmp_path / "evaluations.sqlite3"
+    private = _WORK_HISTORY_PRIVATE
+    with sqlite3.connect(task_path) as connection:
+        connection.execute("CREATE TABLE task_runs (run_id TEXT, agent_id TEXT, snapshot TEXT, created_at TEXT, completed_at TEXT, status TEXT, answer TEXT, error TEXT)")
+        connection.execute("INSERT INTO task_runs VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+                           ("task-failed", "deleted-agent", private, "2026-01-01T08:00:00+00:00",
+                            "2026-01-01T09:00:00+00:00", "FAILED", private, private))
+    with sqlite3.connect(conversation_path) as connection:
+        connection.executescript("""
+            CREATE TABLE conversations (id TEXT, project_id TEXT, owner_kind TEXT,
+                owner_id TEXT, title TEXT, status TEXT, created_at TEXT, updated_at TEXT, revision INTEGER);
+            CREATE TABLE messages (id TEXT, conversation_id TEXT, sequence INTEGER,
+                role TEXT, content TEXT, created_at TEXT, status TEXT, references_json TEXT);
+        """)
+        for identity, owner, status in (
+            ("child-conversation", "agent", "archived"),
+            ("empty-conversation", "agent", "active"),
+            ("deleted-conversation", "agent", "deleted"),
+            ("general-conversation", "app", "active"),
+        ):
+            connection.execute("INSERT INTO conversations VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                               (identity, "bago-agentic-data-lab:default", owner, "fixture-agent",
+                                private, status, "2026-01-01T00:00:00+00:00",
+                                "2026-01-01T00:00:00+00:00", 0))
+        references = json.dumps({"trace": {"trace_id": "trace-fixture"},
+                                 "delegation_parent": {"proposal_id": "delegation_" + "a" * 32},
+                                 "private": private})
+        for identity, conversation, role, refs in (
+            ("turn-matched", "child-conversation", "assistant", references),
+            ("turn-no-trace", "child-conversation", "assistant", "{}"),
+            ("turn-user", "child-conversation", "user", references),
+            ("turn-deleted", "deleted-conversation", "assistant", references),
+            ("turn-general", "general-conversation", "assistant", references),
+        ):
+            connection.execute("INSERT INTO messages VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+                               (identity, conversation, 1, role, private,
+                                "2026-01-01T11:00:00+00:00", "completed", refs))
+    with sqlite3.connect(evaluation_path) as connection:
+        connection.executescript("""
+            CREATE TABLE runs (id TEXT, suite_id TEXT, suite_version TEXT, suite_name TEXT,
+                agent_id TEXT, agent_name TEXT, agent_config_fingerprint TEXT, provider_id TEXT,
+                model_id TEXT, status TEXT, total_cases INTEGER, passed_cases INTEGER,
+                failed_cases INTEGER, error_cases INTEGER, duration_ms REAL, started_at TEXT,
+                completed_at TEXT, payload_json TEXT);
+            CREATE TABLE active_suite_runs (suite_id TEXT, run_id TEXT, started_at TEXT);
+        """)
+        connection.execute("INSERT INTO runs VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                           ("evaluation-completed", "suite-fixture", "1", private,
+                            "fixture-agent", "Historical fixture agent", private, private, private,
+                            "COMPLETED", 1, 1, 0, 0, 0, "2026-01-01T10:00:00+00:00",
+                            "2026-01-01T10:30:00+00:00", private))
+        connection.executemany("INSERT INTO active_suite_runs VALUES (?, ?, ?)", [
+            ("suite-fixture", "evaluation-completed", "2026-01-01T10:00:00+00:00"),
+            ("suite-pending", "evaluation-running", "2026-01-01T12:00:00+00:00"),
+        ])
+    jobs_directory = tmp_path / "jobs"
+    jobs_directory.mkdir()
+    (jobs_directory / "legacy-failed.json").write_text(json.dumps({
+        "job_id": "legacy-failed", "agent_id": "fixture-agent", "status": "FAILED",
+        "created_at": "2026-01-01T07:00:00", "completed_at": "2026-01-01T08:00:00",
+        "duration_ms": 0, "cost_usd": 0, "stdout": private, "stderr": private,
+        "metrics": {"private": private},
+    }), encoding="utf-8")
+    conversations = ConversationStore(conversation_path)
+    delegations = AgentDelegations(
+        directory=tmp_path / "delegations", workspace=tmp_path,
+        conversations=conversations, load_agent=_work_history_no_effect,
+        resolve_model=_work_history_no_effect, execute_turn=_work_history_no_effect,
+        authorize_tools=_work_history_no_effect, record_trace=_work_history_no_effect,
+        trace_root=tmp_path / "traces",
+    )
+    (tmp_path / "delegations" / "records").mkdir(parents=True, exist_ok=True)
+    fixture = {
+        "jobs_directory": jobs_directory, "task_store": TaskStore(task_path),
+        "conversations": conversations,
+        "evaluations": EvaluationStore(tmp_path, database_path=evaluation_path),
+        "delegations": delegations,
+    }
+    _work_history_save_delegation(fixture, "a", "PASSED", "child-conversation", "trace-fixture")
+    _work_history_save_delegation(fixture, "b", "FAILED", "failed-child", "failed-trace")
+    return fixture
+
+
+def _work_history_save_delegation(fixture, digit, state, conversation, trace):
+    from src.services.agent_delegation import digest
+
+    binding = {
+        "proposal_id": "delegation_" + digit * 32,
+        "parent_conversation_id": "parent-conversation", "agent_id": "fixture-agent",
+        "agent_name": "Historical fixture agent", "expires_at": 1900000000,
+        "workspace": str(fixture["jobs_directory"].parent),
+        "task": _WORK_HISTORY_PRIVATE, "human_scope": _WORK_HISTORY_PRIVATE,
+    }
+    record = {
+        "binding": binding, "proposal_sha256": digest(binding), "state": state,
+        "started_at": None if state == "PROPOSED" else 1767261600,
+        "finished_at": None if state == "PROPOSED" else 1767265200,
+        "child_conversation_id": conversation, "child_trace_id": trace,
+        "receipt_id": None if state == "PROPOSED" else "receipt-" + digit,
+        "receipt_sha256": None if state == "PROPOSED" else digit * 64,
+        "tools_executed": None if state == "PROPOSED" else False,
+        "target_written": None if state == "PROPOSED" else False,
+    }
+    fixture["delegations"]._save(record, new=True)
+    return binding["proposal_id"]
+
+
+def _work_history_forbid_mutation(monkeypatch, fixture):
+    store = fixture["delegations"]
+    for name in ("get", "public", "_parent", "execute", "save", "_save"):
+        if hasattr(store, name):
+            monkeypatch.setattr(store, name, _work_history_no_effect)
+    for name in ("_connect", "_db"):
+        for key in ("task_store", "conversations", "evaluations"):
+            if hasattr(fixture[key], name):
+                monkeypatch.setattr(fixture[key], name, _work_history_no_effect)
+
+
+def _work_history_authorizer(monkeypatch):
+    original_connect = sqlite3.connect
+    reads = []
+    sensitive = {"snapshot", "answer", "error", "content", "title", "payload_json",
+                 "provider_id", "model_id", "agent_config_fingerprint"}
+
+    def connect(*args, **kwargs):
+        connection = original_connect(*args, **kwargs)
+
+        def authorize(action, first, second, database, trigger):
+            if action == sqlite3.SQLITE_READ:
+                reads.append((first, second))
+                if second in sensitive:
+                    return sqlite3.SQLITE_DENY
+            if action in (sqlite3.SQLITE_INSERT, sqlite3.SQLITE_UPDATE, sqlite3.SQLITE_DELETE,
+                          sqlite3.SQLITE_CREATE_TABLE, sqlite3.SQLITE_DROP_TABLE,
+                          sqlite3.SQLITE_ALTER_TABLE):
+                return sqlite3.SQLITE_DENY
+            return sqlite3.SQLITE_OK
+
+        connection.set_authorizer(authorize)
+        return connection
+
+    monkeypatch.setattr(sqlite3, "connect", connect)
+    return reads
+
+
+def test_work_history_real_five_sources_readonly_and_allowlisted(tmp_path, monkeypatch):
+    from src.work_history import work_history
+
+    fixture = _work_history_fixture(tmp_path)
+    _work_history_forbid_mutation(monkeypatch, fixture)
+    before = _work_history_bytes(tmp_path)
+    reads = _work_history_authorizer(monkeypatch)
+    result = work_history(**fixture)
+    assert set(result) == _WORK_HISTORY_RESPONSE_FIELDS
+    assert result["schema"] == "work-history.v1"
+    assert result["total"] == 7
+    assert result["has_more"] is False
+    assert result["next_offset"] is None
+    assert len(result["sources"]) == 5
+    assert {source["kind"] for source in result["sources"]} == {
+        "legacy_job", "task_run", "delegation", "agent_turn", "evaluation"}
+    for source in result["sources"]:
+        assert set(source) == {"kind", "state", "error_code", "truncated"}
+        assert source["state"] == "available"
+        assert source["error_code"] is None
+        assert source["truncated"] is False
+    rows = {item["key"]: item for item in result["items"]}
+    assert len(rows) == 7
+    for item in rows.values():
+        assert set(item) == _WORK_HISTORY_FIELDS
+        assert item["key"] == item["kind"] + ":" + item["id"]
+    assert rows["legacy_job:legacy-failed"]["status"] == "FAILED"
+    assert rows["legacy_job:legacy-failed"]["cost_usd"] == 0
+    assert rows["legacy_job:legacy-failed"]["duration_ms"] == 0
+    task = rows["task_run:task-failed"]
+    assert task["agent_id"] == "deleted-agent"
+    assert task["status"] == "FAILED"
+    for field in ("agent_name", "trace_id", "receipt_id", "tools_executed", "target_written", "cost_usd"):
+        assert task[field] is None
+    passed_key = "delegation:delegation_" + "a" * 32
+    passed = rows[passed_key]
+    assert passed["status"] == "PASSED"
+    assert passed["tools_executed"] is False
+    assert passed["target_written"] is False
+    assert passed["agent_name"] == "Historical fixture agent"
+    assert passed["started_at"] == "2026-01-01T10:00:00+00:00"
+    assert passed["completed_at"] == "2026-01-01T11:00:00+00:00"
+    assert rows["delegation:delegation_" + "b" * 32]["status"] == "FAILED"
+    turn = rows["agent_turn:turn-matched"]
+    assert turn["related_key"] == passed_key
+    assert passed["related_key"] == turn["key"]
+    assert turn["started_at"] is None
+    assert turn["duration_ms"] is None
+    assert turn["completed_at"] == "2026-01-01T11:00:00+00:00"
+    assert rows["evaluation:evaluation-running"]["status"] == "RUNNING"
+    assert rows["evaluation:evaluation-running"]["trace_id"] is None
+    assert rows["evaluation:evaluation-completed"]["duration_ms"] == 0
+    encoded = json.dumps(result)
+    assert _WORK_HISTORY_PRIVATE not in encoded
+    assert str(tmp_path) not in encoded
+    for field in ("snapshot", "rendered_prompt", "answer", "content", "payload_json", "task",
+                  "provider_id", "model_id", "path", "grants", "stdout"):
+        assert '"' + field + '"' not in encoded
+    assert {table for table, column in reads} >= {"task_runs", "messages", "runs", "active_suite_runs"}
+    assert _work_history_bytes(tmp_path) == before
+
+
+def test_work_history_absent_sources_do_not_create_storage(tmp_path):
+    from src.agent_tasks import TaskStore
+    from src.conversations import ConversationStore
+    from src.evaluation.agent_lab import EvaluationStore
+    from src.services.agent_delegation import AgentDelegations
+    from src.work_history import work_history
+
+    absent = tmp_path / "absent"
+    conversations = ConversationStore(absent / "conversations.sqlite3")
+    delegations = AgentDelegations(
+        directory=absent / "delegations", workspace=tmp_path, conversations=conversations,
+        load_agent=_work_history_no_effect, resolve_model=_work_history_no_effect,
+        execute_turn=_work_history_no_effect, authorize_tools=_work_history_no_effect,
+        record_trace=_work_history_no_effect, trace_root=absent / "traces")
+    before = sorted(str(path.relative_to(tmp_path)) for path in tmp_path.rglob("*"))
+    result = work_history(
+        jobs_directory=absent / "jobs", task_store=TaskStore(absent / "tasks.sqlite3"),
+        conversations=conversations,
+        evaluations=EvaluationStore(tmp_path, database_path=absent / "evaluations.sqlite3"),
+        delegations=delegations)
+    assert result["items"] == []
+    assert result["total"] == 0
+    assert len(result["sources"]) == 5
+    assert all(source["state"] == "absent" for source in result["sources"])
+    assert sorted(str(path.relative_to(tmp_path)) for path in tmp_path.rglob("*")) == before
+    assert not absent.exists()
+
+
+@pytest.mark.parametrize("storage", ["corrupt", "missing-table"])
+def test_work_history_sqlite_errors_are_not_empty_success(tmp_path, storage):
+    from src.agent_tasks import TaskStore
+    from src.conversations import ConversationStore
+    from src.evaluation.agent_lab import EvaluationStore
+
+    path = tmp_path / "broken.sqlite3"
+    if storage == "corrupt":
+        path.write_bytes(b"synthetic invalid sqlite database")
+    else:
+        with sqlite3.connect(path) as connection:
+            connection.execute("CREATE TABLE unrelated (id TEXT)")
+    before = path.read_bytes()
+    stores = (TaskStore(path), ConversationStore(path), EvaluationStore(tmp_path, database_path=path))
+    for store in stores:
+        result = store.work_history_metadata()
+        assert result["state"] == "unavailable"
+        assert result["items"] == []
+        assert isinstance(result["error_code"], str) and result["error_code"]
+        assert str(path) not in result["error_code"]
+    assert path.read_bytes() == before
+
+
+def test_work_history_corrupt_records_preserve_valid_attempts(tmp_path, monkeypatch):
+    from src.work_history import work_history
+
+    fixture = _work_history_fixture(tmp_path)
+    (fixture["jobs_directory"] / "broken.json").write_text("{invalid", encoding="utf-8")
+    record_path = tmp_path / "delegations" / "records" / ("delegation_" + "b" * 32 + ".json")
+    record = json.loads(record_path.read_text(encoding="utf-8"))
+    record["state"] = "PASSED"
+    record_path.write_text(json.dumps(record), encoding="utf-8")
+    _work_history_forbid_mutation(monkeypatch, fixture)
+    before = _work_history_bytes(tmp_path)
+    result = work_history(**fixture)
+    sources = {source["kind"]: source for source in result["sources"]}
+    for kind in ("legacy_job", "delegation"):
+        assert sources[kind]["state"] == "partial"
+        assert sources[kind]["error_code"]
+    keys = {item["key"] for item in result["items"]}
+    assert "legacy_job:legacy-failed" in keys
+    assert "delegation:delegation_" + "a" * 32 in keys
+    assert "delegation:delegation_" + "b" * 32 not in keys
+    assert _work_history_bytes(tmp_path) == before
+
+
+@pytest.mark.parametrize("link_kind", ["symlink", "hardlink"])
+def test_work_history_rejects_unsafe_files(tmp_path, link_kind):
+    import os
+    from src.work_history import legacy_metadata
+
+    jobs = tmp_path / "jobs"
+    jobs.mkdir()
+    original = tmp_path / "unsafe.json"
+    original.write_text(json.dumps({"job_id": "unsafe", "status": "FAILED"}), encoding="utf-8")
+    (jobs / "good.json").write_text(json.dumps({"job_id": "good", "status": "FAILED"}), encoding="utf-8")
+    try:
+        if link_kind == "symlink":
+            (jobs / "unsafe.json").symlink_to(original)
+        else:
+            os.link(original, jobs / "unsafe.json")
+    except (OSError, NotImplementedError) as error:
+        pytest.skip("platform cannot create the unsafe-link fixture: " + str(error))
+    before = _work_history_bytes(tmp_path)
+    result = legacy_metadata(jobs)
+    assert result["state"] == "partial"
+    assert result["error_code"]
+    assert [item["id"] for item in result["items"]] == ["good"]
+    assert _work_history_bytes(tmp_path) == before
+
+
+def test_work_history_real_times_order_unknowns_and_pagination(tmp_path):
+    from src.work_history import work_history
+
+    fixture = _work_history_fixture(tmp_path)
+    with sqlite3.connect(fixture["task_store"].database_path) as connection:
+        connection.execute("DELETE FROM task_runs")
+        connection.executemany("INSERT INTO task_runs VALUES (?, ?, ?, ?, ?, ?, ?, ?)", [
+            ("task-a", "deleted-agent", "private", "2026-01-01T10:00:00-05:00", "2026-01-01T11:00:00+00:00", "FAILED", "private", "private"),
+            ("task-b", "deleted-agent", "private", "2026-01-01T16:00:00+01:00", None, "FAILED", "private", "private"),
+            ("task-invalid", "deleted-agent", "private", "not-a-timestamp", "2026-01-01T09:00:00", "FAILED", "private", "private"),
+        ])
+    _work_history_save_delegation(fixture, "c", "PROPOSED", None, None)
+    all_rows = work_history(**fixture, limit=200)
+    task_rows = work_history(**fixture, kind="task_run", limit=200)
+    assert task_rows["total"] == 3
+    assert [row["id"] for row in task_rows["items"]] == ["task-a", "task-b", "task-invalid"]
+    first, second, invalid = task_rows["items"]
+    assert first["created_at"] == "2026-01-01T15:00:00+00:00"
+    assert first["activity_at"] == second["activity_at"] == "2026-01-01T15:00:00+00:00"
+    assert invalid["created_at"] is None
+    assert invalid["completed_at"] is None
+    assert invalid["activity_at"] is None
+    for row in task_rows["items"]:
+        for name in ("cost_usd", "duration_ms", "tools_executed", "target_written"):
+            assert row[name] is None
+    proposed = next(row for row in all_rows["items"] if row["id"] == "delegation_" + "c" * 32)
+    for name in ("created_at", "started_at", "completed_at", "activity_at"):
+        assert proposed[name] is None
+    legacy = next(row for row in all_rows["items"] if row["kind"] == "legacy_job")
+    assert legacy["created_at"] == "2026-01-01T07:00:00+00:00"
+    assert legacy["cost_usd"] == legacy["duration_ms"] == 0
+    first_page = work_history(**fixture, limit=2, offset=0)
+    second_page = work_history(**fixture, limit=2, offset=2)
+    assert first_page["items"] == all_rows["items"][:2]
+    assert second_page["items"] == all_rows["items"][2:4]
+    assert first_page["total"] == second_page["total"] == all_rows["total"]
+    assert first_page["has_more"] is True and first_page["next_offset"] == 2
+    assert second_page["has_more"] is True and second_page["next_offset"] == 4
+    final = work_history(**fixture, limit=2, offset=all_rows["total"])
+    assert final["items"] == []
+    assert final["has_more"] is False and final["next_offset"] is None
+
+
+@pytest.mark.parametrize("value,epoch", [
+    (None, False), (True, True), (float("nan"), True), (float("inf"), True),
+    (10 ** 100, True), ("bad", False), ("2026-01-01T00:00:00", False),
+])
+def test_work_history_invalid_time_is_unknown_not_exception(value, epoch):
+    from src.work_history import _time
+
+    assert _time(value, epoch=epoch) is None
+
+
+@pytest.mark.parametrize("kwargs", [
+    {"limit": True}, {"limit": 0}, {"limit": 201}, {"limit": 1.5},
+    {"offset": True}, {"offset": -1}, {"offset": 10001}, {"kind": "unknown"},
+])
+def test_work_history_rejects_invalid_pagination(tmp_path, kwargs):
+    from src.work_history import work_history
+
+    fixture = _work_history_fixture(tmp_path)
+    before = _work_history_bytes(tmp_path)
+    with pytest.raises(ValueError):
+        work_history(**fixture, **kwargs)
+    assert _work_history_bytes(tmp_path) == before
+
+
+@pytest.mark.parametrize("mismatch", ["agent", "conversation", "trace", "proposal", "ambiguous"])
+def test_work_history_requires_exact_unambiguous_delegation_relationship(tmp_path, mismatch):
+    from src.work_history import work_history
+
+    fixture = _work_history_fixture(tmp_path)
+    path = fixture["conversations"].database_path
+    with sqlite3.connect(path) as connection:
+        if mismatch == "agent":
+            connection.execute("UPDATE conversations SET owner_id = 'other-agent' WHERE id = 'child-conversation'")
+        elif mismatch == "conversation":
+            connection.execute("UPDATE conversations SET id = 'other-child' WHERE id = 'child-conversation'")
+            connection.execute("UPDATE messages SET conversation_id = 'other-child' WHERE conversation_id = 'child-conversation'")
+        elif mismatch in ("trace", "proposal"):
+            refs = {"trace": {"trace_id": "other-trace" if mismatch == "trace" else "trace-fixture"},
+                    "delegation_parent": {"proposal_id": "delegation_" + ("d" if mismatch == "proposal" else "a") * 32}}
+            connection.execute("UPDATE messages SET references_json = ? WHERE id = 'turn-matched'", (json.dumps(refs),))
+        else:
+            connection.execute("INSERT INTO messages SELECT 'turn-duplicate', conversation_id, 2, role, content, created_at, status, references_json FROM messages WHERE id = 'turn-matched'")
+    result = work_history(**fixture)
+    turns = [row for row in result["items"] if row["kind"] == "agent_turn"]
+    assert len(turns) == (2 if mismatch == "ambiguous" else 1)
+    assert all(row["related_key"] is None for row in turns)
+    delegation = next(row for row in result["items"] if row["id"] == "delegation_" + "a" * 32)
+    assert delegation["related_key"] is None
+    assert len([row for row in result["items"] if row["kind"] == "delegation"]) == 2
+
+
+def test_work_history_explicit_truncation_and_mismatched_filename(tmp_path):
+    from src.work_history import legacy_metadata
+
+    jobs = tmp_path / "jobs"
+    jobs.mkdir()
+    for identity in ("a", "b", "c"):
+        (jobs / (identity + ".json")).write_text(json.dumps({"job_id": identity, "status": "FAILED"}), encoding="utf-8")
+    before = _work_history_bytes(tmp_path)
+    bounded = legacy_metadata(jobs, limit=2)
+    assert len(bounded["items"]) == 2
+    assert bounded["truncated"] is True
+    assert _work_history_bytes(tmp_path) == before
+    (jobs / "wrong.json").write_text(json.dumps({"job_id": "different", "status": "FAILED"}), encoding="utf-8")
+    result = legacy_metadata(jobs)
+    assert result["state"] == "partial"
+    assert result["error_code"]
+    assert {row["id"] for row in result["items"]} == {"a", "b", "c"}
+
+
+def test_work_history_endpoint_uses_runtime_bindings_and_validates_queries(tmp_path, monkeypatch):
+    from fastapi.testclient import TestClient
+    from src.api import server
+    import src.jobs as jobs_repository
+    from src.work_history import work_history
+
+    fixture = _work_history_fixture(tmp_path)
+    agents = tmp_path / "agents"
+    monkeypatch.setattr(server, "AGENTS_DIR", agents)
+    monkeypatch.setattr(jobs_repository, "JOBS_DIR", fixture["jobs_directory"])
+    monkeypatch.setattr(server, "CONVERSATIONS", fixture["conversations"])
+    monkeypatch.setattr(server, "EVALUATIONS", fixture["evaluations"])
+    monkeypatch.setattr(server, "_agent_delegations", lambda: fixture["delegations"])
+    monkeypatch.setenv("BAGO_TASK_HISTORY_PATH", str(fixture["task_store"].database_path))
+    monkeypatch.setattr(server.provider_runtime, "chat", _work_history_no_effect)
+    _work_history_forbid_mutation(monkeypatch, fixture)
+    before = _work_history_bytes(tmp_path)
+    expected = work_history(**fixture)
+    # Deliberately avoid lifespan: this GET must not depend on startup jobs or host storage.
+    client = TestClient(server.app)
+    try:
+        response = client.get("/api/work-history")
+        assert response.status_code == 200
+        assert response.json() == expected
+        page = client.get("/api/work-history", params={"kind": "task_run", "limit": 2, "offset": 0})
+        assert page.status_code == 200
+        assert page.json() == work_history(**fixture, kind="task_run", limit=2, offset=0)
+        for query in ("limit=0", "limit=201", "offset=-1", "offset=10001", "kind=unknown", "limit=true"):
+            assert client.get("/api/work-history?" + query).status_code == 422
+    finally:
+        client.close()
+    assert _work_history_bytes(tmp_path) == before
+    assert not agents.exists()
+
+

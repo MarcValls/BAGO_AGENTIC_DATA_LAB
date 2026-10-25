@@ -126,6 +126,15 @@ El carrusel cambia de captura automáticamente. Puedes abrir el [visor HTML con 
 
 </details>
 
+<details>
+<summary>Captura 06 · DESPUÉS de la reparación del Historial: cinco fuentes disponibles y filtro Trabajo legacy explícito. El vacío corresponde sólo a esa fuente; no demuestra ausencia de tareas ni que una misión haya terminado.</summary>
+
+![Historial unificado después de la reparación: cinco fuentes disponibles, filtro Trabajo legacy vacío](docs/assets/readme-20261025/10-work-history-unified-sources.png)
+
+**DESPUÉS de la reparación del Historial: cinco fuentes disponibles y filtro Trabajo legacy explícito. El vacío corresponde sólo a esa fuente; no demuestra ausencia de tareas ni que una misión haya terminado.**
+
+</details>
+
 **Profundizar:** [cómo se tomaron, identidad del servidor, observaciones y hashes](docs/verification/readme-captures-20261025.md) · [guía del frontend](docs/readme_frontend.md).
 
 ## Datos y conocimiento
@@ -703,7 +712,7 @@ El catálogo es de referencia; la definición operativa sigue en `.github/agents
 | Área | Cobertura | Fuentes presentes / declaradas |
 |---|---|---|
 | Gobierno del proyecto | Estado, contrato, arquitectura, roadmap, aprendizaje y skills | 6/6 presentes |
-| Demo y portfolio | Tutoriales, walkthrough, snapshot y notas de release | 5/5 presentes |
+| Demo y portfolio | Tutoriales, walkthrough, snapshot y notas de release | 6/6 presentes |
 | Versionado | Versión declarada del repositorio | 1/1 presentes |
 
 **Gobierno del proyecto:**
@@ -722,6 +731,7 @@ El catálogo es de referencia; la definición operativa sigue en `.github/agents
 - [`docs/one_command_demo_walkthrough.md`](docs/one_command_demo_walkthrough.md) — canonical demo explanations and artifact walkthrough
 - [`docs/governed-execution/RUNTIME_FIXTURE_PROFILE.md`](docs/governed-execution/RUNTIME_FIXTURE_PROFILE.md) — perfil local GEX autenticado: configuración, fixture sintético, aprobación y recibos durables
 - [`docs/releases/RELEASE_NOTES_DEMO_V1.md`](docs/releases/RELEASE_NOTES_DEMO_V1.md) — frozen one-command demo v1.0.0 release notes
+- [`docs/progress/SPRINT_20261025_06.md`](docs/progress/SPRINT_20261025_06.md) — estado del historial integrado y resultado completo de la fuente aplicada; Jaeger global OPEN
 
 **Versionado:**
 

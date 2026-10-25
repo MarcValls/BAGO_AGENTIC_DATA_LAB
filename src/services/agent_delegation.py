@@ -46,6 +46,12 @@ class DelegationError(ValueError):
 
 
 class AgentDelegations:
+    def work_history_metadata(self, limit=10000):
+        """Project verified records without reconciliation or recovery writes."""
+        from ..work_history import delegation_metadata
+
+        return delegation_metadata(self, limit)
+
     def __init__(self,*,directory,workspace,conversations,load_agent,resolve_model,execute_turn,
                  authorize_tools,record_trace,trace_root,clock=time.time):
         self.directory=Path(directory);self.workspace=Path(workspace).resolve();self.conversations=conversations
