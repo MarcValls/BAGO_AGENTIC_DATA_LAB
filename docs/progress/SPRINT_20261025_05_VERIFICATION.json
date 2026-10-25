@@ -1,0 +1,12 @@
+{
+  "schema": "bago.publication-progress.v1",
+  "status": "WIP_NO_GO_GLOBAL",
+  "first_code_commit": "a9f42368bd791d71c68f81c5c282f1d44d4f12a3",
+  "base_commit": "263bb76cf9a47f404b297808bd33b748833686be",
+  "first_snapshot_full_suite": {"passed":1414,"failed":25,"skipped":1,"subtests_passed":22,"result":"FAIL"},
+  "subsequent_directed_checks": {"readme_and_whatsapp_dom":52,"chat_shortcuts":73,"build":"PASS","readme_collection_render":"PASS","readme_reproducibility":"PASS","full_suite_pass":"NOT_IMPLIED"},
+  "preservation": {"upstream_readonly_ci_guard_cases_restored":3,"private_runtime_data_published":false,"historical_provenance_re_signed":false},
+  "presentation": {"original_png_count":5,"jaeger_png_count":4,"legacy_history_png_is_before_repair":true,"html_controls_browser_check":"PASS","readme_manifest_sha256":"0aad7e121d74627e652af005d3124f0b9ed7c599f6c39019171cc5c7e6d2da0f"},
+  "history_delivery": {"backend_applied_after_first_code_commit":true,"ui":"IN_PROGRESS","not_in_first_code_commit":true},
+  "global_open": ["Four assistant legacy contracts","False business-completion classification P1","Long successful end-to-end mission","Global causal and recovery gates","Fresh final full-suite execution"]
+}
