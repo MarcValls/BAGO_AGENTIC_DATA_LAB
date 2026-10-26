@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from 'react'
 
 export const AGENT_SECTIONS = [
   { id: 'agents', get label(){return t('commerce.my_agents')}, icon: '◈' },
+  { id: 'tools', get label(){return t('agentTools.agentTools')}, icon: '⚒' },
   { id: 'builder', get label(){return t('commerce.create_agent')}, icon: '⊞' },
   { id: 'runner', get label(){return t('commerce.run_test')}, icon: '▷' },
   { id: 'evaluation_lab', get label(){return t('commerce.evaluation_454')}, icon: '▦' },
