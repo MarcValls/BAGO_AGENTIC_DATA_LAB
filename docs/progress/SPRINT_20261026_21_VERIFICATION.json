@@ -6,7 +6,7 @@
   "candidate": {
     "worktree": "C:/Users/AMTEC_Terminal_1º/Desktop/BAGO5_ADL/.worktrees/project-workspace-chat-isolation-20261026",
     "branch": "fix/project-workspace-chat-isolation-20261026",
-    "head_before_sprint": "969719b1ebd17e263a343ac41e8b461158c870f4",
+  "head_before_sprint": "969719b1ebd17e263a343ac41e8b461158c870f4",
     "pull_request": 71,
     "pull_request_state_before_publish": "OPEN",
     "base_sha_before_refresh": "263bb76cf9a47f404b297808bd33b748833686be",
@@ -27,6 +27,18 @@
     "preserved_contract": "GET /api/runtime/status remains registration_metadata and response_verified=false; provider IDs are not added to that endpoint."
   },
   "checks": [
+    {
+      "id": "full-suite-after-rebase",
+      "command": "python scripts/generate_dynamic_readme.py",
+      "result": "README generated after 1574 tests passed",
+      "status": "PASS"
+    },
+    {
+      "id": "readme-check-after-rebase",
+      "command": "python scripts/generate_dynamic_readme.py --check --skip-tests",
+      "result": "README verified; suite NOT_RUN (1576 cases collected)",
+      "status": "PASS"
+    },
     {
       "id": "backend-status-and-routing",
       "command": "C:/Python314/python.exe -m pytest tests/test_runtime_status.py tests/test_runtime_status_integration.py tests/test_orchestrator_routing.py::test_orchestrator_resolves_file_read_intent_then_calls_only_authorized_reader tests/test_orchestrator_routing.py::test_orchestrator_does_not_read_files_when_workspace_read_permission_is_missing -q",
@@ -95,6 +107,6 @@
     {"path": "docs/agent-chat-control/assets/manual-ui-actual-2026-10-26/07-provider-response-observed-session.png", "sha256": "3D3435D73FC2DA60DB2D780B57A8636F541443E021D8965CFBCFE00A9DA948D3"},
     {"path": "docs/agent-chat-control/assets/manual-ui-actual-2026-10-26/08-jaeger-provider-response-observed-session.png", "sha256": "B5CD1B396DA655E5CEB6A87435A92D1CD5261216E5585EFF3383CDAEFA848646"}
   ],
-  "readme_closure": {"full_generation": "NOT_RUN", "check_skip_tests": "NOT_RUN"},
-  "github": {"published": false, "fresh_base_check": "REQUIRED; origin/main advanced to 55917870d89ac9ee87dc9b8477496ec2e03c8d71", "ci_for_new_head": "NOT_RUN"}
+  "readme_closure": {"full_generation": "PASS; 1574 tests passed", "check_skip_tests": "PASS; 1576 cases collected; suite NOT_RUN"},
+  "github": {"published": false, "fresh_base_check": "PASS; HEAD is based on origin/main 55917870d89ac9ee87dc9b8477496ec2e03c8d71", "ci_for_new_head": "NOT_RUN"}
 }
