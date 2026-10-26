@@ -10,7 +10,7 @@ const response=(data:unknown,status=200)=>({ok:status<400,status,json:async()=>d
 const summary=(id:string,date?:string)=>({id,owner_kind:'assistant',owner_id:'app-assistant',title:'Historial '+id,status:'active',updated_at:date,revision:2})
 const rows=[summary('old','2026-10-20T10:15:00Z'),summary('tie-one','2026-10-24T11:00:00+01:00'),summary('tie-two','2026-10-24T10:00:00Z'),summary('bad','invalid-date'),summary('missing'),summary('date-only','2026-10-24')]
 function chat(policy:'explicit'|'latest'|undefined='explicit',workspaceScopeVersion=0){return <AgentChat historySelection={policy} workspaceScopeVersion={workspaceScopeVersion} cognitiveMode="baseline" onNavigate={()=>{}} onOpenProviderSettings={()=>{}} onOpenCognitionSettings={()=>{}}/>}
-async function fixture({policy='explicit',late=false,fail=false,workspaceScopeVersion=0}:{policy?:'explicit'|'latest';late?:boolean;fail?:boolean;workspaceScopeVersion?:number}={}){
+async function fixture({policy='explicit',late=false,fail=false,workspaceScopeVersion=0,listRows=rows}:{policy?:'explicit'|'latest';late?:boolean;fail?:boolean;workspaceScopeVersion?:number;listRows?:typeof rows}={}){
  const calls:Array<{url:string;method:string;body:any}>=[];const created=new Map<string,any>();let delayed:((value:any)=>void)|null=null;let activeTitle='Proyecto A'
  const fetcher=vi.fn(async(url:string,init?:RequestInit)=>{
  const method=init?.method??'GET',body=init?.body?JSON.parse(String(init.body)):null;calls.push({url,method,body})
@@ -20,7 +20,7 @@ async function fixture({policy='explicit',late=false,fail=false,workspaceScopeVe
  if(url.startsWith('/api/conversations?')){
   if(fail)return response({detail:'synthetic list failure'},500)
   if(late)return await new Promise(r=>{delayed=r})
-  const query=new URLSearchParams(url.split('?')[1]);return response({conversations:query.get('owner_kind')==='agent'?[{...summary('agent-history','2026-10-24T12:00:00Z'),owner_kind:'agent',owner_id:'fixture-agent'}]:rows})
+  const query=new URLSearchParams(url.split('?')[1]);return response({conversations:query.get('owner_kind')==='agent'?[{...summary('agent-history','2026-10-24T12:00:00Z'),owner_kind:'agent',owner_id:'fixture-agent'}]:listRows})
  }
  if(url==='/api/conversations'&&method==='POST'){
   const c={...summary('created-'+(created.size+1),'2026-10-24T14:00:00Z'),owner_kind:body.owner_kind,owner_id:body.owner_id,revision:1,messages:[]};created.set(c.id,c);return response(c)
@@ -65,6 +65,11 @@ it('blank BAGO5 lists only assistant history, keeps agent histories inaccessible
 })
 it('orders valid activity instants newest-first with stable ties and exposes true UTC date/time only',async()=>{
  const f=await fixture();const buttons=Array.from(f.view.container.querySelectorAll('.conversation-library-item'));expect(buttons.map(b=>b.querySelector('strong')?.textContent)).toEqual(['Historial tie-one','Historial tie-two','Historial old','Historial bad','Historial missing','Historial date-only']);const times=Array.from(f.view.container.querySelectorAll('time'));expect(times.map(t=>t.getAttribute('dateTime'))).toEqual([rows[1].updated_at,rows[2].updated_at,rows[0].updated_at]);expect(times[0].textContent).toBe('Última actividad · '+formatDate(rows[1].updated_at!)+' UTC');expect(f.view.container.querySelectorAll('.conversation-library-item span')).toHaveLength(6);expect(screen.getAllByText('Última actividad no disponible')).toHaveLength(3)
+})
+it('localizes the service default conversation title without changing user titles',async()=>{
+ const f=await fixture({listRows:[{...summary('untitled','2026-10-24T12:00:00Z'),title:'New conversation'},summary('custom','2026-10-24T11:00:00Z')]});
+ const titles=Array.from(f.view.container.querySelectorAll('.conversation-library-item strong')).map(node=>node.textContent);
+ expect(titles).toEqual(['Nueva conversación','Historial custom']);expect(details(f.calls)).toEqual([]);expect(writes(f.calls)).toEqual([])
 })
 it('list failure shows error while blank composer remains usable and no record or inference is created',async()=>{
  const f=await fixture({fail:true});await waitFor(()=>expect(f.view.container.querySelector('.conversation-library .inline-error')?.textContent).toBeTruthy());const composer=screen.getByRole('textbox',{name:'Mensaje al asistente o agente seleccionado'}) as HTMLTextAreaElement;fireEvent.change(composer,{target:{value:'Borrador recuperable'}});expect(composer.disabled).toBe(false);expect(composer.value).toBe('Borrador recuperable');expect(details(f.calls)).toEqual([]);expect(writes(f.calls)).toEqual([])

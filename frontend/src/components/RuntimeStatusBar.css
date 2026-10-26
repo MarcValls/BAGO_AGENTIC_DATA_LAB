@@ -1,11 +1,12 @@
 /* Opt-in normal-flow row: no App wrapper, reparenting or fixed overlay. */
 .app-shell:has(> footer.runtime-status-bar) { grid-template-rows: minmax(0, 1fr) auto; }
 .app-shell > footer.runtime-status-bar { grid-column: 1 / -1; grid-row: 2; }
-.runtime-status-bar { min-width: 0; min-height: 0; border-top: 1px solid #527086; background: #111f2c; color: #eef6fc; font-size: 14px; font-weight: 650; line-height: 1.3; }
+.runtime-status-bar { min-width: 0; min-height: 0; border-top: 1px solid #527086; background: #111f2c; color: #eef6fc; font-size: 15px; font-weight: 700; line-height: 1.3; }
 .runtime-status-bar .runtime-status-bar__row { display: grid; grid-template-columns: repeat(5, minmax(180px, 1fr)) auto; min-height: 44px; overflow-x: auto; align-items: stretch; overscroll-behavior-inline: contain; scroll-snap-type: x proximity; scrollbar-width: thin; }
 .runtime-status-bar .runtime-status-bar__group { display: grid; grid-template-columns: 8px minmax(0, 1fr); grid-template-rows: auto auto; align-content: center; align-items: start; column-gap: 6px; row-gap: 2px; min-width: 0; padding: 7px 9px; border: 0; border-right: 1px solid #344b5e; background: transparent; color: inherit; font: inherit; text-align: left; cursor: pointer; scroll-snap-align: start; white-space: normal; }
 .runtime-status-bar .runtime-status-bar__group[aria-expanded="true"] { background: #20394b; }
 .runtime-status-bar .runtime-status-bar__group > strong { grid-column: 2; grid-row: 1; }
+.runtime-status-bar .runtime-status-bar__group > strong { font-size: 16px; font-weight: 750; }
 .runtime-status-bar .runtime-status-bar__value { grid-column: 2; grid-row: 2; min-width: 0; max-width: 100%; overflow-wrap: anywhere; white-space: normal; }
 .runtime-status-bar .runtime-status-bar__dot { width: 8px; height: 8px; flex: 0 0 8px; border-radius: 50%; background: #b4c2cb; }
 .runtime-status-bar [data-tone="good"] .runtime-status-bar__dot { background: #8ce2b4; }
@@ -38,15 +39,17 @@
 .runtime-status-bar .runtime-status-bar__state[data-tone="error"] { color: #ffccc8; border-color: #ba8583; background: #402729; }
 .runtime-status-bar .runtime-status-bar__detail-grid, .runtime-status-bar .runtime-status-bar__detail-meta { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin: 0; }
 .runtime-status-bar .runtime-status-bar__detail-card { min-width: 0; padding: 10px 12px; border: 1px solid #3f5669; border-inline-start: 3px solid var(--status-section); border-radius: 4px; background: #162839; }
-.runtime-status-bar .runtime-status-bar__details dt { font-size: 14px; font-weight: 750; color: #d4e4f0; }
-.runtime-status-bar .runtime-status-bar__details dd { margin: 5px 0 0; font-size: 14px; font-weight: 650; line-height: 1.45; overflow-wrap: anywhere; }
+.runtime-status-bar .runtime-status-bar__details dt { font-size: 15px; font-weight: 750; color: #d4e4f0; }
+.runtime-status-bar .runtime-status-bar__details dd { margin: 5px 0 0; font-size: 15px; font-weight: 700; line-height: 1.45; overflow-wrap: anywhere; }
 .runtime-status-bar .runtime-status-bar__detail-meta { margin-top: 12px; padding-top: 12px; border-top: 1px solid #344b5e; }
 .runtime-status-bar .runtime-status-bar__detail-meta > div { min-width: 0; padding: 8px 12px; border: 1px solid #344b5e; border-radius: 4px; background: #142231; }
 .runtime-status-bar .runtime-status-bar__freshness[data-freshness="stale"], .runtime-status-bar .runtime-status-bar__freshness[data-freshness="clock"] { color: #ffe3ab; }
 .runtime-status-bar .runtime-status-bar__notice { margin: 0; padding: 4px 10px; border-bottom: 1px solid #527086; color: #ffe0a2; }
+.runtime-status-bar .runtime-status-bar__scroll-hint { display: none; }
 @media (max-width: 760px) {
   .app-shell:has(> footer.runtime-status-bar) { grid-template-rows: auto minmax(0, 1fr) auto; }
   .app-shell > footer.runtime-status-bar { grid-row: 3; }
   .runtime-status-bar .runtime-status-bar__row { grid-template-columns: repeat(5, minmax(180px, 1fr)) auto; }
+  .runtime-status-bar .runtime-status-bar__scroll-hint { display: block; margin: 0; padding: 3px 10px; border-bottom: 1px solid #344b5e; color: #c3d9e8; font-size: 12px; font-weight: 750; line-height: 1.25; text-align: right; }
   .runtime-status-bar .runtime-status-bar__detail-grid, .runtime-status-bar .runtime-status-bar__detail-meta { grid-template-columns: minmax(0, 1fr); }
 }

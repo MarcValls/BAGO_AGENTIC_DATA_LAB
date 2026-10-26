@@ -52,6 +52,14 @@ A 390 × 844 tampoco hubo overflow horizontal del documento. El panel de proyect
 
 Capturas de esta pasada, con datos sintéticos, guardadas fuera del repositorio en `C:\Users\AMTEC_Terminal_1º\AppData\Local\Temp\adl-review-candidate-20261026-e3e72364\frontend-final-desktop.png` y `...\frontend-final-mobile.png`. Se comprobó también la navegación a Capacidades, que mostró el catálogo; sin envíos, cambios de datos ni llamadas a proveedores.
 
+## Revisión posterior de pulido móvil - 26 de octubre
+
+Sobre el mismo runtime aislado `5194/8097`, el siguiente sprint corrigió tres observaciones P2 de la pasada anterior: el panel de proyecto ahora inicia plegado en ventanas de hasta 760 px; la franja de estado muestra una indicación para deslizar y descubrir Git/Proveedores; y la tipografía del pie subió a 15 px / peso 700, con etiquetas de 16 px / peso 750. El título de servicio `New conversation` se presenta localizado como «Nueva conversación» sin renombrar el registro ni alterar otros títulos.
+
+Playwright en Chromium devolvió HTTP 200, sin errores de página ni overflow horizontal del documento en escritorio 1440 × 900 y móvil 390 × 844. En móvil, el panel comenzó cerrado (`aria-expanded=false`), el compositor quedó visible, el usuario pudo abrir y cerrar el panel, y el pie mostró «Desliza para ver Git y proveedores →»; la franja conserva scroll horizontal interno (1084 px de contenido para 390 px visibles). En escritorio, el panel continúa abierto y se ven todos los grupos del pie. Los datos siguen siendo sintéticos, no se llamó al modelo y 8093/8098 no se usaron.
+
+Capturas de la candidata tras el cambio, en Temp: `C:\Users\AMTEC_Terminal_1º\AppData\Local\Temp\adl-review-candidate-20261026-e3e72364\frontend-polish-desktop.png` y `...\frontend-polish-mobile.png`.
+
 ## Pendientes recomendados por prioridad
 
 ### P0 - antes de afirmar integración del producto
@@ -68,9 +76,9 @@ Capturas de esta pasada, con datos sintéticos, guardadas fuera del repositorio 
 
 ### P2 - pulido y accesibilidad
 
-- Ajustar la distribución de la barra inferior con nombres y valores legibles en escritorio; añadir una señal de desplazamiento o una composición compacta para móvil, donde Git y Proveedores quedan fuera de la primera vista. Probar también zoom del navegador.
+- Completar QA de zoom del navegador, navegación sólo con teclado y VoiceOver/NVDA; la pasada de pulido verificó teclado por pruebas de foco, pero no probó lectores de pantalla ni zoom.
 - Completar QA de teclado/foco y táctil para el panel derecho, los menús desplegables y el cambio de proyecto; la comprobación visual móvil 390 × 844 sólo cubrió el estado inicial y el cierre del panel.
-- Localizar `New conversation` y valorar iniciar el panel de proyecto plegado en móvil para que el chat sea visible desde la primera pantalla.
+- Mantener la actualización de los manuales de uso con capturas sintéticas por caso; la revisión frontend no reemplaza esa documentación.
 - Añadir capturas de producto con datos sintéticos y runtime identificado en los manuales de cada caso de uso. No reutilizar capturas locales con datos de conversación reales.
 
 ## Dictamen

@@ -49,6 +49,17 @@ it('workspace-only agents never request development API and preserve independent
  fireEvent.click(screen.getByRole('button',{name:'Cerrar cambios del proyecto'}));fireEvent.click(screen.getByRole('button',{name:/Proyecto/}));
  expect((screen.getByLabelText('Permiso actual') as HTMLInputElement).checked).toBe(true);expect(fetcher).not.toHaveBeenCalled();
 })
+it('starts folded on narrow screens when requested open by the desktop layout',()=>{
+ const original=Object.getOwnPropertyDescriptor(window,'matchMedia')
+ Object.defineProperty(window,'matchMedia',{configurable:true,value:vi.fn(()=>({matches:true}))})
+ try{
+  render(<DevelopmentPanel ownerId="app-assistant" showChanges={false} initialOpen workspaceContent={<p>Workspace content</p>}/>);
+  const tab=screen.getByRole('button',{name:/Proyecto/});expect(tab.getAttribute('aria-expanded')).toBe('false');
+  expect(document.getElementById(tab.getAttribute('aria-controls')!)?.hidden).toBe(true)
+ }finally{
+  if(original)Object.defineProperty(window,'matchMedia',original);else delete (window as any).matchMedia
+ }
+})
 it('workspace and history expand independently without changing confirmation',async()=>{
  setup();render(<DevelopmentPanel ownerId="author" workspaceContent={<details className="project-sidebar-section"><summary>Carpeta de trabajo</summary><p>Scope actual</p></details>}/>);
  await screen.findByText(fixture.change_id+' · PREPARED');

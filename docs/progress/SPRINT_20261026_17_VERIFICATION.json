@@ -1,0 +1,64 @@
+{
+  "schema": "adl-sprint-verification.v1",
+  "sprint": "SPRINT_20261026_17",
+  "repository": "BAGO_AGENTIC_DATA_LAB",
+  "branch": "fix/project-workspace-chat-isolation-20261026",
+  "base_sha": "263bb76cf9a47f404b297808bd33b748833686be",
+  "head_before_sprint": "1181e68d8f903b5e33c4ac7d10fea4b5e6160a3e",
+  "identity_binding": {
+    "method": "isolated_process_launch_from_worktree_and_source_hashes",
+    "frontend_origin": "http://127.0.0.1:5194",
+    "api_origin": "http://127.0.0.1:8097",
+    "vite_pid": 31076,
+    "api_pid": 33788,
+    "isolated_data_root": "C:\\Users\\AMTEC_Terminal_1º\\AppData\\Local\\Temp\\adl-review-candidate-20261026-e3e72364",
+    "comparison_runtime_8093_8098_used": false
+  },
+  "changed_source_sha256": {
+    "frontend/src/components/DevelopmentPanel.tsx": "D7D27864F59944167FA8AC300D966CC5F1795B6F4FB20558CDCF3A2DE1D0A7AB",
+    "frontend/src/components/RuntimeStatusBar.tsx": "82E2372C1B951E5103DAC7315B1B710AF908D63CDDD2210721CE2DB35FFDBA2F",
+    "frontend/src/components/RuntimeStatusBar.css": "AE58E96C89FA488A5D112054DE5614A3964FE379BB68C3EBCC8E23977917EFC7",
+    "frontend/src/components/AgentChat.tsx": "722DBB2D66A8F688CBB3BE221F404F2C8BB78B03F124C84044B86E3724C09538",
+    "frontend/src/i18n/domains/commerce.ts": "94AC227D1D0E6B9619EFBCD92171094F98A1E96633D0B7626C8D656327255CE6",
+    "frontend/tests/development/development-panel.test.tsx": "1A6D6DAF539443A7DB87CDBE0905830DC1F0879E1B4E2442C9DFDC035F5EAA5E",
+    "frontend/tests/runtime-status-bar/status.test.tsx": "F0AAFEDC3488262F7482A94BAC1C44BE1CFC215957DC7AA097D202CC36341F61",
+    "frontend/tests/chat-startup/startup.test.tsx": "15100AF1CD83BB56AF80CEF1AFB885676D077CA1B391A3AC46262C20D1E1D8EC"
+  },
+  "verification": {
+    "frontend_directed_tests": "PASS 54/54 across 3 files",
+    "frontend_build": "PASS with existing greater-than-500kB chunk warning",
+    "git_diff_check": "PASS",
+    "readme_generator": "PASS: README generated after 1570 tests passed",
+    "readme_check": "PASS: reproducible; suite NOT_RUN (1572 cases collected)",
+    "github_push_ci": "PENDING",
+    "github_pull_request_ci": "PENDING"
+  },
+  "rendered_ui_review": {
+    "browser": "Python Playwright / Chromium; CUA had no browser surfaces",
+    "http_status": 200,
+    "page_errors": [],
+    "desktop_viewport": "1440x900",
+    "desktop_panel_open": true,
+    "mobile_viewport": "390x844",
+    "mobile_document_width": 390,
+    "mobile_panel_initial_open": false,
+    "mobile_tab_aria_expanded_initial": false,
+    "mobile_composer_visible_initially": true,
+    "mobile_hint_visible": true,
+    "mobile_status_row": {
+      "client_width": 390,
+      "scroll_width": 1084
+    },
+    "mobile_panel_toggle": [false, true, false],
+    "localized_system_title": "Nueva conversación",
+    "provider_invocations": 0,
+    "external_messages_sent": 0,
+    "screenshots_temp": [
+      "C:\\Users\\AMTEC_Terminal_1º\\AppData\\Local\\Temp\\adl-review-candidate-20261026-e3e72364\\frontend-polish-desktop.png",
+      "C:\\Users\\AMTEC_Terminal_1º\\AppData\\Local\\Temp\\adl-review-candidate-20261026-e3e72364\\frontend-polish-mobile.png"
+    ]
+  },
+  "route_receipt": ".bago/evidence/frontend-polish-20261026/route.json",
+  "gate": "VERIFICATION_IN_PROGRESS",
+  "release_readiness": "NOT_VALIDATED"
+}
