@@ -63,6 +63,8 @@ def create_project_folder_router(*, workspace_root, set_workspace_root, pick_dir
             owner = service()
             if request.method == 'GET' and path == 'config':
                 payload = owner.config()
+            elif request.method == 'GET' and path == 'active':
+                payload = await asyncio.to_thread(owner.active_project)
             elif request.method == 'GET' and path == 'workspaces':
                 payload = await asyncio.to_thread(owner.workspaces)
             elif request.method == 'POST' and path == 'browse':

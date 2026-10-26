@@ -193,6 +193,8 @@
 .chat-agent-panel .conversation-library-heading { min-height: 32px; align-items: center; justify-content: center; padding: 0 0 10px; text-align: center; }
 .chat-agent-panel .chat-sidebar-heading h2,
 .chat-agent-panel .conversation-library-heading strong { margin: 0; color: #dce7f2; font-size: 1rem; font-weight: 700; line-height: 1.2; }
+.conversation-library-project { display: grid; justify-items: start; gap: 3px; text-align: left; }
+.conversation-library-project span { max-width: 100%; overflow: hidden; color: #a9bfd4; font-size: .78rem; text-overflow: ellipsis; white-space: nowrap; }
 .chat-sidebar-agents { display: flex; flex-direction: column; overflow-y: auto; border-left: 1px solid #34485f; }
 .chat-sidebar-agents .chat-sidebar-heading { flex: 0 0 auto; }
 .chat-sidebar-agents .control-agent-option { flex: 0 0 auto; }

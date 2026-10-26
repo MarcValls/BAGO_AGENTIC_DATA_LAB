@@ -95,6 +95,8 @@ interface AgentChatProps {
   onPreparedPromptHandled?: (id:string)=>void
   /** Explicit selection is the product policy; latest retains reusable embedding compatibility. */
   historySelection?: 'latest' | 'explicit'
+  /** Changes when the bound project folder changes; history is reloaded in its own scope. */
+  workspaceScopeVersion?: number
   onInspectionSelection?: (selection: InspectionSelection|null) => void
   onInspectExecution?: (selection: InspectionSelection) => void
   onNavigate: (view: ExistingView) => void
@@ -163,7 +165,7 @@ function inferIntent(message: string, cognitiveMode: 'baseline' | 'bago5'): { op
   return { operation: 'chat' }
 }
 
-export default function AgentChat({ onInspectionSelection, onInspectExecution, onNavigate, onManageAgents, onOpenCommunication, onOpenProviderSettings, onOpenCognitionSettings, cognitiveMode, historySelection = 'latest', hidden = false, preparedPrompt, onPreparedPromptHandled }: AgentChatProps) {
+export default function AgentChat({ onInspectionSelection, onInspectExecution, onNavigate, onManageAgents, onOpenCommunication, onOpenProviderSettings, onOpenCognitionSettings, cognitiveMode, historySelection = 'latest', workspaceScopeVersion = 0, hidden = false, preparedPrompt, onPreparedPromptHandled }: AgentChatProps) {
   useI18n()
   const english = getLocale() === 'en'
   const [reviewContext,setReviewContext]=useState<{runs:Array<{work_id:string;owner_id:string;producer_name?:string;conversation_id:string;source_root:string;candidate_id:string;scope_sha256:string;artifacts:Array<{path:string;sha256:string}>;business_acceptance:string}>;contacts:Array<{id:string;name:string;phone:string}>}>({runs:[],contacts:[]})
@@ -201,6 +203,7 @@ export default function AgentChat({ onInspectionSelection, onInspectExecution, o
   const [libraryMode, setLibraryMode] = useState<LibraryMode>('active')
   const [libraryError, setLibraryError] = useState<string|Error>('')
   const [permanentlyDeleting, setPermanentlyDeleting] = useState(false)
+  const [activeProject, setActiveProject] = useState<{project_id:string|null;title:string;scope:string}|null>(null)
   const [loadingConversation, setLoadingConversation] = useState(false)
   const [creatingConversation, setCreatingConversation] = useState(false)
   const creatingConversationRef = useRef(false)
@@ -463,7 +466,7 @@ export default function AgentChat({ onInspectionSelection, onInspectExecution, o
   useEffect(() => {onInspectionSelection?.(activeConversation ? {conversationId:activeConversation.id,revision:activeConversation.revision} : null)}, [activeConversation?.id, activeConversation?.revision, onInspectionSelection])
 
   const conversationLoadGeneration = useRef(0)
-  const conversationScope = `${ownerKind}:${ownerId}:${libraryMode}`
+  const conversationScope = `${ownerKind}:${ownerId}:${libraryMode}:${workspaceScopeVersion}`
   const conversationScopeRef = useRef(conversationScope)
   conversationScopeRef.current = conversationScope
   const matchesOwner = (conversation: ConversationSummary) => conversation.owner_kind === ownerKind && conversation.owner_id === ownerId
@@ -573,7 +576,20 @@ export default function AgentChat({ onInspectionSelection, onInspectExecution, o
       window.removeEventListener('focus', refreshIfStale)
     }
   }, [refreshAgents])
-  useEffect(() => {clearInspectionSelection(); void refreshConversationList();return () => {conversationLoadGeneration.current++}}, [ownerKind, ownerId, libraryMode, historySelection])
+  useEffect(() => {
+    clearInspectionSelection()
+    setConversationList([])
+    void fetch('/api/project-folders/v1/active').then(async response => {
+      if (!response.ok) throw await responseError(response)
+      return response.json()
+    }).then(value => {
+      if (conversationScopeRef.current.endsWith(`:${workspaceScopeVersion}`)) {
+        setActiveProject({project_id:typeof value.project_id==='string'?value.project_id:null,title:typeof value.title==='string'?value.title:'',scope:typeof value.scope==='string'?value.scope:'unknown'})
+      }
+    }).catch(() => { setActiveProject(null) })
+    void refreshConversationList()
+    return () => {conversationLoadGeneration.current++}
+  }, [ownerKind, ownerId, libraryMode, historySelection, workspaceScopeVersion])
   useEffect(() => { void refreshConversationProposals(activeConversation?.id ?? null) }, [activeConversation?.id])
   useEffect(() => { messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' }) }, [messages])
   useEffect(() => () => { if (conversationScrollTimerRef.current !== null) window.clearTimeout(conversationScrollTimerRef.current) }, [])
@@ -1054,6 +1070,7 @@ export default function AgentChat({ onInspectionSelection, onInspectExecution, o
   const conversationLibrary = (
     <section style={!selectedAgent ? {flex: '1 1 0', minHeight: 0, maxHeight: 'none', margin: 0} : undefined} className="chat-sidebar-pane conversation-library" aria-label={t('commerce.conversation_library')}>
               {selectedAgent && <div className="conversation-library-heading"><strong>{t('commerce.chat_title_named',{name:selectedAgent.config.name})}</strong></div>}
+              {!selectedAgent && <div className="conversation-library-heading conversation-library-project"><strong>{t('commerce.project_chats')}</strong><span title={activeProject?.title||undefined}>{activeProject?.title||t('commerce.project_not_registered')}</span></div>}
               <TabStrip<LibraryMode> label={t('commerce.conversation_status')} value={libraryMode} onChange={setLibraryMode} items={[{ id: 'active', label: t('commerce.recent') }, { id: 'archived', label: t('commerce.archived') }, { id: 'deleted', label: t('commerce.trash') }]} />
               {loadingConversation && <p className="muted-state" role="status">{t('commerce.opening_conversation')}</p>}
               {libraryError && <p className="inline-error" role="alert">{errorMessage(libraryError)}</p>}

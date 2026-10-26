@@ -2,9 +2,10 @@ import asyncio
 from pathlib import Path
 
 import pytest
+from fastapi.testclient import TestClient
 
 from src.conversations import ConversationConflict, ConversationNotFound, ConversationStore
-from src.conversations.library import PROJECT_ID, default_database_path
+from src.conversations.library import PROJECT_ID, default_database_path, reset_project_scope, set_project_scope
 from src.api import server
 
 
@@ -36,6 +37,89 @@ def test_owner_scoping_restart_and_message_references_are_persistent(tmp_path: P
     assert saved["messages"][1]["references"]["sources"][0]["path"] == "demo.txt"
     assert reopened.get(agent_one["id"])["messages"] == []
     assert reopened.get(agent_two["id"])["id"] != reopened.get(agent_one["id"])["id"]
+
+
+def test_conversation_history_isolated_by_active_project_and_legacy_history_is_preserved(tmp_path: Path):
+    store = ConversationStore(tmp_path / "library.sqlite3")
+    legacy = store.create("assistant", "ignored", "Legacy project chat")
+
+    first_token = set_project_scope("workspace_project_a")
+    try:
+        first = store.create("assistant", "ignored", "Project A chat")
+        assert [item["id"] for item in store.list()] == [first["id"]]
+        assert store.get(first["id"])["project_id"] == "workspace_project_a"
+        with pytest.raises(ConversationNotFound):
+            store.get(legacy["id"])
+    finally:
+        reset_project_scope(first_token)
+
+    second_token = set_project_scope("workspace_project_b")
+    try:
+        second = store.create("assistant", "ignored", "Project B chat")
+        assert [item["id"] for item in store.list()] == [second["id"]]
+        with pytest.raises(ConversationNotFound):
+            store.get(first["id"])
+    finally:
+        reset_project_scope(second_token)
+
+    assert [item["id"] for item in store.list()] == [legacy["id"]]
+    assert store.get(legacy["id"])["title"] == "Legacy project chat"
+
+
+def test_conversation_api_scopes_requests_to_the_active_project(monkeypatch, tmp_path: Path):
+    store = ConversationStore(tmp_path / "library.sqlite3")
+    monkeypatch.setattr(server, "CONVERSATIONS", store)
+    active = {"id": "workspace_project_a"}
+    monkeypatch.setattr(server, "_active_conversation_project_id", lambda: active["id"])
+    client = TestClient(server.app)
+
+    created = client.post("/api/conversations", json={"owner_kind": "assistant"})
+    assert created.status_code == 200
+    conversation = created.json()
+    assert conversation["project_id"] == "workspace_project_a"
+    assert [item["id"] for item in client.get("/api/conversations").json()["conversations"]] == [conversation["id"]]
+
+    active["id"] = "workspace_project_b"
+    assert client.get("/api/conversations").json()["conversations"] == []
+    assert client.get(f"/api/conversations/{conversation['id']}").status_code == 404
+
+    active["id"] = "workspace_project_a"
+    assert client.get(f"/api/conversations/{conversation['id']}").status_code == 200
+
+
+def test_request_workspace_root_stays_bound_if_another_request_switches_project(monkeypatch, tmp_path: Path):
+    project_a = tmp_path / "project-a"
+    project_b = tmp_path / "project-b"
+    project_a.mkdir()
+    project_b.mkdir()
+    monkeypatch.setattr(server, "WORKSPACE_ROOT", project_b)
+    monkeypatch.setattr(server, "_WORKSPACE_ROOT_PINNED", True)
+    token = server._REQUEST_WORKSPACE_ROOT.set(project_a)
+    try:
+        assert server.current_workspace_root() == project_a
+        assert server.WORKSPACE_ROOT == project_b
+        assert server.current_workspace_root() == project_a
+    finally:
+        server._REQUEST_WORKSPACE_ROOT.reset(token)
+    assert server.current_workspace_root() == project_b
+
+
+def test_unregistered_workspace_retains_legacy_conversation_identity(monkeypatch, tmp_path: Path):
+    from src.project_folders import ProjectFolders
+
+    monkeypatch.setattr(ProjectFolders, "active_project", lambda self: {
+        "project_id": None, "root": str(tmp_path / "workspace-a"), "scope": "unregistered_workspace",
+    })
+    assert server._active_conversation_project_id() == PROJECT_ID
+
+
+def test_repository_default_keeps_legacy_conversation_identity(monkeypatch):
+    from src.project_folders import ProjectFolders
+
+    monkeypatch.setattr(ProjectFolders, "active_project", lambda self: {
+        "project_id": None, "root": str(server.REPO_ROOT), "scope": "unregistered_workspace",
+    })
+    assert server._active_conversation_project_id() == PROJECT_ID
 
 
 def test_revision_conflicts_and_rename_archive_delete_restore(tmp_path: Path):

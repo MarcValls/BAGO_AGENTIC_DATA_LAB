@@ -458,6 +458,27 @@ class ProjectFolders:
             results[identity] = info
         return {"workspaces": list(results.values())}
 
+    def active_project(self):
+        """Return the registered project identity for the bound folder, if any."""
+        root = Path(self.workspace_root()).resolve()
+        for identity, record in self._registry().items():
+            if Path(record["root"]).resolve() == root:
+                item = self._open_registered(identity).info()
+                return {"project_id": item["id"], "name": item["name"], "title": item["title"],
+                        "root": str(root), "scope": "project"}
+        if self.legacy_parent():
+            try:
+                manifest = json.loads(_file(root / MANIFEST)[0].decode("utf-8"))
+                identity = manifest.get("id")
+                if WORKSPACE_ID.fullmatch(identity or "") and Path(manifest.get("root", "")).resolve() == root:
+                    item = self._open_registered(identity).info()
+                    return {"project_id": item["id"], "name": item["name"], "title": item["title"],
+                            "root": str(root), "scope": "project"}
+            except (OSError, ValueError, TypeError, UnicodeError, ProjectFolderError, ServiceError):
+                pass
+        return {"project_id": None, "name": root.name, "title": root.name,
+                "root": str(root), "scope": "unregistered_workspace"}
+
     def action(self, workspace_id, body):
         owner = self
         class OwnedAdapter:
