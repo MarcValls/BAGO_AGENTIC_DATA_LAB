@@ -9,13 +9,14 @@ afterEach(()=>{cleanup();vi.unstubAllGlobals()})
 const response=(data:unknown,status=200)=>({ok:status<400,status,json:async()=>data})
 const summary=(id:string,date?:string)=>({id,owner_kind:'assistant',owner_id:'app-assistant',title:'Historial '+id,status:'active',updated_at:date,revision:2})
 const rows=[summary('old','2026-10-20T10:15:00Z'),summary('tie-one','2026-10-24T11:00:00+01:00'),summary('tie-two','2026-10-24T10:00:00Z'),summary('bad','invalid-date'),summary('missing'),summary('date-only','2026-10-24')]
-function chat(policy:'explicit'|'latest'|undefined='explicit'){return <AgentChat historySelection={policy} cognitiveMode="baseline" onNavigate={()=>{}} onOpenProviderSettings={()=>{}} onOpenCognitionSettings={()=>{}}/>}
-async function fixture({policy='explicit',late=false,fail=false}:{policy?:'explicit'|'latest';late?:boolean;fail?:boolean}={}){
- const calls:Array<{url:string;method:string;body:any}>=[];const created=new Map<string,any>();let delayed:((value:any)=>void)|null=null
+function chat(policy:'explicit'|'latest'|undefined='explicit',workspaceScopeVersion=0){return <AgentChat historySelection={policy} workspaceScopeVersion={workspaceScopeVersion} cognitiveMode="baseline" onNavigate={()=>{}} onOpenProviderSettings={()=>{}} onOpenCognitionSettings={()=>{}}/>}
+async function fixture({policy='explicit',late=false,fail=false,workspaceScopeVersion=0}:{policy?:'explicit'|'latest';late?:boolean;fail?:boolean;workspaceScopeVersion?:number}={}){
+ const calls:Array<{url:string;method:string;body:any}>=[];const created=new Map<string,any>();let delayed:((value:any)=>void)|null=null;let activeTitle='Proyecto A'
  const fetcher=vi.fn(async(url:string,init?:RequestInit)=>{
  const method=init?.method??'GET',body=init?.body?JSON.parse(String(init.body)):null;calls.push({url,method,body})
  if(url==='/api/agents/list')return response({agents:[{id:'fixture-agent',config:{name:'Agente de prueba',type:'tool',tools:[],system_prompt:'fixture'},created_at:'2026-10-24'}]})
  if(url==='/api/providers/selection')return response({provider_id:null,model_id:null})
+ if(url==='/api/project-folders/v1/active')return response({project_id:'workspace-'+(activeTitle==='Proyecto A'?'a':'b'),title:activeTitle,scope:'project'})
  if(url.startsWith('/api/conversations?')){
   if(fail)return response({detail:'synthetic list failure'},500)
   if(late)return await new Promise(r=>{delayed=r})
@@ -33,8 +34,8 @@ async function fixture({policy='explicit',late=false,fail=false}:{policy?:'expli
   const c=created.get(body.conversation_id);const saved={...c,revision:c.revision+1,messages:[{id:'user-first',role:'user',content:body.message},{id:'reply-first',role:'assistant',content:'Respuesta al primer mensaje'}]};created.set(c.id,saved);return response({operation:'chat',conversation:saved})
  }
  return response({models:[],proposals:[]})
- });vi.stubGlobal('fetch',fetcher);const view=render(chat(policy));await waitFor(()=>expect(calls.some(c=>c.url.startsWith('/api/conversations?'))).toBe(true));if(!late)await act(async()=>{})
- return {view,calls,created,resolveList:async()=>{await act(async()=>{delayed!(response({conversations:rows}))})}}
+  });vi.stubGlobal('fetch',fetcher);const view=render(chat(policy,workspaceScopeVersion));await waitFor(()=>expect(calls.some(c=>c.url.startsWith('/api/conversations?'))).toBe(true));if(!late)await act(async()=>{})
+  return {view,calls,created,changeProject:()=>{activeTitle='Proyecto B'},resolveList:async()=>{await act(async()=>{delayed!(response({conversations:rows}))})}}
 }
 const writes=(calls:Array<{method:string}>)=>calls.filter(c=>c.method!=='GET')
 const details=(calls:Array<{url:string;method:string}>)=>calls.filter(c=>c.method==='GET'&&c.url.startsWith('/api/conversations/'))
@@ -46,6 +47,10 @@ it('late history list cannot pick a chat or overwrite the blank composer draft',
 })
 it('manual history selection alone reads the exact selected record, preserving draft and producing no write',async()=>{
  const f=await fixture();const composer=screen.getByRole('textbox',{name:'Mensaje al asistente o agente seleccionado'}) as HTMLTextAreaElement;fireEvent.change(composer,{target:{value:'Borrador no enviado'}});fireEvent.click(screen.getByRole('button',{name:/Historial tie-two/}));await screen.findByText('Contenido elegido tie-two');expect(details(f.calls).map(c=>c.url)).toEqual(['/api/conversations/tie-two']);expect(composer.value).toBe('Borrador no enviado');expect(writes(f.calls)).toEqual([])
+})
+it('project switch clears the old conversation and reloads history under the new visible project',async()=>{
+ const f=await fixture();fireEvent.click(screen.getByRole('button',{name:/Historial tie-two/}));await screen.findByText('Contenido elegido tie-two');const requests=f.calls.filter(c=>c.url.startsWith('/api/conversations?')).length
+ f.changeProject();f.view.rerender(chat('explicit',1));await screen.findByText('Proyecto B');await waitFor(()=>expect(f.calls.filter(c=>c.url.startsWith('/api/conversations?')).length).toBe(requests+1));expect(screen.queryByText('Contenido elegido tie-two')).toBeNull();expect(f.view.container.querySelectorAll('article.control-message')).toHaveLength(0);expect(writes(f.calls)).toEqual([])
 })
 it('first explicit send lazily creates one record and uses the ordinary chat revision with no grants',async()=>{
  const f=await fixture();const composer=screen.getByRole('textbox',{name:'Mensaje al asistente o agente seleccionado'});fireEvent.change(composer,{target:{value:'Una pregunta sintética nueva'}});fireEvent.click(screen.getByRole('button',{name:'Enviar',exact:true}));await screen.findByText('Respuesta al primer mensaje');const actual=writes(f.calls);expect(actual.map(c=>c.url)).toEqual(['/api/conversations','/api/chat/control']);expect(actual[0].body).toEqual({owner_kind:'assistant',owner_id:'app-assistant'});expect(actual[1].body).toMatchObject({operation:'chat',conversation_id:'created-1',revision:1,message:'Una pregunta sintética nueva'});expect(actual[1].body.workspace_read_authorization_id).toBeUndefined();expect(actual[1].body.web_read_authorization_id).toBeUndefined();expect(f.created.size).toBe(1)

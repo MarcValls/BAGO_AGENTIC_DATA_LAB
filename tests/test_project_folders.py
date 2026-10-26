@@ -84,6 +84,21 @@ def test_child_uses_explicit_parent_and_is_registered_for_sdk_actions(folders):
     assert not list(admin.iterdir())
 
 
+def test_active_project_exposes_registered_identity_for_conversation_scope(folders):
+    owner, runtime, chosen, _, _ = folders
+    result = apply(owner, plan(owner, chosen, title='Project chat scope'))
+
+    active = owner.active_project()
+
+    assert active == {
+        'project_id': result['workspace']['id'],
+        'name': result['workspace']['name'],
+        'title': 'Project chat scope',
+        'root': str(chosen.resolve()),
+        'scope': 'project',
+    }
+
+
 def test_existing_sdk_identity_preserves_bytes_and_canonical_name(folders):
     owner, runtime, chosen, _, _ = folders
     first = apply(owner, plan(owner, chosen))

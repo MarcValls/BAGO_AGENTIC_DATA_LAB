@@ -166,7 +166,7 @@ def task_metadata(database_path, limit=10000):
         lambda row: _item("task_run", row.pop("run_id"), **row))
 
 
-def conversation_metadata(database_path, limit=10000):
+def conversation_metadata(database_path, limit=10000, project_id="bago-agentic-data-lab:default"):
     trace = "CASE WHEN json_valid(m.references_json) THEN json_extract(m.references_json, '$.trace.trace_id') END"
     delegation = "CASE WHEN json_valid(m.references_json) THEN json_extract(m.references_json, '$.delegation_parent.proposal_id') END"
     query = (
@@ -181,7 +181,7 @@ def conversation_metadata(database_path, limit=10000):
         if _identifier(row["trace_id"]) is None:
             raise ValueError("invalid trace identifier")
         return _item("agent_turn", row["message_id"], **row)
-    return _sqlite_metadata(database_path, limit, query, project, ("bago-agentic-data-lab:default",))
+    return _sqlite_metadata(database_path, limit, query, project, (project_id,))
 
 
 def evaluation_metadata(database_path, limit=10000):

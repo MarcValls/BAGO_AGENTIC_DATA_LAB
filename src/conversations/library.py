@@ -6,6 +6,7 @@ import json
 import os
 import sqlite3
 import uuid
+from contextvars import ContextVar
 from contextlib import closing
 from datetime import datetime, timezone
 from pathlib import Path
@@ -13,6 +14,20 @@ from typing import Any, Literal
 
 OwnerKind = Literal["assistant", "agent"]
 PROJECT_ID = "bago-agentic-data-lab:default"
+_PROJECT_SCOPE: ContextVar[str | None] = ContextVar("bago_conversation_project_scope", default=None)
+
+
+def set_project_scope(project_id: str):
+    """Bind conversation persistence to the project selected for this request."""
+    return _PROJECT_SCOPE.set(project_id)
+
+
+def reset_project_scope(token) -> None:
+    _PROJECT_SCOPE.reset(token)
+
+
+def current_project_scope() -> str:
+    return _PROJECT_SCOPE.get() or PROJECT_ID
 
 
 class ConversationNotFound(Exception):
@@ -45,7 +60,7 @@ class ConversationStore:
         """Read assistant trace metadata without loading message content."""
         from ..work_history import conversation_metadata
 
-        return conversation_metadata(self.database_path, limit)
+        return conversation_metadata(self.database_path, limit, current_project_scope())
 
     def __init__(self, database_path: Path | str | None = None) -> None:
         self.database_path = Path(database_path) if database_path else default_database_path()
@@ -112,14 +127,14 @@ class ConversationStore:
         with self._connect() as connection:
             connection.execute(
                 "INSERT INTO conversations (id, project_id, owner_kind, owner_id, title, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?)",
-                (conversation_id, PROJECT_ID, owner_kind, owner_id, title.strip()[:160] or "New conversation", now, now),
+                (conversation_id, current_project_scope(), owner_kind, owner_id, title.strip()[:160] or "New conversation", now, now),
             )
             row = connection.execute("SELECT * FROM conversations WHERE id = ?", (conversation_id,)).fetchone()
         return self._decode_conversation(row)
 
     def list(self, owner_kind: OwnerKind | None = None, owner_id: str | None = None, status: str = "active", limit: int = 100) -> list[dict[str, Any]]:
         clauses = ["project_id = ?"]
-        values: list[Any] = [PROJECT_ID]
+        values: list[Any] = [current_project_scope()]
         if status == "all":
             clauses.append("status != 'deleted'")
         else:
@@ -142,7 +157,7 @@ class ConversationStore:
         with self._connect() as connection:
             row = connection.execute(
                 "SELECT * FROM conversations WHERE id = ? AND project_id = ? AND status != 'deleted'",
-                (conversation_id, PROJECT_ID),
+                (conversation_id, current_project_scope()),
             ).fetchone()
             if row is None:
                 raise ConversationNotFound(conversation_id)
@@ -163,7 +178,7 @@ class ConversationStore:
             connection.execute("BEGIN IMMEDIATE")
             row = connection.execute(
                 "SELECT revision, status FROM conversations WHERE id = ? AND project_id = ?",
-                (conversation_id, PROJECT_ID),
+                (conversation_id, current_project_scope()),
             ).fetchone()
             if row is None or row["status"] == "deleted":
                 connection.rollback()
@@ -212,14 +227,14 @@ class ConversationStore:
         if status is not None:
             assignments.append("status = ?")
             values.append(status)
-        values.extend([conversation_id, PROJECT_ID, expected_revision])
+        values.extend([conversation_id, current_project_scope(), expected_revision])
         with self._connect() as connection:
             changed = connection.execute(
                 f"UPDATE conversations SET {', '.join(assignments)} WHERE id = ? AND project_id = ? AND revision = ? AND status != 'deleted'",
                 values,
             ).rowcount
             if not changed:
-                exists = connection.execute("SELECT 1 FROM conversations WHERE id = ? AND project_id = ?", (conversation_id, PROJECT_ID)).fetchone()
+                exists = connection.execute("SELECT 1 FROM conversations WHERE id = ? AND project_id = ?", (conversation_id, current_project_scope())).fetchone()
                 if exists is None:
                     raise ConversationNotFound(conversation_id)
                 raise ConversationConflict(conversation_id)
@@ -231,10 +246,10 @@ class ConversationStore:
         with self._connect() as connection:
             changed = connection.execute(
                 "UPDATE conversations SET status = 'active', updated_at = ?, revision = revision + 1 WHERE id = ? AND project_id = ? AND revision = ? AND status IN ('archived', 'deleted')",
-                (_now(), conversation_id, PROJECT_ID, expected_revision),
+                (_now(), conversation_id, current_project_scope(), expected_revision),
             ).rowcount
             if not changed:
-                exists = connection.execute("SELECT 1 FROM conversations WHERE id = ? AND project_id = ?", (conversation_id, PROJECT_ID)).fetchone()
+                exists = connection.execute("SELECT 1 FROM conversations WHERE id = ? AND project_id = ?", (conversation_id, current_project_scope())).fetchone()
                 if exists is None:
                     raise ConversationNotFound(conversation_id)
                 raise ConversationConflict(conversation_id)
@@ -253,7 +268,7 @@ class ConversationStore:
             try:
                 row = connection.execute(
                     "SELECT status,revision FROM conversations WHERE id=? AND project_id=?",
-                    (conversation_id, PROJECT_ID),
+                    (conversation_id, current_project_scope()),
                 ).fetchone()
                 if row is None:
                     raise ConversationNotFound(conversation_id)
@@ -262,7 +277,7 @@ class ConversationStore:
                 connection.execute("DELETE FROM messages WHERE conversation_id=?", (conversation_id,))
                 changed = connection.execute(
                     "DELETE FROM conversations WHERE id=? AND project_id=? AND status='deleted' AND revision=?",
-                    (conversation_id, PROJECT_ID, expected_revision),
+                    (conversation_id, current_project_scope(), expected_revision),
                 ).rowcount
                 if changed != 1:
                     raise ConversationConflict(conversation_id)

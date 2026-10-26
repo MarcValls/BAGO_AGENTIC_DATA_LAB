@@ -18,6 +18,7 @@ import sys
 import threading
 import time
 import uuid
+from contextvars import ContextVar
 from contextlib import asynccontextmanager
 from collections import deque
 from datetime import datetime
@@ -55,7 +56,7 @@ from src.conversations import ConversationConflict, ConversationNotFound, Conver
 from src.capabilities.manager import agent_tool_catalog
 from src.agent_tools.document_tools import DOCUMENT_AUTHORIZATIONS, DOCUMENT_TOOL_IDS, DocumentAccessError
 from src.agent_tools.agent_services import SERVICE_TOOL_IDS
-from src.conversations.library import OwnerKind
+from src.conversations.library import OwnerKind, PROJECT_ID, reset_project_scope, set_project_scope
 from src.providers import codex, github_copilot, ollama, registration, model_policy, runtime as provider_runtime
 from src.knowledge import LocalRAGError, run_ingest_and_answer
 from src.metadata import ontology_runtime
@@ -111,6 +112,7 @@ _MCP_GOVERNANCE_EVIDENCE_DIR = REPO_ROOT / ".bago" / "traces" / "mcp-governance"
 _WORKSPACE_CONFIG_DIR = Path(os.environ.get("LOCALAPPDATA", Path.home())) / "BAGO" / "AgenticDataLab"
 _WORKSPACE_CONFIG_PATH = _WORKSPACE_CONFIG_DIR / "workspace.json"
 _WORKSPACE_LOCK = threading.RLock()
+_REQUEST_WORKSPACE_ROOT: ContextVar[Path | None] = ContextVar("bago_request_workspace_root", default=None)
 
 
 def _load_workspace_root() -> Path:
@@ -127,6 +129,9 @@ _WORKSPACE_ROOT_PINNED = _WORKSPACE_CONFIG_PATH.is_file()
 
 
 def current_workspace_root() -> Path:
+    request_root = _REQUEST_WORKSPACE_ROOT.get()
+    if request_root is not None:
+        return request_root
     with _WORKSPACE_LOCK:
         return WORKSPACE_ROOT if _WORKSPACE_ROOT_PINNED else Path(REPO_ROOT).resolve()
 
@@ -143,6 +148,7 @@ def _set_workspace_root(candidate: str | Path) -> Path:
         os.replace(temporary, _WORKSPACE_CONFIG_PATH)
         WORKSPACE_ROOT = root
         _WORKSPACE_ROOT_PINNED = True
+        _REQUEST_WORKSPACE_ROOT.set(root)
     return root
 
 
@@ -674,6 +680,62 @@ async def _application_lifespan(application):
 
 
 app = FastAPI(title="BAGO Portfolio Control", version="1.0.0", lifespan=_application_lifespan)
+
+
+def _active_conversation_project_id() -> str:
+    """Resolve the selected folder to its registered, stable project identity."""
+    from src.project_folders import ProjectFolders, binding_identity as project_binding_identity
+
+    bound_root = _REQUEST_WORKSPACE_ROOT.get()
+    if bound_root is None:
+        with _WORKSPACE_LOCK:
+            bound_root = WORKSPACE_ROOT if _WORKSPACE_ROOT_PINNED else Path(REPO_ROOT).resolve()
+
+    folders = ProjectFolders(
+        state_directory=_WORKSPACE_CONFIG_DIR / "project-folders-v1",
+        workspace_root=lambda: bound_root,
+        set_workspace_root=_set_workspace_root,
+        pick_directory=_pick_workspace_directory,
+        binding_identity=lambda: project_binding_identity(_WORKSPACE_CONFIG_PATH, bound_root),
+        legacy_parent=lambda: os.getenv("BAGO_WORKSPACE_PARENT"),
+        binding_lock=_WORKSPACE_LOCK,
+    )
+    active = folders.active_project()
+    project_id = active.get("project_id")
+    if project_id:
+        return project_id
+    # A folder becomes an independent chat scope when it is registered as a project.
+    # Until then it remains the legacy general workspace and retains existing history.
+    return PROJECT_ID
+
+
+@app.middleware("http")
+async def conversation_project_scope(request: Request, call_next):
+    token = None
+    root_token = None
+    if request.url.path.startswith("/api/"):
+        with _WORKSPACE_LOCK:
+            root = WORKSPACE_ROOT if _WORKSPACE_ROOT_PINNED else Path(REPO_ROOT).resolve()
+        root_token = _REQUEST_WORKSPACE_ROOT.set(Path(root).resolve())
+        path = request.url.path
+        conversation_route = (path == "/api/conversations" or path.startswith("/api/conversations/")
+                              or path == "/api/chat/control" or path == "/api/work-history"
+                              or re.fullmatch(r"/api/agents/[^/]+/chat", path) is not None)
+        if conversation_route:
+            try:
+                token = set_project_scope(_active_conversation_project_id())
+            except Exception:
+                _REQUEST_WORKSPACE_ROOT.reset(root_token)
+                return JSONResponse({"error": {"code": "project_scope_unavailable",
+                    "message": "No se puede verificar el proyecto activo; se bloqueó el acceso a conversaciones."}},
+                    status_code=503, headers={"Cache-Control": "no-store"})
+    try:
+        return await call_next(request)
+    finally:
+        if token is not None:
+            reset_project_scope(token)
+        if root_token is not None:
+            _REQUEST_WORKSPACE_ROOT.reset(root_token)
 
 
 @app.get("/api/catalog/openmetadata/status")
