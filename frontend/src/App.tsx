@@ -225,7 +225,7 @@ function App() {
 
   return (
     <div className={`app-shell app-shell--navmenu ${activeInteractionView === 'chat' ? 'app-shell--chat' : ''} ${sidebarCollapsed ? 'app-shell--sidebar-collapsed' : ''}`}>
-      <aside className="app-navigation-shell">
+      <aside className="app-navigation-shell" aria-label={t("core.App.workspace_sidebar_bc2716")}>
         <div className="workspace-sidebar-brand">
         <div className="app-menu-brand">
           <img className="workspace-sidebar-logo" src="/brand/BAGO_logotipo_horizontal.svg" alt="BAGO" width="208" height="53.404" />
