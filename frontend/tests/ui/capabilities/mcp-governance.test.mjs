@@ -15,47 +15,28 @@ Object.defineProperty(globalThis, 'navigator', { configurable: true, value: dom.
 
 const server = await createServer({ server: { middlewareMode: true }, appType: 'custom' })
 const React = await import('react')
-const { act, cleanup, fireEvent, render, screen, waitFor } = await import('@testing-library/react')
+const { act, cleanup, fireEvent, render, screen, within } = await import('@testing-library/react')
 const { default: CapabilityManager } = await server.ssrLoadModule('/src/components/CapabilityManager.tsx')
-const {setLocale,t} = await server.ssrLoadModule('/src/i18n/index.ts')
-setLocale('en') // Explicit English expectation; product default remains Spanish.
+const {setLocale} = await server.ssrLoadModule('/src/i18n/index.ts')
+setLocale('en')
 
-
-const catalog = { capabilities: [] }
 const proposals = { proposals: [] }
-const fixture = {
-  run_id: 'mcp_demo_test_1', status: 'completed', transport: 'stdio', source_kind: 'repository_local_fixture', server: 'bago-local-demo',
-  discovered: [
-    { name: 'get_lab_status', fingerprint: 'sha256:read-tool' },
-    { name: 'propose_lab_note', fingerprint: 'sha256:write-tool' },
-  ],
-  registered: [
-    { name: 'get_lab_status', effect_type: 'READ' },
-    { name: 'propose_lab_note', effect_type: 'WRITE' },
-  ],
-  read_call: {
-    receipt_id: 'mcp_receipt_read_1', decision: 'ALLOW', actual_effect: { called: true },
-    receipt: { receipt_id: 'mcp_receipt_read_1', request_id: 'request_read_1', decision: 'ALLOW', outcome: 'SUCCESS', actual_effect: { called: true } },
-  },
-  write_call: {
-    receipt_id: 'mcp_receipt_write_1', decision: 'REQUIRE_HUMAN', actual_effect: { called: false },
-    receipt: { receipt_id: 'mcp_receipt_write_1', request_id: 'request_write_1', decision: 'REQUIRE_HUMAN', outcome: 'BLOCKED', actual_effect: { called: false } },
-  },
-  trace: { trace_id: 'trace_mcp_test_1', events: [{ event_id: 'event_read_1' }, { event_id: 'event_write_denied_1' }] },
-  evidence: { path: '.bago/traces/mcp-governance/mcp_demo_test_1.json', sha256: 'a'.repeat(64) },
+const mcpCapability = {
+  id: 'mcp.execute', name: 'MCP execution', provider: 'local', effect: 'EXECUTE',
+  status: 'MODULE_PRESENT_NOT_CONNECTED', integration: 'MODULE_PRESENT_NOT_CONNECTED',
+  summary: 'Connection is not currently available.', limits: {}, source_fingerprints: {},
+  source_available: true, fingerprint: 'a'.repeat(64),
 }
-
 const jsonResponse = (body, status = 200) => ({ ok: status >= 200 && status < 300, status, json: async () => body })
-function stubFetch({ run = async () => jsonResponse(fixture) } = {}) {
+
+function stubFetch({ capabilities = [] } = {}) {
   const original = globalThis.fetch
   const calls = []
   globalThis.fetch = async (input, init = {}) => {
     const url = String(input)
     calls.push({ url, method: init.method ?? 'GET', body: init.body })
-    if (url === '/api/connections') return jsonResponse({ connections: [] })
-    if (url === '/api/capabilities') return jsonResponse(catalog)
+    if (url === '/api/capabilities') return jsonResponse({ capabilities })
     if (url === '/api/capabilities/proposals?status=all&limit=100') return jsonResponse(proposals)
-    if (url === '/api/demo/mcp-governance') return run(url, init)
     throw new Error(`Unexpected request: ${url}`)
   }
   return { calls, restore: () => { globalThis.fetch = original } }
@@ -64,13 +45,14 @@ function stubFetch({ run = async () => jsonResponse(fixture) } = {}) {
 afterEach(() => cleanup())
 after(async () => { await server.close(); dom.window.close() })
 
-describe('Capability Manager local MCP governance route', () => {
-  it('renders the catalog loading state and then a truthful empty state', async () => {
+describe('Capability Manager MCP connection route', () => {
+  it('renders the catalog loading state and truthful empty state without demo controls', async () => {
     let releaseCatalog
     const original = globalThis.fetch
-    globalThis.fetch = async (input) => {
+    const calls = []
+    globalThis.fetch = async (input, init = {}) => {
       const url = String(input)
-      if (url === '/api/connections') return jsonResponse({ connections: [] })
+      calls.push({ url, method: init.method ?? 'GET' })
       if (url === '/api/capabilities') return new Promise((resolve) => { releaseCatalog = resolve })
       if (url === '/api/capabilities/proposals?status=all&limit=100') return jsonResponse(proposals)
       throw new Error(`Unexpected request: ${url}`)
@@ -78,82 +60,49 @@ describe('Capability Manager local MCP governance route', () => {
     try {
       render(React.createElement(CapabilityManager))
       assert.ok(screen.getByText(/Loading capability catalog and proposals/))
-      await act(async () => releaseCatalog(jsonResponse(catalog)))
+      await act(async () => releaseCatalog(jsonResponse({ capabilities: [] })))
       assert.ok(await screen.findByText('No capability records were returned by the backend.'))
       assert.ok(screen.getByText(/No saved proposals/))
+      assert.equal(screen.queryByRole('button', { name: /fixture|demonstration/i }), null)
+      assert.equal(screen.queryByRole('heading', { name: 'Local MCP fixture' }), null)
+      assert.ok(calls.every((call) => call.method === 'GET' && !call.url.includes('/demo/')))
     } finally { globalThis.fetch = original }
   })
 
-  it('scopes the fixture and keeps external configuration in Settings without implicit connection or transport calls', async () => {
-    const stub = stubFetch()
+  it('lists the actual MCP capability and exposes configuration and quick options without executing it', async () => {
+    const stub = stubFetch({ capabilities: [mcpCapability] })
+    const destinations = []
     try {
-      render(React.createElement(CapabilityManager))
-      const button = await screen.findByRole('button', { name: 'Run local MCP fixture' })
-      assert.match(screen.getByText(/This demonstration starts only/).textContent, /External connections/)
-      assert.ok(screen.getByRole('heading', { name: 'Local MCP fixture' }))
-      assert.equal(screen.queryByRole('heading', { name: 'External connections' }), null)
+      render(React.createElement(CapabilityManager, { onNavigate: (destination) => destinations.push(destination) }))
+      await screen.findByText('mcp.execute')
+      assert.ok(screen.getAllByText(/MODULE_PRESENT_NOT_CONNECTED/).length >= 1)
+      const quickOptions = screen.getByRole('navigation', { name: 'Quick options' })
+      assert.ok(within(quickOptions).getByRole('button', { name: 'Connections' }))
+      const capabilityCard = screen.getByRole('article')
+      fireEvent.click(within(capabilityCard).getByRole('button', { name: 'Connections' }))
+      assert.deepEqual(destinations, ['connections'])
       assert.equal(stub.calls.some((call) => call.url.startsWith('/api/connections')), false)
       assert.deepEqual(stub.calls.map((call) => call.url), ['/api/capabilities', '/api/capabilities/proposals?status=all&limit=100'])
-      assert.equal(stub.calls.some((call) => call.method !== 'GET'), false)
-      assert.equal(stub.calls.some((call) => call.url === '/api/demo/mcp-governance'), false)
-      assert.equal(button.disabled, false)
+      assert.ok(stub.calls.every((call) => call.method === 'GET' && !call.url.includes('/demo/')))
+      assert.equal(screen.queryByRole('button', { name: /Run local MCP fixture/ }), null)
     } finally { stub.restore() }
   })
 
-  it('shows an accessible loading state only after the user starts the fixed fixture', async () => {
-    let release
-    const stub = stubFetch({ run: () => new Promise((resolve) => { release = resolve }) })
+  it('surfaces catalog errors with retry and makes no transport request', async () => {
+    const original = globalThis.fetch
+    const calls = []
+    globalThis.fetch = async (input, init = {}) => {
+      const url = String(input)
+      calls.push({ url, method: init.method ?? 'GET' })
+      if (url === '/api/capabilities') return jsonResponse({ detail: { message: 'Capability service unavailable.' } }, 503)
+      if (url === '/api/capabilities/proposals?status=all&limit=100') return jsonResponse(proposals)
+      throw new Error(`Unexpected request: ${url}`)
+    }
     try {
       render(React.createElement(CapabilityManager))
-      fireEvent.click(await screen.findByRole('button', { name: 'Run local MCP fixture' }))
-      assert.ok(await screen.findByText(/Running the local MCP fixture and recording its observed calls/))
-      assert.equal(screen.getByRole('button', { name: 'Running local fixture…' }).disabled, true)
-      const request = stub.calls.find((call) => call.url === '/api/demo/mcp-governance')
-      assert.equal(request.method, 'POST')
-      assert.deepEqual(JSON.parse(request.body), {})
-      await act(async () => release(jsonResponse(fixture)))
-      assert.ok(await screen.findByRole('region', { name: 'Local MCP fixture result' }))
-    } finally { stub.restore() }
-  })
-
-  it('renders discovered effects, actual READ/WRITE transport states, receipts, trace and evidence', async () => {
-    const stub = stubFetch()
-    try {
-      render(React.createElement(CapabilityManager))
-      fireEvent.click(await screen.findByRole('button', { name: 'Run local MCP fixture' }))
-      assert.ok(await screen.findByText(/The READ call reached MCP; the WRITE call was denied before transport/))
-      assert.ok(screen.getByText('get_lab_status'))
-      assert.ok(screen.getByText('propose_lab_note'))
-      assert.ok(screen.getByText('Effect: READ'))
-      assert.ok(screen.getByText('Effect: WRITE'))
-      assert.ok(screen.getByText('mcp_receipt_read_1'))
-      assert.ok(screen.getByText('mcp_receipt_write_1'))
-      assert.ok(screen.getByText('trace_mcp_test_1'))
-      assert.ok(screen.getByText(/\.bago\/traces\/mcp-governance\/mcp_demo_test_1\.json/))
-      assert.ok(screen.getByText('a'.repeat(64)))
-      fireEvent.click(screen.getByText('Inspect READ receipt'))
-      assert.ok(screen.getByText(/"outcome": "SUCCESS"/))
-      fireEvent.click(screen.getByText('Inspect WRITE receipt'))
-      assert.ok(screen.getByText(/"outcome": "BLOCKED"/))
-      assert.equal(stub.calls.filter((call) => call.url === '/api/demo/mcp-governance').length, 1)
-    } finally { stub.restore() }
-  })
-
-  it('reports request errors and malformed or unsafe outcomes without claiming success', async () => {
-    const errorStub = stubFetch({ run: async () => jsonResponse({ detail: { message: 'Local fixture unavailable.' } }, 503) })
-    try {
-      render(React.createElement(CapabilityManager))
-      fireEvent.click(await screen.findByRole('button', { name: 'Run local MCP fixture' }))
-      assert.match((await screen.findByRole('alert')).textContent, /Local fixture unavailable/)
-      assert.equal(screen.queryByRole('status', { name: /READ call reached MCP/ }), null)
-    } finally { errorStub.restore(); cleanup() }
-
-    const badStub = stubFetch({ run: async () => jsonResponse({ ...fixture, write_call: { ...fixture.write_call, actual_effect: { called: true } } }) })
-    try {
-      render(React.createElement(CapabilityManager))
-      fireEvent.click(await screen.findByRole('button', { name: 'Run local MCP fixture' }))
-      assert.ok(await screen.findByText(/required policy is not demonstrated/i))
-      assert.equal(screen.queryByText(/The READ call reached MCP; the WRITE call was denied before transport/), null)
-    } finally { badStub.restore() }
+      assert.match((await screen.findByRole('alert')).textContent, /Capability service unavailable/)
+      assert.ok(screen.getByRole('button', { name: 'Retry' }))
+      assert.ok(calls.every((call) => call.method === 'GET' && !call.url.includes('/demo/')))
+    } finally { globalThis.fetch = original }
   })
 })

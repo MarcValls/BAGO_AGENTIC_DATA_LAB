@@ -1,0 +1,59 @@
+{
+  "schema": "bago.frontend-sprint-verification.v1",
+  "sprint": "SPRINT_20261026_15",
+  "state": "PREPARED",
+  "gate": "PENDING_CI",
+  "candidate": {
+    "worktree_branch": "fix/project-workspace-chat-isolation-20261026",
+    "pr": 71,
+    "pr_branch": "review/adl-applied-code-20261025",
+    "base": "263bb76cf9a47f404b297808bd33b748833686be",
+    "previous_head": "5bde1620b6052349be28df9ba330df056749af1b"
+  },
+  "changed_scope": {
+    "product_code_changed": false,
+    "files": [
+      "frontend/tests/ui/agent-evaluation-lab/rendered.test.mjs",
+      "frontend/tests/ui/capabilities/mcp-governance.test.mjs",
+      "frontend/tests/ui/chat-shell/chat-navigation.test.mjs",
+      "docs/progress/SPRINT_20261026_15.md",
+      "docs/progress/FRONTEND_EVALUATION_20261026.md"
+    ]
+  },
+  "checks": {
+    "node_syntax": "PASS",
+    "git_diff_check": "PASS_WITH_LINE_ENDING_WARNING",
+    "node_ui_tests": "NOT_VERIFIED_RUNNER_DID_NOT_COMPLETE_AFTER_VITE_HMR_PORT_24678_CONFLICT",
+    "readme_generator": {
+      "status": "PASS",
+      "command": "python -B scripts/generate_dynamic_readme.py",
+      "passed": 1570
+    },
+    "readme_reproducibility": {
+      "status": "PASS",
+      "command": "python scripts/generate_dynamic_readme.py --check --skip-tests",
+      "collected": 1572,
+      "suite": "NOT_RUN"
+    },
+    "github_ci": {
+      "status": "PENDING",
+      "last_failing_pr_run": 40265858653,
+      "last_failing_push_run": 40265854557
+    }
+  },
+  "visual_review": {
+    "status": "OBSERVED_RUNTIME_NOT_CANDIDATE_VERIFICATION",
+    "url": "http://127.0.0.1:8093",
+    "http": 200,
+    "browser": "Playwright Chromium headless",
+    "viewport": "1920x1080",
+    "page_errors": 0,
+    "backend_identity": "orchestrator-delegation-r42-preview",
+    "screenshot": "C:/Users/AMTEC_Terminal_1º/AppData/Local/Temp/adl-frontend-review-20261026/runtime-8093-desktop.png",
+    "screenshot_in_repository": false,
+    "reason": "Screenshot includes local conversation content and runtime backend is not the PR candidate."
+  },
+  "global_frontend": "NOT_VALIDATED",
+  "merge": false,
+  "release": false
+}

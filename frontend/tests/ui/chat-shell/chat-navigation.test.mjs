@@ -21,7 +21,7 @@ dom.window.HTMLElement.prototype.scrollIntoView = () => {}
 
 const server = await createServer({ server: { middlewareMode: true }, appType: 'custom' })
 const React = await import('react')
-const { cleanup, fireEvent, render, screen, waitFor } = await import('@testing-library/react')
+const { cleanup, fireEvent, render, screen } = await import('@testing-library/react')
 const {setLocale,resetLocaleForTests}=await server.ssrLoadModule('/src/i18n/index.ts')
 beforeEach(()=>{resetLocaleForTests();setLocale('en')})
 const { default: AgentChat } = await server.ssrLoadModule('/src/components/AgentChat.tsx')
@@ -48,7 +48,7 @@ afterEach(() => {
 })
 after(async () => { await server.close(); dom.window.close() })
 
-it('mounts agent and conversation navigation in its panel and preserves authorization controls', async () => {
+it('shows only agents linked to the conversation and preserves authorization controls', async () => {
   const conversationRequests = []
   stubFetch(async (input) => {
     const url = String(input)
@@ -65,11 +65,13 @@ it('mounts agent and conversation navigation in its panel and preserves authoriz
   const chatTarget = document.createElement('main')
   document.body.append(chatTarget)
   let providerSettingsOpened = false
+  let manageAgentsOpened = false
   render(React.createElement(AgentChat, {
     cognitiveMode: 'baseline',
     onOpenCognitionSettings: () => {},
     onNavigate: () => {},
     onOpenProviderSettings: () => { providerSettingsOpened = true },
+    onManageAgents: () => { manageAgentsOpened = true },
   }), { container: chatTarget })
 
   const panel = chatTarget.querySelector('.chat-agent-panel')
@@ -77,10 +79,16 @@ it('mounts agent and conversation navigation in its panel and preserves authoriz
   assert.equal(panel.open, false)
   fireEvent.click(panel.querySelector('summary'))
   assert.equal(panel.open, true)
-  const agentNavigation = await screen.findByRole('complementary', { name: 'Orchestrator conversations and agents' })
+  const agentNavigation = chatTarget.querySelector('.control-chat-sidebar')
+  assert.ok(agentNavigation)
   assert.equal(chatTarget.querySelector('.chat-agent-panel-slot').contains(agentNavigation), true)
   assert.equal(chatTarget.querySelector('.control-chat-main') !== null, true)
-  await screen.findByRole('button', { name: /Support agent/ })
+  assert.match(agentNavigation.textContent, /Agents in this chat/)
+  assert.match(agentNavigation.textContent, /No agent tasks are linked to this conversation yet/)
+  assert.equal(agentNavigation.textContent.includes('Support agent'), false)
+  fireEvent.click(screen.getByRole('button', { name: 'Manage agents' }))
+  assert.equal(manageAgentsOpened, true)
+  await screen.findByRole('button', { name: 'BAGO5 orchestrator' })
 
   const authorizeReads = screen.getByRole('checkbox', { name: 'Allow project file reads' })
   assert.equal(authorizeReads.checked, false)
@@ -91,11 +99,6 @@ it('mounts agent and conversation navigation in its panel and preserves authoriz
   assert.equal(screen.queryByLabelText('Project-relative paths'), null)
   fireEvent.click(await screen.findByRole('button', { name: 'Open provider settings' }))
   assert.equal(providerSettingsOpened, true)
-
-  fireEvent.click(screen.getByRole('button', { name: /Support agent/ }))
-  await waitFor(() => assert.ok(screen.getByRole('heading', { name: 'Chat with Support agent' })))
-
-  fireEvent.click(screen.getByRole('button', { name: 'Archived' }))
-  await waitFor(() => assert.ok(conversationRequests.some((url) => url.includes('status=archived'))))
-
+  assert.ok(conversationRequests.length > 0)
+  assert.ok(conversationRequests.every((url) => new URLSearchParams(url.split('?')[1]).get('owner_kind') === 'assistant'))
 })
