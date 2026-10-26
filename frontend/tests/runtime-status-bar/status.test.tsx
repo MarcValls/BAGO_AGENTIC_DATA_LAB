@@ -27,7 +27,7 @@ it.each(['es','en'] as const)('queries one readonly aggregate and presents five 
  expect(f.calls).toHaveLength(1);expect(f.calls[0].url).toBe('/api/runtime/status');expect(f.calls[0].init).toMatchObject({method:'GET',cache:'no-store'});expect(f.calls[0].init?.body).toBeUndefined()
  expect(f.view.container.querySelectorAll('[data-group]')).toHaveLength(5)
  expect(group('backend').textContent).toContain(locale==='es'?'API responde':'API responds')
- expect(group('activity').textContent).toContain(locale==='es'?'0 solicitudes API':'0 API requests')
+ expect(group('activity').textContent).toContain(locale==='es'?'0 solicitudes activas':'0 active API requests')
  expect(group('memory').textContent).toContain(locale==='es'?'Historial disponible · general sin conectar':'History available · general disconnected')
  expect(group('git').textContent).toContain(locale==='es'?'main · remoto configurado':'main · remote configured')
  expect(group('provider').textContent).toContain('Ollama / gemma4:31b')
@@ -51,12 +51,12 @@ it.each(['present','absent','unknown'])('distinguishes history %s from disconnec
 })
 it('keeps partial errors local while backend and API activity remain observed',async()=>{
  const raw=payload(),f=await setup(()=>reply({...raw,memory:{...raw.memory,state:'unavailable',history:{kind:'conversation_history',state:'unknown'},general:{state:'not_observed'},error_code:'memory_metadata_unavailable'},provider:{...raw.provider,state:'unavailable',error_code:'provider_metadata_unavailable'},git:{...raw.git,state:'unavailable',repo_detected:null,branch:null,detached:null,remote_configured:null,error_code:'git_metadata_unavailable'}}))
- expect(group('backend').textContent).toContain('API responde');expect(group('activity').textContent).toContain('0 solicitudes API');expect(group('memory').textContent).toContain('Sin datos de memoria');expect(group('git').textContent).toContain('Git no disponible')
+ expect(group('backend').textContent).toContain('API responde');expect(group('activity').textContent).toContain('0 solicitudes activas');expect(group('memory').textContent).toContain('Sin datos de memoria');expect(group('git').textContent).toContain('Git no disponible')
  fireEvent.click(group('memory'));expect(screen.getByText('memory_metadata_unavailable')).toBeTruthy();expect(screen.getByText('No hay una lectura válida para acreditar presencia de historial.')).toBeTruthy();expect(f.calls).toHaveLength(1)
 })
 it('represents active requests only in the current API scope, never host Codex or all jobs',async()=>{
  const f=await setup(()=>reply(payload({activity:{state:'active',active_requests:3,scope:'current_process_http_api_requests',background_activity:'not_observed'}})))
- expect(group('activity').textContent).toContain('Actividad ADL');expect(group('activity').textContent).toContain('3 solicitudes API');fireEvent.click(group('activity'));expect(screen.getByText('Peticiones HTTP del proceso API actual.')).toBeTruthy();expect(screen.getByText('Trabajos de fondo y actividad del host Codex.')).toBeTruthy();expect(f.calls).toHaveLength(1)
+ expect(group('activity').textContent).toContain('Actividad ADL');expect(group('activity').textContent).toContain('3 solicitudes activas');fireEvent.click(group('activity'));expect(screen.getByText('Peticiones HTTP del proceso API actual.')).toBeTruthy();expect(screen.getByText('Trabajos de fondo y actividad del host Codex.')).toBeTruthy();expect(f.calls).toHaveLength(1)
 })
 it('does not replace unknown API activity with zero or infer GitHub authentication from a remote',async()=>{
  const raw=payload();await setup(()=>reply({...raw,activity:{...raw.activity,active_requests:null},git:{...raw.git,remote_configured:true}}));expect(group('activity').textContent).toContain('Sin comprobar');expect(group('activity').textContent).not.toContain('0');fireEvent.click(group('git'));expect(screen.getByText('Autenticación GitHub').nextElementSibling?.textContent).toBe('Sin comprobar')
