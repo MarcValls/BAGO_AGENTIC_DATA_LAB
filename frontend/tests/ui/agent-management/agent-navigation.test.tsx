@@ -11,7 +11,7 @@ afterEach(() => { cleanup(); vi.restoreAllMocks(); vi.unstubAllGlobals() })
 const options = () => ({ activeView: 'chat', collapsed: false, onExpandSidebar: vi.fn(), onNavigate: vi.fn() })
 
 describe('Grupo lateral Agentes', () => {
-  it('starts folded on global Chat, opens four reused destinations and never navigates just by unfolding', () => {
+  it('starts folded on global Chat, opens five destinations and never navigates just by unfolding', () => {
     const props=options(); render(<AgentNavigation {...props} />)
     const group=screen.getByRole('button',{name:'Agentes'})
     expect(group.getAttribute('aria-expanded')).toBe('false')
@@ -21,8 +21,8 @@ describe('Grupo lateral Agentes', () => {
     expect(group.getAttribute('aria-expanded')).toBe('true')
     expect(props.onNavigate).not.toHaveBeenCalled()
     const section=screen.getByRole('group',{name:'Gestión y trabajo con agentes'})
-    expect(within(section).getAllByRole('button').length).toBe(4)
-    for(const [label,id] of [['Mis agentes','agents'],['Crear agente','builder'],['Ejecutar / Probar','runner'],['Evaluación','evaluation_lab']]) {
+    expect(within(section).getAllByRole('button').length).toBe(5)
+    for(const [label,id] of [['Mis agentes','agents'],['Herramientas','tools'],['Crear agente','builder'],['Ejecutar / Probar','runner'],['Evaluación','evaluation_lab']]) {
       fireEvent.click(within(section).getByRole('button',{name:label}));expect(props.onNavigate).toHaveBeenLastCalledWith(id)
     }
   })

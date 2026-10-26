@@ -12,6 +12,7 @@ import Trace from './components/Trace'
 import Evaluation from './components/Evaluation'
 import AgentBuilder from './components/AgentBuilder'
 import AgentManagement from './components/AgentManagement'
+import AgentToolsView from './components/AgentToolsView'
 import AgentNavigation, { AGENT_SECTIONS, isAgentSection } from './components/AgentNavigation'
 import ChatNavigation, { CHAT_SECTIONS } from './components/ChatNavigation'
 import CommunicationsNavigation, {COMMUNICATION_SECTIONS,isCommunicationSection,type CommunicationSection} from './components/CommunicationsNavigation'
@@ -307,6 +308,7 @@ function App() {
 
           {activeInteractionView === 'capabilities' && <CapabilityManager onPrepareChat={prepareCapabilityChat} onNavigate={navigateCapability} />}
           {activeInteractionView === 'agents' && <AgentManagement onCreate={() => setActiveInteractionView('builder')} onTest={id => { setManagedAgentId(id); setActiveInteractionView('runner') }} onEvaluate={id => { setManagedAgentId(id); setActiveInteractionView('evaluation_lab') }} />}
+          {activeInteractionView === 'tools' && <AgentToolsView onOpenConnections={() => { setSettingsView('connections'); setSettingsOpen(true) }} onCreateAgent={() => setActiveInteractionView('builder')} />}
           {activeInteractionView === 'builder' && <AgentBuilder onBack={() => setActiveInteractionView('agents')} onAgentCreated={() => setDemoRefresh((previous) => previous + 1)} />}
           {activeInteractionView === 'runner' && <><AgentTasks initialAgentId={managedAgentId} /><details className="agent-tasks-advanced" open={advancedRunsOpen} onToggle={event => setAdvancedRunsOpen(event.currentTarget.open)}><summary>{t("core.App.advanced_governed_demonstration_execution_b685a6")}</summary>{advancedRunsOpen && <GovernedFixtureRunner apiBase={window.location.origin} />}</details></>}
           {activeInteractionView === 'evaluation_lab' && <AgentEvaluationLab initialAgentId={managedAgentId} />}
