@@ -6,6 +6,20 @@ Guía de referencia con capturas para reconocer cada pantalla y seguir los recor
 
 Las capturas muestran la interfaz actual de BAGO. Las pantallas 05–28 y 30–35 se recorrieron con Playwright y respuestas de demostración interceptadas en el navegador. No se consultaron trabajos reales, no se guardó el agente de ejemplo, no se ejecutó ningún modelo y no se leyó la carpeta `src`: las autorizaciones, el escaneo y los resultados son ficticios. La pantalla “guardado” del agente y el resultado `PASS` de evaluación son estados ilustrativos.
 
+### Revisión visual más reciente: escritorio y móvil
+
+Estas dos capturas se tomaron el 26 de octubre de 2026 desde la candidata de la PR #71, servida en el entorno aislado `5194/8097`, con datos sintéticos. En escritorio se ve el chat y el pie de estado; en móvil, el panel de proyecto empieza plegado y el pie indica que se puede deslizar para ver Git y proveedores. Son capturas del producto renderizado, no de una ejecución con proveedor.
+
+![Candidata BAGO ADL en escritorio, 1440 × 900](assets/manual-ui-actual-2026-10-26/01-chat-desktop-candidate.png)
+
+![Candidata BAGO ADL en móvil, 390 × 844](assets/manual-ui-actual-2026-10-26/02-chat-mobile-candidate.png)
+
+### Ejemplo observado de traza Jaeger
+
+La captura siguiente documenta una lectura puntual de workspace autorizada en AgentChat: Jaeger mostró 14 spans y la operación `workspace.read` aparece con resultado ALLOW. Pertenece a una ejecución distinta de las dos capturas de interfaz anteriores; demuestra esa lectura concreta, no una misión de sector completa ni un recorrido integral de principio a fin.
+
+![Jaeger: lectura puntual autorizada de workspace en AgentChat](../../assets/readme-20261025/08-jaeger-workspace-read-live.png)
+
 Las cuatro primeras imágenes documentan el chat y sus respuestas dentro de la conversación:
 
 1. Abre el chat y escribe una petición normal.

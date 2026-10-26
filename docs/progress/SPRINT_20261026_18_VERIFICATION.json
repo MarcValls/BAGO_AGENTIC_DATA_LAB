@@ -1,0 +1,41 @@
+{
+  "schema": "adl-sprint-verification.v1",
+  "sprint": "SPRINT_20261026_18",
+  "repository": "BAGO_AGENTIC_DATA_LAB",
+  "branch": "fix/project-workspace-chat-isolation-20261026",
+  "base_sha": "263bb76cf9a47f404b297808bd33b748833686be",
+  "head_before_sprint": "09d67bb4fde696f67492af81ac571481c215a0b8",
+  "change_kind": "manual_documentation_and_screenshots",
+  "artifacts": {
+    "manual": "docs/agent-chat-control/MANUAL_PARA_DUMMIES_CAPTURAS.md",
+    "desktop_screenshot": {
+      "path": "docs/agent-chat-control/assets/manual-ui-actual-2026-10-26/01-chat-desktop-candidate.png",
+      "sha256": "3CDEB2ABD966847AC3507D647822EDA94C665D3080F5D7081B6A6A6EAC786F06",
+      "source": "isolated PR candidate runtime 5194/8097; synthetic data; 1440x900"
+    },
+    "mobile_screenshot": {
+      "path": "docs/agent-chat-control/assets/manual-ui-actual-2026-10-26/02-chat-mobile-candidate.png",
+      "sha256": "47C4112E9A21C2B864F5611802DF77686A585C5CBF674FF6D160EBC8811F0446",
+      "source": "isolated PR candidate runtime 5194/8097; synthetic data; 390x844"
+    },
+    "jaeger_screenshot": {
+      "path": "docs/assets/readme-20261025/08-jaeger-workspace-read-live.png",
+      "sha256": "F98750EA7D6BC49D60D8916AE8ED81E88D3E0411CB3EF791CB0A33D793E3FC93",
+      "scope": "separate live authorized workspace.read; ALLOW; 14 spans; not the same session as the UI screenshots"
+    }
+  },
+  "verification": {
+    "readme_generator": "PASS: README generated after 1570 tests passed",
+    "readme_check": "PASS: reproducible; suite NOT_RUN (1572 cases collected)",
+    "visual_asset_review": "PASS: all three referenced images opened and inspected",
+    "previous_commit_github_push_verify": "PASS: run 40280981121",
+    "previous_commit_github_pull_request_verify": "PASS: run 40280975634",
+    "current_sprint_github_ci": "PENDING until this sprint commit is pushed",
+    "release_readiness": "NOT_VALIDATED"
+  },
+  "remaining": [
+    "Five sector manuals with workflows grounded in actually available tools and sector-specific live Jaeger evidence",
+    "A long successful end-to-end job with integrated receipt and trace evidence",
+    "Product-wide release validation"
+  ]
+}
