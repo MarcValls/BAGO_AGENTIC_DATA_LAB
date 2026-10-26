@@ -135,8 +135,8 @@ it('uses an opt-in normal-flow row and minimal App import/final-child integratio
  const css=readFileSync('src/components/RuntimeStatusBar.css','utf8'),app=readFileSync('src/App.tsx','utf8').replace(/\r\n/g,'\n')
  expect(css).toContain('grid-template-rows: minmax(0, 1fr) auto');expect(css).toContain('grid-template-rows: auto minmax(0, 1fr) auto');expect(css).toContain('grid-row: 2');expect(css).toContain('grid-row: 3');expect(css).not.toMatch(/position\s*:\s*(?:fixed|absolute)/);expect(css).toContain('font-size: 15px');expect(css).toContain('font-weight: 700');expect(css).toContain('runtime-status-bar__scroll-hint')
  const groupRule=css.split('.runtime-status-bar .runtime-status-bar__group {')[1]?.split('}')[0]??'',valueRule=css.split('.runtime-status-bar .runtime-status-bar__value {')[1]?.split('}')[0]??''
- expect(groupRule).toContain('display: grid');expect(groupRule).toContain('grid-template-rows: auto auto');expect(groupRule).toContain('white-space: normal');expect(css).toContain('scroll-snap-type: x proximity')
- expect(valueRule).toContain('overflow-wrap: anywhere');expect(valueRule).toContain('white-space: normal');expect(valueRule).not.toContain('text-overflow: ellipsis');expect(valueRule).not.toContain('overflow: hidden')
+ expect(groupRule).toContain('display: grid');expect(groupRule).toContain('grid-template-rows: minmax(0, 1fr)');expect(groupRule).toContain('white-space: nowrap');expect(css).toContain('scroll-snap-type: x proximity')
+ expect(valueRule).toContain('white-space: nowrap');expect(valueRule).toContain('text-overflow: ellipsis');expect(valueRule).toContain('overflow: hidden');expect(css).toContain('max-height: 34px')
  expect(app.match(/import RuntimeStatusBar from/g)).toHaveLength(1);expect(app.match(/<RuntimeStatusBar \/>/g)).toHaveLength(1);expect(app).toContain('</dialog>\n      <RuntimeStatusBar />\n    </div>')
 })
 it.each(['es','en'] as const)('separates summary, source-colored detail cards and UTC freshness without promoting configuration in %s',async locale=>{

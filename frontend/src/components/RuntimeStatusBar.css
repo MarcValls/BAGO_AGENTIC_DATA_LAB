@@ -2,21 +2,21 @@
 .app-shell:has(> footer.runtime-status-bar) { grid-template-rows: minmax(0, 1fr) auto; }
 .app-shell > footer.runtime-status-bar { grid-column: 1 / -1; grid-row: 2; }
 .runtime-status-bar { min-width: 0; min-height: 0; border-top: 1px solid #527086; background: #111f2c; color: #eef6fc; font-size: 15px; font-weight: 700; line-height: 1.3; }
-.runtime-status-bar .runtime-status-bar__row { display: grid; grid-template-columns: repeat(5, minmax(180px, 1fr)) auto; min-height: 44px; overflow-x: auto; align-items: stretch; overscroll-behavior-inline: contain; scroll-snap-type: x proximity; scrollbar-width: thin; }
-.runtime-status-bar .runtime-status-bar__group { display: grid; grid-template-columns: 8px minmax(0, 1fr); grid-template-rows: auto auto; align-content: center; align-items: start; column-gap: 6px; row-gap: 2px; min-width: 0; padding: 7px 9px; border: 0; border-right: 1px solid #344b5e; background: transparent; color: inherit; font: inherit; text-align: left; cursor: pointer; scroll-snap-align: start; white-space: normal; }
+.runtime-status-bar .runtime-status-bar__row { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)) auto; min-height: 34px; max-height: 34px; overflow-x: auto; overflow-y: hidden; align-items: stretch; overscroll-behavior-inline: contain; scroll-snap-type: x proximity; scrollbar-width: none; }
+.runtime-status-bar .runtime-status-bar__group { display: grid; grid-template-columns: 8px auto minmax(0, 1fr); grid-template-rows: minmax(0, 1fr); align-content: center; align-items: center; column-gap: 7px; min-width: 0; padding: 0 9px; border: 0; border-right: 1px solid #344b5e; background: transparent; color: inherit; font: inherit; text-align: left; cursor: pointer; scroll-snap-align: start; white-space: nowrap; }
 .runtime-status-bar .runtime-status-bar__group[aria-expanded="true"] { background: #20394b; }
-.runtime-status-bar .runtime-status-bar__group > strong { grid-column: 2; grid-row: 1; }
-.runtime-status-bar .runtime-status-bar__group > strong { font-size: 16px; font-weight: 750; }
-.runtime-status-bar .runtime-status-bar__value { grid-column: 2; grid-row: 2; min-width: 0; max-width: 100%; overflow-wrap: anywhere; white-space: normal; }
+.runtime-status-bar .runtime-status-bar__group > strong { grid-column: 2; grid-row: 1; overflow: hidden; text-overflow: ellipsis; font-size: 14px; font-weight: 750; }
+.runtime-status-bar .runtime-status-bar__value { grid-column: 3; grid-row: 1; min-width: 0; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 13px; font-weight: 600; }
 .runtime-status-bar .runtime-status-bar__dot { width: 8px; height: 8px; flex: 0 0 8px; border-radius: 50%; background: #b4c2cb; }
 .runtime-status-bar [data-tone="good"] .runtime-status-bar__dot { background: #8ce2b4; }
 .runtime-status-bar [data-tone="info"] .runtime-status-bar__dot { background: #86d9f1; }
 .runtime-status-bar [data-tone="warning"] .runtime-status-bar__dot { background: #f4cf80; }
 .runtime-status-bar [data-tone="error"] .runtime-status-bar__dot { background: #ffaaa5; }
-.runtime-status-bar .runtime-status-bar__old { grid-column: 2; color: #f4cf80; }
-.runtime-status-bar .runtime-status-bar__refresh { display: flex; align-items: center; gap: 8px; padding: 3px 8px; white-space: nowrap; }
+.runtime-status-bar .runtime-status-bar__old { display: none; }
+.runtime-status-bar .runtime-status-bar__refresh { display: flex; align-items: center; gap: 8px; padding: 0 8px; white-space: nowrap; }
 .runtime-status-bar button { font: inherit; color: inherit; }
-.runtime-status-bar .runtime-status-bar__refresh button, .runtime-status-bar .runtime-status-bar__detail-heading button { border: 1px solid #6a8da4; border-radius: 3px; background: #213c50; padding: 5px 8px; cursor: pointer; }
+.runtime-status-bar .runtime-status-bar__refresh button, .runtime-status-bar .runtime-status-bar__detail-heading button { border: 1px solid #6a8da4; border-radius: 3px; background: #213c50; padding: 2px 7px; cursor: pointer; }
+.runtime-status-bar .runtime-status-bar__refresh button { font-size: 13px; line-height: 1.2; }
 .runtime-status-bar button[aria-disabled="true"] { opacity: .65; cursor: default; }
 .runtime-status-bar button:focus-visible { outline: 2px solid #adf0ff; outline-offset: -2px; }
 .runtime-status-bar .runtime-status-bar__details { --status-section: #b4c2cb; max-block-size: min(46dvh, 360px); overflow-y: auto; padding: 14px 16px; border-bottom: 1px solid #527086; background: #101c29; }
@@ -50,6 +50,5 @@
   .app-shell:has(> footer.runtime-status-bar) { grid-template-rows: auto minmax(0, 1fr) auto; }
   .app-shell > footer.runtime-status-bar { grid-row: 3; }
   .runtime-status-bar .runtime-status-bar__row { grid-template-columns: repeat(5, minmax(180px, 1fr)) auto; }
-  .runtime-status-bar .runtime-status-bar__scroll-hint { display: block; margin: 0; padding: 3px 10px; border-bottom: 1px solid #344b5e; color: #c3d9e8; font-size: 12px; font-weight: 750; line-height: 1.25; text-align: right; }
   .runtime-status-bar .runtime-status-bar__detail-grid, .runtime-status-bar .runtime-status-bar__detail-meta { grid-template-columns: minmax(0, 1fr); }
 }
