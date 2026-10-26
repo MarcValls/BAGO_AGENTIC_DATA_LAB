@@ -49,6 +49,16 @@ La consulta de metadatos se repite cada 30 segundos con la pestaña visible. Se 
 
 Si la consulta falla, se muestra el aviso y se conservan los valores anteriores con la etiqueta **Anterior**; no se presentan como una comprobación nueva. Una observación de más de un minuto también se marca como anterior. **Sin comprobar** indica que falta una lectura válida, no un fallo demostrado de ese servicio.
 
+## Guías prácticas por sector
+
+Estas guías incluyen capturas de la interfaz para orientar cada recorrido. Son guías de uso, no ejecuciones verificadas; cada página indica si el escenario sigue sin ejecutar.
+
+- [Investigación de mercado](casos-de-uso/investigacion-mercado.md)
+- [Administración documental](casos-de-uso/administracion-documental.md)
+- [Logística e inventario](casos-de-uso/logistica-inventario.md)
+- [Atención al cliente](casos-de-uso/atencion-cliente.md)
+- [Calidad y operaciones](casos-de-uso/calidad-operaciones.md)
+
 ## Chat y lectura de páginas públicas
 
 Si el agente devuelve una tarea por estar fuera de su alcance, BAGO5 registra la devolución, excluye a ese agente y busca otro perfil; no vuelve a asignársela en ese recorrido. Si ninguno encaja con una tarea clara, puede crear un perfil limitado a esa tarea y seleccionar las herramientas necesarias entre las que están conectadas al chat de agentes. Las herramientas no conectadas —incluido MCP genérico— no se asignan como si estuvieran disponibles. Si el perfil nuevo necesita herramientas, queda como propuesta y no inicia el turno hijo hasta que confirmes los permisos y la carpeta; si no necesita herramientas, puede ejecutar el turno conversacional tras comprobar el alcance. El alcance de tareas no concede permisos de lectura del Workspace, documentos, herramientas, desarrollo, exportación, escritura de archivos ni comunicaciones. Esas acciones conservan su autorización específica. Una devolución o una necesidad de permiso no se presenta como tarea completada.
@@ -86,6 +96,10 @@ Selecciona una fila para consultar identificadores, referencia de traza y recibo
 La sección **Fuentes del historial** indica si cada fuente está disponible, ausente, parcial o no disponible. Si la cobertura es incompleta, el total sólo corresponde a los registros enumerados. Un error de conexión o formato se muestra como error; si se conservan datos anteriores, se avisa de que no se han actualizado. Puedes volver a intentarlo con **Actualizar**.
 
 ## Revisar fuentes y ejecuciones
+
+![Ejemplo de traza sintética abierta en Jaeger.](assets/screenshots-2026-10-26/05-jaeger-traza.png)
+
+*La captura muestra una traza sintética de prueba (12 spans, 2,7 s); no acredita una misión sectorial real ni una misión larga exitosa.*
 
 Después de una respuesta, despliega **Fuentes web** o **Archivos consultados** para ver las referencias conservadas. Durante el desplazamiento por una conversación larga aparecen brevemente botones para saltar al principio o al final.
 
