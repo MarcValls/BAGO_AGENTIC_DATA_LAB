@@ -35,3 +35,26 @@
 Para considerar completo el frontend, los siguientes hitos deben ser verificables en el runtime: (1) contexto y conversaciones aislados por proyecto, (2) selección de modelos alineada con Modelos activos y respuesta de proveedor comprobada, (3) historial que consulte ejecuciones reales o explique su alcance vacío, (4) navegación explícita Herramientas/Capacidades según la decisión del usuario y (5) legibilidad del pie y los estados de error. Las capturas del manual son orientación visual; no sustituyen pruebas de estas funciones.
 
 **Estado:** revisión `VERIFIED` para lo observado en el preview local indicado; aceptación del frontend completo `NOT_VALIDATED`. No se hicieron cambios de código en la aplicación ni pruebas automatizadas de UI.
+
+## Revisión de continuidad - 26-10-2026
+
+Se repitió la inspección del escritorio de `http://127.0.0.1:8093/` y las consultas de sólo lectura al backend `8098`. El preview sigue identificado como `orchestrator-delegation-r42-preview` (PID 27708); no corresponde al candidato de código `project-workspace-chat-isolation-20261026`.
+
+### Verificación del estado visible
+
+- La API de salud responde HTTP 200. La ruta nueva `/api/project-folders/v1/active` responde HTTP 404, así que el runtime no tiene cargada la identificación de proyecto incorporada en el candidato.
+- El workspace informado por el preview sigue con alcance `global_workspace`. El historial del Chat contiene conversaciones de distintos trabajos sin una etiqueta de proyecto; esta captura no demuestra aislamiento por proyecto.
+- `/api/jobs/list` sigue respondiendo HTTP 200 con `jobs: []`.
+- La pantalla muestra un selector largo de modelos con muchos rótulos `sin verificar`. La comprobación de `/api/providers/chat-models` no terminó dentro del timeout de 5 segundos; no se interpreta ese timeout como prueba de que todos los modelos fallen.
+- La barra inferior presenta texto recortado en estados de Memoria y Proveedores, y `Git no disponible`. El snapshot visible conserva una tipografía secundaria pequeña en el chat, el historial y el pie.
+- La navegación observada sigue mostrando `Capacidades` bajo BAGO5 y no muestra un destino `Herramientas` bajo Agentes. El usuario había pedido distinguir esos dos destinos.
+
+La captura local de esta observación se conservó fuera del repositorio en `C:\BAGO_TESTS\BAGO5_ADL\frontend-evaluation-20261026\current-8093-preview.png`; contiene títulos de conversaciones y no se publica en esta rama documental.
+
+### Cambio de código preparado en rama separada
+
+En la rama de trabajo `fix/project-workspace-chat-isolation-20261026` se preparó aislamiento de historial por identidad estable de proyecto, un alcance determinista separado para carpetas aún no registradas y conservación del identificador histórico de la raíz del repositorio. La UI del Chat incorpora el nombre del proyecto activo. Verificaciones de ese candidato: 158 pruebas Python focalizadas y 10 pruebas Vitest de arranque pasaron; `npm run build` pasó con aviso de bundle principal mayor a 500 kB. Estos resultados no pertenecen al preview 8093.
+
+La suite frontend completa del candidato registró 24 fallos y 766 pruebas aprobadas (790 en total). Se comprobó que dos de esos fallos ya se reproducen en la base exacta `52432e5adf0be349eeb24c06bbbaf1acbb4a3f7c`; los otros 22 aún requieren clasificación diferencial. La ejecución de `generate_dynamic_readme.py` para la rama de código continúa pendiente al momento de esta anotación.
+
+**Estado de esta revisión:** observaciones del runtime `VERIFIED`; candidato aislado por proyecto `PREPARED` y con verificación focalizada `VERIFIED`; despliegue y validación de extremo a extremo `NOT_RUN`. El frontend completo sigue `NOT_VALIDATED`.
