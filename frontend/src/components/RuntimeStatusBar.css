@@ -2,16 +2,17 @@
 .app-shell:has(> footer.runtime-status-bar) { grid-template-rows: minmax(0, 1fr) auto; }
 .app-shell > footer.runtime-status-bar { grid-column: 1 / -1; grid-row: 2; }
 .runtime-status-bar { min-width: 0; min-height: 0; border-top: 1px solid #527086; background: #111f2c; color: #eef6fc; font-size: 14px; font-weight: 650; line-height: 1.3; }
-.runtime-status-bar .runtime-status-bar__row { display: grid; grid-template-columns: repeat(5, minmax(180px, 1fr)) auto; min-height: 44px; overflow-x: auto; align-items: stretch; }
-.runtime-status-bar .runtime-status-bar__group { display: flex; align-items: center; gap: 6px; min-width: 0; padding: 7px 9px; border: 0; border-right: 1px solid #344b5e; background: transparent; color: inherit; font: inherit; text-align: left; cursor: pointer; }
+.runtime-status-bar .runtime-status-bar__row { display: grid; grid-template-columns: repeat(5, minmax(180px, 1fr)) auto; min-height: 44px; overflow-x: auto; align-items: stretch; overscroll-behavior-inline: contain; scroll-snap-type: x proximity; scrollbar-width: thin; }
+.runtime-status-bar .runtime-status-bar__group { display: grid; grid-template-columns: 8px minmax(0, 1fr); grid-template-rows: auto auto; align-content: center; align-items: start; column-gap: 6px; row-gap: 2px; min-width: 0; padding: 7px 9px; border: 0; border-right: 1px solid #344b5e; background: transparent; color: inherit; font: inherit; text-align: left; cursor: pointer; scroll-snap-align: start; white-space: normal; }
 .runtime-status-bar .runtime-status-bar__group[aria-expanded="true"] { background: #20394b; }
-.runtime-status-bar .runtime-status-bar__value { min-width: 0; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+.runtime-status-bar .runtime-status-bar__group > strong { grid-column: 2; grid-row: 1; }
+.runtime-status-bar .runtime-status-bar__value { grid-column: 2; grid-row: 2; min-width: 0; max-width: 100%; overflow-wrap: anywhere; white-space: normal; }
 .runtime-status-bar .runtime-status-bar__dot { width: 8px; height: 8px; flex: 0 0 8px; border-radius: 50%; background: #b4c2cb; }
 .runtime-status-bar [data-tone="good"] .runtime-status-bar__dot { background: #8ce2b4; }
 .runtime-status-bar [data-tone="info"] .runtime-status-bar__dot { background: #86d9f1; }
 .runtime-status-bar [data-tone="warning"] .runtime-status-bar__dot { background: #f4cf80; }
 .runtime-status-bar [data-tone="error"] .runtime-status-bar__dot { background: #ffaaa5; }
-.runtime-status-bar .runtime-status-bar__old { color: #f4cf80; }
+.runtime-status-bar .runtime-status-bar__old { grid-column: 2; color: #f4cf80; }
 .runtime-status-bar .runtime-status-bar__refresh { display: flex; align-items: center; gap: 8px; padding: 3px 8px; white-space: nowrap; }
 .runtime-status-bar button { font: inherit; color: inherit; }
 .runtime-status-bar .runtime-status-bar__refresh button, .runtime-status-bar .runtime-status-bar__detail-heading button { border: 1px solid #6a8da4; border-radius: 3px; background: #213c50; padding: 5px 8px; cursor: pointer; }
