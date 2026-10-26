@@ -1,15 +1,16 @@
 {
   "schema": "bago.frontend-sprint-verification.v1",
   "sprint": "SPRINT_20261026_15",
-  "state": "PREPARED",
-  "gate": "PENDING_CI_AFTER_FINAL_ASSERTION_REPAIR",
+  "state": "VALIDATED",
+  "gate": "VALIDATED_SCOPED_TASK",
   "candidate": {
     "worktree_branch": "fix/project-workspace-chat-isolation-20261026",
     "pr": 71,
     "pr_branch": "review/adl-applied-code-20261025",
     "base": "263bb76cf9a47f404b297808bd33b748833686be",
     "previous_head": "5bde1620b6052349be28df9ba330df056749af1b",
-    "first_sprint_commit": "7bdc8eb9d4e02cc24888fe942c3719071fda83c7"
+    "first_sprint_commit": "7bdc8eb9d4e02cc24888fe942c3719071fda83c7",
+    "validated_head": "7b8a26f23a71127d9372072e20cf50562412f6f9"
   },
   "changed_scope": {
     "product_code_changed": false,
@@ -45,14 +46,20 @@
       "suite": "NOT_RUN"
     },
     "github_ci": {
-      "status": "PENDING_LATEST_COMMIT",
+      "status": "PASS",
       "last_failing_pr_run": 40265858653,
       "last_failing_push_run": 40265854557,
       "sprint_commit_run": 40269328620,
       "first_attempt_sha": "7bdc8eb9d4e02cc24888fe942c3719071fda83c7",
       "first_attempt_findings": ["stale translated button expectations", "chat empty-state expectation mismatch", "empty-suite assertion accidentally matched valid empty run-history paragraph"],
       "first_attempt_status": "INCOMPLETE_CANCELLED",
-      "final_candidate_ci": "NOT_STARTED"
+      "final_candidate_ci": {
+        "push": {"run_id": 40272812155, "status": "PASS"},
+        "pull_request": {"run_id": 40272816866, "status": "PASS"},
+        "readme_push": {"run_id": 40272812023, "status": "PASS"},
+        "readme_pull_request": {"run_id": 40272816832, "status": "PASS"},
+        "docker_build_pull_request": {"run_id": 40272816826, "status": "PASS"}
+      }
     }
   },
   "visual_review": {
