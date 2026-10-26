@@ -4,6 +4,7 @@ import {afterEach,beforeEach,expect,it,vi} from 'vitest'
 import {act,cleanup,fireEvent,render,screen,waitFor} from '@testing-library/react'
 import {resetLocaleForTests,t} from '../../src/i18n'
 import AgentChat from '../../src/components/AgentChat'
+import {openDelegatedChild,withPersistedDelegation} from '../helpers/delegated-agent-chat'
 
 const response=(data:any)=>({ok:true,status:200,json:async()=>data})
 beforeEach(()=>{localStorage.clear();resetLocaleForTests();HTMLElement.prototype.scrollIntoView=()=>{}})
@@ -12,7 +13,8 @@ afterEach(()=>{cleanup();vi.unstubAllGlobals()})
 it('delegates one selected producer snapshot and contact to the reviewer, with per-message draft consent',async()=>{
  const agent={id:'reviewer',config:{name:'Revisor fixture',type:'tool',description:'Synthetic reviewer',provider_id:'ollama-cloud',model_id:'fixture-model',tools:['delivery_review','delivery_prepare_draft']}}
  const make=(id:string,kind:string,owner:string)=>({id,owner_kind:kind,owner_id:owner,title:id,status:'active',revision:7,updated_at:'2026-10-24',messages:[] as any[]})
- const assistant=make('conv-assistant','assistant','app-assistant');let conversation=make('conv-review','agent','reviewer')
+ const assistantBase=make('conv-assistant','assistant','app-assistant');let conversation=make('conv-review','agent','reviewer')
+ const assistant=withPersistedDelegation(assistantBase,agent,conversation.id)
  const otherConversation=make('conv-other','agent','reviewer')
  const run={work_id:'production_1',owner_id:'different-producer',conversation_id:'other-conversation',source_root:'C:/synthetic',candidate_id:'a'.repeat(64),scope_sha256:'b'.repeat(64),artifacts:[{path:'out/report.csv',sha256:'c'.repeat(64)}],business_acceptance:'NOT_RUN'}
  const calls:Array<{path:string;body:any}>=[]
@@ -36,8 +38,7 @@ it('delegates one selected producer snapshot and contact to the reviewer, with p
  }))
  render(<AgentChat cognitiveMode="baseline" onNavigate={()=>{}} onOpenProviderSettings={()=>{}} onOpenCognitionSettings={()=>{}}/>)
  await screen.findByRole('region',{name:assistant.id});await act(async()=>{})
- fireEvent.click(screen.getByText(/Conversaciones y agentes/));fireEvent.click(await screen.findByRole('button',{name:/Revisor fixture/}))
- await screen.findByRole('region',{name:'Revisor fixture'});await act(async()=>{})
+ await openDelegatedChild('Revisor fixture');await act(async()=>{})
  fireEvent.click(screen.getByText(t('agentTools.workspace')))
  fireEvent.change(await screen.findByLabelText(t('agentTools.work')),{target:{value:run.work_id}})
  fireEvent.change(screen.getByLabelText(t('agentTools.contact')),{target:{value:'contact_fixture'}})

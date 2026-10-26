@@ -4,6 +4,7 @@ import {afterEach,beforeEach,expect,it,vi} from 'vitest'
 import {act,cleanup,fireEvent,render,screen,waitFor} from '@testing-library/react'
 import AgentChat from '../../src/components/AgentChat'
 import {resetLocaleForTests,setLocale,t} from '../../src/i18n'
+import {openDelegatedChild,withPersistedDelegation} from '../helpers/delegated-agent-chat'
 
 const response=(data:any,status=200)=>({ok:status>=200&&status<300,status,json:async()=>data})
 const deferred=()=>{let resolve!:(value:any)=>void,reject!:(value:any)=>void;const promise=new Promise<any>((yes,no)=>{resolve=yes;reject=no});return {promise,resolve,reject}}
@@ -13,13 +14,14 @@ const selectedValue='ollama-cloud|gemma4:31b'
 beforeEach(()=>{localStorage.clear();resetLocaleForTests();setLocale('en');HTMLElement.prototype.scrollIntoView=()=>{}})
 afterEach(()=>{cleanup();vi.unstubAllGlobals();vi.restoreAllMocks()})
 
-async function setup(){
+async function setup(options:{delegatedAgent?:boolean}={}){
  const put=deferred(),chat=deferred(),calls:Array<{url:string;method?:string;body:any}>=[]
  let currentPut=put
  let nextSelection:ReturnType<typeof deferred>|null=null
- const conversation={id:'assistant-conv',owner_kind:'assistant',owner_id:'app-assistant',status:'active',title:'Fixture conversation',revision:0,messages:[],updated_at:'2026-10-24'}
- const agentConversation={...conversation,id:'agent-conv',owner_kind:'agent',owner_id:'fixture-agent'}
+ const conversationBase={id:'assistant-conv',owner_kind:'assistant',owner_id:'app-assistant',status:'active',title:'Fixture conversation',revision:0,messages:[],updated_at:'2026-10-24'}
+ const agentConversation={...conversationBase,id:'agent-conv',owner_kind:'agent',owner_id:'fixture-agent'}
  const actor={id:'fixture-agent',config:{name:'Own model agent',type:'tool',tools:[],provider_id:'ollama-cloud',model_id:'own-agent-model',system_prompt:'Fixture'}}
+ const conversation=options.delegatedAgent?withPersistedDelegation(conversationBase,actor,agentConversation.id):conversationBase
  vi.stubGlobal('fetch',vi.fn(async(url:string,init?:RequestInit)=>{
    const body=init?.body?JSON.parse(String(init.body)):null
    calls.push({url,method:init?.method,body})
@@ -125,12 +127,10 @@ it('recovers a failed selection only after a new explicit exact PUT, retaining t
 })
 
 it('preserves an assigned agent own provider while the unrelated orchestrator selection has failed',async()=>{
- const f=await setup()
+ const f=await setup({delegatedAgent:true})
  fireEvent.change(f.picker,{target:{value:selectedValue}})
  await act(async()=>f.put.resolve(response({},422)))
- fireEvent.click(screen.getByText(/Conversations and agents/))
- fireEvent.click(await screen.findByRole('button',{name:/Own model agent/}))
- await screen.findByRole('region',{name:'Own model agent'})
+ await openDelegatedChild('Own model agent')
  fireEvent.change(f.input,{target:{value:'Use the assigned model only'}})
  fireEvent.submit(f.input.form!)
  await screen.findByText('Own model response')

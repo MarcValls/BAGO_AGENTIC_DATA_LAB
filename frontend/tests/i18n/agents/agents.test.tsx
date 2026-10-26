@@ -79,7 +79,7 @@ it('retains builder fields, task, instructions and tool selections without refet
  const task=screen.getByLabelText('Tarea *') as HTMLTextAreaElement
  const callsBeforeLocale=fetch.mock.calls.length
  act(()=>setLocale('en'));expect(name.value).toBe('Edited name');expect(task.value).toBe('ORIGINAL TASK')
- expect((container.querySelectorAll('textarea')[2] as HTMLTextAreaElement).value).toBe('ORIGINAL INSTRUCTIONS')
+ expect((screen.getByText('System Prompt').parentElement!.querySelector('textarea') as HTMLTextAreaElement).value).toBe('ORIGINAL INSTRUCTIONS')
  expect(screen.getByText('Sandbox Execution').parentElement!.querySelector('input')!.checked).toBe(true)
  expect(fetch).toHaveBeenCalledTimes(callsBeforeLocale);expect(screen.getByText('Agent Name *')).toBeTruthy()
 })

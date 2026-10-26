@@ -6,12 +6,14 @@ import {beforeEach,afterEach,expect,it,vi} from 'vitest'
 import {act,cleanup,fireEvent,render,screen,waitFor} from '@testing-library/react'
 import AgentChat from '../../src/components/AgentChat'
 import {summary,review,context,response} from './fixtures'
+import {openDelegatedChild,withPersistedDelegation} from '../helpers/delegated-agent-chat'
 afterEach(()=>{cleanup();vi.unstubAllGlobals()})
 async function setup(options:{stored?:any;role?:string;failed?:boolean}={}){
  HTMLElement.prototype.scrollIntoView=()=>{}
  const agent={id:context.owner_id,config:{name:'Agente fixture',type:'tool',description:'Fixture',provider_id:'ollama-cloud',model_id:'model-fixture'}}
  const make=(id:string,owner_kind:string,owner_id:string)=>({id,owner_kind,owner_id,title:id,status:'active',revision:7,updated_at:'2026-10-23',messages:[] as any[]})
- const assistant=make('conv-assistant','assistant','app-assistant');let agentConv=make(context.conversation_id,'agent',context.owner_id)
+ const assistantBase=make('conv-assistant','assistant','app-assistant');let agentConv=make(context.conversation_id,'agent',context.owner_id)
+ const assistant=withPersistedDelegation(assistantBase,agent,agentConv.id)
  if(options.stored!==undefined)agentConv.messages=[{id:'saved',role:options.role??'assistant',content:options.failed?'':'### Propuesta guardada',...(options.failed?{status:'failed'}:{}),references:{workspace_write_proposal:options.stored,trace:{trace_id:'trace-proposal',trace_state:'local_only'}}}]
  const calls:Array<{path:string;body:any}>=[]
  vi.stubGlobal('fetch',vi.fn(async(path:string,init?:RequestInit)=>{
@@ -32,8 +34,7 @@ async function setup(options:{stored?:any;role?:string;failed?:boolean}={}){
  const inspect=vi.fn();render(<AgentChat cognitiveMode="baseline" onNavigate={()=>{}} onOpenProviderSettings={()=>{}} onOpenCognitionSettings={()=>{}} onInspectExecution={inspect}/>)
  await screen.findByRole('region',{name:assistant.id});await act(async()=>{})
  expect(screen.queryByLabelText('Proponer archivos')).toBeNull()
- fireEvent.click(screen.getByText(/Conversaciones y agentes/));fireEvent.click(await screen.findByRole('button',{name:/Agente fixture/}))
- await screen.findByRole('region',{name:'Agente fixture'});await act(async()=>{})
+ await openDelegatedChild('Agente fixture');await act(async()=>{})
  return {calls,inspect}
 }
 function send(){fireEvent.change(screen.getByPlaceholderText('Escribe a Agente fixture.'),{target:{value:'Prepara un informe'}});fireEvent.click(screen.getByRole('button',{name:'Enviar'}))}
@@ -69,9 +70,9 @@ it.each([
 it('does not trust a proposal reference attached to a user message',async()=>{
  const {calls}=await setup({stored:summary,role:'user'});await screen.findByRole('alert');expect(calls).toEqual([])
 })
-it('switching back to assistant clears the selected-agent proposal permission',async()=>{
+it('switching back to assistant clears the delegated-agent proposal permission',async()=>{
  await setup();fireEvent.click(screen.getByLabelText('Proponer archivos'));fireEvent.click(screen.getByRole('button',{name:'Orquestador BAGO5'}));await screen.findByRole('region',{name:'conv-assistant'});expect(screen.queryByLabelText('Proponer archivos')).toBeNull()
- fireEvent.click(screen.getByRole('button',{name:/Agente fixture/}));await screen.findByRole('region',{name:'Agente fixture'});expect((screen.getByLabelText('Proponer archivos') as HTMLInputElement).checked).toBe(false)
+ await openDelegatedChild('Agente fixture');expect((screen.getByLabelText('Proponer archivos') as HTMLInputElement).checked).toBe(false)
 })
 
 
