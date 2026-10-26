@@ -1,7 +1,7 @@
 // Manually authored product presentation catalog. Protocol values and user content are not translated.
 export const es = {
   "commerce.project_folder.form_title": "Carpeta y nombre del proyecto",
-  "commerce.project_folder.global_scope": "La carpeta activa es global para ADL; no es una selección aislada por conversación.",
+  "commerce.project_folder.global_scope": "La carpeta activa se usa en ADL. Los chats se separan por proyecto registrado.",
   "commerce.project_folder.active": "Carpeta activa:",
   "commerce.project_folder.active_unavailable": "Carpeta activa no disponible",
   "commerce.project_folder.existing": "Usar esta carpeta existente",
@@ -748,7 +748,7 @@ export const es = {
 } as const
 export const en: {[K in keyof typeof es]: string} = {
   "commerce.project_folder.form_title": "Project folder and name",
-  "commerce.project_folder.global_scope": "The active folder is global to ADL; it is not isolated per conversation.",
+  "commerce.project_folder.global_scope": "The active folder is used across ADL. Chats are separated by registered project.",
   "commerce.project_folder.active": "Active folder:",
   "commerce.project_folder.active_unavailable": "Active folder unavailable",
   "commerce.project_folder.existing": "Use this existing folder",

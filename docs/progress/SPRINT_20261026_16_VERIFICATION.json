@@ -1,0 +1,101 @@
+{
+  "schema": "adl-sprint-verification.v1",
+  "sprint": "SPRINT_20261026_16",
+  "repository": "BAGO_AGENTIC_DATA_LAB",
+  "branch": "fix/project-workspace-chat-isolation-20261026",
+  "base_sha": "263bb76cf9a47f404b297808bd33b748833686be",
+  "head_before_sprint": "d8093d5e22e9af1bbb2e131620ac8fcc4606d22a",
+  "identity_binding": {
+    "method": "isolated_process_launch_from_worktree plus source hashes",
+    "api_port": 8097,
+    "api_pid": 33788,
+    "vite_port": 5194,
+    "vite_pid": 31076,
+    "integration_preview_identity_endpoint": "NOT_FOUND_404",
+    "isolated_data_root": "C:\\Users\\AMTEC_Terminal_1º\\AppData\\Local\\Temp\\adl-review-candidate-20261026-e3e72364"
+  },
+  "changed_source_sha256": {
+    "frontend/vite.config.ts": "9c377643122b7ff0602933993f69f2c57a9b4661b9f26b5aea84e5083192313a",
+    "frontend/src/i18n/domains/commerce.ts": "75cf66d60f08a97a710b6b17c9c1c4794a09ceda92e2b805710f346dbe4fc00f",
+    "frontend/src/components/RuntimeStatusBar.tsx": "8390d4aaf8029cdd94dc57c827fe8bf38e01e6ba897a2f69156bc92daad3eace",
+    "frontend/tests/runtime-status-bar/status.test.tsx": "7d7e56518b92e175482494332e309afb09c01843b7400e25efd9fe588ce01ab4"
+  },
+  "live_project_flow": {
+    "project_a_id": "workspace_ecd96ae2d4b24f978c467851f7516ff5",
+    "project_b_id": "workspace_e97f18d8c21e4a5e89573702b99a4080",
+    "conversation_id": "conv_ff52dad797d14b60b03994e333013750",
+    "conversation_project_id": "workspace_ecd96ae2d4b24f978c467851f7516ff5",
+    "project_b_visible_conversations": 0,
+    "project_a_visible_conversations_after_switch_back": 1,
+    "project_folder_receipts": [
+      {
+        "receipt_id": "project-folder-receipt_1425d08a7f644a1199e97e154b5cc854",
+        "plan_id": "project-plan_9734130426434b4986777023338d2a46",
+        "status": "APPLIED",
+        "created_files": [
+          ".bago/context/PROJECT_CONTEXT.md",
+          ".bago/state/PROJECT_STATE.json",
+          ".bago/runtime/ACTIVE_HANDOFF.md",
+          ".workspace-service/manifest.json"
+        ],
+        "binding_applied": true
+      },
+      {
+        "receipt_id": "project-folder-receipt_62e302e865b84dfab7fb5def821d311b",
+        "plan_id": "project-plan_66db8eb24ea14316bed4c955e564a3c9",
+        "status": "APPLIED",
+        "created_files": [
+          ".bago/context/PROJECT_CONTEXT.md",
+          ".bago/state/PROJECT_STATE.json",
+          ".bago/runtime/ACTIVE_HANDOFF.md",
+          ".workspace-service/manifest.json"
+        ],
+        "binding_applied": true
+      },
+      {
+        "receipt_id": "project-folder-receipt_67f49de3e7da4cd9a58159e33f67f61d",
+        "plan_id": "project-plan_b5691193d30b4700ac57542ae681f74f",
+        "status": "APPLIED",
+        "created_files": [],
+        "binding_applied": true
+      }
+    ],
+    "provider_invocations": 0,
+    "external_messages_sent": 0
+  },
+  "verification": {
+    "frontend_directed_tests": "PASS 85/85",
+    "frontend_build": "PASS with existing greater-than-500kB chunk warning",
+    "backend_directed_tests": "PASS 59/59",
+    "git_diff_check": "PASS",
+    "README_generator": "PASS: README generated after 1570 tests passed",
+    "README_check": "PASS: README reproducible; suite NOT_RUN (1572 cases collected)",
+    "github_push_ci": "PENDING",
+    "github_pull_request_ci": "PENDING",
+    "visual_scope": "Desktop 1920x1080 and mobile 390x844; isolated synthetic workspace, not the 8093/8098 deployment",
+    "rendered_ui_review": {
+      "browser_path": "Python Playwright; CUA listed no browser surfaces",
+      "page_identity": "HTTP 200; BAGO · Espacio de trabajo",
+      "page_errors": [],
+      "desktop_horizontal_overflow": false,
+      "mobile_horizontal_overflow": false,
+      "interaction": "Left navigation to Capacidades loaded the catalog; at mobile width, closing the project panel reveals the chat composer",
+      "findings": [
+        "Project panel occupies the available mobile viewport while open",
+        "New conversation remains English in the Spanish interface",
+        "Runtime status row scrolls horizontally; Git and provider are beyond the first 390px view without a visible scroll cue"
+      ],
+      "screenshots_temp": [
+        "C:\\Users\\AMTEC_Terminal_1º\\AppData\\Local\\Temp\\adl-review-candidate-20261026-e3e72364\\frontend-final-desktop.png",
+        "C:\\Users\\AMTEC_Terminal_1º\\AppData\\Local\\Temp\\adl-review-candidate-20261026-e3e72364\\frontend-final-mobile.png"
+      ]
+    }
+  },
+  "screenshot": {
+    "path": ".bago/evidence/frontend-review-project-workspace-20261026/workspace-projects-candidate.png",
+    "sha256": "D55E315D2FFB8B0BC6AD2943CCA781450D43DFCBB26E3AEBFF2AD5F91D2AF1AD"
+  },
+  "route_receipt": ".bago/evidence/frontend-review-project-workspace-20261026/route.json",
+  "gate": "VERIFICATION_IN_PROGRESS",
+  "release_readiness": "NOT_VALIDATED"
+}

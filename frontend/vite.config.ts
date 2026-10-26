@@ -11,7 +11,9 @@ export default defineConfig({
     proxy: {
       '/api': {
         target: process.env.BAGO_API_PROXY_TARGET || 'http://localhost:8080',
-        changeOrigin: true,
+        // Preserve the browser origin as the Host header for same-origin API
+        // checks performed by the backend (for example project-folder plans).
+        changeOrigin: false,
       }
     }
   },
