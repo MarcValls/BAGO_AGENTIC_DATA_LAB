@@ -17,6 +17,13 @@ from src.development import TOOL_IDS as DEVELOPMENT_TOOL_IDS
 
 DELIVERY_TOOL_IDS=frozenset({'delivery_review','delivery_revalidate','delivery_prepare_draft'})
 SERVICE_TOOL_IDS=FS_TOOL_IDS|DELIVERY_TOOL_IDS|DEVELOPMENT_TOOL_IDS
+DEVELOPMENT_CHAT_INSTRUCTIONS=(
+    "\nUse only the assigned development tools within the host-configured development profile. "
+    "A development tool does not require document authorization and cannot escape that host profile. "
+    "You may read, prepare a staged patch and run only fixed check IDs. Handler receipts prove these actions. "
+    "Independent reviewer tools inspect an exact candidate and record a verdict; the author cannot approve its own patch. "
+    "Only the human development panel can apply a passing reviewed patch. Never claim source/runtime updated from a prepared or checked patch. "
+    "Use compact exact replacements with base SHA-256 for large source files. No arbitrary commands, shell, credentials or unrelated paths.")
 _LOCK=threading.RLock()
 _REVIEWS={}
 
@@ -144,6 +151,43 @@ class AgentServiceSession:
         except (ValueError,OSError,TypeError,KeyError) as error:
             receipt.update(decision='FAIL' if receipt['executed'] else 'DENY',reason_code='AGENT_SERVICE_REJECTED',reason=str(error))
             return {'state':'FAILED','error':str(error),'send_executed':False},receipt
+
+
+class DevelopmentChatSession:
+    """Expose assigned host-profile tools to agent chat without a document grant."""
+    def __init__(self, *, owner_id, conversation_id, assigned):
+        from src.development import DevelopmentService
+        self.owner_id=owner_id
+        self.conversation_id=conversation_id
+        requested=frozenset(assigned)&DEVELOPMENT_TOOL_IDS
+        if 'development_review' in requested and requested & {'development_prepare','development_check','development_revise'}:
+            requested=requested-{'development_review'}
+        self.assigned=requested
+        self.service=DevelopmentService()
+
+    def schemas(self):
+        return self.service.schemas(self.assigned)
+
+    def invoke(self,name,args):
+        if name not in self.assigned:
+            return {'ok':False,'error':'development_assignment_or_reviewer_separation_required'}, {
+                'kind':'development_tool','tool_name':name,'decision':'DENY','executed':False}
+        return self.service.invoke(name,args,owner_id=self.owner_id,conversation_id=self.conversation_id,root=self.service.root)
+
+
+def development_chat_session(*, owner_id, conversation_id, assigned):
+    assigned=frozenset(assigned)&DEVELOPMENT_TOOL_IDS
+    if not assigned or not os.environ.get('BAGO_DEVELOPMENT_PROFILE'):
+        return None
+    return DevelopmentChatSession(owner_id=owner_id,conversation_id=conversation_id,assigned=assigned)
+
+
+def invoke_development_chat_tool(session,name,args):
+    if session is not None:
+        return session.invoke(name,args)
+    reason='DEVELOPMENT_AUTHORIZATION_REQUIRED'
+    return {'ok':False,'reason_code':reason}, {
+        'kind':'development_tool','tool_name':name,'decision':'DENY','executed':False,'reason_code':reason}
 
 
 def _proposal_path(workspace,proposal_id):

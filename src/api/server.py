@@ -55,7 +55,13 @@ from src.capabilities import (
 from src.conversations import ConversationConflict, ConversationNotFound, ConversationStore
 from src.capabilities.manager import agent_tool_catalog
 from src.agent_tools.document_tools import DOCUMENT_AUTHORIZATIONS, DOCUMENT_TOOL_IDS, DocumentAccessError
-from src.agent_tools.agent_services import SERVICE_TOOL_IDS
+from src.agent_tools.agent_services import (
+    DEVELOPMENT_CHAT_INSTRUCTIONS,
+    SERVICE_TOOL_IDS,
+    development_chat_session,
+    invoke_development_chat_tool,
+)
+from src.development import TOOL_IDS as DEVELOPMENT_TOOL_IDS
 from src.conversations.library import OwnerKind, PROJECT_ID, reset_project_scope, set_project_scope
 from src.providers import codex, github_copilot, ollama, registration, model_policy, runtime as provider_runtime
 from src.knowledge import LocalRAGError, run_ingest_and_answer
@@ -2336,6 +2342,7 @@ async def _chat_with_workspace_read(
     write_workspace=None,
     write_context=None,
     document_grant=None,
+    development_session=None,
     recorder=None,
 ) -> tuple[str, list[dict[str, Any]], list[dict[str, Any]], str | None]:
     """Run a bounded provider tool loop with read-only workspace tools."""
@@ -2379,7 +2386,9 @@ async def _chat_with_workspace_read(
         if document_grant is not None and not (allow_navigation and round_index == 0):
             available_tools.extend(document_grant["session"].tool_schemas(document_grant))
             if document_grant.get('services') is not None:
-                available_tools.extend(document_grant['services'].schemas(document_grant['assigned']))
+                available_tools.extend(document_grant['services'].schemas(set(document_grant['assigned'])-DEVELOPMENT_TOOL_IDS))
+        if development_session is not None and not (allow_navigation and round_index == 0):
+            available_tools.extend(development_session.schemas())
         turn_kwargs: dict[str, Any] = {"tools": available_tools}
         if allow_navigation:
             turn_kwargs["options"] = {"temperature": 0}
@@ -2534,9 +2543,13 @@ async def _chat_with_workspace_read(
                     read_events.append({"decision": "DENY", "path": normalize_workspace_path(raw_path), "reason_code": "TOOL_CALL_LIMIT", "attempt": calls_used + 1})
             elif tool_name in DOCUMENT_TOOL_IDS | SERVICE_TOOL_IDS:
                 calls_used += 1
-                if document_grant is None:
+                if tool_name in DEVELOPMENT_TOOL_IDS:
+                    result,receipt=await asyncio.to_thread(
+                        _native_receipt_call, recorder, turn_observation, "service.tool",
+                        invoke_development_chat_tool,development_session,tool_name,arguments)
+                elif document_grant is None:
                     result = {"ok": False, "reason_code": "DOCUMENT_AUTHORIZATION_REQUIRED"}
-                    read_events.append({"kind": "document_tool", "tool_name": tool_name, "decision": "DENY", "path": None, "reason_code": result["reason_code"], "executed": False})
+                    receipt = {"kind": "document_tool", "tool_name": tool_name, "decision": "DENY", "path": None, "reason_code": result["reason_code"], "executed": False}
                 else:
                     if tool_name in SERVICE_TOOL_IDS:
                         result,receipt=await asyncio.to_thread(
@@ -2560,14 +2573,14 @@ async def _chat_with_workspace_read(
                                 receipt['production']=result['production']
                             except (OSError,ValueError,KeyError) as error:
                                 receipt['production_error']=str(error)
-                    read_events.append(receipt)
-                    if receipt.get("decision") == "ALLOW":
-                        for record in result.get("records", []):
-                            source = record["source"]
-                            sources.append({"source_type": "document", "path": str(document_grant["session"].root/source["path"]),
-                                "start_line": 1, "end_line": 1, "file_sha256": source["sha256"],
-                                "content_sha256": source["sha256"], "source_id": source["source_id"],
-                                "locations": [s["location"] for s in record.get("segments", [])]})
+                read_events.append(receipt)
+                if receipt.get("decision") == "ALLOW" and document_grant is not None and tool_name not in DEVELOPMENT_TOOL_IDS:
+                    for record in result.get("records", []):
+                        source = record["source"]
+                        sources.append({"source_type": "document", "path": str(document_grant["session"].root/source["path"]),
+                            "start_line": 1, "end_line": 1, "file_sha256": source["sha256"],
+                            "content_sha256": source["sha256"], "source_id": source["source_id"],
+                            "locations": [s["location"] for s in record.get("segments", [])]})
             elif tool_name not in {READ_WORKSPACE_FILE, SCAN_CODE_DUPLICATES}:
                 result = {"ok": False, "error": "That tool is not available in this chat."}
                 calls_used += 1
@@ -4307,6 +4320,13 @@ async def _execute_native_agent_chat_turn(agent_id,request,response,*,recorder,n
             owner_kind="agent", owner_id=agent_id, conversation_id=request.conversation_id, revision=request.revision)
         write_workspace = _owned_write_workspace(workspace_root) if request.allow_workspace_write_proposals else None
         write_context = {"owner_kind":"agent","owner_id":agent_id,"conversation_id":request.conversation_id,"conversation_revision":request.revision}
+    try:
+        development_session = development_chat_session(
+            owner_id=agent_id, conversation_id=request.conversation_id,
+            assigned=getattr(record.config, "tools", []))
+    except (OSError, ValueError, RuntimeError):
+        raise HTTPException(409, detail={"code":"development_profile_unavailable",
+            "message":"The configured development profile is unavailable; no development tool was run."}) from None
     with operation("conversation.history"):
         history = CONVERSATIONS.history(request.conversation_id)
     with operation("conversation.user.persist"):
@@ -4331,12 +4351,8 @@ async def _execute_native_agent_chat_turn(agent_id,request,response,*,recorder,n
             "no rename or settlement is executed. document_export can create only a new report in the reviewed output directory. "
             "Reuse returned opaque bundle_id; never invent extracted evidence. Missing OCR or unsupported formats must be reported.")
         messages[0]['content']+='\nFilesystem tools may inventory or persist proposals only. A proposal is not execution: only the human UI can confirm its exact plan. Delivery tools use the selected producer run and contact; artifact integrity is not business acceptance. Missing mandatory checks block delivery. A communications draft does not send any message.'
-        if any(name.startswith('development_') for name in document_grant['assigned']):
-            messages[0]['content'] += ('\nThe assigned development tools override the general no-execution statement ONLY within the host-configured development profile and this authorized root. '
-                'You may read, prepare a staged patch and run only fixed check IDs. Handler receipts prove these actions. '
-                'Independent reviewer tools inspect an exact candidate and record a verdict; the author cannot approve its own patch. '
-                'Only the human development panel can apply a passing reviewed patch. Never claim source/runtime updated from a prepared or checked patch. '
-                'Use compact exact replacements with base SHA-256 for large source files. No arbitrary commands, shell, credentials or unrelated paths.')
+    if development_session is not None:
+        messages[0]['content'] += DEVELOPMENT_CHAT_INSTRUCTIONS
     if cognitive_context["prompt_guidance"]:
         messages[0]["content"] += "\n\n" + cognitive_context["prompt_guidance"]
     messages.extend(history[-30:])
@@ -4363,12 +4379,12 @@ async def _execute_native_agent_chat_turn(agent_id,request,response,*,recorder,n
     turn_observation = {"sources":sources,"read_events":read_events}
     native_state["observation"] = turn_observation
     try:
-        if authorized_paths or authorized_directories or authorized_web or write_workspace is not None or document_grant is not None:
+        if authorized_paths or authorized_directories or authorized_web or write_workspace is not None or document_grant is not None or development_session is not None:
             answer, sources, read_events, _ = await _chat_with_workspace_read(
                 model_id, messages, authorized_paths, authorized_directories, workspace_root=workspace_root,
                 provider_id=provider_id, web_permit=authorized_web,
                 turn_observation=turn_observation, write_workspace=write_workspace, write_context=write_context,
-                document_grant=document_grant, recorder=recorder,
+                document_grant=document_grant, development_session=development_session, recorder=recorder,
             )
         else:
             with operation("provider.direct"):
