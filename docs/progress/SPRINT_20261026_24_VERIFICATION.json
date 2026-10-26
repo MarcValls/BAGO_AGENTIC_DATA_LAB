@@ -6,6 +6,7 @@
   "candidate": {
     "branch": "fix/runtime-status-bar-thin-20261026",
     "head_before_sprint": "7ddab767322671cedaff2b8097b15897051fd939",
+    "implementation_head_ci": "319448040c61728aa158c941ee4dc3dc767c53b5",
     "fresh_base_sha": "c06f1eb0d9e844807f8c009e26fc9514c0787008",
     "pull_request": 74
   },
@@ -79,8 +80,12 @@
     },
     {
       "tool": "GitHub Actions on the new commit",
-      "result": "Pending publication",
-      "status": "NOT_RUN"
+      "result": {
+        "ci_run": {"id": 40333009038, "run_number": 437, "conclusion": "success"},
+        "docker_build_run": {"id": 40333008931, "run_number": 92, "conclusion": "success"},
+        "readme_consistency_run": {"id": 40333009116, "run_number": 455, "conclusion": "success"}
+      },
+      "status": "PASS"
     }
   ],
   "source_identity": {
