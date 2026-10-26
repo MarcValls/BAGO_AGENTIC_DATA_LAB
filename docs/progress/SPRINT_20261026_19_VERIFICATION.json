@@ -83,8 +83,33 @@
       "result": "PASS",
       "suite": "NOT_RUN; 1573 tests collected"
     },
-    "github_push": "PENDING",
-    "github_ci": "PENDING",
+    "github_push": {
+      "result": "PUSHED",
+      "commit": "4180315c5c4a70115b06752f360241ce35f726d6",
+      "sprint_branch": "fix/project-workspace-chat-isolation-20261026",
+      "pull_request": {
+        "number": 71,
+        "branch": "review/adl-applied-code-20261025",
+        "url": "https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/pull/71",
+        "state": "OPEN"
+      }
+    },
+    "github_ci": {
+      "result": "IN_PROGRESS",
+      "commit": "4180315c5c4a70115b06752f360241ce35f726d6",
+      "observed": {
+        "build": "PASS",
+        "readme_consistency": [
+          "PASS",
+          "PASS"
+        ],
+        "verify": [
+          "PENDING",
+          "PENDING"
+        ],
+        "security_scan": "SKIPPED"
+      }
+    },
     "release_readiness": "NOT_VALIDATED"
   },
   "remaining": [
