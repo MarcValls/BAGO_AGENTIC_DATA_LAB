@@ -69,9 +69,15 @@
   },
   "github": {
     "pull_request": 71,
-    "sprint_commit": "PENDING",
+    "sprint_commit": "2e7cff9a065159ed7c4f68018e526de9f74a837a",
+    "published_head_at_verification": "afc36ad15e04d09a32d12612254e65c887645755",
     "fresh_merge_base_check": "PASS",
-    "fresh_ci": "PENDING"
+    "fresh_ci": {
+      "status": "PENDING",
+      "checks": ["readme", "verify"],
+      "head": "afc36ad15e04d09a32d12612254e65c887645755"
+    },
+    "url": "https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/pull/71"
   },
-  "overall": "INCOMPLETE: focused checks, README generation/check, and one synthetic live run passed; sprint publication, fresh PR CI, published-runtime verification, and broader validation remain pending"
+  "overall": "INCOMPLETE: focused checks, README generation/check, and one synthetic live run passed; fresh PR CI, published-runtime verification, and broader validation remain pending"
 }
