@@ -720,6 +720,7 @@ async def conversation_project_scope(request: Request, call_next):
         path = request.url.path
         conversation_route = (path == "/api/conversations" or path.startswith("/api/conversations/")
                               or path == "/api/chat/control" or path == "/api/work-history"
+                              or (path == "/api/capabilities/proposals" and request.method == "POST")
                               or re.fullmatch(r"/api/agents/[^/]+/chat", path) is not None)
         if conversation_route:
             try:
@@ -4464,6 +4465,15 @@ async def websocket_agent_chat(websocket: WebSocket) -> None:
     """Legacy transport backed by the same real, server-owned agent chat."""
     if not await _accept_local_websocket(websocket):
         return
+    with _WORKSPACE_LOCK:
+        root = WORKSPACE_ROOT if _WORKSPACE_ROOT_PINNED else Path(REPO_ROOT).resolve()
+    root_token = _REQUEST_WORKSPACE_ROOT.set(Path(root).resolve())
+    try:
+        project_token = set_project_scope(_active_conversation_project_id())
+    except Exception:
+        _REQUEST_WORKSPACE_ROOT.reset(root_token)
+        await websocket.close(code=1011)
+        return
     active_connections.append(websocket)
 
     try:
@@ -4527,6 +4537,8 @@ async def websocket_agent_chat(websocket: WebSocket) -> None:
     finally:
         if websocket in active_connections:
             active_connections.remove(websocket)
+        reset_project_scope(project_token)
+        _REQUEST_WORKSPACE_ROOT.reset(root_token)
 
 
 # ===== API: GitHub Actions Integration =====
