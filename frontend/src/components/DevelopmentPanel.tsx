@@ -23,7 +23,7 @@ async function readResponse(response: Response) {
 }
 
 export default function DevelopmentPanel({ownerId, disabled = false, workspaceContent, historyContent, showChanges = true, initialOpen = true}: {ownerId: string; disabled?: boolean; workspaceContent?: ReactNode; historyContent?: ReactNode; showChanges?: boolean; initialOpen?: boolean}) {
-  const [open, setOpen] = useState(initialOpen)
+  const [open, setOpen] = useState(() => initialOpen && !(typeof window !== 'undefined' && typeof window.matchMedia === 'function' && window.matchMedia('(max-width: 760px)').matches))
   const panelId = useId()
   const toggleRef = useRef<HTMLButtonElement>(null)
   const closeRef = useRef<HTMLButtonElement>(null)

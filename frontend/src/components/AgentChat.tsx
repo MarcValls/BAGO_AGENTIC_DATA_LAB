@@ -1107,7 +1107,7 @@ export default function AgentChat({ onInspectionSelection, onInspectExecution, o
                   const bounds = event.currentTarget.getBoundingClientRect()
                   showConversationContextMenu(conversation, bounds.left, bounds.bottom)
                 }}
-              ><strong style={!selectedAgent ? {flexShrink: 0, whiteSpace: 'normal', overflowWrap: 'anywhere'} : undefined}>{conversation.title}</strong><span style={!selectedAgent ? {flexShrink: 0} : undefined}>{Number.isFinite(conversationActivity(conversation.updated_at)) ? <time dateTime={conversation.updated_at}>Última actividad · {formatDate(conversation.updated_at)} UTC</time> : 'Última actividad no disponible'}</span></button>)}</div>
+              ><strong style={!selectedAgent ? {flexShrink: 0, whiteSpace: 'normal', overflowWrap: 'anywhere'} : undefined}>{conversation.title === 'New conversation' ? t('commerce.new_conversation') : conversation.title}</strong><span style={!selectedAgent ? {flexShrink: 0} : undefined}>{Number.isFinite(conversationActivity(conversation.updated_at)) ? <time dateTime={conversation.updated_at}>Última actividad · {formatDate(conversation.updated_at)} UTC</time> : 'Última actividad no disponible'}</span></button>)}</div>
               <div className="conversation-library-footer"><button className="conversation-library-new" type="button" disabled={creatingConversation} onClick={() => void startConversation()}>{t('commerce.new')}</button>
                 {libraryMode === 'deleted' && activeConversation?.status === 'deleted' && <button type="button" disabled={permanentlyDeleting} onClick={() => void permanentlyDeleteConversation()}>{permanentlyDeleting ? t('commerce.deleting') : t('commerce.permanently_delete')}</button>}
               </div>

@@ -142,6 +142,7 @@ export default function RuntimeStatusBar() {
     </section>
     {failure && <p className="runtime-status-bar__notice" role="status">{errorText} {snapshot ? say('Se conserva la observación anterior.', 'The earlier observation is retained.') : say('Estados sin comprobar.', 'States are not checked.')}</p>}
     {paused && <p className="runtime-status-bar__notice">{say('Actualización en pausa: pestaña oculta.', 'Updates paused: tab hidden.')}</p>}
+    <p className="runtime-status-bar__scroll-hint">{say('Desliza para ver Git y proveedores →', 'Swipe to see Git and providers →')}</p>
     <div className="runtime-status-bar__row">
       {views.map(item => {
         const old = ['stale', 'clock'].includes(freshness(item.checkedAt))
