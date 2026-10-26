@@ -151,3 +151,18 @@ Se capturaron las 14 vistas principales y los estados mostrados en los recorrido
 ## Repetir la captura técnica
 
 El recorrido automatizado está en [`scripts/capture_dummy_manual.py`](../../scripts/capture_dummy_manual.py). Requiere el frontend disponible en `http://127.0.0.1:5173`, Python Playwright y Chromium instalados. El script intercepta las rutas `/api/` y guarda las imágenes en `assets/manual/`; no necesita llamar al proveedor ni al backend real.
+
+## Recorrido live: leer un archivo autorizado del workspace
+
+1. Abre el chat del proyecto correcto y escribe la ruta relativa exacta, por ejemplo `sample_a.py`.
+2. Marca **Permitir lectura de archivos del proyecto** antes de enviar. El permiso se comprueba al enviar y sólo cubre el archivo autorizado para ese turno.
+3. Pide que se use la herramienta de lectura de workspace y que se resuma el archivo. Revisa la respuesta y abre **Inspeccionar ejecución** para consultar la traza.
+4. Comprueba el recibo: decisión `ALLOW`, ruta, intervalo de líneas, total y si la lectura quedó truncada. Un mensaje HTTP 200, por sí solo, no demuestra que se leyera el archivo.
+
+En la ejecución sintética verificada el 26 de octubre de 2026, BAGO leyó `sample_a.py` (11 líneas) y respondió en una frase sobre su funcionalidad. La conversación fue `conv_9887036846fb4b939599cfc64a7da1fd`; la traza Jaeger fue `ca351b6323cbcbb65c0882c1c7f778cf`. Tiene dos spans: `assistant.control` y su hijo `workspace.read`, con recibo `ALLOW` para las líneas 1–11, total 11 y `truncated=false`. No se ofrecieron ni utilizaron herramientas `development_*`.
+
+**Límite de medición:** el span `workspace.read` figura con `timing_source=projection` y `duration_measured=false`. La duración de unos microsegundos que muestra Jaeger no es una medición real del tiempo de lectura. Esta prueba demuestra el recorrido y su recibo en esa candidata sintética; no certifica el producto publicado ni mediciones de rendimiento.
+
+![Lectura autorizada de workspace desde el chat](assets/manual-ui-actual-2026-10-26/05-chat-workspace-read-live.png)
+
+![Traza Jaeger de la lectura autorizada](assets/manual-ui-actual-2026-10-26/06-jaeger-workspace-read-live.png)
