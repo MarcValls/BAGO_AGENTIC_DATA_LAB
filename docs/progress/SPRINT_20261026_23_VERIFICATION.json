@@ -1,0 +1,102 @@
+{
+  "schema": "bago.sprint-verification.v1",
+  "sprint": 23,
+  "date": "2026-10-26",
+  "status": "VERIFIED_SCOPED; production GO NOT_VALIDATED",
+  "candidate": {
+    "worktree": "C:/Users/AMTEC_Terminal_1º/Desktop/BAGO5_ADL/.worktrees/project-workspace-chat-isolation-20261026",
+    "branch": "fix/runtime-status-bar-thin-20261026",
+    "head_before_sprint": "33267c5219ed6e7fd09d98ef06266bd9d164bc1c",
+    "fresh_base_sha": "c06f1eb0d9e844807f8c009e26fc9514c0787008",
+    "base": "origin/main@c06f1eb0d9e844807f8c009e26fc9514c0787008",
+    "pull_request": 74
+  },
+  "change": {
+    "id": "runtime-status-bar-28px-one-line",
+    "authorship": "External UI edit by Codex",
+    "files": [
+      "frontend/src/components/RuntimeStatusBar.css",
+      "frontend/tests/runtime-status-bar/status.test.tsx",
+      "docs/agent-chat-control/assets/manual-ui-actual-2026-10-26/11-runtime-status-bar-thin-100-percent.png",
+      "docs/progress/SPRINT_20261026_23.md",
+      "docs/progress/SPRINT_20261026_23_VERIFICATION.json"
+    ],
+    "live_source_patch": "C:/BAGO_TESTS/JAEGER_ADL_20261024/source/frontend/src/components/RuntimeStatusBar.css",
+    "live_source_sha256": "B105CA90C9EDABE7A4A87616730DF97D46F3526DE596A99FAD8229A91794CDAF",
+    "preserved": ["status semantics", "expanded details", "keyboard controls", "status values"]
+  },
+  "checks": [
+    {
+      "command": "npm run build",
+      "cwd": "frontend",
+      "result": "TypeScript and Vite build passed; 449 modules; existing main bundle warning above 500 kB",
+      "status": "PASS"
+    },
+    {
+      "tool": "Chromium CDP against http://127.0.0.1:8093/",
+      "result": {
+        "viewport": "1920x978",
+        "device_pixel_ratio": 1,
+        "footer_height_css_px": 29,
+        "row_height_css_px": 28,
+        "groups": 5,
+        "row_scroll_width_css_px": 1920,
+        "row_client_width_css_px": 1920,
+        "restart_performed": false
+      },
+      "status": "VERIFIED"
+    },
+    {
+      "tool": "Chromium CDP against http://127.0.0.1:5194/",
+      "result": {
+        "viewport": "1920x978",
+        "device_pixel_ratio": 1,
+        "footer_height_css_px": 29,
+        "row_height_css_px": 28,
+        "hint_display": "none",
+        "groups": 5,
+        "row_scroll_width_css_px": 1920,
+        "row_client_width_css_px": 1920,
+        "vite_overlay": false
+      },
+      "status": "VERIFIED"
+    },
+    {
+      "command": "automated test suite",
+      "result": "NOT_RUN; not requested",
+      "status": "NOT_RUN"
+    },
+    {
+      "command": "python scripts/generate_dynamic_readme.py",
+      "result": "NOT_RUN because this command executes the full automated test suite",
+      "status": "NOT_RUN"
+    },
+    {
+      "command": "python scripts/generate_dynamic_readme.py --check --skip-tests",
+      "result": "README verified; 1576 cases collected without executing the suite",
+      "status": "PASS"
+    },
+    {
+      "command": "git diff --check",
+      "result": "No whitespace errors",
+      "status": "PASS"
+    }
+  ],
+  "screenshots": [
+    {
+      "path": "docs/agent-chat-control/assets/manual-ui-actual-2026-10-26/11-runtime-status-bar-thin-100-percent.png",
+      "sha256": "84DDD8D9744E85596FAE8E95325676289610E6B6408244C8843A9256F4CE8C4F"
+    },
+    {
+      "external_path": "C:/BAGO_TESTS/JAEGER_ADL_20261024/evidence/runtime-status-bar-8093-full.png",
+      "sha256": "6DE13EE724D1A0851FC74A1738C8DD286F0BB373DEEE107D05ACC62F5E6104D8"
+    }
+  ],
+  "production_gate": {
+    "status": "NO_GO",
+    "reason": "This sprint only reduces the runtime status bar height; tool execution, autonomous delegation, recovery and complete causal trace remain unresolved."
+  },
+  "github": {
+    "remote_ci": "PENDING after push"
+  }
+}
