@@ -21,7 +21,7 @@ import uuid
 from contextvars import ContextVar
 from contextlib import asynccontextmanager
 from collections import deque
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Literal
 from urllib.parse import urlsplit
@@ -2389,6 +2389,8 @@ async def _chat_with_workspace_read(
             turn = await asyncio.to_thread(
                 _native_provider_roundtrip, recorder, "provider.chat_turn.roundtrip", round_index + 1,
                 provider_runtime.chat_turn, provider_id, model_id, messages, **turn_kwargs)
+        if turn_observation is not None:
+            turn_observation["provider_response_observed"] = True
         raw_calls = turn.get("tool_calls")
         tool_calls = raw_calls if isinstance(raw_calls, list) else []
         if (allow_navigation and round_index == 0 and tool_calls
@@ -2603,6 +2605,8 @@ async def _chat_with_workspace_read(
                 answer = await asyncio.to_thread(
                     _native_provider_roundtrip, recorder, "provider.final.roundtrip", round_index + 2,
                     provider_runtime.chat, provider_id, model_id, messages)
+            if turn_observation is not None:
+                turn_observation["provider_response_observed"] = True
             return answer, sources, read_events, None
 
     raise ollama.ProviderError("tool_loop_incomplete", "The chat could not complete its response.")
@@ -3162,6 +3166,7 @@ async def control_chat(request: ControlChatRequest) -> dict[str, Any]:
     """Persist app-assistant turns; draft editing never grants delivery authorization."""
     turn_started_at_ns = time.time_ns()
     provider_id, model_id = "application", "not_used"
+    provider_observation: dict[str, bool] = {"observed": False}
     sources: list[dict[str, Any]] = []
     read_events: list[dict[str, Any]] = []
     conversation = _owned_conversation(request.conversation_id, "assistant", "app-assistant")
@@ -3196,6 +3201,12 @@ async def control_chat(request: ControlChatRequest) -> dict[str, Any]:
         nonlocal revision
         payload.setdefault("sources", sources)
         payload.setdefault("read_events", read_events)
+        if provider_observation["observed"] and provider_id not in {"application", ""} and model_id not in {"not_used", ""}:
+            payload.setdefault("provider_response_observation", {
+                "provider_id": provider_id,
+                "model_id": model_id,
+                "observed_at": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
+            })
         if not payload.get("trace"):
             payload["trace"] = await asyncio.to_thread(_record_agent_chat_trace,
                 agent_id="app-assistant", provider_id=provider_id, model_id=model_id,
@@ -3368,6 +3379,7 @@ async def control_chat(request: ControlChatRequest) -> dict[str, Any]:
         })
         next_turn = await asyncio.to_thread(provider_runtime.chat_turn, provider_id, model_id, messages,
             tools=[CONTROL_REQUEST_TOOL], options={"temperature": 0})
+        provider_observation["observed"] = True
         return _control_request_from_turn(next_turn)
 
     async def route_orchestrated_task(first: dict[str, Any]):
@@ -3455,20 +3467,24 @@ async def control_chat(request: ControlChatRequest) -> dict[str, Any]:
             requested_paths = _authorized_workspace_paths_named_in_request(request.message, authorized_paths)
             if not requested_paths:
                 return await finish_turn("chat", "No he leído ningún archivo: la autorización de este envío no incluye la ruta que has pedido.")
+            turn_observation = {"sources": sources, "read_events": read_events, "provider_response_observed": False}
             answer, sources, read_events, _ = await _chat_with_workspace_read(
                 model_id, messages, requested_paths, [], workspace_root=workspace_root,
                 allow_navigation=False, provider_id=provider_id, web_permit=None,
-                turn_observation={"sources": sources, "read_events": read_events},
+                turn_observation=turn_observation,
             )
+            provider_observation["observed"] = turn_observation["provider_response_observed"]
             return await finish_turn("chat", answer)
         if authorized_paths or authorized_directories or authorized_web:
+            turn_observation = {"sources": sources, "read_events": read_events, "provider_response_observed": False}
             answer, sources, read_events, navigation_view = await _chat_with_workspace_read(
                 model_id, messages, authorized_paths, authorized_directories,
                 workspace_root=workspace_root, allow_navigation=True,
                 recover_invalid_delegate_for_task=not _request_names_agent(request.message),
                 provider_id=provider_id, web_permit=authorized_web,
-                turn_observation={"sources":sources,"read_events":read_events},
+                turn_observation=turn_observation,
             )
+            provider_observation["observed"] = turn_observation["provider_response_observed"]
             if navigation_view and navigation_view.startswith("delegation:"):
                 return await route_orchestrated_task(json.loads(navigation_view[len("delegation:"):]))
             if navigation_view and navigation_view.startswith("communication:"):
@@ -3484,11 +3500,13 @@ async def control_chat(request: ControlChatRequest) -> dict[str, Any]:
                 return await finish_turn("workspace_scan", answer, control_capability="workspace.scan_duplicates")
         elif request.operation == "help":
             answer = await asyncio.to_thread(provider_runtime.chat, provider_id, model_id, messages)
+            provider_observation["observed"] = True
         else:
             turn = await asyncio.to_thread(
                 provider_runtime.chat_turn, provider_id, model_id, messages,
                 tools=[CONTROL_REQUEST_TOOL], options={"temperature": 0},
             )
+            provider_observation["observed"] = True
             resolved = _control_request_from_turn(
                 turn, recover_invalid_delegate_for_task=not _request_names_agent(request.message)
             )

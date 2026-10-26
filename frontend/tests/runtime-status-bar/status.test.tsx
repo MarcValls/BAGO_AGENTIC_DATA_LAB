@@ -4,10 +4,11 @@ import {afterEach,beforeEach,expect,it,vi} from 'vitest'
 import {act,cleanup,fireEvent,render,screen,within} from '@testing-library/react'
 import {readFileSync} from 'node:fs'
 import RuntimeStatusBar from '../../src/components/RuntimeStatusBar'
+import {PROVIDER_RESPONSE_OBSERVED_EVENT} from '../../src/contracts/provider-response-observation'
 import {formatDate,resetLocaleForTests,setLocale} from '../../src/i18n'
 
 const now=()=>new Date().toISOString()
-const payload=(overrides:Record<string,unknown>={})=>({schema:'runtime-status.v1',checked_at:now(),backend:{responding:true},activity:{state:'idle',active_requests:0,scope:'current_process_http_api_requests',background_activity:'not_observed'},memory:{state:'available',history:{kind:'conversation_history',state:'present',proof:'metadata_presence_only'},general:{state:'disconnected'},checked_at:now(),error_code:null},provider:{state:'configured_unverified',label:'Ollama',model:'gemma4:31b',observation:'registration_metadata',response_verified:false,checked_at:now(),error_code:null},git:{state:'repository',repo_detected:true,branch:'main',detached:false,remote_configured:true,remote_verification:'not_checked',checked_at:now(),cached:false,cache_ttl_seconds:5,error_code:null},...overrides})
+const payload=(overrides:Record<string,unknown>={})=>({schema:'runtime-status.v1',checked_at:now(),backend:{responding:true},activity:{state:'idle',active_requests:0,scope:'current_process_http_api_requests',background_activity:'not_observed'},memory:{state:'available',history:{kind:'conversation_history',state:'present',proof:'metadata_presence_only'},general:{state:'disconnected'},checked_at:now(),error_code:null},provider:{state:'configured_unverified',provider_id:'ollama-cloud',model_id:'gemma4:31b',label:'Ollama',model:'gemma4:31b',observation:'registration_metadata',response_verified:false,checked_at:now(),error_code:null},git:{state:'repository',repo_detected:true,branch:'main',detached:false,remote_configured:true,remote_verification:'not_checked',checked_at:now(),cached:false,cache_ttl_seconds:5,error_code:null},...overrides})
 const reply=(body:unknown,status=200)=>({ok:status<400,status,json:vi.fn(async()=>body)})
 type Call={url:string;init?:RequestInit}
 const group=(id:string)=>document.querySelector<HTMLButtonElement>(`.runtime-status-bar [data-group="${id}"]`)!
@@ -70,6 +71,23 @@ it.each([404,503])('keeps unknown states for aggregate HTTP%s without reading ra
 it('rejects malformed envelopes but isolates malformed individual sources',async()=>{
  const raw=payload(),f=await setup(i=>reply(i===0?{...raw,schema:'unknown'}:{...raw,provider:{...raw.provider,response_verified:true}}))
  expect(f.view.container.textContent).toContain('Respuesta de metadatos incompatible.');fireEvent.click(refresh());await act(async()=>{});expect(group('backend').textContent).toContain('API responde');expect(group('provider').textContent).toContain('Sin comprobar');expect(group('provider').getAttribute('data-tone')).toBe('unknown')
+})
+it('shows a session-local provider response without promoting registration metadata and keeps it through polling',async()=>{
+ vi.useFakeTimers();const f=await setup();const observedAt='2026-10-26T10:30:00.000Z'
+ act(()=>window.dispatchEvent(new CustomEvent(PROVIDER_RESPONSE_OBSERVED_EVENT,{detail:{provider_id:'ollama-cloud',model_id:'gemma4:31b',observed_at:observedAt}})))
+ expect(group('provider').textContent).toContain('Respuesta recibida en esta sesión')
+ fireEvent.click(group('provider'));let panel=screen.getByRole('region',{name:'Proveedores · detalles'})
+ expect(panel.textContent).toContain('configurado, sin verificar');expect(panel.textContent).toContain('ollama-cloud / gemma4:31b');expect(panel.textContent).toContain('2026');expect(panel.textContent).toContain('No; esta observación sólo dura en esta pestaña.')
+ fireEvent.click(refresh());await act(async()=>{});await act(async()=>{await vi.advanceTimersByTimeAsync(30_000)})
+ expect(f.calls.length).toBeGreaterThanOrEqual(3);expect(group('provider').textContent).toContain('Respuesta recibida en esta sesión')
+ f.view.unmount();const remounted=await setup();expect(group('provider').textContent).toContain('configurado, sin verificar');expect(group('provider').textContent).not.toContain('Respuesta recibida')
+})
+it('separates another provider response and ignores malformed session events',async()=>{
+ await setup();act(()=>window.dispatchEvent(new CustomEvent(PROVIDER_RESPONSE_OBSERVED_EVENT,{detail:{provider_id:'openai-platform',model_id:'gpt-test',observed_at:'2026-10-26T10:30:00Z'}})))
+ expect(group('provider').textContent).toContain('configurado, sin verificar');fireEvent.click(group('provider'));const panel=screen.getByRole('region',{name:'Proveedores · detalles'})
+ expect(panel.textContent).toContain('openai-platform / gpt-test');expect(panel.textContent).toContain('Ninguna para este proveedor y modelo.')
+ act(()=>window.dispatchEvent(new CustomEvent(PROVIDER_RESPONSE_OBSERVED_EVENT,{detail:{provider_id:'ollama-cloud',model_id:'private',observed_at:'not-a-time'}})))
+ expect(group('provider').textContent).toContain('configurado, sin verificar')
 })
 it('preserves the last observation as earlier data after a failed refresh, never as newly disconnected',async()=>{
  const f=await setup(i=>i===0?reply(payload()):Promise.reject(new Error('PRIVATE_NETWORK_MARKER')))

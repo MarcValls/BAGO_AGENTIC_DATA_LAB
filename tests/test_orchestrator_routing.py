@@ -470,6 +470,9 @@ def test_orchestrator_resolves_file_read_intent_then_calls_only_authorized_reade
     assert phases == [{"resolve_control_request"}, {"read_workspace_file"}, {"read_workspace_file"}]
     assert len(body["sources"]) == 1 and body["sources"][0]["path"] == "sample_a.py"
     assert len(body["read_events"]) == 1 and body["read_events"][0]["decision"] == "ALLOW"
+    assert body["provider_response_observation"]["provider_id"] == "ollama-cloud"
+    assert body["provider_response_observation"]["model_id"] == "parent-fixture"
+    assert body["provider_response_observation"]["observed_at"].endswith("Z")
     assert "development_" not in " ".join(tool for phase in phases for tool in phase)
 
 
@@ -494,6 +497,7 @@ def test_orchestrator_does_not_read_files_when_workspace_read_permission_is_miss
     assert "No he leído ningún archivo" in body["assistant_message"]
     assert calls == []
     assert body["sources"] == [] and body["read_events"] == []
+    assert "provider_response_observation" not in body
 
 
 def test_unoffered_workspace_handler_fails_closed_before_route_resolution(setup):

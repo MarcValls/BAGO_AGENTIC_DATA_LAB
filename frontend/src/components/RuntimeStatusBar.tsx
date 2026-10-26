@@ -1,5 +1,6 @@
 import {useEffect, useId, useRef, useState} from 'react'
 import {formatDate, formatNumber, useI18n} from '../i18n'
+import {PROVIDER_RESPONSE_OBSERVED_EVENT, readProviderResponseObservation, type ProviderResponseObservation} from '../contracts/provider-response-observation'
 import './RuntimeStatusBar.css'
 
 const POLL_MS = 30_000
@@ -43,6 +44,7 @@ export default function RuntimeStatusBar() {
   const {locale} = useI18n()
   const say = (es: string, en: string) => locale === 'en' ? en : es
   const [snapshot, setSnapshot] = useState<Snapshot | null>(null)
+  const [providerResponse, setProviderResponse] = useState<ProviderResponseObservation | null>(null)
   const [failure, setFailure] = useState<Failure | null>(null)
   const [loading, setLoading] = useState(false)
   const [paused, setPaused] = useState(false)
@@ -51,6 +53,15 @@ export default function RuntimeStatusBar() {
   const refresh = useRef<() => void>(() => {})
   const buttons = useRef<Partial<Record<Group, HTMLButtonElement | null>>>({})
   const panelId = useId()
+
+  useEffect(() => {
+    const receive = (event: Event) => {
+      const observation = readProviderResponseObservation((event as CustomEvent<unknown>).detail)
+      if (observation) setProviderResponse(observation)
+    }
+    window.addEventListener(PROVIDER_RESPONSE_OBSERVED_EVENT, receive)
+    return () => window.removeEventListener(PROVIDER_RESPONSE_OBSERVED_EVENT, receive)
+  }, [])
 
   useEffect(() => {
     let alive = true, inFlight = false
@@ -120,7 +131,12 @@ export default function RuntimeStatusBar() {
     const data = snapshot.provider
     if (!data) return base
     const states: Record<string, string> = {ready: say('registrado, sin respuesta verificada', 'registered, response not verified'), configured_unverified: say('configurado, sin verificar', 'configured, unverified'), not_configured: say('no configurado', 'not configured'), needs_authentication: say('requiere autenticación', 'authentication required'), error: say('error de configuración', 'configuration error'), unsupported_runtime: say('runtime no compatible', 'unsupported runtime'), unavailable: say('sin datos', 'unavailable')}
-    return {...base, value: `${data.label ?? say('Sin proveedor', 'No provider')}${data.model ? ` / ${data.model}` : ''} · ${states[data.state]}`, tone: ['error', 'unavailable'].includes(data.state) ? 'error' : 'warning', checkedAt: data.checked_at, rows: [[say('Proveedor', 'Provider'), data.label ?? notRecorded], [say('Modelo seleccionado', 'Selected model'), data.model ?? notRecorded], [say('Estado registrado', 'Registered state'), data.state], [say('Tipo de observación', 'Observation type'), say('Metadatos de registro, sin llamada de generación.', 'Registration metadata, without a generation call.')], [say('Respuesta actual', 'Current response'), say('No verificada', 'Not verified')], ...(data.error_code ? [[say('Código', 'Code'), data.error_code] as [string, string]] : [])]}
+    const responseLabels: Record<string, string> = {'ollama-cloud':'Ollama', codex:'OpenAI Codex', 'openai-platform':'OpenAI Platform', 'github-copilot':'GitHub Copilot'}
+    const matchedResponse = providerResponse && data.label === responseLabels[providerResponse.provider_id] && data.model === providerResponse.model_id ? providerResponse : null
+    const responseLabel = matchedResponse ? say('Respuesta recibida en esta sesión', 'Response received this session') : say('Sin respuesta observada en esta sesión', 'No response observed this session')
+    const value = matchedResponse ? `${data.label ?? say('Proveedor', 'Provider')} / ${data.model ?? matchedResponse.model_id} · ${responseLabel}` : `${data.label ?? say('Sin proveedor', 'No provider')}${data.model ? ` / ${data.model}` : ''} · ${states[data.state]}`
+    const rows: Array<[string, string]> = [[say('Proveedor', 'Provider'), data.label ?? notRecorded], [say('Modelo seleccionado', 'Selected model'), data.model ?? notRecorded], [say('Estado registrado', 'Registered state'), states[data.state]], [say('Tipo de observación', 'Observation type'), say('Metadatos de registro; no comprueban disponibilidad ni salud.', 'Registration metadata; does not establish provider availability or health.')], [say('Respuesta actual', 'Current response'), matchedResponse ? say('Recibida en esta sesión', 'Received this session') : say('No verificada', 'Not verified')], [say('Respuesta observada en esta sesión', 'Response observed this session'), matchedResponse ? `${matchedResponse.provider_id} / ${matchedResponse.model_id}` : say('Ninguna para este proveedor y modelo.', 'None for this provider and model.')], ...(matchedResponse ? [[say('Hora de respuesta UTC', 'Response time UTC'), `${formatDate(matchedResponse.observed_at)} UTC`] as [string, string]] : []), ...(providerResponse && !matchedResponse ? [[say('Última respuesta observada', 'Last response observed'), `${providerResponse.provider_id} / ${providerResponse.model_id} · ${formatDate(providerResponse.observed_at)} UTC`] as [string, string]] : []), [say('Respuesta verificada de forma persistente', 'Persistently verified response'), say('No; esta observación sólo dura en esta pestaña.', 'No; this observation lasts only in this browser tab.')], ...(data.error_code ? [[say('Código', 'Code'), data.error_code] as [string, string]] : [])]
+    return {...base, value, tone: matchedResponse ? 'info' : ['error', 'unavailable'].includes(data.state) ? 'error' : 'warning', checkedAt: data.checked_at, rows}
   }
   const views = groups.map(view)
   const selected = views.find(item => item.id === expanded)
