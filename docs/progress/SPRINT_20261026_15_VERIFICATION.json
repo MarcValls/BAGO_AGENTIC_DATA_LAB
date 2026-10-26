@@ -2,7 +2,7 @@
   "schema": "bago.frontend-sprint-verification.v1",
   "sprint": "SPRINT_20261026_15",
   "state": "PREPARED",
-  "gate": "PENDING_CI_AFTER_REPAIR",
+  "gate": "PENDING_CI_AFTER_FINAL_ASSERTION_REPAIR",
   "candidate": {
     "worktree_branch": "fix/project-workspace-chat-isolation-20261026",
     "pr": 71,
@@ -26,9 +26,12 @@
     "node_syntax": "PASS",
     "git_diff_check": "PASS_WITH_LINE_ENDING_WARNING",
     "node_ui_tests": {
-      "selected_capability_and_chat_tests": "PASS",
-      "agent_evaluation_rendered_test": "NOT_VERIFIED_LOCAL_RUN_DID_NOT_COMPLETE",
-      "runner_concurrency": 1
+      "status": "PASS",
+      "passed": 47,
+      "suites": 7,
+      "command": "npm run test:ui",
+      "runner_concurrency": 1,
+      "warnings": "React act(...) warnings in catalog-quality tests; no failures"
     },
     "readme_generator": {
       "status": "PASS",
@@ -42,12 +45,14 @@
       "suite": "NOT_RUN"
     },
     "github_ci": {
-      "status": "FAILURE_FIRST_COMMIT_REPAIR_PENDING",
+      "status": "PENDING_LATEST_COMMIT",
       "last_failing_pr_run": 40265858653,
       "last_failing_push_run": 40265854557,
       "sprint_commit_run": 40269328620,
-      "sprint_commit_status": "FAILURE",
-      "sprint_commit_findings": ["stale translated button expectations", "chat empty-state expectation mismatch", "agent evaluation test process SIGKILL"]
+      "first_attempt_sha": "7bdc8eb9d4e02cc24888fe942c3719071fda83c7",
+      "first_attempt_findings": ["stale translated button expectations", "chat empty-state expectation mismatch", "empty-suite assertion accidentally matched valid empty run-history paragraph"],
+      "first_attempt_status": "INCOMPLETE_CANCELLED",
+      "final_candidate_ci": "NOT_STARTED"
     }
   },
   "visual_review": {

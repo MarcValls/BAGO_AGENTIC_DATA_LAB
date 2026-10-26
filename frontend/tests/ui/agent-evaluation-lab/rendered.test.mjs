@@ -102,7 +102,7 @@ describe('Agent Evaluation Lab rendered behavior', () => {
     await screen.findByText('Select a suite or run')
     // Empty suite state intentionally has no instructional placeholder.
     assert.equal(screen.queryByText(/No saved suites yet/), null)
-    assert.equal(document.querySelector('.eval-suites .eval-empty'), null)
+    assert.equal(document.querySelector('.eval-suites .eval-suite-option'), null)
     assert.ok(screen.getByText('No runs recorded.'))
     assert.equal(screen.queryByLabelText('Suite name'), null)
     assert.equal(screen.queryByRole('button', { name: 'Run evaluation' }), null)
