@@ -5,6 +5,7 @@ beforeEach(()=>{localStorage.clear();resetLocaleForTests();setLocale('es')})
 import {beforeEach,afterEach,expect,it,vi} from 'vitest'
 import {act,cleanup,fireEvent,render,screen,waitFor} from '@testing-library/react'
 import AgentChat from '../../src/components/AgentChat'
+import {openDelegatedChild,withPersistedDelegation} from '../helpers/delegated-agent-chat'
 const response=(body:unknown,status=200)=>({ok:status<400,status,json:async()=>body})
 const source=(path:string)=>({source_type:'public_web',path,start_line:1,end_line:2,content_sha256:'a'.repeat(64)})
 const oldMessage={id:'old',role:'assistant',content:'Respuesta anterior',references:{sources:[source('https://prior.example/')]}}
@@ -112,17 +113,19 @@ it('binds failure recovery to the selected agent owner and preserves inspect ide
  HTMLElement.prototype.scrollIntoView=()=>{}
  const agent={id:'agent-web',config:{name:'Web reader fixture',description:'Fixture',type:'tool',system_prompt:'Fixture',tools:[],provider_id:'ollama-cloud',model_id:'fixture'},created_at:'2026-10-23'}
  const initial=make({owner_kind:'agent',owner_id:'agent-web'}),saved={...failed(),owner_kind:'agent',owner_id:'agent-web'}
+ const parent=withPersistedDelegation(make({id:'conv-parent'}),agent,initial.id)
  let posted=false
  const inspect=vi.fn()
  const fetch=vi.fn(async(path:string)=>{
-  if(path.startsWith('/api/conversations?'))return response({conversations:path.includes('owner_kind=agent')?[initial]:[]})
+  if(path.startsWith('/api/conversations?'))return response({conversations:path.includes('owner_kind=agent')?[initial]:[parent]})
+  if(path==='/api/conversations/conv-parent')return response(parent)
   if(path==='/api/conversations/conv-failed')return response(posted?saved:initial)
   if(path==='/api/agents/list')return response({agents:[agent]})
   if(path==='/api/agents/agent-web/chat'){posted=true;return response({detail:detail()},503)}
   return response({models:[],proposals:[]})
  });vi.stubGlobal('fetch',fetch)
  render(<AgentChat cognitiveMode="baseline" onNavigate={()=>{}} onOpenProviderSettings={()=>{}} onOpenCognitionSettings={()=>{}} onInspectExecution={inspect}/>)
- fireEvent.click(await screen.findByText('Web reader fixture'))
+ await openDelegatedChild('Web reader fixture')
  await screen.findByText('Respuesta anterior');await act(async()=>{})
  fireEvent.change(screen.getByLabelText('Mensaje al asistente o agente seleccionado'),{target:{value:'Lee esta página'}})
  fireEvent.click(screen.getByRole('button',{name:'Enviar'}));await screen.findByText(/Respuesta fallida/)
