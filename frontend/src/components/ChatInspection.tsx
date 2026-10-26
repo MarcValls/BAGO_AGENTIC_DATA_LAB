@@ -4,6 +4,7 @@ import {useI18n, t, formatDate, formatNumber, apiError, errorMessage} from '../i
 import {useEffect, useRef, useState} from 'react'
 import {isConversationInspection, type ConversationInspection, type InspectionSelection} from '../types/inspection'
 import './ChatInspection.css'
+import './ChatInspectionOverrides.css'
 
 type InspectionView='inspector'|'summary'|'retrieval'|'authorization'|'trace'|'evaluation'
 const viewTitles:Record<InspectionView,string>={get inspector() { return t('agents.ChatInspection.conversacion_actual_inspect') },get summary() { return t('agents.ChatInspection.resumen_de_la_ejecucion') },get retrieval() { return t('agents.ChatInspection.evidencias_de_la_ejecucion') },get authorization() { return t('agents.ChatInspection.autorizacion_de_la_ejecucion') },get trace() { return t('agents.ChatInspection.traza_de_la_ejecucion') },get evaluation() { return t('agents.ChatInspection.evaluacion_de_la_ejecucion') }}
