@@ -9,7 +9,7 @@
     "lint": "eslint src",
     "test": "vitest run",
     "test:providers": "vitest run tests/providers/provider-settings.test.tsx",
-    "test:ui": "node --test tests/ui/agent-evaluation-lab/agent-evaluation-lab.test.mjs tests/ui/agent-evaluation-lab/rendered.test.mjs tests/ui/agent-runner/agent-runner.test.mjs tests/ui/capabilities/mcp-governance.test.mjs tests/ui/chat-shell/chat-navigation.test.mjs tests/ui/knowledge/catalog-quality.test.mjs tests/ui/knowledge/grounded-source.test.mjs tests/ui/knowledge/ontology-review.test.mjs",
+    "test:ui": "node --test --test-concurrency=1 tests/ui/agent-evaluation-lab/agent-evaluation-lab.test.mjs tests/ui/agent-evaluation-lab/rendered.test.mjs tests/ui/agent-runner/agent-runner.test.mjs tests/ui/capabilities/mcp-governance.test.mjs tests/ui/chat-shell/chat-navigation.test.mjs tests/ui/knowledge/catalog-quality.test.mjs tests/ui/knowledge/grounded-source.test.mjs tests/ui/knowledge/ontology-review.test.mjs",
     "test:contracts": "node --test tests/contracts/node-contracts.test.mjs"
   },
   "dependencies": {

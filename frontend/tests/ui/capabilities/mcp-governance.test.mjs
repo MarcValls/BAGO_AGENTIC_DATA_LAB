@@ -13,7 +13,7 @@ Object.assign(globalThis, {
 })
 Object.defineProperty(globalThis, 'navigator', { configurable: true, value: dom.window.navigator })
 
-const server = await createServer({ server: { middlewareMode: true }, appType: 'custom' })
+const server = await createServer({ server: { middlewareMode: true, hmr: false }, appType: 'custom' })
 const React = await import('react')
 const { act, cleanup, fireEvent, render, screen, within } = await import('@testing-library/react')
 const { default: CapabilityManager } = await server.ssrLoadModule('/src/components/CapabilityManager.tsx')
@@ -77,9 +77,9 @@ describe('Capability Manager MCP connection route', () => {
       await screen.findByText('mcp.execute')
       assert.ok(screen.getAllByText(/MODULE_PRESENT_NOT_CONNECTED/).length >= 1)
       const quickOptions = screen.getByRole('navigation', { name: 'Quick options' })
-      assert.ok(within(quickOptions).getByRole('button', { name: 'Connections' }))
+      assert.ok(within(quickOptions).getByRole('button', { name: 'Connections and execution' }))
       const capabilityCard = screen.getByRole('article')
-      fireEvent.click(within(capabilityCard).getByRole('button', { name: 'Connections' }))
+      fireEvent.click(within(capabilityCard).getByRole('button', { name: 'External connections' }))
       assert.deepEqual(destinations, ['connections'])
       assert.equal(stub.calls.some((call) => call.url.startsWith('/api/connections')), false)
       assert.deepEqual(stub.calls.map((call) => call.url), ['/api/capabilities', '/api/capabilities/proposals?status=all&limit=100'])
@@ -101,7 +101,7 @@ describe('Capability Manager MCP connection route', () => {
     try {
       render(React.createElement(CapabilityManager))
       assert.match((await screen.findByRole('alert')).textContent, /Capability service unavailable/)
-      assert.ok(screen.getByRole('button', { name: 'Retry' }))
+      assert.ok(screen.getByRole('button', { name: 'Reload' }))
       assert.ok(calls.every((call) => call.method === 'GET' && !call.url.includes('/demo/')))
     } finally { globalThis.fetch = original }
   })

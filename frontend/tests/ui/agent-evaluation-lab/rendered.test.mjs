@@ -18,7 +18,7 @@ Object.assign(globalThis, {
 })
 Object.defineProperty(globalThis, 'navigator', { configurable: true, value: dom.window.navigator })
 
-const server = await createServer({ server: { middlewareMode: true }, appType: 'custom' })
+const server = await createServer({ server: { middlewareMode: true, hmr: false }, appType: 'custom' })
 const React = await import('react')
 const testing = await import('@testing-library/react')
 const { cleanup, fireEvent, render, screen, waitFor } = testing

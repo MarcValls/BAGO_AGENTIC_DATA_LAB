@@ -19,7 +19,7 @@ Object.assign(globalThis, {
 Object.defineProperty(globalThis, 'navigator', { configurable: true, value: dom.window.navigator })
 dom.window.HTMLElement.prototype.scrollIntoView = () => {}
 
-const server = await createServer({ server: { middlewareMode: true }, appType: 'custom' })
+const server = await createServer({ server: { middlewareMode: true, hmr: false }, appType: 'custom' })
 const React = await import('react')
 const { cleanup, fireEvent, render, screen } = await import('@testing-library/react')
 const {setLocale,resetLocaleForTests}=await server.ssrLoadModule('/src/i18n/index.ts')
@@ -84,7 +84,7 @@ it('shows only agents linked to the conversation and preserves authorization con
   assert.equal(chatTarget.querySelector('.chat-agent-panel-slot').contains(agentNavigation), true)
   assert.equal(chatTarget.querySelector('.control-chat-main') !== null, true)
   assert.match(agentNavigation.textContent, /Agents in this chat/)
-  assert.match(agentNavigation.textContent, /No agent tasks are linked to this conversation yet/)
+  assert.match(agentNavigation.textContent, /No agent has been used in this conversation yet/)
   assert.equal(agentNavigation.textContent.includes('Support agent'), false)
   fireEvent.click(screen.getByRole('button', { name: 'Manage agents' }))
   assert.equal(manageAgentsOpened, true)

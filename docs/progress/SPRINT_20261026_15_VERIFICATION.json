@@ -2,13 +2,14 @@
   "schema": "bago.frontend-sprint-verification.v1",
   "sprint": "SPRINT_20261026_15",
   "state": "PREPARED",
-  "gate": "PENDING_CI",
+  "gate": "PENDING_CI_AFTER_REPAIR",
   "candidate": {
     "worktree_branch": "fix/project-workspace-chat-isolation-20261026",
     "pr": 71,
     "pr_branch": "review/adl-applied-code-20261025",
     "base": "263bb76cf9a47f404b297808bd33b748833686be",
-    "previous_head": "5bde1620b6052349be28df9ba330df056749af1b"
+    "previous_head": "5bde1620b6052349be28df9ba330df056749af1b",
+    "first_sprint_commit": "7bdc8eb9d4e02cc24888fe942c3719071fda83c7"
   },
   "changed_scope": {
     "product_code_changed": false,
@@ -16,6 +17,7 @@
       "frontend/tests/ui/agent-evaluation-lab/rendered.test.mjs",
       "frontend/tests/ui/capabilities/mcp-governance.test.mjs",
       "frontend/tests/ui/chat-shell/chat-navigation.test.mjs",
+      "frontend/package.json",
       "docs/progress/SPRINT_20261026_15.md",
       "docs/progress/FRONTEND_EVALUATION_20261026.md"
     ]
@@ -23,7 +25,11 @@
   "checks": {
     "node_syntax": "PASS",
     "git_diff_check": "PASS_WITH_LINE_ENDING_WARNING",
-    "node_ui_tests": "NOT_VERIFIED_RUNNER_DID_NOT_COMPLETE_AFTER_VITE_HMR_PORT_24678_CONFLICT",
+    "node_ui_tests": {
+      "selected_capability_and_chat_tests": "PASS",
+      "agent_evaluation_rendered_test": "NOT_VERIFIED_LOCAL_RUN_DID_NOT_COMPLETE",
+      "runner_concurrency": 1
+    },
     "readme_generator": {
       "status": "PASS",
       "command": "python -B scripts/generate_dynamic_readme.py",
@@ -36,9 +42,12 @@
       "suite": "NOT_RUN"
     },
     "github_ci": {
-      "status": "PENDING",
+      "status": "FAILURE_FIRST_COMMIT_REPAIR_PENDING",
       "last_failing_pr_run": 40265858653,
-      "last_failing_push_run": 40265854557
+      "last_failing_push_run": 40265854557,
+      "sprint_commit_run": 40269328620,
+      "sprint_commit_status": "FAILURE",
+      "sprint_commit_findings": ["stale translated button expectations", "chat empty-state expectation mismatch", "agent evaluation test process SIGKILL"]
     }
   },
   "visual_review": {
@@ -52,6 +61,15 @@
     "screenshot": "C:/Users/AMTEC_Terminal_1º/AppData/Local/Temp/adl-frontend-review-20261026/runtime-8093-desktop.png",
     "screenshot_in_repository": false,
     "reason": "Screenshot includes local conversation content and runtime backend is not the PR candidate."
+  },
+  "responsive_measurement": {
+    "status": "OBSERVED_RUNTIME_NOT_CANDIDATE_VERIFICATION",
+    "viewport": "390x844",
+    "document_width": 390,
+    "horizontal_overflow": false,
+    "chat_sidebar": {"y": 791, "height": 348},
+    "runtime_status_bar": {"y": 793, "height": 51},
+    "finding": "Most of the right chat sidebar lies below the initial mobile viewport."
   },
   "global_frontend": "NOT_VALIDATED",
   "merge": false,

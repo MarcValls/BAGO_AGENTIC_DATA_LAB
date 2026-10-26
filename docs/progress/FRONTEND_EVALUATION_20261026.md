@@ -26,6 +26,10 @@ Estos puntos son evidencia de código o de la pantalla observada. No prueban por
 3. **La carpeta activa no queda reconocible en la primera mirada.** El panel indica “Carpeta de trabajo”, pero la captura no presenta una ruta clara; además señala que no hay rutas para este turno. Debe diferenciarse visualmente la carpeta vinculada al proyecto, la carpeta seleccionada y las rutas autorizadas para un envío.
 4. **La jerarquía del panel derecho es funcional, pero densa.** El historial comparte una columna estrecha con el panel de proyecto. Mantener el desplegable, pero mejorar los títulos, el estado de selección y la acción de cambio de carpeta ayudaría a reducir ambigüedad.
 
+## Medición DOM en móvil
+
+En la misma instancia 8093, a 390 × 844, el documento no presenta overflow horizontal (`scrollWidth == 390`). Sin embargo, `.control-chat-sidebar` empieza en `y=791` y mide 348 px de alto, por lo que casi todo el panel derecho queda debajo del viewport inicial; la barra inferior ocupa `y=793..844`. Esto requiere revisar la composición móvil del panel para que proyecto e historial puedan abrirse y usarse sin quedar fuera de pantalla. Es una medición DOM, no una validación visual móvil ni una prueba de la candidata de PR.
+
 ## Pendientes recomendados por prioridad
 
 ### P0 - antes de afirmar integración del producto
