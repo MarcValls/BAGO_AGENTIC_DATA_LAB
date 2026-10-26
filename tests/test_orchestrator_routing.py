@@ -430,6 +430,72 @@ def test_authorized_workspace_turn_routes_before_any_direct_read(setup):
     assert body["sources"] == [] and body["read_events"] == []
 
 
+def test_orchestrator_resolves_file_read_intent_then_calls_only_authorized_reader(setup):
+    f = setup
+    target = f["workspace"] / "sample_a.py"
+    target.write_text("def total():\n    return 17\n", encoding="utf-8")
+    permit = server.WORKSPACE_READ_AUTHORIZATIONS.issue(
+        f["workspace"], owner_kind="assistant", owner_id="app-assistant",
+        conversation_id=f["parent"]["id"], revision=0, paths=["sample_a.py"],
+    )
+    phases = []
+
+    def route(provider, model, messages, **kwargs):
+        names = {item.get("function", {}).get("name") for item in kwargs.get("tools", [])}
+        phases.append(names)
+        if names == {"resolve_control_request"}:
+            return {"tool_calls": [{"id": "route-1", "function": {"name": "resolve_control_request", "arguments": {
+                "decision": "workspace_read", "reply": "Voy a consultar el archivo autorizado."
+            }}}]}
+        assert names == {"read_workspace_file"}
+        if not any(message.get("role") == "tool" and message.get("tool_name") == "read_workspace_file" for message in messages):
+            return {"tool_calls": [{"id": "read-1", "function": {"name": "read_workspace_file", "arguments": {
+                "path": "sample_a.py", "start_line": 1, "end_line": 2
+            }}}]}
+        tool_result = next(message["content"] for message in reversed(messages)
+                           if message.get("role") == "tool" and message.get("tool_name") == "read_workspace_file")
+        assert "def total()" in tool_result and "return 17" in tool_result
+        return {"content": "sample_a.py define total(), que devuelve 17; contiene dos líneas.", "tool_calls": []}
+
+    f["monkeypatch"].setattr(server.provider_runtime, "chat_turn", route)
+    response = f["client"].post("/api/chat/control", json={
+        "message": "Inspecciona sample_a.py y resume en una frase qué hace y cuántas líneas tiene.",
+        "conversation_id": f["parent"]["id"], "revision": 0,
+        "workspace_read_authorization_id": permit["authorization_id"],
+    })
+    assert response.status_code == 200, response.text
+    body = response.json()
+    assert body["operation"] == "chat"
+    assert body["assistant_message"] == "sample_a.py define total(), que devuelve 17; contiene dos líneas."
+    assert phases == [{"resolve_control_request"}, {"read_workspace_file"}, {"read_workspace_file"}]
+    assert len(body["sources"]) == 1 and body["sources"][0]["path"] == "sample_a.py"
+    assert len(body["read_events"]) == 1 and body["read_events"][0]["decision"] == "ALLOW"
+    assert "development_" not in " ".join(tool for phase in phases for tool in phase)
+
+
+def test_orchestrator_does_not_read_files_when_workspace_read_permission_is_missing(setup):
+    f = setup
+    calls = []
+
+    def route(provider, model, messages, **kwargs):
+        names = {item.get("function", {}).get("name") for item in kwargs.get("tools", [])}
+        calls.append(names)
+        return {"tool_calls": [{"id": "route-1", "function": {"name": "resolve_control_request", "arguments": {
+            "decision": "workspace_read", "reply": "Voy a consultar el archivo solicitado."
+        }}}]}
+
+    f["monkeypatch"].setattr(server.provider_runtime, "chat_turn", route)
+    response = f["client"].post("/api/chat/control", json={
+        "message": "Lee sample_a.py con la herramienta de lectura de workspace y resúmelo.",
+        "conversation_id": f["parent"]["id"], "revision": 0,
+    })
+    assert response.status_code == 200, response.text
+    body = response.json()
+    assert "No he leído ningún archivo" in body["assistant_message"]
+    assert calls == []
+    assert body["sources"] == [] and body["read_events"] == []
+
+
 def test_unoffered_workspace_handler_fails_closed_before_route_resolution(setup):
     f = setup
     (f["workspace"] / "hint.txt").write_text("Synthetic invoice amount: 17 units.\n", encoding="utf-8")
@@ -449,7 +515,7 @@ def test_unoffered_workspace_handler_fails_closed_before_route_resolution(setup)
         "tool_calls": [{"function": {"name": "read_workspace_file", "arguments": {"path": "hint.txt"}}}]
     })
     response = f["client"].post("/api/chat/control", json={
-        "message": "Read hint.txt and report its amount.", "conversation_id": f["parent"]["id"], "revision": 0,
+        "message": "Explain the current project behavior.", "conversation_id": f["parent"]["id"], "revision": 0,
         "workspace_read_authorization_id": permit["authorization_id"],
     })
     assert response.status_code == 200, response.text
@@ -458,6 +524,47 @@ def test_unoffered_workspace_handler_fails_closed_before_route_resolution(setup)
     assert "No ejecuté herramientas" in body["assistant_message"]
     assert read_calls == []
     assert body["sources"] == [] and body["read_events"] == []
+
+
+def test_explicit_read_request_runs_only_named_authorized_workspace_file_tool(setup):
+    f = setup
+    target = f["workspace"] / "sample_a.py"
+    target.write_text("def total():\n    return 17\n", encoding="utf-8")
+    permit = server.WORKSPACE_READ_AUTHORIZATIONS.issue(
+        f["workspace"], owner_kind="assistant", owner_id="app-assistant",
+        conversation_id=f["parent"]["id"], revision=0, paths=["sample_a.py"],
+    )
+    phases = []
+
+    def read_only(provider, model, messages, **kwargs):
+        names = {item.get("function", {}).get("name") for item in kwargs.get("tools", [])}
+        phases.append(names)
+        assert names == {"read_workspace_file"}
+        prior_read = next((message for message in reversed(messages)
+                           if message.get("role") == "tool" and message.get("tool_name") == "read_workspace_file"), None)
+        if prior_read is None:
+            return {"tool_calls": [{"id": "read-1", "function": {"name": "read_workspace_file", "arguments": {
+                "path": "sample_a.py", "start_line": 1
+            }}}]}
+        result = json.loads(prior_read["content"])
+        assert result["total_lines"] == 2
+        assert "def total()" in result["content"]
+        return {"content": "sample_a.py define total(), que devuelve 17; contiene dos líneas.", "tool_calls": []}
+
+    f["monkeypatch"].setattr(server.provider_runtime, "chat_turn", read_only)
+    response = f["client"].post("/api/chat/control", json={
+        "message": "Lee únicamente sample_a.py con la herramienta de lectura del workspace. Resume su función y el número total exacto de líneas. No uses herramientas development_*.",
+        "conversation_id": f["parent"]["id"], "revision": 0,
+        "workspace_read_authorization_id": permit["authorization_id"],
+    })
+    assert response.status_code == 200, response.text
+    body = response.json()
+    assert body["assistant_message"] == "sample_a.py define total(), que devuelve 17; contiene dos líneas."
+    assert phases == [{"read_workspace_file"}, {"read_workspace_file"}]
+    assert [item["path"] for item in body["sources"]] == ["sample_a.py"]
+    assert [item["decision"] for item in body["read_events"]] == ["ALLOW"]
+    assert body["read_events"][0]["total_lines"] == 2
+    assert body["read_events"][0]["truncated"] is False
 
 
 def test_effective_manual_explains_tool_selection_and_permission_boundary():

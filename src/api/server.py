@@ -190,7 +190,7 @@ CONTROL_REQUEST_TOOL = {
             "Choose delegate_agent with exact saved agent_id and task for a text-only child chat turn only when the host validates the saved task_scope as a match; a matching scope may execute without a second delegation review. Never run a draft, infer an ambiguous target, authorize scope or claim execution. "
             "For ordinary in-scope chat work, choose delegate_agent only when the saved profile's task_scope clearly covers the requested task; the host validates scope and may run that conversational turn without a second delegation review. If no profile fits, choose create_agent_for_task for a clear actionable request; this creates a task-limited profile and selects only relevant tools connected to agent chat. Tool assignment grants no permission: when tools are assigned, return the delegation card for explicit effect and folder authorization; a tool-free conversational turn may dispatch without a repeated review. If a worker returns OUT_OF_SCOPE, select a different profile or create one; never send the task back to the same worker. "
             "Choose communication_draft to prepare or edit a client message or delivery schedule in an editable chat card. This never authorizes or sends. Include communication fields; ask for missing contact or calendar details. "
-            "Interpret the user request semantically and choose one decision. Choose draft_agent when the user intends to design or start creating an agent; the app will put an editable configuration form directly in this chat and will save nothing until the user confirms creation. Choose job_history when the user wants to see or review recorded jobs; the app will show the job-history table in this chat. Choose workspace_scan when the user wants duplicate, repeated, or structurally similar code located in the current project; the app will put a bounded, read-only scan form directly in this chat and will not scan until the user chooses a directory and authorizes it. Do not choose it for general code questions, explanations, or bug investigations. Choose navigate when the user wants to reach, open, or inspect an existing app view, even if they describe its purpose without naming it. If they ask to open the agent builder or Job History as a screen, choose navigate to that view; every such request must be confirmed in chat before switching. Choose answer when they ask what, why, or how something works. Choose clarify only when the requested purpose cannot be matched or is genuinely unclear. "
+            "Interpret the user request semantically and choose one decision. Choose workspace_read when the user explicitly asks to inspect, read, summarize, or extract information from one or more project files. This decision only selects the next read-only tool stage; the host still requires a current, exact, single-use file authorization and the read handler enforces those paths. Never choose workspace_read for code development, a request to change files, or general code explanations. If the requested files are not authorized, the host will stop without reading and ask for permission. Choose draft_agent when the user intends to design or start creating an agent; the app will put an editable configuration form directly in this chat and will save nothing until the user confirms creation. Choose job_history when the user wants to see or review recorded jobs; the app will show the job-history table in this chat. Choose workspace_scan when the user wants duplicate, repeated, or structurally similar code located in the current project; the app will put a bounded, read-only scan form directly in this chat and will not scan until the user chooses a directory and authorizes it. Do not choose it for general code questions, explanations, or bug investigations. Choose navigate when the user wants to reach, open, or inspect an existing app view, even if they describe its purpose without naming it. If they ask to open the agent builder or Job History as a screen, choose navigate to that view; every such request must be confirmed in chat before switching. Choose answer when they ask what, why, or how something works. Choose clarify only when the requested purpose cannot be matched or is genuinely unclear. "
             "A question about a view is not a request to open it. Any navigate decision is only a proposal: return it to the chat as a confirmation request and never switch screens automatically. When answering or clarifying, write the user-facing reply and do not navigate. "
             "Registered view meanings: inspector shows decisions and evidence; builder configures agents; workspace manages project and memory locations; runner opens agent runs; jobs shows job records and history; traces shows detailed execution steps; summary shows a run summary; retrieval covers retrieval and ontology; authorization covers permissions; evaluation shows checks for a completed run; evaluation_lab configures agent evaluation experiments; provider_settings configures providers, credentials, and models; cognition_settings changes reasoning mode, prompt behavior, and context; capabilities shows the capability catalog. "
             "Examples: take me to the project workspace or project memory folder -> navigate workspace; take me to where reasoning mode is adjusted -> navigate cognition_settings; show me the recorded jobs -> job_history; open the Job History screen -> navigate jobs; show me the detailed steps of an agent run -> navigate traces; open provider and model setup -> navigate provider_settings; what does the Evaluation view do -> answer in chat. "
@@ -200,7 +200,7 @@ CONTROL_REQUEST_TOOL = {
         "parameters": {
             "type": "object",
             "properties": {
-                "decision": {"type": "string", "enum": ["delegate_agent", "create_agent_for_task", "draft_agent", "communication_draft", "job_history", "workspace_scan", "workspace_action", "navigate", "answer", "clarify"]},
+                "decision": {"type": "string", "enum": ["delegate_agent", "create_agent_for_task", "draft_agent", "communication_draft", "job_history", "workspace_scan", "workspace_read", "workspace_action", "navigate", "answer", "clarify"]},
                 "agent_id": {"type":"string","description":"Exact persisted agent ID from saved agent metadata."},
                 "task": {"type":"string","minLength":1,"maxLength":8000,"description":"Reviewable task for one child turn; never permissions."},
                 "communication": {"type": "object", "description": "Prepare/edit ONLY. contact_id and text for new draft; draft_id and expected_revision for edit. Never approve or send.", "properties": {
@@ -1959,6 +1959,44 @@ def _workspace_read_instructions(enabled: bool, authorized_paths: list[str] | No
     )
 
 
+def _explicit_workspace_file_read_intent(message: str) -> bool:
+    """Recognize a narrowly explicit, read-only request for a named project file."""
+    if not isinstance(message, str):
+        return False
+    normalized = message.replace("\\", "/")
+    if re.search(r"\b(?:no\s+(?:leas|lea|leer|read)|do\s+not\s+read|don't\s+read)\b", normalized, re.IGNORECASE):
+        return False
+    if re.search(r"\b(?:modifica|modificar|edita|editar|escribe|escribir|crea|crear|borra|elimina|cambia|cambiar|ejecuta|ejecutar|run|execute|write|edit|modify|delete|create|install|commit|publish)\b", normalized, re.IGNORECASE):
+        return False
+    requests_read = re.search(r"\b(?:lee|leer|leeme|read|reading|read_workspace_file)\b", normalized, re.IGNORECASE)
+    names_workspace_reader = re.search(
+        r"\bherramienta(?:\s+de)?\s+(?:lectura|leer)\s+(?:de|del)?\s*workspace\b|"
+        r"\bworkspace\s+read\s+tool\b|\bread_workspace_file\b",
+        normalized, re.IGNORECASE,
+    )
+    names_file = re.search(r"(?<![\w])(?:[\w.-]+/)*[\w.-]+\.[A-Za-z0-9]{1,10}(?![\w])", normalized)
+    return bool(requests_read and names_workspace_reader and names_file)
+
+
+def _authorized_workspace_paths_named_in_request(message: str, authorized_paths: list[str]) -> list[str]:
+    """Narrow a one-turn grant to paths the user actually named in their request."""
+    normalized_message = message.replace("\\", "/").casefold()
+    mentions = {
+        item.replace("\\", "/").casefold()
+        for item in re.findall(r"(?<![\w])(?:[\w.-]+/)*[\w.-]+\.[A-Za-z0-9]{1,10}(?![\w])", normalized_message)
+    }
+    by_name: dict[str, list[str]] = {}
+    for path in authorized_paths:
+        by_name.setdefault(path.replace("\\", "/").rsplit("/", 1)[-1].casefold(), []).append(path)
+    matched = []
+    for path in authorized_paths:
+        normalized_path = path.replace("\\", "/").casefold()
+        basename = normalized_path.rsplit("/", 1)[-1]
+        if normalized_path in normalized_message or (basename in mentions and len(by_name.get(basename, [])) == 1):
+            matched.append(path)
+    return matched
+
+
 def _record_chat_cognition_trace(
     *,
     cognitive_context: dict[str, Any],
@@ -2126,7 +2164,9 @@ def _control_request_from_arguments(arguments: Any) -> dict[str, Any] | None:
         if not isinstance(reply, str) or not reply.strip():
             return None
         return {"decision": decision, "reply": reply.strip(), "workspace_proposal": proposal}
-    if decision not in {"draft_agent", "job_history", "workspace_scan", "answer", "clarify"}:
+    if decision == "workspace_read" and set(arguments) - {"decision", "reply"}:
+        return {"decision": "clarify", "reply": "Indica qué archivo quieres consultar; las rutas se limitan al permiso confirmado para este envío."}
+    if decision not in {"draft_agent", "job_history", "workspace_scan", "workspace_read", "answer", "clarify"}:
         return None
     reply = arguments.get("reply")
     if not isinstance(reply, str) or not reply.strip():
@@ -2305,6 +2345,7 @@ async def _chat_with_workspace_read(
     proposal_used = False
     calls_used = 0
     web_calls_used = 0
+    workspace_read_routed = False
     web_reader = _web_reader(web_permit) if web_permit is not None else None
     web_instructions = _web_instructions(web_permit)
     if messages and messages[0].get("role") == "system":
@@ -2318,6 +2359,12 @@ async def _chat_with_workspace_read(
             # before any granted workspace or other effect-capable handler can
             # be called. The child gets its own independently reviewed grants.
             available_tools.append(CONTROL_REQUEST_TOOL)
+        elif workspace_read_routed:
+            # Intent has been resolved by the orchestrator. Expose only the
+            # granted read handler in this phase; never mix routing and data
+            # access in the same provider round.
+            if authorized_paths:
+                available_tools.append(READ_WORKSPACE_TOOL)
         else:
             if authorized_paths:
                 available_tools.append(READ_WORKSPACE_TOOL)
@@ -2358,6 +2405,12 @@ async def _chat_with_workspace_read(
             if not isinstance(answer, str) or not answer.strip():
                 raise ollama.ProviderError("empty_model_response", "Ollama returned no assistant response.")
             resolved = _control_request_from_turn(turn) if allow_navigation else None
+            if resolved and resolved["decision"] == "workspace_read":
+                if not authorized_paths:
+                    return ("No he leído ningún archivo. Activa el permiso de lectura del proyecto y autoriza los archivos para este envío.",
+                            sources, read_events, None)
+                workspace_read_routed = True
+                continue
             if resolved and resolved["decision"] in {"delegate_agent", "create_agent_for_task"}:
                 return resolved["reply"], sources, read_events, "delegation:" + json.dumps(resolved)
             if resolved and resolved["decision"] == "communication_draft":
@@ -2401,6 +2454,20 @@ async def _chat_with_workspace_read(
                     return resolved["reply"], sources, read_events, "job_history"
                 if resolved and resolved["decision"] == "workspace_scan":
                     return resolved["reply"], sources, read_events, "workspace_scan"
+                if resolved and resolved["decision"] == "workspace_read":
+                    if not authorized_paths:
+                        return ("No he leído ningún archivo. Activa el permiso de lectura del proyecto y autoriza los archivos para este envío.",
+                                sources, read_events, None)
+                    workspace_read_routed = True
+                    messages.append({
+                        "role": "tool",
+                        "tool_name": "resolve_control_request",
+                        **({"tool_call_id": call["id"]} if isinstance(call, dict) and call.get("id") else {}),
+                        "content": json.dumps({"ok": True, "selected_operation": "workspace_read",
+                                               "authorized_project_relative_paths": authorized_paths},
+                                              ensure_ascii=False, separators=(",", ":")),
+                    })
+                    continue
                 if resolved and resolved["decision"] == "navigate":
                     return "Abriendo la vista solicitada.", sources, read_events, resolved["view"]
                 if resolved:
@@ -3382,6 +3449,18 @@ async def control_chat(request: ControlChatRequest) -> dict[str, Any]:
     read_events: list[dict[str, Any]] = []
     try:
         navigation_view: str | None = None
+        if request.operation == "chat" and _explicit_workspace_file_read_intent(request.message):
+            if not authorized_paths:
+                return await finish_turn("chat", "No he leído ningún archivo. Activa el permiso de lectura del proyecto y autoriza los archivos para este envío.")
+            requested_paths = _authorized_workspace_paths_named_in_request(request.message, authorized_paths)
+            if not requested_paths:
+                return await finish_turn("chat", "No he leído ningún archivo: la autorización de este envío no incluye la ruta que has pedido.")
+            answer, sources, read_events, _ = await _chat_with_workspace_read(
+                model_id, messages, requested_paths, [], workspace_root=workspace_root,
+                allow_navigation=False, provider_id=provider_id, web_permit=None,
+                turn_observation={"sources": sources, "read_events": read_events},
+            )
+            return await finish_turn("chat", answer)
         if authorized_paths or authorized_directories or authorized_web:
             answer, sources, read_events, navigation_view = await _chat_with_workspace_read(
                 model_id, messages, authorized_paths, authorized_directories,
@@ -3426,6 +3505,8 @@ async def control_chat(request: ControlChatRequest) -> dict[str, Any]:
                 return await finish_turn("workspace_action", resolved["reply"], workspace_proposal=resolved["workspace_proposal"])
             if resolved and resolved["decision"] == "workspace_scan":
                 return await finish_turn("workspace_scan", resolved["reply"], control_capability="workspace.scan_duplicates")
+            if resolved and resolved["decision"] == "workspace_read":
+                return await finish_turn("chat", "No he leído ningún archivo. Activa el permiso de lectura del proyecto y autoriza los archivos para este envío.")
             if resolved and resolved["decision"] == "navigate":
                 navigation_view = resolved["view"]
             elif resolved:

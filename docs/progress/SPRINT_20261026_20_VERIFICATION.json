@@ -1,0 +1,77 @@
+{
+  "sprint": 20,
+  "date": "2026-10-26",
+  "candidate": {
+    "worktree": "C:/Users/AMTEC_Terminal_1º/Desktop/BAGO5_ADL/.worktrees/project-workspace-chat-isolation-20261026",
+    "branch": "fix/project-workspace-chat-isolation-20261026",
+    "base_sha_last_verified_before_sprint": "263bb76cf9a47f404b297808bd33b748833686be",
+    "pre_sprint_head": "682453eeed033ec36076940420591725c920ae10"
+  },
+  "implementation": {
+    "authorship": "Codex external source edit; the actual workspace read was executed through the ADL UI",
+    "scope": "Explicit, named, authorized, read-only workspace file requests",
+    "tools_exposed_for_read_stage": ["read_workspace_file"],
+    "development_tools_used": false,
+    "receipt_fields_added": ["total_lines", "truncated"]
+  },
+  "focused_tests": {
+    "command": "python -m pytest tests/test_orchestrator_routing.py tests/test_workspace_read.py tests/test_agent_chat_trace.py tests/test_semantic_navigation.py tests/test_integrated_services.py tests/test_conversation_library.py tests/test_code_duplicates.py -q",
+    "result": "71 passed, 9 warnings in 14.15s",
+    "status": "PASS"
+  },
+  "live_run": {
+    "candidate_ui": "http://127.0.0.1:5194/",
+    "candidate_api": "http://127.0.0.1:8097",
+    "workspace_kind": "synthetic under user Temp directory",
+    "provider_model": "ollama-cloud/kimi-k2.6",
+    "conversation_id": "conv_9887036846fb4b939599cfc64a7da1fd",
+    "local_trace_id": "trace-8ebef88c1ce64d5a",
+    "jaeger_trace_id": "ca351b6323cbcbb65c0882c1c7f778cf",
+    "file": "sample_a.py",
+    "receipt": {
+      "decision": "ALLOW",
+      "start_line": 1,
+      "end_line": 11,
+      "total_lines": 11,
+      "truncated": false
+    },
+    "span_names": ["assistant.control", "workspace.read"],
+    "workspace_read_span_timing_source": "projection",
+    "workspace_read_span_duration_measured": false,
+    "published_runtime_verified": false
+  },
+  "screenshots": [
+    {
+      "path": "docs/agent-chat-control/assets/manual-ui-actual-2026-10-26/05-chat-workspace-read-live.png",
+      "sha256": "D91409822C9C636F82B208B3CE34B901BC20C3B4C6747343AFF48460DDE5329C"
+    },
+    {
+      "path": "docs/agent-chat-control/assets/manual-ui-actual-2026-10-26/06-jaeger-workspace-read-live.png",
+      "sha256": "FBB02D4A43302742034E0A1246C57C8B2CE0F613007B5E315184F5A389F3CC79"
+    }
+  ],
+  "readme_closure": {
+    "python scripts/generate_dynamic_readme.py": {
+      "status": "PASS",
+      "exit_code": 0,
+      "reported": "README generado tras 1574 tests pasados"
+    },
+    "python scripts/generate_dynamic_readme.py --check --skip-tests": {
+      "status": "PASS",
+      "exit_code": 0,
+      "reported": "README verificado; suite NOT_RUN (1576 casos recogidos)"
+    }
+  },
+  "fresh_base": {
+    "fetched_origin_main": "263bb76cf9a47f404b297808bd33b748833686be",
+    "merge_base": "263bb76cf9a47f404b297808bd33b748833686be",
+    "unchanged_during_sprint": true
+  },
+  "github": {
+    "pull_request": 71,
+    "sprint_commit": "PENDING",
+    "fresh_merge_base_check": "PASS",
+    "fresh_ci": "PENDING"
+  },
+  "overall": "INCOMPLETE: focused checks, README generation/check, and one synthetic live run passed; sprint publication, fresh PR CI, published-runtime verification, and broader validation remain pending"
+}

@@ -76,6 +76,20 @@ La repetición desde la UI confirmó `POST /api/workspace-read/authorizations` H
 
 ## Pendientes recomendados por prioridad
 
+## Revisión live adicional: lectura de workspace y captura Jaeger
+
+En la candidata aislada `5194/8097`, una petición real desde la UI leyó el archivo sintético `sample_a.py` usando el permiso de workspace. La respuesta indicó correctamente su función y el total de 11 líneas. El recibo persistido fue `ALLOW`, ruta `sample_a.py`, líneas 1–11, `total_lines=11`, `truncated=false`; conversación `conv_9887036846fb4b939599cfc64a7da1fd`; traza Jaeger `ca351b6323cbcbb65c0882c1c7f778cf`. No se emplearon herramientas `development_*`.
+
+Las capturas finales están en [chat](../agent-chat-control/assets/manual-ui-actual-2026-10-26/05-chat-workspace-read-live.png) y [Jaeger](../agent-chat-control/assets/manual-ui-actual-2026-10-26/06-jaeger-workspace-read-live.png). La traza muestra `assistant.control` y el hijo `workspace.read`, decisión `ALLOW` y los metadatos de líneas. El tiempo del span hijo es una proyección (`timing_source=projection`, `duration_measured=false`); los microsegundos visibles no acreditan duración medida.
+
+Esta ejecución confirma un flujo puntual en un proyecto sintético de la candidata; no acredita la instancia publicada ni una misión larga. En la UI, la respuesta presenta «Archivos consultados · 1» y el grupo de lecturas, pero no expone directamente la decisión del recibo ni el estado del span hijo: para comprobarlos hay que abrir Inspect/Jaeger. Además, el pie siguió indicando `Ollama / kimi-k2.6 · configurado, sin verificar` pese a que el proveedor acababa de producir una respuesta real. La distinción entre configuración y verificación puede ser correcta como estado persistente, pero debería indicar que hubo una respuesta observada en esta sesión o explicar la diferencia.
+
+### Evaluación del frontend tras la ejecución
+
+El recorrido visual principal resulta comprensible: instrucción, respuesta con recuento, archivos consultados, inspector y carpeta de proyecto están presentes. La pantalla de conversación conserva bastante espacio vacío entre la respuesta y el compositor, y el historial del panel derecho muestra entradas duplicadas con el mismo título, lo que dificulta reconocer cuál corresponde a la ejecución actual. La ficha de respuesta debería ofrecer una ruta de evidencia directa —permiso, herramienta, recibo y traza— sin obligar a navegar a Jaeger para distinguir una lectura real de una respuesta textual. El pie es legible en escritorio en esta captura, aunque su estado del proveedor no se actualiza con el resultado recién observado.
+
+El alcance de esta pasada es una única vista de escritorio sintética. No sustituye la evaluación móvil, accesibilidad, zoom o pruebas del runtime publicado ya señaladas arriba; el dictamen general sigue `NOT_VALIDATED`.
+
 ### P0 - antes de afirmar integración del producto
 
 - Conectar el historial de trabajo con ejecuciones reales y mostrar al menos un recorrido largo exitoso con recibos y traza Jaeger enlazados. Hoy el frontend puede presentar un índice de fuentes, pero la disponibilidad real depende del backend.

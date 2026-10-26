@@ -13,6 +13,9 @@ def test_workspace_reader_can_inspect_a_bounded_range_in_a_source_file_over_32k(
     result, receipt = read_workspace_file(tmp_path, {"path": "large_source.py", "start_line": 400, "end_line": 402}, ["large_source.py"])
 
     assert result["ok"] is True
+    assert result["total_lines"] == 4999
+    assert receipt["total_lines"] == 4999
+    assert receipt["truncated"] is True
     assert result["content"].splitlines() == ["400: line 400: source text", "401: line 401: source text", "402: line 402: source text"]
     assert receipt["path"] == "large_source.py"
     assert receipt["decision"] == "ALLOW"
