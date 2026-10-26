@@ -57,7 +57,8 @@ it('keeps dialog actions, original focus target and the draft intact',()=>{
 })
 it('places the 44px hit target on the actual O pivot while the menu remains in grid flow',()=>{
  const css=readFileSync('src/components/NavMenu.css','utf8'),svg=readFileSync('public/brand/BAGO_logotipo_horizontal.svg')
- expect(createHash('sha256').update(svg).digest('hex')).toBe('e06014adf28e831ab5ada712a1e29f902bd3a6616737e8ddde1c02ae88f9a0b7')
+ // Git checks this SVG out with CRLF on Windows when core.autocrlf=true. Hash its canonical LF bytes so the asset identity stays strict across platforms.
+ expect(createHash('sha256').update(svg.toString('utf8').replace(/\r\n/g,'\n')).digest('hex')).toBe('7a69241a02f159776c1ef664af9cadfbed546406e650867195dac2f0c78a949d')
  const xml=new DOMParser().parseFromString(svg.toString(),'image/svg+xml')
  expect(xml.documentElement.getAttribute('viewBox')).toBe('0 -1.75 200 51.35')
  expect(xml.querySelector('g[transform]')?.getAttribute('transform')).toBe('translate(-19.7 -5.28) translate(181 29.2) scale(.907) translate(-181 -29.2)')
