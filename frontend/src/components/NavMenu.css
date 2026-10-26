@@ -64,12 +64,21 @@
 .app-shell--navmenu .workspace-sidebar .workspace-sidebar-footer { display: flex; flex: 0 0 auto; }
 @media (max-width: 760px) {
   .app-shell.app-shell--navmenu { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto minmax(0, 1fr); }
-  .app-shell--navmenu > .app-navigation-shell { max-height: 48dvh; min-height: 94px; overflow: hidden; }
+  .app-shell--navmenu > .app-navigation-shell { max-height: 124px; min-height: 0; gap: 4px; padding: 4px 8px; overflow: hidden; }
+  .app-shell--navmenu > .app-navigation-shell > .workspace-sidebar-brand { flex-basis: 58px; height: 58px; padding: 0; }
+  .app-shell--navmenu .workspace-sidebar { display: grid; grid-template-columns: minmax(0, 1fr) auto; grid-template-rows: 40px; align-items: center; gap: 4px; min-height: 0; }
+  .app-shell--navmenu .workspace-sidebar .primary-navigation { grid-column: 1; grid-row: 1; align-self: stretch; height: 40px; min-height: 0; max-height: 40px; }
+  .app-shell--navmenu .workspace-sidebar .workspace-sidebar-footer { grid-column: 2; grid-row: 1; margin: 0; padding: 0; border: 0; }
   .app-shell--navmenu > .app-main { grid-column: 1; grid-row: 2; }
-  .app-shell.app-shell--navmenu.app-shell--sidebar-collapsed { grid-template-columns: 72px minmax(0, 1fr); grid-template-rows: minmax(0, 1fr); }
-  .app-shell--navmenu.app-shell--sidebar-collapsed > .app-navigation-shell { max-height: none; }
-  .app-shell--navmenu.app-shell--sidebar-collapsed > .app-main { grid-column: 2; grid-row: 1; }
-  .app-shell--navmenu .workspace-sidebar .primary-navigation { width: 100%; flex: 1 1 auto; overflow-x: hidden; overflow-y: auto; }
-  .app-shell--navmenu .workspace-sidebar .navigation-group { gap: 4px; }
-  .app-shell--navmenu .workspace-sidebar .navigation-item { width: 100%; min-height: 36px; }
+  .app-shell.app-shell--navmenu.app-shell--sidebar-collapsed { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto minmax(0, 1fr); }
+  .app-shell--navmenu.app-shell--sidebar-collapsed > .app-navigation-shell { max-height: 124px; }
+  .app-shell--navmenu.app-shell--sidebar-collapsed > .app-main { grid-column: 1; grid-row: 2; }
+  .app-shell--navmenu.app-shell--sidebar-collapsed .workspace-sidebar { grid-template-rows: 40px; }
+  .app-shell--navmenu.app-shell--sidebar-collapsed .workspace-sidebar .workspace-sidebar-footer .settings-trigger { width: 40px; justify-content: center; padding-right: 8px; padding-left: 8px; }
+  .app-shell--navmenu .workspace-sidebar .primary-navigation { width: 100%; flex: 1 1 auto; flex-direction: row; align-items: center; overflow-x: auto; overflow-y: hidden; }
+  .app-shell--navmenu .workspace-sidebar .navigation-group { width: max-content; min-width: max-content; height: 40px; flex: 0 0 auto; flex-direction: row; flex-wrap: nowrap; align-items: center; gap: 4px; }
+  .app-shell--navmenu .workspace-sidebar .chat-navigation { display: flex; width: max-content; height: 40px; flex: 0 0 auto; flex-direction: row; align-items: center; }
+  .app-shell--navmenu .workspace-sidebar .agent-navigation { display: flex; width: max-content; height: 40px; flex: 0 0 auto; flex-direction: row; align-items: center; }
+  .app-shell--navmenu .workspace-sidebar .agent-navigation-children { display: flex; height: 40px; flex-direction: row; margin: 0 4px; padding-left: 4px; }
+  .app-shell--navmenu .workspace-sidebar .navigation-item { width: max-content; max-width: none; min-height: 38px; white-space: nowrap; overflow-wrap: normal; }
 }
