@@ -48,7 +48,7 @@ function contrastRatio(foreground:string,background:string){
 function loadApplicationStyles(){
  if(document.head.querySelector('[data-inspector-test-styles]'))return
  const style=document.createElement('style');style.dataset.inspectorTestStyles='true'
- style.textContent=['src/index.css','src/App.css','src/VisualSystem.css','src/components/ChatInspection.css'].flatMap(path=>postcss.parse(readFileSync(path,'utf8')).nodes.filter(node=>node.type==='rule'&&(node.selector.includes('chat-inspection')||node.selector==='button'||node.selector==='button:hover')).map(node=>node.toString())).join('\n')
+ style.textContent=['src/index.css','src/App.css','src/VisualSystem.css','src/components/ChatInspection.css','src/components/ChatInspectionOverrides.css'].flatMap(path=>postcss.parse(readFileSync(path,'utf8')).nodes.filter(node=>node.type==='rule'&&(node.selector.includes('chat-inspection')||node.selector==='button'||node.selector==='button:hover')).map(node=>node.toString())).join('\n')
  document.head.append(style)
 }
 it('renders Inspector controls above application-wide dark surfaces with readable spacing and contrast',async()=>{
@@ -83,7 +83,7 @@ it('renders Inspector controls above application-wide dark surfaces with readabl
  expect(cs(disclosure).display).toBe('list-item')
  fireEvent.click(disclosure)
  expect((details as HTMLDetailsElement).open).toBe(true)
- const css=readFileSync('src/components/ChatInspection.css','utf8'),r2=css.split('/* INSPECTOR_LAYOUT_R2:')[1]
+ const css=readFileSync('src/components/ChatInspection.css','utf8')+readFileSync('src/components/ChatInspectionOverrides.css','utf8'),r2=css.split('/* INSPECTOR_LAYOUT_R2:')[1]
  expect(r2).toContain('@container chat-inspection (max-width: 420px)')
  expect(r2).toContain('grid-template-columns: minmax(0, 1fr)')
  expect(r2).toContain('min-width: 0')

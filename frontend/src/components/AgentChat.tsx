@@ -1,5 +1,6 @@
 import {t, useI18n, getLocale, formatDate, formatNumber, apiError, errorMessage, localMessage} from '../i18n'
 import './AgentChat.css'
+import './AgentChatOverrides.css'
 import './ChatMessage.css'
 import './WindowsSurface.css'
 import type {InspectionSelection} from '../types/inspection'

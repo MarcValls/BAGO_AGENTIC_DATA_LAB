@@ -39,12 +39,7 @@
 .control-chat-header { display: flex; justify-content: space-between; gap: 18px; align-items: center; padding: 19px 24px; border-bottom: 1px solid #26364b; }
 .control-chat-header p:not(.section-eyebrow) { margin: 6px 0 0; color: #9aadc2; font-size: .84rem; }
 .chat-mode-badge { max-width: 45%; overflow: hidden; padding: 7px 10px; color: #a8c5e8; border: 1px solid #344b67; border-radius: 999px; background: #14243a; font-size: .72rem; text-overflow: ellipsis; white-space: nowrap; }
-.control-chat-transcript-frame { position: relative; display: flex; flex: 1 1 0; min-height: 0; min-width: 0; }
 .control-chat-messages { flex: 1; overflow-y: auto; min-height: 0; padding: 12px clamp(10px, 1.2vw, 20px); }
-.conversation-scroll-controls { position: absolute; z-index: 4; right: clamp(12px, 2vw, 24px); bottom: 14px; display: grid; gap: 6px; animation: conversation-scroll-controls-in .16s ease-out; }
-.conversation-scroll-controls button { width: 38px; height: 38px; border: 1px solid #5794a6; color: #e1f6fa; background: #153348ed; box-shadow: 0 3px 12px #0006; font-size: 1.1rem; cursor: pointer; }
-.conversation-scroll-controls button:hover, .conversation-scroll-controls button:focus-visible { border-color: #8be0e8; background: #1d5265; outline: 2px solid #8be0e8; outline-offset: 2px; }
-@keyframes conversation-scroll-controls-in { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
 .chat-welcome { max-width: 650px; margin: 24px auto; text-align: center; }
 .welcome-mark { display: grid; width: 48px; height: 48px; margin: auto auto 17px; place-items: center; border: 1px solid #5279a7; border-radius: 16px; color: #a7caff; background: #1b314c; font-size: 1.5rem; }
 .chat-welcome h3 { margin: 0 0 8px; font-size: 1.28rem; }
@@ -193,8 +188,6 @@
 .chat-agent-panel .conversation-library-heading { min-height: 32px; align-items: center; justify-content: center; padding: 0 0 10px; text-align: center; }
 .chat-agent-panel .chat-sidebar-heading h2,
 .chat-agent-panel .conversation-library-heading strong { margin: 0; color: #dce7f2; font-size: 1rem; font-weight: 700; line-height: 1.2; }
-.conversation-library-project { display: grid; justify-items: start; gap: 3px; text-align: left; }
-.conversation-library-project span { max-width: 100%; overflow: hidden; color: #a9bfd4; font-size: .78rem; text-overflow: ellipsis; white-space: nowrap; }
 .chat-sidebar-agents { display: flex; flex-direction: column; overflow-y: auto; border-left: 1px solid #34485f; }
 .chat-sidebar-agents .chat-sidebar-heading { flex: 0 0 auto; }
 .chat-sidebar-agents .control-agent-option { flex: 0 0 auto; }
@@ -270,7 +263,6 @@
 .control-chat .assistant-markdown > :is(p, blockquote) { max-inline-size: 76ch; }
 .control-chat .control-message-user .control-message-content { max-inline-size: 76ch; margin-inline-start: auto; }
 .control-chat .control-chat-window .window-panel-content { overflow: auto; }
-.control-chat .control-chat-transcript-frame { flex: 1 1 0; min-height: 0; }
 .control-chat .control-chat-messages { flex: 1 1 0; min-height: 0; }
 /* Open library shares remaining height with messages, capped at half its owning chat area.
    No forced height or positive minimum: composer and intrinsic header keep their space. */
@@ -322,49 +314,3 @@
 .control-chat .chat-agent-panel .chat-sidebar-agents .chat-sidebar-heading > .secondary-action { flex: 0 0 auto; padding: 6px 8px; border-radius: 0; color: #b5dce6; border-color: #345767; background: transparent; box-shadow: none; }
 .control-chat .chat-agent-panel .chat-sidebar-agents .chat-sidebar-heading > .secondary-action:hover { color: #e2f8ff; border-color: #63a7b6; background: #183541; }
 .control-chat .chat-agent-panel .chat-sidebar-agents .chat-sidebar-heading > .secondary-action:focus-visible { outline: 2px solid #9de9f1; outline-offset: 2px; }
-
-/* Permission options: preserve the native controls and their per-turn consent. */
-.chat-composer-actions:has(> .workspace-read-toggle) { justify-content: flex-start; gap: 8px; }
-.chat-composer-actions > .workspace-read-toggle {
-  box-sizing: border-box;
-  flex: 0 1 auto;
-  min-width: 0;
-  max-width: 100%;
-  min-height: 32px;
-  align-items: center;
-  gap: 7px;
-  padding: 6px 9px;
-  border: 1px solid var(--bago-ui-border-subtle, #26364b);
-  border-radius: var(--bago-ui-radius-sm, 4px);
-  background: var(--bago-ui-surface, #0d1726);
-  color: var(--bago-ui-text-soft, #c4d1df);
-  font-size: .73rem;
-  line-height: 1.35;
-  transition: border-color .15s ease, background-color .15s ease, color .15s ease;
-}
-.chat-composer-actions > .workspace-read-toggle > input[type="checkbox"] {
-  width: 14px;
-  height: 14px;
-  margin: 0;
-  accent-color: #71d4df;
-  cursor: inherit;
-}
-.chat-composer-actions > .workspace-read-toggle > span { min-width: 0; overflow-wrap: anywhere; }
-.chat-composer-actions > .workspace-read-toggle:hover:not(:has(input:disabled)) { border-color: #477988; background: #142c39; color: #e3f7fa; }
-.chat-composer-actions > .workspace-read-toggle:has(input:checked) { border-color: #448d9c; background: #153440; color: #d8f5f8; }
-.chat-composer-actions > .workspace-read-toggle:has(input:focus-visible) { outline: 2px solid #9de9f1; outline-offset: 2px; }
-.chat-composer-actions > .workspace-read-toggle:has(input:disabled) { border-color: #344555; background: #15202b; color: #aebdcb; cursor: not-allowed; }
-.chat-composer-actions > .workspace-read-toggle:has(input:disabled:checked) { border-color: #42616b; background: #1a2c35; color: #bdced6; }
-@media (max-width: 480px) {
-  .chat-composer-actions > .workspace-read-toggle { flex: 1 1 140px; padding: 6px 8px; }
-}
-@media (prefers-reduced-motion: reduce) {
-  .chat-composer-actions > .workspace-read-toggle { transition: none; }
-}
-/* PROJECT_PANEL_R2: integrated right edge. Native library still owns the full chat. */
-.control-chat .control-chat-window > .window-panel-content { position: relative; }
-.control-chat .control-chat-window > .window-panel-content:has(> .development-drawer-anchor) { padding-right: 36px; }
-@media (min-width: 761px) {
-  .control-chat .control-chat-window > .window-panel-content:has(> .development-drawer-anchor[data-open="true"]) { padding-right: min(440px, 36%); }
-}
-.control-chat .control-chat-window > .window-panel-content:has(.chat-agent-panel[open]) { padding-right: 0; }
