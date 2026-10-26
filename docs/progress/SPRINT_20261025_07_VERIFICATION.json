@@ -1,0 +1,49 @@
+{
+  "schema": "bago.publication-folder-sprint07.v1",
+  "scope_gate": "VALIDATED_SCOPED_TASK",
+  "global_status": "NO_GO_OPEN",
+  "origin": "EXTERNAL_CODEX_PROJECT_MANAGER_FIX_NOT_ADL_JAEGER",
+  "product_sha256": {
+    "src/project_folders.py": "f84394f8f444a63c0e2faf2f948da9259e640eac2c337d151454f5f0df832d8d",
+    "src/api/project_folder_routes.py": "04d9f587b1066412443d3bba9ac30a6f656af54bac9770be357e028d61c428e7",
+    "src/api/server.py": "c3559bcbf8fb5c8966faeeb26074e8e6e950d42106e78bbfb42ad2ca715edbb9",
+    "tests/test_project_folders.py": "1c081c36786f25a9cef5f4df328fa08c5d812b872e3aad98fd712670426ef87d",
+    "frontend/src/components/WorkspaceManager.tsx": "f7c191eec1651c48ac6173d51ebb20a3d2aee1dd81ab7ab77649c81eebebc602",
+    "frontend/src/components/WorkspaceManager.css": "d293a8bc1338236448a60ae0d3ca88cd274a761de2223546276b3d77889137cd",
+    "frontend/src/components/CognitionSettings.tsx": "8eba311a9fa40b4687f745b3cfc04fe5efb21901075709c0c4f282122e927af2",
+    "frontend/src/App.tsx": "637fadfa92f2ba8a42ab04ebaefded976b71547f39727f97179b90ad157dbc78",
+    "frontend/src/i18n/domains/commerce.ts": "df5ef17fdad2efec262b1ee50773a890235311c9f2d4d1a5b0af89f5846d36c6",
+    "frontend/tests/workspace/manager.test.tsx": "680d6c4d6d9b0e0d42938c7de7c0861e782b2b94453a44e3ef5253ac65314c92",
+    "frontend/tests/project-folders/fixtures.ts": "8902239070e5628902f784c707c715ccbfbe5bcd67430e4c7cf5afbb20700c05",
+    "frontend/tests/project-folders/selection.test.tsx": "5bb66bff28ae011099a60e7e3717500861a374b0743e2bcaf23e82d223dccfe7",
+    "frontend/tests/project-folders/radio-layout.test.tsx": "d7c468eef02c7d323eeba7cb2c01a572dd3693a9a351151b0819a2f9f6bbb09b",
+    "frontend/tests/service-tabs/service-tabs.test.tsx": "9fa9975acf2b99d21d5ea1e6325bab11025e3d642817981d13b2ea90ff12a834",
+    "frontend/tests/i18n/commerce/commerce.test.tsx": "c2124623b19e1f3fb0bc557c40a2173d57e1cee24509ed9dbdf343507ab3b80b",
+    "frontend/tests/web-research/service-disclosure.test.tsx": "6cbeae1b598d00f18a3d093f56422676e9849ff12e8cd9a696a2662f32c254d9",
+    "docs/public-web/MANUAL.md": "ebbb5955947e43500b595503c98f53928addc7f12c64443d3f32c25b304aa7af"
+  },
+  "source_full_suite": {
+    "passed": 1512,
+    "failed": 4,
+    "skipped": 2,
+    "subtests_passed": 22,
+    "seconds": 615.05
+  },
+  "source_readme_full": "FAIL",
+  "source_readme_check": "PASS_COLLECTION_ONLY",
+  "publication_full_suite": "NOT_RUN",
+  "new_head_ci": "NOT_CHECKED_AT_PREPARATION",
+  "inherited_ui_fail": "visual-system.test.tsx: expects ExternalConnections in CapabilityManager; reproduced unchanged baseline",
+  "private_data_included": false,
+  "publication_directed_checks": {
+    "backend_passed": 67,
+    "readme_presentation_passed": 24,
+    "broader_ui_passed": 127,
+    "broader_ui_failed": 1,
+    "broader_ui_failure_exact": "adapts actual card/fieldset/list groups and main headers instead of fictional capability or workspace headings",
+    "typescript_vite": "PASS",
+    "readme_render": "PASS_COLLECTION_ONLY",
+    "readme_check": "PASS_COLLECTION_ONLY",
+    "global_suite": "NOT_RUN"
+  }
+}

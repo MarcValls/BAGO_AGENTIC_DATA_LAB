@@ -41,3 +41,6 @@ excluded/bago-app-game-development/
 /Users*BAGO5_ADL.bagogoals*full-suite.xml
 /frontend/.publication-candidate*/
 /frontend/.publication-scope*/
+
+# Private portable application data; publish code only.
+/.bago_user_data/

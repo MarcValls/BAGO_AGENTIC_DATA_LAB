@@ -1,0 +1,135 @@
+# Evaluación del frontend - 26 de octubre de 2026
+
+## Alcance observado
+
+Revisión estática del frontend y revisión visual de escritorio a 1920 × 1080 en `http://127.0.0.1:8093`. La página respondió HTTP 200 y no produjo excepciones JavaScript durante la carga inicial. El backend de 8093 y 8098 se identifica como `orchestrator-delegation-r42-preview`; por tanto, esta observación no acredita que el runtime ejecute la rama de la PR #71. No se pudo abrir una ventana UI dedicada mediante el conector de navegador. La revisión visual se hizo con Playwright headless.
+
+La captura se conserva fuera del repositorio porque contiene datos de conversaciones del runtime local:
+
+`C:\Users\AMTEC_Terminal_1º\AppData\Local\Temp\adl-frontend-review-20261026\runtime-8093-desktop.png`
+
+## Lo que ya está presente en el código y la vista
+
+- Chat principal de BAGO5, historial de conversaciones y selección explícita de conversación.
+- Panel derecho de carpeta de trabajo e historial de conversaciones en la vista observada.
+- Barra inferior con indicadores de memoria, backend, actividad HTTP, Git y proveedor.
+- Historial de trabajo unificado con fuentes legacy, task runs, delegaciones, turnos de agente y evaluaciones; enumera cobertura parcial y separa estado observado de finalización.
+- Catálogo de capacidades separado de agentes y acciones para navegar a configuración de conexiones.
+- El panel de actividad limita correctamente su afirmación a solicitudes HTTP del proceso API; declara que no observa trabajos de fondo.
+
+Estos puntos son evidencia de código o de la pantalla observada. No prueban por sí solos integración efectiva con todos los servicios.
+
+## Hallazgos visuales de escritorio
+
+1. **El chat inicial queda muy vacío.** En la vista en blanco, el encabezado y las acciones de inicio quedan agrupados arriba y el espacio central domina la pantalla. Una guía de primer uso con ejemplos de tareas seguras y visibles podría orientar al usuario sin enviar mensajes ni iniciar herramientas automáticamente.
+2. **La barra inferior pierde legibilidad por truncamiento.** Aun a 1920 px, algunos valores de Memoria y Proveedores se cortan; no se puede leer el estado completo sin abrir los detalles. Conviene reducir duplicidad entre etiqueta y valor, dar ancho al valor prioritario y conservar el detalle expandible como segundo nivel.
+3. **La carpeta activa no queda reconocible en la primera mirada.** El panel indica “Carpeta de trabajo”, pero la captura no presenta una ruta clara; además señala que no hay rutas para este turno. Debe diferenciarse visualmente la carpeta vinculada al proyecto, la carpeta seleccionada y las rutas autorizadas para un envío.
+4. **La jerarquía del panel derecho es funcional, pero densa.** El historial comparte una columna estrecha con el panel de proyecto. Mantener el desplegable, pero mejorar los títulos, el estado de selección y la acción de cambio de carpeta ayudaría a reducir ambigüedad.
+
+## Medición DOM en móvil
+
+En la misma instancia 8093, a 390 × 844, el documento no presenta overflow horizontal (`scrollWidth == 390`). Sin embargo, `.control-chat-sidebar` empieza en `y=791` y mide 348 px de alto, por lo que casi todo el panel derecho queda debajo del viewport inicial; la barra inferior ocupa `y=793..844`. Esto requiere revisar la composición móvil del panel para que proyecto e historial puedan abrirse y usarse sin quedar fuera de pantalla. Es una medición DOM, no una validación visual móvil ni una prueba de la candidata de PR.
+
+## Revisión posterior de la candidata en escritorio
+
+El 26 de octubre se levantó esta rama en un entorno aislado: Vite `5194` y API `8097`, procesos `31076` y `33788`, respectivamente. El código se sirvió desde el worktree `fix/project-workspace-chat-isolation-20261026`; los datos, la base de conversaciones y dos carpetas de proyecto sintéticas quedaron bajo Temp. No se usaron 8093/8098 ni se invocó ningún proveedor. El endpoint `/api/integration-preview-identity` no existe en esta candidata (404); identidad se acotó por ruta de lanzamiento, PIDs, HEAD `d8093d5` y hashes de los archivos modificados que constan en el registro de verificación del Sprint 16.
+
+La prueba visual encontró que el proxy Vite con `changeOrigin: true` hacía que el servicio rechazara los planes de carpeta con `Origen no permitido`. Tras conservar el `Host` original en el proxy, la interfaz preparó y aplicó planes de carpeta con confirmación humana. Se verificó que:
+
+- El destino del plan era exactamente la carpeta elegida. Se crearon los tres documentos `.bago` y `.workspace-service/manifest.json`; la respuesta confirmó el binding activo y los cuatro archivos aparecen en el recibo.
+- Un segundo proyecto se creó en una carpeta distinta. El chat vacío se creó mediante la acción explícita «Nueva» en el primer proyecto. El segundo proyecto devolvió una lista vacía; al volver al primero, la interfaz mostró de nuevo ese chat.
+- Los recibos de ambos proyectos quedaron `APPLIED`; al volver a activar el primero, el plan preservó sus archivos existentes y no creó copias.
+
+Captura sintética del panel de proyectos y el selector de carpeta: [workspace-projects-candidate.png](../../.bago/evidence/frontend-review-project-workspace-20261026/workspace-projects-candidate.png). SHA-256: `E40BC66B486DB11174D82200FD135048692E7217C2495CF9AE10069B30DC0E87`.
+
+La barra inferior indica solicitudes HTTP **activas en este momento**, no un contador acumulado: `0 solicitudes activas` significa que el backend está inactivo. Se ajustó esa etiqueta para que no se interprete como historial de llamadas. La monitorización sigue sin observar trabajos de fondo ni la actividad del host Codex. La vista de escritorio conserva mucho espacio vacío en el chat inicial y el texto pequeño del pie todavía puede ganar tamaño y peso. Esta prueba live sólo verifica el flujo de workspace/chat en el entorno sintético; no acredita el runtime publicado 8093/8098 ni una ejecución larga con Jaeger.
+
+## Revisión renderizada adicional de escritorio y móvil
+
+Se repitió la inspección de la misma candidata aislada con Python Playwright, porque el conector visual no tenía navegadores disponibles. La página `http://127.0.0.1:5194/` devolvió HTTP 200, título `BAGO · Espacio de trabajo`, contenido visible y ningún error de consola o excepción JavaScript. A 1920 × 1080 no hubo overflow. Al navegar desde la barra izquierda a Capacidades, el catálogo terminó de cargar y mostró las capacidades documentales; no se quedó en el estado de carga.
+
+A 390 × 844 tampoco hubo overflow horizontal del documento. El panel de proyecto abierto ocupa el ancho disponible y desplaza visualmente el chat; su botón «Cerrar» lo pliega y deja visible el compositor, con ancho útil de 332 px. El flujo es usable, aunque el panel abierto domina la primera pantalla móvil. El pie contiene 1074 px de indicadores en una franja de 390 px, con desplazamiento horizontal interno; Git y Proveedores quedan fuera de la primera vista y no hay una señal clara de que se pueda deslizar. La captura de escritorio inicial muestra además la etiqueta `New conversation` en inglés con la interfaz española. Conviene localizarla, dar una pista visible del desplazamiento y decidir si el panel debe abrir plegado en móvil.
+
+Capturas de esta pasada, con datos sintéticos, guardadas fuera del repositorio en `C:\Users\AMTEC_Terminal_1º\AppData\Local\Temp\adl-review-candidate-20261026-e3e72364\frontend-final-desktop.png` y `...\frontend-final-mobile.png`. Se comprobó también la navegación a Capacidades, que mostró el catálogo; sin envíos, cambios de datos ni llamadas a proveedores.
+
+## Revisión posterior de pulido móvil - 26 de octubre
+
+Sobre el mismo runtime aislado `5194/8097`, el siguiente sprint corrigió tres observaciones P2 de la pasada anterior: el panel de proyecto ahora inicia plegado en ventanas de hasta 760 px; la franja de estado muestra una indicación para deslizar y descubrir Git/Proveedores; y la tipografía del pie subió a 15 px / peso 700, con etiquetas de 16 px / peso 750. El título de servicio `New conversation` se presenta localizado como «Nueva conversación» sin renombrar el registro ni alterar otros títulos.
+
+Playwright en Chromium devolvió HTTP 200, sin errores de página ni overflow horizontal del documento en escritorio 1440 × 900 y móvil 390 × 844. En móvil, el panel comenzó cerrado (`aria-expanded=false`), el compositor quedó visible, el usuario pudo abrir y cerrar el panel, y el pie mostró «Desliza para ver Git y proveedores →»; la franja conserva scroll horizontal interno (1084 px de contenido para 390 px visibles). En escritorio, el panel continúa abierto y se ven todos los grupos del pie. Los datos siguen siendo sintéticos, no se llamó al modelo y 8093/8098 no se usaron.
+
+Capturas de la candidata tras el cambio, en Temp: `C:\Users\AMTEC_Terminal_1º\AppData\Local\Temp\adl-review-candidate-20261026-e3e72364\frontend-polish-desktop.png` y `...\frontend-polish-mobile.png`.
+
+## Revisión live de permisos y respuesta del chat - 26 de octubre
+
+Se continuó en la candidata aislada de la PR #71 (`5194/8097`, API PID 34712), con el proyecto y el archivo de prueba sintéticos guardados en Temp. Al solicitar la lectura autorizada de `sample_a.py`, la UI emitió el permiso y recibió HTTP 200, pero antes del arreglo el backend devolvía `Conversation was not found`. La causa estaba en el middleware de scope: conversaciones y chats heredaban el proyecto activo, pero las rutas de autorización web/workspace y de escaneo no.
+
+Se añadió el scope de conversación a `POST /api/web-read/authorizations`, `POST /api/workspace-read/authorizations`, `POST /api/workspace-scan/authorizations` y `POST /api/workspace-scan/run`. La regresión `test_project_chat_authorizations_and_scan_keep_the_active_project_scope` verifica autorización de lectura y web, autorización y ejecución del escaneo en un proyecto, y denegación del permiso al cambiar a otro proyecto. Los dos tests enfocados de aislamiento pasaron.
+
+La repetición desde la UI confirmó `POST /api/workspace-read/authorizations` HTTP 200 y `POST /api/chat/control` HTTP 200. El modelo seleccionado `ollama-cloud/kimi-k2.6` respondió que no podía ejecutar la lectura porque `read_workspace_file` no estaba disponible en su contexto. Jaeger recuperó la traza `143e68539c91a6951dbfa1d67349374e`: una sola operación `assistant.control`, 9,819 ms, `workspace_read_count=0`. El archivo no se leyó. La captura del chat y la traza están en el manual; sus SHA-256 constan en `SPRINT_20261026_19_VERIFICATION.json`.
+
+### Hallazgos de interfaz y capacidad
+
+- El mensaje del modelo informa que la lectura no ocurrió, y la respuesta incluye acceso a Inspect/Jaeger; el pie reporta `0 solicitudes activas`. La interfaz no presenta en la propia respuesta una ficha compacta que diga `Herramienta no ejecutada` ni diferencia visualmente permiso emitido, herramienta invocada y recibo ALLOW. Un usuario tiene que abrir la traza para confirmar `workspace_read_count=0`.
+- El bloqueo principal es del recorrido del orquestador/proveedor: la respuesta de chat se completó sin llamada a `read_workspace_file`. No se cambiará la política de enrutamiento desde esta evaluación; los tests actuales preservan que el orquestador resuelva propietario/alcance antes de herramientas. Debe completarse esa ruta mediante un cambio funcional acotado y validación propia.
+- La autorización por proyecto ya pasa en la candidata modificada. La suite completa, el uso de herramientas desde un agente seleccionado y una respuesta correcta con lectura real siguen `NOT_RUN` en esta revisión.
+
+## Pendientes recomendados por prioridad
+
+## Revisión live adicional: lectura de workspace y captura Jaeger
+
+En la candidata aislada `5194/8097`, una petición real desde la UI leyó el archivo sintético `sample_a.py` usando el permiso de workspace. La respuesta indicó correctamente su función y el total de 11 líneas. El recibo persistido fue `ALLOW`, ruta `sample_a.py`, líneas 1–11, `total_lines=11`, `truncated=false`; conversación `conv_9887036846fb4b939599cfc64a7da1fd`; traza Jaeger `ca351b6323cbcbb65c0882c1c7f778cf`. No se emplearon herramientas `development_*`.
+
+Las capturas finales están en [chat](../agent-chat-control/assets/manual-ui-actual-2026-10-26/05-chat-workspace-read-live.png) y [Jaeger](../agent-chat-control/assets/manual-ui-actual-2026-10-26/06-jaeger-workspace-read-live.png). La traza muestra `assistant.control` y el hijo `workspace.read`, decisión `ALLOW` y los metadatos de líneas. El tiempo del span hijo es una proyección (`timing_source=projection`, `duration_measured=false`); los microsegundos visibles no acreditan duración medida.
+
+Esta ejecución confirma un flujo puntual en un proyecto sintético de la candidata; no acredita la instancia publicada ni una misión larga. En la UI, la respuesta presenta «Archivos consultados · 1» y el grupo de lecturas, pero no expone directamente la decisión del recibo ni el estado del span hijo: para comprobarlos hay que abrir Inspect/Jaeger. Además, el pie siguió indicando `Ollama / kimi-k2.6 · configurado, sin verificar` pese a que el proveedor acababa de producir una respuesta real. La distinción entre configuración y verificación puede ser correcta como estado persistente, pero debería indicar que hubo una respuesta observada en esta sesión o explicar la diferencia.
+
+### Evaluación del frontend tras la ejecución
+
+El recorrido visual principal resulta comprensible: instrucción, respuesta con recuento, archivos consultados, inspector y carpeta de proyecto están presentes. La pantalla de conversación conserva bastante espacio vacío entre la respuesta y el compositor, y el historial del panel derecho muestra entradas duplicadas con el mismo título, lo que dificulta reconocer cuál corresponde a la ejecución actual. La ficha de respuesta debería ofrecer una ruta de evidencia directa —permiso, herramienta, recibo y traza— sin obligar a navegar a Jaeger para distinguir una lectura real de una respuesta textual. El pie es legible en escritorio en esta captura, aunque su estado del proveedor no se actualiza con el resultado recién observado.
+
+El alcance de esta pasada es una única vista de escritorio sintética. No sustituye la evaluación móvil, accesibilidad, zoom o pruebas del runtime publicado ya señaladas arriba; el dictamen general sigue `NOT_VALIDATED`.
+
+### P0 - antes de afirmar integración del producto
+
+- Conectar el historial de trabajo con ejecuciones reales y mostrar al menos un recorrido largo exitoso con recibos y traza Jaeger enlazados. Hoy el frontend puede presentar un índice de fuentes, pero la disponibilidad real depende del backend.
+- Repetir la comprobación de workspace/chat en el runtime que el usuario vaya a comparar en 8093/8098, tras publicar el candidato; la verificación 5194/8097 es aislada y sintética. La candidata tampoco expone el endpoint `integration-preview-identity`.
+
+### P1 - completar la experiencia de operación
+
+- El indicador “Actividad ADL” debe incorporar un contrato de progreso de jobs/task runs, no sólo peticiones HTTP, y presentar fase, duración y resultado. Hasta entonces debe conservar el rótulo limitado actual.
+- Hacer visible qué fuente del historial está ausente o parcial y permitir abrir el registro relacionado, el recibo y la traza desde la misma ficha.
+- Mostrar en cada respuesta que pidió una operación una ficha breve con estado observable: permiso emitido, herramienta invocada, decisión del recibo y enlace a la traza. No inferir una ejecución de un HTTP 200 ni de una respuesta del modelo.
+- En proveedores, separar con claridad proveedor registrado, habilitación para el orquestador/agente, modelo elegido y respuesta realmente verificada. El código actual del pie indica que sólo lee metadatos, lo cual es correcto pero insuficiente para diagnosticar disponibilidad.
+- Proporcionar una orientación inicial no ejecutable en el chat vacío, con ejemplos cortos para workspace, consulta documental y uso de agentes.
+
+### P2 - pulido y accesibilidad
+
+- Completar QA de zoom del navegador, navegación sólo con teclado y VoiceOver/NVDA; la pasada de pulido verificó teclado por pruebas de foco, pero no probó lectores de pantalla ni zoom.
+- Completar QA de teclado/foco y táctil para el panel derecho, los menús desplegables y el cambio de proyecto; la comprobación visual móvil 390 × 844 sólo cubrió el estado inicial y el cierre del panel.
+- Mantener la actualización de los manuales de uso con capturas sintéticas por caso; la revisión frontend no reemplaza esa documentación.
+- Añadir capturas de producto con datos sintéticos y runtime identificado en los manuales de cada caso de uso. No reutilizar capturas locales con datos de conversación reales.
+
+## Dictamen
+
+El frontend está más integrado que un conjunto de pantallas informativas: enlaza chat, capacidades, proyecto, historial de conversaciones, historial de trabajo y estado runtime. Aún falta cerrar la prueba extremo a extremo con la instancia exacta y mejorar la legibilidad inicial de chat, workspace y barra inferior. Evaluación global: `NOT_VALIDATED`; no es un GO para release.
+
+## Revisión fresca de la candidata y flujo de respuesta de proveedor - 26 de octubre
+
+Se evaluó la candidata local `fix/project-workspace-chat-isolation-20261026` en `5194/8097`, HEAD previo `969719b1ebd17e263a343ac41e8b461158c870f4`, a escritorio 1440×900 y móvil 390×844. Chromium headless no registró errores de página/consola ni overflow horizontal en esas dos medidas. La barra del proveedor se verificó también tras una lectura autorizada real desde el Chat BAGO5 contra un proyecto sintético.
+
+- **Estado del proveedor:** la UI recibió HTTP 200 y un recibo `ALLOW` para `sample_a.py` (11 líneas, una fuente). Después del reinicio controlado del API candidato (PID 2632 → 55252, cero solicitudes activas antes del reinicio), el pie mostró `ollama-cloud/kimi-k2.6 · Respuesta recibida en esta sesión`. El detalle mantuvo `configurado, sin verificar` como metadato persistente y advirtió que la señal no se conserva al recargar. El cambio no eleva `response_verified`.
+- **Traza:** Jaeger devolvió HTTP 200 para `f765387a8765b3a2d96441bcea8d230f`; contiene `assistant.control` y `workspace.read`, 2 spans. El hijo muestra `timing_source=projection` y `duration_measured=false`; su duración visible de 43 μs no es una medición de rendimiento.
+- **Capacidades:** el catálogo presentó 13 entradas y dejó de mostrar el estado de carga antes de 2,5 s. La primera captura anterior se tomó demasiado pronto; no era un fallo persistente.
+- **Agentes y herramientas:** hay 14 perfiles y las tarjetas separan proveedor/modelo, alcance y asignaciones. Varios no tienen herramientas asignadas. La vista Herramientas indica correctamente que `mcp.execute` no está disponible en el chat y que asignación no equivale a permiso o ejecución.
+- **Accesibilidad del constructor:** varios campos de texto de Crear agente no tienen etiqueta ni nombre accesible explícito y dependen del placeholder. Requiere corrección y verificación específica con teclado/lector de pantalla.
+- **Evaluación e historial:** la pantalla terminó de cargar y mostró cero ejecuciones. La interfaz no puede enseñar todavía una ejecución/historial real en esa vista.
+- **Manuales:** el manual general incluye ahora capturas del estado de respuesta de sesión y su traza exacta; siguen pendientes cinco manuales distintos por sector empresarial, con capturas y recorridos Jaeger reales.
+
+Las capturas del estado y de Jaeger se conservan en `docs/agent-chat-control/assets/manual-ui-actual-2026-10-26/07-provider-response-observed-session.png` y `08-jaeger-provider-response-observed-session.png`. No se deben confundir con el preview publicado 8093/8098 ni con una validación global.
+
+**Dictamen actualizado:** el cambio de estado del proveedor queda `VERIFIED` en una tarea acotada, pero el frontend global sigue `NOT_VALIDATED`. Faltan el recorrido completo de las pantallas, accesibilidad/zoom, historial de ejecuciones reales, integración MCP ejecutable, asignaciones útiles de herramientas y los cinco manuales sectoriales. No es GO para release.
+
+### Actualización de manuales en `origin/main`
+
+Una actualización fresca de GitHub mostró que la PR #72 ya fue integrada en `main` como `5591787`. Incluye cinco guías por sector (`administración documental`, `atención al cliente`, `calidad y operaciones`, `investigación de mercado`, `logística e inventario`) y cinco capturas del producto. Esto cubre la existencia inicial de los cinco documentos solicitados, pero sus propios textos los marcan como escenarios no ejecutados. La imagen Jaeger compartida es una traza sintética de 12 spans/2,7 s; aún faltan trazas live vinculadas a cada caso empresarial y evidencia de que cada recorrido usa realmente las herramientas descritas.

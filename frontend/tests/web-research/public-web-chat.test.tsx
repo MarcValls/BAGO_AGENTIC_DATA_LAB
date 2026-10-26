@@ -5,6 +5,7 @@ beforeEach(()=>{localStorage.clear();resetLocaleForTests();setLocale('es')})
 import {beforeEach,afterEach,expect,it,vi} from 'vitest'
 import {act,cleanup,fireEvent,render,screen,waitFor,within} from '@testing-library/react'
 import AgentChat from '../../src/components/AgentChat'
+import {openDelegatedChild,withPersistedDelegation} from '../helpers/delegated-agent-chat'
 const response=(body:unknown,status=200)=>({ok:status<400,status,json:async()=>body})
 const make=(id='conv-web',messages:any[]=[])=>({id,owner_kind:'assistant',owner_id:'app-assistant',title:id,status:'active',revision:7,updated_at:'2026-10-23',messages})
 afterEach(()=>{cleanup();vi.unstubAllGlobals()})
@@ -82,10 +83,11 @@ it('does not make an unsafe stored source URL clickable',async()=>{
  await setup({conversation:make('conv-web',[{id:'unsafe',role:'assistant',content:'Fuente corrupta fixture',references:{sources:[{source_type:'public_web',path:'javascript:alert(1)',start_line:1,end_line:1}]}}])})
  const section=await screen.findByLabelText('Fuentes web públicas consultadas');expect(within(section).queryByRole('link')).toBeNull();expect(within(section).getByText('URL no válida para abrir')).toBeTruthy()
 })
-it('clears consent on owner switch and grants only to the selected saved agent',async()=>{
+it('clears consent on owner switch and grants only to the delegated saved agent',async()=>{
  HTMLElement.prototype.scrollIntoView=()=>{}
  const agent={id:'agent-web',config:{name:'Agente Web fixture',type:'analyst',description:'Fixture',provider_id:'ollama-cloud',model_id:'fixture-model'}}
- const assistant=make(),agentConv={...make('conv-agent'),owner_kind:'agent',owner_id:agent.id}
+ const agentConv={...make('conv-agent'),owner_kind:'agent',owner_id:agent.id}
+ const assistant=withPersistedDelegation(make(),agent,agentConv.id)
  const mutations:Array<{path:string;body:any}>=[]
  vi.stubGlobal('fetch',vi.fn(async(path:string,init?:RequestInit)=>{
   const body=init?.body?JSON.parse(String(init.body)):null;if(init?.method&&init.method!=='GET')mutations.push({path,body})
@@ -99,7 +101,7 @@ it('clears consent on owner switch and grants only to the selected saved agent',
  }))
  render(<AgentChat cognitiveMode="baseline" onNavigate={()=>{}} onOpenProviderSettings={()=>{}} onOpenCognitionSettings={()=>{}} />)
  await screen.findByRole('region',{name:'conv-web'});await act(async()=>{})
- enable();fireEvent.click(screen.getByText(/Conversaciones y agentes/));fireEvent.click(await screen.findByRole('button',{name:/Agente Web fixture/}))
+ enable();await openDelegatedChild('Agente Web fixture')
  await waitFor(()=>expect((screen.getByLabelText('Permitir lectura web pública') as HTMLInputElement).checked).toBe(false))
  expect(screen.queryByLabelText('URL HTTPS de entrada · una por línea')).toBeNull()
  await waitFor(()=>expect(screen.getByText('Chats · Agente Web fixture')).toBeTruthy())

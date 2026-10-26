@@ -159,14 +159,21 @@ def test_no_permission_does_not_offer_web_or_fabricate_source(monkeypatch,tmp_pa
     assert result['sources']==[] and result['read_events']==[]
 
 
-def test_control_chat_web_sources_and_trace(monkeypatch,tmp_path):
+def test_control_chat_rejects_web_read_before_routing(monkeypatch,tmp_path):
     s,store,c,b=setup_server(monkeypatch,tmp_path,owner='assistant')
     monkeypatch.setattr(s.provider_runtime,'active_selection',lambda:{'provider_id':'codex','model_id':'fixture'})
     monkeypatch.setattr(s,'_communication_service',lambda:SimpleNamespace(contacts=lambda:[],drafts=lambda:[]))
-    turns=iter([{'tool_calls':[{'function':{'name':'public_web_read','arguments':{'url':URL}}}]},{'content':'Returned public text.'}]);monkeypatch.setattr(s.provider_runtime,'chat_turn',lambda *a,**k:next(turns))
+    calls=[]
+    def turn(*args,**kwargs):
+        calls.append(kwargs)
+        return {'tool_calls':[{'function':{'name':'public_web_read','arguments':{'url':URL}}}]}
+    monkeypatch.setattr(s.provider_runtime,'chat_turn',turn)
+    monkeypatch.setattr(PublicWebReader,'read',lambda *a,**k:pytest.fail('no web read before routing'))
     g=asyncio.run(s.create_web_read_authorization(s.WebReadAuthorizationRequest(**b,urls=[URL])))
     result=asyncio.run(s.control_chat(s.ControlChatRequest(message='Read web',conversation_id=c['id'],revision=0,web_read_authorization_id=g['authorization_id'])))
-    assert result['sources'][0]['snapshot_id'] and result['trace']['trace_id']
+    assert result['sources']==[] and result['read_events']==[] and result['trace']['trace_id']
+    assert len(calls)==1 and [t['function']['name'] for t in calls[0]['tools']]==['resolve_control_request']
+    assert not (tmp_path/'captures').exists()
     assert store.get(c['id'])['messages'][-1]['references']['trace']==result['trace']
 
 

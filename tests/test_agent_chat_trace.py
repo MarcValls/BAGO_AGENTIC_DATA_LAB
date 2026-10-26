@@ -1,6 +1,7 @@
 import asyncio
 import hashlib
 import json
+import pytest
 from pathlib import Path
 
 from fastapi import Response
@@ -114,3 +115,209 @@ def test_real_agent_tool_loop_traces_allowed_and_denied_exact_file_reads(monkeyp
     assert [event["status"] for event in reads] == ["ALLOW", "DENY"]
     assert all(event["parent_event_id"] == trace["events"][0]["event_id"] for event in reads)
     assert reads[0]["attributes"]["file_sha256"] == hashlib.sha256((tmp_path / "evidence.txt").read_bytes()).hexdigest()
+
+
+def _a4_receipt_trace():
+    from src.observability.native_timing import NativeTimingRecorder
+
+    recorder = NativeTimingRecorder(run_id="agent-chat-" + "a" * 32)
+    recorder.trace_id = "trace-" + "a" * 16
+    with recorder.span("agent.chat") as root:
+        with recorder.span("workspace.read") as measured:
+            measured.finish(status="SUCCEEDED")
+        root.finish(status="SUCCEEDED")
+    return recorder.to_local_trace(), measured.event_id
+
+
+def test_a4_individual_receipt_identity_and_no_global_gate():
+    trace, event_id = _a4_receipt_trace()
+    measured = {"decision": "ALLOW", "file_sha256": "b" * 64}
+    equal_but_distinct = dict(measured)
+    observation = {"read_events": [measured, equal_but_distinct, measured],
+                   "_native_receipt_invocations": [(measured, event_id)]}
+    result = server._native_chat_compatibility_evidence(
+        trace, {"root_attributes": {}, "observation": observation})
+    native = next(event for event in result.events if event.event_id == event_id)
+    original = next(event for event in trace.events if event.event_id == event_id)
+    assert native.status == measured["decision"]
+    assert native.attributes["native_outcome"] == original.status
+    assert native.start_time_unix_nano == original.start_time_unix_nano
+    assert native.end_time_unix_nano == original.end_time_unix_nano
+    assert native.attributes["file_sha256"] == "b" * 64
+    projections = [event for event in result.events if event.attributes.get("timing_mode") == "projection"]
+    assert len(projections) == 1
+    assert projections[0].start_time_unix_nano is None
+    assert projections[0].end_time_unix_nano is None
+    assert "depth" not in projections[0].attributes
+    assert "file_sha256" not in original.attributes
+
+
+def test_a4_rejects_ambiguous_missing_and_incomplete_native_bindings():
+    from dataclasses import replace
+
+    trace, event_id = _a4_receipt_trace()
+    receipt = {"decision": "DENY"}
+    native = next(event for event in trace.events if event.event_id == event_id)
+    incomplete = replace(native, attributes=dict(native.attributes, interval_complete=False))
+    cases = [
+        (trace, [(receipt, "event-missing")]),
+        (trace, [(receipt, event_id), (receipt, event_id)]),
+        (trace, [(receipt, event_id), (dict(receipt), event_id)]),
+        (replace(trace, events=trace.events + (native,)), [(receipt, event_id)]),
+        (replace(trace, events=tuple(incomplete if event is native else event for event in trace.events)),
+         [(receipt, event_id)]),
+    ]
+    for frozen, bindings in cases:
+        result = server._native_chat_compatibility_evidence(frozen, {
+            "root_attributes": {}, "observation": {
+                "read_events": [receipt], "_native_receipt_invocations": bindings}})
+        projected = [event for event in result.events if event.attributes.get("timing_mode") == "projection"]
+        assert len(projected) == 1
+        assert projected[0].status == "DENY"
+        assert projected[0].start_time_unix_nano is None
+        assert projected[0].end_time_unix_nano is None
+
+
+def test_a4_individual_compatibility_projections_redact_raw_data():
+    trace, _ = _a4_receipt_trace()
+    receipts = [
+        {"kind": "public_web_read", "decision": "ALLOW"},
+        {"kind": "workspace_write_proposal", "decision": "FAIL"},
+        {"kind": "document_tool", "tool_name": "document_extract", "decision": "DENY"},
+    ]
+    for receipt in receipts:
+        receipt.update(path="RAW_PRIVATE_PATH", arguments="RAW_ARGUMENTS", payload="RAW_PAYLOAD",
+                       error="RAW_ERROR", authorization_id="RAW_AUTHORIZATION", provider_id="RAW_PROVIDER",
+                       document="RAW_DOCUMENT", tool_call_id="RAW_TOOL_CALL")
+    result = server._native_chat_compatibility_evidence(trace, {
+        "root_attributes": {}, "observation": {"read_events": receipts + receipts}})
+    projections = [event for event in result.events if event.attributes.get("timing_mode") == "projection"]
+    assert [event.name for event in projections] == ["web.read", "workspace.propose_write", "document_extract"]
+    assert [event.status for event in projections] == ["ALLOW", "FAIL", "DENY"]
+    assert len({event.event_id for event in projections}) == 3
+    assert "RAW_" not in result.to_json()
+    assert all(event.start_time_unix_nano is None and event.end_time_unix_nano is None for event in projections)
+
+
+def test_a4_receipt_worker_binds_actual_object_after_closed_handler(tmp_path):
+    from src.observability.native_timing import NativeTimingRecorder
+
+    (tmp_path / "evidence.txt").write_text("native evidence", encoding="utf-8")
+    recorder = NativeTimingRecorder(run_id="agent-chat-" + "b" * 32)
+    recorder.trace_id = "trace-" + "b" * 16
+    observation = {"read_events": []}
+    with recorder.span("agent.chat") as root:
+        result, receipt = server._native_receipt_call(
+            recorder, observation, "workspace.read", server.read_workspace_file,
+            tmp_path, {"path": "evidence.txt"}, ["evidence.txt"])
+        observation["read_events"].append(receipt)
+        root.finish(status="SUCCEEDED")
+    frozen = recorder.to_local_trace()
+    bound, event_id = observation["_native_receipt_invocations"][0]
+    assert bound is receipt
+    event = next(event for event in frozen.events if event.event_id == event_id)
+    assert event.attributes["interval_complete"] is True
+    assert event.start_time_unix_nano is not None
+    assert event.end_time_unix_nano >= event.start_time_unix_nano
+    assert result is not None
+    projected = server._native_chat_compatibility_evidence(frozen, {
+        "root_attributes": {}, "observation": observation})
+    assert len(projected.events) == len(frozen.events)
+
+
+def _a4_failed_message(store):
+    conversation = store.create("agent", "agent-a4")
+    reference = {"version": 1, "agent_id": "agent-a4", "conversation_id": conversation["id"],
+                 "trace_id": "trace-" + "c" * 16, "execution_id": "agent-chat-" + "c" * 32,
+                 "trace_state": "pending_finalization"}
+    references = {"trace": reference, "sources": [{"unchanged": True}],
+                  "execution_failure": {"state": "FAILED", "response_received": False}}
+    message = store.append_message(conversation["id"], 0, "assistant", "", references, status="failed")
+    target = server._native_failed_chat_target("agent-a4", conversation["id"], message, references, reference)
+    metadata = dict(reference, trace_state="local_only", local_state="persisted",
+                    export_state="not_configured", sidecar_state="persisted")
+    return conversation, target, metadata
+
+
+def test_a4_failed_writeback_changes_only_existing_references(monkeypatch, tmp_path):
+    import pytest
+
+    store = ConversationStore(tmp_path / "failed.sqlite3")
+    monkeypatch.setattr(server, "CONVERSATIONS", store)
+    conversation, target, metadata = _a4_failed_message(store)
+    with store._connect() as connection:
+        before_conversation = dict(connection.execute("SELECT * FROM conversations WHERE id = ?", (conversation["id"],)).fetchone())
+        before_messages = [dict(row) for row in connection.execute("SELECT * FROM messages")]
+    server._native_failed_chat_writeback(target, metadata)
+    with store._connect() as connection:
+        after_conversation = dict(connection.execute("SELECT * FROM conversations WHERE id = ?", (conversation["id"],)).fetchone())
+        after_messages = [dict(row) for row in connection.execute("SELECT * FROM messages")]
+    assert after_conversation == before_conversation
+    assert len(after_messages) == len(before_messages) == 1
+    before = before_messages[0]
+    after = after_messages[0]
+    before_refs = json.loads(before.pop("references_json"))
+    after_refs = json.loads(after.pop("references_json"))
+    assert after == before
+    assert after_refs.pop("trace") == metadata
+    before_refs.pop("trace")
+    assert after_refs == before_refs
+    with pytest.raises(server.ConversationConflict):
+        server._native_failed_chat_writeback(target, metadata)
+
+
+def test_a4_failed_writeback_rejects_every_cas_guard(monkeypatch, tmp_path):
+    import pytest
+
+    store = ConversationStore(tmp_path / "cas.sqlite3")
+    monkeypatch.setattr(server, "CONVERSATIONS", store)
+    mutations = [
+        ("UPDATE conversations SET revision = revision + 1 WHERE id = ?", "conversation"),
+        ("UPDATE conversations SET status = 'deleted' WHERE id = ?", "conversation"),
+        ("UPDATE conversations SET owner_id = 'another-agent' WHERE id = ?", "conversation"),
+        ("UPDATE messages SET sequence = sequence + 1 WHERE id = ?", "message"),
+        ("UPDATE messages SET status = 'complete' WHERE id = ?", "message"),
+        ("UPDATE messages SET role = 'user' WHERE id = ?", "message"),
+        ("UPDATE messages SET content = 'not empty' WHERE id = ?", "message"),
+        ("UPDATE messages SET references_json = '{}' WHERE id = ?", "message"),
+    ]
+    for sql, identity in mutations:
+        conversation, target, metadata = _a4_failed_message(store)
+        with store._connect() as connection:
+            connection.execute(sql, (conversation["id"] if identity == "conversation" else target["message_id"],))
+            before = [dict(row) for row in connection.execute("SELECT * FROM messages ORDER BY id")]
+        with pytest.raises(server.ConversationConflict):
+            server._native_failed_chat_writeback(target, metadata)
+        with store._connect() as connection:
+            assert [dict(row) for row in connection.execute("SELECT * FROM messages ORDER BY id")] == before
+    _, target, metadata = _a4_failed_message(store)
+    for key in ("trace_id", "execution_id", "agent_id", "conversation_id"):
+        with pytest.raises(ValueError):
+            server._native_failed_chat_writeback(target, dict(metadata, **{key: "wrong-identity"}))
+    for key in ("message_id", "conversation_id"):
+        with pytest.raises(server.ConversationConflict, match=".*"):
+            server._native_failed_chat_writeback(dict(target, **{key: "missing-identity"}), metadata)
+
+
+@pytest.mark.parametrize(("receipt", "expected_status"), [
+    ({"decision": "ALLOW"}, "SUCCEEDED"),
+    ({"decision": "DENY"}, "DENIED"),
+    ({"decision": "FAIL"}, "FAILED"),
+    ({}, "FAILED"),
+    ({"decision": "UNKNOWN"}, "FAILED"),
+    (None, "FAILED"),
+    ("invalid", "FAILED"),
+])
+def test_a4_receipt_call_fails_closed_for_unknown_or_missing_decisions(receipt, expected_status):
+    from src.observability.native_timing import NativeTimingRecorder
+    import pytest
+
+    recorder = NativeTimingRecorder(run_id="agent-chat-" + "d" * 32)
+
+    def handler(*args, **kwargs):
+        return {"ok": True}, receipt
+
+    server._native_receipt_call(recorder, None, "workspace.read", handler)
+    event = recorder.to_local_trace().events[0]
+    assert event.status == expected_status
+

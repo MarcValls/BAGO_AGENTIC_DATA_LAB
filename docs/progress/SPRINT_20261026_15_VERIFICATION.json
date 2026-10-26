@@ -1,0 +1,89 @@
+{
+  "schema": "bago.frontend-sprint-verification.v1",
+  "sprint": "SPRINT_20261026_15",
+  "state": "VALIDATED",
+  "gate": "VALIDATED_SCOPED_TASK",
+  "candidate": {
+    "worktree_branch": "fix/project-workspace-chat-isolation-20261026",
+    "pr": 71,
+    "pr_branch": "review/adl-applied-code-20261025",
+    "base": "263bb76cf9a47f404b297808bd33b748833686be",
+    "previous_head": "5bde1620b6052349be28df9ba330df056749af1b",
+    "first_sprint_commit": "7bdc8eb9d4e02cc24888fe942c3719071fda83c7",
+    "validated_head": "7b8a26f23a71127d9372072e20cf50562412f6f9"
+  },
+  "changed_scope": {
+    "product_code_changed": false,
+    "files": [
+      "frontend/tests/ui/agent-evaluation-lab/rendered.test.mjs",
+      "frontend/tests/ui/capabilities/mcp-governance.test.mjs",
+      "frontend/tests/ui/chat-shell/chat-navigation.test.mjs",
+      "frontend/package.json",
+      "docs/progress/SPRINT_20261026_15.md",
+      "docs/progress/FRONTEND_EVALUATION_20261026.md"
+    ]
+  },
+  "checks": {
+    "node_syntax": "PASS",
+    "git_diff_check": "PASS_WITH_LINE_ENDING_WARNING",
+    "node_ui_tests": {
+      "status": "PASS",
+      "passed": 47,
+      "suites": 7,
+      "command": "npm run test:ui",
+      "runner_concurrency": 1,
+      "warnings": "React act(...) warnings in catalog-quality tests; no failures"
+    },
+    "readme_generator": {
+      "status": "PASS",
+      "command": "python -B scripts/generate_dynamic_readme.py",
+      "passed": 1570
+    },
+    "readme_reproducibility": {
+      "status": "PASS",
+      "command": "python scripts/generate_dynamic_readme.py --check --skip-tests",
+      "collected": 1572,
+      "suite": "NOT_RUN"
+    },
+    "github_ci": {
+      "status": "PASS",
+      "last_failing_pr_run": 40265858653,
+      "last_failing_push_run": 40265854557,
+      "sprint_commit_run": 40269328620,
+      "first_attempt_sha": "7bdc8eb9d4e02cc24888fe942c3719071fda83c7",
+      "first_attempt_findings": ["stale translated button expectations", "chat empty-state expectation mismatch", "empty-suite assertion accidentally matched valid empty run-history paragraph"],
+      "first_attempt_status": "INCOMPLETE_CANCELLED",
+      "final_candidate_ci": {
+        "push": {"run_id": 40272812155, "status": "PASS"},
+        "pull_request": {"run_id": 40272816866, "status": "PASS"},
+        "readme_push": {"run_id": 40272812023, "status": "PASS"},
+        "readme_pull_request": {"run_id": 40272816832, "status": "PASS"},
+        "docker_build_pull_request": {"run_id": 40272816826, "status": "PASS"}
+      }
+    }
+  },
+  "visual_review": {
+    "status": "OBSERVED_RUNTIME_NOT_CANDIDATE_VERIFICATION",
+    "url": "http://127.0.0.1:8093",
+    "http": 200,
+    "browser": "Playwright Chromium headless",
+    "viewport": "1920x1080",
+    "page_errors": 0,
+    "backend_identity": "orchestrator-delegation-r42-preview",
+    "screenshot": "C:/Users/AMTEC_Terminal_1º/AppData/Local/Temp/adl-frontend-review-20261026/runtime-8093-desktop.png",
+    "screenshot_in_repository": false,
+    "reason": "Screenshot includes local conversation content and runtime backend is not the PR candidate."
+  },
+  "responsive_measurement": {
+    "status": "OBSERVED_RUNTIME_NOT_CANDIDATE_VERIFICATION",
+    "viewport": "390x844",
+    "document_width": 390,
+    "horizontal_overflow": false,
+    "chat_sidebar": {"y": 791, "height": 348},
+    "runtime_status_bar": {"y": 793, "height": 51},
+    "finding": "Most of the right chat sidebar lies below the initial mobile viewport."
+  },
+  "global_frontend": "NOT_VALIDATED",
+  "merge": false,
+  "release": false
+}

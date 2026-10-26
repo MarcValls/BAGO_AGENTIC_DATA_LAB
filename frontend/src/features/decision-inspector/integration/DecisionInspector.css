@@ -40,3 +40,9 @@
 .decision-inspector__summary p, .decision-inspector__answer-detail > p { max-inline-size: 76ch; }
 .decision-inspector__inventory ul { grid-template-columns: repeat(auto-fit, minmax(min(100%, 17rem), 1fr)); }
 .decision-inspector__summary-grid { grid-template-columns: repeat(auto-fit, minmax(min(100%, 10rem), 1fr)); }
+
+/* Shared identity stays available without repeating page and section headings. */
+.decision-inspector-page__identity { min-width: 0; margin-block: 8px 12px; padding: 8px 10px; border: 1px solid var(--bago-ui-border-subtle, #26364b); }
+.decision-inspector-page__identity summary { cursor: pointer; }
+.decision-inspector-page__identity :is(dd, code) { min-width: 0; max-width: 100%; overflow-wrap: anywhere; }
+.decision-inspector-page__identity dd { margin-inline-start: 0; }

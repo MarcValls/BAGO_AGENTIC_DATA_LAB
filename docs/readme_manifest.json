@@ -1,106 +1,5 @@
 {
-  "project": {
-    "title": "BAGO Agentic Data Lab",
-    "emoji": "🧪",
-    "description": "Aplicación y laboratorio de agentes, datos y ejecución gobernada: trabajar desde la interfaz e inspeccionar propuestas, autorizaciones y evidencia.",
-    "repository": "https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB",
-    "default_branch": "main",
-    "license": "MIT",
-    "ci_workflow": "ci.yml"
-  },
-  "verification_record": "docs/verification/readme-corporate-status-20261022.json",
-  "presentation": {
-    "banner": "docs/assets/bago-readme-banner.svg",
-    "frontend_guide": "docs/readme_frontend.md",
-    "capture_date": "2026-10-22",
-    "capture_guide": "docs/assets/readme-20261022/README.md",
-    "captures": [
-      {"path": "docs/assets/readme-20261022/chat.png", "alt": "Respuesta real del nuevo agente BAGO Demo Chat 20261022 con lectura autorizada de DEMO.md el 22 de octubre de 2026", "caption": "Chat · respuesta nueva con gpt-6-luna: dos pedidos ficticios, una lectura autorizada y citas de DEMO.md. Traza trace-496fac766f384348."},
-      {"path": "docs/assets/readme-20261022/workspace.png", "alt": "Workspace nuevo de la demostración del 22 de octubre de 2026 con el fixture DEMO.md", "caption": "Workspace · carpeta nueva para la demostración, con datos ficticios propios y sin canon de proyecto."},
-      {"path": "docs/assets/readme-20261022/chat-created.png", "alt": "Creación real del agente desde el borrador integrado en Chat el 22 de octubre de 2026", "caption": "Chat y Agent Builder integrado · borrador, Preview y guardado del agente nuevo. El primer intento falló por model_registration_mismatch; se verificó el modelo en Settings y el segundo guardado terminó correctamente."},
-      {"path": "docs/assets/readme-20261022/inspect.png", "alt": "Inspect capturado el 22 de octubre de 2026 mostrando la traza histórica de Bruma y no la traza del nuevo chat", "caption": "Inspect · captura nueva de un artefacto anterior: muestra Bruma trace-5b385699ffda0529, distinta de la traza del chat nuevo. Hallazgo: no se observó vinculación automática desde esa conversación."}
-    ]
-  },
-  "frontend": {
-    "entry": "frontend/src/App.tsx",
-    "package": "frontend/package.json",
-    "api": "src/api/server.py",
-    "setup_guide": "docs/agent-chat-control/LOCAL_SETUP.md",
-    "launcher": "scripts/run-local-ui.ps1",
-    "start_commands": [
-      "python -m pip install -r requirements-test.txt",
-      "npm ci --prefix frontend",
-      "npm run build --prefix frontend",
-      "python -m src.api.server"
-    ],
-    "layers": [
-      {
-        "name": "Interacción",
-        "description": "Chat, Workspace, Capabilities, Agent Builder, Agent Runs y Agent Evaluation Lab.",
-        "sources": ["frontend/src/App.tsx", "frontend/src/components/AgentChat.tsx"]
-      },
-      {
-        "name": "Datos y tareas",
-        "description": "Tareas guardadas de agentes; ingesta y consulta con citas; revisión de ontología, calidad de catálogo y conexiones/MCP. Cada recorrido conserva sus límites de disponibilidad.",
-        "sources": ["frontend/src/components/AgentTasks.tsx", "frontend/src/components/KnowledgeIngest.tsx", "frontend/src/components/OntologyReview.tsx", "frontend/src/components/CatalogQuality.tsx", "frontend/src/components/ExternalConnections.tsx"]
-      },
-      {
-        "name": "Inspect",
-        "description": "Decision Inspector, BER Effect Record, historial y paneles de recuperación, autorización, traza y evaluación.",
-        "sources": ["frontend/src/features/decision-inspector/index.ts", "frontend/src/features/ber-effect-inspector/BerEffectRecordInspector.tsx"]
-      },
-      {
-        "name": "Settings",
-        "description": "Configuración cognitiva y de proveedores/modelos, selección de modelos y comprobaciones de disponibilidad.",
-        "sources": ["frontend/src/components/CognitionSettings.tsx", "frontend/src/components/ProviderSettings.tsx"]
-      }
-    ]
-  },
-  "canonical_documents": [
-    {"path": ".bago/canon/STATE.md", "role": "estado canónico registrado, con fecha y alcance propios"},
-    {"path": ".bago/canon/LAB_CONTRACT.md", "role": "contrato del laboratorio"},
-    {"path": ".bago/canon/ARCHITECTURE.md", "role": "arquitectura y límites"},
-    {"path": ".bago/canon/ROADMAP.md", "role": "roadmap ejecutable"},
-    {"path": ".bago/canon/LEARNING_LEDGER.md", "role": "aprendizaje y evidencia"},
-    {"path": ".bago/canon/JOB_SKILL_MATRIX.md", "role": "skills y alineación laboral"},
-    {"path": "docs/cv_linkedin/portfolio-demo-v1.md", "role": "snapshot freeze portfolio-demo-v1 (CV/LinkedIn)"},
-    {"path": "docs/one_command_demo.md", "role": "quickstart and artifact contract for one-command governed demo"},
-    {"path": "docs/one_command_demo_walkthrough.md", "role": "canonical demo explanations and artifact walkthrough"},
-    {"path": "docs/governed-execution/RUNTIME_FIXTURE_PROFILE.md", "role": "perfil local GEX autenticado: configuración, fixture sintético, aprobación y recibos durables"},
-    {"path": "docs/releases/RELEASE_NOTES_DEMO_V1.md", "role": "frozen one-command demo v1.0.0 release notes"},
-    {"path": "VERSION", "role": "current repository version"}
-  ],
-  "sync_agent": {
-    "definition": ".github/agents/bago-sync-agent.agent.md",
-    "executor": "scripts/bago_sync_agent.py",
-    "documentation": "docs/bago-sync-agent.md"
-  },
-  "first_user_tutorial": {
-    "evidence_mode": "synthetic_ui_capture",
-    "video": "docs/agent-chat-control/assets/ADL_videotutorial_ui_actual_2026-10-19.mp4",
-    "subtitles": "docs/agent-chat-control/assets/ADL_videotutorial_ui_actual_2026-10-19.es.srt",
-    "guide": "docs/agent-chat-control/TUTORIAL_PRIMER_USO.md",
-    "historical_video": "docs/agent-chat-control/assets/historical/ADL_videotutorial_primer_usuario_2026-10-10.mp4",
-    "historical_subtitles": "docs/agent-chat-control/assets/historical/ADL_videotutorial_primer_usuario_2026-10-10.es.srt",
-    "historical_trace": "docs/agent-chat-control/assets/trace-c7ec5fcc40284a42.json",
-    "historical_input": "output/tutorial/sample-note.txt"
-  },
-  "jaeger_capture": "portfolio/assets/jaeger-trace-graph.png",
-  "business_demo": {
-    "guide": "output/playwright/bruma-market-tutorial/README.md",
-    "orders": "output/playwright/bruma-market-tutorial/extracted/orders.json",
-    "decisions": "output/playwright/bruma-market-tutorial/extracted/policy-decisions.json",
-    "run_evidence": "output/playwright/bruma-market-tutorial/extracted/run-evidence.json",
-    "input_orders": "output/playwright/bruma-market-tutorial/inputs/orders.csv",
-    "policy": "output/playwright/bruma-market-tutorial/inputs/policy.md",
-    "qa": "output/playwright/bruma-market-tutorial/inputs/qa-expected.md",
-    "profiles": "output/playwright/bruma-market-tutorial/cloud-runs/profiles.json",
-    "video": "output/playwright/bruma-market-tutorial/tutorial-bruma-market.mp4",
-    "subtitles": "output/playwright/bruma-market-tutorial/tutorial-bruma-market.srt",
-    "hash_manifest": "output/playwright/bruma-market-tutorial/sha256-manifest.json"
-  },
   "architecture": {
-    "principle": "LangGraph propone → BAGO autoriza → ExecutionGateway → SandboxManager → Receipt → LocalTrace → Eval.",
     "pipeline": [
       "RAG recupera documentos y citas",
       "Ontology Engine materializa RDF/Turtle",
@@ -118,236 +17,754 @@
       "GovernedRAG puede consumir el backend semántico persistente y recargar su fingerprint",
       "OpenTelemetry proyecta LocalTrace a Jaeger local sin conceder autoridad",
       "GitHub Actions repite tests, README, demo, vector validation, Jaeger validation y compile checks"
+    ],
+    "principle": "LangGraph propone → BAGO autoriza → ExecutionGateway → SandboxManager → Receipt → LocalTrace → Eval."
+  },
+  "business_demo": {
+    "decisions": "output/playwright/bruma-market-tutorial/extracted/policy-decisions.json",
+    "guide": "output/playwright/bruma-market-tutorial/README.md",
+    "hash_manifest": "output/playwright/bruma-market-tutorial/sha256-manifest.json",
+    "input_orders": "output/playwright/bruma-market-tutorial/inputs/orders.csv",
+    "orders": "output/playwright/bruma-market-tutorial/extracted/orders.json",
+    "policy": "output/playwright/bruma-market-tutorial/inputs/policy.md",
+    "profiles": "output/playwright/bruma-market-tutorial/cloud-runs/profiles.json",
+    "qa": "output/playwright/bruma-market-tutorial/inputs/qa-expected.md",
+    "run_evidence": "output/playwright/bruma-market-tutorial/extracted/run-evidence.json",
+    "subtitles": "output/playwright/bruma-market-tutorial/tutorial-bruma-market.srt",
+    "video": "output/playwright/bruma-market-tutorial/tutorial-bruma-market.mp4"
+  },
+  "canonical_documents": [
+    {
+      "path": ".bago/canon/STATE.md",
+      "role": "estado canónico registrado, con fecha y alcance propios"
+    },
+    {
+      "path": ".bago/canon/LAB_CONTRACT.md",
+      "role": "contrato del laboratorio"
+    },
+    {
+      "path": ".bago/canon/ARCHITECTURE.md",
+      "role": "arquitectura y límites"
+    },
+    {
+      "path": ".bago/canon/ROADMAP.md",
+      "role": "roadmap ejecutable"
+    },
+    {
+      "path": ".bago/canon/LEARNING_LEDGER.md",
+      "role": "aprendizaje y evidencia"
+    },
+    {
+      "path": ".bago/canon/JOB_SKILL_MATRIX.md",
+      "role": "skills y alineación laboral"
+    },
+    {
+      "path": "docs/cv_linkedin/portfolio-demo-v1.md",
+      "role": "snapshot freeze portfolio-demo-v1 (CV/LinkedIn)"
+    },
+    {
+      "path": "docs/one_command_demo.md",
+      "role": "quickstart and artifact contract for one-command governed demo"
+    },
+    {
+      "path": "docs/one_command_demo_walkthrough.md",
+      "role": "canonical demo explanations and artifact walkthrough"
+    },
+    {
+      "path": "docs/governed-execution/RUNTIME_FIXTURE_PROFILE.md",
+      "role": "perfil local GEX autenticado: configuración, fixture sintético, aprobación y recibos durables"
+    },
+    {
+      "path": "docs/releases/RELEASE_NOTES_DEMO_V1.md",
+      "role": "frozen one-command demo v1.0.0 release notes"
+    },
+    {
+      "path": "VERSION",
+      "role": "current repository version"
+    },
+    {
+      "path": "docs/progress/SPRINT_20261025_06.md",
+      "role": "estado del historial integrado y resultado completo de la fuente aplicada; Jaeger global OPEN"
+    },
+    {
+      "path": "docs/progress/SPRINT_20261025_07.md",
+      "role": "carpeta y proyecto con revisión exacta; gate acotado validado, global NO GO y cuatro fallos abiertos"
+    },
+    {
+      "path": "docs/progress/SPRINT_20261025_08.md",
+      "role": "barra de metadatos runtime y límites; verificación acotada, global NO GO, portabilidad y autoverificación pendientes"
+    }
+  ],
+  "first_user_tutorial": {
+    "evidence_mode": "synthetic_ui_capture",
+    "guide": "docs/agent-chat-control/TUTORIAL_PRIMER_USO.md",
+    "historical_input": "output/tutorial/sample-note.txt",
+    "historical_subtitles": "docs/agent-chat-control/assets/historical/ADL_videotutorial_primer_usuario_2026-10-10.es.srt",
+    "historical_trace": "docs/agent-chat-control/assets/trace-c7ec5fcc40284a42.json",
+    "historical_video": "docs/agent-chat-control/assets/historical/ADL_videotutorial_primer_usuario_2026-10-10.mp4",
+    "subtitles": "docs/agent-chat-control/assets/ADL_videotutorial_ui_actual_2026-10-19.es.srt",
+    "video": "docs/agent-chat-control/assets/ADL_videotutorial_ui_actual_2026-10-19.mp4"
+  },
+  "frontend": {
+    "api": "src/api/server.py",
+    "entry": "frontend/src/App.tsx",
+    "launcher": "scripts/run-local-ui.ps1",
+    "layers": [
+      {
+        "description": "Chat, Workspace, Capabilities, Agent Builder, Agent Runs y Agent Evaluation Lab.",
+        "name": "Interacción",
+        "sources": [
+          "frontend/src/App.tsx",
+          "frontend/src/components/AgentChat.tsx"
+        ]
+      },
+      {
+        "description": "Tareas guardadas de agentes; ingesta y consulta con citas; revisión de ontología, calidad de catálogo y conexiones/MCP. Cada recorrido conserva sus límites de disponibilidad.",
+        "name": "Datos y tareas",
+        "sources": [
+          "frontend/src/components/AgentTasks.tsx",
+          "frontend/src/components/KnowledgeIngest.tsx",
+          "frontend/src/components/OntologyReview.tsx",
+          "frontend/src/components/CatalogQuality.tsx",
+          "frontend/src/components/ExternalConnections.tsx"
+        ]
+      },
+      {
+        "description": "Decision Inspector, BER Effect Record, historial y paneles de recuperación, autorización, traza y evaluación.",
+        "name": "Inspect",
+        "sources": [
+          "frontend/src/features/decision-inspector/index.ts",
+          "frontend/src/features/ber-effect-inspector/BerEffectRecordInspector.tsx"
+        ]
+      },
+      {
+        "description": "Configuración cognitiva y de proveedores/modelos, selección de modelos y comprobaciones de disponibilidad.",
+        "name": "Settings",
+        "sources": [
+          "frontend/src/components/CognitionSettings.tsx",
+          "frontend/src/components/ProviderSettings.tsx"
+        ]
+      }
+    ],
+    "package": "frontend/package.json",
+    "setup_guide": "docs/agent-chat-control/LOCAL_SETUP.md",
+    "start_commands": [
+      "python -m pip install -r requirements-test.txt",
+      "npm ci --prefix frontend",
+      "npm run build --prefix frontend",
+      "python -m src.api.server"
     ]
   },
-  "phases": [
-    {
-      "id": "L0",
-      "name": "Baseline & Lab Contract",
-      "target": "—",
-      "status": "COMPLETE",
-      "checks": [
-        {"kind": "contract", "patterns": [".bago/canon/LAB_CONTRACT.md", ".bago/canon/ARCHITECTURE.md", ".bago/canon/ROADMAP.md", ".bago/canon/LEARNING_LEDGER.md", ".bago/canon/JOB_SKILL_MATRIX.md", "LICENSE"]},
-        {"kind": "tests", "patterns": []},
-        {"kind": "evidence", "patterns": []}
-      ],
-      "commit_patterns": ["L0: Initial baseline", "Add: Project structure"]
-    },
-    {
-      "id": "L1",
-      "name": "LangGraph Governed Execution",
-      "target": "—",
-      "status": "VALIDATED (local governed graph evidence)",
-      "checks": [
-        {"kind": "code", "patterns": ["src/orchestration/state_graph.py", "src/orchestration/governed_execution.py"]},
-        {"kind": "tests", "patterns": ["tests/test_l1_governance.py", "tests/test_l1_integrated_graph.py"]},
-        {"kind": "evidence", "patterns": ["evidence/l1_governed_execution_20261010.md", "evidence/l1-governed-execution-completion-20261010/L1_VALIDATION.md", "evidence/l1-governed-execution-completion-20261010/L1_DEMO_RECEIPTS.json", "evidence/l1-governed-execution-completion-20261010/L1_DEMO_TRANSCRIPT.md"]}
-      ],
-      "commit_patterns": ["feat: integrate L1 governed LangGraph execution", "fix: require strict L1 approval booleans"]
-    },
-    {
-      "id": "L2",
-      "name": "ETL / Data Pipeline",
-      "target": "—",
-      "status": "VALIDATED",
-      "checks": [
-        {"kind": "code", "patterns": ["src/etl/pipeline.py"]},
-        {"kind": "tests", "patterns": ["tests/test_l2_etl_pipeline.py"]},
-        {"kind": "evidence", "patterns": ["l2_etl_metadata.db"]}
-      ],
-      "commit_patterns": ["L2: ETL Pipeline VALIDATED"]
-    },
-    {
-      "id": "L3",
-      "name": "Metadata & Ontology",
-      "target": "—",
-      "status": "VERIFIED",
-      "checks": [
-        {"kind": "code", "patterns": ["src/metadata/schema.py", "src/metadata/ontology.py", "src/metadata/ontology_generator.py"]},
-        {"kind": "tests", "patterns": ["tests/test_l3_*.py", "tests/test_metadata_schema.py", "tests/test_ontology_generator.py"]},
-        {"kind": "evidence", "patterns": ["evidence/l3_ontology_graph.md", "docs/ontology_generator.md"]}
-      ],
-      "commit_patterns": ["feat: add governed metadata ontology pipeline"]
-    },
-    {
-      "id": "L4",
-      "name": "Governed RAG",
-      "target": "Orbitant",
-      "status": "VERIFIED",
-      "checks": [
-        {"kind": "code", "patterns": ["src/retrieval/governed_rag.py"]},
-        {"kind": "tests", "patterns": ["tests/test_retrieval_*.py"]},
-        {"kind": "evidence", "patterns": ["evidence/retrieval_benchmark_results.md", "docs/governed_rag.md"]}
-      ],
-      "commit_patterns": ["feat: add governed hybrid retrieval"]
-    },
-    {
-      "id": "L5",
-      "name": "MCP con gobernanza",
-      "target": "Orbitant",
-      "status": "VERIFIED",
-      "checks": [
-        {"kind": "code", "patterns": ["src/adapters/mcp_adapter.py"]},
-        {"kind": "tests", "patterns": ["tests/test_mcp_governance.py"]},
-        {"kind": "evidence", "patterns": ["evidence/mcp_governed_demo.md", "evidence/mcp_governed_demo.mp4", "docs/mcp_governance.md"]}
-      ],
-      "commit_patterns": ["feat: add governed MCP adapter"]
-    },
-    {
-      "id": "L6",
-      "name": "AWS Bedrock Provider",
-      "target": "Tuio",
-      "status": "VERIFIED (historical live Converse; latest attempts throttled)",
-      "checks": [
-        {"kind": "code", "patterns": ["src/adapters/bedrock_provider_adapter.py", "scripts/run_l6_aws_free_tier_validation.py"]},
-        {"kind": "tests", "patterns": ["tests/test_bedrock_integration.py"]},
-        {"kind": "evidence", "patterns": ["evidence/bedrock_provider_benchmark.md", "evidence/l6_aws_live.md", "evidence/l6_aws_free_tier.md", "docs/aws_bedrock_setup.md"]}
-      ],
-      "commit_patterns": ["feat: add governed AWS Bedrock provider adapter"]
-    },
-    {
-      "id": "L7",
-      "name": "Bedrock Knowledge Base",
-      "target": "Devoteam",
-      "status": "VERIFIED (offline)",
-      "checks": [
-        {"kind": "code", "patterns": ["src/adapters/bedrock_kb_adapter.py"]},
-        {"kind": "tests", "patterns": ["tests/test_bedrock_kb_adapter.py"]},
-        {"kind": "evidence", "patterns": ["evidence/bago_etl_vs_bedrock_kb_comparison.md", "docs/bedrock_knowledge_base.md"]}
-      ],
-      "commit_patterns": ["feat: add governed Bedrock Knowledge Base adapter"]
-    },
-    {
-      "id": "L8",
-      "name": "Metadata Catalog",
-      "target": "Devoteam",
-      "status": "VERIFIED (local live)",
-      "checks": [
-        {"kind": "code", "patterns": ["src/adapters/openmetadata_adapter.py", "scripts/run_l8_openmetadata_live_validation.py", "infra/openmetadata/docker-compose.yml"]},
-        {"kind": "tests", "patterns": ["tests/test_openmetadata_adapter.py"]},
-        {"kind": "evidence", "patterns": ["evidence/l8_openmetadata_catalog.md", "evidence/l8_openmetadata_live.md", "docs/openmetadata_catalog.md"]}
-      ],
-      "commit_patterns": ["feat: add governed OpenMetadata catalog adapter"]
-    },
-    {
-      "id": "L9",
-      "name": "End-to-End Governed Agent",
-      "target": "commercetools",
-      "status": "VERIFIED (offline)",
-      "checks": [
-        {"kind": "code", "patterns": ["src/agent/governed_knowledge_agent.py"]},
-        {"kind": "tests", "patterns": ["tests/test_l9_end_to_end_agent.py"]},
-        {"kind": "evidence", "patterns": ["evidence/l9_commercetools_agent.md", "evidence/l9_authorized_actions_20260922.md", "docs/commercetools_capstone.md"]}
-      ],
-      "commit_patterns": ["feat: add L9 commercetools governed agent"]
-    },
-    {
-      "id": "L10",
-      "name": "Governed Ontology Engine",
-      "target": "BAGO / portfolio",
-      "status": "VERIFIED (local)",
-      "checks": [
-        {"kind": "code", "patterns": ["src/metadata/ontology_engine.py", "src/agent/governed_knowledge_agent.py", "scripts/generate_l10_ontology_evidence.py"]},
-        {"kind": "tests", "patterns": ["tests/test_l10_ontology_engine.py"]},
-        {"kind": "evidence", "patterns": ["evidence/l10_ontology_engine.md", "docs/ontology_engine.md"]}
-      ],
-      "commit_patterns": ["feat: add governed ontology engine", "L10"]
-    },
-    {
-      "id": "L11",
-      "name": "Governed Sandbox Layer",
-      "target": "BAGO / secure execution",
-      "status": "VERIFIED (local)",
-      "checks": [
-        {"kind": "code", "patterns": ["src/sandbox/*.py", "src/execution/gateway.py"]},
-        {"kind": "tests", "patterns": ["tests/test_sandbox.py"]},
-        {"kind": "evidence", "patterns": ["evidence/sandbox_local_restricted.md", "docs/sandbox_manager.md", "scripts/run_sandbox_local_validation.py"]}
-      ],
-      "commit_patterns": ["feat: add governed sandbox layer", "L11"]
-    },
-    {
-      "id": "L12",
-      "name": "Local Observability & Evals",
-      "target": "BAGO / portfolio",
-      "status": "VERIFIED (local)",
-      "checks": [
-        {"kind": "code", "patterns": ["src/observability/*.py", "src/evaluation/*.py"]},
-        {"kind": "tests", "patterns": ["tests/test_l12_observability.py"]},
-        {"kind": "evidence", "patterns": ["evidence/l12_observability_evals.md", "docs/observability_evals.md", "scripts/run_l12_observability_evidence.py"]}
-      ],
-      "commit_patterns": ["feat: add local observability and evals", "L12"]
-    },
-    {
-      "id": "L13",
-      "name": "Public E2E Demo & CI",
-      "target": "BAGO / portfolio",
-      "status": "VERIFIED (local)",
-      "checks": [
-        {"kind": "code", "patterns": ["scripts/run_public_e2e_demo.py", "scripts/bago.py", "scripts/install_demo.sh", "demo.py", "portfolio/README.md", ".github/workflows/ci.yml", "requirements.txt"]},
-        {"kind": "tests", "patterns": ["tests/test_public_e2e_demo.py"]},
-        {"kind": "evidence", "patterns": ["evidence/public_e2e_demo.md", "docs/public_e2e_demo.md"]}
-      ],
-      "commit_patterns": ["feat: add public e2e demo and ci", "L13"]
-    },
-    {
-      "id": "L14",
-      "name": "Governed Local Vector Store",
-      "target": "BAGO / portfolio",
-      "status": "VERIFIED (local)",
-      "checks": [
-        {"kind": "code", "patterns": ["src/retrieval/sqlite_vector_store.py", "scripts/run_l14_vector_store_validation.py"]},
-        {"kind": "tests", "patterns": ["tests/test_sqlite_vector_store.py"]},
-        {"kind": "evidence", "patterns": ["evidence/l14_vector_store.md", "docs/local_vector_store.md"]}
-      ],
-      "commit_patterns": ["feat: add governed local vector store", "L14"]
-    },
-    {
-      "id": "L15",
-      "name": "OpenTelemetry + Jaeger Local Live",
-      "target": "BAGO / portfolio",
-      "status": "VERIFIED (local live)",
-      "checks": [
-        {"kind": "code", "patterns": ["src/observability/otel_bridge.py", "scripts/run_l15_otel_live_validation.py", "infra/observability/docker-compose.yml"]},
-        {"kind": "tests", "patterns": ["tests/test_l15_otel_bridge.py"]},
-        {"kind": "evidence", "patterns": ["evidence/l15_otel_jaeger_live.md", "docs/otel_jaeger.md"]}
-      ],
-      "commit_patterns": ["feat: add local opentelemetry jaeger validation", "L15"]
-    }
-  ],
-  "releases": [
-    {
-      "tag": "portfolio-demo-v1",
-      "date": "2026-10-02",
-      "title": "Portfolio Demo v1",
-      "summary": "L0..L15 VERIFIED local + zero-cost rule. Snapshot for CV/LinkedIn.",
-      "docs": [
-        "docs/cv_linkedin/portfolio-demo-v1.md",
-        "evidence/portfolio_demo_v1.md",
-        "evidence/l15_jaeger_capture_attempt.md"
-      ],
-      "video": "evidence/portfolio_demo_v1.mp4",
-      "video_sha256": "evidence/portfolio_demo_v1.mp4.sha256",
-      "video_frame_set_sha256": "f7417a1f5d03ac332000ffb31fe4d1f5ee69f9f4606692f779735d419d6645d2",
-      "duration": "76.50s",
-      "boundaries": {
-        "verified_local": "L0..L15",
-        "aws_live": "one bounded Bedrock Converse call (NOT_PROVEN zero-dollar billing)",
-        "not_run": "AWS ConverseStream, Bedrock KB live, remote OpenMetadata, commercetools live, remote observability"
-      }
-    }
-  ],
+  "jaeger_capture": "portfolio/assets/jaeger-trace-graph.png",
   "one_command_demo": {
-    "command": "python demo.py",
-    "documentation": "docs/one_command_demo.md",
-    "walkthrough": "docs/one_command_demo_walkthrough.md",
-    "example_question": "¿Qué sustituye a la política anterior y qué evidencia la valida?",
-    "expected_result": "PASS",
     "artifacts": [
       "summary.json",
       "agent_run.json",
       "receipts.json",
       "trace.json",
       "evaluation.json"
-    ]
-  }
+    ],
+    "command": "python demo.py",
+    "documentation": "docs/one_command_demo.md",
+    "example_question": "¿Qué sustituye a la política anterior y qué evidencia la valida?",
+    "expected_result": "PASS",
+    "walkthrough": "docs/one_command_demo_walkthrough.md"
+  },
+  "phases": [
+    {
+      "checks": [
+        {
+          "kind": "contract",
+          "patterns": [
+            ".bago/canon/LAB_CONTRACT.md",
+            ".bago/canon/ARCHITECTURE.md",
+            ".bago/canon/ROADMAP.md",
+            ".bago/canon/LEARNING_LEDGER.md",
+            ".bago/canon/JOB_SKILL_MATRIX.md",
+            "LICENSE"
+          ]
+        },
+        {
+          "kind": "tests",
+          "patterns": []
+        },
+        {
+          "kind": "evidence",
+          "patterns": []
+        }
+      ],
+      "commit_patterns": [
+        "L0: Initial baseline",
+        "Add: Project structure"
+      ],
+      "id": "L0",
+      "name": "Baseline & Lab Contract",
+      "status": "COMPLETE",
+      "target": "—"
+    },
+    {
+      "checks": [
+        {
+          "kind": "code",
+          "patterns": [
+            "src/orchestration/state_graph.py",
+            "src/orchestration/governed_execution.py"
+          ]
+        },
+        {
+          "kind": "tests",
+          "patterns": [
+            "tests/test_l1_governance.py",
+            "tests/test_l1_integrated_graph.py"
+          ]
+        },
+        {
+          "kind": "evidence",
+          "patterns": [
+            "evidence/l1_governed_execution_20261010.md",
+            "evidence/l1-governed-execution-completion-20261010/L1_VALIDATION.md",
+            "evidence/l1-governed-execution-completion-20261010/L1_DEMO_RECEIPTS.json",
+            "evidence/l1-governed-execution-completion-20261010/L1_DEMO_TRANSCRIPT.md"
+          ]
+        }
+      ],
+      "commit_patterns": [
+        "feat: integrate L1 governed LangGraph execution",
+        "fix: require strict L1 approval booleans"
+      ],
+      "id": "L1",
+      "name": "LangGraph Governed Execution",
+      "status": "VALIDATED (local governed graph evidence)",
+      "target": "—"
+    },
+    {
+      "checks": [
+        {
+          "kind": "code",
+          "patterns": [
+            "src/etl/pipeline.py"
+          ]
+        },
+        {
+          "kind": "tests",
+          "patterns": [
+            "tests/test_l2_etl_pipeline.py"
+          ]
+        },
+        {
+          "kind": "evidence",
+          "patterns": [
+            "l2_etl_metadata.db"
+          ]
+        }
+      ],
+      "commit_patterns": [
+        "L2: ETL Pipeline VALIDATED"
+      ],
+      "id": "L2",
+      "name": "ETL / Data Pipeline",
+      "status": "VALIDATED",
+      "target": "—"
+    },
+    {
+      "checks": [
+        {
+          "kind": "code",
+          "patterns": [
+            "src/metadata/schema.py",
+            "src/metadata/ontology.py",
+            "src/metadata/ontology_generator.py"
+          ]
+        },
+        {
+          "kind": "tests",
+          "patterns": [
+            "tests/test_l3_*.py",
+            "tests/test_metadata_schema.py",
+            "tests/test_ontology_generator.py"
+          ]
+        },
+        {
+          "kind": "evidence",
+          "patterns": [
+            "evidence/l3_ontology_graph.md",
+            "docs/ontology_generator.md"
+          ]
+        }
+      ],
+      "commit_patterns": [
+        "feat: add governed metadata ontology pipeline"
+      ],
+      "id": "L3",
+      "name": "Metadata & Ontology",
+      "status": "VERIFIED",
+      "target": "—"
+    },
+    {
+      "checks": [
+        {
+          "kind": "code",
+          "patterns": [
+            "src/retrieval/governed_rag.py"
+          ]
+        },
+        {
+          "kind": "tests",
+          "patterns": [
+            "tests/test_retrieval_*.py"
+          ]
+        },
+        {
+          "kind": "evidence",
+          "patterns": [
+            "evidence/retrieval_benchmark_results.md",
+            "docs/governed_rag.md"
+          ]
+        }
+      ],
+      "commit_patterns": [
+        "feat: add governed hybrid retrieval"
+      ],
+      "id": "L4",
+      "name": "Governed RAG",
+      "status": "VERIFIED",
+      "target": "Orbitant"
+    },
+    {
+      "checks": [
+        {
+          "kind": "code",
+          "patterns": [
+            "src/adapters/mcp_adapter.py"
+          ]
+        },
+        {
+          "kind": "tests",
+          "patterns": [
+            "tests/test_mcp_governance.py"
+          ]
+        },
+        {
+          "kind": "evidence",
+          "patterns": [
+            "evidence/mcp_governed_demo.md",
+            "evidence/mcp_governed_demo.mp4",
+            "docs/mcp_governance.md"
+          ]
+        }
+      ],
+      "commit_patterns": [
+        "feat: add governed MCP adapter"
+      ],
+      "id": "L5",
+      "name": "MCP con gobernanza",
+      "status": "VERIFIED",
+      "target": "Orbitant"
+    },
+    {
+      "checks": [
+        {
+          "kind": "code",
+          "patterns": [
+            "src/adapters/bedrock_provider_adapter.py",
+            "scripts/run_l6_aws_free_tier_validation.py"
+          ]
+        },
+        {
+          "kind": "tests",
+          "patterns": [
+            "tests/test_bedrock_integration.py"
+          ]
+        },
+        {
+          "kind": "evidence",
+          "patterns": [
+            "evidence/bedrock_provider_benchmark.md",
+            "evidence/l6_aws_live.md",
+            "evidence/l6_aws_free_tier.md",
+            "docs/aws_bedrock_setup.md"
+          ]
+        }
+      ],
+      "commit_patterns": [
+        "feat: add governed AWS Bedrock provider adapter"
+      ],
+      "id": "L6",
+      "name": "AWS Bedrock Provider",
+      "status": "VERIFIED (historical live Converse; latest attempts throttled)",
+      "target": "Tuio"
+    },
+    {
+      "checks": [
+        {
+          "kind": "code",
+          "patterns": [
+            "src/adapters/bedrock_kb_adapter.py"
+          ]
+        },
+        {
+          "kind": "tests",
+          "patterns": [
+            "tests/test_bedrock_kb_adapter.py"
+          ]
+        },
+        {
+          "kind": "evidence",
+          "patterns": [
+            "evidence/bago_etl_vs_bedrock_kb_comparison.md",
+            "docs/bedrock_knowledge_base.md"
+          ]
+        }
+      ],
+      "commit_patterns": [
+        "feat: add governed Bedrock Knowledge Base adapter"
+      ],
+      "id": "L7",
+      "name": "Bedrock Knowledge Base",
+      "status": "VERIFIED (offline)",
+      "target": "Devoteam"
+    },
+    {
+      "checks": [
+        {
+          "kind": "code",
+          "patterns": [
+            "src/adapters/openmetadata_adapter.py",
+            "scripts/run_l8_openmetadata_live_validation.py",
+            "infra/openmetadata/docker-compose.yml"
+          ]
+        },
+        {
+          "kind": "tests",
+          "patterns": [
+            "tests/test_openmetadata_adapter.py"
+          ]
+        },
+        {
+          "kind": "evidence",
+          "patterns": [
+            "evidence/l8_openmetadata_catalog.md",
+            "evidence/l8_openmetadata_live.md",
+            "docs/openmetadata_catalog.md"
+          ]
+        }
+      ],
+      "commit_patterns": [
+        "feat: add governed OpenMetadata catalog adapter"
+      ],
+      "id": "L8",
+      "name": "Metadata Catalog",
+      "status": "VERIFIED (local live)",
+      "target": "Devoteam"
+    },
+    {
+      "checks": [
+        {
+          "kind": "code",
+          "patterns": [
+            "src/agent/governed_knowledge_agent.py"
+          ]
+        },
+        {
+          "kind": "tests",
+          "patterns": [
+            "tests/test_l9_end_to_end_agent.py"
+          ]
+        },
+        {
+          "kind": "evidence",
+          "patterns": [
+            "evidence/l9_commercetools_agent.md",
+            "evidence/l9_authorized_actions_20260922.md",
+            "docs/commercetools_capstone.md"
+          ]
+        }
+      ],
+      "commit_patterns": [
+        "feat: add L9 commercetools governed agent"
+      ],
+      "id": "L9",
+      "name": "End-to-End Governed Agent",
+      "status": "VERIFIED (offline)",
+      "target": "commercetools"
+    },
+    {
+      "checks": [
+        {
+          "kind": "code",
+          "patterns": [
+            "src/metadata/ontology_engine.py",
+            "src/agent/governed_knowledge_agent.py",
+            "scripts/generate_l10_ontology_evidence.py"
+          ]
+        },
+        {
+          "kind": "tests",
+          "patterns": [
+            "tests/test_l10_ontology_engine.py"
+          ]
+        },
+        {
+          "kind": "evidence",
+          "patterns": [
+            "evidence/l10_ontology_engine.md",
+            "docs/ontology_engine.md"
+          ]
+        }
+      ],
+      "commit_patterns": [
+        "feat: add governed ontology engine",
+        "L10"
+      ],
+      "id": "L10",
+      "name": "Governed Ontology Engine",
+      "status": "VERIFIED (local)",
+      "target": "BAGO / portfolio"
+    },
+    {
+      "checks": [
+        {
+          "kind": "code",
+          "patterns": [
+            "src/sandbox/*.py",
+            "src/execution/gateway.py"
+          ]
+        },
+        {
+          "kind": "tests",
+          "patterns": [
+            "tests/test_sandbox.py"
+          ]
+        },
+        {
+          "kind": "evidence",
+          "patterns": [
+            "evidence/sandbox_local_restricted.md",
+            "docs/sandbox_manager.md",
+            "scripts/run_sandbox_local_validation.py"
+          ]
+        }
+      ],
+      "commit_patterns": [
+        "feat: add governed sandbox layer",
+        "L11"
+      ],
+      "id": "L11",
+      "name": "Governed Sandbox Layer",
+      "status": "VERIFIED (local)",
+      "target": "BAGO / secure execution"
+    },
+    {
+      "checks": [
+        {
+          "kind": "code",
+          "patterns": [
+            "src/observability/*.py",
+            "src/evaluation/*.py"
+          ]
+        },
+        {
+          "kind": "tests",
+          "patterns": [
+            "tests/test_l12_observability.py"
+          ]
+        },
+        {
+          "kind": "evidence",
+          "patterns": [
+            "evidence/l12_observability_evals.md",
+            "docs/observability_evals.md",
+            "scripts/run_l12_observability_evidence.py"
+          ]
+        }
+      ],
+      "commit_patterns": [
+        "feat: add local observability and evals",
+        "L12"
+      ],
+      "id": "L12",
+      "name": "Local Observability & Evals",
+      "status": "VERIFIED (local)",
+      "target": "BAGO / portfolio"
+    },
+    {
+      "checks": [
+        {
+          "kind": "code",
+          "patterns": [
+            "scripts/run_public_e2e_demo.py",
+            "scripts/bago.py",
+            "scripts/install_demo.sh",
+            "demo.py",
+            "portfolio/README.md",
+            ".github/workflows/ci.yml",
+            "requirements.txt"
+          ]
+        },
+        {
+          "kind": "tests",
+          "patterns": [
+            "tests/test_public_e2e_demo.py"
+          ]
+        },
+        {
+          "kind": "evidence",
+          "patterns": [
+            "evidence/public_e2e_demo.md",
+            "docs/public_e2e_demo.md"
+          ]
+        }
+      ],
+      "commit_patterns": [
+        "feat: add public e2e demo and ci",
+        "L13"
+      ],
+      "id": "L13",
+      "name": "Public E2E Demo & CI",
+      "status": "VERIFIED (local)",
+      "target": "BAGO / portfolio"
+    },
+    {
+      "checks": [
+        {
+          "kind": "code",
+          "patterns": [
+            "src/retrieval/sqlite_vector_store.py",
+            "scripts/run_l14_vector_store_validation.py"
+          ]
+        },
+        {
+          "kind": "tests",
+          "patterns": [
+            "tests/test_sqlite_vector_store.py"
+          ]
+        },
+        {
+          "kind": "evidence",
+          "patterns": [
+            "evidence/l14_vector_store.md",
+            "docs/local_vector_store.md"
+          ]
+        }
+      ],
+      "commit_patterns": [
+        "feat: add governed local vector store",
+        "L14"
+      ],
+      "id": "L14",
+      "name": "Governed Local Vector Store",
+      "status": "VERIFIED (local)",
+      "target": "BAGO / portfolio"
+    },
+    {
+      "checks": [
+        {
+          "kind": "code",
+          "patterns": [
+            "src/observability/otel_bridge.py",
+            "scripts/run_l15_otel_live_validation.py",
+            "infra/observability/docker-compose.yml"
+          ]
+        },
+        {
+          "kind": "tests",
+          "patterns": [
+            "tests/test_l15_otel_bridge.py"
+          ]
+        },
+        {
+          "kind": "evidence",
+          "patterns": [
+            "evidence/l15_otel_jaeger_live.md",
+            "docs/otel_jaeger.md"
+          ]
+        }
+      ],
+      "commit_patterns": [
+        "feat: add local opentelemetry jaeger validation",
+        "L15"
+      ],
+      "id": "L15",
+      "name": "OpenTelemetry + Jaeger Local Live",
+      "status": "VERIFIED (local live)",
+      "target": "BAGO / portfolio"
+    }
+  ],
+  "presentation": {
+    "banner": "docs/assets/bago-readme-banner.svg",
+    "capture_date": "2026-10-25",
+    "capture_guide": "docs/verification/readme-captures-20261025.md",
+    "captures": [
+      {
+        "alt": "Jaeger mostrando la traza de selección de capacidad",
+        "caption": "Traza e6ad19aa91275f3a7f069df126b86474: assistant.control, 11,6 ms, un span; registra la presentación/selección de capacidad, no el escaneo.",
+        "path": "docs/assets/readme-20261025/03-jaeger-capability-selection.png"
+      },
+      {
+        "alt": "Jaeger mostrando una delegación de lectura denegada por raíz incompatible",
+        "caption": "Traza 52ecd0539027d9ef6139ede1def3b8f9: raíz 4,116 s, dos spans. development_read fue denegada por development_root_mismatch; el hijo de 15 μs está marcado como projection, no como tiempo medido.",
+        "path": "docs/assets/readme-20261025/04-jaeger-delegation-denied.png"
+      },
+      {
+        "alt": "Jaeger mostrando una traza histórica larga de agent.chat",
+        "caption": "Traza histórica ef52b03816307abf57decaa751282173: 22,318 s, 12 spans y 11 hijos. El chat terminó correctamente, pero la respuesta guardada declaró regression NOT_RUN y ninguna herramienta ejecutada.",
+        "path": "docs/assets/readme-20261025/05-jaeger-historical-long-chat.png"
+      },
+      {
+        "alt": "Jaeger con la traza live de agent.chat y el span workspace.read autorizado",
+        "caption": "Lectura puntual autorizada de workspace en AgentChat: ALLOW y 14 spans. La captura muestra la lectura entre dos rondas del proveedor; no demuestra una misión documental completa ni el cierre de la suite.",
+        "path": "docs/assets/readme-20261025/08-jaeger-workspace-read-live.png"
+      },
+      {
+        "alt": "Historial de trabajos legacy vacío antes de su corrección",
+        "caption": "ANTES de la corrección del Historial de trabajos: el registro legacy estaba vacío. Esto no demuestra ausencia de conversaciones, TaskRuns ni otras ejecuciones; no representa el estado posterior a la reparación.",
+        "path": "docs/assets/readme-20261025/09-work-history-legacy-empty.png"
+      },
+      {
+        "alt": "Historial unificado después de la reparación: cinco fuentes disponibles, filtro Trabajo legacy vacío",
+        "caption": "DESPUÉS de la reparación del Historial: cinco fuentes disponibles y filtro Trabajo legacy explícito. El vacío corresponde sólo a esa fuente; no demuestra ausencia de tareas ni que una misión haya terminado.",
+        "path": "docs/assets/readme-20261025/10-work-history-unified-sources.png"
+      }
+    ],
+    "carousel_gif": "docs/assets/readme-20261025/carousel.gif",
+    "carousel_html": "docs/assets/readme-20261025/carousel.html",
+    "frontend_guide": "docs/readme_frontend.md"
+  },
+  "project": {
+    "ci_workflow": "ci.yml",
+    "default_branch": "main",
+    "description": "Aplicación y laboratorio de agentes, datos y ejecución gobernada: trabajar desde la interfaz e inspeccionar propuestas, autorizaciones y evidencia.",
+    "emoji": "🧪",
+    "license": "MIT",
+    "repository": "https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB",
+    "title": "BAGO Agentic Data Lab"
+  },
+  "releases": [
+    {
+      "boundaries": {
+        "aws_live": "one bounded Bedrock Converse call (NOT_PROVEN zero-dollar billing)",
+        "not_run": "AWS ConverseStream, Bedrock KB live, remote OpenMetadata, commercetools live, remote observability",
+        "verified_local": "L0..L15"
+      },
+      "date": "2026-10-02",
+      "docs": [
+        "docs/cv_linkedin/portfolio-demo-v1.md",
+        "evidence/portfolio_demo_v1.md",
+        "evidence/l15_jaeger_capture_attempt.md"
+      ],
+      "duration": "76.50s",
+      "summary": "L0..L15 VERIFIED local + zero-cost rule. Snapshot for CV/LinkedIn.",
+      "tag": "portfolio-demo-v1",
+      "title": "Portfolio Demo v1",
+      "video": "evidence/portfolio_demo_v1.mp4",
+      "video_frame_set_sha256": "f7417a1f5d03ac332000ffb31fe4d1f5ee69f9f4606692f779735d419d6645d2",
+      "video_sha256": "evidence/portfolio_demo_v1.mp4.sha256"
+    }
+  ],
+  "sync_agent": {
+    "definition": ".github/agents/bago-sync-agent.agent.md",
+    "documentation": "docs/bago-sync-agent.md",
+    "executor": "scripts/bago_sync_agent.py"
+  },
+  "verification_record": "docs/verification/readme-corporate-status-20261022.json"
 }

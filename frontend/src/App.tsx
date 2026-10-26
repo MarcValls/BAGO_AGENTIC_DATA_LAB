@@ -1,6 +1,7 @@
 import {useI18n,t,localMessage,errorMessage,apiError,formatDate,formatNumber} from './i18n'
 import './App.css'
 import './NavigationOrder.css'
+import './components/NavMenu.css'
 import LanguageSelector from './i18n/LanguageSelector'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import axios from 'axios'
@@ -11,19 +12,23 @@ import Trace from './components/Trace'
 import Evaluation from './components/Evaluation'
 import AgentBuilder from './components/AgentBuilder'
 import AgentManagement from './components/AgentManagement'
+import AgentToolsView from './components/AgentToolsView'
 import AgentNavigation, { AGENT_SECTIONS, isAgentSection } from './components/AgentNavigation'
+import ChatNavigation, { CHAT_SECTIONS } from './components/ChatNavigation'
 import CommunicationsNavigation, {COMMUNICATION_SECTIONS,isCommunicationSection,type CommunicationSection} from './components/CommunicationsNavigation'
 import GovernedFixtureRunner from './components/GovernedFixtureRunner'
 import AgentTasks from './components/AgentTasks'
-import AgentChat from './components/AgentChat'
+import AgentChat, {type PreparedChatPrompt} from './components/AgentChat'
 import Communications from './components/Communications'
 import type { Contact as CommunicationContact } from './types/communications'
 import WhatsAppSettings from './components/WhatsAppSettings'
 import WorkspaceManager from './components/WorkspaceManager'
 import ChatInspection from './components/ChatInspection'
 import type {InspectionSelection} from './types/inspection'
-import CapabilityManager from './components/CapabilityManager'
+import CapabilityManager, {type CapabilityChatRequest, type CapabilityDestination} from './components/CapabilityManager'
+import ToolsConnectionsView from './components/ToolsConnectionsView'
 import JobHistory from './components/JobHistory'
+import RuntimeStatusBar from './components/RuntimeStatusBar'
 import AgentEvaluationLab from './components/AgentEvaluationLab'
 import Contacts from './components/Contacts'
 import ProviderSettings from './components/ProviderSettings'
@@ -41,17 +46,16 @@ interface Artifacts {
   evaluation: any
 }
 
-type AppView = 'communications' | 'communications_history' | 'contacts' | 'chat' | 'workspace' | 'capabilities' | 'agents' | 'inspector' | 'ber_record' | 'builder' | 'runner' | 'control' | 'jobs' | 'summary' | 'retrieval' | 'authorization' | 'trace' | 'evaluation' | 'evaluation_lab'
+type AppView = 'communications' | 'communications_history' | 'contacts' | 'chat' | 'workspace' | 'capabilities' | 'tools' | 'agents' | 'inspector' | 'ber_record' | 'builder' | 'runner' | 'control' | 'jobs' | 'summary' | 'retrieval' | 'authorization' | 'trace' | 'evaluation' | 'evaluation_lab'
 type DataView = Extract<AppView, 'inspector' | 'ber_record' | 'jobs' | 'summary' | 'retrieval' | 'authorization' | 'trace' | 'evaluation'>
 type InteractionView = Exclude<AppView, DataView>
 type AssistantView = 'communications' | 'whatsapp_settings' | 'inspector' | 'builder' | 'chat' | 'workspace' | 'runner' | 'control' | 'jobs' | 'traces' | 'summary' | 'retrieval' | 'authorization' | 'evaluation' | 'evaluation_lab' | 'provider_settings' | 'cognition_settings' | 'capabilities'
-type SettingsView = 'cognition' | 'providers' | 'whatsapp'
+type SettingsView = 'cognition' | 'providers' | 'whatsapp' | 'connections'
 
 const navigation: Array<{ id: AppView; label: string; layer: 'interaction' | 'data' }> = [
   { id: 'workspace', get label(){return t("core.App.workspace_87bb59")}, layer: 'interaction' },
   { id: 'chat', get label(){return t("core.App.chat_460b3a")}, layer: 'interaction' },
   ...AGENT_SECTIONS.map(section => ({ id: section.id, get label(){return section.label}, layer: 'interaction' as const })),
-  { id: 'capabilities', get label(){return t("core.App.capabilities_9460f1")}, layer: 'interaction' },
   ...COMMUNICATION_SECTIONS.map(section=>({id:section.id,get label(){return section.label},layer:'interaction' as const})),
   { id: 'inspector', get label(){return t("core.App.decision_inspector_2bc4a6")}, layer: 'data' },
   { id: 'ber_record', get label(){return t("core.App.ber_effect_record_76c485")}, layer: 'data' },
@@ -72,6 +76,7 @@ const interactionIcons: Record<InteractionView, string> = {
   chat: '◌',
   workspace: '▣',
   capabilities: '◇',
+  tools: '⚙',
   agents: '◈',
   builder: '⊞',
   runner: '▷',
@@ -116,8 +121,15 @@ function App() {
   const [loadingArtifacts, setLoadingArtifacts] = useState(true)
   const [artifactError, setArtifactError] = useState<any>(null)
   const [activeInteractionView, setActiveInteractionView] = useState<InteractionView>('chat')
+  const [preparedChatPrompt,setPreparedChatPrompt] = useState<PreparedChatPrompt|null>(null)
+  const preparedPromptSequence=useRef(0)
+  const prepareCapabilityChat=useCallback((request:CapabilityChatRequest)=>{setPreparedChatPrompt({id:'capability-prompt-'+(++preparedPromptSequence.current),text:request.prompt,...(request.capabilityId==='workspace.scan_duplicates'?{capabilityId:request.capabilityId}:{})});setActiveInteractionView('chat')},[])
+  const consumePreparedPrompt=useCallback((id:string)=>setPreparedChatPrompt(current=>current?.id===id?null:current),[])
+  const navigateCapability=useCallback((destination:CapabilityDestination)=>{if(destination==='connections'){setSettingsView('connections');setSettingsOpen(true)}else{setSidebarCollapsed(false);setActiveInteractionView(destination)}},[])
   const [managedAgentId, setManagedAgentId] = useState('')
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
+  const sidebarToggleRef = useRef<HTMLButtonElement>(null)
+  const sidebarMenuRef = useRef<HTMLDivElement>(null)
   const [activeDataView, setActiveDataView] = useState<DataView>('inspector')
   const [dataLayerOpen, setDataLayerOpen] = useState(false)
   const [settingsOpen, setSettingsOpen] = useState(false)
@@ -209,18 +221,34 @@ function App() {
     setActiveInteractionView(view)
   }
 
-  const activeInteractionLabel = interactionNavigation.find((item) => item.id === activeInteractionView)?.label ?? 'Workspace'
+  const activeInteractionLabel = interactionNavigation.find((item) => item.id === activeInteractionView)?.label ?? AGENT_SECTIONS.find(section => section.id === activeInteractionView)?.label ?? CHAT_SECTIONS.find(section => section.id === activeInteractionView)?.label ?? 'Workspace'
 
   return (
-    <div className={`app-shell ${activeInteractionView === 'chat' ? 'app-shell--chat' : ''} ${sidebarCollapsed ? 'app-shell--sidebar-collapsed' : ''}`}>
-      <aside id="workspace-sidebar-content" className={`workspace-sidebar ${activeInteractionView === 'chat' ? 'workspace-sidebar--chat' : ''} ${sidebarCollapsed ? 'workspace-sidebar--collapsed' : ''}`} aria-label={t("core.App.workspace_sidebar_bc2716")}>
+    <div className={`app-shell app-shell--navmenu ${activeInteractionView === 'chat' ? 'app-shell--chat' : ''} ${sidebarCollapsed ? 'app-shell--sidebar-collapsed' : ''}`}>
+      <aside className="app-navigation-shell" aria-label={t("core.App.workspace_sidebar_bc2716")}>
         <div className="workspace-sidebar-brand">
-          <img className="workspace-sidebar-logo" src="/brand/BAGO_logotipo_horizontal.svg" alt="BAGO" />
-          <img className="workspace-sidebar-symbol" src="/brand/BAGO_simbolo_negativo.svg" alt="" aria-hidden="true" />
+        <div className="app-menu-brand">
+          <img className="workspace-sidebar-logo" src="/brand/BAGO_logotipo_horizontal.svg" alt="BAGO" width="208" height="53.404" />
+        <button ref={sidebarToggleRef} type="button" className="app-menu-toggle"
+          aria-label={sidebarCollapsed ? t("core.App.expand_sidebar_37a5d6") : t("core.App.collapse_sidebar_aab31c")}
+          aria-expanded={!sidebarCollapsed} aria-controls="workspace-sidebar-content"
+          title={sidebarCollapsed ? t("core.App.expand_sidebar_37a5d6") : t("core.App.collapse_sidebar_aab31c")}
+          onClick={() => setSidebarCollapsed(current => !current)}
+          onKeyDown={event => {
+            if (event.key === 'Escape' && !sidebarCollapsed) { event.preventDefault(); setSidebarCollapsed(true) }
+            if (event.key === 'ArrowDown') {
+              event.preventDefault(); setSidebarCollapsed(false)
+              window.requestAnimationFrame(() => sidebarMenuRef.current?.querySelector<HTMLButtonElement>('.primary-navigation button')?.focus())
+            }
+          }} />
         </div>
+        </div>
+      <div ref={sidebarMenuRef} onKeyDown={event => {
+        if (event.key === 'Escape' && !event.defaultPrevented) { event.preventDefault(); setSidebarCollapsed(true); sidebarToggleRef.current?.focus() }
+      }} id="workspace-sidebar-content" className={`workspace-sidebar ${activeInteractionView === 'chat' ? 'workspace-sidebar--chat' : ''} ${sidebarCollapsed ? 'workspace-sidebar--collapsed' : ''}`} aria-label={t("core.App.workspace_sidebar_bc2716")}>
         <nav className="primary-navigation" aria-label={t("core.App.interaction_layer_b8f1ed")}>
           <div className="navigation-group">
-            {interactionNavigation.filter(item => (!isAgentSection(item.id)||item.id==='agents')&&item.id!=='contacts'&&item.id!=='communications_history').map((item) => item.id==='agents' ? <AgentNavigation key={item.id} activeView={activeInteractionView} collapsed={sidebarCollapsed} onExpandSidebar={() => setSidebarCollapsed(false)} onNavigate={view => setActiveInteractionView(view)} /> : item.id==='communications' ? <CommunicationsNavigation key={item.id} activeView={activeInteractionView} collapsed={sidebarCollapsed} onExpandSidebar={()=>setSidebarCollapsed(false)} onNavigate={navigateCommunications}/> : (
+            {interactionNavigation.filter(item => (!isAgentSection(item.id)||item.id==='agents')&&item.id!=='contacts'&&item.id!=='communications_history').map((item) => item.id==='agents' ? <AgentNavigation key={item.id} activeView={activeInteractionView} collapsed={sidebarCollapsed} onExpandSidebar={() => setSidebarCollapsed(false)} onNavigate={view => setActiveInteractionView(view)} /> : item.id==='chat' ? <ChatNavigation key={item.id} activeView={activeInteractionView} collapsed={sidebarCollapsed} onExpandSidebar={() => setSidebarCollapsed(false)} onNavigate={view => setActiveInteractionView(view)} /> : item.id==='communications' ? <CommunicationsNavigation key={item.id} activeView={activeInteractionView} collapsed={sidebarCollapsed} onExpandSidebar={()=>setSidebarCollapsed(false)} onNavigate={navigateCommunications}/> : (
               <button
                 key={item.id}
                 type="button"
@@ -265,31 +293,22 @@ function App() {
             <span className="navigation-item-icon" aria-hidden="true">⚙</span>
             <span>{t("core.App.settings_74a883")}</span>
           </button>
-          <button
-            type="button"
-            className="sidebar-collapse-button"
-            aria-label={sidebarCollapsed ? t("core.App.expand_sidebar_37a5d6") : t("core.App.collapse_sidebar_aab31c")}
-            aria-expanded={!sidebarCollapsed}
-            aria-controls="workspace-sidebar-content"
-            title={sidebarCollapsed ? t("core.App.expand_sidebar_37a5d6") : t("core.App.collapse_sidebar_aab31c")}
-            onClick={() => setSidebarCollapsed((collapsed) => !collapsed)}
-          >
-            <span aria-hidden="true">{sidebarCollapsed ? '›' : '‹'}</span>
-          </button>
         </footer>
+      </div>
       </aside>
 
       <div className="app-main">
         <main className={`app-view ${activeInteractionView === 'chat' ? 'app-view--chat' : ''} ${appScroll.scrolling ? 'scroll-active' : ''}`} aria-label={t("core.App.p0_view_b10ac6",{p0:String(activeInteractionLabel)})} tabIndex={0} onScroll={appScroll.onScroll}>
-          {activeInteractionView === 'chat' && <AgentChat onInspectionSelection={selectInspection} onInspectExecution={inspectExecution} onOpenCommunication={(id) => { setCommunicationsDraftId(id); setCommunicationsSection('message'); setActiveInteractionView('communications') }} onNavigate={navigateFromChat} onManageAgents={() => { setSidebarCollapsed(false); setActiveInteractionView('agents') }} onOpenProviderSettings={openProviderSettings} onOpenCognitionSettings={openCognitionSettings} cognitiveMode={cognitiveMode} />}
+          {<AgentChat hidden={activeInteractionView !== 'chat'} preparedPrompt={preparedChatPrompt} onPreparedPromptHandled={consumePreparedPrompt} historySelection="explicit" workspaceScopeVersion={workspaceRefresh} onInspectionSelection={selectInspection} onInspectExecution={inspectExecution} onOpenCommunication={(id) => { setCommunicationsDraftId(id); setCommunicationsSection('message'); setActiveInteractionView('communications') }} onNavigate={navigateFromChat} onManageAgents={() => { setSidebarCollapsed(false); setActiveInteractionView('agents') }} onOpenProviderSettings={openProviderSettings} onOpenCognitionSettings={openCognitionSettings} cognitiveMode={cognitiveMode} />}
           {isCommunicationSection(activeInteractionView) && <div className="communications-section-host">
             <div className="communications-section-panel" hidden={activeInteractionView==='contacts'}><Communications activeSection={communicationsSection} draftId={communicationsDraftId} initialContact={communicationContact}/></div>
             <div className="communications-section-panel" hidden={activeInteractionView!=='contacts'}><Contacts onUseContact={contact=>{setCommunicationContact({...contact});setCommunicationsSection('message');setActiveInteractionView('communications')}}/></div>
           </div>}
-          {activeInteractionView === 'workspace' && <WorkspaceManager onSelected={() => setWorkspaceRefresh(value => value + 1)} contextPanel={<div className="context-memory-details context-memory-panel"><CognitionSettings key={workspaceRefresh} mode={cognitiveMode} onModeChange={setCognitiveMode} workspaceOnly /></div>} />}
+          {activeInteractionView === 'workspace' && <WorkspaceManager refreshKey={workspaceRefresh} onSelected={() => setWorkspaceRefresh(value => value + 1)} contextPanel={({openProjectSelection,refreshKey})=><div className="context-memory-details context-memory-panel"><CognitionSettings key={`${workspaceRefresh}:${refreshKey}`} mode={cognitiveMode} onModeChange={setCognitiveMode} workspaceOnly onRequestWorkspaceSelection={openProjectSelection} /></div>} />}
 
-          {activeInteractionView === 'capabilities' && <CapabilityManager />}
+          {activeInteractionView === 'capabilities' && <CapabilityManager onPrepareChat={prepareCapabilityChat} onNavigate={navigateCapability} />}
           {activeInteractionView === 'agents' && <AgentManagement onCreate={() => setActiveInteractionView('builder')} onTest={id => { setManagedAgentId(id); setActiveInteractionView('runner') }} onEvaluate={id => { setManagedAgentId(id); setActiveInteractionView('evaluation_lab') }} />}
+          {activeInteractionView === 'tools' && <AgentToolsView onOpenConnections={() => { setSettingsView('connections'); setSettingsOpen(true) }} onCreateAgent={() => setActiveInteractionView('builder')} />}
           {activeInteractionView === 'builder' && <AgentBuilder onBack={() => setActiveInteractionView('agents')} onAgentCreated={() => setDemoRefresh((previous) => previous + 1)} />}
           {activeInteractionView === 'runner' && <><AgentTasks initialAgentId={managedAgentId} /><details className="agent-tasks-advanced" open={advancedRunsOpen} onToggle={event => setAdvancedRunsOpen(event.currentTarget.open)}><summary>{t("core.App.advanced_governed_demonstration_execution_b685a6")}</summary>{advancedRunsOpen && <GovernedFixtureRunner apiBase={window.location.origin} />}</details></>}
           {activeInteractionView === 'evaluation_lab' && <AgentEvaluationLab initialAgentId={managedAgentId} />}
@@ -316,10 +335,11 @@ function App() {
             <span className="navigation-caption">{t("core.App.configure_6defaf")}</span>
             <button type="button" className={`navigation-item ${settingsView === 'cognition' ? 'active' : ''}`} aria-current={settingsView === 'cognition' ? 'page' : undefined} onClick={() => setSettingsView('cognition')}>{t("core.App.cognition_and_context_8fb65b")}</button>
             <button type="button" className={`navigation-item ${settingsView === 'providers' ? 'active' : ''}`} aria-current={settingsView === 'providers' ? 'page' : undefined} onClick={() => setSettingsView('providers')}>{t("core.App.providers_and_models_740468")}</button>
+            <button type="button" className={`navigation-item ${settingsView === 'connections' ? 'active' : ''}`} aria-current={settingsView === 'connections' ? 'page' : undefined} onClick={()=>setSettingsView('connections')}>{t('commerce.capability_ui.connections')}</button>
             <button type="button" className={`navigation-item ${settingsView === 'whatsapp' ? 'active' : ''}`} aria-current={settingsView === 'whatsapp' ? 'page' : undefined} onClick={() => setSettingsView('whatsapp')}>WhatsApp</button>
           </nav>
-          <section className={`settings-layer-content ${settingsScroll.scrolling ? 'scroll-active' : ''}`} aria-label={settingsView === 'whatsapp' ? t("core.App.whatsapp_settings_4c4831") : settingsView === 'providers' ? t("core.App.provider_and_model_settings_d104f0") : t("core.App.cognition_and_context_settings_ab7e3e")} tabIndex={0} onScroll={settingsScroll.onScroll}>
-            {settingsView === 'whatsapp' ? (settingsOpen ? <WhatsAppSettings /> : null) : settingsView === 'providers'
+          <section className={`settings-layer-content ${settingsScroll.scrolling ? 'scroll-active' : ''}`} aria-label={settingsView === 'connections' ? t('commerce.capability_ui.connections') : settingsView === 'whatsapp' ? t("core.App.whatsapp_settings_4c4831") : settingsView === 'providers' ? t("core.App.provider_and_model_settings_d104f0") : t("core.App.cognition_and_context_settings_ab7e3e")} tabIndex={0} onScroll={settingsScroll.onScroll}>
+            {settingsView === 'connections' ? (settingsOpen ? <ToolsConnectionsView /> : null) : settingsView === 'whatsapp' ? (settingsOpen ? <WhatsAppSettings /> : null) : settingsView === 'providers'
               ? <ProviderSettings />
               : <CognitionSettings mode={cognitiveMode} onModeChange={setCognitiveMode} showWorkspaceLocations />}
           </section>
@@ -336,7 +356,6 @@ function App() {
       >
         <header className="data-layer-header">
           <div className="data-layer-heading">
-            <p className="app-kicker">{t("core.App.inspector_e0723a")}</p>
             {activeDataView === 'ber_record' || activeDataView === 'jobs'
               ? <p role="status">{t("core.App.independent_global_view_not_linked_to_the_500e90")}</p>
               : <div className="inspection-source-switch" role="group" aria-label={t("core.App.inspection_source_48862b")}><button type="button" aria-pressed={inspectionSource === 'conversation'} onClick={() => setInspectionSource('conversation')}>{t("core.App.current_conversation_cb100e")}</button><button type="button" aria-pressed={inspectionSource === 'demo'} onClick={() => setInspectionSource('demo')}>{t("core.App.historical_demonstration_independent_of_chat_3b2e02")}</button></div>}
@@ -367,12 +386,12 @@ function App() {
           </nav>
 
           <section className={`data-layer-content ${dataScroll.scrolling ? 'scroll-active' : ''}`} aria-label={t("core.App.p0_view_b10ac6",{p0:String(dataNavigation.find((item) => item.id === activeDataView)?.label ?? 'Data')})} tabIndex={0} onScroll={dataScroll.onScroll}>
-            {inspectionSource === 'conversation' && activeDataView !== 'ber_record' && activeDataView !== 'jobs' ? <ChatInspection view={activeDataView} selection={inspectionSelection} onSelect={setInspectionSelection} /> : activeDataView === 'ber_record' ? <BerEffectRecordInspector /> : activeDataView === 'jobs' ? <JobHistory /> : loadingArtifacts
+            {inspectionSource === 'conversation' && activeDataView !== 'ber_record' && activeDataView !== 'jobs' ? <ChatInspection view={activeDataView} selection={inspectionSelection} onSelect={setInspectionSelection} onViewChange={setActiveDataView} embedded /> : activeDataView === 'ber_record' ? <BerEffectRecordInspector /> : activeDataView === 'jobs' ? <JobHistory /> : loadingArtifacts
               ? <div className="app-view-state" role="status"><span className="spinner" /><p>{t("core.App.loading_project_evidence_f1d4b9")}</p></div>
               : artifactError || !artifacts
                 ? <section className="artifact-unavailable" role="status"><p className="app-kicker">{t("core.App.project_evidence_f0eaa4")}</p><h2>{t("core.App.artifacts_are_not_available_yet_8ac485")}</h2>{artifactError&&<p>{errorMessage(artifactError)}</p>}<p>{t("core.App.no_evidence_bundle_is_available_directory_scan_4ff75c")}</p><button type="button" className="navigation-item active" onClick={() => { setDataLayerOpen(false); setActiveInteractionView('runner') }}>{t("core.App.open_agent_runs_1bfddc")}</button></section>
                 : <>
-                  {activeDataView === 'inspector' && <DecisionInspector artifacts={artifacts} />}
+                  {activeDataView === 'inspector' && <DecisionInspector artifacts={artifacts} embedded />}
                   {activeDataView === 'summary' && <Summary data={artifacts} />}
                   {activeDataView === 'retrieval' && <Retrieval data={artifacts} />}
                   {activeDataView === 'authorization' && <Authorization data={artifacts} />}
@@ -382,6 +401,7 @@ function App() {
           </section>
         </div>
       </dialog>
+      <RuntimeStatusBar />
     </div>
   )
 }

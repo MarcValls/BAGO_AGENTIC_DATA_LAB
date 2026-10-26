@@ -1,0 +1,109 @@
+{
+  "schema": "bago.runtime-status-footer-sprint14.v1",
+  "scope_gate": "VALIDATED_SCOPED_TASK",
+  "global_frontend_status": "NOT_VALIDATED",
+  "origin": "EXTERNAL_CODEX_CSS_AND_TEST_ADJUSTMENT_NOT_ADL_AUTHORED",
+  "candidate": {
+    "branch": "fix/project-workspace-chat-isolation-20261026",
+    "base_head": "710ac60d9161976accb34a18946b25e6ce7e1bbe",
+    "origin_main": "263bb76cf9a47f404b297808bd33b748833686be",
+    "merge_base": "263bb76cf9a47f404b297808bd33b748833686be",
+    "deployed": false
+  },
+  "changed_files": [
+    "frontend/src/components/RuntimeStatusBar.css",
+    "frontend/tests/runtime-status-bar/status.test.tsx"
+  ],
+  "checks": {
+    "runtime_status_tests": {
+      "status": "PASS",
+      "passed": 36,
+      "command": "npm test -- --run tests/runtime-status-bar/status.test.tsx"
+    },
+    "build": {
+      "status": "PASS_WITH_CHUNK_WARNING",
+      "command": "npm run build",
+      "main_bundle_bytes": 1098990,
+      "gzip_bytes": 283680
+    },
+    "browser_visual": {
+      "status": "PASS_LAYOUT_ONLY_USING_FIXTURE",
+      "browser": "Python Playwright Chromium headless; Browser plugin unavailable",
+      "url": "http://127.0.0.1:5190/",
+      "viewports": [
+        "1920x1080",
+        "390x844"
+      ],
+      "synthetic_endpoint": "/api/runtime/status",
+      "observed": {
+        "complete_values_visible": true,
+        "mobile_horizontal_scroll": true,
+        "details_expand": true,
+        "provider_detail_cards": 5
+      },
+      "screenshots": [
+        {
+          "state": "desktop_collapsed_fixture",
+          "path": "C:/Users/AMTEC_Terminal_1º/AppData/Local/Temp/adl-frontend-review-20261026/footer-fixture-desktop-collapsed.png",
+          "sha256": "AA152C8CC0593589B679AE42FD93B06D6E97503862586F88AD83B1FE5AA4CCE0"
+        },
+        {
+          "state": "desktop_provider_expanded_fixture",
+          "path": "C:/Users/AMTEC_Terminal_1º/AppData/Local/Temp/adl-frontend-review-20261026/footer-fixture-desktop-expanded.png",
+          "sha256": "434815D6D27FE73B5DE8757326CFB313EDA884F411E06A1C6BFE37617F4C1D0A"
+        },
+        {
+          "state": "mobile_collapsed_fixture",
+          "path": "C:/Users/AMTEC_Terminal_1º/AppData/Local/Temp/adl-frontend-review-20261026/footer-fixture-mobile-collapsed.png",
+          "sha256": "B83E83C74778039F156428BDCA8DDE5DF2C5E4F9E6B8B6BF9DFE3E1A518C7866"
+        },
+        {
+          "state": "mobile_scrolled_fixture",
+          "path": "C:/Users/AMTEC_Terminal_1º/AppData/Local/Temp/adl-frontend-review-20261026/footer-fixture-mobile-scrolled.png",
+          "sha256": "54921B5EA83D89483EE32881EB4F7FF93044CD7A8BB868FCEF20901C695A17BF"
+        },
+        {
+          "state": "mobile_provider_expanded_fixture",
+          "path": "C:/Users/AMTEC_Terminal_1º/AppData/Local/Temp/adl-frontend-review-20261026/footer-fixture-mobile-expanded.png",
+          "sha256": "4A7BF847BD317DEA1E36E42075C8A4FE1E9D861F2B2B6469C0E1C7A18CFFBD78"
+        }
+      ]
+    },
+    "github_ci_base": {
+      "run_id": 40259194850,
+      "status": "FAILURE",
+      "tests": {
+        "failed": 21,
+        "passed": 771,
+        "total": 792,
+        "failed_files": 9,
+        "passed_files": 74
+      },
+      "failure_step": "Run frontend package tests",
+      "subsequent_ui_and_build_steps": "SKIPPED"
+    },
+    "readme_generator": {
+      "status": "PASS",
+      "command": "python -B scripts/generate_dynamic_readme.py",
+      "tests_passed": 1570
+    },
+    "readme_check": {
+      "status": "PASS",
+      "command": "python scripts/generate_dynamic_readme.py --check --skip-tests",
+      "collected_cases": 1572,
+      "suite_in_this_command": "NOT_RUN"
+    }
+  },
+  "runtime_binding": {
+    "backend": "http://127.0.0.1:8098",
+    "runtime_status_endpoint": {
+      "path": "/api/runtime/status",
+      "status": 502
+    },
+    "runtime_integration": "NOT_VALIDATED",
+    "candidate_identity": "orchestrator-delegation-r42-preview",
+    "ports_8093_8098": "same preview identity; not this branch"
+  },
+  "merge": false,
+  "release": false
+}

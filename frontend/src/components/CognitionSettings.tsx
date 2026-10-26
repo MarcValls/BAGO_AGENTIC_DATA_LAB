@@ -27,11 +27,12 @@ type ContextMetadata = {
   memory: { kind: string; state: string; description: string }
 }
 
-export default function CognitionSettings({ mode, onModeChange, workspaceOnly = false, showWorkspaceLocations = true }: {
+export default function CognitionSettings({ mode, onModeChange, workspaceOnly = false, showWorkspaceLocations = true, onRequestWorkspaceSelection }: {
   mode: CognitiveMode
   onModeChange: (mode: CognitiveMode) => void
   workspaceOnly?: boolean
   showWorkspaceLocations?: boolean
+  onRequestWorkspaceSelection?: () => void
 }) {
   useI18n()
 
@@ -52,6 +53,7 @@ export default function CognitionSettings({ mode, onModeChange, workspaceOnly = 
     void fetch('/api/chat/context', { signal: controller.signal }).then(async (response) => {
       if (!response.ok) throw apiError(await response.json().catch(() => null),response.status,'agents')
       const data = await response.json() as ContextMetadata
+      if(controller.signal.aborted)return
       if (typeof data.workspace_root !== 'string' || !Array.isArray(data.paths) || !data.cognition || !data.memory) throw localMessage("core.CognitionSettings.context_metadata_is_incomplete_bf2ff3")
       setMetadata(data)
       setPathDraft(data.workspace_root)
@@ -107,7 +109,8 @@ export default function CognitionSettings({ mode, onModeChange, workspaceOnly = 
       <label><input type="radio" name="cognitive-mode" value="bago5" checked={mode === 'bago5'} onChange={() => changeMode('bago5')} /><span><strong>{t("core.CognitionSettings.bago5_experimental_e39938")}</strong><small>{t("core.CognitionSettings.add_bounded_cognitive_focus_to_the_model_6cb533")}</small></span></label>
     </fieldset>}
     {!workspaceOnly && modeNotice && <p className="cognition-status" role="status">{errorMessage(modeNotice)}</p>}
-    {workspaceOnly && <section className="workspace-picker" aria-label={t("core.CognitionSettings.project_folder_60c6cd")}>
+    {workspaceOnly && onRequestWorkspaceSelection && <section className="workspace-picker" aria-label={t("core.CognitionSettings.project_folder_60c6cd")}><h4>{t("core.CognitionSettings.project_folder_60c6cd")}</h4><code className="context-location-path">{metadata?.workspace_root??t("commerce.project_folder.active_unavailable")}</code><p>{t("commerce.project_folder.global_scope")}</p><button type="button" onClick={onRequestWorkspaceSelection}>{t("commerce.project_folder.edit_in_projects")}</button></section>}
+    {workspaceOnly && !onRequestWorkspaceSelection && <section className="workspace-picker" aria-label={t("core.CognitionSettings.project_folder_60c6cd")}>
       <label htmlFor="workspace-path">{t("core.CognitionSettings.project_folder_60c6cd")}</label>
       <div className="workspace-path-row"><input id="workspace-path" value={pathDraft} onChange={(event) => { setPathDraft(event.target.value); setWorkspaceNotice('') }} onKeyDown={(event) => { if (event.key === 'Enter' && !workspaceBusy && pathDraft.trim()) void applyWorkspace('/api/workspace/select') }} placeholder={t("core.CognitionSettings.select_a_folder_ea37f6")} disabled={workspaceBusy} />
         <button type="button" className="workspace-browse" onClick={() => void applyWorkspace('/api/workspace/browse')} disabled={workspaceBusy}>{workspaceBusy ? t("core.CognitionSettings.waiting_a7f426") : t("core.CognitionSettings.browse_4ebca1")}</button>

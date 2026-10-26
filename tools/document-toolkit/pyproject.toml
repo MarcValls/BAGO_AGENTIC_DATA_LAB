@@ -1,0 +1,23 @@
+[build-system]
+requires = ["setuptools==80.9.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "bago-document-toolkit"
+version = "0.2.0"
+description = "Bounded document inventory, cited extraction and reviewable plans"
+requires-python = ">=3.11"
+dependencies = []
+
+[project.optional-dependencies]
+pdf = ["pypdf==6.13.1"]
+ocr = ["Pillow==12.2.0"]
+
+[project.scripts]
+bago-documents = "document_toolkit.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["document_toolkit*"]
+
+[tool.setuptools.package-data]
+document_toolkit = ["*.ps1"]

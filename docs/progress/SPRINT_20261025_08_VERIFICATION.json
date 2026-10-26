@@ -1,0 +1,60 @@
+{
+  "schema": "bago.publication-status-sprint08.v1",
+  "scope_gate": "VALIDATED_SCOPED_TASK",
+  "global_status": "NO_GO_OPEN",
+  "origin": "EXTERNAL_CODEX_RUNTIME_STATUS_NOT_ADL_JAEGER",
+  "product_sha256": {
+    "src/runtime_status.py": "f6d914aacb4d45f2aa28e58c8cc37895958f7df893e77de784c59006399a95ca",
+    "src/api/server.py": "edd9db2700b34d92e01a991eb342d957c1410aa14f4d2afe472fade6c18c8038",
+    "tests/test_runtime_status.py": "8f76754b228de638d91232d884f06ae373137fc21862bac8fa2cdaeaeca41134",
+    "tests/test_runtime_status_integration.py": "e24778935f1bf22b849b78af6fbc0f457ce7bd6be36dac95ea3cdbfa7ecf21e6",
+    "frontend/src/components/RuntimeStatusBar.tsx": "0ce36cae0926338a442a24d1ed46ab6db7a1d1520ddc21a57cd8a8d72e5b0962",
+    "frontend/src/components/RuntimeStatusBar.css": "c134a517b436d6f79431fb8af3d8c6925acc7bf5dff83a58dc83ee0d6ede1712",
+    "frontend/src/App.tsx": "ef047f8ce298c9bdee141dcce47f56330d9f47ffdc6c25956a268e24f097bb89",
+    "docs/public-web/MANUAL.md": "b55d0c40bc813329f9ce356d835b6da4728673f106741582afb4e276ce17a2d5",
+    "frontend/tests/runtime-status-bar/status.test.tsx": "844b42a4584d9134dd2a51a1b8623fa42fea9fab09a745c49c9f8b0b63001ea3",
+    "frontend/tests/runtime-status-bar/fixture.ts": "f32fe19f002777d85995a4766603d411da86131488a3cad75b23d8b97aa4aa22",
+    "frontend/tests/ui/chat-shell/visual-system.test.tsx": "c9f2965bd8c0c8012ff0c74f8fdc8fba5b3a8096105bc5c7f8615c1d95676a07",
+    "frontend/tests/navigation-r6/logo-o.test.tsx": "e7ab5d4da569b6c9f3e42806bdcbe29c25b2120aac71c8edd4d03785805383ae",
+    "frontend/tests/navigation-r5/hamburger.test.tsx": "27c9fc3913cd7bd068f20d9bc38b62c3f60f20bf477fc1278599c36a6d17127d",
+    "frontend/tests/inspection/inspector-deduplication.test.tsx": "e3b203f01506f1fc0cb6045cdcf441f73e5964efe9dbc3ba972a9829558f258d",
+    ".gitignore": "34f8b65e5435ad9998b5de74ded2c0b5909ba850db97d621b6e510e849dc5a16"
+  },
+  "source_full_python_footer": "NOT_RUN",
+  "previous_full_folder_source": {
+    "passed": 1512,
+    "failed": 4,
+    "skipped": 2,
+    "subtests": 22
+  },
+  "ui_full_pre_plural": {
+    "passed": 766,
+    "failed": 23,
+    "baseline_failure_ids_exact": true
+  },
+  "intermittent_extra_failure_preserved": true,
+  "publication_full_suite": "NOT_RUN",
+  "new_head_ci": "NOT_CHECKED_AT_PREPARATION",
+  "automatic_provider_bootstrap": "PENDING_NEXT_SCOPE",
+  "portable_full_migration": "PENDING_IGNORE_ONLY",
+  "private_data_included": false,
+  "publication_incoming_commit": {
+    "sha": "447b56542c20e5c4dcc382e659d9fc32c26bd24e",
+    "author": "copilot-swe-agent[bot]",
+    "preserved": true,
+    "assistant_web_coverage": "CHANGED_NOT_EQUIVALENT_ORIGINAL_INVARIANTS_NOT_RESTORED",
+    "effective_source_tests_changed": false,
+    "prior_1512_4_result": "HISTORICAL_EFFECTIVE_SOURCE_ONLY_NOT_LATEST_PUBLIC_TREE"
+  },
+  "publication_directed_checks": {
+    "backend_post_ff_passed": 106,
+    "readme_post_ff_passed": 24,
+    "ui_passed": 75,
+    "ui_build_binding": "Before FF on identical15frozenproduct hashes; incomingonly3Python testfiles",
+    "typescript_vite": "PASS",
+    "readme_render": "PASS_COLLECTION_ONLY",
+    "readme_check": "PASS_COLLECTION_ONLY",
+    "global_suite": "NOT_RUN",
+    "source_tests_unchanged": true
+  }
+}

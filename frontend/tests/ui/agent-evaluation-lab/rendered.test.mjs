@@ -18,7 +18,7 @@ Object.assign(globalThis, {
 })
 Object.defineProperty(globalThis, 'navigator', { configurable: true, value: dom.window.navigator })
 
-const server = await createServer({ server: { middlewareMode: true }, appType: 'custom' })
+const server = await createServer({ server: { middlewareMode: true, hmr: false }, appType: 'custom' })
 const React = await import('react')
 const testing = await import('@testing-library/react')
 const { cleanup, fireEvent, render, screen, waitFor } = testing
@@ -99,7 +99,10 @@ describe('Agent Evaluation Lab rendered behavior', () => {
   it('renders empty inventory and history without invented data', async () => {
     const restore = stubFetch(standardFetch({ agents: [], models: [], suites: [], runs: [] }))
     render(React.createElement(AgentEvaluationLab))
-    await screen.findByText(/No saved suites yet/)
+    await screen.findByText('Select a suite or run')
+    // Empty suite state intentionally has no instructional placeholder.
+    assert.equal(screen.queryByText(/No saved suites yet/), null)
+    assert.equal(document.querySelector('.eval-suites .eval-suite-option'), null)
     assert.ok(screen.getByText('No runs recorded.'))
     assert.equal(screen.queryByLabelText('Suite name'), null)
     assert.equal(screen.queryByRole('button', { name: 'Run evaluation' }), null)

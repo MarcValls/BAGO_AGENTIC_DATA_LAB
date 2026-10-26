@@ -66,7 +66,7 @@ def failing_turn(server,decision='ALLOW'):
 
 @pytest.mark.parametrize('owner',['agent','assistant'])
 @pytest.mark.parametrize('decision',['ALLOW','DENY','FAIL'])
-def test_failure_after_each_read_outcome_preserves_correlated_failed_trace(monkeypatch,tmp_path,owner,decision):
+def test_read_outcome_preserves_failed_agent_trace_or_blocks_unrouted_assistant(monkeypatch,tmp_path,owner,decision):
     s,store,c,b=helpers.setup_server(monkeypatch,tmp_path,owner)
     if owner=='assistant':
         monkeypatch.setattr(s.provider_runtime,'active_selection',lambda:{'provider_id':'codex','model_id':'fixture'})
@@ -80,9 +80,17 @@ def test_failure_after_each_read_outcome_preserves_correlated_failed_trace(monke
     g=asyncio.run(s.create_web_read_authorization(s.WebReadAuthorizationRequest(**b,urls=[URL])))
     foreign=store.create(owner,'foreign-owner');foreign_before=store.get(foreign['id'])
     kwargs=dict(message='Research fixture',conversation_id=c['id'],revision=0,web_read_authorization_id=g['authorization_id'])
+    if owner=='assistant':
+        result=asyncio.run(s.control_chat(s.ControlChatRequest(**kwargs)))
+        assert result['sources']==[] and result['read_events']==[]
+        assert len(calls)==1 and not (tmp_path/'captures').exists()
+        last=store.get(c['id'])['messages'][-1]
+        assert last['role']=='assistant' and last['references']['trace']==result['trace']
+        assert len(exported)==1 and exported[0].events[0].status=='COMPLETED'
+        assert store.get(foreign['id'])==foreign_before
+        return
     with pytest.raises(HTTPException) as error:
-        if owner=='agent':asyncio.run(s.chat_with_agent('fixture-agent',s.AgentChatRequest(**kwargs),Response()))
-        else:asyncio.run(s.control_chat(s.ControlChatRequest(**kwargs)))
+        asyncio.run(s.chat_with_agent('fixture-agent',s.AgentChatRequest(**kwargs),Response()))
     detail=error.value.detail;saved=store.get(c['id']);last=saved['messages'][-1]
     assert error.value.status_code==503 and detail['code']=='fixture_provider_failed' and detail['execution_state']=='FAILED'
     assert last['role']=='assistant' and last['status']=='failed' and last['content']==''

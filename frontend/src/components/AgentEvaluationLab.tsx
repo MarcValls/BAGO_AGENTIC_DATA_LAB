@@ -133,7 +133,7 @@ export default function AgentEvaluationLab({ initialAgentId = '' }: { initialAge
           >{suitesExpanded ? '‹' : '›'}</button>
         </div>
         <div id="eval-suites-content" hidden={!suitesExpanded}>
-          {suites.length === 0 ? <p className="eval-empty">{t('agents.AgentEvaluationLab.no_saved_suites_yet_create_a_suite_to_define_a_repeatable_check')}</p> : suites.map((suite) => <button type="button" className={`eval-suite-option ${suite.id === selectedSuiteId ? 'selected' : ''}`} key={suite.id} onClick={() => selectSuite(suite)}><strong>{suite.name}</strong><span>{t('agents.evaluation.suiteVersionCases',{version:formatNumber(suite.version),count:formatNumber(suite.cases.length)})}</span></button>)}
+          {suites.map((suite) => <button type="button" className={`eval-suite-option ${suite.id === selectedSuiteId ? 'selected' : ''}`} key={suite.id} onClick={() => selectSuite(suite)}><strong>{suite.name}</strong><span>{t('agents.evaluation.suiteVersionCases',{version:formatNumber(suite.version),count:formatNumber(suite.cases.length)})}</span></button>)}
           <div className="eval-section-heading eval-history-heading"><h3>{t('agents.AgentEvaluationLab.run_history')}</h3><span>{runs.length}</span></div>
           {runs.length === 0 ? <p className="eval-empty">{t('agents.AgentEvaluationLab.no_runs_recorded')}</p> : runs.map((run) => <button type="button" className={`eval-run-option ${run.id === selectedRunId ? 'selected' : ''}`} key={run.id} onClick={() => selectRun(run)}><strong>{agentStateLabel(run.status)}</strong><span>{run.suite_name} v{run.suite_version}</span><code>{run.id}</code></button>)}
         </div>

@@ -4,7 +4,8 @@ import {es as commonEs,en as commonEn} from './domains/common'
 import {es as coreEs,en as coreEn} from './domains/core'
 import {es as commerceEs,en as commerceEn} from './domains/commerce'
 import {es as agentsEs,en as agentsEn} from './domains/agents'
-export const catalogs={es:{...commonEs,...statesEs,...coreEs,...commerceEs,...agentsEs},en:{...commonEn,...statesEn,...coreEn,...commerceEn,...agentsEn}}
+import {es as agentToolsEs,en as agentToolsEn} from './domains/agentTools'
+export const catalogs={es:{...commonEs,...statesEs,...coreEs,...commerceEs,...agentsEs,...agentToolsEs},en:{...commonEn,...statesEn,...coreEn,...commerceEn,...agentsEn,...agentToolsEn}}
 export type Locale='es'|'en'
 export type TranslationKey=keyof typeof catalogs.es
 export type MessageParameters=Record<string,string|number>

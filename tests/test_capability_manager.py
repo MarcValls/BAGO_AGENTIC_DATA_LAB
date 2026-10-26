@@ -9,6 +9,8 @@ from src.capabilities import CapabilityNotFound, CapabilityProposalConflict, Cap
 from src.capabilities.manager import default_database_path
 from src.api import server
 from src.conversations import ConversationStore
+from src.agent_tools.document_tools import DOCUMENT_TOOL_IDS
+from src.agent_tools.agent_services import SERVICE_TOOL_IDS
 
 
 def test_default_database_is_local_and_workspace_scoped(monkeypatch, tmp_path: Path):
@@ -115,7 +117,7 @@ def test_capability_api_lists_and_persists_proposals_without_execution(monkeypat
     assert catalog_response.status_code == 200
     assert {item["id"] for item in catalog_response.json()["capabilities"]} == {
         "workspace.read_text", "workspace.scan_duplicates", "agent.evaluate", "mcp.execute", "sandbox.execute", "agent.run",
-    }
+    } | DOCUMENT_TOOL_IDS | SERVICE_TOOL_IDS
 
     created = client.post("/api/capabilities/proposals", json={
         "capability_id": "agent.run",

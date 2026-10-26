@@ -1,0 +1,115 @@
+{
+  "schema": "bago.frontend-mobile-review-sprint13.v1",
+  "scope_gate": "VALIDATED_SCOPED_TASK",
+  "global_frontend_status": "NOT_VALIDATED",
+  "origin": "EXTERNAL_CODEX_FRONTEND_CSS_NOT_ADL_AUTHORED",
+  "candidate": {
+    "branch": "fix/project-workspace-chat-isolation-20261026",
+    "head_before_sprint": "a7538a47741fb17992adf0fd6c2ba90e03dd70de",
+    "fetched_origin_main": "263bb76cf9a47f404b297808bd33b748833686be",
+    "merge_base": "263bb76cf9a47f404b297808bd33b748833686be",
+    "deployed": false
+  },
+  "changed_files": [
+    "frontend/src/components/NavMenu.css"
+  ],
+  "checks": {
+    "npm_run_build": "PASS_WITH_CHUNK_SIZE_WARNING",
+    "focused_vitest": {
+      "status": "PASS",
+      "passed": 8,
+      "files": [
+        "tests/ui/communications/navigation-control-order.test.tsx",
+        "tests/chat-right-panel/general-context.test.tsx"
+      ]
+    },
+    "desktop_visual": {
+      "viewport": "1920x1080",
+      "horizontal_overflow": false,
+      "screenshot": "C:/Users/AMTEC_Terminal_1º/AppData/Local/Temp/adl-frontend-review-20261026/candidate-desktop-final.png",
+      "sha256": "19BD8C1AE9DA3AE9D7868376089460DC47BF3ED2678743C59340F36CC43369CB"
+    },
+    "mobile_visual": {
+      "viewport": "390x844",
+      "horizontal_overflow": false,
+      "sidebar_expanded": {
+        "labels": "visible_single_line",
+        "horizontal_scroll": "verified_to_end"
+      },
+      "sidebar_collapsed": {
+        "aria_expanded": false,
+        "visible_icons": 14,
+        "visible_labels": 0,
+        "accessible_settings_label": "Abrir configuración"
+      },
+      "project_panel_close_reveals_composer": true,
+      "screenshot": "C:/Users/AMTEC_Terminal_1º/AppData/Local/Temp/adl-frontend-review-20261026/candidate-mobile-chat-final.png",
+      "sha256": "9F3CBD662803ABF83A4FAA3F894DC4243ADFFADB43515B47F9AFC43989A6166E"
+    },
+    "browser": "Python Playwright Chromium headless; Browser plugin unavailable"
+  },
+  "screenshots": [
+    {
+      "state": "mobile_navigation_open_390x844",
+      "path": "C:/Users/AMTEC_Terminal_1º/AppData/Local/Temp/adl-frontend-review-20261026/candidate-mobile-final.png",
+      "sha256": "B64E455457737172AD1C58EE75A67D8CB9E598DBAD9C6137292A81A89AAF4731"
+    },
+    {
+      "state": "mobile_navigation_collapsed_icons_390x844",
+      "path": "C:/Users/AMTEC_Terminal_1º/AppData/Local/Temp/adl-frontend-review-20261026/candidate-mobile-menu-closed.png",
+      "sha256": "EC1A58A24F2D19582E5918A373E6AAE6F9924AA18BF5ED8D54D9B3A75245B33C"
+    },
+    {
+      "state": "mobile_navigation_collapsed_scrolled_390x844",
+      "path": "C:/Users/AMTEC_Terminal_1º/AppData/Local/Temp/adl-frontend-review-20261026/candidate-mobile-menu-scrolled.png",
+      "sha256": "F383B629E125A1FE3E59D76553BA7065615E9B5E2EAD0F403C9F28AF59ED2A9D"
+    },
+    {
+      "state": "mobile_chat_panel_closed_390x844",
+      "path": "C:/Users/AMTEC_Terminal_1º/AppData/Local/Temp/adl-frontend-review-20261026/candidate-mobile-chat-final.png",
+      "sha256": "9F3CBD662803ABF83A4FAA3F894DC4243ADFFADB43515B47F9AFC43989A6166E"
+    },
+    {
+      "state": "desktop_1920x1080",
+      "path": "C:/Users/AMTEC_Terminal_1º/AppData/Local/Temp/adl-frontend-review-20261026/candidate-desktop-final.png",
+      "sha256": "19BD8C1AE9DA3AE9D7868376089460DC47BF3ED2678743C59340F36CC43369CB"
+    }
+  ],
+  "runtime_binding": {
+    "frontend": "http://127.0.0.1:5190",
+    "backend_proxy": "http://127.0.0.1:8098",
+    "backend_candidate": "orchestrator-delegation-r42-preview",
+    "project_active_endpoint": {
+      "path": "/api/project-folders/v1/active",
+      "status": 404,
+      "responses": 2
+    },
+    "8093_is_candidate": false,
+    "integrated_project_flow": "NOT_VALIDATED"
+  },
+  "previous_frontend_selected_test_failures": 21,
+  "full_local_readme_generator": {
+    "command": "python -B scripts/generate_dynamic_readme.py",
+    "status": "PASS",
+    "tests_passed": 1570
+  },
+  "readme_reproducibility_check": {
+    "command": "python scripts/generate_dynamic_readme.py --check --skip-tests",
+    "status": "PASS",
+    "collected_cases": 1572,
+    "suite_in_this_command": "NOT_RUN"
+  },
+  "previous_head_ci": {
+    "commit": "a7538a47741fb17992adf0fd6c2ba90e03dd70de",
+    "ci": "FAILURE",
+    "readme_consistency": "SUCCESS",
+    "docker_build": "SUCCESS",
+    "run_ids": [
+      40257559482,
+      40257559467,
+      40257559481
+    ]
+  },
+  "merge": false,
+  "release": false
+}

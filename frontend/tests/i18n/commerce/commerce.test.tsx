@@ -73,23 +73,28 @@ describe('commerce presentation catalogs and live preference',()=>{
   expect(fetcher.mock.calls.length).toBe(count)
   expect(fetcher.mock.calls.every(call=>call.length===1||!(call[1] as RequestInit)?.method)).toBe(true)
  })
- it('preserves a project creation review and its approval while translating its parameterized scope',async()=>{
-  const fetcher=vi.fn(async(input:string)=>response(input.endsWith('/config')?{configured:true,parent:'C:/ProjectRoot'}:{workspaces:[]}))
-  vi.stubGlobal('fetch',fetcher)
+ it('preserves a project creation review and its approval while translating its exact planned scope',async()=>{
+  const {folderFixture}=await import('../../project-folders/fixtures');const f=folderFixture({root:'D:/ProjectRoot'})
   render(<WorkspaceManager />)
-  await screen.findByLabelText('Nombre de carpeta')
+  await waitFor(()=>expect((screen.getByRole('button',{name:'Usar carpeta'}) as HTMLButtonElement).disabled).toBe(false))
+  fireEvent.click(screen.getByLabelText('Crear una carpeta hija'))
   fireEvent.change(screen.getByLabelText('Nombre de carpeta'),{target:{value:'original-folder'}})
   fireEvent.change(screen.getByLabelText('Título del proyecto'),{target:{value:'Original title'}})
-  fireEvent.click(screen.getByRole('button',{name:'Revisar creación'}))
-  const review=screen.getByRole('dialog')
+  fireEvent.click(screen.getByRole('button',{name:'Usar carpeta'}))
+  const review=await screen.findByRole('dialog')
   const approval=within(review).getByRole('checkbox') as HTMLInputElement
   fireEvent.click(approval)
-  const count=fetcher.mock.calls.length
+  const count=f.fetcher.mock.calls.length
   switchTo('en')
-  expect(within(review).getByText('Create original-folder under C:/ProjectRoot and seed context, state and continuity')).toBeTruthy()
+  expect(within(review).getByText('D:/ProjectRoot/original-folder')).toBeTruthy()
+  expect(within(review).getByText('Original title')).toBeTruthy()
+  expect(within(review).getByText('folder_plan_1')).toBeTruthy()
+  expect(within(review).getByText('1'.repeat(64))).toBeTruthy()
+  expect(within(review).getByText('Preparing this plan has not created files or changed the active folder. Confirm only the target and changes you reviewed.')).toBeTruthy()
   expect(within(review).getByRole('checkbox')).toBe(approval)
   expect(approval.checked).toBe(true)
-  expect(fetcher.mock.calls.length).toBe(count)
+  expect(f.fetcher.mock.calls.length).toBe(count)
+  expect(f.mutations().map(c=>c.url)).toEqual(['/api/project-folders/v1/plans'])
  })
  it('preserves the exact write proposal and consent; changing language never writes',async()=>{
   const context={owner_kind:'agent' as const,owner_id:'agent-original',conversation_id:'conversation-original',conversation_revision:2}
@@ -144,10 +149,10 @@ describe('commerce presentation catalogs and live preference',()=>{
  })
  it('updates tool labels without replacing the open menu',()=>{
   render(<ChatTools conversationId="original" />)
-  const menu=screen.getByText('Herramientas').closest('details')!
+  const menu=screen.getByText('Recursos').closest('details')!
   menu.open=true
   switchTo('en')
-  expect(screen.getByText('Tools').closest('details')).toBe(menu)
+  expect(screen.getByText('Resources').closest('details')).toBe(menu)
   expect(menu.open).toBe(true)
   expect(screen.getByRole('button',{name:'Consult file'})).toBeTruthy()
  })
@@ -155,7 +160,7 @@ describe('commerce presentation catalogs and live preference',()=>{
   const fetcher=vi.fn(async(input:string)=>response(input.includes('chat-models')?{models:[]}:input.includes('selection')?null:input.includes('/agents/list')?{agents:[]}:{conversations:[]}))
   vi.stubGlobal('fetch',fetcher)
   render(<AgentChat onNavigate={()=>{}} onOpenProviderSettings={()=>{}} onOpenCognitionSettings={()=>{}} cognitiveMode="baseline" />)
-  await screen.findByText('Todavía no hay agentes. Pide al asistente que cree uno.')
+  await waitFor(()=>expect(fetcher.mock.calls.some(([url])=>url.includes('/agents/list'))).toBe(true))
   const editor=screen.getByLabelText('Mensaje al asistente o agente seleccionado') as HTMLTextAreaElement
   fireEvent.change(editor,{target:{value:'User prompt must stay original'}})
   fireEvent.click(screen.getByLabelText('Permitir lectura de archivos del proyecto'))

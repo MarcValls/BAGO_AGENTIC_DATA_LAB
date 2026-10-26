@@ -6,6 +6,38 @@ Guía de referencia con capturas para reconocer cada pantalla y seguir los recor
 
 Las capturas muestran la interfaz actual de BAGO. Las pantallas 05–28 y 30–35 se recorrieron con Playwright y respuestas de demostración interceptadas en el navegador. No se consultaron trabajos reales, no se guardó el agente de ejemplo, no se ejecutó ningún modelo y no se leyó la carpeta `src`: las autorizaciones, el escaneo y los resultados son ficticios. La pantalla “guardado” del agente y el resultado `PASS` de evaluación son estados ilustrativos.
 
+### Revisión visual más reciente: escritorio y móvil
+
+Estas dos capturas se tomaron el 26 de octubre de 2026 desde la candidata de la PR #71, servida en el entorno aislado `5194/8097`, con datos sintéticos. En escritorio se ve el chat y el pie de estado; en móvil, el panel de proyecto empieza plegado y el pie indica que se puede deslizar para ver Git y proveedores. Son capturas del producto renderizado, no de una ejecución con proveedor.
+
+![Candidata BAGO ADL en escritorio, 1440 × 900](assets/manual-ui-actual-2026-10-26/01-chat-desktop-candidate.png)
+
+![Candidata BAGO ADL en móvil, 390 × 844](assets/manual-ui-actual-2026-10-26/02-chat-mobile-candidate.png)
+
+### Ejemplo observado de traza Jaeger
+
+La captura siguiente documenta una lectura puntual de workspace autorizada en AgentChat: Jaeger mostró 14 spans y la operación `workspace.read` aparece con resultado ALLOW. Pertenece a una ejecución distinta de las dos capturas de interfaz anteriores; demuestra esa lectura concreta, no una misión de sector completa ni un recorrido integral de principio a fin.
+
+![Jaeger: lectura puntual autorizada de workspace en AgentChat](../assets/readme-20261025/08-jaeger-workspace-read-live.png)
+
+### Diagnóstico real: permiso concedido, herramienta no invocada
+
+En una comprobación separada del chat general del entorno aislado `5194/8097`, se autorizó únicamente `sample_a.py`. La emisión del permiso respondió HTTP 200 y el envío al orquestador también respondió HTTP 200, pero el modelo indicó que no tenía la herramienta activa. La traza Jaeger `143e68539c91a6951dbfa1d67349374e` registró una sola operación `assistant.control`, de 9,819 ms, con `workspace_read_count=0`. Por tanto, **no se leyó el archivo** y este ejemplo no es una ejecución exitosa. Sirve para distinguir una autorización aceptada de una herramienta realmente ejecutada.
+
+![Chat general: respuesta explícita de que no se ejecutó la lectura](assets/manual-ui-actual-2026-10-26/03-chat-read-not-executed.png)
+
+![Jaeger: traza real de la respuesta sin lectura de workspace](assets/manual-ui-actual-2026-10-26/04-jaeger-chat-no-tool-call.png)
+
+### Respuesta del proveedor observada en esta sesión
+
+En otra conversación sintética se completó una lectura autorizada de `sample_a.py`. El pie muestra **«Respuesta recibida en esta sesión»** junto al proveedor y modelo que respondieron. Al abrir **Proveedores**, el detalle conserva por separado el estado registrado **«configurado, sin verificar»**. Una respuesta real en un turno confirma que ese modelo respondió en ese momento; no es una comprobación persistente de disponibilidad o salud. La observación es temporal y desaparece al recargar la aplicación.
+
+![Chat de ADL y barra con una respuesta observada en la sesión](assets/manual-ui-actual-2026-10-26/07-provider-response-observed-session.png)
+
+La traza Jaeger de ese turno contiene dos spans: `assistant.control` y `workspace.read`. El recibo fue `ALLOW`, líneas 1-11, total 11. El span hijo lleva `timing_source=projection` y `duration_measured=false`; los 43 μs que dibuja Jaeger no son una duración medida.
+
+![Traza Jaeger del mismo turno, con los spans assistant.control y workspace.read](assets/manual-ui-actual-2026-10-26/08-jaeger-provider-response-observed-session.png)
+
 Las cuatro primeras imágenes documentan el chat y sus respuestas dentro de la conversación:
 
 1. Abre el chat y escribe una petición normal.
@@ -129,3 +161,18 @@ Se capturaron las 14 vistas principales y los estados mostrados en los recorrido
 ## Repetir la captura técnica
 
 El recorrido automatizado está en [`scripts/capture_dummy_manual.py`](../../scripts/capture_dummy_manual.py). Requiere el frontend disponible en `http://127.0.0.1:5173`, Python Playwright y Chromium instalados. El script intercepta las rutas `/api/` y guarda las imágenes en `assets/manual/`; no necesita llamar al proveedor ni al backend real.
+
+## Recorrido live: leer un archivo autorizado del workspace
+
+1. Abre el chat del proyecto correcto y escribe la ruta relativa exacta, por ejemplo `sample_a.py`.
+2. Marca **Permitir lectura de archivos del proyecto** antes de enviar. El permiso se comprueba al enviar y sólo cubre el archivo autorizado para ese turno.
+3. Pide que se use la herramienta de lectura de workspace y que se resuma el archivo. Revisa la respuesta y abre **Inspeccionar ejecución** para consultar la traza.
+4. Comprueba el recibo: decisión `ALLOW`, ruta, intervalo de líneas, total y si la lectura quedó truncada. Un mensaje HTTP 200, por sí solo, no demuestra que se leyera el archivo.
+
+En la ejecución sintética verificada el 26 de octubre de 2026, BAGO leyó `sample_a.py` (11 líneas) y respondió en una frase sobre su funcionalidad. La conversación fue `conv_9887036846fb4b939599cfc64a7da1fd`; la traza Jaeger fue `ca351b6323cbcbb65c0882c1c7f778cf`. Tiene dos spans: `assistant.control` y su hijo `workspace.read`, con recibo `ALLOW` para las líneas 1–11, total 11 y `truncated=false`. No se ofrecieron ni utilizaron herramientas `development_*`.
+
+**Límite de medición:** el span `workspace.read` figura con `timing_source=projection` y `duration_measured=false`. La duración de unos microsegundos que muestra Jaeger no es una medición real del tiempo de lectura. Esta prueba demuestra el recorrido y su recibo en esa candidata sintética; no certifica el producto publicado ni mediciones de rendimiento.
+
+![Lectura autorizada de workspace desde el chat](assets/manual-ui-actual-2026-10-26/05-chat-workspace-read-live.png)
+
+![Traza Jaeger de la lectura autorizada](assets/manual-ui-actual-2026-10-26/06-jaeger-workspace-read-live.png)

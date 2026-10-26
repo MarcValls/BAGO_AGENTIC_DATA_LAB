@@ -75,27 +75,67 @@ flowchart LR
 
 ## La aplicación en pantalla
 
-**Capturas nuevas · 2026-10-22 · Brave visible · aplicación local.** Se tomaron recorriendo las pantallas de la sesión documentada, sin reutilizar las imágenes de los tutoriales anteriores.
+**Capturas del recorrido documentado el 2026-10-25 · aplicación local en Brave visible.** Las imágenes se capturaron desde el navegador visible; las observaciones y su procedencia están descritas en la guía enlazada.
 
-La sesión incluye creación de un agente nuevo y una respuesta real con lectura autorizada de datos ficticios. La evidencia de ese recorrido se identifica en Casos y demos. Cada imagen conserva su alcance: Inspect mostró una traza anterior de Bruma, diferente de la conversación recién ejecutada.
+El carrusel cambia de captura automáticamente. Puedes abrir el [visor HTML con controles de anterior, siguiente y pausa](docs/assets/readme-20261025/carousel.html) o desplegar una imagen original para leerla a tamaño completo.
 
-![Respuesta real del nuevo agente BAGO Demo Chat 20261022 con lectura autorizada de DEMO.md el 22 de octubre de 2026](docs/assets/readme-20261022/chat.png)
+![Carrusel de capturas actuales de BAGO ADL](docs/assets/readme-20261025/carousel.gif)
 
-**Chat · respuesta nueva con gpt-6-luna: dos pedidos ficticios, una lectura autorizada y citas de DEMO.md. Traza trace-496fac766f384348.**
+<details>
+<summary>Captura 01 · Traza e6ad19aa91275f3a7f069df126b86474: assistant.control, 11,6 ms, un span; registra la presentación/selección de capacidad, no el escaneo.</summary>
 
-![Workspace nuevo de la demostración del 22 de octubre de 2026 con el fixture DEMO.md](docs/assets/readme-20261022/workspace.png)
+![Jaeger mostrando la traza de selección de capacidad](docs/assets/readme-20261025/03-jaeger-capability-selection.png)
 
-**Workspace · carpeta nueva para la demostración, con datos ficticios propios y sin canon de proyecto.**
+**Traza e6ad19aa91275f3a7f069df126b86474: assistant.control, 11,6 ms, un span; registra la presentación/selección de capacidad, no el escaneo.**
 
-![Creación real del agente desde el borrador integrado en Chat el 22 de octubre de 2026](docs/assets/readme-20261022/chat-created.png)
+</details>
 
-**Chat y Agent Builder integrado · borrador, Preview y guardado del agente nuevo. El primer intento falló por model_registration_mismatch; se verificó el modelo en Settings y el segundo guardado terminó correctamente.**
+<details>
+<summary>Captura 02 · Traza 52ecd0539027d9ef6139ede1def3b8f9: raíz 4,116 s, dos spans. development_read fue denegada por development_root_mismatch; el hijo de 15 μs está marcado como projection, no como tiempo medido.</summary>
 
-![Inspect capturado el 22 de octubre de 2026 mostrando la traza histórica de Bruma y no la traza del nuevo chat](docs/assets/readme-20261022/inspect.png)
+![Jaeger mostrando una delegación de lectura denegada por raíz incompatible](docs/assets/readme-20261025/04-jaeger-delegation-denied.png)
 
-**Inspect · captura nueva de un artefacto anterior: muestra Bruma trace-5b385699ffda0529, distinta de la traza del chat nuevo. Hallazgo: no se observó vinculación automática desde esa conversación.**
+**Traza 52ecd0539027d9ef6139ede1def3b8f9: raíz 4,116 s, dos spans. development_read fue denegada por development_root_mismatch; el hijo de 15 μs está marcado como projection, no como tiempo medido.**
 
-**Profundizar:** [cómo se tomaron, identidad del servidor, observaciones y hashes](docs/assets/readme-20261022/README.md) · [guía del frontend](docs/readme_frontend.md).
+</details>
+
+<details>
+<summary>Captura 03 · Traza histórica ef52b03816307abf57decaa751282173: 22,318 s, 12 spans y 11 hijos. El chat terminó correctamente, pero la respuesta guardada declaró regression NOT_RUN y ninguna herramienta ejecutada.</summary>
+
+![Jaeger mostrando una traza histórica larga de agent.chat](docs/assets/readme-20261025/05-jaeger-historical-long-chat.png)
+
+**Traza histórica ef52b03816307abf57decaa751282173: 22,318 s, 12 spans y 11 hijos. El chat terminó correctamente, pero la respuesta guardada declaró regression NOT_RUN y ninguna herramienta ejecutada.**
+
+</details>
+
+<details>
+<summary>Captura 04 · Lectura puntual autorizada de workspace en AgentChat: ALLOW y 14 spans. La captura muestra la lectura entre dos rondas del proveedor; no demuestra una misión documental completa ni el cierre de la suite.</summary>
+
+![Jaeger con la traza live de agent.chat y el span workspace.read autorizado](docs/assets/readme-20261025/08-jaeger-workspace-read-live.png)
+
+**Lectura puntual autorizada de workspace en AgentChat: ALLOW y 14 spans. La captura muestra la lectura entre dos rondas del proveedor; no demuestra una misión documental completa ni el cierre de la suite.**
+
+</details>
+
+<details>
+<summary>Captura 05 · ANTES de la corrección del Historial de trabajos: el registro legacy estaba vacío. Esto no demuestra ausencia de conversaciones, TaskRuns ni otras ejecuciones; no representa el estado posterior a la reparación.</summary>
+
+![Historial de trabajos legacy vacío antes de su corrección](docs/assets/readme-20261025/09-work-history-legacy-empty.png)
+
+**ANTES de la corrección del Historial de trabajos: el registro legacy estaba vacío. Esto no demuestra ausencia de conversaciones, TaskRuns ni otras ejecuciones; no representa el estado posterior a la reparación.**
+
+</details>
+
+<details>
+<summary>Captura 06 · DESPUÉS de la reparación del Historial: cinco fuentes disponibles y filtro Trabajo legacy explícito. El vacío corresponde sólo a esa fuente; no demuestra ausencia de tareas ni que una misión haya terminado.</summary>
+
+![Historial unificado después de la reparación: cinco fuentes disponibles, filtro Trabajo legacy vacío](docs/assets/readme-20261025/10-work-history-unified-sources.png)
+
+**DESPUÉS de la reparación del Historial: cinco fuentes disponibles y filtro Trabajo legacy explícito. El vacío corresponde sólo a esa fuente; no demuestra ausencia de tareas ni que una misión haya terminado.**
+
+</details>
+
+**Profundizar:** [cómo se tomaron, identidad del servidor, observaciones y hashes](docs/verification/readme-captures-20261025.md) · [guía del frontend](docs/readme_frontend.md).
 
 ## Datos y conocimiento
 
@@ -350,7 +390,7 @@ Las matrices de skills y roles conservan las estimaciones de planificación del 
 
 El detalle histórico conserva trazabilidad y procedencia. Las imágenes de tutoriales anteriores siguen en sus documentos originales; la galería de esta portada contiene únicamente capturas nuevas.
 
-[Tutorial histórico de primer uso](docs/agent-chat-control/TUTORIAL_PRIMER_USO.md): conserva el recorrido de UI del 2026-10-19 con respuestas API sintéticas y sus referencias a la sesión histórica del 2026-10-10. No es evidencia de una ejecución nueva ni sustituye las capturas actuales del 2026-10-22.
+[Tutorial histórico de primer uso](docs/agent-chat-control/TUTORIAL_PRIMER_USO.md): conserva el recorrido de UI del 2026-10-19 con respuestas API sintéticas y sus referencias a la sesión histórica del 2026-10-10. No es evidencia de una ejecución nueva ni sustituye las capturas actuales del 2026-10-25.
 
 <details>
 <summary>Fases L0–L15: estados declarados y archivos de evidencia</summary>
@@ -512,7 +552,7 @@ flowchart LR
 ### L12 — Local Observability & Evals
 **Estado:** VERIFIED (local)
 
-**Código localizado:** [`src/evaluation/__init__.py`](src/evaluation/__init__.py) · [`src/evaluation/agent_lab.py`](src/evaluation/agent_lab.py) · [`src/evaluation/local_evals.py`](src/evaluation/local_evals.py) · (+5 archivos)
+**Código localizado:** [`src/evaluation/__init__.py`](src/evaluation/__init__.py) · [`src/evaluation/agent_lab.py`](src/evaluation/agent_lab.py) · [`src/evaluation/local_evals.py`](src/evaluation/local_evals.py) · (+6 archivos)
 **Tests:** [`tests/test_l12_observability.py`](tests/test_l12_observability.py)
 **Evidencia:** [`docs/observability_evals.md`](docs/observability_evals.md) · [`evidence/l12_observability_evals.md`](evidence/l12_observability_evals.md) · [`scripts/run_l12_observability_evidence.py`](scripts/run_l12_observability_evidence.py)
 **Patrones sin resolver:** `ninguno`
@@ -672,7 +712,7 @@ El catálogo es de referencia; la definición operativa sigue en `.github/agents
 | Área | Cobertura | Fuentes presentes / declaradas |
 |---|---|---|
 | Gobierno del proyecto | Estado, contrato, arquitectura, roadmap, aprendizaje y skills | 6/6 presentes |
-| Demo y portfolio | Tutoriales, walkthrough, snapshot y notas de release | 5/5 presentes |
+| Demo y portfolio | Tutoriales, walkthrough, snapshot y notas de release | 8/8 presentes |
 | Versionado | Versión declarada del repositorio | 1/1 presentes |
 
 **Gobierno del proyecto:**
@@ -691,6 +731,9 @@ El catálogo es de referencia; la definición operativa sigue en `.github/agents
 - [`docs/one_command_demo_walkthrough.md`](docs/one_command_demo_walkthrough.md) — canonical demo explanations and artifact walkthrough
 - [`docs/governed-execution/RUNTIME_FIXTURE_PROFILE.md`](docs/governed-execution/RUNTIME_FIXTURE_PROFILE.md) — perfil local GEX autenticado: configuración, fixture sintético, aprobación y recibos durables
 - [`docs/releases/RELEASE_NOTES_DEMO_V1.md`](docs/releases/RELEASE_NOTES_DEMO_V1.md) — frozen one-command demo v1.0.0 release notes
+- [`docs/progress/SPRINT_20261025_06.md`](docs/progress/SPRINT_20261025_06.md) — estado del historial integrado y resultado completo de la fuente aplicada; Jaeger global OPEN
+- [`docs/progress/SPRINT_20261025_07.md`](docs/progress/SPRINT_20261025_07.md) — carpeta y proyecto con revisión exacta; gate acotado validado, global NO GO y cuatro fallos abiertos
+- [`docs/progress/SPRINT_20261025_08.md`](docs/progress/SPRINT_20261025_08.md) — barra de metadatos runtime y límites; verificación acotada, global NO GO, portabilidad y autoverificación pendientes
 
 **Versionado:**
 
@@ -710,9 +753,9 @@ L0..L15 VERIFIED local + zero-cost rule. Snapshot for CV/LinkedIn.
 - SHA-256 sidecar: `evidence/portfolio_demo_v1.mp4.sha256`
 - Frame-set SHA-256 (deterministic): `f7417a1f5d03ac332000ffb31fe4d1f5ee69f9f4606692f779735d419d6645d2` — byte-stable across encoder runs
 - Boundaries:
-  - `verified_local`: L0..L15
   - `aws_live`: one bounded Bedrock Converse call (NOT_PROVEN zero-dollar billing)
   - `not_run`: AWS ConverseStream, Bedrock KB live, remote OpenMetadata, commercetools live, remote observability
+  - `verified_local`: L0..L15
 
 
 </details>

@@ -1,0 +1,3 @@
+# Document/image decoding in the delivered backend; OCR engine remains external.
+pypdf==6.13.1
+Pillow==12.2.0
