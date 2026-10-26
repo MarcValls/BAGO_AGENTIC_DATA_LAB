@@ -60,6 +60,20 @@ Playwright en Chromium devolvió HTTP 200, sin errores de página ni overflow ho
 
 Capturas de la candidata tras el cambio, en Temp: `C:\Users\AMTEC_Terminal_1º\AppData\Local\Temp\adl-review-candidate-20261026-e3e72364\frontend-polish-desktop.png` y `...\frontend-polish-mobile.png`.
 
+## Revisión live de permisos y respuesta del chat - 26 de octubre
+
+Se continuó en la candidata aislada de la PR #71 (`5194/8097`, API PID 34712), con el proyecto y el archivo de prueba sintéticos guardados en Temp. Al solicitar la lectura autorizada de `sample_a.py`, la UI emitió el permiso y recibió HTTP 200, pero antes del arreglo el backend devolvía `Conversation was not found`. La causa estaba en el middleware de scope: conversaciones y chats heredaban el proyecto activo, pero las rutas de autorización web/workspace y de escaneo no.
+
+Se añadió el scope de conversación a `POST /api/web-read/authorizations`, `POST /api/workspace-read/authorizations`, `POST /api/workspace-scan/authorizations` y `POST /api/workspace-scan/run`. La regresión `test_project_chat_authorizations_and_scan_keep_the_active_project_scope` verifica autorización de lectura y web, autorización y ejecución del escaneo en un proyecto, y denegación del permiso al cambiar a otro proyecto. Los dos tests enfocados de aislamiento pasaron.
+
+La repetición desde la UI confirmó `POST /api/workspace-read/authorizations` HTTP 200 y `POST /api/chat/control` HTTP 200. El modelo seleccionado `ollama-cloud/kimi-k2.6` respondió que no podía ejecutar la lectura porque `read_workspace_file` no estaba disponible en su contexto. Jaeger recuperó la traza `143e68539c91a6951dbfa1d67349374e`: una sola operación `assistant.control`, 9,819 ms, `workspace_read_count=0`. El archivo no se leyó. La captura del chat y la traza están en el manual; sus SHA-256 constan en `SPRINT_20261026_19_VERIFICATION.json`.
+
+### Hallazgos de interfaz y capacidad
+
+- El mensaje del modelo informa que la lectura no ocurrió, y la respuesta incluye acceso a Inspect/Jaeger; el pie reporta `0 solicitudes activas`. La interfaz no presenta en la propia respuesta una ficha compacta que diga `Herramienta no ejecutada` ni diferencia visualmente permiso emitido, herramienta invocada y recibo ALLOW. Un usuario tiene que abrir la traza para confirmar `workspace_read_count=0`.
+- El bloqueo principal es del recorrido del orquestador/proveedor: la respuesta de chat se completó sin llamada a `read_workspace_file`. No se cambiará la política de enrutamiento desde esta evaluación; los tests actuales preservan que el orquestador resuelva propietario/alcance antes de herramientas. Debe completarse esa ruta mediante un cambio funcional acotado y validación propia.
+- La autorización por proyecto ya pasa en la candidata modificada. La suite completa, el uso de herramientas desde un agente seleccionado y una respuesta correcta con lectura real siguen `NOT_RUN` en esta revisión.
+
 ## Pendientes recomendados por prioridad
 
 ### P0 - antes de afirmar integración del producto
@@ -71,6 +85,7 @@ Capturas de la candidata tras el cambio, en Temp: `C:\Users\AMTEC_Terminal_1º\A
 
 - El indicador “Actividad ADL” debe incorporar un contrato de progreso de jobs/task runs, no sólo peticiones HTTP, y presentar fase, duración y resultado. Hasta entonces debe conservar el rótulo limitado actual.
 - Hacer visible qué fuente del historial está ausente o parcial y permitir abrir el registro relacionado, el recibo y la traza desde la misma ficha.
+- Mostrar en cada respuesta que pidió una operación una ficha breve con estado observable: permiso emitido, herramienta invocada, decisión del recibo y enlace a la traza. No inferir una ejecución de un HTTP 200 ni de una respuesta del modelo.
 - En proveedores, separar con claridad proveedor registrado, habilitación para el orquestador/agente, modelo elegido y respuesta realmente verificada. El código actual del pie indica que sólo lee metadatos, lo cual es correcto pero insuficiente para diagnosticar disponibilidad.
 - Proporcionar una orientación inicial no ejecutable en el chat vacío, con ejemplos cortos para workspace, consulta documental y uso de agentes.
 

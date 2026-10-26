@@ -1,0 +1,99 @@
+{
+  "schema": "adl-sprint-verification.v1",
+  "sprint": "SPRINT_20261026_19",
+  "repository": "BAGO_AGENTIC_DATA_LAB",
+  "branch": "fix/project-workspace-chat-isolation-20261026",
+  "base_sha": "263bb76cf9a47f404b297808bd33b748833686be",
+  "head_before_sprint": "f0e28306610f5a869f617ef8f4586118e210128b",
+  "change_kind": "project_scoped_authorizations_and_frontend_evaluation",
+  "changes": {
+    "api_scope_routes": [
+      "/api/web-read/authorizations",
+      "/api/workspace-read/authorizations",
+      "/api/workspace-scan/authorizations",
+      "/api/workspace-scan/run"
+    ],
+    "regression_test": "tests/test_conversation_library.py::test_project_chat_authorizations_and_scan_keep_the_active_project_scope",
+    "manual": "docs/agent-chat-control/MANUAL_PARA_DUMMIES_CAPTURAS.md",
+    "frontend_evaluation": "docs/progress/FRONTEND_EVALUATION_20261026.md"
+  },
+  "runtime": {
+    "ui": "http://127.0.0.1:5194",
+    "ui_pid": 31076,
+    "api": "http://127.0.0.1:8097",
+    "api_pid": 34712,
+    "workspace_data": "synthetic Temp project",
+    "provider_model": "ollama-cloud/kimi-k2.6"
+  },
+  "verification": {
+    "focused_tests": {
+      "command": "python -m pytest tests/test_conversation_library.py tests/test_code_duplicates.py -q",
+      "result": "PASS",
+      "passed": 19,
+      "warnings": 1
+    },
+    "live_authorization": "PASS: POST /api/workspace-read/authorizations returned HTTP 200",
+    "live_chat": "HTTP 200; provider response received; workspace tool was not called",
+    "jaeger_trace": {
+      "trace_id": "143e68539c91a6951dbfa1d67349374e",
+      "url": "http://127.0.0.1:16689/trace/143e68539c91a6951dbfa1d67349374e",
+      "operation": "assistant.control",
+      "spans": 1,
+      "duration_ms": 9819,
+      "workspace_read_count": 0,
+      "conclusion": "NOT_RUN for workspace.read; the file was not read"
+    },
+    "screenshots": [
+      {
+        "path": "docs/agent-chat-control/assets/manual-ui-actual-2026-10-26/03-chat-read-not-executed.png",
+        "sha256": "6CC04D7890CFD789BD3352BAA26423F8BF7D043247902D63765D57547FB7C081",
+        "source": "visible candidate UI; synthetic project; the model explicitly declined tool use"
+      },
+      {
+        "path": "docs/agent-chat-control/assets/manual-ui-actual-2026-10-26/04-jaeger-chat-no-tool-call.png",
+        "sha256": "71B3B71327D0640B706F529898E691CB10AEF92E868198ADC81DD7CF36A9F66C",
+        "source": "live Jaeger trace of the same chat turn; one span; zero workspace reads"
+      }
+    ],
+    "readme_generator": {
+      "command": "python scripts/generate_dynamic_readme.py",
+      "result": "FAIL",
+      "exit_code": 1,
+      "pytest_summary": {
+        "passed": 1531,
+        "failed": 40,
+        "skipped": 2,
+        "warnings": 16,
+        "subtests_passed": 22
+      },
+      "failure_groups": {
+        "delivery_review": 4,
+        "document_tools_windows_ocr": 4,
+        "agent_services_integration": 3,
+        "chat_communications": 1,
+        "communications": 22,
+        "integrated_services": 3,
+        "render_portfolio_demo_video": 3
+      },
+      "readme_generated": false,
+      "note": "El generador falló antes de generar README. Ningún test fallido pertenece a test_conversation_library.py o test_code_duplicates.py."
+    },
+    "readme_check": {
+      "command": "python scripts/generate_dynamic_readme.py --check --skip-tests",
+      "result": "PASS",
+      "suite": "NOT_RUN; 1573 tests collected"
+    },
+    "github_push": "PENDING",
+    "github_ci": "PENDING",
+    "release_readiness": "NOT_VALIDATED"
+  },
+  "remaining": [
+    "Resolver o documentar con evidencia los 40 fallos actuales de la suite completa; no se compararon contra la base, por lo que no se clasifican como preexistentes",
+    "Cinco manuales sectoriales distintos con ejecuciones reales, capturas y evidencia Jaeger específica",
+    "Una lectura workspace.read exitosa desde el orquestador o un agente seleccionado",
+    "Un trabajo largo exitoso con recibo y traza Jaeger enlazados",
+    "Estado visible por respuesta para permiso, invocación de herramienta, recibo y traza",
+    "QA de teclado, lector de pantalla y zoom de navegador",
+    "Validación global del producto y release"
+  ]
+}

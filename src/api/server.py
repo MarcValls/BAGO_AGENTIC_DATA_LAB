@@ -720,6 +720,10 @@ async def conversation_project_scope(request: Request, call_next):
         path = request.url.path
         conversation_route = (path == "/api/conversations" or path.startswith("/api/conversations/")
                               or path == "/api/chat/control" or path == "/api/work-history"
+                              or path in {"/api/web-read/authorizations",
+                                          "/api/workspace-read/authorizations",
+                                          "/api/workspace-scan/authorizations",
+                                          "/api/workspace-scan/run"}
                               or (path == "/api/capabilities/proposals" and request.method == "POST")
                               or re.fullmatch(r"/api/agents/[^/]+/chat", path) is not None)
         if conversation_route:
