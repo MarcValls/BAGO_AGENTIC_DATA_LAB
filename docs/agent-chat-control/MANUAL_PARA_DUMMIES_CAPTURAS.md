@@ -18,7 +18,15 @@ Estas dos capturas se tomaron el 26 de octubre de 2026 desde la candidata de la 
 
 La captura siguiente documenta una lectura puntual de workspace autorizada en AgentChat: Jaeger mostró 14 spans y la operación `workspace.read` aparece con resultado ALLOW. Pertenece a una ejecución distinta de las dos capturas de interfaz anteriores; demuestra esa lectura concreta, no una misión de sector completa ni un recorrido integral de principio a fin.
 
-![Jaeger: lectura puntual autorizada de workspace en AgentChat](../../assets/readme-20261025/08-jaeger-workspace-read-live.png)
+![Jaeger: lectura puntual autorizada de workspace en AgentChat](../assets/readme-20261025/08-jaeger-workspace-read-live.png)
+
+### Diagnóstico real: permiso concedido, herramienta no invocada
+
+En una comprobación separada del chat general del entorno aislado `5194/8097`, se autorizó únicamente `sample_a.py`. La emisión del permiso respondió HTTP 200 y el envío al orquestador también respondió HTTP 200, pero el modelo indicó que no tenía la herramienta activa. La traza Jaeger `143e68539c91a6951dbfa1d67349374e` registró una sola operación `assistant.control`, de 9,819 ms, con `workspace_read_count=0`. Por tanto, **no se leyó el archivo** y este ejemplo no es una ejecución exitosa. Sirve para distinguir una autorización aceptada de una herramienta realmente ejecutada.
+
+![Chat general: respuesta explícita de que no se ejecutó la lectura](assets/manual-ui-actual-2026-10-26/03-chat-read-not-executed.png)
+
+![Jaeger: traza real de la respuesta sin lectura de workspace](assets/manual-ui-actual-2026-10-26/04-jaeger-chat-no-tool-call.png)
 
 Las cuatro primeras imágenes documentan el chat y sus respuestas dentro de la conversación:
 

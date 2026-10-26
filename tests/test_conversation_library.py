@@ -87,6 +87,52 @@ def test_conversation_api_scopes_requests_to_the_active_project(monkeypatch, tmp
     assert client.get(f"/api/conversations/{conversation['id']}").status_code == 200
 
 
+def test_project_chat_authorizations_and_scan_keep_the_active_project_scope(monkeypatch, tmp_path: Path):
+    (tmp_path / "sample.py").write_text("def answer():\n    return 42\n", encoding="utf-8")
+    source = tmp_path / "src"
+    source.mkdir()
+    (source / "one.py").write_text("a = 1\nb = 2\nc = 3\nd = 4\ne = 5\n", encoding="utf-8")
+    (source / "two.py").write_text("a = 1\nb = 2\nc = 3\nd = 4\ne = 5\n", encoding="utf-8")
+
+    monkeypatch.setattr(server, "CONVERSATIONS", ConversationStore(tmp_path / "library.sqlite3"))
+    monkeypatch.setattr(server, "WORKSPACE_ROOT", tmp_path)
+    monkeypatch.setattr(server, "_WORKSPACE_ROOT_PINNED", True)
+    monkeypatch.setattr(server, "REPO_ROOT", tmp_path)
+    monkeypatch.setattr(server, "current_workspace_root", lambda: tmp_path.resolve())
+    active = {"id": "workspace_project_a"}
+    monkeypatch.setattr(server, "_active_conversation_project_id", lambda: active["id"])
+    client = TestClient(server.app)
+
+    created = client.post("/api/conversations", json={"owner_kind": "assistant"})
+    assert created.status_code == 200
+    conversation = created.json()
+    payload = {
+        "owner_kind": "assistant", "owner_id": "app-assistant",
+        "conversation_id": conversation["id"], "revision": conversation["revision"],
+    }
+
+    read_grant = client.post("/api/workspace-read/authorizations", json={**payload, "paths": ["sample.py"]})
+    assert read_grant.status_code == 200
+    assert read_grant.json()["paths"] == ["sample.py"]
+
+    web_grant = client.post("/api/web-read/authorizations", json={**payload, "urls": ["https://example.com"]})
+    assert web_grant.status_code == 200
+
+    scan_grant = client.post("/api/workspace-scan/authorizations", json={**payload, "directories": ["src"]})
+    assert scan_grant.status_code == 200
+    scan = client.post("/api/workspace-scan/run", json={
+        "conversation_id": conversation["id"], "revision": conversation["revision"],
+        "authorization_id": scan_grant.json()["authorization_id"], "directory": "src",
+    })
+    assert scan.status_code == 200
+    assert scan.json()["receipt"]["decision"] == "ALLOW"
+    assert scan.json()["result"]["files_scanned"] == 2
+
+    active["id"] = "workspace_project_b"
+    assert client.get("/api/conversations").json()["conversations"] == []
+    assert client.post("/api/workspace-read/authorizations", json={**payload, "paths": ["sample.py"]}).status_code == 404
+
+
 def test_request_workspace_root_stays_bound_if_another_request_switches_project(monkeypatch, tmp_path: Path):
     project_a = tmp_path / "project-a"
     project_b = tmp_path / "project-b"
