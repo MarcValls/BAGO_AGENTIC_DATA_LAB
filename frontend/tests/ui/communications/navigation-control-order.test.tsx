@@ -25,7 +25,10 @@ afterEach(()=>{cleanup();vi.unstubAllGlobals();localStorage.clear();resetLocaleF
 it('keeps Settings uniquely in its original footer and orders actual controls while retaining Chat, localized focus/draft and groups',async()=>{
  const view=render(<App/>),sidebar=view.container.querySelector('.workspace-sidebar') as HTMLElement
  const buttons=within(sidebar).getAllByRole('button')
- expect(buttons.map(b=>b.getAttribute('aria-label')||b.textContent?.trim())).toEqual(['Espacio de trabajo','Chat','Agentes','Capacidades','Comunicaciones','Abrir inspector','Abrir configuración'])
+ const controlNames=buttons.map(button=>button.getAttribute('aria-label')||button.querySelector('.navigation-item-icon')?.nextElementSibling?.textContent?.trim()||button.textContent?.trim())
+ expect(controlNames).toEqual(['Espacio de trabajo','BAGO5','Chat','Capacidades','Agentes','Comunicaciones','Abrir inspector','Abrir configuración'])
+ const chatGroup=within(within(sidebar).getByRole('navigation',{name:'Área de interacción'})).getByRole('group',{name:'Chat'})
+ expect(within(chatGroup).getAllByRole('button').map(button=>button.querySelector('.navigation-item-icon')?.nextElementSibling?.textContent?.trim())).toEqual(['Chat','Capacidades'])
  const menuToggle=screen.getByRole('button',{name:'Contraer barra lateral'})
  expect(menuToggle.closest('.app-menu-brand')?.querySelector('img')?.getAttribute('src')).toBe('/brand/BAGO_logotipo_horizontal.svg');expect(menuToggle.getAttribute('aria-controls')).toBe(sidebar.id)
  expect(menuToggle.compareDocumentPosition(sidebar)&Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
@@ -34,7 +37,8 @@ it('keeps Settings uniquely in its original footer and orders actual controls wh
  expect(sidebar.querySelector('footer .settings-trigger')).toBe(within(sidebar).getByRole('button',{name:'Abrir configuración'}))
  expect(sidebar.querySelector('.primary-navigation .settings-trigger')).toBeNull()
  const manual=within(sidebar).getByRole('link',{name:'Manual'})
- expect(buttons[5].compareDocumentPosition(manual)&Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
+ const inspector=within(sidebar).getByRole('button',{name:'Abrir inspector'})
+ expect(inspector.compareDocumentPosition(manual)&Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
  expect(within(sidebar).getByRole('button',{name:'Chat'}).getAttribute('aria-current')).toBe('page')
  const draft=screen.getByRole('textbox',{name:'Mensaje al asistente o agente seleccionado'}) as HTMLTextAreaElement
  fireEvent.change(draft,{target:{value:'UNSENT_USER_DRAFT'}})
