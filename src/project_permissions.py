@@ -130,7 +130,12 @@ def _revision(policy: dict[str, object]) -> str:
     return hashlib.sha256(_policy_bytes(policy)).hexdigest()
 
 
-def _safe_relative_directory(root: Path, value: str) -> str:
+def _blocked_component(value: str) -> bool:
+    folded = value.casefold()
+    return folded in _BLOCKED or folded.startswith(".env.") or bool(_SENSITIVE.search(value)) or bool(_RESERVED.fullmatch(value))
+
+
+def _safe_relative_directory(root: Path, value: str, *, allow_missing: bool = False) -> str:
     if not isinstance(value, str) or not value or value.startswith(("/", "\\")) or _DRIVE.match(value) or "\\" in value or ":" in value or "\x00" in value:
         raise _deny("invalid_permission_request")
     if value == ".":
@@ -138,23 +143,39 @@ def _safe_relative_directory(root: Path, value: str) -> str:
     parts = value.split("/")
     if any(not part or part in {".", ".."} or part != part.rstrip(" .") or any(ord(char) < 32 or char in '<>"|?*' for char in part) for part in parts):
         raise _deny("invalid_permission_request")
-    if any(part.casefold() in _BLOCKED or _SENSITIVE.search(part) or _RESERVED.fullmatch(part) for part in parts):
+    if any(_blocked_component(part) for part in parts):
         raise _deny("invalid_permission_request")
     raw = root.joinpath(*parts)
-    _inspect_no_links(raw, allow_missing=False)
+    # A persisted exact-file grant must remain readable as policy metadata if
+    # that file is later removed. Effect leases still validate the requested
+    # target at use time, and writes can legitimately target a not-yet-created
+    # leaf. Existing targets are restricted to real directories or single-link
+    # regular files.
+    _inspect_no_links(raw, allow_missing=allow_missing)
     try:
-        resolved = raw.resolve(strict=True)
+        resolved = raw.resolve(strict=False)
     except (OSError, RuntimeError):
         raise _deny("project_path_unavailable", 409) from None
-    if resolved != root and root not in resolved.parents or not resolved.is_dir():
+    if resolved != root and root not in resolved.parents:
         raise _deny("invalid_permission_request")
+    try:
+        info = raw.lstat()
+    except FileNotFoundError:
+        if not allow_missing:
+            raise _deny("project_path_unavailable", 409) from None
+        info = None
+    except OSError:
+        raise _deny("project_path_unavailable", 409) from None
+    if info is not None and not stat.S_ISDIR(info.st_mode):
+        if not stat.S_ISREG(info.st_mode) or info.st_nlink != 1:
+            raise _deny("invalid_permission_request")
     return "/".join(parts)
 
 
-def _normalise_directories(root: Path, values: Sequence[str]) -> list[str]:
+def _normalise_directories(root: Path, values: Sequence[str], *, allow_missing: bool = False) -> list[str]:
     if isinstance(values, (str, bytes)) or not isinstance(values, Sequence) or len(values) > _MAX_DIRS:
         raise _deny("invalid_permission_request")
-    result = sorted({_safe_relative_directory(root, item) for item in values}, key=lambda item: (item.casefold(), item))
+    result = sorted({_safe_relative_directory(root, item, allow_missing=allow_missing) for item in values}, key=lambda item: (item.casefold(), item))
     return result
 
 
@@ -280,7 +301,7 @@ class ProjectPermissions:
             values = policy[field]
             if not isinstance(values, list) or len(values) > _MAX_DIRS or any(not isinstance(item, str) for item in values):
                 raise _deny("project_policy_invalid", 503)
-            normalized = _normalise_directories(root, values)
+            normalized = _normalise_directories(root, values, allow_missing=True)
             if normalized != values:
                 raise _deny("project_policy_invalid", 503)
         return policy
@@ -305,7 +326,7 @@ class ProjectPermissions:
 
     def browse_directories(self, *, expected_project_id: str, expected_binding: str,
                            expected_revision: str, directory: str) -> dict[str, object]:
-        """List one level of real project directories for the human permission editor.
+        """List one level of safe project files and directories for the permission editor.
 
         This is configuration metadata, not a READ lease. It intentionally does
         not create the permission directory, policy, lock, or any other state.
@@ -354,26 +375,30 @@ class ProjectPermissions:
                         break
                     scanned += 1
                     # Names only. Never follow an entry link/junction, and do
-                    # not expose protected directory names in the chooser.
+                    # not expose protected names in the chooser.
                     name = entry.name
-                    if (not name or name.casefold() in _BLOCKED or _SENSITIVE.search(name)
-                            or _RESERVED.fullmatch(name)):
+                    if not name or _blocked_component(name):
                         continue
                     try:
                         child = resolved_target / name
                         _inspect_no_links(child, allow_missing=False)
-                        if not entry.is_dir(follow_symlinks=False):
-                            continue
                         resolved_child = child.resolve(strict=True)
-                        if (resolved_child != root and root not in resolved_child.parents) or not resolved_child.is_dir():
+                        if resolved_child != root and root not in resolved_child.parents:
                             raise _deny("project_path_denied")
+                        info = child.lstat()
+                        if stat.S_ISDIR(info.st_mode):
+                            kind = "directory"
+                        elif stat.S_ISREG(info.st_mode) and info.st_nlink == 1:
+                            kind = "file"
+                        else:
+                            continue
                     except PermissionError:
                         # Junctions/reparse points are not traversable or
                         # discoverable in the human tree.
                         continue
                     except (OSError, RuntimeError):
                         raise _deny("directory_listing_unavailable", 503) from None
-                    candidates.append((name, relative + "/" + name if relative != "." else name))
+                    candidates.append((name, relative + "/" + name if relative != "." else name, kind))
                     if len(candidates) > _MAX_TREE_CHILDREN:
                         scan_truncated = True
                         break
@@ -388,7 +413,9 @@ class ProjectPermissions:
 
         candidates.sort(key=lambda item: (item[0].casefold(), item[0]))
         truncated = scan_truncated or len(candidates) > _MAX_TREE_CHILDREN
-        children = [{"name": name, "path": path} for name, path in candidates[:_MAX_TREE_CHILDREN]]
+        children = [{"name": name, "path": path} for name, path, kind in candidates[:_MAX_TREE_CHILDREN] if kind == "directory"]
+        files = [{"name": name, "path": path} for name, path, kind in candidates[:_MAX_TREE_CHILDREN] if kind == "file"]
+        entries = [{"name": name, "path": path, "kind": kind} for name, path, kind in candidates[:_MAX_TREE_CHILDREN]]
 
         # Bind the response to the same active selection and permission revision
         # after enumeration. A project switch or concurrent save invalidates it.
@@ -402,7 +429,7 @@ class ProjectPermissions:
         self._assert_expected(current, after, expected_project_id, expected_binding, expected_revision)
         return {"project_id": context.project_id, "root": str(root), "binding": context.binding,
                 "revision": before["revision"], "directory": relative,
-                "directories": children, "truncated": truncated}
+                "directories": children, "files": files, "entries": entries, "truncated": truncated}
 
     def _assert_expected(self, context: ProjectContext, snapshot: dict[str, object], project_id: str, binding: str, revision: str) -> None:
         if context.project_id != project_id or context.binding != binding:
@@ -446,8 +473,18 @@ class ProjectPermissions:
             old = self._load(current, root, identity, policy_path)
             snapshot = self._snapshot(current, root, identity, old)
             self._assert_expected(current, snapshot, expected_project_id, expected_binding, expected_revision)
-            reads = _normalise_directories(root, read_directories)
-            writes = _normalise_directories(root, write_directories)
+            # Keep stale explicit scopes editable after a file or folder is
+            # removed. They do not authorize an out-of-root path, and leases
+            # still revalidate the requested target immediately before IO.
+            reads = _normalise_directories(root, read_directories, allow_missing=True)
+            writes = _normalise_directories(root, write_directories, allow_missing=True)
+            previous_reads = set(old["read_directories"]) if old else set()
+            previous_writes = set(old["write_directories"]) if old else set()
+            for effect_scopes, previously_granted in ((reads, previous_reads), (writes, previous_writes)):
+                for scope in effect_scopes:
+                    target = root if scope == "." else root.joinpath(*scope.split("/"))
+                    if not target.exists() and scope not in previously_granted:
+                        raise _deny("project_path_unavailable", 409)
             counter = int(old["revision_counter"]) + 1 if old else 1
             policy: dict[str, object] = {"schema": _SCHEMA, "project_id": current.project_id,
                 "root": str(root), "physical_root": identity, "revision_counter": counter,
