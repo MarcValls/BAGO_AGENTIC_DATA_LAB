@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 import React from 'react'
 import {afterEach,beforeEach,expect,it,vi} from 'vitest'
-import {act,cleanup,fireEvent,render,screen,waitFor} from '@testing-library/react'
+import {act,cleanup,fireEvent,render,screen,waitFor,within} from '@testing-library/react'
 import {resetLocaleForTests,t} from '../../src/i18n'
 import AgentChat from '../../src/components/AgentChat'
 import {openDelegatedChild,withPersistedDelegation} from '../helpers/delegated-agent-chat'
@@ -24,6 +24,9 @@ it('delegates one selected producer snapshot and contact to the reviewer, with p
    if(path==='/api/agents/list')return response({agents:[agent]})
    if(path.startsWith('/api/providers/chat-models'))return response({models:[{provider_id:'ollama-cloud',label:'Ollama',state:'ready',model_id:'fixture-model',chat_enabled:true}]})
    if(path==='/api/providers/selection')return response({provider_id:'ollama-cloud',model_id:'fixture-model'})
+   if(path==='/api/project-folders/v1/active')return response({project_id:'project-review',title:'Proyecto de revisión',scope:'project',root:'C:/synthetic'})
+   if(path==='/api/project-permissions')return response({project_id:'project-review',root:'C:/synthetic',binding:{workspace_root:'C:/synthetic'},revision:1,state:'configured',read_directories:[],write_directories:[]})
+   if(path==='/api/project-permissions/directories')return response({project_id:'project-review',root:'C:/synthetic',binding:{workspace_root:'C:/synthetic'},revision:1,directory:body?.directory??'.',directories:[],files:[],entries:[],truncated:false})
    if(path.startsWith('/api/conversations?'))return response({conversations:path.includes('owner_kind=agent')?[conversation,otherConversation]:[assistant]})
    if(path==='/api/conversations/conv-assistant')return response(assistant)
    if(path==='/api/conversations/conv-review')return response(conversation)
@@ -39,7 +42,7 @@ it('delegates one selected producer snapshot and contact to the reviewer, with p
  render(<AgentChat cognitiveMode="baseline" onNavigate={()=>{}} onOpenProviderSettings={()=>{}} onOpenCognitionSettings={()=>{}}/>)
  await screen.findByRole('region',{name:assistant.id});await act(async()=>{})
  await openDelegatedChild('Revisor fixture');await act(async()=>{})
- fireEvent.click(screen.getByText(t('agentTools.workspace')))
+  fireEvent.click(screen.getByRole('button',{name:/Proyecto/}));fireEvent.click(screen.getByRole('button',{name:'Administrar acceso'}));const accessDialog=await screen.findByRole('dialog',{name:'Acceso y carpeta de trabajo'});fireEvent.click(within(accessDialog).getByText(t('agentTools.workspace'),{selector:'summary'}))
  fireEvent.change(await screen.findByLabelText(t('agentTools.work')),{target:{value:run.work_id}})
  fireEvent.change(screen.getByLabelText(t('agentTools.contact')),{target:{value:'contact_fixture'}})
  fireEvent.click(screen.getByLabelText(t('agentTools.scopeGrant')))

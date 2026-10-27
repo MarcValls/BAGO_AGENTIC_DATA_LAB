@@ -1200,29 +1200,59 @@ export default function AgentChat({ onInspectionSelection, onInspectExecution, o
           {allowPublicWebRead && <section aria-label={t('commerce.public_web_reading_scope')}><label className="workspace-read-paths">{t('commerce.entry_https_urls_one_per_line')}<textarea rows={3} value={publicWebUrls} onChange={event => setPublicWebUrls(event.target.value)} placeholder="https://www.ejemplo.com/" maxLength={16384} disabled={sending} /></label><p>{t('commerce.this_turn_only_public_pages_from_these_origins')}</p><ul aria-label={t('commerce.requested_web_origins')}>{[...new Set(publicWebUrls.split(/\r?\n/).map(value => {try {return new URL(value.trim()).origin} catch {return value.trim() ? t('commerce.invalid_url',{url:value.trim()}) : ''}}).filter(Boolean))].map(origin => <li key={origin}><code>{origin}</code></li>)}</ul></section>}
 
         </form>
-        {!selectedAgent && <DevelopmentPanel key="app-assistant-context" ownerId={ownerId} disabled={sending} initialOpen showChanges={false} historyContent={conversationLibrary} workspaceContent={<><ProjectPermissions projectId={activeProject?.project_id ?? null} projectRoot={activeProject?.root ?? null} refreshKey={workspaceScopeVersion}/><details className="project-sidebar-section workspace-read-paths" open><summary>{t('agentTools.workspace')}</summary><div className="project-sidebar-section-body"><p>Los permisos READ/WRITE persistentes se administran arriba. Abrir el espacio de trabajo permite cambiar de proyecto.</p><button type="button" onClick={()=>onNavigate('workspace')}>Abrir espacio de trabajo</button></div></details></>}/> }
-        {selectedAgent && <DevelopmentPanel key={selectedAgent.id} ownerId={selectedAgent.id} disabled={sending} initialOpen={false} showChanges={Boolean(selectedAgent.config.tools?.some(tool=>tool.startsWith('development_')))} workspaceContent={<><ProjectPermissions projectId={activeProject?.project_id ?? null} projectRoot={activeProject?.root ?? null} refreshKey={workspaceScopeVersion}/>{selectedAgent.config.tools?.some(tool=>['document_','filesystem_','delivery_','development_'].some(prefix=>tool.startsWith(prefix))) && <details className="workspace-read-paths project-sidebar-section"><summary>{t('agentTools.workspace')}</summary><div className="project-sidebar-section-body"><p className="project-sidebar-scope">Los permisos del proyecto se conservan entre conversaciones. Las operaciones de escritura propuestas requieren revisión y confirmación humanas.</p>
-            <button type="button" disabled={sending||documentBrowseBusy} onClick={()=>void browseDocuments()}>{t('agentTools.chooseFolder')}</button>
-            {documentBrowseError && <p role="alert">{documentBrowseError}</p>}
-            {documentFolders && <div aria-label={t('agentTools.browser')}>
-              <nav aria-label={t('agentTools.allowedFolders')}>{documentFolders.roots.map(root=><button type="button" key={root.path} disabled={documentBrowseBusy} onClick={()=>void browseDocuments(root.path)}>{root.name}</button>)}</nav>
-              {documentFolders.path && <><p><code>{documentFolders.path}</code></p><button type="button" disabled={documentBrowseBusy} onClick={()=>{setDocumentRoot(documentFolders.path!);setDocumentConsent(false);setDocumentOutputConsent(false);setDocumentFolders(null)}}>{t('agentTools.useFolder')}</button></>}
-              {documentFolders.parent && <button type="button" disabled={documentBrowseBusy} onClick={()=>void browseDocuments(documentFolders.parent!)}>{t('agentTools.parent')}</button>}
-              <ul>{documentFolders.directories.map(folder=><li key={folder.path}><button type="button" disabled={documentBrowseBusy} onClick={()=>void browseDocuments(folder.path)}>{folder.name}</button></li>)}</ul>
-            </div>}
-            {selectedAgent.config.tools?.some(tool=>tool.startsWith('delivery_'))&&<section aria-label={t('agentTools.deliveryReview')}>
-              <button type="button" disabled={sending} onClick={()=>void loadReviewContext()}>{t('agentTools.reloadResults')}</button>
-              {reviewContextError&&<p role="alert">{t('agentTools.contextUnavailable')}</p>}
-              <label>{t('agentTools.work')}<select value={reviewWork} disabled={sending} onChange={event=>{const run=reviewContext.runs.find(item=>item.work_id===event.target.value);setReviewWork(event.target.value);if(run)setDocumentRoot(run.source_root);setDocumentConsent(false);setDraftConsent(false)}}><option value="">{t('agentTools.chooseWork')}</option>{reviewContext.runs.map(run=><option key={run.work_id} value={run.work_id}>{run.producer_name||run.owner_id} · {run.artifacts.map(a=>a.path.split('/').pop()).join(', ')} · {run.business_acceptance==='PASS'?t('agentTools.readyReview'):t('agentTools.contentPending')}</option>)}</select></label>
-              {!reviewContext.runs.length&&<p>{t('agentTools.noWork')}</p>}
-              <label>{t('agentTools.contact')}<select value={reviewContact} disabled={sending} onChange={event=>{setReviewContact(event.target.value);setDraftConsent(false);setDocumentConsent(false)}}><option value="">{t('agentTools.chooseContact')}</option>{reviewContext.contacts.map(contact=><option key={contact.id} value={contact.id}>{contact.name} · {contact.phone}</option>)}</select></label>
-              <button type="button" onClick={()=>onNavigate('communications')}>{t('agentTools.manageContacts')}</button>
-              {selectedAgent.config.tools.includes('delivery_prepare_draft')&&<label><input type="checkbox" checked={draftConsent} disabled={sending||!documentConsent||!reviewWork||!reviewContact} onChange={event=>setDraftConsent(event.target.checked)}/>{t('agentTools.allowDraft')}</label>}
-            </section>}
-            {documentRoot && <><p><code>{documentRoot}</code></p><label><input type="checkbox" checked={documentConsent} disabled={sending} onChange={event=>setDocumentConsent(event.target.checked)}/>{t('agentTools.scopeGrant')}</label>
-              {selectedAgent.config.tools.includes('document_export') && <label><input type="checkbox" checked={documentOutputConsent} disabled={sending||!documentConsent||!documentOutputDirectory} onChange={event=>setDocumentOutputConsent(event.target.checked)}/>{t('agentTools.reportGrant')}<code>{documentOutputDirectory}</code></label>}
-              <p>{t('agentTools.confirmationNotice')}</p></>}
-          </div></details>}</>}/>}
+        {!selectedAgent && <DevelopmentPanel key="app-assistant-context" ownerId={ownerId} disabled={sending} initialOpen showChanges={false} historyContent={conversationLibrary} workspaceContent={
+          <ProjectPermissions
+            projectId={activeProject?.project_id ?? null}
+            projectRoot={activeProject?.root ?? null}
+            refreshKey={workspaceScopeVersion}
+            workspaceContent={<>
+              <p>Las herramientas usan los permisos guardados del proyecto. Abrir este panel no consulta archivos.</p>
+              <button type="button" onClick={() => onNavigate('workspace')}>Abrir espacio de trabajo</button>
+              <p>Puedes indicar rutas concretas en el mensaje.</p>
+            </>}
+          />
+        } />}
+        {selectedAgent && <DevelopmentPanel key={selectedAgent.id} ownerId={selectedAgent.id} disabled={sending} initialOpen={false} showChanges={Boolean(selectedAgent.config.tools?.some(tool=>tool.startsWith('development_')))} workspaceContent={
+          <ProjectPermissions
+            projectId={activeProject?.project_id ?? null}
+            projectRoot={activeProject?.root ?? null}
+            refreshKey={workspaceScopeVersion}
+            workspaceContent={
+              <>
+                <p>Las herramientas usan los permisos guardados del proyecto. Abrir esta sección no consulta archivos.</p>
+                <button type="button" onClick={() => onNavigate('workspace')}>Abrir espacio de trabajo</button>
+                {selectedAgent.config.tools?.some(tool=>['document_','filesystem_','delivery_','development_'].some(prefix=>tool.startsWith(prefix))) && (
+                  <details className="workspace-read-paths project-sidebar-section">
+                    <summary>{t('agentTools.workspace')}</summary>
+                    <div className="project-sidebar-section-body">
+                      <p className="project-sidebar-scope">Los permisos del proyecto se conservan entre conversaciones. Las operaciones de escritura propuestas requieren revisión y confirmación humanas.</p>
+                      <button type="button" disabled={sending||documentBrowseBusy} onClick={()=>void browseDocuments()}>{t('agentTools.chooseFolder')}</button>
+                      {documentBrowseError && <p role="alert">{documentBrowseError}</p>}
+                      {documentFolders && <div aria-label={t('agentTools.browser')}>
+                        <nav aria-label={t('agentTools.allowedFolders')}>{documentFolders.roots.map(root=><button type="button" key={root.path} disabled={documentBrowseBusy} onClick={()=>void browseDocuments(root.path)}>{root.name}</button>)}</nav>
+                        {documentFolders.path && <><p><code>{documentFolders.path}</code></p><button type="button" disabled={documentBrowseBusy} onClick={()=>{setDocumentRoot(documentFolders.path!);setDocumentConsent(false);setDocumentOutputConsent(false);setDocumentFolders(null)}}>{t('agentTools.useFolder')}</button></>}
+                        {documentFolders.parent && <button type="button" disabled={documentBrowseBusy} onClick={()=>void browseDocuments(documentFolders.parent!)}>{t('agentTools.parent')}</button>}
+                        <ul>{documentFolders.directories.map(folder=><li key={folder.path}><button type="button" disabled={documentBrowseBusy} onClick={()=>void browseDocuments(folder.path)}>{folder.name}</button></li>)}</ul>
+                      </div>}
+                      {selectedAgent.config.tools?.some(tool=>tool.startsWith('delivery_'))&&<section aria-label={t('agentTools.deliveryReview')}>
+                        <button type="button" disabled={sending} onClick={()=>void loadReviewContext()}>{t('agentTools.reloadResults')}</button>
+                        {reviewContextError&&<p role="alert">{t('agentTools.contextUnavailable')}</p>}
+                        <label>{t('agentTools.work')}<select value={reviewWork} disabled={sending} onChange={event=>{const run=reviewContext.runs.find(item=>item.work_id===event.target.value);setReviewWork(event.target.value);if(run)setDocumentRoot(run.source_root);setDocumentConsent(false);setDraftConsent(false)}}><option value="">{t('agentTools.chooseWork')}</option>{reviewContext.runs.map(run=><option key={run.work_id} value={run.work_id}>{run.producer_name||run.owner_id} · {run.artifacts.map(a=>a.path.split('/').pop()).join(', ')} · {run.business_acceptance==='PASS'?t('agentTools.readyReview'):t('agentTools.contentPending')}</option>)}</select></label>
+                        {!reviewContext.runs.length&&<p>{t('agentTools.noWork')}</p>}
+                        <label>{t('agentTools.contact')}<select value={reviewContact} disabled={sending} onChange={event=>{setReviewContact(event.target.value);setDraftConsent(false);setDocumentConsent(false)}}><option value="">{t('agentTools.chooseContact')}</option>{reviewContext.contacts.map(contact=><option key={contact.id} value={contact.id}>{contact.name} · {contact.phone}</option>)}</select></label>
+                        <button type="button" onClick={()=>onNavigate('communications')}>{t('agentTools.manageContacts')}</button>
+                        {selectedAgent.config.tools.includes('delivery_prepare_draft')&&<label><input type="checkbox" checked={draftConsent} disabled={sending||!documentConsent||!reviewWork||!reviewContact} onChange={event=>setDraftConsent(event.target.checked)}/>{t('agentTools.allowDraft')}</label>}
+                      </section>}
+                      {documentRoot && <><p><code>{documentRoot}</code></p><label><input type="checkbox" checked={documentConsent} disabled={sending} onChange={event=>setDocumentConsent(event.target.checked)}/>{t('agentTools.scopeGrant')}</label>
+                        {selectedAgent.config.tools.includes('document_export') && <label><input type="checkbox" checked={documentOutputConsent} disabled={sending||!documentConsent||!documentOutputDirectory} onChange={event=>setDocumentOutputConsent(event.target.checked)}/>{t('agentTools.reportGrant')}<code>{documentOutputDirectory}</code></label>}
+                        <p>{t('agentTools.confirmationNotice')}</p></>}
+                    </div>
+                  </details>
+                )}
+              </>
+            }
+          />
+        } />}
         <div className="chat-agent-panel-slot" ref={setAgentPanelTarget} />
       </WindowPanel>
       {menuMessage && messageContextMenu && createPortal(<div ref={messageMenuRef} className="chat-message-context-menu" role="menu" aria-labelledby={`message-author-${menuMessage.id}`} style={{ left: messageContextMenu.x, top: messageContextMenu.y }} onKeyDown={event => {

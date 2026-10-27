@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 import React from 'react'
 import {afterEach, beforeEach, expect, it, vi} from 'vitest'
-import {act, cleanup, fireEvent, render, screen, waitFor} from '@testing-library/react'
+import {act, cleanup, fireEvent, render, screen, waitFor, within} from '@testing-library/react'
 import AgentChat from '../../src/components/AgentChat'
 import {resetLocaleForTests, setLocale, t} from '../../src/i18n'
 
@@ -159,9 +159,15 @@ it('prefills the existing suggestion without sending or creating an empty conver
 
 it('uses saved project permissions independently from the explicit one-turn web grant', async () => {
   const f = await fixture()
-  expect(screen.getByText('src')).toBeTruthy()
+  const projectPanel = screen.getByRole('region', {name: 'Contexto del proyecto'})
+  expect(within(projectPanel).getByRole('button', {name: 'Administrar acceso'})).toBeTruthy()
+  expect(within(projectPanel).queryByText('src')).toBeNull()
   expect(screen.queryByLabelText('Permitir lectura de archivos del proyecto')).toBeNull()
   expect(screen.queryByLabelText('Rutas relativas al proyecto')).toBeNull()
+  fireEvent.click(within(projectPanel).getByRole('button', {name: 'Administrar acceso'}))
+  const accessDialog = await screen.findByRole('dialog', {name: 'Acceso y carpeta de trabajo'})
+  expect(within(accessDialog).getByText('src', {selector: '.project-permissions__scope code'})).toBeTruthy()
+  fireEvent.click(within(accessDialog).getByRole('button', {name: 'Cerrar'}))
   fireEvent.click(screen.getByLabelText('Permitir lectura web p\u00fablica'))
   fireEvent.change(screen.getByLabelText('URL HTTPS de entrada \u00b7 una por l\u00ednea'), {target: {value: 'https://example.com/'}})
   await send(f.input, naturalMessages[0])

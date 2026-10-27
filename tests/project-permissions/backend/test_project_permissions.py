@@ -97,6 +97,78 @@ def test_explicit_save_read_write_and_revoke_change_revision(tmp_path: Path) -> 
     assert revoked["revision"] != granted["revision"]
 
 
+def test_exact_file_grants_are_persistent_and_do_not_include_siblings(tmp_path: Path) -> None:
+    root = tmp_path / "project"
+    root.mkdir()
+    (root / "notes.txt").write_text("selected", encoding="utf-8")
+    (root / "other.txt").write_text("not selected", encoding="utf-8")
+    svc = service(root)
+
+    granted = save_all(svc, read=("notes.txt",), write=("other.txt",))
+    assert granted["read_directories"] == ["notes.txt"]
+    assert granted["write_directories"] == ["other.txt"]
+    with svc.lease("read", ("notes.txt",)):
+        pass
+    with pytest.raises(PermissionError):
+        with svc.lease("read", ("other.txt",)):
+            pytest.fail("an exact file grant must not include sibling files")
+    with svc.lease("write", ("other.txt",)):
+        pass
+    with pytest.raises(PermissionError):
+        with svc.lease("write", ("notes.txt",)):
+            pytest.fail("a READ grant must not imply WRITE")
+
+    (root / "notes.txt").unlink()
+    restarted = service(root)
+    restored = restarted.snapshot()
+    assert restored["read_directories"] == ["notes.txt"]
+    cleared = save_all(restarted, read=(), write=())
+    assert cleared["read_directories"] == []
+
+
+def test_exact_file_grant_rejects_symlinks_hardlinks_and_sensitive_paths(tmp_path: Path) -> None:
+    root = tmp_path / "project"
+    root.mkdir()
+    (root / "ordinary.txt").write_text("ordinary", encoding="utf-8")
+    (root / "api_token.txt").write_text("secret", encoding="utf-8")
+    outside = tmp_path / "outside.txt"
+    outside.write_text("outside", encoding="utf-8")
+    svc = service(root)
+
+    with pytest.raises(PermissionError):
+        save_all(svc, read=("api_token.txt",), write=())
+    hardlink = root / "hardlink.txt"
+    os.link(outside, hardlink)
+    with pytest.raises(PermissionError):
+        save_all(svc, read=("hardlink.txt",), write=())
+    symlink = root / "symlink.txt"
+    try:
+        symlink.symlink_to(outside)
+    except (OSError, NotImplementedError):
+        pytest.skip("symlinks are unavailable on this host")
+    with pytest.raises(PermissionError):
+        save_all(svc, read=("symlink.txt",), write=())
+
+
+def test_permission_tree_lists_safe_files_and_directories(tmp_path: Path) -> None:
+    root = tmp_path / "project"
+    (root / "docs").mkdir(parents=True)
+    (root / "docs" / "guide.md").write_text("guide", encoding="utf-8")
+    (root / "notes.txt").write_text("notes", encoding="utf-8")
+    (root / ".env.staging").write_text("hidden", encoding="utf-8")
+    svc = service(root)
+    current = svc.snapshot()
+
+    result = svc.browse_directories(expected_project_id=current["project_id"], expected_binding=current["binding"],
+                                    expected_revision=current["revision"], directory=".")
+    assert result["directories"] == [{"name": "docs", "path": "docs"}]
+    assert result["files"] == [{"name": "notes.txt", "path": "notes.txt"}]
+    assert result["entries"] == [
+        {"name": "docs", "path": "docs", "kind": "directory"},
+        {"name": "notes.txt", "path": "notes.txt", "kind": "file"},
+    ]
+
+
 def test_saved_read_write_permissions_load_in_fresh_service_instance(tmp_path: Path) -> None:
     root = tmp_path / "project"
     (root / "docs").mkdir(parents=True)

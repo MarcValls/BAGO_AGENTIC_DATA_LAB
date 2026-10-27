@@ -58,6 +58,30 @@ def test_routes_use_strict_confirmed_payload_and_no_store(tmp_path: Path) -> Non
     assert revoked.json()["write_directories"] == []
 
 
+def test_route_accepts_exact_file_scope_and_lists_file_entries(tmp_path: Path) -> None:
+    root = tmp_path / "project"
+    root.mkdir()
+    (root / "notes.txt").write_text("safe", encoding="utf-8")
+    service = ProjectPermissions(lambda: ProjectContext("project-a", root, "binding-a", "Project A"))
+    app = FastAPI()
+    app.include_router(create_project_permissions_router(lambda: service))
+    client = TestClient(app)
+
+    initial = client.get("/api/project-permissions").json()
+    saved = client.put("/api/project-permissions", json={
+        "expected_project_id": "project-a", "expected_binding": "binding-a",
+        "expected_revision": initial["revision"], "read_directories": ["notes.txt"],
+        "write_directories": [], "confirmed": True,
+    })
+    assert saved.status_code == 200
+    listing = client.post("/api/project-permissions/directories", json={
+        "expected_project_id": "project-a", "expected_binding": "binding-a",
+        "expected_revision": saved.json()["revision"], "directory": ".",
+    })
+    assert listing.status_code == 200
+    assert listing.json()["files"] == [{"name": "notes.txt", "path": "notes.txt"}]
+
+
 def test_routes_reject_untrusted_origins(tmp_path: Path) -> None:
     root = tmp_path / "project"
     root.mkdir()
