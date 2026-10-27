@@ -1,10 +1,10 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="450" viewBox="0 0 1200 450" role="img" aria-labelledby="ttl des">
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="504" viewBox="0 0 1200 504" role="img" aria-labelledby="ttl des">
 <title id="ttl">BAGO / ADL · Un workspace. Capacidades observables.</title><desc id="des">React · FastAPI · datos · agentes · ejecución gobernada · evidencia. Panel vectorial del README; documentación completa enlazada desde la imagen.</desc>
 <defs><linearGradient id="bg" x1="0" x2="1" y1="0" y2="1"><stop stop-color="#101d2d"/><stop offset="1" stop-color="#17283b"/></linearGradient>
 <pattern id="micro" width="28" height="28" patternUnits="userSpaceOnUse"><path d="M28 0H0V28" fill="none" stroke="#7C9CB3" stroke-opacity=".10" stroke-width=".7"/></pattern></defs>
-<rect width="1200" height="450" fill="url(#bg)"/><rect width="1200" height="450" fill="url(#micro)"/>
-<path d="M0 0H1200M0 449H1200" stroke="#416986" stroke-width="1"/>
-<rect x="32" y="24" width="1136" height="402" rx="4" fill="#142539" fill-opacity=".94" stroke="#34516A"/>
+<rect width="1200" height="504" fill="url(#bg)"/><rect width="1200" height="504" fill="url(#micro)"/>
+<path d="M0 0H1200M0 503H1200" stroke="#416986" stroke-width="1"/>
+<rect x="32" y="24" width="1136" height="456" rx="4" fill="#142539" fill-opacity=".94" stroke="#34516A"/>
 <rect x="32" y="24" width="4" height="402" fill="#447B9D"/>
 <text x="66" y="64" fill="#81AFC9" font-size="14" font-weight="750" letter-spacing="2.8">BAGO   /   AGENTIC DATA LAB</text>
 <text x="928" y="64" fill="#8CA7BB" font-size="13" font-weight="650" letter-spacing="1.4">00  /  IDENTIDAD</text>
@@ -21,7 +21,7 @@
 <rect x="794" y="242" width="310" height="24" rx="2" fill="#335875" stroke="#3B5B71" stroke-width="1"/><circle cx="809" cy="254" r="3" fill="#F3BE78"/><text x="822" y="259" fill="#E4F0F4" font-size="13" font-weight="650" letter-spacing="1">CHAT</text><rect x="794" y="271" width="310" height="24" rx="2" fill="#20374C" stroke="#3B5B71" stroke-width="1"/><circle cx="809" cy="283" r="3" fill="#81AFC9"/><text x="822" y="288" fill="#E4F0F4" font-size="13" font-weight="650" letter-spacing="1">PROPUESTA</text><rect x="794" y="300" width="310" height="24" rx="2" fill="#20374C" stroke="#3B5B71" stroke-width="1"/><circle cx="809" cy="312" r="3" fill="#81AFC9"/><text x="822" y="317" fill="#E4F0F4" font-size="13" font-weight="650" letter-spacing="1">AUTORIZACIÓN</text><rect x="794" y="329" width="310" height="24" rx="2" fill="#20374C" stroke="#3B5B71" stroke-width="1"/><circle cx="809" cy="341" r="3" fill="#81AFC9"/><text x="822" y="346" fill="#E4F0F4" font-size="13" font-weight="650" letter-spacing="1">EVIDENCIA</text>
 
 
-<path d="M68 371L1132 371" stroke="#33506A" stroke-width="1" fill="none"/>
-<circle cx="75" cy="398" r="3.5" fill="#81AFC9"/><text x="91" y="404" fill="#80A4BA" font-size="12" font-weight="650" letter-spacing="1">BAGO / PORTADA VECTORIAL · ABRIR LA DOCUMENTACIÓN ÍNTEGRA</text>
-<text x="1093" y="405" fill="#6E8FA6" font-size="12" font-weight="650" letter-spacing="1.1">ADL.00</text>
+<path d="M68 425L1132 425" stroke="#33506A" stroke-width="1" fill="none"/>
+<circle cx="75" cy="452" r="3.5" fill="#81AFC9"/><text x="91" y="458" fill="#80A4BA" font-size="12" font-weight="650" letter-spacing="1">BAGO / PORTADA VECTORIAL · ABRIR LA DOCUMENTACIÓN ÍNTEGRA</text>
+<text x="1093" y="459" fill="#6E8FA6" font-size="12" font-weight="650" letter-spacing="1.1">ADL.00</text>
 </svg>
