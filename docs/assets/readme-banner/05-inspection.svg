@@ -1,10 +1,10 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="628" viewBox="0 0 1200 628" role="img" aria-labelledby="ttl des">
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="670" viewBox="0 0 1200 670" role="img" aria-labelledby="ttl des">
 <title id="ttl">BAGO / ADL · Observar, inspeccionar, contrastar</title><desc id="des">Trazas, recibos y evaluaciones son capas complementarias con fronteras propias.. Panel vectorial del README; documentación completa enlazada desde la imagen.</desc>
 <defs><linearGradient id="bg" x1="0" x2="1" y1="0" y2="1"><stop stop-color="#101d2d"/><stop offset="1" stop-color="#17283b"/></linearGradient>
 <pattern id="micro" width="28" height="28" patternUnits="userSpaceOnUse"><path d="M28 0H0V28" fill="none" stroke="#7C9CB3" stroke-opacity=".10" stroke-width=".7"/></pattern></defs>
-<rect width="1200" height="628" fill="url(#bg)"/><rect width="1200" height="628" fill="url(#micro)"/>
-<path d="M0 0H1200M0 627H1200" stroke="#416986" stroke-width="1"/>
-<rect x="32" y="24" width="1136" height="580" rx="4" fill="#142539" fill-opacity=".94" stroke="#34516A"/>
+<rect width="1200" height="670" fill="url(#bg)"/><rect width="1200" height="670" fill="url(#micro)"/>
+<path d="M0 0H1200M0 669H1200" stroke="#416986" stroke-width="1"/>
+<rect x="32" y="24" width="1136" height="622" rx="4" fill="#142539" fill-opacity=".94" stroke="#34516A"/>
 <rect x="32" y="24" width="4" height="580" fill="#447B9D"/>
 <text x="66" y="64" fill="#81AFC9" font-size="14" font-weight="750" letter-spacing="2.8">BAGO   /   AGENTIC DATA LAB</text>
 <text x="1114" y="64" fill="#8CA7BB" font-size="13" font-weight="650" letter-spacing="1.4">05  /  OBSERVABILIDAD</text>
@@ -26,7 +26,7 @@
 <text x="73" y="527" fill="#81AFC9" font-size="14" font-weight="750" letter-spacing="1.6">PROCEDENCIA</text>
 <text x="236" y="528" fill="#B7CBD9" font-size="17" font-weight="450" letter-spacing="0">Jaeger proyecta trazas. No autoriza operaciones.</text><text x="236" y="556" fill="#B7CBD9" font-size="17" font-weight="450" letter-spacing="0">Una vista de Inspect no verifica por sí sola un efecto.</text>
 
-<path d="M68 549L1132 549" stroke="#33506A" stroke-width="1" fill="none"/>
-<circle cx="75" cy="576" r="3.5" fill="#81AFC9"/><text x="91" y="582" fill="#80A4BA" font-size="12" font-weight="650" letter-spacing="1">REVISAR INSPECT, OPENTELEMETRY Y EVIDENCIA DELIMITADA</text>
-<text x="1093" y="583" fill="#6E8FA6" font-size="12" font-weight="650" letter-spacing="1.1">ADL.05</text>
+<path d="M68 591L1132 591" stroke="#33506A" stroke-width="1" fill="none"/>
+<circle cx="75" cy="618" r="3.5" fill="#81AFC9"/><text x="91" y="624" fill="#80A4BA" font-size="12" font-weight="650" letter-spacing="1">REVISAR INSPECT, OPENTELEMETRY Y EVIDENCIA DELIMITADA</text>
+<text x="1093" y="625" fill="#6E8FA6" font-size="12" font-weight="650" letter-spacing="1.1">ADL.05</text>
 </svg>
