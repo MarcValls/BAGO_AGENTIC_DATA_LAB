@@ -19,7 +19,7 @@
 <rect x="768" y="194" width="362" height="181" rx="3" fill="#1C354A" stroke="#447B9D"/>
 <text x="792" y="226" fill="#81AFC9" font-size="13" font-weight="700" letter-spacing="1.7">CANAL DE TRABAJO</text>
 <rect x="794" y="242" width="310" height="24" rx="2" fill="#335875" stroke="#3B5B71" stroke-width="1"/><circle cx="809" cy="254" r="3" fill="#F3BE78"/><text x="822" y="259" fill="#E4F0F4" font-size="13" font-weight="650" letter-spacing="1">CHAT</text><rect x="794" y="271" width="310" height="24" rx="2" fill="#20374C" stroke="#3B5B71" stroke-width="1"/><circle cx="809" cy="283" r="3" fill="#81AFC9"/><text x="822" y="288" fill="#E4F0F4" font-size="13" font-weight="650" letter-spacing="1">PROPUESTA</text><rect x="794" y="300" width="310" height="24" rx="2" fill="#20374C" stroke="#3B5B71" stroke-width="1"/><circle cx="809" cy="312" r="3" fill="#81AFC9"/><text x="822" y="317" fill="#E4F0F4" font-size="13" font-weight="650" letter-spacing="1">AUTORIZACIÓN</text><rect x="794" y="329" width="310" height="24" rx="2" fill="#20374C" stroke="#3B5B71" stroke-width="1"/><circle cx="809" cy="341" r="3" fill="#81AFC9"/><text x="822" y="346" fill="#E4F0F4" font-size="13" font-weight="650" letter-spacing="1">EVIDENCIA</text>
-<text x="66" y="417" fill="#7F9CB0" font-size="12" font-weight="650" letter-spacing="2">DOCUMENTACIÓN VISUAL / SIN ESTADOS IMPLÍCITOS</text>
+
 
 <path d="M68 371L1132 371" stroke="#33506A" stroke-width="1" fill="none"/>
 <circle cx="75" cy="398" r="3.5" fill="#81AFC9"/><text x="91" y="404" fill="#80A4BA" font-size="12" font-weight="650" letter-spacing="1">BAGO / PORTADA VECTORIAL · ABRIR LA DOCUMENTACIÓN ÍNTEGRA</text>
