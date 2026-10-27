@@ -1,0 +1,79 @@
+{
+  "schema": "adl.live-project-root-collaboration.v1",
+  "observed_at_utc": "2026-10-27T11:15:37.313Z",
+  "runtime": {
+    "base_url": "http://127.0.0.1:8098",
+    "process_id": 92532,
+    "health": "ok",
+    "source_commit": null,
+    "source_binding": "NOT_CAPTURED"
+  },
+  "project": {
+    "project_id": "workspace_80e67a1c3d824a8da3e639e97586b285",
+    "root": "D:\\PRUEBAS_BAGO5_ADL\\PRUEBA_01",
+    "permission_state": "configured",
+    "read_directories": ["."],
+    "write_directories": ["."],
+    "permission_revision": "a10f3f8c8170813e9d9c5d615feba4aa3efd50d063e2b25a578c4e539cc5bfc5"
+  },
+  "successful_read_delegation": {
+    "parent_conversation_id": "conv_acc9c18429504d0299e313496fd01154",
+    "parent_message_id": "msg_3b829a1084184e7c9b7b7a5e353fd80b",
+    "parent_trace_id": "trace-e77fe22940a94675",
+    "parent_execution_id": "agent-chat-cb684c4671e44d1389070227b0547ab8",
+    "parent_trace_sha256": "218ef499dc95e6bcc95ac39e6fbb8b2712c68ddba2de4b214fee5ec9b382840d",
+    "completion_message_id": "msg_7d4c8b5d924e4cf0919d05137634d51d",
+    "completion_trace_id": "trace-b90652ce7e274139",
+    "completion_execution_id": "agent-chat-ed4dd4292eb54462bb4a96264c22ac66",
+    "completion_trace_sha256": "cfc7ef4a63c4e8f1364018e51479a19f889c8d37a13a7202aacb47c1605bd99c",
+    "parent_provider_id": "ollama-cloud",
+    "parent_model_id": "minimax-m2.7",
+    "parent_model_invoked": true,
+    "proposal_id": "delegation_77b8c63a3f9445cf8eeb8415297cdc78",
+    "proposal_sha256": "fe9956b1cd21f3ef79d4f19b39c3ca25125fff9b94d3b753647ce20feb8cb654",
+    "state": "PASSED",
+    "agent_id": "agent_8f75791b20954c0d9d0c64170a80d1e6",
+    "agent_name": "Candidate project fileops verifier",
+    "agent_provider_id": "ollama-cloud",
+    "agent_model_id": "gemma4:31b",
+    "child_conversation_id": "conv_f28a6b9790c7494ba321dd9e9cbbb423",
+    "child_trace_id": "trace-87dd15b9fa5b4ac5",
+    "child_trace_sha256": "63165a5b1b98e5257c737c0cd2abc64213a16dc94b6577ebf7e4fd5e6448155e",
+    "delegation_receipt_id": "delegation-receipt_3b41d257528f4dfd8879041f70670114",
+    "delegation_receipt_sha256": "12dccf3a6d31673df7d1d916d3423c563a4b0b49ca032030c555c96193d131f7",
+    "tool_name": "filesystem_inventory",
+    "tool_receipt_id": "service_28326afb527d45ddb2c70573be865c7a",
+    "tool_result_sha256": "be1416f5c690fd2daa989a2f7a742512754d65bd45d72f9e64510f0c1d8d287d",
+    "tool_evidence_sha256": "b18ea5369e2c1d28cd249f6979f27f3edec7d1a514575f8c98c8318eb002a352",
+    "decision": "ALLOW",
+    "outcome": "VERIFIED",
+    "target_written": false,
+    "permission_revision": "a10f3f8c8170813e9d9c5d615feba4aa3efd50d063e2b25a578c4e539cc5bfc5"
+  },
+  "delegated_copy_plan_attempts": [
+    {
+      "conversation_id": "conv_7ef9925028f54dab93b54d0d7dd070ad",
+      "message_id": "msg_b8380b6b04f34ff2beca3e4bd5685803",
+      "trace_id": "trace-e8c54aef24074242",
+      "trace_sha256": "63dc84c6a98e15d1c49ce1d7f49b8e4a9e312af14dfc551a054ebb72b584fa58",
+      "provider_id": "ollama-cloud",
+      "model_id": "minimax-m2.7",
+      "result": "No suitable saved agent selected; no delegation proposal returned."
+    },
+    {
+      "conversation_id": "conv_7ef9925028f54dab93b54d0d7dd070ad",
+      "message_id": "msg_e4870edf5e534c899c70e193d1e6003c",
+      "trace_id": "trace-870a0513aaa44cec",
+      "trace_sha256": "922c065ea8bf97cb401a47041495ee7beda22395220e2e739baa8128fb1be7a2",
+      "provider_id": "ollama-cloud",
+      "model_id": "minimax-m2.7",
+      "result": "No suitable saved agent selected; no delegation proposal returned."
+    }
+  ],
+  "scope_and_limits": [
+    "The successful child call was a read-only filesystem_inventory within the selected project root.",
+    "The two delegated copy-plan attempts did not create a plan or alter files.",
+    "Edit/copy/rename with host review and execution were verified separately in the R9 direct-agent workflow.",
+    "The active runtime source commit was not captured, so this live observation is not bound to a repository SHA."
+  ]
+}
