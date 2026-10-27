@@ -30,6 +30,15 @@ Todas las operaciones se limitaron a `ADL_FILEOPS_ACCEPTANCE_20261027`, un fixtu
 
 Los cinco turnos de agente persistieron trazas locales; tres trazas de planificación/lectura llevan respectivamente los IDs `trace-6804a02791ad43ba`, `trace-491ffddc5e924ac9`, `trace-887c2fa7694e412c`, `trace-3f08f3039bf04d3c` y `trace-3fe6e8f5803a431b`. Cada evento raíz registra `provider_id=ollama-cloud`, `model_id=gemma4:31b` y el agente de aceptación. Los recibos y sus hashes se encuentran bajo `.bago-filesystem/receipts/` en la raíz del proyecto; los recibos de llamada y artefactos de salida están bajo `.bago/state/agent-tools/` y `.bago/traces/agent-tools/`.
 
+## Colaboración padre-hijo
+
+En el mismo HEAD y proyecto, el chat principal (`ollama-cloud/minimax-m2.7`) delegó el inventario al agente de aceptación (`ollama-cloud/gemma4:31b`). El hijo ejecutó `filesystem_inventory` una vez, obtuvo `ALLOW`, y devolvió los nombres y hashes al padre. La delegación terminó `PASSED`, `tools_executed=true`, `target_written=false`.
+
+- Conversación padre: `conv_e1fba40a8b524f289de1bb4ecc8a12d2`; traza `trace-12bb472ec0a04456`, SHA-256 `6d1c7bf5dd300c99dc74492bc5572fe4a404c0393d28e14bb50c8393de439f4e`.
+- Delegación: `delegation_6403a3754d9c4cf88709469ab5c91aab`; recibo `delegation-receipt_e187e80bef5243cdb0ccf525d071b1b3`, SHA-256 `8cf1002093a606c4a038117c74159f3f483b5be48e6c996d6e29bb7add658661`.
+- Conversación hija: `conv_563b956c140140cf964b48d5a203ad1c`; traza `trace-334918fc47f94d05`, SHA-256 `ff0ffb98021a6fcfea40a83c19a298399029919ffec7f6ba0424d474f9001773`.
+- Recibo de herramienta hija: `service_be3df5e4f8434f1a968622905c0abf0d`, evidencia SHA-256 `d11ea4908f70139bcd2f75fc2a0b9869fcea379bd38f54f9f50a5483f8ed115a`.
+
 ## Verificación focalizada
 
 - Backend/permisos/herramientas: 94 tests y 22 subtests PASS; 1 aviso conocido de compatibilidad Pydantic V1 bajo Python 3.14.
@@ -41,7 +50,7 @@ Los cinco turnos de agente persistieron trazas locales; tres trazas de planifica
 ## Límites
 
 - `business_acceptance=NOT_RUN`: la integridad y la lectura posterior se verificaron, pero no se evaluó el significado funcional del contenido.
-- Esta prueba cubre un agente con herramientas en un turno directo. No repite aquí la colaboración padre-hijo con herramienta; esa evidencia anterior está separada y ligada a otro runtime.
+- La colaboración padre-hijo fue de solo lectura; el ciclo de mutaciones fue ejecutado por el agente hijo en turnos directos, con revisión y aprobación separadas.
 - El candidato no se instaló ni se fusionó en la instancia abierta de BAGO. El servidor aislado de prueba se detuvo después de capturar los resultados.
 - No se probó eliminación permanente de archivos.
 - La suite completa y el build local no se ejecutaron como parte de estas comprobaciones focalizadas; CI exact-head está registrado arriba.
