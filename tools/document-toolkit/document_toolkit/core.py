@@ -138,7 +138,7 @@ def capabilities():
     return {"schema": "document-toolkit.capabilities.v1", "version": "0.2.0",
             "operations": list(OPERATIONS), "formats": {
                 name: {"available": pdf if name == ".pdf" else bool(pillow and (tesseract or winrt["available"])) if name == ".png" else True,
-                       "dependency": "pypdf==6.13.1" if name == ".pdf" else "Pillow==12.2.0 and Tesseract or Windows WinRT OCR" if name == ".png" else "Python standard library"}
+                       "dependency": "pypdf==6.21.2" if name == ".pdf" else "Pillow==13.0.0 and Tesseract or Windows WinRT OCR" if name == ".png" else "Python standard library"}
                 for name in FORMATS}, "ocr_backends": {"tesseract": {"available": bool(tesseract), "recognition_verified": False}, "windows-winrt": winrt}, "ocr_executable_available": bool(tesseract), "source_writes": False}
 
 

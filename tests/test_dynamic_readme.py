@@ -124,7 +124,7 @@ def test_ci_installs_video_runtime_before_running_full_suite():
     workflow = (ROOT / ".github" / "workflows" / "ci.yml").read_text(encoding="utf-8")
     test_dependencies = (ROOT / "requirements-test.txt").read_text(encoding="utf-8")
 
-    assert "Pillow==12.2.0" in test_dependencies
+    assert "Pillow==13.0.0" in test_dependencies
     assert "sudo apt-get install --yes ffmpeg" in workflow
     assert workflow.index("sudo apt-get install --yes ffmpeg") < workflow.index(
         "run: python -m pytest tests -q"
