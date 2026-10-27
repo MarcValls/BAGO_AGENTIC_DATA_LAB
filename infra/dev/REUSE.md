@@ -10,7 +10,7 @@ hashes de los archivos ADL están en evidence/attempt01/reuse-diagnostics.json.
 |---|---|---|
 | Dockerfile.ui | Multi-stage Python3.11 y Node22; runtime container ya existente | Mismos stacks y servidor, separados en imágenes dev/test; sin duplicar backend |
 | frontend/vite.config.ts | BAGO_API_PROXY_TARGET ya existe | Se usa tal cual, apuntando al host con host.docker.internal |
-| requirements-test.txt | Dependencias API de pruebas y Pillow12.2.0 declaradas | Se instala su contrato completo en la imagen Python |
+| requirements-test.txt | Dependencias API de pruebas y Pillow13.0.0 declaradas | Se instala su contrato completo en la imagen Python |
 | CI | Instala ffmpeg antes de pytest y usa Python3.11 | Se lleva ese orden a la imagen Linux |
 | compose.yaml/frontend Dockerfile | Plantilla3000 usa npm start, inexistente en package.json actual | No se adopta esa entrada; Vite usa npm run dev en5173 |
 | compose.debug.yaml | Arranca index.js ajeno a la entrada Vite | Se conserva original y no se usa |
