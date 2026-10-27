@@ -68,7 +68,6 @@ jobs:
       contents: read
       security-events: write
     needs: build
-    if: github.event_name != 'pull_request'
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -88,6 +87,9 @@ jobs:
           image-ref: local/bago-portfolio:scan
           format: sarif
           output: trivy-results.sarif
+          exit-code: '1'
+          severity: 'CRITICAL,HIGH'
+          ignore-unfixed: true
 
       - name: Upload Trivy results to GitHub Security tab
         uses: github/codeql-action/upload-sarif@v3
