@@ -13,6 +13,7 @@ from pathlib import Path
 import jsonschema
 
 from src.providers.registration import _secure_keyring
+from src.storage.portable import data_path
 from .security import ConnectionError, TIMEOUT, bounded_json, client_for, validate_url
 from .transports import list_tools, session_for
 
@@ -73,8 +74,8 @@ def schema_check(schema):
 
 class ConnectionService:
     def __init__(self, registry_path=None, evidence_dir=None):
-        self.registry_path = registry_path or ROOT / ".bago/runtime/connections/registry.json"
-        self.evidence_dir = evidence_dir or ROOT / ".bago/traces/external-connections"
+        self.registry_path = registry_path or data_path("connections", "registry.json")
+        self.evidence_dir = evidence_dir or data_path("traces", "external-connections")
 
     def _read(self):
         try:

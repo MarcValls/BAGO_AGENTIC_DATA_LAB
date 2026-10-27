@@ -76,9 +76,8 @@ def default_database_path(workspace_root: Path | str) -> Path:
     root = Path(workspace_root).resolve()
     identity = str(root).casefold() if os.name == "nt" else str(root)
     workspace_id = hashlib.sha256(identity.encode("utf-8")).hexdigest()[:32]
-    local_app_data = os.environ.get("LOCALAPPDATA")
-    base = Path(local_app_data) if local_app_data else Path.home() / ".local" / "share"
-    return base / "BAGO" / "AgenticDataLab" / "evaluations" / workspace_id / "evaluation.sqlite3"
+    from src.storage.portable import configured_path
+    return configured_path("BAGO_AGENT_EVALUATION_DB_PATH", "evaluations", workspace_id, "evaluation.sqlite3")
 
 
 def validate_cases(cases: Any) -> list[dict[str, Any]]:

@@ -409,7 +409,10 @@ class LoadStage:
 class ETLPipeline:
     """Orquestador del pipeline ETL completo."""
     
-    def __init__(self, db_path: str = "etl_metadata.db"):
+    def __init__(self, db_path: str | Path | None = None):
+        if db_path is None:
+            from src.storage.portable import configured_path
+            db_path = configured_path("ADL_ETL_METADATA_DB", "etl", "metadata.sqlite3")
         self.extract = ExtractStage()
         self.normalize = NormalizeStage()
         self.validate = ValidateStage(db_path)
@@ -500,7 +503,7 @@ if __name__ == "__main__":
     print("=" * 80)
     
     # Initialize pipeline
-    pipeline = ETLPipeline(db_path="l2_etl_metadata.db")
+    pipeline = ETLPipeline()
     
     # Ingest documents from command line or use defaults
     if len(sys.argv) > 1:

@@ -9,11 +9,14 @@ from src.conversations.library import PROJECT_ID, default_database_path, reset_p
 from src.api import server
 
 
-def test_default_database_is_per_user_and_outside_repository(monkeypatch, tmp_path: Path):
-    monkeypatch.setenv("LOCALAPPDATA", str(tmp_path / "local"))
+def test_default_database_is_under_portable_application_data_root(monkeypatch, tmp_path: Path):
+    app_root = tmp_path / "application"
+    app_root.mkdir()
+    monkeypatch.setenv("BAGO_APP_ROOT", str(app_root))
+    monkeypatch.setenv("LOCALAPPDATA", str(tmp_path / "legacy-local"))
     monkeypatch.delenv("BAGO_CONVERSATION_DB_PATH", raising=False)
 
-    assert default_database_path() == tmp_path / "local" / "BAGO" / "AgenticDataLab" / "conversations" / "library.sqlite3"
+    assert default_database_path() == app_root / ".bago" / "data" / "conversations" / "library.sqlite3"
 
 
 def test_owner_scoping_restart_and_message_references_are_persistent(tmp_path: Path):

@@ -45,7 +45,7 @@ def test_fixed_fixture_runs_read_and_denies_write_before_transport(tmp_path: Pat
     evidence_path = tmp_path / f"{result['run_id']}.json"
     evidence_bytes = evidence_path.read_bytes()
     persisted = json.loads(evidence_bytes)
-    assert result["evidence"]["path"] == f".bago/traces/mcp-governance/{result['run_id']}.json"
+    assert result["evidence"]["path"] == f".bago/data/traces/mcp-governance/{result['run_id']}.json"
     assert result["evidence"]["sha256"] == hashlib.sha256(evidence_bytes).hexdigest()
     assert persisted["read_call"]["receipt_id"] == result["read_call"]["receipt_id"]
     assert persisted["write_call"]["receipt_id"] == result["write_call"]["receipt_id"]

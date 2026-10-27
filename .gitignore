@@ -44,3 +44,5 @@ excluded/bago-app-game-development/
 
 # Private portable application data; publish code only.
 /.bago_user_data/
+/.bago/data/
+/.bago/data/

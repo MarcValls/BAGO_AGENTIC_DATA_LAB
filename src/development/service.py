@@ -11,6 +11,7 @@ import shutil
 import subprocess
 import time
 import uuid
+from src.storage.portable import relocate_owned_path
 
 TOOL_IDS = frozenset({'development_read', 'development_prepare', 'development_revise', 'development_check', 'development_inspect', 'development_review'})
 MAX_TEXT = 262144
@@ -88,7 +89,7 @@ class DevelopmentService:
         if type(self.max_change_bytes)!=int or not 1<=self.max_change_bytes<=MAX_CHANGE_BYTES_CEILING:
             raise DevelopmentError('invalid_change_budget')
         self.root = Path(self.profile['root']).resolve(strict=True)
-        self.state = Path(self.profile['state_root']).resolve()
+        self.state = relocate_owned_path(Path(self.profile['state_root'])).resolve()
         if self.state == self.root or self.root in self.state.parents or self.state in self.root.parents:
             raise DevelopmentError('state_root_must_be_separate')
         # Profiles are host-owned authority. Reject links even when resolution would hide them.

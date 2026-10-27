@@ -93,7 +93,8 @@ def create_agent_management_router(*, agents_dir, load_agent, jobs_dir=None, act
         if active_check is not None:
             return active_check(agent_id)
         from src import jobs
-        state = Path(os.environ.get("BAGO_GEX_STATE_DIR", str(Path(os.environ.get("LOCALAPPDATA", Path.home())) / "BAGO/AgenticDataLab/gex/runtime")))
+        from src.storage.portable import configured_path
+        state = configured_path("BAGO_GEX_STATE_DIR", "gex", "runtime")
         return active_work(agent_id, agents_dir=agents_dir(), jobs_dir=Path(jobs_dir or jobs.JOBS_DIR), gex_state_dir=state)
 
     @router.get("/{agent_id}/deletion-review")

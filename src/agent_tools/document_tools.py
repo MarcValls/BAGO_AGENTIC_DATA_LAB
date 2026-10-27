@@ -100,7 +100,8 @@ def checked_directory(value, workspace):
 
 
 def output_directory():
-    return Path(os.getenv("BAGO_DOCUMENT_OUTPUT_ROOT", str(Path(os.getenv("LOCALAPPDATA", str(Path.home()/'.local/share')))/'BAGO/AgenticDataLab/document-exports'))).absolute()
+    from src.storage.portable import configured_path
+    return configured_path("BAGO_DOCUMENT_OUTPUT_ROOT", "document-exports")
 
 
 def browse(value, workspace):

@@ -128,6 +128,7 @@ from src.api.schemas import (
     WorkspaceScanAuthorizationRequest,
     WorkspaceScanRunRequest,
 )
+from src.storage.portable import configured_path, data_path, storage_status
 
 # `src.evaluation.local_evals` retains a legacy absolute `observability` import.
 # Add the source root before dynamically loading the evaluation package.
@@ -147,13 +148,15 @@ utc_now = _evaluation_module.utc_now
 redact_credentials = _evaluation_module.redact_credentials
 contains_credential = _evaluation_module.contains_credential
 
-DEMO_OUTPUT_DIR = Path(__file__).resolve().parent.parent.parent / "demo_output" / "latest"
-AGENTS_DIR = Path(__file__).resolve().parent.parent.parent / "agents" / "created"
+DEMO_OUTPUT_DIR = data_path("demo-output", "latest")
+AGENTS_DIR = data_path("agents", "created")
 FRONTEND_BUILD = Path(__file__).resolve().parent.parent.parent / "frontend" / "dist"
 REPO_ROOT = Path(__file__).resolve().parent.parent.parent
-_MCP_GOVERNANCE_EVIDENCE_DIR = REPO_ROOT / ".bago" / "traces" / "mcp-governance"
-_WORKSPACE_CONFIG_DIR = Path(os.environ.get("LOCALAPPDATA", Path.home())) / "BAGO" / "AgenticDataLab"
+SERVER_SOURCE_SHA256_AT_IMPORT = hashlib.sha256(Path(__file__).read_bytes()).hexdigest()
+_MCP_GOVERNANCE_EVIDENCE_DIR = data_path("traces", "mcp-governance")
+_WORKSPACE_CONFIG_DIR = data_path("config")
 _WORKSPACE_CONFIG_PATH = _WORKSPACE_CONFIG_DIR / "workspace.json"
+_DEFAULT_WORKSPACE_ROOT = data_path("workspaces", "default")
 _WORKSPACE_LOCK = threading.RLock()
 _REQUEST_WORKSPACE_ROOT: ContextVar[Path | None] = ContextVar("bago_request_workspace_root", default=None)
 
@@ -161,10 +164,13 @@ _REQUEST_WORKSPACE_ROOT: ContextVar[Path | None] = ContextVar("bago_request_work
 def _load_workspace_root() -> Path:
     try:
         configured = json.loads(_WORKSPACE_CONFIG_PATH.read_text(encoding="utf-8")).get("workspace_root")
-        candidate = Path(configured).expanduser().resolve() if isinstance(configured, str) else REPO_ROOT.resolve()
-        return candidate if candidate.is_dir() else REPO_ROOT.resolve()
+        candidate = Path(configured).expanduser().resolve() if isinstance(configured, str) else None
+        if candidate is not None and candidate.is_dir():
+            return candidate
     except (OSError, RuntimeError, ValueError, TypeError, json.JSONDecodeError):
-        return REPO_ROOT.resolve()
+        pass
+    _DEFAULT_WORKSPACE_ROOT.mkdir(parents=True, exist_ok=True)
+    return _DEFAULT_WORKSPACE_ROOT.resolve()
 
 
 WORKSPACE_ROOT = _load_workspace_root()
@@ -176,11 +182,11 @@ def current_workspace_root() -> Path:
     if request_root is not None:
         return request_root
     with _WORKSPACE_LOCK:
-        return WORKSPACE_ROOT if _WORKSPACE_ROOT_PINNED else Path(REPO_ROOT).resolve()
+        return WORKSPACE_ROOT if _WORKSPACE_ROOT_PINNED else _DEFAULT_WORKSPACE_ROOT.resolve()
 
 
 def _set_workspace_root(candidate: str | Path) -> Path:
-    global WORKSPACE_ROOT, _WORKSPACE_ROOT_PINNED
+    global WORKSPACE_ROOT, _WORKSPACE_ROOT_PINNED, CAPABILITIES, EVALUATIONS, EVALUATION_TRACE_DIR
     root = Path(candidate).expanduser().resolve(strict=True)
     if not root.is_dir():
         raise ValueError("Choose an existing folder.")
@@ -191,6 +197,9 @@ def _set_workspace_root(candidate: str | Path) -> Path:
         os.replace(temporary, _WORKSPACE_CONFIG_PATH)
         WORKSPACE_ROOT = root
         _WORKSPACE_ROOT_PINNED = True
+        CAPABILITIES = CapabilityStore(root)
+        EVALUATIONS = EvaluationStore(root)
+        EVALUATION_TRACE_DIR = EVALUATIONS.database_path.parent / "traces"
         _REQUEST_WORKSPACE_ROOT.set(root)
     return root
 
@@ -214,10 +223,10 @@ def _capability_store() -> CapabilityStore:
     return CapabilityStore(current_workspace_root())
 
 
-AGENT_CHAT_TRACE_DIR = REPO_ROOT / ".bago" / "traces" / "agent-chat"
+AGENT_CHAT_TRACE_DIR = data_path("traces", "agent-chat")
 CONVERSATIONS = ConversationStore()
-CAPABILITIES = CapabilityStore(REPO_ROOT)
-EVALUATIONS = EvaluationStore(REPO_ROOT)
+CAPABILITIES = CapabilityStore(current_workspace_root())
+EVALUATIONS = EvaluationStore(current_workspace_root())
 EVALUATION_TRACE_DIR = EVALUATIONS.database_path.parent / "traces"
 CONTROL_NAVIGATION_VIEWS = frozenset({
     "inspector", "builder", "chat", "workspace", "runner", "control", "jobs", "traces", "summary",
@@ -416,7 +425,7 @@ def _active_conversation_project_id() -> str:
     bound_root = _REQUEST_WORKSPACE_ROOT.get()
     if bound_root is None:
         with _WORKSPACE_LOCK:
-            bound_root = WORKSPACE_ROOT if _WORKSPACE_ROOT_PINNED else Path(REPO_ROOT).resolve()
+            bound_root = WORKSPACE_ROOT if _WORKSPACE_ROOT_PINNED else _DEFAULT_WORKSPACE_ROOT.resolve()
 
     folders = ProjectFolders(
         state_directory=_WORKSPACE_CONFIG_DIR / "project-folders-v1",
@@ -442,7 +451,7 @@ async def conversation_project_scope(request: Request, call_next):
     root_token = None
     if request.url.path.startswith("/api/"):
         with _WORKSPACE_LOCK:
-            root = WORKSPACE_ROOT if _WORKSPACE_ROOT_PINNED else Path(REPO_ROOT).resolve()
+            root = WORKSPACE_ROOT if _WORKSPACE_ROOT_PINNED else _DEFAULT_WORKSPACE_ROOT.resolve()
         root_token = _REQUEST_WORKSPACE_ROOT.set(Path(root).resolve())
         path = request.url.path
         conversation_route = (path == "/api/conversations" or path.startswith("/api/conversations/")
@@ -740,7 +749,7 @@ def inspect_conversation(conversation_id: str, trace_id: str | None = None,
                 raise HTTPException(409, detail={
                     "code": "native_trace_evidence_unavailable",
                     "state": "pending" if reference.get("trace_state") == "pending_finalization" else "failed"})
-        return inspection(conversation, [AGENT_CHAT_TRACE_DIR, REPO_ROOT / ".bago/traces/workspace-scans"],
+        return inspection(conversation, [AGENT_CHAT_TRACE_DIR, data_path("traces", "workspace-scans")],
                           trace_id=trace_id, execution_id=execution_id, offset=offset, limit=limit)
     except InspectionError as error:
         raise HTTPException(status_code=error.status, detail={"code": error.code,
@@ -824,6 +833,17 @@ def get_evaluation() -> dict[str, Any]:
 def health() -> dict[str, str]:
     """Health check."""
     return {"status": "ok"}
+
+
+@app.get("/api/runtime/storage")
+def runtime_storage() -> dict[str, Any]:
+    """Report effective application/data roots without reading stored content."""
+    return {
+        **storage_status(),
+        "process_id": os.getpid(),
+        "server_source_path": str(Path(__file__).resolve()),
+        "server_source_sha256_at_import": SERVER_SOURCE_SHA256_AT_IMPORT,
+    }
 
 
 # ===== API: Ollama provider configuration =====
@@ -1110,7 +1130,7 @@ async def run_local_mcp_governance_demo(request: Request) -> dict[str, Any]:
 
     run_id = f"mcp_demo_{uuid.uuid4().hex}"
     trace_id = f"trace_{uuid.uuid4().hex}"
-    evidence_relpath = f".bago/traces/mcp-governance/{run_id}.json"
+    evidence_relpath = f".bago/data/traces/mcp-governance/{run_id}.json"
     evidence_path = _MCP_GOVERNANCE_EVIDENCE_DIR / f"{run_id}.json"
     tool_call_counts = {"get_lab_status": 0, "propose_lab_note": 0}
     trace_events: list[dict[str, Any]] = []
@@ -1968,7 +1988,7 @@ WEB_READ_AUTHORIZATIONS = Authorizations()
 
 
 def _web_reader(permit):
-    root = Path(os.getenv("BAGO_WEB_RESEARCH_STATE_DIR") or Path(os.getenv("LOCALAPPDATA", str(Path.home()))) / "BAGO/AgenticDataLab/web-research")
+    root = configured_path("BAGO_WEB_RESEARCH_STATE_DIR", "web-research")
     return PublicWebReader(permit, SnapshotStore(root))
 
 
@@ -2420,7 +2440,7 @@ def _record_workspace_scan_trace(result: dict[str, Any], receipt: dict[str, Any]
     local_trace = LocalTrace(trace_id=trace_id, run_id="workspace-scan-" + uuid.uuid4().hex, events=(event,))
     state = "local_only"
     trace_sha256 = ""
-    trace_dir = REPO_ROOT / ".bago" / "traces" / "workspace-scans"
+    trace_dir = data_path("traces", "workspace-scans")
     try:
         trace_dir.mkdir(parents=True, exist_ok=True)
         target = trace_dir / f"{trace_id}.json"
@@ -4306,7 +4326,7 @@ async def websocket_agent_chat(websocket: WebSocket) -> None:
     if not await _accept_local_websocket(websocket):
         return
     with _WORKSPACE_LOCK:
-        root = WORKSPACE_ROOT if _WORKSPACE_ROOT_PINNED else Path(REPO_ROOT).resolve()
+        root = WORKSPACE_ROOT if _WORKSPACE_ROOT_PINNED else _DEFAULT_WORKSPACE_ROOT.resolve()
     root_token = _REQUEST_WORKSPACE_ROOT.set(Path(root).resolve())
     try:
         project_token = set_project_scope(_active_conversation_project_id())

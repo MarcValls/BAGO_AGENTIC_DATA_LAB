@@ -56,14 +56,9 @@ class AuthenticatedPrincipal:
 
 
 def default_identity_database_path() -> Path:
-    """Return an OS user-data path outside the repository/workspace."""
-
-    override = os.environ.get("BAGO_GEX_IDENTITY_DB_PATH")
-    if override:
-        return Path(override).expanduser().resolve()
-    local_app_data = os.environ.get("LOCALAPPDATA")
-    base = Path(local_app_data) if local_app_data else Path.home() / ".local" / "share"
-    return base / "BAGO" / "AgenticDataLab" / "gex" / "identity.sqlite3"
+    """Return a portable identity database path outside the project workspace."""
+    from src.storage.portable import configured_path
+    return configured_path("BAGO_GEX_IDENTITY_DB_PATH", "gex", "identity.sqlite3")
 
 
 def _timestamp(value: datetime) -> str:

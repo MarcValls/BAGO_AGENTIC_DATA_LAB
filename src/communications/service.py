@@ -15,6 +15,7 @@ import uuid
 from datetime import datetime, timedelta, timezone
 from pathlib import Path, PurePosixPath
 from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
+from src.storage.portable import configured_path
 
 UTC = timezone.utc
 
@@ -103,8 +104,8 @@ def next_time(s, now):
 
 class CommunicationService:
     def __init__(self, state_dir=None, session=None, workspace_root=None, clock=None, contacts_store=None):
-        self.root = Path(state_dir or os.getenv("BAGO_COMMUNICATIONS_STATE_DIR") or
-                         Path(os.getenv("LOCALAPPDATA", str(Path.home()))) / "BAGO/AgenticDataLab/communications")
+        self.root = (Path(state_dir).expanduser().resolve() if state_dir else
+                     configured_path("BAGO_COMMUNICATIONS_STATE_DIR", "communications"))
         self.contacts_store = contacts_store
         self.session = session
         self.workspace_root = workspace_root or Path.cwd()
