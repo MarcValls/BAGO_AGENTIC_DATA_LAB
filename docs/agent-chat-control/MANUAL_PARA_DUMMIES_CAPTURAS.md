@@ -37,7 +37,6 @@ En otra conversación sintética se completó una lectura autorizada de `sample_
 La traza Jaeger de ese turno contiene dos spans: `assistant.control` y `workspace.read`. El recibo fue `ALLOW`, líneas 1-11, total 11. El span hijo lleva `timing_source=projection` y `duration_measured=false`; los 43 μs que dibuja Jaeger no son una duración medida.
 
 ![Traza Jaeger del mismo turno, con los spans assistant.control y workspace.read](assets/manual-ui-actual-2026-10-26/08-jaeger-provider-response-observed-session.png)
-
 Las cuatro primeras imágenes documentan el chat y sus respuestas dentro de la conversación:
 
 1. Abre el chat y escribe una petición normal.
