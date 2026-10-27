@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="624" viewBox="0 0 1200 624" role="img" aria-labelledby="ttl des">
+<title id="ttl">BAGO / ADL · Chat como entrada principal</title><desc id="des">Workspace, Builder, Runs, Inspect y Settings amplían la conversación.. Panel vectorial del README; documentación completa enlazada desde la imagen.</desc>
+<defs><linearGradient id="bg" x1="0" x2="1" y1="0" y2="1"><stop stop-color="#101d2d"/><stop offset="1" stop-color="#17283b"/></linearGradient>
+<pattern id="micro" width="28" height="28" patternUnits="userSpaceOnUse"><path d="M28 0H0V28" fill="none" stroke="#7C9CB3" stroke-opacity=".10" stroke-width=".7"/></pattern></defs>
+<rect width="1200" height="624" fill="url(#bg)"/><rect width="1200" height="624" fill="url(#micro)"/>
+<path d="M0 0H1200M0 623H1200" stroke="#416986" stroke-width="1"/>
+<rect x="32" y="24" width="1136" height="576" rx="4" fill="#142539" fill-opacity=".94" stroke="#34516A"/>
+<rect x="32" y="24" width="4" height="576" fill="#447B9D"/>
+<text x="66" y="64" fill="#81AFC9" font-size="14" font-weight="750" letter-spacing="2.8">BAGO   /   AGENTIC DATA LAB</text>
+<text x="1114" y="64" fill="#8CA7BB" font-size="13" font-weight="650" letter-spacing="1.4">02  /  EXPERIENCIA</text>
+<text x="66" y="118" fill="#F2EFEA" font-size="37" font-weight="650" letter-spacing="-0.5">Chat como entrada principal</text>
+<text x="68" y="151" fill="#B9CEDA" font-size="18" font-weight="400" letter-spacing="0">Workspace, Builder, Runs, Inspect y Settings amplían la conversación.</text>
+<path d="M68 174L1132 174" stroke="#3B5B74" stroke-width="1" fill="none"/>
+
+<rect x="68" y="196" width="715" height="302" rx="3" fill="#172D42" stroke="#4A6B81" stroke-width="1"/>
+<rect x="68" y="196" width="715" height="38" rx="3" fill="#244057" stroke="#4A6B81" stroke-width="1"/>
+<circle cx="89" cy="215" r="4" fill="#81AFC9"/><circle cx="105" cy="215" r="4" fill="#547C99"/><circle cx="121" cy="215" r="4" fill="#547C99"/>
+<text x="360" y="220" fill="#D2E4ED" font-size="14" font-weight="650" letter-spacing="1.6">WORKSPACE  /  CHAT</text>
+<rect x="91" y="251" width="410" height="70" rx="3" fill="#20374B" stroke="#3A5F79" stroke-width="1"/>
+<text x="112" y="275" fill="#81AFC9" font-size="12" font-weight="700" letter-spacing="1.4">USUARIO</text>
+<text x="112" y="299" fill="#F2EFEA" font-size="18" font-weight="500" letter-spacing="0">Define intención y alcance.</text>
+<rect x="153" y="333" width="595" height="105" rx="3" fill="#294459" stroke="#4A718A" stroke-width="1"/>
+<text x="176" y="359" fill="#A8D4E6" font-size="13" font-weight="700" letter-spacing="1">ASISTENTE · RESPUESTA / PROPUESTA</text>
+<text x="176" y="391" fill="#B7CBD9" font-size="18" font-weight="450" letter-spacing="0">Expone su propuesta. No ejecuta efectos</text><text x="176" y="418" fill="#B7CBD9" font-size="18" font-weight="450" letter-spacing="0">por la existencia de una respuesta.</text>
+<rect x="90" y="455" width="653" height="26" rx="3" fill="#172A3D" stroke="#385A70" stroke-width="1"/><text x="108" y="473" fill="#87A8BF" font-size="13" font-weight="500" letter-spacing="0">Revisión y autorización fuera de la inferencia</text>
+<rect x="804" y="196" width="327" height="302" rx="3" fill="#1B3247" stroke="#43627A" stroke-width="1"/>
+<text x="830" y="232" fill="#81AFC9" font-size="14" font-weight="750" letter-spacing="1.6">PANELES</text>
+<rect x="823" y="254" width="289" height="42" rx="3" fill="#213A50" stroke="#365773" stroke-width="1"/><text x="840" y="281" fill="#E8F0F3" font-size="17" font-weight="600" letter-spacing="0">AGENT BUILDER</text><rect x="823" y="305" width="289" height="42" rx="3" fill="#213A50" stroke="#365773" stroke-width="1"/><text x="840" y="332" fill="#E8F0F3" font-size="17" font-weight="600" letter-spacing="0">RUNS / EVALUATION</text><rect x="823" y="356" width="289" height="42" rx="3" fill="#213A50" stroke="#365773" stroke-width="1"/><text x="840" y="383" fill="#E8F0F3" font-size="17" font-weight="600" letter-spacing="0">INSPECT / BER</text><rect x="823" y="407" width="289" height="42" rx="3" fill="#213A50" stroke="#365773" stroke-width="1"/><text x="840" y="434" fill="#E8F0F3" font-size="17" font-weight="600" letter-spacing="0">SETTINGS / MODELS</text>
+<text x="68" y="539" fill="#81AFC9" font-size="13" font-weight="750" letter-spacing="1.7">VISTAS DOCUMENTADAS</text>
+<text x="332" y="539" fill="#B6C9D6" font-size="16" font-weight="450" letter-spacing="0">La composición es conceptual; no es una captura del runtime.</text>
+
+<path d="M68 545L1132 545" stroke="#33506A" stroke-width="1" fill="none"/>
+<circle cx="75" cy="572" r="3.5" fill="#81AFC9"/><text x="91" y="578" fill="#80A4BA" font-size="12" font-weight="650" letter-spacing="1">REVISAR FRONTEND Y GALERÍA DE CAPTURAS FECHADAS · 25 OCT 2026</text>
+<text x="1093" y="579" fill="#6E8FA6" font-size="12" font-weight="650" letter-spacing="1.1">ADL.02</text>
+</svg>
