@@ -1,0 +1,39 @@
+{
+  "schema": "adl.project-permission-restart-evidence.v1",
+  "observed_at_utc": "2026-10-27T10:57:36.5541679Z",
+  "candidate": {
+    "branch": "codex/adl-project-permission-restart-20261027",
+    "head": "c1b1fce16a6306516531602488072c7fd20ab36b"
+  },
+  "runtime": {
+    "base_url": "http://127.0.0.1:8101",
+    "data_root": "C:\\BAGO_TESTS\\ADL_PERMISSION_LIVE_RESTART_20261027\\data",
+    "health_after_restart": "ok",
+    "previous_process_id": 25500,
+    "process_id_after_restart": 107764,
+    "old_listener_absent_before_restart": true
+  },
+  "selected_project": {
+    "project_id": "workspace_36b71a88b76c45c69712c9f6b6e13978",
+    "root": "C:\\BAGO_TESTS\\ADL_PERMISSION_LIVE_RESTART_20261027\\workspace",
+    "permissions_state": "configured",
+    "read_directories": ["."],
+    "write_directories": ["."],
+    "permission_revision": "76d067bcd10a5ddd8dd727cc489b8cc4400255f651b13821c5c5d67666cf64a6",
+    "policy_sha256": "76d067bcd10a5ddd8dd727cc489b8cc4400255f651b13821c5c5d67666cf64a6",
+    "read_target_exists": true
+  },
+  "observations": [
+    "The project selected before process restart was returned after restart with the same project_id and root.",
+    "The saved READ and WRITE project policy was returned after restart with the same revision.",
+    "The permission revision equals the SHA-256 of the project's .bago/state/PROJECT_PERMISSIONS.json file."
+  ],
+  "not_run": [
+    "Provider/model request after restart",
+    "Read tool invocation after restart",
+    "Edit/copy/rename operations after restart",
+    "User-facing runtime or UI",
+    "Full local test suite"
+  ],
+  "scope": "Isolated local ADL server and synthetic selected project only; does not establish the state of the user's active runtime or workspace."
+}

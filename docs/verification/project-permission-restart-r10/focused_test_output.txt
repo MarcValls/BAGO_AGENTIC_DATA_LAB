@@ -1,0 +1,4 @@
+pytest_node=tests/project-permissions/backend/test_project_permissions.py::test_saved_read_write_permissions_load_in_fresh_service_instance
+pytest_exit=0
+.                                                                        [100%]
+1 passed in 0.16s

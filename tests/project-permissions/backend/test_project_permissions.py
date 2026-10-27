@@ -97,6 +97,34 @@ def test_explicit_save_read_write_and_revoke_change_revision(tmp_path: Path) -> 
     assert revoked["revision"] != granted["revision"]
 
 
+def test_saved_read_write_permissions_load_in_fresh_service_instance(tmp_path: Path) -> None:
+    root = tmp_path / "project"
+    (root / "docs").mkdir(parents=True)
+    (root / "outputs").mkdir()
+    (root / "docs/report.txt").write_text("persisted read target", encoding="utf-8")
+    original_service = service(root)
+
+    granted = save_all(original_service, read=("docs",), write=("outputs",))
+
+    # Model a server restart: a new service has the same selected project
+    # identity but no in-memory state from the service that saved the policy.
+    restarted_service = service(root)
+    restored = restarted_service.snapshot()
+
+    assert restored["state"] == "configured"
+    assert restored["project_id"] == granted["project_id"]
+    assert restored["root"] == granted["root"]
+    assert restored["binding"] == granted["binding"]
+    assert restored["revision"] == granted["revision"]
+    assert restored["read_directories"] == ["docs"]
+    assert restored["write_directories"] == ["outputs"]
+
+    with restarted_service.lease("read", ("docs/report.txt",), expected_revision=granted["revision"]):
+        pass
+    with restarted_service.lease("write", ("outputs/result.txt",), expected_revision=granted["revision"]):
+        pass
+
+
 def test_stale_revision_and_context_binding_fail_closed(tmp_path: Path) -> None:
     root = tmp_path / "project"
     other_root = tmp_path / "other-project"

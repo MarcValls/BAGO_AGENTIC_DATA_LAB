@@ -56,3 +56,13 @@ En el mismo HEAD y proyecto, el chat principal (`ollama-cloud/minimax-m2.7`) del
 - La suite completa y el build local no se ejecutaron como parte de estas comprobaciones focalizadas; CI exact-head está registrado arriba.
 
 Dictamen de R9: **VERIFIED para lectura, edición, copia y renombrado gobernados en la raíz del proyecto seleccionado, con permiso persistente.** La integración en la instancia instalada y la aceptación funcional del contenido permanecen pendientes.
+
+## Comprobación posterior en el BAGO activo: raíz de proyecto y tool call colaborativa
+
+Observación del 27/10/2026 en el servidor activo `127.0.0.1:8098` (PID `92532`; la revisión exacta del código que sirve este proceso no quedó enlazada). La API informó el proyecto `workspace_80e67a1c3d824a8da3e639e97586b285`, raíz `D:\PRUEBAS_BAGO5_ADL\PRUEBA_01`, y política persistente READ/WRITE `.` con revisión `a10f3f8c8170813e9d9c5d615feba4aa3efd50d063e2b25a578c4e539cc5bfc5`, coincidentes con el alcance de R9.
+
+En una conversación nueva del mismo proyecto, el chat principal llamó al proveedor real `ollama-cloud/minimax-m2.7` y delegó una tarea de solo lectura al agente guardado `Candidate project fileops verifier`, proveedor `ollama-cloud`, modelo `gemma4:31b`. La llamada hija ejecutó `filesystem_inventory` dentro de `ADL_FILEOPS_ACCEPTANCE_20261027`; el host registró `ALLOW`, `VERIFIED`, `target_written=false` y el path de la raíz del proyecto. El inventario volvió a observar `source.txt` y el fixture sintético. Referencias exactas, hashes y el alcance no vinculado al commit se encuentran en `live_project_root_collaboration.json`.
+
+La delegación colaborativa de lectura queda **VERIFIED en el runtime observado**. La delegación de un `filesystem_plan` de copia desde el chat principal quedó **NOT_VERIFIED**: dos llamadas reales de `ollama-cloud/minimax-m2.7` contestaron que no encontraban un agente con alcance claro y no generaron propuesta ni operación de archivos. El flujo R9 de edición, copia y renombrado sí está probado en turnos directos del agente con revisión y ejecución host; no se afirma aquí que esas mutaciones fueran realizadas por un agente hijo delegado.
+
+El proceso activo se mantuvo intacto. No se modificaron archivos del fixture durante esta comprobación de colaboración.
