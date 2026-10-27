@@ -155,7 +155,7 @@ def validate_workspace_read_paths(workspace_root: Path | str, paths: Sequence[st
     return canonical_paths
 
 
-def read_workspace_file(
+def _read_workspace_file_unleased(
     workspace_root: Path | str,
     arguments: Any,
     authorized_paths: Sequence[str] = (),
@@ -283,3 +283,51 @@ def read_workspace_file(
         "truncated": last < len(lines),
     }
     return result, source
+
+
+def read_workspace_file(
+    workspace_root: Path | str,
+    arguments: Any,
+    authorized_paths: Sequence[str] = (),
+    *,
+    project_permissions=None,
+    expected_project: dict[str, Any] | None = None,
+) -> tuple[dict[str, Any], dict[str, Any] | None]:
+    """Read under the selected project's saved READ policy when supplied.
+
+    The policy lease is acquired only around the bounded read and revalidates
+    the active project binding and revision at that actual IO boundary.
+    """
+    if project_permissions is None:
+        return _read_workspace_file_unleased(workspace_root, arguments, authorized_paths)
+    requested = arguments
+    if isinstance(requested, str):
+        try:
+            requested = json.loads(requested)
+        except (TypeError, ValueError):
+            requested = None
+    path = normalize_workspace_path(requested.get("path") if isinstance(requested, dict) else None)
+    if path is None:
+        return _read_workspace_file_unleased(workspace_root, arguments, authorized_paths)
+    try:
+        from src.project_permissions import PermissionError as ProjectPermissionError
+        snapshot = project_permissions.snapshot()
+        if expected_project and any(snapshot.get(key) != expected_project.get(key)
+                                    for key in ("project_id", "root", "binding")):
+            raise ProjectPermissionError("project_context_changed", "The active project changed.", 409)
+        if expected_project and snapshot.get("revision") != expected_project.get("revision"):
+            raise ProjectPermissionError("revision_conflict", "The project permission policy changed.", 409)
+        with project_permissions.lease("read", (path,), expected_revision=snapshot["revision"]) as current:
+            result, source = _read_workspace_file_unleased(workspace_root, arguments, (path,))
+            if source:
+                source["project_id"] = current["project_id"]
+                source["policy_revision"] = current["revision"]
+            return result, source
+    except Exception as error:
+        if not isinstance(error, ProjectPermissionError):
+            raise
+        return {"ok": False, "error": "The selected project's saved READ permission does not allow this file.",
+                "reason_code": error.code}, {
+            "decision": "DENY", "path": path, "reason_code": error.code,
+            "project_id": expected_project.get("project_id") if expected_project else None,
+        }

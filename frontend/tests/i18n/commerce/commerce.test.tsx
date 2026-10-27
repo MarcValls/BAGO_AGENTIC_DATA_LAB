@@ -156,23 +156,21 @@ describe('commerce presentation catalogs and live preference',()=>{
   expect(menu.open).toBe(true)
   expect(screen.getByRole('button',{name:'Consult file'})).toBeTruthy()
  })
- it('keeps the chat composer, per-turn permission and paths without executing a turn',async()=>{
+ it('keeps the chat composer and public-web control without a per-turn project permission editor',async()=>{
   const fetcher=vi.fn(async(input:string)=>response(input.includes('chat-models')?{models:[]}:input.includes('selection')?null:input.includes('/agents/list')?{agents:[]}:{conversations:[]}))
   vi.stubGlobal('fetch',fetcher)
   render(<AgentChat onNavigate={()=>{}} onOpenProviderSettings={()=>{}} onOpenCognitionSettings={()=>{}} cognitiveMode="baseline" />)
   await waitFor(()=>expect(fetcher.mock.calls.some(([url])=>url.includes('/agents/list'))).toBe(true))
   const editor=screen.getByLabelText('Mensaje al asistente o agente seleccionado') as HTMLTextAreaElement
   fireEvent.change(editor,{target:{value:'User prompt must stay original'}})
-  fireEvent.click(screen.getByLabelText('Permitir lectura de archivos del proyecto'))
-  const paths=screen.getByLabelText('Rutas relativas al proyecto') as HTMLTextAreaElement
-  fireEvent.change(paths,{target:{value:'src/original.py'}})
+  expect(screen.queryByLabelText('Permitir lectura de archivos del proyecto')).toBeNull()
+  expect(screen.queryByLabelText('Rutas relativas al proyecto')).toBeNull()
   const count=fetcher.mock.calls.length
   switchTo('en')
   expect(screen.getByLabelText('Message the assistant or selected agent')).toBe(editor)
   expect(editor.value).toBe('User prompt must stay original')
-  expect((screen.getByLabelText('Allow project file reads') as HTMLInputElement).checked).toBe(true)
-  expect(screen.getByLabelText('Project-relative paths')).toBe(paths)
-  expect(paths.value).toBe('src/original.py')
+  expect(screen.queryByLabelText('Allow project file reads')).toBeNull()
+  expect(screen.queryByLabelText('Project-relative paths')).toBeNull()
   expect(fetcher.mock.calls.length).toBe(count)
  })
 })

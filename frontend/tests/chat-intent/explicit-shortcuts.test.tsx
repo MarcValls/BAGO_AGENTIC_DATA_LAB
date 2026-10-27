@@ -28,13 +28,15 @@ async function fixture(mode: 'baseline' | 'bago5' = 'baseline', fail = false) {
     calls.push({url, method, body})
     if (url === '/api/agents/list') return reply({agents: []})
     if (url === '/api/providers/selection') return reply({provider_id: null, model_id: null})
+    if (url === '/api/project-folders/v1/active') return reply({project_id: 'project-1', title: 'Proyecto de prueba', scope: 'project', root: 'D:/work/project'})
+    if (url === '/api/project-permissions') return reply({project_id: 'project-1', root: 'D:/work/project', binding: {workspace_root: 'D:/work/project', revision: 4}, revision: 3, state: 'active', read_directories: ['src'], write_directories: ['docs']})
+    if (url === '/api/project-permissions/directories') return reply({project_id: 'project-1', root: 'D:/work/project', binding: {workspace_root: 'D:/work/project', revision: 4}, revision: 3, directory: '.', directories: [{name: 'src', path: 'src'}, {name: 'docs', path: 'docs'}], truncated: false})
     if (url.startsWith('/api/conversations?')) return reply({conversations: []})
     if (url === '/api/conversations' && method === 'POST') {
       conversation = {id: 'conv-shortcuts', owner_kind: 'assistant', owner_id: 'app-assistant', title: 'Fixture', revision: 1, status: 'active', messages: []}
       return reply(conversation)
     }
     if (url === '/api/capabilities') return reply({capabilities: [{id: 'workspace.read_text', name: 'Lectura fixture', status: 'AVAILABLE', effect: 'read'}]})
-    if (url === '/api/workspace-read/authorizations') return reply({authorization_id: 'explicit-workspace-grant'})
     if (url === '/api/web-read/authorizations') return reply({authorization_id: 'explicit-web-grant', allowed_origins: ['https://example.com']})
     if (url === '/api/chat/control') {
       if (fail) return reply({detail: 'Fallo sintético del proveedor'}, 503)
@@ -47,7 +49,7 @@ async function fixture(mode: 'baseline' | 'bago5' = 'baseline', fail = false) {
   await waitFor(() => expect(calls.some(call => call.url.startsWith('/api/conversations?'))).toBe(true))
   await act(async () => {})
   const input = screen.getByRole('textbox', {name: 'Mensaje al asistente o agente seleccionado'}) as HTMLTextAreaElement
-  const mutations = () => calls.filter(call => call.method !== 'GET')
+  const mutations = () => calls.filter(call => call.method !== 'GET' && call.url !== '/api/project-permissions/directories')
   const control = () => calls.filter(call => call.url === '/api/chat/control')
   return {calls, input, mutations, control, view, onNavigate}
 }
@@ -155,20 +157,21 @@ it('prefills the existing suggestion without sending or creating an empty conver
   expect(f.mutations()).toEqual([])
 })
 
-it('propagates only explicitly enabled one-turn permissions on the natural model route', async () => {
+it('uses saved project permissions independently from the explicit one-turn web grant', async () => {
   const f = await fixture()
-  fireEvent.click(screen.getByLabelText('Permitir lectura de archivos del proyecto'))
-  fireEvent.change(screen.getByLabelText('Rutas relativas al proyecto'), {target: {value: 'docs/fixture.md'}})
-  fireEvent.click(screen.getByLabelText('Permitir lectura web pública'))
-  fireEvent.change(screen.getByLabelText('URL HTTPS de entrada · una por línea'), {target: {value: 'https://example.com/'}})
+  expect(screen.getByText('src')).toBeTruthy()
+  expect(screen.queryByLabelText('Permitir lectura de archivos del proyecto')).toBeNull()
+  expect(screen.queryByLabelText('Rutas relativas al proyecto')).toBeNull()
+  fireEvent.click(screen.getByLabelText('Permitir lectura web p\u00fablica'))
+  fireEvent.change(screen.getByLabelText('URL HTTPS de entrada \u00b7 una por l\u00ednea'), {target: {value: 'https://example.com/'}})
   await send(f.input, naturalMessages[0])
   await screen.findByText('Respuesta fixture')
-  expect(f.control()[0].body).toMatchObject({operation: 'chat', workspace_read_authorization_id: 'explicit-workspace-grant', web_read_authorization_id: 'explicit-web-grant'})
+  expect(f.control()[0].body).toMatchObject({operation: 'chat', web_read_authorization_id: 'explicit-web-grant'})
+  expect(f.control()[0].body).not.toHaveProperty('workspace_read_authorization_id')
   const grants = f.mutations().filter(call => call.url.endsWith('/authorizations'))
-  expect(grants).toHaveLength(2)
+  expect(grants).toHaveLength(1)
   for (const grant of grants) expect(grant.body).toMatchObject({owner_kind: 'assistant', owner_id: 'app-assistant', conversation_id: 'conv-shortcuts', revision: 1})
-  expect((screen.getByLabelText('Permitir lectura de archivos del proyecto') as HTMLInputElement).checked).toBe(false)
-  expect((screen.getByLabelText('Permitir lectura web pública') as HTMLInputElement).checked).toBe(false)
+  expect((screen.getByLabelText('Permitir lectura web p\u00fablica') as HTMLInputElement).checked).toBe(false)
 })
 
 it('keeps provider errors visible and never retries a natural mission automatically', async () => {

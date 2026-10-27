@@ -92,6 +92,22 @@ class FilesystemTests(unittest.TestCase):
             with self.assertRaises(fs.FilesystemError):
                 self.tool.plan('write', target=target, content='x')
 
+    def test_edit_replaces_only_unchanged_existing_file_and_receipts_hashes(self):
+        plan, receipt = self.execute('edit', target='original.txt', content='edited synthetic content')
+        target = self.root / 'original.txt'
+        self.assertEqual(target.read_text(encoding='utf-8'), 'edited synthetic content')
+        self.assertEqual(receipt['readback']['sha256'], plan['content_sha256'])
+        self.assertIn('target_replaced', receipt['effects'])
+        with self.assertRaises(fs.FilesystemError):
+            self.tool.plan('edit', target='missing.txt', content='cannot create')
+
+    def test_edit_rejects_stale_target_and_preserves_new_content(self):
+        plan = self.tool.plan('edit', target='original.txt', content='approved content')
+        (self.root / 'original.txt').write_text('concurrent change', encoding='utf-8')
+        receipt = self.tool.execute(plan['id'], approval=self.approval(plan))
+        self.assertEqual(receipt['status'], 'FAILED')
+        self.assertEqual((self.root / 'original.txt').read_text(encoding='utf-8'), 'concurrent change')
+
     def test_change_after_plan_fails_and_receipt_persists(self):
         plan = self.tool.plan('move', source='original.txt', target='moved.txt')
         (self.root / 'original.txt').write_text('changed')

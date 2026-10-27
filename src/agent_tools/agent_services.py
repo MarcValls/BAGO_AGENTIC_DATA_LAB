@@ -43,11 +43,14 @@ def _protected(path):
 
 
 class AgentServiceSession:
-    def __init__(self,*,workspace,root,owner_id,conversation_id,communications,review_work_id=None,contact_id=None,allow_draft=False):
+    def __init__(self,*,workspace,root,owner_id,conversation_id,communications,review_work_id=None,contact_id=None,allow_draft=False,
+                 project_permissions=None):
         self.workspace=Path(workspace).resolve();self.root=Path(root).resolve()
         self.owner_id=owner_id;self.conversation_id=conversation_id;self.communications=communications
         self.review_work_id=review_work_id;self.contact_id=contact_id;self.allow_draft=allow_draft
-        self.state=self.workspace/'.bago/traces/agent-tools'
+        self.project_permissions=project_permissions
+        self.project_snapshot=project_permissions.snapshot() if project_permissions else None
+        self.state=self.workspace/'.bago/state/agent-tools'
         self.producers=ProducerStore(self.workspace)
         self.source_binding=self.producers.summary(self.producers.load_registered(review_work_id)) if review_work_id else None
         self.contact_snapshot=next((c for c in communications.contacts() if c['id']==contact_id),None) if communications and contact_id else None
@@ -103,24 +106,40 @@ class AgentServiceSession:
                 if isinstance(args.get('content'),str) and len(args['content'])>65536:raise ValueError('text exceeds UI review limit')
                 if name=='filesystem_inventory':
                     if set(args)-{'path'}:raise ValueError('unexpected inventory arguments')
-                    toolkit=FilesystemToolkit(self.root);folder=toolkit._path(args.get('path','.'),allow_dot=True)
-                    if not folder.is_dir():raise ValueError('inventory requires a directory')
-                    entries=[]
-                    for item in sorted(folder.iterdir(),key=lambda p:p.name.casefold()):
-                        relative=item.relative_to(self.root).as_posix()
-                        if _protected(relative) or item.name=='trash':continue
-                        if len(entries)>=1000:raise ValueError('inventory limit exceeded; choose a narrower folder')
-                        toolkit._plain(item)
-                        entries.append({'path':relative,'kind':'directory' if item.is_dir() else 'file','snapshot':None if item.is_dir() else toolkit._snapshot(item)})
-                    result={'root':str(self.root),'entries':entries,'recursive':False,'excluded':'hidden/internal paths'}
+                    lease = self.project_permissions.lease('read',(args.get('path','.'),),expected_revision=self.project_snapshot['revision']) if self.project_permissions else __import__('contextlib').nullcontext()
+                    with lease:
+                        toolkit=FilesystemToolkit(self.root);folder=toolkit._path(args.get('path','.'),allow_dot=True)
+                        if not folder.is_dir():raise ValueError('inventory requires a directory')
+                        entries=[]
+                        for item in sorted(folder.iterdir(),key=lambda p:p.name.casefold()):
+                            relative=item.relative_to(self.root).as_posix()
+                            if _protected(relative) or item.name=='trash':continue
+                            if len(entries)>=1000:raise ValueError('inventory limit exceeded; choose a narrower folder')
+                            toolkit._plain(item)
+                            entries.append({'path':relative,'kind':'directory' if item.is_dir() else 'file','snapshot':None if item.is_dir() else toolkit._snapshot(item)})
+                        result={'root':str(self.root),'entries':entries,'recursive':False,'excluded':'hidden/internal paths'}
                     native={'status':'VERIFIED'}
-                else:result,native=FilesystemSession().invoke(name,args,{'root':str(self.root),'tools':assigned})
+                else:
+                    from contextlib import ExitStack
+                    with ExitStack() as leases:
+                        if name=='filesystem_plan' and self.project_permissions:
+                            operation=args.get('operation');source=args.get('source');target=args.get('target')
+                            if source and operation in {'copy','move','rename','trash','restore'}:
+                                leases.enter_context(self.project_permissions.lease('read',(source,),expected_revision=self.project_snapshot['revision']))
+                            if operation=='edit' and target:
+                                leases.enter_context(self.project_permissions.lease('read',(target,),expected_revision=self.project_snapshot['revision']))
+                            if source and operation in {'move','rename','trash','restore'}:
+                                leases.enter_context(self.project_permissions.lease('write',(source,),expected_revision=self.project_snapshot['revision']))
+                            if target and operation not in {'trash'}:
+                                leases.enter_context(self.project_permissions.lease('write',(target,),expected_revision=self.project_snapshot['revision']))
+                        result,native=FilesystemSession().invoke(name,args,{'root':str(self.root),'tools':assigned})
                 if name=='filesystem_plan':
                     if any(_protected(result.get(key)) for key in ('source','target')):raise ValueError('resolved filesystem plan targets an internal path')
                     proposal='fsproposal_'+uuid.uuid4().hex
                     binding={'proposal_id':proposal,'owner_id':self.owner_id,'conversation_id':self.conversation_id,'root':str(self.root),
-                        'plan_id':result['id'],'plan_sha256':result['sha256'],'status':'PROPOSED','expires_at':result['expires_at'],'plan':result}
-                    write(self.state/'filesystem-proposals'/(proposal+'.json'),binding)
+                        'plan_id':result['id'],'plan_sha256':result['sha256'],'status':'PROPOSED','expires_at':result['expires_at'],'plan':result,
+                        'project_snapshot':self.project_snapshot}
+                    write(self.workspace/'.bago/state/fop'/(proposal+'.json'),binding)
                     result={'proposal_id':proposal,'plan':result,'state':'PROPOSED','executed':False}
                     receipt['filesystem_proposal']={k:binding[k] for k in ('proposal_id','owner_id','conversation_id','plan_sha256','root','status')}
                 receipt.update(executed=True,decision='ALLOW',outcome=native['status'])
@@ -151,6 +170,11 @@ class AgentServiceSession:
         except (ValueError,OSError,TypeError,KeyError) as error:
             receipt.update(decision='FAIL' if receipt['executed'] else 'DENY',reason_code='AGENT_SERVICE_REJECTED',reason=str(error))
             return {'state':'FAILED','error':str(error),'send_executed':False},receipt
+        except Exception as error:
+            from src.project_permissions import PermissionError as ProjectPermissionError
+            if not isinstance(error,ProjectPermissionError):raise
+            receipt.update(decision='DENY',reason_code=error.code,reason='Project permission denied at the filesystem boundary.')
+            return {'state':'DENIED','reason_code':error.code,'send_executed':False},receipt
 
 
 class DevelopmentChatSession:
@@ -192,14 +216,18 @@ def invoke_development_chat_tool(session,name,args):
 
 def _proposal_path(workspace,proposal_id):
     if not isinstance(proposal_id,str) or not proposal_id.startswith('fsproposal_') or len(proposal_id)!=43 or not all(c in '0123456789abcdef' for c in proposal_id[11:]):raise ValueError('invalid proposal id')
-    return Path(workspace).resolve()/'.bago/traces/agent-tools/filesystem-proposals'/(proposal_id+'.json')
+    return Path(workspace).resolve()/'.bago/state/fop'/(proposal_id+'.json')
 
 
-def review_filesystem(*,workspace,proposal_id,owner_id,conversation_id,revision):
+def review_filesystem(*,workspace,proposal_id,owner_id,conversation_id,revision,project_permissions=None):
     with _LOCK:
         path=_proposal_path(workspace,proposal_id);saved=json.loads(path.read_text(encoding='utf8'))
         if saved['owner_id']!=owner_id or saved['conversation_id']!=conversation_id:raise ValueError('foreign filesystem proposal')
         if time.time()>=saved['expires_at']:raise ValueError('filesystem plan expired')
+        if project_permissions and saved.get('project_snapshot'):
+            current=project_permissions.snapshot()
+            if any(current.get(key)!=saved['project_snapshot'].get(key) for key in ('project_id','root','binding','revision')):
+                raise ValueError('project permissions or selected project changed; prepare again')
         from src.agent_tools.document_tools import checked_directory
         root=checked_directory(saved['root'],workspace)
         actual=FilesystemToolkit(root)._load('plans',saved['plan_id'])
@@ -221,17 +249,30 @@ def review_filesystem(*,workspace,proposal_id,owner_id,conversation_id,revision)
         return {**saved,'review_token':token,'conversation_revision':revision}
 
 
-def execute_filesystem(*,workspace,proposal_id,owner_id,conversation_id,revision,review_token,plan_sha256,confirmed):
+def execute_filesystem(*,workspace,proposal_id,owner_id,conversation_id,revision,review_token,plan_sha256,confirmed,project_permissions=None):
     with _LOCK:
         token=_REVIEWS.pop(review_token,None)
         expected={'workspace':str(Path(workspace).resolve()),'proposal_id':proposal_id,'owner_id':owner_id,
                   'conversation_id':conversation_id,'revision':revision,'plan_sha256':plan_sha256}
         if confirmed is not True or token is None or token['expires_at']<=time.time() or any(token[k]!=v for k,v in expected.items()):raise ValueError('exact current human review required')
-        saved=review_filesystem(workspace=workspace,proposal_id=proposal_id,owner_id=owner_id,conversation_id=conversation_id,revision=revision)
+        saved=review_filesystem(workspace=workspace,proposal_id=proposal_id,owner_id=owner_id,conversation_id=conversation_id,revision=revision,project_permissions=project_permissions)
         if saved['review_token']:_REVIEWS.pop(saved['review_token'],None)
         if saved['status']!='PROPOSED' or saved['plan_sha256']!=plan_sha256:raise ValueError('proposal no longer executable')
-        receipt=FilesystemToolkit(saved['root']).execute(saved['plan_id'],approval={'root':saved['root'],'plan_sha256':plan_sha256,
-            'operations':[saved['plan']['operation']],'actor':'human-ui:'+owner_id,'expires_at':time.time()+60})
+        from contextlib import ExitStack
+        plan=saved['plan'];operation=plan['operation'];source=plan.get('source');target=plan.get('target')
+        with ExitStack() as leases:
+            if project_permissions:
+                policy=saved.get('project_snapshot') or {}
+                expected=policy.get('revision')
+                if source and operation in {'copy','move','rename','trash','restore'}:
+                    leases.enter_context(project_permissions.lease('read',(source,),expected_revision=expected))
+                if source and operation in {'move','rename','trash','restore'}:
+                    leases.enter_context(project_permissions.lease('write',(source,),expected_revision=expected))
+                if target and operation not in {'trash'}:
+                    effect_path=target if operation != 'edit' else target
+                    leases.enter_context(project_permissions.lease('write',(effect_path,),expected_revision=expected))
+            receipt=FilesystemToolkit(saved['root']).execute(saved['plan_id'],approval={'root':saved['root'],'plan_sha256':plan_sha256,
+                'operations':[operation],'actor':'human-ui:'+owner_id,'expires_at':time.time()+60})
         saved.update(status=receipt['status'],receipt=receipt,review_token=None)
         target=Path(saved['root'])/saved['plan']['target']
         if receipt['status']=='VERIFIED' and target.is_file() and saved['plan']['operation']!='trash':
@@ -240,5 +281,7 @@ def execute_filesystem(*,workspace,proposal_id,owner_id,conversation_id,revision
                     source_root=saved['root'],outputs=[target],receipt=receipt)
             except (OSError,ValueError) as error:
                 saved['production_error']=str(error)
-        write(_proposal_path(workspace,proposal_id),saved,new=False)
+        proposal_path=_proposal_path(workspace,proposal_id)
+        proposal_path.parent.mkdir(parents=True,exist_ok=True)
+        write(proposal_path,saved,new=False)
         return saved

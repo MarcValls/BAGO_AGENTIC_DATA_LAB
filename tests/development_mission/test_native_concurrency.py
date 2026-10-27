@@ -360,7 +360,7 @@ def _native_lifecycle_fixture(tmp_path, monkeypatch):
     monkeypatch.setattr(api, "_consume_workspace_read_authorization", authorize)
     monkeypatch.setattr(api, "_consume_workspace_scan_authorization", lambda *args, **kwargs: [])
     monkeypatch.setattr(api, "_consume_web_authorization", lambda *args, **kwargs: None)
-    monkeypatch.setattr(api, "_workspace_read_instructions", lambda *args: "")
+    monkeypatch.setattr(api, "_workspace_read_instructions", lambda *args, **kwargs: "")
     monkeypatch.setattr(api, "baseline_chat_context", lambda: {"prompt_guidance": ""})
     monkeypatch.setattr(api, "_record_chat_cognition_trace", lambda **kwargs: {"state": "recorded"})
     monkeypatch.setattr(api, "_record_agent_chat_trace", forbidden)

@@ -14,11 +14,14 @@ async function setup(options:{grant?:unknown;status?:number;conversation?:any;ag
  let conv=options.conversation??make();const mutations:Array<{path:string;body:any}>=[]
  const fetch=vi.fn(async(path:string,init?:RequestInit)=>{
   const body=init?.body?JSON.parse(String(init.body)):null
-  if(init?.method&&init.method!=='GET')mutations.push({path,body})
+  if(init?.method&&init.method!=='GET'&&path!=='/api/project-permissions/directories')mutations.push({path,body})
   if(path.startsWith('/api/conversations?'))return response({conversations:[conv]})
   if(path==='/api/conversations/'+conv.id)return response(conv)
   if(path==='/api/agents/list')return response({agents:options.agents??[]})
   if(path==='/api/providers/selection')return response({provider_id:null,model_id:null})
+  if(path==='/api/project-folders/v1/active')return response({project_id:'project-1',title:'Proyecto de prueba',scope:'project',root:'D:/work/project'})
+  if(path==='/api/project-permissions')return response({project_id:'project-1',root:'D:/work/project',binding:{workspace_root:'D:/work/project',revision:4},revision:3,state:'active',read_directories:['src'],write_directories:['docs']})
+  if(path==='/api/project-permissions/directories')return response({project_id:'project-1',root:'D:/work/project',binding:{workspace_root:'D:/work/project',revision:4},revision:3,directory:'.',directories:[{name:'src',path:'src'},{name:'docs',path:'docs'}],truncated:false})
   if(path==='/api/web-read/authorizations')return response(options.grant??{authorization_id:'web-token',allowed_origins:['https://www.sollutia.com']},options.status??200)
   if(path==='/api/workspace-read/authorizations')return response({authorization_id:'local-token'})
   if(path==='/api/chat/control'||path.endsWith('/chat')){
@@ -52,12 +55,13 @@ it('binds the explicit one-turn grant to exact owner, conversation and revision 
  expect((screen.getByLabelText('Permitir lectura web pública') as HTMLInputElement).checked).toBe(false)
  send();await waitFor(()=>expect(mutations).toHaveLength(3));expect(mutations[2].body.web_read_authorization_id).toBeUndefined()
 })
-it('preserves independent project-file permission alongside web permission',async()=>{
- const {mutations}=await setup();enable();fireEvent.click(screen.getByLabelText('Permitir lectura de archivos del proyecto'))
- fireEvent.change(screen.getByLabelText('Rutas relativas al proyecto'),{target:{value:'README.md'}});send()
+it('keeps saved project READ policy separate from the one-turn public-web grant',async()=>{
+ const {mutations}=await setup();enable();
+ const panel=screen.getByRole('region',{name:'Contexto del proyecto'});expect(within(panel).getByText('src')).toBeTruthy();send()
  await screen.findByText('Respuesta fixture')
- expect(mutations.map(item=>item.path)).toEqual(['/api/workspace-read/authorizations','/api/web-read/authorizations','/api/chat/control'])
- expect(mutations[2].body).toMatchObject({workspace_read_authorization_id:'local-token',web_read_authorization_id:'web-token'})
+ expect(mutations.map(item=>item.path)).toEqual(['/api/web-read/authorizations','/api/chat/control'])
+ expect(mutations[1].body).toMatchObject({web_read_authorization_id:'web-token'})
+ expect(mutations[1].body).not.toHaveProperty('workspace_read_authorization_id')
 })
 it.each(['','http://www.sollutia.com/','https://user:pass@www.sollutia.com/','https://www.sollutia.com:8443/','not a URL',Array.from({length:9},(_,i)=>`https://www.sollutia.com/${i}`).join('\n')])('rejects invalid entry scope before requesting authorization: %s',async(url)=>{
  const {mutations}=await setup();enable(url);send();await screen.findByRole('alert');expect(mutations).toEqual([])
@@ -90,7 +94,7 @@ it('clears consent on owner switch and grants only to the delegated saved agent'
  const assistant=withPersistedDelegation(make(),agent,agentConv.id)
  const mutations:Array<{path:string;body:any}>=[]
  vi.stubGlobal('fetch',vi.fn(async(path:string,init?:RequestInit)=>{
-  const body=init?.body?JSON.parse(String(init.body)):null;if(init?.method&&init.method!=='GET')mutations.push({path,body})
+  const body=init?.body?JSON.parse(String(init.body)):null;if(init?.method&&init.method!=='GET'&&path!=='/api/project-permissions/directories')mutations.push({path,body})
   if(path.startsWith('/api/conversations?'))return response({conversations:[path.includes('owner_kind=agent')?agentConv:assistant]})
   if(path==='/api/conversations/conv-web')return response(assistant)
   if(path==='/api/conversations/conv-agent')return response(agentConv)

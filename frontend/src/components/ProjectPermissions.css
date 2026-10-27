@@ -1,0 +1,22 @@
+.project-permissions { padding: 12px; border-bottom: 1px solid #3a586c; color: var(--development-text, #dce7f2); background: #112337; }
+.project-permissions header { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.project-permissions h4 { margin: 0; font-size: .88rem; }
+.project-permissions header p, .project-permissions p { margin: 6px 0; line-height: 1.45; }
+.project-permissions__root { display: block; margin: 8px 0; overflow-wrap: anywhere; color: #b8dbea; font-size: .73rem; }
+.project-permissions dl { display: grid; gap: 4px; margin: 10px 0; }
+.project-permissions dl div { display: grid; grid-template-columns: 70px minmax(0,1fr); gap: 8px; padding: 6px 8px; border-left: 3px solid #59b8c8; background: #172b40; }
+.project-permissions dd { margin: 0; overflow-wrap: anywhere; }
+.project-permissions__revoked { border-left: 3px solid #d98585; padding: 8px; background: #33252d; }
+.project-permission-tree { margin: 10px 0; padding: 8px; border: 1px solid #344b67; border-radius: 4px; background: #0e1c2b; }
+.project-permission-tree > p { font-size: .75rem; }
+.project-permission-tree ul { display: grid; gap: 5px; padding: 0; margin: 8px 0; list-style: none; }
+.project-permission-tree li { display: grid; grid-template-columns: minmax(0,1fr) auto auto; align-items: center; gap: 6px; }
+.project-permission-tree__current { display: grid; grid-template-columns: minmax(0,1fr) auto auto; align-items: center; gap: 6px; padding: 6px 0; border-bottom: 1px solid #344b67; }
+.project-permission-tree button, .project-permissions button { color: inherit; border: 1px solid #3a566e; border-radius: 4px; padding: 6px 8px; background: #192b40; font: inherit; cursor: pointer; }
+.project-permission-tree__open { min-width: 0; text-align: left; overflow-wrap: anywhere; }
+.project-permission-tree label, .project-permissions__confirm { display: flex; align-items: center; gap: 5px; font-size: .73rem; }
+.project-permissions input:focus-visible, .project-permissions button:focus-visible { outline: 2px solid #82c8f0; outline-offset: 2px; }
+.project-permissions__confirm { margin: 10px 0; align-items: flex-start; }
+.project-permissions__confirm input { margin-top: 3px; }
+.project-permissions__actions { display: flex; flex-wrap: wrap; gap: 7px; }
+.project-permissions__actions button { flex: 1 1 120px; }
