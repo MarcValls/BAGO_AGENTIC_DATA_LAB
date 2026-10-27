@@ -18,11 +18,14 @@ async function setup(options:{stored?:any;role?:string;failed?:boolean}={}){
  const calls:Array<{path:string;body:any}>=[]
  vi.stubGlobal('fetch',vi.fn(async(path:string,init?:RequestInit)=>{
   const body=init?.body?JSON.parse(String(init.body)):null
-  if(init?.method&&init.method!=='GET')calls.push({path,body})
+  if(init?.method&&init.method!=='GET'&&path!=='/api/project-permissions/directories')calls.push({path,body})
   if(path.startsWith('/api/conversations?'))return response({conversations:[path.includes('owner_kind=agent')?agentConv:assistant]})
   if(path==='/api/conversations/'+assistant.id)return response(assistant)
   if(path==='/api/conversations/'+agentConv.id)return response(agentConv)
   if(path==='/api/agents/list')return response({agents:[agent]})
+  if(path==='/api/project-folders/v1/active')return response({project_id:'project-1',title:'Proyecto de prueba',scope:'project',root:'D:/work/project'})
+  if(path==='/api/project-permissions')return response({project_id:'project-1',root:'D:/work/project',binding:{workspace_root:'D:/work/project',revision:4},revision:3,state:'active',read_directories:['src'],write_directories:['docs']})
+  if(path==='/api/project-permissions/directories')return response({project_id:'project-1',root:'D:/work/project',binding:{workspace_root:'D:/work/project',revision:4},revision:3,directory:'.',directories:[{name:'src',path:'src'},{name:'docs',path:'docs'}],truncated:false})
   if(path==='/api/web-read/authorizations')return response({authorization_id:'web-grant',allowed_origins:['https://example.org']})
   if(path.endsWith('/actions'))return response(review)
   if(path==='/api/agents/'+agent.id+'/chat'){
@@ -38,18 +41,20 @@ async function setup(options:{stored?:any;role?:string;failed?:boolean}={}){
  return {calls,inspect}
 }
 function send(){fireEvent.change(screen.getByPlaceholderText('Escribe a Agente fixture.'),{target:{value:'Prepara un informe'}});fireEvent.click(screen.getByRole('button',{name:'Enviar'}))}
-it('selected agent requires opt-in each turn independently of web, preserves Markdown and never autoapplies a returned proposal',async()=>{
+it('uses project WRITE policy without per-turn opt-in, preserves Markdown and never autoapplies a proposal',async()=>{
  const {calls,inspect}=await setup()
- fireEvent.click(screen.getByLabelText('Proponer archivos'));fireEvent.click(screen.getByLabelText('Permitir lectura web pública'));fireEvent.change(screen.getByLabelText('URL HTTPS de entrada · una por línea'),{target:{value:'https://example.org/'}})
+ expect(screen.queryByLabelText('Proponer archivos')).toBeNull()
+ fireEvent.click(screen.getByLabelText('Permitir lectura web p\u00fablica'));fireEvent.change(screen.getByLabelText('URL HTTPS de entrada \u00b7 una por l\u00ednea'),{target:{value:'https://example.org/'}})
  send();await screen.findByDisplayValue(review.proposed_text)
  const sent=calls.find(c=>c.path.endsWith('/chat'))!
- expect(sent.body).toMatchObject({allow_workspace_write_proposals:true,web_read_authorization_id:'web-grant',conversation_id:context.conversation_id,revision:7})
- expect((screen.getByLabelText('Proponer archivos') as HTMLInputElement).checked).toBe(false)
+ expect(sent.body).toMatchObject({web_read_authorization_id:'web-grant',conversation_id:context.conversation_id,revision:7})
+ expect(sent.body).not.toHaveProperty('allow_workspace_write_proposals')
+ expect(screen.queryByLabelText('Proponer archivos')).toBeNull()
  expect(screen.getByRole('table')).toBeTruthy()
- fireEvent.click(screen.getByRole('button',{name:'Inspeccionar ejecución'}));expect(inspect).toHaveBeenCalledWith({conversationId:context.conversation_id,revision:9,traceId:'trace-proposal'})
+ fireEvent.click(screen.getByRole('button',{name:'Inspeccionar ejecuci\u00f3n'}));expect(inspect).toHaveBeenCalledWith({conversationId:context.conversation_id,revision:9,traceId:'trace-proposal'})
  expect(calls.filter(c=>c.path.endsWith('/actions')).every(c=>c.body.operation==='review_write')).toBe(true)
  send();await waitFor(()=>expect(calls.filter(c=>c.path.endsWith('/chat'))).toHaveLength(2))
- expect(calls.filter(c=>c.path.endsWith('/chat'))[1].body.allow_workspace_write_proposals).toBeUndefined()
+ expect(calls.filter(c=>c.path.endsWith('/chat'))[1].body).not.toHaveProperty('allow_workspace_write_proposals')
 })
 it('does not infer proposal authorization from a request without the per-turn checkbox',async()=>{
  const {calls}=await setup();send();await screen.findByDisplayValue(review.proposed_text)
@@ -70,11 +75,11 @@ it.each([
 it('does not trust a proposal reference attached to a user message',async()=>{
  const {calls}=await setup({stored:summary,role:'user'});await screen.findByRole('alert');expect(calls).toEqual([])
 })
-it('switching back to assistant clears the delegated-agent proposal permission',async()=>{
- await setup();fireEvent.click(screen.getByLabelText('Proponer archivos'));fireEvent.click(screen.getByRole('button',{name:'Orquestador BAGO5'}));await screen.findByRole('region',{name:'conv-assistant'});expect(screen.queryByLabelText('Proponer archivos')).toBeNull()
- await openDelegatedChild('Agente fixture');expect((screen.getByLabelText('Proponer archivos') as HTMLInputElement).checked).toBe(false)
+it('assistant and delegated-agent navigation do not expose a per-turn project permission control',async()=>{
+ await setup();expect(screen.queryByLabelText('Proponer archivos')).toBeNull()
+ fireEvent.click(screen.getByRole('button',{name:'Orquestador BAGO5'}));await screen.findByRole('region',{name:'conv-assistant'});expect(screen.queryByLabelText('Proponer archivos')).toBeNull()
+ await openDelegatedChild('Agente fixture');expect(screen.queryByLabelText('Proponer archivos')).toBeNull()
 })
-
 
 it('restores a persisted partial proposal alongside FAILED state and its own Inspect identity',async()=>{
  const {calls,inspect}=await setup({stored:summary,failed:true});await screen.findByDisplayValue(review.proposed_text)

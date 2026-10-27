@@ -1038,8 +1038,8 @@ export default function AgentChat({ onInspectionSelection, onInspectExecution, o
     }
   }
 
-  const openControlChat = () => { setSelectedAgent(null); setAllowWorkspaceRead(false); setWorkspaceReadPaths(''); setCapabilityDraft(null); setCapabilityProposals([]); setError('') }
-  const selectAgent = (agent: Agent) => { setSelectedAgent(agent); setAllowWorkspaceRead(false); setWorkspaceReadPaths(''); setCapabilityDraft(null); setCapabilityProposals([]); setError('') }
+  const openControlChat = () => { setSelectedAgent(null); setCapabilityDraft(null); setCapabilityProposals([]); setError('') }
+  const selectAgent = (agent: Agent) => { setSelectedAgent(agent); setCapabilityDraft(null); setCapabilityProposals([]); setError('') }
   const latestDirectoryScanPromptId = [...messages].reverse().find((message) => message.inlineDirectoryScan)?.id
   const latestDelegationMessageIds = new Set<string>()
   const seenDelegationProposalIds = new Set<string>()
