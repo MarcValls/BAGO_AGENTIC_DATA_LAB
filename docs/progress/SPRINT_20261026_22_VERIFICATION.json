@@ -1,0 +1,67 @@
+{
+  "schema": "bago.sprint-verification.v1",
+  "sprint": 22,
+  "date": "2026-10-26",
+  "status": "VERIFIED_SCOPED; production GO NOT_VALIDATED",
+  "candidate": {
+    "worktree": "C:/Users/AMTEC_Terminal_1º/Desktop/BAGO5_ADL/.worktrees/project-workspace-chat-isolation-20261026",
+    "branch": "fix/runtime-status-bar-thin-20261026",
+    "head_before_sprint": "1a63bf30c480470ef6a2aa096ba0e6a399e50b53",
+    "fresh_base_sha": "c06f1eb0d9e844807f8c009e26fc9514c0787008",
+    "fresh_base_tree": "c4ea503b5bff245751ad7478b49ea4edf18f6062",
+    "previous_pull_request": 71,
+    "base": "origin/main@c06f1eb0d9e844807f8c009e26fc9514c0787008"
+  },
+  "change": {
+    "id": "runtime-status-bar-one-line",
+    "authorship": "External UI edit by Codex",
+    "files": [
+      "frontend/src/components/RuntimeStatusBar.css",
+      "frontend/tests/runtime-status-bar/status.test.tsx",
+      "docs/progress/SPRINT_20261026_22.md",
+      "docs/progress/SPRINT_20261026_22_VERIFICATION.json",
+      "docs/agent-chat-control/assets/manual-ui-actual-2026-10-26/09-runtime-status-bar-desktop-100-percent.png",
+      "docs/agent-chat-control/assets/manual-ui-actual-2026-10-26/10-runtime-status-bar-mobile-scroll.png"
+    ],
+    "preserved": ["status source and endpoint", "expandable details", "full accessible names", "responsive horizontal access"]
+  },
+  "checks": [
+    {
+      "command": "npm --prefix frontend test -- --run tests/runtime-status-bar/status.test.tsx",
+      "result": "38 passed",
+      "status": "PASS"
+    },
+    {
+      "command": "npm --prefix frontend run build",
+      "result": "TypeScript and Vite build passed; main bundle >500 kB warning remains",
+      "status": "PASS_WITH_WARNING"
+    },
+    {
+      "tool": "Playwright headed Chromium on http://127.0.0.1:5194/",
+      "result": {
+        "desktop": {"viewport": "1536x776", "zoom": 1.0, "footer_height_css_px": 34.8, "row_height_css_px": 34, "refresh_control_clipped": false, "groups_single_line": 5, "full_aria_labels": 5},
+        "mobile": {"viewport": "390x844", "row_height_css_px": 34, "scroll_width_css_px": 1072, "client_width_css_px": 390, "second_hint_row": false}
+      },
+      "status": "VERIFIED"
+    },
+    {
+      "command": "python scripts/generate_dynamic_readme.py",
+      "result": "README generated after 1574 tests passed",
+      "status": "PASS"
+    },
+    {
+      "command": "python scripts/generate_dynamic_readme.py --check --skip-tests",
+      "result": "README verified; suite NOT_RUN (1576 cases collected)",
+      "status": "PASS"
+    }
+  ],
+  "screenshots": [
+    {"path": "docs/agent-chat-control/assets/manual-ui-actual-2026-10-26/09-runtime-status-bar-desktop-100-percent.png", "sha256": "FE06B2C47EA704DD38E95B5098A2FF850EC2793363199DC604FCCAF96E9A4BA2"},
+    {"path": "docs/agent-chat-control/assets/manual-ui-actual-2026-10-26/10-runtime-status-bar-mobile-scroll.png", "sha256": "FD9D3C85F03387C328737E0CC0FD3E1463D8C101BEF95E95C1A9AEEF197E2F44"}
+  ],
+  "production_gate": {
+    "status": "NO_GO",
+    "reason": "This scoped UI change does not close the outstanding tool execution, autonomous delegation, recovery, and end-to-end causal trace requirements."
+  },
+  "github": {"remote_ci": "NOT_RUN in this local evidence; the published head requires GitHub Actions verification"}
+}

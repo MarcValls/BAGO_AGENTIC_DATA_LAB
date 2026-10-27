@@ -1,0 +1,101 @@
+{
+  "schema": "bago.sprint-verification.v1",
+  "sprint": 24,
+  "date": "2026-10-26",
+  "status": "VERIFIED_SCOPED; production GO NOT_VALIDATED",
+  "candidate": {
+    "branch": "fix/runtime-status-bar-thin-20261026",
+    "head_before_sprint": "7ddab767322671cedaff2b8097b15897051fd939",
+    "implementation_head_ci": "319448040c61728aa158c941ee4dc3dc767c53b5",
+    "fresh_base_sha": "c06f1eb0d9e844807f8c009e26fc9514c0787008",
+    "pull_request": 74
+  },
+  "change": {
+    "id": "runtime-status-bar-21px",
+    "authorship": "External UI edit by Codex",
+    "files": [
+      "frontend/src/components/RuntimeStatusBar.css",
+      "frontend/tests/runtime-status-bar/status.test.tsx",
+      "docs/progress/SPRINT_20261026_24.md",
+      "docs/progress/SPRINT_20261026_24_VERIFICATION.json",
+      "docs/agent-chat-control/assets/manual-ui-actual-2026-10-26/12-runtime-status-bar-21px-8093.png"
+    ],
+    "geometry": {"footer_height_css_px": 21, "row_height_css_px": 20, "border_included": true},
+    "css_sha256": "15C3A1A0C85126D51E7935E8CE1EF64ACE90BD98D5ADE098241FED9DD5EBCEA4",
+    "preserved": ["expanded details flow", "accessible labels", "horizontal overflow", "status data and semantics"]
+  },
+  "checks": [
+    {
+      "command": "npm test -- --run tests/runtime-status-bar/status.test.tsx",
+      "cwd": "frontend",
+      "result": "38 passed",
+      "status": "PASS"
+    },
+    {
+      "command": "npm run build",
+      "cwd": "frontend",
+      "result": "TypeScript and Vite build passed; 449 modules; existing main bundle warning above 500 kB",
+      "status": "PASS_WITH_WARNING"
+    },
+    {
+      "command": "python -B scripts/generate_dynamic_readme.py",
+      "result": "README generated after 1574 tests passed",
+      "status": "PASS"
+    },
+    {
+      "command": "python scripts/generate_dynamic_readme.py --check --skip-tests",
+      "result": "README consistent; suite NOT_RUN in this command (1576 tests collected)",
+      "status": "PASS"
+    },
+    {
+      "command": "git diff --check",
+      "result": "No whitespace errors",
+      "status": "PASS"
+    },
+    {
+      "tool": "GET http://127.0.0.1:8093/src/components/RuntimeStatusBar.css",
+      "result": "Served CSS reports footer min-height/max-height 21px and row 20px",
+      "status": "VERIFIED"
+    },
+    {
+      "tool": "Chromium screenshot captured from UI 8093 at 100 percent zoom",
+      "source": {
+        "path": "C:/Users/AMTEC_Terminal_1º/AppData/Local/Temp/bago-footer-8093.png",
+        "sha256": "D45A79D5256420814C88EAAD5F4010E90373E829DAF6B77FF28D3DA2A93AD2D9",
+        "dimensions": "1920x978",
+        "captured_at_utc": "2026-10-26T13:04:53Z"
+      },
+      "artifact": {
+        "path": "docs/agent-chat-control/assets/manual-ui-actual-2026-10-26/12-runtime-status-bar-21px-8093.png",
+        "sha256": "B36E8314DC4498AFEBB79C0C49519F38F583D4DBDFF3FD4202559D088C65A169",
+        "dimensions": "1920x21",
+        "crop": "bottom 21 pixel strip only; original UI screenshot remains local"
+      },
+      "status": "VERIFIED"
+    },
+    {
+      "tool": "Rendered review of PR branch after edit",
+      "result": "NOT_RUN",
+      "status": "NOT_RUN"
+    },
+    {
+      "tool": "GitHub Actions on the new commit",
+      "result": {
+        "ci_run": {"id": 40333009038, "run_number": 437, "conclusion": "success"},
+        "docker_build_run": {"id": 40333008931, "run_number": 92, "conclusion": "success"},
+        "readme_consistency_run": {"id": 40333009116, "run_number": 455, "conclusion": "success"}
+      },
+      "status": "PASS"
+    }
+  ],
+  "source_identity": {
+    "effective_runtime_css_sha256": "ABF33426CBA473FE0484599817400177ED18FF715AA3707E2A6CAA428A50992B",
+    "runtime_container": "bago-review-8093-frontend-1",
+    "container_mount": "C:/BAGO_TESTS/JAEGER_ADL_20261024/source/frontend/src -> /workspace/frontend/src",
+    "service_restarted": false
+  },
+  "production_gate": {
+    "status": "NO_GO",
+    "reason": "This sprint only addresses footer height; tool execution, autonomous delegation, recovery and complete causal trace remain open."
+  }
+}
