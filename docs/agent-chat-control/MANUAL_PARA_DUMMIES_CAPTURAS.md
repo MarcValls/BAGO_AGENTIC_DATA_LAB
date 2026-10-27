@@ -28,6 +28,15 @@ En una comprobación separada del chat general del entorno aislado `5194/8097`, 
 
 ![Jaeger: traza real de la respuesta sin lectura de workspace](assets/manual-ui-actual-2026-10-26/04-jaeger-chat-no-tool-call.png)
 
+### Respuesta del proveedor observada en esta sesión
+
+En otra conversación sintética se completó una lectura autorizada de `sample_a.py`. El pie muestra **«Respuesta recibida en esta sesión»** junto al proveedor y modelo que respondieron. Al abrir **Proveedores**, el detalle conserva por separado el estado registrado **«configurado, sin verificar»**. Una respuesta real en un turno confirma que ese modelo respondió en ese momento; no es una comprobación persistente de disponibilidad o salud. La observación es temporal y desaparece al recargar la aplicación.
+
+![Chat de ADL y barra con una respuesta observada en la sesión](assets/manual-ui-actual-2026-10-26/07-provider-response-observed-session.png)
+
+La traza Jaeger de ese turno contiene dos spans: `assistant.control` y `workspace.read`. El recibo fue `ALLOW`, líneas 1-11, total 11. El span hijo lleva `timing_source=projection` y `duration_measured=false`; los 43 μs que dibuja Jaeger no son una duración medida.
+
+![Traza Jaeger del mismo turno, con los spans assistant.control y workspace.read](assets/manual-ui-actual-2026-10-26/08-jaeger-provider-response-observed-session.png)
 Las cuatro primeras imágenes documentan el chat y sus respuestas dentro de la conversación:
 
 1. Abre el chat y escribe una petición normal.

@@ -1,0 +1,48 @@
+{
+  "schema": "bago.adl.scoped_verification.v1",
+  "change_id": "adl-development-tool-chat-exposure-20261026",
+  "status": "VERIFIED_SCOPED_TASK",
+  "decision": "GO",
+  "claim_level": "TESTED",
+  "base_revision": null,
+  "baseline_snapshot_sha256": "c19045e0e2fc650b46462d1d25a9975fa56fe2bee345ff7a7452010fd4d2b09a",
+  "candidate_snapshot_sha256": "af9fe95e0029aad4d4a68ba99d6cefd86544a7ff3f4313bca5b3f4b64a0b0e56",
+  "check_runner": "BAGO suite run_checks.py + verify_change.py under WSL Ubuntu 24.04; test subprocesses ran C:\\Python314\\python.exe",
+  "test_results": [
+    {
+      "test_id": "test_dev_tool_chat_without_document_grant",
+      "boundary": "INTEGRATION",
+      "status": "PASS",
+      "evidence_ref": "EV-test_dev_tool_chat_without_document_grant"
+    },
+    {
+      "test_id": "test_development_assignment_and_reviewer_separation",
+      "boundary": "UNIT",
+      "status": "PASS",
+      "evidence_ref": "EV-test_development_assignment_and_reviewer_separation"
+    },
+    {
+      "test_id": "test_document_tools_integration",
+      "boundary": "INTEGRATION",
+      "status": "PASS",
+      "evidence_ref": "EV-test_document_tools_integration"
+    },
+    {
+      "test_id": "test_agent_services_integration",
+      "boundary": "INTEGRATION",
+      "status": "PASS",
+      "evidence_ref": "EV-test_agent_services_integration"
+    }
+  ],
+  "observed": [
+    "Real FastAPI agent chat handler exposed the assigned development_read schema without a document grant.",
+    "DevelopmentService returned an ALLOW receipt for the profile-bounded fixture read.",
+    "Persisted local trace contained service.tool with kind=tool and status=ALLOW.",
+    "Fixture file content remained unchanged."
+  ],
+  "limits": [
+    "Synthetic provider only; no hosted provider call.",
+    "No live BAGO runtime, production deployment or remote Jaeger retrieval was performed.",
+    "This verdict covers the listed tests and candidate snapshot only; it is not a production GO."
+  ]
+}

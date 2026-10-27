@@ -1,0 +1,112 @@
+{
+  "schema": "bago.sprint-verification.v1",
+  "sprint": 21,
+  "date": "2026-10-26",
+  "status": "VERIFIED_SCOPED; frontend global NOT_VALIDATED",
+  "candidate": {
+    "worktree": "C:/Users/AMTEC_Terminal_1º/Desktop/BAGO5_ADL/.worktrees/project-workspace-chat-isolation-20261026",
+    "branch": "fix/project-workspace-chat-isolation-20261026",
+  "head_before_sprint": "969719b1ebd17e263a343ac41e8b461158c870f4",
+    "pull_request": 71,
+    "pull_request_state_before_publish": "OPEN",
+    "base_sha_before_refresh": "263bb76cf9a47f404b297808bd33b748833686be",
+    "refreshed_origin_main": "55917870d89ac9ee87dc9b8477496ec2e03c8d71"
+  },
+  "change": {
+    "id": "provider-response-observed",
+    "authorship": "External source edit by Codex; live chat read executed through ADL UI",
+    "description": "Display a browser-session response observation for the actual provider/model response without changing persistent provider registration metadata.",
+    "files": [
+      "frontend/src/components/AgentChat.tsx",
+      "frontend/src/components/RuntimeStatusBar.tsx",
+      "frontend/src/contracts/provider-response-observation.ts",
+      "frontend/tests/runtime-status-bar/status.test.tsx",
+      "src/api/server.py",
+      "tests/test_orchestrator_routing.py"
+    ],
+    "preserved_contract": "GET /api/runtime/status remains registration_metadata and response_verified=false; provider IDs are not added to that endpoint."
+  },
+  "checks": [
+    {
+      "id": "full-suite-after-rebase",
+      "command": "python scripts/generate_dynamic_readme.py",
+      "result": "README generated after 1574 tests passed",
+      "status": "PASS"
+    },
+    {
+      "id": "readme-check-after-rebase",
+      "command": "python scripts/generate_dynamic_readme.py --check --skip-tests",
+      "result": "README verified; suite NOT_RUN (1576 cases collected)",
+      "status": "PASS"
+    },
+    {
+      "id": "backend-status-and-routing",
+      "command": "C:/Python314/python.exe -m pytest tests/test_runtime_status.py tests/test_runtime_status_integration.py tests/test_orchestrator_routing.py::test_orchestrator_resolves_file_read_intent_then_calls_only_authorized_reader tests/test_orchestrator_routing.py::test_orchestrator_does_not_read_files_when_workspace_read_permission_is_missing -q",
+      "result": "47 passed, 1 warning",
+      "status": "PASS"
+    },
+    {
+      "id": "frontend-provider-status",
+      "command": "npm --prefix frontend test -- --run tests/runtime-status-bar/status.test.tsx",
+      "result": "38 passed",
+      "status": "PASS"
+    },
+    {
+      "id": "frontend-build",
+      "command": "npm --prefix frontend run build",
+      "result": "TypeScript and Vite build passed; warning: main bundle >500 kB",
+      "status": "PASS_WITH_WARNING"
+    },
+    {
+      "id": "focused-routing-repeat",
+      "command": "C:/Python314/python.exe -m pytest tests/test_orchestrator_routing.py::test_orchestrator_resolves_file_read_intent_then_calls_only_authorized_reader tests/test_orchestrator_routing.py::test_orchestrator_does_not_read_files_when_workspace_read_permission_is_missing -q",
+      "result": "2 passed, 1 warning",
+      "status": "PASS"
+    }
+  ],
+  "runtime": {
+    "ui": {"url": "http://127.0.0.1:5194/", "pid": 31076},
+    "api": {"url": "http://127.0.0.1:8097", "old_pid": 2632, "new_pid": 55252, "health_http": 200},
+    "jaeger_ui": "http://127.0.0.1:16689",
+    "workspace": "synthetic selected-existing project under user Temp",
+    "file": "sample_a.py",
+    "file_sha256": "d1ca2db7606a37926bcf2bf9403620ec55459047ee8bb3378b90273b78ef505f",
+    "provider_model": "ollama-cloud/kimi-k2.6",
+    "conversation_id": "conv_fb2b65fe5550475193e6b33175a93754",
+    "revision": 4,
+    "provider_response_observation": {"observed_at": "2026-10-26T08:58:42.770343Z", "session_only": true},
+    "workspace_receipt": {"decision": "ALLOW", "path": "sample_a.py", "start_line": 1, "end_line": 11, "total_lines": 11, "truncated": false},
+    "trace": {
+      "local_trace_id": "trace-12770497360449df",
+      "jaeger_trace_id": "f765387a8765b3a2d96441bcea8d230f",
+      "jaeger_http": 200,
+      "span_names": ["assistant.control", "workspace.read"],
+      "total_spans": 2,
+      "workspace_read_timing_source": "projection",
+      "workspace_read_duration_measured": false
+    },
+    "published_runtime_verified": false
+  },
+  "visual_review": {
+    "desktop_viewport": "1440x900",
+    "mobile_viewport": "390x844",
+    "horizontal_overflow": false,
+    "page_errors": 0,
+    "console_errors": 0,
+    "limitations": ["All frontend routes not exhaustively tested", "Accessibility/zoom/screen reader not fully tested", "No full user-write workflow tested"]
+  },
+  "frontend_findings": {
+    "capabilities": "13 entries rendered within 2.5 seconds; initial loading screenshot was premature",
+    "agent_tools": "mcp.execute unavailable in agent chat; several of 14 profiles have no tools assigned",
+    "agent_builder_accessibility": "Several text fields have no explicit accessible name beyond placeholder",
+    "evaluation_history": "Evaluation route loaded and showed zero execution records",
+    "five_sector_manuals_with_ui_screenshots": "PRESENT_ON_REFRESHED_ORIGIN_MAIN; scenarios marked not executed",
+    "real_jaeger_trace_for_each_sector_case": "NOT_DONE; current shared Jaeger capture is synthetic"
+  },
+  "screenshots": [
+    {"path": "docs/agent-chat-control/assets/manual-ui-actual-2026-10-26/07-provider-response-observed-session.png", "sha256": "3D3435D73FC2DA60DB2D780B57A8636F541443E021D8965CFBCFE00A9DA948D3"},
+    {"path": "docs/agent-chat-control/assets/manual-ui-actual-2026-10-26/08-jaeger-provider-response-observed-session.png", "sha256": "B5CD1B396DA655E5CEB6A87435A92D1CD5261216E5585EFF3383CDAEFA848646"}
+  ],
+  "readme_closure": {"full_generation": "PASS; 1574 tests passed", "check_skip_tests": "PASS; 1576 cases collected; suite NOT_RUN"},
+  "github": {"published": false, "fresh_base_check": "PASS; HEAD is based on origin/main 55917870d89ac9ee87dc9b8477496ec2e03c8d71", "ci_for_new_head": "NOT_RUN"}
+}

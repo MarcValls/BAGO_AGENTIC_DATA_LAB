@@ -1,4 +1,5 @@
 import {t, useI18n, getLocale, formatDate, formatNumber, apiError, errorMessage, localMessage} from '../i18n'
+import {PROVIDER_RESPONSE_OBSERVED_EVENT, readProviderResponseObservation} from '../contracts/provider-response-observation'
 import './AgentChat.css'
 import './AgentChatOverrides.css'
 import './ChatMessage.css'
@@ -965,6 +966,10 @@ export default function AgentChat({ onInspectionSelection, onInspectExecution, o
         const provider = selectedAgent.config.provider_id || 'ollama-cloud'
         const expectedSource = provider === 'ollama-cloud' ? 'ollama' : provider
         if (data.source !== expectedSource || typeof data.assistant_message !== 'string') throw new Error("commerce.the_server_did_not_confirm_a_response_from_the_selected_provider")
+        if (data.assistant_message.trim() && selectedAgent.config.model_id) window.dispatchEvent(new CustomEvent(PROVIDER_RESPONSE_OBSERVED_EVENT, {detail: {provider_id: provider, model_id: selectedAgent.config.model_id, observed_at: new Date().toISOString()}}))
+      } else {
+        const observation = readProviderResponseObservation(data.provider_response_observation)
+        if (observation) window.dispatchEvent(new CustomEvent(PROVIDER_RESPONSE_OBSERVED_EVENT, {detail: observation}))
       }
       if (Array.isArray(data.read_events) && data.read_events.length) {
         setMessages((previous) => [...previous, { id: idFor(), role: 'assistant', content: '', readEvents: data.read_events }])

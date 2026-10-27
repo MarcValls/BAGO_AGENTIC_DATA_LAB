@@ -21,7 +21,7 @@ import uuid
 from contextvars import ContextVar
 from contextlib import asynccontextmanager
 from collections import deque
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Literal
 from urllib.parse import urlsplit
@@ -42,7 +42,6 @@ from src.communications.worker import CommunicationWorker
 from src.api.contacts_routes import create_contacts_router
 from src.services.contacts_bridge import shared_contacts
 from src.agent_tasks import TaskDefinition, agent_lock
-from pydantic import BaseModel, ConfigDict, Field, SecretStr, field_validator
 
 from src.jobs import JobExecution, get_agent_metrics, list_jobs, load_job, save_job
 from src.capabilities import (
@@ -55,7 +54,13 @@ from src.capabilities import (
 from src.conversations import ConversationConflict, ConversationNotFound, ConversationStore
 from src.capabilities.manager import agent_tool_catalog
 from src.agent_tools.document_tools import DOCUMENT_AUTHORIZATIONS, DOCUMENT_TOOL_IDS, DocumentAccessError
-from src.agent_tools.agent_services import SERVICE_TOOL_IDS
+from src.agent_tools.agent_services import (
+    DEVELOPMENT_CHAT_INSTRUCTIONS,
+    SERVICE_TOOL_IDS,
+    development_chat_session,
+    invoke_development_chat_tool,
+)
+from src.development import TOOL_IDS as DEVELOPMENT_TOOL_IDS
 from src.conversations.library import OwnerKind, PROJECT_ID, reset_project_scope, set_project_scope
 from src.providers import codex, github_copilot, ollama, registration, model_policy, runtime as provider_runtime
 from src.knowledge import LocalRAGError, run_ingest_and_answer
@@ -85,6 +90,44 @@ from src.observability.otel_bridge import export_local_trace_to_otlp
 from src.sandbox import SandboxError
 from src.runtime.ber import BerClient
 from src.runtime.ber.agent_runner import MAX_TASK_CHARS, AgentRunner, AgentRunnerError
+
+from src.api.schemas import (
+    AGENT_TOOL_ALLOWLIST,
+    AgentChatRequest,
+    AgentConfig,
+    AgentCreateRequest,
+    AgentResponse,
+    CapabilityProposalCancelRequest,
+    CapabilityProposalCreateRequest,
+    CodexLoginRequest,
+    ContextPathCheckRequest,
+    ControlChatRequest,
+    ConversationCreateRequest,
+    ConversationPermanentDeleteRequest,
+    ConversationRenameRequest,
+    ConversationRevisionRequest,
+    DemoRequest,
+    DemoRunResponse,
+    EvaluationRunRequest,
+    EvaluationSuiteCreateRequest,
+    EvaluationSuiteUpdateRequest,
+    GithubCopilotModelsRequest,
+    JobResponse,
+    KnowledgeIngestAnswerRequest,
+    ModelPolicyRequest,
+    OllamaConfigRequest,
+    OllamaVerifyRequest,
+    OntologyApprovalRequest,
+    OntologyProposalRequest,
+    OntologyQueryRequest,
+    OpenMetadataLiveValidationRequest,
+    ProviderRegistrationRequest,
+    ProviderSelectionRequest,
+    WebReadAuthorizationRequest,
+    WorkspaceReadAuthorizationRequest,
+    WorkspaceScanAuthorizationRequest,
+    WorkspaceScanRunRequest,
+)
 
 # `src.evaluation.local_evals` retains a legacy absolute `observability` import.
 # Add the source root before dynamically loading the evaluation package.
@@ -176,7 +219,6 @@ CONVERSATIONS = ConversationStore()
 CAPABILITIES = CapabilityStore(REPO_ROOT)
 EVALUATIONS = EvaluationStore(REPO_ROOT)
 EVALUATION_TRACE_DIR = EVALUATIONS.database_path.parent / "traces"
-AGENT_TOOL_ALLOWLIST = frozenset(item["id"] for item in agent_tool_catalog())
 CONTROL_NAVIGATION_VIEWS = frozenset({
     "inspector", "builder", "chat", "workspace", "runner", "control", "jobs", "traces", "summary",
     "retrieval", "authorization", "evaluation", "evaluation_lab", "provider_settings",
@@ -222,56 +264,6 @@ CONTROL_REQUEST_TOOL = {
 
 # Ensure agents directory exists
 AGENTS_DIR.mkdir(parents=True, exist_ok=True)
-
-
-class DemoRequest(BaseModel):
-    write_evidence: bool = False
-    json_output: bool = False
-
-
-class ContextPathCheckRequest(BaseModel):
-    path: str = Field(min_length=1, max_length=2048)
-
-
-class DemoRunResponse(BaseModel):
-    status: str
-    exit_code: int
-    stdout: str
-    stderr: str
-
-
-class AgentConfig(BaseModel):
-    model_config = ConfigDict(extra="forbid")
-
-    name: str = Field(min_length=1, max_length=100)
-    description: str = Field(min_length=1, max_length=1000)
-    task_scope: str | None = Field(default=None, max_length=8000)
-    type: Literal["rag", "tool", "multi-agent"]
-    system_prompt: str = Field(min_length=1, max_length=12000)
-    # Older user-created agents predate provider/model pinning. Keep them
-    # readable without migrating their persisted records as a side effect.
-    provider_id: Literal["ollama-cloud", "codex", "openai-platform", "github-copilot"] | None = None
-    model_id: str | None = Field(default=None, min_length=1, max_length=128)
-    tools: list[str] = Field(default_factory=list, max_length=20)
-    retrieval_config: dict[str, Any] | None = None
-    sandbox_profile: str | None = Field(default=None, max_length=100)
-    task: TaskDefinition | None = None
-
-    @field_validator("tools")
-    @classmethod
-    def only_registered_tools(cls, value: list[str]) -> list[str]:
-        if len(set(value)) != len(value) or any(tool not in AGENT_TOOL_ALLOWLIST for tool in value):
-            raise ValueError("Agent contains an unregistered tool.")
-        return value
-
-    @field_validator("model_id")
-    @classmethod
-    def valid_model(cls, value: str | None) -> str | None:
-        if value is None:
-            return None
-        if not registration.MODEL_RE.fullmatch(value):
-            raise ValueError("Model identifier is invalid.")
-        return value
 
 
 def _task_connected_agent_tools() -> list[dict[str, Any]]:
@@ -380,271 +372,6 @@ async def _generate_agent_draft(
     except provider_runtime.ProviderRuntimeError as error:
         raise _provider_http_error(error) from None
     return draft
-
-
-class OllamaConfigRequest(BaseModel):
-    model_config = ConfigDict(extra="forbid")
-
-    auth_mode: Literal["api_key", "local_cli"]
-    api_key: str | None = Field(default=None, max_length=4096)
-    model_id: str | None = Field(default=None, max_length=128)
-
-
-class OllamaVerifyRequest(BaseModel):
-    model_id: str | None = Field(default=None, max_length=128)
-
-
-class GithubCopilotModelsRequest(BaseModel):
-    model_config = ConfigDict(extra="forbid")
-
-    auth_mode: Literal["copilot_cli", "token"] = "copilot_cli"
-    api_key: str | None = Field(default=None, max_length=4096)
-
-
-class CodexLoginRequest(BaseModel):
-    model_config = ConfigDict(extra="forbid")
-
-    auth_mode: Literal["chatgpt", "api_key"] = "chatgpt"
-    api_key: SecretStr | None = Field(default=None, max_length=4096)
-
-
-class ProviderRegistrationRequest(BaseModel):
-    model_config = ConfigDict(extra="forbid")
-
-    auth_mode: str = Field(min_length=1, max_length=40)
-    model_id: str | None = Field(default=None, max_length=128)
-    base_url: str | None = Field(default=None, max_length=512)
-    api_key: str | None = Field(default=None, max_length=4096)
-
-
-class AgentCreateRequest(BaseModel):
-    """Create body also accepts the legacy Builder shape without provider fields."""
-    model_config = ConfigDict(extra="forbid")
-
-    name: str = Field(min_length=1, max_length=100)
-    description: str = Field(min_length=1, max_length=1000)
-    task_scope: str | None = Field(default=None, max_length=8000)
-    type: Literal["rag", "tool", "multi-agent"]
-    system_prompt: str = Field(min_length=1, max_length=12000)
-    provider_id: Literal["ollama-cloud", "codex", "openai-platform", "github-copilot"] | None = None
-    model_id: str | None = Field(default=None, max_length=128)
-    tools: list[str] = Field(default_factory=list, max_length=20)
-    retrieval_config: dict[str, Any] | None = None
-    sandbox_profile: str | None = Field(default=None, max_length=100)
-    task: TaskDefinition | None = None
-
-    @field_validator("tools")
-    @classmethod
-    def only_registered_tools(cls, value: list[str]) -> list[str]:
-        if len(set(value)) != len(value) or any(tool not in AGENT_TOOL_ALLOWLIST for tool in value):
-            raise ValueError("Agent contains an unregistered tool.")
-        return value
-
-    @field_validator("model_id")
-    @classmethod
-    def valid_model(cls, value: str | None) -> str | None:
-        if not value:
-            return None
-        if not registration.MODEL_RE.fullmatch(value):
-            raise ValueError("Model identifier is invalid.")
-        return value
-
-
-class ControlChatRequest(BaseModel):
-    model_config = ConfigDict(extra="forbid")
-
-    operation: Literal["chat", "help", "list_agents", "draft_agent", "navigate"] = "chat"
-    message: str = Field(default="", max_length=8000)
-    view: Literal["inspector", "builder", "chat", "workspace", "runner", "control", "jobs", "traces", "summary", "retrieval", "authorization", "evaluation", "evaluation_lab", "provider_settings", "cognition_settings", "capabilities", "communications", "whatsapp_settings"] | None = None
-    capability_id: Literal["workspace.scan_duplicates"] | None = None
-    conversation_id: str
-    revision: int = Field(ge=0)
-    web_read_authorization_id: str | None = Field(default=None, max_length=128)
-    workspace_read_authorization_id: str | None = Field(default=None, max_length=128)
-    workspace_scan_authorization_id: str | None = Field(default=None, max_length=128)
-    cognitive_mode: Literal["baseline", "bago5"] = "baseline"
-
-
-class ProviderSelectionRequest(BaseModel):
-    model_config = ConfigDict(extra="forbid")
-
-    provider_id: str = Field(min_length=1, max_length=64)
-    model_id: str = Field(min_length=1, max_length=128)
-
-
-class ModelPolicyRequest(model_policy.Policy):
-    expected_revision: str = Field(min_length=1, max_length=64)
-
-
-class KnowledgeIngestAnswerRequest(BaseModel):
-    model_config = ConfigDict(extra="forbid")
-
-    path: str = Field(min_length=1, max_length=512)
-    question: str = Field(min_length=1, max_length=4000)
-    source_authority: Literal["PROPOSED", "VERIFIED"]
-    minimum_authority: Literal["PROPOSED", "VERIFIED"]
-
-
-class OpenMetadataLiveValidationRequest(BaseModel):
-    model_config = ConfigDict(extra="forbid")
-    confirm_run: bool
-
-
-class OntologyProposalRequest(BaseModel):
-    model_config = ConfigDict(extra="forbid")
-    path: str = Field(min_length=1, max_length=512)
-
-
-class OntologyApprovalRequest(BaseModel):
-    model_config = ConfigDict(extra="forbid")
-    proposal_ids: list[str] = Field(min_length=1, max_length=100)
-
-
-class OntologyQueryRequest(BaseModel):
-    model_config = ConfigDict(extra="forbid")
-    query: str = Field(min_length=1, max_length=2000)
-
-
-class AgentChatRequest(BaseModel):
-    model_config = ConfigDict(extra="forbid")
-
-    message: str = Field(min_length=1, max_length=8000)
-    conversation_id: str
-    revision: int = Field(ge=0)
-    web_read_authorization_id: str | None = Field(default=None, max_length=128)
-    workspace_read_authorization_id: str | None = Field(default=None, max_length=128)
-    workspace_scan_authorization_id: str | None = Field(default=None, max_length=128)
-    allow_workspace_write_proposals: bool = False
-    document_authorization_id: str | None = Field(default=None, max_length=128)
-    cognitive_mode: Literal["baseline", "bago5"] = "baseline"
-
-
-class WebReadAuthorizationRequest(BaseModel):
-    model_config = ConfigDict(extra="forbid")
-    owner_kind: Literal["assistant", "agent"]
-    owner_id: str = Field(min_length=1, max_length=128)
-    conversation_id: str
-    revision: int = Field(ge=0)
-    urls: list[str] = Field(min_length=1, max_length=8)
-
-
-class WorkspaceReadAuthorizationRequest(BaseModel):
-    model_config = ConfigDict(extra="forbid")
-
-    owner_kind: Literal["assistant", "agent"]
-    owner_id: str = Field(min_length=1, max_length=128)
-    conversation_id: str
-    revision: int = Field(ge=0)
-    paths: list[str] = Field(min_length=1, max_length=20)
-
-
-class WorkspaceScanAuthorizationRequest(BaseModel):
-    model_config = ConfigDict(extra="forbid")
-
-    owner_kind: Literal["assistant", "agent"]
-    owner_id: str = Field(min_length=1, max_length=128)
-    conversation_id: str
-    revision: int = Field(ge=0)
-    directories: list[str] = Field(min_length=1, max_length=5)
-
-
-class WorkspaceScanRunRequest(BaseModel):
-    model_config = ConfigDict(extra="forbid")
-
-    conversation_id: str
-    revision: int = Field(ge=0)
-    authorization_id: str = Field(min_length=32, max_length=128)
-    directory: str = Field(min_length=1, max_length=512)
-
-
-class ConversationCreateRequest(BaseModel):
-    model_config = ConfigDict(extra="forbid")
-
-    owner_kind: Literal["assistant", "agent"]
-    owner_id: str = Field(default="app-assistant", min_length=1, max_length=128)
-    title: str = Field(default="New conversation", min_length=1, max_length=160)
-
-
-class ConversationRevisionRequest(BaseModel):
-    model_config = ConfigDict(extra="forbid")
-
-    revision: int = Field(ge=0)
-
-
-class ConversationPermanentDeleteRequest(BaseModel):
-    model_config = ConfigDict(extra="forbid", strict=True)
-    expected_revision: int = Field(ge=0)
-    confirmed: bool
-
-
-class CapabilityProposalCreateRequest(BaseModel):
-    model_config = ConfigDict(extra="forbid")
-
-    capability_id: str = Field(min_length=1, max_length=64, pattern=r"^[a-z][a-z0-9_.-]*$")
-    summary: str = Field(min_length=1, max_length=500)
-    requested_scope: str = Field(min_length=1, max_length=1000)
-    conversation_id: str | None = Field(default=None, min_length=37, max_length=37, pattern=r"^conv_[0-9a-f]{32}$")
-
-    @field_validator("summary", "requested_scope")
-    @classmethod
-    def clean_proposal_text(cls, value: str) -> str:
-        value = " ".join(value.split())
-        if not value or any(ord(character) < 32 for character in value):
-            raise ValueError("Proposal text must be plain non-empty text.")
-        if re.search(
-            r"(?:api[_ -]?key|access[_ -]?token|client[_ -]?secret|password)\s*[:=]\s*\S+|"
-            r"\bBearer\s+\S+|-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----",
-            value,
-            re.IGNORECASE,
-        ):
-            raise ValueError("Proposal text must not contain credentials.")
-        return value
-
-
-class CapabilityProposalCancelRequest(BaseModel):
-    model_config = ConfigDict(extra="forbid")
-
-    revision: int = Field(ge=0)
-
-
-class EvaluationSuiteCreateRequest(BaseModel):
-    model_config = ConfigDict(extra="forbid")
-    name: str = Field(min_length=1, max_length=100)
-    agent_id: str = Field(min_length=1, max_length=64)
-    cases: list[dict[str, Any]] = Field(min_length=1, max_length=10)
-
-
-class EvaluationSuiteUpdateRequest(EvaluationSuiteCreateRequest):
-    expected_revision: int = Field(ge=0)
-
-
-class EvaluationRunRequest(BaseModel):
-    model_config = ConfigDict(extra="forbid")
-    revision: int = Field(ge=0)
-    model_id: str = Field(min_length=1, max_length=128)
-
-
-class ConversationRenameRequest(ConversationRevisionRequest):
-    title: str = Field(min_length=1, max_length=160)
-
-
-class AgentResponse(BaseModel):
-    id: str
-    config: AgentConfig
-    created_at: str
-
-
-class JobResponse(BaseModel):
-    job_id: str
-    agent_id: str | None
-    job_type: str
-    status: str
-    created_at: str
-    completed_at: str | None
-    duration_ms: int | None
-    exit_code: int | None
-    cost_usd: float
-    metrics: dict[str, Any] | None
 
 
 _COMMUNICATIONS = None
@@ -2336,6 +2063,7 @@ async def _chat_with_workspace_read(
     write_workspace=None,
     write_context=None,
     document_grant=None,
+    development_session=None,
     recorder=None,
 ) -> tuple[str, list[dict[str, Any]], list[dict[str, Any]], str | None]:
     """Run a bounded provider tool loop with read-only workspace tools."""
@@ -2379,7 +2107,9 @@ async def _chat_with_workspace_read(
         if document_grant is not None and not (allow_navigation and round_index == 0):
             available_tools.extend(document_grant["session"].tool_schemas(document_grant))
             if document_grant.get('services') is not None:
-                available_tools.extend(document_grant['services'].schemas(document_grant['assigned']))
+                available_tools.extend(document_grant['services'].schemas(set(document_grant['assigned'])-DEVELOPMENT_TOOL_IDS))
+        if development_session is not None and not (allow_navigation and round_index == 0):
+            available_tools.extend(development_session.schemas())
         turn_kwargs: dict[str, Any] = {"tools": available_tools}
         if allow_navigation:
             turn_kwargs["options"] = {"temperature": 0}
@@ -2389,6 +2119,8 @@ async def _chat_with_workspace_read(
             turn = await asyncio.to_thread(
                 _native_provider_roundtrip, recorder, "provider.chat_turn.roundtrip", round_index + 1,
                 provider_runtime.chat_turn, provider_id, model_id, messages, **turn_kwargs)
+        if turn_observation is not None:
+            turn_observation["provider_response_observed"] = True
         raw_calls = turn.get("tool_calls")
         tool_calls = raw_calls if isinstance(raw_calls, list) else []
         if (allow_navigation and round_index == 0 and tool_calls
@@ -2532,9 +2264,13 @@ async def _chat_with_workspace_read(
                     read_events.append({"decision": "DENY", "path": normalize_workspace_path(raw_path), "reason_code": "TOOL_CALL_LIMIT", "attempt": calls_used + 1})
             elif tool_name in DOCUMENT_TOOL_IDS | SERVICE_TOOL_IDS:
                 calls_used += 1
-                if document_grant is None:
+                if tool_name in DEVELOPMENT_TOOL_IDS:
+                    result,receipt=await asyncio.to_thread(
+                        _native_receipt_call, recorder, turn_observation, "service.tool",
+                        invoke_development_chat_tool,development_session,tool_name,arguments)
+                elif document_grant is None:
                     result = {"ok": False, "reason_code": "DOCUMENT_AUTHORIZATION_REQUIRED"}
-                    read_events.append({"kind": "document_tool", "tool_name": tool_name, "decision": "DENY", "path": None, "reason_code": result["reason_code"], "executed": False})
+                    receipt = {"kind": "document_tool", "tool_name": tool_name, "decision": "DENY", "path": None, "reason_code": result["reason_code"], "executed": False}
                 else:
                     if tool_name in SERVICE_TOOL_IDS:
                         result,receipt=await asyncio.to_thread(
@@ -2558,14 +2294,14 @@ async def _chat_with_workspace_read(
                                 receipt['production']=result['production']
                             except (OSError,ValueError,KeyError) as error:
                                 receipt['production_error']=str(error)
-                    read_events.append(receipt)
-                    if receipt.get("decision") == "ALLOW":
-                        for record in result.get("records", []):
-                            source = record["source"]
-                            sources.append({"source_type": "document", "path": str(document_grant["session"].root/source["path"]),
-                                "start_line": 1, "end_line": 1, "file_sha256": source["sha256"],
-                                "content_sha256": source["sha256"], "source_id": source["source_id"],
-                                "locations": [s["location"] for s in record.get("segments", [])]})
+                read_events.append(receipt)
+                if receipt.get("decision") == "ALLOW" and document_grant is not None and tool_name not in DEVELOPMENT_TOOL_IDS:
+                    for record in result.get("records", []):
+                        source = record["source"]
+                        sources.append({"source_type": "document", "path": str(document_grant["session"].root/source["path"]),
+                            "start_line": 1, "end_line": 1, "file_sha256": source["sha256"],
+                            "content_sha256": source["sha256"], "source_id": source["source_id"],
+                            "locations": [s["location"] for s in record.get("segments", [])]})
             elif tool_name not in {READ_WORKSPACE_FILE, SCAN_CODE_DUPLICATES}:
                 result = {"ok": False, "error": "That tool is not available in this chat."}
                 calls_used += 1
@@ -2603,6 +2339,8 @@ async def _chat_with_workspace_read(
                 answer = await asyncio.to_thread(
                     _native_provider_roundtrip, recorder, "provider.final.roundtrip", round_index + 2,
                     provider_runtime.chat, provider_id, model_id, messages)
+            if turn_observation is not None:
+                turn_observation["provider_response_observed"] = True
             return answer, sources, read_events, None
 
     raise ollama.ProviderError("tool_loop_incomplete", "The chat could not complete its response.")
@@ -3162,6 +2900,7 @@ async def control_chat(request: ControlChatRequest) -> dict[str, Any]:
     """Persist app-assistant turns; draft editing never grants delivery authorization."""
     turn_started_at_ns = time.time_ns()
     provider_id, model_id = "application", "not_used"
+    provider_observation: dict[str, bool] = {"observed": False}
     sources: list[dict[str, Any]] = []
     read_events: list[dict[str, Any]] = []
     conversation = _owned_conversation(request.conversation_id, "assistant", "app-assistant")
@@ -3196,6 +2935,12 @@ async def control_chat(request: ControlChatRequest) -> dict[str, Any]:
         nonlocal revision
         payload.setdefault("sources", sources)
         payload.setdefault("read_events", read_events)
+        if provider_observation["observed"] and provider_id not in {"application", ""} and model_id not in {"not_used", ""}:
+            payload.setdefault("provider_response_observation", {
+                "provider_id": provider_id,
+                "model_id": model_id,
+                "observed_at": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
+            })
         if not payload.get("trace"):
             payload["trace"] = await asyncio.to_thread(_record_agent_chat_trace,
                 agent_id="app-assistant", provider_id=provider_id, model_id=model_id,
@@ -3368,6 +3113,7 @@ async def control_chat(request: ControlChatRequest) -> dict[str, Any]:
         })
         next_turn = await asyncio.to_thread(provider_runtime.chat_turn, provider_id, model_id, messages,
             tools=[CONTROL_REQUEST_TOOL], options={"temperature": 0})
+        provider_observation["observed"] = True
         return _control_request_from_turn(next_turn)
 
     async def route_orchestrated_task(first: dict[str, Any]):
@@ -3455,20 +3201,24 @@ async def control_chat(request: ControlChatRequest) -> dict[str, Any]:
             requested_paths = _authorized_workspace_paths_named_in_request(request.message, authorized_paths)
             if not requested_paths:
                 return await finish_turn("chat", "No he leído ningún archivo: la autorización de este envío no incluye la ruta que has pedido.")
+            turn_observation = {"sources": sources, "read_events": read_events, "provider_response_observed": False}
             answer, sources, read_events, _ = await _chat_with_workspace_read(
                 model_id, messages, requested_paths, [], workspace_root=workspace_root,
                 allow_navigation=False, provider_id=provider_id, web_permit=None,
-                turn_observation={"sources": sources, "read_events": read_events},
+                turn_observation=turn_observation,
             )
+            provider_observation["observed"] = turn_observation["provider_response_observed"]
             return await finish_turn("chat", answer)
         if authorized_paths or authorized_directories or authorized_web:
+            turn_observation = {"sources": sources, "read_events": read_events, "provider_response_observed": False}
             answer, sources, read_events, navigation_view = await _chat_with_workspace_read(
                 model_id, messages, authorized_paths, authorized_directories,
                 workspace_root=workspace_root, allow_navigation=True,
                 recover_invalid_delegate_for_task=not _request_names_agent(request.message),
                 provider_id=provider_id, web_permit=authorized_web,
-                turn_observation={"sources":sources,"read_events":read_events},
+                turn_observation=turn_observation,
             )
+            provider_observation["observed"] = turn_observation["provider_response_observed"]
             if navigation_view and navigation_view.startswith("delegation:"):
                 return await route_orchestrated_task(json.loads(navigation_view[len("delegation:"):]))
             if navigation_view and navigation_view.startswith("communication:"):
@@ -3484,11 +3234,13 @@ async def control_chat(request: ControlChatRequest) -> dict[str, Any]:
                 return await finish_turn("workspace_scan", answer, control_capability="workspace.scan_duplicates")
         elif request.operation == "help":
             answer = await asyncio.to_thread(provider_runtime.chat, provider_id, model_id, messages)
+            provider_observation["observed"] = True
         else:
             turn = await asyncio.to_thread(
                 provider_runtime.chat_turn, provider_id, model_id, messages,
                 tools=[CONTROL_REQUEST_TOOL], options={"temperature": 0},
             )
+            provider_observation["observed"] = True
             resolved = _control_request_from_turn(
                 turn, recover_invalid_delegate_for_task=not _request_names_agent(request.message)
             )
@@ -4289,6 +4041,13 @@ async def _execute_native_agent_chat_turn(agent_id,request,response,*,recorder,n
             owner_kind="agent", owner_id=agent_id, conversation_id=request.conversation_id, revision=request.revision)
         write_workspace = _owned_write_workspace(workspace_root) if request.allow_workspace_write_proposals else None
         write_context = {"owner_kind":"agent","owner_id":agent_id,"conversation_id":request.conversation_id,"conversation_revision":request.revision}
+    try:
+        development_session = development_chat_session(
+            owner_id=agent_id, conversation_id=request.conversation_id,
+            assigned=getattr(record.config, "tools", []))
+    except (OSError, ValueError, RuntimeError):
+        raise HTTPException(409, detail={"code":"development_profile_unavailable",
+            "message":"The configured development profile is unavailable; no development tool was run."}) from None
     with operation("conversation.history"):
         history = CONVERSATIONS.history(request.conversation_id)
     with operation("conversation.user.persist"):
@@ -4313,12 +4072,8 @@ async def _execute_native_agent_chat_turn(agent_id,request,response,*,recorder,n
             "no rename or settlement is executed. document_export can create only a new report in the reviewed output directory. "
             "Reuse returned opaque bundle_id; never invent extracted evidence. Missing OCR or unsupported formats must be reported.")
         messages[0]['content']+='\nFilesystem tools may inventory or persist proposals only. A proposal is not execution: only the human UI can confirm its exact plan. Delivery tools use the selected producer run and contact; artifact integrity is not business acceptance. Missing mandatory checks block delivery. A communications draft does not send any message.'
-        if any(name.startswith('development_') for name in document_grant['assigned']):
-            messages[0]['content'] += ('\nThe assigned development tools override the general no-execution statement ONLY within the host-configured development profile and this authorized root. '
-                'You may read, prepare a staged patch and run only fixed check IDs. Handler receipts prove these actions. '
-                'Independent reviewer tools inspect an exact candidate and record a verdict; the author cannot approve its own patch. '
-                'Only the human development panel can apply a passing reviewed patch. Never claim source/runtime updated from a prepared or checked patch. '
-                'Use compact exact replacements with base SHA-256 for large source files. No arbitrary commands, shell, credentials or unrelated paths.')
+    if development_session is not None:
+        messages[0]['content'] += DEVELOPMENT_CHAT_INSTRUCTIONS
     if cognitive_context["prompt_guidance"]:
         messages[0]["content"] += "\n\n" + cognitive_context["prompt_guidance"]
     messages.extend(history[-30:])
@@ -4345,12 +4100,12 @@ async def _execute_native_agent_chat_turn(agent_id,request,response,*,recorder,n
     turn_observation = {"sources":sources,"read_events":read_events}
     native_state["observation"] = turn_observation
     try:
-        if authorized_paths or authorized_directories or authorized_web or write_workspace is not None or document_grant is not None:
+        if authorized_paths or authorized_directories or authorized_web or write_workspace is not None or document_grant is not None or development_session is not None:
             answer, sources, read_events, _ = await _chat_with_workspace_read(
                 model_id, messages, authorized_paths, authorized_directories, workspace_root=workspace_root,
                 provider_id=provider_id, web_permit=authorized_web,
                 turn_observation=turn_observation, write_workspace=write_workspace, write_context=write_context,
-                document_grant=document_grant, recorder=recorder,
+                document_grant=document_grant, development_session=development_session, recorder=recorder,
             )
         else:
             with operation("provider.direct"):

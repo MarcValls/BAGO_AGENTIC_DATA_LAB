@@ -29,6 +29,7 @@ La barra lateral permite cambiar entre Workspace, el grupo **BAGO5**, Agentes y 
 En **Configuración → Conexiones externas** puedes guardar una conexión y descubrir las herramientas que ofrece. Esas herramientas aparecen en la ficha de la conexión; descubrirlas no las ejecuta ni las asigna a agentes. **Agentes → Mis agentes → Editar** muestra tipo, proveedor y modelo, alcance de asignación y herramientas configuradas para ese perfil. El menú **Recursos** del compositor sirve para abrir recursos contextuales del chat y no sustituye a esos destinos.
 
 ![Lista de capacidades agrupada y menú de opciones rápidas en BAGO5](images/capabilities-list-quick-menu.png)
+
 La asignación de herramientas se configura dentro del formulario del agente; no hay un destino lateral independiente llamado «Herramientas».
 
 ![Catálogo de capacidades con requisitos de uso y estados de integración.](assets/screenshots-2026-10-26/02-capacidades-completa.png)
@@ -57,7 +58,7 @@ Si la consulta falla, se muestra el aviso y se conservan los valores anteriores 
 
 ## Guías prácticas por sector
 
-Estas guías son recorridos de trabajo y revisión, no resultados de ejecuciones. Los nombres de capacidad pueden aparecer en el catálogo; disponibilidad no confirma que estén habilitados para el agente, autorizados o conectados en el momento de uso. Abre cada guía para ver el alcance recomendado.
+Estas guías incluyen capturas de la interfaz para orientar cada recorrido y describen trabajo y revisión, no resultados de ejecuciones verificadas; cada página indica si el escenario sigue sin ejecutar. La disponibilidad de una capacidad no confirma que esté habilitada para el agente, autorizada o conectada en el momento de uso. Abre cada guía para ver el alcance recomendado.
 
 - [Investigación de mercado: consultar fuentes públicas y contrastarlas](casos-de-uso/investigacion-mercado.md)
 - [Administración: extraer datos de documentos con referencias](casos-de-uso/administracion-documental.md)
@@ -82,6 +83,7 @@ Si el agente devuelve una tarea por estar fuera de su alcance, BAGO5 registra la
 7. Pulsa **Send**. El permiso vale para ese turno, esa conversación y ese interlocutor. La casilla vuelve a quedar desmarcada.
 
 Al desplazarte por una conversación larga aparecen unos segundos los botones **Ir al principio de la conversación** y **Ir al final de la conversación**.
+
 Los atajos del chat se reconocen cuando el mensaje completo pide una sola acción, por ejemplo **«Lista mis agentes»**, **«Lista capacidades»** o **«Proponer capacidad workspace.read_text»**. Una tarea que menciona agentes, capacidades, «hay» o «tengo» dentro de una explicación conserva el recorrido normal del chat; esas palabras no sustituyen tu encargo por un listado. Los atajos tampoco conceden permisos ni ejecutan herramientas. Las sugerencias sólo rellenan el borrador hasta que pulses **Enviar**.
 
 Ejemplo de entrada pública: `https://www.sollutia.com/es/empresa.html`. La disponibilidad de la página depende de su servidor.
@@ -208,7 +210,7 @@ Abre **Contactos → Agenda**. La pestaña **Google** contiene la conexión e im
 
 El contacto se guarda localmente. La eliminación local no borra contactos en Google ni mensajes enviados. Un contacto con correo pero sin teléfono sigue disponible en la agenda; no puede elegirse como destinatario de WhatsApp.
 
-**Preparar mensaje** lleva el mismo contacto a Comunicaciones. También puedes abrir la pestaña **Contactos** dentro de Comunicaciones. En el Chat, abre **Recursos** para los recursos contextuales disponibles. Se utiliza la misma agenda; elegir un destinatario no envía un mensaje.
+**Preparar mensaje** lleva el mismo contacto a Comunicaciones. También puedes abrir la pestaña **Contactos** dentro de Comunicaciones o **Herramientas → Contactos** en el Chat. Se utiliza la misma agenda; elegir un destinatario no envía un mensaje.
 
 ### Importar sólo algunos contactos de Google
 

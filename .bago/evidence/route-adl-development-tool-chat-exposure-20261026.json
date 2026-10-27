@@ -1,0 +1,20 @@
+{
+  "schema": "bago.skills_suite.route_receipt.v1",
+  "request_id": "adl-development-tool-chat-exposure-20261026",
+  "created_at": "2026-10-26T14:37:39.843660+00:00",
+  "policy_version": "1.1.0",
+  "policy_sha256": "7cbac2f62348a875202049918bb1c27afe31d73bf5f11bb03262ebe0b7879564",
+  "intent": "app_game",
+  "reason": "Corregir el acoplamiento que impide exponer en chat las herramientas development_* asignadas al agente y verificar su ejecución gobernada.",
+  "selected_modules": [
+    "bago-core",
+    "bago-app-game-development"
+  ],
+  "excluded_modules": [
+    "bago-goal",
+    "bago-core-batteries",
+    "bago-reparador",
+    "bago-ui-expert"
+  ],
+  "governance_scope": "suite_internal_advisory"
+}

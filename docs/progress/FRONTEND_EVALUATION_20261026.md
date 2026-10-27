@@ -113,3 +113,23 @@ El alcance de esta pasada es una única vista de escritorio sintética. No susti
 ## Dictamen
 
 El frontend está más integrado que un conjunto de pantallas informativas: enlaza chat, capacidades, proyecto, historial de conversaciones, historial de trabajo y estado runtime. Aún falta cerrar la prueba extremo a extremo con la instancia exacta y mejorar la legibilidad inicial de chat, workspace y barra inferior. Evaluación global: `NOT_VALIDATED`; no es un GO para release.
+
+## Revisión fresca de la candidata y flujo de respuesta de proveedor - 26 de octubre
+
+Se evaluó la candidata local `fix/project-workspace-chat-isolation-20261026` en `5194/8097`, HEAD previo `969719b1ebd17e263a343ac41e8b461158c870f4`, a escritorio 1440×900 y móvil 390×844. Chromium headless no registró errores de página/consola ni overflow horizontal en esas dos medidas. La barra del proveedor se verificó también tras una lectura autorizada real desde el Chat BAGO5 contra un proyecto sintético.
+
+- **Estado del proveedor:** la UI recibió HTTP 200 y un recibo `ALLOW` para `sample_a.py` (11 líneas, una fuente). Después del reinicio controlado del API candidato (PID 2632 → 55252, cero solicitudes activas antes del reinicio), el pie mostró `ollama-cloud/kimi-k2.6 · Respuesta recibida en esta sesión`. El detalle mantuvo `configurado, sin verificar` como metadato persistente y advirtió que la señal no se conserva al recargar. El cambio no eleva `response_verified`.
+- **Traza:** Jaeger devolvió HTTP 200 para `f765387a8765b3a2d96441bcea8d230f`; contiene `assistant.control` y `workspace.read`, 2 spans. El hijo muestra `timing_source=projection` y `duration_measured=false`; su duración visible de 43 μs no es una medición de rendimiento.
+- **Capacidades:** el catálogo presentó 13 entradas y dejó de mostrar el estado de carga antes de 2,5 s. La primera captura anterior se tomó demasiado pronto; no era un fallo persistente.
+- **Agentes y herramientas:** hay 14 perfiles y las tarjetas separan proveedor/modelo, alcance y asignaciones. Varios no tienen herramientas asignadas. La vista Herramientas indica correctamente que `mcp.execute` no está disponible en el chat y que asignación no equivale a permiso o ejecución.
+- **Accesibilidad del constructor:** varios campos de texto de Crear agente no tienen etiqueta ni nombre accesible explícito y dependen del placeholder. Requiere corrección y verificación específica con teclado/lector de pantalla.
+- **Evaluación e historial:** la pantalla terminó de cargar y mostró cero ejecuciones. La interfaz no puede enseñar todavía una ejecución/historial real en esa vista.
+- **Manuales:** el manual general incluye ahora capturas del estado de respuesta de sesión y su traza exacta; siguen pendientes cinco manuales distintos por sector empresarial, con capturas y recorridos Jaeger reales.
+
+Las capturas del estado y de Jaeger se conservan en `docs/agent-chat-control/assets/manual-ui-actual-2026-10-26/07-provider-response-observed-session.png` y `08-jaeger-provider-response-observed-session.png`. No se deben confundir con el preview publicado 8093/8098 ni con una validación global.
+
+**Dictamen actualizado:** el cambio de estado del proveedor queda `VERIFIED` en una tarea acotada, pero el frontend global sigue `NOT_VALIDATED`. Faltan el recorrido completo de las pantallas, accesibilidad/zoom, historial de ejecuciones reales, integración MCP ejecutable, asignaciones útiles de herramientas y los cinco manuales sectoriales. No es GO para release.
+
+### Actualización de manuales en `origin/main`
+
+Una actualización fresca de GitHub mostró que la PR #72 ya fue integrada en `main` como `5591787`. Incluye cinco guías por sector (`administración documental`, `atención al cliente`, `calidad y operaciones`, `investigación de mercado`, `logística e inventario`) y cinco capturas del producto. Esto cubre la existencia inicial de los cinco documentos solicitados, pero sus propios textos los marcan como escenarios no ejecutados. La imagen Jaeger compartida es una traza sintética de 12 spans/2,7 s; aún faltan trazas live vinculadas a cada caso empresarial y evidencia de que cada recorrido usa realmente las herramientas descritas.
