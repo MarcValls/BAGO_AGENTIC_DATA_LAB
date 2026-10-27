@@ -28,6 +28,8 @@ Aplicación y laboratorio de agentes, datos y ejecución gobernada: trabajar des
 
 ### Explorar el laboratorio
 
+**Accesos rápidos:** [Chat y agentes](#la-aplicación-frontend) · [Datos, RAG y grafos](#datos-y-conocimiento) · [Ejecución gobernada](#bago-ber-y-ejecución-gobernada) · [Arquitectura por capas](#arquitectura-de-un-vistazo) · [Tests y límites](#tests-y-verificación) · [Instalación y demo](#instalación-y-operación)
+
 | | | |
 |:---:|:---:|:---:|
 | [![Experiencia: Chat y agentes](docs/assets/readme-visual/nav-chat.svg)](#la-aplicación-frontend) | [![Conocimiento: Datos, RAG y grafos](docs/assets/readme-visual/nav-data.svg)](#datos-y-conocimiento) | [![Control: ejecución gobernada](docs/assets/readme-visual/nav-governance.svg)](#bago-ber-y-ejecución-gobernada) |

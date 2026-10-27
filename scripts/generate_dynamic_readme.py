@@ -934,8 +934,16 @@ def _render_bago_visual_section(key: str) -> list[str]:
         if len(cards) != 6:
             raise ValueError("Expected 6 navigation cards")
         cells = [f"[![{c['alt']}]({c['asset']})]({c['target']})" for c in cards]
+        def nav_label(card: dict[str, str]) -> str:
+            label = card["alt"].split(": ", 1)[-1]
+            return label[:1].upper() + label[1:]
+
+        text_links = " · ".join(
+            f"[{nav_label(c)}]({c['target']})" for c in cards
+        )
         return [
             "### Explorar el laboratorio", "",
+            f"**Accesos rápidos:** {text_links}", "",
             "| | | |", "|:---:|:---:|:---:|",
             "| " + " | ".join(cells[:3]) + " |",
             "| " + " | ".join(cells[3:]) + " |", "",
