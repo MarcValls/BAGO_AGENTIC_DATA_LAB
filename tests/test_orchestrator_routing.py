@@ -29,6 +29,34 @@ def _install_task_agent_factory(f, monkeypatch, tools=()):
     monkeypatch.setattr(server, "_generate_agent_draft", generate)
 
 
+def test_explicit_named_saved_agent_route_resolves_exact_profile(setup):
+    f = setup
+    agent = server._load_agent(f["agent_id"])
+    route = server._explicit_saved_agent_request(
+        "Delega al agente Saved fixture esta tarea: Prepare synthetic.txt only.",
+        [agent],
+    )
+    assert route == {
+        "decision": "delegate_agent",
+        "agent_id": f["agent_id"],
+        "task": "Prepare synthetic.txt only.",
+        "reply": "Comprobaré que Saved fixture tiene alcance para esta tarea y usaré el proyecto seleccionado.",
+    }
+
+
+def test_explicit_named_saved_agent_route_fails_closed_on_ambiguous_or_nonimperative_text(setup):
+    f = setup
+    first = server._load_agent(f["agent_id"])
+    second = first.model_copy(deep=True)
+    second.id = "agent_9876abcd"
+    second.config.name = "Saved fixture"
+    message = "Delega al agente Saved fixture: Prepare synthetic.txt only."
+    assert server._explicit_saved_agent_request(message, [first, second]) is None
+    assert server._explicit_saved_agent_request(
+        "El agente Saved fixture puede preparar synthetic.txt.", [first]
+    ) is None
+
+
 def test_agent_without_explicit_saved_task_scope_fails_closed(setup):
     f = setup
     record = server._load_agent(f["agent_id"])
