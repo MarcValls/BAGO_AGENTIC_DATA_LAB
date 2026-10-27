@@ -1,10 +1,10 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="718" viewBox="0 0 1200 718" role="img" aria-labelledby="ttl des">
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="776" viewBox="0 0 1200 776" role="img" aria-labelledby="ttl des">
 <title id="ttl">BAGO / ADL · Instalar, arrancar y revisar</title><desc id="des">React + Vite servido por FastAPI; requiere los servicios y dependencias declarados.. Panel vectorial del README; documentación completa enlazada desde la imagen.</desc>
 <defs><linearGradient id="bg" x1="0" x2="1" y1="0" y2="1"><stop stop-color="#101d2d"/><stop offset="1" stop-color="#17283b"/></linearGradient>
 <pattern id="micro" width="28" height="28" patternUnits="userSpaceOnUse"><path d="M28 0H0V28" fill="none" stroke="#7C9CB3" stroke-opacity=".10" stroke-width=".7"/></pattern></defs>
-<rect width="1200" height="718" fill="url(#bg)"/><rect width="1200" height="718" fill="url(#micro)"/>
-<path d="M0 0H1200M0 717H1200" stroke="#416986" stroke-width="1"/>
-<rect x="32" y="24" width="1136" height="670" rx="4" fill="#142539" fill-opacity=".94" stroke="#34516A"/>
+<rect width="1200" height="776" fill="url(#bg)"/><rect width="1200" height="776" fill="url(#micro)"/>
+<path d="M0 0H1200M0 775H1200" stroke="#416986" stroke-width="1"/>
+<rect x="32" y="24" width="1136" height="728" rx="4" fill="#142539" fill-opacity=".94" stroke="#34516A"/>
 <rect x="32" y="24" width="4" height="670" fill="#447B9D"/>
 <text x="66" y="64" fill="#81AFC9" font-size="14" font-weight="750" letter-spacing="2.8">BAGO   /   AGENTIC DATA LAB</text>
 <text x="1114" y="64" fill="#8CA7BB" font-size="13" font-weight="650" letter-spacing="1.4">07  /  OPERACIÓN</text>
@@ -21,7 +21,7 @@
 <rect x="69" y="503" width="510" height="137" rx="3" fill="#1B3043" stroke="#3C5A70" stroke-width="1"/><rect x="69" y="503" width="4" height="137" rx="0" fill="#81AFC9" stroke="#81AFC9" stroke-width="1"/><text x="93" y="535" fill="#81AFC9" font-size="13" font-weight="750" letter-spacing="1.3">ENTRADA</text><text x="93" y="578" fill="#F2EFEA" font-size="23" font-weight="650" letter-spacing="0">INTERFAZ</text><text x="93" y="614" fill="#B7CBD9" font-size="16" font-weight="450" letter-spacing="0">http://127.0.0.1:8080</text>
 <rect x="601" y="503" width="530" height="137" rx="3" fill="#1B3043" stroke="#3C5A70" stroke-width="1"/><rect x="601" y="503" width="4" height="137" rx="0" fill="#81AFC9" stroke="#81AFC9" stroke-width="1"/><text x="625" y="535" fill="#81AFC9" font-size="13" font-weight="750" letter-spacing="1.3">ESTADO</text><text x="625" y="578" fill="#F2EFEA" font-size="23" font-weight="650" letter-spacing="0">CANON Y ROADMAP</text><text x="625" y="614" fill="#B7CBD9" font-size="16" font-weight="450" letter-spacing="0">La fecha importa: no implica PASS vigente.</text>
 
-<path d="M68 639L1132 639" stroke="#33506A" stroke-width="1" fill="none"/>
-<circle cx="75" cy="666" r="3.5" fill="#81AFC9"/><text x="91" y="672" fill="#80A4BA" font-size="12" font-weight="650" letter-spacing="1">VER INSTRUCCIONES DE ARRANQUE Y ESTADO CANÓNICO FECHADO</text>
-<text x="1093" y="673" fill="#6E8FA6" font-size="12" font-weight="650" letter-spacing="1.1">ADL.07</text>
+<path d="M68 697L1132 697" stroke="#33506A" stroke-width="1" fill="none"/>
+<circle cx="75" cy="724" r="3.5" fill="#81AFC9"/><text x="91" y="730" fill="#80A4BA" font-size="12" font-weight="650" letter-spacing="1">VER INSTRUCCIONES DE ARRANQUE Y ESTADO CANÓNICO FECHADO</text>
+<text x="1093" y="731" fill="#6E8FA6" font-size="12" font-weight="650" letter-spacing="1.1">ADL.07</text>
 </svg>
