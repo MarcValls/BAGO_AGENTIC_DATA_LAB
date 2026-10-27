@@ -81,15 +81,25 @@ jobs:
           tags: local/bago-portfolio:scan
           cache-from: type=gha
 
-      - name: Run Trivy vulnerability scan
-        uses: aquasecurity/trivy-action@master
+      - name: Generate complete Trivy vulnerability report
+        uses: aquasecurity/trivy-action@v0.36.0
         with:
           image-ref: local/bago-portfolio:scan
           format: sarif
           output: trivy-results.sarif
+          exit-code: '0'
+          ignore-unfixed: 'false'
+          version: v0.76.1
+
+      - name: Gate fixed critical and high vulnerabilities
+        uses: aquasecurity/trivy-action@v0.36.0
+        with:
+          image-ref: local/bago-portfolio:scan
+          format: table
           exit-code: '1'
           severity: 'CRITICAL,HIGH'
           ignore-unfixed: true
+          skip-setup-trivy: true
 
       - name: Upload Trivy results to GitHub Security tab
         uses: github/codeql-action/upload-sarif@v3
