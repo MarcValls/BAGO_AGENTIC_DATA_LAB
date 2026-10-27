@@ -32,7 +32,8 @@ def test_checked_in_readme_matches_canonical_render():
         passing_tests=0,
     )
 
-    assert (ROOT / "README.md").read_text(encoding="utf-8") == rendered
+    assert (ROOT / "README_DETAILS.md").read_text(encoding="utf-8") == rendered
+    assert (ROOT / "README.md").read_text(encoding="utf-8") == generator.render_svg_landing()
 
 
 @pytest.mark.parametrize(

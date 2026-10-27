@@ -1,0 +1,51 @@
+{
+  "schema": "bago.readme.svg.landing.v1",
+  "design": "BAGO / ADL · vector panels",
+  "panels": [
+    {
+      "asset": "docs/assets/readme-banner/00-hero.svg",
+      "alt": "BAGO Agentic Data Lab: portada gráfica y acceso a documentación completa",
+      "target": "README_DETAILS.md"
+    },
+    {
+      "asset": "docs/assets/readme-banner/01-map.svg",
+      "alt": "Índice gráfico de las catorce secciones del laboratorio",
+      "target": "README_DETAILS.md"
+    },
+    {
+      "asset": "docs/assets/readme-banner/02-workspace.svg",
+      "alt": "Experiencia de chat, frontend, agentes e inspección",
+      "target": "docs/readme_frontend.md"
+    },
+    {
+      "asset": "docs/assets/readme-banner/03-intelligence.svg",
+      "alt": "Cadena de conocimiento gobernado y selección de proveedores",
+      "target": "docs/governed_rag.md"
+    },
+    {
+      "asset": "docs/assets/readme-banner/04-governance.svg",
+      "alt": "Control de ejecución: propuesta, revisión, permisos, operación y recibo",
+      "target": "docs/governed-execution/GEX_V1_NORMATIVE_CONTRACT.md"
+    },
+    {
+      "asset": "docs/assets/readme-banner/05-inspection.svg",
+      "alt": "Observabilidad: LocalTrace, Inspect, recibos y evaluación",
+      "target": "docs/observability_evals.md"
+    },
+    {
+      "asset": "docs/assets/readme-banner/06-demos.svg",
+      "alt": "Demostraciones delimitadas y estados de verificación",
+      "target": "docs/one_command_demo.md"
+    },
+    {
+      "asset": "docs/assets/readme-banner/07-operations.svg",
+      "alt": "Instalación local de la app y acceso al estado documentado",
+      "target": "docs/agent-chat-control/LOCAL_SETUP.md"
+    },
+    {
+      "asset": "docs/assets/readme-banner/08-sources.svg",
+      "alt": "Fuentes canónicas y documentación completa",
+      "target": "README_DETAILS.md"
+    }
+  ]
+}

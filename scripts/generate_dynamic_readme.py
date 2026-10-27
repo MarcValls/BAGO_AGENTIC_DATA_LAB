@@ -8,6 +8,8 @@ the checkout every time this script runs.
 from __future__ import annotations
 
 import argparse
+from html import escape as html_escape
+import xml.etree.ElementTree as ET
 import ast
 import json
 import re
@@ -20,6 +22,8 @@ from typing import Any
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 README_PATH = REPO_ROOT / "README.md"
+README_DETAILS_PATH = REPO_ROOT / "README_DETAILS.md"
+SVG_LANDING_MANIFEST_PATH = REPO_ROOT / "docs" / "readme_svg_manifest.json"
 MANIFEST_PATH = REPO_ROOT / "docs" / "readme_manifest.json"
 INLINE = chr(96)
 FENCE = INLINE * 3
@@ -1196,6 +1200,63 @@ def render_readme(
     ])
     return "\n".join(lines)
 
+
+def render_svg_landing() -> str:
+    """Build the GitHub SVG landing from local validated vector panels.
+
+    render_readme() remains the source-driven full technical document.
+    SVG artwork is editable versioned source, not a claim of runtime status.
+    """
+    config = _read_json(SVG_LANDING_MANIFEST_PATH)
+    if config.get("schema") != "bago.readme.svg.landing.v1":
+        raise ValueError("Unsupported SVG README manifest")
+    panels = config.get("panels")
+    if not isinstance(panels, list) or len(panels) < 8:
+        raise ValueError("Vector landing requires eight or more panels")
+    seen: set[str] = set()
+    pieces: list[str] = ['<div align="center">']
+    for item in panels:
+        if not isinstance(item, dict):
+            raise ValueError("Malformed SVG panel")
+        asset, target, alt = (item.get(key) for key in ("asset", "target", "alt"))
+        if not all(isinstance(value, str) and value for value in (asset, target, alt)):
+            raise ValueError("Missing SVG asset, destination or alternative text")
+        if (
+            not re.fullmatch(r"docs/assets/readme-banner/[0-9]{2}-[a-z0-9-]+\.svg", asset)
+            or asset in seen
+        ):
+            raise ValueError(f"Unsafe or duplicate vector panel: {asset}")
+        seen.add(asset)
+        target_path, sep, fragment = target.partition("#")
+        if not re.fullmatch(r"[A-Za-z0-9_./-]+\.md", target_path):
+            raise ValueError(f"Unsafe destination: {target}")
+        if ".." in Path(target_path).parts or (sep and not fragment):
+            raise ValueError(f"Unsafe destination: {target}")
+        if not (REPO_ROOT / target_path).is_file():
+            raise FileNotFoundError(f"Missing destination: {target_path}")
+        source = REPO_ROOT / asset
+        root = ET.fromstring(source.read_text(encoding="utf-8"))
+        if root.tag != "{http://www.w3.org/2000/svg}svg" or not root.get("viewBox"):
+            raise ValueError(f"Invalid SVG root/viewBox: {asset}")
+        for node in root.iter():
+            tag = node.tag.rsplit("}", 1)[-1]
+            if tag in {"script", "foreignObject", "image", "iframe", "animate", "set"}:
+                raise ValueError(f"Unsafe SVG element in {asset}: {tag}")
+            for attribute, value in node.attrib.items():
+                key = attribute.rsplit("}", 1)[-1]
+                if key.startswith("on") or (key in {"href", "src"} and not value.startswith("#")):
+                    raise ValueError(f"Unsafe SVG attribute in {asset}: {key}")
+                if "url(" in value.lower() and "url(#" not in value.lower():
+                    raise ValueError(f"External resource in SVG: {asset}")
+        pieces.append(
+            f'<a href="{html_escape(target, quote=True)}">'
+            f'<img src="{html_escape(asset, quote=True)}" width="100%" '
+            f'alt="{html_escape(alt, quote=True)}" /></a>'
+        )
+    pieces.append("</div>")
+    return "\n".join(pieces) + "\n"
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
@@ -1218,14 +1279,17 @@ def main(argv: list[str] | None = None) -> int:
         state=state,
         passing_tests=test_count,
     )
+    landing = render_svg_landing()
     current = README_PATH.read_text(encoding="utf-8") if README_PATH.exists() else ""
+    detailed = README_DETAILS_PATH.read_text(encoding="utf-8") if README_DETAILS_PATH.exists() else ""
     if args.check:
-        if current != rendered:
+        if current != landing or detailed != rendered:
             print("README desactualizado: ejecuta python scripts/generate_dynamic_readme.py")
             return 1
         print(f"README verificado; suite NOT_RUN ({test_count} casos recogidos)" if args.skip_tests else f"README verificado; {test_count} tests pasaron")
         return 0
-    README_PATH.write_text(rendered, encoding="utf-8", newline="\n")
+    README_DETAILS_PATH.write_text(rendered, encoding="utf-8", newline="\n")
+    README_PATH.write_text(landing, encoding="utf-8", newline="\n")
     print(f"README generado; suite NOT_RUN ({test_count} casos recogidos)" if args.skip_tests else f"README generado tras {test_count} tests pasados")
     return 0
 
