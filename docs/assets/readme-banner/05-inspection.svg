@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="628" viewBox="0 0 1200 628" role="img" aria-labelledby="ttl des">
+<title id="ttl">BAGO / ADL · Observar, inspeccionar, contrastar</title><desc id="des">Trazas, recibos y evaluaciones son capas complementarias con fronteras propias.. Panel vectorial del README; documentación completa enlazada desde la imagen.</desc>
+<defs><linearGradient id="bg" x1="0" x2="1" y1="0" y2="1"><stop stop-color="#101d2d"/><stop offset="1" stop-color="#17283b"/></linearGradient>
+<pattern id="micro" width="28" height="28" patternUnits="userSpaceOnUse"><path d="M28 0H0V28" fill="none" stroke="#7C9CB3" stroke-opacity=".10" stroke-width=".7"/></pattern></defs>
+<rect width="1200" height="628" fill="url(#bg)"/><rect width="1200" height="628" fill="url(#micro)"/>
+<path d="M0 0H1200M0 627H1200" stroke="#416986" stroke-width="1"/>
+<rect x="32" y="24" width="1136" height="580" rx="4" fill="#142539" fill-opacity=".94" stroke="#34516A"/>
+<rect x="32" y="24" width="4" height="580" fill="#447B9D"/>
+<text x="66" y="64" fill="#81AFC9" font-size="14" font-weight="750" letter-spacing="2.8">BAGO   /   AGENTIC DATA LAB</text>
+<text x="1114" y="64" fill="#8CA7BB" font-size="13" font-weight="650" letter-spacing="1.4">05  /  OBSERVABILIDAD</text>
+<text x="66" y="118" fill="#F2EFEA" font-size="37" font-weight="650" letter-spacing="-0.5">Observar, inspeccionar, contrastar</text>
+<text x="68" y="151" fill="#B9CEDA" font-size="18" font-weight="400" letter-spacing="0">Trazas, recibos y evaluaciones son capas complementarias con fronteras propias.</text>
+<path d="M68 174L1132 174" stroke="#3B5B74" stroke-width="1" fill="none"/>
+
+<rect x="70" y="197" width="515" height="291" rx="3" fill="#172E41" stroke="#4A6B80" stroke-width="1"/>
+<rect x="70" y="197" width="515" height="40" rx="3" fill="#24445C" stroke="#52768D" stroke-width="1"/>
+<text x="91" y="222" fill="#D8EAF3" font-size="15" font-weight="700" letter-spacing="1.1">INSPECT / LOCALTRACE</text>
+<path d="M105 271L105 444" stroke="#547A96" stroke-width="2" fill="none"/>
+<circle cx="105" cy="274" r="5" fill="#81AFC9"/><rect x="134" y="260" width="405" height="30" rx="2" fill="#1D384C" stroke="#385B75" stroke-width="1"/><text x="151" y="280" fill="#D3E3ED" font-size="15" font-weight="550" letter-spacing="0.3" font-family="Consolas,monospace">workflow.started</text><circle cx="105" cy="313" r="5" fill="#81AFC9"/><rect x="134" y="299" width="405" height="30" rx="2" fill="#1D384C" stroke="#385B75" stroke-width="1"/><text x="151" y="319" fill="#D3E3ED" font-size="15" font-weight="550" letter-spacing="0.3" font-family="Consolas,monospace">retrieval.source</text><circle cx="105" cy="352" r="5" fill="#81AFC9"/><rect x="134" y="338" width="405" height="30" rx="2" fill="#1D384C" stroke="#385B75" stroke-width="1"/><text x="151" y="358" fill="#D3E3ED" font-size="15" font-weight="550" letter-spacing="0.3" font-family="Consolas,monospace">authorization.decision</text><circle cx="105" cy="391" r="5" fill="#F3BE78"/><rect x="134" y="377" width="405" height="30" rx="2" fill="#1D384C" stroke="#385B75" stroke-width="1"/><text x="151" y="397" fill="#D3E3ED" font-size="15" font-weight="550" letter-spacing="0.3" font-family="Consolas,monospace">effect.receipt / scope</text><circle cx="105" cy="430" r="5" fill="#81AFC9"/><rect x="134" y="416" width="405" height="30" rx="2" fill="#1D384C" stroke="#385B75" stroke-width="1"/><text x="151" y="436" fill="#D3E3ED" font-size="15" font-weight="550" letter-spacing="0.3" font-family="Consolas,monospace">evaluation.record</text>
+<rect x="610" y="197" width="519" height="291" rx="3" fill="#1B3347" stroke="#476980" stroke-width="1"/>
+<text x="632" y="227" fill="#A0CCE1" font-size="15" font-weight="750" letter-spacing="1.2">EVIDENCIA NO ES INFERENCIA</text>
+<rect x="628" y="250" width="200" height="42" rx="0" fill="#244159" stroke="#53718A" stroke-width="1"/><text x="645" y="281" fill="#BFE0F0" font-size="15" font-weight="700" letter-spacing="0">ARTEFACTO</text><rect x="828" y="250" width="263" height="42" rx="0" fill="#244159" stroke="#53718A" stroke-width="1"/><text x="845" y="281" fill="#BFE0F0" font-size="15" font-weight="700" letter-spacing="0">QUÉ ACREDITA</text>
+<rect x="628" y="292" width="200" height="54" rx="0" fill="#182E42" stroke="#314F65" stroke-width="1"/><text x="645" y="323" fill="#D5E4EC" font-size="16" font-weight="450" letter-spacing="0">RECIBO</text><rect x="828" y="292" width="263" height="54" rx="0" fill="#182E42" stroke="#314F65" stroke-width="1"/><text x="845" y="323" fill="#D5E4EC" font-size="16" font-weight="450" letter-spacing="0">[Efecto / identidad]</text>
+<rect x="628" y="346" width="200" height="54" rx="0" fill="#182E42" stroke="#314F65" stroke-width="1"/><text x="645" y="377" fill="#D5E4EC" font-size="16" font-weight="450" letter-spacing="0">TRAZA</text><rect x="828" y="346" width="263" height="54" rx="0" fill="#182E42" stroke="#314F65" stroke-width="1"/><text x="845" y="377" fill="#D5E4EC" font-size="16" font-weight="450" letter-spacing="0">[Secuencia / IDs]</text>
+<rect x="628" y="400" width="200" height="54" rx="0" fill="#182E42" stroke="#314F65" stroke-width="1"/><text x="645" y="431" fill="#D5E4EC" font-size="16" font-weight="450" letter-spacing="0">EVALUACIÓN</text><rect x="828" y="400" width="263" height="54" rx="0" fill="#182E42" stroke="#314F65" stroke-width="1"/><text x="845" y="431" fill="#D5E4EC" font-size="16" font-weight="450" letter-spacing="0">[Criterio acotado]</text>
+<text x="73" y="527" fill="#81AFC9" font-size="14" font-weight="750" letter-spacing="1.6">PROCEDENCIA</text>
+<text x="236" y="528" fill="#B7CBD9" font-size="17" font-weight="450" letter-spacing="0">Jaeger proyecta trazas. No autoriza operaciones.</text><text x="236" y="556" fill="#B7CBD9" font-size="17" font-weight="450" letter-spacing="0">Una vista de Inspect no verifica por sí sola un efecto.</text>
+
+<path d="M68 549L1132 549" stroke="#33506A" stroke-width="1" fill="none"/>
+<circle cx="75" cy="576" r="3.5" fill="#81AFC9"/><text x="91" y="582" fill="#80A4BA" font-size="12" font-weight="650" letter-spacing="1">REVISAR INSPECT, OPENTELEMETRY Y EVIDENCIA DELIMITADA</text>
+<text x="1093" y="583" fill="#6E8FA6" font-size="12" font-weight="650" letter-spacing="1.1">ADL.05</text>
+</svg>
