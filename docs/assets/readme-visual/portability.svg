@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="389" viewBox="0 0 1200 389" role="img" aria-labelledby="svg-title svg-desc">
+<title id="svg-title">ADL - Portabilidad de datos</title>
+<desc id="svg-desc">Código separado de datos locales .bago/data y carpetas workspace externas. La migración real no se ha aplicado.</desc>
+<defs><linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#101d2d"/><stop offset="1" stop-color="#17283b"/></linearGradient><marker id="arrow" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#81afc9"/></marker><marker id="amberarrow" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#F3BE78"/></marker></defs>
+<rect width="1200" height="389" rx="12" fill="url(#bg)"/>
+<path d="M40 0V389" stroke="#26384A" stroke-opacity=".15"/>
+<path d="M120 0V389" stroke="#26384A" stroke-opacity=".15"/>
+<path d="M200 0V389" stroke="#26384A" stroke-opacity=".15"/>
+<path d="M280 0V389" stroke="#26384A" stroke-opacity=".15"/>
+<path d="M360 0V389" stroke="#26384A" stroke-opacity=".15"/>
+<path d="M440 0V389" stroke="#26384A" stroke-opacity=".15"/>
+<path d="M520 0V389" stroke="#26384A" stroke-opacity=".15"/>
+<path d="M600 0V389" stroke="#26384A" stroke-opacity=".15"/>
+<path d="M680 0V389" stroke="#26384A" stroke-opacity=".15"/>
+<path d="M760 0V389" stroke="#26384A" stroke-opacity=".15"/>
+<path d="M840 0V389" stroke="#26384A" stroke-opacity=".15"/>
+<path d="M920 0V389" stroke="#26384A" stroke-opacity=".15"/>
+<path d="M1000 0V389" stroke="#26384A" stroke-opacity=".15"/>
+<path d="M1080 0V389" stroke="#26384A" stroke-opacity=".15"/>
+<path d="M1160 0V389" stroke="#26384A" stroke-opacity=".15"/>
+<text x="42" y="47" font-size="15" fill="#81afc9" font-weight="700" letter-spacing="1.2">DATOS PORTABLES · PR #78 INTEGRADA EN MAIN</text>
+<rect x="934" y="25" width="218" height="29" rx="14" fill="#17283b" stroke="#81afc9" stroke-width="1"/><text x="1043.0" y="45" font-size="12" fill="#81afc9" font-weight="600" text-anchor="middle" letter-spacing="0.5">2026-10-27</text>
+<rect x="43" y="91" width="302" height="157" rx="14" fill="#1c3043" stroke="#355269" stroke-width="1.2"/><rect x="43" y="91" width="4" height="157" rx="2" fill="#81afc9"/><text x="61" y="119" font-size="12" fill="#81afc9" font-weight="700" letter-spacing="1.1">CÓDIGO</text><text x="61" y="155" font-size="20" fill="#F2EFEA" font-weight="650">Checkout ADL</text><text x="61" y="181" font-size="14" fill="#AABFCC" font-weight="400">Git, scripts, UI</text><text x="61" y="202" font-size="14" fill="#AABFCC" font-weight="400">NO incluye datos privados</text>
+<rect x="447" y="91" width="306" height="157" rx="14" fill="#1c3043" stroke="#355269" stroke-width="1.2"/><rect x="447" y="91" width="4" height="157" rx="2" fill="#8CD4BC"/><text x="465" y="119" font-size="12" fill="#8CD4BC" font-weight="700" letter-spacing="1.1">ESTADO POR COPIA</text><text x="465" y="155" font-size="20" fill="#F2EFEA" font-weight="650">.bago/data</text><text x="465" y="181" font-size="14" fill="#AABFCC" font-weight="400">Conversaciones · agentes</text><text x="465" y="202" font-size="14" fill="#AABFCC" font-weight="400">Tareas · trazas · evals</text>
+<rect x="858" y="91" width="304" height="157" rx="14" fill="#1c3043" stroke="#355269" stroke-width="1.2"/><rect x="858" y="91" width="4" height="157" rx="2" fill="#F3BE78"/><text x="876" y="119" font-size="12" fill="#F3BE78" font-weight="700" letter-spacing="1.1">FUERA DE LA COPIA</text><text x="876" y="155" font-size="20" fill="#F2EFEA" font-weight="650">Workspaces</text><text x="876" y="181" font-size="14" fill="#AABFCC" font-weight="400">Carpetas elegidas</text><text x="876" y="202" font-size="14" fill="#AABFCC" font-weight="400">No se copian con ADL</text>
+<path d="M347 167 L442 167" fill="none" stroke="#81afc9" stroke-width="2" stroke-linecap="round" marker-end="url(#arrow)"/>
+<path d="M755 167 L850 167" fill="none" stroke="#F3BE78" stroke-width="2" stroke-linecap="round" stroke-dasharray="7 6" marker-end="url(#amberarrow)"/>
+<rect x="44" y="269" width="1118" height="66" rx="12" fill="#101d2d" stroke="#F3BE78" stroke-width="1.2"/>
+<text x="64" y="296" font-size="16" fill="#F3BE78" font-weight="700">MIGRACIÓN REAL: NO APLICADA</text>
+<text x="64" y="321" font-size="14" fill="#AABFCC" font-weight="400">Detener runtime propietario · inventariar · copiar bajo control · comprobar SQLite, hashes y lectura/escritura.</text>
+<text x="45" y="363" font-size="14" fill="#AABFCC" font-weight="400">BAGO_DATA_ROOT puede sobrescribir la raíz por configuración; inspeccionar la raíz efectiva en /api/runtime/storage.</text>
+<path d="M16 387H1184" stroke="#447B9D" stroke-width="2" stroke-opacity=".7"/>
+</svg>

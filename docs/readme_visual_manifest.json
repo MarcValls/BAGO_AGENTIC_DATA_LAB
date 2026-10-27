@@ -1,0 +1,128 @@
+{
+  "schema": "bago.readme.visual.v1",
+  "version": "1.0.0",
+  "origin": "BAGO5 · visual README design pack (27/10/2026)",
+  "snapshot": {
+    "repository": "MarcValls/BAGO_AGENTIC_DATA_LAB",
+    "observed_at": "2026-10-27",
+    "main_sha": "ac6670ecfb1cda0ef8bd4bf1f065455e65791c62",
+    "historical_canon_date": "2026-10-18",
+    "claim_boundary": "not a live runtime or post-merge CI validation"
+  },
+  "sections": {
+    "nav": {
+      "entries": [
+        {
+          "asset": "docs/assets/readme-visual/nav-chat.svg",
+          "alt": "Experiencia: Chat y agentes",
+          "target": "#la-aplicación-frontend"
+        },
+        {
+          "asset": "docs/assets/readme-visual/nav-data.svg",
+          "alt": "Conocimiento: Datos, RAG y grafos",
+          "target": "#datos-y-conocimiento"
+        },
+        {
+          "asset": "docs/assets/readme-visual/nav-governance.svg",
+          "alt": "Control: ejecución gobernada",
+          "target": "#bago-ber-y-ejecución-gobernada"
+        },
+        {
+          "asset": "docs/assets/readme-visual/nav-architecture.svg",
+          "alt": "Sistema: arquitectura por capas",
+          "target": "#arquitectura-de-un-vistazo"
+        },
+        {
+          "asset": "docs/assets/readme-visual/nav-evidence.svg",
+          "alt": "Evidencias: tests y límites",
+          "target": "#tests-y-verificación"
+        },
+        {
+          "asset": "docs/assets/readme-visual/nav-start.svg",
+          "alt": "Operación: instalación y demo",
+          "target": "#instalación-y-operación"
+        }
+      ]
+    },
+    "overview": {
+      "entries": [
+        {
+          "asset": "docs/assets/readme-visual/journey.svg",
+          "alt": "Chat, propuesta, autorización, operación y evidencia",
+          "target": "docs/readme_frontend.md",
+          "caption": "**Vista conceptual:** cada etapa de ejecución necesita su propia autoridad y observación; la navegación no implica efecto."
+        }
+      ]
+    },
+    "knowledge": {
+      "entries": [
+        {
+          "asset": "docs/assets/readme-visual/knowledge.svg",
+          "alt": "Documentos, ETL, recuperación con filtros, SQLite y citas",
+          "target": "docs/governed_rag.md",
+          "caption": "**Alcance:** componentes descritos por el repositorio, con verificaciones locales fechadas; una cita no otorga permiso de acción."
+        }
+      ]
+    },
+    "governance": {
+      "entries": [
+        {
+          "asset": "docs/assets/readme-visual/governance.svg",
+          "alt": "Propuesta, autorización, permit, operación y recibo",
+          "target": "docs/governed-execution/GEX_V1_NORMATIVE_CONTRACT.md",
+          "caption": "**Frontera:** denegación sin efecto y recibo verificable; perfiles de fixture y runtime real no son equivalentes."
+        }
+      ]
+    },
+    "architecture": {
+      "entries": [
+        {
+          "asset": "docs/assets/readme-visual/architecture.svg",
+          "alt": "Frontend React, API FastAPI, control, datos y evidencia",
+          "target": ".bago/canon/ARCHITECTURE.md",
+          "caption": "**Lectura:** mapa de responsabilidades extraídas de la documentación; no es una topología desplegada ni un PASS global."
+        }
+      ]
+    },
+    "demonstrability": {
+      "entries": [
+        {
+          "asset": "docs/assets/readme-visual/cdp.svg",
+          "alt": "Ciclo de demostrabilidad BAGO-CDP-001",
+          "target": "docs/one_command_demo_walkthrough.md",
+          "caption": "**BAGO-CDP-001:** cada capacidad requiere recorrido reproducible, positivo/negativo, evidencia y conservación independiente."
+        }
+      ]
+    },
+    "verification": {
+      "entries": [
+        {
+          "asset": "docs/assets/readme-visual/capabilities.svg",
+          "alt": "Capacidades locales verificadas y pendientes por escenario",
+          "target": ".bago/canon/STATE.md",
+          "caption": "**Estado:** no sumar pruebas de commits distintos; un resultado NOT_RUN permanece NOT_RUN hasta ejecutar la prueba pertinente."
+        }
+      ]
+    },
+    "portability": {
+      "entries": [
+        {
+          "asset": "docs/assets/readme-visual/portability.svg",
+          "alt": "Separación de código, datos locales y workspaces externos",
+          "target": "docs/public-web/MANUAL.md",
+          "caption": "**Corte 27/10:** PR #78 fusionada; migración efectiva de AppData no realizada; `BAGO_DATA_ROOT` requiere revisar configuración."
+        }
+      ]
+    },
+    "status": {
+      "entries": [
+        {
+          "asset": "docs/assets/readme-visual/status.svg",
+          "alt": "Cronología de canon, CI y fusiones hasta 27/10",
+          "target": ".bago/canon/STATE.md",
+          "caption": "**Snapshot documental:** `main@ac6670ec`; CI histórica del 22/10 no valida el nuevo HEAD; PR #79 de seguridad sigue abierta en el corte."
+        }
+      ]
+    }
+  }
+}

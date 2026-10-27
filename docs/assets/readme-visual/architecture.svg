@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="605" viewBox="0 0 1200 605" role="img" aria-labelledby="svg-title svg-desc">
+<title id="svg-title">ADL - Arquitectura en capas</title>
+<desc id="svg-desc">Mapa de frontend React, API FastAPI, control de ejecución, workspace, RAG, proveedores, evidencia y proyección OpenTelemetry.</desc>
+<defs><linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#101d2d"/><stop offset="1" stop-color="#17283b"/></linearGradient><marker id="arrow" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#81afc9"/></marker><marker id="amberarrow" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#F3BE78"/></marker></defs>
+<rect width="1200" height="605" rx="12" fill="url(#bg)"/>
+<path d="M40 0V605" stroke="#26384A" stroke-opacity=".15"/>
+<path d="M120 0V605" stroke="#26384A" stroke-opacity=".15"/>
+<path d="M200 0V605" stroke="#26384A" stroke-opacity=".15"/>
+<path d="M280 0V605" stroke="#26384A" stroke-opacity=".15"/>
+<path d="M360 0V605" stroke="#26384A" stroke-opacity=".15"/>
+<path d="M440 0V605" stroke="#26384A" stroke-opacity=".15"/>
+<path d="M520 0V605" stroke="#26384A" stroke-opacity=".15"/>
+<path d="M600 0V605" stroke="#26384A" stroke-opacity=".15"/>
+<path d="M680 0V605" stroke="#26384A" stroke-opacity=".15"/>
+<path d="M760 0V605" stroke="#26384A" stroke-opacity=".15"/>
+<path d="M840 0V605" stroke="#26384A" stroke-opacity=".15"/>
+<path d="M920 0V605" stroke="#26384A" stroke-opacity=".15"/>
+<path d="M1000 0V605" stroke="#26384A" stroke-opacity=".15"/>
+<path d="M1080 0V605" stroke="#26384A" stroke-opacity=".15"/>
+<path d="M1160 0V605" stroke="#26384A" stroke-opacity=".15"/>
+<text x="42" y="45" font-size="15" fill="#81afc9" font-weight="700" letter-spacing="1.4">ARQUITECTURA · RESPONSABILIDADES SEPARADAS</text>
+<text x="1154" y="45" font-size="11" fill="#AABFCC" font-weight="650" text-anchor="end" letter-spacing="0.5">MAPA DOCUMENTAL · NO TOPOLOGÍA EN VIVO</text>
+<rect x="40" y="91" width="265" height="142" rx="14" fill="#1c3043" stroke="#355269" stroke-width="1.2"/><rect x="40" y="91" width="4" height="142" rx="2" fill="#81afc9"/><text x="58" y="119" font-size="12" fill="#81afc9" font-weight="700" letter-spacing="1.1">INTERACCIÓN</text><text x="58" y="155" font-size="20" fill="#F2EFEA" font-weight="650">React · Chat</text><text x="58" y="181" font-size="14" fill="#AABFCC" font-weight="400">Builder · Workspace</text><text x="58" y="202" font-size="14" fill="#AABFCC" font-weight="400">Inspect · Settings</text>
+<rect x="337" y="91" width="265" height="142" rx="14" fill="#1c3043" stroke="#355269" stroke-width="1.2"/><rect x="337" y="91" width="4" height="142" rx="2" fill="#81afc9"/><text x="355" y="119" font-size="12" fill="#81afc9" font-weight="700" letter-spacing="1.1">CONTRATOS HTTP</text><text x="355" y="155" font-size="20" fill="#F2EFEA" font-weight="650">FastAPI</text><text x="355" y="181" font-size="14" fill="#AABFCC" font-weight="400">Entradas y validación</text><text x="355" y="202" font-size="14" fill="#AABFCC" font-weight="400">Identidad y alcance</text>
+<rect x="634" y="91" width="265" height="142" rx="14" fill="#1c3043" stroke="#355269" stroke-width="1.2"/><rect x="634" y="91" width="4" height="142" rx="2" fill="#F3BE78"/><text x="652" y="119" font-size="12" fill="#F3BE78" font-weight="700" letter-spacing="1.1">CONTROL</text><text x="652" y="155" font-size="20" fill="#F2EFEA" font-weight="650">Autorización</text><text x="652" y="181" font-size="14" fill="#AABFCC" font-weight="400">Petición / permit</text><text x="652" y="202" font-size="14" fill="#AABFCC" font-weight="400">Política aplicable</text>
+<rect x="931" y="91" width="227" height="142" rx="14" fill="#1c3043" stroke="#355269" stroke-width="1.2"/><rect x="931" y="91" width="4" height="142" rx="2" fill="#F3BE78"/><text x="949" y="119" font-size="12" fill="#F3BE78" font-weight="700" letter-spacing="1.1">EFECTOS</text><text x="949" y="155" font-size="20" fill="#F2EFEA" font-weight="650">Gateway</text><text x="949" y="181" font-size="14" fill="#AABFCC" font-weight="400">Sandbox / MCP</text><text x="949" y="202" font-size="14" fill="#AABFCC" font-weight="400">Adaptador tipado</text>
+<rect x="40" y="310" width="265" height="142" rx="14" fill="#1c3043" stroke="#355269" stroke-width="1.2"/><rect x="40" y="310" width="4" height="142" rx="2" fill="#B3B9F5"/><text x="58" y="338" font-size="12" fill="#B3B9F5" font-weight="700" letter-spacing="1.1">ESTADO DE TRABAJO</text><text x="58" y="374" font-size="20" fill="#F2EFEA" font-weight="650">Workspace</text><text x="58" y="400" font-size="14" fill="#AABFCC" font-weight="400">Proyecto · agentes</text><text x="58" y="421" font-size="14" fill="#AABFCC" font-weight="400">Conversaciones / tareas</text>
+<rect x="337" y="310" width="265" height="142" rx="14" fill="#1c3043" stroke="#355269" stroke-width="1.2"/><rect x="337" y="310" width="4" height="142" rx="2" fill="#81afc9"/><text x="355" y="338" font-size="12" fill="#81afc9" font-weight="700" letter-spacing="1.1">CONOCIMIENTO</text><text x="355" y="374" font-size="20" fill="#F2EFEA" font-weight="650">RAG + Ontología</text><text x="355" y="400" font-size="14" fill="#AABFCC" font-weight="400">ETL · SQLite vector</text><text x="355" y="421" font-size="14" fill="#AABFCC" font-weight="400">Citas y metadatos</text>
+<rect x="634" y="310" width="265" height="142" rx="14" fill="#1c3043" stroke="#355269" stroke-width="1.2"/><rect x="634" y="310" width="4" height="142" rx="2" fill="#B3B9F5"/><text x="652" y="338" font-size="12" fill="#B3B9F5" font-weight="700" letter-spacing="1.1">MODELOS</text><text x="652" y="374" font-size="20" fill="#F2EFEA" font-weight="650">Proveedores</text><text x="652" y="400" font-size="14" fill="#AABFCC" font-weight="400">Respuesta del modelo</text><text x="652" y="421" font-size="14" fill="#AABFCC" font-weight="400">No atribuye permiso</text>
+<rect x="931" y="310" width="227" height="142" rx="14" fill="#1c3043" stroke="#355269" stroke-width="1.2"/><rect x="931" y="310" width="4" height="142" rx="2" fill="#8CD4BC"/><text x="949" y="338" font-size="12" fill="#8CD4BC" font-weight="700" letter-spacing="1.1">EVIDENCIA</text><text x="949" y="374" font-size="20" fill="#F2EFEA" font-weight="650">LocalTrace</text><text x="949" y="400" font-size="14" fill="#AABFCC" font-weight="400">Recibos / evals</text><text x="949" y="421" font-size="14" fill="#AABFCC" font-weight="400">BER / inspección</text>
+<path d="M306 160 L332 160" fill="none" stroke="#81afc9" stroke-width="2" stroke-linecap="round" marker-end="url(#arrow)"/>
+<path d="M603 160 L629 160" fill="none" stroke="#81afc9" stroke-width="2" stroke-linecap="round" marker-end="url(#arrow)"/>
+<path d="M900 160 L925 160" fill="none" stroke="#81afc9" stroke-width="2" stroke-linecap="round" marker-end="url(#arrow)"/>
+<path d="M470 236V306" fill="none" stroke="#81afc9" stroke-width="2" stroke-linecap="round" marker-end="url(#arrow)"/>
+<path d="M775 236V306" fill="none" stroke="#B3B9F5" stroke-width="2" stroke-linecap="round" marker-end="url(#arrow)"/>
+<path d="M1045 237V305" fill="none" stroke="#8CD4BC" stroke-width="2" stroke-linecap="round" marker-end="url(#arrow)"/>
+<path d="M306 379H332" fill="none" stroke="#7896AA" stroke-width="2" stroke-linecap="round" stroke-dasharray="7 5" marker-end="url(#arrow)"/>
+<path d="M604 379H628" fill="none" stroke="#7896AA" stroke-width="2" stroke-linecap="round" stroke-dasharray="7 5" marker-end="url(#arrow)"/>
+<path d="M900 379H925" fill="none" stroke="#8CD4BC" stroke-width="2" stroke-linecap="round" stroke-dasharray="5 5" marker-end="url(#arrow)"/>
+<rect x="40" y="479" width="1118" height="69" rx="12" fill="#101d2d" stroke="#355269" stroke-width="1.2"/>
+<text x="63" y="503" font-size="17" fill="#81afc9" font-weight="700">OBSERVABILIDAD EXTERNA · OpenTelemetry / Jaeger</text>
+<text x="63" y="529" font-size="14" fill="#AABFCC" font-weight="400">Proyección de trazas, no fuente de permiso ni sustituto del recibo local.</text>
+<path d="M1045 454V484H920" fill="none" stroke="#8CD4BC" stroke-width="2" stroke-linecap="round" marker-end="url(#arrow)"/>
+<text x="43" y="581" font-size="14" fill="#AABFCC" font-weight="400">Continuidad conceptual: UI → API → control de efecto → recibo → verificación.</text>
+<path d="M16 603H1184" stroke="#447B9D" stroke-width="2" stroke-opacity=".7"/>
+</svg>
