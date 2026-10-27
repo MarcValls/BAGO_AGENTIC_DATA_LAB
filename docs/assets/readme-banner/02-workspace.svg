@@ -1,10 +1,10 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="624" viewBox="0 0 1200 624" role="img" aria-labelledby="ttl des">
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="680" viewBox="0 0 1200 680" role="img" aria-labelledby="ttl des">
 <title id="ttl">BAGO / ADL · Chat como entrada principal</title><desc id="des">Workspace, Builder, Runs, Inspect y Settings amplían la conversación.. Panel vectorial del README; documentación completa enlazada desde la imagen.</desc>
 <defs><linearGradient id="bg" x1="0" x2="1" y1="0" y2="1"><stop stop-color="#101d2d"/><stop offset="1" stop-color="#17283b"/></linearGradient>
 <pattern id="micro" width="28" height="28" patternUnits="userSpaceOnUse"><path d="M28 0H0V28" fill="none" stroke="#7C9CB3" stroke-opacity=".10" stroke-width=".7"/></pattern></defs>
-<rect width="1200" height="624" fill="url(#bg)"/><rect width="1200" height="624" fill="url(#micro)"/>
-<path d="M0 0H1200M0 623H1200" stroke="#416986" stroke-width="1"/>
-<rect x="32" y="24" width="1136" height="576" rx="4" fill="#142539" fill-opacity=".94" stroke="#34516A"/>
+<rect width="1200" height="680" fill="url(#bg)"/><rect width="1200" height="680" fill="url(#micro)"/>
+<path d="M0 0H1200M0 679H1200" stroke="#416986" stroke-width="1"/>
+<rect x="32" y="24" width="1136" height="632" rx="4" fill="#142539" fill-opacity=".94" stroke="#34516A"/>
 <rect x="32" y="24" width="4" height="576" fill="#447B9D"/>
 <text x="66" y="64" fill="#81AFC9" font-size="14" font-weight="750" letter-spacing="2.8">BAGO   /   AGENTIC DATA LAB</text>
 <text x="928" y="64" fill="#8CA7BB" font-size="13" font-weight="650" letter-spacing="1.4">02  /  EXPERIENCIA</text>
@@ -29,7 +29,7 @@
 <text x="68" y="539" fill="#81AFC9" font-size="13" font-weight="750" letter-spacing="1.7">VISTAS DOCUMENTADAS</text>
 <text x="332" y="539" fill="#B6C9D6" font-size="16" font-weight="450" letter-spacing="0">La composición es conceptual; no es una captura del runtime.</text>
 
-<path d="M68 545L1132 545" stroke="#33506A" stroke-width="1" fill="none"/>
-<circle cx="75" cy="572" r="3.5" fill="#81AFC9"/><text x="91" y="578" fill="#80A4BA" font-size="12" font-weight="650" letter-spacing="1">REVISAR FRONTEND Y GALERÍA DE CAPTURAS FECHADAS · 25 OCT 2026</text>
-<text x="1093" y="579" fill="#6E8FA6" font-size="12" font-weight="650" letter-spacing="1.1">ADL.02</text>
+<path d="M68 601L1132 601" stroke="#33506A" stroke-width="1" fill="none"/>
+<circle cx="75" cy="628" r="3.5" fill="#81AFC9"/><text x="91" y="634" fill="#80A4BA" font-size="12" font-weight="650" letter-spacing="1">REVISAR FRONTEND Y GALERÍA DE CAPTURAS FECHADAS · 25 OCT 2026</text>
+<text x="1093" y="635" fill="#6E8FA6" font-size="12" font-weight="650" letter-spacing="1.1">ADL.02</text>
 </svg>
