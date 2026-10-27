@@ -1,0 +1,76 @@
+{
+  "contract": "adl.project-file-operations.r9.evidence.v1",
+  "repository": "MarcValls/BAGO_AGENTIC_DATA_LAB",
+  "branch": "codex/adl-project-file-operations-20261027",
+  "candidate_sha": "74bd848f812be4373d8a44627aa3ca3719678da1",
+  "project": {
+    "project_id": "workspace_80e67a1c3d824a8da3e639e97586b285",
+    "root": "D:\\PRUEBAS_BAGO5_ADL\\PRUEBA_01",
+    "permission_state": "configured",
+    "read_directories": ["."],
+    "write_directories": ["."],
+    "policy_revision": "a10f3f8c8170813e9d9c5d615feba4aa3efd50d063e2b25a578c4e539cc5bfc5"
+  },
+  "runtime": {
+    "url": "http://127.0.0.1:8100",
+    "candidate_process_id": 5164,
+    "data_root": "C:\\BAGO_TESTS\\PROJECT_PERMISSIONS_20261026\\source\\.bago\\data",
+    "provider_id": "ollama-cloud",
+    "model_id": "gemma4:31b",
+    "agent_id": "agent_8f75791b20954c0d9d0c64170a80d1e6",
+    "conversation_id": "conv_2917031aae394455973d370264df985e"
+  },
+  "operations": [
+    {
+      "operation": "edit",
+      "proposal_id": "fsproposal_52dfbabdaafa4d2fbbf9995fb81010b5",
+      "plan_id": "7c5530cea75a41b38427ffb17ab72c3f",
+      "plan_sha256": "b3c68656b4970534b56dd20d1b5c4560db69cdc7fc83cd15aab85a5426d34893",
+      "receipt_sha256": "fb2522f7334e521f1a77da7ad7f6d4ad36cc65c509e106e7c798b6013c53f659",
+      "path": "ADL_FILEOPS_ACCEPTANCE_20261027/source.txt",
+      "state": "VERIFIED",
+      "readback_sha256": "5d284d9a8053954718f2cf3ef9c292df06a01a02f0a316b4a92ecca8c3d0951b"
+    },
+    {
+      "operation": "copy",
+      "proposal_id": "fsproposal_8f06425470264e5f98ab05ecdd1c8505",
+      "plan_id": "864fd18461c44b608dac491f9513f99b",
+      "plan_sha256": "18f08c2cbee5521630956a2b3c2f59a9edd6b3cfe2aa02a3572a0506971e9174",
+      "receipt_sha256": "3a9336149974839089ebe1816aba469bcf001f32fa94c0bc45824e5725bcb22f",
+      "source": "ADL_FILEOPS_ACCEPTANCE_20261027/source.txt",
+      "target": "ADL_FILEOPS_ACCEPTANCE_20261027/copy-candidate-20261027.txt",
+      "state": "VERIFIED",
+      "readback_sha256": "5d284d9a8053954718f2cf3ef9c292df06a01a02f0a316b4a92ecca8c3d0951b"
+    },
+    {
+      "operation": "rename",
+      "proposal_id": "fsproposal_811ca6e5a20c4f7b8f4fe3d812452135",
+      "plan_id": "124704f72dbd402caf8226a1cbb07646",
+      "plan_sha256": "f6b7eba6fe396dca76d5f8c4dc3b7b25a0b1c9f585c5d56a853f70d078b3da77",
+      "receipt_sha256": "97287cc7c2d7624eed419d27abb0b56c37e6b1786e96222bfdaceab6ea82ab33",
+      "source": "ADL_FILEOPS_ACCEPTANCE_20261027/copy-candidate-20261027.txt",
+      "target": "ADL_FILEOPS_ACCEPTANCE_20261027/renamed-candidate-20261027.txt",
+      "state": "VERIFIED",
+      "readback_sha256": "5d284d9a8053954718f2cf3ef9c292df06a01a02f0a316b4a92ecca8c3d0951b"
+    }
+  ],
+  "final_inventory": {
+    "receipt_id": "service_11e9ba4966af4dc991721f3720e320d2",
+    "evidence_sha256": "fe1b91265532f4711c62a652e8c1d781bab41537e105e67a4bf11e0ecc4fe21d",
+    "source_present": true,
+    "renamed_copy_present": true,
+    "intermediate_copy_absent": true,
+    "content_sha256": "5d284d9a8053954718f2cf3ef9c292df06a01a02f0a316b4a92ecca8c3d0951b"
+  },
+  "focused_checks": {
+    "backend_permissions_and_tools": "94 passed, 22 subtests passed, 1 warning",
+    "project_permissions_ui": "5 passed",
+    "chat_navigation_ui": "1 passed",
+    "project_fileops_review_execute_delegation_integration": "3 passed",
+    "github_exact_head_ci": "PASS run 40479074488",
+    "github_readme_consistency": "PASS run 40479074818"
+  },
+  "business_acceptance": "NOT_RUN",
+  "installed_runtime_deployment": "NOT_RUN",
+  "permanent_delete": "NOT_RUN"
+}
