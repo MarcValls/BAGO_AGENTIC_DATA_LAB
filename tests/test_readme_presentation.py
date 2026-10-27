@@ -271,7 +271,7 @@ def test_recorded_not_run_is_rendered_without_inventing_a_pass(monkeypatch):
 
 
 def test_check_skip_collects_without_execution_or_rewriting_readme(tmp_path, monkeypatch, capsys):
-    expected = render()
+    expected = generator.render_svg_landing()
     path = tmp_path / "README.md"
     path.write_text(expected, encoding="utf-8")
     before = path.read_bytes()
