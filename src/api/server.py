@@ -1982,6 +1982,56 @@ def _request_names_agent(message: str) -> bool:
     ))
 
 
+def _explicit_saved_agent_request(message: str, agents: list["AgentResponse"]) -> dict[str, str] | None:
+    """Resolve a leading, explicit delegation command to one exact saved profile.
+
+    This removes model guessing only for direct named-agent requests. The host
+    still validates the persisted task_scope before dispatch, and this route
+    grants no tool or project permission.
+    """
+    command = re.match(
+        r"^\s*(?:por\s+favor[, ]*)?(?:delega|asigna|encarga)\b",
+        message,
+        flags=re.IGNORECASE,
+    )
+    if command is None:
+        return None
+    matches: list[tuple[AgentResponse, int, int]] = []
+    folded_message = message.casefold()
+    for agent in agents:
+        name = getattr(getattr(agent, "config", None), "name", None)
+        if not isinstance(name, str) or not name.strip():
+            continue
+        start = folded_message.find(name.casefold().strip())
+        if start < 0:
+            continue
+        # Require the profile name to occur after the command and only once;
+        # partial names and duplicate/ambiguous profile references fail closed.
+        between = message[command.end():start]
+        if (start < command.end() or not re.search(r"\bagente\b", between, re.IGNORECASE)
+                or folded_message.find(name.casefold().strip(), start + 1) >= 0):
+            continue
+        matches.append((agent, start, start + len(name.strip())))
+    if len(matches) != 1:
+        return None
+    agent, _, end = matches[0]
+    task = message[end:].lstrip(" \t\r\n:—-.,;»”\"'")
+    task = re.sub(
+        r"^(?:(?:para\s+)?(?:que\s+)?|(?:esta\s+)?(?:tarea|misi[oó]n)\s*[:,-]?\s*)+",
+        "",
+        task,
+        flags=re.IGNORECASE,
+    ).strip()
+    if not task:
+        return None
+    return {
+        "decision": "delegate_agent",
+        "agent_id": agent.id,
+        "task": task,
+        "reply": f"Comprobaré que {agent.config.name} tiene alcance para esta tarea y usaré el proyecto seleccionado.",
+    }
+
+
 def _control_request_from_turn(
     turn: dict[str, Any], *, recover_invalid_delegate_for_task: bool = False
 ) -> dict[str, Any] | None:
@@ -3210,7 +3260,7 @@ async def control_chat(request: ControlChatRequest) -> dict[str, Any]:
         provider_observation["observed"] = True
         return _control_request_from_turn(next_turn)
 
-    async def route_orchestrated_task(first: dict[str, Any]):
+    async def route_orchestrated_task(first: dict[str, Any], *, require_tool_review: bool = False):
         tried: list[str] = []
         auto_created_agent: AgentResponse | None = None
         current = first
@@ -3263,6 +3313,11 @@ async def control_chat(request: ControlChatRequest) -> dict[str, Any]:
                 current = await ask_orchestrator_to_reassign(tried, agent_id)
                 if current is None: break
                 continue
+            # An explicit named-agent command is a request to use that saved
+            # profile, not consent to run its effects. Keep its tools behind
+            # the host review card while preserving ordinary text delegation.
+            if require_tool_review and agent.config.tools:
+                review_required = True
             fit, reason = await _classify_agent_task_scope(provider_id, model_id, agent, current["task"])
             if fit != "in_scope":
                 tried.append(agent_id)
@@ -3281,6 +3336,10 @@ async def control_chat(request: ControlChatRequest) -> dict[str, Any]:
                 continue
             return result
         return await finish_turn("chat", "No he encontrado un agente que pueda aceptar esta tarea con claridad. La dejo sin ejecutar para que revisemos el alcance.")
+
+    explicit_route = _explicit_saved_agent_request(request.message.strip(), agents)
+    if explicit_route is not None:
+        return await route_orchestrated_task(explicit_route, require_tool_review=True)
 
     if cognitive_context["prompt_guidance"]:
         messages[0]["content"] += "\n\n" + cognitive_context["prompt_guidance"]

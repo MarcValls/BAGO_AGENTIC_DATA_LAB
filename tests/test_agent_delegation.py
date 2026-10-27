@@ -119,6 +119,23 @@ def test_general_orchestrator_dispatches_clear_in_scope_task_without_a_review_ca
     assert 'PROPOSED' in states and 'RUNNING' in states and 'PASSED' in states
 
 
+def test_explicit_saved_agent_file_task_uses_selected_project_and_stops_for_tool_review(setup):
+    f=setup
+    response=f['client'].post('/api/chat/control',json={
+        'message':'Delega al agente Saved fixture esta tarea: Prepare synthetic.txt only.',
+        'conversation_id':f['parent']['id'],'revision':0,
+    })
+    assert response.status_code==200,response.text
+    data=response.json();delegation=data['agent_delegation']
+    assert data['operation']=='agent_delegation'
+    assert delegation['state']=='PROPOSED'
+    assert delegation['task']=='Prepare synthetic.txt only.'
+    assert not delegation['target_written']
+    assert not (f['workspace']/'corpus/synthetic.txt').exists()
+    assert not any(model=='child-fixture' for model,_,_ in f['calls'])
+    assert delegation['assigned_tools']==['filesystem_plan']
+
+
 def test_out_of_scope_return_is_persisted_and_not_reported_as_success(setup):
     f=setup;f['delegation_outcome']='out_of_scope';propose(f)
     result=execute(f).json()['agent_delegation']
