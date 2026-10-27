@@ -26,7 +26,18 @@ Aplicación y laboratorio de agentes, datos y ejecución gobernada: trabajar des
 | [04 · Datos y conocimiento](#datos-y-conocimiento) | [08 · Arquitectura](#arquitectura-de-un-vistazo) | [13 · Estado y roadmap](#estado-y-roadmap) |
 | [Guía del frontend](docs/readme_frontend.md) | [09 · Casos y demos](#casos-y-demos) | [14 · Documentación](#documentación-y-aprendizaje) |
 
+### Explorar el laboratorio
+
+| | | |
+|:---:|:---:|:---:|
+| [![Experiencia: Chat y agentes](docs/assets/readme-visual/nav-chat.svg)](#la-aplicación-frontend) | [![Conocimiento: Datos, RAG y grafos](docs/assets/readme-visual/nav-data.svg)](#datos-y-conocimiento) | [![Control: ejecución gobernada](docs/assets/readme-visual/nav-governance.svg)](#bago-ber-y-ejecución-gobernada) |
+| [![Sistema: arquitectura por capas](docs/assets/readme-visual/nav-architecture.svg)](#arquitectura-de-un-vistazo) | [![Evidencias: tests y límites](docs/assets/readme-visual/nav-evidence.svg)](#tests-y-verificación) | [![Operación: instalación y demo](docs/assets/readme-visual/nav-start.svg)](#instalación-y-operación) |
+
 ## El laboratorio
+
+[![Chat, propuesta, autorización, operación y evidencia](docs/assets/readme-visual/journey.svg)](docs/readme_frontend.md)
+
+**Vista conceptual:** cada etapa de ejecución necesita su propia autoridad y observación; la navegación no implica efecto.
 
 BAGO Agentic Data Lab reúne una aplicación de trabajo y un laboratorio de AI Engineering. Permite conversar con el asistente, preparar agentes y datos, y recorrer controles de ejecución, recuperación, trazabilidad y evaluación con contratos explícitos.
 
@@ -139,6 +150,10 @@ El carrusel cambia de captura automáticamente. Puedes abrir el [visor HTML con 
 
 ## Datos y conocimiento
 
+[![Documentos, ETL, recuperación con filtros, SQLite y citas](docs/assets/readme-visual/knowledge.svg)](docs/governed_rag.md)
+
+**Alcance:** componentes descritos por el repositorio, con verificaciones locales fechadas; una cita no otorga permiso de acción.
+
 El contexto del workspace, los documentos recuperados y las relaciones de una ontología aportan información a la tarea. Los recorridos gobernados mantienen la identidad y la elegibilidad de las fuentes para que una cita o una relación pueda revisarse después.
 
 | Capacidad | Aportación | Qué revisar |
@@ -192,6 +207,10 @@ En la demostración nueva se verificó la selección de Codex gpt-6-luna en Sett
 
 ## BAGO, BER y ejecución gobernada
 
+[![Propuesta, autorización, permit, operación y recibo](docs/assets/readme-visual/governance.svg)](docs/governed-execution/GEX_V1_NORMATIVE_CONTRACT.md)
+
+**Frontera:** denegación sin efecto y recibo verificable; perfiles de fixture y runtime real no son equivalentes.
+
 BAGO aporta contratos y control de ejecución. El modelo produce propuestas; la autorización y la comprobación del efecto pertenecen al recorrido de ejecución. ADL presenta la revisión humana y la evidencia disponible en la interfaz.
 
 ```mermaid
@@ -213,6 +232,10 @@ flowchart LR
 **Profundizar:** [contrato normativo GEX](docs/governed-execution/GEX_V1_NORMATIVE_CONTRACT.md) · [perfil de lectura sintética](docs/governed-execution/RUNTIME_FIXTURE_PROFILE.md) · [alcance BER Agent Runner](docs/ber/AGENT_RUNNER_SCOPE.md) · [BER Effect Inspector](docs/ber/BER_EFFECT_INSPECTOR.md).
 
 ## Arquitectura de un vistazo
+
+[![Frontend React, API FastAPI, control, datos y evidencia](docs/assets/readme-visual/architecture.svg)](.bago/canon/ARCHITECTURE.md)
+
+**Lectura:** mapa de responsabilidades extraídas de la documentación; no es una topología desplegada ni un PASS global.
 
 La aplicación conecta experiencia de usuario, API y servicios especializados. El control de efectos conserva sus fronteras; LocalTrace enlaza eventos y artefactos, mientras que la proyección OpenTelemetry facilita su observación externa.
 
@@ -239,6 +262,10 @@ flowchart TB
 **Profundizar:** [arquitectura completa](.bago/canon/ARCHITECTURE.md) · [pipeline del laboratorio](docs/one_command_demo_walkthrough.md) · [frontera de sandbox local](docs/sandbox_manager.md).
 
 ## Casos y demos
+
+[![Ciclo de demostrabilidad BAGO-CDP-001](docs/assets/readme-visual/cdp.svg)](docs/one_command_demo_walkthrough.md)
+
+**BAGO-CDP-001:** cada capacidad requiere recorrido reproducible, positivo/negativo, evidencia y conservación independiente.
 
 Cada demo tiene entradas y alcance propios. Las fixtures permiten repetir controles sin credenciales. Los tutoriales con datos ficticios ayudan a entender el producto y conservan los recibos que realmente produjeron.
 
@@ -310,9 +337,17 @@ La colección de pytest no es una ejecución: `--check --skip-tests` informa `NO
 
 </details>
 
+[![Capacidades locales verificadas y pendientes por escenario](docs/assets/readme-visual/capabilities.svg)](.bago/canon/STATE.md)
+
+**Estado:** no sumar pruebas de commits distintos; un resultado NOT_RUN permanece NOT_RUN hasta ejecutar la prueba pertinente.
+
 **Profundizar:** [registro versionado de resultados](docs/verification/readme-corporate-status-20261022.json) · [contrato de generación y comprobaciones](docs/readme_generation.md) · [integridad teamctl](docs/verification/teamctl-integrity-20261022/README.md).
 
 ## Instalación y operación
+
+[![Separación de código, datos locales y workspaces externos](docs/assets/readme-visual/portability.svg)](docs/public-web/MANUAL.md)
+
+**Corte 27/10:** PR #78 fusionada; migración efectiva de AppData no realizada; `BAGO_DATA_ROOT` requiere revisar configuración.
 
 La aplicación completa necesita Python 3.11+, Node.js 22 y un entorno Python activado. Desde la raíz del checkout, instala las dependencias declaradas, construye el frontend y arranca la API que sirve `frontend/dist`.
 
@@ -353,6 +388,10 @@ La evidencia L15 del **2026-10-08** registró 15 spans proyectados y observados 
 **Profundizar:** [observabilidad y evaluación](docs/observability_evals.md) · [OpenTelemetry y Jaeger](docs/otel_jaeger.md) · [informe L15](evidence/l15_otel_jaeger_live.md) · [alcance del frontend](docs/readme_frontend.md#inspeccionar-la-evidencia).
 
 ## Estado y roadmap
+
+[![Cronología de canon, CI y fusiones hasta 27/10](docs/assets/readme-visual/status.svg)](.bago/canon/STATE.md)
+
+**Snapshot documental:** `main@ac6670ec`; CI histórica del 22/10 no valida el nuevo HEAD; PR #79 de seguridad sigue abierta en el corte.
 
 **Estado canónico fechado:** 2026-10-18 · **fase declarada:** L15 · OpenTelemetry + Jaeger Local Live.
 

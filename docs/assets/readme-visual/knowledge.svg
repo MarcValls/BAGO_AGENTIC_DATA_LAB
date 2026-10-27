@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="325" viewBox="0 0 1200 325" role="img" aria-labelledby="svg-title svg-desc">
+<title id="svg-title">ADL - Datos y conocimiento</title>
+<desc id="svg-desc">Cadena de documentos, ETL, recuperación RAG gobernada y citas; índice SQLite y ontología contextual.</desc>
+<defs><linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#101d2d"/><stop offset="1" stop-color="#17283b"/></linearGradient><marker id="arrow" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#81afc9"/></marker><marker id="amberarrow" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#F3BE78"/></marker></defs>
+<rect width="1200" height="325" rx="12" fill="url(#bg)"/>
+<path d="M40 0V325" stroke="#26384A" stroke-opacity=".15"/>
+<path d="M120 0V325" stroke="#26384A" stroke-opacity=".15"/>
+<path d="M200 0V325" stroke="#26384A" stroke-opacity=".15"/>
+<path d="M280 0V325" stroke="#26384A" stroke-opacity=".15"/>
+<path d="M360 0V325" stroke="#26384A" stroke-opacity=".15"/>
+<path d="M440 0V325" stroke="#26384A" stroke-opacity=".15"/>
+<path d="M520 0V325" stroke="#26384A" stroke-opacity=".15"/>
+<path d="M600 0V325" stroke="#26384A" stroke-opacity=".15"/>
+<path d="M680 0V325" stroke="#26384A" stroke-opacity=".15"/>
+<path d="M760 0V325" stroke="#26384A" stroke-opacity=".15"/>
+<path d="M840 0V325" stroke="#26384A" stroke-opacity=".15"/>
+<path d="M920 0V325" stroke="#26384A" stroke-opacity=".15"/>
+<path d="M1000 0V325" stroke="#26384A" stroke-opacity=".15"/>
+<path d="M1080 0V325" stroke="#26384A" stroke-opacity=".15"/>
+<path d="M1160 0V325" stroke="#26384A" stroke-opacity=".15"/>
+<text x="42" y="44" font-size="15" fill="#81afc9" font-weight="700" letter-spacing="1.6">RECUPERACIÓN Y CONOCIMIENTO</text>
+<rect x="950" y="22" width="204" height="29" rx="14" fill="#17283b" stroke="#81afc9" stroke-width="1"/><text x="1052.0" y="42" font-size="12" fill="#81afc9" font-weight="600" text-anchor="middle" letter-spacing="0.5">LOCAL · ALCANCE</text>
+<rect x="40" y="82" width="249" height="138" rx="14" fill="#1c3043" stroke="#355269" stroke-width="1.2"/><rect x="40" y="82" width="4" height="138" rx="2" fill="#81afc9"/><text x="58" y="110" font-size="12" fill="#81afc9" font-weight="700" letter-spacing="1.1">FUENTES</text><text x="58" y="146" font-size="20" fill="#F2EFEA" font-weight="650">Documentos</text><text x="58" y="172" font-size="14" fill="#AABFCC" font-weight="400">Identidad y</text><text x="58" y="193" font-size="14" fill="#AABFCC" font-weight="400">revisión</text>
+<rect x="335" y="82" width="249" height="138" rx="14" fill="#1c3043" stroke="#355269" stroke-width="1.2"/><rect x="335" y="82" width="4" height="138" rx="2" fill="#81afc9"/><text x="353" y="110" font-size="12" fill="#81afc9" font-weight="700" letter-spacing="1.1">TRANSFORMACIÓN</text><text x="353" y="146" font-size="20" fill="#F2EFEA" font-weight="650">ETL</text><text x="353" y="172" font-size="14" fill="#AABFCC" font-weight="400">Chunks y</text><text x="353" y="193" font-size="14" fill="#AABFCC" font-weight="400">metadatos</text>
+<rect x="630" y="82" width="249" height="138" rx="14" fill="#1c3043" stroke="#355269" stroke-width="1.2"/><rect x="630" y="82" width="4" height="138" rx="2" fill="#81afc9"/><text x="648" y="110" font-size="12" fill="#81afc9" font-weight="700" letter-spacing="1.1">CONSULTA</text><text x="648" y="146" font-size="20" fill="#F2EFEA" font-weight="650">RAG gobernado</text><text x="648" y="172" font-size="14" fill="#AABFCC" font-weight="400">Filtros y</text><text x="648" y="193" font-size="14" fill="#AABFCC" font-weight="400">ranking</text>
+<rect x="925" y="82" width="235" height="138" rx="14" fill="#1c3043" stroke="#355269" stroke-width="1.2"/><rect x="925" y="82" width="4" height="138" rx="2" fill="#8CD4BC"/><text x="943" y="110" font-size="12" fill="#8CD4BC" font-weight="700" letter-spacing="1.1">RESULTADO</text><text x="943" y="146" font-size="20" fill="#F2EFEA" font-weight="650">Citas</text><text x="943" y="172" font-size="14" fill="#AABFCC" font-weight="400">Fragmento y</text><text x="943" y="193" font-size="14" fill="#AABFCC" font-weight="400">procedencia</text>
+<path d="M291 150 L330 150" fill="none" stroke="#81afc9" stroke-width="2" stroke-linecap="round" marker-end="url(#arrow)"/>
+<path d="M586 150 L625 150" fill="none" stroke="#81afc9" stroke-width="2" stroke-linecap="round" marker-end="url(#arrow)"/>
+<path d="M881 150 L920 150" fill="none" stroke="#81afc9" stroke-width="2" stroke-linecap="round" marker-end="url(#arrow)"/>
+<path d="M452 222V256H744V222" fill="none" stroke="#7896AA" stroke-width="2" stroke-linecap="round" stroke-dasharray="6 6"/>
+<rect x="347" y="251" width="204" height="29" rx="14" fill="#17283b" stroke="#81afc9" stroke-width="1"/><text x="449.0" y="271" font-size="12" fill="#81afc9" font-weight="600" text-anchor="middle" letter-spacing="0.5">SQLite · índice</text>
+<rect x="639" y="251" width="190" height="29" rx="14" fill="#17283b" stroke="#81afc9" stroke-width="1"/><text x="734.0" y="271" font-size="12" fill="#81afc9" font-weight="600" text-anchor="middle" letter-spacing="0.5">RDF · SPARQL</text>
+<text x="42" y="303" font-size="15" fill="#AABFCC" font-weight="400">Un fragmento recuperado no es una autorización y una inferencia no es un hecho sin procedencia.</text>
+<path d="M16 323H1184" stroke="#447B9D" stroke-width="2" stroke-opacity=".7"/>
+</svg>

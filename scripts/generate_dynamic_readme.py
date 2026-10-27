@@ -907,6 +907,48 @@ def _render_current_captures(manifest: dict[str, Any]) -> list[str]:
     return lines
 
 
+# BEGIN BAGO_VISUAL_README_V1 — additive presentation layer.
+BAGO_VISUAL_MANIFEST = REPO_ROOT / "docs" / "readme_visual_manifest.json"
+
+
+def _render_bago_visual_section(key: str) -> list[str]:
+    """Render only local linked assets; each click is handled by Markdown."""
+    manifest = _read_json(BAGO_VISUAL_MANIFEST)
+    if manifest.get("schema") != "bago.readme.visual.v1":
+        raise ValueError("Invalid visual README manifest schema")
+    if key not in manifest["sections"]:
+        raise ValueError(f"Unknown visual section: {key}")
+    info = manifest["sections"][key]
+    entries = info.get("entries", [])
+    for entry in entries:
+        asset = entry["asset"]
+        if not asset.startswith("docs/assets/readme-visual/") or ".." in asset:
+            raise ValueError(f"Untrusted visual asset path: {asset}")
+        if not (REPO_ROOT / asset).is_file():
+            raise FileNotFoundError(f"Missing visual asset: {asset}")
+        target = entry["target"]
+        if not target.startswith(("#", "docs/", ".bago/")):
+            raise ValueError(f"Untrusted visual link target: {target}")
+    if key == "nav":
+        cards = entries
+        if len(cards) != 6:
+            raise ValueError("Expected 6 navigation cards")
+        cells = [f"[![{c['alt']}]({c['asset']})]({c['target']})" for c in cards]
+        return [
+            "### Explorar el laboratorio", "",
+            "| | | |", "|:---:|:---:|:---:|",
+            "| " + " | ".join(cells[:3]) + " |",
+            "| " + " | ".join(cells[3:]) + " |", "",
+        ]
+    result = []
+    for entry in entries:
+        result.extend([
+            f"[![{entry['alt']}]({entry['asset']})]({entry['target']})", "",
+            entry["caption"], "",
+        ])
+    return result
+# END BAGO_VISUAL_README_V1
+
 def render_readme(
     *,
     manifest: dict[str, Any],
@@ -941,7 +983,9 @@ def render_readme(
         "| [03 · Capturas actuales](#la-aplicación-en-pantalla) | [07 · Ejecución gobernada](#bago-ber-y-ejecución-gobernada) | [12 · Observabilidad](#observabilidad-e-inspección) |",
         "| [04 · Datos y conocimiento](#datos-y-conocimiento) | [08 · Arquitectura](#arquitectura-de-un-vistazo) | [13 · Estado y roadmap](#estado-y-roadmap) |",
         "| [Guía del frontend](docs/readme_frontend.md) | [09 · Casos y demos](#casos-y-demos) | [14 · Documentación](#documentación-y-aprendizaje) |", "",
+        *_render_bago_visual_section("nav"),
         "## El laboratorio", "",
+        *_render_bago_visual_section("overview"),
         "BAGO Agentic Data Lab reúne una aplicación de trabajo y un laboratorio de AI Engineering. Permite conversar con el asistente, preparar agentes y datos, y recorrer controles de ejecución, recuperación, trazabilidad y evaluación con contratos explícitos.", "",
         "El producto organiza la experiencia alrededor de una intención del usuario. La evidencia permite distinguir una respuesta del modelo, una propuesta, una autorización y un efecto comprobado. Cada integración conserva su entorno y sus límites de validación.", "",
         "| Necesidad | Recorrido | Resultado que se puede inspeccionar |", "|---|---|---|",
@@ -974,6 +1018,7 @@ def render_readme(
         "", f"**Profundizar:** [guía del frontend y alcance conversacional]({guide}) · [entrada de la app]({manifest['frontend']['entry']}) · [API FastAPI]({manifest['frontend']['api']}).", "",
         *current_captures,
         "## Datos y conocimiento", "",
+        *_render_bago_visual_section("knowledge"),
         "El contexto del workspace, los documentos recuperados y las relaciones de una ontología aportan información a la tarea. Los recorridos gobernados mantienen la identidad y la elegibilidad de las fuentes para que una cita o una relación pueda revisarse después.", "",
         "| Capacidad | Aportación | Qué revisar |", "|---|---|---|",
         "| Ingesta y consulta | Preparar conocimiento y recuperar fragmentos con citas | Fuente, metadata permitida y evidencia devuelta |",
@@ -1008,6 +1053,7 @@ def render_readme(
         "En la demostración nueva se verificó la selección de Codex gpt-6-luna en Settings y se obtuvo una respuesta real del agente con ese modelo. El primer guardado había fallado con `model_registration_mismatch`; el error quedó visible. Esa observación pertenece a esta sesión y no declara operativos todos los proveedores de la tabla.", "",
         "**Profundizar:** [proveedores y modelos en el frontend](docs/readme_frontend.md#proveedores-y-modelos) · [pantalla de configuración](docs/provider-models-screen.md) · [setup Bedrock](docs/aws_bedrock_setup.md).", "",
         "## BAGO, BER y ejecución gobernada", "",
+        *_render_bago_visual_section("governance"),
         "BAGO aporta contratos y control de ejecución. El modelo produce propuestas; la autorización y la comprobación del efecto pertenecen al recorrido de ejecución. ADL presenta la revisión humana y la evidencia disponible en la interfaz.", "",
         "```mermaid", "flowchart LR",
         '    P["Propuesta sin autoridad implícita"] --> A["Autorización y aprobación aplicables"]',
@@ -1022,6 +1068,7 @@ def render_readme(
         "| BER Effect Record | Inspección del registro y del efecto declarado | Una vista del registro requiere su propia evidencia para acreditar el efecto |", "",
         "**Profundizar:** [contrato normativo GEX](docs/governed-execution/GEX_V1_NORMATIVE_CONTRACT.md) · [perfil de lectura sintética](docs/governed-execution/RUNTIME_FIXTURE_PROFILE.md) · [alcance BER Agent Runner](docs/ber/AGENT_RUNNER_SCOPE.md) · [BER Effect Inspector](docs/ber/BER_EFFECT_INSPECTOR.md).", "",
         "## Arquitectura de un vistazo", "",
+        *_render_bago_visual_section("architecture"),
         "La aplicación conecta experiencia de usuario, API y servicios especializados. El control de efectos conserva sus fronteras; LocalTrace enlaza eventos y artefactos, mientras que la proyección OpenTelemetry facilita su observación externa.", "",
         "```mermaid", "flowchart TB",
         '    UI["React · Chat y vistas de profundización"] --> API["FastAPI · contratos y endpoints"]',
@@ -1040,6 +1087,7 @@ def render_readme(
         "| Evidencia | Recibos, traza local y evaluación | [Observabilidad](docs/observability_evals.md) |", "",
         "**Profundizar:** [arquitectura completa](.bago/canon/ARCHITECTURE.md) · [pipeline del laboratorio](docs/one_command_demo_walkthrough.md) · [frontera de sandbox local](docs/sandbox_manager.md).", "",
         "## Casos y demos", "",
+        *_render_bago_visual_section("demonstrability"),
         "Cada demo tiene entradas y alcance propios. Las fixtures permiten repetir controles sin credenciales. Los tutoriales con datos ficticios ayudan a entender el producto y conservan los recibos que realmente produjeron.", "",
         "| Recorrido | Entrada | Resultado y artefactos | Alcance |", "|---|---|---|---|",
         "| Chat real · 22 de octubre | Agente nuevo, workspace nuevo y lectura explícita de `DEMO.md` | Respuesta con citas y LocalTrace `trace-496fac766f384348` | Una lectura autorizada y dos pedidos ficticios; Inspect no quedó vinculado automáticamente |",
@@ -1058,8 +1106,10 @@ def render_readme(
         "La demo compone recuperación con citas, ejecución tipada, recibos, LocalTrace y evaluación estructural. El resultado esperado del fixture es `PASS`; la orden escrita aquí no acredita una ejecución nueva. Los artefactos se escriben en `demo_output/`.", "",
         "**Profundizar:** [demo y requisitos](docs/one_command_demo.md) · [lectura de sus artefactos](docs/one_command_demo_walkthrough.md) · [GEX fixture](docs/governed-execution/RUNTIME_FIXTURE_PROFILE.md) · [tutorial Bruma](output/playwright/bruma-market-tutorial/README.md).", "",
         *_render_verification(manifest),
+        *_render_bago_visual_section("verification"),
         "**Profundizar:** [registro versionado de resultados](" + manifest["verification_record"] + ") · [contrato de generación y comprobaciones](docs/readme_generation.md) · [integridad teamctl](docs/verification/teamctl-integrity-20261022/README.md).", "",
         "## Instalación y operación", "",
+        *_render_bago_visual_section("portability"),
         "La aplicación completa necesita Python 3.11+, Node.js 22 y un entorno Python activado. Desde la raíz del checkout, instala las dependencias declaradas, construye el frontend y arranca la API que sirve `frontend/dist`.", "",
         "```bash", *manifest["frontend"]["start_commands"], "```", "",
         "Abre <http://127.0.0.1:8080>. Los comandos describen el arranque, no una sesión iniciada por este README. Configura después el proveedor/modelo en Settings; su disponibilidad se comprueba por separado.", "",
@@ -1081,6 +1131,7 @@ def render_readme(
         "La evidencia L15 del **2026-10-08** registró 15 spans proyectados y observados y 13 operaciones con `PASS`. Se conserva como ejecución histórica local. Las capturas nuevas de esta página no se presentan como una nueva validación de Jaeger.", "",
         "**Profundizar:** [observabilidad y evaluación](docs/observability_evals.md) · [OpenTelemetry y Jaeger](docs/otel_jaeger.md) · [informe L15](evidence/l15_otel_jaeger_live.md) · [alcance del frontend](docs/readme_frontend.md#inspeccionar-la-evidencia).", "",
         "## Estado y roadmap", "",
+        *_render_bago_visual_section("status"),
         f"**Estado canónico fechado:** {_cell(state['updated'])} · **fase declarada:** {_cell(state['current_phase'])}.", "",
         "El estado de una capacidad pertenece a su evidencia y entorno. Reorganizar esta portada conserva las capacidades documentadas, sin renovar automáticamente su fecha ni promover integraciones externas.", "",
         "| Capacidad | Estado y alcance documentados | Qué falta para una afirmación más amplia |", "|---|---|---|",

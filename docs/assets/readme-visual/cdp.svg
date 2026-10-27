@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="346" viewBox="0 0 1200 346" role="img" aria-labelledby="svg-title svg-desc">
+<title id="svg-title">BAGO - Ciclo de demostrabilidad</title>
+<desc id="svg-desc">El ciclo BAGO-CDP-001 con ocho pasos: definir, construir, integrar, observar, probar, verificar, demostrar y conservar.</desc>
+<defs><linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#101d2d"/><stop offset="1" stop-color="#17283b"/></linearGradient><marker id="arrow" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#81afc9"/></marker><marker id="amberarrow" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#F3BE78"/></marker></defs>
+<rect width="1200" height="346" rx="12" fill="url(#bg)"/>
+<path d="M40 0V346" stroke="#26384A" stroke-opacity=".15"/>
+<path d="M120 0V346" stroke="#26384A" stroke-opacity=".15"/>
+<path d="M200 0V346" stroke="#26384A" stroke-opacity=".15"/>
+<path d="M280 0V346" stroke="#26384A" stroke-opacity=".15"/>
+<path d="M360 0V346" stroke="#26384A" stroke-opacity=".15"/>
+<path d="M440 0V346" stroke="#26384A" stroke-opacity=".15"/>
+<path d="M520 0V346" stroke="#26384A" stroke-opacity=".15"/>
+<path d="M600 0V346" stroke="#26384A" stroke-opacity=".15"/>
+<path d="M680 0V346" stroke="#26384A" stroke-opacity=".15"/>
+<path d="M760 0V346" stroke="#26384A" stroke-opacity=".15"/>
+<path d="M840 0V346" stroke="#26384A" stroke-opacity=".15"/>
+<path d="M920 0V346" stroke="#26384A" stroke-opacity=".15"/>
+<path d="M1000 0V346" stroke="#26384A" stroke-opacity=".15"/>
+<path d="M1080 0V346" stroke="#26384A" stroke-opacity=".15"/>
+<path d="M1160 0V346" stroke="#26384A" stroke-opacity=".15"/>
+<text x="42" y="44" font-size="15" fill="#81afc9" font-weight="700" letter-spacing="1.2">BAGO-CDP-001 · VERTICAL DEMOSTRABLE</text>
+<rect x="41" y="83" width="269" height="79" rx="12" fill="#1c3043" stroke="#355269" stroke-width="1.2"/>
+<rect x="53" y="96" width="48" height="29" rx="14" fill="#17283b" stroke="#81afc9" stroke-width="1"/><text x="77.0" y="116" font-size="12" fill="#81afc9" font-weight="600" text-anchor="middle" letter-spacing="0.5">01</text>
+<text x="117" y="131" font-size="17" fill="#F2EFEA" font-weight="700">DEFINIR</text>
+<path d="M312 124 L333 124" fill="none" stroke="#81afc9" stroke-width="2" stroke-linecap="round" marker-end="url(#arrow)"/>
+<rect x="335" y="83" width="269" height="79" rx="12" fill="#1c3043" stroke="#355269" stroke-width="1.2"/>
+<rect x="347" y="96" width="48" height="29" rx="14" fill="#17283b" stroke="#81afc9" stroke-width="1"/><text x="371.0" y="116" font-size="12" fill="#81afc9" font-weight="600" text-anchor="middle" letter-spacing="0.5">02</text>
+<text x="411" y="131" font-size="17" fill="#F2EFEA" font-weight="700">CONSTRUIR</text>
+<path d="M606 124 L627 124" fill="none" stroke="#81afc9" stroke-width="2" stroke-linecap="round" marker-end="url(#arrow)"/>
+<rect x="629" y="83" width="269" height="79" rx="12" fill="#1c3043" stroke="#355269" stroke-width="1.2"/>
+<rect x="641" y="96" width="48" height="29" rx="14" fill="#17283b" stroke="#81afc9" stroke-width="1"/><text x="665.0" y="116" font-size="12" fill="#81afc9" font-weight="600" text-anchor="middle" letter-spacing="0.5">03</text>
+<text x="705" y="131" font-size="17" fill="#F2EFEA" font-weight="700">INTEGRAR</text>
+<path d="M900 124 L921 124" fill="none" stroke="#81afc9" stroke-width="2" stroke-linecap="round" marker-end="url(#arrow)"/>
+<rect x="923" y="83" width="269" height="79" rx="12" fill="#1c3043" stroke="#355269" stroke-width="1.2"/>
+<rect x="935" y="96" width="48" height="29" rx="14" fill="#17283b" stroke="#F3BE78" stroke-width="1"/><text x="959.0" y="116" font-size="12" fill="#F3BE78" font-weight="600" text-anchor="middle" letter-spacing="0.5">04</text>
+<text x="999" y="131" font-size="17" fill="#F2EFEA" font-weight="700">OBSERVAR</text>
+<rect x="41" y="188" width="269" height="79" rx="12" fill="#1c3043" stroke="#355269" stroke-width="1.2"/>
+<rect x="53" y="201" width="48" height="29" rx="14" fill="#17283b" stroke="#F3BE78" stroke-width="1"/><text x="77.0" y="221" font-size="12" fill="#F3BE78" font-weight="600" text-anchor="middle" letter-spacing="0.5">05</text>
+<text x="117" y="236" font-size="17" fill="#F2EFEA" font-weight="700">PROBAR</text>
+<path d="M312 229 L333 229" fill="none" stroke="#81afc9" stroke-width="2" stroke-linecap="round" marker-end="url(#arrow)"/>
+<rect x="335" y="188" width="269" height="79" rx="12" fill="#1c3043" stroke="#355269" stroke-width="1.2"/>
+<rect x="347" y="201" width="48" height="29" rx="14" fill="#17283b" stroke="#8CD4BC" stroke-width="1"/><text x="371.0" y="221" font-size="12" fill="#8CD4BC" font-weight="600" text-anchor="middle" letter-spacing="0.5">06</text>
+<text x="411" y="236" font-size="17" fill="#F2EFEA" font-weight="700">VERIFICAR</text>
+<path d="M606 229 L627 229" fill="none" stroke="#81afc9" stroke-width="2" stroke-linecap="round" marker-end="url(#arrow)"/>
+<rect x="629" y="188" width="269" height="79" rx="12" fill="#1c3043" stroke="#355269" stroke-width="1.2"/>
+<rect x="641" y="201" width="48" height="29" rx="14" fill="#17283b" stroke="#8CD4BC" stroke-width="1"/><text x="665.0" y="221" font-size="12" fill="#8CD4BC" font-weight="600" text-anchor="middle" letter-spacing="0.5">07</text>
+<text x="705" y="236" font-size="17" fill="#F2EFEA" font-weight="700">DEMOSTRAR</text>
+<path d="M900 229 L921 229" fill="none" stroke="#81afc9" stroke-width="2" stroke-linecap="round" marker-end="url(#arrow)"/>
+<rect x="923" y="188" width="269" height="79" rx="12" fill="#1c3043" stroke="#355269" stroke-width="1.2"/>
+<rect x="935" y="201" width="48" height="29" rx="14" fill="#17283b" stroke="#8CD4BC" stroke-width="1"/><text x="959.0" y="221" font-size="12" fill="#8CD4BC" font-weight="600" text-anchor="middle" letter-spacing="0.5">08</text>
+<text x="999" y="236" font-size="17" fill="#F2EFEA" font-weight="700">CONSERVAR</text>
+<text x="43" y="323" font-size="14" fill="#AABFCC" font-weight="400">Cada capacidad lleva entrada, observable, caso positivo/negativo, evidencia, versión y límites propios.</text>
+<path d="M16 344H1184" stroke="#447B9D" stroke-width="2" stroke-opacity=".7"/>
+</svg>

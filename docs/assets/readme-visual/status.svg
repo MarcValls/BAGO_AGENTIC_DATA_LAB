@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="343" viewBox="0 0 1200 343" role="img" aria-labelledby="svg-title svg-desc">
+<title id="svg-title">ADL - Cronología de evidencia</title>
+<desc id="svg-desc">El 18 octubre canon L15, 22 octubre CI fechado, 26 octubre PR74, 27 octubre PR78 fusionada. Persisten comprobaciones pendientes.</desc>
+<defs><linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#101d2d"/><stop offset="1" stop-color="#17283b"/></linearGradient><marker id="arrow" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#81afc9"/></marker><marker id="amberarrow" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#F3BE78"/></marker></defs>
+<rect width="1200" height="343" rx="12" fill="url(#bg)"/>
+<path d="M40 0V343" stroke="#26384A" stroke-opacity=".15"/>
+<path d="M120 0V343" stroke="#26384A" stroke-opacity=".15"/>
+<path d="M200 0V343" stroke="#26384A" stroke-opacity=".15"/>
+<path d="M280 0V343" stroke="#26384A" stroke-opacity=".15"/>
+<path d="M360 0V343" stroke="#26384A" stroke-opacity=".15"/>
+<path d="M440 0V343" stroke="#26384A" stroke-opacity=".15"/>
+<path d="M520 0V343" stroke="#26384A" stroke-opacity=".15"/>
+<path d="M600 0V343" stroke="#26384A" stroke-opacity=".15"/>
+<path d="M680 0V343" stroke="#26384A" stroke-opacity=".15"/>
+<path d="M760 0V343" stroke="#26384A" stroke-opacity=".15"/>
+<path d="M840 0V343" stroke="#26384A" stroke-opacity=".15"/>
+<path d="M920 0V343" stroke="#26384A" stroke-opacity=".15"/>
+<path d="M1000 0V343" stroke="#26384A" stroke-opacity=".15"/>
+<path d="M1080 0V343" stroke="#26384A" stroke-opacity=".15"/>
+<path d="M1160 0V343" stroke="#26384A" stroke-opacity=".15"/>
+<text x="43" y="46" font-size="16" fill="#81afc9" font-weight="700" letter-spacing="1.5">CORTE DE EVIDENCIA · 27 OCT 2026</text>
+<rect x="941" y="24" width="216" height="29" rx="14" fill="#17283b" stroke="#81afc9" stroke-width="1"/><text x="1049.0" y="44" font-size="12" fill="#81afc9" font-weight="600" text-anchor="middle" letter-spacing="0.5">main · ac6670ec</text>
+<path d="M118 155 L1090 155" fill="none" stroke="#355269" stroke-width="4" stroke-linecap="round"/>
+<circle cx="136" cy="155" r="10" fill="#447B9D" stroke="#81afc9" stroke-width="3"/>
+<text x="136" y="110" font-size="15" fill="#81afc9" font-weight="700" text-anchor="middle">18 OCT</text>
+<text x="136" y="198" font-size="18" fill="#F2EFEA" font-weight="650" text-anchor="middle">Canon L15</text>
+<text x="136" y="226" font-size="13" fill="#AABFCC" font-weight="400" text-anchor="middle">Estado declarado</text>
+<circle cx="402" cy="155" r="10" fill="#447B9D" stroke="#81afc9" stroke-width="3"/>
+<text x="402" y="110" font-size="15" fill="#81afc9" font-weight="700" text-anchor="middle">22 OCT</text>
+<text x="402" y="198" font-size="18" fill="#F2EFEA" font-weight="650" text-anchor="middle">CI histórico</text>
+<text x="402" y="226" font-size="13" fill="#AABFCC" font-weight="400" text-anchor="middle">550 Python PASS</text>
+<circle cx="666" cy="155" r="10" fill="#447B9D" stroke="#81afc9" stroke-width="3"/>
+<text x="666" y="110" font-size="15" fill="#81afc9" font-weight="700" text-anchor="middle">26 OCT</text>
+<text x="666" y="198" font-size="18" fill="#F2EFEA" font-weight="650" text-anchor="middle">PR #74</text>
+<text x="666" y="226" font-size="13" fill="#AABFCC" font-weight="400" text-anchor="middle">Barra UI fusionada</text>
+<circle cx="930" cy="155" r="10" fill="#447B9D" stroke="#81afc9" stroke-width="3"/>
+<text x="930" y="110" font-size="15" fill="#81afc9" font-weight="700" text-anchor="middle">27 OCT</text>
+<text x="930" y="198" font-size="18" fill="#F2EFEA" font-weight="650" text-anchor="middle">PR #78</text>
+<text x="930" y="226" font-size="13" fill="#AABFCC" font-weight="400" text-anchor="middle">Datos portables</text>
+<rect x="40" y="252" width="1117" height="70" rx="10" fill="#101d2d" stroke="#355269" stroke-width="1.2"/>
+<text x="61" y="279" font-size="14" fill="#F3BE78" font-weight="700">PENDIENTES:</text>
+<text x="204" y="279" font-size="15" fill="#F2EFEA" font-weight="400">CI de main no ejecutada aquí  ·  migración real NO APLICADA  ·  PR #79 seguridad abierta</text>
+<text x="61" y="305" font-size="13" fill="#AABFCC" font-weight="400">La fecha de un informe no es la fecha de verificación de todas las capacidades.</text>
+<path d="M16 341H1184" stroke="#447B9D" stroke-width="2" stroke-opacity=".7"/>
+</svg>
