@@ -11,6 +11,7 @@ import { createPortal } from 'react-dom'
 import { Capability, CapabilityProposal, capabilityResponseError } from './CapabilityManager'
 import AgentBuilder from './AgentBuilder'
 import DevelopmentPanel from './DevelopmentPanel'
+import ProjectPermissions from './ProjectPermissions'
 import HumanCorrectionReview, {type HumanCorrectionSource, type PreparedHumanCorrection} from './HumanCorrectionReview'
 import AgentServiceReview,{type FilesystemProposal} from './AgentServiceReview'
 import WorkspaceManager, { type WorkspaceProposal } from './WorkspaceManager'
@@ -205,7 +206,7 @@ export default function AgentChat({ onInspectionSelection, onInspectExecution, o
   const [libraryMode, setLibraryMode] = useState<LibraryMode>('active')
   const [libraryError, setLibraryError] = useState<string|Error>('')
   const [permanentlyDeleting, setPermanentlyDeleting] = useState(false)
-  const [activeProject, setActiveProject] = useState<{project_id:string|null;title:string;scope:string}|null>(null)
+  const [activeProject, setActiveProject] = useState<{project_id:string|null;title:string;scope:string;root:string|null}|null>(null)
   const [loadingConversation, setLoadingConversation] = useState(false)
   const [creatingConversation, setCreatingConversation] = useState(false)
   const creatingConversationRef = useRef(false)
@@ -221,11 +222,8 @@ export default function AgentChat({ onInspectionSelection, onInspectExecution, o
   const [messageContextMenu, setMessageContextMenu] = useState<{ id: string; agentId: string | null; latestUserId: string | undefined; conversationId: string | null; revision: number | null; x: number; y: number; origin: HTMLElement } | null>(null)
   useEffect(()=>{if(hidden){setMessageContextMenu(null);setConversationContextMenu(null)}},[hidden])
   const messageMenuRef = useRef<HTMLDivElement>(null)
-  const [allowWorkspaceRead, setAllowWorkspaceRead] = useState(false)
   const [allowPublicWebRead, setAllowPublicWebRead] = useState(false)
-  const [allowWorkspaceWriteProposals,setAllowWorkspaceWriteProposals]=useState(false)
   const [publicWebUrls, setPublicWebUrls] = useState('')
-  const [workspaceReadPaths, setWorkspaceReadPaths] = useState('')
   async function loadReviewContext(signal?:AbortSignal){
     if(!selectedAgent?.config.tools?.some(tool=>tool.startsWith('delivery_')))return
     try{
@@ -486,12 +484,12 @@ export default function AgentChat({ onInspectionSelection, onInspectExecution, o
     correctionReturnFocus.current=humanCorrection?.origin??null
     setHumanCorrection(null)
   }
-  const correctionPermissions=`lectura del proyecto ${allowWorkspaceRead?'activada':'desactivada'}, web pública ${allowPublicWebRead?'activada':'desactivada'}, carpeta ${documentConsent?'con permiso actual':'sin permiso actual'}, propuestas de archivos ${allowWorkspaceWriteProposals?'activadas':'desactivadas'}`
-  const correctionPermissionIdentity=JSON.stringify({providerId:selectedAgent?.config.provider_id??chatProviderSelection?.provider_id,modelId:selectedAgent?.config.model_id??chatProviderSelection?.model_id,savingChatProvider,chatProviderSelectionFailed,cognitiveMode,allowWorkspaceRead,workspaceReadPaths,allowPublicWebRead,publicWebUrls,allowWorkspaceWriteProposals,documentRoot,documentConsent,documentOutputConsent,documentOutputDirectory,reviewWork,reviewContact,draftConsent})
+  const correctionPermissions=`permisos READ/WRITE persistentes del proyecto, web pública ${allowPublicWebRead?'activada':'desactivada'}, carpeta ${documentConsent?'con permiso actual':'sin permiso actual'}`
+  const correctionPermissionIdentity=JSON.stringify({projectId:activeProject?.project_id,projectRoot:activeProject?.root,providerId:selectedAgent?.config.provider_id??chatProviderSelection?.provider_id,modelId:selectedAgent?.config.model_id??chatProviderSelection?.model_id,savingChatProvider,chatProviderSelectionFailed,cognitiveMode,allowPublicWebRead,publicWebUrls,documentRoot,documentConsent,documentOutputConsent,documentOutputDirectory,reviewWork,reviewContact,draftConsent})
 
   const clearInspectionSelection = () => {setActiveConversation(null);setMessages([]);onInspectionSelection?.(null)}
 
-  useEffect(() => {setAllowPublicWebRead(false);setAllowWorkspaceWriteProposals(false);setPublicWebUrls('');setDocumentConsent(false);setDocumentOutputConsent(false);setDraftConsent(false)}, [activeConversation?.id, ownerId])
+  useEffect(() => {setAllowPublicWebRead(false);setPublicWebUrls('');setDocumentConsent(false);setDocumentOutputConsent(false);setDraftConsent(false)}, [activeConversation?.id, ownerId])
 
   const applyConversation = (conversation: StoredConversation) => {
     const inlineAgentDrafts = new Map(messages.filter((message) => message.agentBuilderDraft).map((message) => [message.id, message.agentBuilderDraft as AgentConfig]))
@@ -581,12 +579,13 @@ export default function AgentChat({ onInspectionSelection, onInspectExecution, o
   useEffect(() => {
     clearInspectionSelection()
     setConversationList([])
+    setActiveProject(null)
     void fetch('/api/project-folders/v1/active').then(async response => {
       if (!response.ok) throw await responseError(response)
       return response.json()
     }).then(value => {
       if (conversationScopeRef.current.endsWith(`:${workspaceScopeVersion}`)) {
-        setActiveProject({project_id:typeof value.project_id==='string'?value.project_id:null,title:typeof value.title==='string'?value.title:'',scope:typeof value.scope==='string'?value.scope:'unknown'})
+        setActiveProject({project_id:typeof value.project_id==='string'?value.project_id:null,title:typeof value.title==='string'?value.title:'',scope:typeof value.scope==='string'?value.scope:'unknown',root:typeof value.root==='string'?value.root:null})
       }
     }).catch(() => { setActiveProject(null) })
     void refreshConversationList()
@@ -852,9 +851,7 @@ export default function AgentChat({ onInspectionSelection, onInspectExecution, o
     if (!correctionRequest) setInput('')
     setError('')
     setLibraryError('')
-    const readFilesForThisMessage = allowWorkspaceRead
     const readWebForThisMessage = allowPublicWebRead
-    const proposeFilesForThisMessage=Boolean(selectedAgent)&&allowWorkspaceWriteProposals
     const documentRootForThisMessage = selectedAgent && documentConsent ? documentRoot : ''
     const outputDocumentsForThisMessage = documentOutputConsent
     const selectedReviewForThisMessage=reviewContext.runs.find(run=>run.work_id===reviewWork)
@@ -862,9 +859,7 @@ export default function AgentChat({ onInspectionSelection, onInspectExecution, o
     setDraftConsent(false)
     setDocumentConsent(false);setDocumentOutputConsent(false)
     const urlsForThisMessage = publicWebUrls
-    setAllowWorkspaceRead(false)
     setAllowPublicWebRead(false)
-    setAllowWorkspaceWriteProposals(false)
     setSending(true)
     const generation = conversationLoadGeneration.current
     const scope = conversationScopeRef.current
@@ -891,7 +886,6 @@ export default function AgentChat({ onInspectionSelection, onInspectExecution, o
         return
       }
       setMessages((previous) => [...previous, { id: idFor(), role: 'user', content }])
-      let workspaceReadAuthorizationId: string | undefined
       let documentAuthorizationId: string | undefined
       if (documentRootForThisMessage && selectedAgent) {
         const authorizationResponse = await fetch('/api/document-tools/authorizations', {
@@ -906,17 +900,6 @@ export default function AgentChat({ onInspectionSelection, onInspectExecution, o
         const authorization = await authorizationResponse.json()
         if (authorization.root !== documentRootForThisMessage || typeof authorization.authorization_id !== 'string') throw new Error(t('agentTools.grantNotConfirmed'))
         documentAuthorizationId = authorization.authorization_id
-      }
-      if (readFilesForThisMessage) {
-        const paths = workspaceReadPaths.split(/\r?\n/).map((path) => path.trim()).filter(Boolean)
-        if (!paths.length) throw new Error("commerce.enter_the_exact_project_relative_file_paths_to_authorize_one_per_line")
-        const authorizationResponse = await fetch('/api/workspace-read/authorizations', {
-          method: 'POST', headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ owner_kind: ownerKind, owner_id: ownerId, conversation_id: conversation.id, revision: conversation.revision, paths }),
-        })
-        if (!authorizationResponse.ok) throw await responseError(authorizationResponse)
-        const authorization = await authorizationResponse.json()
-        workspaceReadAuthorizationId = authorization.authorization_id
       }
       let webReadAuthorizationId: string | undefined
       if (readWebForThisMessage) {
@@ -944,13 +927,13 @@ export default function AgentChat({ onInspectionSelection, onInspectExecution, o
       if (selectedAgent) {
         response = await fetch(`/api/agents/${encodeURIComponent(selectedAgent.id)}/chat`, {
           method: 'POST', headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ message: content, conversation_id: conversation.id, revision: conversation.revision, cognitive_mode: cognitiveMode, ...(documentAuthorizationId?{document_authorization_id:documentAuthorizationId}:{}), ...(proposeFilesForThisMessage?{allow_workspace_write_proposals:true}:{}), ...(workspaceReadAuthorizationId ? { workspace_read_authorization_id: workspaceReadAuthorizationId } : {}), ...(webReadAuthorizationId ? {web_read_authorization_id: webReadAuthorizationId} : {}) }),
+          body: JSON.stringify({ message: content, conversation_id: conversation.id, revision: conversation.revision, cognitive_mode: cognitiveMode, ...(documentAuthorizationId?{document_authorization_id:documentAuthorizationId}:{}), ...(webReadAuthorizationId ? {web_read_authorization_id: webReadAuthorizationId} : {}) }),
         })
       } else {
         intent = localCapabilityIntent ?? inferIntent(content, cognitiveMode)
         response = await fetch('/api/chat/control', {
           method: 'POST', headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ operation: intent.operation, message: content, conversation_id: conversation.id, revision: conversation.revision, ...(explicitCapabilityId ? {capability_id:explicitCapabilityId} : {}), ...(intent.operation === 'chat' ? { cognitive_mode: cognitiveMode } : {}), ...(workspaceReadAuthorizationId ? { workspace_read_authorization_id: workspaceReadAuthorizationId } : {}), ...(webReadAuthorizationId ? {web_read_authorization_id: webReadAuthorizationId} : {}), ...(intent.view ? { view: intent.view } : {}) }),
+          body: JSON.stringify({ operation: intent.operation, message: content, conversation_id: conversation.id, revision: conversation.revision, ...(explicitCapabilityId ? {capability_id:explicitCapabilityId} : {}), ...(intent.operation === 'chat' ? { cognitive_mode: cognitiveMode } : {}), ...(webReadAuthorizationId ? {web_read_authorization_id: webReadAuthorizationId} : {}), ...(intent.view ? { view: intent.view } : {}) }),
         })
       }
       if (!current()) return
@@ -1211,17 +1194,14 @@ export default function AgentChat({ onInspectionSelection, onInspectExecution, o
             <button className="primary-action" type="submit" disabled={sending || orchestratorSelectionBlocked || !input.trim() || Boolean(activeConversation && activeConversation.status !== 'active')}>{sending ? 'Sending.' : t('commerce.send')}</button>
           </div>
           <div className="chat-composer-actions">
-            {selectedAgent&&<label className="workspace-read-toggle"><input type="checkbox" checked={allowWorkspaceWriteProposals} onChange={event=>setAllowWorkspaceWriteProposals(event.target.checked)} disabled={sending||Boolean(activeConversation&&activeConversation.status!=='active')}/><span>{t('commerce.propose_files')}</span></label>}
             <label className="workspace-read-toggle"><input type="checkbox" checked={allowPublicWebRead} onChange={event => setAllowPublicWebRead(event.target.checked)} disabled={sending || Boolean(activeConversation && activeConversation.status !== 'active')} /><span>{t('commerce.allow_public_web_reading')}</span></label>
-            <label className="workspace-read-toggle"><input type="checkbox" checked={allowWorkspaceRead} onChange={(event) => setAllowWorkspaceRead(event.target.checked)} disabled={sending || Boolean(activeConversation && activeConversation.status !== 'active')} /><span>{t('commerce.allow_project_file_reads')}</span></label>
             {!selectedAgent && <label className="chat-provider-picker"><span className="visually-hidden">{t('commerce.orchestrator_model')}</span><select aria-label={t('commerce.orchestrator_model')} value={!chatProviderSelectionFailed && chatProviderSelection ? `${chatProviderSelection.provider_id}|${chatProviderSelection.model_id}` : ''} onChange={event => void changeChatProvider(event.target.value)} aria-busy={savingChatProvider} data-provider-selection-state={savingChatProvider ? 'pending' : chatProviderSelectionFailed ? 'failed' : chatProviderSelection ? 'confirmed' : 'unselected'} disabled={sending || savingChatProvider || chatProviders.length === 0}><option value="" disabled>{chatProviders.length ? t('commerce.select_a_model') : t('commerce.configure_a_provider')}</option>{chatProviders.map(provider => <option key={`${provider.provider_id}|${provider.model_id}`} value={`${provider.provider_id}|${provider.model_id}`}>{provider.label} · {provider.display_name ?? provider.model_id}{provider.state === 'configured_unverified' ? t('commerce.unverified') : ''}</option>)}</select></label>}
           </div>
           {allowPublicWebRead && <section aria-label={t('commerce.public_web_reading_scope')}><label className="workspace-read-paths">{t('commerce.entry_https_urls_one_per_line')}<textarea rows={3} value={publicWebUrls} onChange={event => setPublicWebUrls(event.target.value)} placeholder="https://www.ejemplo.com/" maxLength={16384} disabled={sending} /></label><p>{t('commerce.this_turn_only_public_pages_from_these_origins')}</p><ul aria-label={t('commerce.requested_web_origins')}>{[...new Set(publicWebUrls.split(/\r?\n/).map(value => {try {return new URL(value.trim()).origin} catch {return value.trim() ? t('commerce.invalid_url',{url:value.trim()}) : ''}}).filter(Boolean))].map(origin => <li key={origin}><code>{origin}</code></li>)}</ul></section>}
-          {allowWorkspaceRead && <label className="workspace-read-paths">{t('commerce.project_relative_paths')}<textarea rows={3} value={workspaceReadPaths} onChange={(event) => setWorkspaceReadPaths(event.target.value)} placeholder={'src/api/server.py\nsrc/agent_tools/workspace_read.py'} disabled={sending} /></label>}
 
         </form>
-        {!selectedAgent && <DevelopmentPanel key="app-assistant-context" ownerId={ownerId} disabled={sending} initialOpen showChanges={false} historyContent={conversationLibrary} workspaceContent={<details className="project-sidebar-section workspace-read-paths" open><summary>{t('agentTools.workspace')}</summary><div className="project-sidebar-section-body"><p className="project-sidebar-scope">Alcance del próximo envío. Abrir este panel no autoriza lecturas.</p><p>Solicitud de lectura de archivos del proyecto: {allowWorkspaceRead ? 'marcada' : 'no marcada'}.</p><p>La autorización se comprueba al enviar el mensaje.</p><p>{workspaceReadPaths.trim() ? <>Rutas indicadas para este turno: <code>{workspaceReadPaths}</code></> : 'No hay rutas indicadas para este turno.'}</p><button type="button" onClick={()=>onNavigate('workspace')}>Abrir espacio de trabajo</button></div></details>}/> }
-        {selectedAgent?.config.tools?.some(tool=>['document_','filesystem_','delivery_','development_'].some(prefix=>tool.startsWith(prefix))) && <DevelopmentPanel key={selectedAgent.id} ownerId={selectedAgent.id} disabled={sending} initialOpen={false} showChanges={selectedAgent.config.tools.some(tool=>tool.startsWith('development_'))} workspaceContent={<details className="workspace-read-paths project-sidebar-section"><summary>{t('agentTools.workspace')}</summary><div className="project-sidebar-section-body"><p className="project-sidebar-scope">Alcance actual: carpeta seleccionada y permiso explícito de este turno.</p>
+        {!selectedAgent && <DevelopmentPanel key="app-assistant-context" ownerId={ownerId} disabled={sending} initialOpen showChanges={false} historyContent={conversationLibrary} workspaceContent={<><ProjectPermissions projectId={activeProject?.project_id ?? null} projectRoot={activeProject?.root ?? null} refreshKey={workspaceScopeVersion}/><details className="project-sidebar-section workspace-read-paths" open><summary>{t('agentTools.workspace')}</summary><div className="project-sidebar-section-body"><p>Los permisos READ/WRITE persistentes se administran arriba. Abrir el espacio de trabajo permite cambiar de proyecto.</p><button type="button" onClick={()=>onNavigate('workspace')}>Abrir espacio de trabajo</button></div></details></>}/> }
+        {selectedAgent && <DevelopmentPanel key={selectedAgent.id} ownerId={selectedAgent.id} disabled={sending} initialOpen={false} showChanges={Boolean(selectedAgent.config.tools?.some(tool=>tool.startsWith('development_')))} workspaceContent={<><ProjectPermissions projectId={activeProject?.project_id ?? null} projectRoot={activeProject?.root ?? null} refreshKey={workspaceScopeVersion}/>{selectedAgent.config.tools?.some(tool=>['document_','filesystem_','delivery_','development_'].some(prefix=>tool.startsWith(prefix))) && <details className="workspace-read-paths project-sidebar-section"><summary>{t('agentTools.workspace')}</summary><div className="project-sidebar-section-body"><p className="project-sidebar-scope">Los permisos del proyecto se conservan entre conversaciones. Las operaciones de escritura propuestas requieren revisión y confirmación humanas.</p>
             <button type="button" disabled={sending||documentBrowseBusy} onClick={()=>void browseDocuments()}>{t('agentTools.chooseFolder')}</button>
             {documentBrowseError && <p role="alert">{documentBrowseError}</p>}
             {documentFolders && <div aria-label={t('agentTools.browser')}>
@@ -1242,7 +1222,7 @@ export default function AgentChat({ onInspectionSelection, onInspectExecution, o
             {documentRoot && <><p><code>{documentRoot}</code></p><label><input type="checkbox" checked={documentConsent} disabled={sending} onChange={event=>setDocumentConsent(event.target.checked)}/>{t('agentTools.scopeGrant')}</label>
               {selectedAgent.config.tools.includes('document_export') && <label><input type="checkbox" checked={documentOutputConsent} disabled={sending||!documentConsent||!documentOutputDirectory} onChange={event=>setDocumentOutputConsent(event.target.checked)}/>{t('agentTools.reportGrant')}<code>{documentOutputDirectory}</code></label>}
               <p>{t('agentTools.confirmationNotice')}</p></>}
-          </div></details>}/>}
+          </div></details>}</>}/>}
         <div className="chat-agent-panel-slot" ref={setAgentPanelTarget} />
       </WindowPanel>
       {menuMessage && messageContextMenu && createPortal(<div ref={messageMenuRef} className="chat-message-context-menu" role="menu" aria-labelledby={`message-author-${menuMessage.id}`} style={{ left: messageContextMenu.x, top: messageContextMenu.y }} onKeyDown={event => {

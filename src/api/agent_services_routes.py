@@ -27,7 +27,7 @@ class FilesystemExecuteRequest(FilesystemReviewRequest):
     confirmed:bool=Field(strict=True)
 
 
-def create_agent_services_router(*,workspace_root,load_agent,owned_conversation,communications):
+def create_agent_services_router(*,workspace_root,load_agent,owned_conversation,communications,project_permissions=None):
     router=APIRouter()
     def origin(request):
         value=request.headers.get('origin')
@@ -60,7 +60,8 @@ def create_agent_services_router(*,workspace_root,load_agent,owned_conversation,
     async def review(proposal_id:str,body:FilesystemReviewRequest,request:Request):
         origin(request);bound(body)
         try:return await asyncio.to_thread(review_filesystem,workspace=workspace_root(),proposal_id=proposal_id,
-            owner_id=body.owner_id,conversation_id=body.conversation_id,revision=body.revision)
+            owner_id=body.owner_id,conversation_id=body.conversation_id,revision=body.revision,
+            project_permissions=project_permissions() if project_permissions else None)
         except (ValueError,OSError,KeyError) as error:raise HTTPException(422,detail={'code':'filesystem_review_rejected','message':str(error)}) from None
 
     @router.post('/api/agent-tools/filesystem/{proposal_id}/execute')
@@ -68,6 +69,7 @@ def create_agent_services_router(*,workspace_root,load_agent,owned_conversation,
         origin(request);bound(body)
         try:return await asyncio.to_thread(execute_filesystem,workspace=workspace_root(),proposal_id=proposal_id,
             owner_id=body.owner_id,conversation_id=body.conversation_id,revision=body.revision,
-            review_token=body.review_token,plan_sha256=body.plan_sha256,confirmed=body.confirmed)
+            review_token=body.review_token,plan_sha256=body.plan_sha256,confirmed=body.confirmed,
+            project_permissions=project_permissions() if project_permissions else None)
         except (ValueError,OSError,KeyError) as error:raise HTTPException(422,detail={'code':'filesystem_execute_rejected','message':str(error)}) from None
     return router

@@ -19,7 +19,7 @@ import uuid
 from contextlib import contextmanager
 
 
-OPERATIONS = frozenset({'mkdir', 'write', 'copy', 'move', 'rename', 'trash', 'restore'})
+OPERATIONS = frozenset({'mkdir', 'write', 'edit', 'copy', 'move', 'rename', 'trash', 'restore'})
 MAX_BYTES = 16 * 1024 * 1024
 RESERVED = re.compile(r'^(CON|PRN|AUX|NUL|COM[1-9]|LPT[1-9])(?:\.|$)', re.I)
 
@@ -175,17 +175,21 @@ class FilesystemToolkit:
                 if source is not None or trash_id is not None:
                     raise FilesystemError('unexpected source')
                 snapshot = None
-            if dst is None or dst.exists():
-                raise FilesystemError('target must be new')
+            if dst is None or (dst.exists() and operation != 'edit'):
+                raise FilesystemError('target must be new, except edit requires an existing target')
             if not dst.parent.is_dir() and not (operation == 'trash' and dst.parent == self.root / 'trash'):
                 raise FilesystemError('target parent must exist')
             if operation == 'rename' and src.parent != dst.parent:
                 raise FilesystemError('rename must stay in the same directory')
-            if operation == 'write':
+            if operation in ('write', 'edit'):
                 if not isinstance(content, str) or len(content.encode('utf-8')) > MAX_BYTES:
-                    raise FilesystemError('write requires UTF-8 text up to 16 MiB')
+                    raise FilesystemError('write/edit requires UTF-8 text up to 16 MiB')
+                if operation == 'edit':
+                    if source is not None or trash_id is not None or dst is None or not dst.is_file():
+                        raise FilesystemError('edit requires an existing regular target')
+                    snapshot = self._snapshot(dst)
             elif content is not None:
-                raise FilesystemError('content only valid for write')
+                raise FilesystemError('content only valid for write/edit')
             plan = {'version': 1, 'id': identifier, 'root': str(self.root), 'operation': operation,
                     'source': source, 'target': target, 'source_snapshot': snapshot,
                     'target_snapshot': None, 'content': content, 'trash_id': trash_id,
@@ -230,10 +234,12 @@ class FilesystemToolkit:
             try:
                 src = self._path(plan['source'], internal=op == 'restore') if plan['source'] else None
                 dst = self._path(plan['target'], internal=op == 'trash')
-                if dst.exists():
+                if dst.exists() and op != 'edit':
                     raise FilesystemError('target collision')
                 if src and self._snapshot(src) != plan['source_snapshot']:
                     raise FilesystemError('source changed after plan')
+                if op == 'edit' and self._snapshot(dst) != plan['source_snapshot']:
+                    raise FilesystemError('target changed after plan')
                 if op == 'mkdir':
                     dst.mkdir()
                     receipt['effects'].append('target_created')
@@ -249,19 +255,28 @@ class FilesystemToolkit:
                         self._save_new(self.state / 'trash-index' / (plan_id + '.json'),
                                        {'id': plan_id, 'original_path': plan['source'],
                                         'stored_path': plan['target'], 'sha256': plan['source_snapshot']['sha256']})
-                    with dst.open('xb') as output:
-                        receipt['effects'].append('target_created')
-                        if op == 'write':
+                    staged = dst.with_name('.' + dst.name + '.bago-edit-' + plan_id) if op == 'edit' else dst
+                    with staged.open('xb') as output:
+                        receipt['effects'].append('target_staged' if op == 'edit' else 'target_created')
+                        if op in ('write', 'edit'):
                             output.write(plan['content'].encode('utf-8'))
                         else:
                             with src.open('rb') as input_stream:
                                 shutil.copyfileobj(input_stream, output, 65536)
                         output.flush()
                         os.fsync(output.fileno())
-                    readback = self._snapshot(dst)
-                    wanted = plan['content_sha256'] if op == 'write' else plan['source_snapshot']['sha256']
+                    readback = self._snapshot(staged)
+                    wanted = plan['content_sha256'] if op in ('write', 'edit') else plan['source_snapshot']['sha256']
                     if readback['sha256'] != wanted:
                         raise FilesystemError('target readback mismatch')
+                    if op == 'edit':
+                        if self._snapshot(dst) != plan['source_snapshot']:
+                            raise FilesystemError('target changed during edit')
+                        os.replace(staged, dst)
+                        receipt['effects'].append('target_replaced')
+                        readback = self._snapshot(dst)
+                        if readback['sha256'] != wanted:
+                            raise FilesystemError('target replacement readback mismatch')
                     if src and self._snapshot(src) != plan['source_snapshot']:
                         raise FilesystemError('source changed during copy')
                     if op in ('move', 'rename', 'trash', 'restore'):
@@ -271,6 +286,14 @@ class FilesystemToolkit:
                             raise FilesystemError('source removal readback failed')
                 receipt.update(status='VERIFIED', readback=readback)
             except Exception as exc:
+                if op == 'edit':
+                    staged = dst.with_name('.' + dst.name + '.bago-edit-' + plan_id)
+                    try:
+                        info = staged.lstat()
+                        if stat.S_ISREG(info.st_mode) and info.st_nlink == 1:
+                            staged.unlink()
+                    except OSError:
+                        pass
                 receipt.update(status='PARTIAL' if receipt['effects'] else 'FAILED',
                                error=type(exc).__name__ + ': ' + str(exc))
             receipt['finished_at'] = time.time()
