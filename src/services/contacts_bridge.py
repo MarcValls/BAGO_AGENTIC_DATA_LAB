@@ -7,11 +7,11 @@ import uuid
 from pathlib import Path
 from src.contacts_service.core import Contacts, ServiceError, validate_contact, now
 from src.communications.service import CommunicationError
+from src.storage.portable import configured_path
 
 
 def contacts_root():
-    return Path(os.getenv('BAGO_CONTACTS_STATE_DIR') or
-                Path(os.getenv('LOCALAPPDATA', str(Path.home()))) / 'BAGO/AgenticDataLab/contacts')
+    return configured_path('BAGO_CONTACTS_STATE_DIR', 'contacts')
 
 
 class ContactsBridge:

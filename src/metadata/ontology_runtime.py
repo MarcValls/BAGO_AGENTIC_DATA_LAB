@@ -25,12 +25,16 @@ def _db_path() -> Path:
     override = os.environ.get("ADL_ONTOLOGY_DB")
     if override:
         return Path(override).expanduser().resolve()
-    return Path(__file__).resolve().parents[2] / ".bago" / "knowledge" / "ontology.sqlite3"
+    from src.storage.portable import configured_path
+    return configured_path("ADL_ONTOLOGY_DB", "knowledge", "ontology.sqlite3")
 
 
 def _trace_dir() -> Path:
     override = os.environ.get("ADL_ONTOLOGY_TRACE_DIR")
-    return Path(override).expanduser().resolve() if override else Path(__file__).resolve().parents[2] / ".bago" / "traces" / "ontology"
+    if override:
+        return Path(override).expanduser().resolve()
+    from src.storage.portable import configured_path
+    return configured_path("ADL_ONTOLOGY_TRACE_DIR", "traces", "ontology")
 
 
 def _connect() -> sqlite3.Connection:

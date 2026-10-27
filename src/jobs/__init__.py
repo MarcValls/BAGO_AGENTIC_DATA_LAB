@@ -7,9 +7,9 @@ from dataclasses import dataclass, asdict
 from datetime import datetime
 from pathlib import Path
 from typing import Any
+from src.storage.portable import data_path
 
-JOBS_DIR = Path(__file__).resolve().parent.parent.parent / "jobs" / "history"
-JOBS_DIR.mkdir(parents=True, exist_ok=True)
+JOBS_DIR = data_path("jobs", "history")
 
 
 @dataclass
@@ -35,6 +35,7 @@ class JobExecution:
 
 def save_job(job: JobExecution) -> None:
     """Save job to disk."""
+    JOBS_DIR.mkdir(parents=True, exist_ok=True)
     job_file = JOBS_DIR / f"{job.job_id}.json"
     job_file.write_text(json.dumps(job.to_dict(), indent=2))
 

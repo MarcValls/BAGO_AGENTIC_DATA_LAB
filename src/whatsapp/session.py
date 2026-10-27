@@ -78,8 +78,9 @@ def is_link(path):
 
 class WhatsAppSession:
     def __init__(self, state_dir=None):
-        default = Path(os.environ.get("LOCALAPPDATA", str(Path.home() / ".local/share"))) / "BAGO/AgenticDataLab/whatsapp"
-        self.root = Path(state_dir or os.environ.get("BAGO_WHATSAPP_STATE_DIR", default)).resolve()
+        from src.storage.portable import configured_path
+        self.root = (Path(state_dir).expanduser().resolve() if state_dir else
+                     configured_path("BAGO_WHATSAPP_STATE_DIR", "whatsapp"))
         self.profile = self.root / "brave-profile"
         self.lock = threading.RLock()
 

@@ -15,13 +15,14 @@ from pathlib import Path
 from typing import Any, Literal
 
 import requests
+from src.storage.portable import configured_path
 
 PROVIDER_ID = "ollama-cloud"
 CLOUD_BASE = "https://ollama.com/api"
 LOCAL_BASE = "http://127.0.0.1:11434/api"
 SERVICE_NAME = "BAGO.AgentChat.OllamaCloud"
 MODEL_RE = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$")
-CONFIG_PATH = Path(__file__).resolve().parents[2] / ".bago" / "providers" / "ollama.json"
+CONFIG_PATH = configured_path("BAGO_OLLAMA_CONFIG_PATH", "providers", "ollama.json")
 
 
 class ProviderError(Exception):

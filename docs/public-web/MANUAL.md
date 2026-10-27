@@ -188,6 +188,14 @@ Abre **Contexto y memoria** para ver la misma carpeta activa y los documentos de
 
 Que un documento aparezca como no encontrado significa que no existe en esa ubicación reconocida. El plan confirmado en Proyectos puede crear únicamente los mínimos ausentes; seleccionar o abrir el panel no inventa contexto ni continuidad. La memoria de conversación y una memoria general externa son conexiones diferentes: «Sin conectar» no se interpreta como una conexión activa.
 
+### Datos de ADL y portabilidad
+
+Por defecto, cada copia de ADL guarda su estado propio en `<carpeta de ADL>/.bago/data`. Ahí se conservan conversaciones, agentes, tareas, capacidades, evaluaciones, contactos, comunicaciones, configuraciones y trazas. Si `BAGO_DATA_ROOT` está definido explícitamente, el estado de BAGO5 indica la raíz efectiva y avisa de almacenes configurados fuera de ella.
+
+Para trasladar una copia de ADL, conserva también `.bago/data`; copiar únicamente el código no lleva consigo sus conversaciones ni los demás datos locales. Esta carpeta puede contener información privada y no debe añadirse al repositorio Git. Las carpetas de proyecto elegidas en Workspace siguen en sus ubicaciones seleccionadas: copiar ADL no copia los archivos de esos proyectos.
+
+Las credenciales protegidas por el almacén seguro de Windows u otro sistema operativo permanecen vinculadas a ese equipo. Al cambiar de equipo puede ser necesario volver a iniciar sesión. Una copia de estado de WhatsApp puede contener una sesión privada y requiere tratarse como dato confidencial.
+
 ## Git local y planes de GitHub
 
 En un proyecto gestionado, abre **Archivos → Git y GitHub**.

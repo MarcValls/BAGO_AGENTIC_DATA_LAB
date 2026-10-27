@@ -12,10 +12,11 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 from urllib.parse import urlsplit
+from src.storage.portable import configured_path
 
 MODEL_RE = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$")
 SERVICE_NAME = "BAGO.AgenticDataLab.ProviderRegistration"
-REGISTRY_PATH = Path(os.environ.get("LOCALAPPDATA", Path.home())) / "BAGO" / "AgenticDataLab" / "provider-registry.json"
+REGISTRY_PATH = configured_path("BAGO_PROVIDER_REGISTRY_PATH", "providers", "provider-registry.json")
 _LOCK = threading.RLock()
 _runtime_failures: dict[str, tuple[str, str]] = {}
 

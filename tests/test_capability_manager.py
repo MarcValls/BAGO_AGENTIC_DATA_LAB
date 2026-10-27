@@ -13,13 +13,16 @@ from src.agent_tools.document_tools import DOCUMENT_TOOL_IDS
 from src.agent_tools.agent_services import SERVICE_TOOL_IDS
 
 
-def test_default_database_is_local_and_workspace_scoped(monkeypatch, tmp_path: Path):
-    monkeypatch.setenv("LOCALAPPDATA", str(tmp_path / "local"))
+def test_default_database_is_portable_and_workspace_scoped(monkeypatch, tmp_path: Path):
+    app_root = tmp_path / "application"
+    app_root.mkdir()
+    monkeypatch.setenv("BAGO_APP_ROOT", str(app_root))
+    monkeypatch.setenv("LOCALAPPDATA", str(tmp_path / "legacy-local"))
     monkeypatch.delenv("BAGO_CAPABILITY_DB_PATH", raising=False)
 
     first = default_database_path(tmp_path / "workspace-one")
     second = default_database_path(tmp_path / "workspace-two")
-    assert first.is_relative_to(tmp_path / "local" / "BAGO" / "AgenticDataLab" / "capabilities")
+    assert first.is_relative_to(app_root / ".bago" / "data" / "capabilities")
     assert first != second
     assert first.name == "capabilities.sqlite3"
 

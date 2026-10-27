@@ -40,15 +40,8 @@ class ConversationConflict(Exception):
 
 def default_database_path() -> Path:
     """Resolve a per-user database outside the repository and other ADL stores."""
-    override = os.environ.get("BAGO_CONVERSATION_DB_PATH")
-    if override:
-        return Path(override).expanduser().resolve()
-    local_app_data = os.environ.get("LOCALAPPDATA")
-    if local_app_data:
-        root = Path(local_app_data)
-    else:
-        root = Path.home() / ".local" / "share"
-    return root / "BAGO" / "AgenticDataLab" / "conversations" / "library.sqlite3"
+    from src.storage.portable import configured_path
+    return configured_path("BAGO_CONVERSATION_DB_PATH", "conversations", "library.sqlite3")
 
 
 def _now() -> str:

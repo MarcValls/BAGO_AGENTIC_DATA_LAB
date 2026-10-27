@@ -10,8 +10,20 @@ from src.agent_tools.code_duplicates import (
 )
 from src.agent_tools import code_duplicates
 from fastapi.testclient import TestClient
+import pytest
 from src.api import server
 from src.conversations import ConversationStore
+
+
+@pytest.fixture
+def isolated_portable_roots(monkeypatch, tmp_path: Path) -> tuple[Path, Path]:
+    app_root = tmp_path / "application"
+    workspace_root = tmp_path / "project"
+    app_root.mkdir()
+    workspace_root.mkdir()
+    monkeypatch.setenv("BAGO_APP_ROOT", str(app_root))
+    monkeypatch.delenv("BAGO_DATA_ROOT", raising=False)
+    return app_root, workspace_root
 
 
 def test_scan_finds_exact_blocks_and_similar_python_functions(tmp_path: Path) -> None:
@@ -125,10 +137,10 @@ def test_chat_tool_loop_invokes_scan_and_returns_receipt(monkeypatch, tmp_path: 
     assert len(events[0]["manifest_sha256"]) == 64
 
 
-def test_scan_authorization_endpoint_binds_directory_to_conversation(monkeypatch, tmp_path: Path) -> None:
-    (tmp_path / "src").mkdir()
-    monkeypatch.setattr(server, "REPO_ROOT", tmp_path)
-    monkeypatch.setattr(server, "current_workspace_root", lambda: tmp_path.resolve())
+def test_scan_authorization_endpoint_binds_directory_to_conversation(monkeypatch, tmp_path: Path, isolated_portable_roots: tuple[Path, Path]) -> None:
+    _, workspace_root = isolated_portable_roots
+    (workspace_root / "src").mkdir()
+    monkeypatch.setattr(server, "current_workspace_root", lambda: workspace_root.resolve())
     monkeypatch.setattr(server, "CONVERSATIONS", ConversationStore(tmp_path / "conversations.sqlite3"))
     conversation = server.CONVERSATIONS.create("assistant", "app-assistant")
 
@@ -146,17 +158,17 @@ def test_scan_authorization_endpoint_binds_directory_to_conversation(monkeypatch
     ) == ["src"]
 
 
-def test_control_scan_run_persists_result_receipt_and_local_trace(monkeypatch, tmp_path: Path) -> None:
-    source = tmp_path / "src"
+def test_control_scan_run_persists_result_receipt_and_local_trace(monkeypatch, tmp_path: Path, isolated_portable_roots: tuple[Path, Path]) -> None:
+    app_root, workspace_root = isolated_portable_roots
+    source = workspace_root / "src"
     source.mkdir()
     (source / "one.ts").write_text("const a = 1;\nconst b = 2;\nconst c = 3;\nconst d = 4;\nconst e = 5;\n", encoding="utf-8")
     (source / "two.ts").write_text("const a = 1;\nconst b = 2;\nconst c = 3;\nconst d = 4;\nconst e = 5;\n", encoding="utf-8")
-    monkeypatch.setattr(server, "REPO_ROOT", tmp_path)
-    monkeypatch.setattr(server, "current_workspace_root", lambda: tmp_path.resolve())
+    monkeypatch.setattr(server, "current_workspace_root", lambda: workspace_root.resolve())
     monkeypatch.setattr(server, "CONVERSATIONS", ConversationStore(tmp_path / "conversations.sqlite3"))
     conversation = server.CONVERSATIONS.create("assistant", "app-assistant")
     grant = server.WORKSPACE_DIRECTORY_AUTHORIZATIONS.issue(
-        tmp_path, owner_kind="assistant", owner_id="app-assistant",
+        workspace_root, owner_kind="assistant", owner_id="app-assistant",
         conversation_id=conversation["id"], revision=conversation["revision"], directories=["src"],
     )
 
@@ -173,5 +185,5 @@ def test_control_scan_run_persists_result_receipt_and_local_trace(monkeypatch, t
     assert len(payload["receipt"]["manifest_sha256"]) == 64
     assert payload["trace"]["trace_state"] == "local_only"
     assert len(payload["conversation"]["messages"]) == 2
-    trace_path = tmp_path / ".bago" / "traces" / "workspace-scans" / f"{payload['trace']['trace_id']}.json"
+    trace_path = app_root / ".bago" / "data" / "traces" / "workspace-scans" / f"{payload['trace']['trace_id']}.json"
     assert trace_path.is_file()

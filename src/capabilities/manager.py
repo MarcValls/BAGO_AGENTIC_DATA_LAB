@@ -44,10 +44,9 @@ def default_database_path(workspace_root: Path | str) -> Path:
     override = os.environ.get("BAGO_CAPABILITY_DB_PATH")
     if override:
         return Path(override).expanduser().resolve()
-    local_app_data = os.environ.get("LOCALAPPDATA")
-    base = Path(local_app_data) if local_app_data else Path.home() / ".local" / "share"
+    from src.storage.portable import configured_path
     workspace_id, _ = workspace_identity(workspace_root)
-    return base / "BAGO" / "AgenticDataLab" / "capabilities" / workspace_id / "capabilities.sqlite3"
+    return configured_path("BAGO_CAPABILITY_DB_PATH", "capabilities", workspace_id, "capabilities.sqlite3")
 
 
 def _source_fingerprint(root: Path, relative_path: str) -> str | None:

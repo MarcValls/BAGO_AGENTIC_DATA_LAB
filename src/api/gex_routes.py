@@ -47,8 +47,8 @@ def create_gex_router(*, load_agent, provider_resolver):
             workspace = os.environ.get("BAGO_GEX_WORKSPACE_ROOT")
             state = os.environ.get("BAGO_GEX_STATE_DIR")
             if not state:
-                base = Path(os.environ["LOCALAPPDATA"]) if os.environ.get("LOCALAPPDATA") else Path.home() / ".local/share"
-                state = str(base / "BAGO/AgenticDataLab/gex/runtime")
+                from src.storage.portable import configured_path
+                state = str(configured_path("BAGO_GEX_STATE_DIR", "gex", "runtime"))
             if not workspace:
                 holder["error"] = "CONFIGURATION_REQUIRED"
                 raise ControlError(holder["error"], 503)

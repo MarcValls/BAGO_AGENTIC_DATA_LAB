@@ -35,7 +35,8 @@ def default_history_path(directory: Path) -> Path:
     if os.name == "nt":
         identity = identity.casefold()
     namespace = hashlib.sha256(identity.encode("utf-8")).hexdigest()
-    return Path(os.environ.get("LOCALAPPDATA", Path.home())) / "BAGO" / "AgenticDataLab" / "tasks" / namespace / "history.sqlite3"
+    from src.storage.portable import configured_path
+    return configured_path("BAGO_TASK_HISTORY_PATH", "tasks", namespace, "history.sqlite3")
 
 
 def create_task_router(*, agents_dir: Callable[[], Path], load_agent: Callable[[str], Any],

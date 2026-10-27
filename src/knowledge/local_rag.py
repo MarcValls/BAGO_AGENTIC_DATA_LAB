@@ -36,13 +36,16 @@ def _database_path() -> Path:
     override = os.environ.get("ADL_KNOWLEDGE_DB")
     if override:
         return Path(override).expanduser().resolve()
-    base = Path(os.environ.get("LOCALAPPDATA", Path.home())) / "BAGO" / "AgenticDataLab" / "knowledge"
-    return base / "local-knowledge.sqlite3"
+    from src.storage.portable import configured_path
+    return configured_path("ADL_KNOWLEDGE_DB", "knowledge", "local-knowledge.sqlite3")
 
 
 def _trace_dir() -> Path:
     override = os.environ.get("ADL_KNOWLEDGE_TRACE_DIR")
-    return Path(override).resolve() if override else Path(__file__).resolve().parents[2] / ".bago" / "traces" / "grounded-rag"
+    if override:
+        return Path(override).resolve()
+    from src.storage.portable import configured_path
+    return configured_path("ADL_KNOWLEDGE_TRACE_DIR", "traces", "grounded-rag")
 
 
 def _validate_and_read(root: Path, requested: str) -> tuple[str, bytes]:

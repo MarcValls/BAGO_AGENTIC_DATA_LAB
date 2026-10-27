@@ -20,7 +20,7 @@ const answer = {
   ingestion: { receipt_id: 'ingest_receipt_01', source_id: 'source_01', source_path: 'docs/guide.md', source_sha256: 'a'.repeat(64), source_revision: 'rev_2', index_fingerprint: 'index_sha256_01', chunk_count: 2, idempotent: false },
   retrieval: { query: 'What is the procedure?', index_fingerprint: 'index_sha256_01', eligible_count: 1, filtered_count: 1, hits: [{ rank: 1, chunk_id: 'chunk_01', document_id: 'doc_01', score: 0.9, evidence: { chunk_id: 'chunk_01', document_id: 'doc_01', source_uri: 'docs/guide.md', revision: 'rev_2', citation: 'The procedure has two steps.' } }], citations: [] },
   generation: { provider_id: 'ollama', model_id: 'test-model', answer: 'The procedure has two steps.' },
-  trace: { trace_id: 'trace_rag_01', path: '.bago/traces/rag/trace_rag_01.json', sha256: 'b'.repeat(64) },
+  trace: { trace_id: 'trace_rag_01', path: '.bago/data/traces/rag/trace_rag_01.json', sha256: 'b'.repeat(64) },
 }
 const response = (body, status = 200) => ({ ok: status >= 200 && status < 300, status, json: async () => body })
 function fillForm() {
