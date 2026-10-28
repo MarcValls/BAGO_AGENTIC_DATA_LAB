@@ -132,6 +132,8 @@ function App() {
   const sidebarToggleRef = useRef<HTMLButtonElement>(null)
   const returnToChatRef = useRef<HTMLButtonElement>(null)
   const sidebarMenuRef = useRef<HTMLDivElement>(null)
+  const primaryNavigationFrameRef = useRef<HTMLDivElement>(null)
+  const [primaryNavigationMoreDirection, setPrimaryNavigationMoreDirection] = useState<'down' | 'right' | null>(null)
   const [activeDataView, setActiveDataView] = useState<DataView>('inspector')
   const [dataLayerOpen, setDataLayerOpen] = useState(false)
   const [settingsOpen, setSettingsOpen] = useState(false)
@@ -146,6 +148,36 @@ function App() {
   const appScroll = useScrollActivity()
   const settingsScroll = useScrollActivity()
   const dataScroll = useScrollActivity()
+
+  useEffect(() => {
+    const navigation = primaryNavigationFrameRef.current?.querySelector<HTMLElement>('.primary-navigation')
+    if (!navigation) return
+
+    const updateOverflowCue = () => {
+      const horizontal = window.innerWidth <= 760
+      const remaining = horizontal
+        ? navigation.scrollWidth - navigation.clientWidth - navigation.scrollLeft > 1
+        : navigation.scrollHeight - navigation.clientHeight - navigation.scrollTop > 1
+      setPrimaryNavigationMoreDirection(remaining ? (horizontal ? 'right' : 'down') : null)
+    }
+
+    navigation.addEventListener('scroll', updateOverflowCue, { passive: true })
+    window.addEventListener('resize', updateOverflowCue)
+    const mutations = new MutationObserver(updateOverflowCue)
+    mutations.observe(navigation, { attributes: true, childList: true, subtree: true, attributeFilter: ['hidden', 'aria-expanded', 'class'] })
+    const sizes = typeof ResizeObserver === 'undefined' ? null : new ResizeObserver(updateOverflowCue)
+    sizes?.observe(navigation)
+    const navigationGroup = navigation.firstElementChild
+    if (navigationGroup) sizes?.observe(navigationGroup)
+    updateOverflowCue()
+
+    return () => {
+      navigation.removeEventListener('scroll', updateOverflowCue)
+      window.removeEventListener('resize', updateOverflowCue)
+      mutations.disconnect()
+      sizes?.disconnect()
+    }
+  }, [])
 
   useEffect(() => {
     if (inspectionSource !== 'demo') {setArtifacts(null);setLoadingArtifacts(false);setArtifactError(null);return}
@@ -268,8 +300,9 @@ function App() {
       <div ref={sidebarMenuRef} onKeyDown={event => {
         if (event.key === 'Escape' && !event.defaultPrevented) { event.preventDefault(); setSidebarCollapsed(true); sidebarToggleRef.current?.focus() }
       }} id="workspace-sidebar-content" className={`workspace-sidebar ${activeInteractionView === 'chat' ? 'workspace-sidebar--chat' : ''} ${sidebarCollapsed ? 'workspace-sidebar--collapsed' : ''}`} aria-label={t("core.App.workspace_sidebar_bc2716")}>
-        <nav className="primary-navigation" aria-label={t("core.App.interaction_layer_b8f1ed")}>
-          <div className="navigation-group">
+        <div ref={primaryNavigationFrameRef} className="primary-navigation-frame">
+          <nav className="primary-navigation" aria-label={t("core.App.interaction_layer_b8f1ed")}>
+            <div className="navigation-group">
             {interactionNavigation.filter(item => (!isAgentSection(item.id)||item.id==='agents')&&item.id!=='contacts'&&item.id!=='communications_history').map((item) => item.id==='agents' ? <AgentNavigation key={item.id} activeView={activeInteractionView} collapsed={sidebarCollapsed} onExpandSidebar={() => setSidebarCollapsed(false)} onNavigate={view => setActiveInteractionView(view)} /> : item.id==='chat' ? <ChatNavigation key={item.id} activeView={activeInteractionView} collapsed={sidebarCollapsed} onExpandSidebar={() => setSidebarCollapsed(false)} onNavigate={view => setActiveInteractionView(view)} /> : item.id==='communications' ? <CommunicationsNavigation key={item.id} activeView={activeInteractionView} collapsed={sidebarCollapsed} onExpandSidebar={()=>setSidebarCollapsed(false)} onNavigate={navigateCommunications}/> : (
               <button
                 key={item.id}
@@ -298,8 +331,10 @@ function App() {
               <span>{t("core.App.inspector_e0723a")}</span>
             </button>
             <a className="navigation-item" href="/manual" aria-label={t("core.App.manual_b0b9fe")} target="_blank" rel="noreferrer" title={t("core.App.manual_b0b9fe")}><span className="navigation-item-icon" aria-hidden="true">?</span><span>{t("core.App.manual_b0b9fe")}</span></a>
-          </div>
-        </nav>
+            </div>
+          </nav>
+          {primaryNavigationMoreDirection && <span className="primary-navigation-more" data-direction={primaryNavigationMoreDirection} aria-hidden="true" />}
+        </div>
 
         <footer className="workspace-sidebar-footer">
           <button
