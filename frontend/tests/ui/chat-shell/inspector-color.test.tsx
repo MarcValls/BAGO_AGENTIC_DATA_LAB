@@ -1,5 +1,5 @@
 // @vitest-environment jsdom
-import {expect,it,vi} from 'vitest'
+import {afterEach,expect,it,vi} from 'vitest'
 import React from 'react'
 import {fireEvent,render,screen} from '@testing-library/react'
 import {readFileSync} from 'node:fs'
@@ -7,6 +7,7 @@ import {join} from 'node:path'
 import {createHash} from 'node:crypto'
 import postcss from 'postcss'
 import ChatInspection from '../../../src/components/ChatInspection'
+afterEach(()=>document.head.querySelector('[data-inspector-production-styles]')?.remove())
 const paths=['src/components/AgentChat.css','src/App.css','src/components/ChatInspection.css']
 const fixtureRoot='tests/ui/chat-shell/fixtures/inspector-color'
 const provenance=JSON.parse(readFileSync(join(fixtureRoot,'PROVENANCE.json'),'utf8')) as {files:Array<{fixture:string;sha256:string;bytes:number}>}
@@ -49,6 +50,17 @@ function loadApplicationStyles(){
  if(document.head.querySelector('[data-inspector-test-styles]'))return
  const style=document.createElement('style');style.dataset.inspectorTestStyles='true'
  style.textContent=['src/index.css','src/App.css','src/VisualSystem.css','src/components/ChatInspection.css','src/components/ChatInspectionOverrides.css'].flatMap(path=>postcss.parse(readFileSync(path,'utf8')).nodes.filter(node=>node.type==='rule'&&(node.selector.includes('chat-inspection')||node.selector==='button'||node.selector==='button:hover')).map(node=>node.toString())).join('\n')
+ document.head.append(style)
+}
+function loadProductionInspectorStyles(){
+ if(document.head.querySelector('[data-inspector-production-styles]'))return
+ const style=document.createElement('style');style.dataset.inspectorProductionStyles='true'
+ const relevant:string[]=[]
+ for(const path of ['src/index.css','src/App.css','src/components/ChatInspection.css','src/components/ChatInspectionOverrides.css','src/ServiceSurfaces.css','src/VisualSystem.css','src/AppOverrides.css']){
+  const css=postcss.parse(readFileSync(path,'utf8'))
+  css.walkRules(rule=>{if(rule.selectors.some(selector=>selector.includes('.chat-inspection')||selector===':root'||selector==='#root .app-shell'||selector==='button'||selector==='button:hover'||selector==='select'||selector==='summary'))relevant.push(rule.toString().replace('#root .app-shell .chat-inspection :is(button, select, .chat-inspection-technical)','#root .app-shell .chat-inspection button, #root .app-shell .chat-inspection select, #root .app-shell .chat-inspection .chat-inspection-technical').replaceAll('var(--vs-work)','#101f2e').replaceAll('var(--vs-line)','#30495c').replaceAll('var(--vs-text)','#e3edf6').replaceAll('var(--vs-selection)','#1c4054').replaceAll('var(--vs-muted)','#abc0d0').replaceAll('var(--vs-accent)','#79c7da').replaceAll('var(--vs-focus)','#a1e5f0'))})
+ }
+ style.textContent=relevant.join('\n')
  document.head.append(style)
 }
 it('renders Inspector controls above application-wide dark surfaces with readable spacing and contrast',async()=>{
@@ -97,6 +109,24 @@ it('renders Inspector controls above application-wide dark surfaces with readabl
  expect(r3).toContain('#root #data-layer .chat-inspection .chat-inspection-counters dt')
  expect(r3).toContain('#root #data-layer .chat-inspection .chat-inspection-counters dd')
  expect(r3).toContain('display: list-item')
+})
+
+it('keeps embedded Inspector navigation, execution selector and details readable in application CSS order',async()=>{
+ vi.stubGlobal('fetch',vi.fn(async()=>({ok:true,status:200,json:async()=>({schema:'bago.chat.inspection.v1',conversation_id:'conv-current',revision:1,state:'selected',executions:[{trace_id:'trace-496fac766f384348',message_id:'m1',execution_id:'run-current'}],total:1,offset:0,next_offset:null,selected})})))
+ loadProductionInspectorStyles()
+ const view=render(<div id="root"><div className="app-shell"><div id="data-layer" className="data-layer"><ChatInspection view="inspector" embedded selection={{conversationId:'conv-current'}} onSelect={()=>{}} onViewChange={()=>{}} /></div></div></div>)
+ const summaryButton=await screen.findByRole('button',{name:'Resumen de la ejecución'})
+ const traceButton=screen.getByRole('button',{name:'Traza de la ejecución'})
+ const inspector=view.container.querySelector('.chat-inspection')!
+ const executionSelect=inspector.querySelector('.chat-inspection-run-control select')!
+ const technicalSummary=inspector.querySelector('.chat-inspection-common > summary')!
+ const controls=[summaryButton,traceButton,executionSelect,technicalSummary]
+ expect(summaryButton.disabled).toBe(false)
+ expect(traceButton.disabled).toBe(false)
+ expect(getComputedStyle(summaryButton).color).toBe('rgb(227, 237, 246)')
+ for(const control of controls){
+  expect(contrastRatio(getComputedStyle(control).color,getComputedStyle(control).backgroundColor)).toBeGreaterThanOrEqual(4.5)
+ }
 })
 
 it('keeps all four honest zero counters opaque and legible in an empty summary',async()=>{
