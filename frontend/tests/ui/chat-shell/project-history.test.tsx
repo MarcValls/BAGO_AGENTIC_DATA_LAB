@@ -8,16 +8,17 @@ import AgentChat from '../../../src/components/AgentChat'
 import {resetLocaleForTests,setLocale} from '../../../src/i18n'
 
 const records = [
-  {id:'conv-zulu',owner_kind:'assistant',owner_id:'app-assistant',title:'Zulu long synthetic conversation',status:'active',created_at:'2026-10-01T07:30:00Z',updated_at:'2026-10-28T10:15:00Z',revision:3},
-  {id:'conv-alpha',owner_kind:'assistant',owner_id:'app-assistant',title:'Alpha synthetic conversation',status:'active',created_at:'2026-10-02T08:45:00Z',updated_at:'2026-10-26T12:00:00Z',revision:1},
-  {id:'conv-gamma',owner_kind:'assistant',owner_id:'app-assistant',title:'Gamma with unavailable creation date',status:'active',created_at:'bad-timestamp',updated_at:'2026-10-27T09:05:00Z',revision:2},
+  {id:'conv-zulu',owner_kind:'assistant',owner_id:'app-assistant',title:'Zulu long synthetic conversation',status:'active',labels:['Zeta','Urgent'],created_at:'2026-10-01T07:30:00Z',updated_at:'2026-10-28T10:15:00Z',revision:3},
+  {id:'conv-alpha',owner_kind:'assistant',owner_id:'app-assistant',title:'Alpha synthetic conversation',status:'active',labels:['Docs'],created_at:'2026-10-02T08:45:00Z',updated_at:'2026-10-26T12:00:00Z',revision:1},
+  {id:'conv-gamma',owner_kind:'assistant',owner_id:'app-assistant',title:'Gamma with unavailable creation date',status:'active',labels:[],created_at:'bad-timestamp',updated_at:'2026-10-27T09:05:00Z',revision:2},
 ] as const
 const project={project_id:'project-synthetic',title:'Synthetic project',scope:'project',root:'C:\\Synthetic\\Project'}
 const permissions={project_id:project.project_id,root:project.root,binding:{kind:'synthetic'},revision:1,state:'active',read_directories:['.'],write_directories:[]}
 let calls:Array<{url:string;method:string}>=[]
+let conversations=records.map(record=>({...record,labels:[...record.labels]}))
 
 beforeEach(()=>{
-  localStorage.clear();resetLocaleForTests();setLocale('en');calls=[]
+  localStorage.clear();resetLocaleForTests();setLocale('en');calls=[];conversations=records.map(record=>({...record,labels:[...record.labels]}))
   HTMLElement.prototype.scrollIntoView=vi.fn()
   vi.stubGlobal('fetch',vi.fn(async(input:string,init?:RequestInit)=>{
     const url=String(input),method=init?.method??'GET';calls.push({url,method})
@@ -27,8 +28,14 @@ beforeEach(()=>{
     else if(url==='/api/providers/selection')body=null
     else if(url==='/api/project-folders/v1/active')body=project
     else if(url==='/api/project-permissions'&&method==='GET')body=permissions
-    else if(url.startsWith('/api/conversations?'))body={conversations:records}
-    else if(url==='/api/conversations/conv-alpha')body={...records[1],messages:[{id:'msg-preserved',role:'assistant',content:'Synthetic conversation content remains visible.'}]}
+    else if(url.startsWith('/api/conversations/')&&url.endsWith('/labels')&&method==='PATCH'){
+      const id=url.split('/')[3],payload=JSON.parse(String(init?.body)) as {labels:string[];revision:number}
+      const current=conversations.find(item=>item.id===id)
+      if(!current||current.revision!==payload.revision)return {ok:false,status:409,json:async()=>({detail:'changed elsewhere'})}
+      current.labels=[...payload.labels];current.revision+=1;body=current
+    }
+    else if(url.startsWith('/api/conversations?'))body={conversations}
+    else if(url==='/api/conversations/conv-alpha')body={...conversations[1],messages:[{id:'msg-preserved',role:'assistant',content:'Synthetic conversation content remains visible.'}]}
     else if(url.startsWith('/api/capabilities/proposals?'))body={proposals:[]}
     else return {ok:false,status:404,json:async()=>({detail:'not found'})}
     return {ok:true,status:200,json:async()=>body}
@@ -58,7 +65,7 @@ it('keeps Resources, Cognition and model in one DOM group in the required order'
   expect(model.parentElement?.parentElement).toBe(group)
 })
 
-it('shows source-backed UTC dates in a compact row and sorts the expanded table by name and creation time',async()=>{
+it('shows source-backed UTC dates and sorts the expanded table by labels, name and creation time',async()=>{
   const {container}=await renderChat()
   openProject()
   await waitFor(()=>expect(container.querySelector('.conversation-compact-row[data-conversation-id="conv-alpha"]')).not.toBeNull())
@@ -72,17 +79,35 @@ it('shows source-backed UTC dates in a compact row and sorts the expanded table 
   const region=await screen.findByRole('region',{name:'Loaded conversations'})
   const rows=()=>Array.from(region.querySelectorAll('tbody tr')).map(row=>row.getAttribute('data-conversation-id'))
   expect(rows()).toEqual(['conv-zulu','conv-gamma','conv-alpha'])
-  expect(region.querySelector('tbody tr[data-conversation-id="conv-gamma"] td:nth-child(2)')?.textContent).toBe('Unavailable')
-  expect(region.querySelector('tbody tr[data-conversation-id="conv-alpha"] td:nth-child(2) time')?.getAttribute('datetime')).toBe('2026-10-02T08:45:00Z')
+  expect(region.querySelector('tbody tr[data-conversation-id="conv-gamma"] td:nth-child(3)')?.textContent).toBe('Unavailable')
+  expect(region.querySelector('tbody tr[data-conversation-id="conv-alpha"] td:nth-child(3) time')?.getAttribute('datetime')).toBe('2026-10-02T08:45:00Z')
   expect(region.querySelectorAll('.conversation-row-actions-button')).toHaveLength(3)
   expect(screen.getByRole('button',{name:'Actions for Alpha synthetic conversation'})).toBeTruthy()
 
+  fireEvent.click(screen.getByRole('button',{name:'Labels'}))
+  expect(rows()).toEqual(['conv-gamma','conv-alpha','conv-zulu'])
+  expect(region.querySelector('th[aria-sort="ascending"]')).not.toBeNull()
   fireEvent.click(region.querySelector('thead button')!)
   expect(rows()).toEqual(['conv-alpha','conv-gamma','conv-zulu'])
   expect(region.querySelector('th[aria-sort="ascending"]')).not.toBeNull()
   fireEvent.click(screen.getByRole('button',{name:/Created/}))
   expect(rows()).toEqual(['conv-zulu','conv-alpha','conv-gamma'])
-  expect(screen.queryByText(/label/i)).toBeNull()
+  expect(region.querySelectorAll('.conversation-label-chip')).toHaveLength(3)
+})
+
+it('edits conversation labels through the scoped API and renders the saved tags',async()=>{
+  await renderChat()
+  openProject()
+  fireEvent.click(screen.getByRole('button',{name:'Expand Project panel'}))
+  const region=await screen.findByRole('region',{name:'Loaded conversations'})
+  vi.spyOn(window,'prompt').mockReturnValue('Release, QA')
+  fireEvent.click(screen.getByRole('button',{name:'Actions for Alpha synthetic conversation'}))
+  fireEvent.click(screen.getByRole('menuitem',{name:'Edit labels'}))
+  await waitFor(()=>expect(calls.some(call=>call.url==='/api/conversations/conv-alpha/labels'&&call.method==='PATCH')).toBe(true))
+  const labels=Array.from(region.querySelectorAll('tbody tr[data-conversation-id="conv-alpha"] .conversation-label-chip')).map(node=>node.textContent)
+  expect(labels).toEqual(['Release','QA'])
+  const request=vi.mocked(fetch).mock.calls.find(([url,init])=>String(url)==='/api/conversations/conv-alpha/labels'&&init?.method==='PATCH')
+  expect(JSON.parse(String(request?.[1]?.body))).toEqual({revision:1,labels:['Release','QA']})
 })
 
 it('closes Project with Escape and its button without losing the selected conversation, draft or content',async()=>{

@@ -9,6 +9,7 @@ from pydantic import BaseModel, ConfigDict, Field, SecretStr, field_validator
 
 from src.agent_tasks import TaskDefinition
 from src.capabilities.manager import agent_tool_catalog
+from src.conversations.library import normalize_conversation_labels
 from src.providers import model_policy, registration
 
 AGENT_TOOL_ALLOWLIST = frozenset(item["id"] for item in agent_tool_catalog())
@@ -277,6 +278,16 @@ class EvaluationRunRequest(BaseModel):
 
 class ConversationRenameRequest(ConversationRevisionRequest):
     title: str = Field(min_length=1, max_length=160)
+
+class ConversationLabelsRequest(ConversationRevisionRequest):
+    model_config = ConfigDict(extra="forbid", strict=True)
+
+    labels: list[str] = Field(max_length=20)
+
+    @field_validator("labels")
+    @classmethod
+    def clean_labels(cls, value: list[str]) -> list[str]:
+        return normalize_conversation_labels(value)
 
 class AgentResponse(BaseModel):
     id: str
