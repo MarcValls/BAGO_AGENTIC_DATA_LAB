@@ -1205,11 +1205,7 @@ export default function AgentChat({ onInspectionSelection, onInspectExecution, o
             projectId={activeProject?.project_id ?? null}
             projectRoot={activeProject?.root ?? null}
             refreshKey={workspaceScopeVersion}
-            workspaceContent={<>
-              <p>Las herramientas usan los permisos guardados del proyecto. Abrir este panel no consulta archivos.</p>
-              <button type="button" onClick={() => onNavigate('workspace')}>Abrir espacio de trabajo</button>
-              <p>Puedes indicar rutas concretas en el mensaje.</p>
-            </>}
+            onBrowseWorkspace={() => onNavigate('workspace')}
           />
         } />}
         {selectedAgent && <DevelopmentPanel key={selectedAgent.id} ownerId={selectedAgent.id} disabled={sending} initialOpen={false} showChanges={Boolean(selectedAgent.config.tools?.some(tool=>tool.startsWith('development_')))} workspaceContent={
@@ -1217,11 +1213,8 @@ export default function AgentChat({ onInspectionSelection, onInspectExecution, o
             projectId={activeProject?.project_id ?? null}
             projectRoot={activeProject?.root ?? null}
             refreshKey={workspaceScopeVersion}
-            workspaceContent={
-              <>
-                <p>Las herramientas usan los permisos guardados del proyecto. Abrir esta sección no consulta archivos.</p>
-                <button type="button" onClick={() => onNavigate('workspace')}>Abrir espacio de trabajo</button>
-                {selectedAgent.config.tools?.some(tool=>['document_','filesystem_','delivery_','development_'].some(prefix=>tool.startsWith(prefix))) && (
+            onBrowseWorkspace={() => onNavigate('workspace')}
+            workspaceContent={selectedAgent.config.tools?.some(tool=>['document_','filesystem_','delivery_','development_'].some(prefix=>tool.startsWith(prefix))) && (
                   <details className="workspace-read-paths project-sidebar-section">
                     <summary>{t('agentTools.workspace')}</summary>
                     <div className="project-sidebar-section-body">
@@ -1249,8 +1242,6 @@ export default function AgentChat({ onInspectionSelection, onInspectExecution, o
                     </div>
                   </details>
                 )}
-              </>
-            }
           />
         } />}
         <div className="chat-agent-panel-slot" ref={setAgentPanelTarget} />

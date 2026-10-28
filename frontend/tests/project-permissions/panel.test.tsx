@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 import React from 'react'
 import {afterEach,beforeEach,expect,it,vi} from 'vitest'
-import {cleanup,fireEvent,render,screen,waitFor} from '@testing-library/react'
+import {cleanup,fireEvent,render,screen,waitFor,within} from '@testing-library/react'
 import ProjectPermissions from '../../src/components/ProjectPermissions'
 
 const snapshot=(state='configured')=>({project_id:'project-1',root:'D:/work/project',binding:{workspace_root:'D:/work/project',revision:4},revision:3,state,read_directories:['src'],write_directories:[]})
@@ -12,18 +12,33 @@ beforeEach(()=>localStorage.clear())
 afterEach(()=>{cleanup();vi.unstubAllGlobals()})
 
 it('keeps the sidebar compact and loads the bound file tree only when the combined panel opens',async()=>{
- const fetch=vi.fn(async(url:unknown)=>match(url).endsWith('/directories')?reply(listing):reply(snapshot()))
+ const fetch=vi.fn(async(url:unknown,init?:RequestInit)=>{
+  if(match(url).endsWith('/directories')){
+   const body=init?.body?JSON.parse(String(init.body)):{}
+   return reply(body.directory==='src'?{...listing,directory:'src',directories:[],files:[{name:'nested.py',path:'src/nested.py'}],entries:[{name:'nested.py',path:'src/nested.py',kind:'file'}]}:listing)
+  }
+  return reply(snapshot())
+ })
+ const onBrowseWorkspace=vi.fn()
  vi.stubGlobal('fetch',fetch)
- render(<ProjectPermissions projectId="project-1" projectRoot="D:/work/project" workspaceContent={<button type="button">Abrir espacio de trabajo</button>}/> )
+ render(<ProjectPermissions projectId="project-1" projectRoot="D:/work/project" onBrowseWorkspace={onBrowseWorkspace}/> )
  expect(await screen.findByText('D:/work/project')).toBeTruthy()
  expect(screen.getByRole('button',{name:'Administrar acceso'})).toBeTruthy()
+ expect(screen.queryByLabelText('Resumen de permisos')).toBeNull()
  expect(fetch).not.toHaveBeenCalledWith('/api/project-permissions/directories',expect.anything())
  fireEvent.click(screen.getByRole('button',{name:'Administrar acceso'}))
- expect(await screen.findByRole('dialog',{name:'Acceso y carpeta de trabajo'})).toBeTruthy()
- expect(await screen.findByRole('button',{name:'Abrir carpeta src'})).toBeTruthy()
+ expect(await screen.findByRole('dialog',{name:'Permisos del proyecto'})).toBeTruthy()
+ fireEvent.click(await screen.findByRole('button',{name:'Expandir carpeta src'}))
+ expect(await screen.findByText('nested.py')).toBeTruthy()
  expect(await screen.findByText('README.md')).toBeTruthy()
- expect(screen.getByRole('button',{name:'Abrir espacio de trabajo'})).toBeTruthy()
+ expect(screen.queryByRole('region',{name:'Carpeta de trabajo'})).toBeNull()
+ expect(screen.getByText('Directorio de trabajo:')).toBeTruthy()
+ expect(document.querySelector('.project-permissions__workspace-summary code')?.textContent).toBe('D:/work/project')
+ fireEvent.click(screen.getByRole('button',{name:'Examinar carpeta de trabajo'}))
+ expect(onBrowseWorkspace).toHaveBeenCalledTimes(1)
+ expect(within(screen.getByRole('dialog',{name:'Permisos del proyecto'})).queryByText(/Las herramientas usan los permisos guardados/)).toBeNull()
  expect(fetch).toHaveBeenCalledWith('/api/project-permissions/directories',expect.objectContaining({method:'POST',body:JSON.stringify({expected_project_id:'project-1',expected_binding:snapshot().binding,expected_revision:3,directory:'.'})}))
+ expect(fetch).toHaveBeenCalledWith('/api/project-permissions/directories',expect.objectContaining({method:'POST',body:JSON.stringify({expected_project_id:'project-1',expected_binding:snapshot().binding,expected_revision:3,directory:'src'})}))
 })
 
 it('saves file and folder scopes only after explicit confirmation, bound to project and revision',async()=>{
@@ -36,7 +51,7 @@ it('saves file and folder scopes only after explicit confirmation, bound to proj
  }))
  render(<ProjectPermissions projectId="project-1" projectRoot="D:/work/project"/> )
  fireEvent.click(await screen.findByRole('button',{name:'Administrar acceso'}))
- await screen.findByRole('button',{name:'Abrir carpeta docs'})
+ await screen.findByRole('button',{name:'Expandir carpeta docs'})
  fireEvent.click(screen.getByLabelText('Permitir lectura en README.md'))
  fireEvent.click(screen.getByLabelText('Permitir escritura en docs'))
  const save=screen.getByRole('button',{name:'Guardar permisos'}) as HTMLButtonElement
@@ -90,14 +105,16 @@ it('shows loading, unknown binding and API errors without granting access',async
  let resolve:(value:any)=>void=()=>{}
  vi.stubGlobal('fetch',vi.fn(()=>new Promise(done=>{resolve=done})))
  const view=render(<ProjectPermissions projectId="project-1" projectRoot="D:/work/project"/> )
- expect(screen.getByText('Consultando estado')).toBeTruthy()
+ expect(screen.getByText('Directorio de trabajo:')).toBeTruthy()
  view.unmount()
  vi.stubGlobal('fetch',vi.fn(async()=>reply(snapshot())))
- render(<ProjectPermissions projectId="project-2" projectRoot="D:/elsewhere"/> )
+ const mismatch=render(<ProjectPermissions projectId="project-2" projectRoot="D:/elsewhere"/> )
  fireEvent.click(await screen.findByRole('button',{name:'Administrar acceso'}))
  expect(await screen.findByText(/No se puede confirmar el proyecto/)).toBeTruthy()
+ mismatch.unmount()
  vi.stubGlobal('fetch',vi.fn(async()=>reply({error:'offline'},503)))
  render(<ProjectPermissions projectId="project-1" projectRoot="D:/work/project"/> )
- expect(await screen.findByText('Estado no disponible')).toBeTruthy()
+ fireEvent.click(await screen.findByRole('button',{name:'Administrar acceso'}))
+ expect(await screen.findByRole('alert')).toBeTruthy()
  resolve(reply(snapshot()))
 })

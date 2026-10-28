@@ -42,7 +42,7 @@ it('delegates one selected producer snapshot and contact to the reviewer, with p
  render(<AgentChat cognitiveMode="baseline" onNavigate={()=>{}} onOpenProviderSettings={()=>{}} onOpenCognitionSettings={()=>{}}/>)
  await screen.findByRole('region',{name:assistant.id});await act(async()=>{})
  await openDelegatedChild('Revisor fixture');await act(async()=>{})
-  fireEvent.click(screen.getByRole('button',{name:/Proyecto/}));fireEvent.click(screen.getByRole('button',{name:'Administrar acceso'}));const accessDialog=await screen.findByRole('dialog',{name:'Acceso y carpeta de trabajo'});fireEvent.click(within(accessDialog).getByText(t('agentTools.workspace'),{selector:'summary'}))
+  fireEvent.click(screen.getByRole('button',{name:/Proyecto/}));fireEvent.click(screen.getByRole('button',{name:'Administrar acceso'}));const accessDialog=await screen.findByRole('dialog',{name:'Permisos del proyecto'});fireEvent.click(within(accessDialog).getByText(t('agentTools.workspace'),{selector:'summary'}))
  fireEvent.change(await screen.findByLabelText(t('agentTools.work')),{target:{value:run.work_id}})
  fireEvent.change(screen.getByLabelText(t('agentTools.contact')),{target:{value:'contact_fixture'}})
  fireEvent.click(screen.getByLabelText(t('agentTools.scopeGrant')))
