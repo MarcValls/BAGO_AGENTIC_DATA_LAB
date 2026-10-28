@@ -141,7 +141,7 @@
 .conversation-row-actions-button:hover, .conversation-row-actions-button:focus-visible { border-color: #78b7f4; background: #203851; }
 .conversation-row-actions-button:focus-visible { outline: 2px solid #78b7f4; outline-offset: 2px; }
 .conversation-library-table-scroll { display: none; box-sizing: border-box; width: 100%; min-width: 0; flex: 1 1 0; overflow: auto; overscroll-behavior: contain; }
-.conversation-library-table { width: 100%; min-width: 620px; border-collapse: collapse; color: #dce7f2; font-size: .88rem; }
+.conversation-library-table { width: 100%; min-width: 840px; border-collapse: collapse; color: #dce7f2; font-size: .88rem; }
 .conversation-library-table th, .conversation-library-table td { padding: 7px 9px; border-bottom: 1px solid #293c53; text-align: left; vertical-align: middle; }
 .conversation-library-table th { position: sticky; top: 0; z-index: 1; color: #d5f0fa; background: #14243a; }
 .conversation-library-table th button { min-height: 32px; padding: 4px 6px; border: 0; color: inherit; background: transparent; font: inherit; font-weight: 650; text-align: left; cursor: pointer; }
@@ -150,11 +150,14 @@
 .conversation-library-table-select.selected { color: #e6fcff; background: #1b4658; }
 .conversation-library-table td time, .conversation-library-table td > span { white-space: nowrap; font-variant-numeric: tabular-nums; }
 .conversation-library-table td .conversation-row-actions-button { margin-inline: auto; }
+.conversation-labels { display: flex; min-width: 120px; max-width: 320px; flex-wrap: wrap; gap: 4px; }
+.conversation-label-chip { max-width: 200px; padding: 2px 6px; overflow: hidden; border: 1px solid #3c6075; border-radius: 3px; color: #d9f3fa; background: #173448; text-overflow: ellipsis; white-space: nowrap; }
+.conversation-labels-empty { color: #9eb0c1; font-size: .82rem; }
 .development-drawer[data-expanded="true"] .conversation-library-list { display: none; }
 .development-drawer[data-expanded="true"] .conversation-library-table-scroll { display: block; }
 @media (max-width: 760px) {
   .conversation-library-table-scroll { max-width: 100%; }
   .conversation-library-table th, .conversation-library-table td { padding: 6px 7px; }
-  .conversation-library-table { min-width: 600px; }
+  .conversation-library-table { min-width: 760px; }
   .conversation-row-actions-button { width: 38px; min-width: 38px; }
 }
