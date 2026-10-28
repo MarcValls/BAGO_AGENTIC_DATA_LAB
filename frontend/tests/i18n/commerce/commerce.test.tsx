@@ -162,6 +162,14 @@ describe('commerce presentation catalogs and live preference',()=>{
   render(<AgentChat onNavigate={()=>{}} onOpenProviderSettings={()=>{}} onOpenCognitionSettings={()=>{}} cognitiveMode="baseline" />)
   await waitFor(()=>expect(fetcher.mock.calls.some(([url])=>url.includes('/agents/list'))).toBe(true))
   const editor=screen.getByLabelText('Mensaje al asistente o agente seleccionado') as HTMLTextAreaElement
+  const actions=editor.closest('form')!.querySelector('.chat-composer-actions')!
+  const resources=within(actions).getByText('Recursos').closest('details')!
+  const cognition=within(actions).getByLabelText('Abrir configuración de cognición y contexto')
+  const model=within(actions).getByLabelText('Modelo del orquestador')
+  expect(actions.querySelector('.chat-mode-header')).toBeNull()
+  expect(resources.compareDocumentPosition(cognition)&Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
+  expect(cognition.compareDocumentPosition(model)&Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
+  expect(resources.closest('.chat-context-controls')).toBe(cognition.closest('.chat-context-controls'))
   fireEvent.change(editor,{target:{value:'User prompt must stay original'}})
   expect(screen.queryByLabelText('Permitir lectura de archivos del proyecto')).toBeNull()
   expect(screen.queryByLabelText('Rutas relativas al proyecto')).toBeNull()
