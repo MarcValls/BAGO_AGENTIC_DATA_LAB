@@ -48,10 +48,10 @@ type WorkspaceSource = { source_type?: 'public_web' | 'document'; locations?:Arr
 type WorkspaceReadEvent = { filesystem_proposal?:FilesystemProposal; delivery_review?:{review_id:string;decision:string;errors:string[];missing:string[];pending:string[];send_executed:boolean}; production?:{work_id:string}; tool_name?:string; receipt_id?:string; executed?:boolean; outcome?:string; next_cursor?:string|null; corpus_coverage?:{total:number;offset:number;batch_selected:number;complete:boolean}; output?:{download_url?:string;sha256?:string;path?:string}; decision: 'ALLOW' | 'DENY' | 'FAIL'; kind?: string; path: string | null; reason_code?: string; file_sha256?: string; content_sha256?: string; files_scanned?: number; files_skipped?: number; bytes_scanned?: number; lines_scanned?: number; finding_count?: number; truncated?: boolean; manifest_sha256?: string }
 type CognitiveTrace = { mode: 'baseline' | 'bago5'; enabled: boolean; profile?: string | null; method?: string; focus: Array<{ id: string; kind: string; label: string; score: number }>; capacity?: number; max_hops?: number; trace_id?: string; trace_state?: string }
 type Message = { uiContent?:Error; workspaceWriteProposal?:WriteProposalSummary; workspaceWriteProposalError?:string; status?: string; workspaceProposal?: WorkspaceProposal; communicationDraft?: CommunicationDraft; communicationDraftId?: string; agentDelegation?: AgentDelegationProposal; id: string; role: 'user' | 'assistant'; content: string; trace?: MessageTrace; cognitiveTrace?: CognitiveTrace; sources?: WorkspaceSource[]; readEvents?: WorkspaceReadEvent[]; agentBuilderDraft?: AgentConfig; inlineJobHistory?: boolean; inlineDirectoryScan?: boolean; scanOutcome?: ScanOutcome; pendingNavigation?: ExistingView; navigationDecision?: 'accepted' | 'declined' }
-type ConversationSummary = { id: string; owner_kind: 'assistant' | 'agent'; owner_id: string; title: string; status: 'active' | 'archived' | 'deleted'; created_at?: string; updated_at: string; revision: number }
+type ConversationSummary = { id: string; owner_kind: 'assistant' | 'agent'; owner_id: string; title: string; status: 'active' | 'archived' | 'deleted'; labels?: string[]; created_at?: string; updated_at: string; revision: number }
 type StoredConversation = ConversationSummary & { messages: Array<{ id: string; role: 'user' | 'assistant'; content: string; status?: string; references?: { agent_delegation?: AgentDelegationProposal; workspace_write_proposal?:unknown; workspace_proposal?: WorkspaceProposal; communication_draft_id?: string; communication_draft?: CommunicationDraft; trace?: { trace_id?: string; trace_state?: string; jaeger_trace_id?: string; jaeger_url?: string } & Partial<ScanTrace>; cognitive_trace?: CognitiveTrace; sources?: WorkspaceSource[]; read_events?: Array<WorkspaceReadEvent & Partial<ScanReceipt>>; scan_result?: ScanReport; control_capability?: string } }> }
 type LibraryMode = 'active' | 'archived' | 'deleted'
-type ConversationSortKey = 'title' | 'created_at' | 'updated_at'
+type ConversationSortKey = 'labels' | 'title' | 'created_at' | 'updated_at'
 type ConversationSort = { key: ConversationSortKey; direction: 'asc' | 'desc' }
 type ControlOperation = 'chat' | 'help' | 'list_agents' | 'draft_agent' | 'navigate' | 'list_capabilities' | 'propose_capability'
 type ExistingView = 'communications' | 'whatsapp_settings' | 'inspector' | 'builder' | 'chat' | 'workspace' | 'runner' | 'control' | 'jobs' | 'traces' | 'summary' | 'retrieval' | 'authorization' | 'evaluation' | 'evaluation_lab' | 'provider_settings' | 'cognition_settings' | 'capabilities'
@@ -736,9 +736,28 @@ export default function AgentChat({ onInspectionSelection, onInspectExecution, o
     }
   }
 
+  const manageConversationLabels = async (target: ConversationSummary) => {
+    const raw = window.prompt(t('commerce.labels_prompt'), (target.labels ?? []).join(', '))
+    if (raw === null) return
+    const labels = raw.split(',').map(label => label.trim()).filter(Boolean)
+    try {
+      const response = await fetch(`/api/conversations/${encodeURIComponent(target.id)}/labels`, {
+        method: 'PATCH', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ revision: target.revision, labels }),
+      })
+      if (!response.ok) throw await responseError(response)
+      const updated = await response.json() as StoredConversation
+      if (activeConversation?.id === target.id) applyConversation(updated)
+      await refreshConversationList()
+    } catch (cause) {
+      setLibraryError(cause instanceof Error ? cause : 'commerce.conversation_labels_could_not_be_updated')
+      if (cause instanceof Error && cause.message.includes('changed elsewhere')) await refreshConversationList()
+    }
+  }
+
   const showConversationContextMenu = (conversation: ConversationSummary, x: number, y: number) => {
     const menuWidth = 184
-    const menuHeight = conversation.status === 'active' ? 132 : 104
+    const menuHeight = conversation.status === 'deleted' ? 104 : 164
     setConversationContextMenu({
       conversation,
       x: Math.max(8, Math.min(x, window.innerWidth - menuWidth - 8)),
@@ -1068,6 +1087,8 @@ export default function AgentChat({ onInspectionSelection, onInspectExecution, o
     let result = 0
     if (conversationSort.key === 'title') {
       result = a.title.localeCompare(b.title, getLocale(), {sensitivity: 'base', numeric: true})
+    } else if (conversationSort.key === 'labels') {
+      result = (a.labels ?? []).join(', ').localeCompare((b.labels ?? []).join(', '), getLocale(), {sensitivity: 'base', numeric: true})
     } else {
       const first = conversationActivity(a[conversationSort.key])
       const second = conversationActivity(b[conversationSort.key])
@@ -1151,12 +1172,16 @@ export default function AgentChat({ onInspectionSelection, onInspectExecution, o
                   <caption className="visually-hidden">{t('commerce.conversation_library_table_caption')}</caption>
                   <thead><tr>
                     {sortHeader('title', t('commerce.conversation_name'))}
+                    {sortHeader('labels', t('commerce.conversation_labels'))}
                     {sortHeader('created_at', t('commerce.conversation_created'))}
                     {sortHeader('updated_at', t('commerce.conversation_last_activity'))}
                     <th scope="col" aria-label={t('commerce.conversation_actions_heading')}></th>
                   </tr></thead>
                   <tbody>{orderedConversationList.map(conversation => <tr data-conversation-id={conversation.id} data-selected={activeConversation?.id === conversation.id} key={`table-${conversation.id}`}>
                     <td>{renderConversationSelection(conversation, false)}</td>
+                      <td><div className="conversation-labels">{(conversation.labels ?? []).length > 0
+                        ? (conversation.labels ?? []).map(label => <span className="conversation-label-chip" key={`${conversation.id}-${label}`}>{label}</span>)
+                        : <span className="conversation-labels-empty">{t('commerce.no_labels')}</span>}</div></td>
                     <td>{conversationTime(conversation.created_at, 'commerce.created_date')}</td>
                     <td>{conversationTime(conversation.updated_at, 'commerce.last_activity_date')}</td>
                     <td>{renderConversationActions(conversation)}</td>
@@ -1183,6 +1208,7 @@ export default function AgentChat({ onInspectionSelection, onInspectExecution, o
                   items[(currentIndex + direction + items.length) % items.length]?.focus()
                 }}
               >
+                {conversationContextMenu.conversation.status !== 'deleted' && <button type="button" role="menuitem" onClick={() => { const { conversation } = conversationContextMenu; setConversationContextMenu(null); void manageConversationLabels(conversation) }}>{t('commerce.edit_labels')}</button>}
                 {conversationContextMenu.conversation.status !== 'deleted' && <button type="button" role="menuitem" onClick={() => { const { conversation } = conversationContextMenu; setConversationContextMenu(null); void manageConversation('rename', conversation) }}>{t('commerce.rename')}</button>}
                 {conversationContextMenu.conversation.status === 'active' && <button type="button" role="menuitem" onClick={() => { const { conversation } = conversationContextMenu; setConversationContextMenu(null); void manageConversation('archive', conversation) }}>{t('commerce.archive')}</button>}
                 {conversationContextMenu.conversation.status !== 'deleted' && <button type="button" role="menuitem" onClick={() => { const { conversation } = conversationContextMenu; setConversationContextMenu(null); void manageConversation('delete', conversation) }}>{t('commerce.move_to_trash')}</button>}
@@ -1256,19 +1282,20 @@ export default function AgentChat({ onInspectionSelection, onInspectExecution, o
         </div>
         {humanCorrection && <HumanCorrectionReview source={humanCorrection.source} current={correctionSourceCurrent(humanCorrection.source)} busy={sending} permissions={correctionPermissions} permissionIdentity={correctionPermissionIdentity} onCancel={closeHumanCorrection} onSend={prepared=>void sendMessage(undefined,prepared)}/>}
         <form className="control-chat-composer" onSubmit={(event) => void sendMessage(event)}><label className="visually-hidden" htmlFor="control-chat-input">{t('commerce.message_the_assistant_or_selected_agent')}</label>
-          <div className="chat-composer-actions">
-            <label className="workspace-read-toggle"><input type="checkbox" checked={allowPublicWebRead} onChange={event => setAllowPublicWebRead(event.target.checked)} disabled={sending || Boolean(activeConversation && activeConversation.status !== 'active')} /><span>{t('commerce.allow_public_web_reading')}</span></label>
-            <div className="chat-context-controls">
-              <ChatTools conversationId={activeConversation?.id} onOpenCommunication={onOpenCommunication} />
-              <button type="button" onClick={onOpenCognitionSettings} aria-label={t('commerce.open_cognition_and_context_settings')}>{t('commerce.cognition')} {cognitiveMode === 'bago5' ? t('commerce.bago5_experimental') : t('commerce.baseline')} <span aria-hidden="true">↗</span></button>
-            {!selectedAgent && <label className="chat-provider-picker"><span className="visually-hidden">{t('commerce.orchestrator_model')}</span><select aria-label={t('commerce.orchestrator_model')} value={!chatProviderSelectionFailed && chatProviderSelection ? `${chatProviderSelection.provider_id}|${chatProviderSelection.model_id}` : ''} onChange={event => void changeChatProvider(event.target.value)} aria-busy={savingChatProvider} data-provider-selection-state={savingChatProvider ? 'pending' : chatProviderSelectionFailed ? 'failed' : chatProviderSelection ? 'confirmed' : 'unselected'} disabled={sending || savingChatProvider || chatProviders.length === 0}><option value="" disabled>{chatProviders.length ? t('commerce.select_a_model') : t('commerce.configure_a_provider')}</option>{chatProviders.map(provider => <option key={`${provider.provider_id}|${provider.model_id}`} value={`${provider.provider_id}|${provider.model_id}`}>{provider.label} · {provider.display_name ?? provider.model_id}{provider.state === 'configured_unverified' ? t('commerce.unverified') : ''}</option>)}</select></label>}
-            </div>
-          </div><div className="chat-composer-input"><textarea ref={composerRef} id="control-chat-input" rows={2} value={input} onChange={(event) => setInput(event.target.value)} onKeyDown={(event) => {
+          <div className="chat-composer-input"><textarea ref={composerRef} id="control-chat-input" rows={2} value={input} onChange={(event) => setInput(event.target.value)} onKeyDown={(event) => {
           if (event.key !== 'Enter' || event.shiftKey || event.nativeEvent.isComposing || event.repeat) return
           event.preventDefault()
           void sendMessage()
         }} placeholder={activeConversation?.status && activeConversation.status !== 'active' ? t('commerce.restore_or_start_a_new_conversation') : selectedAgent ? t('commerce.message_agent',{name:selectedAgent.config.name}) : t('commerce.message_the_assistant')} disabled={sending || Boolean(activeConversation && activeConversation.status !== 'active')} />
             <button className="primary-action" type="submit" disabled={sending || orchestratorSelectionBlocked || !input.trim() || Boolean(activeConversation && activeConversation.status !== 'active')}>{sending ? 'Sending.' : t('commerce.send')}</button>
+          </div>
+          <div className="chat-composer-actions">
+            <label className="workspace-read-toggle"><input type="checkbox" checked={allowPublicWebRead} onChange={event => setAllowPublicWebRead(event.target.checked)} disabled={sending || Boolean(activeConversation && activeConversation.status !== 'active')} /><span>{t('commerce.allow_public_web_reading')}</span></label>
+            <div className="chat-context-controls">
+              <ChatTools conversationId={activeConversation?.id} onOpenCommunication={onOpenCommunication} />
+              <button type="button" onClick={onOpenCognitionSettings} aria-label={t('commerce.open_cognition_and_context_settings')}>{t('commerce.cognition')} {cognitiveMode === 'bago5' ? t('commerce.bago5_experimental') : t('commerce.baseline')} <span aria-hidden="true">↗</span></button>
+              {!selectedAgent && <label className="chat-provider-picker"><span className="visually-hidden">{t('commerce.orchestrator_model')}</span><select aria-label={t('commerce.orchestrator_model')} value={!chatProviderSelectionFailed && chatProviderSelection ? `${chatProviderSelection.provider_id}|${chatProviderSelection.model_id}` : ''} onChange={event => void changeChatProvider(event.target.value)} aria-busy={savingChatProvider} data-provider-selection-state={savingChatProvider ? 'pending' : chatProviderSelectionFailed ? 'failed' : chatProviderSelection ? 'confirmed' : 'unselected'} disabled={sending || savingChatProvider || chatProviders.length === 0}><option value="" disabled>{chatProviders.length ? t('commerce.select_a_model') : t('commerce.configure_a_provider')}</option>{chatProviders.map(provider => <option key={`${provider.provider_id}|${provider.model_id}`} value={`${provider.provider_id}|${provider.model_id}`}>{provider.label} · {provider.display_name ?? provider.model_id}{provider.state === 'configured_unverified' ? t('commerce.unverified') : ''}</option>)}</select></label>}
+            </div>
           </div>
           {allowPublicWebRead && <section aria-label={t('commerce.public_web_reading_scope')}><label className="workspace-read-paths">{t('commerce.entry_https_urls_one_per_line')}<textarea rows={3} value={publicWebUrls} onChange={event => setPublicWebUrls(event.target.value)} placeholder="https://www.ejemplo.com/" maxLength={16384} disabled={sending} /></label><p>{t('commerce.this_turn_only_public_pages_from_these_origins')}</p><ul aria-label={t('commerce.requested_web_origins')}>{[...new Set(publicWebUrls.split(/\r?\n/).map(value => {try {return new URL(value.trim()).origin} catch {return value.trim() ? t('commerce.invalid_url',{url:value.trim()}) : ''}}).filter(Boolean))].map(origin => <li key={origin}><code>{origin}</code></li>)}</ul></section>}
 

@@ -40,22 +40,23 @@
 
 .control-chat .control-chat-transcript-frame { flex: 1 1 0; min-height: 0; }
 
-.chat-composer-actions:has(> .workspace-read-toggle) { justify-content: flex-start; gap: 8px; }
+.chat-composer-actions:has(> .workspace-read-toggle) { justify-content: flex-start; align-items: center; flex-wrap: nowrap; gap: 4px; min-width: 0; margin-top: 7px; }
 
 .chat-composer-actions > .workspace-read-toggle {
   box-sizing: border-box;
-  flex: 0 1 auto;
+  flex: 0 0 auto;
   min-width: 0;
   max-width: 100%;
   min-height: 32px;
   align-items: center;
-  gap: 7px;
-  padding: 6px 9px;
+  gap: 6px;
+  padding: 4px 5px;
   border: 1px solid var(--bago-ui-border-subtle, #26364b);
   border-radius: var(--bago-ui-radius-sm, 4px);
   background: var(--bago-ui-surface, #0d1726);
   color: var(--bago-ui-text-soft, #c4d1df);
-  font-size: .73rem;
+  font-size: .68rem;
+  white-space: nowrap;
   line-height: 1.35;
   transition: border-color .15s ease, background-color .15s ease, color .15s ease;
 }
@@ -68,7 +69,7 @@
   cursor: inherit;
 }
 
-.chat-composer-actions > .workspace-read-toggle > span { min-width: 0; overflow-wrap: anywhere; }
+.chat-composer-actions > .workspace-read-toggle > span { min-width: 0; white-space: nowrap; }
 
 .chat-composer-actions > .workspace-read-toggle:hover:not(:has(input:disabled)) { border-color: #477988; background: #142c39; color: #e3f7fa; }
 
@@ -100,20 +101,20 @@
 
 .control-chat .control-chat-window > .window-panel-content:has(.chat-agent-panel[open]) { padding-right: 0; }
 
-/* Context and model controls live together above the composer. */
-.chat-composer-actions > .workspace-read-toggle { margin-right: auto; }
-.chat-context-controls { display: flex; flex: 0 0 auto; align-items: center; gap: 8px; }
-.chat-context-controls > button { min-height: 32px; padding: 5px 9px; border: 1px solid #344b67; border-radius: 4px; background: #14243a; color: #b9cee5; font-size: .72rem; cursor: pointer; white-space: nowrap; }
+/* Keep project, cognition and model controls together below the message field. */
+.chat-context-controls { display: flex; flex: 1 1 auto; align-items: center; flex-wrap: nowrap; gap: 4px; min-width: 0; }
+.chat-context-controls > button { flex: 0 0 auto; min-height: 32px; padding: 4px 5px; border: 1px solid #344b67; border-radius: 4px; background: #14243a; color: #b9cee5; font-size: .68rem; cursor: pointer; white-space: nowrap; }
 .chat-context-controls > button:focus-visible { outline: 2px solid #78b2f0; outline-offset: 3px; }
 .chat-provider-picker { margin-left: 0; }
-.chat-context-controls { min-width: 0; flex-wrap: wrap; margin-left: auto; }
-.chat-context-controls .chat-provider-picker { flex: 0 1 280px; min-width: min(100%, 180px); }
-.chat-context-controls .chat-provider-picker select { min-width: 0; }
+.control-chat-composer .chat-tools-menu > summary { padding-right: 7px; padding-left: 7px; }
+.chat-context-controls .chat-provider-picker { flex: 1 1 180px; min-width: 150px; max-width: 280px; }
+.chat-context-controls .chat-provider-picker select { box-sizing: border-box; width: 100%; min-width: 0; text-overflow: ellipsis; }
+.control-chat-composer .chat-tools-options { top: auto; bottom: calc(100% + 6px); }
 .chat-tools-options { max-height: min(38vh, 300px); overflow-y: auto; overscroll-behavior: contain; }
 @media (max-width: 760px) {
-  .chat-composer-actions > .workspace-read-toggle { margin-right: 0; }
-  .chat-context-controls { flex: 1 1 100%; margin-left: 0; }
-  .chat-context-controls .chat-provider-picker { flex: 1 1 100%; }
+  .chat-composer-actions:has(> .workspace-read-toggle) { overflow-x: auto; overscroll-behavior-x: contain; scrollbar-width: thin; }
+  .chat-context-controls { flex: 0 0 auto; }
+  .chat-context-controls .chat-provider-picker { flex: 0 0 150px; }
 }
 
 /* R3 Project bar occupies the chat work-area bounds without covering navigation. */
@@ -141,7 +142,7 @@
 .conversation-row-actions-button:hover, .conversation-row-actions-button:focus-visible { border-color: #78b7f4; background: #203851; }
 .conversation-row-actions-button:focus-visible { outline: 2px solid #78b7f4; outline-offset: 2px; }
 .conversation-library-table-scroll { display: none; box-sizing: border-box; width: 100%; min-width: 0; flex: 1 1 0; overflow: auto; overscroll-behavior: contain; }
-.conversation-library-table { width: 100%; min-width: 620px; border-collapse: collapse; color: #dce7f2; font-size: .88rem; }
+.conversation-library-table { width: 100%; min-width: 840px; border-collapse: collapse; color: #dce7f2; font-size: .88rem; }
 .conversation-library-table th, .conversation-library-table td { padding: 7px 9px; border-bottom: 1px solid #293c53; text-align: left; vertical-align: middle; }
 .conversation-library-table th { position: sticky; top: 0; z-index: 1; color: #d5f0fa; background: #14243a; }
 .conversation-library-table th button { min-height: 32px; padding: 4px 6px; border: 0; color: inherit; background: transparent; font: inherit; font-weight: 650; text-align: left; cursor: pointer; }
@@ -150,11 +151,14 @@
 .conversation-library-table-select.selected { color: #e6fcff; background: #1b4658; }
 .conversation-library-table td time, .conversation-library-table td > span { white-space: nowrap; font-variant-numeric: tabular-nums; }
 .conversation-library-table td .conversation-row-actions-button { margin-inline: auto; }
+.conversation-labels { display: flex; min-width: 120px; max-width: 320px; flex-wrap: wrap; gap: 4px; }
+.conversation-label-chip { max-width: 200px; padding: 2px 6px; overflow: hidden; border: 1px solid #3c6075; border-radius: 3px; color: #d9f3fa; background: #173448; text-overflow: ellipsis; white-space: nowrap; }
+.conversation-labels-empty { color: #9eb0c1; font-size: .82rem; }
 .development-drawer[data-expanded="true"] .conversation-library-list { display: none; }
 .development-drawer[data-expanded="true"] .conversation-library-table-scroll { display: block; }
 @media (max-width: 760px) {
   .conversation-library-table-scroll { max-width: 100%; }
   .conversation-library-table th, .conversation-library-table td { padding: 6px 7px; }
-  .conversation-library-table { min-width: 600px; }
+  .conversation-library-table { min-width: 760px; }
   .conversation-row-actions-button { width: 38px; min-width: 38px; }
 }
