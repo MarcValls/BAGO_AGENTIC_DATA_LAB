@@ -1,8 +1,10 @@
 # README generation contract
 
-README.md is a generated SVG-only visual landing, not a second source
-of truth. README_DETAILS.md is the full generated technical reference at the
-repository root, preserving the relative URLs and comprehensive evidence.
+README.md is a generated, navigable landing, not a second source of truth. It
+combines native Markdown links and section anchors with a linked SVG hero and
+collapsible visual panels. README_DETAILS.md is the full generated technical
+reference at the repository root, preserving relative URLs and comprehensive
+evidence.
 
 The generator combines:
 
@@ -84,10 +86,14 @@ Do not promote navigation to an end-to-end Chat-to-Inspect PASS. The visible
 remain part of the demonstration. A UI excerpt hash identifies its numbered
 excerpt; the complete input-file hash identifies different bytes.
 
-The SVG landing contains nine versioned 1200-pixel-wide panels under
+The landing contains nine versioned 1200-pixel-wide panels under
 `docs/assets/readme-banner/`, composed from `docs/readme_svg_manifest.json`.
-Every visible title, diagram, command, card and grid in README.md is drawn
-inside SVG; the README itself contains only linked image elements.
+The manifest also owns the title, summary and grouped quick links. The hero
+is visible on load; the visual map and topic panels are progressively revealed
+with native `<details>` controls. Each topic has a visible text link as well as
+a clickable image, so navigation does not depend on finding a hotspot in art.
+The Markdown title and quick links provide normal GitHub anchors and keyboard-
+accessible navigation.
 
 The complete, accessible narrative, tables, Mermaid, screenshots,
 source provenance and dated verification remain in `README_DETAILS.md`,
@@ -146,7 +152,12 @@ against its sources before closing work:
 
 - Panels are safe, standalone SVG graphics (no scripts, raster, external
   resources or `foreignObject`), with local links and alternative text.
-- README.md contains no visible Markdown prose or Markdown tables.
+- README.md contains a Markdown title, grouped direct links to local guides,
+  anchors to the map/gallery, and a visible link to the complete reference.
+- The hero is visible by default; the map and topic images use collapsed
+  `<details>` sections with a textual documentation link.
+- Navigation targets are local Markdown files; unsafe and missing targets fail
+  generation.
 - README_DETAILS.md retains all original source-bound material and links.
 - Both generated files must match the source-driven renderer.
 - Visual QA on GitHub is a separate check; do not call it PASS if NOT_RUN.

@@ -27,9 +27,10 @@ The person or agent closing any repository work is responsible for refreshing
 the generated README before reporting completion:
 
 1. Run `python scripts/generate_dynamic_readme.py` after the work is complete.
-   This renders the SVG-only `README.md` from its vector-panel manifest and
-   the complete `README_DETAILS.md` from canonical sources. The generator
-   runs the full test suite before writing either generated file.
+   This renders the navigable `README.md` from its title, summary, quick-link
+   and vector-panel manifest, plus the complete `README_DETAILS.md` from
+   canonical sources. The generator runs the full test suite before writing
+   either generated file.
 2. Run `python scripts/generate_dynamic_readme.py --check --skip-tests` and
    require PASS.
 3. Include both results in the closure evidence. If either command fails, keep
@@ -37,5 +38,5 @@ the generated README before reporting completion:
    incomplete.
 
 Never edit `README.md` or `README_DETAILS.md` manually. Change the owner
-canonical source or `docs/readme_svg_manifest.json` and its linked SVG panels,
-then regenerate and compare both outputs.
+canonical source or `docs/readme_svg_manifest.json`, its navigation targets,
+and linked SVG panels, then regenerate and compare both outputs.

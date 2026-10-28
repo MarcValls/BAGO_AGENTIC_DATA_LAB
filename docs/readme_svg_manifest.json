@@ -1,5 +1,17 @@
 {
-  "schema": "bago.readme.svg.landing.v1",
+  "schema": "bago.readme.svg.landing.v2",
+  "title": "BAGO Agentic Data Lab",
+  "summary": "Agentes, datos y ejecución gobernada con enlaces directos, paneles visuales desplegables y documentación completa.",
+  "navigation": [
+    {"category": "Empezar", "label": "Instalación local", "target": "docs/agent-chat-control/LOCAL_SETUP.md"},
+    {"category": "Explorar", "label": "Chat y frontend", "target": "docs/readme_frontend.md"},
+    {"category": "Explorar", "label": "Demo guiada", "target": "docs/one_command_demo.md"},
+    {"category": "Entender", "label": "Arquitectura", "target": ".bago/canon/ARCHITECTURE.md"},
+    {"category": "Entender", "label": "Datos y RAG", "target": "docs/governed_rag.md"},
+    {"category": "Operar", "label": "Ejecución gobernada", "target": "docs/governed-execution/GEX_V1_NORMATIVE_CONTRACT.md"},
+    {"category": "Operar", "label": "Trazas y evaluación", "target": "docs/observability_evals.md"},
+    {"category": "Completo", "label": "Guía completa", "target": "README_DETAILS.md"}
+  ],
   "design": "BAGO / ADL · vector panels",
   "panels": [
     {

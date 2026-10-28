@@ -1,7 +1,6 @@
-"""SVG-only README coverage and trust boundaries."""
+"""Navigable SVG README coverage and trust boundaries."""
 import json
 from pathlib import Path
-import re
 import sys
 import xml.etree.ElementTree as ET
 
@@ -12,14 +11,23 @@ sys.path.insert(0, str(ROOT / "scripts"))
 import generate_dynamic_readme as generator  # noqa: E402
 
 
-def test_svg_readme_uses_only_linked_vector_images_and_keeps_complete_reference():
+def test_readme_landing_has_direct_links_and_progressive_svg_panels():
     visual = (ROOT / "README.md").read_text(encoding="utf-8")
     full = (ROOT / "README_DETAILS.md").read_text(encoding="utf-8")
     assert visual == generator.render_svg_landing()
-    panels = json.loads((ROOT / "docs/readme_svg_manifest.json").read_text(encoding="utf-8"))["panels"]
+    manifest = json.loads((ROOT / "docs/readme_svg_manifest.json").read_text(encoding="utf-8"))
+    panels = manifest["panels"]
+    assert manifest["schema"] == "bago.readme.svg.landing.v2"
     assert len(panels) == visual.count('<img src="docs/assets/readme-banner/') == 9
-    assert not re.search(r"^#{1,6} |^\|", visual, re.MULTILINE)
-    assert "<table" not in visual and chr(96) * 3 not in visual
+    assert visual.startswith("# BAGO Agentic Data Lab\n")
+    assert "## Accesos directos" in visual
+    assert "[Mapa visual](#mapa-visual)" in visual
+    assert "[Galería por tema](#galeria-por-tema)" in visual
+    assert visual.count("<details>") == 8
+    for item in manifest["navigation"]:
+        assert f'[{item["label"]}]({item["target"]})' in visual
+        assert (ROOT / item["target"].split("#", 1)[0]).is_file()
+    assert "<summary>" in visual
     for heading in (
         "## El laboratorio", "## La aplicación frontend", "## Datos y conocimiento",
         "## Tests y verificación", "## Estado y roadmap",
@@ -50,16 +58,25 @@ def test_svg_panels_are_self_contained_and_preserve_visual_identity():
         assert (ROOT / item["target"].split("#")[0]).is_file()
 
 
-@pytest.mark.parametrize("mutation", ["escape", "external", "no_alt"])
+@pytest.mark.parametrize(
+    "mutation",
+    ["escape", "external", "no_alt", "nav_escape", "nav_external", "nav_bad_label"],
+)
 def test_vector_manifest_rejects_bad_paths_and_inaccessible_panels(tmp_path, monkeypatch, mutation):
     original = json.loads((ROOT / "docs/readme_svg_manifest.json").read_text(encoding="utf-8"))
-    item = original["panels"][0]
+    item = original["panels"][0] if not mutation.startswith("nav_") else original["navigation"][0]
     if mutation == "escape":
         item["asset"] = "docs/assets/readme-banner/../../unsafe.svg"
     elif mutation == "external":
         item["target"] = "https://attacker.example"
-    else:
+    elif mutation == "no_alt":
         item["alt"] = ""
+    elif mutation == "nav_escape":
+        item["target"] = "docs/../README_DETAILS.md"
+    elif mutation == "nav_external":
+        item["target"] = "https://attacker.example"
+    else:
+        item["label"] = "[external link](https://attacker.example)"
     path = tmp_path / "manifest.json"
     path.write_text(json.dumps(original), encoding="utf-8")
     monkeypatch.setattr(generator, "SVG_LANDING_MANIFEST_PATH", path)

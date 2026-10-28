@@ -1201,20 +1201,64 @@ def render_readme(
     return "\n".join(lines)
 
 
+def _validate_local_markdown_target(target: object, context: str) -> str:
+    if not isinstance(target, str) or not target:
+        raise ValueError(f"Missing Markdown destination: {context}")
+    target_path, separator, fragment = target.partition("#")
+    if not re.fullmatch(r"[A-Za-z0-9_./-]+\.md", target_path):
+        raise ValueError(f"Unsafe destination: {target}")
+    if ".." in Path(target_path).parts:
+        raise ValueError(f"Unsafe destination: {target}")
+    if separator and not re.fullmatch(r"[A-Za-z0-9_.-]+", fragment):
+        raise ValueError(f"Unsafe destination fragment: {target}")
+    if not (REPO_ROOT / target_path).is_file():
+        raise FileNotFoundError(f"Missing destination: {target_path}")
+    return target
+
+
 def render_svg_landing() -> str:
-    """Build the GitHub SVG landing from local validated vector panels.
+    """Build a compact, navigable GitHub landing with validated SVG panels.
 
     render_readme() remains the source-driven full technical document.
     SVG artwork is editable versioned source, not a claim of runtime status.
     """
     config = _read_json(SVG_LANDING_MANIFEST_PATH)
-    if config.get("schema") != "bago.readme.svg.landing.v1":
+    if config.get("schema") != "bago.readme.svg.landing.v2":
         raise ValueError("Unsupported SVG README manifest")
     panels = config.get("panels")
     if not isinstance(panels, list) or len(panels) < 8:
         raise ValueError("Vector landing requires eight or more panels")
+    title = config.get("title")
+    summary = config.get("summary")
+    if not isinstance(title, str) or not re.fullmatch(r"[\w][\w &+-]{0,79}", title):
+        raise ValueError("Invalid landing title")
+    if not isinstance(summary, str) or not summary.strip() or len(summary) > 180:
+        raise ValueError("Invalid landing summary")
+
+    navigation = config.get("navigation")
+    if not isinstance(navigation, list) or len(navigation) < 6:
+        raise ValueError("Navigable landing requires six or more direct links")
+    navigation_groups: dict[str, list[str]] = {}
+    seen_labels: set[str] = set()
+    for item in navigation:
+        if not isinstance(item, dict):
+            raise ValueError("Malformed README navigation link")
+        category, label, target = (item.get(key) for key in ("category", "label", "target"))
+        if (
+            not isinstance(category, str)
+            or not re.fullmatch(r"[\w][\w /&+-]{0,39}", category)
+            or not isinstance(label, str)
+            or not re.fullmatch(r"[\w][\w /&+-]{0,59}", label)
+        ):
+            raise ValueError("Unsafe or missing README navigation label")
+        if label in seen_labels:
+            raise ValueError(f"Duplicate README navigation label: {label}")
+        seen_labels.add(label)
+        target = _validate_local_markdown_target(target, label)
+        navigation_groups.setdefault(category, []).append(f"[{label}]({target})")
+
     seen: set[str] = set()
-    pieces: list[str] = ['<div align="center">']
+    rendered_panels: list[dict[str, str]] = []
     for item in panels:
         if not isinstance(item, dict):
             raise ValueError("Malformed SVG panel")
@@ -1227,13 +1271,7 @@ def render_svg_landing() -> str:
         ):
             raise ValueError(f"Unsafe or duplicate vector panel: {asset}")
         seen.add(asset)
-        target_path, sep, fragment = target.partition("#")
-        if not re.fullmatch(r"[A-Za-z0-9_./-]+\.md", target_path):
-            raise ValueError(f"Unsafe destination: {target}")
-        if ".." in Path(target_path).parts or (sep and not fragment):
-            raise ValueError(f"Unsafe destination: {target}")
-        if not (REPO_ROOT / target_path).is_file():
-            raise FileNotFoundError(f"Missing destination: {target_path}")
+        target = _validate_local_markdown_target(target, asset)
         source = REPO_ROOT / asset
         root = ET.fromstring(source.read_text(encoding="utf-8"))
         if root.tag != "{http://www.w3.org/2000/svg}svg" or not root.get("viewBox"):
@@ -1248,13 +1286,63 @@ def render_svg_landing() -> str:
                     raise ValueError(f"Unsafe SVG attribute in {asset}: {key}")
                 if "url(" in value.lower() and "url(#" not in value.lower():
                     raise ValueError(f"External resource in SVG: {asset}")
-        pieces.append(
-            f'<a href="{html_escape(target, quote=True)}">'
-            f'<img src="{html_escape(asset, quote=True)}" width="100%" '
-            f'alt="{html_escape(alt, quote=True)}" /></a>'
+        rendered_panels.append({"asset": asset, "target": target, "alt": alt})
+
+    if not rendered_panels[0]["asset"].endswith("00-hero.svg"):
+        raise ValueError("The first README panel must be the hero panel")
+    if not rendered_panels[1]["asset"].endswith("01-map.svg"):
+        raise ValueError("The second README panel must be the visual map")
+
+    def linked_image(item: dict[str, str]) -> str:
+        return (
+            f'<a href="{html_escape(item["target"], quote=True)}">'
+            f'<img src="{html_escape(item["asset"], quote=True)}" width="100%" '
+            f'alt="{html_escape(item["alt"], quote=True)}" /></a>'
         )
-    pieces.append("</div>")
-    return "\n".join(pieces) + "\n"
+
+    pieces = [
+        f"# {title}",
+        "",
+        f"> {html_escape(summary)}",
+        "",
+        "## Accesos directos",
+        "",
+    ]
+    for category, links in navigation_groups.items():
+        pieces.extend((f"**{category}:** " + " · ".join(links), ""))
+    pieces.extend((
+        "**Ir a:** [Mapa visual](#mapa-visual) · [Galería por tema](#galeria-por-tema) · "
+        "[Guía completa](README_DETAILS.md)",
+        "",
+        '<div align="center">',
+        linked_image(rendered_panels[0]),
+        "</div>",
+        "",
+        "## Mapa visual",
+        "",
+        "<details>",
+        "<summary>Abrir el índice gráfico del laboratorio</summary>",
+        "",
+        "[Abrir la guía completa](README_DETAILS.md)",
+        "",
+        linked_image(rendered_panels[1]),
+        "</details>",
+        "",
+        "## Galeria por tema",
+        "",
+    ))
+    for item in rendered_panels[2:]:
+        pieces.extend((
+            "<details>",
+            f"<summary>{html_escape(item['alt'])}</summary>",
+            "",
+            f"[Abrir documentación relacionada]({item['target']})",
+            "",
+            linked_image(item),
+            "</details>",
+            "",
+        ))
+    return "\n".join(pieces).rstrip() + "\n"
 
 
 def main(argv: list[str] | None = None) -> int:
