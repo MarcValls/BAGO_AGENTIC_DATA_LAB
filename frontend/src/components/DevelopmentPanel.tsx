@@ -108,7 +108,7 @@ export default function DevelopmentPanel({ownerId, projectRoot = null, portalTar
       <code title={projectRoot || undefined}>{projectRoot || t('commerce.project_not_registered')}</code>
       <span className="development-drawer-tab-state" aria-hidden="true">⌄</span>
     </button>
-    <section id={panelId} aria-label={t('commerce.project_panel_title')} className="development-drawer" data-expanded={expanded} hidden={!open}>
+    <section id={panelId} aria-label={t('commerce.project_context_label')} className="development-drawer" data-expanded={expanded} hidden={!open}>
     <header className="development-drawer-header"><h3>{t('commerce.project_panel_title')}</h3>
       <div className="development-drawer-header-actions">
         <button type="button" className="development-drawer-size" aria-pressed={expanded} aria-label={expanded ? t('commerce.restore_project_panel') : t('commerce.expand_project_panel')} onClick={() => setExpanded(value => !value)}>{expanded ? t('commerce.restore_project_panel') : t('commerce.expand_project_panel')}</button>

@@ -101,7 +101,9 @@ it('shows linked-agent navigation and the selected project policy, separate from
   assert.equal(manageAgentsOpened, true)
   await screen.findByRole('button', { name: 'BAGO5 orchestrator' })
 
-  const projectPanel = await screen.findByRole('region', { name: 'Contexto del proyecto' })
+  fireEvent.click(panel.querySelector('summary'))
+  assert.equal(panel.open, false)
+  const projectPanel = await screen.findByRole('region', { name: 'Project context' })
   fireEvent.click(within(projectPanel).getByRole('button', { name: 'Administrar acceso' }))
   const accessDialog = await screen.findByRole('dialog', { name: 'Permisos del proyecto' })
   const permissions = within(accessDialog).getByRole('region', { name: 'Permisos del proyecto' })

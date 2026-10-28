@@ -5,6 +5,7 @@ beforeEach(()=>{localStorage.clear();resetLocaleForTests();setLocale('es')})
 import {beforeEach,afterEach,expect,it,vi} from 'vitest'
 import {act,cleanup,fireEvent,render,screen,waitFor} from '@testing-library/react'
 import AgentChat from '../../src/components/AgentChat'
+import {conversationButton} from '../helpers/conversation-library'
 import {openDelegatedChild,withPersistedDelegation} from '../helpers/delegated-agent-chat'
 const response=(body:unknown,status=200)=>({ok:status<400,status,json:async()=>body})
 const source=(path:string)=>({source_type:'public_web',path,start_line:1,end_line:2,content_sha256:'a'.repeat(64)})
@@ -36,7 +37,7 @@ async function setup(options:{initial?:any;saved?:any;error?:any;pending?:boolea
  const props={cognitiveMode:'baseline' as const,onNavigate:()=>{},onOpenProviderSettings:()=>{},onOpenCognitionSettings:()=>{},onInspectExecution:inspect,onInspectionSelection:select}
  const view=render(<AgentChat {...props}/>);await screen.findByText(options.initial?.messages[0]?.content??'Respuesta anterior');await act(async()=>{})
  const send=()=>{fireEvent.change(screen.getByLabelText('Mensaje al asistente o agente seleccionado'),{target:{value:'Lee esta página'}});fireEvent.click(screen.getByRole('button',{name:'Enviar'}))}
- const switchConversation=()=>{fireEvent.click(screen.getByText(/Conversaciones y agentes/));fireEvent.click(screen.getByRole('button',{name:/Other fixture/}))}
+ const switchConversation=()=>{fireEvent.click(screen.getByText(/Conversaciones y agentes/));fireEvent.click(conversationButton(document,'Other fixture'))}
  return {view,props,fetch,inspect,select,send,switchConversation,finish:(value:any)=>finish(value),finishReload:(value:any)=>finishReload(value)}
 }
 it('restores persisted failed turn sources and trace after HTTP failure, keeping the original error',async()=>{
