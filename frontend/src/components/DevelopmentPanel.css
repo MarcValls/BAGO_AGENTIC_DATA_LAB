@@ -60,3 +60,21 @@
 .development-drawer-body > ul > li[data-status="ROLLED_BACK"] > button { border-left-color: #e0be7e; }
 .project-sidebar-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-block: 12px; }
 .project-sidebar-actions button { flex: 1 1 135px; }
+
+/* R3: Project is anchored to the full chat work area, outside its scroll frame. */
+.control-chat { position: relative; }
+.development-panel-portal { position: absolute; inset: 0; z-index: 20; pointer-events: none; }
+.development-panel-portal[hidden] { display: none; }
+.development-drawer-anchor { position: absolute; inset: 0; z-index: 20; box-sizing: border-box; width: auto; max-height: none; overflow: visible; pointer-events: none; }
+.development-drawer-tab { position: absolute; top: 0; right: 0; bottom: auto; left: 0; z-index: 2; display: grid; box-sizing: border-box; width: 100%; height: 38px; min-height: 38px; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; justify-content: stretch; gap: 12px; padding: 5px 12px; overflow: hidden; border: 0; border-bottom: 1px solid #375d78; border-radius: 0; color: #d5f0fa; background: linear-gradient(90deg, #16435a, #172f4b 55%, #102b31); text-align: left; pointer-events: auto; }
+.development-drawer-tab .project-sidebar-tab-label { font-weight: 700; }
+.development-drawer-tab code { min-width: 0; overflow: hidden; color: #b8d5e6; font: inherit; font-size: .78rem; text-overflow: ellipsis; white-space: nowrap; }
+.development-drawer-tab-state { color: #a0e4ee; }
+.development-drawer-tab:hover { background: linear-gradient(90deg, #1b5369, #1a3c59 55%, #153d41); }
+.development-drawer { position: absolute; inset: 38px 0 0 auto; z-index: 1; box-sizing: border-box; width: min(500px, 46%); height: auto; min-width: 0; max-width: 100%; overflow: hidden; border: 1px solid #375d78; border-top: 0; border-radius: 0; pointer-events: auto; }
+.development-drawer[data-expanded="true"] { right: 0; left: 0; width: 100%; }
+.development-drawer-header-actions { display: flex; min-width: 0; align-items: center; justify-content: flex-end; gap: 8px; }
+.development-drawer-header-actions button { min-width: 0; }
+.development-drawer-size { white-space: nowrap; }
+.development-drawer-close { white-space: nowrap; }
+@media (max-width: 760px) { .development-drawer { left: 0; width: 100%; } .development-drawer-header { align-items: flex-start; } .development-drawer-header-actions { flex-wrap: wrap; } }

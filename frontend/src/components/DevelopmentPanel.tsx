@@ -1,4 +1,6 @@
 import {useCallback, useEffect, useId, useRef, useState, type ReactNode} from 'react'
+import {createPortal} from 'react-dom'
+import {t, useI18n} from '../i18n'
 import './DevelopmentPanel.css'
 
 type Check = {check_id: string; status: string; returncode?: number}
@@ -22,8 +24,11 @@ async function readResponse(response: Response) {
   return data
 }
 
-export default function DevelopmentPanel({ownerId, disabled = false, workspaceContent, historyContent, showChanges = true, initialOpen = true}: {ownerId: string; disabled?: boolean; workspaceContent?: ReactNode; historyContent?: ReactNode; showChanges?: boolean; initialOpen?: boolean}) {
+export default function DevelopmentPanel({ownerId, projectRoot = null, portalTarget = null, disabled = false, workspaceContent, historyContent, onExpandedChange, showChanges = true, initialOpen = true}: {ownerId: string; projectRoot?: string | null; portalTarget?: HTMLElement | null; disabled?: boolean; workspaceContent?: ReactNode; historyContent?: ReactNode; onExpandedChange?: (expanded: boolean) => void; showChanges?: boolean; initialOpen?: boolean}) {
+  useI18n()
   const [open, setOpen] = useState(() => initialOpen && !(typeof window !== 'undefined' && typeof window.matchMedia === 'function' && window.matchMedia('(max-width: 760px)').matches))
+  const [expanded, setExpanded] = useState(false)
+  useEffect(() => {onExpandedChange?.(expanded)}, [expanded, onExpandedChange])
   const panelId = useId()
   const toggleRef = useRef<HTMLButtonElement>(null)
   const closeRef = useRef<HTMLButtonElement>(null)
@@ -35,7 +40,11 @@ export default function DevelopmentPanel({ownerId, disabled = false, workspaceCo
   }, [open])
   useEffect(() => {
     if (!open) return
-    const escape = (event: KeyboardEvent) => {if (event.key === 'Escape' && !event.defaultPrevented) {event.preventDefault(); setOpen(false)}}
+    const escape = (event: KeyboardEvent) => {
+      if (event.key !== 'Escape' || event.defaultPrevented || document.querySelector('dialog[open], [role="dialog"][aria-modal="true"], .chat-tools-menu[open], .conversation-context-menu, .chat-agent-panel[open]')) return
+      event.preventDefault()
+      setOpen(false)
+    }
     document.addEventListener('keydown', escape)
     return () => document.removeEventListener('keydown', escape)
   }, [open])
@@ -92,14 +101,19 @@ export default function DevelopmentPanel({ownerId, disabled = false, workspaceCo
     } catch (cause) {if (version === generation.current) {setError(cause instanceof Error ? cause.message : 'No se pudo completar la operación.'); setConfirmed(false); setCandidate(null)}}
     finally {lock.current = false; setBusy(false)}
   }
-  return <div className="development-drawer-anchor" data-open={open}>
-    <button ref={toggleRef} type="button" className="development-drawer-tab" hidden={open}
-      aria-expanded={open} aria-controls={panelId} onClick={() => setOpen(true)}>
-      <span aria-hidden="true">‹</span><span className="project-sidebar-tab-label">Proyecto</span>
+  const drawer = <div className="development-drawer-anchor" data-open={open} data-expanded={expanded}>
+    <button ref={toggleRef} type="button" className="development-drawer-tab"
+      aria-expanded={open} aria-controls={panelId} aria-label={t('commerce.project_panel_title')} onClick={() => setOpen(value => !value)}>
+      <span className="project-sidebar-tab-label">{t('commerce.project_panel_title')}</span>
+      <code title={projectRoot || undefined}>{projectRoot || t('commerce.project_not_registered')}</code>
+      <span className="development-drawer-tab-state" aria-hidden="true">⌄</span>
     </button>
-    <section id={panelId} aria-label={workspaceContent ? "Contexto del proyecto" : "Cambios del proyecto"} className="development-drawer" hidden={!open}>
-    <header className="development-drawer-header"><h3>Proyecto</h3>
-      <button ref={closeRef} type="button" className="development-drawer-close" aria-label="Cerrar cambios del proyecto" onClick={() => setOpen(false)}>Cerrar <span aria-hidden="true">›</span></button>
+    <section id={panelId} aria-label={t('commerce.project_panel_title')} className="development-drawer" data-expanded={expanded} hidden={!open}>
+    <header className="development-drawer-header"><h3>{t('commerce.project_panel_title')}</h3>
+      <div className="development-drawer-header-actions">
+        <button type="button" className="development-drawer-size" aria-pressed={expanded} aria-label={expanded ? t('commerce.restore_project_panel') : t('commerce.expand_project_panel')} onClick={() => setExpanded(value => !value)}>{expanded ? t('commerce.restore_project_panel') : t('commerce.expand_project_panel')}</button>
+        <button ref={closeRef} type="button" className="development-drawer-close" aria-label={t('commerce.close_project_panel')} onClick={() => setOpen(false)}>{t('commerce.close')} <span aria-hidden="true">×</span></button>
+      </div>
     </header>
     <div className="project-sidebar-sections">
     {workspaceContent}
@@ -129,5 +143,6 @@ export default function DevelopmentPanel({ownerId, disabled = false, workspaceCo
     </div>
     </section>
   </div>
+  return portalTarget ? createPortal(drawer, portalTarget) : drawer
 }
 
