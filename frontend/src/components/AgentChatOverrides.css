@@ -92,8 +92,10 @@
 
 .control-chat .control-chat-window > .window-panel-content:has(> .development-drawer-anchor) { padding-right: 36px; }
 
+.control-chat .control-chat-window > .window-panel-content:has(> .development-drawer-anchor[data-open="false"]) { padding-top: 42px; padding-right: 104px; }
+
 @media (min-width: 761px) {
-.control-chat .control-chat-window > .window-panel-content:has(> .development-drawer-anchor[data-open="true"]) { padding-right: min(440px, 36%); }
+.control-chat .control-chat-window > .window-panel-content:has(> .development-drawer-anchor[data-open="true"]) { padding-top: 0; padding-right: min(440px, 36%); }
 }
 
 .control-chat .control-chat-window > .window-panel-content:has(.chat-agent-panel[open]) { padding-right: 0; }
