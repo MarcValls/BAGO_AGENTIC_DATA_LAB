@@ -103,7 +103,7 @@ it('shows linked-agent navigation and the selected project policy, separate from
 
   const projectPanel = await screen.findByRole('region', { name: 'Contexto del proyecto' })
   fireEvent.click(within(projectPanel).getByRole('button', { name: 'Administrar acceso' }))
-  const accessDialog = await screen.findByRole('dialog', { name: 'Acceso y carpeta de trabajo' })
+  const accessDialog = await screen.findByRole('dialog', { name: 'Permisos del proyecto' })
   const permissions = within(accessDialog).getByRole('region', { name: 'Permisos del proyecto' })
   assert.equal((await within(accessDialog).findByText('D:/projects/selected-project')).textContent, 'D:/projects/selected-project')
   assert.ok(within(permissions).getByText('src', { selector: '.project-permissions__scope code' }))

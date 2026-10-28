@@ -10,7 +10,7 @@
 .development-drawer button:hover:not(:disabled), .development-drawer-tab:hover { background: #203852; }
 .development-drawer button:focus-visible, .development-drawer input:focus-visible, .development-drawer summary:focus-visible, .development-drawer-tab:focus-visible { outline: 2px solid #78b7f4; outline-offset: 2px; }
 .development-drawer-close { flex-shrink: 0; }
-.development-drawer-tab { position: absolute; inset: 0 0 auto auto; z-index: 5; box-sizing: border-box; width: auto; min-width: 92px; height: 36px; display: flex; align-items: center; flex-direction: row; justify-content: center; gap: 8px; padding: 6px 12px; border: 0; border-left: 1px solid var(--development-border); border-bottom: 1px solid var(--development-border); border-radius: 0 0 0 4px; box-shadow: none; font-size: .73rem; }
+.development-drawer-tab { position: absolute; top: 0; right: 0; bottom: auto; left: 0; z-index: 5; box-sizing: border-box; width: 100%; min-width: 0; height: 36px; display: flex; align-items: center; flex-direction: row; justify-content: flex-end; gap: 8px; padding: 6px 12px; border: 0; border-bottom: 1px solid var(--development-border); border-radius: 0; box-shadow: none; font-size: .73rem; }
 .project-sidebar-tab-label { writing-mode: horizontal-tb; white-space: nowrap; }
 .development-drawer-count { padding: 1px 5px; border-radius: 5px; background: #0d1929; color: var(--development-muted); }
 .development-drawer-body { overflow: auto; overscroll-behavior: contain; min-height: 0; padding: 16px 18px 22px; overflow-wrap: anywhere; line-height: 1.5; }

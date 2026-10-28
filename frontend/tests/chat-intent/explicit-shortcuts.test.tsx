@@ -165,7 +165,7 @@ it('uses saved project permissions independently from the explicit one-turn web 
   expect(screen.queryByLabelText('Permitir lectura de archivos del proyecto')).toBeNull()
   expect(screen.queryByLabelText('Rutas relativas al proyecto')).toBeNull()
   fireEvent.click(within(projectPanel).getByRole('button', {name: 'Administrar acceso'}))
-  const accessDialog = await screen.findByRole('dialog', {name: 'Acceso y carpeta de trabajo'})
+  const accessDialog = await screen.findByRole('dialog', {name: 'Permisos del proyecto'})
   expect(within(accessDialog).getByText('src', {selector: '.project-permissions__scope code'})).toBeTruthy()
   fireEvent.click(within(accessDialog).getByRole('button', {name: 'Cerrar'}))
   fireEvent.click(screen.getByLabelText('Permitir lectura web p\u00fablica'))

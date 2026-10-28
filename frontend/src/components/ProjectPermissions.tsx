@@ -4,18 +4,18 @@ import ProjectPermissionTree from './ProjectPermissionTree'
 import {isDirectoryListing, isProjectPermissionSnapshot, type ProjectPermissionSnapshot, type ProjectTreeEntry} from '../types/projectPermissions'
 import './ProjectPermissions.css'
 
-type Props = {projectId: string | null; projectRoot: string | null; refreshKey?: string | number; disabled?: boolean; workspaceContent?: ReactNode}
+type Props = {projectId: string | null; projectRoot: string | null; refreshKey?: string | number; disabled?: boolean; onBrowseWorkspace?: () => void; workspaceContent?: ReactNode}
 type ViewState = 'loading' | 'ready' | 'error' | 'unknown'
 
-export default function ProjectPermissions({projectId, projectRoot, refreshKey = 0, disabled = false, workspaceContent}: Props) {
+export default function ProjectPermissions({projectId, projectRoot, refreshKey = 0, disabled = false, onBrowseWorkspace, workspaceContent}: Props) {
   const [snapshot, setSnapshot] = useState<ProjectPermissionSnapshot | null>(null)
   const [state, setState] = useState<ViewState>('loading')
   const [error, setError] = useState('')
   const [open, setOpen] = useState(false)
-  const [directory, setDirectory] = useState('.')
-  const [entries, setEntries] = useState<ProjectTreeEntry[]>([])
-  const [treeLoading, setTreeLoading] = useState(false)
-  const [treeTruncated, setTreeTruncated] = useState(false)
+  const [entriesByDirectory, setEntriesByDirectory] = useState<Record<string, ProjectTreeEntry[]>>({})
+  const [loadingDirectories, setLoadingDirectories] = useState<string[]>([])
+  const [truncatedDirectories, setTruncatedDirectories] = useState<string[]>([])
+  const [expandedDirectories, setExpandedDirectories] = useState<string[]>([])
   const [readDirectories, setReadDirectories] = useState<string[]>([])
   const [writeDirectories, setWriteDirectories] = useState<string[]>([])
   const [confirmed, setConfirmed] = useState(false)
@@ -30,7 +30,7 @@ export default function ProjectPermissions({projectId, projectRoot, refreshKey =
 
   const load = useCallback(async () => {
     const request = ++generation.current
-    setState('loading'); setError(''); setConfirmed(false); setSnapshot(null); setReadDirectories([]); setWriteDirectories([]); treeRevision.current = ''
+    setState('loading'); setError(''); setConfirmed(false); setSnapshot(null); setReadDirectories([]); setWriteDirectories([]); setEntriesByDirectory({}); setExpandedDirectories([]); setTruncatedDirectories([]); treeRevision.current = ''
     if (!projectId || !projectRoot) { setSnapshot(null); setState('unknown'); return }
     try {
       const response = await fetch('/api/project-permissions')
@@ -49,19 +49,20 @@ export default function ProjectPermissions({projectId, projectRoot, refreshKey =
 
   useEffect(() => { void load(); return () => { generation.current++ } }, [load, refreshKey])
 
-  const browse = useCallback(async (target: string) => {
+  const loadDirectory = useCallback(async (target: string) => {
     if (!snapshot || !projectId || snapshot.revision === null) return
-    setTreeLoading(true); setError('')
+    setLoadingDirectories(current => [...new Set([...current, target])]); setError('')
     try {
       const response = await fetch('/api/project-permissions/directories', {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({expected_project_id: projectId, expected_binding: snapshot.binding, expected_revision: snapshot.revision, directory: target})})
       if (!response.ok) throw new Error(`No se pudo consultar el contenido de la carpeta (${response.status}).`)
       const value: unknown = await response.json()
-      if (!isDirectoryListing(value) || value.project_id !== projectId || value.root !== snapshot.root || value.revision !== snapshot.revision || JSON.stringify(value.binding) !== JSON.stringify(snapshot.binding)) throw new Error('La carpeta activa cambió. Actualiza los permisos antes de continuar.')
-      setDirectory(value.directory)
-      setEntries(value.entries ?? [...value.directories.map(item => ({...item, kind: 'directory' as const})), ...(value.files ?? []).map(item => ({...item, kind: 'file' as const}))])
-      setTreeTruncated(value.truncated)
-    } catch (cause) { setError(cause instanceof Error ? cause.message : 'No se pudo consultar el contenido de la carpeta.') }
-    finally { setTreeLoading(false) }
+      if (!isDirectoryListing(value) || value.project_id !== projectId || value.root !== snapshot.root || value.revision !== snapshot.revision || value.directory !== target || JSON.stringify(value.binding) !== JSON.stringify(snapshot.binding)) throw new Error('La carpeta activa cambió. Actualiza los permisos antes de continuar.')
+      const nextEntries = value.entries ?? [...value.directories.map(item => ({...item, kind: 'directory' as const})), ...(value.files ?? []).map(item => ({...item, kind: 'file' as const}))]
+      setEntriesByDirectory(current => ({...current, [target]: nextEntries}))
+      setTruncatedDirectories(current => value.truncated ? [...new Set([...current, target])] : current.filter(path => path !== target))
+      return nextEntries
+    } catch (cause) { setError(cause instanceof Error ? cause.message : 'No se pudo consultar el contenido de la carpeta.'); return [] }
+    finally { setLoadingDirectories(current => current.filter(path => path !== target)) }
   }, [projectId, snapshot])
 
   useEffect(() => {
@@ -69,8 +70,14 @@ export default function ProjectPermissions({projectId, projectRoot, refreshKey =
     const key = `${projectId}:${snapshot.revision}`
     if (treeRevision.current === key) return
     treeRevision.current = key
-    void browse('.')
-  }, [open, state, snapshot, projectId, browse])
+    void loadDirectory('.')
+  }, [open, state, snapshot, projectId, loadDirectory])
+
+  const toggleDirectory = useCallback((target: string) => {
+    const expanded = expandedDirectories.includes(target)
+    setExpandedDirectories(current => expanded ? current.filter(path => path !== target) : [...current, target])
+    if (!expanded && !Object.prototype.hasOwnProperty.call(entriesByDirectory, target)) void loadDirectory(target)
+  }, [entriesByDirectory, expandedDirectories, loadDirectory])
 
   useEffect(() => {
     if (open) closeButton.current?.focus()
@@ -110,7 +117,7 @@ export default function ProjectPermissions({projectId, projectRoot, refreshKey =
       if (!response.ok) throw new Error(`No se pudieron guardar los permisos (${response.status}).`)
       const value: unknown = await response.json()
       if (!isProjectPermissionSnapshot(value) || value.project_id !== projectId || value.root !== projectRoot) throw new Error('El servidor no confirmó los permisos del proyecto seleccionado.')
-      setSnapshot(value); setReadDirectories(value.read_directories); setWriteDirectories(value.write_directories); setConfirmed(false); setState('ready'); treeRevision.current = ''
+      setSnapshot(value); setReadDirectories(value.read_directories); setWriteDirectories(value.write_directories); setConfirmed(false); setState('ready'); setEntriesByDirectory({}); setExpandedDirectories([]); setTruncatedDirectories([]); treeRevision.current = ''
     } catch (cause) { setError(cause instanceof Error ? cause.message : 'No se pudieron guardar los permisos.'); setConfirmed(false); await load() }
     finally { setBusy(false) }
   }
@@ -123,28 +130,27 @@ export default function ProjectPermissions({projectId, projectRoot, refreshKey =
       if (!response.ok) throw new Error(`No se pudieron revocar los permisos (${response.status}).`)
       const value: unknown = await response.json()
       if (!isProjectPermissionSnapshot(value) || value.project_id !== projectId || value.root !== projectRoot) throw new Error('El servidor no confirmó la revocación para este proyecto.')
-      setSnapshot(value); setReadDirectories([]); setWriteDirectories([]); setConfirmed(false); treeRevision.current = ''
+      setSnapshot(value); setReadDirectories([]); setWriteDirectories([]); setConfirmed(false); setEntriesByDirectory({}); setExpandedDirectories([]); setTruncatedDirectories([]); treeRevision.current = ''
     } catch (cause) { setError(cause instanceof Error ? cause.message : 'No se pudieron revocar los permisos.'); setConfirmed(false); await load() }
     finally { setBusy(false) }
   }
 
-  const preview = (paths: string[]) => paths.length ? paths.length === 1 ? paths[0] : `${paths.length} rutas` : 'Sin acceso'
   const configured = snapshot?.state === 'configured' || snapshot?.state === 'active'
   const hasScopes = readDirectories.length > 0 || writeDirectories.length > 0
 
   return <>
     <section className="project-permissions" aria-label="Permisos del proyecto" aria-busy={state === 'loading' || busy}>
       <div className="project-permissions__summary">
-        <div><strong>Acceso del proyecto</strong><span>{state === 'loading' ? 'Consultando estado' : state === 'ready' && snapshot ? configured ? hasScopes ? 'Permisos guardados' : 'Sin accesos guardados' : snapshot.state === 'revoked' || snapshot.state === 'unconfigured' ? 'Sin accesos guardados' : `Estado: ${snapshot.state}` : state === 'error' ? 'Estado no disponible' : 'Proyecto no confirmado'}</span></div>
-        <button ref={opener} type="button" onClick={() => setOpen(true)} disabled={disabled} aria-haspopup="dialog" aria-expanded={open} aria-controls={dialogId}>Administrar acceso</button>
+        <div className="project-permissions__workspace-summary"><strong>Directorio de trabajo:</strong><code>{snapshot?.root ?? projectRoot ?? 'Sin carpeta seleccionada'}</code>{onBrowseWorkspace && <button type="button" onClick={onBrowseWorkspace} aria-label="Examinar carpeta de trabajo">Examinar</button>}</div>
+        <div className="project-permissions__summary-actions">
+          <button ref={opener} type="button" onClick={() => setOpen(true)} disabled={disabled} aria-haspopup="dialog" aria-expanded={open} aria-controls={dialogId}>Administrar acceso</button>
+        </div>
       </div>
-      <code className="project-permissions__root">{snapshot?.root ?? projectRoot ?? 'Directorio desconocido'}</code>
-      <div className="project-permissions__compact" aria-label="Resumen de permisos"><span>Lectura: {preview(readDirectories)}</span><span>Escritura: {preview(writeDirectories)}</span></div>
     </section>
     {open && createPortal(<div className="project-permissions__backdrop" onMouseDown={event => { if (event.target === event.currentTarget) setOpen(false) }}>
       <section ref={dialog} id={dialogId} role="dialog" aria-modal="true" aria-labelledby={titleId} className="project-permissions__dialog" onMouseDown={event => event.stopPropagation()}>
-        <header className="project-permissions__dialog-header"><div><h2 id={titleId}>Acceso y carpeta de trabajo</h2><code>{snapshot?.root ?? projectRoot ?? 'Directorio desconocido'}</code></div><button ref={closeButton} type="button" onClick={() => setOpen(false)}>Cerrar</button></header>
-        <div className="project-permissions__dialog-body">
+        <header className="project-permissions__dialog-header"><div><h2 id={titleId}>Permisos del proyecto</h2><code>{snapshot?.root ?? projectRoot ?? 'Directorio desconocido'}</code></div><button ref={closeButton} type="button" onClick={() => setOpen(false)}>Cerrar</button></header>
+        <div className={`project-permissions__dialog-body${workspaceContent ? ' project-permissions__dialog-body--with-agent-tools' : ''}`}>
           <section aria-label="Permisos del proyecto" className="project-permissions__section">
             <h3>Permisos del proyecto</h3>
             <p>Estos permisos se guardan en el proyecto y se conservan entre conversaciones. Leer carpetas incluye su contenido; escribir no aplica planes automáticamente.</p>
@@ -158,17 +164,13 @@ export default function ProjectPermissions({projectId, projectRoot, refreshKey =
                 <div><strong>Lectura</strong><div className="project-permissions__scope-items">{readDirectories.length ? readDirectories.map(path=><span className="project-permissions__scope" key={`read:${path}`}><code>{path}</code><button type="button" aria-label={`Quitar lectura en ${path}`} disabled={busy || disabled} onClick={()=>toggle('read',path,false)}>Quitar</button></span>) : <span>Sin accesos</span>}</div></div>
                 <div><strong>Escritura</strong><div className="project-permissions__scope-items">{writeDirectories.length ? writeDirectories.map(path=><span className="project-permissions__scope" key={`write:${path}`}><code>{path}</code><button type="button" aria-label={`Quitar escritura en ${path}`} disabled={busy || disabled} onClick={()=>toggle('write',path,false)}>Quitar</button></span>) : <span>Sin accesos</span>}</div></div>
               </div>
-              <ProjectPermissionTree directory={directory} entries={entries} readDirectories={readDirectories} writeDirectories={writeDirectories} loading={treeLoading} truncated={treeTruncated} onOpen={path => void browse(path)} onToggle={toggle}/>
+              <ProjectPermissionTree entriesByDirectory={entriesByDirectory} loadingDirectories={loadingDirectories} truncatedDirectories={truncatedDirectories} expandedDirectories={expandedDirectories} readDirectories={readDirectories} writeDirectories={writeDirectories} onToggleDirectory={toggleDirectory} onToggle={toggle}/>
               {error && <p role="alert">{error}</p>}
               <label className="project-permissions__confirm"><input type="checkbox" checked={confirmed} disabled={busy || disabled || snapshot.revision === null} onChange={event => setConfirmed(event.target.checked)}/><span>He revisado este alcance y confirmo los permisos del proyecto.</span></label>
               <div className="project-permissions__actions"><button type="button" onClick={() => void save()} disabled={snapshot.revision === null || !confirmed || busy || disabled}>Guardar permisos</button><button type="button" onClick={() => void revoke()} disabled={!configured || !hasScopes || !confirmed || busy || disabled}>Revocar permisos</button></div>
             </>}
           </section>
-          <section aria-label="Carpeta de trabajo" className="project-permissions__section project-permissions__workspace">
-            <h3>Carpeta de trabajo</h3>
-            <p>Las herramientas usan los permisos guardados del proyecto. Abrir esta sección no lee los archivos; las lecturas se hacen al enviar una operación autorizada.</p>
-            {workspaceContent ?? <p>Puedes indicar rutas concretas en el mensaje.</p>}
-          </section>
+          {workspaceContent && <section aria-label="Herramientas de trabajo del agente" className="project-permissions__section project-permissions__workspace">{workspaceContent}</section>}
         </div>
       </section>
     </div>, document.body)}

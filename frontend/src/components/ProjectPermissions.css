@@ -1,10 +1,12 @@
 .project-permissions { padding: 8px 10px; border-bottom: 1px solid var(--development-border, #344b67); color: var(--development-text, #dce7f2); background: #112337; }
-.project-permissions__summary { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
-.project-permissions__summary > div { display: grid; gap: 2px; min-width: 0; }
-.project-permissions__summary strong { font-size: .76rem; }
-.project-permissions__summary span, .project-permissions__compact { color: var(--development-muted, #9aadc2); font-size: .68rem; }
-.project-permissions__compact { display: flex; flex-wrap: wrap; gap: 4px 12px; padding-top: 5px; }
-.project-permissions__root { display: block; max-height: 2.5em; margin-top: 4px; overflow: hidden; overflow-wrap: anywhere; color: #b8dbea; font-size: .64rem; line-height: 1.25; }
+.project-permissions__summary { display: grid; gap: 7px; }
+.project-permissions__summary > div { min-width: 0; }
+.project-permissions__workspace-summary { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 7px; }
+.project-permissions__workspace-summary strong { color: #dce7f2; font-size: .72rem; }
+.project-permissions__workspace-summary code { min-width: 0; color: #b8dbea; overflow-wrap: anywhere; font-size: .68rem; }
+.project-permissions__workspace-summary button { flex: 0 0 auto; padding: 3px 7px; }
+.project-permissions__summary-actions { display: flex; justify-content: flex-end; flex-wrap: wrap; gap: 6px; }
+
 .project-permissions button { color: inherit; border: 1px solid #3a566e; border-radius: var(--bago-ui-radius-sm, 4px); padding: 5px 8px; background: #192b40; font: inherit; cursor: pointer; }
 .project-permissions button:disabled { color: #aebdcb; background: #15202b; cursor: not-allowed; }
 .project-permissions button:focus-visible, .project-permissions input:focus-visible, .project-permission-tree button:focus-visible { outline: 2px solid #82c8f0; outline-offset: 2px; }
@@ -17,7 +19,8 @@
 .project-permissions__dialog button { color: inherit; border: 1px solid #3a566e; border-radius: var(--bago-ui-radius-sm, 4px); padding: 6px 9px; background: #192b40; font: inherit; cursor: pointer; }
 .project-permissions__dialog button:disabled { color: #aebdcb; background: #15202b; cursor: not-allowed; }
 .project-permissions__dialog :is(button,input,select,textarea):focus-visible { outline: 2px solid #82c8f0; outline-offset: 2px; }
-.project-permissions__dialog-body { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(260px, .8fr); gap: 12px; min-height: 0; padding: 12px; overflow: auto; }
+.project-permissions__dialog-body { display: grid; grid-template-columns: minmax(0, 1fr); gap: 12px; min-height: 0; padding: 12px; overflow: auto; }
+.project-permissions__dialog-body--with-agent-tools { grid-template-columns: minmax(0, 1.2fr) minmax(260px, .8fr); }
 .project-permissions__section { min-width: 0; padding: 12px; border: 1px solid #344b67; border-left: 3px solid #67c9dd; border-radius: var(--bago-ui-radius-sm, 4px); background: #101f30; }
 .project-permissions__section h3 { margin: 0 0 8px; font-size: .86rem; }
 .project-permissions__section > p { margin: 6px 0 10px; color: #b8c9d9; font-size: .74rem; line-height: 1.45; }
@@ -46,18 +49,24 @@
 .project-permission-tree__heading strong { font-size: .78rem; }
 .project-permission-tree__heading p { margin: 3px 0 0; color: #9aadc2; font-size: .67rem; }
 .project-permission-tree__heading code { max-width: 45%; overflow-wrap: anywhere; text-align: right; color: #b8dbea; font-size: .66rem; }
-.project-permission-tree__column-headings, .project-permission-tree li, .project-permission-tree__current { display: grid; grid-template-columns: minmax(0, 1fr) 64px 72px; align-items: center; gap: 6px; }
+.project-permission-tree__column-headings, .project-permission-tree__row, .project-permission-tree__current { display: grid; grid-template-columns: minmax(0, 1fr) 64px 72px; align-items: center; gap: 6px; }
 .project-permission-tree__column-headings { padding: 7px 4px; color: #9aadc2; font-size: .64rem; }
-.project-permission-tree ul { display: grid; gap: 3px; min-height: 0; margin: 0; padding: 0; overflow: auto; list-style: none; }
-.project-permission-tree li { min-height: 34px; padding: 2px 4px; border-bottom: 1px solid rgb(52 75 103 / 45%); }
-.project-permission-tree li:hover { background: #172b40; }
+.project-permission-tree__root-list { display: block; flex: 1 1 auto; min-height: 0; margin: 0; padding: 0; overflow: auto; list-style: none; }
+.project-permission-tree__root-list > li { display: block; padding: 0; border-bottom: 1px solid rgb(52 75 103 / 45%); list-style: none; }
+.project-permission-tree__row { min-height: 36px; padding: 2px 4px 2px calc(4px + (var(--tree-level, 0) * 14px)); }
+.project-permission-tree__row:hover { background: #172b40; }
+.project-permission-tree__children { display: block; margin: 0 0 0 14px; padding: 0; border-left: 1px solid #344b67; list-style: none; }
+.project-permission-tree__children > li { display: block; padding: 0; border-bottom: 1px solid rgb(52 75 103 / 45%); list-style: none; }
+.project-permission-tree__children > li:last-child { border-bottom: 0; }
 .project-permission-tree__open, .project-permission-tree__name { display: flex; align-items: center; gap: 7px; min-width: 0; overflow-wrap: anywhere; text-align: left; }
+.project-permission-tree__open { border: 0; background: transparent; }
 .project-permission-tree__name { padding: 4px 8px; color: #c2ceda; font-size: .73rem; }
-.project-permission-tree li button { border: 0; background: transparent; }
-.project-permission-tree li label, .project-permission-tree__current label { display: flex; align-items: center; gap: 4px; color: #b8c9d9; font-size: .67rem; }
+.project-permission-tree__chevron { width: 12px; color: #9aadc2; text-align: center; }
+.project-permission-tree__icon { width: 14px; color: #e0be7e; text-align: center; }
+.project-permission-tree__row label, .project-permission-tree__current label { display: flex; align-items: center; gap: 4px; color: #b8c9d9; font-size: .67rem; }
 .project-permission-tree li input, .project-permission-tree__current input { margin: 0; accent-color: #67c9dd; }
 .project-permission-tree input:disabled { opacity: .65; }
-.project-permission-tree__parent { align-self: flex-start; margin: 6px 0; }
+.project-permission-tree__node-status { margin: 4px 0 6px 28px; padding: 4px 8px; color: #9aadc2; font-size: .67rem; }
 .project-permission-tree__current { flex: 0 0 auto; padding: 7px 4px 2px; border-top: 1px solid #344b67; }
 .project-permission-tree > p { margin: 8px 2px; color: #b8c9d9; font-size: .69rem; }
 .project-permissions__confirm { display: flex; align-items: flex-start; gap: 7px; margin: 10px 0; font-size: .72rem; }
@@ -65,5 +74,5 @@
 .project-permissions__actions { display: flex; flex-wrap: wrap; gap: 7px; }
 .project-permissions__actions button { flex: 1 1 120px; }
 
-@media (max-width: 760px) { .project-permissions__backdrop { padding: 0; } .project-permissions__dialog { width: 100vw; max-height: 100dvh; height: 100dvh; border-radius: 0; } .project-permissions__dialog-body { grid-template-columns: 1fr; } .project-permission-tree { max-height: 45dvh; } }
+@media (max-width: 760px) { .project-permissions__backdrop { padding: 0; } .project-permissions__dialog { width: 100vw; max-height: 100dvh; height: 100dvh; border-radius: 0; } .project-permissions__dialog-body, .project-permissions__dialog-body--with-agent-tools { grid-template-columns: 1fr; } .project-permission-tree { max-height: 45dvh; } }
 @media (prefers-reduced-motion: reduce) { .project-permissions__dialog { scroll-behavior: auto; } }

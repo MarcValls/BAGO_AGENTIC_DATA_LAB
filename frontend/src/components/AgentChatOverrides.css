@@ -90,9 +90,9 @@
 
 .control-chat .control-chat-window > .window-panel-content { position: relative; }
 
-.control-chat .control-chat-window > .window-panel-content:has(> .development-drawer-anchor) { padding-right: 36px; }
+.control-chat .control-chat-window > .window-panel-content:has(> .development-drawer-anchor) { padding-right: 0; }
 
-.control-chat .control-chat-window > .window-panel-content:has(> .development-drawer-anchor[data-open="false"]) { padding-top: 42px; padding-right: 104px; }
+.control-chat .control-chat-window > .window-panel-content:has(> .development-drawer-anchor[data-open="false"]) { padding-top: 42px; padding-right: 0; }
 
 @media (min-width: 761px) {
 .control-chat .control-chat-window > .window-panel-content:has(> .development-drawer-anchor[data-open="true"]) { padding-top: 0; padding-right: min(440px, 36%); }

@@ -57,7 +57,7 @@ it('binds the explicit one-turn grant to exact owner, conversation and revision 
 })
 it('keeps saved project READ policy separate from the one-turn public-web grant',async()=>{
  const {mutations}=await setup();enable();
- const panel=screen.getByRole('region',{name:'Contexto del proyecto'});fireEvent.click(within(panel).getByRole('button',{name:'Administrar acceso'}));const dialog=await screen.findByRole('dialog',{name:'Acceso y carpeta de trabajo'});expect(within(dialog).getByText('src',{selector:'.project-permissions__scope code'})).toBeTruthy();fireEvent.click(within(dialog).getByRole('button',{name:'Cerrar'}));send()
+ const panel=screen.getByRole('region',{name:'Contexto del proyecto'});fireEvent.click(within(panel).getByRole('button',{name:'Administrar acceso'}));const dialog=await screen.findByRole('dialog',{name:'Permisos del proyecto'});expect(within(dialog).getByText('src',{selector:'.project-permissions__scope code'})).toBeTruthy();fireEvent.click(within(dialog).getByRole('button',{name:'Cerrar'}));send()
  await screen.findByText('Respuesta fixture')
  expect(mutations.map(item=>item.path)).toEqual(['/api/web-read/authorizations','/api/chat/control'])
  expect(mutations[1].body).toMatchObject({web_read_authorization_id:'web-token'})
