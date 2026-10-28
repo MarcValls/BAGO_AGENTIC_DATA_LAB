@@ -104,6 +104,7 @@ from src.api.schemas import (
     ContextPathCheckRequest,
     ControlChatRequest,
     ConversationCreateRequest,
+    ConversationLabelsRequest,
     ConversationPermanentDeleteRequest,
     ConversationRenameRequest,
     ConversationRevisionRequest,
@@ -2837,6 +2838,14 @@ async def get_conversation(conversation_id: str) -> dict[str, Any]:
 async def rename_conversation(conversation_id: str, request: ConversationRenameRequest) -> dict[str, Any]:
     try:
         return CONVERSATIONS.rename(conversation_id, request.revision, request.title)
+    except (ConversationNotFound, ConversationConflict, ValueError) as error:
+        raise _conversation_error(error) from None
+
+
+@app.patch("/api/conversations/{conversation_id}/labels")
+async def set_conversation_labels(conversation_id: str, request: ConversationLabelsRequest) -> dict[str, Any]:
+    try:
+        return CONVERSATIONS.set_labels(conversation_id, request.revision, request.labels)
     except (ConversationNotFound, ConversationConflict, ValueError) as error:
         raise _conversation_error(error) from None
 

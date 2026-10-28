@@ -1,4 +1,5 @@
 import asyncio
+import sqlite3
 from pathlib import Path
 
 import pytest
@@ -192,6 +193,78 @@ def test_revision_conflicts_and_rename_archive_delete_restore(tmp_path: Path):
     restored = store.restore(conversation["id"], 5)
     assert restored["status"] == "active"
     assert len(restored["messages"]) == 2
+
+
+def test_conversation_labels_migrate_legacy_database_and_persist_without_changing_activity(tmp_path: Path):
+    database = tmp_path / "legacy-library.sqlite3"
+    activity = "2026-10-01T12:00:00.000Z"
+    with sqlite3.connect(database) as connection:
+        connection.execute(
+            "CREATE TABLE conversations (id TEXT PRIMARY KEY, project_id TEXT NOT NULL, "
+            "owner_kind TEXT NOT NULL, owner_id TEXT NOT NULL, title TEXT NOT NULL, status TEXT NOT NULL, "
+            "created_at TEXT NOT NULL, updated_at TEXT NOT NULL, revision INTEGER NOT NULL DEFAULT 0)"
+        )
+        connection.execute(
+            "INSERT INTO conversations VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+            ("conv_legacy", PROJECT_ID, "assistant", "app-assistant", "Legacy chat", "active", activity, activity, 0),
+        )
+
+    store = ConversationStore(database)
+    legacy = store.get("conv_legacy")
+    assert legacy["labels"] == []
+    tagged = store.set_labels("conv_legacy", legacy["revision"], ["  QA   Review ", "frontend", "qa review"])
+    assert tagged["labels"] == ["QA Review", "frontend"]
+    assert tagged["revision"] == 1
+    assert tagged["updated_at"] == activity
+
+    reopened = ConversationStore(database)
+    assert reopened.get("conv_legacy")["labels"] == ["QA Review", "frontend"]
+    assert reopened.list()[0]["labels"] == ["QA Review", "frontend"]
+    with sqlite3.connect(database) as connection:
+        columns = {row[1] for row in connection.execute("PRAGMA table_info(conversations)")}
+    assert "labels_json" in columns
+
+
+def test_conversation_label_api_validates_revision_and_keeps_labels_project_scoped(monkeypatch, tmp_path: Path):
+    store = ConversationStore(tmp_path / "library.sqlite3")
+    monkeypatch.setattr(server, "CONVERSATIONS", store)
+    active = {"id": "workspace_project_a"}
+    monkeypatch.setattr(server, "_active_conversation_project_id", lambda: active["id"])
+    client = TestClient(server.app)
+    created = client.post("/api/conversations", json={"owner_kind": "assistant"}).json()
+    original_activity = created["updated_at"]
+
+    updated = client.patch(f"/api/conversations/{created['id']}/labels", json={
+        "revision": created["revision"], "labels": ["  QA   Review ", "frontend", "qa review"],
+    })
+    assert updated.status_code == 200
+    assert updated.json()["labels"] == ["QA Review", "frontend"]
+    assert updated.json()["revision"] == created["revision"] + 1
+    assert updated.json()["updated_at"] == original_activity
+    assert client.get("/api/conversations").json()["conversations"][0]["labels"] == ["QA Review", "frontend"]
+
+    assert client.patch(f"/api/conversations/{created['id']}/labels", json={
+        "revision": created["revision"], "labels": ["stale"],
+    }).status_code == 409
+    assert client.patch(f"/api/conversations/{created['id']}/labels", json={
+        "revision": updated.json()["revision"], "labels": [""],
+    }).status_code == 422
+    assert client.patch(f"/api/conversations/{created['id']}/labels", json={
+        "revision": updated.json()["revision"], "labels": [str(index) for index in range(21)],
+    }).status_code == 422
+    assert client.get(f"/api/conversations/{created['id']}").json()["labels"] == ["QA Review", "frontend"]
+
+    active["id"] = "workspace_project_b"
+    assert client.get("/api/conversations").json()["conversations"] == []
+    assert client.patch(f"/api/conversations/{created['id']}/labels", json={
+        "revision": updated.json()["revision"], "labels": ["cross-project"],
+    }).status_code == 404
+    active["id"] = "workspace_project_a"
+    cleared = client.patch(f"/api/conversations/{created['id']}/labels", json={
+        "revision": updated.json()["revision"], "labels": [],
+    })
+    assert cleared.status_code == 200
+    assert cleared.json()["labels"] == []
 
 
 def test_app_assistant_uses_saved_history_and_returns_saved_turn(monkeypatch, tmp_path: Path):

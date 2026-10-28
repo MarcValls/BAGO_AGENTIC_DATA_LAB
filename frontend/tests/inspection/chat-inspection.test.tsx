@@ -7,6 +7,7 @@ import {afterEach,expect,it,vi} from 'vitest'
 import {act,cleanup,fireEvent,render,screen,waitFor} from '@testing-library/react'
 import ChatInspection from '../../src/components/ChatInspection'
 import AgentChat from '../../src/components/AgentChat'
+import {conversationButton} from '../helpers/conversation-library'
 const tid='trace-496fac766f384348'
 const body=(id:string,selected:any=null)=>({schema:'bago.chat.inspection.v1',conversation_id:id,revision:1,state:selected?'selected':'no_artifacts',executions:selected?[{trace_id:tid,message_id:'a1',execution_id:'run-current'}]:[],total:selected?1:0,offset:0,next_offset:null,selected})
 const selected={trace_id:tid,execution_id:'run-current',message_id:'a1',state:'available',integrity:'legacy_unverified',sha256:'a'.repeat(64),limitations:['No evaluation bundle'],trace:{trace_id:tid,run_id:'run-current',event_count:1,cost_usd:0,evidence_refs:[],events:[{evidence_refs:[],kind:'authorization',event_id:'e-current',trace_id:tid,sequence:0,status:'DENY',name:'workspace.read',attributes:{redacted:true}}]}}
@@ -158,7 +159,7 @@ it('AgentChat ignores a late previously selected conversation response',async()=
  }))
  const select=vi.fn();render(<AgentChat cognitiveMode="baseline" onNavigate={()=>{}} onInspectionSelection={select} onOpenProviderSettings={()=>{}} onOpenCognitionSettings={()=>{}} />)
  await screen.findByText('Content conv-A')
- fireEvent.click(screen.getByRole('button',{name:/conv-A/}));fireEvent.click(screen.getByRole('button',{name:/conv-B/}))
+ fireEvent.click(conversationButton(document,'conv-A'));fireEvent.click(conversationButton(document,'conv-B'))
  await screen.findByText('Content conv-B')
  await act(async()=>{finishA(response(a))})
  expect(screen.queryByText('Content conv-A')).toBeNull()

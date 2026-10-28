@@ -60,7 +60,7 @@ async function chat(){
 }
 it('real AgentChat formats assistant content while keeping user text plain and copy byte-for-byte',async()=>{
  const writeText=vi.fn(async()=>{});Object.defineProperty(navigator,'clipboard',{configurable:true,value:{writeText}})
- const {writes}=await chat();expect(screen.getAllByRole('table')).toHaveLength(1)
+ const {writes}=await chat();expect(document.querySelectorAll('.control-chat-messages table')).toHaveLength(1)
  const user=screen.getByText('### Usuario sin formato | texto | original |').closest('article')!
  expect(user.querySelector('h3,table')).toBeNull()
  fireEvent.click(screen.getByRole('button',{name:'Copiar respuesta'}));expect(writeText).toHaveBeenCalledExactlyOnceWith(original)

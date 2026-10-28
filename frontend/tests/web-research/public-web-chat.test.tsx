@@ -5,6 +5,7 @@ beforeEach(()=>{localStorage.clear();resetLocaleForTests();setLocale('es')})
 import {beforeEach,afterEach,expect,it,vi} from 'vitest'
 import {act,cleanup,fireEvent,render,screen,waitFor,within} from '@testing-library/react'
 import AgentChat from '../../src/components/AgentChat'
+import {conversationButton} from '../helpers/conversation-library'
 import {openDelegatedChild,withPersistedDelegation} from '../helpers/delegated-agent-chat'
 const response=(body:unknown,status=200)=>({ok:status<400,status,json:async()=>body})
 const make=(id='conv-web',messages:any[]=[])=>({id,owner_kind:'assistant',owner_id:'app-assistant',title:id,status:'active',revision:7,updated_at:'2026-10-23',messages})
@@ -128,7 +129,7 @@ it('clears the editable scope and consent when switching conversations of the sa
  }))
  render(<AgentChat cognitiveMode="baseline" onNavigate={()=>{}} onOpenProviderSettings={()=>{}} onOpenCognitionSettings={()=>{}} />)
  await screen.findByRole('region',{name:'conv-first'});await act(async()=>{});enable()
- fireEvent.click(screen.getByText(/Conversaciones y agentes/));fireEvent.click(screen.getByRole('button',{name:/conv-second/}))
+ fireEvent.click(screen.getByText(/Conversaciones y agentes/));fireEvent.click(conversationButton(document,'conv-second'))
  await screen.findByRole('region',{name:'conv-second'});await act(async()=>{})
  expect((screen.getByLabelText('Permitir lectura web pública') as HTMLInputElement).checked).toBe(false)
  fireEvent.click(screen.getByLabelText('Permitir lectura web pública'))

@@ -14,7 +14,28 @@ from typing import Any, Literal
 
 OwnerKind = Literal["assistant", "agent"]
 PROJECT_ID = "bago-agentic-data-lab:default"
+MAX_CONVERSATION_LABELS = 20
+MAX_CONVERSATION_LABEL_LENGTH = 48
 _PROJECT_SCOPE: ContextVar[str | None] = ContextVar("bago_conversation_project_scope", default=None)
+
+
+def normalize_conversation_labels(labels: list[str] | tuple[str, ...]) -> list[str]:
+    """Return bounded, case-insensitively unique labels for one conversation."""
+    if not isinstance(labels, (list, tuple)) or len(labels) > MAX_CONVERSATION_LABELS:
+        raise ValueError(f"A conversation can have at most {MAX_CONVERSATION_LABELS} labels.")
+    normalized: list[str] = []
+    seen: set[str] = set()
+    for raw in labels:
+        if not isinstance(raw, str):
+            raise ValueError("Conversation labels must be text.")
+        label = " ".join(raw.split())
+        if not label or len(label) > MAX_CONVERSATION_LABEL_LENGTH or any(ord(character) < 32 for character in raw):
+            raise ValueError(f"Each label must contain 1 to {MAX_CONVERSATION_LABEL_LENGTH} printable characters.")
+        key = label.casefold()
+        if key not in seen:
+            normalized.append(label)
+            seen.add(key)
+    return normalized
 
 
 def set_project_scope(project_id: str):
@@ -75,7 +96,8 @@ class ConversationStore:
                 status TEXT NOT NULL DEFAULT 'active' CHECK (status IN ('active', 'archived', 'deleted')),
                 created_at TEXT NOT NULL,
                 updated_at TEXT NOT NULL,
-                revision INTEGER NOT NULL DEFAULT 0
+                revision INTEGER NOT NULL DEFAULT 0,
+                labels_json TEXT NOT NULL DEFAULT '[]'
             );
             CREATE INDEX IF NOT EXISTS idx_conversations_owner_recent
                 ON conversations(project_id, owner_kind, owner_id, status, updated_at DESC);
@@ -94,6 +116,21 @@ class ConversationStore:
                 ON messages(conversation_id, sequence);
             """
         )
+        # Existing portable databases predate conversation labels. Read first
+        # so normal requests do not take a write lock; serialize only the one
+        # time DDL and recheck after acquiring SQLite's lock.
+        columns = {row["name"] for row in connection.execute("PRAGMA table_info(conversations)")}
+        if "labels_json" not in columns:
+            connection.execute("BEGIN IMMEDIATE")
+            try:
+                columns = {row["name"] for row in connection.execute("PRAGMA table_info(conversations)")}
+                if "labels_json" not in columns:
+                    connection.execute("ALTER TABLE conversations ADD COLUMN labels_json TEXT NOT NULL DEFAULT '[]'")
+                connection.commit()
+            except Exception:
+                connection.rollback()
+                connection.close()
+                raise
         return connection
 
     @staticmethod
@@ -102,6 +139,7 @@ class ConversationStore:
             "id": row["id"], "project_id": row["project_id"], "owner_kind": row["owner_kind"],
             "owner_id": row["owner_id"], "title": row["title"], "status": row["status"],
             "created_at": row["created_at"], "updated_at": row["updated_at"], "revision": row["revision"],
+            "labels": json.loads(row["labels_json"] or "[]"),
         }
 
     @staticmethod
@@ -207,6 +245,33 @@ class ConversationStore:
         if not title:
             raise ValueError("A conversation title is required.")
         return self._change_status_or_title(conversation_id, expected_revision, title=title)
+
+    def set_labels(self, conversation_id: str, expected_revision: int, labels: list[str]) -> dict[str, Any]:
+        normalized = normalize_conversation_labels(labels)
+        with closing(self._connect()) as connection:
+            connection.execute("BEGIN IMMEDIATE")
+            try:
+                row = connection.execute(
+                    "SELECT revision, status FROM conversations WHERE id = ? AND project_id = ?",
+                    (conversation_id, current_project_scope()),
+                ).fetchone()
+                if row is None or row["status"] == "deleted":
+                    raise ConversationNotFound(conversation_id)
+                if row["revision"] != expected_revision:
+                    raise ConversationConflict(conversation_id)
+                changed = connection.execute(
+                    "UPDATE conversations SET labels_json = ?, revision = revision + 1 "
+                    "WHERE id = ? AND project_id = ? AND revision = ? AND status != 'deleted'",
+                    (json.dumps(normalized, ensure_ascii=False, separators=(",", ":")), conversation_id,
+                     current_project_scope(), expected_revision),
+                ).rowcount
+                if not changed:
+                    raise ConversationConflict(conversation_id)
+                connection.commit()
+            except Exception:
+                connection.rollback()
+                raise
+        return self.get(conversation_id)
 
     def set_status(self, conversation_id: str, expected_revision: int, status: Literal["active", "archived", "deleted"]) -> dict[str, Any]:
         return self._change_status_or_title(conversation_id, expected_revision, status=status)

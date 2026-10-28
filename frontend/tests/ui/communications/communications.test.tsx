@@ -6,6 +6,7 @@ import { beforeEach, afterEach, expect, it, vi } from 'vitest'
 import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react'
 import Communications from '../../../src/components/Communications'
 import AgentChat from '../../../src/components/AgentChat'
+import {conversationButton} from '../../helpers/conversation-library'
 const contact = { id: 'c1', name: 'Cliente ficticio', phone: '+34600000001' }
 const draft = { id: 'd1', revision: 'a'.repeat(64), contact_id: 'c1', recipient: contact, text: 'Resultado revisable', attachments: [], schedule: { kind: 'now', timezone: 'Europe/Madrid', at: null, time: null, weekdays: [] }, state: 'draft', next_run_at: null, created_at: '', updated_at: '', conversation_id: 'conversation1', last_error: null }
 const response = (body: unknown, status = 200) => ({ ok: status < 400, status, json: async () => body })
@@ -93,7 +94,8 @@ it('rehydrates the persisted orchestrator draft reference in chat and opens the 
     throw new Error(`Unexpected fixture request ${url}`)
   }))
   render(<AgentChat onNavigate={() => {}} onOpenCommunication={open} onOpenProviderSettings={() => {}} onOpenCognitionSettings={() => {}} cognitiveMode="baseline" />)
-  fireEvent.click(await screen.findByRole('button', { name: /Comunicación guardada/ }))
+  await screen.findByText('Comunicación guardada')
+  fireEvent.click(conversationButton(document, 'Comunicación guardada'))
   await screen.findByRole('heading', { name: 'Revisar comunicación' })
   await screen.findByDisplayValue('Resultado revisable')
   fireEvent.click(screen.getByRole('button', { name: 'Abrir pantalla completa' }))

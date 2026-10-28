@@ -5,7 +5,7 @@ import './AgentChatOverrides.css'
 import './ChatMessage.css'
 import './WindowsSurface.css'
 import type {InspectionSelection} from '../types/inspection'
-import { FormEvent, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
+import { FormEvent, useCallback, useEffect, useId, useLayoutEffect, useMemo, useRef, useState, type KeyboardEvent as ReactKeyboardEvent, type MouseEvent as ReactMouseEvent, type PointerEvent as ReactPointerEvent } from 'react'
 import type { UIEvent } from 'react'
 import { createPortal } from 'react-dom'
 import { Capability, CapabilityProposal, capabilityResponseError } from './CapabilityManager'
@@ -48,9 +48,11 @@ type WorkspaceSource = { source_type?: 'public_web' | 'document'; locations?:Arr
 type WorkspaceReadEvent = { filesystem_proposal?:FilesystemProposal; delivery_review?:{review_id:string;decision:string;errors:string[];missing:string[];pending:string[];send_executed:boolean}; production?:{work_id:string}; tool_name?:string; receipt_id?:string; executed?:boolean; outcome?:string; next_cursor?:string|null; corpus_coverage?:{total:number;offset:number;batch_selected:number;complete:boolean}; output?:{download_url?:string;sha256?:string;path?:string}; decision: 'ALLOW' | 'DENY' | 'FAIL'; kind?: string; path: string | null; reason_code?: string; file_sha256?: string; content_sha256?: string; files_scanned?: number; files_skipped?: number; bytes_scanned?: number; lines_scanned?: number; finding_count?: number; truncated?: boolean; manifest_sha256?: string }
 type CognitiveTrace = { mode: 'baseline' | 'bago5'; enabled: boolean; profile?: string | null; method?: string; focus: Array<{ id: string; kind: string; label: string; score: number }>; capacity?: number; max_hops?: number; trace_id?: string; trace_state?: string }
 type Message = { uiContent?:Error; workspaceWriteProposal?:WriteProposalSummary; workspaceWriteProposalError?:string; status?: string; workspaceProposal?: WorkspaceProposal; communicationDraft?: CommunicationDraft; communicationDraftId?: string; agentDelegation?: AgentDelegationProposal; id: string; role: 'user' | 'assistant'; content: string; trace?: MessageTrace; cognitiveTrace?: CognitiveTrace; sources?: WorkspaceSource[]; readEvents?: WorkspaceReadEvent[]; agentBuilderDraft?: AgentConfig; inlineJobHistory?: boolean; inlineDirectoryScan?: boolean; scanOutcome?: ScanOutcome; pendingNavigation?: ExistingView; navigationDecision?: 'accepted' | 'declined' }
-type ConversationSummary = { id: string; owner_kind: 'assistant' | 'agent'; owner_id: string; title: string; status: 'active' | 'archived' | 'deleted'; updated_at: string; revision: number }
+type ConversationSummary = { id: string; owner_kind: 'assistant' | 'agent'; owner_id: string; title: string; status: 'active' | 'archived' | 'deleted'; labels?: string[]; created_at?: string; updated_at: string; revision: number }
 type StoredConversation = ConversationSummary & { messages: Array<{ id: string; role: 'user' | 'assistant'; content: string; status?: string; references?: { agent_delegation?: AgentDelegationProposal; workspace_write_proposal?:unknown; workspace_proposal?: WorkspaceProposal; communication_draft_id?: string; communication_draft?: CommunicationDraft; trace?: { trace_id?: string; trace_state?: string; jaeger_trace_id?: string; jaeger_url?: string } & Partial<ScanTrace>; cognitive_trace?: CognitiveTrace; sources?: WorkspaceSource[]; read_events?: Array<WorkspaceReadEvent & Partial<ScanReceipt>>; scan_result?: ScanReport; control_capability?: string } }> }
 type LibraryMode = 'active' | 'archived' | 'deleted'
+type ConversationSortKey = 'labels' | 'title' | 'created_at' | 'updated_at'
+type ConversationSort = { key: ConversationSortKey; direction: 'asc' | 'desc' }
 type ControlOperation = 'chat' | 'help' | 'list_agents' | 'draft_agent' | 'navigate' | 'list_capabilities' | 'propose_capability'
 type ExistingView = 'communications' | 'whatsapp_settings' | 'inspector' | 'builder' | 'chat' | 'workspace' | 'runner' | 'control' | 'jobs' | 'traces' | 'summary' | 'retrieval' | 'authorization' | 'evaluation' | 'evaluation_lab' | 'provider_settings' | 'cognition_settings' | 'capabilities'
 type CapabilityDraft = { capabilities: Capability[]; capabilityId: string; summary: string; requestedScope: string; conversationId: string | null }
@@ -203,10 +205,15 @@ export default function AgentChat({ onInspectionSelection, onInspectExecution, o
   const [activeConversation, setActiveConversation] = useState<StoredConversation | null>(null)
   const [conversationList, setConversationList] = useState<ConversationSummary[]>([])
   const [conversationContextMenu, setConversationContextMenu] = useState<{ conversation: ConversationSummary; x: number; y: number } | null>(null)
+  const conversationActionTriggerRef = useRef<HTMLButtonElement | null>(null)
   const [libraryMode, setLibraryMode] = useState<LibraryMode>('active')
+  const [conversationSort, setConversationSort] = useState<ConversationSort>({key: 'updated_at', direction: 'desc'})
+  const [agentPanelOpen, setAgentPanelOpen] = useState(false)
+  const agentPanelContentId = useId()
   const [libraryError, setLibraryError] = useState<string|Error>('')
   const [permanentlyDeleting, setPermanentlyDeleting] = useState(false)
   const [activeProject, setActiveProject] = useState<{project_id:string|null;title:string;scope:string;root:string|null}|null>(null)
+  const [developmentPanelTarget, setDevelopmentPanelTarget] = useState<HTMLDivElement | null>(null)
   const [loadingConversation, setLoadingConversation] = useState(false)
   const [creatingConversation, setCreatingConversation] = useState(false)
   const creatingConversationRef = useRef(false)
@@ -728,9 +735,28 @@ export default function AgentChat({ onInspectionSelection, onInspectExecution, o
     }
   }
 
+  const manageConversationLabels = async (target: ConversationSummary) => {
+    const raw = window.prompt(t('commerce.labels_prompt'), (target.labels ?? []).join(', '))
+    if (raw === null) return
+    const labels = raw.split(',').map(label => label.trim()).filter(Boolean)
+    try {
+      const response = await fetch(`/api/conversations/${encodeURIComponent(target.id)}/labels`, {
+        method: 'PATCH', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ revision: target.revision, labels }),
+      })
+      if (!response.ok) throw await responseError(response)
+      const updated = await response.json() as StoredConversation
+      if (activeConversation?.id === target.id) applyConversation(updated)
+      await refreshConversationList()
+    } catch (cause) {
+      setLibraryError(cause instanceof Error ? cause : 'commerce.conversation_labels_could_not_be_updated')
+      if (cause instanceof Error && cause.message.includes('changed elsewhere')) await refreshConversationList()
+    }
+  }
+
   const showConversationContextMenu = (conversation: ConversationSummary, x: number, y: number) => {
     const menuWidth = 184
-    const menuHeight = conversation.status === 'active' ? 132 : 104
+    const menuHeight = conversation.status === 'deleted' ? 104 : 164
     setConversationContextMenu({
       conversation,
       x: Math.max(8, Math.min(x, window.innerWidth - menuWidth - 8)),
@@ -1038,6 +1064,11 @@ export default function AgentChat({ onInspectionSelection, onInspectExecution, o
     }
   }
 
+  const closeAgentPanel = () => {
+    if (agentPanelRef.current) agentPanelRef.current.open = false
+    setAgentPanelOpen(false)
+    agentPanelRef.current?.querySelector<HTMLElement>(':scope > summary')?.focus()
+  }
   const openControlChat = () => { setSelectedAgent(null); setCapabilityDraft(null); setCapabilityProposals([]); setError('') }
   const selectAgent = (agent: Agent) => { setSelectedAgent(agent); setCapabilityDraft(null); setCapabilityProposals([]); setError('') }
   const latestDirectoryScanPromptId = [...messages].reverse().find((message) => message.inlineDirectoryScan)?.id
@@ -1052,10 +1083,76 @@ export default function AgentChat({ onInspectionSelection, onInspectExecution, o
   }
 
   const orderedConversationList = [...conversationList].sort((a,b)=>{
-    const first=conversationActivity(a.updated_at),second=conversationActivity(b.updated_at)
-    if(Number.isFinite(first)&&Number.isFinite(second))return second-first
-    return Number.isFinite(first)?-1:Number.isFinite(second)?1:0
+    let result = 0
+    if (conversationSort.key === 'title') {
+      result = a.title.localeCompare(b.title, getLocale(), {sensitivity: 'base', numeric: true})
+    } else if (conversationSort.key === 'labels') {
+      result = (a.labels ?? []).join(', ').localeCompare((b.labels ?? []).join(', '), getLocale(), {sensitivity: 'base', numeric: true})
+    } else {
+      const first = conversationActivity(a[conversationSort.key])
+      const second = conversationActivity(b[conversationSort.key])
+      if (Number.isFinite(first) && Number.isFinite(second)) result = first - second
+      else if (Number.isFinite(first)) return -1
+      else if (Number.isFinite(second)) return 1
+    }
+    if (result !== 0) return result * (conversationSort.direction === 'asc' ? 1 : -1)
+    return a.id.localeCompare(b.id)
   })
+  const conversationTitle = (conversation: ConversationSummary) => conversation.title === 'New conversation' ? t('commerce.new_conversation') : conversation.title
+  const conversationTime = (value: string | undefined, label: 'commerce.created_date' | 'commerce.last_activity_date') => {
+    if (!Number.isFinite(conversationActivity(value))) return <span>{t('commerce.timestamp_unavailable')}</span>
+    return <time dateTime={value}>{t(label, {date: formatDate(value!)})}</time>
+  }
+  const selectConversation = (conversation: ConversationSummary) => {
+    if (conversation.status === 'deleted') { setActiveConversation({ ...conversation, messages: [] }); setMessages([]) }
+    else void openConversation(conversation.id)
+  }
+  const conversationSelectionEvents = (conversation: ConversationSummary) => ({
+    onContextMenu: (event: ReactMouseEvent<HTMLButtonElement>) => { event.preventDefault(); cancelConversationLongPress(); conversationActionTriggerRef.current = event.currentTarget; showConversationContextMenu(conversation, event.clientX, event.clientY) },
+    onPointerDown: (event: ReactPointerEvent<HTMLButtonElement>) => {
+      if (event.pointerType !== 'touch') return
+      cancelConversationLongPress()
+      longPressTriggeredRef.current = false
+      const {clientX, clientY} = event
+      longPressTimerRef.current = window.setTimeout(() => { longPressTriggeredRef.current = true; showConversationContextMenu(conversation, clientX, clientY) }, 550)
+    },
+    onPointerUp: cancelConversationLongPress,
+    onPointerCancel: cancelConversationLongPress,
+    onPointerLeave: cancelConversationLongPress,
+    onKeyDown: (event: ReactKeyboardEvent<HTMLButtonElement>) => {
+      if (event.key !== 'ContextMenu' && !(event.shiftKey && event.key === 'F10')) return
+      event.preventDefault()
+      const bounds = event.currentTarget.getBoundingClientRect()
+      conversationActionTriggerRef.current = event.currentTarget
+      showConversationContextMenu(conversation, bounds.left, bounds.bottom)
+    },
+  })
+  const renderConversationSelection = (conversation: ConversationSummary, compact: boolean) => <button
+    key={conversation.id}
+    type="button"
+    className={`${compact ? 'conversation-library-item' : 'conversation-library-table-select'} ${activeConversation?.id === conversation.id ? 'selected' : ''}`}
+    aria-pressed={activeConversation?.id === conversation.id}
+    onClick={(event) => { if (longPressTriggeredRef.current) { event.preventDefault(); longPressTriggeredRef.current = false; return }; setConversationContextMenu(null); selectConversation(conversation) }}
+    {...conversationSelectionEvents(conversation)}
+  >
+    <strong>{conversationTitle(conversation)}</strong>
+    {compact && <span>{conversationTime(conversation.updated_at, 'commerce.last_activity_date')}</span>}
+  </button>
+  const renderConversationActions = (conversation: ConversationSummary) => <button
+    type="button"
+    className="conversation-row-actions-button"
+    aria-label={t('commerce.conversation_actions', {title: conversationTitle(conversation)})}
+    onClick={event => { event.stopPropagation(); conversationActionTriggerRef.current = event.currentTarget; const bounds = event.currentTarget.getBoundingClientRect(); showConversationContextMenu(conversation, bounds.left, bounds.bottom) }}
+  ><span aria-hidden="true">⋯</span></button>
+  const sortHeader = (key: ConversationSortKey, label: string) => {
+    const selected = conversationSort.key === key
+    const direction = selected ? conversationSort.direction : 'none'
+    return <th scope="col" aria-sort={direction === 'asc' ? 'ascending' : direction === 'desc' ? 'descending' : 'none'}>
+      <button type="button" onClick={() => setConversationSort(current => current.key === key ? {key, direction: current.direction === 'asc' ? 'desc' : 'asc'} : {key, direction: key === 'updated_at' ? 'desc' : 'asc'})}>
+        {label}<span aria-hidden="true"> {selected ? conversationSort.direction === 'asc' ? '↑' : '↓' : '↕'}</span>
+      </button>
+    </th>
+  }
   const conversationLibrary = (
     <section style={!selectedAgent ? {flex: '1 1 0', minHeight: 0, maxHeight: 'none', margin: 0} : undefined} className="chat-sidebar-pane conversation-library" aria-label={t('commerce.conversation_library')}>
               {selectedAgent && <div className="conversation-library-heading"><strong>{t('commerce.chat_title_named',{name:selectedAgent.config.name})}</strong></div>}
@@ -1064,38 +1161,32 @@ export default function AgentChat({ onInspectionSelection, onInspectExecution, o
               {loadingConversation && <p className="muted-state" role="status">{t('commerce.opening_conversation')}</p>}
               {libraryError && <p className="inline-error" role="alert">{errorMessage(libraryError)}</p>}
               {conversationList.length === 0 && !libraryError && <p className="muted-state">{t(libraryMode==='active'?'commerce.empty_library_active':libraryMode==='archived'?'commerce.empty_library_archived':'commerce.empty_library_deleted',{owner:selectedAgent?t('commerce.for_this_agent'):t('commerce.with_the_orchestrator')})}</p>}
-              <div style={!selectedAgent ? {flex: '1 1 0', minHeight: 0, overflowY: 'auto'} : undefined} className="conversation-library-list">{orderedConversationList.map((conversation) => <button
-                key={conversation.id}
-                type="button"
-                className={`conversation-library-item ${activeConversation?.id === conversation.id ? 'selected' : ''}`}
-                style={!selectedAgent ? {flex: '0 0 auto', minHeight: 56, height: 'auto'} : undefined}
-                onClick={(event) => {
-                  if (longPressTriggeredRef.current) { event.preventDefault(); longPressTriggeredRef.current = false; return }
-                  setConversationContextMenu(null)
-                  if (conversation.status === 'deleted') { setActiveConversation({ ...conversation, messages: [] }); setMessages([]) }
-                  else void openConversation(conversation.id)
-                }}
-                onContextMenu={(event) => { event.preventDefault(); cancelConversationLongPress(); showConversationContextMenu(conversation, event.clientX, event.clientY) }}
-                onPointerDown={(event) => {
-                  if (event.pointerType !== 'touch') return
-                  cancelConversationLongPress()
-                  longPressTriggeredRef.current = false
-                  const { clientX, clientY } = event
-                  longPressTimerRef.current = window.setTimeout(() => {
-                    longPressTriggeredRef.current = true
-                    showConversationContextMenu(conversation, clientX, clientY)
-                  }, 550)
-                }}
-                onPointerUp={cancelConversationLongPress}
-                onPointerCancel={cancelConversationLongPress}
-                onPointerLeave={cancelConversationLongPress}
-                onKeyDown={(event) => {
-                  if (event.key !== 'ContextMenu' && !(event.shiftKey && event.key === 'F10')) return
-                  event.preventDefault()
-                  const bounds = event.currentTarget.getBoundingClientRect()
-                  showConversationContextMenu(conversation, bounds.left, bounds.bottom)
-                }}
-              ><strong style={!selectedAgent ? {flexShrink: 0, whiteSpace: 'normal', overflowWrap: 'anywhere'} : undefined}>{conversation.title === 'New conversation' ? t('commerce.new_conversation') : conversation.title}</strong><span style={!selectedAgent ? {flexShrink: 0} : undefined}>{Number.isFinite(conversationActivity(conversation.updated_at)) ? <time dateTime={conversation.updated_at}>Última actividad · {formatDate(conversation.updated_at)} UTC</time> : 'Última actividad no disponible'}</span></button>)}</div>
+              {(Boolean(selectedAgent) || agentPanelOpen) && <div style={!selectedAgent ? {flex: '1 1 0', minHeight: 0, overflowY: 'auto'} : undefined} className="conversation-library-list">
+                {orderedConversationList.map(conversation => <div className="conversation-compact-row" data-conversation-id={conversation.id} key={`compact-${conversation.id}`}>
+                  {renderConversationSelection(conversation, true)}{renderConversationActions(conversation)}
+                </div>)}
+              </div>}
+              {!selectedAgent && !agentPanelOpen && <div className="conversation-library-table-scroll" role="region" aria-label={t('commerce.conversation_library_table')} tabIndex={0}>
+                <table className="conversation-library-table">
+                  <caption className="visually-hidden">{t('commerce.conversation_library_table_caption')}</caption>
+                  <thead><tr>
+                    {sortHeader('title', t('commerce.conversation_name'))}
+                    {sortHeader('labels', t('commerce.conversation_labels'))}
+                    {sortHeader('created_at', t('commerce.conversation_created'))}
+                    {sortHeader('updated_at', t('commerce.conversation_last_activity'))}
+                    <th scope="col" aria-label={t('commerce.conversation_actions_heading')}></th>
+                  </tr></thead>
+                  <tbody>{orderedConversationList.map(conversation => <tr data-conversation-id={conversation.id} data-selected={activeConversation?.id === conversation.id} key={`table-${conversation.id}`}>
+                    <td>{renderConversationSelection(conversation, false)}</td>
+                      <td><div className="conversation-labels">{(conversation.labels ?? []).length > 0
+                        ? (conversation.labels ?? []).map(label => <span className="conversation-label-chip" key={`${conversation.id}-${label}`}>{label}</span>)
+                        : <span className="conversation-labels-empty">{t('commerce.no_labels')}</span>}</div></td>
+                    <td>{conversationTime(conversation.created_at, 'commerce.created_date')}</td>
+                    <td>{conversationTime(conversation.updated_at, 'commerce.last_activity_date')}</td>
+                    <td>{renderConversationActions(conversation)}</td>
+                  </tr>)}</tbody>
+                </table>
+              </div>}
               <div className="conversation-library-footer"><button className="conversation-library-new" type="button" disabled={creatingConversation} onClick={() => void startConversation()}>{t('commerce.new')}</button>
                 {libraryMode === 'deleted' && activeConversation?.status === 'deleted' && <button type="button" disabled={permanentlyDeleting} onClick={() => void permanentlyDeleteConversation()}>{permanentlyDeleting ? t('commerce.deleting') : t('commerce.permanently_delete')}</button>}
               </div>
@@ -1107,6 +1198,7 @@ export default function AgentChat({ onInspectionSelection, onInspectExecution, o
                 aria-label={t('commerce.conversation_actions',{title:conversationContextMenu.conversation.title})}
                 style={{ left: conversationContextMenu.x, top: conversationContextMenu.y }}
                 onKeyDown={(event) => {
+                  if (event.key === 'Escape') { event.preventDefault(); event.stopPropagation(); setConversationContextMenu(null); conversationActionTriggerRef.current?.focus(); return }
                   if (event.key !== 'ArrowDown' && event.key !== 'ArrowUp') return
                   event.preventDefault()
                   const items = Array.from(event.currentTarget.querySelectorAll<HTMLButtonElement>('button'))
@@ -1115,6 +1207,7 @@ export default function AgentChat({ onInspectionSelection, onInspectExecution, o
                   items[(currentIndex + direction + items.length) % items.length]?.focus()
                 }}
               >
+                {conversationContextMenu.conversation.status !== 'deleted' && <button type="button" role="menuitem" onClick={() => { const { conversation } = conversationContextMenu; setConversationContextMenu(null); void manageConversationLabels(conversation) }}>{t('commerce.edit_labels')}</button>}
                 {conversationContextMenu.conversation.status !== 'deleted' && <button type="button" role="menuitem" onClick={() => { const { conversation } = conversationContextMenu; setConversationContextMenu(null); void manageConversation('rename', conversation) }}>{t('commerce.rename')}</button>}
                 {conversationContextMenu.conversation.status === 'active' && <button type="button" role="menuitem" onClick={() => { const { conversation } = conversationContextMenu; setConversationContextMenu(null); void manageConversation('archive', conversation) }}>{t('commerce.archive')}</button>}
                 {conversationContextMenu.conversation.status !== 'deleted' && <button type="button" role="menuitem" onClick={() => { const { conversation } = conversationContextMenu; setConversationContextMenu(null); void manageConversation('delete', conversation) }}>{t('commerce.move_to_trash')}</button>}
@@ -1125,11 +1218,16 @@ export default function AgentChat({ onInspectionSelection, onInspectExecution, o
   )
   return (
     <section hidden={hidden} style={hidden ? {display: 'none'} : undefined} className="control-chat" aria-label={t('commerce.agent_and_application_chat')} onScrollCapture={revealScrollbarWhileScrolling}>
+      <div hidden={hidden || agentPanelOpen} className="development-panel-portal" ref={setDevelopmentPanelTarget} />
       {agentPanelTarget && createPortal(
-        <details className="chat-agent-panel" ref={agentPanelRef}>
-          <summary>{t('commerce.conversations_and_agents')} <span>{conversationAgents.length}</span></summary>
-          <aside className="control-chat-sidebar" aria-label={t('commerce.orchestrator_conversations_and_agents')}>
-            {selectedAgent && conversationLibrary}
+        <details className="chat-agent-panel" ref={agentPanelRef} onToggle={event => setAgentPanelOpen(event.currentTarget.open)} onKeyDownCapture={event => {
+          if (event.key !== 'Escape' || event.defaultPrevented || document.querySelector('dialog[open], [role="dialog"][aria-modal="true"], .chat-tools-menu[open], .conversation-context-menu')) return
+          event.preventDefault(); event.stopPropagation(); closeAgentPanel()
+        }}>
+          <summary aria-expanded={agentPanelOpen} aria-controls={agentPanelContentId}>{t('commerce.conversations_and_agents')} <span>{conversationAgents.length}</span></summary>
+          <aside id={agentPanelContentId} className="control-chat-sidebar" aria-label={t('commerce.orchestrator_conversations_and_agents')}>
+            <div className="chat-agent-panel-close-row"><button type="button" aria-label={t('commerce.close_conversations_panel')} onClick={closeAgentPanel}>{t('commerce.close')} <span aria-hidden="true">×</span></button></div>
+            {(selectedAgent || agentPanelOpen) && conversationLibrary}
             <section className="chat-sidebar-pane chat-sidebar-agents" aria-labelledby="chat-agents-title">
               <div className="chat-sidebar-heading"><div><h2 id="chat-agents-title">{t('commerce.agents')}</h2></div>{onManageAgents && <button type="button" className="secondary-action" onClick={onManageAgents}>{t('commerce.manage_agents')}</button>}</div>
               <section className="conversation-agent-activity" aria-label={t('commerce.agents_participating_in_the_selected_conversation')}>
@@ -1183,24 +1281,25 @@ export default function AgentChat({ onInspectionSelection, onInspectExecution, o
         </div>
         {humanCorrection && <HumanCorrectionReview source={humanCorrection.source} current={correctionSourceCurrent(humanCorrection.source)} busy={sending} permissions={correctionPermissions} permissionIdentity={correctionPermissionIdentity} onCancel={closeHumanCorrection} onSend={prepared=>void sendMessage(undefined,prepared)}/>}
         <form className="control-chat-composer" onSubmit={(event) => void sendMessage(event)}><label className="visually-hidden" htmlFor="control-chat-input">{t('commerce.message_the_assistant_or_selected_agent')}</label>
-          <div className="chat-composer-actions">
-            <label className="workspace-read-toggle"><input type="checkbox" checked={allowPublicWebRead} onChange={event => setAllowPublicWebRead(event.target.checked)} disabled={sending || Boolean(activeConversation && activeConversation.status !== 'active')} /><span>{t('commerce.allow_public_web_reading')}</span></label>
-            <div className="chat-context-controls">
-              <ChatTools conversationId={activeConversation?.id} onOpenCommunication={onOpenCommunication} />
-              <button type="button" onClick={onOpenCognitionSettings} aria-label={t('commerce.open_cognition_and_context_settings')}>{t('commerce.cognition')} {cognitiveMode === 'bago5' ? t('commerce.bago5_experimental') : t('commerce.baseline')} <span aria-hidden="true">↗</span></button>
-            </div>
-            {!selectedAgent && <label className="chat-provider-picker"><span className="visually-hidden">{t('commerce.orchestrator_model')}</span><select aria-label={t('commerce.orchestrator_model')} value={!chatProviderSelectionFailed && chatProviderSelection ? `${chatProviderSelection.provider_id}|${chatProviderSelection.model_id}` : ''} onChange={event => void changeChatProvider(event.target.value)} aria-busy={savingChatProvider} data-provider-selection-state={savingChatProvider ? 'pending' : chatProviderSelectionFailed ? 'failed' : chatProviderSelection ? 'confirmed' : 'unselected'} disabled={sending || savingChatProvider || chatProviders.length === 0}><option value="" disabled>{chatProviders.length ? t('commerce.select_a_model') : t('commerce.configure_a_provider')}</option>{chatProviders.map(provider => <option key={`${provider.provider_id}|${provider.model_id}`} value={`${provider.provider_id}|${provider.model_id}`}>{provider.label} · {provider.display_name ?? provider.model_id}{provider.state === 'configured_unverified' ? t('commerce.unverified') : ''}</option>)}</select></label>}
-          </div><div className="chat-composer-input"><textarea ref={composerRef} id="control-chat-input" rows={2} value={input} onChange={(event) => setInput(event.target.value)} onKeyDown={(event) => {
+          <div className="chat-composer-input"><textarea ref={composerRef} id="control-chat-input" rows={2} value={input} onChange={(event) => setInput(event.target.value)} onKeyDown={(event) => {
           if (event.key !== 'Enter' || event.shiftKey || event.nativeEvent.isComposing || event.repeat) return
           event.preventDefault()
           void sendMessage()
         }} placeholder={activeConversation?.status && activeConversation.status !== 'active' ? t('commerce.restore_or_start_a_new_conversation') : selectedAgent ? t('commerce.message_agent',{name:selectedAgent.config.name}) : t('commerce.message_the_assistant')} disabled={sending || Boolean(activeConversation && activeConversation.status !== 'active')} />
             <button className="primary-action" type="submit" disabled={sending || orchestratorSelectionBlocked || !input.trim() || Boolean(activeConversation && activeConversation.status !== 'active')}>{sending ? 'Sending.' : t('commerce.send')}</button>
           </div>
+          <div className="chat-composer-actions">
+            <label className="workspace-read-toggle"><input type="checkbox" checked={allowPublicWebRead} onChange={event => setAllowPublicWebRead(event.target.checked)} disabled={sending || Boolean(activeConversation && activeConversation.status !== 'active')} /><span>{t('commerce.allow_public_web_reading')}</span></label>
+            <div className="chat-context-controls">
+              <ChatTools conversationId={activeConversation?.id} onOpenCommunication={onOpenCommunication} />
+              <button type="button" onClick={onOpenCognitionSettings} aria-label={t('commerce.open_cognition_and_context_settings')}>{t('commerce.cognition')} {cognitiveMode === 'bago5' ? t('commerce.bago5_experimental') : t('commerce.baseline')} <span aria-hidden="true">↗</span></button>
+              {!selectedAgent && <label className="chat-provider-picker"><span className="visually-hidden">{t('commerce.orchestrator_model')}</span><select aria-label={t('commerce.orchestrator_model')} value={!chatProviderSelectionFailed && chatProviderSelection ? `${chatProviderSelection.provider_id}|${chatProviderSelection.model_id}` : ''} onChange={event => void changeChatProvider(event.target.value)} aria-busy={savingChatProvider} data-provider-selection-state={savingChatProvider ? 'pending' : chatProviderSelectionFailed ? 'failed' : chatProviderSelection ? 'confirmed' : 'unselected'} disabled={sending || savingChatProvider || chatProviders.length === 0}><option value="" disabled>{chatProviders.length ? t('commerce.select_a_model') : t('commerce.configure_a_provider')}</option>{chatProviders.map(provider => <option key={`${provider.provider_id}|${provider.model_id}`} value={`${provider.provider_id}|${provider.model_id}`}>{provider.label} · {provider.display_name ?? provider.model_id}{provider.state === 'configured_unverified' ? t('commerce.unverified') : ''}</option>)}</select></label>}
+            </div>
+          </div>
           {allowPublicWebRead && <section aria-label={t('commerce.public_web_reading_scope')}><label className="workspace-read-paths">{t('commerce.entry_https_urls_one_per_line')}<textarea rows={3} value={publicWebUrls} onChange={event => setPublicWebUrls(event.target.value)} placeholder="https://www.ejemplo.com/" maxLength={16384} disabled={sending} /></label><p>{t('commerce.this_turn_only_public_pages_from_these_origins')}</p><ul aria-label={t('commerce.requested_web_origins')}>{[...new Set(publicWebUrls.split(/\r?\n/).map(value => {try {return new URL(value.trim()).origin} catch {return value.trim() ? t('commerce.invalid_url',{url:value.trim()}) : ''}}).filter(Boolean))].map(origin => <li key={origin}><code>{origin}</code></li>)}</ul></section>}
 
         </form>
-        {!selectedAgent && <DevelopmentPanel key="app-assistant-context" ownerId={ownerId} disabled={sending} initialOpen showChanges={false} historyContent={conversationLibrary} workspaceContent={
+        {!selectedAgent && <DevelopmentPanel key="app-assistant-context" ownerId={ownerId} projectRoot={activeProject?.root ?? null} portalTarget={developmentPanelTarget} disabled={sending} showChanges={false} historyContent={!agentPanelOpen ? conversationLibrary : undefined} workspaceContent={
           <ProjectPermissions
             projectId={activeProject?.project_id ?? null}
             projectRoot={activeProject?.root ?? null}
@@ -1208,7 +1307,7 @@ export default function AgentChat({ onInspectionSelection, onInspectExecution, o
             onBrowseWorkspace={() => onNavigate('workspace')}
           />
         } />}
-        {selectedAgent && <DevelopmentPanel key={selectedAgent.id} ownerId={selectedAgent.id} disabled={sending} initialOpen={false} showChanges={Boolean(selectedAgent.config.tools?.some(tool=>tool.startsWith('development_')))} workspaceContent={
+        {selectedAgent && <DevelopmentPanel key={selectedAgent.id} ownerId={selectedAgent.id} projectRoot={activeProject?.root ?? null} portalTarget={developmentPanelTarget} disabled={sending} showChanges={Boolean(selectedAgent.config.tools?.some(tool=>tool.startsWith('development_')))} workspaceContent={
           <ProjectPermissions
             projectId={activeProject?.project_id ?? null}
             projectRoot={activeProject?.root ?? null}

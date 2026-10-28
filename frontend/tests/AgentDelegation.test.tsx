@@ -4,6 +4,7 @@ import { afterEach, beforeEach, expect, it, vi } from 'vitest'
 import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react'
 import AgentDelegation, { type AgentDelegationProposal } from '../src/components/AgentDelegation'
 import AgentChat from '../src/components/AgentChat'
+import {conversationButton} from './helpers/conversation-library'
 import { resetLocaleForTests, setLocale, t } from '../src/i18n'
 
 const proposal: AgentDelegationProposal = {
@@ -172,7 +173,7 @@ it('renders only the latest persisted card per proposal and resets on conversati
   expect(screen.getByText('Second task failed with a recorded reason.')).toBeTruthy()
   expect(screen.getByText('Delegation proposed.')).toBeTruthy()
   fireEvent.click(screen.getByText(t('commerce.conversations_and_agents')))
-  fireEvent.click(await screen.findByRole('button', { name: /Other orchestrator fixture/ }))
+  fireEvent.click(conversationButton(document, 'Other orchestrator fixture'))
   await screen.findByText('Reviewer in next conversation')
   expect(screen.getAllByRole('region', { name: 'Saved agent delegation' })).toHaveLength(1)
   expect(screen.queryByText('Final answer from saved reviewer.')).toBeNull()

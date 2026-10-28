@@ -11,6 +11,25 @@ import AgentBuilder from '../../../src/components/AgentBuilder'
 const id = 'agent_12345678'
 const original = { id, created_at: '2026-10-22T00:00:00Z', config: { name: 'Ámbar', description: 'Gastos de empresa', type: 'tool', system_prompt: '', tools: [], provider_id: 'codex', model_id: 'fixture', task: { prompt: 'Revisar gastos', dates: [] } } }
 const second = { ...original, id: 'agent_87654321', config: { ...original.config, name: 'Norte', description: 'Facturación' } }
+const twelveProfiles = Array.from({ length: 12 }, (_, index) => ({
+  id: 'agent_' + String(index + 1).padStart(8, '0'),
+  created_at: '2026-10-28T00:00:00Z',
+  config: {
+    name: 'Perfil ' + String(index + 1).padStart(2, '0'),
+    description: index === 0
+      ? 'Perfil de aceptación con una descripción deliberadamente larga para confirmar que la lista presenta un resumen compacto y el detalle conserva íntegro el contenido configurado.'
+      : 'Descripción real del perfil ' + (index + 1) + ': revisa entradas y conserva su contexto de trabajo.',
+    task_scope: index === 0
+      ? 'Alcance extenso: revisar archivos del proyecto autorizado, explicar cada transformación y citar sus fuentes sin tocar datos fuera del directorio elegido.'
+      : 'Alcance de trabajo declarado para el perfil ' + (index + 1) + '.',
+    type: 'tool' as const,
+    system_prompt: '',
+    tools: index === 0 ? ['workspace.read_text', 'workspace.list_files', 'workspace.copy_file'] : ['workspace.read_text'],
+    provider_id: index === 5 ? null : 'codex' as const,
+    model_id: index === 5 ? null : 'fixture-model-' + (index + 1),
+    task: { prompt: 'Revisar fixture sintético', dates: [] }
+  }
+}))
 const response = (body: unknown, status = 200) => ({ ok: status < 400, status, json: async () => body })
 const props = () => ({ onCreate: vi.fn(), onTest: vi.fn(), onEvaluate: vi.fn() })
 afterEach(() => { cleanup(); vi.restoreAllMocks(); vi.unstubAllGlobals() })
@@ -76,6 +95,83 @@ describe('Gestión de agentes con API', () => {
     fireEvent.click(screen.getByRole('button',{name:t('agents.AgentManagement.probar_tarea')})); expect(callbacks.onTest).toHaveBeenCalledWith(id)
     fireEvent.click(screen.getByRole('button',{name:t('agents.AgentManagement.evaluar')})); expect(callbacks.onEvaluate).toHaveBeenCalledWith(id)
     fireEvent.click(screen.getByRole('button',{name:t('agents.AgentManagement.crear_agente')})); expect(callbacks.onCreate).toHaveBeenCalledOnce()
+  })
+
+  it('uses a compact searchable list and keeps the selected full profile through filtering and refresh', async () => {
+    vi.stubGlobal('fetch', vi.fn(async () => response({ agents: twelveProfiles })))
+    const callbacks = props()
+    render(<AgentManagement {...callbacks} />)
+    await screen.findByText('12 de 12 agentes')
+
+    const profileSix = screen.getByRole('button', { name: /Perfil 06/ })
+    fireEvent.click(profileSix)
+    expect(screen.getByRole('heading', { level: 2, name: 'Perfil 06' })).toBeTruthy()
+    expect(screen.getAllByText(t('agents.AgentManagement.proveedor_sin_asignar')).length).toBeGreaterThan(0)
+    expect(screen.getAllByText(t('agents.AgentManagement.modelo_sin_asignar')).length).toBeGreaterThan(0)
+
+    const search = screen.getByRole('searchbox', { name: t('agents.AgentManagement.buscar_agente') })
+    fireEvent.change(search, { target: { value: 'Perfil 03' } })
+    expect(screen.getByText('1 de 12 agentes')).toBeTruthy()
+    expect(screen.getByRole('heading', { level: 2, name: 'Perfil 06' })).toBeTruthy()
+    fireEvent.click(screen.getByRole('button', { name: t('agents.AgentManagement.actualizar') }))
+    await screen.findByText('1 de 12 agentes')
+    expect((search as HTMLInputElement).value).toBe('Perfil 03')
+
+    fireEvent.change(search, { target: { value: '' } })
+    expect(screen.getByRole('button', { name: /Perfil 06/ }).getAttribute('aria-pressed')).toBe('true')
+    fireEvent.click(screen.getByRole('button', { name: /Perfil 01/ }))
+    const detail = screen.getByRole('article', { name: 'Perfil 01' })
+    expect(within(detail).getByRole('heading', { level: 2, name: 'Perfil 01' })).toBeTruthy()
+    expect(within(detail).getByText(/Alcance extenso: revisar archivos del proyecto autorizado/)).toBeTruthy()
+    expect(within(detail).getByText('workspace.read_text')).toBeTruthy()
+    expect(within(detail).getByText('workspace.list_files')).toBeTruthy()
+    expect(within(detail).getByText('workspace.copy_file')).toBeTruthy()
+    expect(within(detail).getByText(twelveProfiles[0].config.description)).toBeTruthy()
+
+    fireEvent.click(screen.getByRole('button', { name: t('agents.AgentManagement.probar_tarea') }))
+    fireEvent.click(screen.getByRole('button', { name: t('agents.AgentManagement.evaluar') }))
+    expect(callbacks.onTest).toHaveBeenCalledWith(twelveProfiles[0].id)
+    expect(callbacks.onEvaluate).toHaveBeenCalledWith(twelveProfiles[0].id)
+  })
+
+  it('returns from mobile detail to the list with search and selected identity intact', async () => {
+    vi.stubGlobal('fetch', vi.fn(async () => response({ agents: twelveProfiles })))
+    render(<AgentManagement {...props()} />)
+    await screen.findByText('12 de 12 agentes')
+
+    const input = screen.getByRole('searchbox', { name: t('agents.AgentManagement.buscar_agente') })
+    fireEvent.change(input, { target: { value: 'Perfil 04' } })
+    const selectedButton = screen.getByRole('button', { name: /Perfil 04/ })
+    fireEvent.click(selectedButton)
+    const browser = document.querySelector('.agent-management-browser')
+    expect(browser?.getAttribute('data-mobile-detail')).toBe('true')
+    expect(screen.getByRole('heading', { level: 2, name: 'Perfil 04' })).toBeTruthy()
+
+    fireEvent.click(screen.getByRole('button', { name: t('agents.AgentManagement.volver_a_agentes') }))
+    expect(browser?.getAttribute('data-mobile-detail')).toBe('false')
+    expect((input as HTMLInputElement).value).toBe('Perfil 04')
+    expect(document.activeElement).toBe(selectedButton)
+    expect(selectedButton.getAttribute('aria-pressed')).toBe('true')
+  })
+
+  it('keeps the selected profile when returning from edit and refreshing', async () => {
+    vi.stubGlobal('fetch', vi.fn(async (path: string) => {
+      if (path === '/api/agents/list') return response({ agents: [original, second] })
+      if (path === '/api/agents/' + second.id) return response(second)
+      if (path === '/api/providers/chat-models') return response({ models: [] })
+      if (path === '/api/agent-tools/templates') return response({ templates: [] })
+      if (path === '/api/capabilities') return response({ agent_tools: [] })
+      throw Error('Unexpected request ' + path)
+    }))
+    render(<AgentManagement {...props()} />)
+    await screen.findByText('2 de 2 agentes')
+    fireEvent.click(screen.getByRole('button', { name: /Norte/ }))
+    fireEvent.click(screen.getByRole('button', { name: t('agents.AgentManagement.editar') }))
+    await screen.findByDisplayValue('Norte')
+    fireEvent.click(screen.getAllByRole('button', { name: t('agents.AgentManagement.volver_a_agentes') })[0])
+    await screen.findByText('2 de 2 agentes')
+    expect(screen.getByRole('heading', { level: 2, name: 'Norte' })).toBeTruthy()
+    expect(screen.getByRole('button', { name: /Norte/ }).getAttribute('aria-pressed')).toBe('true')
   })
 
   it('shows empty, error and recoverable refresh states',async()=>{

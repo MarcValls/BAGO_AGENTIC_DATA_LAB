@@ -4,6 +4,7 @@ import {beforeEach,afterEach,expect,it,vi} from 'vitest'
 import {act,cleanup,fireEvent,render,screen,waitFor} from '@testing-library/react'
 import AgentChat from '../../src/components/AgentChat'
 import {resetLocaleForTests,setLocale,formatDate} from '../../src/i18n'
+import {conversationButton,conversationLibrary} from '../helpers/conversation-library'
 beforeEach(()=>{localStorage.clear();resetLocaleForTests();setLocale('es');HTMLElement.prototype.scrollIntoView=vi.fn()})
 afterEach(()=>{cleanup();vi.unstubAllGlobals()})
 const response=(data:unknown,status=200)=>({ok:status<400,status,json:async()=>data})
@@ -46,10 +47,10 @@ it('late history list cannot pick a chat or overwrite the blank composer draft',
  const f=await fixture({late:true});const composer=screen.getByRole('textbox',{name:'Mensaje al asistente o agente seleccionado'}) as HTMLTextAreaElement;fireEvent.change(composer,{target:{value:'Borrador pendiente'}});await f.resolveList();expect(composer.value).toBe('Borrador pendiente');expect(details(f.calls)).toEqual([]);expect(f.view.container.querySelectorAll('article.control-message')).toHaveLength(0);expect(writes(f.calls)).toEqual([])
 })
 it('manual history selection alone reads the exact selected record, preserving draft and producing no write',async()=>{
- const f=await fixture();const composer=screen.getByRole('textbox',{name:'Mensaje al asistente o agente seleccionado'}) as HTMLTextAreaElement;fireEvent.change(composer,{target:{value:'Borrador no enviado'}});fireEvent.click(screen.getByRole('button',{name:/Historial tie-two/}));await screen.findByText('Contenido elegido tie-two');expect(details(f.calls).map(c=>c.url)).toEqual(['/api/conversations/tie-two']);expect(composer.value).toBe('Borrador no enviado');expect(writes(f.calls)).toEqual([])
+ const f=await fixture();const composer=screen.getByRole('textbox',{name:'Mensaje al asistente o agente seleccionado'}) as HTMLTextAreaElement;fireEvent.change(composer,{target:{value:'Borrador no enviado'}});fireEvent.click(conversationButton(document,'Historial tie-two'));await screen.findByText('Contenido elegido tie-two');expect(details(f.calls).map(c=>c.url)).toEqual(['/api/conversations/tie-two']);expect(composer.value).toBe('Borrador no enviado');expect(writes(f.calls)).toEqual([])
 })
 it('project switch clears the old conversation and reloads history under the new visible project',async()=>{
- const f=await fixture();fireEvent.click(screen.getByRole('button',{name:/Historial tie-two/}));await screen.findByText('Contenido elegido tie-two');const requests=f.calls.filter(c=>c.url.startsWith('/api/conversations?')).length
+ const f=await fixture();fireEvent.click(conversationButton(document,'Historial tie-two'));await screen.findByText('Contenido elegido tie-two');const requests=f.calls.filter(c=>c.url.startsWith('/api/conversations?')).length
  f.changeProject();f.view.rerender(chat('explicit',1));await screen.findByText('Proyecto B');await waitFor(()=>expect(f.calls.filter(c=>c.url.startsWith('/api/conversations?')).length).toBe(requests+1));expect(screen.queryByText('Contenido elegido tie-two')).toBeNull();expect(f.view.container.querySelectorAll('article.control-message')).toHaveLength(0);expect(writes(f.calls)).toEqual([])
 })
 it('first explicit send lazily creates one record and uses the ordinary chat revision with no grants',async()=>{
@@ -61,14 +62,14 @@ it('New stays an explicit one-record action instead of a mount effect',async()=>
 it('blank BAGO5 lists only assistant history, keeps agent histories inaccessible and clears turn consent on manual selection without writes',async()=>{
  const f=await fixture();const composer=screen.getByRole('textbox',{name:'Mensaje al asistente o agente seleccionado'}) as HTMLTextAreaElement;fireEvent.change(composer,{target:{value:'Borrador del orquestador'}});fireEvent.click(screen.getByLabelText('Permitir lectura web pública'))
  const lists=f.calls.filter(c=>c.url.startsWith('/api/conversations?'));expect(lists.every(c=>{const q=new URLSearchParams(c.url.split('?')[1]);return q.get('owner_kind')==='assistant'&&q.get('owner_id')==='app-assistant'})).toBe(true);expect(screen.queryByRole('button',{name:/Historial agent-history/})).toBeNull();expect(screen.queryByRole('button',{name:/Agente de prueba/})).toBeNull();expect(details(f.calls)).toEqual([]);expect(f.view.container.querySelectorAll('article.control-message')).toHaveLength(0)
- fireEvent.click(screen.getByRole('button',{name:/Historial tie-two/}));await screen.findByText('Contenido elegido tie-two');expect(details(f.calls).map(c=>c.url)).toEqual(['/api/conversations/tie-two']);await waitFor(()=>expect((screen.getByLabelText('Permitir lectura web pública') as HTMLInputElement).checked).toBe(false));expect(composer.value).toBe('Borrador del orquestador');expect(writes(f.calls)).toEqual([]);expect(f.created.size).toBe(0)
+ fireEvent.click(conversationButton(document,'Historial tie-two'));await screen.findByText('Contenido elegido tie-two');expect(details(f.calls).map(c=>c.url)).toEqual(['/api/conversations/tie-two']);await waitFor(()=>expect((screen.getByLabelText('Permitir lectura web pública') as HTMLInputElement).checked).toBe(false));expect(composer.value).toBe('Borrador del orquestador');expect(writes(f.calls)).toEqual([]);expect(f.created.size).toBe(0)
 })
 it('orders valid activity instants newest-first with stable ties and exposes true UTC date/time only',async()=>{
- const f=await fixture();const buttons=Array.from(f.view.container.querySelectorAll('.conversation-library-item'));expect(buttons.map(b=>b.querySelector('strong')?.textContent)).toEqual(['Historial tie-one','Historial tie-two','Historial old','Historial bad','Historial missing','Historial date-only']);const times=Array.from(f.view.container.querySelectorAll('time'));expect(times.map(t=>t.getAttribute('dateTime'))).toEqual([rows[1].updated_at,rows[2].updated_at,rows[0].updated_at]);expect(times[0].textContent).toBe('Última actividad · '+formatDate(rows[1].updated_at!)+' UTC');expect(f.view.container.querySelectorAll('.conversation-library-item span')).toHaveLength(6);expect(screen.getAllByText('Última actividad no disponible')).toHaveLength(3)
+ const f=await fixture();const library=conversationLibrary(document,'Historial tie-one');const buttons=Array.from(library.querySelectorAll('.conversation-library-table-select'));expect(buttons.map(b=>b.querySelector('strong')?.textContent)).toEqual(['Historial tie-one','Historial tie-two','Historial old','Historial bad','Historial date-only','Historial missing']);const times=Array.from(library.querySelectorAll('time'));expect(times.map(t=>t.getAttribute('dateTime'))).toEqual([rows[1].updated_at,rows[2].updated_at,rows[0].updated_at]);expect(times[0].textContent).toBe('Última actividad · '+formatDate(rows[1].updated_at!)+' UTC')
 })
 it('localizes the service default conversation title without changing user titles',async()=>{
  const f=await fixture({listRows:[{...summary('untitled','2026-10-24T12:00:00Z'),title:'New conversation'},summary('custom','2026-10-24T11:00:00Z')]});
- const titles=Array.from(f.view.container.querySelectorAll('.conversation-library-item strong')).map(node=>node.textContent);
+ const titles=Array.from(f.view.container.querySelectorAll('.conversation-library-table-select strong')).map(node=>node.textContent);
  expect(titles).toEqual(['Nueva conversación','Historial custom']);expect(details(f.calls)).toEqual([]);expect(writes(f.calls)).toEqual([])
 })
 it('list failure shows error while blank composer remains usable and no record or inference is created',async()=>{

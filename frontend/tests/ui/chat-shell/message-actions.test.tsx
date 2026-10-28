@@ -107,11 +107,12 @@ it('dismisses on outside click, resize and scroll, and clamps menu to viewport',
  fireEvent.contextMenu(articles[2]);fireEvent.scroll(articles[2].parentElement!);expect(screen.queryByRole('menu')).toBeNull()
 })
 it('discards menu on every conversation change before a stale action can run, with no legacy agent selector',async()=>{
- const {articles,copy,calls}=await fixture()
- fireEvent.contextMenu(articles[2]);fireEvent.click(screen.getByRole('button',{name:/Conversación B/}))
+ const {articles,copy,calls,container}=await fixture()
+ const selection=(title:string)=>Array.from(container.querySelectorAll<HTMLButtonElement>('.conversation-library-item, .conversation-library-table-select')).find(button=>button.querySelector('strong')?.textContent===title)!
+ fireEvent.contextMenu(articles[2]);fireEvent.click(selection('Conversación B'))
  await screen.findByText('Otro contexto');expect(screen.queryByRole('menu')).toBeNull();expect(copy).not.toHaveBeenCalled()
  const other=screen.getByText('Otro contexto').closest('article')!
- fireEvent.contextMenu(other);expect(screen.queryByRole('button',{name:/Otro agente/})).toBeNull();fireEvent.click(screen.getByRole('button',{name:/Conversación A/}));await screen.findByText(messages[1].content);expect(screen.queryByRole('menu')).toBeNull();expect(copy).not.toHaveBeenCalled();expect(calls.every(c=>c.method==='GET')).toBe(true)
+ fireEvent.contextMenu(other);expect(screen.queryByRole('button',{name:/Otro agente/})).toBeNull();fireEvent.click(selection('Conversación A'));await screen.findByText(messages[1].content);expect(screen.queryByRole('menu')).toBeNull();expect(copy).not.toHaveBeenCalled();expect(calls.every(c=>c.method==='GET')).toBe(true)
 })
 it('does not hijack editable embedded fields or offer actions on a missing response',async()=>{
  const {articles}=await fixture('active',[{id:'empty',role:'assistant',content:'',status:'failed'}])

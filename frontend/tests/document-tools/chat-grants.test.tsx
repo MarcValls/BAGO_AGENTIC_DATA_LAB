@@ -5,6 +5,7 @@ import {act,cleanup,fireEvent,render,screen,waitFor,within} from '@testing-libra
 import {resetLocaleForTests,t} from '../../src/i18n'
 import AgentChat from '../../src/components/AgentChat'
 import {openDelegatedChild,withPersistedDelegation} from '../helpers/delegated-agent-chat'
+import {conversationButton} from '../helpers/conversation-library'
 
 const response=(data:any)=>({ok:true,status:200,json:async()=>data})
 beforeEach(()=>{localStorage.clear();resetLocaleForTests();HTMLElement.prototype.scrollIntoView=()=>{}})
@@ -42,7 +43,7 @@ it('delegates one selected producer snapshot and contact to the reviewer, with p
  render(<AgentChat cognitiveMode="baseline" onNavigate={()=>{}} onOpenProviderSettings={()=>{}} onOpenCognitionSettings={()=>{}}/>)
  await screen.findByRole('region',{name:assistant.id});await act(async()=>{})
  await openDelegatedChild('Revisor fixture');await act(async()=>{})
-  fireEvent.click(screen.getByRole('button',{name:/Proyecto/}));fireEvent.click(screen.getByRole('button',{name:'Administrar acceso'}));const accessDialog=await screen.findByRole('dialog',{name:'Permisos del proyecto'});fireEvent.click(within(accessDialog).getByText(t('agentTools.workspace'),{selector:'summary'}))
+  const projectTab=screen.getByRole('button',{name:'Proyecto',exact:true});if(projectTab.getAttribute('aria-expanded')!=='true')fireEvent.click(projectTab);fireEvent.click(screen.getByRole('button',{name:'Administrar acceso'}));const accessDialog=await screen.findByRole('dialog',{name:'Permisos del proyecto'});fireEvent.click(within(accessDialog).getByText(t('agentTools.workspace'),{selector:'summary'}))
  fireEvent.change(await screen.findByLabelText(t('agentTools.work')),{target:{value:run.work_id}})
  fireEvent.change(screen.getByLabelText(t('agentTools.contact')),{target:{value:'contact_fixture'}})
  fireEvent.click(screen.getByLabelText(t('agentTools.scopeGrant')))
@@ -63,7 +64,7 @@ it('delegates one selected producer snapshot and contact to the reviewer, with p
  fireEvent.click(screen.getByLabelText(t('agentTools.scopeGrant')))
  fireEvent.click(screen.getByLabelText(t('agentTools.allowDraft')))
  fireEvent.click(screen.getByText(/Conversaciones y agentes/))
- fireEvent.click(await screen.findByRole('button',{name:/conv-other/}))
+ fireEvent.click(conversationButton(document,'conv-other'))
  await waitFor(()=>expect((screen.getByLabelText(t('agentTools.scopeGrant')) as HTMLInputElement).checked).toBe(false))
  expect((screen.getByLabelText(t('agentTools.allowDraft')) as HTMLInputElement).checked).toBe(false)
 })
