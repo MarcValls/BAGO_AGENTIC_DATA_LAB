@@ -142,6 +142,11 @@
   border-radius: 0;
   box-shadow: none;
 }
+#root .app-shell .chat-inspection button,
+#root .app-shell .chat-inspection select,
+#root .app-shell .chat-inspection summary {
+  color: var(--vs-text);
+}
 #root .app-shell .chat-inspection button:hover {
   background: var(--vs-selection);
   border-color: var(--vs-accent);
