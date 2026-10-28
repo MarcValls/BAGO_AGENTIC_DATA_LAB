@@ -14,13 +14,13 @@ it('folds to a compact tab, keeps candidate and confirmation, and does not fetch
  fireEvent.click(screen.getByLabelText('He revisado las diferencias y confirmo esta operación'));
  expect((screen.getByText('Aplicar cambio') as HTMLButtonElement).disabled).toBe(false);
  const before=fetcher.mock.calls.length;
- fireEvent.click(screen.getByRole('button',{name:'Cerrar cambios del proyecto'}));
- const tab=screen.getByRole('button',{name:/Proyecto/});
+ fireEvent.click(screen.getByRole('button',{name:'Cerrar panel de Proyecto'}));
+ const tab=screen.getByRole('button',{name:'Proyecto',exact:true});
  expect(tab.getAttribute('aria-expanded')).toBe('false');expect(document.activeElement).toBe(tab);
  const panel=document.getElementById(tab.getAttribute('aria-controls')!);
- expect(panel?.hidden).toBe(true);expect(screen.queryByRole('region',{name:'Cambios del proyecto'})).toBeNull();
+ expect(panel?.hidden).toBe(true);expect(screen.queryByRole('region',{name:'Contexto del proyecto'})).toBeNull();
  fireEvent.click(tab);expect(panel?.hidden).toBe(false);
- expect(document.activeElement).toBe(screen.getByRole('button',{name:'Cerrar cambios del proyecto'}));
+ expect(document.activeElement).toBe(screen.getByRole('button',{name:'Cerrar panel de Proyecto'}));
  expect((screen.getByLabelText('He revisado las diferencias y confirmo esta operación') as HTMLInputElement).checked).toBe(true);
  expect((screen.getByText('Aplicar cambio') as HTMLButtonElement).disabled).toBe(false);
  expect(fetcher.mock.calls).toHaveLength(before);
@@ -29,24 +29,24 @@ it('Escape folds without erasing an external chat draft and returns focus to the
  setup();render(<><textarea aria-label="Borrador del chat" defaultValue="conservar este borrador"/><DevelopmentPanel ownerId="author"/></>);
  await screen.findByText(fixture.change_id+' · PREPARED');
  fireEvent.keyDown(document,{key:'Escape'});
- const tab=screen.getByRole('button',{name:/Proyecto/});expect(document.activeElement).toBe(tab);
+ const tab=screen.getByRole('button',{name:'Proyecto',exact:true});expect(document.activeElement).toBe(tab);
  expect((screen.getByLabelText('Borrador del chat') as HTMLTextAreaElement).value).toBe('conservar este borrador');
- fireEvent.click(tab);expect(screen.getByRole('region',{name:'Cambios del proyecto'})).toBeTruthy();
+ fireEvent.click(tab);expect(screen.getByRole('region',{name:'Contexto del proyecto'})).toBeTruthy();
 })
 it('retains pending loading through fold without starting a second request',async()=>{
  let resolve!:(value:unknown)=>void;const fetcher=vi.fn(()=>new Promise(r=>{resolve=r}));vi.stubGlobal('fetch',fetcher);
- render(<DevelopmentPanel ownerId="author"/>);fireEvent.click(screen.getByRole('button',{name:'Cerrar cambios del proyecto'}));
- resolve(response({changes:[]}));fireEvent.click(screen.getByRole('button',{name:/Proyecto/}));
+ render(<DevelopmentPanel ownerId="author"/>);fireEvent.click(screen.getByRole('button',{name:'Cerrar panel de Proyecto'}));
+ resolve(response({changes:[]}));fireEvent.click(screen.getByRole('button',{name:'Proyecto',exact:true}));
  expect(await screen.findByText(/Todavía no hay cambios/)).toBeTruthy();expect(fetcher).toHaveBeenCalledTimes(1);
 })
 
 it('workspace-only agents never request development API and preserve independent section controls',async()=>{
  const fetcher=vi.fn();vi.stubGlobal('fetch',fetcher);
  render(<DevelopmentPanel ownerId="folder-agent" showChanges={false} initialOpen={false} workspaceContent={<details className="project-sidebar-section"><summary>Carpeta de trabajo</summary><input aria-label="Permiso actual" type="checkbox"/></details>}/>);
- fireEvent.click(screen.getByRole('button',{name:/Proyecto/}));
+ fireEvent.click(screen.getByRole('button',{name:'Proyecto',exact:true}));
  expect(screen.queryByText('Historial de cambios')).toBeNull();
  fireEvent.click(screen.getByText('Carpeta de trabajo'));fireEvent.click(screen.getByLabelText('Permiso actual'));
- fireEvent.click(screen.getByRole('button',{name:'Cerrar cambios del proyecto'}));fireEvent.click(screen.getByRole('button',{name:/Proyecto/}));
+ fireEvent.click(screen.getByRole('button',{name:'Cerrar panel de Proyecto'}));fireEvent.click(screen.getByRole('button',{name:'Proyecto',exact:true}));
  expect((screen.getByLabelText('Permiso actual') as HTMLInputElement).checked).toBe(true);expect(fetcher).not.toHaveBeenCalled();
 })
 it('starts folded on narrow screens when requested open by the desktop layout',()=>{
@@ -54,7 +54,7 @@ it('starts folded on narrow screens when requested open by the desktop layout',(
  Object.defineProperty(window,'matchMedia',{configurable:true,value:vi.fn(()=>({matches:true}))})
  try{
   render(<DevelopmentPanel ownerId="app-assistant" showChanges={false} initialOpen workspaceContent={<p>Workspace content</p>}/>);
-  const tab=screen.getByRole('button',{name:/Proyecto/});expect(tab.getAttribute('aria-expanded')).toBe('false');
+  const tab=screen.getByRole('button',{name:'Proyecto',exact:true});expect(tab.getAttribute('aria-expanded')).toBe('false');
   expect(document.getElementById(tab.getAttribute('aria-controls')!)?.hidden).toBe(true)
  }finally{
   if(original)Object.defineProperty(window,'matchMedia',original);else delete (window as any).matchMedia
@@ -73,5 +73,5 @@ it('general context slots preserve independent sections and never load developme
  const fetcher=vi.fn();vi.stubGlobal('fetch',fetcher)
  render(<DevelopmentPanel ownerId="app-assistant" showChanges={false} initialOpen workspaceContent={<details className="project-sidebar-section" open><summary>Workspace actual</summary><p>Sin permiso nuevo</p></details>} historyContent={<p>Conversación conservada</p>}/>);
  expect(screen.getByRole('region',{name:'Contexto del proyecto'})).toBeTruthy();expect(screen.getByText('Historial de conversaciones')).toBeTruthy();expect(screen.queryByText('Historial de cambios')).toBeNull();expect(screen.queryByRole('button',{name:'Aplicar cambio'})).toBeNull();expect(screen.queryByRole('button',{name:'Actualizar cambios'})).toBeNull();expect(document.querySelectorAll('.project-sidebar-sections > details[open]')).toHaveLength(2)
- fireEvent.click(screen.getByRole('button',{name:'Cerrar cambios del proyecto'}));fireEvent.click(screen.getByRole('button',{name:/Proyecto/}));expect(screen.getByText('Conversación conservada')).toBeTruthy();expect(fetcher).not.toHaveBeenCalled()
+ fireEvent.click(screen.getByRole('button',{name:'Cerrar panel de Proyecto'}));fireEvent.click(screen.getByRole('button',{name:'Proyecto',exact:true}));expect(screen.getByText('Conversación conservada')).toBeTruthy();expect(fetcher).not.toHaveBeenCalled()
 })
