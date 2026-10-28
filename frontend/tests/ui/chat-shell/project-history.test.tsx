@@ -132,22 +132,18 @@ it('closes Project with Escape and its button without losing the selected conver
   expect(screen.getByText('Synthetic conversation content remains visible.')).toBeTruthy()
 })
 
-it('provides an explicit close button and Escape return for the conversations and agents panel',async()=>{
+it('closes the conversations and agents panel with Escape and returns focus to its summary',async()=>{
   const {container}=await renderChat()
   const details=container.querySelector('details.chat-agent-panel') as HTMLDetailsElement
   const summary=details.querySelector('summary') as HTMLElement
   fireEvent.click(summary)
   await waitFor(()=>expect(details.open).toBe(true))
   expect(summary.getAttribute('aria-expanded')).toBe('true')
-  const close=screen.getByRole('button',{name:'Close conversations and agents panel'})
-  fireEvent.click(close)
-  await waitFor(()=>expect(details.open).toBe(false))
-  expect(document.activeElement).toBe(summary)
-  fireEvent.click(summary)
-  await waitFor(()=>expect(details.open).toBe(true))
+  expect(screen.queryByRole('button',{name:/close conversations and agents panel/i})).toBeNull()
   fireEvent.keyDown(summary,{key:'Escape'})
   await waitFor(()=>expect(details.open).toBe(false))
   expect(document.activeElement).toBe(summary)
+  expect(summary.getAttribute('aria-expanded')).toBe('false')
 })
 
 it('defines a full-width Project panel without a sidebar size mode and with internal table scrolling',()=>{

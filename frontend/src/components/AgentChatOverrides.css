@@ -114,14 +114,6 @@
 /* R3 Project bar occupies the chat work-area bounds without covering navigation. */
 .control-chat:has(> .development-panel-portal:not([hidden])) .control-chat-window > .window-panel-content { padding-top: 42px; padding-right: 0; }
 .control-chat:has(> .development-panel-portal[hidden]) .control-chat-window > .window-panel-content { padding-top: 0; padding-right: 0; }
-.chat-agent-panel .control-chat-sidebar { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, .8fr); grid-template-rows: auto minmax(0, 1fr); min-height: 0; }
-.chat-agent-panel .chat-agent-panel-close-row { display: flex; flex: 0 0 auto; justify-content: flex-end; padding: 5px 8px; border-bottom: 1px solid #294257; }
-.chat-agent-panel .chat-agent-panel-close-row button { min-height: 34px; padding: 5px 9px; border: 1px solid #3d647b; color: #d5f0fa; background: #142c39; cursor: pointer; }
-.chat-agent-panel .chat-agent-panel-close-row button:focus-visible { outline: 2px solid #9de9f1; outline-offset: 2px; }
-@media (max-width: 760px) {
-  .chat-agent-panel .chat-agent-panel-close-row { position: sticky; top: 0; z-index: 2; }
-}
-
 /* R3 conversation library: familiar compact rows plus a dense expanded table. */
 .conversation-library-list { gap: 0; }
 .conversation-compact-row { display: flex; min-width: 0; align-items: stretch; border-bottom: 1px solid #263b50; }

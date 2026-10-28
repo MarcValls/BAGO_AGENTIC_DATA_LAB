@@ -1226,7 +1226,6 @@ export default function AgentChat({ onInspectionSelection, onInspectExecution, o
         }}>
           <summary aria-expanded={agentPanelOpen} aria-controls={agentPanelContentId}>{t('commerce.conversations_and_agents')} <span>{conversationAgents.length}</span></summary>
           <aside id={agentPanelContentId} className="control-chat-sidebar" aria-label={t('commerce.orchestrator_conversations_and_agents')}>
-            <div className="chat-agent-panel-close-row"><button type="button" aria-label={t('commerce.close_conversations_panel')} onClick={closeAgentPanel}>{t('commerce.close')} <span aria-hidden="true">×</span></button></div>
             {(selectedAgent || agentPanelOpen) && conversationLibrary}
             <section className="chat-sidebar-pane chat-sidebar-agents" aria-labelledby="chat-agents-title">
               <div className="chat-sidebar-heading"><div><h2 id="chat-agents-title">{t('commerce.agents')}</h2></div>{onManageAgents && <button type="button" className="secondary-action" onClick={onManageAgents}>{t('commerce.manage_agents')}</button>}</div>
