@@ -25,6 +25,9 @@ export default function AgentManagement({ onCreate, onTest, onEvaluate }: Props)
   useI18n()
   const [agents, setAgents] = useState<Profile[]>([])
   const [query, setQuery] = useState('')
+  const [selectedId, setSelectedId] = useState<string | null>(null)
+  const [mobileDetailOpen, setMobileDetailOpen] = useState(false)
+  const [restoreListFocus, setRestoreListFocus] = useState(false)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | Error>('')
   const [notice, setNotice] = useState<string | Error>('')
@@ -37,6 +40,7 @@ export default function AgentManagement({ onCreate, onTest, onEvaluate }: Props)
   const controller = useRef<AbortController | null>(null)
   const reviewRegion = useRef<HTMLElement | null>(null)
   const reviewTrigger = useRef<HTMLElement | null>(null)
+  const profileButtons = useRef(new Map<string, HTMLButtonElement>())
   useEffect(() => {
     if (review) {
       reviewRegion.current?.focus({ preventScroll: true })
@@ -48,6 +52,12 @@ export default function AgentManagement({ onCreate, onTest, onEvaluate }: Props)
     reviewTrigger.current?.focus()
   }
 
+  useEffect(() => {
+    if (!restoreListFocus) return
+    profileButtons.current.get(selectedId ?? '')?.focus()
+    setRestoreListFocus(false)
+  }, [restoreListFocus, selectedId])
+
   const refresh = useCallback(async () => {
     const current = ++generation.current
     controller.current?.abort()
@@ -57,7 +67,12 @@ export default function AgentManagement({ onCreate, onTest, onEvaluate }: Props)
       const data = await request<{ agents: Profile[]; warning_count?: number }>('/api/agents/list', { signal: next.signal })
       if (!Array.isArray(data?.agents)) throw new AgentPresentationError(() => t('agents.AgentManagement.el_servidor_no_devolvio_una_lista_valida_de_agentes'))
       const loaded = data.agents.map(item => profile(item))
-      if (current === generation.current && !next.signal.aborted) { setAgents(loaded); setWarnings(data.warning_count || 0) }
+      if (current === generation.current && !next.signal.aborted) {
+        setAgents(loaded)
+        setSelectedId(previous => loaded.some(item => item.id === previous) ? previous : loaded[0]?.id ?? null)
+        if (!loaded.length) setMobileDetailOpen(false)
+        setWarnings(data.warning_count || 0)
+      }
     } catch (cause) { if (current === generation.current && !next.signal.aborted) setError(cause instanceof Error ? cause : new AgentPresentationError(() => t('agents.AgentManagement.no_se_pudo_cargar_la_lista'))) }
     finally { if (current === generation.current && !next.signal.aborted) setLoading(false) }
   }, [])
@@ -92,29 +107,95 @@ export default function AgentManagement({ onCreate, onTest, onEvaluate }: Props)
     finally { setBusy(false) }
   }
 
-  const shown = agents.filter(agent => `${agent.config.name} ${agent.config.description} ${agent.id} ${agentStateLabel(agent.config.type)}`.toLocaleLowerCase().includes(query.trim().toLocaleLowerCase()))
-  if (editing) return <section className="agent-management" aria-label={t('agents.AgentManagement.editar_agente')}><button type="button" onClick={() => { setEditing(null); void refresh() }}>{t('agents.AgentManagement.volver_a_agentes')}</button><details><summary>{t('agents.AgentManagement.identidad_del_perfil')}</summary><code>{editing.id}</code></details><AgentBuilder key={editing.id} agentId={editing.id} initialAgent={editing.config} onBack={() => setEditing(null)} onAgentCreated={() => { setEditing(null); setNotice(new AgentPresentationError(() => t('agents.AgentManagement.cambios_guardados_en_el_perfil'))); void refresh() }} /></section>
+  const shown = agents.filter(agent => `${agent.config.name} ${agent.config.description} ${agent.config.task_scope ?? ''} ${agent.id} ${agentStateLabel(agent.config.type)} ${agent.config.provider_id ?? ''} ${agent.config.model_id ?? ''} ${agent.config.tools.join(' ')}`.toLocaleLowerCase().includes(query.trim().toLocaleLowerCase()))
+  const selected = agents.find(agent => agent.id === selectedId) ?? agents[0] ?? null
+  const returnFromEdit = () => { setEditing(null); void refresh() }
+  const toolsSummary = (agent: Profile) => {
+    if (!agent.config.tools.length) return t('agents.AgentManagement.sin_herramientas_asignadas')
+    const visible = agent.config.tools.slice(0, 2).join(', ')
+    return agent.config.tools.length > 2 ? visible + ' +' + (agent.config.tools.length - 2) : visible
+  }
+  const providerModel = (agent: Profile) => (
+    <>
+      <span>{agent.config.provider_id || t('agents.AgentManagement.proveedor_sin_asignar')}</span>
+      {' · '}
+      <span>{agent.config.model_id || t('agents.AgentManagement.modelo_sin_asignar')}</span>
+    </>
+  )
+
+  if (editing) return <section className="agent-management agent-management-edit" aria-label={t('agents.AgentManagement.editar_agente')}>
+    <button type="button" onClick={returnFromEdit}>{t('agents.AgentManagement.volver_a_agentes')}</button>
+    <details><summary>{t('agents.AgentManagement.identidad_del_perfil')}</summary><code>{editing.id}</code></details>
+    <AgentBuilder key={editing.id} agentId={editing.id} initialAgent={editing.config} onBack={returnFromEdit} onAgentCreated={() => { setEditing(null); setNotice(new AgentPresentationError(() => t('agents.AgentManagement.cambios_guardados_en_el_perfil'))); void refresh() }} />
+  </section>
+
   return <section className="agent-management" aria-labelledby="agent-management-title">
-    <header><div><p className="app-kicker">{t('agents.AgentManagement.bago_biblioteca_de_perfiles')}</p><h1 id="agent-management-title">{t('agents.AgentManagement.agentes')}</h1></div><div className="agent-management-actions"><button type="button" onClick={onCreate}>{t('agents.AgentManagement.crear_agente')}</button><button type="button" disabled={loading || busy} onClick={() => void refresh()}>{t('agents.AgentManagement.actualizar')}</button></div></header>
-    <label className="agent-management-search">{t('agents.AgentManagement.buscar_agente')}<input type="search" value={query} onChange={event => setQuery(event.target.value)} placeholder={t('agents.AgentManagement.nombre_descripcion_tipo_o_identificador')} /></label>
+    <header className="agent-management-page-header">
+      <div><p className="app-kicker">{t('agents.AgentManagement.bago_biblioteca_de_perfiles')}</p><h1 id="agent-management-title">{t('agents.AgentManagement.agentes')}</h1></div>
+      <div className="agent-management-actions">
+        <button type="button" onClick={onCreate}>{t('agents.AgentManagement.crear_agente')}</button>
+        <button type="button" disabled={loading || busy} onClick={() => void refresh()}>{t('agents.AgentManagement.actualizar')}</button>
+      </div>
+    </header>
+    <label className="agent-management-search">
+      {t('agents.AgentManagement.buscar_agente')}
+      <input type="search" value={query} onChange={event => setQuery(event.target.value)} placeholder={t('agents.AgentManagement.nombre_descripcion_tipo_o_identificador')} />
+    </label>
     {loading && <p role="status">{t('agents.AgentManagement.cargando_agentes')}</p>}
-    {!loading && <p role="status">{t('agents.management.count',{shown:formatNumber(shown.length),total:formatNumber(agents.length)})}</p>}
+    {!loading && <p className="agent-management-count" role="status">{t('agents.management.count',{shown:formatNumber(shown.length),total:formatNumber(agents.length)})}</p>}
     {warnings > 0 && <p role="alert">{t('agents.management.warnings',{count:formatNumber(warnings)})}</p>}
     {error && <div role="alert"><p>{typeof error === 'string' ? error : presentAgentError(error)}</p><button type="button" onClick={() => void refresh()}>{t('agents.AgentManagement.actualizar_y_reintentar')}</button></div>}
     {notice && <p role="status">{typeof notice === 'string' ? notice : presentAgentError(notice)}</p>}
     {!loading && !error && !agents.length && <div className="agent-management-empty"><h2>{t('agents.AgentManagement.aun_no_hay_agentes_guardados')}</h2><p>{t('agents.AgentManagement.crea_el_primero_para_definir_su_tarea_proveedor_y_herramientas')}</p><button type="button" onClick={onCreate}>{t('agents.AgentManagement.crear_mi_primer_agente')}</button></div>}
-    {!loading && agents.length > 0 && !shown.length && <p>{t('agents.AgentManagement.no_hay_agentes_que_coincidan_con_la_busqueda')}</p>}
-    <ul className="agent-management-list">{shown.map(agent => <li key={agent.id}><article aria-label={t('agents.AgentManagement.agente_p0', {p0: agent.config.name})}>
-      <header className="agent-management-card-heading"><h2>{agent.config.name}</h2><span className="agent-management-type">{agentStateLabel(agent.config.type)}</span></header>
-      <p className="agent-management-description">{agent.config.description}</p>
-      <dl className="agent-management-metadata">
-        <div className="agent-meta-provider"><dt>{t('agents.AgentManagement.proveedor_y_modelo')}</dt><dd>{agent.config.provider_id || t('agents.AgentManagement.proveedor_sin_asignar')} · {agent.config.model_id || t('agents.AgentManagement.modelo_sin_asignar')}</dd></div>
-        <div className="agent-meta-scope"><dt>{t('agents.AgentManagement.alcance_de_asignacion')}</dt><dd>{agent.config.task_scope || t('agents.AgentManagement.sin_alcance_declarado')}</dd></div>
-        <div className="agent-meta-tools"><dt>{t('agents.AgentManagement.herramientas_asignadas')}</dt><dd>{agent.config.tools.length ? <ul>{agent.config.tools.map(tool => <li key={tool}><code>{tool}</code></li>)}</ul> : <span>{t('agents.AgentManagement.sin_herramientas_asignadas')}</span>}</dd></div>
-      </dl>
-      <details className="agent-management-identity"><summary>{t('agents.AgentManagement.identidad_del_perfil')}</summary><code>{agent.id}</code></details>
-      <div className="agent-management-actions"><button type="button" disabled={busy || loading} onClick={() => void select(agent.id, 'edit')}>{t('agents.AgentManagement.editar')}</button><button type="button" disabled={busy || loading} onClick={() => onTest(agent.id)}>{t('agents.AgentManagement.probar_tarea')}</button><button type="button" disabled={busy || loading} onClick={() => onEvaluate(agent.id)}>{t('agents.AgentManagement.evaluar')}</button><button type="button" className="agent-management-danger" disabled={busy || loading} onClick={() => void select(agent.id, 'delete')}>{t('agents.AgentManagement.eliminar_perfil')}</button></div>
-    </article></li>)}</ul>
+    {!loading && agents.length > 0 && <div className="agent-management-browser" data-mobile-detail={mobileDetailOpen}>
+      <section className="agent-management-list-pane" aria-label={t('agents.AgentManagement.agentes')}>
+        <h2 className="agent-management-pane-title">{t('agents.AgentManagement.agentes')}</h2>
+        {shown.length === 0
+          ? <p className="agent-management-no-match">{t('agents.AgentManagement.no_hay_agentes_que_coincidan_con_la_busqueda')}</p>
+          : <ul className="agent-management-list">
+            {shown.map(agent => <li key={agent.id}>
+              <button
+                ref={element => { if (element) profileButtons.current.set(agent.id, element); else profileButtons.current.delete(agent.id) }}
+                type="button"
+                className="agent-management-profile-option"
+                aria-pressed={agent.id === selected?.id}
+                onClick={() => { setSelectedId(agent.id); setMobileDetailOpen(true) }}
+              >
+                <span className="agent-management-option-heading">
+                  <strong>{agent.config.name}</strong>
+                  <span className="agent-management-type">{agentStateLabel(agent.config.type)}</span>
+                </span>
+                <span className="agent-management-option-description">{agent.config.description}</span>
+                <span className="agent-management-option-meta">{providerModel(agent)}</span>
+                <span className="agent-management-option-meta">{toolsSummary(agent)}</span>
+              </button>
+            </li>)}
+          </ul>}
+      </section>
+      {selected && <article className="agent-management-detail" aria-labelledby="agent-management-detail-title">
+        <button type="button" className="agent-management-back" onClick={() => { setMobileDetailOpen(false); setRestoreListFocus(true) }}>{t('agents.AgentManagement.volver_a_agentes')}</button>
+        <header className="agent-management-detail-heading">
+          <div><p className="app-kicker">{agentStateLabel(selected.config.type)}</p><h2 id="agent-management-detail-title">{selected.config.name}</h2></div>
+          <code className="agent-management-detail-id">{selected.id}</code>
+        </header>
+        <p className="agent-management-full-description">{selected.config.description}</p>
+        <dl className="agent-management-metadata agent-management-detail-metadata">
+          <div className="agent-meta-provider"><dt>{t('agents.AgentManagement.proveedor_y_modelo')}</dt><dd>{providerModel(selected)}</dd></div>
+          <div className="agent-meta-scope"><dt>{t('agents.AgentManagement.alcance_de_asignacion')}</dt><dd>{selected.config.task_scope || t('agents.AgentManagement.sin_alcance_declarado')}</dd></div>
+          <div className="agent-meta-tools"><dt>{t('agents.AgentManagement.herramientas_asignadas')}</dt><dd>
+            {selected.config.tools.length
+              ? <ul>{selected.config.tools.map(tool => <li key={tool}><code>{tool}</code></li>)}</ul>
+              : <span>{t('agents.AgentManagement.sin_herramientas_asignadas')}</span>}
+          </dd></div>
+        </dl>
+        <div className="agent-management-actions agent-management-detail-actions">
+          <button type="button" disabled={busy || loading} onClick={() => void select(selected.id, 'edit')}>{t('agents.AgentManagement.editar')}</button>
+          <button type="button" disabled={busy || loading} onClick={() => onTest(selected.id)}>{t('agents.AgentManagement.probar_tarea')}</button>
+          <button type="button" disabled={busy || loading} onClick={() => onEvaluate(selected.id)}>{t('agents.AgentManagement.evaluar')}</button>
+          <button type="button" className="agent-management-danger" disabled={busy || loading} onClick={() => void select(selected.id, 'delete')}>{t('agents.AgentManagement.eliminar_perfil')}</button>
+        </div>
+      </article>}
+    </div>}
     {busy && <p role="status">{t('agents.AgentManagement.comprobando_la_operacion')}</p>}
     {review && <section ref={reviewRegion} tabIndex={-1} onKeyDown={event => { if (event.key === 'Escape' && !busy) { event.preventDefault(); closeReview() } }} className="agent-management-review" role="region" aria-label={t('agents.AgentManagement.confirmar_eliminacion')}><h2>{t('agents.management.deleteTitle',{name:review.name})}</h2><p>{t('agents.AgentManagement.se_quitara_el_perfil_de_la_biblioteca_sus_conversaciones_trazas_evalua')}</p><p><code>{review.agent_id}</code></p><details><summary>{t('agents.AgentManagement.revision_sha_256_del_perfil')}</summary><code>{review.revision}</code></details>{!review.deletable && <p role="alert">{t('agents.management.blocked',{blockers:review.blockers.join(', ')})}</p>}<label><input type="checkbox" checked={confirmed} disabled={!review.deletable || busy} onChange={event => setConfirmed(event.target.checked)} />{t('agents.AgentManagement.confirmo_que_quiero_eliminar_este_perfil')}</label><div className="agent-management-actions"><button type="button" className="agent-management-danger" disabled={!confirmed || !review.deletable || busy} onClick={() => void remove()}>{t('agents.AgentManagement.confirmar_eliminacion')}</button><button type="button" disabled={busy} onClick={closeReview}>{t('agents.AgentManagement.cancelar')}</button></div></section>}
   </section>
