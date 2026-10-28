@@ -61,7 +61,7 @@ it.each(['assistant','agent'])('New closes library, clears the new composer and 
  expect(f.calls.filter(c=>c.method==='POST')).toHaveLength(1)
  expect(JSON.parse(f.calls.find(c=>c.method==='POST')!.body!)).toEqual({owner_kind:owner,owner_id:owner==='agent'?'agent-one':'app-assistant'})
  expect(f.calls.every(c=>c.method==='GET'||c.url==='/api/conversations')).toBe(true)
- expect(f.view.container.querySelector('.chat-mode-header')).not.toBeNull()
+ expect(f.view.container.querySelector('.chat-context-controls')).not.toBeNull()
 })
 it.each([{failure:true},{detailFailure:true},{foreign:true}])('creation failure/invalid identity keeps library, prior content and draft: %j',async options=>{
  const f=fixture(options);await screen.findByText('PREVIOUS_CONTENT');fireEvent.change(f.composer,{target:{value:'KEEP_DRAFT'}});open(f.panel)

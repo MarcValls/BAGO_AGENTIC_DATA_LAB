@@ -37,6 +37,7 @@ import { DecisionInspector } from './features/decision-inspector'
 import { BerEffectRecordInspector } from './features/ber-effect-inspector/BerEffectRecordInspector'
 import './ServiceSurfaces.css'
 import './VisualSystem.css'
+import './AppOverrides.css'
 
 interface Artifacts {
   summary: any
@@ -129,6 +130,7 @@ function App() {
   const [managedAgentId, setManagedAgentId] = useState('')
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
   const sidebarToggleRef = useRef<HTMLButtonElement>(null)
+  const returnToChatRef = useRef<HTMLButtonElement>(null)
   const sidebarMenuRef = useRef<HTMLDivElement>(null)
   const [activeDataView, setActiveDataView] = useState<DataView>('inspector')
   const [dataLayerOpen, setDataLayerOpen] = useState(false)
@@ -221,6 +223,26 @@ function App() {
     setActiveInteractionView(view)
   }
 
+  const returnToChat = useCallback(() => {
+    setActiveInteractionView('chat')
+    window.requestAnimationFrame(() => document.querySelector<HTMLTextAreaElement>('.app-view--chat #control-chat-input')?.focus())
+  }, [])
+  useEffect(() => {
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key !== 'Escape' || event.defaultPrevented || activeInteractionView === 'chat' || document.querySelector('dialog[open], [role="dialog"][aria-modal="true"]')) return
+      event.preventDefault()
+      event.stopPropagation()
+      returnToChat()
+    }
+    document.addEventListener('keydown', handleEscape, true)
+    return () => document.removeEventListener('keydown', handleEscape, true)
+  }, [activeInteractionView, returnToChat])
+
+  useEffect(() => {
+    if (activeInteractionView === 'chat') return
+    returnToChatRef.current?.focus()
+  }, [activeInteractionView])
+
   const activeInteractionLabel = interactionNavigation.find((item) => item.id === activeInteractionView)?.label ?? AGENT_SECTIONS.find(section => section.id === activeInteractionView)?.label ?? CHAT_SECTIONS.find(section => section.id === activeInteractionView)?.label ?? 'Workspace'
 
   return (
@@ -299,6 +321,7 @@ function App() {
 
       <div className="app-main">
         <main className={`app-view ${activeInteractionView === 'chat' ? 'app-view--chat' : ''} ${appScroll.scrolling ? 'scroll-active' : ''}`} aria-label={t("core.App.p0_view_b10ac6",{p0:String(activeInteractionLabel)})} tabIndex={0} onScroll={appScroll.onScroll}>
+          {activeInteractionView !== 'chat' && <header className="app-view-return-bar"><button ref={returnToChatRef} type="button" className="app-view-return-chat" onClick={returnToChat} aria-label={t('core.App.return_to_chat')}><span aria-hidden="true">×</span>{t('core.App.return_to_chat')}</button></header>}
           {<AgentChat hidden={activeInteractionView !== 'chat'} preparedPrompt={preparedChatPrompt} onPreparedPromptHandled={consumePreparedPrompt} historySelection="explicit" workspaceScopeVersion={workspaceRefresh} onInspectionSelection={selectInspection} onInspectExecution={inspectExecution} onOpenCommunication={(id) => { setCommunicationsDraftId(id); setCommunicationsSection('message'); setActiveInteractionView('communications') }} onNavigate={navigateFromChat} onManageAgents={() => { setSidebarCollapsed(false); setActiveInteractionView('agents') }} onOpenProviderSettings={openProviderSettings} onOpenCognitionSettings={openCognitionSettings} cognitiveMode={cognitiveMode} />}
           {isCommunicationSection(activeInteractionView) && <div className="communications-section-host">
             <div className="communications-section-panel" hidden={activeInteractionView==='contacts'}><Communications activeSection={communicationsSection} draftId={communicationsDraftId} initialContact={communicationContact}/></div>

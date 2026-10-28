@@ -1,0 +1,5 @@
+/* Local navigation controls; keep the historical App.css prefix unchanged. */
+.app-view-return-bar { position: sticky; top: 0; z-index: 12; display: flex; min-height: 42px; flex: 0 0 auto; align-items: center; justify-content: flex-end; padding: 4px 16px; border-bottom: 1px solid #26364b; background: #0d1726ed; }
+.app-view-return-chat { display: inline-flex; min-height: 32px; align-items: center; gap: 7px; padding: 5px 10px; border: 1px solid #3d6179; border-radius: 4px; color: #d7edf2; background: #142c3a; font: inherit; font-size: .76rem; cursor: pointer; }
+.app-view-return-chat:hover { border-color: #67a8b9; background: #1a3b4a; }
+.app-view-return-chat:focus-visible { outline: 2px solid #9de9f1; outline-offset: 2px; }
