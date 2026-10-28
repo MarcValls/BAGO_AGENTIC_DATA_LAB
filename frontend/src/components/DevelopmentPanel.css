@@ -1,6 +1,6 @@
 /* Context drawer: independent of the chat flow and composer sizing. */
 .development-drawer-anchor { --development-surface: var(--bago-ui-surface, #142237); --development-border: var(--bago-ui-border-subtle, #344b67); --development-text: var(--bago-ui-text, #dce7f2); --development-muted: var(--bago-ui-text-soft, #9aadc2); --development-workspace-accent: #67c9dd; --development-history-accent: #b5a0ea; }
-.development-drawer { position: absolute; inset: 0 0 0 auto; z-index: 5; display: flex; flex-direction: column; box-sizing: border-box; width: min(440px, 36%); height: 100%; color: var(--development-text); background: var(--development-surface); border: 0; border-left: 1px solid var(--development-border); border-radius: 0; box-shadow: none; font-size: .8rem; overflow: hidden; }
+.development-drawer { position: absolute; inset: 38px 0 0; z-index: 1; display: flex; flex-direction: column; box-sizing: border-box; width: auto; height: auto; min-width: 0; max-width: 100%; color: var(--development-text); background: var(--development-surface); border: 1px solid #375d78; border-top: 0; border-radius: 0; box-shadow: none; font-size: .8rem; overflow: hidden; pointer-events: auto; }
 .development-drawer[hidden], .development-drawer-tab[hidden] { display: none; }
 .development-drawer-header { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 12px; border-bottom: 1px solid var(--development-border); flex: 0 0 auto; }
 .development-drawer-header h3 { margin: 0; font-size: 1rem; }
@@ -37,7 +37,6 @@
 .project-sidebar-section-body select { width: 100%; }
 .project-sidebar-section-body nav { display: flex; flex-wrap: wrap; gap: 5px; }
 .project-sidebar-scope { color: var(--development-muted); font-size: .72rem; margin-top: 0; }
-@media (max-width: 760px) { .development-drawer { width: 100%; } }
 @media (prefers-reduced-motion: reduce) { .development-drawer { animation: none; transition: none; } }
 
 /* R4: finite presentation selectors, no control positioning. */
@@ -71,10 +70,7 @@
 .development-drawer-tab code { min-width: 0; overflow: hidden; color: #b8d5e6; font: inherit; font-size: .78rem; text-overflow: ellipsis; white-space: nowrap; }
 .development-drawer-tab-state { color: #a0e4ee; }
 .development-drawer-tab:hover { background: linear-gradient(90deg, #1b5369, #1a3c59 55%, #153d41); }
-.development-drawer { position: absolute; inset: 38px 0 0 auto; z-index: 1; box-sizing: border-box; width: min(500px, 46%); height: auto; min-width: 0; max-width: 100%; overflow: hidden; border: 1px solid #375d78; border-top: 0; border-radius: 0; pointer-events: auto; }
-.development-drawer[data-expanded="true"] { right: 0; left: 0; width: 100%; }
 .development-drawer-header-actions { display: flex; min-width: 0; align-items: center; justify-content: flex-end; gap: 8px; }
 .development-drawer-header-actions button { min-width: 0; }
-.development-drawer-size { white-space: nowrap; }
 .development-drawer-close { white-space: nowrap; }
-@media (max-width: 760px) { .development-drawer { left: 0; width: 100%; } .development-drawer-header { align-items: flex-start; } .development-drawer-header-actions { flex-wrap: wrap; } }
+@media (max-width: 760px) { .development-drawer-header { align-items: flex-start; } .development-drawer-header-actions { flex-wrap: wrap; } }

@@ -24,11 +24,9 @@ async function readResponse(response: Response) {
   return data
 }
 
-export default function DevelopmentPanel({ownerId, projectRoot = null, portalTarget = null, disabled = false, workspaceContent, historyContent, onExpandedChange, showChanges = true, initialOpen = true}: {ownerId: string; projectRoot?: string | null; portalTarget?: HTMLElement | null; disabled?: boolean; workspaceContent?: ReactNode; historyContent?: ReactNode; onExpandedChange?: (expanded: boolean) => void; showChanges?: boolean; initialOpen?: boolean}) {
+export default function DevelopmentPanel({ownerId, projectRoot = null, portalTarget = null, disabled = false, workspaceContent, historyContent, showChanges = true, initialOpen = true}: {ownerId: string; projectRoot?: string | null; portalTarget?: HTMLElement | null; disabled?: boolean; workspaceContent?: ReactNode; historyContent?: ReactNode; showChanges?: boolean; initialOpen?: boolean}) {
   useI18n()
-  const [open, setOpen] = useState(() => initialOpen && !(typeof window !== 'undefined' && typeof window.matchMedia === 'function' && window.matchMedia('(max-width: 760px)').matches))
-  const [expanded, setExpanded] = useState(false)
-  useEffect(() => {onExpandedChange?.(expanded)}, [expanded, onExpandedChange])
+  const [open, setOpen] = useState(initialOpen)
   const panelId = useId()
   const toggleRef = useRef<HTMLButtonElement>(null)
   const closeRef = useRef<HTMLButtonElement>(null)
@@ -101,17 +99,16 @@ export default function DevelopmentPanel({ownerId, projectRoot = null, portalTar
     } catch (cause) {if (version === generation.current) {setError(cause instanceof Error ? cause.message : 'No se pudo completar la operación.'); setConfirmed(false); setCandidate(null)}}
     finally {lock.current = false; setBusy(false)}
   }
-  const drawer = <div className="development-drawer-anchor" data-open={open} data-expanded={expanded}>
+  const drawer = <div className="development-drawer-anchor" data-open={open}>
     <button ref={toggleRef} type="button" className="development-drawer-tab"
       aria-expanded={open} aria-controls={panelId} aria-label={t('commerce.project_panel_title')} onClick={() => setOpen(value => !value)}>
       <span className="project-sidebar-tab-label">{t('commerce.project_panel_title')}</span>
       <code title={projectRoot || undefined}>{projectRoot || t('commerce.project_not_registered')}</code>
       <span className="development-drawer-tab-state" aria-hidden="true">⌄</span>
     </button>
-    <section id={panelId} aria-label={t('commerce.project_context_label')} className="development-drawer" data-expanded={expanded} hidden={!open}>
+    <section id={panelId} aria-label={t('commerce.project_context_label')} className="development-drawer" hidden={!open}>
     <header className="development-drawer-header"><h3>{t('commerce.project_panel_title')}</h3>
       <div className="development-drawer-header-actions">
-        <button type="button" className="development-drawer-size" aria-pressed={expanded} aria-label={expanded ? t('commerce.restore_project_panel') : t('commerce.expand_project_panel')} onClick={() => setExpanded(value => !value)}>{expanded ? t('commerce.restore_project_panel') : t('commerce.expand_project_panel')}</button>
         <button ref={closeRef} type="button" className="development-drawer-close" aria-label={t('commerce.close_project_panel')} onClick={() => setOpen(false)}>{t('commerce.close')} <span aria-hidden="true">×</span></button>
       </div>
     </header>

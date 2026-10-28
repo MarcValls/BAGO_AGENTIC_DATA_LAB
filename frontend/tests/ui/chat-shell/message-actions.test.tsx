@@ -108,7 +108,7 @@ it('dismisses on outside click, resize and scroll, and clamps menu to viewport',
 })
 it('discards menu on every conversation change before a stale action can run, with no legacy agent selector',async()=>{
  const {articles,copy,calls,container}=await fixture()
- const selection=(title:string)=>Array.from(container.querySelectorAll<HTMLButtonElement>('.conversation-library-item')).find(button=>button.querySelector('strong')?.textContent===title)!
+ const selection=(title:string)=>Array.from(container.querySelectorAll<HTMLButtonElement>('.conversation-library-item, .conversation-library-table-select')).find(button=>button.querySelector('strong')?.textContent===title)!
  fireEvent.contextMenu(articles[2]);fireEvent.click(selection('Conversación B'))
  await screen.findByText('Otro contexto');expect(screen.queryByRole('menu')).toBeNull();expect(copy).not.toHaveBeenCalled()
  const other=screen.getByText('Otro contexto').closest('article')!

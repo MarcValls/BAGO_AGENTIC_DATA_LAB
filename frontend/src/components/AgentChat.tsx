@@ -214,7 +214,6 @@ export default function AgentChat({ onInspectionSelection, onInspectExecution, o
   const [permanentlyDeleting, setPermanentlyDeleting] = useState(false)
   const [activeProject, setActiveProject] = useState<{project_id:string|null;title:string;scope:string;root:string|null}|null>(null)
   const [developmentPanelTarget, setDevelopmentPanelTarget] = useState<HTMLDivElement | null>(null)
-  const [projectPanelExpanded, setProjectPanelExpanded] = useState(false)
   const [loadingConversation, setLoadingConversation] = useState(false)
   const [creatingConversation, setCreatingConversation] = useState(false)
   const creatingConversationRef = useRef(false)
@@ -1162,12 +1161,12 @@ export default function AgentChat({ onInspectionSelection, onInspectExecution, o
               {loadingConversation && <p className="muted-state" role="status">{t('commerce.opening_conversation')}</p>}
               {libraryError && <p className="inline-error" role="alert">{errorMessage(libraryError)}</p>}
               {conversationList.length === 0 && !libraryError && <p className="muted-state">{t(libraryMode==='active'?'commerce.empty_library_active':libraryMode==='archived'?'commerce.empty_library_archived':'commerce.empty_library_deleted',{owner:selectedAgent?t('commerce.for_this_agent'):t('commerce.with_the_orchestrator')})}</p>}
-              {(!projectPanelExpanded || Boolean(selectedAgent) || agentPanelOpen) && <div style={!selectedAgent ? {flex: '1 1 0', minHeight: 0, overflowY: 'auto'} : undefined} className="conversation-library-list">
+              {(Boolean(selectedAgent) || agentPanelOpen) && <div style={!selectedAgent ? {flex: '1 1 0', minHeight: 0, overflowY: 'auto'} : undefined} className="conversation-library-list">
                 {orderedConversationList.map(conversation => <div className="conversation-compact-row" data-conversation-id={conversation.id} key={`compact-${conversation.id}`}>
                   {renderConversationSelection(conversation, true)}{renderConversationActions(conversation)}
                 </div>)}
               </div>}
-              {projectPanelExpanded && !selectedAgent && !agentPanelOpen && <div className="conversation-library-table-scroll" role="region" aria-label={t('commerce.conversation_library_table')} tabIndex={0}>
+              {!selectedAgent && !agentPanelOpen && <div className="conversation-library-table-scroll" role="region" aria-label={t('commerce.conversation_library_table')} tabIndex={0}>
                 <table className="conversation-library-table">
                   <caption className="visually-hidden">{t('commerce.conversation_library_table_caption')}</caption>
                   <thead><tr>
@@ -1300,7 +1299,7 @@ export default function AgentChat({ onInspectionSelection, onInspectExecution, o
           {allowPublicWebRead && <section aria-label={t('commerce.public_web_reading_scope')}><label className="workspace-read-paths">{t('commerce.entry_https_urls_one_per_line')}<textarea rows={3} value={publicWebUrls} onChange={event => setPublicWebUrls(event.target.value)} placeholder="https://www.ejemplo.com/" maxLength={16384} disabled={sending} /></label><p>{t('commerce.this_turn_only_public_pages_from_these_origins')}</p><ul aria-label={t('commerce.requested_web_origins')}>{[...new Set(publicWebUrls.split(/\r?\n/).map(value => {try {return new URL(value.trim()).origin} catch {return value.trim() ? t('commerce.invalid_url',{url:value.trim()}) : ''}}).filter(Boolean))].map(origin => <li key={origin}><code>{origin}</code></li>)}</ul></section>}
 
         </form>
-        {!selectedAgent && <DevelopmentPanel key="app-assistant-context" ownerId={ownerId} projectRoot={activeProject?.root ?? null} portalTarget={developmentPanelTarget} disabled={sending} onExpandedChange={setProjectPanelExpanded} showChanges={false} historyContent={!agentPanelOpen ? conversationLibrary : undefined} workspaceContent={
+        {!selectedAgent && <DevelopmentPanel key="app-assistant-context" ownerId={ownerId} projectRoot={activeProject?.root ?? null} portalTarget={developmentPanelTarget} disabled={sending} showChanges={false} historyContent={!agentPanelOpen ? conversationLibrary : undefined} workspaceContent={
           <ProjectPermissions
             projectId={activeProject?.project_id ?? null}
             projectRoot={activeProject?.root ?? null}
@@ -1308,7 +1307,7 @@ export default function AgentChat({ onInspectionSelection, onInspectExecution, o
             onBrowseWorkspace={() => onNavigate('workspace')}
           />
         } />}
-        {selectedAgent && <DevelopmentPanel key={selectedAgent.id} ownerId={selectedAgent.id} projectRoot={activeProject?.root ?? null} portalTarget={developmentPanelTarget} disabled={sending} onExpandedChange={setProjectPanelExpanded} showChanges={Boolean(selectedAgent.config.tools?.some(tool=>tool.startsWith('development_')))} workspaceContent={
+        {selectedAgent && <DevelopmentPanel key={selectedAgent.id} ownerId={selectedAgent.id} projectRoot={activeProject?.root ?? null} portalTarget={developmentPanelTarget} disabled={sending} showChanges={Boolean(selectedAgent.config.tools?.some(tool=>tool.startsWith('development_')))} workspaceContent={
           <ProjectPermissions
             projectId={activeProject?.project_id ?? null}
             projectRoot={activeProject?.root ?? null}

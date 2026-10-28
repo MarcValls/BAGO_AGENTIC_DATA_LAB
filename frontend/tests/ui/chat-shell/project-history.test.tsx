@@ -65,20 +65,17 @@ it('keeps Resources, Cognition and model in one DOM group in the required order'
   expect(model.parentElement?.parentElement).toBe(group)
 })
 
-it('shows source-backed UTC dates and sorts the expanded table by labels, name and creation time',async()=>{
+it('shows source-backed UTC dates and sorts the full-width project table by labels, name and creation time',async()=>{
   const {container}=await renderChat()
   openProject()
-  await waitFor(()=>expect(container.querySelector('.conversation-compact-row[data-conversation-id="conv-alpha"]')).not.toBeNull())
-  const compact=container.querySelector('.conversation-library-list')!
-  expect(compact.querySelectorAll('.conversation-compact-row')).toHaveLength(3)
-  expect(compact.querySelector('[data-conversation-id="conv-zulu"] time')?.getAttribute('datetime')).toBe('2026-10-28T10:15:00Z')
-  expect(compact.querySelectorAll('.conversation-row-actions-button')).toHaveLength(3)
-  expect(container.querySelector('.development-drawer-tab code')?.textContent).toBe(project.root)
-
-  fireEvent.click(screen.getByRole('button',{name:'Expand Project panel'}))
   const region=await screen.findByRole('region',{name:'Loaded conversations'})
   const rows=()=>Array.from(region.querySelectorAll('tbody tr')).map(row=>row.getAttribute('data-conversation-id'))
   expect(rows()).toEqual(['conv-zulu','conv-gamma','conv-alpha'])
+  expect(region.querySelectorAll('.conversation-compact-row')).toHaveLength(0)
+  expect(region.querySelector('tbody tr[data-conversation-id="conv-zulu"] td:nth-child(4) time')?.getAttribute('datetime')).toBe('2026-10-28T10:15:00Z')
+  expect(region.querySelectorAll('.conversation-row-actions-button')).toHaveLength(3)
+  expect(container.querySelector('.development-drawer-tab code')?.textContent).toBe(project.root)
+
   expect(region.querySelector('tbody tr[data-conversation-id="conv-gamma"] td:nth-child(3)')?.textContent).toBe('Unavailable')
   expect(region.querySelector('tbody tr[data-conversation-id="conv-alpha"] td:nth-child(3) time')?.getAttribute('datetime')).toBe('2026-10-02T08:45:00Z')
   expect(region.querySelectorAll('.conversation-row-actions-button')).toHaveLength(3)
@@ -98,7 +95,6 @@ it('shows source-backed UTC dates and sorts the expanded table by labels, name a
 it('edits conversation labels through the scoped API and renders the saved tags',async()=>{
   await renderChat()
   openProject()
-  fireEvent.click(screen.getByRole('button',{name:'Expand Project panel'}))
   const region=await screen.findByRole('region',{name:'Loaded conversations'})
   vi.spyOn(window,'prompt').mockReturnValue('Release, QA')
   fireEvent.click(screen.getByRole('button',{name:'Actions for Alpha synthetic conversation'}))
@@ -113,7 +109,7 @@ it('edits conversation labels through the scoped API and renders the saved tags'
 it('closes Project with Escape and its button without losing the selected conversation, draft or content',async()=>{
   const {container}=await renderChat()
   openProject()
-  const alpha=container.querySelector('.conversation-compact-row[data-conversation-id="conv-alpha"] .conversation-library-item') as HTMLButtonElement
+  const alpha=container.querySelector('tr[data-conversation-id="conv-alpha"] .conversation-library-table-select') as HTMLButtonElement
   fireEvent.click(alpha)
   await screen.findByText('Synthetic conversation content remains visible.')
   const composer=screen.getByRole('textbox',{name:'Message the assistant or selected agent'}) as HTMLTextAreaElement
@@ -128,7 +124,7 @@ it('closes Project with Escape and its button without losing the selected conver
   fireEvent.click(bar)
   await screen.findByText('Synthetic conversation content remains visible.')
   expect(composer.value).toBe('UNSENT_SYNTHETIC_DRAFT')
-  expect(container.querySelector('.conversation-compact-row[data-conversation-id="conv-alpha"] .conversation-library-item.selected')).not.toBeNull()
+  expect(container.querySelector('tr[data-conversation-id="conv-alpha"] .conversation-library-table-select.selected')).not.toBeNull()
   fireEvent.click(screen.getByRole('button',{name:'Close Project panel'}))
   await waitFor(()=>expect(bar.getAttribute('aria-expanded')).toBe('false'))
   expect(mutationCount()).toBe(before)
@@ -154,13 +150,16 @@ it('provides an explicit close button and Escape return for the conversations an
   expect(document.activeElement).toBe(summary)
 })
 
-it('defines full-width Project bar, expand/restore drawer, internal table scrolling and responsive chat controls',()=>{
+it('defines a full-width Project panel without a sidebar size mode and with internal table scrolling',()=>{
   const development=postcss.parse(readFileSync('src/components/DevelopmentPanel.css','utf8'))
   const rules=new Map<string,Record<string,string>>()
   development.walkRules(rule=>{const values=rules.get(rule.selector)??{};rule.walkDecls(decl=>{values[decl.prop]=decl.value});rules.set(rule.selector,values)})
   expect(rules.get('.development-panel-portal')?.inset).toBe('0')
   expect(rules.get('.development-drawer-tab')?.width).toBe('100%')
-  expect(rules.get('.development-drawer[data-expanded="true"]')?.width).toBe('100%')
+  expect(rules.get('.development-drawer')?.inset).toBe('38px 0 0')
+  expect(rules.get('.development-drawer')?.width).toBe('auto')
+  expect(rules.has('.development-drawer[data-expanded="true"]')).toBe(false)
+  expect(readFileSync('src/components/DevelopmentPanel.tsx','utf8')).not.toContain('development-drawer-size')
   const chat=postcss.parse(readFileSync('src/components/AgentChatOverrides.css','utf8'))
   const table=chat.nodes.find(node=>node.type==='rule'&&node.selector==='.conversation-library-table-scroll')
   expect(table?.nodes?.some(node=>node.type==='decl'&&node.prop==='overflow'&&node.value==='auto')).toBe(true)

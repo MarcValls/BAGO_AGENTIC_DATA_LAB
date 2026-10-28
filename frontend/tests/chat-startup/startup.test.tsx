@@ -65,11 +65,11 @@ it('blank BAGO5 lists only assistant history, keeps agent histories inaccessible
  fireEvent.click(conversationButton(document,'Historial tie-two'));await screen.findByText('Contenido elegido tie-two');expect(details(f.calls).map(c=>c.url)).toEqual(['/api/conversations/tie-two']);await waitFor(()=>expect((screen.getByLabelText('Permitir lectura web pública') as HTMLInputElement).checked).toBe(false));expect(composer.value).toBe('Borrador del orquestador');expect(writes(f.calls)).toEqual([]);expect(f.created.size).toBe(0)
 })
 it('orders valid activity instants newest-first with stable ties and exposes true UTC date/time only',async()=>{
- const f=await fixture();const library=conversationLibrary(document,'Historial tie-one');const buttons=Array.from(library.querySelectorAll('.conversation-library-item'));expect(buttons.map(b=>b.querySelector('strong')?.textContent)).toEqual(['Historial tie-one','Historial tie-two','Historial old','Historial bad','Historial date-only','Historial missing']);const times=Array.from(library.querySelectorAll('time'));expect(times.map(t=>t.getAttribute('dateTime'))).toEqual([rows[1].updated_at,rows[2].updated_at,rows[0].updated_at]);expect(times[0].textContent).toBe('Última actividad · '+formatDate(rows[1].updated_at!)+' UTC')
+ const f=await fixture();const library=conversationLibrary(document,'Historial tie-one');const buttons=Array.from(library.querySelectorAll('.conversation-library-table-select'));expect(buttons.map(b=>b.querySelector('strong')?.textContent)).toEqual(['Historial tie-one','Historial tie-two','Historial old','Historial bad','Historial date-only','Historial missing']);const times=Array.from(library.querySelectorAll('time'));expect(times.map(t=>t.getAttribute('dateTime'))).toEqual([rows[1].updated_at,rows[2].updated_at,rows[0].updated_at]);expect(times[0].textContent).toBe('Última actividad · '+formatDate(rows[1].updated_at!)+' UTC')
 })
 it('localizes the service default conversation title without changing user titles',async()=>{
  const f=await fixture({listRows:[{...summary('untitled','2026-10-24T12:00:00Z'),title:'New conversation'},summary('custom','2026-10-24T11:00:00Z')]});
- const titles=Array.from(f.view.container.querySelectorAll('.conversation-library-item strong')).map(node=>node.textContent);
+ const titles=Array.from(f.view.container.querySelectorAll('.conversation-library-table-select strong')).map(node=>node.textContent);
  expect(titles).toEqual(['Nueva conversación','Historial custom']);expect(details(f.calls)).toEqual([]);expect(writes(f.calls)).toEqual([])
 })
 it('list failure shows error while blank composer remains usable and no record or inference is created',async()=>{

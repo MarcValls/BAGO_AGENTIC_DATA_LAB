@@ -49,13 +49,14 @@ it('workspace-only agents never request development API and preserve independent
  fireEvent.click(screen.getByRole('button',{name:'Cerrar panel de Proyecto'}));fireEvent.click(screen.getByRole('button',{name:'Proyecto',exact:true}));
  expect((screen.getByLabelText('Permiso actual') as HTMLInputElement).checked).toBe(true);expect(fetcher).not.toHaveBeenCalled();
 })
-it('starts folded on narrow screens when requested open by the desktop layout',()=>{
+it('keeps the full project panel open on narrow screens when requested open',()=>{
  const original=Object.getOwnPropertyDescriptor(window,'matchMedia')
  Object.defineProperty(window,'matchMedia',{configurable:true,value:vi.fn(()=>({matches:true}))})
  try{
   render(<DevelopmentPanel ownerId="app-assistant" showChanges={false} initialOpen workspaceContent={<p>Workspace content</p>}/>);
-  const tab=screen.getByRole('button',{name:'Proyecto',exact:true});expect(tab.getAttribute('aria-expanded')).toBe('false');
-  expect(document.getElementById(tab.getAttribute('aria-controls')!)?.hidden).toBe(true)
+   const tab=screen.getByRole('button',{name:'Proyecto',exact:true});expect(tab.getAttribute('aria-expanded')).toBe('true');
+   expect(document.getElementById(tab.getAttribute('aria-controls')!)?.hidden).toBe(false)
+   expect(screen.queryByRole('button',{name:/Ampliar panel de Proyecto|Restaurar tamaño del panel de Proyecto/})).toBeNull()
  }finally{
   if(original)Object.defineProperty(window,'matchMedia',original);else delete (window as any).matchMedia
  }

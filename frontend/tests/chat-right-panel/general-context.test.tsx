@@ -36,8 +36,8 @@ it('general blank startup keeps selected-project permissions available in the pr
 })
 it('right history uses actual dated conversations in activity order and manual exact-id selection preserves the draft',async()=>{
  const f=await mount();const panel=screen.getByRole('region',{name:'Contexto del proyecto'});const library=within(panel).getByRole('region',{name:'Biblioteca de conversaciones'})
- expect(Array.from(library.querySelectorAll('.conversation-library-item strong')).map(e=>e.textContent)).toEqual(['Conversación reciente','Conversación antigua','Sin fecha'])
- expect(Array.from(library.querySelectorAll('time')).map(e=>e.getAttribute('dateTime'))).toEqual([rows[1].updated_at,rows[0].updated_at]);expect(within(library).getByText('No disponible')).toBeTruthy()
+ expect(Array.from(library.querySelectorAll('.conversation-library-table-select strong')).map(e=>e.textContent)).toEqual(['Conversación reciente','Conversación antigua','Sin fecha'])
+ expect(Array.from(library.querySelectorAll('time')).map(e=>e.getAttribute('dateTime'))).toEqual([rows[1].updated_at,rows[0].updated_at]);expect(within(library).getAllByText('No disponible')).toHaveLength(4)
  const composer=screen.getByRole('textbox',{name:'Mensaje al asistente o agente seleccionado'}) as HTMLTextAreaElement;fireEvent.change(composer,{target:{value:'Borrador del usuario'}})
  fireEvent.click(conversationButton(library,'Conversación antigua'));await screen.findByText('Respuesta conservada older');expect(composer.value).toBe('Borrador del usuario');expect(f.calls.filter(c=>c.url.startsWith('/api/conversations/')).map(c=>c.url)).toEqual(['/api/conversations/older']);expect(mutations(f.calls)).toEqual([])
 })
