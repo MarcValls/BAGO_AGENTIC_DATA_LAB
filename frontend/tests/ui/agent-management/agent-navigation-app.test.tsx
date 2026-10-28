@@ -4,7 +4,7 @@ beforeLocaleExpectation(() => setLocale('es'))
 // @vitest-environment jsdom
 import React from 'react'
 import { afterEach, expect, it, vi } from 'vitest'
-import { cleanup, fireEvent, render, screen } from '@testing-library/react'
+import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react'
 
 vi.mock('axios',()=>({default:{get:vi.fn(async()=>({data:{}}))}}))
 vi.mock('../../../src/components/AgentChat',()=>({default:({onManageAgents}:any)=><div>Chat global<button onClick={onManageAgents}>Gestionar agentes desde Chat</button></div>}))
@@ -13,7 +13,8 @@ vi.mock('../../../src/components/AgentBuilder',()=>({default:({onBack}:any)=><di
 vi.mock('../../../src/components/AgentTasks',()=>({default:({initialAgentId}:any)=><div>Tarea existente {initialAgentId}</div>}))
 vi.mock('../../../src/components/AgentEvaluationLab',()=>({default:({initialAgentId}:any)=><div>Laboratorio existente {initialAgentId}</div>}))
 import App from '../../../src/App'
-afterEach(()=>{cleanup();vi.restoreAllMocks()})
+const originalWindowWidth = window.innerWidth
+afterEach(()=>{cleanup();vi.restoreAllMocks();window.innerWidth=originalWindowWidth})
 
 it('groups four destinations in the sidebar while retaining one global Chat and one management route',async()=>{
   render(<App />)
@@ -36,4 +37,45 @@ it('groups four destinations in the sidebar while retaining one global Chat and 
   expect(screen.getByText('Biblioteca única')).toBeTruthy()
   fireEvent.click(screen.getByRole('button',{name:'Evaluar seleccionado'}))
   expect(screen.getByText('Laboratorio existente agent_12345678')).toBeTruthy()
+})
+
+it('shows a directional navigation cue only while more content remains',async()=>{
+  window.innerWidth=1280
+  const desktop=render(<App />)
+  const desktopNav=document.querySelector<HTMLElement>('.primary-navigation')!
+  let scrollTop=0
+  let desktopScrollHeight=120
+  Object.defineProperties(desktopNav,{
+    clientHeight:{configurable:true,get:()=>120},
+    scrollHeight:{configurable:true,get:()=>desktopScrollHeight},
+    scrollTop:{configurable:true,get:()=>scrollTop,set:value=>{scrollTop=value}}
+  })
+  fireEvent.scroll(desktopNav)
+  await waitFor(()=>expect(desktopNav.parentElement?.querySelector('.primary-navigation-more')).toBeNull())
+  desktopScrollHeight=240
+  fireEvent.scroll(desktopNav)
+  await waitFor(()=>expect(desktopNav.parentElement?.querySelector('.primary-navigation-more')?.getAttribute('data-direction')).toBe('down'))
+  scrollTop=120
+  fireEvent.scroll(desktopNav)
+  await waitFor(()=>expect(desktopNav.parentElement?.querySelector('.primary-navigation-more')).toBeNull())
+
+  desktop.unmount()
+  window.innerWidth=500
+  render(<App />)
+  const mobileNav=document.querySelector<HTMLElement>('.primary-navigation')!
+  let scrollLeft=0
+  let mobileScrollWidth=120
+  Object.defineProperties(mobileNav,{
+    clientWidth:{configurable:true,get:()=>120},
+    scrollWidth:{configurable:true,get:()=>mobileScrollWidth},
+    scrollLeft:{configurable:true,get:()=>scrollLeft,set:value=>{scrollLeft=value}}
+  })
+  fireEvent.scroll(mobileNav)
+  await waitFor(()=>expect(mobileNav.parentElement?.querySelector('.primary-navigation-more')).toBeNull())
+  mobileScrollWidth=240
+  fireEvent.scroll(mobileNav)
+  await waitFor(()=>expect(mobileNav.parentElement?.querySelector('.primary-navigation-more')?.getAttribute('data-direction')).toBe('right'))
+  scrollLeft=120
+  fireEvent.scroll(mobileNav)
+  await waitFor(()=>expect(mobileNav.parentElement?.querySelector('.primary-navigation-more')).toBeNull())
 })
