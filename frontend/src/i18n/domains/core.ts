@@ -1,5 +1,6 @@
 export const es = {
   "core.App.chat_460b3a": "Chat",
+  "core.App.return_to_chat": "Volver al chat",
   "core.App.communications_85090d": "Comunicaciones",
   "core.CommunicationsNavigation.messages": "Mensajes",
   "core.CommunicationsNavigation.history": "Historial",
@@ -674,6 +675,7 @@ export const es = {
 } as const
 export const en: {[K in keyof typeof es]:string} = {
   "core.App.chat_460b3a": "Chat",
+  "core.App.return_to_chat": "Return to chat",
   "core.App.communications_85090d": "Communications",
   "core.CommunicationsNavigation.messages": "Messages",
   "core.CommunicationsNavigation.history": "History",

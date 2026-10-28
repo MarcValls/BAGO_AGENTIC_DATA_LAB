@@ -1150,10 +1150,6 @@ export default function AgentChat({ onInspectionSelection, onInspectExecution, o
         className="control-chat-main control-chat-window"
         hideTitlebar
       >
-        <div className="chat-mode-header">
-          <ChatTools conversationId={activeConversation?.id} onOpenCommunication={onOpenCommunication} />
-          <button type="button" onClick={onOpenCognitionSettings} aria-label={t('commerce.open_cognition_and_context_settings')}>{t('commerce.cognition')} {cognitiveMode === 'bago5' ? t('commerce.bago5_experimental') : t('commerce.baseline')} <span aria-hidden="true">↗</span></button>
-        </div>
         {preparedPromptReview && <section aria-label={t('commerce.capability_ui.review_title')} className="capability-chat-card">
           <h3>{t('commerce.capability_ui.review_title')}</h3><p>{t('commerce.capability_ui.review_preserve')}</p>
           {selectedAgent && <p>{t('commerce.capability_ui.review_agent')}</p>}
@@ -1186,16 +1182,20 @@ export default function AgentChat({ onInspectionSelection, onInspectExecution, o
         </div>}
         </div>
         {humanCorrection && <HumanCorrectionReview source={humanCorrection.source} current={correctionSourceCurrent(humanCorrection.source)} busy={sending} permissions={correctionPermissions} permissionIdentity={correctionPermissionIdentity} onCancel={closeHumanCorrection} onSend={prepared=>void sendMessage(undefined,prepared)}/>}
-        <form className="control-chat-composer" onSubmit={(event) => void sendMessage(event)}><label className="visually-hidden" htmlFor="control-chat-input">{t('commerce.message_the_assistant_or_selected_agent')}</label><div className="chat-composer-input"><textarea ref={composerRef} id="control-chat-input" rows={2} value={input} onChange={(event) => setInput(event.target.value)} onKeyDown={(event) => {
+        <form className="control-chat-composer" onSubmit={(event) => void sendMessage(event)}><label className="visually-hidden" htmlFor="control-chat-input">{t('commerce.message_the_assistant_or_selected_agent')}</label>
+          <div className="chat-composer-actions">
+            <label className="workspace-read-toggle"><input type="checkbox" checked={allowPublicWebRead} onChange={event => setAllowPublicWebRead(event.target.checked)} disabled={sending || Boolean(activeConversation && activeConversation.status !== 'active')} /><span>{t('commerce.allow_public_web_reading')}</span></label>
+            <div className="chat-context-controls">
+              <ChatTools conversationId={activeConversation?.id} onOpenCommunication={onOpenCommunication} />
+              <button type="button" onClick={onOpenCognitionSettings} aria-label={t('commerce.open_cognition_and_context_settings')}>{t('commerce.cognition')} {cognitiveMode === 'bago5' ? t('commerce.bago5_experimental') : t('commerce.baseline')} <span aria-hidden="true">↗</span></button>
+            </div>
+            {!selectedAgent && <label className="chat-provider-picker"><span className="visually-hidden">{t('commerce.orchestrator_model')}</span><select aria-label={t('commerce.orchestrator_model')} value={!chatProviderSelectionFailed && chatProviderSelection ? `${chatProviderSelection.provider_id}|${chatProviderSelection.model_id}` : ''} onChange={event => void changeChatProvider(event.target.value)} aria-busy={savingChatProvider} data-provider-selection-state={savingChatProvider ? 'pending' : chatProviderSelectionFailed ? 'failed' : chatProviderSelection ? 'confirmed' : 'unselected'} disabled={sending || savingChatProvider || chatProviders.length === 0}><option value="" disabled>{chatProviders.length ? t('commerce.select_a_model') : t('commerce.configure_a_provider')}</option>{chatProviders.map(provider => <option key={`${provider.provider_id}|${provider.model_id}`} value={`${provider.provider_id}|${provider.model_id}`}>{provider.label} · {provider.display_name ?? provider.model_id}{provider.state === 'configured_unverified' ? t('commerce.unverified') : ''}</option>)}</select></label>}
+          </div><div className="chat-composer-input"><textarea ref={composerRef} id="control-chat-input" rows={2} value={input} onChange={(event) => setInput(event.target.value)} onKeyDown={(event) => {
           if (event.key !== 'Enter' || event.shiftKey || event.nativeEvent.isComposing || event.repeat) return
           event.preventDefault()
           void sendMessage()
         }} placeholder={activeConversation?.status && activeConversation.status !== 'active' ? t('commerce.restore_or_start_a_new_conversation') : selectedAgent ? t('commerce.message_agent',{name:selectedAgent.config.name}) : t('commerce.message_the_assistant')} disabled={sending || Boolean(activeConversation && activeConversation.status !== 'active')} />
             <button className="primary-action" type="submit" disabled={sending || orchestratorSelectionBlocked || !input.trim() || Boolean(activeConversation && activeConversation.status !== 'active')}>{sending ? 'Sending.' : t('commerce.send')}</button>
-          </div>
-          <div className="chat-composer-actions">
-            <label className="workspace-read-toggle"><input type="checkbox" checked={allowPublicWebRead} onChange={event => setAllowPublicWebRead(event.target.checked)} disabled={sending || Boolean(activeConversation && activeConversation.status !== 'active')} /><span>{t('commerce.allow_public_web_reading')}</span></label>
-            {!selectedAgent && <label className="chat-provider-picker"><span className="visually-hidden">{t('commerce.orchestrator_model')}</span><select aria-label={t('commerce.orchestrator_model')} value={!chatProviderSelectionFailed && chatProviderSelection ? `${chatProviderSelection.provider_id}|${chatProviderSelection.model_id}` : ''} onChange={event => void changeChatProvider(event.target.value)} aria-busy={savingChatProvider} data-provider-selection-state={savingChatProvider ? 'pending' : chatProviderSelectionFailed ? 'failed' : chatProviderSelection ? 'confirmed' : 'unselected'} disabled={sending || savingChatProvider || chatProviders.length === 0}><option value="" disabled>{chatProviders.length ? t('commerce.select_a_model') : t('commerce.configure_a_provider')}</option>{chatProviders.map(provider => <option key={`${provider.provider_id}|${provider.model_id}`} value={`${provider.provider_id}|${provider.model_id}`}>{provider.label} · {provider.display_name ?? provider.model_id}{provider.state === 'configured_unverified' ? t('commerce.unverified') : ''}</option>)}</select></label>}
           </div>
           {allowPublicWebRead && <section aria-label={t('commerce.public_web_reading_scope')}><label className="workspace-read-paths">{t('commerce.entry_https_urls_one_per_line')}<textarea rows={3} value={publicWebUrls} onChange={event => setPublicWebUrls(event.target.value)} placeholder="https://www.ejemplo.com/" maxLength={16384} disabled={sending} /></label><p>{t('commerce.this_turn_only_public_pages_from_these_origins')}</p><ul aria-label={t('commerce.requested_web_origins')}>{[...new Set(publicWebUrls.split(/\r?\n/).map(value => {try {return new URL(value.trim()).origin} catch {return value.trim() ? t('commerce.invalid_url',{url:value.trim()}) : ''}}).filter(Boolean))].map(origin => <li key={origin}><code>{origin}</code></li>)}</ul></section>}
 
