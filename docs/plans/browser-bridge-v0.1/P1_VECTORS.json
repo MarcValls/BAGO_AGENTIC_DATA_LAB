@@ -676,6 +676,62 @@
         "verification_state": "INCONCLUSIVE"
       },
       "claim": "reference transition model; not proof of Chrome/GEX runtime"
+    },
+    {
+      "id": "BB-P1-025",
+      "name": "failure_receipt_not_independently_verified",
+      "classification": "SPEC_ONLY",
+      "given": {
+        "chrome_user_invocation": true,
+        "chrome_grant_current": true,
+        "adl_permit_valid": true,
+        "pairing_valid": true,
+        "context_current": true,
+        "registration_enabled": true,
+        "command_auth_valid": true,
+        "replay_detected": false,
+        "dispatch_intent_persisted": true,
+        "grant_current_at_effect": true,
+        "terminal_receipt_persisted": true,
+        "effect_observed": false,
+        "independently_verified": false,
+        "host_ack": true,
+        "conformance_reported": false
+      },
+      "expected": {
+        "dispatch": "ONE",
+        "operation_state": "FAILED",
+        "verification_state": "PENDING"
+      },
+      "claim": "reference transition model; not proof of Chrome/GEX runtime"
+    },
+    {
+      "id": "BB-P1-026",
+      "name": "revoked_at_effect_failure_not_independently_verified",
+      "classification": "SPEC_ONLY",
+      "given": {
+        "chrome_user_invocation": true,
+        "chrome_grant_current": true,
+        "adl_permit_valid": true,
+        "pairing_valid": true,
+        "context_current": true,
+        "registration_enabled": true,
+        "command_auth_valid": true,
+        "replay_detected": false,
+        "dispatch_intent_persisted": true,
+        "grant_current_at_effect": false,
+        "terminal_receipt_persisted": true,
+        "effect_observed": false,
+        "independently_verified": false,
+        "host_ack": true,
+        "conformance_reported": false
+      },
+      "expected": {
+        "dispatch": "ONE",
+        "operation_state": "FAILED",
+        "verification_state": "PENDING"
+      },
+      "claim": "reference transition model; not proof of Chrome/GEX runtime"
     }
   ]
 }

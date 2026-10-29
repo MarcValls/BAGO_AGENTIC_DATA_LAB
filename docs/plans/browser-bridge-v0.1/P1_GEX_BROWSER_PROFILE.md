@@ -31,7 +31,7 @@ El contrato nuevo adl.browser.capability-profile.v1 describe esa extensión futu
 | Registro de capacidad | Backend GEX, versión y huella fijadas | Habilitar únicamente browser.document.read cuando haya integración y gates. No aceptar autodescubrimiento del host. |
 | DISPATCH_INTENT + consumo | Ledger durable GEX existente | Reservar intento único antes de enviar el comando, sin crear otro registro autoritativo. |
 | Host y extensión | Transporte y comprobación local | Validar autenticidad del mensaje, Chrome/grant, sesión, tab, documento y límites; jamás emitir permits. |
-| Observation | Adaptador de lectura | Informar OBSERVED/DENIED/ERROR y hash del extracto; no equivale a recibo terminal. |
+| Observation | Adaptador de lectura | Informar OBSERVED/DENIED/ERROR y entregar el extracto tipado acotado con digest; no equivale a recibo terminal. |
 | ReceiptV1 + VerificationResultV1 | GEX y verificador independiente | Registrar efecto observado/durable y postcondición. Una respuesta del host no es VERIFIED_SUCCESS. |
 | Conformidad de dominio | Adaptador read-only y checks host-owned de teamctl | Evaluar la candidata; no conceder autoridad runtime ni activar la capacidad. |
 
@@ -57,7 +57,7 @@ El archivo P1_BROWSER_SCHEMA.json usa JSON Schema 2020-12 y additionalProperties
 2. BrowserGexRequest: **perfil de solicitud versionado v2**, con principal autenticado y un initiator discriminado HUMAN o AGENT; HUMAN no lleva campos de agente, AGENT debe enlazar agent_config_digest y revisión. No sustituye ni altera GEXRequestV1; requerirá un adaptador GEX autorizado en P4.
 3. SharedTabBinding: tab_id, extension_id, origin, document_epoch, sesión, proyecto e invocation_event_ref. Este último es una referencia de auditoría, **no una prueba de concesión activeTab**.
 4. Dispatch: request_digest, attempt_id, permit_id, dispatch_intent_event_id, registry/policy, binding, document_epoch, límites, nonce, sesión/sequence y message_auth_tag.
-5. Observation: OBSERVED/DENIED/ERROR, digest y longitud de lo realmente extraído, fecha y truncation. Nunca contiene SUCCESS o VERIFIED_SUCCESS.
+5. Observation: OBSERVED/DENIED/ERROR, digest, longitud, fecha y truncation. Para OBSERVED incluye `document` tipado (`text/plain`, bytes UTF-8 en base64, SHA-256 y longitud); el base64 decodificado se limita a `max_output_bytes` (como máximo 65 536 bytes). DENIED/ERROR requieren `document: null`. No se admiten URL, ruta, identificador de blob ni canal de recuperación externo. `request_digest`, `attempt_id` y `binding_id` deben coincidir exactamente con el Dispatch autorizado; GEX valida y compara SHA-256 sobre los bytes decodificados antes de crear un recibo. Nunca contiene SUCCESS o VERIFIED_SUCCESS.
 
 El esquema valida forma, no autenticidad, tiempo efectivo, identidad real del usuario, activeTab ni relación criptográfica con el ledger. La validación semántica y criptográfica pertenece a las autoridades señaladas.
 
@@ -70,7 +70,7 @@ La entrada BrowserGexRequestV2 es un contrato propuesto **backend-generated**. P
 3. GEX decide según política y aprobación exigida; emite permit de un uso. Sin autorización explícita = DENY. Conformidad de dominio NO es uno de los requisitos que sustituyen el permit.
 4. En **la transacción durable del ledger GEX existente**, reservar attempt_id, consumir permit (CAS) y persistir DISPATCH_INTENT. Si falla, fail closed antes del efecto.
 5. El servidor envía un comando de lectura tipado por el canal emparejado. El host valida MAC y secuencia, sesión/digest/binding/límites y vigencia. La extensión revalida el grant efectivo de Chrome, origen, pestaña y documento antes de extraer.
-6. El host remite Observation con output_sha256 de los bytes efectivamente observados. El backend convierte el resultado a ReceiptV1 únicamente con validación y persistencia durable; nunca recibe un receipt terminal "hecho" por un mensaje de una página.
+6. El host remite Observation con el documento extraído en el campo `document` y output_sha256 de los mismos bytes efectivamente observados. El backend valida el límite, el contenido base64, la longitud, SHA-256 y su vínculo con Dispatch antes de convertir el resultado a ReceiptV1 con persistencia durable; nunca recibe un receipt terminal "hecho" por un mensaje de una página.
 7. Si GEX recibe y persiste ReceiptV1 correctamente, podrá asignar SUCCEEDED observado; la verificación independiente posterior emite VerificationResultV1 ligado al mismo request_digest, attempt_id, receipt_id y receipt_digest.
 8. Si tras DISPATCH_INTENT falta recibo terminal persistido: **UNKNOWN / RECONCILIATION_REQUIRED** (estado de operación), verificación INCONCLUSIVE, sin retry ciego. Un host ACK, timeout, respuesta LLM o reporte CONFORMANT jamás convierte el intento en SUCCEEDED.
 
@@ -94,7 +94,9 @@ La conformidad es un **gate de entrega de candidata**, no un paso runtime por ca
 
 ## 6. Vectores, criterios de cierre y límites
 
-P1_VECTORS.json contiene 24 escenarios SPEC_ONLY. tests/contracts/browser_bridge/test_p1_browser_contracts.py comprueba estructura, negativos, correspondencia 13↔checks, compatibilidad v1 y transiciones esperadas con un **oráculo de referencia**, no un runtime.
+P1_VECTORS.json contiene 26 escenarios SPEC_ONLY. tests/contracts/browser_bridge/test_p1_browser_contracts.py comprueba estructura, negativos, correspondencia 13↔checks, compatibilidad v1 y transiciones esperadas con un **oráculo de referencia**, no un runtime.
+
+La suite incluye vectores negativos de recibo de fallo sin verificación independiente: el estado operativo es FAILED, mientras la verificación permanece PENDING. Sólo evidencia independiente ligada al intento permite emitir VERIFIED_FAILURE.
 
 Para promover P1 a contrato ACCEPTED/FROZEN se requiere:
 

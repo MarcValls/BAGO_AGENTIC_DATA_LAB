@@ -7,6 +7,8 @@ contract package and the separation of verification from execution.
 from __future__ import annotations
 
 import copy
+import base64
+import hashlib
 import json
 from pathlib import Path
 
@@ -74,8 +76,16 @@ def samples():
     observation = {
         "contract_version": "adl.browser.read-observation.v1",
         "request_digest": H, "attempt_id": "attempt-1", "binding_id": H,
-        "document_epoch": "nav-1", "status": "OBSERVED", "output_sha256": H,
-        "output_bytes": 32, "truncated": False, "observed_at": STAMP,
+        "document_epoch": "nav-1", "status": "OBSERVED",
+        "output_sha256": hashlib.sha256(b"document body").hexdigest(),
+        "output_bytes": len(b"document body"),
+        "document": {
+            "media_type": "text/plain", "encoding": "base64",
+            "content_base64": base64.b64encode(b"document body").decode("ascii"),
+            "sha256": hashlib.sha256(b"document body").hexdigest(),
+            "byte_length": len(b"document body"),
+        },
+        "truncated": False, "observed_at": STAMP,
         "error_code": None,
     }
     request_v2 = {
@@ -175,6 +185,50 @@ def test_observation_cannot_become_terminal_receipt(mutator):
         VALIDATOR.validate(observation)
 
 
+def test_observation_document_is_bounded_integrity_checked_and_request_bound():
+    observation = copy.deepcopy(samples()[3])
+    dispatch = samples()[2]
+    assert observation["request_digest"] == dispatch["request_digest"]
+    assert observation["attempt_id"] == dispatch["attempt_id"]
+    payload = observation["document"]
+    raw = base64.b64decode(payload["content_base64"], validate=True)
+    assert len(raw) == payload["byte_length"] == observation["output_bytes"]
+    assert hashlib.sha256(raw).hexdigest() == payload["sha256"] == observation["output_sha256"]
+
+    for mutate in (
+        lambda x: x["document"].update(sha256=H),
+        lambda x: x["document"].update(byte_length=65537),
+        lambda x: x.update(request_digest="b" * 64),
+        lambda x: x["document"].update(content_base64=base64.b64encode(b"forged").decode("ascii")),
+    ):
+        candidate = copy.deepcopy(observation)
+        mutate(candidate)
+        with pytest.raises(AssertionError):
+            verify_observation_document(candidate, dispatch)
+
+
+def verify_observation_document(observation: dict, dispatch: dict) -> bytes:
+    """Test oracle: validates the typed inline payload and its dispatch binding."""
+    assert observation["request_digest"] == dispatch["request_digest"]
+    assert observation["attempt_id"] == dispatch["attempt_id"]
+    assert observation["binding_id"] == dispatch["binding_id"]
+    payload = observation["document"]
+    raw = base64.b64decode(payload["content_base64"], validate=True)
+    assert len(raw) <= dispatch["limits"]["max_output_bytes"]
+    assert len(raw) == payload["byte_length"] == observation["output_bytes"]
+    digest = hashlib.sha256(raw).hexdigest()
+    assert digest == payload["sha256"] == observation["output_sha256"]
+    return raw
+
+
+@pytest.mark.parametrize("status", ["DENIED", "ERROR"])
+def test_non_observation_cannot_smuggle_document(status):
+    observation = copy.deepcopy(samples()[3])
+    observation.update(status=status, output_sha256=None, output_bytes=0)
+    with pytest.raises(ValidationError):
+        VALIDATOR.validate(observation)
+
+
 @pytest.mark.parametrize("initiator", [
     {"kind": "HUMAN", "actor_ref": "user-1"},
     {"kind": "AGENT", "actor_ref": "registered-agent-1",
@@ -230,7 +284,9 @@ def reference_state(given: dict) -> dict:
                 "verification_state": "INCONCLUSIVE"}
     if not given["grant_current_at_effect"] or not given["effect_observed"]:
         return {"dispatch": "ONE", "operation_state": "FAILED",
-                "verification_state": "VERIFIED_FAILURE"}
+                "verification_state": (
+                    "VERIFIED_FAILURE" if given["independently_verified"] else "PENDING"
+                )}
     return {"dispatch": "ONE", "operation_state": "SUCCEEDED",
             "verification_state": (
                 "VERIFIED_SUCCESS" if given["independently_verified"] else "PENDING"
@@ -244,6 +300,17 @@ def test_all_spec_vectors_match_reference_state_without_claiming_execution():
     for row in VECTORS["vectors"]:
         assert row["classification"] == "SPEC_ONLY"
         assert row["expected"] == reference_state(row["given"]), row["id"]
+
+
+def test_terminal_failure_without_independent_verification_stays_pending():
+    by_id = {row["id"]: row for row in VECTORS["vectors"]}
+    for vector_id in ("BB-P1-025", "BB-P1-026"):
+        row = by_id[vector_id]
+        assert row["given"]["terminal_receipt_persisted"] is True
+        assert row["given"]["effect_observed"] is False
+        assert row["given"]["independently_verified"] is False
+        assert row["expected"]["operation_state"] == "FAILED"
+        assert row["expected"]["verification_state"] == "PENDING"
 
 
 def test_receipt_loss_is_unknown_even_when_host_acknowledges_and_conformant():

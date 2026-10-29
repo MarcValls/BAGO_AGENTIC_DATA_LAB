@@ -13,8 +13,10 @@ Este traspaso es **documental/técnico**, no un handoff DONE de teamctl ni un re
 - P1_GEX_BROWSER_PROFILE.md: decisión de extensión tipada, HUMAN/AGENT, doble autorización, único ledger, estados inciertos.
 - P1_BROWSER_SCHEMA.json: cinco formas versionadas y cerradas (perfil, GEX request v2, binding, dispatch, observation). No modifica GEX_V1_SCHEMA.json.
 - P1_CONTROL_MAP.json: 13 controles canónicos asociados a checks host-owned **propuestos**; NO hay checks de Browser Bridge registrados como PASS.
-- P1_VECTORS.json: 24 escenarios SPEC_ONLY, incluidos host ACK sin recibo, revocación, replay, permiso ausente y conformidad que no autoriza.
+- P1_VECTORS.json: 26 escenarios SPEC_ONLY, incluidos host ACK sin recibo, revocación, replay, permiso ausente, conformidad que no autoriza y fallos terminales sin verificación independiente.
 - tests/contracts/browser_bridge/test_p1_browser_contracts.py: pruebas de validación estructural, negativos, compatibilidad GEX v1 y oráculo de transiciones.
+
+La Observation lleva el documento extraído como contenido inline base64 tipado (`text/plain`), limitado a 65 536 bytes decodificados, con SHA-256 y longitud. El vínculo usa request_digest, attempt_id y binding_id del Dispatch autorizado. El backend debe verificar identidad de solicitud, límite, longitud e integridad antes de crear el recibo. No se define URL, ruta ni canal de recuperación externo.
 
 **Guardarraíles en PR:** solo se crean nuevos archivos bajo docs/plans/browser-bridge-v0.1/ y tests/contracts/browser_bridge/. No se modifican runtime, GEX, permisos, UI, CI, README, LedgerEventV1 ni el adaptador de conformidad.
 
@@ -42,12 +44,13 @@ Comandos que deben ejecutarse realmente sobre el mismo SHA candidato:
 
 La generación completa de README se exige en AGENTS.md antes del cierre real. GitHub CI ejecuta pytest tests y README check, pero no sustituye por sí sola la generación de ambos README que ordena el contrato local.
 
-Revisar externamente si el mapeo control→check constituye una comprobación semánticamente suficiente y cómo se autentica el canal host↔ADL. Los 24 vectores son SPEC_ONLY, incluso si un test verifica que sus expectativas son consistentes.
+Revisar externamente si el mapeo control→check constituye una comprobación semánticamente suficiente y cómo se autentica el canal host↔ADL. Los 26 vectores actuales son SPEC_ONLY, incluso si un test verifica que sus expectativas son consistentes.
 
 ## Estado de evidencia en la publicación inicial
 
 - Inspección GitHub de GEX y adaptador F-003: **REALIZADA**, alcance estático.
-- Revisión programática del contrato (13 controles, 24 vectores, perfiles/versiones): **PASS_STATIC_ONLY** en la sesión de preparación, no es pytest ni test de producto.
+- Revisión programática inicial del contrato (13 controles, 24 vectores, perfiles/versiones): **PASS_STATIC_ONLY** en la sesión de preparación, no es pytest ni test de producto. La rama correctiva añade dos vectores negativos y debe evaluarse con sus propios resultados.
+- Cambios P2 de integridad de documento y separación de verificación: se someten a pytest en la rama correctiva; aún no son evidencia hasta ejecutar la suite.
 - Test Python en el SHA definitivo: **PENDIENTE de resultado CI / NO DECLARADO PASS**.
 - Chrome real, Windows, Native Messaging, GEX browser_native y teamctl: **NOT_RUN**.
 - Revisión/aprobación humana de las extensiones versionadas: **PENDIENTE**.
