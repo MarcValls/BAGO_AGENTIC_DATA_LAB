@@ -1,0 +1,480 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://bago.local/contracts/browser-bridge/p1/v1",
+  "title": "BAGO5_ADL Browser Bridge P1 profile and wire contracts — SPEC_ONLY",
+  "description": "A non-authorizing versioned contract for future GEX browser_native extension. Does not modify GEX v1 or grant activeTab.",
+  "oneOf": [
+    {
+      "$ref": "#/$defs/CapabilityProfile"
+    },
+    {
+      "$ref": "#/$defs/SharedTabBinding"
+    },
+    {
+      "$ref": "#/$defs/Dispatch"
+    },
+    {
+      "$ref": "#/$defs/Observation"
+    }
+  ],
+  "$defs": {
+    "Sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "CapabilityProfile": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "contract_version": {
+          "const": "adl.browser.capability-profile.v1"
+        },
+        "capability_id": {
+          "const": "browser.document.read"
+        },
+        "capability_version": {
+          "const": "0.1.0"
+        },
+        "effect": {
+          "const": "READ"
+        },
+        "executor_kind": {
+          "const": "browser_native"
+        },
+        "enablement": {
+          "enum": [
+            "DISABLED",
+            "ENABLED",
+            "UNAVAILABLE"
+          ]
+        },
+        "registration_authority": {
+          "const": "ADL_GEX_BACKEND"
+        },
+        "input_schema_digest": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "registry_digest": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "policy_revision": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "host_name": {
+          "const": "com.bago.adl.browser_bridge"
+        },
+        "extension_id": {
+          "type": "string",
+          "pattern": "^[a-p]{32}$"
+        },
+        "grant_requirement": {
+          "const": "CHROME_ACTIVE_TAB_USER_INVOCATION"
+        },
+        "principal_origin": {
+          "const": "BACKEND_AUTHENTICATED"
+        },
+        "browser_content_trust": {
+          "const": "UNTRUSTED_DATA"
+        },
+        "network_scope": {
+          "const": "HOST_LOOPBACK_TO_ADL_ONLY"
+        },
+        "write_scope": {
+          "const": "none"
+        },
+        "max_output_bytes": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 65536
+        },
+        "max_timeout_ms": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 5000
+        }
+      },
+      "required": [
+        "contract_version",
+        "capability_id",
+        "capability_version",
+        "effect",
+        "executor_kind",
+        "enablement",
+        "registration_authority",
+        "input_schema_digest",
+        "registry_digest",
+        "policy_revision",
+        "host_name",
+        "extension_id",
+        "grant_requirement",
+        "principal_origin",
+        "browser_content_trust",
+        "network_scope",
+        "write_scope",
+        "max_output_bytes",
+        "max_timeout_ms"
+      ]
+    },
+    "SharedTabBinding": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "contract_version": {
+          "const": "adl.browser.shared-tab-binding.v1"
+        },
+        "binding_id": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "adl_instance_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "workspace_binding_fingerprint": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "bridge_session_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "extension_id": {
+          "type": "string",
+          "pattern": "^[a-p]{32}$"
+        },
+        "tab_id": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "document_epoch": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "origin": {
+          "type": "string",
+          "format": "uri",
+          "pattern": "^https?://"
+        },
+        "invocation_event_ref": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "grant_claim": {
+          "const": "CHROME_ACTIVE_TAB_USER_INVOCATION"
+        },
+        "state": {
+          "enum": [
+            "SHARED",
+            "REVOKED",
+            "EXPIRED"
+          ]
+        },
+        "expires_at": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "contract_version",
+        "binding_id",
+        "adl_instance_id",
+        "workspace_binding_fingerprint",
+        "bridge_session_id",
+        "extension_id",
+        "tab_id",
+        "document_epoch",
+        "origin",
+        "invocation_event_ref",
+        "grant_claim",
+        "state",
+        "expires_at"
+      ]
+    },
+    "Dispatch": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "contract_version": {
+          "const": "adl.browser.dispatch.v1"
+        },
+        "capability_id": {
+          "const": "browser.document.read"
+        },
+        "capability_version": {
+          "const": "0.1.0"
+        },
+        "request_id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "request_digest": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "attempt_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "permit_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "dispatch_intent_event_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "registry_digest": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "policy_revision": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "adl_instance_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "workspace_binding_fingerprint": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "bridge_session_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "binding_id": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "document_epoch": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "origin": {
+          "type": "string",
+          "format": "uri",
+          "pattern": "^https?://"
+        },
+        "initiator_kind": {
+          "enum": [
+            "HUMAN",
+            "AGENT"
+          ]
+        },
+        "initiator_ref": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "session_key_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "sequence": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "nonce": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "expires_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "limits": {
+          "$ref": "#/$defs/ReadLimits"
+        },
+        "message_auth_tag": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        }
+      },
+      "required": [
+        "contract_version",
+        "capability_id",
+        "capability_version",
+        "request_id",
+        "request_digest",
+        "attempt_id",
+        "permit_id",
+        "dispatch_intent_event_id",
+        "registry_digest",
+        "policy_revision",
+        "adl_instance_id",
+        "workspace_binding_fingerprint",
+        "bridge_session_id",
+        "binding_id",
+        "document_epoch",
+        "origin",
+        "initiator_kind",
+        "initiator_ref",
+        "session_key_id",
+        "sequence",
+        "nonce",
+        "expires_at",
+        "limits",
+        "message_auth_tag"
+      ]
+    },
+    "ReadLimits": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "max_output_bytes",
+        "timeout_ms"
+      ],
+      "properties": {
+        "max_output_bytes": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 65536
+        },
+        "timeout_ms": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 5000
+        }
+      }
+    },
+    "Observation": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "contract_version": {
+          "const": "adl.browser.read-observation.v1"
+        },
+        "request_digest": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "attempt_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "binding_id": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "document_epoch": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "status": {
+          "enum": [
+            "OBSERVED",
+            "DENIED",
+            "ERROR"
+          ]
+        },
+        "output_sha256": {
+          "oneOf": [
+            {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "output_bytes": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 65536
+        },
+        "truncated": {
+          "type": "boolean"
+        },
+        "observed_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "error_code": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 128
+        }
+      },
+      "required": [
+        "contract_version",
+        "request_digest",
+        "attempt_id",
+        "binding_id",
+        "document_epoch",
+        "status",
+        "output_sha256",
+        "output_bytes",
+        "truncated",
+        "observed_at",
+        "error_code"
+      ],
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "status": {
+                "const": "OBSERVED"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "output_sha256": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$"
+              },
+              "error_code": {
+                "type": "null"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "status": {
+                "enum": [
+                  "DENIED",
+                  "ERROR"
+                ]
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "output_sha256": {
+                "type": "null"
+              },
+              "output_bytes": {
+                "const": 0
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}
