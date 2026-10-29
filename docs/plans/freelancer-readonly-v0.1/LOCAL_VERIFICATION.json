@@ -1,0 +1,41 @@
+{
+  "schema": "adl.freelancer_candidate_verification.v1",
+  "status": "LOCAL_OFFLINE_PASS_INTEGRATION_PENDING",
+  "date": "2026-10-29",
+  "base_sha": "a9a4929fdbf51dd8872315de25ec8d277902c11c",
+  "environment": {
+    "python": "3.13.5",
+    "platform": "Linux",
+    "checkout": "partial_candidate_not_full_ADL"
+  },
+  "tests": {
+    "command": "python -m unittest discover -s tests -p test_freelancer_readonly.py -v",
+    "passed": 34,
+    "failed": 0,
+    "type": "local_deterministic_fake_transport",
+    "real_network_calls": 0,
+    "claim": "not a live API test, full regression or independent audit"
+  },
+  "compile": {
+    "command": "python -m py_compile src/connections/freelancer_readonly.py tests/test_freelancer_readonly.py",
+    "returncode": 0
+  },
+  "not_run": [
+    "native_host_authorization",
+    "secure_account_setup",
+    "ui_chat_integration",
+    "OAuth_browser",
+    "sandbox_API",
+    "production_API",
+    "Windows",
+    "full_ADL_suite",
+    "teamctl_mission_gate",
+    "README_generation",
+    "independent_review"
+  ],
+  "hashes": {
+    "src/connections/freelancer_readonly.py": "fb61f2ab7a62a31458756c561b02df983350c33e254196dc2a283a7c1a4d573d",
+    "tests/test_freelancer_readonly.py": "be96b53b7252fe97b11ce8d3a914d5a94dea711ee8eededf3082fb6aee509d8b",
+    "docs/plans/freelancer-readonly-v0.1/LOCAL_TESTS.log": "13a0e058ddabdeb3c4083d98e9ebeb45cb50db883640fe8276659f0bd84702bf"
+  }
+}
