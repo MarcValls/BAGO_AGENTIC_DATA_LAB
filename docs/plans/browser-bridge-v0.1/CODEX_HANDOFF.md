@@ -1,5 +1,15 @@
 # Traspaso a Codex — BAGO5_ADL Browser Bridge v0.1
 
+## Nota prioritaria para Codex — conformidad y estado pendiente (2026-10-29)
+
+**El puente todavía no está implementado por este plan.** Antes de P1, consulta [DOMAIN_CONFORMANCE_INTEGRATION.md](./DOMAIN_CONFORMANCE_INTEGRATION.md) y contrasta el estado actual de `main`. Se detectó un adaptador de dominio de solo lectura y 13 controles obligatorios integrados tras la base original del plan: `src/contracts/domain_conformance.py` y `docs/domain-conformance/`. La adenda define un **mapeo propuesto** hacia comprobaciones de Browser Bridge, no checks ya creados ni ejecutados.
+
+No llamar a la conformidad para autorizar lecturas, no inventar otro ledger o gateway, no declarar permiso Chrome sin una acción reconocida de usuario en la extensión, no producir SUCCESS si falta un recibo terminal después de despacho. En ese caso se conserva `UNKNOWN / RECONCILIATION_REQUIRED` y se prohíbe el replay ciego.
+
+La nueva adenda no modifica la misión activa, `main`, el runtime ni el estado de verificación. **P0 debe reevaluar concurrencia, base SHA y suficiencia semántica del mapping propuesto** antes de registrar required checks en teamctl. Esta coordinación no implica aprobar la implementación.
+
+---
+
 Fecha: 2026-10-29.
 Estado: **PROPUESTO / DOCUMENTACIÓN PARA REVISIÓN**.
 Este archivo no es un handoff `DONE` del equipo ni un recibo de ejecución. No modifica el estado de ninguna misión.
