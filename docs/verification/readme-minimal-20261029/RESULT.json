@@ -1,0 +1,91 @@
+{
+  "schema": "bago.readme.minimal.candidate.evidence.v1",
+  "date": "2026-10-29",
+  "state": "IMPLEMENTED_CANDIDATE_PARTIALLY_VERIFIED",
+  "base_sha_at_start": "a9a4929fdbf51dd8872315de25ec8d277902c11c",
+  "base_sha_before_publication": "a9a4929fdbf51dd8872315de25ec8d277902c11c",
+  "merge_authorized": false,
+  "checks": {
+    "readme_tests": {
+      "result": "PASS",
+      "passed": 49,
+      "log": "focused.log"
+    },
+    "final_mandatory_link_assertions": {
+      "result": "PASS",
+      "passed": 17
+    },
+    "initial_full_generation": {
+      "result": "FAIL",
+      "passed": 1707,
+      "failed": 37,
+      "skipped": 2,
+      "log": "generation-initial-fail.log",
+      "cause": "Host OTel sampler at 1%; frontend jsdom not installed"
+    },
+    "environment_retest": {
+      "result": "PASS",
+      "passed": 146,
+      "log": "environment-retest.log"
+    },
+    "full_generation": {
+      "result": "PASS",
+      "passed": 1744,
+      "log": "generation-pass.log",
+      "command": "OTEL_TRACES_SAMPLER=always_on OTEL_TRACES_SAMPLER_ARG=1 python scripts/generate_dynamic_readme.py"
+    },
+    "consistency": {
+      "result": "PASS",
+      "suite_execution": "NOT_RUN",
+      "collected": 1746,
+      "log": "consistency.log",
+      "command": "python scripts/generate_dynamic_readme.py --check --skip-tests"
+    },
+    "protected_files": {
+      "result": "PASS",
+      "count": 34,
+      "record": "conservation.json"
+    },
+    "github_desktop": {
+      "result": "PASS",
+      "viewport": [
+        1363,
+        936
+      ],
+      "document_width": 1348,
+      "details": 0,
+      "image_loaded": true,
+      "screenshot": "github-desktop.jpg",
+      "observed_commit": "a30cc743335f997e9f2f8f7e15a82d04418954f3"
+    },
+    "github_mobile": {
+      "result": "NOT_RUN",
+      "reason": "Browser control API exposes no viewport resize or mobile emulation"
+    },
+    "human_visual_acceptance": {
+      "result": "NOT_RUN",
+      "reason": "Awaiting Marc; no merge authorized"
+    },
+    "remote_ci": {
+      "result": "NOT_RUN",
+      "reason": "PR workflows evaluated separately after publication"
+    }
+  },
+  "sha256": {
+    "README.md": "aeb823c75ef3cf24def0e39f97d58e32e2f8f1375e71b4156a0b8c320a507b63",
+    "README_DETAILS.md": "7a2682fea70897ae318537835912743ed0f1193922ada9a7d6c04b41b11ef003",
+    "docs/readme_generation.md": "ff26b7128380a37d9820bbe952634827820ef4b1ff6012fbb28bbeee92887fd4",
+    "docs/readme_svg_manifest.json": "36aa0a3b742c0a33ee1dda40444d207b5daf4dd6d0cb8b00ef697393b5119187",
+    "docs/verification/readme-minimal-20261029/REVIEW.md": "aa02db151fb3707830dd1a810ad467b3c4902b61fc4aa7c1a47809276f5356ab",
+    "docs/verification/readme-minimal-20261029/conservation.json": "ff0a3de59ea1705a12c34029a462b47fd7736b327d79b9526f99039549ca4ae1",
+    "docs/verification/readme-minimal-20261029/consistency.log": "95fb7c87bdc878ad3a13ba61b0d927de5ce96cb4271570c80d826ab3a993ff0a",
+    "docs/verification/readme-minimal-20261029/environment-retest.log": "6ec5e0d3babec7873e10c1671ca0e3b31d7ed3aa451b4350c81e401d4bd62b3d",
+    "docs/verification/readme-minimal-20261029/focused.log": "9c3df2c368e201c530975a2e4100f7a1c8368a95e76fdbef682dcfa0b9371e8b",
+    "docs/verification/readme-minimal-20261029/generation-initial-fail.log": "a2dde1550ceee492c1ca5ce4ff0ed8912f87d7b171f5eb8d6c18559fbcbf09a3",
+    "docs/verification/readme-minimal-20261029/generation-pass.log": "3649d4296b66cd902a6b529e483fd957cf2490f5af9830b872eed6975a252f40",
+    "docs/verification/readme-minimal-20261029/github-desktop.jpg": "728012228ce38d5e5ccc76e478fcbec935cea694e9907f9dd5d9550d319eae86",
+    "scripts/generate_dynamic_readme.py": "8dd19ddecd37dd2351ed6b4eef3dbec98c1d6f88dfa24a916797e80fa8e3de0e",
+    "tests/test_readme_minimal.py": "95162c17b491eabbc0f0d6eab1d2d31ae72ad35dcf74c37367d4c135f02b7def",
+    "tests/test_readme_svg_landing.py": "8eeae4a08c2b624f0a83bbb2f17431dc108fd86957129ce4039d7fa2b076dfcb"
+  }
+}
