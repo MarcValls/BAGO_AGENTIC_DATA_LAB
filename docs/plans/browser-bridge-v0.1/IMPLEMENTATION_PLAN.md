@@ -1,5 +1,19 @@
 # BAGO5_ADL Browser Bridge v0.1 — Plan de implementación
 
+## Actualización de coordinación — conformidad de dominio (2026-10-29)
+
+**Lectura prioritaria antes de P1:** [DOMAIN_CONFORMANCE_INTEGRATION.md](./DOMAIN_CONFORMANCE_INTEGRATION.md).
+
+La implementación sigue pendiente. Tras redactar este plan se incorporó a `main` un adaptador de conformidad de dominio de solo lectura (`src/contracts/domain_conformance.py`), el manifiesto `adl.domain_manifest.v1` y un contrato de 13 controles. **No crear un segundo sistema de conformidad**: las comprobaciones específicas de Browser Bridge deben mapearse por política host-owned a esos controles, mediante checks requeridos y handoff gestionados por `teamctl`. Esta comprobación es un gate de candidata, nunca un permiso ni una puerta de ejecución.
+
+Se conservan dos autoridades distintas y necesarias para cada lectura: la concesión `activeTab` derivada de un gesto real del usuario en Chrome y la autorización gobernada ADL/GEX. No se hereda `activeTab` del chat, un binding guardado ni un test de conformidad.
+
+Tras `DISPATCH_INTENT`, si falta recibo terminal persistido, el resultado es `UNKNOWN / RECONCILIATION_REQUIRED`, no SUCCESS, aunque el host haya contestado o un test de transporte pase. No crear otro ledger: GEX mantiene efectos y recibos durables; `teamctl` aporta evidencia de verificaciones de candidata, y el adaptador de conformidad solo las consulta.
+
+**Divergencia conocida:** el plan inicial se elaboró sobre `main@ae8e53e14afa763f816eac9e11ddc0e8a24cdc56` y se inspeccionó el contrato de conformidad sobre `main@1ebf9b1b2c5cd75de8dd34dddb0cc581588327c4`. Releer main al reanudar y actualizar el inventario P0. Ningún cambio de diseño se considera implementado por esta adenda.
+
+---
+
 Fecha: 2026-10-29.
 Estado del diseño: **PROPUESTO / REVIEW REQUIRED**.
 Estado de implementación del puente: **NO IMPLEMENTADO POR ESTE CAMBIO**.
