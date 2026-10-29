@@ -1,0 +1,135 @@
+{
+  "contract": "adl.browser.p1.control-map.v1",
+  "status": "PROPOSED_HOST_POLICY_NOT_ACTIVE",
+  "domain_id": "browser.bridge.read",
+  "policy_owner": "ADL_TRUSTED_HOST_NOT_DOMAIN_PACKET",
+  "source_contract": "adl.domain_manifest.v1",
+  "note": "check IDs are proposed future teamctl required_checks; listing them here is not a PASS or actual host policy. The host must review and register each check and verify semantic adequacy.",
+  "controls": [
+    {
+      "control_id": "AUTH-001",
+      "check_id": "bb_auth_boundary",
+      "assertion": "Conformance/Chrome/host never mint GEX permission.",
+      "vector_ids": [
+        "BB-P1-005",
+        "BB-P1-019",
+        "BB-P1-020"
+      ]
+    },
+    {
+      "control_id": "SCOPE-001",
+      "check_id": "bb_scope_tab",
+      "assertion": "Workspace binding, origin, document epoch, profile and tab scope checked.",
+      "vector_ids": [
+        "BB-P1-004",
+        "BB-P1-007",
+        "BB-P1-021"
+      ]
+    },
+    {
+      "control_id": "SOURCE-001",
+      "check_id": "bb_web_untrusted",
+      "assertion": "Web content is untrusted input and cannot promote to authority.",
+      "vector_ids": [
+        "BB-P1-009",
+        "BB-P1-021"
+      ]
+    },
+    {
+      "control_id": "STATE-001",
+      "check_id": "bb_uncertain_terminal",
+      "assertion": "Dispatch without a terminal durable receipt is reconciled, not succeeded.",
+      "vector_ids": [
+        "BB-P1-012",
+        "BB-P1-013",
+        "BB-P1-017",
+        "BB-P1-024"
+      ]
+    },
+    {
+      "control_id": "OPER-001",
+      "check_id": "bb_read_only_effect",
+      "assertion": "A typed read is the only effect; no clicks, writes or arbitrary scripts.",
+      "vector_ids": [
+        "BB-P1-001",
+        "BB-P1-008"
+      ]
+    },
+    {
+      "control_id": "CAP-001",
+      "check_id": "bb_real_chrome_grant",
+      "assertion": "A real browser invocation and still-current Chrome grant are independently required.",
+      "vector_ids": [
+        "BB-P1-003",
+        "BB-P1-004",
+        "BB-P1-022"
+      ]
+    },
+    {
+      "control_id": "EVID-001",
+      "check_id": "bb_receipt_chain",
+      "assertion": "Runtime receipt and separate verifier match same request/attempt, never producer-only proof.",
+      "vector_ids": [
+        "BB-P1-002",
+        "BB-P1-012",
+        "BB-P1-015"
+      ]
+    },
+    {
+      "control_id": "MEM-001",
+      "check_id": "bb_binding_no_memory_grant",
+      "assertion": "Recorded session or invocation text never substitutes Chrome authorization.",
+      "vector_ids": [
+        "BB-P1-003",
+        "BB-P1-022"
+      ]
+    },
+    {
+      "control_id": "ROUTE-001",
+      "check_id": "bb_single_gex_route",
+      "assertion": "Chat and manual UI route through GEX; unauthorized host command is denied.",
+      "vector_ids": [
+        "BB-P1-005",
+        "BB-P1-009"
+      ]
+    },
+    {
+      "control_id": "REL-001",
+      "check_id": "bb_version_dependencies",
+      "assertion": "Versioned dependency pins among GEX schema, host, extension and profile.",
+      "vector_ids": [
+        "BB-P1-008",
+        "BB-P1-021"
+      ]
+    },
+    {
+      "control_id": "VER-001",
+      "check_id": "bb_version_mismatch",
+      "assertion": "Unknown/changed protocol or registry digest rejects dispatch.",
+      "vector_ids": [
+        "BB-P1-008",
+        "BB-P1-009"
+      ]
+    },
+    {
+      "control_id": "SEM-001",
+      "check_id": "bb_typed_interface",
+      "assertion": "Read, share and revoke contracts are explicit and identity-bound.",
+      "vector_ids": [
+        "BB-P1-001",
+        "BB-P1-004",
+        "BB-P1-016"
+      ]
+    },
+    {
+      "control_id": "KERNEL-001",
+      "check_id": "bb_no_new_authority",
+      "assertion": "No new ledger, permission oracle, execution gateway or GEX fixture fallback.",
+      "vector_ids": [
+        "BB-P1-011",
+        "BB-P1-018",
+        "BB-P1-019"
+      ]
+    }
+  ]
+}
