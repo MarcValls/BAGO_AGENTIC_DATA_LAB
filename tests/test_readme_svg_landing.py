@@ -11,23 +11,17 @@ sys.path.insert(0, str(ROOT / "scripts"))
 import generate_dynamic_readme as generator  # noqa: E402
 
 
-def test_readme_landing_has_direct_links_and_progressive_svg_panels():
-    visual = (ROOT / "README.md").read_text(encoding="utf-8")
+def test_minimal_landing_preserves_navigation_and_complete_reference():
+    visual = generator.render_svg_landing()
     full = (ROOT / "README_DETAILS.md").read_text(encoding="utf-8")
-    assert visual == generator.render_svg_landing()
     manifest = json.loads((ROOT / "docs/readme_svg_manifest.json").read_text(encoding="utf-8"))
-    panels = manifest["panels"]
-    assert manifest["schema"] == "bago.readme.svg.landing.v2"
-    assert len(panels) == visual.count('<img src="docs/assets/readme-banner/') == 9
+    assert manifest["schema"] == "bago.readme.svg.landing.v3"
     assert visual.startswith("# BAGO Agentic Data Lab\n")
-    assert "## Accesos directos" in visual
-    assert "[Mapa visual](#mapa-visual)" in visual
-    assert "[Galería por tema](#galeria-por-tema)" in visual
-    assert visual.count("<details>") == 8
+    assert "<details" not in visual.lower() and "<summary" not in visual.lower()
+    assert "00-hero.svg" not in visual and "01-map.svg" not in visual
     for item in manifest["navigation"]:
         assert f'[{item["label"]}]({item["target"]})' in visual
         assert (ROOT / item["target"].split("#", 1)[0]).is_file()
-    assert "<summary>" in visual
     for heading in (
         "## El laboratorio", "## La aplicación frontend", "## Datos y conocimiento",
         "## Tests y verificación", "## Estado y roadmap",

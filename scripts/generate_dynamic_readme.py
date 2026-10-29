@@ -1207,13 +1207,74 @@ def _validate_local_markdown_target(target: object, context: str) -> str:
     target_path, separator, fragment = target.partition("#")
     if not re.fullmatch(r"[A-Za-z0-9_./-]+\.md", target_path):
         raise ValueError(f"Unsafe destination: {target}")
-    if ".." in Path(target_path).parts:
+    if ".." in Path(target_path).parts or not (REPO_ROOT / target_path).resolve().is_relative_to(REPO_ROOT.resolve()):
         raise ValueError(f"Unsafe destination: {target}")
     if separator and not re.fullmatch(r"[A-Za-z0-9_.-]+", fragment):
         raise ValueError(f"Unsafe destination fragment: {target}")
     if not (REPO_ROOT / target_path).is_file():
         raise FileNotFoundError(f"Missing destination: {target_path}")
     return target
+
+
+def _landing_text(value: object, context: str) -> str:
+    """Allow plain editorial text, never injected Markdown/HTML controls."""
+    if (
+        not isinstance(value, str) or not value.strip() or len(value) > 700
+        or any(char in value for char in "\n\r<>[]`|*_\\")
+    ):
+        raise ValueError(f"Invalid landing text: {context}")
+    return html_escape(value)
+
+
+def _render_minimal_landing(config: dict[str, Any], groups: dict[str, list[str]]) -> str:
+    """Render the v3 editorial surface; v2 vector validation remains mandatory."""
+    minimal = config["minimal"]
+    intro = _landing_text(minimal["intro"], "intro")
+    areas = minimal["areas"]
+    if not isinstance(areas, list) or len(areas) != 4:
+        raise ValueError("Minimal landing requires four functional areas")
+    capture = minimal["capture"]
+    asset = capture["asset"]
+    if not isinstance(asset, str) or not re.fullmatch(r"docs/assets/[a-zA-Z0-9_/-]+\.png", asset):
+        raise ValueError("Unsafe capture path")
+    if ".." in Path(asset).parts or not (REPO_ROOT / asset).resolve().is_relative_to(REPO_ROOT.resolve()):
+        raise ValueError("Capture escapes repository")
+    if not (REPO_ROOT / asset).read_bytes().startswith(b"\x89PNG\r\n\x1a\n"):
+        raise ValueError("Capture must be a PNG")
+    observed = date.fromisoformat(capture["date"]).isoformat()
+    alt = _landing_text(capture["alt"], "capture alt")
+    guide = _validate_local_markdown_target(capture["guide"], "capture provenance")
+    if len(groups.get("Inicio", [])) != 4:
+        raise ValueError("Minimal landing requires four entry links")
+    lines = [
+        f"# {config['title']}", "", f"**{_landing_text(config['summary'], 'summary')}**", "",
+        intro, "", " · ".join(groups["Inicio"]), "", "---", "", "## Qué ofrece", "",
+    ]
+    # Short paragraphs wrap naturally on narrow GitHub screens.
+    for area in areas:
+        label = _landing_text(area["label"], "area label")
+        description = _landing_text(area["description"], "area description")
+        target = _validate_local_markdown_target(area["target"], label)
+        lines.extend([f"**[{label}]({target})** — {description}", ""])
+    lines.extend([
+        "## Del chat a una operación verificable", "",
+        "**Intención** → **Propuesta** → **Revisión y autorización** → **Ejecución** → **Recibo** → **Verificación**", "",
+        "Este es el principio arquitectónico; cada capacidad y recorrido tiene su propio estado y alcance. Las capacidades no demostradas de extremo a extremo no se presentan como verificadas.", "",
+        "## La aplicación", "", f"![{alt}]({asset})", "",
+        f"Captura documentada del {observed}; no acredita por sí sola el estado actual de la interfaz ni la ejecución de herramientas. [Procedencia y límites]({guide}).", "",
+        "## Probar ADL", "",
+        "**Aplicación Windows:** sigue la [instalación local](docs/agent-chat-control/LOCAL_SETUP.md) para iniciar el frontend y configurar el proveedor.", "",
+        "**Demostración reproducible:** sigue la [demo de ejecución gobernada](docs/one_command_demo.md) para ejecutar un recorrido local sin claves externas y examinar los archivos de resultado. La demostración utiliza fixtures; no valida servicios cloud en producción.", "",
+        "## Documentación y evidencia", "",
+    ])
+    for category, links in groups.items():
+        if category != "Inicio":
+            lines.extend([f"**{category}:** " + " · ".join(links), ""])
+    lines.extend([
+        "[Recursos SVG originales](docs/assets/readme-banner/) · [Contrato de generación](docs/readme_generation.md)", "",
+        "Portada generada desde el manifiesto; los estados y resultados conservan la fecha y el alcance de sus fuentes.", "",
+    ])
+    return "\n".join(lines)
 
 
 def render_svg_landing() -> str:
@@ -1223,7 +1284,7 @@ def render_svg_landing() -> str:
     SVG artwork is editable versioned source, not a claim of runtime status.
     """
     config = _read_json(SVG_LANDING_MANIFEST_PATH)
-    if config.get("schema") != "bago.readme.svg.landing.v2":
+    if config.get("schema") not in {"bago.readme.svg.landing.v2", "bago.readme.svg.landing.v3"}:
         raise ValueError("Unsupported SVG README manifest")
     panels = config.get("panels")
     if not isinstance(panels, list) or len(panels) < 8:
@@ -1292,6 +1353,9 @@ def render_svg_landing() -> str:
         raise ValueError("The first README panel must be the hero panel")
     if not rendered_panels[1]["asset"].endswith("01-map.svg"):
         raise ValueError("The second README panel must be the visual map")
+
+    if config["schema"] == "bago.readme.svg.landing.v3":
+        return _render_minimal_landing(config, navigation_groups)
 
     def linked_image(item: dict[str, str]) -> str:
         return (

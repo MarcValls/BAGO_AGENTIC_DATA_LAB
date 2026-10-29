@@ -1,18 +1,50 @@
 {
-  "schema": "bago.readme.svg.landing.v2",
+  "schema": "bago.readme.svg.landing.v3",
   "title": "BAGO Agentic Data Lab",
-  "summary": "Agentes, datos y ejecución gobernada con enlaces directos, paneles visuales desplegables y documentación completa.",
+  "summary": "Agentes, datos y ejecución gobernada desde un espacio de trabajo.",
   "navigation": [
-    {"category": "Empezar", "label": "Instalación local", "target": "docs/agent-chat-control/LOCAL_SETUP.md"},
-    {"category": "Explorar", "label": "Chat y frontend", "target": "docs/readme_frontend.md"},
-    {"category": "Explorar", "label": "Demo guiada", "target": "docs/one_command_demo.md"},
-    {"category": "Entender", "label": "Arquitectura", "target": ".bago/canon/ARCHITECTURE.md"},
-    {"category": "Entender", "label": "Datos y RAG", "target": "docs/governed_rag.md"},
-    {"category": "Operar", "label": "Ejecución gobernada", "target": "docs/governed-execution/GEX_V1_NORMATIVE_CONTRACT.md"},
-    {"category": "Operar", "label": "Trazas y evaluación", "target": "docs/observability_evals.md"},
-    {"category": "Completo", "label": "Guía completa", "target": "README_DETAILS.md"}
+    {
+      "category": "Inicio",
+      "label": "Empezar en Windows",
+      "target": "docs/agent-chat-control/LOCAL_SETUP.md"
+    },
+    {
+      "category": "Inicio",
+      "label": "Probar la demo local",
+      "target": "docs/one_command_demo.md"
+    },
+    {
+      "category": "Inicio",
+      "label": "Explorar la arquitectura",
+      "target": ".bago/canon/ARCHITECTURE.md"
+    },
+    {
+      "category": "Inicio",
+      "label": "Ver trazas y evaluación",
+      "target": "docs/observability_evals.md"
+    },
+    {
+      "category": "Referencia",
+      "label": "Contrato de ejecución",
+      "target": "docs/governed-execution/GEX_V1_NORMATIVE_CONTRACT.md"
+    },
+    {
+      "category": "Referencia",
+      "label": "Estado canónico",
+      "target": ".bago/canon/STATE.md"
+    },
+    {
+      "category": "Referencia",
+      "label": "Seguridad",
+      "target": "SECURITY.md"
+    },
+    {
+      "category": "Referencia",
+      "label": "Guía técnica completa",
+      "target": "README_DETAILS.md"
+    }
   ],
-  "design": "BAGO / ADL · vector panels",
+  "design": "BAGO / ADL · minimal editorial",
   "panels": [
     {
       "asset": "docs/assets/readme-banner/00-hero.svg",
@@ -59,5 +91,36 @@
       "alt": "Fuentes canónicas y documentación completa",
       "target": "README_DETAILS.md"
     }
-  ]
+  ],
+  "minimal": {
+    "intro": "ADL permite formular una intención desde el chat, preparar una operación, revisar su autorización y consultar resultados con evidencias. Cada recorrido debe distinguir lo que el agente afirma de lo que el sistema realmente ejecutó y comprobó.",
+    "areas": [
+      {
+        "label": "Chat y workspace",
+        "target": "docs/readme_frontend.md",
+        "description": "Conversar, preparar contexto, consultar y revisar propuestas sin confundir una respuesta con una ejecución."
+      },
+      {
+        "label": "Agentes y conocimiento",
+        "target": "docs/governed_rag.md",
+        "description": "Organizar capacidades, recuperar información con procedencia y mantener los límites de autoridad."
+      },
+      {
+        "label": "Ejecución gobernada",
+        "target": "docs/governed-execution/GEX_V1_NORMATIVE_CONTRACT.md",
+        "description": "Aplicar permisos y controles antes de efectos materiales; registrar resultados y excepciones."
+      },
+      {
+        "label": "Inspect y observabilidad",
+        "target": "docs/observability_evals.md",
+        "description": "Relacionar solicitudes, recibos, trazas, evidencias y verificaciones."
+      }
+    ],
+    "capture": {
+      "asset": "docs/assets/readme-20261022/chat.png",
+      "alt": "Chat y espacio de trabajo ADL, captura documentada del 22 de octubre de 2026",
+      "date": "2026-10-22",
+      "guide": "docs/readme_frontend.md"
+    }
+  }
 }
