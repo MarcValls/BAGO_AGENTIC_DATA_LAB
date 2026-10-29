@@ -121,3 +121,8 @@ Estado en esta entrega: ambos **NOT_RUN**. No editar `README.md` ni `README_DETA
 ## 8. Resumen operativo para el siguiente agente
 
 **Revisar primero, no activar.** El plan está disponible en una rama documental para que pueda consumirse mientras continúa el trabajo actual. No modificar main, contratos congelados ni estado del equipo sin el procedimiento aplicable. La siguiente salida útil es un inventario P0 con conflictos reales y un alcance de implementación acotado; no otro anuncio genérico de que el puente ya existe.
+
+
+## Prioridad de coordinación — cambio concurrente Freelancer (2026-10-29)
+
+Antes de tocar `src/api/connection_routes.py`, `src/api/server.py`, `src/connections/service.py` o los componentes compartidos de chat, leer [P0_FREELANCER_COORDINATION_DELTA_20261029.md](./P0_FREELANCER_COORDINATION_DELTA_20261029.md). Comparar por SHA #104 `139c79cdda05b838e6efe789230c1a79e316ebc9`, #105 `17ced6e47bc23def3bdb2934e6198444f2249cc2` y la punta local de main. Exigir misión/scopes y reservas visibles; sin acceso al worktree Windows, registrar `NOT_RUN`. No alterar el inventario histórico ni cerrar `P0_GATE_OPEN`.
