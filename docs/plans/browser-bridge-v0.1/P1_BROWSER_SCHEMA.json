@@ -2,10 +2,13 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://bago.local/contracts/browser-bridge/p1/v1",
   "title": "BAGO5_ADL Browser Bridge P1 profile and wire contracts — SPEC_ONLY",
-  "description": "A non-authorizing versioned contract for future GEX browser_native extension. Does not modify GEX v1 or grant activeTab.",
+  "description": "Non-authorizing contract candidates incl. HUMAN/AGENT GEX v2 request profile; GEX v1 unchanged. Does not execute or grant activeTab.",
   "oneOf": [
     {
       "$ref": "#/$defs/CapabilityProfile"
+    },
+    {
+      "$ref": "#/$defs/BrowserGexRequest"
     },
     {
       "$ref": "#/$defs/SharedTabBinding"
@@ -474,6 +477,188 @@
             }
           }
         }
+      ]
+    },
+    "HumanInitiator": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "HUMAN"
+        },
+        "actor_ref": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        }
+      },
+      "required": [
+        "kind",
+        "actor_ref"
+      ]
+    },
+    "AgentInitiator": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "AGENT"
+        },
+        "actor_ref": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "agent_config_digest": {
+          "$ref": "#/$defs/Sha256"
+        },
+        "agent_revision": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        }
+      },
+      "required": [
+        "kind",
+        "actor_ref",
+        "agent_config_digest",
+        "agent_revision"
+      ]
+    },
+    "Initiator": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/HumanInitiator"
+        },
+        {
+          "$ref": "#/$defs/AgentInitiator"
+        }
+      ]
+    },
+    "BrowserGexRequest": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "contract_version": {
+          "const": "adl.browser.gex-request.v2"
+        },
+        "request_id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "run_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "proposal_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "principal": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "issuer": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 256
+            },
+            "subject": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 256
+            },
+            "session_binding": {
+              "$ref": "#/$defs/Sha256"
+            },
+            "auth_strength": {
+              "const": "verified"
+            }
+          },
+          "required": [
+            "issuer",
+            "subject",
+            "session_binding",
+            "auth_strength"
+          ]
+        },
+        "initiator": {
+          "$ref": "#/$defs/Initiator"
+        },
+        "adl_instance_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "workspace_binding_fingerprint": {
+          "$ref": "#/$defs/Sha256"
+        },
+        "capability_id": {
+          "const": "browser.document.read"
+        },
+        "capability_version": {
+          "const": "0.1.0"
+        },
+        "registry_digest": {
+          "$ref": "#/$defs/Sha256"
+        },
+        "policy_revision": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "shared_tab_binding_id": {
+          "$ref": "#/$defs/Sha256"
+        },
+        "document_epoch": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "origin": {
+          "type": "string",
+          "format": "uri",
+          "pattern": "^https?://(?:[A-Za-z0-9.-]+|\\[[0-9a-fA-F:]+\\])(?::[1-9][0-9]{0,4})?$"
+        },
+        "constraints": {
+          "$ref": "#/$defs/ReadLimits"
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "expires_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "nonce": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        }
+      },
+      "required": [
+        "contract_version",
+        "request_id",
+        "run_id",
+        "proposal_id",
+        "principal",
+        "initiator",
+        "adl_instance_id",
+        "workspace_binding_fingerprint",
+        "capability_id",
+        "capability_version",
+        "registry_digest",
+        "policy_revision",
+        "shared_tab_binding_id",
+        "document_epoch",
+        "origin",
+        "constraints",
+        "created_at",
+        "expires_at",
+        "nonce"
       ]
     }
   }
