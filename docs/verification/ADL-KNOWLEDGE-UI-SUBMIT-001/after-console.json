@@ -1,0 +1,5 @@
+{
+  "scope": "Original browser console bytes represented as UTF-8 text; trailing spaces and line endings are escaped, not discarded",
+  "raw_sha256": "a0881a3223d935e36be3c46047d46774fc960a896a552e4ba10f9c198ec26f51",
+  "raw_utf8": "[     215ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ http://127.0.0.1:5199/node_modules/.vite/deps/react-dom_client.js?v=3d6f4460:15804\n"
+}

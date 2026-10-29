@@ -1,0 +1,56 @@
+{
+  "base_sha": "bf4ce08b730e4616f3a5caf9e3111b8d8ec1a3e6",
+  "files": [
+    {
+      "path": "src/observability/native_timing.py",
+      "base_sha256": "f65b222f2cdb7b607f39ed9bb89744e4978db75cccb83866225c09fdde03e688",
+      "current_sha256": "d21151c18fd2bac660da2aa07bd0325a7aaeaa7ed37fdabfe2338024e6538195",
+      "identical": false,
+      "equal_after_crlf_normalization": true
+    },
+    {
+      "path": "src/runtime_status.py",
+      "base_sha256": "f6d914aacb4d45f2aa28e58c8cc37895958f7df893e77de784c59006399a95ca",
+      "current_sha256": "bc762d62a403caa755a734a4918f7bb9e42c51ad83fa9c750c53d26db65d799f",
+      "identical": false,
+      "equal_after_crlf_normalization": true
+    },
+    {
+      "path": "tests/development_mission/test_native_concurrency.py",
+      "base_sha256": "14764a97c5daecb1cbf37c9a35c9578ea0fd89a06aba2b482e3d6aa8013b7518",
+      "current_sha256": "27edfb8ced03d5c10c0a0396421929886e8eb7921a3765a4409df6bef5d3d547",
+      "identical": false,
+      "equal_after_crlf_normalization": true
+    },
+    {
+      "path": "tests/development_mission/test_native_timing.py",
+      "base_sha256": "88e0c8c504da379590dfe91cec7231a9c5d8eb20f47e6e47d461d1cf0633f6e3",
+      "current_sha256": "83f84eb508e3633ef65c7dea1d2ced0e737a06e09848c6a633ebe21706a2a8f2",
+      "identical": false,
+      "equal_after_crlf_normalization": true
+    },
+    {
+      "path": "tests/test_runtime_status.py",
+      "base_sha256": "8f76754b228de638d91232d884f06ae373137fc21862bac8fa2cdaeaeca41134",
+      "current_sha256": "886434460e97947d69c9b48e54b006db03e4671ef0c7eb9a47084a7b9b67c946",
+      "identical": false,
+      "equal_after_crlf_normalization": true
+    }
+  ],
+  "all_inspected_backend_and_test_bytes_unchanged": false,
+  "python314": "3.14.5 (tags/v3.14.5:5607950, May 10 2026, 10:43:50) [MSC v.1944 64 bit (AMD64)]",
+  "clock": {
+    "implementation": "QueryPerformanceCounter()",
+    "monotonic": true,
+    "adjustable": false,
+    "resolution": 1e-07
+  },
+  "packages": {
+    "pytest": "9.0.3",
+    "fastapi": "0.136.1",
+    "httpx": "0.28.1",
+    "github-copilot-sdk": "0.3.0"
+  },
+  "interpretation": "The four failing backend/test sources match origin/main after CRLF normalization and are absent from the working diff. The cases failed on Windows Python3.11 and passed on Windows Python3.14. This does not prove global Python3.11 or Linux compatibility.",
+  "all_inspected_files_equal_after_crlf_normalization": true
+}

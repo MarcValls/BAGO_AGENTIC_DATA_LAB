@@ -1,5 +1,6 @@
 import {t, useI18n} from '../i18n'
 import { useEffect, useRef, useState } from 'react'
+import { createPortal } from 'react-dom'
 import KnowledgeIngest from './KnowledgeIngest'
 import OntologyReview from './OntologyReview'
 import CatalogQuality from './CatalogQuality'
@@ -61,7 +62,9 @@ export default function ChatTools({conversationId, onOpenCommunication}: {conver
         {tools.map(tool => <button key={tool.id} type="button" onClick={() => openTool(tool.id)}>{tool.label}</button>)}
       </div>
     </details>
-    <dialog ref={dialogRef} className="chat-tool-dialog" aria-label={selectedTool?.label ?? t('commerce.chat_resources_group')}
+    {/* Resource forms live outside the composer; portal events still need isolation. */}
+    {createPortal(<dialog ref={dialogRef} className="chat-tool-dialog" aria-label={selectedTool?.label ?? t('commerce.chat_resources_group')}
+      onSubmit={event => event.stopPropagation()}
       onCancel={() => setActiveTool(null)} onClose={() => { setActiveTool(null); launcherRef.current?.focus() }}>
       <header className="chat-tool-dialog-heading"><strong>{selectedTool?.label}</strong><button type="button" onClick={() => setActiveTool(null)} aria-label={t('commerce.close_tool')}>{t('commerce.close')} <span aria-hidden="true">×</span></button></header>
       <div className="chat-tool-dialog-body">
@@ -70,6 +73,6 @@ export default function ChatTools({conversationId, onOpenCommunication}: {conver
         {activeTool === 'relations' && <OntologyReview />}
         {activeTool === 'catalog' && <CatalogQuality />}
       </div>
-    </dialog>
+    </dialog>, menuRef.current?.closest('.control-chat') ?? document.body)}
   </>
 }
