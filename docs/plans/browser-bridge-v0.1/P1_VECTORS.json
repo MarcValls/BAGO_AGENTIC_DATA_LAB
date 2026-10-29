@@ -1,0 +1,681 @@
+{
+  "contract": "adl.browser.p1.vectors.v1",
+  "status": "SPEC_ONLY_NOT_EXECUTED",
+  "purpose": "Independent reference outcomes for a future GEX Browser capability, not runtime receipts or activation.",
+  "grant_definition": "chrome_user_invocation means browser-verified gesture, not a producer-supplied text field",
+  "no_ledger_or_activation": true,
+  "vectors": [
+    {
+      "id": "BB-P1-001",
+      "name": "happy_path",
+      "classification": "SPEC_ONLY",
+      "given": {
+        "chrome_user_invocation": true,
+        "chrome_grant_current": true,
+        "adl_permit_valid": true,
+        "pairing_valid": true,
+        "context_current": true,
+        "registration_enabled": true,
+        "command_auth_valid": true,
+        "replay_detected": false,
+        "dispatch_intent_persisted": true,
+        "grant_current_at_effect": true,
+        "terminal_receipt_persisted": true,
+        "effect_observed": true,
+        "independently_verified": true,
+        "host_ack": true,
+        "conformance_reported": false
+      },
+      "expected": {
+        "dispatch": "ONE",
+        "operation_state": "SUCCEEDED",
+        "verification_state": "VERIFIED_SUCCESS"
+      },
+      "claim": "reference transition model; not proof of Chrome/GEX runtime"
+    },
+    {
+      "id": "BB-P1-002",
+      "name": "no_independent_verification",
+      "classification": "SPEC_ONLY",
+      "given": {
+        "chrome_user_invocation": true,
+        "chrome_grant_current": true,
+        "adl_permit_valid": true,
+        "pairing_valid": true,
+        "context_current": true,
+        "registration_enabled": true,
+        "command_auth_valid": true,
+        "replay_detected": false,
+        "dispatch_intent_persisted": true,
+        "grant_current_at_effect": true,
+        "terminal_receipt_persisted": true,
+        "effect_observed": true,
+        "independently_verified": false,
+        "host_ack": true,
+        "conformance_reported": false
+      },
+      "expected": {
+        "dispatch": "ONE",
+        "operation_state": "SUCCEEDED",
+        "verification_state": "PENDING"
+      },
+      "claim": "reference transition model; not proof of Chrome/GEX runtime"
+    },
+    {
+      "id": "BB-P1-003",
+      "name": "no_user_invocation",
+      "classification": "SPEC_ONLY",
+      "given": {
+        "chrome_user_invocation": false,
+        "chrome_grant_current": false,
+        "adl_permit_valid": true,
+        "pairing_valid": true,
+        "context_current": true,
+        "registration_enabled": true,
+        "command_auth_valid": true,
+        "replay_detected": false,
+        "dispatch_intent_persisted": true,
+        "grant_current_at_effect": true,
+        "terminal_receipt_persisted": true,
+        "effect_observed": true,
+        "independently_verified": true,
+        "host_ack": true,
+        "conformance_reported": true
+      },
+      "expected": {
+        "dispatch": "ZERO",
+        "operation_state": "DENIED",
+        "verification_state": "NOT_REQUESTED"
+      },
+      "claim": "reference transition model; not proof of Chrome/GEX runtime"
+    },
+    {
+      "id": "BB-P1-004",
+      "name": "browser_grant_expired",
+      "classification": "SPEC_ONLY",
+      "given": {
+        "chrome_user_invocation": true,
+        "chrome_grant_current": false,
+        "adl_permit_valid": true,
+        "pairing_valid": true,
+        "context_current": true,
+        "registration_enabled": true,
+        "command_auth_valid": true,
+        "replay_detected": false,
+        "dispatch_intent_persisted": true,
+        "grant_current_at_effect": true,
+        "terminal_receipt_persisted": true,
+        "effect_observed": true,
+        "independently_verified": true,
+        "host_ack": true,
+        "conformance_reported": false
+      },
+      "expected": {
+        "dispatch": "ZERO",
+        "operation_state": "DENIED",
+        "verification_state": "NOT_REQUESTED"
+      },
+      "claim": "reference transition model; not proof of Chrome/GEX runtime"
+    },
+    {
+      "id": "BB-P1-005",
+      "name": "adl_permit_missing",
+      "classification": "SPEC_ONLY",
+      "given": {
+        "chrome_user_invocation": true,
+        "chrome_grant_current": true,
+        "adl_permit_valid": false,
+        "pairing_valid": true,
+        "context_current": true,
+        "registration_enabled": true,
+        "command_auth_valid": true,
+        "replay_detected": false,
+        "dispatch_intent_persisted": true,
+        "grant_current_at_effect": true,
+        "terminal_receipt_persisted": true,
+        "effect_observed": true,
+        "independently_verified": true,
+        "host_ack": true,
+        "conformance_reported": false
+      },
+      "expected": {
+        "dispatch": "ZERO",
+        "operation_state": "DENIED",
+        "verification_state": "NOT_REQUESTED"
+      },
+      "claim": "reference transition model; not proof of Chrome/GEX runtime"
+    },
+    {
+      "id": "BB-P1-006",
+      "name": "pairing_missing",
+      "classification": "SPEC_ONLY",
+      "given": {
+        "chrome_user_invocation": true,
+        "chrome_grant_current": true,
+        "adl_permit_valid": true,
+        "pairing_valid": false,
+        "context_current": true,
+        "registration_enabled": true,
+        "command_auth_valid": true,
+        "replay_detected": false,
+        "dispatch_intent_persisted": true,
+        "grant_current_at_effect": true,
+        "terminal_receipt_persisted": true,
+        "effect_observed": true,
+        "independently_verified": true,
+        "host_ack": true,
+        "conformance_reported": false
+      },
+      "expected": {
+        "dispatch": "ZERO",
+        "operation_state": "DENIED",
+        "verification_state": "NOT_REQUESTED"
+      },
+      "claim": "reference transition model; not proof of Chrome/GEX runtime"
+    },
+    {
+      "id": "BB-P1-007",
+      "name": "wrong_workspace",
+      "classification": "SPEC_ONLY",
+      "given": {
+        "chrome_user_invocation": true,
+        "chrome_grant_current": true,
+        "adl_permit_valid": true,
+        "pairing_valid": true,
+        "context_current": false,
+        "registration_enabled": true,
+        "command_auth_valid": true,
+        "replay_detected": false,
+        "dispatch_intent_persisted": true,
+        "grant_current_at_effect": true,
+        "terminal_receipt_persisted": true,
+        "effect_observed": true,
+        "independently_verified": true,
+        "host_ack": true,
+        "conformance_reported": false
+      },
+      "expected": {
+        "dispatch": "ZERO",
+        "operation_state": "DENIED",
+        "verification_state": "NOT_REQUESTED"
+      },
+      "claim": "reference transition model; not proof of Chrome/GEX runtime"
+    },
+    {
+      "id": "BB-P1-008",
+      "name": "capability_disabled",
+      "classification": "SPEC_ONLY",
+      "given": {
+        "chrome_user_invocation": true,
+        "chrome_grant_current": true,
+        "adl_permit_valid": true,
+        "pairing_valid": true,
+        "context_current": true,
+        "registration_enabled": false,
+        "command_auth_valid": true,
+        "replay_detected": false,
+        "dispatch_intent_persisted": true,
+        "grant_current_at_effect": true,
+        "terminal_receipt_persisted": true,
+        "effect_observed": true,
+        "independently_verified": true,
+        "host_ack": true,
+        "conformance_reported": false
+      },
+      "expected": {
+        "dispatch": "ZERO",
+        "operation_state": "DENIED",
+        "verification_state": "NOT_REQUESTED"
+      },
+      "claim": "reference transition model; not proof of Chrome/GEX runtime"
+    },
+    {
+      "id": "BB-P1-009",
+      "name": "bad_channel_mac",
+      "classification": "SPEC_ONLY",
+      "given": {
+        "chrome_user_invocation": true,
+        "chrome_grant_current": true,
+        "adl_permit_valid": true,
+        "pairing_valid": true,
+        "context_current": true,
+        "registration_enabled": true,
+        "command_auth_valid": false,
+        "replay_detected": false,
+        "dispatch_intent_persisted": true,
+        "grant_current_at_effect": true,
+        "terminal_receipt_persisted": true,
+        "effect_observed": true,
+        "independently_verified": true,
+        "host_ack": true,
+        "conformance_reported": false
+      },
+      "expected": {
+        "dispatch": "ZERO",
+        "operation_state": "DENIED",
+        "verification_state": "NOT_REQUESTED"
+      },
+      "claim": "reference transition model; not proof of Chrome/GEX runtime"
+    },
+    {
+      "id": "BB-P1-010",
+      "name": "replay",
+      "classification": "SPEC_ONLY",
+      "given": {
+        "chrome_user_invocation": true,
+        "chrome_grant_current": true,
+        "adl_permit_valid": true,
+        "pairing_valid": true,
+        "context_current": true,
+        "registration_enabled": true,
+        "command_auth_valid": true,
+        "replay_detected": true,
+        "dispatch_intent_persisted": true,
+        "grant_current_at_effect": true,
+        "terminal_receipt_persisted": true,
+        "effect_observed": true,
+        "independently_verified": true,
+        "host_ack": true,
+        "conformance_reported": false
+      },
+      "expected": {
+        "dispatch": "ZERO",
+        "operation_state": "DENIED",
+        "verification_state": "NOT_REQUESTED"
+      },
+      "claim": "reference transition model; not proof of Chrome/GEX runtime"
+    },
+    {
+      "id": "BB-P1-011",
+      "name": "store_unavailable_before_dispatch",
+      "classification": "SPEC_ONLY",
+      "given": {
+        "chrome_user_invocation": true,
+        "chrome_grant_current": true,
+        "adl_permit_valid": true,
+        "pairing_valid": true,
+        "context_current": true,
+        "registration_enabled": true,
+        "command_auth_valid": true,
+        "replay_detected": false,
+        "dispatch_intent_persisted": false,
+        "grant_current_at_effect": true,
+        "terminal_receipt_persisted": true,
+        "effect_observed": true,
+        "independently_verified": true,
+        "host_ack": true,
+        "conformance_reported": false
+      },
+      "expected": {
+        "dispatch": "ZERO",
+        "operation_state": "BLOCKED",
+        "verification_state": "NOT_REQUESTED"
+      },
+      "claim": "reference transition model; not proof of Chrome/GEX runtime"
+    },
+    {
+      "id": "BB-P1-012",
+      "name": "missing_receipt_with_ack",
+      "classification": "SPEC_ONLY",
+      "given": {
+        "chrome_user_invocation": true,
+        "chrome_grant_current": true,
+        "adl_permit_valid": true,
+        "pairing_valid": true,
+        "context_current": true,
+        "registration_enabled": true,
+        "command_auth_valid": true,
+        "replay_detected": false,
+        "dispatch_intent_persisted": true,
+        "grant_current_at_effect": true,
+        "terminal_receipt_persisted": false,
+        "effect_observed": true,
+        "independently_verified": true,
+        "host_ack": true,
+        "conformance_reported": false
+      },
+      "expected": {
+        "dispatch": "ONE",
+        "operation_state": "RECONCILIATION_REQUIRED",
+        "verification_state": "INCONCLUSIVE"
+      },
+      "claim": "reference transition model; not proof of Chrome/GEX runtime"
+    },
+    {
+      "id": "BB-P1-013",
+      "name": "missing_receipt_without_ack",
+      "classification": "SPEC_ONLY",
+      "given": {
+        "chrome_user_invocation": true,
+        "chrome_grant_current": true,
+        "adl_permit_valid": true,
+        "pairing_valid": true,
+        "context_current": true,
+        "registration_enabled": true,
+        "command_auth_valid": true,
+        "replay_detected": false,
+        "dispatch_intent_persisted": true,
+        "grant_current_at_effect": true,
+        "terminal_receipt_persisted": false,
+        "effect_observed": false,
+        "independently_verified": true,
+        "host_ack": false,
+        "conformance_reported": false
+      },
+      "expected": {
+        "dispatch": "ONE",
+        "operation_state": "RECONCILIATION_REQUIRED",
+        "verification_state": "INCONCLUSIVE"
+      },
+      "claim": "reference transition model; not proof of Chrome/GEX runtime"
+    },
+    {
+      "id": "BB-P1-014",
+      "name": "failure_receipt_persisted",
+      "classification": "SPEC_ONLY",
+      "given": {
+        "chrome_user_invocation": true,
+        "chrome_grant_current": true,
+        "adl_permit_valid": true,
+        "pairing_valid": true,
+        "context_current": true,
+        "registration_enabled": true,
+        "command_auth_valid": true,
+        "replay_detected": false,
+        "dispatch_intent_persisted": true,
+        "grant_current_at_effect": true,
+        "terminal_receipt_persisted": true,
+        "effect_observed": false,
+        "independently_verified": true,
+        "host_ack": true,
+        "conformance_reported": false
+      },
+      "expected": {
+        "dispatch": "ONE",
+        "operation_state": "FAILED",
+        "verification_state": "VERIFIED_FAILURE"
+      },
+      "claim": "reference transition model; not proof of Chrome/GEX runtime"
+    },
+    {
+      "id": "BB-P1-015",
+      "name": "observed_but_unverified",
+      "classification": "SPEC_ONLY",
+      "given": {
+        "chrome_user_invocation": true,
+        "chrome_grant_current": true,
+        "adl_permit_valid": true,
+        "pairing_valid": true,
+        "context_current": true,
+        "registration_enabled": true,
+        "command_auth_valid": true,
+        "replay_detected": false,
+        "dispatch_intent_persisted": true,
+        "grant_current_at_effect": true,
+        "terminal_receipt_persisted": true,
+        "effect_observed": true,
+        "independently_verified": false,
+        "host_ack": true,
+        "conformance_reported": false
+      },
+      "expected": {
+        "dispatch": "ONE",
+        "operation_state": "SUCCEEDED",
+        "verification_state": "PENDING"
+      },
+      "claim": "reference transition model; not proof of Chrome/GEX runtime"
+    },
+    {
+      "id": "BB-P1-016",
+      "name": "revoked_at_effect_with_terminal_failure",
+      "classification": "SPEC_ONLY",
+      "given": {
+        "chrome_user_invocation": true,
+        "chrome_grant_current": true,
+        "adl_permit_valid": true,
+        "pairing_valid": true,
+        "context_current": true,
+        "registration_enabled": true,
+        "command_auth_valid": true,
+        "replay_detected": false,
+        "dispatch_intent_persisted": true,
+        "grant_current_at_effect": false,
+        "terminal_receipt_persisted": true,
+        "effect_observed": false,
+        "independently_verified": true,
+        "host_ack": true,
+        "conformance_reported": false
+      },
+      "expected": {
+        "dispatch": "ONE",
+        "operation_state": "FAILED",
+        "verification_state": "VERIFIED_FAILURE"
+      },
+      "claim": "reference transition model; not proof of Chrome/GEX runtime"
+    },
+    {
+      "id": "BB-P1-017",
+      "name": "revoked_at_effect_without_terminal",
+      "classification": "SPEC_ONLY",
+      "given": {
+        "chrome_user_invocation": true,
+        "chrome_grant_current": true,
+        "adl_permit_valid": true,
+        "pairing_valid": true,
+        "context_current": true,
+        "registration_enabled": true,
+        "command_auth_valid": true,
+        "replay_detected": false,
+        "dispatch_intent_persisted": true,
+        "grant_current_at_effect": false,
+        "terminal_receipt_persisted": false,
+        "effect_observed": false,
+        "independently_verified": true,
+        "host_ack": true,
+        "conformance_reported": false
+      },
+      "expected": {
+        "dispatch": "ONE",
+        "operation_state": "RECONCILIATION_REQUIRED",
+        "verification_state": "INCONCLUSIVE"
+      },
+      "claim": "reference transition model; not proof of Chrome/GEX runtime"
+    },
+    {
+      "id": "BB-P1-018",
+      "name": "conformance_not_execution_gate",
+      "classification": "SPEC_ONLY",
+      "given": {
+        "chrome_user_invocation": true,
+        "chrome_grant_current": true,
+        "adl_permit_valid": true,
+        "pairing_valid": true,
+        "context_current": true,
+        "registration_enabled": true,
+        "command_auth_valid": true,
+        "replay_detected": false,
+        "dispatch_intent_persisted": true,
+        "grant_current_at_effect": true,
+        "terminal_receipt_persisted": true,
+        "effect_observed": true,
+        "independently_verified": false,
+        "host_ack": true,
+        "conformance_reported": true
+      },
+      "expected": {
+        "dispatch": "ONE",
+        "operation_state": "SUCCEEDED",
+        "verification_state": "PENDING"
+      },
+      "claim": "reference transition model; not proof of Chrome/GEX runtime"
+    },
+    {
+      "id": "BB-P1-019",
+      "name": "conformance_cannot_grant",
+      "classification": "SPEC_ONLY",
+      "given": {
+        "chrome_user_invocation": true,
+        "chrome_grant_current": false,
+        "adl_permit_valid": false,
+        "pairing_valid": true,
+        "context_current": true,
+        "registration_enabled": true,
+        "command_auth_valid": true,
+        "replay_detected": false,
+        "dispatch_intent_persisted": true,
+        "grant_current_at_effect": true,
+        "terminal_receipt_persisted": true,
+        "effect_observed": true,
+        "independently_verified": true,
+        "host_ack": true,
+        "conformance_reported": true
+      },
+      "expected": {
+        "dispatch": "ZERO",
+        "operation_state": "DENIED",
+        "verification_state": "NOT_REQUESTED"
+      },
+      "claim": "reference transition model; not proof of Chrome/GEX runtime"
+    },
+    {
+      "id": "BB-P1-020",
+      "name": "browser_grant_cannot_grant_adl",
+      "classification": "SPEC_ONLY",
+      "given": {
+        "chrome_user_invocation": true,
+        "chrome_grant_current": true,
+        "adl_permit_valid": false,
+        "pairing_valid": true,
+        "context_current": true,
+        "registration_enabled": true,
+        "command_auth_valid": true,
+        "replay_detected": false,
+        "dispatch_intent_persisted": true,
+        "grant_current_at_effect": true,
+        "terminal_receipt_persisted": true,
+        "effect_observed": true,
+        "independently_verified": true,
+        "host_ack": true,
+        "conformance_reported": true
+      },
+      "expected": {
+        "dispatch": "ZERO",
+        "operation_state": "DENIED",
+        "verification_state": "NOT_REQUESTED"
+      },
+      "claim": "reference transition model; not proof of Chrome/GEX runtime"
+    },
+    {
+      "id": "BB-P1-021",
+      "name": "stale_document_epoch",
+      "classification": "SPEC_ONLY",
+      "given": {
+        "chrome_user_invocation": true,
+        "chrome_grant_current": true,
+        "adl_permit_valid": true,
+        "pairing_valid": true,
+        "context_current": false,
+        "registration_enabled": true,
+        "command_auth_valid": true,
+        "replay_detected": false,
+        "dispatch_intent_persisted": true,
+        "grant_current_at_effect": true,
+        "terminal_receipt_persisted": true,
+        "effect_observed": true,
+        "independently_verified": true,
+        "host_ack": true,
+        "conformance_reported": false
+      },
+      "expected": {
+        "dispatch": "ZERO",
+        "operation_state": "DENIED",
+        "verification_state": "NOT_REQUESTED"
+      },
+      "claim": "reference transition model; not proof of Chrome/GEX runtime"
+    },
+    {
+      "id": "BB-P1-022",
+      "name": "unverified_invocation_ref",
+      "classification": "SPEC_ONLY",
+      "given": {
+        "chrome_user_invocation": false,
+        "chrome_grant_current": true,
+        "adl_permit_valid": true,
+        "pairing_valid": true,
+        "context_current": true,
+        "registration_enabled": true,
+        "command_auth_valid": true,
+        "replay_detected": false,
+        "dispatch_intent_persisted": true,
+        "grant_current_at_effect": true,
+        "terminal_receipt_persisted": true,
+        "effect_observed": true,
+        "independently_verified": true,
+        "host_ack": true,
+        "conformance_reported": false
+      },
+      "expected": {
+        "dispatch": "ZERO",
+        "operation_state": "DENIED",
+        "verification_state": "NOT_REQUESTED"
+      },
+      "claim": "reference transition model; not proof of Chrome/GEX runtime"
+    },
+    {
+      "id": "BB-P1-023",
+      "name": "receipt_persisted_without_effect",
+      "classification": "SPEC_ONLY",
+      "given": {
+        "chrome_user_invocation": true,
+        "chrome_grant_current": true,
+        "adl_permit_valid": true,
+        "pairing_valid": true,
+        "context_current": true,
+        "registration_enabled": true,
+        "command_auth_valid": true,
+        "replay_detected": false,
+        "dispatch_intent_persisted": true,
+        "grant_current_at_effect": true,
+        "terminal_receipt_persisted": true,
+        "effect_observed": false,
+        "independently_verified": true,
+        "host_ack": true,
+        "conformance_reported": false
+      },
+      "expected": {
+        "dispatch": "ONE",
+        "operation_state": "FAILED",
+        "verification_state": "VERIFIED_FAILURE"
+      },
+      "claim": "reference transition model; not proof of Chrome/GEX runtime"
+    },
+    {
+      "id": "BB-P1-024",
+      "name": "no_terminal_no_verification",
+      "classification": "SPEC_ONLY",
+      "given": {
+        "chrome_user_invocation": true,
+        "chrome_grant_current": true,
+        "adl_permit_valid": true,
+        "pairing_valid": true,
+        "context_current": true,
+        "registration_enabled": true,
+        "command_auth_valid": true,
+        "replay_detected": false,
+        "dispatch_intent_persisted": true,
+        "grant_current_at_effect": true,
+        "terminal_receipt_persisted": false,
+        "effect_observed": true,
+        "independently_verified": false,
+        "host_ack": true,
+        "conformance_reported": false
+      },
+      "expected": {
+        "dispatch": "ONE",
+        "operation_state": "RECONCILIATION_REQUIRED",
+        "verification_state": "INCONCLUSIVE"
+      },
+      "claim": "reference transition model; not proof of Chrome/GEX runtime"
+    }
+  ]
+}
