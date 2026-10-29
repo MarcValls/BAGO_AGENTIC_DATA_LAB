@@ -12,14 +12,17 @@
     "scope": "Expected old behavior reproduced before patch"
   },
   "focused_tests": {
-    "command": "npm test -- tests/ui/knowledge/chat-resource-submit.test.tsx tests/ui/chat-shell/chat-composer.test.tsx tests/integration/contact-consumers.test.tsx tests/i18n/commerce/commerce.test.tsx",
-    "passed": 15,
-    "failed": 0
+    "command": "npm test -- tests/runtime/package-upgrade.test.tsx tests/ui/knowledge/chat-resource-submit.test.tsx tests/ui/chat-shell/chat-composer.test.tsx tests/integration/contact-consumers.test.tsx tests/i18n/commerce/commerce.test.tsx",
+    "passed": 17,
+    "failed": 0,
+    "record": "SSR_FOCUSED_BUILD_RESULT.json"
   },
   "frontend_build": {
     "command": "npm run build",
     "status": "PASS",
-    "warning": "Existing generated bundle exceeds 500 kB advisory threshold"
+    "warning": "Existing generated bundle exceeds 500 kB advisory threshold",
+    "source_sha256": "64c855a132648f81dcc247cd3efbd0139df121ec1b800c939277b6c0d80ee108",
+    "record": "SSR_FOCUSED_BUILD_RESULT.json"
   },
   "real_ui": {
     "url": "http://127.0.0.1:5199/",
@@ -33,7 +36,8 @@
       1920,
       1080
     ],
-    "resultVisible": true
+    "resultVisible": true,
+    "subject_commit": "89c6069182633c316d46662a0182e7fba24d02e7"
   },
   "provider": "codex",
   "model": "gpt-6-luna",
@@ -45,9 +49,9 @@
     "Execution Gateway unification remains design/audit only."
   ],
   "source_sha256_at_browser_proof": "feae852faf4c3cefdbb841f16e7c7390b2cf545aabfa09f6221b2b92a5d4c098",
-  "final_source_sha256": "149909365c27defdcdd127eb0f061905576d2f2f98a95fda522aea0d55691e99",
+  "final_source_sha256": "64c855a132648f81dcc247cd3efbd0139df121ec1b800c939277b6c0d80ee108",
   "source_newlines_normalized_after_browser_proof": true,
-  "final_source_review": "independent-review.json",
+  "final_source_review": "SSR_REVIEW.json",
   "generated_build_artifacts": "Own .build and tracked dist/index.html changes restored to fetched base after build; code-only repair publication.",
   "readme_first_attempt": {
     "status": "COLLECTION_BLOCKED",
@@ -84,7 +88,9 @@
     "status": "PASS",
     "exit_code": 0,
     "passed": 1661,
-    "record": "README_PY314_RESULT.json"
+    "record": "README_PY314_RESULT.json",
+    "subject_commit": "89c6069182633c316d46662a0182e7fba24d02e7",
+    "scope": "Local full suite on initial parent; final follow-up full suite required in hosted CI before closure"
   },
   "readme_consistency": {
     "command": "python scripts/generate_dynamic_readme.py --check --skip-tests",
@@ -92,9 +98,28 @@
     "exit_code": 0,
     "collected_cases": 1664,
     "suite_execution": "NOT_RUN_BY_CONSISTENCY_CHECK",
-    "record": "README_CHECK_RESULT.json"
+    "record": "README_CHECK_RESULT.json",
+    "followup_local_collect_only_status": "PASS",
+    "followup_source_sha256": "64c855a132648f81dcc247cd3efbd0139df121ec1b800c939277b6c0d80ee108"
   },
   "base_sha_at_publication_preflight": "bf4ce08b730e4616f3a5caf9e3111b8d8ec1a3e6",
   "merge_base_at_publication_preflight": "bf4ce08b730e4616f3a5caf9e3111b8d8ec1a3e6",
-  "git_diff_check": "PASS"
+  "git_diff_check": "PASS",
+  "initial_published_source_sha256": "149909365c27defdcdd127eb0f061905576d2f2f98a95fda522aea0d55691e99",
+  "initial_published_commit": "89c6069182633c316d46662a0182e7fba24d02e7",
+  "initial_focused_tests": {
+    "command": "npm test -- tests/ui/knowledge/chat-resource-submit.test.tsx tests/ui/chat-shell/chat-composer.test.tsx tests/integration/contact-consumers.test.tsx tests/i18n/commerce/commerce.test.tsx",
+    "passed": 15,
+    "failed": 0
+  },
+  "ssr_followup": {
+    "cause": "document access in Node renderToString(App)",
+    "local_before": "1 failed, 1 passed",
+    "after": "17 focused PASS and build PASS",
+    "source_sha256": "64c855a132648f81dcc247cd3efbd0139df121ec1b800c939277b6c0d80ee108",
+    "review": "SSR_REVIEW.json",
+    "browser": "SSR_BROWSER_CHECK.json",
+    "model_call": "NOT_REPEATED; original live-model evidence remains parent-scoped",
+    "final_full_suite": "PENDING_HOSTED_CI"
+  }
 }

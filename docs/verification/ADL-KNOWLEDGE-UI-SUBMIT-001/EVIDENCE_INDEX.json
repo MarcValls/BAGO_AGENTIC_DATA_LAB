@@ -5,8 +5,8 @@
   "files": [
     {
       "path": "CLOSURE.md",
-      "bytes": 2665,
-      "sha256": "67b4d5478ba463a4a69bbbf5db807058dc3b48cb64fe2af123b8c8bbeaeaefd9"
+      "bytes": 3640,
+      "sha256": "8fafd25f99c3cb40ef1d322efdd93384f387e5d88260fca41b0a08d6e8a602ca"
     },
     {
       "path": "PLATFORM_DIFFERENTIAL.json",
@@ -39,6 +39,31 @@
       "sha256": "3f8688c82ac601732766659e516136e6114f8cd161c43980f210be430a9bae6a"
     },
     {
+      "path": "SSR_BASELINE_RESULT.json",
+      "bytes": 2576,
+      "sha256": "8ed8a208eda4f96dca97f3ef8beb112a2a9413ddc25ca16363a30e53526cfff8"
+    },
+    {
+      "path": "SSR_BROWSER_CHECK.json",
+      "bytes": 467,
+      "sha256": "51c506d6ebb83b38b8740e846a8eb2dda3776c2283af2ffce7a5e0da14c82f41"
+    },
+    {
+      "path": "SSR_FOCUSED_BUILD_RESULT.json",
+      "bytes": 1733,
+      "sha256": "fb1335dad3a22e29e1f46b86ce677cd61491f0700d9528ab00445fadb63dc390"
+    },
+    {
+      "path": "SSR_REVIEW.json",
+      "bytes": 3956,
+      "sha256": "856748962dcd1464bb7cd992ff5cd7d8bf925995fe74ef6c2b3fd1562d839f8b"
+    },
+    {
+      "path": "SSR_REVIEW.md",
+      "bytes": 1687,
+      "sha256": "7f17bd8f8dfa61d6550ef2b8b1562270900565d7c5fb730e3e43ca4765475565"
+    },
+    {
       "path": "UI_ESCAPE_READOUT.txt",
       "bytes": 395,
       "sha256": "79183824c53ace31c71d6d9ffdb81dd8efcfdc8fa10e0236a5036093fb868bc8"
@@ -55,8 +80,8 @@
     },
     {
       "path": "VERIFICATION.json",
-      "bytes": 4045,
-      "sha256": "863fc70fec339a59f6835851be9bd28fa0c0b5bcda633c72efee15eb34fa15ff"
+      "bytes": 5574,
+      "sha256": "6595ab71959e208aeabc64bc9131e38fca6f1d7c6d1656975d0a5116dc0dae0c"
     },
     {
       "path": "after-console.json",
@@ -92,6 +117,11 @@
       "path": "screenshots/after-source-answer.png",
       "bytes": 84175,
       "sha256": "2688b3649ed090b207a2998b4213c0df50044674642fd9381a6014644d681753"
+    },
+    {
+      "path": "screenshots/after-ssr-guard.png",
+      "bytes": 45975,
+      "sha256": "670faaeac11ab7b5a5af1e2fdca42aba4026e5525d643384abf96a197a6a9d3d"
     },
     {
       "path": "screenshots/before-source-dialog.png",

@@ -63,7 +63,7 @@ export default function ChatTools({conversationId, onOpenCommunication}: {conver
       </div>
     </details>
     {/* Resource forms live outside the composer; portal events still need isolation. */}
-    {createPortal(<dialog ref={dialogRef} className="chat-tool-dialog" aria-label={selectedTool?.label ?? t('commerce.chat_resources_group')}
+    {typeof document !== 'undefined' && createPortal(<dialog ref={dialogRef} className="chat-tool-dialog" aria-label={selectedTool?.label ?? t('commerce.chat_resources_group')}
       onSubmit={event => event.stopPropagation()}
       onCancel={() => setActiveTool(null)} onClose={() => { setActiveTool(null); launcherRef.current?.focus() }}>
       <header className="chat-tool-dialog-heading"><strong>{selectedTool?.label}</strong><button type="button" onClick={() => setActiveTool(null)} aria-label={t('commerce.close_tool')}>{t('commerce.close')} <span aria-hidden="true">×</span></button></header>

@@ -1,0 +1,9 @@
+{
+  "scope": "Existing visible Brave tab; source dialog opened, screenshot inspected, Escape pressed; no model request or source submission repeated",
+  "url": "http://127.0.0.1:5178/",
+  "source_sha256": "64c855a132648f81dcc247cd3efbd0139df121ec1b800c939277b6c0d80ee108",
+  "browser": "Brave existing tab brave-tab-1",
+  "guard_present_in_served_module": true,
+  "screenshot": "screenshots/after-ssr-guard.png",
+  "observed_at": "2026-10-29T01:28:21.183624+01:00"
+}
