@@ -1,0 +1,273 @@
+{
+  "schema": "adl.browser_bridge.p0.inventory.v1",
+  "inventory_state": "STATIC_REPOSITORY_INVENTORY",
+  "date": "2026-10-29",
+  "source": {
+    "repository": "MarcValls/BAGO_AGENTIC_DATA_LAB",
+    "branch": "main",
+    "commit_sha": "a9a4929fdbf51dd8872315de25ec8d277902c11c",
+    "root_tree_sha": "c5f8cbe49f79fb1babfdf837fc4fd15ca5f84fb3",
+    "inspection_method": "GitHub API file, blob, tree and commit reads; not local execution"
+  },
+  "merge_context": {
+    "browser_bridge_plan_pr": 100,
+    "domain_conformance_pr": 101,
+    "readme_preview_pr": 102,
+    "browser_bridge_p1_pr": 103,
+    "all_merged": true,
+    "open_pr_count_observed": 0
+  },
+  "parallel_remote_work": {
+    "branch": "work/freelancer-readonly-20261029",
+    "observed_sha": "7b327ca71ce2e3d43299a79473816843b23372f8",
+    "changed_paths": [
+      "docs/plans/freelancer-readonly-v0.1/LOCAL_TESTS.log",
+      "docs/plans/freelancer-readonly-v0.1/LOCAL_VERIFICATION.json",
+      "docs/plans/freelancer-readonly-v0.1/PLAN_AND_HANDOFF.md",
+      "src/connections/freelancer_readonly.py",
+      "tests/test_freelancer_readonly.py"
+    ],
+    "local_worktree_status": "NOT_OBSERVABLE"
+  },
+  "missing_dedicated_paths_in_inspected_trees": [
+    "extensions/",
+    "src/browser_bridge/",
+    "scripts/browser_bridge/",
+    "src/api/browser_bridge_routes.py"
+  ],
+  "absence_claim_scope": "Only committed repo trees under the pinned SHA, not local files or installed components",
+  "conformance": {
+    "contract": "adl.domain_manifest.v1",
+    "required_control_count": 13,
+    "p1_vector_count": 24,
+    "p1_vector_state": "SPEC_ONLY_NOT_EXECUTED",
+    "p1_control_map_state": "PROPOSED_HOST_POLICY_NOT_ACTIVE"
+  },
+  "ci_baseline": {
+    "run_id": 40843379291,
+    "sha": "a9a4929fdbf51dd8872315de25ec8d277902c11c",
+    "result": "SUCCESS",
+    "trigger": "push",
+    "suite": "PASS",
+    "readme_check": "PASS",
+    "frontend_tests": "PASS",
+    "build": "PASS",
+    "source": "https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/actions/runs/40843379291",
+    "note": "Tests on main do not verify native messaging/Windows/Chrome Browser Bridge"
+  },
+  "inventory": [
+    {
+      "id": "plan",
+      "path": "docs/plans/browser-bridge-v0.1/IMPLEMENTATION_PLAN.md",
+      "blob_sha": "14c5e06fe5b39ac2323ea3ef7fca70542fdd9c6d",
+      "state": "PLAN"
+    },
+    {
+      "id": "p1-profile",
+      "path": "docs/plans/browser-bridge-v0.1/P1_GEX_BROWSER_PROFILE.md",
+      "blob_sha": "9135310e2f17ee121e097b7714d9e456fe00b27d",
+      "state": "SPEC_ONLY"
+    },
+    {
+      "id": "p1-schema",
+      "path": "docs/plans/browser-bridge-v0.1/P1_BROWSER_SCHEMA.json",
+      "blob_sha": "2ccc76e95f4e36d1f0b2898286c0eed1be0a3d0b",
+      "state": "SPEC_ONLY"
+    },
+    {
+      "id": "p1-vectors",
+      "path": "docs/plans/browser-bridge-v0.1/P1_VECTORS.json",
+      "blob_sha": "c62ad3505ad54700342f9664b4e989723b719514",
+      "state": "SPEC_ONLY"
+    },
+    {
+      "id": "p1-mapping",
+      "path": "docs/plans/browser-bridge-v0.1/P1_CONTROL_MAP.json",
+      "blob_sha": "c6729d35edcd34ae7b85304ccc7b6a129c622d68",
+      "state": "PROPOSED_NOT_ACTIVE"
+    },
+    {
+      "id": "p1-handoff",
+      "path": "docs/plans/browser-bridge-v0.1/P1_HANDOFF.md",
+      "blob_sha": "3a2881d3f01467b672210dca5239b59c7895d019",
+      "state": "HISTORIC_REVIEW_REQUIRED"
+    },
+    {
+      "id": "gex-normative",
+      "path": "docs/governed-execution/GEX_V1_NORMATIVE_CONTRACT.md",
+      "blob_sha": "a0283d22be5f60b00ef5f75207f4f335ed3c0f4c",
+      "state": "PREPARED_NOT_FROZEN"
+    },
+    {
+      "id": "gex-schema",
+      "path": "docs/governed-execution/GEX_V1_SCHEMA.json",
+      "blob_sha": "50edc96ce4a247d6c1f465e4137fb2195dede174",
+      "state": "V1_NO_BROWSER_NATIVE"
+    },
+    {
+      "id": "gex-control",
+      "path": "src/execution/gex_control.py",
+      "blob_sha": "a595bdcf7a1695fe748d1db526c81316a14163b6",
+      "state": "FIXTURE_READ_ONLY"
+    },
+    {
+      "id": "gex-service",
+      "path": "src/execution/gex_service.py",
+      "blob_sha": "705ec4f34f354c3094e46317209bc8f9658feb64",
+      "state": "FIXTURE_READ_ONLY"
+    },
+    {
+      "id": "execution-gateway",
+      "path": "src/execution/gateway.py",
+      "blob_sha": "8ef1c4fda534dd8047ba91cded50534485b5f998",
+      "state": "TYPED_LOCAL_SANDBOX_ONLY"
+    },
+    {
+      "id": "ledger",
+      "path": "src/execution/ledger/sqlite_ledger.py",
+      "blob_sha": "d951b4fcdb0c2f0d3a2344e73237b811eacfd6af",
+      "state": "DURABLE_REUSE_TARGET"
+    },
+    {
+      "id": "permit",
+      "path": "src/execution/permit/permit_v1.py",
+      "blob_sha": "c27bbf7907e5b5be12bcb26d55f01a63e9f6889b",
+      "state": "SIGNED_GEX_PERMIT"
+    },
+    {
+      "id": "gex-routes",
+      "path": "src/api/gex_routes.py",
+      "blob_sha": "8a3fc8bdb6719848cb0638b839208dacfc587dce",
+      "state": "FIXTURE_ONLY_API"
+    },
+    {
+      "id": "server",
+      "path": "src/api/server.py",
+      "blob_sha": "d4fa41d8f2026e8c36be61587e05a29d9a4a612c",
+      "state": "GENERIC_WS_UNAVAILABLE"
+    },
+    {
+      "id": "connections-api",
+      "path": "src/api/connection_routes.py",
+      "blob_sha": "b96fbc353b9ef6c0cea94ce1c829716e94fd4104",
+      "state": "MCP_HTTP_ONLY"
+    },
+    {
+      "id": "connections-service",
+      "path": "src/connections/service.py",
+      "blob_sha": "13ef524daf31b31da1f594737dfb9ad6a0cd060f",
+      "state": "SEPARATE_CONNECTIONS"
+    },
+    {
+      "id": "project-permissions",
+      "path": "src/api/project_permissions_routes.py",
+      "blob_sha": "49055606512e50d52a93e665bd7dfa6e8cb0bcf4",
+      "state": "DIRECTORY_PERMISSION_ONLY"
+    },
+    {
+      "id": "domain-conformance",
+      "path": "src/contracts/domain_conformance.py",
+      "blob_sha": "87e5525f3ae9e1a63d6fd75f3baa622f9520d13a",
+      "state": "READ_ONLY_NON_AUTHORIZING"
+    },
+    {
+      "id": "domain-schema",
+      "path": "docs/domain-conformance/source/05_DOMAIN_MANIFEST.schema.json",
+      "blob_sha": "d73de88a6f268eef801fd457da03fdd1e22cdc68",
+      "state": "THIRTEEN_CONTROLS"
+    },
+    {
+      "id": "whatsapp-cdp",
+      "path": "src/whatsapp/cdp.py",
+      "blob_sha": "acc43dae359167d61a0664c75cbb93d807975878",
+      "state": "OTHER_BROWSER_TRANSPORT_CDP"
+    },
+    {
+      "id": "whatsapp-session",
+      "path": "src/whatsapp/session.py",
+      "blob_sha": "7b5319c8ab0c1ccdaa448c7b74e709b04ed4cd70",
+      "state": "OWNED_BRAVE_PROFILE"
+    },
+    {
+      "id": "public-web",
+      "path": "src/web_research/core.py",
+      "blob_sha": "2699b58cf3e5204d08171613ee8fe8df0246a69a",
+      "state": "OTHER_TRANSPORT_HTTPS"
+    },
+    {
+      "id": "inspection",
+      "path": "src/observability/chat_inspection.py",
+      "blob_sha": "af325666158a36d277198010699503c041f01f5b",
+      "state": "READ_ONLY_PROJECTION"
+    },
+    {
+      "id": "tracing",
+      "path": "src/observability/local_trace.py",
+      "blob_sha": "afb0519a3c4d2d6391b8424792a536e8c3455fe6",
+      "state": "NON_AUTHORIZING_PROJECTION"
+    },
+    {
+      "id": "app",
+      "path": "frontend/src/App.tsx",
+      "blob_sha": "b764678cb2624ac15c4026dc4bb4dd54a64be49a",
+      "state": "EXISTING_SETTINGS_CHAT_INSPECT"
+    },
+    {
+      "id": "agent-chat",
+      "path": "frontend/src/components/AgentChat.tsx",
+      "blob_sha": "aded8c76c8ee639998c1e7119adaafa734299eeb",
+      "state": "EXISTING_CHAT"
+    },
+    {
+      "id": "fixture-ui",
+      "path": "frontend/src/components/GovernedFixtureRunner.tsx",
+      "blob_sha": "abf340d2e281b4d69307307c4b0a7408c4a6c4b4",
+      "state": "FIXTURE_UI"
+    },
+    {
+      "id": "p1-tests",
+      "path": "tests/contracts/browser_bridge/test_p1_browser_contracts.py",
+      "blob_sha": "5c2bfd5ff10ed366b6a1aa738d557dc9ba38e117",
+      "state": "SPEC_ONLY_TESTS"
+    },
+    {
+      "id": "domain-tests",
+      "path": "tests/contracts/evidence/test_domain_conformance.py",
+      "blob_sha": "8af79ff613caa051d7af60d893985c196792233e",
+      "state": "DOMAIN_CONFORMANCE_TESTS"
+    },
+    {
+      "id": "gex-integration-tests",
+      "path": "tests/governed_execution/integration/test_fixture_slice.py",
+      "blob_sha": "6402db5ccf5f0c9a31dae57874e2a17fe71d87dd",
+      "state": "FIXTURE_BASELINE"
+    },
+    {
+      "id": "gex-api-tests",
+      "path": "tests/api/test_gex_runtime.py",
+      "blob_sha": "844d375ff4f732aaf7692a6b0c6761c401ebee95",
+      "state": "GEX_API_BASELINE"
+    },
+    {
+      "id": "whatsapp-tests",
+      "path": "tests/test_whatsapp_cdp_targets.py",
+      "blob_sha": "7b083d35c7af5e17d0a0cc9b8542aabdc08c4c7b",
+      "state": "OWNED_BROWSER_ALTERNATE_TESTS"
+    },
+    {
+      "id": "readme-rules",
+      "path": "AGENTS.md",
+      "blob_sha": "3e16214d25a40b8774c0a40427d80641987bf1d1",
+      "state": "WORKFLOW_RULES"
+    }
+  ],
+  "boundaries": {
+    "browser_bridge_implemented": false,
+    "local_windows_runtime_checked": false,
+    "chrome_user_gesture_checked": false,
+    "browser_gex_dispatch_tested": false,
+    "domain_mapping_approved": false,
+    "p1_contract_frozen": false
+  },
+  "p0_gate": "OPEN_PENDING_LOCAL_BASELINE_AND_CONCURRENCY_SCOPE_CONFIRMATION"
+}
