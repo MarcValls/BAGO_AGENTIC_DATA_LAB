@@ -1,0 +1,11 @@
+### Result
+{
+  "openDialogs": 0,
+  "draft": "ESBORRANY_NO_ENVIAR_QA",
+  "focusText": "Recursos",
+  "focusTag": "SUMMARY"
+}
+### Ran Playwright code
+```js
+await page.evaluate('() => ({openDialogs:document.querySelectorAll("dialog[open]").length,draft:document.getElementById("control-chat-input").value,focusText:document.activeElement.textContent,focusTag:document.activeElement.tagName})');
+```

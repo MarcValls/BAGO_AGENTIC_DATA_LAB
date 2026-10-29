@@ -1,0 +1,73 @@
+{
+  "schema": "adl.knowledge-ui.ssr-independent-review.v1",
+  "type": "BOUNDED_STATIC_REVIEW",
+  "candidate": {
+    "checkout": "C:\\BAGO_TESTS\\ADL_KNOWLEDGE_UI_REPAIR_20261029\\source",
+    "committed_parent": "89c6069182633c316d46662a0182e7fba24d02e7",
+    "state": "ONE_LINE_WORKTREE_FOLLOWUP_OVER_PARENT",
+    "source": "frontend/src/components/ChatTools.tsx",
+    "source_sha256": "64c855a132648f81dcc247cd3efbd0139df121ec1b800c939277b6c0d80ee108",
+    "source_diff_sha256": "a2427a922eeeddd205864e10b3d3b59f0b17e0ed0a0cc982154e8488ff301abf",
+    "existing_ssr_test": "frontend/tests/runtime/package-upgrade.test.tsx",
+    "existing_ssr_test_sha256": "a5cc9583b747b461c8ee5a2696786bb922a95652b7ccfbe7789974ef33e03181"
+  },
+  "change": "Guard createPortal with typeof document !== undefined so Node SSR does not evaluate the portal or its document.body fallback.",
+  "findings": [],
+  "counts": {
+    "P0": 0,
+    "P1": 0,
+    "P2": 0
+  },
+  "observations": [
+    {
+      "id": "SSR01",
+      "source_line": 66,
+      "claim": "When document is absent, the guard evaluates false and JavaScript short-circuiting skips createPortal and evaluation of its container argument. typeof is safe on an undeclared identifier.",
+      "scope": "STATIC_LANGUAGE_SEMANTICS"
+    },
+    {
+      "id": "SSR02",
+      "source_line": 32,
+      "claim": "Remaining document listeners are inside useEffect. React server rendering does not run those effects. createPortal import is preserved but no server invocation occurs.",
+      "scope": "STATIC_REACT_LIFECYCLE_REASONING"
+    },
+    {
+      "id": "BROWSER01",
+      "source_line": 66,
+      "claim": "In a normal browser document exists, so the portal expression, its control-chat/body target, submit isolation, showModal/close effects and focus handlers are the same as in committed parent89c6069.",
+      "scope": "STATIC_BRANCH_EQUIVALENCE_NOT_BROWSER_RETEST"
+    },
+    {
+      "id": "TEST01",
+      "source_line": 1,
+      "claim": "The existing package-upgrade test imports react-dom/server.node and calls renderToString(createElement(App)); SSR compatibility is an existing repository check, not a hypothetical product expansion.",
+      "scope": "STATIC_EXISTING_TEST_REVIEW"
+    },
+    {
+      "id": "SCOPE01",
+      "claim": "This follow-up does not change request payload, backend routes, model selection, retrieval, authorization, network or generation code.",
+      "scope": "SOURCE_DIFF_REVIEW"
+    }
+  ],
+  "verification": {
+    "static_diff_check": {
+      "exit_code": 0,
+      "output": "warning: in the working copy of 'frontend/src/components/ChatTools.tsx', LF will be replaced by CRLF the next time Git touches it\n"
+    },
+    "focused17_tests": "IMPLEMENTER_REPORTED_PASS; NOT_RERUN_BY_REVIEWER",
+    "build": "IMPLEMENTER_REPORTED_PASS; NOT_RERUN_BY_REVIEWER",
+    "new_browser_modal_open_close": "NOT_RUN_BY_REVIEWER; parent to record separate evidence",
+    "remote_model_on_new_bytes": "NOT_RUN; parent89c model proof not promoted to follow-up bytes",
+    "prior_parent_live_model_proof": "HISTORICAL_PARENT_ONLY"
+  },
+  "decision": "NO_NEW_P0_P1_P2_OBSERVED_IN_ONE_LINE_GUARD; STATIC_ACCEPTANCE_FOR_REVIEWED_SOURCE_ONLY",
+  "correction_to_previous_review": "The earlier note that SSR was unsupported/out of scope was too broad: the repository already has a Node SSR regression test. This follow-up specifically restores that compatibility.",
+  "limits": [
+    "No unit suite, build, browser or model call executed by this reviewer.",
+    "No assertion of global product correctness or absence of all regressions.",
+    "Hydration is not dynamically verified; current SPA uses client rendering.",
+    "Existing RAG source-isolation/permission findings are unchanged and outside this UI guard.",
+    "Report binds exact source bytes; subsequent edits require a differential check.",
+    "Reviewer did not edit checkout; only SSR_REVIEW.json and SSR_REVIEW.md are written outside it."
+  ]
+}

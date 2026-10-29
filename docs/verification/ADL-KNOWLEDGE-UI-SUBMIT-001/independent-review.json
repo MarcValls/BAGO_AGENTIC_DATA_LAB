@@ -1,0 +1,96 @@
+{
+  "schema": "adl.knowledge-ui.independent-review.v1",
+  "review_type": "INDEPENDENT_STATIC_DIFF_REVIEW",
+  "candidate": {
+    "checkout": "C:\\BAGO_TESTS\\ADL_KNOWLEDGE_UI_REPAIR_20261029\\source",
+    "base_ref": "origin/main",
+    "base_sha": "bf4ce08b730e4616f3a5caf9e3111b8d8ec1a3e6",
+    "head": "bf4ce08b730e4616f3a5caf9e3111b8d8ec1a3e6",
+    "source_sha256": {
+      "frontend/src/components/ChatTools.tsx": "149909365c27defdcdd127eb0f061905576d2f2f98a95fda522aea0d55691e99",
+      "frontend/src/components/KnowledgeIngest.tsx": "10ad8ebb4d680d7640d6c773098d426a8ae53113def29314772e03daefe4682b",
+      "frontend/src/components/ChatTools.css": "ebde7bc82bd78f20d5bf25a821a2a5454f8ecb25d6efd049e722fe2c1fc98f42",
+      "frontend/src/components/KnowledgeIngest.css": "1e8abbbe9500fa3205c3c394c21091850caed73a27152c3bfec677f899a6d879",
+      "frontend/tests/ui/knowledge/chat-resource-submit.test.tsx": "4d2232afb23ffcef2becd9324cc90066a729189a07a93513ace6a9aea2e98021",
+      "frontend/src/components/AgentChat.tsx": "d9b583acf6293907c58dd4e74274eafec210feec870f6d58176146dcced056b0"
+    }
+  },
+  "scope": [
+    "source diff versus origin/main",
+    "dialog DOM form ancestry and React portal submit bubbling",
+    "native dialog show/close/cancel lifecycle and launcher focus by source reasoning",
+    "CSS scope and standalone body fallback by source reasoning",
+    "new regression test intent and limitations",
+    "generated output publication scope"
+  ],
+  "p0": 0,
+  "p1": 0,
+  "findings": [
+    {
+      "id": "REV-P2-01",
+      "severity": "P2",
+      "category": "FORMATTING",
+      "file": "frontend/src/components/ChatTools.tsx",
+      "lines": [
+        3,
+        65,
+        66,
+        67,
+        76
+      ],
+      "finding": "Source-only git diff --check reported trailing whitespace on added CRLF lines during review.",
+      "status_at_report": "PASS",
+      "evidence_command": "git diff --check -- frontend/src/components/ChatTools.tsx frontend/tests/ui/knowledge/chat-resource-submit.test.tsx",
+      "evidence": "warning: in the working copy of 'frontend/src/components/ChatTools.tsx', LF will be replaced by CRLF the next time Git touches it\n",
+      "recommendation": "Normalize intended source line endings and rerun this static check before publication; no source behavior change required."
+    },
+    {
+      "id": "REV-P2-02",
+      "severity": "P2",
+      "category": "TEST_SCOPE",
+      "file": "frontend/tests/ui/knowledge/chat-resource-submit.test.tsx",
+      "lines": [
+        10,
+        11,
+        36,
+        44
+      ],
+      "finding": "New tests exercise nested-form exclusion and one intended POST with no composer submit/draft loss. They do not exercise native dialog close/cancel focus restoration or standalone body fallback. showModal/close are simplified stubs and close does not dispatch close.",
+      "recommendation": "Keep these lifecycle/fallback cases explicit as not verified by these two tests. Existing real-browser evidence can cover them if it includes those actions; do not infer native focus behavior from jsdom stubs."
+    },
+    {
+      "id": "REV-P2-03",
+      "severity": "P2",
+      "category": "PUBLICATION_SCOPE",
+      "file": "frontend/.build and frontend/dist/index.html",
+      "finding": "Build regenerated tracked derived outputs with broad changes beyond the seven-line source diff. dist/index.html now names new hashed assets while git tracks no assets in that directory. This is an artifact/publication-scope observation, not a newly demonstrated source regression.",
+      "recommendation": "Choose deliberately whether derived artifacts belong in the PR; avoid publishing a changed bare dist index as a standalone frontend without its built assets."
+    }
+  ],
+  "positive_findings": [
+    "Portal removes the actual HTML dialog/forms from the composer form while preserving normal .control-chat ancestor styling.",
+    "onSubmit stopPropagation is necessary because React portal events can reach logical React ancestors even when DOM form ancestry is removed.",
+    "KnowledgeIngest own submit handler retains preventDefault and its intended fetch; no payload/provider selection logic changed.",
+    "Normal open state transition after selecting a resource rerenders the portal into the closest .control-chat before the effect calls showModal on the new dialog ref.",
+    "Close/cancel handlers and launcher focus callback are preserved; dialog and resource-specific global CSS remain applicable. No new functional defect found in these paths by static reasoning.",
+    "When rendered with no .control-chat ancestor in a browser, the dialog targets document.body and remains outside a surrounding form. SSR without document is not supported by this new render path; current app is CSR/Vite.",
+    "The two added tests assert observable behavior and fail the original nested-form conditions rather than mirroring implementation details alone."
+  ],
+  "verification": {
+    "source_diff_check": {
+      "exit_code": 0,
+      "output": "warning: in the working copy of 'frontend/src/components/ChatTools.tsx', LF will be replaced by CRLF the next time Git touches it\n"
+    },
+    "unit_suites": "NOT_RUN per parent instruction; prior 15 focused PASS is implementer-provided evidence, not independently reproduced",
+    "build": "NOT_RUN per parent instruction; PASS claim supplied by implementer",
+    "remote_model": "NOT_RUN; no provider or model was changed/called by reviewer",
+    "real_browser": "NOT_RUN by reviewer; implementer reports successful live response with no chat request and preserved draft"
+  },
+  "decision": "NO_P0_P1_SOURCE_DEFECT_OBSERVED; BOUNDED_SOURCE_CHANGE_ACCEPTABLE_AFTER_PUBLICATION_HYGIENE; NOT_A_GLOBAL_PRODUCT_GATE",
+  "limits": [
+    "No dynamic browser test, focus/keyboard trial, model request or repeated suite executed.",
+    "Static review does not prove absence of all regressions.",
+    "Review binds to recorded file hashes; later functional edits require differential review.",
+    "No checkout files edited. Only review.json and review.md written outside checkout."
+  ]
+}

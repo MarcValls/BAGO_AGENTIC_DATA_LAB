@@ -1,0 +1,80 @@
+{
+  "generation": {
+    "answer": "| Codi d’expedient | Documents sense incidències |\n|---|---:|\n| PROVA-F35BBA3598FB | 8 |\n\nFont: [documents/records.txt#revision=d6734b202db34d99a28bd274f8105ab412b4d504f33133bd208c27ae4a1fcc7b]",
+    "model_id": "gpt-6-luna",
+    "provider_id": "codex"
+  },
+  "ingestion": {
+    "chunk_count": 1,
+    "idempotent": true,
+    "index_fingerprint": "56c5f5abd05fa22f87429ea5eacfdb865edc24b09ac19bf0cdcef09e71a00da3",
+    "minimum_authority": "PROPOSED",
+    "receipt_id": "receipt_rag_2424cdbb89624443bc29c33cb2f546e9",
+    "source_authority": "PROPOSED",
+    "source_id": "src_072fc311c83a08a66fc4a4301b946547",
+    "source_path": "documents/records.txt",
+    "source_revision": "d6734b202db34d99a28bd274f8105ab412b4d504f33133bd208c27ae4a1fcc7b",
+    "source_sha256": "d6734b202db34d99a28bd274f8105ab412b4d504f33133bd208c27ae4a1fcc7b"
+  },
+  "retrieval": {
+    "citations": [
+      "documents/records.txt#revision=d6734b202db34d99a28bd274f8105ab412b4d504f33133bd208c27ae4a1fcc7b"
+    ],
+    "eligible_count": 1,
+    "filtered_count": 0,
+    "hits": [
+      {
+        "chunk_id": "src_072fc311c83a08a66fc4a4301b946547:0",
+        "document_id": "src_072fc311c83a08a66fc4a4301b946547",
+        "evidence": {
+          "chunk_id": "src_072fc311c83a08a66fc4a4301b946547:0",
+          "citation": "documents/records.txt#revision=d6734b202db34d99a28bd274f8105ab412b4d504f33133bd208c27ae4a1fcc7b",
+          "document_id": "src_072fc311c83a08a66fc4a4301b946547",
+          "revision": "d6734b202db34d99a28bd274f8105ab412b4d504f33133bd208c27ae4a1fcc7b",
+          "source_uri": "documents/records.txt"
+        },
+        "lexical_score": 1.87678304,
+        "rank": 1,
+        "score": 1.09555108,
+        "semantic_score": 0.29815539
+      }
+    ],
+    "index_fingerprint": "56c5f5abd05fa22f87429ea5eacfdb865edc24b09ac19bf0cdcef09e71a00da3",
+    "intent": "retrieval",
+    "metadata_filter": {
+      "allowed_domains": [],
+      "created_after": null,
+      "include_superseded": false,
+      "minimum_authority": "PROPOSED",
+      "require_provenance": true,
+      "required_classifications": []
+    },
+    "mode": "hybrid",
+    "pipeline": [
+      "intent_classification",
+      "metadata_filters",
+      "lexical_bm25",
+      "semantic_embedding",
+      "hybrid_rrf_fusion",
+      "deterministic_reranker",
+      "authority_validity_gate",
+      "evidence_context_ready"
+    ],
+    "query": "Quin es el codi de expedient i quants documents no tenen incidencies? Respon en una taula breu i cita la font amb la revisio exacta.",
+    "reranked": true
+  },
+  "run_id": "rag_2424cdbb89624443bc29c33cb2f546e9",
+  "status": "answered",
+  "trace": {
+    "events": [
+      "source_read",
+      "etl_normalized",
+      "version_persisted",
+      "vector_indexed",
+      "authority_filtered",
+      "retrieval_completed",
+      "answered"
+    ],
+    "trace_id": "trace_8645ef9d8380469395280774958f1040"
+  }
+}

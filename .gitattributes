@@ -12,3 +12,4 @@
 /src/workspace_sdk/workspace_service.py -text
 # Content-addressed historical evidence must retain its recorded byte identity.
 /docs/final-beige/predecessor/objects/* -text
+/docs/verification/ADL-KNOWLEDGE-UI-SUBMIT-001/** -text

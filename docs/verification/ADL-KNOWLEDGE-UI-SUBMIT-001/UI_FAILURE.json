@@ -1,0 +1,17 @@
+{
+  "status": "FAIL",
+  "candidate": "19f6a3716f91287c41ced38f4faf1ae7f12cd01d",
+  "viewport": [
+    1920,
+    1080
+  ],
+  "origin": "http://127.0.0.1:5199",
+  "action": "Click Indexar fuente y responder after completing source path and question",
+  "observed": "Navigation to /?; dialog and question state lost; nested form React errors",
+  "knowledge_traces_created": 0,
+  "console": "C:\\BAGO_TESTS\\ADL_FILE_DATA_VERIFY_20261028_233030\\.playwright-cli\\console-2026-10-28T23-34-16-159Z.log",
+  "console_sha256": "ab2f02181a77eb5172ef250ff87f5dd5d61067386e52ec09dc7bdfb1320038df",
+  "snapshot": "C:\\BAGO_TESTS\\ADL_FILE_DATA_VERIFY_20261028_233030\\.playwright-cli\\page-2026-10-28T23-36-10-432Z.yml",
+  "snapshot_sha256": "8e54fc71c1ef09b2209bf07459bb026e3a9d486911bb22b7d38627da25a6ea13",
+  "scope": "One rendered UI attempt, not all form failures attributed exclusively to nesting"
+}

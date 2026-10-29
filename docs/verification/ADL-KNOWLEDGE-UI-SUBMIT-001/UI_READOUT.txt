@@ -1,0 +1,19 @@
+### Result
+{
+  "url": "http://127.0.0.1:5199/",
+  "dialogOutsideForm": true,
+  "nestedForms": 0,
+  "draft": "ESBORRANY_NO_ENVIAR_QA",
+  "knowledgeRequests": 1,
+  "chatRequests": 0,
+  "dialogFitsHorizontally": true,
+  "viewport": [
+    1920,
+    1080
+  ],
+  "resultVisible": true
+}
+### Ran Playwright code
+```js
+await page.evaluate('() => {const d=document.querySelector("dialog[open]");return {url:location.href,dialogOutsideForm:d.closest("form")===null,nestedForms:document.querySelectorAll("form form").length,draft:document.getElementById("control-chat-input").value,knowledgeRequests:performance.getEntriesByType("resource").filter(x=>x.name.includes("/api/knowledge/ingest-and-answer")).length,chatRequests:performance.getEntriesByType("resource").filter(x=>x.name.includes("/api/chat/control")).length,dialogFitsHorizontally:d.scrollWidth<=d.clientWidth,viewport:[innerWidth,innerHeight],resultVisible:!!document.querySelector(".knowledge-result")};}');
+```

@@ -1,0 +1,125 @@
+{
+  "operation": "REPAIR",
+  "base_ref": "origin/main",
+  "base_sha_at_creation": "bf4ce08b730e4616f3a5caf9e3111b8d8ec1a3e6",
+  "candidate_branch": "codex/adl-knowledge-dialog-submit-20261029",
+  "baseline_live_reproduction_candidate": "19f6a3716f91287c41ced38f4faf1ae7f12cd01d",
+  "baseline_ChatTools_matches_fetched_main": true,
+  "base_ChatTools_sha256": "8b04cdc893a284212ab12958f527676e30fe1f5afb22a2288516c5f5060da8f6",
+  "baseline_regression_tests": {
+    "command": "npm test -- tests/ui/knowledge/chat-resource-submit.test.tsx",
+    "failed": 2,
+    "scope": "Expected old behavior reproduced before patch"
+  },
+  "focused_tests": {
+    "command": "npm test -- tests/runtime/package-upgrade.test.tsx tests/ui/knowledge/chat-resource-submit.test.tsx tests/ui/chat-shell/chat-composer.test.tsx tests/integration/contact-consumers.test.tsx tests/i18n/commerce/commerce.test.tsx",
+    "passed": 17,
+    "failed": 0,
+    "record": "SSR_FOCUSED_BUILD_RESULT.json"
+  },
+  "frontend_build": {
+    "command": "npm run build",
+    "status": "PASS",
+    "warning": "Existing generated bundle exceeds 500 kB advisory threshold",
+    "source_sha256": "64c855a132648f81dcc247cd3efbd0139df121ec1b800c939277b6c0d80ee108",
+    "record": "SSR_FOCUSED_BUILD_RESULT.json"
+  },
+  "real_ui": {
+    "url": "http://127.0.0.1:5199/",
+    "dialogOutsideForm": true,
+    "nestedForms": 0,
+    "draft": "ESBORRANY_NO_ENVIAR_QA",
+    "knowledgeRequests": 1,
+    "chatRequests": 0,
+    "dialogFitsHorizontally": true,
+    "viewport": [
+      1920,
+      1080
+    ],
+    "resultVisible": true,
+    "subject_commit": "89c6069182633c316d46662a0182e7fba24d02e7"
+  },
+  "provider": "codex",
+  "model": "gpt-6-luna",
+  "scope": "Isolated synthetic desktop UI, real provider; no shared-index isolation or common gateway claim",
+  "remaining_limitations": [
+    "RAG source/project isolation in shared index requires separate repair/vector.",
+    "Knowledge response does not update the main provider-response observation footer.",
+    "Source picker and rich Markdown table presentation were not changed.",
+    "Execution Gateway unification remains design/audit only."
+  ],
+  "source_sha256_at_browser_proof": "feae852faf4c3cefdbb841f16e7c7390b2cf545aabfa09f6221b2b92a5d4c098",
+  "final_source_sha256": "64c855a132648f81dcc247cd3efbd0139df121ec1b800c939277b6c0d80ee108",
+  "source_newlines_normalized_after_browser_proof": true,
+  "final_source_review": "SSR_REVIEW.json",
+  "generated_build_artifacts": "Own .build and tracked dist/index.html changes restored to fetched base after build; code-only repair publication.",
+  "readme_first_attempt": {
+    "status": "COLLECTION_BLOCKED",
+    "reason": "Python3.11 base environment lacked declared github-copilot-sdk",
+    "tests_executed": 0
+  },
+  "readme_environment": "Isolated Python3.11 venv with system site packages and pip-installed requirements-test.txt.",
+  "final_newlines": "LF: CRLF additions are flagged by this Git whitespace policy; semantic patch is 5 added/2 removed lines.",
+  "python311_windows_full_suite": {
+    "status": "FAIL",
+    "passed": 1657,
+    "failed": 4,
+    "skipped": 3,
+    "subtests_passed": 22,
+    "duration_seconds": 630.37,
+    "log": "README_FULL_RUN.json"
+  },
+  "python311_windows_clock": {
+    "implementation": "GetTickCount64()",
+    "resolution_seconds": 0.015625
+  },
+  "python314_windows_focused": {
+    "status": "PASS",
+    "passed": 4,
+    "warning": 1,
+    "duration_seconds": 3.75,
+    "scope": "Only the four prior failures; no source changes",
+    "clock": "QueryPerformanceCounter()",
+    "resolution_seconds": 1e-07
+  },
+  "readme_final_environment": "Windows Python3.14.5",
+  "readme_generation": {
+    "command": "python scripts/generate_dynamic_readme.py",
+    "status": "PASS",
+    "exit_code": 0,
+    "passed": 1661,
+    "record": "README_PY314_RESULT.json",
+    "subject_commit": "89c6069182633c316d46662a0182e7fba24d02e7",
+    "scope": "Local full suite on initial parent; final follow-up full suite required in hosted CI before closure"
+  },
+  "readme_consistency": {
+    "command": "python scripts/generate_dynamic_readme.py --check --skip-tests",
+    "status": "PASS",
+    "exit_code": 0,
+    "collected_cases": 1664,
+    "suite_execution": "NOT_RUN_BY_CONSISTENCY_CHECK",
+    "record": "README_CHECK_RESULT.json",
+    "followup_local_collect_only_status": "PASS",
+    "followup_source_sha256": "64c855a132648f81dcc247cd3efbd0139df121ec1b800c939277b6c0d80ee108"
+  },
+  "base_sha_at_publication_preflight": "bf4ce08b730e4616f3a5caf9e3111b8d8ec1a3e6",
+  "merge_base_at_publication_preflight": "bf4ce08b730e4616f3a5caf9e3111b8d8ec1a3e6",
+  "git_diff_check": "PASS",
+  "initial_published_source_sha256": "149909365c27defdcdd127eb0f061905576d2f2f98a95fda522aea0d55691e99",
+  "initial_published_commit": "89c6069182633c316d46662a0182e7fba24d02e7",
+  "initial_focused_tests": {
+    "command": "npm test -- tests/ui/knowledge/chat-resource-submit.test.tsx tests/ui/chat-shell/chat-composer.test.tsx tests/integration/contact-consumers.test.tsx tests/i18n/commerce/commerce.test.tsx",
+    "passed": 15,
+    "failed": 0
+  },
+  "ssr_followup": {
+    "cause": "document access in Node renderToString(App)",
+    "local_before": "1 failed, 1 passed",
+    "after": "17 focused PASS and build PASS",
+    "source_sha256": "64c855a132648f81dcc247cd3efbd0139df121ec1b800c939277b6c0d80ee108",
+    "review": "SSR_REVIEW.json",
+    "browser": "SSR_BROWSER_CHECK.json",
+    "model_call": "NOT_REPEATED; original live-model evidence remains parent-scoped",
+    "final_full_suite": "PENDING_HOSTED_CI"
+  }
+}
