@@ -51,14 +51,17 @@ El registro futuro debe versionar también input_schema_digest, registry_digest,
 
 ### P1-D04 — Tipos de mensajes cerrados
 
-El archivo P1_BROWSER_SCHEMA.json usa JSON Schema 2020-12 y additionalProperties=false. Sus cuatro tipos son:
+El archivo P1_BROWSER_SCHEMA.json usa JSON Schema 2020-12 y additionalProperties=false. Sus cinco tipos son:
 
 1. CapabilityProfile: definición descriptiva del registro futuro, sin efecto de habilitación.
-2. SharedTabBinding: tab_id, extension_id, origin, document_epoch, sesión, proyecto e invocation_event_ref. Este último es una referencia de auditoría, **no una prueba de concesión activeTab**.
-3. Dispatch: request_digest, attempt_id, permit_id, dispatch_intent_event_id, registry/policy, binding, document_epoch, límites, nonce, sesión/sequence y message_auth_tag.
-4. Observation: OBSERVED/DENIED/ERROR, digest y longitud de lo realmente extraído, fecha y truncation. Nunca contiene SUCCESS o VERIFIED_SUCCESS.
+2. BrowserGexRequest: **perfil de solicitud versionado v2**, con principal autenticado y un initiator discriminado HUMAN o AGENT; HUMAN no lleva campos de agente, AGENT debe enlazar agent_config_digest y revisión. No sustituye ni altera GEXRequestV1; requerirá un adaptador GEX autorizado en P4.
+3. SharedTabBinding: tab_id, extension_id, origin, document_epoch, sesión, proyecto e invocation_event_ref. Este último es una referencia de auditoría, **no una prueba de concesión activeTab**.
+4. Dispatch: request_digest, attempt_id, permit_id, dispatch_intent_event_id, registry/policy, binding, document_epoch, límites, nonce, sesión/sequence y message_auth_tag.
+5. Observation: OBSERVED/DENIED/ERROR, digest y longitud de lo realmente extraído, fecha y truncation. Nunca contiene SUCCESS o VERIFIED_SUCCESS.
 
 El esquema valida forma, no autenticidad, tiempo efectivo, identidad real del usuario, activeTab ni relación criptográfica con el ledger. La validación semántica y criptográfica pertenece a las autoridades señaladas.
+
+La entrada BrowserGexRequestV2 es un contrato propuesto **backend-generated**. Principal y binding deben derivarse de la sesión autenticada, no del JSON remitido por el modelo. Si el workspace carece de binding válido para GEX, la operación se deniega; no se fabrica una identidad Git ni se usa el permiso de carpetas como sustituto.
 
 ## 3. Flujo contractual para P4 (todavía NO IMPLEMENTADO)
 
