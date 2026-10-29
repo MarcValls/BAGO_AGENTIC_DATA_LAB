@@ -51,3 +51,19 @@ La comparación remota de `a9a4929...` con `main` también encuentra cambios en 
 ## Traspaso para Codex
 
 Leer este documento junto a `P0_MAIN_INVENTORY_20261029.md/.json`, `IMPLEMENTATION_PLAN.md`, `CODEX_HANDOFF.md`, `P1_GEX_BROWSER_PROFILE.md` y los contratos GEX vigentes. Confirmar en la rama de trabajo los SHAs anteriores y la punta actual. No editar rutas compartidas hasta superar las reservas 1–3. Mantener evidencia de cada comparación y distinguir **PROPUESTO**, **IMPLEMENTADO**, **VERIFICADO** y **NOT_RUN**.
+
+
+## Adenda de comparación por blobs (verificación remota final)
+
+Las seis superficies compartidas comparadas directamente entre `139c79c...` y `main` tienen **el mismo blob SHA** en ambas puntas:
+
+| Ruta | Blob SHA en ambos refs | Resultado |
+| --- | --- | --- |
+| `src/api/connection_routes.py` | `68451ac75fcc58c6a7266f5928d6b6176eda67ee` | IDENTICAL |
+| `src/api/server.py` | `8596e93b26b9c08f82c94af4dd91021270c4e4a5` | IDENTICAL |
+| `src/connections/service.py` | `e6a5e4433d363d6505f43e8f43964eb581567788` | IDENTICAL |
+| `frontend/src/components/AgentChat.tsx` | `f255926f8bae7c1081a35a637e9703347b114fd6` | IDENTICAL |
+| `frontend/src/components/ChatTools.tsx` | `ea58d665404a828f2456beb1696ddb86b3f12c45` | IDENTICAL |
+| `frontend/src/components/ExternalConnections.tsx` | `7afe4bf714643afc67d0f308150cd90af22dfd8c` | IDENTICAL |
+
+Esto acredita igualdad de contenido para esos seis archivos en esos dos refs; no borra la divergencia de historia del compare (merge-base `a9a4929...`, main +3, candidato +2), ni inspecciona cambios locales posteriores. Las reservas siguen siendo necesarias para evitar carreras de trabajo futuro. El inventario histórico P0 fue releído y mantiene sus SHA de archivo: MD `6d0b11207c62dbb5f33de5af7ba744c2391167cd`, JSON `38a5d04a848b2b4fa75de5083833574ecabc61c8`.
