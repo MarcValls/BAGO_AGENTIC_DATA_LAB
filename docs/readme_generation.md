@@ -1,8 +1,8 @@
 # README generation contract
 
 README.md is a generated, navigable landing, not a second source of truth. It
-combines native Markdown links and section anchors with a linked SVG hero and
-collapsible visual panels. README_DETAILS.md is the full generated technical
+combines native Markdown, four direct entry links, four functional areas, a
+governed execution route and one dated screenshot without disclosure controls. README_DETAILS.md is the full generated technical
 reference at the repository root, preserving relative URLs and comprehensive
 evidence.
 
@@ -86,14 +86,20 @@ Do not promote navigation to an end-to-end Chat-to-Inspect PASS. The visible
 remain part of the demonstration. A UI excerpt hash identifies its numbered
 excerpt; the complete input-file hash identifies different bytes.
 
-The landing contains nine versioned 1200-pixel-wide panels under
-`docs/assets/readme-banner/`, composed from `docs/readme_svg_manifest.json`.
-The manifest also owns the title, summary and grouped quick links. The hero
-is visible on load; the visual map and topic panels are progressively revealed
-with native `<details>` controls. Each topic has a visible text link as well as
-a clickable image, so navigation does not depend on finding a hotspot in art.
-The Markdown title and quick links provide normal GitHub anchors and keyboard-
-accessible navigation.
+The v3 minimal landing is owned by `docs/readme_svg_manifest.json` (schema
+`bago.readme.svg.landing.v3`). Its title, summary, navigation, introduction,
+four functional areas and dated capture are editable sources. The four `Inicio`
+links appear before the first content section; remaining navigation appears
+under documentation and evidence. Short area paragraphs wrap on narrow screens.
+The screenshot is explicitly historical and cannot certify today's runtime.
+
+The nine versioned SVG panels under `docs/assets/readme-banner/` remain intact
+and reachable through the landing's resource-directory link. All panel paths,
+destinations and SVG safety checks still run before rendering v3, even though
+the images are no longer embedded in the landing. The v2 manifest schema and
+its former vector renderer remain supported for compatibility. Unsupported
+schemas fail closed. New editorial text cannot inject Markdown/HTML controls;
+capture paths, PNG signature, observation date and provenance are validated.
 
 The complete, accessible narrative, tables, Mermaid, screenshots,
 source provenance and dated verification remain in `README_DETAILS.md`,
@@ -136,9 +142,9 @@ against its sources before closing work:
    execution evidence may link directly to the recorded CI run/job URL.
 3. Run `python scripts/generate_dynamic_readme.py`; this runs the complete test suite before writing. The README does not convert the collected case count into a passing claim.
 4. Inspect `git diff -- README.md README_DETAILS.md docs/assets/readme-banner/` and review the rendered pages.
-   Require visible substantial product sections, a chat-led entry narrative,
-   accessible corporate branding, fresh screenshot provenance and a resolved
-   deep link from each principal section. Confirm actual chat controls are
+   For README.md require the compact landing contract below. For README_DETAILS.md
+   retain substantial product sections, the chat-led narrative, branding, capture
+   provenance and deep documentation links. Confirm actual chat controls are
    distinct from manual steps and future coverage. Review every phase inventory,
    missing-pattern marker, role/skill table and four Bruma decisions in the
    appendices. Customer directories, invoices and delivery notes remain outside
@@ -148,16 +154,16 @@ against its sources before closing work:
 5. Run `python scripts/generate_dynamic_readme.py --check --skip-tests`. This confirms reproducibility and collects cases; it does not execute tests or prove that they passed.
 6. Include both command results and the reviewed README diff in closure evidence.
 
-## Additional vector-specific acceptance
+## Landing acceptance
 
-- Panels are safe, standalone SVG graphics (no scripts, raster, external
-  resources or `foreignObject`), with local links and alternative text.
-- README.md contains a Markdown title, grouped direct links to local guides,
-  anchors to the map/gallery, and a visible link to the complete reference.
-- The hero is visible by default; the map and topic images use collapsed
-  `<details>` sections with a textual documentation link.
-- Navigation targets are local Markdown files; unsafe and missing targets fail
-  generation.
-- README_DETAILS.md retains all original source-bound material and links.
-- Both generated files must match the source-driven renderer.
-- Visual QA on GitHub is a separate check; do not call it PASS if NOT_RUN.
+- README.md exposes installation, demo, architecture and traces before the
+  first section, plus security, GEX, state and the full reference below.
+- Four functional areas, the governed route and one dated capture are visible
+  without `<details>` or `<summary>`; there is no dominant SVG hero.
+- Every rendered destination exists; unsafe, escaping and missing paths fail.
+- Vector resources and their safety validation remain intact; v2 still renders.
+- README_DETAILS.md retains the original source-bound material and links.
+- Both generated files match their renderers; generation is deterministic.
+- Visual QA on actual GitHub desktop/mobile is separate. Record NOT_RUN when
+  viewport control or a rendering surface is unavailable. Human visual acceptance
+  is required before merging the candidate.

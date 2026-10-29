@@ -1,89 +1,45 @@
 # BAGO Agentic Data Lab
 
-> Agentes, datos y ejecución gobernada con enlaces directos, paneles visuales desplegables y documentación completa.
+**Agentes, datos y ejecución gobernada desde un espacio de trabajo.**
 
-## Accesos directos
+ADL permite formular una intención desde el chat, preparar una operación, revisar su autorización y consultar resultados con evidencias. Cada recorrido debe distinguir lo que el agente afirma de lo que el sistema realmente ejecutó y comprobó.
 
-**Empezar:** [Instalación local](docs/agent-chat-control/LOCAL_SETUP.md)
+[Empezar en Windows](docs/agent-chat-control/LOCAL_SETUP.md) · [Probar la demo local](docs/one_command_demo.md) · [Explorar la arquitectura](.bago/canon/ARCHITECTURE.md) · [Ver trazas y evaluación](docs/observability_evals.md)
 
-**Explorar:** [Chat y frontend](docs/readme_frontend.md) · [Demo guiada](docs/one_command_demo.md)
+---
 
-**Entender:** [Arquitectura](.bago/canon/ARCHITECTURE.md) · [Datos y RAG](docs/governed_rag.md)
+## Qué ofrece
 
-**Operar:** [Ejecución gobernada](docs/governed-execution/GEX_V1_NORMATIVE_CONTRACT.md) · [Trazas y evaluación](docs/observability_evals.md)
+**[Chat y workspace](docs/readme_frontend.md)** — Conversar, preparar contexto, consultar y revisar propuestas sin confundir una respuesta con una ejecución.
 
-**Completo:** [Guía completa](README_DETAILS.md)
+**[Agentes y conocimiento](docs/governed_rag.md)** — Organizar capacidades, recuperar información con procedencia y mantener los límites de autoridad.
 
-**Ir a:** [Mapa visual](#mapa-visual) · [Galería por tema](#galeria-por-tema) · [Guía completa](README_DETAILS.md)
+**[Ejecución gobernada](docs/governed-execution/GEX_V1_NORMATIVE_CONTRACT.md)** — Aplicar permisos y controles antes de efectos materiales; registrar resultados y excepciones.
 
-<div align="center">
-<a href="README_DETAILS.md"><img src="docs/assets/readme-banner/00-hero.svg" width="100%" alt="BAGO Agentic Data Lab: portada gráfica y acceso a documentación completa" /></a>
-</div>
+**[Inspect y observabilidad](docs/observability_evals.md)** — Relacionar solicitudes, recibos, trazas, evidencias y verificaciones.
 
-## Mapa visual
+## Del chat a una operación verificable
 
-<details>
-<summary>Abrir el índice gráfico del laboratorio</summary>
+**Intención** → **Propuesta** → **Revisión y autorización** → **Ejecución** → **Recibo** → **Verificación**
 
-[Abrir la guía completa](README_DETAILS.md)
+Este es el principio arquitectónico; cada capacidad y recorrido tiene su propio estado y alcance. Las capacidades no demostradas de extremo a extremo no se presentan como verificadas.
 
-<a href="README_DETAILS.md"><img src="docs/assets/readme-banner/01-map.svg" width="100%" alt="Índice gráfico de las catorce secciones del laboratorio" /></a>
-</details>
+## La aplicación
 
-## Galeria por tema
+![Chat y espacio de trabajo ADL, captura documentada del 22 de octubre de 2026](docs/assets/readme-20261022/chat.png)
 
-<details>
-<summary>Experiencia de chat, frontend, agentes e inspección</summary>
+Captura documentada del 2026-10-22; no acredita por sí sola el estado actual de la interfaz ni la ejecución de herramientas. [Procedencia y límites](docs/readme_frontend.md).
 
-[Abrir documentación relacionada](docs/readme_frontend.md)
+## Probar ADL
 
-<a href="docs/readme_frontend.md"><img src="docs/assets/readme-banner/02-workspace.svg" width="100%" alt="Experiencia de chat, frontend, agentes e inspección" /></a>
-</details>
+**Aplicación Windows:** sigue la [instalación local](docs/agent-chat-control/LOCAL_SETUP.md) para iniciar el frontend y configurar el proveedor.
 
-<details>
-<summary>Cadena de conocimiento gobernado y selección de proveedores</summary>
+**Demostración reproducible:** sigue la [demo de ejecución gobernada](docs/one_command_demo.md) para ejecutar un recorrido local sin claves externas y examinar los archivos de resultado. La demostración utiliza fixtures; no valida servicios cloud en producción.
 
-[Abrir documentación relacionada](docs/governed_rag.md)
+## Documentación y evidencia
 
-<a href="docs/governed_rag.md"><img src="docs/assets/readme-banner/03-intelligence.svg" width="100%" alt="Cadena de conocimiento gobernado y selección de proveedores" /></a>
-</details>
+**Referencia:** [Contrato de ejecución](docs/governed-execution/GEX_V1_NORMATIVE_CONTRACT.md) · [Estado canónico](.bago/canon/STATE.md) · [Seguridad](SECURITY.md) · [Guía técnica completa](README_DETAILS.md)
 
-<details>
-<summary>Control de ejecución: propuesta, revisión, permisos, operación y recibo</summary>
+[Recursos SVG originales](docs/assets/readme-banner/) · [Contrato de generación](docs/readme_generation.md)
 
-[Abrir documentación relacionada](docs/governed-execution/GEX_V1_NORMATIVE_CONTRACT.md)
-
-<a href="docs/governed-execution/GEX_V1_NORMATIVE_CONTRACT.md"><img src="docs/assets/readme-banner/04-governance.svg" width="100%" alt="Control de ejecución: propuesta, revisión, permisos, operación y recibo" /></a>
-</details>
-
-<details>
-<summary>Observabilidad: LocalTrace, Inspect, recibos y evaluación</summary>
-
-[Abrir documentación relacionada](docs/observability_evals.md)
-
-<a href="docs/observability_evals.md"><img src="docs/assets/readme-banner/05-inspection.svg" width="100%" alt="Observabilidad: LocalTrace, Inspect, recibos y evaluación" /></a>
-</details>
-
-<details>
-<summary>Demostraciones delimitadas y estados de verificación</summary>
-
-[Abrir documentación relacionada](docs/one_command_demo.md)
-
-<a href="docs/one_command_demo.md"><img src="docs/assets/readme-banner/06-demos.svg" width="100%" alt="Demostraciones delimitadas y estados de verificación" /></a>
-</details>
-
-<details>
-<summary>Instalación local de la app y acceso al estado documentado</summary>
-
-[Abrir documentación relacionada](docs/agent-chat-control/LOCAL_SETUP.md)
-
-<a href="docs/agent-chat-control/LOCAL_SETUP.md"><img src="docs/assets/readme-banner/07-operations.svg" width="100%" alt="Instalación local de la app y acceso al estado documentado" /></a>
-</details>
-
-<details>
-<summary>Fuentes canónicas y documentación completa</summary>
-
-[Abrir documentación relacionada](README_DETAILS.md)
-
-<a href="README_DETAILS.md"><img src="docs/assets/readme-banner/08-sources.svg" width="100%" alt="Fuentes canónicas y documentación completa" /></a>
-</details>
+Portada generada desde el manifiesto; los estados y resultados conservan la fecha y el alcance de sus fuentes.
