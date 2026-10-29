@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import type { FormEvent } from 'react'
 import { apiError, errorMessage, t, useI18n } from '../i18n'
 import './FreelancerChatTool.css'
@@ -27,8 +27,10 @@ export default function FreelancerChatTool({ conversationId, conversationRevisio
   const [challenge, setChallenge] = useState<Challenge | null>(null)
   const [result, setResult] = useState<any>(null)
   const [error, setError] = useState<unknown>('')
+  const contextGeneration = useRef(0)
 
   useEffect(() => {
+    contextGeneration.current += 1
     setChallenge(null); setResult(null); setError('')
   }, [conversationId, conversationRevision])
 
@@ -58,29 +60,30 @@ export default function FreelancerChatTool({ conversationId, conversationRevisio
     if (!enabled || !conversationId || conversationRevision === undefined || !connectionId) return
     const args = argumentsForOperation()
     if (!args) { setError(t('commerce.freelancer_invalid_input')); return }
+    const generation = contextGeneration.current
     setBusy(true); setError(''); setChallenge(null); setResult(null)
     try {
       const value = await request(`/api/connections/freelancer/${encodeURIComponent(connectionId)}/challenge`, post({
         conversation_id: conversationId, conversation_revision: conversationRevision,
         operation, arguments: args,
       })) as Challenge
-      setChallenge(value)
-    } catch (cause) { setError(cause) }
-    finally { setBusy(false) }
+      if (generation === contextGeneration.current) setChallenge(value)
+    } catch (cause) { if (generation === contextGeneration.current) setError(cause) }
+    finally { if (generation === contextGeneration.current) setBusy(false) }
   }
 
   const authorizeAndRead = async () => {
     if (!challenge || !conversationId || conversationRevision === undefined || !connectionId) return
+    const generation = contextGeneration.current
     setBusy(true); setError(''); setResult(null)
     try {
       const value = await request(`/api/connections/freelancer/${encodeURIComponent(connectionId)}/read`, post({
         challenge_id: challenge.challenge_id, conversation_id: conversationId,
         conversation_revision: conversationRevision,
       }))
-      setResult(value)
-      setChallenge(null)
-    } catch (cause) { setError(cause); setChallenge(null) }
-    finally { setBusy(false) }
+      if (generation === contextGeneration.current) { setResult(value); setChallenge(null) }
+    } catch (cause) { if (generation === contextGeneration.current) { setError(cause); setChallenge(null) } }
+    finally { if (generation === contextGeneration.current) setBusy(false) }
   }
 
   return <section className="freelancer-chat-tool" aria-labelledby="freelancer-chat-title">
