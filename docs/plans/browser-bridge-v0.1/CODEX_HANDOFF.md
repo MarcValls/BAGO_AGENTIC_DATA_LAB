@@ -1,5 +1,18 @@
 # Traspaso a Codex — BAGO5_ADL Browser Bridge v0.1
 
+## Actualización P0: main inspeccionado 2026-10-29
+
+**Lee primero:** [P0_MAIN_INVENTORY_20261029.md](./P0_MAIN_INVENTORY_20261029.md) y [snapshot JSON de SHA/blob](./P0_MAIN_INVENTORY_20261029.json). Base inspeccionada: `main@a9a4929fdbf51dd8872315de25ec8d277902c11c`. Es una comprobación remota del repositorio; **NO es una prueba de Chrome, Windows o del worktree local de Codex**.
+
+**Cambio importante desde el handoff histórico:** las PR #100 y #103 **ya fueron fusionadas en main**. P1 se materializó como esquema/contratos/vectores SPEC_ONLY, pero sigue sin activar `browser_native`, sin aceptación/FREEZE acreditado y sin pruebas reales del Browser Bridge. No utilices la base anterior `ae8e53e...` para una nueva implementación.
+
+**Conciliar antes de escribir:** `git fetch origin main`, comprobar identidad del worktree, `git status`, cambios sin publicar, ramas/misiones y scopes ocupados. La rama remota `work/freelancer-readonly-20261029` toca `src/connections/`, área adyacente. No interpretar 0 PRs abiertas como ausencia de trabajo local. El P0 de repositorio está actualizado pero el gate de Windows/worktree permanece **OPEN**.
+
+**Siguientes restricciones:** el registro GEX v1 solo admite `local/mcp` y solicita `agent`; ninguna operación `browser_native` debe pasar por un alias de fixture o por conexiones genéricas. Mantener el único ledger GEX, conformidad read-only, gesto real `activeTab` y estado `UNKNOWN / RECONCILIATION_REQUIRED` sin recibo terminal. P4 sigue bloqueado hasta extensión versionada aceptada y pruebas de integración.
+
+---
+
+
 ## Nota prioritaria para Codex — conformidad y estado pendiente (2026-10-29)
 
 **El puente todavía no está implementado por este plan.** Antes de P1, consulta [DOMAIN_CONFORMANCE_INTEGRATION.md](./DOMAIN_CONFORMANCE_INTEGRATION.md) y contrasta el estado actual de `main`. Se detectó un adaptador de dominio de solo lectura y 13 controles obligatorios integrados tras la base original del plan: `src/contracts/domain_conformance.py` y `docs/domain-conformance/`. La adenda define un **mapeo propuesto** hacia comprobaciones de Browser Bridge, no checks ya creados ni ejecutados.
