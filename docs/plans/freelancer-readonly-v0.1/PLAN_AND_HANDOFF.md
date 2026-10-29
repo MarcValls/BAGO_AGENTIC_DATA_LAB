@@ -1,6 +1,6 @@
 # Freelancer — primera fase de lectura para BAGO5/ADL
 
-Fecha: 2026-10-29. Estado: **CANDIDATO IMPLEMENTADO / INTEGRACION NATIVA PENDIENTE**.
+Fecha: 2026-10-29. Estado de la PR #104: **FUSIONADA**. Estado de esta revisión: **CORRECCIÓN CANDIDATA; VERIFICACIÓN Y NUEVA PR PENDIENTES**.
 No es una integración oficial publicada por Freelancer: es un adaptador propio de ADL para la API oficial.
 No declarar la cuenta conectada ni el producto VERIFIED a partir de estos archivos.
 
@@ -8,7 +8,9 @@ No declarar la cuenta conectada ni el producto VERIFIED a partir de estos archiv
 
 El usuario ha solicitado construir una capacidad nativa para conectar su cuenta, consultar proyectos y leer conversaciones. Las ofertas y mensajes corresponden a una fase posterior con autorización explícita. No hay autorización para gastar saldo, contratar servicios, aceptar adjudicaciones, crear hitos, adjuntar archivos, publicar ni enviar mensajes. No se incluyen datos económicos personales del usuario en este repositorio público.
 
-El objetivo final vive en la configuración y el chat existentes de ADL. Este incremento materializa el adaptador de lectura y sus pruebas, pero **no añade rutas, no registra herramientas de agente, no modifica pantallas y no toca la coordinación compartida**. Es una rama de revisión, no una release. La conexión y el acceso real a datos privados permanecen deshabilitados hasta completar los gates de host.
+La descripción inicial de PR #104 decía que no añadía rutas ni pantallas. Esa afirmación no corresponde al commit fusionado: incorpora rutas en `src/api/connection_routes.py`, servicio en `src/connections/service.py`, autorización en `src/connections/freelancer_authorization.py` y superficies de configuración/chat en React. No registra Freelancer como herramienta autónoma genérica; el chat usa un control específico. La corrección de esta revisión descarta respuestas de una petición si el componente ya pertenece a otra conversación.
+
+La integración de código está implementada, pero no equivale a integración real con una cuenta. La conexión usa un token OAuth previamente emitido; el flujo OAuth/PKCE automático y la verificación con cuenta real permanecen pendientes. Las operaciones de escritura siguen fuera de alcance.
 
 ## Baseline inspeccionada
 
@@ -28,7 +30,7 @@ El objetivo final vive en la configuración y el chat existentes de ADL. Este in
 5. Usar `frontend/src/components/ExternalConnections.tsx` y `src/api/connection_routes.py` como superficies candidatas. No abrir una nueva aplicación, otro gateway ni otro ledger.
 6. Mantener Chat como orquestador. El modelo recibe datos remotos como contenido no fiable; no puede convertir un anuncio o mensaje en instrucciones, autorización ni gasto.
 
-## Materializado en esta candidata
+## Alcance realmente fusionado en PR #104
 
 `src/connections/freelancer_readonly.py` implementa un transporte sin persistencia:
 
@@ -115,7 +117,7 @@ Consultadas el 2026-10-29. Validan formas de API y límites de la afirmación, n
 
 La implementación es propia; no incorpora el SDK LGPL ni copia sus módulos. No se verificó un contrato de tarifas de API; no se promete coste universal cero. En esta entrega no se llamó a la API ni se gastó saldo.
 
-## Actualización de implementación nativa (2026-10-29)
+## Estado documentado tras PR #104 (2026-10-29)
 
 Estado de esta candidata: **IMPLEMENTADO EN CÓDIGO / VERIFICADO LOCALMENTE CON DOBLES / CUENTA REAL Y GATE DE EQUIPO NOT_RUN**. La rama conserva el transporte de solo lectura de esta PR y añade las superficies de configuración/chat y la autorización vinculada a conversación. No es una publicación ni una validación con Freelancer real.
 
@@ -139,4 +141,25 @@ Verificación local sobre el candidato `codex/freelancer-native-integration-2026
 | `npm run build` | PASS; queda el aviso de bundle >500 kB |
 | `py_compile` de archivos cambiados y `git diff --check` | PASS |
 
-Pendiente y límites: no se usó cuenta/token real ni API sandbox/producción; no se hizo revisión visual en navegador; `teamctl` no pudo inicializar una misión nueva porque existe estado runtime legado, que se preservó. El flujo OAuth automático queda fuera de esta entrega. No declarar integración live ni gate terminal del equipo. Releer esta tabla si cambia el SHA candidato; las cifras pertenecen al estado verificado localmente.
+Pendiente y límites: no se usó cuenta/token real ni API sandbox/producción; no se hizo revisión visual en navegador; `teamctl` no pudo inicializar una misión nueva porque existe estado runtime legado, que se preservó. El flujo OAuth automático queda fuera de esta entrega. No declarar integración live ni gate terminal del equipo. Estas cifras pertenecen al candidato fusionado de la PR #104 y no se atribuyen a la rama de revisión.
+
+## Revisión independiente de regresión de contexto (2026-10-29)
+
+**Defecto observado en código fusionado:** `FreelancerChatTool` limpiaba el resultado al cambiar `conversationId` o revisión, pero una petición `/read` pendiente podía completar después y ejecutar `setResult` desde el callback capturado. `_owned_conversation` comprueba propiedad y existencia; `require_active_assistant_conversation` comprueba estado y revisión, pero cambiar la selección del frontend no necesariamente altera esos valores. La lectura quedaba autorizada inicialmente, aunque su contenido podía reaparecer en la interfaz de otra conversación.
+
+**Corrección candidata:** generación local de contexto para ignorar resultados, retos y errores de peticiones iniciadas bajo props anteriores. No cancela ni revoca una petición ya despachada al servicio remoto; la respuesta queda descartada en la interfaz. Se añade una prueba negativa de cambio de conversación mientras `/read` está pendiente.
+
+Estado de esta corrección: **IMPLEMENTADO** en el candidato `codex/freelancer-governance-review`.
+
+| Comprobación sobre esta corrección | Resultado |
+|---|---|
+| `python -m pytest tests/test_freelancer_native.py tests/test_freelancer_readonly.py -q` | PASS, 40 tests + 92 subtests |
+| `npm test -- --run tests/ui/freelancer/freelancer-chat.test.tsx` | PASS, 3 tests |
+| `npm run build` | PASS; aviso existente de bundle superior a 500 kB |
+| `git diff --check` | PASS |
+| `python scripts/generate_dynamic_readme.py` | FAIL: 28 fallos/1756 PASS/2 skipped/114 subtests; fallos en `test_l15_otel_bridge.py`, `test_public_web_repair.py` y `tests/development_mission/test_native_failures.py` (exportación OTLP), fuera de los archivos modificados |
+| `python scripts/generate_dynamic_readme.py --check --skip-tests` | PASS; 1786 casos recogidos; suite NOT_RUN en este modo |
+| `teamctl status` | PASS como lectura, pero la misión activa es otra y `LEGACY_UNVERIFIED`; no satisface el gate de esta corrección |
+| Credencial real, API sandbox/producción, OAuth/PKCE y Windows | NOT_RUN |
+
+No se modificaron README generados porque la ejecución requerida del generador falló antes de escribirlos. La corrección está lista para revisión en una PR, pero los fallos de suite y el gate de misión quedan visibles y no se presentan como PASS. No se usó cuenta real, token privado, OAuth live ni operación de escritura.
