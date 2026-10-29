@@ -114,3 +114,29 @@ Consultadas el 2026-10-29. Validan formas de API y límites de la afirmación, n
 - https://www.freelancer.com/support/project/messaging-on-projects — limitaciones de mensajería de la plataforma.
 
 La implementación es propia; no incorpora el SDK LGPL ni copia sus módulos. No se verificó un contrato de tarifas de API; no se promete coste universal cero. En esta entrega no se llamó a la API ni se gastó saldo.
+
+## Actualización de implementación nativa (2026-10-29)
+
+Estado de esta candidata: **IMPLEMENTADO EN CÓDIGO / VERIFICADO LOCALMENTE CON DOBLES / CUENTA REAL Y GATE DE EQUIPO NOT_RUN**. La rama conserva el transporte de solo lectura de esta PR y añade las superficies de configuración/chat y la autorización vinculada a conversación. No es una publicación ni una validación con Freelancer real.
+
+**Gate de arquitectura: NO_GO para producción y para declarar integración con la puerta común.** La ruta de lectura consume un reto propio y llama directamente a `FreelancerReadAdapter`; no despacha un permiso/efecto tipado por GEX ni usa su ledger. El reto local sirve como control de la candidata, pero no sustituye autorización humana durable. La comprobación de `Origin` es defensa CSRF/local y no autenticación ni aprobación humana. El inventario de Browser Bridge P0 deja GEX limitado a `fixture.read`; extenderlo requiere cerrar primero los contratos/versionado P1 y demostrar que esa fixture permanece intacta. No habilitar estas rutas en un runtime de producción hasta cerrar ese gate.
+
+- Configuración usa el almacén seguro existente (`_secure_keyring`), conserva solo metadatos en el registro y no incluye el token en respuestas. El alta acepta un token OAuth ya emitido; el flujo OAuth Authorization Code/PKCE automático no está implementado.
+- La verificación ejecuta `account.read`; solo una respuesta observada permite marcar la cuenta `connected`. Desconectar elimina la credencial local; no revoca el token en Freelancer.
+- El chat permite únicamente `projects.search`, `project.read`, `threads.list` y `messages.read`. La propuesta de lectura muestra operación y argumentos antes de una segunda acción explícita. Los cuerpos remotos se presentan como contenido no fiable y no se guardan en recibos ni se envían a `/api/chat`.
+- El reto es de un solo uso, limitado temporalmente y ligado a ID/revisión de conexión, cuenta, entorno, operación, argumentos y conversación activa. La cuenta Freelancer queda excluida de `discover` e `invoke` genéricos.
+- Se añadió revalidación después del transporte: si cambian la conexión o la conversación durante la lectura, no se entrega el resultado privado al chat.
+
+Verificación local sobre el candidato `codex/freelancer-native-integration-20261029` (base `a9a4929fdbf51dd8872315de25ec8d277902c11c`):
+
+| Comprobación | Resultado |
+|---|---|
+| Pruebas focalizadas Freelancer y conexiones existentes | PASS, 66 tests + 92 subtests |
+| Suite completa Python mediante `python scripts/generate_dynamic_readme.py` | PASS, 1765 tests |
+| `python scripts/generate_dynamic_readme.py --check --skip-tests` | PASS; suite NOT_RUN por el modo `--skip-tests` |
+| `npm test -- --run` | PASS, 820 tests en 88 archivos |
+| `npm run test:ui` | PASS, 47 tests |
+| `npm run build` | PASS; queda el aviso de bundle >500 kB |
+| `py_compile` de archivos cambiados y `git diff --check` | PASS |
+
+Pendiente y límites: no se usó cuenta/token real ni API sandbox/producción; no se hizo revisión visual en navegador; `teamctl` no pudo inicializar una misión nueva porque existe estado runtime legado, que se preservó. El flujo OAuth automático queda fuera de esta entrega. No declarar integración live ni gate terminal del equipo. Releer esta tabla si cambia el SHA candidato; las cifras pertenecen al estado verificado localmente.

@@ -4697,7 +4697,7 @@ app.include_router(create_development_router())
 
 app.state.gex_trusted_origins = tuple(_cors_origins)
 app.include_router(create_gex_router(load_agent=_load_model_enabled_agent, provider_resolver=provider_runtime.resolve))
-app.include_router(create_connection_router())
+app.include_router(create_connection_router(owned_conversation=_owned_conversation))
 app.include_router(create_agent_management_router(agents_dir=lambda: AGENTS_DIR, load_agent=_load_agent))
 app.include_router(create_communication_router(service_factory=_communication_service))
 from src.api.whatsapp_routes import create_whatsapp_router

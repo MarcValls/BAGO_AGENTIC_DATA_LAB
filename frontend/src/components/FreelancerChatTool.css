@@ -1,0 +1,15 @@
+.freelancer-chat-tool { min-height: 100%; box-sizing: border-box; padding: 18px; color: #dce8f5; }
+.freelancer-chat-tool header { max-width: 900px; }
+.freelancer-chat-tool h2, .freelancer-chat-tool h3 { margin: 0 0 8px; }
+.freelancer-chat-tool p { color: #aebfd1; font-size: .83rem; line-height: 1.5; overflow-wrap: anywhere; }
+.freelancer-chat-tool form { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; max-width: 760px; margin: 16px 0; }
+.freelancer-chat-tool label { display: grid; gap: 5px; font-size: .8rem; }
+.freelancer-chat-tool input, .freelancer-chat-tool select { box-sizing: border-box; min-width: 0; min-height: 36px; padding: 7px 9px; border: 1px solid #405773; border-radius: 4px; color: #e3edf8; background: #0c1724; font: inherit; }
+.freelancer-chat-tool button { justify-self: start; min-height: 34px; padding: 6px 10px; border: 1px solid #405773; border-radius: 4px; color: #e3edf8; background: #192d43; cursor: pointer; }
+.freelancer-chat-tool button:disabled { opacity: .55; cursor: wait; }
+.freelancer-read-review, .freelancer-read-result { max-width: 980px; margin: 16px 0; padding: 14px; border: 1px solid #405773; border-radius: 4px; background: #132236; }
+.freelancer-read-review button + button { margin-left: 8px; }
+.freelancer-read-result pre { max-height: 50vh; overflow: auto; white-space: pre-wrap; overflow-wrap: anywhere; padding: 10px; border: 1px solid #2d435a; background: #0b1521; font-size: .78rem; }
+.freelancer-read-review pre { max-height: 160px; overflow: auto; white-space: pre-wrap; overflow-wrap: anywhere; padding: 9px; border: 1px solid #2d435a; background: #0b1521; font-size: .78rem; }
+.freelancer-chat-error { color: #ffb7b7 !important; }
+@media (max-width: 720px) { .freelancer-chat-tool form { grid-template-columns: minmax(0, 1fr); } }

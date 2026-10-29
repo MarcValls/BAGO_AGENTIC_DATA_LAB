@@ -101,7 +101,146 @@ class ConnectionService:
 
     def all(self):
         with LOCK:
-            return {"connections": [self.public(r) for r in self._read().values()]}
+            # Freelancer uses the same registry/keyring but a stricter read-only
+            # API and never enters the generic MCP/HTTP invocation surface.
+            return {"connections": [self.public(r) for r in self._read().values()
+                                    if r.get("kind") != "freelancer_readonly"]}
+
+    def freelancer_all(self):
+        with LOCK:
+            rows = [self._freelancer_public(r) for r in self._read().values()
+                    if r.get("kind") == "freelancer_readonly"]
+        return {"connections": rows}
+
+    @staticmethod
+    def _freelancer_public(record):
+        return {key: record[key] for key in (
+            "id", "name", "kind", "environment", "state", "has_credential",
+            "account_id", "username", "display_name", "last_checked_at",
+            "last_error", "revision") if key in record}
+
+    def freelancer_create(self, *, name, environment, credential):
+        if (not isinstance(name, str) or not name.strip() or len(name.strip()) > 100
+                or any(ord(char) < 32 for char in name)):
+            raise ConnectionError("invalid_name", "Introduce un nombre válido de hasta 100 caracteres.")
+        if environment not in {"sandbox", "production"}:
+            raise ConnectionError("invalid_environment", "Selecciona sandbox o producción.")
+        # This endpoint only stores an already-issued OAuth token. It does not
+        # claim an account is connected until account.read has been observed.
+        from .freelancer_readonly import FreelancerReadError
+        try:
+            # Constructor validation without making a network call.
+            from .freelancer_readonly import FreelancerReadAdapter
+            FreelancerReadAdapter(credential, environment=environment)
+        except FreelancerReadError as error:
+            raise ConnectionError(error.code, "La credencial no tiene un formato válido.") from None
+        identifier = "conn_" + uuid.uuid4().hex
+        record = dict(id=identifier, name=name.strip(), kind="freelancer_readonly",
+                      environment=environment, state="configured_unverified",
+                      has_credential=True, account_id=None, username=None,
+                      display_name=None, last_checked_at=None, last_error=None,
+                      revision=uuid.uuid4().hex)
+        try:
+            _secure_keyring().set_password(SERVICE, identifier, credential)
+        except Exception:
+            raise ConnectionError("secure_store_unavailable", "No está disponible el almacén seguro de credenciales.", 503) from None
+        try:
+            with LOCK:
+                records = self._read()
+                records[identifier] = record
+                self._write(records)
+        except Exception:
+            try:
+                _secure_keyring().delete_password(SERVICE, identifier)
+            except Exception:
+                pass
+            raise
+        return self._freelancer_public(record)
+
+    def freelancer_require(self, identifier):
+        record = self.require(identifier)
+        if record.get("kind") != "freelancer_readonly":
+            raise ConnectionError("connection_type_mismatch", "La conexión no es una cuenta Freelancer de solo lectura.", 409)
+        return record
+
+    def freelancer_credentials(self, record):
+        if record.get("kind") != "freelancer_readonly" or record.get("has_credential") is not True:
+            raise ConnectionError("credential_unavailable", "No hay una credencial Freelancer configurada.", 503)
+        try:
+            secret = _secure_keyring().get_password(SERVICE, record["id"])
+        except Exception:
+            secret = None
+        if not secret:
+            raise ConnectionError("credential_unavailable", "No se pudo obtener la credencial segura.", 503)
+        return secret
+
+    async def freelancer_verify(self, identifier, *, adapter_factory=None):
+        from .freelancer_readonly import FreelancerReadAdapter, FreelancerReadError
+        record = self.freelancer_require(identifier)
+        token = self.freelancer_credentials(record)
+        try:
+            adapter = (adapter_factory or FreelancerReadAdapter)(token, environment=record["environment"])
+            response = await adapter.read("account.read", {})
+            account = response["data"]
+            account_id = account.get("id")
+            if type(account_id) is not int or account_id <= 0:
+                raise FreelancerReadError("invalid_response")
+            self._update(record, state="connected", account_id=account_id,
+                         username=account.get("username"), display_name=account.get("display_name"),
+                         last_checked_at=now(), last_error=None, revision=uuid.uuid4().hex)
+            return self._freelancer_public(record)
+        except FreelancerReadError as error:
+            self._update(record, state="error", last_checked_at=now(),
+                         last_error={"code": error.code, "message": "No se pudo verificar la cuenta Freelancer."},
+                         revision=uuid.uuid4().hex)
+            raise ConnectionError(error.code, "No se pudo verificar la cuenta Freelancer.", 502 if error.code not in {"authentication_failed", "access_denied"} else 403) from None
+
+    async def freelancer_read(self, identifier, *, operation, arguments, adapter_factory=None):
+        from .freelancer_readonly import FreelancerReadAdapter, FreelancerReadError
+        record = self.freelancer_require(identifier)
+        if record.get("state") != "connected" or type(record.get("account_id")) is not int:
+            raise ConnectionError("account_unverified", "Verifica primero la conexión de esta cuenta.", 409)
+        token = self.freelancer_credentials(record)
+        try:
+            adapter = (adapter_factory or FreelancerReadAdapter)(token, environment=record["environment"])
+            result = await adapter.read(operation, arguments)
+            latest = self.freelancer_require(identifier)
+            if (latest.get("revision") != record.get("revision")
+                    or latest.get("environment") != record.get("environment")
+                    or latest.get("account_id") != record.get("account_id")):
+                raise ConnectionError("connection_changed", "La cuenta cambió durante la lectura. No se devolverán los datos.", 409)
+            rows = result.get("data", {}).get("projects", result.get("data", {}).get("threads", result.get("data", {}).get("messages", [])))
+            output_count = len(rows) if isinstance(rows, list) else 1
+            receipt = {"receipt_id": "freelancer_read_" + uuid.uuid4().hex,
+                       "connection_id": record["id"], "connection_revision": record["revision"],
+                       "environment": record["environment"], "account_id": record["account_id"],
+                       "operation": operation, "arguments_sha256": digest(arguments),
+                       "output_count": output_count, "observed_at": now(),
+                       "scope": "Remote read observed; returned content is untrusted and not retained in this receipt."}
+            # Persist only metadata. The response and private message bodies are
+            # deliberately excluded from traces, receipts and logs.
+            raw = json.dumps(receipt, ensure_ascii=False, sort_keys=True, indent=2).encode("utf-8")
+            try:
+                self.evidence_dir.mkdir(parents=True, exist_ok=True)
+                path = self.evidence_dir / (receipt["receipt_id"] + ".json")
+                path.write_bytes(raw)
+            except OSError:
+                raise ConnectionError("evidence_unavailable", "No se pudo guardar el recibo privado de lectura.", 503) from None
+            receipt["evidence_sha256"] = hashlib.sha256(raw).hexdigest()
+            return {"connection": self._freelancer_public(record), **result, "receipt": receipt}
+        except FreelancerReadError as error:
+            if error.code in {"authentication_failed", "access_denied"}:
+                try:
+                    self._update(record, state="error", last_checked_at=now(),
+                                 last_error={"code": error.code, "message": "La credencial ya no permite leer esta cuenta."},
+                                 revision=uuid.uuid4().hex)
+                except ConnectionError:
+                    pass
+            raise ConnectionError(error.code, "No se pudo completar la lectura de Freelancer.", 502) from None
+
+    def freelancer_delete(self, identifier):
+        record = self.freelancer_require(identifier)
+        return self.delete(identifier)
 
     def require(self, connection_id):
         with LOCK:
@@ -201,6 +340,8 @@ class ConnectionService:
 
     async def discover(self, identifier, confirmed):
         record = self.require(identifier)
+        if record.get("kind") == "freelancer_readonly":
+            raise ConnectionError("operation_unavailable", "Las cuentas Freelancer no admiten descubrimiento ni ejecución genéricos.", 403)
         if confirmed is not True:
             raise ConnectionError("confirmation_required", "Confirma el descubrimiento antes de conectar.", 403)
         headers, secret = self.credentials(record)
@@ -257,6 +398,8 @@ class ConnectionService:
 
     async def invoke(self, identifier, data):
         record = self.require(identifier)
+        if record.get("kind") == "freelancer_readonly":
+            raise ConnectionError("operation_unavailable", "Las cuentas Freelancer solo admiten lecturas tipadas autorizadas.", 403)
         tool_name, args = data["tool_name"], data["arguments"]
         called, secret = False, ""
         if data["confirmed"] is not True:

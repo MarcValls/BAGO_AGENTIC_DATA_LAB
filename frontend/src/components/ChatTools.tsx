@@ -8,16 +8,18 @@ import './ChatTools.css'
 import Contacts from './Contacts'
 import Communications from './Communications'
 import type { AddressContact } from '../types/contacts'
+import FreelancerChatTool from './FreelancerChatTool'
 
 const tools = [
   { id: 'contacts', get label(){return t('commerce.contacts')} },
   { id: 'source', get label(){return t('commerce.consult_file')} },
   { id: 'relations', get label(){return t('commerce.knowledge_relationships')} },
   { id: 'catalog', get label(){return t('commerce.local_catalog')} },
+  { id: 'freelancer', get label(){return t('commerce.freelancer_read_only')} },
 ] as const
 type ToolId = typeof tools[number]['id']
 
-export default function ChatTools({conversationId, onOpenCommunication}: {conversationId?: string; onOpenCommunication?: (id: string) => void}) {
+export default function ChatTools({conversationId, conversationRevision, freelancerEnabled = false, onOpenCommunication}: {conversationId?: string; conversationRevision?: number; freelancerEnabled?: boolean; onOpenCommunication?: (id: string) => void}) {
   useI18n()
 
   const [selectedContact, setSelectedContact] = useState<AddressContact | null>(null)
@@ -72,6 +74,7 @@ export default function ChatTools({conversationId, onOpenCommunication}: {conver
         {activeTool === 'source' && <KnowledgeIngest />}
         {activeTool === 'relations' && <OntologyReview />}
         {activeTool === 'catalog' && <CatalogQuality />}
+        {activeTool === 'freelancer' && <FreelancerChatTool conversationId={conversationId} conversationRevision={conversationRevision} enabled={freelancerEnabled} />}
       </div>
     </dialog>, menuRef.current?.closest('.control-chat') ?? document.body)}
   </>

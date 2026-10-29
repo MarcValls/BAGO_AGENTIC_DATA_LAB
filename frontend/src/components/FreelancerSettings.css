@@ -1,0 +1,20 @@
+.freelancer-settings { margin-top: 16px; padding: 10px 14px; border: 1px solid #31465e; border-radius: 5px; background: #101e2d; }
+.freelancer-settings > summary { display: flex; align-items: baseline; gap: 10px; cursor: pointer; list-style: none; }
+.freelancer-settings > summary::-webkit-details-marker { display: none; }
+.freelancer-settings > summary::after { content: '⌄'; margin-left: auto; color: #adc4dc; }
+.freelancer-settings[open] > summary { margin-bottom: 12px; }
+.freelancer-settings > section { padding-top: 5px; }
+.freelancer-settings h3, .freelancer-settings h4 { margin: 0 0 7px; }
+.freelancer-settings header p, .freelancer-settings-note { margin: 6px 0 10px; color: #aebfd1; font-size: .8rem; line-height: 1.5; }
+.freelancer-settings form { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); align-items: end; gap: 10px; }
+.freelancer-settings label { display: grid; gap: 4px; min-width: 0; font-size: .78rem; }
+.freelancer-settings input, .freelancer-settings select { box-sizing: border-box; width: 100%; min-height: 34px; padding: 6px 8px; border: 1px solid #405773; border-radius: 4px; color: #e5edf7; background: #0c1724; font: inherit; }
+.freelancer-settings button { min-height: 32px; padding: 5px 9px; border: 1px solid #405773; border-radius: 4px; color: #e2ecf7; background: #1b3048; cursor: pointer; }
+.freelancer-settings button:disabled { opacity: .55; cursor: wait; }
+.freelancer-connections { margin-top: 14px; }
+.freelancer-connection { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 10px 0; border-top: 1px solid #2d435a; }
+.freelancer-connection > div:first-child { display: grid; gap: 4px; min-width: 0; font-size: .78rem; overflow-wrap: anywhere; }
+.freelancer-connection > div:first-child span { color: #aebfd1; }
+.freelancer-actions { display: flex; flex-wrap: wrap; gap: 7px; }
+.freelancer-error { color: #ffb7b7 !important; }
+@media (max-width: 760px) { .freelancer-settings form { grid-template-columns: minmax(0, 1fr); } .freelancer-connection { align-items: flex-start; flex-direction: column; } }
