@@ -52,8 +52,8 @@ terminal, without silently becoming the CI result for another candidate.
 
 ## Corporate landing and progressive detail
 
-The current presentation follows the user's explicit request for an extensive,
-visual corporate BAGO README. Its principal sections remain visible: laboratory,
+The full technical reference in README_DETAILS.md preserves the extensive
+corporate presentation. Its principal sections remain visible: laboratory,
 chat-led frontend, fresh screenshots, data, agents/tasks/evaluation, providers,
 governed execution, architecture, demos, executed verification, installation,
 observability, capability status and documentation. Each section contains a

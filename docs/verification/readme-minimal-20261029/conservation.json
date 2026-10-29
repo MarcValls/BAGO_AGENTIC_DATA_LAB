@@ -1,0 +1,177 @@
+{
+  "base": "a9a4929fdbf51dd8872315de25ec8d277902c11c",
+  "result": "PASS",
+  "files_verified": 34,
+  "files": [
+    {
+      "path": ".bago/canon/ARCHITECTURE.md",
+      "sha256": "e02fcda898504f402b4f6374e4670eb5df96189f64c039ddf28bd7493a3ad0bb",
+      "result": "PASS"
+    },
+    {
+      "path": ".bago/canon/JOB_SKILL_MATRIX.md",
+      "sha256": "d8da759701988d4ba9a73a9be904847f63a7691501b0d8b1c30e569907097ce6",
+      "result": "PASS"
+    },
+    {
+      "path": ".bago/canon/LAB_CONTRACT.md",
+      "sha256": "0cd86888c828e76728c98e861e609d75dd1a84f604686634df77e26143a182a7",
+      "result": "PASS"
+    },
+    {
+      "path": ".bago/canon/LEARNING_LEDGER.md",
+      "sha256": "7c438e17f92e77544ecf710229ddba391413df2013589877873bb24e6e34ee69",
+      "result": "PASS"
+    },
+    {
+      "path": ".bago/canon/ROADMAP.md",
+      "sha256": "a0f31e20dded70f59218000334a6d90227e3a4d2c4b76e49363bb780051e2537",
+      "result": "PASS"
+    },
+    {
+      "path": ".bago/canon/STATE.md",
+      "sha256": "56f9d04cc620b03a26af5c0ec3a428b5c941b3a8e77aab21e012ebc1a266f878",
+      "result": "PASS"
+    },
+    {
+      "path": "README_DETAILS.md",
+      "sha256": "7a2682fea70897ae318537835912743ed0f1193922ada9a7d6c04b41b11ef003",
+      "result": "PASS"
+    },
+    {
+      "path": "README_PREVIEW.md",
+      "sha256": "2483ff4d7cc009a3a90dc65eb3383129fe44fea318c7b3f361c94408f7bf0920",
+      "result": "PASS"
+    },
+    {
+      "path": "docs/assets/bago-readme-banner.svg",
+      "sha256": "5f7b7d773e8433df66402e49e1f1adba0f05f39d21b6a8854b9bc307a973d9d5",
+      "result": "PASS"
+    },
+    {
+      "path": "docs/assets/readme-banner/00-hero.svg",
+      "sha256": "1c91f641652c8582a06bcbd700fff0985d328835ff913f1f71f0f14415c4ae05",
+      "result": "PASS"
+    },
+    {
+      "path": "docs/assets/readme-banner/01-map.svg",
+      "sha256": "8c3ee0262c1c370631e23a733bb0d92628eb45dcd277c9b89854e23d5eac5415",
+      "result": "PASS"
+    },
+    {
+      "path": "docs/assets/readme-banner/02-workspace.svg",
+      "sha256": "9486b17c33b000e3f78f9c383d61b022bf76f2faa05e74eb749399e6965c2663",
+      "result": "PASS"
+    },
+    {
+      "path": "docs/assets/readme-banner/03-intelligence.svg",
+      "sha256": "ba0570d2ea27d4d78108fbf45fc15691d42310b1f62d2a363224797d6502ee8b",
+      "result": "PASS"
+    },
+    {
+      "path": "docs/assets/readme-banner/04-governance.svg",
+      "sha256": "68e22e22a71a12151cb3654de5654feaec1696ce8c974841fcc14591500677a4",
+      "result": "PASS"
+    },
+    {
+      "path": "docs/assets/readme-banner/05-inspection.svg",
+      "sha256": "211731214ebbec085f3d1a933e4b0d723b1c512aea0ca1f4c2251dad7b94c989",
+      "result": "PASS"
+    },
+    {
+      "path": "docs/assets/readme-banner/06-demos.svg",
+      "sha256": "d6c031e8ca4681a9a9ed245d01f0ac8968be8c7ca32b1b94025cb5790925fb07",
+      "result": "PASS"
+    },
+    {
+      "path": "docs/assets/readme-banner/07-operations.svg",
+      "sha256": "8c6314bc604bce6430c60af465b22ddf129e6ff47cc8bd58b29cbce6678496c4",
+      "result": "PASS"
+    },
+    {
+      "path": "docs/assets/readme-banner/08-sources.svg",
+      "sha256": "3f2950f0e24e4da191164176e3e0e4a78e7fad5298445d56e727c2d5363fa78a",
+      "result": "PASS"
+    },
+    {
+      "path": "docs/assets/readme-visual/architecture.svg",
+      "sha256": "75f8bde8c8f95fc276e7a9b8eece6b7506df8854a8d05c02a407e72aad785e86",
+      "result": "PASS"
+    },
+    {
+      "path": "docs/assets/readme-visual/capabilities.svg",
+      "sha256": "3c123f70f6aba5de4491eebbf9db630c51d174e9b91508c037fec86e33e8cb7b",
+      "result": "PASS"
+    },
+    {
+      "path": "docs/assets/readme-visual/cdp.svg",
+      "sha256": "44bc05fd8f6211e961b630401ecadea4ef09d90f2300ac14c2e6c5f0258dfd0f",
+      "result": "PASS"
+    },
+    {
+      "path": "docs/assets/readme-visual/governance.svg",
+      "sha256": "52890b8b9081e946a84a739042a685fdb528fbda8d22323c26ae73f387d7059c",
+      "result": "PASS"
+    },
+    {
+      "path": "docs/assets/readme-visual/journey.svg",
+      "sha256": "57fce198f6785a4d76dbce26c71304707f0f5d4c135e8604dec20742395197fe",
+      "result": "PASS"
+    },
+    {
+      "path": "docs/assets/readme-visual/knowledge.svg",
+      "sha256": "aaa23bdd0b06cc751750c68b4739b73e2baf0cd42c73d8792e99a448a60d995b",
+      "result": "PASS"
+    },
+    {
+      "path": "docs/assets/readme-visual/nav-architecture.svg",
+      "sha256": "2aaeab8c3cccd83918603dc874c33b38b219ec78d39d7f10e04f70797d754af0",
+      "result": "PASS"
+    },
+    {
+      "path": "docs/assets/readme-visual/nav-chat.svg",
+      "sha256": "4a6b91aa67f9639a1e9603c14595d525ac25f76da23b02a4f34020203945667b",
+      "result": "PASS"
+    },
+    {
+      "path": "docs/assets/readme-visual/nav-data.svg",
+      "sha256": "0848035abede1892d52147c6d90840f3d39f0f023623f306fa59312160fa0717",
+      "result": "PASS"
+    },
+    {
+      "path": "docs/assets/readme-visual/nav-evidence.svg",
+      "sha256": "f985253a0108f1a3feeb5940266fce276c3c2eb781f5b328abb9fab28c67f685",
+      "result": "PASS"
+    },
+    {
+      "path": "docs/assets/readme-visual/nav-governance.svg",
+      "sha256": "065f962baf4a161f7c478d41e22561490bb06061ee0defb0417db39853f9cacc",
+      "result": "PASS"
+    },
+    {
+      "path": "docs/assets/readme-visual/nav-start.svg",
+      "sha256": "f9551afd1227a81161dfbe010be9cd275d6a3fdd0bd7a4eef73bddd8540a14fb",
+      "result": "PASS"
+    },
+    {
+      "path": "docs/assets/readme-visual/portability.svg",
+      "sha256": "35bddb03f25b5798456b5f6e5b4e7e9537456666657ac7df5b6c224252235f8d",
+      "result": "PASS"
+    },
+    {
+      "path": "docs/assets/readme-visual/status.svg",
+      "sha256": "d7c99c8175360bda29d03d29b14eca7e4f95e0ecd2e12d9a73f56e66a1995640",
+      "result": "PASS"
+    },
+    {
+      "path": "docs/readme_manifest.json",
+      "sha256": "5fb31c93d4f556e0c1ddf1cf2b43161277050ef2d692d97c79b36ddf331bb496",
+      "result": "PASS"
+    },
+    {
+      "path": "docs/readme_visual_manifest.json",
+      "sha256": "e4d6ac17febf0b233748e0901ea8d6a78db133dd4be7d3616bfb43bc1d9d930a",
+      "result": "PASS"
+    }
+  ]
+}

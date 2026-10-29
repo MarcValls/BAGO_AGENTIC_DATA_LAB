@@ -2,6 +2,7 @@ import {useI18n,t,localMessage,errorMessage,apiError,formatDate,formatNumber} fr
 import { useEffect, useState } from 'react'
 import type { FormEvent } from 'react'
 import './ExternalConnections.css'
+import FreelancerSettings from './FreelancerSettings'
 
 type Kind = 'docker_mcp' | 'mcp' | 'http_api'
 type Effect = 'READ' | 'WRITE'
@@ -204,6 +205,7 @@ export default function ExternalConnections() {
       {result.result !== undefined && <details open><summary>{t("core.ExternalConnections.service_response_1a7de5")}</summary><pre>{JSON.stringify(result.result, null, 2)}</pre></details>}
       <p>{t("core.ExternalConnections.the_receipt_records_the_observed_call_it_d77186")}</p>
     </section>}
+    <FreelancerSettings />
   </section>
 }
 

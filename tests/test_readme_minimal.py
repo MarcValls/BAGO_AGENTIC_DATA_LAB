@@ -30,6 +30,13 @@ def test_minimal_content_and_deterministic_output(monkeypatch):
     for heading in ('Qué ofrece', 'Del chat a una operación verificable', 'La aplicación', 'Probar ADL', 'Documentación y evidencia'):
         assert f'## {heading}' in first
     assert first.count('![') == 1
+    for target in (
+        'docs/agent-chat-control/LOCAL_SETUP.md', 'docs/one_command_demo.md',
+        '.bago/canon/ARCHITECTURE.md', 'SECURITY.md', 'README_DETAILS.md',
+        'docs/governed-execution/GEX_V1_NORMATIVE_CONTRACT.md',
+        'docs/observability_evals.md', '.bago/canon/STATE.md',
+    ):
+        assert f']({target})' in first
     assert '2026-10-22' in first and 'no acredita por sí sola' in first
     assert 'fixtures; no valida servicios cloud en producción' in first
     assert len(configuration()['minimal']['areas']) == 4

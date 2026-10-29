@@ -1,0 +1,39 @@
+test_account_identity_projection (test_freelancer_readonly.ReadContractTests.test_account_identity_projection) ... ok
+test_active_is_explicit (test_freelancer_readonly.ReadContractTests.test_active_is_explicit) ... ok
+test_active_strict_boolean (test_freelancer_readonly.ReadContractTests.test_active_strict_boolean) ... ok
+test_all_descriptors_read_only_and_independent (test_freelancer_readonly.ReadContractTests.test_all_descriptors_read_only_and_independent) ... ok
+test_bounded_response (test_freelancer_readonly.ReadContractTests.test_bounded_response) ... ok
+test_cancel_propagates (test_freelancer_readonly.ReadContractTests.test_cancel_propagates) ... ok
+test_collection_limit_enforced (test_freelancer_readonly.ReadContractTests.test_collection_limit_enforced) ... ok
+test_credential_echo_rejected (test_freelancer_readonly.ReadContractTests.test_credential_echo_rejected) ... ok
+test_credential_validation (test_freelancer_readonly.ReadContractTests.test_credential_validation) ... ok
+test_empty_lists_valid_not_successful_job_claim (test_freelancer_readonly.ReadContractTests.test_empty_lists_valid_not_successful_job_claim) ... ok
+test_environment_validation (test_freelancer_readonly.ReadContractTests.test_environment_validation) ... ok
+test_escaped_credential_echo_rejected (test_freelancer_readonly.ReadContractTests.test_escaped_credential_echo_rejected) ... ok
+test_exception_does_not_disclose_token (test_freelancer_readonly.ReadContractTests.test_exception_does_not_disclose_token) ... ok
+test_extra_parameters_denied (test_freelancer_readonly.ReadContractTests.test_extra_parameters_denied) ... ok
+test_header_only_and_pinned_record (test_freelancer_readonly.ReadContractTests.test_header_only_and_pinned_record) ... ok
+test_http_errors_sanitized_and_not_retried (test_freelancer_readonly.ReadContractTests.test_http_errors_sanitized_and_not_retried) ... ok
+test_invalid_ids (test_freelancer_readonly.ReadContractTests.test_invalid_ids) ... ok
+test_invalid_json_envelopes (test_freelancer_readonly.ReadContractTests.test_invalid_json_envelopes) ... ok
+test_malformed_collections_fail_closed (test_freelancer_readonly.ReadContractTests.test_malformed_collections_fail_closed) ... ok
+test_missing_or_nonobject_arguments (test_freelancer_readonly.ReadContractTests.test_missing_or_nonobject_arguments) ... ok
+test_no_write_transport_or_file_api (test_freelancer_readonly.ReadContractTests.test_no_write_transport_or_file_api) ... ok
+test_one_selected_thread (test_freelancer_readonly.ReadContractTests.test_one_selected_thread) ... ok
+test_pagination_bounds (test_freelancer_readonly.ReadContractTests.test_pagination_bounds) ... ok
+test_project_id_and_scope (test_freelancer_readonly.ReadContractTests.test_project_id_and_scope) ... ok
+test_projects_include_nonactive_by_default (test_freelancer_readonly.ReadContractTests.test_projects_include_nonactive_by_default) ... ok
+test_query_validation (test_freelancer_readonly.ReadContractTests.test_query_validation) ... ok
+test_response_message_scope (test_freelancer_readonly.ReadContractTests.test_response_message_scope) ... ok
+test_response_project_scope (test_freelancer_readonly.ReadContractTests.test_response_project_scope) ... ok
+test_secret_in_query_denied_before_transport (test_freelancer_readonly.ReadContractTests.test_secret_in_query_denied_before_transport) ... ok
+test_secret_not_in_repr (test_freelancer_readonly.ReadContractTests.test_secret_not_in_repr) ... ok
+test_thread_count_bounds (test_freelancer_readonly.ReadContractTests.test_thread_count_bounds) ... ok
+test_thread_metadata_no_preview_or_attachments (test_freelancer_readonly.ReadContractTests.test_thread_metadata_no_preview_or_attachments) ... ok
+test_timeout_is_explicit (test_freelancer_readonly.ReadContractTests.test_timeout_is_explicit) ... ok
+test_unknown_write_operations_have_no_transport (test_freelancer_readonly.ReadContractTests.test_unknown_write_operations_have_no_transport) ... ok
+
+----------------------------------------------------------------------
+Ran 34 tests in 0.020s
+
+OK
