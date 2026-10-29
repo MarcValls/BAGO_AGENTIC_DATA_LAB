@@ -1,0 +1,94 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://bago.local/contracts/05_DOMAIN_MANIFEST.schema.json",
+  "title": "ADL Domain Manifest v1.0 (reconstructed canonical source)",
+  "description": "Canonical replacement authored on 2026-10-29 from the requirements supplied for ADL-CONTEXT-ARCHITECTURE-001. It is not recovered historical source bytes.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["contract", "domain_id", "version", "candidate_sha256", "scope", "sources", "operations", "capabilities", "interfaces", "relations", "conformance"],
+  "properties": {
+    "contract": {"const": "adl.domain_manifest.v1"},
+    "domain_id": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$"},
+    "version": {"type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"},
+    "candidate_sha256": {"$ref": "#/$defs/sha256"},
+    "supersedes": {"type": ["string", "null"]},
+    "scope": {
+      "type": "object", "additionalProperties": false,
+      "required": ["in_scope", "out_of_scope"],
+      "properties": {
+        "in_scope": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}},
+        "out_of_scope": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}}
+      }
+    },
+    "sources": {"type": "array", "items": {"$ref": "#/$defs/source"}},
+    "operations": {"type": "array", "items": {"$ref": "#/$defs/operation"}},
+    "capabilities": {"type": "array", "items": {"type": "string", "minLength": 1}},
+    "interfaces": {"type": "array", "items": {"type": "string", "minLength": 1}},
+    "relations": {"type": "array", "items": {"$ref": "#/$defs/relation"}},
+    "conformance": {"$ref": "#/$defs/conformance"}
+  },
+  "$defs": {
+    "sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "source": {
+      "type": "object", "additionalProperties": false,
+      "required": ["id", "role", "authority", "validity", "uri", "revision"],
+      "properties": {
+        "id": {"type": "string", "minLength": 1},
+        "role": {"enum": ["CANONICAL", "AUTHORITATIVE_STATE", "EVIDENCE", "REFERENCE", "MEMORY", "INFERENCE", "EXPERIMENTAL"]},
+        "authority": {"enum": ["CANONICAL", "VERIFIED", "PROPOSED", "EXPERIMENTAL", "DEPRECATED"]},
+        "validity": {"enum": ["CURRENT", "SUPERSEDED", "INVALID", "UNKNOWN"]},
+        "uri": {"type": "string", "minLength": 1},
+        "revision": {"type": "string", "minLength": 1}
+      }
+    },
+    "operation": {
+      "type": "object", "additionalProperties": false,
+      "required": ["id", "effects", "capabilities", "evidence_requirements"],
+      "properties": {
+        "id": {"type": "string", "minLength": 1},
+        "effects": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}},
+        "capabilities": {"type": "array", "items": {"type": "string", "minLength": 1}},
+        "evidence_requirements": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}}
+      }
+    },
+    "relation": {
+      "type": "object", "additionalProperties": false,
+      "required": ["kind", "target", "version"],
+      "properties": {
+        "kind": {"enum": ["depends_on", "hands_off_to", "supersedes", "conflicts_with"]},
+        "target": {"type": "string", "minLength": 1},
+        "version": {"type": "string", "minLength": 1}
+      }
+    },
+    "control": {
+      "type": "object", "additionalProperties": false,
+      "required": ["id", "result", "evidence_refs"],
+      "properties": {
+        "id": {"enum": ["AUTH-001", "SCOPE-001", "SOURCE-001", "STATE-001", "OPER-001", "CAP-001", "EVID-001", "MEM-001", "ROUTE-001", "REL-001", "VER-001", "SEM-001", "KERNEL-001"]},
+        "result": {"enum": ["PASS", "FAIL", "BLOCKED", "N/A"]},
+        "evidence_refs": {"type": "array", "items": {"type": "string", "minLength": 1}}
+      }
+    },
+    "conformance": {
+      "type": "object", "additionalProperties": false,
+      "required": ["result", "open_critical_conflicts", "controls"],
+      "properties": {
+        "result": {"enum": ["CONFORMANT", "NON_CONFORMANT", "BLOCKED"]},
+        "open_critical_conflicts": {"type": "array", "items": {"type": "string", "minLength": 1}},
+        "controls": {"type": "array", "items": {"$ref": "#/$defs/control"}}
+      },
+      "allOf": [{
+        "if": {"properties": {"result": {"const": "CONFORMANT"}}, "required": ["result"]},
+        "then": {
+          "properties": {
+            "open_critical_conflicts": {"maxItems": 0},
+            "controls": {
+              "minItems": 13,
+              "items": {"properties": {"result": {"const": "PASS"}, "evidence_refs": {"minItems": 1}}}
+            }
+          }
+        }
+      }]
+    }
+  }
+}

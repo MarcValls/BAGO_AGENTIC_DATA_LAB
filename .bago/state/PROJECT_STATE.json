@@ -6,6 +6,19 @@
   "goals_directory": ".bago/goals",
   "team_kit_directory": ".bago/team/kit",
   "team_runtime_directory": ".bago/team/runtime",
+  "current_work": {
+    "goal": "adl-domain-conformance-f003-20261029",
+    "status": "VERIFIED",
+    "branch": "codex/adl-domain-conformance-f003-20261029",
+    "base_sha": "ae8e53e14afa763f816eac9e11ddc0e8a24cdc56",
+    "scope": "read-only adapter for the ADL canonical reconstructed domain manifest v1.0; historical byte compatibility and activation integration remain NOT_RUN",
+    "evidence": {
+      "focused_tests": "PASS: 34 manifest, negative-vector, and delivery-review preservation tests",
+      "whatsapp_preservation_tests": "PASS: 28",
+      "generated_readme_full_suite": "PASS: 1683 passed; direct generator exit code 0",
+      "generated_readme_check": "PASS: 1686 collected, suite NOT_RUN by check"
+    }
+  },
   "migration": {
     "goal": ".bago/goals/context-unification/goal.md",
     "status": "VALIDATED",
