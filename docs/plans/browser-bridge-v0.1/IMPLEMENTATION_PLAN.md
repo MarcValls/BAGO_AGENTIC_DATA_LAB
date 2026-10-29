@@ -142,11 +142,17 @@ Conservar los comportamientos existentes de diálogo/composer corregidos por PR 
 
 Todos los trabajos siguientes están **PROPUESTOS**, no READY/DONE. Las PR son unidades sugeridas, no PR ya creadas.
 
-### P0 — Inventario y baseline
+### P0 — Inventario y baseline (actualización de main: 2026-10-29)
 
-Releer `origin/main` y registrar SHA, estado de worktree, PR concurrentes y ámbitos ocupados. Buscar implementaciones previas de browser/Native Messaging antes de añadir archivos. Inspeccionar gateway, sandbox, ledger, identidad, permisos, conexiones, UI y suites afectadas. Ejecutar baseline según CI actual y guardar versiones/resultados; no trasladar números históricos de tests.
+**Inventario actual:** [P0_MAIN_INVENTORY_20261029.md](./P0_MAIN_INVENTORY_20261029.md) · [snapshot de rutas y blobs JSON](./P0_MAIN_INVENTORY_20261029.json).
 
-**Salida:** mapa de reutilización, mapa de confianza, ruta exacta de integración, matriz de conservación y alcance de implementación aceptado. **Gate:** ninguna dependencia crítica se declara verificada solo por existir código. Si el perfil GEX no permite extensión segura, bloquear integración y mantener únicamente harness de desarrollo.
+**Base GitHub inspeccionada:** `main@a9a4929fdbf51dd8872315de25ec8d277902c11c` (incluye PR #100 y #103 fusionadas). Este registro sustituye **solo la referencia de inventario P0** anterior; no reescribe los resultados históricos ni convierte en ejecutor a P1.
+
+**Dictamen:** `P0_STATIC_INVENTORY_VERIFIED` / `P0_GATE_OPEN`. Se identificaron autoridades GEX, fixture, ledger, conformidad, API, permisos, UI, alternativas Brave CDP y HTTPS público, pruebas y CI atribuida al SHA. Los artefactos P1 en main son contratos candidatos; `browser_native` sigue sin integración runtime y GEX v1 conserva `local/mcp` con `agent` obligatorio.
+
+**Antes de programar:** confirmar en el Windows de Codex el worktree y su estado, rama/base fresca, proyectos y herramientas en ejecución, scopes ocupados y baseline de regresión. Revisar la rama remota paralela `work/freelancer-readonly-20261029` para evitar conflictos en conexiones. La existencia de CI PASS sobre main no demuestra permisos `activeTab`, Native Messaging ni reconciliación del Browser Bridge.
+
+**Gate:** mantener la integración P4 bloqueada hasta aceptar formalmente la extensión versionada GEX y mapping semántico de los 13 controles; P2/P3 solo pueden empezar de manera aislada tras la revisión contractual correspondiente, sin activar autoridad ni acceder a pestañas reales por atajos. No declarar P0 completamente cerrado sin los controles locales/Windows previstos.
 
 ### P1 — Contratos y vectores de conformidad
 
