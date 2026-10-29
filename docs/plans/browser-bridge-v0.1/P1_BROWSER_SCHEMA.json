@@ -160,7 +160,7 @@
         "origin": {
           "type": "string",
           "format": "uri",
-          "pattern": "^https?://"
+          "pattern": "^https?://(?:[A-Za-z0-9.-]+|\\[[0-9a-fA-F:]+\\])(?::[1-9][0-9]{0,4})?$"
         },
         "invocation_event_ref": {
           "type": "string",
@@ -269,7 +269,7 @@
         "origin": {
           "type": "string",
           "format": "uri",
-          "pattern": "^https?://"
+          "pattern": "^https?://(?:[A-Za-z0-9.-]+|\\[[0-9a-fA-F:]+\\])(?::[1-9][0-9]{0,4})?$"
         },
         "initiator_kind": {
           "enum": [
