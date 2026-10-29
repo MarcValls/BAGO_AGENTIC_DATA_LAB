@@ -262,3 +262,8 @@ Fuentes primarias Chrome consultadas el 2026-10-29:
 - C2: [activeTab](https://developer.chrome.com/docs/extensions/develop/concepts/activeTab)
 - C3: [Scripting API](https://developer.chrome.com/docs/extensions/reference/api/scripting)
 - C4: [Service worker lifecycle](https://developer.chrome.com/docs/extensions/develop/concepts/service-workers/lifecycle)
+
+
+## Actualización diferencial — coordinación con Freelancer (2026-10-29)
+
+Leer [P0_FREELANCER_COORDINATION_DELTA_20261029.md](./P0_FREELANCER_COORDINATION_DELTA_20261029.md) antes de reservar o modificar API, servicio de conexiones o chat. Conserva sin alteración el inventario P0 de 34 blobs referido a `main@a9a4929fdbf51dd8872315de25ec8d277902c11c`; documenta la candidata #104 `139c79cdda05b838e6efe789230c1a79e316ebc9`, su divergencia con la punta actual de main, dependencias y reservas compartidas. `P0_GATE_OPEN` se mantiene.
