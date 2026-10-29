@@ -116,6 +116,9 @@ def test_profile_rejects_privilege_escalation(field, value):
 @pytest.mark.parametrize("field,value", [
     ("extension_id", "untrusted-extension"),
     ("origin", "chrome://settings"),
+    ("origin", "https://user:token@example.test"),
+    ("origin", "https://example.test/path?token=value"),
+    ("origin", "https://example.test#fragment"),
     ("grant_claim", "LLM_INSTRUCTION"),
     ("tab_id", -1),
 ])
@@ -132,6 +135,7 @@ def test_binding_rejects_invalid_grant_shape(field, value):
     ("limits", {"max_output_bytes": 131072, "timeout_ms": 5000}),
     ("message_auth_tag", "unchecked"),
     ("dispatch_intent_event_id", ""),
+    ("origin", "https://example.test/private"),
 ])
 def test_dispatch_rejects_bypass_shape(field, value):
     dispatch = copy.deepcopy(samples()[2])
