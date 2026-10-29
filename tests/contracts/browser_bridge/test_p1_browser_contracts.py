@@ -78,17 +78,35 @@ def samples():
         "output_bytes": 32, "truncated": False, "observed_at": STAMP,
         "error_code": None,
     }
-    return profile, binding, dispatch, observation
+    request_v2 = {
+        "contract_version": "adl.browser.gex-request.v2",
+        "request_id": "0ab73c0b-87a0-44aa-88f0-95cb488c0939",
+        "run_id": "run-1", "proposal_id": "proposal-1",
+        "principal": {"issuer": "adl-auth", "subject": "user-1",
+                      "session_binding": H, "auth_strength": "verified"},
+        "initiator": {"kind": "HUMAN", "actor_ref": "user-1"},
+        "adl_instance_id": "adl-instance-1",
+        "workspace_binding_fingerprint": H,
+        "capability_id": "browser.document.read",
+        "capability_version": "0.1.0",
+        "registry_digest": H, "policy_revision": "browser-read-p1",
+        "shared_tab_binding_id": H, "document_epoch": "nav-1",
+        "origin": "https://example.test",
+        "constraints": {"max_output_bytes": 65536, "timeout_ms": 5000},
+        "created_at": STAMP, "expires_at": STAMP,
+        "nonce": "nonce-1",
+    }
+    return profile, binding, dispatch, observation, request_v2
 
 
-def test_schema_compiles_and_has_four_disjoint_contracts():
+def test_schema_compiles_and_has_five_disjoint_contracts():
     Draft202012Validator.check_schema(SCHEMA)
     assert SCHEMA["$schema"].endswith("/2020-12/schema")
     for item in samples():
         assert VALIDATOR.is_valid(item), list(VALIDATOR.iter_errors(item))
 
 
-@pytest.mark.parametrize("index", range(4))
+@pytest.mark.parametrize("index", range(5))
 def test_closed_messages_reject_unknown_fields(index):
     item = copy.deepcopy(samples()[index])
     item["can_execute_unrestricted"] = True
@@ -155,6 +173,38 @@ def test_observation_cannot_become_terminal_receipt(mutator):
     mutator(observation)
     with pytest.raises(ValidationError):
         VALIDATOR.validate(observation)
+
+
+@pytest.mark.parametrize("initiator", [
+    {"kind": "HUMAN", "actor_ref": "user-1"},
+    {"kind": "AGENT", "actor_ref": "registered-agent-1",
+     "agent_config_digest": H, "agent_revision": "v1"},
+])
+def test_versioned_gex_request_accepts_explicit_initiator(initiator):
+    request = copy.deepcopy(samples()[4])
+    request["initiator"] = initiator
+    assert VALIDATOR.is_valid(request), list(VALIDATOR.iter_errors(request))
+
+
+@pytest.mark.parametrize("initiator", [
+    {"kind": "HUMAN", "actor_ref": "user-1", "agent_id": "fake"},
+    {"kind": "AGENT", "actor_ref": "agent-1"},
+    {"kind": "AGENT", "actor_ref": "agent-1", "agent_config_digest": "unchecked",
+     "agent_revision": "v1"},
+    {"kind": "SYSTEM", "actor_ref": "admin"},
+])
+def test_versioned_gex_request_rejects_fake_or_incomplete_initiators(initiator):
+    request = copy.deepcopy(samples()[4])
+    request["initiator"] = initiator
+    with pytest.raises(ValidationError):
+        VALIDATOR.validate(request)
+
+
+def test_versioned_gex_request_cannot_be_bound_to_other_capabilities():
+    request = copy.deepcopy(samples()[4])
+    request["capability_id"] = "browser.tab.click"
+    with pytest.raises(ValidationError):
+        VALIDATOR.validate(request)
 
 
 def reference_state(given: dict) -> dict:
