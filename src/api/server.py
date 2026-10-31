@@ -3798,6 +3798,7 @@ def _record_agent_chat_trace(
     trace_id = "trace-" + uuid.uuid4().hex[:16]
     event_id = "event-" + uuid.uuid4().hex[:16]
     run_id = "agent-chat-" + uuid.uuid4().hex
+    wall_clock_regressed = ended_at_ns < started_at_ns
     event = TraceEvent(
         event_id=event_id,
         trace_id=trace_id,
@@ -3813,7 +3814,11 @@ def _record_agent_chat_trace(
             **({"operation":control_operation,"model_invoked":provider_id != "application"} if control_operation else {}),
             **({"failure_code":failure_code} if failure_code else {}),
             **({"conversation_id":conversation_id} if conversation_id else {}),
-            "duration_ms": max(0, (ended_at_ns - started_at_ns) // 1_000_000),
+            # Match native timing evidence: retain regressed raw Unix endpoints,
+            # but do not claim an ordered interval or fabricate zero duration.
+            "duration_ms": None if wall_clock_regressed else (ended_at_ns - started_at_ns) // 1_000_000,
+            **({"wall_clock_regressed": True, "native_start_unix_ns": started_at_ns,
+                "native_end_unix_ns": ended_at_ns} if wall_clock_regressed else {}),
             "cost_status": "not_reported",
             **({"delegation_id":delegation_context["proposal_id"],"parent_conversation_id":delegation_context["parent_conversation_id"],"parent_message_id":delegation_context["parent_message_id"],"parent_trace_id":delegation_context.get("parent_trace_id")} if delegation_context else {}),
             "workspace_read_count": sum(1 for item in (sources or []) if item.get("source_type") != "public_web"),
@@ -3826,8 +3831,8 @@ def _record_agent_chat_trace(
             "web_read_sources": [item["path"] for item in (sources or []) if item.get("source_type") == "public_web"],
         },
         evidence_refs=(f"agent://{agent_id}",),
-        start_time_unix_nano=started_at_ns,
-        end_time_unix_nano=ended_at_ns,
+        start_time_unix_nano=None if wall_clock_regressed else started_at_ns,
+        end_time_unix_nano=None if wall_clock_regressed else ended_at_ns,
     )
     child_events = []
     for index, receipt in enumerate(read_events or [], start=1):

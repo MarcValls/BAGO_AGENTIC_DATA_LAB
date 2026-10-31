@@ -163,6 +163,61 @@ def test_no_parent_grant_is_inherited_and_replay_different_scope_never_invokes_a
     assert f['store'].list('agent',f['agent_id']) and len(f['store'].list('agent',f['agent_id']))==1
 
 
+@pytest.mark.parametrize(('outcome','expected'),[
+    ('completed','PASSED'),
+    ('needs_authorization','NEEDS_AUTHORIZATION'),
+    ('out_of_scope','OUT_OF_SCOPE'),
+])
+def test_parent_trace_clock_regression_preserves_child_outcome_and_replay_scope(setup,outcome,expected):
+    f=setup;f['delegation_outcome']=outcome
+    # The service's default clock remains real time.time. Only Unix nanoseconds
+    # regress; native child intervals still retain their monotonic durations.
+    regressed_end=server.time.time_ns()-10_000_000_000
+    f['monkeypatch'].setattr(server.time,'time_ns',lambda:regressed_end)
+    propose(f)
+    response=execute(f)
+    assert response.status_code==200,response.text
+    result=response.json();delegation=result['agent_delegation']
+    assert delegation['state']==expected,delegation
+    assert not delegation['tools_executed'] and not delegation['target_written']
+    assert not (f['workspace']/'corpus/synthetic.txt').exists()
+    receipt_path=f['tmp']/'traces/agent-delegations/receipts'/(delegation['receipt_id']+'.json')
+    receipt=json.loads(receipt_path.read_text())
+    assert receipt['state']==expected and receipt['human_scope']['allow_tools'] is False
+    reference=result['conversation']['messages'][-1]['references']['trace']
+    trace_path=f['tmp']/'traces/agent-chat'/(reference['trace_id']+'.json')
+    trace=json.loads(trace_path.read_text());event=trace['events'][0]
+    assert hashlib.sha256(trace_path.read_bytes()).hexdigest()==reference['trace_sha256']
+    assert event['attributes']['wall_clock_regressed'] is True
+    assert event['attributes']['native_start_unix_ns']==int(receipt['started_at']*1e9)
+    assert event['attributes']['native_end_unix_ns']==regressed_end
+    assert event['attributes']['duration_ms'] is None
+    assert 'start_time_unix_nano' not in event and 'end_time_unix_nano' not in event
+    assert event['attributes']['delegation_id']==delegation['proposal_id']
+    calls=len(f['calls']);replay_body=payload(f,tools=True);replay_body['parent_revision']=999
+    replay=execute(f,replay_body)
+    assert replay.status_code==200,replay.text
+    assert replay.json()['agent_delegation']['state']==expected
+    assert replay.json()['agent_delegation']['child_conversation_id']==delegation['child_conversation_id']
+    assert len(f['calls'])==calls and len(f['store'].list('agent',f['agent_id']))==1
+
+
+def test_parent_trace_normal_clock_keeps_ordered_interval_and_duration(setup):
+    f=setup
+    metadata=server._record_agent_chat_trace(agent_id='app-assistant',provider_id='application',model_id='not_used',
+        started_at_ns=1_000_000_000,ended_at_ns=1_123_000_000,control_operation='agent_delegation')
+    path=f['tmp']/'traces/agent-chat'/(metadata['trace_id']+'.json')
+    event=json.loads(path.read_text())['events'][0]
+    assert metadata['trace_state']=='local_only'
+    assert hashlib.sha256(path.read_bytes()).hexdigest()==metadata['trace_sha256']
+    assert event['start_time_unix_nano']==1_000_000_000
+    assert event['end_time_unix_nano']==1_123_000_000
+    assert event['attributes']['duration_ms']==123
+    assert 'wall_clock_regressed' not in event['attributes']
+    assert 'native_start_unix_ns' not in event['attributes']
+    assert 'native_end_unix_ns' not in event['attributes']
+
+
 @pytest.mark.parametrize('mutation',['confirm','hash','revision','profile','model','foreign','origin'])
 def test_unapproved_foreign_stale_or_changed_target_cannot_dispatch(setup,mutation):
     f=setup;propose(f);body=payload(f)
