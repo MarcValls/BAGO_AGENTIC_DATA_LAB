@@ -1,6 +1,6 @@
 {
   "schema": "bago.operational-status.snapshot.v1",
-  "updated_at": "2026-10-31T16:18:06.911203+00:00",
+  "updated_at": "2026-10-31T16:46:42.434202+00:00",
   "mission_id": "CODEX_GOVERNED_CONTINUITY_20261031",
   "candidate_id": "0f74f0d818f422d2a9506957e6396070300bbb77d88c602605b4fa647e7cc774",
   "state": "EXECUTED",
@@ -104,7 +104,7 @@
   },
   "handoff_sha256": "f547de10b5fee7482d2e987278af497520763cb053bb839a01c9fe9b3e832c02",
   "published_evidence_limit": "Source receipts and handoff are not included in this GitHub branch; listed source hashes cannot be independently recomputed from the branch alone.",
-  "cognitive_spiral": "NOT_RUN",
+  "cognitive_spiral": "EXECUTED_LIVE",
   "cognitive_runtime_available": true,
   "cooperative_relay": {
     "mission_id": "RELAY_REVIEW_SNAPSHOT_20261031_R2",
@@ -117,5 +117,21 @@
     "r1": "FAIL_PRESERVED_STOPPED",
     "stale_lease_rejected": true,
     "wrong_digest_rejected": true
+  },
+  "cognitive_audit": {
+    "integration": "PASS",
+    "task_status": "CLOSED",
+    "evidence_status": "VALID",
+    "processes": 3,
+    "native_stages_per_cycle": 12,
+    "host_turns": 6,
+    "memory_entries": [
+      1,
+      2,
+      3
+    ],
+    "original_product": "FAIL/NO_GO",
+    "learning": "NOT_EVALUATED",
+    "scope": "read-only current BAGO5 mission audit; no ConfigManager fixture or replay"
   }
 }

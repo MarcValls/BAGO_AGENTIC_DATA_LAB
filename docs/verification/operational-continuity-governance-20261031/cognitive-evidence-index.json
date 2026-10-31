@@ -1,0 +1,226 @@
+{
+  "schema": "bago.cognitive.public-evidence-index.v1",
+  "updated_at": "2026-10-31T17:46:42.434202+01:00",
+  "mode": "live",
+  "objective": "Auditar la continuidad operativa gobernada actual de BAGO5 y su evidencia Browser Bridge; identificar bloqueos reales, conservar NO_GO mientras falte integridad o aceptación, y registrar decisiones reflexivas y siguientes acciones verificables sin modificar fuentes ni recibos originales.",
+  "mission_id": "COG-BAGO5-AUDIT-cog-bago5-cbf3f6a1aa25",
+  "suite": {
+    "candidate": "CONTEXT-LIFECYCLE-NATIVE-RC2",
+    "display_name": "BAGO5os 1.4.7",
+    "identity_sha256": "082ab22f16d418da4c07352e153232ee56cde70f2382ae4bcaa9905e28737d6d",
+    "package_id": "bago-operating-suite",
+    "payload_files": 600,
+    "payload_sha256": "e8a211b01420776dabafe8efdb98ea78c35c1156efcdfd0baeb7eb33aa121114",
+    "release_id": "BAGO-SUITE-147-BAGO-SKILL-RC2",
+    "schema": "bago.suite.candidate-identity.v1",
+    "scope": "exact installed skill bytes; unsigned integrity, not publisher authentication",
+    "version": "1.4.7"
+  },
+  "cycles": [
+    {
+      "cycle": 1,
+      "pid": 16880,
+      "session_id": "cog-bago5-cbf3f6a1aa25",
+      "stages": [
+        "OBSERVE",
+        "DETECT",
+        "PROPOSE",
+        "SELECT",
+        "ACT",
+        "VALIDATE",
+        "RECORD",
+        "REFLECT",
+        "EVOLVE",
+        "REMEMBER",
+        "DISTILL",
+        "EMIT"
+      ],
+      "memory_entries": 1,
+      "integration_status": "PASS",
+      "original_product": "FAIL",
+      "trace_sha256": "e7bcf5ef3a0f95bf61c5e0afdaede4f66a85b237f018d58837b6a31d43ce83bc",
+      "turns": [
+        {
+          "stage": "PROPOSE",
+          "host_exchange": {
+            "mode": "live",
+            "request_id": "cycle01-propose-01",
+            "request_sha256": "1dcd9d34e91f77f6026b506c0818380087de4c03709f16c17eed2a3b7bcdac6d",
+            "response_sha256": "d9219e262a3c29cac8f1a491019d7d4ee38a3835366c00e8704dff4ee88ec565"
+          },
+          "context_envelope_id": "b962adba5270ba26",
+          "packet_sha256": "0a02f4f1e251100faa862a4c04ecf9d8d84430fe5ff95547e23a4624c167c174",
+          "spbe_kind": "PROPOSAL_READY"
+        },
+        {
+          "stage": "REFLECT",
+          "host_exchange": {
+            "mode": "live",
+            "request_id": "cycle01-reflect-01",
+            "request_sha256": "33725242adc31791c1bc2167656321b18c1ead4e15932d2ee417743493d68ad9",
+            "response_sha256": "2c518204b4922c1e1523cbe4cc2372e443e52d4de76194b7b29704a9fd8c128c"
+          },
+          "context_envelope_id": "abe90e93c89d9d91",
+          "packet_sha256": "729d1cbdbad0497b045718f2af2b675c64962f52745358a9f7b926271d140e90",
+          "spbe_kind": "PROPOSAL_READY"
+        }
+      ],
+      "gateway_effect_counts": {
+        "filesystem.read": 10,
+        "process.execute": 1,
+        "filesystem.write": 0
+      }
+    },
+    {
+      "cycle": 2,
+      "pid": 14704,
+      "session_id": "cog-bago5-cbf3f6a1aa25",
+      "stages": [
+        "OBSERVE",
+        "DETECT",
+        "PROPOSE",
+        "SELECT",
+        "ACT",
+        "VALIDATE",
+        "RECORD",
+        "REFLECT",
+        "EVOLVE",
+        "REMEMBER",
+        "DISTILL",
+        "EMIT"
+      ],
+      "memory_entries": 2,
+      "integration_status": "PASS",
+      "original_product": "FAIL",
+      "trace_sha256": "47a8417f1b7953af5bdc6a9a16b34c4a423677ef07ddf5e83d90aea49defec9a",
+      "turns": [
+        {
+          "stage": "PROPOSE",
+          "host_exchange": {
+            "mode": "live",
+            "request_id": "cycle02-propose-01",
+            "request_sha256": "16484b5f9916216906fa1f506b1705d51a2f8ac0b2ecc492d78e2959907417ab",
+            "response_sha256": "457b6431862d046aa0ef4539835e448c5c87c5039347a91880cc14d0f01264c5"
+          },
+          "context_envelope_id": "e4b4020d2482ab74",
+          "packet_sha256": "eca309b22a91735ddadfb29bfaf59970a6cb45e975c66efb78551ed48869fe17",
+          "spbe_kind": "PROPOSAL_READY"
+        },
+        {
+          "stage": "REFLECT",
+          "host_exchange": {
+            "mode": "live",
+            "request_id": "cycle02-reflect-01",
+            "request_sha256": "406b8ac3061953c4285aa19ca638a6bc750f55e462fa20789fd30a6722f0c790",
+            "response_sha256": "38ee1ddf8292dabbbe8e139ff9ef554a93ecaf0add2bb06f19f8062df25b375f"
+          },
+          "context_envelope_id": "2b944ebbcf852b3d",
+          "packet_sha256": "13d22f442ab8d1149456b37c5ad8a9343c3cddb4e81002db3e0fefbd3a7889a2",
+          "spbe_kind": "PROPOSAL_READY"
+        }
+      ],
+      "gateway_effect_counts": {
+        "filesystem.read": 10,
+        "process.execute": 1,
+        "filesystem.write": 0
+      }
+    },
+    {
+      "cycle": 3,
+      "pid": 19260,
+      "session_id": "cog-bago5-cbf3f6a1aa25",
+      "stages": [
+        "OBSERVE",
+        "DETECT",
+        "PROPOSE",
+        "SELECT",
+        "ACT",
+        "VALIDATE",
+        "RECORD",
+        "REFLECT",
+        "EVOLVE",
+        "REMEMBER",
+        "DISTILL",
+        "EMIT"
+      ],
+      "memory_entries": 3,
+      "integration_status": "PASS",
+      "original_product": "FAIL",
+      "trace_sha256": "efc3b90799d691b5b740d1894d8b1ce47bfce7f956371623b0b3d7217b1c800c",
+      "turns": [
+        {
+          "stage": "PROPOSE",
+          "host_exchange": {
+            "mode": "live",
+            "request_id": "cycle03-propose-01",
+            "request_sha256": "f56d5f683e6361823376dac270cc8e4f41a07e79f8d799f69937cb450ff721c4",
+            "response_sha256": "bc5919d7511413fe97b37719e78a172604b9254527953e885105988fcd1fc949"
+          },
+          "context_envelope_id": "f263cd0ad0d0b57b",
+          "packet_sha256": "4f8798a1707dfa79ccf314afbf9dbc581d2a09cac48911b1c92865aa5c882beb",
+          "spbe_kind": "PROPOSAL_READY"
+        },
+        {
+          "stage": "REFLECT",
+          "host_exchange": {
+            "mode": "live",
+            "request_id": "cycle03-reflect-01",
+            "request_sha256": "8543d6ecab44cb743db382c1b42cee7b8dd7384ab6339069018453edd59967fc",
+            "response_sha256": "b646c26837f132fae6acce0315477159aaec155ab6d04cf5fb538ec29929926e"
+          },
+          "context_envelope_id": "d1b65f961246f7d4",
+          "packet_sha256": "56539f38fae94d350fa6333036458d36d2b5d6f926af34eb31b2004252439d32",
+          "spbe_kind": "PROPOSAL_READY"
+        }
+      ],
+      "gateway_effect_counts": {
+        "filesystem.read": 10,
+        "process.execute": 1,
+        "filesystem.write": 0
+      }
+    }
+  ],
+  "receipts": [
+    {
+      "check": "cycle1",
+      "run_id": "bdef3ddf70d04581b70411ddf3943e06",
+      "receipt": "receipts/188036fa6c554b66a945a296d4d66524.json",
+      "sha256": "76e4f92a9d53c1fad416de042d2a8d88aa5ab8d3d2262992e6c53d9efce6fc4b"
+    },
+    {
+      "check": "cycle2",
+      "run_id": "8682037a991e4a2bb06264dfc80e1b1b",
+      "receipt": "receipts/d6a099f87f2a4e51a66ee1bad643f4f3.json",
+      "sha256": "3a39be3faf8d065e304234b3507f16d8d95e7d8d5fc2acb1f52e43fb82b088a8"
+    },
+    {
+      "check": "cycle3",
+      "run_id": "71201636a955421ab25025e77a4a3a7a",
+      "receipt": "receipts/24b8fcf395e647209e3bbdc747dc7f64.json",
+      "sha256": "9e9e80c63956bc2f7407435a91111d5493a2d995e0990a3c4d6c724f0126fa89"
+    },
+    {
+      "check": "final-verification",
+      "attempt_record": "final-suite-execution.json",
+      "outcome": "FAIL",
+      "run_id": "a200da78c05c4eae895361bf506e22bf",
+      "receipt": "receipts/d17adb219bd14392a13a5582ac644e0f.json",
+      "sha256": "af856979dddacdc1064e5e5775f5f9cd80907e281412051c05b285d2f521d36e"
+    },
+    {
+      "check": "final-verification",
+      "attempt_record": "final-suite-retry-execution.json",
+      "outcome": "PASS",
+      "run_id": "49fba47bee3b4c3682c4bb86261065be",
+      "receipt": "receipts/1712539cfeab429a88885195c691e43f.json",
+      "sha256": "61409d0d46e8e9c611deb239198c0b77c141fd9a8d39b4eaea94b76eb7699d47"
+    }
+  ],
+  "integration_verification": "PASS",
+  "original_mission_conclusion": "FAIL/NO_GO",
+  "learning_status": "NOT_EVALUATED",
+  "pec_binding": "NOT_DISPATCHED_PEC_RUNTIME_NOT_BOUND",
+  "publication_scope": "derived trace index, exact final verification bytes and close-result projection; raw source receipts/mailbox stay local",
+  "final_verification_sha256": "315d53cce84f42a84149489312925d05d2a0ad3d0a72d1514a8cbd3e1947a4b5",
+  "close_source_record_sha256": "f60643d0436fccd9250b185326f082da17ffb84072e7085757269e7ce4674a71"
+}

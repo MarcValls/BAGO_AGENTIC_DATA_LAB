@@ -1,0 +1,123 @@
+{
+  "checks": [
+    {
+      "candidate": {
+        "CONFIG.json": "aa055ed48eb933f32ef856bece6709b841741e924d94f6915b3fda6eeadb4c9a",
+        "HOST_GRANT.json": "22cb8e7f78ebfc6845da145e06855e382e034546868eadb9373a9c0cfb0f40b9",
+        "candidate/src/evaluate_mission.py": "28cca0bbae067e3b72d0d564981286aac5c9c609aa4ddfd04802bcd153b7f94f",
+        "candidate/src/mission_runtime.py": "1dada6c16c1e10bd9926e290e01247918fe0c0383cd178fbd0a1a4b9bad50089",
+        "candidate/src/runtime_paths.py": "659425ac1ea27ca9edb9b5e175476402400d62d306dc969df0175af0a62f3145",
+        "candidate/src/verify_mission.py": "3d46b3befec6ff4d7c262f8628728da93d967e8ff807f9fb3cfc8470a83adc8e"
+      },
+      "config_evaluator_sha256": "28cca0bbae067e3b72d0d564981286aac5c9c609aa4ddfd04802bcd153b7f94f",
+      "evaluator_sha256": "28cca0bbae067e3b72d0d564981286aac5c9c609aa4ddfd04802bcd153b7f94f",
+      "frozen_evaluator_sha256": "28cca0bbae067e3b72d0d564981286aac5c9c609aa4ddfd04802bcd153b7f94f",
+      "id": "input_freeze",
+      "status": "PASS"
+    },
+    {
+      "id": "three_processes_and_memory",
+      "memory_entries": [
+        1,
+        2,
+        3
+      ],
+      "pids": [
+        14704,
+        16880,
+        19260
+      ],
+      "session_ids": [
+        "cog-bago5-cbf3f6a1aa25"
+      ],
+      "status": "PASS"
+    },
+    {
+      "cycles": [
+        {
+          "cycle": 1,
+          "mailbox_live_bindings_valid": true,
+          "memory_entries": 1,
+          "pid": 16880,
+          "product_fail": true,
+          "reflection_honest_fail": true,
+          "session_id": "cog-bago5-cbf3f6a1aa25",
+          "source_hashes_unchanged": true,
+          "stage_order_valid": true
+        },
+        {
+          "cycle": 2,
+          "mailbox_live_bindings_valid": true,
+          "memory_entries": 2,
+          "pid": 14704,
+          "product_fail": true,
+          "reflection_honest_fail": true,
+          "session_id": "cog-bago5-cbf3f6a1aa25",
+          "source_hashes_unchanged": true,
+          "stage_order_valid": true
+        },
+        {
+          "cycle": 3,
+          "mailbox_live_bindings_valid": true,
+          "memory_entries": 3,
+          "pid": 19260,
+          "product_fail": true,
+          "reflection_honest_fail": true,
+          "session_id": "cog-bago5-cbf3f6a1aa25",
+          "source_hashes_unchanged": true,
+          "stage_order_valid": true
+        }
+      ],
+      "id": "native_spiral_and_host_turns",
+      "stages": [
+        "OBSERVE",
+        "DETECT",
+        "PROPOSE",
+        "SELECT",
+        "ACT",
+        "VALIDATE",
+        "RECORD",
+        "REFLECT",
+        "EVOLVE",
+        "REMEMBER",
+        "DISTILL",
+        "EMIT"
+      ],
+      "status": "PASS"
+    },
+    {
+      "id": "context_reflexive_spbe",
+      "status": "PASS"
+    },
+    {
+      "filesystem_write_seen": false,
+      "id": "gateway_permissions_and_no_writes",
+      "process_permission_consumed": true,
+      "status": "PASS"
+    },
+    {
+      "all_three_product_fail": true,
+      "id": "original_product_fail_and_honest_reflection",
+      "status": "PASS"
+    },
+    {
+      "files": {
+        "PROVENANCE.json": "361a2147548e3e8c8b416619ba958b7e925c7cf766d00b18750fbb49bdc18854",
+        "REQUIREMENTS.md": "3d6ec8e3f7338e92f4f072b2abcd8af073cc267a6faf130d11d509f2253f5f22",
+        "goal_status.json": "142bf2347f6268812fbb9bf9e4f8f61466981b42a53cb45846eb858f84b1f432",
+        "mission_snapshot.json": "6ba84a63fd02b7d03be7322ea4f353b3d35fad99e3ca0af6ff501f2847eeeeae",
+        "pyproject.toml": "7b62176e4d0485cebde07a1b21d81833b114804ef82509fc6df5a24eef35ac4b"
+      },
+      "id": "project_inputs_immutable",
+      "status": "PASS"
+    }
+  ],
+  "coverage": "COMPLETE",
+  "cycle_count": 3,
+  "evaluator_sha256": "28cca0bbae067e3b72d0d564981286aac5c9c609aa4ddfd04802bcd153b7f94f",
+  "input_freeze_sha256": "29c0f7e24482592e538e90fd7fe2813c512a596ea6c87d5d2ace8d738a84603a",
+  "original_mission_product": "FAIL/NO_GO",
+  "product_conclusion": "Original mission remains NO_GO; this result verifies the cognitive audit integration only.",
+  "schema": "bago.cognitive.final-verification.v1",
+  "status": "PASS"
+}

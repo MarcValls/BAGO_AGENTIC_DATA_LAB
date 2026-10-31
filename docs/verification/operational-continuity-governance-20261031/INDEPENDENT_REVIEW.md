@@ -54,3 +54,6 @@ La correlación work item→check→execution→receipt está explícita por IDs
 `NOT_RUN`: no se ejecutaron ciclos cognitivos. La conclusión inicial sobre runtime ausente fue una búsqueda incompleta. El controlador real está en la raíz de la skill instalada y su identidad 1.4.7 pasó. El [relevo real R2](RELAY.md) se ejecutó y cerró; ese cierre solo valida consistencia del snapshot y no elimina los P1 de esta revisión.
 
 **P0:** ninguno observado dentro del material revisado; esto no equivale a una certificación de ausencia sistémica. **P1 abiertos:** tres, descritos arriba. **P2 abiertos:** dos. **Handoff validado:** no.
+## Actualización posterior: cognición LIVE
+
+La auditoría cognitiva de la misión real ya se ejecutó con tres procesos, seis decisiones LIVE y verificación independiente. La integración pasó; los mismos bloqueos originales fueron observados como FAIL. Esta evidencia no valida el handoff original de teamctl. [COGNITIVE.md](COGNITIVE.md).

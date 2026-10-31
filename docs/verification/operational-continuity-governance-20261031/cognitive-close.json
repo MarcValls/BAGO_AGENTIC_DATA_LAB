@@ -1,0 +1,19 @@
+{
+  "collaboration_incomplete": false,
+  "evidence_status": "VALID",
+  "mandatory_not_satisfied": [],
+  "operation": "VERIFY",
+  "outcomes": {
+    "cycle1": "PASS",
+    "cycle2": "PASS",
+    "cycle3": "PASS",
+    "final-verification": "PASS"
+  },
+  "owned_child_running": false,
+  "product_status": "PASS",
+  "published": false,
+  "status": "PASS",
+  "target": null,
+  "task_status": "CLOSED",
+  "unconsumed_or_missing": []
+}

@@ -1,5 +1,7 @@
 # Estado operativo actual — continuidad gobernada y Browser Bridge R5
 
+Actualización más reciente: 2026-10-31T17:46:42.434202+01:00. Auditoría cognitiva LIVE ejecutada y verificada; integración PASS, misión original NO_GO. [Evidencias](COGNITIVE.md).
+
 **Corte de ejecución:** 2026-10-31 15:38:35 UTC. **Revisión independiente de solo lectura:** 2026-10-31 15:54 UTC.
 **Misión:** `CODEX_GOVERNED_CONTINUITY_20261031` · **candidato:** `0f74f0d818f422d2a9506957e6396070300bbb77d88c602605b4fa647e7cc774`
 **Estado general:** `EXECUTED` · **cierre:** `NO_GO`.
@@ -50,7 +52,7 @@ El preview fue de 188 bytes con SHA-256 `9586130d1cd0699a6c43dd2aa5a725ae9057394
 - Toolbar y vídeo: `NOT_RUN`; la prueba usó `connectNative` directamente desde el popup y preservó el foco. La ruta completa por clic y extracción del service worker no está validada.
 - Se observó un 404 de recurso en la fixture, aunque el contenido esperado y su digest coincidieron.
 - No se probaron páginas externas, credenciales, despacho GEX/ADL ni perfil de producción.
-- Cognitive Spiral: `NOT_RUN`. Runtime real localizado en la instalación de la skill, identidad PASS para 1.4.7; no se ejecutaron ciclos cognitivos.
+- Cognitive Spiral: `EXECUTED_LIVE` sobre la misión actual mediante adaptador local de auditoría: 3 procesos, 12 etapas por ciclo, 6 decisiones LIVE, memoria 1→2→3; integración PASS, producto original FAIL/NO_GO. Véase [COGNITIVE.md](COGNITIVE.md).
 - La rama publicada aún no está integrada en `main`. El registro local `.bago/goals/.../status.json` permanece desfasado porque restaurarlo o reemplazar su handoff alteraría la auditoría; esta página pública es más actual, pero la revisión formal sigue sin handoff validado.
 
 ## Evidencia disponible en GitHub
@@ -61,3 +63,7 @@ Esta rama publica [`runtime-summary.json`](runtime-summary.json) y la [captura d
 ## Actualización: relevo cooperativo real
 
 La conclusión anterior de runtime ausente queda corregida: se omitió la raíz instalada de la skill. El relevo serial R2 ya se ejecutó con sucesor y verificador reales; cerrado PASS/VALID para consistencia del snapshot. R1 conserva FAIL/STOP; la misión original sigue NO_GO. Véase [RELAY.md](RELAY.md).
+
+## Actualización: auditoría cognitiva LIVE
+
+Se completó y verificó la auditoría cognitiva con inputs reales de esta misión. Su cierre no valida la misión original: LOCAL_POLICY y los criterios abiertos siguen bloqueando la aceptación. [Evidencias y alcance](COGNITIVE.md).
