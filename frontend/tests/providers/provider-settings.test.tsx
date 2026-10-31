@@ -14,6 +14,73 @@ beforeEach(()=>{localStorage.clear();resetLocaleForTests()})
 
 afterEach(() => { cleanup(); vi.unstubAllGlobals(); vi.restoreAllMocks() })
 
+describe('Model footer Exit', () => {
+  const model = { provider_id: 'ollama-cloud', model_id: 'footer-fixture', label: 'Synthetic provider', state: 'ready' }
+  const policy = { models: [], main_chat: null, revision: 'footer-r1', catalog: [model] }
+
+  function footerApi(state: string, mutations: string[]) {
+    vi.stubGlobal('fetch', vi.fn(async (input: string, init?: RequestInit) => {
+      const url = String(input)
+      if (init?.method && init.method !== 'GET') mutations.push(url)
+      if (url === '/api/providers/registry') return response({ registrations: [] })
+      if (url === '/api/providers/ollama/status') return response({ state: 'not_configured' })
+      if (url === '/api/providers/model-policy') {
+        if (state === 'error') return response({ detail: { message: 'Synthetic model inventory failure.' } }, 503)
+        return response({ ...policy, catalog: state === 'empty' ? [] : [{ ...model, state: state === 'unavailable' ? 'unavailable' : 'ready' }] })
+      }
+      throw new Error(`Unexpected request: ${url}`)
+    }))
+  }
+
+  it.each(['normal', 'empty', 'unavailable', 'error'])('calls the parent Exit without saving (%s)', async state => {
+    const mutations: string[] = []
+    const onExit = vi.fn()
+    footerApi(state, mutations)
+    render(<ProviderSettings onExit={onExit} />)
+    fireEvent.click(screen.getByRole('tab', { name: 'Modelos activos' }))
+    const exit = screen.getByRole('button', { name: 'Salir', exact: true }) as HTMLButtonElement
+    await waitFor(() => expect(exit.disabled).toBe(false))
+    if (state === 'normal') fireEvent.click(screen.getByLabelText('Orquestador · ollama-cloud|footer-fixture'))
+    if (state === 'error') expect(screen.getByRole('alert').textContent).toContain('Synthetic model inventory failure.')
+    fireEvent.click(exit)
+    expect(onExit).toHaveBeenCalledTimes(1)
+    expect(mutations).toEqual([])
+  })
+
+  it('preserves standalone navigation back to Providers without saving', async () => {
+    const mutations: string[] = []
+    footerApi('empty', mutations)
+    render(<ProviderSettings />)
+    fireEvent.click(screen.getByRole('tab', { name: 'Modelos activos' }))
+    const exit = screen.getByRole('button', { name: 'Salir', exact: true }) as HTMLButtonElement
+    await waitFor(() => expect(exit.disabled).toBe(false))
+    fireEvent.click(exit)
+    expect(screen.getByRole('tab', { name: 'Modelos activos' }).getAttribute('aria-selected')).toBe('false')
+    expect(document.getElementById('provider-settings-panel-providers')).not.toBeNull()
+    expect(mutations).toEqual([])
+  })
+
+  it('keeps Exit disabled while the model inventory is loading', async () => {
+    let finish: (value: unknown) => void = () => { throw new Error('not started') }
+    vi.stubGlobal('fetch', vi.fn(async (input: string) => {
+      const url = String(input)
+      if (url === '/api/providers/registry') return response({ registrations: [] })
+      if (url === '/api/providers/ollama/status') return response({ state: 'not_configured' })
+      if (url === '/api/providers/model-policy') return new Promise(resolve => { finish = resolve })
+      throw new Error(`Unexpected request: ${url}`)
+    }))
+    const onExit = vi.fn()
+    render(<ProviderSettings onExit={onExit} />)
+    fireEvent.click(screen.getByRole('tab', { name: 'Modelos activos' }))
+    const exit = screen.getByRole('button', { name: 'Salir', exact: true }) as HTMLButtonElement
+    expect(exit.disabled).toBe(true)
+    fireEvent.click(exit)
+    expect(onExit).not.toHaveBeenCalled()
+    finish(response(policy))
+    await waitFor(() => expect(exit.disabled).toBe(false))
+  })
+})
+
 describe('Provider settings behavior with simulated API responses', () => {
   it('marks Ollama as registered after saving its key even when no model is selected', async () => {
     let current = { state: 'not_configured', auth_mode: null as string | null, model_id: null as string | null }

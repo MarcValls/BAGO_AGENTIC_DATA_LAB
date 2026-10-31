@@ -101,7 +101,7 @@ function providerUsable(state: string | undefined): boolean {
   return state === 'ready' || state === 'configured_unverified'
 }
 
-export default function ProviderSettings({ onStatusChange }: { onStatusChange?: (status: ProviderStatusSummary) => void }) {
+export default function ProviderSettings({ onStatusChange, onExit }: { onStatusChange?: (status: ProviderStatusSummary) => void; onExit?: () => void }) {
   useI18n()
 
   const [settingsTab, setSettingsTab] = useState<'providers' | 'models'>('providers')
@@ -140,7 +140,7 @@ export default function ProviderSettings({ onStatusChange }: { onStatusChange?: 
         <button type="button" role="tab" id="provider-settings-tab-models" aria-selected={settingsTab === 'models'} aria-controls="provider-settings-panel-models" tabIndex={settingsTab === 'models' ? 0 : -1} className={settingsTab === 'models' ? 'active' : ''} onClick={() => setSettingsTab('models')}>{t("core.ProviderSettings.active_models_2fdf9d")}</button>
       </div>
       {settingsTab === 'models'
-        ? <div role="tabpanel" id="provider-settings-panel-models" aria-labelledby="provider-settings-tab-models" className="provider-model-policy-panel"><ModelAssignments onExit={() => setSettingsTab('providers')} /></div>
+        ? <div role="tabpanel" id="provider-settings-panel-models" aria-labelledby="provider-settings-tab-models" className="provider-model-policy-panel"><ModelAssignments onExit={onExit ?? (() => setSettingsTab('providers'))} /></div>
         : <div role="tabpanel" id="provider-settings-panel-providers" aria-labelledby="provider-settings-tab-providers">
       <div className="provider-registration-layout">
         <div className="provider-tabs">

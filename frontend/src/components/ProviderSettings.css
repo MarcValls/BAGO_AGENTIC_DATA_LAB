@@ -6,6 +6,8 @@
 .provider-settings-tabs button:focus-visible { outline: 2px solid #8dbce8; outline-offset: 2px; }
 .provider-model-policy-panel { display: flex; min-height: 0; flex: 1; }
 .provider-model-policy-panel > .model-assignments { width: 100%; min-height: 0; }
+.settings-layer-content > .provider-settings:has(> .provider-model-policy-panel) { flex: 1 1 0; min-height: 0; overflow: hidden; }
+.provider-settings:has(> .provider-model-policy-panel) > .provider-settings-tabs { flex: 0 0 auto; }
 .codex-provider-settings { display: flex; min-width: 0; flex-direction: column; gap: 11px; }
 .codex-provider-settings .provider-steps { display: grid; gap: 8px; padding: 10px; }
 .codex-provider-settings .auth-choice-group { margin: 0; }
