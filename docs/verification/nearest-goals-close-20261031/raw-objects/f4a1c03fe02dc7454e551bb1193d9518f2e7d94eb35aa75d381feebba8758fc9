@@ -1,0 +1,18 @@
+{
+  "change_request_id": "CR-007-HOST-LOCAL-PROVIDER-API-BOUNDARY",
+  "contract_id": "agent-chat-control-contract-v1",
+  "old_fingerprint": "fa2a2a74865a89a0ac6fe698680a7b85b5a687214c1ca879937a916d85b1c82e",
+  "proposed_new_fingerprint": "f91e731132418382b0ecba3d438b26fd52a868ee4945faa22a601129b2cf5030",
+  "reason": "Provider configuration accepts a secret from the UI, while the existing API used wildcard CORS and published Docker port 8080 on all host interfaces. Keep this unauthenticated first slice host-local.",
+  "impacted_consumers": [
+    "AC02 API implementation",
+    "AC03 UI host/origin assumptions",
+    "AC04 independent verification",
+    "AC05 terminal gate"
+  ],
+  "required_invalidations": [
+    "Add AC07 to implement and verify host-local binding and CORS restrictions.",
+    "AC04 must review local-only boundary and must not certify LAN exposure."
+  ],
+  "decision": "Accepted as the least-exposure default for the first local UI slice. LAN use remains unsupported until an authenticated API boundary is implemented."
+}

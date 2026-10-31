@@ -1,0 +1,45 @@
+{
+  "mission_id": "BAGO_MODEL_FOOTER_EXIT_REPAIR_20261031",
+  "operation": "REPAIR",
+  "title": "Restore existing footer Exit acceptance in the real Settings parent",
+  "objective": "Exit from ModelAssignments closes Settings in App, while preserving standalone ProviderSettings navigation and no implicit saving.",
+  "scope": "Frontend App/ProviderSettings callbacks, meaningful regression and actual App browser fixture only. No model, permissions, provider calls or backend changes.",
+  "max_concurrency": 1,
+  "terminal_work_items": [
+    "F01"
+  ],
+  "work_items": [
+    {
+      "id": "F01",
+      "title": "Repair and verify current Settings footer Exit",
+      "role": "decision-ui-engineer",
+      "depends_on": [],
+      "write_scopes": [
+        "src/App.tsx",
+        "src/components/ProviderSettings.tsx",
+        "tests/providers/provider-settings.test.tsx",
+        "tests/ui/providers-footer/**",
+        "nearest-goals-check/footer-repair/**",
+        ".build/**",
+        "dist/**"
+      ],
+      "output_scopes": [
+        "src/App.tsx",
+        "src/components/ProviderSettings.tsx",
+        "tests/providers/provider-settings.test.tsx",
+        "tests/ui/providers-footer/**",
+        "nearest-goals-check/footer-repair/**"
+      ],
+      "required_checks": [
+        "footer-tests",
+        "footer-browser"
+      ]
+    }
+  ],
+  "constraints": [
+    "No backend changes, real credentials, provider calls, global configuration or user focus.",
+    "No frozen baseline visual artifacts may change.",
+    "No source edits outside exact files.",
+    "Show actual App callback behavior, no replacement harness that substitutes Exit behavior."
+  ]
+}

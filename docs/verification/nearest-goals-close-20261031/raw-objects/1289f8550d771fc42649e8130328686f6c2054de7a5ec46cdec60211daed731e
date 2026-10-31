@@ -1,0 +1,52 @@
+{
+  "status": "PASS",
+  "scope": "simulated API component tests; full npm suite and build in green only",
+  "started_at": "2026-10-31T20:00:08.611154+00:00",
+  "completed_at": "2026-10-31T20:01:53.212544+00:00",
+  "passed": 827,
+  "failed": 0,
+  "attempt": 2,
+  "commands": [
+    {
+      "command": [
+        "C:\\Program Files\\nodejs\\npm.cmd",
+        "test",
+        "--",
+        "--maxWorkers=2",
+        "--reporter=json",
+        "--outputFile=C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\.worktrees\\nearest-goals-close-20261031\\frontend\\nearest-goals-check\\footer-repair\\green-attempt2-vitest.json"
+      ],
+      "returncode": 0,
+      "logs": [
+        {
+          "path": "nearest-goals-check/footer-repair/green-attempt2-npm-test.stdout.log",
+          "sha256": "60376280f2a73f72353415c0b6e542660b9e97150e40adacc96c7a8a013f2c0b"
+        },
+        {
+          "path": "nearest-goals-check/footer-repair/green-attempt2-npm-test.stderr.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ]
+    },
+    {
+      "command": [
+        "C:\\Program Files\\nodejs\\npm.cmd",
+        "run",
+        "build"
+      ],
+      "returncode": 0,
+      "logs": [
+        {
+          "path": "nearest-goals-check/footer-repair/green-build.stdout.log",
+          "sha256": "29b9b81dcdee2eb46a8ed1a9f0fa4a8d82ad774be60fb3ee68ac6a8ddb799bc3"
+        },
+        {
+          "path": "nearest-goals-check/footer-repair/green-build.stderr.log",
+          "sha256": "351b524197fb492920789369e7f1a271420c757633fbb553b280a181ac4c31a4"
+        }
+      ]
+    }
+  ],
+  "browser": "SEPARATE_CHECK",
+  "provider_calls": "NOT_RUN"
+}

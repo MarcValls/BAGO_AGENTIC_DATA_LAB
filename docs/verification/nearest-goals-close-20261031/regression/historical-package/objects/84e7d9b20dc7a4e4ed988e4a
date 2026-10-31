@@ -1,0 +1,568 @@
+{
+  "schema": "bago.near-goals-independent-review.v1",
+  "reviewed_at_utc": "2026-10-31T18:35:30.310210+00:00",
+  "repo_root": "C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL",
+  "worktree_candidate": ".worktrees/nearest-goals-close-20261031",
+  "worktree_base": "8065906f4560f4f0b0951cc445b673ecad7ce175",
+  "reviewer": "independent current Codex agent",
+  "status": "PASS",
+  "goals": [
+    {
+      "goal": "github-update-20261022",
+      "status": "PASS",
+      "scope": "independent integrity and closure review of historical reconciliation only",
+      "historical_candidate": "b0b2f2a2079019fe80e82b836e13c5580a189b70",
+      "publication": {
+        "pr": 62,
+        "merge": "f253f3700990943755e63717a93d3be99f0e19fa",
+        "ci_run": "39813814372",
+        "tree": "accfe27115fed2854d791434d9866ebd39210b56"
+      },
+      "handoffs": [
+        {
+          "work_id": "V01",
+          "handoff_sha256": "9aebdec044edf317edf22cdd70e8af36601e5489958f972f7c97710438183755",
+          "required_check": "review",
+          "pass_receipt_ids": [
+            "6c49ffe7b4fc40cb8ba6559339724163"
+          ]
+        }
+      ],
+      "checks": [
+        {
+          "id": "final_reconciliation_manifest_and_all_entries",
+          "result": "PASS",
+          "detail": {
+            "manifest_sha256": "41ca07884be4762c66e2b30349e2731811491b496a28bf9cdcac693fa61c8e87",
+            "declared_files": 13,
+            "all_entry_hashes_and_sizes_match": true
+          }
+        },
+        {
+          "id": "reconciliation_input_hashes",
+          "result": "PASS",
+          "detail": {
+            "github-pr62.json": "6f1cbd110ecdda834eab285cb8d6745d2a9d2ca423f19df8b4bb55bbcbaf8e6b",
+            "github-ci.json": "a3e5e37f90b1c8058ec1b4d7406a4978c86c616ff420e89a9afb5a765b6746a9"
+          }
+        },
+        {
+          "id": "downloaded_pr_matches_reconciliation",
+          "result": "PASS",
+          "detail": {
+            "number": 62,
+            "state": "MERGED",
+            "head": "b0b2f2a2079019fe80e82b836e13c5580a189b70",
+            "merge": "f253f3700990943755e63717a93d3be99f0e19fa"
+          }
+        },
+        {
+          "id": "downloaded_ci_matches_exact_head",
+          "result": "PASS",
+          "detail": {
+            "run": "39813814372",
+            "status": "completed",
+            "conclusion": "success",
+            "head": "b0b2f2a2079019fe80e82b836e13c5580a189b70"
+          }
+        },
+        {
+          "id": "published_candidate_and_tree_bound",
+          "result": "PASS",
+          "detail": {
+            "candidate": "b0b2f2a2079019fe80e82b836e13c5580a189b70",
+            "tree": "accfe27115fed2854d791434d9866ebd39210b56"
+          }
+        },
+        {
+          "id": "local_git_objects_tree_and_ancestry",
+          "result": "PASS",
+          "detail": {
+            "head_tree": "accfe27115fed2854d791434d9866ebd39210b56",
+            "merge_tree": "accfe27115fed2854d791434d9866ebd39210b56",
+            "ancestor_rc": 0
+          }
+        },
+        {
+          "id": "mission_and_terminal_status_closed",
+          "result": "PASS",
+          "detail": {
+            "mission_id": {
+              "audit_scope": {
+                "evidence_roots": [
+                  "reviews"
+                ],
+                "exclude": [],
+                "fixture_roots": [
+                  "fixtures"
+                ],
+                "include": [
+                  "inputs/**"
+                ],
+                "preserved_roots": [
+                  "preserved"
+                ]
+              },
+              "max_concurrency": 1,
+              "mission_id": "ADL_PUBLICATION_TEST_REVIEW_20261022",
+              "operation": "VERIFICATION",
+              "terminal_work_items": [
+                "V01"
+              ],
+              "work_items": [
+                {
+                  "depends_on": [],
+                  "id": "V01",
+                  "output_scopes": [
+                    "reviews/verification/**",
+                    "fixtures/verification/**"
+                  ],
+                  "required_checks": [
+                    "review"
+                  ],
+                  "role": "publication-test-verifier",
+                  "title": "Review three stale frontend test corrections",
+                  "write_scopes": [
+                    "reviews/verification/**",
+                    "fixtures/verification/**"
+                  ]
+                }
+              ]
+            },
+            "lifecycle": "CLOSED",
+            "terminal": "VALIDATED_SCOPED_TASK"
+          }
+        },
+        {
+          "id": "historical_only_scope_explicit",
+          "result": "PASS",
+          "detail": {
+            "scope": "historical evidence reconciliation, not current product regression",
+            "current_checkout_tests": "NOT_RUN",
+            "new_product_tests": "NOT_RUN"
+          }
+        },
+        {
+          "id": "legacy_controller_boundary_preserved",
+          "result": "PASS",
+          "detail": {
+            "modern": "LEGACY_UNVERIFIED",
+            "original_rc": 0
+          }
+        },
+        {
+          "id": "historical_junit_counts",
+          "result": "PASS",
+          "detail": {
+            "tests": 537,
+            "failed": 0,
+            "errors": 0,
+            "skipped": 1,
+            "passed": 536
+          }
+        },
+        {
+          "id": "work_item_handoffs_bound",
+          "result": "PASS",
+          "detail": [
+            {
+              "work_id": "V01",
+              "handoff_sha256": "9aebdec044edf317edf22cdd70e8af36601e5489958f972f7c97710438183755",
+              "required_check": "review",
+              "pass_receipt_ids": [
+                "6c49ffe7b4fc40cb8ba6559339724163"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "handoff_outputs_hashes_current",
+          "result": "PASS",
+          "detail": "All outputs declared by required work-item handoffs hashed against current bytes"
+        },
+        {
+          "id": "required_check_receipts_hashes_current",
+          "result": "PASS",
+          "detail": "Required PASS receipts match state digests and COMPLETED state"
+        },
+        {
+          "id": "idempotence_snapshot_and_current_bytes",
+          "result": "PASS",
+          "detail": {
+            "files_compared": 40,
+            "before_equals_after": true,
+            "current_matches_after": true
+          }
+        },
+        {
+          "id": "protected_historical_inputs_current",
+          "result": "PASS",
+          "detail": {
+            "count": 38
+          }
+        }
+      ],
+      "limitations": [
+        "No current checkout/product tests executed.",
+        "Downloaded GitHub JSON is local session evidence; this review verifies its bytes and internal cross-binding, not a fresh live GitHub query.",
+        "Original Suite 1.4.2 controller closure is historical and does not satisfy the modern teamctl LEGACY_UNVERIFIED gate.",
+        "Historical V01 reviewer independence from T01 is not proven; this audit independently checks the overall reconciliation package and does not change V01's label."
+      ]
+    },
+    {
+      "goal": "readme-clarity-20261022",
+      "status": "PASS",
+      "scope": "independent integrity and closure review of historical reconciliation only",
+      "historical_candidate": "64a88fbc30bb1b2c0a4cd516281c71be1f65748b",
+      "publication": {
+        "pr": 63,
+        "merge": "2d521170fdf651da482b5bf9d5b229a41412a8d2",
+        "ci_run": "39823019847",
+        "tree": "0012569d5abbd89a48781cd9603baa70674b732a"
+      },
+      "handoffs": [
+        {
+          "work_id": "B01",
+          "handoff_sha256": "84a157919265a958ac0b8938dc8c1ba8da2c7c8f4328f938e537575be056dc62",
+          "required_check": "build",
+          "pass_receipt_ids": [
+            "2c4d84b27d18437cb269edbdcc7dc507"
+          ]
+        },
+        {
+          "work_id": "T01",
+          "handoff_sha256": "e342f4bc9af04d023f5059efe95f703ef2df4010dc48efcfc4652a6b8137a63f",
+          "required_check": "tests",
+          "pass_receipt_ids": [
+            "09bf27edc5b044b8993459a9a0d46e75"
+          ]
+        },
+        {
+          "work_id": "V01",
+          "handoff_sha256": "4c782fcff25733d96c78b09ff95f96396497bd867696b72dd071692682fc8e96",
+          "required_check": "review",
+          "pass_receipt_ids": [
+            "bf13eb1825b34f8892067f1977185a1b"
+          ]
+        },
+        {
+          "work_id": "I01",
+          "handoff_sha256": "11845a3eca06e90dd0672841cf8547924bd3c22031541f11c8927554ce1ca327",
+          "required_check": "final",
+          "pass_receipt_ids": [
+            "70abb24fbde1402c8cde8876b3bd4521"
+          ]
+        }
+      ],
+      "checks": [
+        {
+          "id": "final_reconciliation_manifest_and_all_entries",
+          "result": "PASS",
+          "detail": {
+            "manifest_sha256": "2bf875cace0e629db987b4308c8928a49ea185c94522f38533a688ad304d2e8c",
+            "declared_files": 20,
+            "all_entry_hashes_and_sizes_match": true
+          }
+        },
+        {
+          "id": "reconciliation_input_hashes",
+          "result": "PASS",
+          "detail": {
+            "github-pr63.json": "bc9171bdc587e2c909f1e7370a99722515115f5277e23e1ad376ee7217ea3eea",
+            "github-ci.json": "8890f2ba7d9f5ad27a28f593de4ce78cfb89f76695d7c510eb9995d0a7615408"
+          }
+        },
+        {
+          "id": "downloaded_pr_matches_reconciliation",
+          "result": "PASS",
+          "detail": {
+            "number": 63,
+            "state": "MERGED",
+            "head": "64a88fbc30bb1b2c0a4cd516281c71be1f65748b",
+            "merge": "2d521170fdf651da482b5bf9d5b229a41412a8d2"
+          }
+        },
+        {
+          "id": "downloaded_ci_matches_exact_head",
+          "result": "PASS",
+          "detail": {
+            "run": "39823019847",
+            "status": "completed",
+            "conclusion": "success",
+            "head": "64a88fbc30bb1b2c0a4cd516281c71be1f65748b"
+          }
+        },
+        {
+          "id": "published_candidate_and_tree_bound",
+          "result": "PASS",
+          "detail": {
+            "candidate": "64a88fbc30bb1b2c0a4cd516281c71be1f65748b",
+            "tree": "0012569d5abbd89a48781cd9603baa70674b732a"
+          }
+        },
+        {
+          "id": "local_git_objects_tree_and_ancestry",
+          "result": "PASS",
+          "detail": {
+            "head_tree": "0012569d5abbd89a48781cd9603baa70674b732a",
+            "merge_tree": "0012569d5abbd89a48781cd9603baa70674b732a",
+            "ancestor_rc": 0
+          }
+        },
+        {
+          "id": "mission_and_terminal_status_closed",
+          "result": "PASS",
+          "detail": {
+            "mission_id": {
+              "audit_scope": {
+                "evidence_roots": [
+                  "reviews"
+                ],
+                "exclude": [],
+                "fixture_roots": [
+                  "fixtures"
+                ],
+                "include": [
+                  "inputs/**"
+                ],
+                "preserved_roots": [
+                  "preserved"
+                ]
+              },
+              "max_concurrency": 2,
+              "mission_id": "ADL_README_CLARITY_20261022",
+              "operation": "REPAIR",
+              "terminal_work_items": [
+                "I01"
+              ],
+              "work_items": [
+                {
+                  "depends_on": [],
+                  "id": "B01",
+                  "output_scopes": [
+                    "deliveries/B01/**",
+                    "reviews/B01/**",
+                    "fixtures/B01/**"
+                  ],
+                  "required_checks": [
+                    "build"
+                  ],
+                  "role": "readme-builder",
+                  "title": "readme-builder",
+                  "write_scopes": [
+                    "deliveries/B01/**",
+                    "reviews/B01/**",
+                    "fixtures/B01/**"
+                  ]
+                },
+                {
+                  "depends_on": [],
+                  "id": "T01",
+                  "output_scopes": [
+                    "deliveries/T01/**",
+                    "reviews/T01/**",
+                    "fixtures/T01/**"
+                  ],
+                  "required_checks": [
+                    "tests"
+                  ],
+                  "role": "readme-test-author",
+                  "title": "readme-test-author",
+                  "write_scopes": [
+                    "deliveries/T01/**",
+                    "reviews/T01/**",
+                    "fixtures/T01/**"
+                  ]
+                },
+                {
+                  "depends_on": [
+                    "B01",
+                    "T01"
+                  ],
+                  "id": "V01",
+                  "output_scopes": [
+                    "deliveries/V01/**",
+                    "reviews/V01/**",
+                    "fixtures/V01/**"
+                  ],
+                  "required_checks": [
+                    "review"
+                  ],
+                  "role": "readme-independent-review",
+                  "title": "readme-independent-review",
+                  "write_scopes": [
+                    "deliveries/V01/**",
+                    "reviews/V01/**",
+                    "fixtures/V01/**"
+                  ]
+                },
+                {
+                  "depends_on": [
+                    "V01"
+                  ],
+                  "id": "I01",
+                  "output_scopes": [
+                    "deliveries/I01/**",
+                    "reviews/I01/**",
+                    "fixtures/I01/**"
+                  ],
+                  "required_checks": [
+                    "final"
+                  ],
+                  "role": "readme-integrator",
+                  "title": "readme-integrator",
+                  "write_scopes": [
+                    "deliveries/I01/**",
+                    "reviews/I01/**",
+                    "fixtures/I01/**"
+                  ]
+                }
+              ]
+            },
+            "lifecycle": "CLOSED",
+            "terminal": "VALIDATED_SCOPED_TASK"
+          }
+        },
+        {
+          "id": "historical_only_scope_explicit",
+          "result": "PASS",
+          "detail": {
+            "scope": "historical evidence reconciliation, not current product regression",
+            "current_checkout_tests": "NOT_RUN",
+            "new_product_tests": "NOT_RUN"
+          }
+        },
+        {
+          "id": "legacy_controller_boundary_preserved",
+          "result": "PASS",
+          "detail": {
+            "modern": "LEGACY_UNVERIFIED",
+            "original_rc": 0
+          }
+        },
+        {
+          "id": "historical_junit_counts",
+          "result": "PASS",
+          "detail": {
+            "tests": 550,
+            "failed": 0,
+            "errors": 0,
+            "skipped": 1,
+            "passed": 549
+          }
+        },
+        {
+          "id": "readme_i01_close_and_postclose_verify",
+          "result": "PASS",
+          "detail": {
+            "close_rc": 0,
+            "verify_rc": 0
+          }
+        },
+        {
+          "id": "cancelled_ci_preserved",
+          "result": "PASS",
+          "detail": 39823364746
+        },
+        {
+          "id": "work_item_handoffs_bound",
+          "result": "PASS",
+          "detail": [
+            {
+              "work_id": "B01",
+              "handoff_sha256": "84a157919265a958ac0b8938dc8c1ba8da2c7c8f4328f938e537575be056dc62",
+              "required_check": "build",
+              "pass_receipt_ids": [
+                "2c4d84b27d18437cb269edbdcc7dc507"
+              ]
+            },
+            {
+              "work_id": "T01",
+              "handoff_sha256": "e342f4bc9af04d023f5059efe95f703ef2df4010dc48efcfc4652a6b8137a63f",
+              "required_check": "tests",
+              "pass_receipt_ids": [
+                "09bf27edc5b044b8993459a9a0d46e75"
+              ]
+            },
+            {
+              "work_id": "V01",
+              "handoff_sha256": "4c782fcff25733d96c78b09ff95f96396497bd867696b72dd071692682fc8e96",
+              "required_check": "review",
+              "pass_receipt_ids": [
+                "bf13eb1825b34f8892067f1977185a1b"
+              ]
+            },
+            {
+              "work_id": "I01",
+              "handoff_sha256": "11845a3eca06e90dd0672841cf8547924bd3c22031541f11c8927554ce1ca327",
+              "required_check": "final",
+              "pass_receipt_ids": [
+                "70abb24fbde1402c8cde8876b3bd4521"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "handoff_outputs_hashes_current",
+          "result": "PASS",
+          "detail": "All outputs declared by required work-item handoffs hashed against current bytes"
+        },
+        {
+          "id": "required_check_receipts_hashes_current",
+          "result": "PASS",
+          "detail": "Required PASS receipts match state digests and COMPLETED state"
+        },
+        {
+          "id": "idempotence_snapshot_and_current_bytes",
+          "result": "PASS",
+          "detail": {
+            "files_compared": 81,
+            "before_equals_after": true,
+            "current_matches_after": true
+          }
+        },
+        {
+          "id": "protected_historical_inputs_current",
+          "result": "PASS",
+          "detail": {
+            "count": 79
+          }
+        },
+        {
+          "id": "historical_readme_gate_receipts",
+          "result": "PASS",
+          "detail": {
+            "generate_rc": 0,
+            "check_rc": 0,
+            "result": "PASS",
+            "counts": {
+              "tests": 550,
+              "failures": 0,
+              "errors": 0,
+              "skipped": 1,
+              "passed": 549
+            },
+            "junit_counts": {
+              "tests": 550,
+              "failures": 0,
+              "errors": 0,
+              "skipped": 1
+            }
+          }
+        },
+        {
+          "id": "independence_not_overstated",
+          "result": "PASS",
+          "detail": "T01 and V01 share host handle /root/p1_compatibility; historical V01 independence is not established. This review is independent of the package and does not relabel V01."
+        }
+      ],
+      "limitations": [
+        "No current checkout/product tests executed.",
+        "Downloaded GitHub JSON is local session evidence; this review verifies its bytes and internal cross-binding, not a fresh live GitHub query.",
+        "Original Suite 1.4.2 controller closure is historical and does not satisfy the modern teamctl LEGACY_UNVERIFIED gate.",
+        "Historical V01 reviewer independence from T01 is not proven; this audit independently checks the overall reconciliation package and does not change V01's label."
+      ]
+    }
+  ],
+  "decision": "GO_HISTORICAL_CLOSURES_ONLY"
+}

@@ -1,0 +1,108 @@
+{
+  "schema": "bago.historical-reconciliation.artifacts.v1",
+  "goal": "readme-clarity-20261022",
+  "scope": "new reconciliation artifacts and final historical ledger; no current product validation",
+  "independent_review": "PENDING",
+  "files": [
+    {
+      "path": ".bago/team/runtime/events.jsonl",
+      "sha256": "2fdabcfcfafd65ea20bde796d26154649aca0f2fb5a4abcab732ef2f4de01a0b",
+      "bytes": 3179
+    },
+    {
+      "path": ".bago/team/runtime/handoffs/I01.json",
+      "sha256": "11845a3eca06e90dd0672841cf8547924bd3c22031541f11c8927554ce1ca327",
+      "bytes": 1473
+    },
+    {
+      "path": ".bago/team/runtime/state.json",
+      "sha256": "037709861d86a126c292119f4638f8510eb6a9eaeedfb078de1efc530f4474cf",
+      "bytes": 6722
+    },
+    {
+      "path": "reconciliation-20261031/evidence-reconciliation.json",
+      "sha256": "cf7b2bdbb8788c8e7513af095b8df004279182f5e62ece8f758af17ef108832c",
+      "bytes": 2689
+    },
+    {
+      "path": "reconciliation-20261031/github-ci.json",
+      "sha256": "8890f2ba7d9f5ad27a28f593de4ce78cfb89f76695d7c510eb9995d0a7615408",
+      "bytes": 184
+    },
+    {
+      "path": "reconciliation-20261031/github-pr63.json",
+      "sha256": "bc9171bdc587e2c909f1e7370a99722515115f5277e23e1ad376ee7217ea3eea",
+      "bytes": 254
+    },
+    {
+      "path": "reconciliation-20261031/IDEMPOTENCE.json",
+      "sha256": "c9f14f6286dd09331f6560898464a86db121571d81b6f418281a9d4eb061c3c3",
+      "bytes": 20065
+    },
+    {
+      "path": "reconciliation-20261031/legacy-close.json",
+      "sha256": "10c07a01063b5b574dc7006b7f3fe6080475f25a0d8654a62a5e266297aed4e5",
+      "bytes": 690
+    },
+    {
+      "path": "reconciliation-20261031/legacy-I01-handoff-submission-attempt2.json",
+      "sha256": "853d83d4cc707fdbc091a189c089f20dad6f2f616151d0767af1bde7c040c539",
+      "bytes": 826
+    },
+    {
+      "path": "reconciliation-20261031/legacy-I01-handoff-submission.json",
+      "sha256": "17bb9e723ce389053aebe2cc56d96459a476fa9ebb14dd2ed22bfd0f16827e06",
+      "bytes": 802
+    },
+    {
+      "path": "reconciliation-20261031/legacy-verify-after.json",
+      "sha256": "35f18084cba63deaa32ba547efc706f36fa6557bf6e3580c8cfc9c26692d4f61",
+      "bytes": 684
+    },
+    {
+      "path": "reconciliation-20261031/preserved/legacy-events-before.jsonl",
+      "sha256": "93b08c3d26470b1f07a54c44a15d1b77a4b4084dbcd63b0246da54172c024919",
+      "bytes": 3012
+    },
+    {
+      "path": "reconciliation-20261031/preserved/legacy-state-before.json",
+      "sha256": "f4a7c9d92ce751ea96eca3ee551a7b340c53219b8071a02263a15440c5d55d0d",
+      "bytes": 6529
+    },
+    {
+      "path": "reconciliation-20261031/preserved/reconcile-attempt1.py",
+      "sha256": "df854d619dd0fdbc8f3e2e8978c74d87d33986f48f10dcecb12f46fab0e066ce",
+      "bytes": 11857
+    },
+    {
+      "path": "reconciliation-20261031/protected-before.json",
+      "sha256": "9360d41d8ced7102276bed0e7e733dd371da5bbee360fb7aa204dea27b1342da",
+      "bytes": 9361
+    },
+    {
+      "path": "reconciliation-20261031/reconcile.py",
+      "sha256": "41eec171e88664c0b0f7ceac74653527703624eea8e6228582f3c5917960c093",
+      "bytes": 12112
+    },
+    {
+      "path": "reconciliation-20261031/RESULTADO.md",
+      "sha256": "caec0c7307d2b37b05c9e4a2d951d8a0a6d55ccfa51966d4d69a3ff7ec6c826d",
+      "bytes": 3316
+    },
+    {
+      "path": "reconciliation-20261031/verify_idempotence.py",
+      "sha256": "fe4e8a94614bca153a5490b189072e0d904f376b6b9994ee5bfc9557e88b41dc",
+      "bytes": 1833
+    },
+    {
+      "path": "reviews/I01/handoff-reconciliation-20261031-attempt2.json",
+      "sha256": "137fa78fca246ad1bfce3a77bcc0c05787e325b798f44dd5b969a095586a85aa",
+      "bytes": 1644
+    },
+    {
+      "path": "reviews/I01/handoff-reconciliation-20261031.json",
+      "sha256": "946e78e5c274e0902091fefb9299035edeeda646a15bdac36924fbdde3a2e70e",
+      "bytes": 1718
+    }
+  ]
+}

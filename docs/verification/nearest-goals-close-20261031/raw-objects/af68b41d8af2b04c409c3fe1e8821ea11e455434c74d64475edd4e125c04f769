@@ -1,0 +1,47 @@
+{
+  "constraints": [
+    "No backend changes, real credentials, provider calls, global configuration or user focus.",
+    "No frozen baseline visual artifacts may change.",
+    "No source edits outside exact files.",
+    "Show actual App callback behavior, no replacement harness that substitutes Exit behavior."
+  ],
+  "max_concurrency": 1,
+  "mission_id": "BAGO_MODEL_FOOTER_COMPLETE_REPAIR_20261031",
+  "objective": "Restore exact original footer acceptance in actual App: Exit closes Settings without saving; footer stays visible and content scrolls independently on desktop/mobile.",
+  "operation": "REPAIR",
+  "scope": "Previous callback files plus ProviderSettings.css sizing rules limited to actual Settings models tab; no global style redesign.",
+  "terminal_work_items": [
+    "F02"
+  ],
+  "title": "Restore existing footer Exit acceptance in the real Settings parent",
+  "work_items": [
+    {
+      "depends_on": [],
+      "id": "F02",
+      "output_scopes": [
+        "src/App.tsx",
+        "src/components/ProviderSettings.tsx",
+        "tests/providers/provider-settings.test.tsx",
+        "tests/ui/providers-footer/**",
+        "nearest-goals-check/footer-repair/**",
+        "src/components/ProviderSettings.css"
+      ],
+      "required_checks": [
+        "footer-tests",
+        "footer-browser"
+      ],
+      "role": "decision-ui-engineer",
+      "title": "Repair actual Settings model footer parent sizing and Exit",
+      "write_scopes": [
+        "src/App.tsx",
+        "src/components/ProviderSettings.tsx",
+        "tests/providers/provider-settings.test.tsx",
+        "tests/ui/providers-footer/**",
+        "nearest-goals-check/footer-repair/**",
+        ".build/**",
+        "dist/**",
+        "src/components/ProviderSettings.css"
+      ]
+    }
+  ]
+}

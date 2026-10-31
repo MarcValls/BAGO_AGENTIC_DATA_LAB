@@ -1,0 +1,232 @@
+"""Prepare/apply accepted goal closures without rewriting historical evidence.
+
+Default is a read-only plan. After acceptance is final, invoke with --apply.
+Only the eight named goals can move P->V; existing historical closures remain.
+"""
+from __future__ import annotations
+import argparse
+import ast
+import collections
+import datetime
+import hashlib
+import json
+import os
+from pathlib import Path
+import re
+import subprocess
+import sys
+import uuid
+
+CANDIDATE=Path(__file__).resolve().parents[3]
+PREFIX='docs/verification/nearest-goals-close-20261031'
+AUDIT=Path('.bago/goals/operational-continuity-governance-20261031/evidence/control/goals-audit-20261031')
+ELIGIBLE=frozenset(('agent-saved-tasks-20261020','context-viewer-20261020','eval-equal-height-20261020',
+    'model-assignments-20261020','model-footer-20261020','provider-status-line-20261020',
+    'square-color-ui-20261020','workspace-compact-20261020'))
+
+def digest(blob):return hashlib.sha256(blob).hexdigest()
+def read_json(path):return json.loads(path.read_text(encoding='utf-8-sig'))
+def encoded(value):return (json.dumps(value,ensure_ascii=False,indent=2)+'\n').encode('utf8')
+
+def bounded(path,root):
+    path=path.absolute();root=root.resolve()
+    if not path.resolve().is_relative_to(root):raise ValueError('Path outside declared root: '+str(path))
+    for part in (path,*path.parents):
+        if part.exists():
+            info=part.lstat()
+            if part.is_symlink() or getattr(info,'st_file_attributes',0)&1024:
+                raise ValueError('Reparse/link path rejected: '+str(part))
+        if part==root:break
+    return path
+
+def write_new_or_same(path,blob):
+    if path.exists():
+        if path.read_bytes()!=blob:raise ValueError('Existing immutable bytes differ: '+str(path))
+        return
+    path.parent.mkdir(parents=True,exist_ok=True)
+    with path.open('xb') as stream:stream.write(blob);stream.flush();os.fsync(stream.fileno())
+    if path.read_bytes()!=blob:raise ValueError('Copy readback mismatch: '+str(path))
+
+def replace_atomically(path,blob):
+    if path.read_bytes()==blob:return
+    temporary=path.with_name(path.name+'.'+uuid.uuid4().hex+'.tmp')
+    try:
+        with temporary.open('xb') as stream:stream.write(blob);stream.flush();os.fsync(stream.fileno())
+        os.replace(temporary,path)
+        if path.read_bytes()!=blob:raise ValueError('Updated file readback mismatch: '+str(path))
+    finally:
+        if temporary.exists():temporary.unlink()
+
+def names(values,label):
+    if not isinstance(values,list):raise ValueError(label+' must be a list')
+    found={}
+    for item in values:
+        name=item if isinstance(item,str) else next((item[k] for k in ('goal','goal_id','id') if isinstance(item,dict) and isinstance(item.get(k),str)),None)
+        if not name or name in found or not re.fullmatch(r'[A-Za-z0-9][A-Za-z0-9_-]*',name):
+            raise ValueError('Invalid/duplicate goal in '+label)
+        found[name]=item if isinstance(item,dict) else {}
+    return found
+
+def matrix_goals(matrix):
+    values=matrix.get('goals')
+    if isinstance(values,dict):return values
+    if isinstance(values,list):return names(values,'matrix.goals')
+    raise ValueError('Matrix goals must be an object or list')
+
+def updated_builder(source,accepted,changed_summaries,rows,commit):
+    tree=ast.parse(source)
+    assignment=next((n for n in tree.body if isinstance(n,ast.Assign) and any(isinstance(t,ast.Name) and t.id=='data' for t in n.targets)),None)
+    if assignment is None or not isinstance(assignment.value,ast.Constant) or not isinstance(assignment.value.value,str):
+        raise ValueError('Unsupported audit builder data contract')
+    updated=[];seen=set()
+    for line in assignment.value.value.splitlines():
+        name,kind,summary,reference=line.split('|')
+        seen.add(name)
+        if name in accepted:
+            kind='V';summary=rows[name]['summary'];reference='closure-20261031/ACCEPTANCE.json'
+        elif name in changed_summaries:
+            summary=rows[name]['summary']
+        updated.append('|'.join((name,kind,summary,reference)))
+    if seen!=set(rows):raise ValueError('Builder/inventory goal set differs')
+    data='\n'.join(updated)
+    if "'''" in data:raise ValueError('Unsupported triple quote in audit data')
+    lines=source.splitlines(keepends=True)
+    lines[assignment.lineno-1:assignment.end_lineno]=["data='''"+data+"'''\n"]
+    result=''.join(lines)
+    counts=dict(collections.Counter(row['classification'] for row in rows.values()))
+    result,number=re.subn(r'assert counts==\{[^\n]+\}',lambda _: 'assert counts=='+repr(counts),result)
+    if number!=1:raise ValueError('Unsupported audit count assertion')
+    result=result.replace('historical candidates, not current product revalidation',
+        'historical candidates plus explicitly accepted scoped closures; not global product validation')
+    result=result.replace('dos cierres históricos reconciliados y revisados independientemente el 31-Oct',
+        'cierres históricos y cierres acotados aceptados el 31-Oct, vinculados a sus candidatos')
+    result=result.replace('Las ocho features UI con read_authorization_invalid/403 tienen cambios funcionales comprobados, pero cierre global pendiente.',
+        'Sólo los objetivos aceptados en closure-20261031 se promueven a V. Los restantes conservan su clasificación y sus motivos documentados; no se declara cierre global del producto.')
+    ast.parse(result)
+    return result.encode('utf8'),counts
+
+def main():
+    parser=argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--apply',action='store_true',help='Apply only after the final acceptance artifact exists')
+    parser.add_argument('--original-root',type=Path)
+    parser.add_argument('--acceptance',type=Path,default=CANDIDATE/PREFIX/'closure/ACCEPTANCE.json')
+    parser.add_argument('--matrix',type=Path,default=CANDIDATE/PREFIX/'review/goal-matrix.json')
+    args=parser.parse_args()
+    original=args.original_root
+    if original is None:
+        common=subprocess.check_output(['git','rev-parse','--path-format=absolute','--git-common-dir'],cwd=CANDIDATE,text=True).strip()
+        original=Path(common).resolve().parent
+    original=original.resolve()
+    goals=bounded(original/'.bago/goals',original);audit=bounded(original/AUDIT,original)
+    acceptance_path=bounded(args.acceptance,CANDIDATE);matrix_path=bounded(args.matrix,CANDIDATE)
+    acceptance_blob=acceptance_path.read_bytes();matrix_blob=matrix_path.read_bytes()
+    acceptance=json.loads(acceptance_blob);matrix=json.loads(matrix_blob)
+    accepted=names(acceptance.get('accepted_goals'),'accepted_goals')
+    remaining=names(acceptance.get('remaining_goals'),'remaining_goals')
+    historical=names(acceptance.get('historical_accepted_goals',[]),'historical_accepted_goals')
+    commit=acceptance.get('product_commit')
+    if not isinstance(commit,str) or re.fullmatch(r'[0-9a-f]{40}',commit) is None:raise ValueError('product_commit must be a full SHA40')
+    heads=[matrix[k] for k in ('candidate_head','candidate_git_head','product_commit') if matrix.get(k)]
+    if not heads or any(head!=commit for head in heads):raise ValueError('Acceptance/matrix product commit mismatch')
+    if acceptance.get('status') in {'PREPARED','PENDING','PROPOSED','NOT_RUN','NO_GO','BLOCKED','FAIL'}:
+        raise ValueError('Acceptance is explicitly pending or rejected')
+    if not set(accepted)<=ELIGIBLE or set(accepted)&set(remaining):raise ValueError('Accepted scope/remaining conflict')
+    if not ELIGIBLE-set(accepted)<=set(remaining):raise ValueError('Remaining list omits an unaccepted goal from the eight-goal scope')
+    inventory_path=bounded(audit/'inventory.json',original);report_path=bounded(audit/'GOALS_STATUS.md',original);builder_path=bounded(audit/'build_report.py',original)
+    inventory=read_json(inventory_path);rows={r['goal']:dict(r) for r in inventory['items']}
+    actual={p.name for p in goals.iterdir() if p.is_dir()}
+    if len(actual)!=57 or actual!=set(rows):raise ValueError('Expected the unchanged 57 root goals')
+    if not (set(remaining)|set(historical))<=actual:raise ValueError('Unknown remaining/historical goal')
+    if any(rows[name]['classification']!='V' for name in historical):raise ValueError('Historical closures must already be V; this script cannot promote them')
+    reviewed=matrix_goals(matrix);copies=[]
+    for name,item in accepted.items():
+        if name not in reviewed or reviewed[name].get('eligible_for_closure') is not True:
+            raise ValueError('Independent matrix does not permit closure: '+name)
+        destination=bounded(goals/name/'closure-20261031',original)
+        source=(Path('.bago/goals')/name/'closure-20261031/ACCEPTANCE.json').as_posix()
+        row=rows[name]
+        if row['classification']!='P' and not (row['classification']=='V' and row['source']==source):
+            raise ValueError('Only P->V or an identical closure is permitted: '+name)
+        summary=item.get('summary') or f'VALIDATED_SCOPED: aceptación y revisión independiente del alcance; producto {commit[:12]}. Suite Linux final PASS; Windows global no validado.'
+        summary=' '.join(str(summary).replace('|','/').split())
+        rows[name]=dict(row,classification='V',summary=summary,source=source,source_sha256=digest(acceptance_blob))
+        for file,blob in (('ACCEPTANCE.json',acceptance_blob),('goal-matrix.json',matrix_blob)):
+            path=bounded(destination/file,original)
+            if path.exists() and path.read_bytes()!=blob:raise ValueError('Existing closure conflicts: '+str(path))
+            copies.append((path,blob))
+    # A remaining reviewed goal can receive its current stop reason, but its
+    # classification and historical evidence reference are never promoted.
+    changed_summaries=[]
+    for name in ELIGIBLE&set(remaining):
+        decision=reviewed.get(name,{})
+        if rows[name]['classification']=='P' and decision.get('eligible_for_closure') is False and decision.get('decision'):
+            reason=remaining[name].get('summary') or ('PARTIAL: '+str(decision['decision'])+' Producto '+commit[:12]+'. No cerrado.')
+            rows[name]['summary']=' '.join(str(reason).replace('|','/').split())
+            changed_summaries.append(name)
+    if not accepted:
+        print(json.dumps({'status':'NO_ACCEPTED_GOALS','writes':False}));return 0
+    before={name:bounded(audit/name,original).read_bytes() for name in ('build_report.py','inventory.json','GOALS_STATUS.md')}
+    builder,counts=updated_builder(before['build_report.py'].decode('utf-8-sig'),accepted,changed_summaries,rows,commit)
+    key=digest(acceptance_blob+matrix_blob)[:24]
+    snapshot=bounded(audit/'pre-closure-20261031'/key,original)
+    receipt_path=bounded(snapshot/'reconciliation-receipt.json',original)
+    plan={'status':'PREPARED','original_root':str(original),'candidate_root':str(CANDIDATE),'product_commit':commit,
+        'accepted_goals':list(accepted),'remaining_goals':list(remaining),'historical_accepted_goals':list(historical),
+        'remaining_summaries_refreshed':sorted(changed_summaries),
+        'root_goals':57,'counts_after':counts,'acceptance_sha256':digest(acceptance_blob),'matrix_sha256':digest(matrix_blob),
+        'snapshot':str(snapshot),'copies':[str(path.relative_to(original)) for path,_ in copies],'apply':args.apply}
+    if receipt_path.exists():
+        receipt=read_json(receipt_path)
+        for relative,expected in receipt['output_sha256'].items():
+            if digest(bounded(original/relative,original).read_bytes())!=expected:raise ValueError('Completed reconciliation output changed: '+relative)
+        print(json.dumps(dict(plan,status='ALREADY_APPLIED',writes=False),ensure_ascii=False));return 0
+    if not args.apply:
+        print(json.dumps(dict(plan,writes=False),ensure_ascii=False,indent=2));return 0
+    # Snapshot exact previous bytes once; never overwrite an earlier snapshot.
+    snapshot.mkdir(parents=True,exist_ok=True)
+    manifest_path=snapshot/'snapshot-manifest.json'
+    if not manifest_path.exists():
+        for name,blob in before.items():write_new_or_same(snapshot/name,blob)
+        write_new_or_same(snapshot/'accepted-goal-matrix.json',matrix_blob)
+        write_new_or_same(snapshot/'accepted-ACCEPTANCE.json',acceptance_blob)
+        write_new_or_same(manifest_path,encoded({'plan':plan,'before_sha256':{name:digest(blob) for name,blob in before.items()}}))
+    else:
+        saved=read_json(manifest_path)
+        if saved['plan']['acceptance_sha256']!=digest(acceptance_blob) or saved['plan']['matrix_sha256']!=digest(matrix_blob):
+            raise ValueError('Snapshot inputs conflict')
+        for name,expected in saved['before_sha256'].items():
+            if digest((snapshot/name).read_bytes())!=expected:raise ValueError('Snapshot changed: '+name)
+    for path,blob in copies:write_new_or_same(path,blob)
+    replace_atomically(builder_path,builder)
+    run=subprocess.run([sys.executable,'-B',str(builder_path)],cwd=original,capture_output=True,text=True)
+    if run.returncode:raise RuntimeError('Audit regeneration failed; snapshots retained: '+run.stdout+run.stderr)
+    regenerated=read_json(inventory_path);newrows={r['goal']:r for r in regenerated['items']}
+    if set(newrows)!=actual or regenerated['counts']!=counts:raise ValueError('Post-regeneration goal/count mismatch')
+    refreshed_bindings=[]
+    for row in inventory['items']:
+        name=row['goal']
+        if name not in accepted:
+            expected=dict(row)
+            if name in changed_summaries:expected['summary']=rows[name]['summary']
+            # The existing builder refreshes file fingerprints on every audit.
+            # Preserve all other fields for unaccepted goals.
+            expected['source_sha256']=newrows[name]['source_sha256']
+            if newrows[name]!=expected:raise ValueError('Unaccepted goal was changed: '+name)
+            if row.get('source_sha256')!=newrows[name].get('source_sha256'):refreshed_bindings.append(name)
+    for name in accepted:
+        if newrows[name]!=rows[name]:raise ValueError('Accepted goal differs from planned row: '+name)
+    if {p.name for p in goals.iterdir() if p.is_dir()}!=actual:raise ValueError('Root goal set changed')
+    output_paths=[builder_path,inventory_path,report_path]+[p for p,_ in copies]
+    receipt=dict(plan,status='APPLIED_VERIFIED',executed_at=datetime.datetime.now(datetime.timezone.utc).isoformat(),
+        unchanged_classification_source_bindings_refreshed=refreshed_bindings,
+        audit_command=run.args,audit_stdout=run.stdout,audit_stderr=run.stderr,
+        output_sha256={p.relative_to(original).as_posix():digest(p.read_bytes()) for p in output_paths})
+    write_new_or_same(receipt_path,encoded(receipt))
+    print(json.dumps({'status':'APPLIED_VERIFIED','accepted_goals':list(accepted),'counts':counts,'receipt':str(receipt_path)},ensure_ascii=False))
+    return 0
+
+if __name__=='__main__':
+    try:raise SystemExit(main())
+    except (OSError,ValueError,RuntimeError,KeyError,AssertionError) as error:
+        print(json.dumps({'status':'BLOCKED','error':str(error),'history':'Existing snapshots and closure bytes are never silently overwritten.'},ensure_ascii=False),file=sys.stderr)
+        raise SystemExit(1)

@@ -1,0 +1,6 @@
+{"at":"2026-10-22T12:43:36.620818+00:00","kind":"MISSION_INIT","mission_id":"ADL_PUBLICATION_TEST_REVIEW_20261022"}
+{"agent":"p1_compatibility","at":"2026-10-22T12:43:38.183571+00:00","kind":"CLAIM","work_id":"V01"}
+{"at":"2026-10-22T12:45:53.677042+00:00","execution_id":"6c49ffe7b4fc40cb8ba6559339724163","kind":"EXECUTION_STARTED","pid":88104,"work_id":"V01"}
+{"at":"2026-10-22T12:46:00.913814+00:00","execution_id":"6c49ffe7b4fc40cb8ba6559339724163","kind":"EXECUTION_COMPLETED","result":"PASS"}
+{"at":"2026-10-22T12:47:28.186713+00:00","kind":"HANDOFF_DONE","work_id":"V01"}
+{"at":"2026-10-22T12:48:40.814296+00:00","kind":"MISSION_CLOSED","operation":"VERIFICATION"}

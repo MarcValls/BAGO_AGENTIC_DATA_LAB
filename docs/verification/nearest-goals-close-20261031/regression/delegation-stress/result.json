@@ -1,0 +1,7 @@
+{
+  "status": "PASS",
+  "iterations": 100,
+  "failures": [],
+  "all_events": [],
+  "source": "original current fixture/API; diagnostic wrappers rethrow exceptions unchanged"
+}

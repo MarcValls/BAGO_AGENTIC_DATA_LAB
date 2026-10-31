@@ -1,0 +1,28 @@
+import React, {useState} from 'react'
+import {createRoot} from 'react-dom/client'
+import '../src/index.css'
+import '../src/App.css'
+import CognitionSettings from '../src/components/CognitionSettings'
+import ModelAssignments from '../src/components/ModelAssignments'
+import ProviderSettings from '../src/components/ProviderSettings'
+import AgentEvaluationLab from '../src/components/AgentEvaluationLab'
+import AgentTasks from '../src/components/AgentTasks'
+import {setLocale} from '../src/i18n'
+setLocale('es')
+function Harness(){
+ const [surface,setSurface]=useState(new URLSearchParams(location.search).get('surface')||'workspace')
+ return <div className="app-shell" style={{height:'100vh',display:'flex',flexDirection:'column'}}>
+  <aside style={{padding:8,background:'#152335',color:'white',flexShrink:0}}>Candidate components / synthetic API only — no provider calls</aside>
+  <nav style={{display:'flex',gap:8,padding:8,flexWrap:'wrap',flexShrink:0}}>{['workspace','models','providers','evaluation','tasks'].map(name=><button key={name} onClick={()=>setSurface(name)}>{name}</button>)}</nav>
+  <main className="app-content" style={{padding:12,minWidth:0,minHeight:0,flex:1,display:'flex',flexDirection:'column',overflow:surface==='models'?'hidden':'auto'}}>
+   <div className="settings-panel" style={{height:surface==='models'?'100%':undefined,minWidth:0,minHeight:0,flexShrink:surface==='models'?1:0}}>
+    {surface==='workspace'&&<CognitionSettings mode="baseline" onModeChange={()=>{}} workspaceOnly/>}
+    {surface==='models'&&<ModelAssignments onExit={()=>setSurface('workspace')}/>}
+    {surface==='providers'&&<ProviderSettings/>}
+    {surface==='evaluation'&&<AgentEvaluationLab/>}
+    {surface==='tasks'&&<AgentTasks initialAgentId="fixture-agent"/>}
+   </div>
+  </main>
+ </div>
+}
+createRoot(document.getElementById('root')!).render(<Harness/>);

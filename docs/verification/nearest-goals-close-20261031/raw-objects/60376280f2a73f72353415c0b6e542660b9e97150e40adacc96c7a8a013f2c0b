@@ -1,0 +1,5 @@
+
+> bago-portfolio-ui@1.0.0 test
+> vitest run --maxWorkers=2 --reporter=json --outputFile=C:\Users\AMTEC_Terminal_1º\Desktop\BAGO5_ADL\.worktrees\nearest-goals-close-20261031\frontend\nearest-goals-check\footer-repair\green-attempt2-vitest.json
+
+JSON report written to C:/Users/AMTEC_Terminal_1º/Desktop/BAGO5_ADL/.worktrees/nearest-goals-close-20261031/frontend/nearest-goals-check/footer-repair/green-attempt2-vitest.json

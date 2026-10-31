@@ -1,0 +1,32 @@
+.agent-tasks { box-sizing: border-box; max-width: none; margin: 0 0 20px; min-width: 0; padding: 16px; }
+.agent-tasks-heading { display: flex; align-items: end; gap: 24px; margin-bottom: 16px; }
+.agent-tasks-heading h2 { margin: 0; font-size: 1.4rem; }
+.agent-tasks-heading label { display: grid; gap: 5px; flex: 1; max-width: 480px; }
+.agent-tasks select { width: 100%; min-width: 0; padding: 9px; color: inherit; background: #0b1522; border: 1px solid #344c63; border-radius: 5px; font: inherit; }
+.agent-tasks button { cursor: pointer; padding: 8px 12px; color: inherit; background: #172b40; border: 1px solid #365773; border-radius: 5px; font: inherit; }
+.agent-tasks button:disabled { opacity: .5; cursor: not-allowed; }
+.agent-tasks .primary-action { background: #266486; }
+.agent-tasks-layout { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); gap: 18px; align-items: start; }
+.agent-task-editor, .agent-task-history { padding: 16px; min-width: 0; border: 1px solid #2d4257; border-radius: 7px; background: #101d2d; }
+.agent-task-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 9px; margin-top: 14px; }
+.agent-task-actions span, .agent-task-validation { font-size: .8rem; color: #a9bed0; }
+.agent-task-validation { display: block; margin-top: 8px; }
+.agent-task-history > header { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 10px; }
+.agent-task-history h3 { margin: 0; font-size: 1rem; }
+.agent-task-history h3 small { color: #9cb5c9; margin-left: 5px; }
+.agent-task-run { border: 1px solid #2d4257; border-left: 3px solid #527f9f; border-radius: 4px; margin-top: 9px; padding: 10px; min-width: 0; overflow-wrap: anywhere; }
+.agent-task-run summary { cursor: pointer; }
+.agent-task-run summary strong { font-size: .88rem; }
+.agent-task-run summary > time { display: block; font-size: .78rem; color: #9eb3c6; margin: 4px 0 0 16px; }
+.task-run-answered { color: #77d4a4; } .task-run-failed { color: #f39090; }
+.agent-task-run-prompt, .agent-task-answer { white-space: pre-wrap; overflow-wrap: anywhere; font: inherit; font-size: .88rem; }
+.agent-task-answer { max-height: 320px; overflow: auto; background: #091522; padding: 10px; border-radius: 4px; }
+.agent-task-run-dates { font-size: .85rem; }
+.agent-task-run-dates > div { display: flex; justify-content: space-between; gap: 10px; margin: 5px 0; }
+.agent-task-run-dates dd { margin: 0; }
+.agent-task-run-meta { display: grid; gap: 4px; font-size: .72rem; color: #9eb3c6; margin-bottom: 10px; }
+.agent-task-run-meta code { overflow-wrap: anywhere; }
+.agent-tasks-advanced { border: 1px solid #30475b; border-left: 3px solid #527f9f; border-radius: 5px; padding: 12px; margin-top: 20px; }
+.agent-tasks-advanced > summary { cursor: pointer; }
+@media (max-width: 950px) { .agent-tasks-layout { grid-template-columns: minmax(0, 1fr); } }
+@media (max-width: 600px) { .agent-tasks { padding: 12px; } .agent-tasks-heading { align-items: stretch; flex-direction: column; gap: 10px; } .agent-task-editor, .agent-task-history { padding: 12px; } }

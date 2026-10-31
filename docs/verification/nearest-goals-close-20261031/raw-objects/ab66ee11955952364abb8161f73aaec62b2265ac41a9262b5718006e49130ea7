@@ -1,0 +1,32 @@
+# F01 — reparación acotada del Salir de Modelos activos
+
+Se aplican decision-ui-engineer y la metodología UI Expert al proyecto real:
+React19, TypeScript y Vite8 en frontend/. Las referencias bago_fw/ControlPlane de
+la skill son de otro layout y no se importan. No hay rediseño ni nuevas deps.
+
+Auditoría: App mantiene settingsOpen y un dialog nativo; ProviderSettings mantiene
+la pestaña providers/models. ModelAssignments ya recibe onExit y lo ejecuta desde
+el footer sin guardar. Falta propagar la intención hasta el propietario del dialog.
+Clasificación: P1 funcional de navegación; no se detecta cambio contractual que
+reemplace el requisito original de Salir del goal model-footer-20261020.
+
+Mapa/propuesta: Chat → Configuración(dialog) → Proveedores y modelos → Modelos
+activos → Salir → dialog cerrado y Chat conservado. Para ProviderSettings aislado
+sin propietario, conservar Modelos activos → Salir → Proveedores.
+
+Conservar: ModelAssignments, accesibilidad, estilos, footer, carga/error/vacío,
+semántica de Guardar y permisos/API. Modificar solo App y la prop opcional de
+ProviderSettings. No guardar selección al salir ni llamar a proveedores.
+
+Pruebas deterministas con API simulada cubren estados normal, vacío, no disponible,
+error y carga, además del fallback aislado. RED debe fallar antes de implementar.
+La propuesta se materializa en los componentes reales y se revisa con Brave
+headless contra App real construida: no una UI alternativa ni callback sustituido.
+Se publican capturas/DOM/asserts del fixture; no acredita backend ni login reales.
+
+Primeros resultados conservados: RED inicial observó tres fallos de callback y
+un fallo del nuevo selector normal, más dos casos que ya pasaban. El primer full
+produjo826PASS/1FAIL: el selector omitía el separador «·» de la etiqueta existente.
+Se corrigió únicamente el selector del test/browser y se ejecuta un segundo full
+para evitar presentar la suma de un full incompleto y pruebas focales como si
+fuese una nueva ejecución completa. El primer fallo y su recibo no se sustituyen.

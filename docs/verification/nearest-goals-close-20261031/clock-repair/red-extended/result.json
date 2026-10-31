@@ -1,0 +1,37 @@
+{
+  "phase": "red-extended",
+  "test_result": "FAIL",
+  "returncode": 1,
+  "argv": [
+    "C:\\Python314\\python.exe",
+    "-B",
+    "-m",
+    "pytest",
+    "-q",
+    "-p",
+    "no:cacheprovider",
+    "tests/test_agent_delegation.py::test_parent_trace_clock_regression_preserves_child_outcome_and_replay_scope",
+    "tests/test_agent_delegation.py::test_parent_trace_normal_clock_keeps_ordered_interval_and_duration",
+    "--basetemp=\\\\?\\C:\\Users\\AMTEC_Terminal_1\u00ba\\Desktop\\BAGO5_ADL\\.worktrees\\nearest-goals-close-20261031\\docs\\verification\\nearest-goals-close-20261031\\clock-repair\\red-extended\\t\\p",
+    "--junitxml=C:\\Users\\AMTEC_Terminal_1\u00ba\\Desktop\\BAGO5_ADL\\.worktrees\\nearest-goals-close-20261031\\docs\\verification\\nearest-goals-close-20261031\\clock-repair\\red-extended\\tests.xml"
+  ],
+  "started_at": "2026-10-31T19:50:28.275556+00:00",
+  "finished_at": "2026-10-31T19:50:34.918724+00:00",
+  "counts": {
+    "tests": 4,
+    "failures": 3,
+    "errors": 0,
+    "skipped": 0
+  },
+  "sources": {
+    "src/api/server.py": "1124ccf14f65f7beb27a27308999a572ef7f7bfcba5ab182352adda7ae6d5e1a",
+    "tests/test_agent_delegation.py": "32784a4c08a8c6815a95e346ddd72290ec8eb89f686269b4352991c90314d0b8"
+  },
+  "logs": {
+    "stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout.log": "e686742d8a070cfb8108ba9f1e8a829830c02bc42d4af13b66e9669d400e4487",
+    "tests.xml": "c32d87e539cedb6936d324bfada7f19e432b95a54e1e69a5bc915baca7aef13b"
+  },
+  "network": "Provider functions are synthetic fixture callbacks; no live inference",
+  "temp_scope": "C:\\Users\\AMTEC_Terminal_1\u00ba\\Desktop\\BAGO5_ADL\\.worktrees\\nearest-goals-close-20261031\\docs\\verification\\nearest-goals-close-20261031\\clock-repair\\red-extended\\t"
+}

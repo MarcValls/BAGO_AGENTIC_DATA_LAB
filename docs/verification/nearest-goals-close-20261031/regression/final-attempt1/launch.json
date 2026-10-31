@@ -1,0 +1,26 @@
+{
+  "image_id": "sha256:3d92378210d9a4b5411f2f74f9bfe08bd1f90787c5426b589e8b95486c243480",
+  "candidate_head": "b1b4d524a0e936300a71da36e0c0276e061fa34e",
+  "argv": [
+    "docker",
+    "run",
+    "--rm",
+    "-i",
+    "--name",
+    "bago-near-complete-464d7328ab",
+    "--network",
+    "none",
+    "--mount",
+    "type=bind,source=C:\\Users\\AMTEC_Terminal_1\u00ba\\Desktop\\BAGO5_ADL\\.worktrees\\nearest-goals-close-20261031\\docs\\verification\\nearest-goals-close-20261031\\regression\\final-attempt1,target=/results",
+    "--entrypoint",
+    "python",
+    "sha256:3d92378210d9a4b5411f2f74f9bfe08bd1f90787c5426b589e8b95486c243480",
+    "-B",
+    "-c",
+    "\nfrom pathlib import Path\nimport os,sys,tarfile\nroot=Path('/workspace');root.mkdir(exist_ok=True)\nwith tarfile.open(fileobj=sys.stdin.buffer,mode='r|') as archive:archive.extractall(root,filter='data')\nos.chdir(root)\nexec((root/'check-job.py').read_text())\n"
+  ],
+  "archive_sha256": "9105714147ae5857ada577de1e5fe05d21a7310534cb9355e9de157be200f56e",
+  "selection_count": 205,
+  "dependency_files": 5134,
+  "dependencies": "existing npm ci with unchanged lock; excludes transient .cache/.vite and Windows .bin shims"
+}

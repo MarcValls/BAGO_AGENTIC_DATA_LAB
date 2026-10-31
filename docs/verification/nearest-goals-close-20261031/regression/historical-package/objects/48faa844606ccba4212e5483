@@ -1,0 +1,327 @@
+{
+  "worktree": "C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\.worktrees\\readme-clarity-20261022",
+  "before": {
+    "scripts/generate_dynamic_readme.py": "54c8d497d8599e628af33cf60c9a1b867b0ddb5e890695486442ba269e15312b",
+    "docs/readme_manifest.json": "3d7c554938e6611fdf043bce63381db2fc2432902db8ed1b3722413ab8889b81",
+    "docs/readme_generation.md": "3ec75ca0453bfdb0e5eb4f72504b9efe0f267dc7c9acf04796dc9f9a29f8781a",
+    "docs/verification/readme-status-20261022.json": "2f01d74b4f6f3a90b4bc788565bd9e8311513f85b61c872e80f669439c28c9ab",
+    "docs/verification/readme-20261022/ci-summary.json": "927f31209019c70321e56599ae5d25fd6c06b1f5527d30152afdd9812afbfdc1",
+    "README.md": "0731c7d5a88f5528861c923ed6b947c0eb8a931a2c2572e0fdc814418d131bf1",
+    "tests/test_dynamic_readme.py": "0bd58b9d873242124c0d8877f4c7d0763a68b3f72f960ec8a11dabc7bf04272d",
+    "tests/test_readme_presentation.py": "340b142a772681c95312843fc297ad17234310cbf1442324c0e1192f555178ae"
+  },
+  "after": {
+    "scripts/generate_dynamic_readme.py": "54c8d497d8599e628af33cf60c9a1b867b0ddb5e890695486442ba269e15312b",
+    "docs/readme_manifest.json": "3d7c554938e6611fdf043bce63381db2fc2432902db8ed1b3722413ab8889b81",
+    "docs/readme_generation.md": "3ec75ca0453bfdb0e5eb4f72504b9efe0f267dc7c9acf04796dc9f9a29f8781a",
+    "docs/verification/readme-status-20261022.json": "2f01d74b4f6f3a90b4bc788565bd9e8311513f85b61c872e80f669439c28c9ab",
+    "docs/verification/readme-20261022/ci-summary.json": "927f31209019c70321e56599ae5d25fd6c06b1f5527d30152afdd9812afbfdc1",
+    "README.md": "0731c7d5a88f5528861c923ed6b947c0eb8a931a2c2572e0fdc814418d131bf1",
+    "tests/test_dynamic_readme.py": "0bd58b9d873242124c0d8877f4c7d0763a68b3f72f960ec8a11dabc7bf04272d",
+    "tests/test_readme_presentation.py": "340b142a772681c95312843fc297ad17234310cbf1442324c0e1192f555178ae"
+  },
+  "unchanged": true,
+  "consumed": [
+    {
+      "work_id": "B01",
+      "handoff_sha256": "84a157919265a958ac0b8938dc8c1ba8da2c7c8f4328f938e537575be056dc62",
+      "outputs": [
+        {
+          "frozen": true,
+          "id": "B01:deliveries/B01/attempt-2/scripts/generate_dynamic_readme.py",
+          "path": "deliveries/B01/attempt-2/scripts/generate_dynamic_readme.py",
+          "sha256": "54c8d497d8599e628af33cf60c9a1b867b0ddb5e890695486442ba269e15312b"
+        },
+        {
+          "frozen": true,
+          "id": "B01:deliveries/B01/attempt-2/docs/readme_manifest.json",
+          "path": "deliveries/B01/attempt-2/docs/readme_manifest.json",
+          "sha256": "3d7c554938e6611fdf043bce63381db2fc2432902db8ed1b3722413ab8889b81"
+        },
+        {
+          "frozen": true,
+          "id": "B01:deliveries/B01/attempt-2/docs/readme_generation.md",
+          "path": "deliveries/B01/attempt-2/docs/readme_generation.md",
+          "sha256": "3ec75ca0453bfdb0e5eb4f72504b9efe0f267dc7c9acf04796dc9f9a29f8781a"
+        },
+        {
+          "frozen": true,
+          "id": "B01:deliveries/B01/attempt-2/MANIFEST.json",
+          "path": "deliveries/B01/attempt-2/MANIFEST.json",
+          "sha256": "4f36ada212a5ba241f67253d0b977af43154b9ba03c030046501a1efcfd95453"
+        },
+        {
+          "frozen": true,
+          "id": "B01:fixtures/B01/attempt-2/README.preview.md",
+          "path": "fixtures/B01/attempt-2/README.preview.md",
+          "sha256": "0731c7d5a88f5528861c923ed6b947c0eb8a931a2c2572e0fdc814418d131bf1"
+        },
+        {
+          "frozen": true,
+          "id": "B01:reviews/B01/attempt-2/build-result.json",
+          "path": "reviews/B01/attempt-2/build-result.json",
+          "sha256": "dd611ceb9fd9d85366fa756c8ef7c3a1007fab473b33be34a2e23681ee3c22fd"
+        },
+        {
+          "frozen": true,
+          "id": "B01:reviews/B01/attempt-2/preview-receipt.json",
+          "path": "reviews/B01/attempt-2/preview-receipt.json",
+          "sha256": "96bc6d50c3d38db573cecc308f58fb283ef6b0b061f72ead4ae041ddec53687e"
+        },
+        {
+          "frozen": true,
+          "id": "B01:reviews/B01/attempt-2/preview.stdout.log",
+          "path": "reviews/B01/attempt-2/preview.stdout.log",
+          "sha256": "f2ec2429800f894ae3872f73804abe2ba66b83e51fa60ebc231cc8a3303037b6"
+        },
+        {
+          "frozen": true,
+          "id": "B01:reviews/B01/attempt-2/preview.stderr.log",
+          "path": "reviews/B01/attempt-2/preview.stderr.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "frozen": true,
+          "id": "B01:reviews/B01/source-bindings.json",
+          "path": "reviews/B01/source-bindings.json",
+          "sha256": "326251a7c22366d4e6de120f5bd21dd68b4710d2b1fcc258d79d171ee10fc24b"
+        },
+        {
+          "frozen": true,
+          "id": "B01:reviews/B01/REPORT.md",
+          "path": "reviews/B01/REPORT.md",
+          "sha256": "85f60e5663b12fdfaa16af66902702fa15d2a7fbe1a970707ac2a98aa737c098"
+        },
+        {
+          "frozen": true,
+          "id": "B01:reviews/B01/build_check.py",
+          "path": "reviews/B01/build_check.py",
+          "sha256": "4ee3f0eb544b6a5d0db9e71cfbc82b717b979d72e1bed060e166c3c599e5eea5"
+        },
+        {
+          "frozen": true,
+          "id": "B01:reviews/B01/run_build.py",
+          "path": "reviews/B01/run_build.py",
+          "sha256": "1ac17e73f8844817f323fc159cc89ba90a32095b183a7023b2b4670cdc07284e"
+        },
+        {
+          "frozen": true,
+          "id": "B01:reviews/B01/seal.py",
+          "path": "reviews/B01/seal.py",
+          "sha256": "284ad29b3524d0b8c7311d6b8d7826a212ee50700644ce354eb26f09689dd2db"
+        },
+        {
+          "frozen": true,
+          "id": "B01:reviews/B01/managed-build-2.json",
+          "path": "reviews/B01/managed-build-2.json",
+          "sha256": "e78b79879e176bee2af31109d2c7ef702f02d1bbc943cd5f7f6ba12e08e4acd6"
+        },
+        {
+          "frozen": true,
+          "id": "B01:reviews/B01/diff-check.stdout.log",
+          "path": "reviews/B01/diff-check.stdout.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "frozen": true,
+          "id": "B01:reviews/B01/diff-check.stderr.log",
+          "path": "reviews/B01/diff-check.stderr.log",
+          "sha256": "d2cb6ffb663a2b94bca7a186494ceb020deacbc8ff6c9af0ce2e8eba2120ca08"
+        }
+      ]
+    },
+    {
+      "work_id": "T01",
+      "handoff_sha256": "e342f4bc9af04d023f5059efe95f703ef2df4010dc48efcfc4652a6b8137a63f",
+      "outputs": [
+        {
+          "kind": "TEST_DELIVERY",
+          "path": "deliveries/T01/MANIFEST.json",
+          "sha256": "71913499696cd1766872f4eb1a6089eaea169d5cbe75eae7252563a2d5386802"
+        },
+        {
+          "kind": "TEST_DELIVERY",
+          "path": "deliveries/T01/tests/test_dynamic_readme.py",
+          "sha256": "0bd58b9d873242124c0d8877f4c7d0763a68b3f72f960ec8a11dabc7bf04272d"
+        },
+        {
+          "kind": "TEST_DELIVERY",
+          "path": "deliveries/T01/tests/test_readme_presentation.py",
+          "sha256": "340b142a772681c95312843fc297ad17234310cbf1442324c0e1192f555178ae"
+        },
+        {
+          "kind": "TEST_DELIVERY",
+          "path": "reviews/T01/final/result.json",
+          "sha256": "f0090e2a5a3b354f14d97af2bc7f8b8a3ae8c2c5752d80f65ed93200aca3d07b"
+        },
+        {
+          "kind": "TEST_DELIVERY",
+          "path": "reviews/T01/final/stderr.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "kind": "TEST_DELIVERY",
+          "path": "reviews/T01/final/stdout.log",
+          "sha256": "e4d756aece07f27405b3b19d8c5aeae22501c0efa86d81bcf00a0c3a82d1f3eb"
+        },
+        {
+          "kind": "TEST_DELIVERY",
+          "path": "reviews/T01/final/target-sha-manifest.json",
+          "sha256": "fe7929bbb50047372c4fe8b2c84724c1970447dc6fb539fece54e2ec85361c81"
+        },
+        {
+          "kind": "TEST_DELIVERY",
+          "path": "reviews/T01/prepare_handoff.py",
+          "sha256": "a7c126b380e4fd387f4327e1e63b9a5b52f7982974d59f8253bbc6ecbd24dbab"
+        },
+        {
+          "kind": "TEST_DELIVERY",
+          "path": "reviews/T01/REPORT.md",
+          "sha256": "b5e87801b36d8f3f81921e340b5efd7d59357d531f9e59f37670b42324a0c3f3"
+        },
+        {
+          "kind": "TEST_DELIVERY",
+          "path": "reviews/T01/result.json",
+          "sha256": "1475af985a8c5aa68059a2e0f8af739ac48abb4fba9605ffcd947cae8119d6e5"
+        },
+        {
+          "kind": "TEST_DELIVERY",
+          "path": "reviews/T01/run_tests-attempt1.py",
+          "sha256": "720b3398d545bcd355dcb79e715423e17904e3833ed4432824ac7a9c3501e802"
+        },
+        {
+          "kind": "TEST_DELIVERY",
+          "path": "reviews/T01/run_tests.py",
+          "sha256": "ff32339601e6def2c956494e9d9a066960fca7dc7ce0310464930246f3ea01d8"
+        },
+        {
+          "kind": "TEST_DELIVERY",
+          "path": "reviews/T01/stderr.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "kind": "TEST_DELIVERY",
+          "path": "reviews/T01/stdout.log",
+          "sha256": "0cd3a6f97e4e7e64dce016104e920dca6b185975de11b98988626cc8e0a42d4f"
+        },
+        {
+          "kind": "TEST_DELIVERY",
+          "path": "reviews/T01/target-sha-manifest.json",
+          "sha256": "49465254d7fcb8606796383498e86f7de8d63e9b47136a28283a0833da61bfd9"
+        }
+      ]
+    }
+  ],
+  "new_local_links": [
+    {
+      "link": "docs/agent-chat-control/LOCAL_SETUP.md",
+      "sha256": "97140cc0f93e253eb8b8efcdcddfb2ee5e287c49e1e7788e7bdd66af55dacf8b"
+    },
+    {
+      "link": "docs/decision-inspector/MANUAL_PARA_DUMMIES.md",
+      "sha256": "0d8f782ccbe5af8b0ebc9931c75d75e69c7bb2d13d314ed2f9192c79d7b5242f"
+    },
+    {
+      "link": "docs/verification/github-update-20261022/README.md",
+      "sha256": "9256a6adefb72ce3f52582bd27f6c249b9a6e9134db937c5d0a416a1e325f4c0"
+    },
+    {
+      "link": "docs/verification/readme-status-20261022.json",
+      "sha256": "2f01d74b4f6f3a90b4bc788565bd9e8311513f85b61c872e80f669439c28c9ab"
+    },
+    {
+      "link": "frontend/package.json",
+      "sha256": "2b79daf1b88a63288e55e545b45113f5913bf4d7784c74f6601c56e0375929f3"
+    },
+    {
+      "link": "frontend/src/App.tsx",
+      "sha256": "69d94ddce1ef34b314be1d2671e77d3774f9bbe960d18b8dfa429f78ce0c4f2e"
+    },
+    {
+      "link": "frontend/src/components/AgentChat.tsx",
+      "sha256": "97f96f98c270178f56a5f5abf21683c0c11f94b42cd52055f20935f5d9525591"
+    },
+    {
+      "link": "frontend/src/components/AgentTasks.tsx",
+      "sha256": "a2314c8a36eaf3e7512bc2a104b1f49101f9632be22cfdd3d13a8aa4037f8d45"
+    },
+    {
+      "link": "frontend/src/components/CognitionSettings.tsx",
+      "sha256": "6bb0e89899dae4986537eb846de5895198ebf62cb2603ed86710d0f3c7646b5d"
+    },
+    {
+      "link": "frontend/src/components/KnowledgeIngest.tsx",
+      "sha256": "4bbbb05825c182be0cb435236e93ad0708de907066c351fccc5ab1a4a0de3072"
+    },
+    {
+      "link": "frontend/src/components/ProviderSettings.tsx",
+      "sha256": "679f91e70e70ee6a074137b7a1aed9e09837b8d08efbdcb7f544611485ce4827"
+    },
+    {
+      "link": "frontend/src/features/ber-effect-inspector/BerEffectRecordInspector.tsx",
+      "sha256": "10610140c33da8ae25fa926e7948bf805171e5f9285fbf87b8e1cac2e1f2ba3b"
+    },
+    {
+      "link": "frontend/src/features/decision-inspector/index.ts",
+      "sha256": "ffb04d8f66079dd279b4dcb81f3c003f8f8c82b6fb291a2477b5286ec725a5e7"
+    },
+    {
+      "link": "scripts/run-local-ui.ps1",
+      "sha256": "5addbf38685e25b046e037212da136eb78fbad45583e9dc15d79aeaf25db23e4"
+    },
+    {
+      "link": "src/api/server.py",
+      "sha256": "dd46ec63245499bcdc0b4a85038e047917f2c70c7d2964ed7759a911c74e5103"
+    }
+  ],
+  "ci": {
+    "candidate": "b0b2f2a2079019fe80e82b836e13c5580a189b70",
+    "run_url": "https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/actions/runs/39813814372",
+    "metadata_sha256": "3aa7524cda44a4943a775563720dc614f09a5ad6f5963d7b8c67ef8984fa9c95",
+    "log_sha256": "e70fe3d18c38fd830f1de91a0c67ca9ebf0aaf08fe832aeb49571471ee0fe111",
+    "matching_trees": [
+      "accfe27115fed2854d791434d9866ebd39210b56",
+      "accfe27115fed2854d791434d9866ebd39210b56"
+    ],
+    "note": "Tree equality is not a separate CI execution on the merge."
+  },
+  "check_command": {
+    "argv": [
+      "C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\.venv\\Scripts\\python.exe",
+      "-B",
+      "scripts/generate_dynamic_readme.py",
+      "--check",
+      "--skip-tests"
+    ],
+    "returncode": 0,
+    "stdout_sha256": "1ae43cdddc601b7c07115c1fb7047bcdc1f729dede01fce68d9dd69b12e11da8",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "negatives": [
+    {
+      "case": "missing_candidate",
+      "result": "PASS",
+      "rejection": "README CI record is missing candidate"
+    },
+    {
+      "case": "missing_evidence",
+      "result": "PASS",
+      "rejection": "README CI check is missing evidence_url"
+    },
+    {
+      "case": "collection_as_result",
+      "result": "PASS",
+      "rejection": "Unsupported README check result"
+    },
+    {
+      "case": "unsupported_schema",
+      "result": "PASS",
+      "rejection": "Unsupported README verification record schema"
+    },
+    {
+      "case": "path_escape",
+      "result": "PASS",
+      "rejection": "Verification record must be repository-relative"
+    }
+  ]
+}

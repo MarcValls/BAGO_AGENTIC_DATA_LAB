@@ -1,0 +1,58 @@
+"""Prepare finite final regression evidence without rerunning existing suites."""
+from pathlib import Path
+import hashlib,importlib.util,json,subprocess,sys
+root=Path(__file__).resolve().parents[3]
+kit=root/'.bago/team/kit/scripts';sys.path.insert(0,str(kit))
+spec=importlib.util.spec_from_file_location('team',kit/'teamctl.py');team=importlib.util.module_from_spec(spec);spec.loader.exec_module(team)
+state=json.loads((root/'.bago/team/runtime/state.json').read_text(encoding='utf8'))
+scope=root/'docs/verification/nearest-goals-close-20261031/regression'
+head=subprocess.check_output(['git','rev-parse','HEAD'],cwd=root,text=True).strip()
+final=json.loads((scope/'final-attempt1/result.json').read_text())
+inner=json.loads((scope/'final-attempt1/inner-result.json').read_text())
+frontend=json.loads((scope/'frontend-integrity/report.json').read_text())
+documents=json.loads((scope/'documents-final.json').read_text())
+assert final['status']=='PASS' and final['container_removed'] and final['candidate_head']==head
+assert inner['status']==frontend['status']==documents['status']=='PASS'
+assert hashlib.sha256((scope/'final-attempt1/inner-result.json').read_bytes()).hexdigest()==final['inner_sha256']
+verification=[]
+for check in ('regression','readme-check','documents','frontend-integrity','historical-export','historical-export-verify'):
+    matches=[(eid,v) for eid,v in state['executions'].items() if v.get('work_id')=='REGRESSION' and v.get('check_id')==check]
+    eid,saved=max(matches,key=lambda item:item[1]['started_at'])
+    receipt=json.loads((root/saved['path']).read_text())
+    assert receipt['result']=='PASS',check
+    verification.append(dict(id=check,command=receipt['command_text'],result=receipt['result'],evidence=saved['path'],execution_id=eid))
+source_paths=['src','tests','frontend/src','frontend/tests','scripts/generate_dynamic_readme.py','docs/readme_manifest.json','docs/readme_svg_manifest.json']
+assert subprocess.run(['git','diff','--exit-code','HEAD','--',*source_paths],cwd=root,capture_output=True).returncode==0
+expected=['frontend/src/App.tsx','frontend/src/components/ProviderSettings.css','frontend/src/components/ProviderSettings.tsx','frontend/tests/providers/provider-settings.test.tsx','src/api/server.py','tests/test_agent_delegation.py']
+changed=subprocess.check_output(['git','diff','--name-only','8065906f4560f4f0b0951cc445b673ecad7ce175',head,'--',*source_paths],cwd=root,text=True).splitlines()
+assert sorted(changed)==sorted(expected),changed
+assert documents['server_sha256']==hashlib.sha256((root/'src/api/server.py').read_bytes()).hexdigest()
+assert documents['document_reader_sha256']==hashlib.sha256((root/'src/api/project_documents.py').read_bytes()).hexdigest()
+generate=next(c for c in inner['commands'] if c['label']=='generate')
+assert generate['main_pytest_passed']==1792 and generate['junit_counts_including_subtests']=={'tests':1908,'failures':0,'errors':0,'skipped':2}
+summary=dict(status='PASS',candidate_head=head,baseline_head='8065906f4560f4f0b0951cc445b673ecad7ce175',image_id=final['image_id'],checks=verification,
+    linux_commands=inner['commands'],linux_full_suite={'passed':1792,'skipped':2,'subtests_passed':114,'junit_total_including_subtests':1908},
+    linux_triage={'passed':204,'skipped':1},windows_full_suite='FAIL preserved; final global execution here is Linux Docker only',
+    frontend=dict(historical_full_vitest_before_css=827,fresh_f02_focused=6,fresh_f02_build='PASS',actual_app_browser_checks=21,integrity=frontend['status']),
+    documents=dict(passed=len(documents['checks']),scope=documents['surface'],receipt='74d6ad48e3f8422d90162114ad584c13'),
+    source_changes=[dict(path=p,sha256=hashlib.sha256((root/p).read_bytes()).hexdigest()) for p in expected],
+    historical_visual=dict(scope='Archived baseline component/cascade checks; not rerun after repairs',baseline_runtime='.bago/goals/nearest-open-goals-20261031/baseline-runtime-live',cascade_report='docs/verification/nearest-goals-close-20261031/regression/cascade-attempt2/report.json'),
+    limits=['Windows global suite is not validated; failures remain preserved.',
+            'Clock regression was reproduced deterministically and repaired in commit4241c82; no unexplained-flake claim.',
+            'Footer Exit and actual-App layout were repaired in commitb1b4d52; F02 currently verifies closure and visible bottom actions.',
+            '827 Vitest is historical before F02 CSS; F02 ran six affected tests plus fresh build.',
+            'Actual-App browser checks use synthetic intercepted APIs; Electron and real provider/backend browser integration are NOT_RUN.',
+            'Archived baseline visual/cascade coverage remains scoped; square/color original full screen set remains partial.',
+            'This handoff does not close all eight goals; independent REVIEW and per-goal acceptance remain mandatory.'])
+(scope/'SUMMARY.json').write_text(json.dumps(summary,indent=2)+'\n',encoding='utf8')
+paths=[]
+# Finite immediate evidence files and one directory level only. Never walk tmp.
+for p in scope.iterdir():
+    if p.is_file():paths.append(p)
+    elif p.is_dir() and p.name!='__pycache__':paths.extend(q for q in p.iterdir() if q.is_file())
+for name in ('README.md','README_DETAILS.md'):paths.append(root/name)
+outputs=[dict(kind='generated-readme' if p.parent==root else 'regression-evidence',path=p.relative_to(root).as_posix(),sha256=hashlib.sha256(p.read_bytes()).hexdigest()) for p in sorted(set(paths))]
+draft=dict(work_id='REGRESSION',role='codex_orchestrator',status='DONE',mission_id=state['mission']['mission_id'],candidate_id=state['candidate_id'],scope_sha256=state['scope_sha256'],changed_files=[x['path'] for x in outputs],outputs=outputs,verification=verification,residual_risks=summary['limits'],next_consumers=['REVIEW'])
+draft['payload_sha256']=team.handoff_payload_hash(draft)
+p=Path(__file__).with_name('REGRESSION-handoff.json');p.write_text(json.dumps(draft,indent=2)+'\n',encoding='utf8')
+print(json.dumps({'status':'PREPARED','outputs':len(outputs),'draft':str(p),'payload_sha256':draft['payload_sha256']}))

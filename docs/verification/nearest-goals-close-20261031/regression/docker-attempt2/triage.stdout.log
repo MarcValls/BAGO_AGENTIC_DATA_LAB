@@ -1,0 +1,19 @@
+.............................F.......................................... [ 92%]
+.....s                                                                   [100%]
+=================================== FAILURES ===================================
+_ test_no_parent_grant_is_inherited_and_replay_different_scope_never_invokes_again _
+
+setup = {'agent_id': 'agent_1234abcd', 'calls': [('child-fixture', [{'content': 'CHILD FIXTURE ONLY\n\nYou do not have app-con...nt object at 0x7d72f16d1ad0>, 'comms': <src.communications.service.CommunicationService object at 0x7d72f16d1290>, ...}
+
+    def test_no_parent_grant_is_inherited_and_replay_different_scope_never_invokes_again(setup):
+>       f=setup;propose(f);result=execute(f).json();assert result['agent_delegation']['state']=='PASSED'
+                                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       AssertionError: assert 'INCONCLUSIVE' == 'PASSED'
+E         
+E         - PASSED
+E         + INCONCLUSIVE
+
+tests/test_agent_delegation.py:158: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_agent_delegation.py::test_no_parent_grant_is_inherited_and_replay_different_scope_never_invokes_again
+1 failed, 76 passed, 1 skipped in 63.34s (0:01:03)

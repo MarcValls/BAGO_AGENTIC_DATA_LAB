@@ -1,0 +1,30 @@
+{
+  "worktree": "C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\.worktrees\\readme-clarity-20261022",
+  "base": "f253f3700990943755e63717a93d3be99f0e19fa",
+  "sources": [
+    {
+      "path": "scripts/generate_dynamic_readme.py",
+      "delivery": "deliveries/B01/attempt-2/scripts/generate_dynamic_readme.py",
+      "target": "C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\.worktrees\\readme-clarity-20261022\\scripts\\generate_dynamic_readme.py",
+      "sha256": "54c8d497d8599e628af33cf60c9a1b867b0ddb5e890695486442ba269e15312b"
+    },
+    {
+      "path": "docs/readme_manifest.json",
+      "delivery": "deliveries/B01/attempt-2/docs/readme_manifest.json",
+      "target": "C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\.worktrees\\readme-clarity-20261022\\docs\\readme_manifest.json",
+      "sha256": "3d7c554938e6611fdf043bce63381db2fc2432902db8ed1b3722413ab8889b81"
+    },
+    {
+      "path": "docs/readme_generation.md",
+      "delivery": "deliveries/B01/attempt-2/docs/readme_generation.md",
+      "target": "C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\.worktrees\\readme-clarity-20261022\\docs\\readme_generation.md",
+      "sha256": "3ec75ca0453bfdb0e5eb4f72504b9efe0f267dc7c9acf04796dc9f9a29f8781a"
+    }
+  ],
+  "verification_record": {
+    "path": "docs/verification/readme-status-20261022.json",
+    "sha256": "2f01d74b4f6f3a90b4bc788565bd9e8311513f85b61c872e80f669439c28c9ab"
+  },
+  "preview_sha256": "0731c7d5a88f5528861c923ed6b947c0eb8a931a2c2572e0fdc814418d131bf1",
+  "diff_check_exit_code": 0
+}

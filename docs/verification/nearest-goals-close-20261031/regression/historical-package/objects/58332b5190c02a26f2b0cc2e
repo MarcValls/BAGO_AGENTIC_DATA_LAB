@@ -1,0 +1,23 @@
+import hashlib
+import json
+from pathlib import Path
+out=Path(__file__).resolve().parent
+p=out.parents[1]
+def read(path):return json.loads(path.read_bytes())
+def digest(value):return hashlib.sha256(json.dumps(value,sort_keys=True,separators=(',',':'),ensure_ascii=False,allow_nan=False).encode()).hexdigest()
+state=read(p/'.bago/team/runtime/state.json')
+assert read(out/'result.json')['status']=='PASS'
+before=read(out/'fingerprints-before.json');after=read(out/'fingerprints-after.json')
+identity_before=digest({'src':before['candidate_source'],'tests':before['candidate_tests']})
+identity_after=digest({'src':after['candidate_source'],'tests':after['candidate_tests']})
+assert identity_before==identity_after
+(out/'candidate-identity.json').write_text(json.dumps({'candidate':'frontend/.publication-candidate-2','scope':'all 80 source files plus three reviewed tests; package/build identity not asserted','before':identity_before,'after':identity_after,'unchanged':True},indent=2)+'\n',encoding='utf-8')
+eid='6c49ffe7b4fc40cb8ba6559339724163'
+receipt_rel='.bago/team/runtime/executions/'+eid+'/receipt.json'
+r=read(p/receipt_rel)
+assert r['result']=='PASS' and r['returncode']==0
+files=sorted(f for f in out.iterdir() if f.is_file() and f.name!='handoff.json')
+h={'work_id':'V01','role':'publication-test-verifier','status':'DONE','mission_id':state['mission']['mission_id'],'candidate_id':state['candidate_id'],'scope_sha256':state['scope_sha256'],'changed_files':[f.relative_to(p).as_posix() for f in files],'outputs':[{'kind':'INDEPENDENT_TEST_REVIEW','path':f.relative_to(p).as_posix(),'sha256':hashlib.sha256(f.read_bytes()).hexdigest()} for f in files],'reviewed_paths':['inputs/TEST_CANDIDATE.json','inputs/MANIFEST.json','inputs/baseline/tests/providers/provider-settings.test.tsx','inputs/candidate/tests/providers/provider-settings.test.tsx','inputs/baseline/tests/ui/agent-evaluation-lab/agent-evaluation-lab-render.test.tsx','inputs/candidate/tests/ui/agent-evaluation-lab/agent-evaluation-lab-render.test.tsx','inputs/baseline/tests/ui/chat-shell/chat-navigation.test.mjs','inputs/candidate/tests/ui/chat-shell/chat-navigation.test.mjs'],'verification':[{'id':'review','command':r['command_text'],'result':'PASS','evidence':receipt_rel,'execution_id':eid}],'findings':[],'residual_risks':['Directed review and 16 synthetic tests only; full frontend gates/build, applying changes and GitHub publication remain coordinator work.','Production src unchanged; DOM test does not prove backend file authorization or real provider connectivity.','TEST_CANDIDATE path is prior metadata; explicit assignment and MANIFEST select candidate-2.'],'next_consumers':[]}
+h['payload_sha256']=digest(h)
+(out/'handoff.json').write_text(json.dumps(h,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
+print(json.dumps({'status':'PREPARED','outputs':len(files),'candidate_review_identity':identity_before,'payload_sha256':h['payload_sha256']}))

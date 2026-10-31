@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="1" failures="0" skipped="0" tests="1" time="1.016" timestamp="2026-10-31T18:48:20.800478+00:00" hostname="9792a7a4a862"><testcase classname="" name="" time="0.000"><error message="collection failure">/root/.local/lib/python3.11/site-packages/pluggy/_caller.py:197: in __call__
+    return self._hookexec(
+/root/.local/lib/python3.11/site-packages/pluggy/_manager.py:183: in _hookexec
+    return self._inner_hookexec(hook_name, methods, kwargs, firstresult)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/root/.local/lib/python3.11/site-packages/_pytest/capture.py:883: in pytest_make_collect_report
+    out, err = self.read_global_capture()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+/root/.local/lib/python3.11/site-packages/_pytest/capture.py:803: in read_global_capture
+    return self._global_capturing.readouterr()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/root/.local/lib/python3.11/site-packages/_pytest/capture.py:706: in readouterr
+    out = self.out.snap() if self.out else ""
+          ^^^^^^^^^^^^^^^
+/root/.local/lib/python3.11/site-packages/_pytest/capture.py:594: in snap
+    self.tmpfile.truncate()
+E   FileNotFoundError: [Errno 2] No such file or directory</error></testcase></testsuite></testsuites>

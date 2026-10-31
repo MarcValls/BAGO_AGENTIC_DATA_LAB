@@ -1,0 +1,91 @@
+"""F02: verify intact F01 provenance, then run affected component tests/build."""
+from pathlib import Path
+import datetime as dt
+import hashlib
+import json
+import shutil
+import subprocess
+
+HERE = Path(__file__).resolve().parent
+FRONTEND = HERE.parents[1]
+REPO = FRONTEND.parent
+OUT = HERE / 'layout-r2'
+ARCHIVE = REPO / '.bago/goals/nearest-open-goals-20261031/frontend-r1-runtime'
+EID = '7940dbf9c3b44d209d5858fee97b03ad'
+
+
+def sha(path):
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def read(path):
+    return json.loads(path.read_bytes())
+
+
+def mapped_runtime(rel):
+    prefix = '.bago/team/runtime/'
+    assert rel.startswith(prefix)
+    return ARCHIVE / rel[len(prefix):]
+
+
+def main():
+    OUT.mkdir(exist_ok=False)
+    old_state = read(ARCHIVE / 'state.json')
+    change_request = read(ARCHIVE / 'change_requests/CR-FOOTER-PARENT-SIZING-20261031.json')
+    assert change_request['old_mission_contract_sha256'] == old_state['mission_contract_sha256']
+    assert change_request['scope_addition'] == ['frontend/src/components/ProviderSettings.css']
+    assert read(FRONTEND / '.bago/team/runtime/state.json')['mission']['mission_id'] == 'BAGO_MODEL_FOOTER_COMPLETE_REPAIR_20261031'
+    entry = old_state['executions'][EID]
+    rp = ARCHIVE / 'executions' / EID / 'receipt.json'
+    assert sha(rp) == entry['sha256']
+    receipt = read(rp)
+    assert receipt['mission_id'] == 'BAGO_MODEL_FOOTER_EXIT_REPAIR_20261031'
+    assert receipt['work_id'] == 'F01' and receipt['check_id'] == 'footer-tests'
+    assert receipt['result'] == 'PASS' and receipt['returncode'] == 0
+    assert receipt['candidate_before'] == receipt['candidate_after'] == old_state['candidate_id']
+    for row in receipt['logs']:
+        assert sha(mapped_runtime(row['path'])) == row['sha256']
+    for row in receipt['outputs']:
+        assert sha(FRONTEND / row['path']) == row['sha256']
+    historical = read(HERE / 'TEST_RESULTS.json')
+    assert historical['status'] == 'PASS' and historical['passed'] == 827 and historical['failed'] == 0
+    for command in historical['commands']:
+        assert command['returncode'] == 0
+        for row in command['logs']:
+            assert sha(FRONTEND / row['path']) == row['sha256']
+    old_files = [HERE / 'TEST_RESULTS.json', HERE / 'RED_RESULTS.json']
+    for dirname in ('browser-attempt1', 'browser-attempt2'):
+        old_files.extend(p for p in (HERE / dirname).iterdir() if p.is_file())
+    preserved = {p.relative_to(FRONTEND).as_posix(): sha(p) for p in old_files}
+    sources = ['src/App.tsx', 'src/components/ProviderSettings.tsx', 'tests/providers/provider-settings.test.tsx', 'src/components/ProviderSettings.css']
+    before = {name: sha(FRONTEND / name) for name in sources}
+    npm = shutil.which('npm.cmd') or shutil.which('npm')
+    report = OUT / 'focused-vitest.json'
+    commands = []
+    for name, argv in [('focused-tests', [npm, 'test', '--', 'tests/providers/provider-settings.test.tsx', '--testNamePattern', 'Model footer Exit', '--maxWorkers=2', '--reporter=json', '--outputFile=' + str(report)]),
+                       ('build', [npm, 'run', 'build'])]:
+        out, err = OUT / (name + '.stdout.log'), OUT / (name + '.stderr.log')
+        with out.open('xb') as stdout, err.open('xb') as stderr:
+            run = subprocess.run(argv, cwd=FRONTEND, stdout=stdout, stderr=stderr, timeout=900)
+        commands.append({'argv': argv, 'returncode': run.returncode,
+                         'logs': [{'path': p.relative_to(FRONTEND).as_posix(), 'sha256': sha(p)} for p in (out, err)]})
+        assert run.returncode == 0, commands[-1]
+    focused = read(report)
+    assert focused['success'] and focused['numPassedTests'] == 6 and focused['numFailedTests'] == 0
+    assert all(sha(FRONTEND / path) == digest for path, digest in preserved.items())
+    assert before == {name: sha(FRONTEND / name) for name in sources}
+    result = {'status': 'PASS', 'completed_at': dt.datetime.now(dt.timezone.utc).isoformat(),
+              'scope': 'CSS-only follow-up: unchanged callback sources, six focused tests and fresh build',
+              'historical_full_vitest': {'passed': 827, 'failed': 0, 'new_execution': False,
+                 'original_execution_id': EID, 'archived_receipt': str(rp.relative_to(REPO)).replace('\\', '/'),
+                 'receipt_sha256': sha(rp), 'result_sha256': sha(HERE / 'TEST_RESULTS.json')},
+              'focused_now': {'passed': 6, 'failed': 0}, 'commands': commands,
+              'source_sha256': before, 'preserved_F01': preserved,
+              'browser': 'SEPARATE_CHECK', 'independent_review': 'PENDING', 'provider_calls': 'NOT_RUN'}
+    with (OUT / 'TEST_RESULTS_R2.json').open('x', encoding='utf-8') as stream:
+        stream.write(json.dumps(result, ensure_ascii=False, indent=2) + '\n')
+    print(json.dumps({'status': 'PASS', 'focused_now': 6, 'full_historical': 827, 'new_full_run': False}))
+
+
+if __name__ == '__main__':
+    main()

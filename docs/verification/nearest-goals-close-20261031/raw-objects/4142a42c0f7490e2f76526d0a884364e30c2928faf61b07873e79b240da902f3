@@ -1,0 +1,59 @@
+{
+  "changed_files": [
+    "frontend/index.html",
+    "frontend/src/App.tsx",
+    "frontend/src/App.css",
+    "frontend/src/index.css",
+    "frontend/src/features/decision-inspector/integration/DecisionInspector.tsx",
+    "frontend/src/features/decision-inspector/integration/DecisionInspector.css",
+    "frontend/src/features/decision-inspector/index.ts",
+    "frontend/tests/ui/decision-inspector/integration/integration.test.tsx"
+  ],
+  "outputs": [
+    {
+      "id": "decision-inspector-integrated-ui-v1",
+      "path": "frontend/src/features/decision-inspector/integration/DecisionInspector.tsx",
+      "frozen": false
+    },
+    {
+      "id": "decision-inspector-browser-evidence-v1",
+      "path": "output/playwright/decision-inspector-overview.png",
+      "frozen": false
+    },
+    {
+      "id": "decision-inspector-trace-ui-evidence-v1",
+      "path": "output/playwright/decision-inspector-trace.png",
+      "frozen": false
+    },
+    {
+      "id": "jaeger-live-graph-evidence-v1",
+      "path": "output/playwright/jaeger-localtrace-04b58bb.png",
+      "frozen": false
+    }
+  ],
+  "verification": [
+    {
+      "evidence": "Vite production build; 124 modules; dark global UI and document shell",
+      "result": "PASS",
+      "command": "npm run build --workspace frontend"
+    },
+    {
+      "evidence": "3/3 integration checks in %TEMP%\\bago-inspector-integration-check-20261008",
+      "result": "PASS",
+      "command": "node --test <compiled integration.test.js>"
+    },
+    {
+      "evidence": "evidence/l15_otel_jaeger_live.md; LocalTrace trace-5b385699ffda0529 mapped to Jaeger 04b58bb123bb6cc94a8cc0d60c7145ae; 15 spans",
+      "result": "PASS",
+      "command": "scripts/run_l15_otel_live_validation.py --check --write-evidence"
+    }
+  ],
+  "residual_risks": [
+    "Current LocalTrace payload has no Jaeger trace id; UI states Jaeger correlation unavailable. Jaeger graph screenshot independently shows the same live validation trace.",
+    "Structured claims and explicit claim-to-evidence links are absent from the current source run; UI displays this gap and does not infer claims.",
+    "AWS live and remote collector verification are NOT_RUN."
+  ],
+  "next_consumers": [
+    "W11"
+  ]
+}

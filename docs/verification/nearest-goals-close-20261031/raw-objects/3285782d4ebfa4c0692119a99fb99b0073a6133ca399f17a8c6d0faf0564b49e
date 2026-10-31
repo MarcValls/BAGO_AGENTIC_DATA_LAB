@@ -1,0 +1,67 @@
+{
+  "changed_files": [
+    ".bago/goals/ADL-BER-INTEGRATION-001/AGENT_DECISION_INSPECTOR_BER_RUNNER_FOLLOWUP.json",
+    ".bago/goals/ADL-BER-INTEGRATION-001/evidence/STANDALONE_PACKAGE_SMOKE_20261019.md",
+    ".bago/goals/ADL-BER-INTEGRATION-001/plan.json",
+    ".bago/goals/ADL-BER-INTEGRATION-001/status.json",
+    ".bago/team/runtime/history/AGENT_DECISION_INSPECTOR_V1-20261019/state-before-ber-runner-followup.json",
+    "docs/ber/AGENT_RUNNER_SCOPE.md"
+  ],
+  "next_consumers": [
+    "W14"
+  ],
+  "outputs": [
+    {
+      "frozen": true,
+      "id": "adl-ber-agent-runner-api-v1",
+      "path": "docs/ber/AGENT_RUNNER_SCOPE.md",
+      "sha256": "f62aeaf05c99b3398fd2b2005f20ac81a5d9f29aa9db408f7577c249d6111e16"
+    },
+    {
+      "kind": "standalone-package-smoke-evidence",
+      "path": ".bago/goals/ADL-BER-INTEGRATION-001/evidence/STANDALONE_PACKAGE_SMOKE_20261019.md",
+      "sha256": "c1754705779d5223de0a64bad2e3c187e09303c769088861cca71d5c7c14f550"
+    }
+  ],
+  "payload_sha256": "a3d2ae71482547b27fc98d7f09b3b24d99989271f0c83d11a040d4aff4d12dc1",
+  "repository_snapshot": {
+    "branch": "codex/adl-ber-integration-20261019",
+    "candidate_state": "dirty isolated worktree; unrelated pre-existing changes preserved",
+    "head": "585fe4635596b1bd253fb8ba6d5b736ebf133ee9"
+  },
+  "residual_risks": [
+    "No live provider inference or Agent Runner WebSocket execution has been implemented or verified yet.",
+    "The local image has not been pushed, published or deployed.",
+    "filesystem.delete and process.terminate remain blocked."
+  ],
+  "role": "team-orchestrator",
+  "status": "DONE",
+  "verification": [
+    {
+      "command": "python .bago/team/kit/scripts/teamctl.py --root . verify",
+      "evidence": "Prior mission validated before follow-up; only preserved orphan warnings AC01-AC10 were reported.",
+      "result": "PASS"
+    },
+    {
+      "command": "python -m pytest tests/test_docker_workflow.py -q",
+      "evidence": "2 passed after adding BER, CLI and Vite build-input packaging assertions.",
+      "result": "PASS"
+    },
+    {
+      "command": "docker build -f Dockerfile.ui --tag bago-portfolio:adl-ber-integration-20261019 .",
+      "evidence": "Local Docker image built; UI multi-entry build succeeded; BER ZIP/lock and demonstration CLI copied into final stage.",
+      "result": "PASS"
+    },
+    {
+      "command": "docker run local image and verify API/UI plus approved BER write",
+      "evidence": "Container API health ok, UI HTTP 200, BER lock hash matched, bago_core module absent, approved filesystem.write produced a BAGO receipt and matching readback; container stopped.",
+      "result": "PASS"
+    },
+    {
+      "command": "Run ADL API and BER CLI from isolated Python 3.11 venv with copied package files",
+      "evidence": "API health ok, frontend HTTP 200, bago_core absent, BER approved write/readback matched; no BAGO Full files copied.",
+      "result": "PASS"
+    }
+  ],
+  "work_id": "W13"
+}

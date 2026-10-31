@@ -1,0 +1,66 @@
+{
+  "head": "8065906f4560f4f0b0951cc445b673ecad7ce175",
+  "candidate_id": "9bdf09833dd28ab922485c21a23e0f645efb5cb812712150dd3c1b07d4f8fada",
+  "files": [
+    {
+      "path": "frontend/src/App.css",
+      "sha256": "5aabb6c16fde081d2f3bf2ac8fb4c8a469346b1fcf7138d373ebcafc91043555"
+    },
+    {
+      "path": "frontend/src/index.css",
+      "sha256": "67d391d312eba3f37bcd72b5bc26bd8982d1a7988f66c224ccc93e42cee89bfb"
+    },
+    {
+      "path": "frontend/src/components/CognitionSettings.tsx",
+      "sha256": "8eba311a9fa40b4687f745b3cfc04fe5efb21901075709c0c4f282122e927af2"
+    },
+    {
+      "path": "frontend/src/components/CognitionSettings.css",
+      "sha256": "3e14e57ca68776bd5b0b434437c1daeff38e9091813d14de17b0b8965de38cb5"
+    },
+    {
+      "path": "frontend/src/components/ProjectContextDocument.tsx",
+      "sha256": "2615ac44e21d05f2ffdd9d84e97080f10e322df6df135d4caa142e9212cfec06"
+    },
+    {
+      "path": "frontend/src/components/ModelAssignments.tsx",
+      "sha256": "1616cf4704be6f260be4c5adf24a3a53c405ec2cb6be0e1583e1d19039115e0e"
+    },
+    {
+      "path": "frontend/src/components/ModelAssignments.css",
+      "sha256": "783e45bda9b812e6fe71c9b4306253db532a3d10bfa44b36dc2f42eeb4917cb0"
+    },
+    {
+      "path": "frontend/src/components/ProviderSettings.tsx",
+      "sha256": "ce9c486f2325665a2b100171d0e7b84b857ca71342db461cde94eefc22fbd3f7"
+    },
+    {
+      "path": "frontend/src/components/ProviderSettings.css",
+      "sha256": "6be03b2e26abfc98e5464096798e84a9df87890d04f7c7bff0291e3244a7691e"
+    },
+    {
+      "path": "frontend/src/components/AgentEvaluationLab.tsx",
+      "sha256": "652f3b30b152671a929d9124ad49be20cb08d159936dc5e8cc3b013d8a095d38"
+    },
+    {
+      "path": "frontend/src/components/AgentEvaluationLab.css",
+      "sha256": "b630cc16565acb1672d3ec9a740b2f4828993dd82fc78fc5e5cb6e684836eaa2"
+    },
+    {
+      "path": "frontend/src/components/AgentTasks.tsx",
+      "sha256": "a176ad2034171a78a3a40bb51d523053012d836c3afc22cb31790cce17e956c4"
+    },
+    {
+      "path": "frontend/src/components/AgentTasks.css",
+      "sha256": "cdddb252bfceee6e3b9b877b85609b73fce3eb791691c104d20dea76619f8fa9"
+    },
+    {
+      "path": "frontend/src/components/AgentTaskForm.tsx",
+      "sha256": "b3a278dd0126e134f8e6f571b965bc8ea5cb9726386ab0da6cea2101dc6ea70c"
+    },
+    {
+      "path": "frontend/src/components/AgentTaskForm.css",
+      "sha256": "13a5bb5997c31d10ddf87e7f96bfe0a1f61722f43594846056509ef986868dd8"
+    }
+  ]
+}

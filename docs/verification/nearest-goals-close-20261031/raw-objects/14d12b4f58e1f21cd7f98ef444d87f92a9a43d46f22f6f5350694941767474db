@@ -1,0 +1,216 @@
+{
+  "status": "PASS",
+  "state": {
+    "protocol_version": "0.3.0-adl-integrity",
+    "created_at": "2026-10-31T19:46:46.657969+00:00",
+    "mission_source": "C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\.worktrees\\nearest-goals-close-20261031\\.bago\\goals\\nearest-open-goals-20261031\\clock-repair-mission.json",
+    "mission_sha256": "c440f3c303e10aa5dcb65da6fee971fedf3f28ecbbd8923a13b1dd8b41a9098f",
+    "mission": {
+      "mission_id": "BAGO_NEAREST_OPEN_GOALS_CLOCK_REPAIR_20261031",
+      "operation": "REPAIR",
+      "title": "Repair observed regressed clock trace and close eligible nearest goals",
+      "objective": "Fix reproducible trace failure without inventing time evidence; verify current candidate and close only fully satisfied historical goal increments.",
+      "scope": "Two exact source files plus bounded verification evidence. Preserve old runtime, all failed attempts, unrelated dirty root and Browser Bridge P1/P3/binding.",
+      "constraints": [
+        "No global Codex config or host clock/permissions changes",
+        "No provider calls, credentials or production data",
+        "Preserve existing Native Timing contract; retain regressed wall-clock evidence",
+        "Old UI test results are reusable only with unchanged source hashes and explicit archived-runtime mapping",
+        "Never close goals with unmet required criteria",
+        "No merge into main"
+      ],
+      "max_concurrency": 1,
+      "terminal_work_items": [
+        "CLOSE"
+      ],
+      "work_items": [
+        {
+          "id": "REPAIR",
+          "title": "REPAIR",
+          "role": "trace-observability-engineer",
+          "depends_on": [],
+          "write_scopes": [
+            "src/api/server.py",
+            "tests/test_agent_delegation.py",
+            "docs/verification/nearest-goals-close-20261031/clock-repair/**"
+          ],
+          "output_scopes": [
+            "src/api/server.py",
+            "tests/test_agent_delegation.py",
+            "docs/verification/nearest-goals-close-20261031/clock-repair/**"
+          ],
+          "required_checks": [
+            "clock-regression"
+          ]
+        },
+        {
+          "id": "REGRESSION",
+          "title": "REGRESSION",
+          "role": "codex_orchestrator",
+          "depends_on": [
+            "REPAIR"
+          ],
+          "write_scopes": [
+            "docs/verification/nearest-goals-close-20261031/regression/**",
+            "README.md",
+            "README_DETAILS.md",
+            "output/**",
+            ".bago/data/**",
+            "frontend/.build/**",
+            "frontend/dist/**"
+          ],
+          "output_scopes": [
+            "docs/verification/nearest-goals-close-20261031/regression/**",
+            "README.md",
+            "README_DETAILS.md",
+            "output/**",
+            ".bago/data/**",
+            "frontend/.build/**",
+            "frontend/dist/**"
+          ],
+          "required_checks": [
+            "regression",
+            "readme-check"
+          ]
+        },
+        {
+          "id": "REVIEW",
+          "title": "REVIEW",
+          "role": "verification-engineer",
+          "depends_on": [
+            "REPAIR",
+            "REGRESSION"
+          ],
+          "write_scopes": [
+            "docs/verification/nearest-goals-close-20261031/review/**"
+          ],
+          "output_scopes": [
+            "docs/verification/nearest-goals-close-20261031/review/**"
+          ],
+          "required_checks": [
+            "review"
+          ]
+        },
+        {
+          "id": "CLOSE",
+          "title": "CLOSE",
+          "role": "codex_orchestrator",
+          "depends_on": [
+            "REVIEW"
+          ],
+          "write_scopes": [
+            "docs/verification/nearest-goals-close-20261031/closure/**"
+          ],
+          "output_scopes": [
+            "docs/verification/nearest-goals-close-20261031/closure/**"
+          ],
+          "required_checks": [
+            "acceptance"
+          ]
+        }
+      ]
+    },
+    "work_status": {
+      "REPAIR": {
+        "status": "READY",
+        "agent": null,
+        "claimed_at": null,
+        "done_at": null
+      },
+      "REGRESSION": {
+        "status": "PENDING",
+        "agent": null,
+        "claimed_at": null,
+        "done_at": null
+      },
+      "REVIEW": {
+        "status": "PENDING",
+        "agent": null,
+        "claimed_at": null,
+        "done_at": null
+      },
+      "CLOSE": {
+        "status": "PENDING",
+        "agent": null,
+        "claimed_at": null,
+        "done_at": null
+      }
+    },
+    "terminal_gate": "OPEN",
+    "candidate_id": "9bdf09833dd28ab922485c21a23e0f645efb5cb812712150dd3c1b07d4f8fada",
+    "candidate_manifest": [
+      {
+        "path": ".bago/team/kit/LICENSE",
+        "sha256": "8a88d04bb6cbd8aff18472c9a6f3b5b73dc18d47245fff490ad11dce32b04c41"
+      },
+      {
+        "path": ".bago/team/kit/SOURCE_LOCK.json",
+        "sha256": "1e9c1945898bcdb9af4be8a668a6531df838ee30110e127a8b52838ebc3cb219"
+      },
+      {
+        "path": ".bago/team/kit/missions/agent-decision-inspector.json",
+        "sha256": "2882001bbafbb813fa5e51605ee657fe593aa72c1c1e2f50b358bc6e1684c8d5"
+      },
+      {
+        "path": ".bago/team/kit/protocol/COMMUNICATION.md",
+        "sha256": "d67cb0a6a9400aff107c4a0bcccb1222cebc088f3af5fa97c4b4cc29ccee399b"
+      },
+      {
+        "path": ".bago/team/kit/protocol/TEAM_PROTOCOL.md",
+        "sha256": "b3818682cabb75a307abf0886ae69bff86adc20c1d708ea2c6d64d0c6d5272ba"
+      },
+      {
+        "path": ".bago/team/kit/protocol/handoff.schema.json",
+        "sha256": "eb86ee70b40df6523e7d336dee7280d630ffbac04fb4645507e7478c33fce691"
+      },
+      {
+        "path": ".bago/team/kit/protocol/mission.schema.json",
+        "sha256": "e25f458e2aa677c01070c9b71ae44d4902f0af1a7e172751449e55abc77994ea"
+      },
+      {
+        "path": ".bago/team/kit/protocol/work_item.schema.json",
+        "sha256": "7d87250007c4e6a251a6dfc612972df0594a90a58f54a2562d850c7f8e9452e7"
+      },
+      {
+        "path": ".bago/team/kit/requirements.txt",
+        "sha256": "7d17c81927f81c5f8445b5e08599aafb19beeb4045b957d9ee12821ac6720a07"
+      },
+      {
+        "path": ".bago/team/kit/scripts/team_safety.py",
+        "sha256": "32f3c9d217b762781318152c0d841750283d684c041af3d50706e014ea14b14d"
+      },
+      {
+        "path": ".bago/team/kit/scripts/teamctl.py",
+        "sha256": "121e043f2c8ec84b6c2a303db9f784c013d6b953c057791285e64677525eaaf2"
+      },
+      {
+        "path": ".bago/team/kit/templates/handoff-draft.example.json",
+        "sha256": "e44f4967c7f2cf2351057fea8ee409232c11391bcf2575a8787a64618c1e0bf3"
+      },
+      {
+        "path": "plugins/bago-agent-decision-engineering-team/scripts/teamctl.py",
+        "sha256": "d08f5e068a6567ac615dd00875475930dd190563b2cb1d413840961973591a41"
+      }
+    ],
+    "mission_contract_sha256": "ec12ea452b2c58e4aad88eef50a9b65d103569bc54dcd83656cab671b3a4ff75",
+    "scope_sha256": "0af844db09c04531999970ed71e0bce9ed1f51245b48416d0453a7bc7cef9df9",
+    "frozen_scope": {
+      "include": [],
+      "exclude": [],
+      "evidence_roots": [],
+      "preserved_roots": [],
+      "fixture_roots": [],
+      "candidates": [],
+      "round": 1,
+      "automatic_rounds": false
+    },
+    "lifecycle": "ACTIVE",
+    "task_state": "ACTIVE",
+    "product_state": "UNASSESSED",
+    "evidence_state": "PENDING",
+    "executions": {},
+    "interruptions": [],
+    "pause_history": [],
+    "updated_at": "2026-10-31T19:46:46.719025+00:00"
+  }
+}

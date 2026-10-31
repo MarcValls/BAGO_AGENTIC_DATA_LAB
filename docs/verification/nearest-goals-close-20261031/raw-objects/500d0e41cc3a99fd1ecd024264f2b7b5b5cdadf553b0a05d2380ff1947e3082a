@@ -1,0 +1,33 @@
+# F01 — bloqueo de aceptación en el padre real
+
+El callback está implementado y las827pruebas frontend y build finales pasaron
+mediante recibo7940dbf9c3b44d209d5858fee97b03ad. Salir cierra el dialog real de
+App en escritorio y móvil sin PUT/POST, comprobado con Brave headless y API
+sintética interceptada. No se ha dado F01 por terminado.
+
+La prueba real con18modelos identificó P1 de layout:
+
+- Escritorio1280×900: footer entre y1482,75 e y1533,75; lista clientHeight y
+  scrollHeight1239. Ambos botones quedan fuera del viewport y la lista no
+  tiene scroll independiente.
+- Móvil430×932: footer entre y1705,375 e y1756,375; lista clientHeight y
+  scrollHeight1472. Repite las dos condiciones fallidas.
+- Transparencia, bordes0, alineación inferior/derecha y comportamiento Salir
+  sí pasaron. No hubo pageerrors, tráfico externo ni API desconocida.
+
+Evidencia: browser-attempt2/BROWSER_RESULTS.json y seis capturas. Recibo del
+controlador79ba50eb89e544069a4cba336656e466: FAIL. No se degrada ese fallo a PASS
+por funcionar el callback. Se conserva también attempt1, que falló por selector
+de Configuración y dos fixtures de metadatos todavía ausentes; se corrigió el
+harness y no fuentes de producto para ese segundo intento.
+
+Causa localizada: App.css aplica a cada hijo de settings-layer-content
+`flex:1 0 auto`, y ProviderSettings.css solo exige min-height100%. El contenedor
+crece con las18filas; la altura imitada por el harness antiguo no lo demostraba.
+
+Falta alcance autorizado sobre ProviderSettings.css o una corrección de sizing
+equivalente explícitamente gobernada. El alcance inicial solo permite modificar
+callbacks en App/ProviderSettings, no CSS ni ModelAssignments congelado. No se
+aplicó estilo inline, inyección CSS en navegador ni cambio fuera de scope.
+Se solicitó al orquestador una ampliación mínima y se detuvo únicamente esa
+operación. El resto de evidencia y fuentes está preparado para revisión.

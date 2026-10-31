@@ -1,0 +1,6 @@
+tools 0 {}
+dom 0 {}
+triage 0 {'tests': 205, 'failures': 0, 'errors': 0, 'skipped': 1}
+generate 0 {'tests': 1908, 'failures': 0, 'errors': 0, 'skipped': 2}
+consistency 0 {'tests': 0, 'failures': 0, 'errors': 0, 'skipped': 0}
+{"status": "PASS", "returncode": 0, "candidate_head": "b1b4d524a0e936300a71da36e0c0276e061fa34e", "image_id": "sha256:3d92378210d9a4b5411f2f74f9bfe08bd1f90787c5426b589e8b95486c243480", "container_removed": true, "inner_sha256": "888acf1218fc926b0b5982fb5a39e4a8ab19810cff122b3853cd50b5bd23552e", "windows_full_suite": "FAIL preserved"}

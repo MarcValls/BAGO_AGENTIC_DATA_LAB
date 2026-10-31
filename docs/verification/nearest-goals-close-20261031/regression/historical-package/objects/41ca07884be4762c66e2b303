@@ -1,0 +1,73 @@
+{
+  "schema": "bago.historical-reconciliation.artifacts.v1",
+  "goal": "github-update-20261022",
+  "scope": "new reconciliation artifacts and final historical ledger; no current product validation",
+  "independent_review": "PENDING",
+  "files": [
+    {
+      "path": ".bago/team/runtime/events.jsonl",
+      "sha256": "e5bf12769bf5bc6283a791f5d50c678a760ee7b49ad815ef39fc0e9228c2aa12",
+      "bytes": 673
+    },
+    {
+      "path": ".bago/team/runtime/state.json",
+      "sha256": "5b3221b34c2b78f93f4a1e1e11fb1940175df50f95bed95adbc3264c86cc8b9f",
+      "bytes": 4561
+    },
+    {
+      "path": "reconciliation-20261031/evidence-reconciliation.json",
+      "sha256": "88755aefd534272991dfbe1535476caa491d656cd517c8f32d0bb2d24f2a696e",
+      "bytes": 2953
+    },
+    {
+      "path": "reconciliation-20261031/github-ci.json",
+      "sha256": "a3e5e37f90b1c8058ec1b4d7406a4978c86c616ff420e89a9afb5a765b6746a9",
+      "bytes": 184
+    },
+    {
+      "path": "reconciliation-20261031/github-pr62.json",
+      "sha256": "6f1cbd110ecdda834eab285cb8d6745d2a9d2ca423f19df8b4bb55bbcbaf8e6b",
+      "bytes": 254
+    },
+    {
+      "path": "reconciliation-20261031/IDEMPOTENCE.json",
+      "sha256": "d62717b57beb5a1593ffd1ce5fd7c1b795860c3a7720475004ba41d22a24feef",
+      "bytes": 10199
+    },
+    {
+      "path": "reconciliation-20261031/legacy-verify-after.json",
+      "sha256": "d67a2cbfc4251b90c4917f30baa9c0ab13714720c40defaf234d666c20529a60",
+      "bytes": 683
+    },
+    {
+      "path": "reconciliation-20261031/preserved/legacy-events-before.jsonl",
+      "sha256": "e5bf12769bf5bc6283a791f5d50c678a760ee7b49ad815ef39fc0e9228c2aa12",
+      "bytes": 673
+    },
+    {
+      "path": "reconciliation-20261031/preserved/legacy-state-before.json",
+      "sha256": "5b3221b34c2b78f93f4a1e1e11fb1940175df50f95bed95adbc3264c86cc8b9f",
+      "bytes": 4561
+    },
+    {
+      "path": "reconciliation-20261031/protected-before.json",
+      "sha256": "f5f4bcd7900471062cd99499ae0a89594dba9db39f724ac5db83e1a0836fa2af",
+      "bytes": 4511
+    },
+    {
+      "path": "reconciliation-20261031/reconcile.py",
+      "sha256": "41eec171e88664c0b0f7ceac74653527703624eea8e6228582f3c5917960c093",
+      "bytes": 12112
+    },
+    {
+      "path": "reconciliation-20261031/RESULTADO.md",
+      "sha256": "e72030e3b52fde98843d37fce502b0c4dfb1a5fb93dc7699a21a9734908564cf",
+      "bytes": 2996
+    },
+    {
+      "path": "reconciliation-20261031/verify_idempotence.py",
+      "sha256": "fe4e8a94614bca153a5490b189072e0d904f376b6b9994ee5bfc9557e88b41dc",
+      "bytes": 1833
+    }
+  ]
+}

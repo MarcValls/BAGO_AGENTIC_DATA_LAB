@@ -1,0 +1,110 @@
+{
+  "status": "FAIL",
+  "scope": "actual built App, headless Brave, synthetic intercepted localhost API only",
+  "headless": true,
+  "user_focus_changed": false,
+  "actualApp": true,
+  "provider_calls": "NOT_RUN",
+  "production_servers_used": false,
+  "brave_executable": "C:/Program Files/BraveSoftware/Brave-Browser/Application/brave.exe",
+  "origin": "http://127.0.0.1:59607",
+  "catalog_models": 18,
+  "cases": [],
+  "checks": [
+    {
+      "name": "no external traffic",
+      "passed": true,
+      "evidence": []
+    },
+    {
+      "name": "all API routes synthetic and expected",
+      "passed": false,
+      "evidence": [
+        {
+          "method": "GET",
+          "path": "/api/runtime/status"
+        },
+        {
+          "method": "GET",
+          "path": "/api/project-permissions"
+        },
+        {
+          "method": "GET",
+          "path": "/api/runtime/status"
+        }
+      ]
+    },
+    {
+      "name": "no App page errors",
+      "passed": true,
+      "evidence": []
+    }
+  ],
+  "requests": [
+    {
+      "method": "GET",
+      "path": "/api/providers/chat-models"
+    },
+    {
+      "method": "GET",
+      "path": "/api/providers/selection"
+    },
+    {
+      "method": "GET",
+      "path": "/api/agents/list"
+    },
+    {
+      "method": "GET",
+      "path": "/api/project-folders/v1/active"
+    },
+    {
+      "method": "GET",
+      "path": "/api/conversations"
+    },
+    {
+      "method": "GET",
+      "path": "/api/chat/context"
+    },
+    {
+      "method": "GET",
+      "path": "/api/runtime/status"
+    },
+    {
+      "method": "GET",
+      "path": "/api/project-permissions"
+    },
+    {
+      "method": "GET",
+      "path": "/api/runtime/status"
+    }
+  ],
+  "unknown": [
+    {
+      "method": "GET",
+      "path": "/api/runtime/status"
+    },
+    {
+      "method": "GET",
+      "path": "/api/project-permissions"
+    },
+    {
+      "method": "GET",
+      "path": "/api/runtime/status"
+    }
+  ],
+  "external": [],
+  "pageErrors": [],
+  "fatal": {
+    "message": "TimeoutError: locator.click: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('button', { name: 'Configuración', exact: true })\u001b[22m\n",
+    "stack": "locator.click: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('button', { name: 'Configuración', exact: true })\u001b[22m\n\n    at C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\.worktrees\\nearest-goals-close-20261031\\frontend\\tests\\ui\\providers-footer\\actual-app-brave.mjs:74:76"
+  },
+  "source_sha256": {
+    "src/App.tsx": "1800630d38ba3f871a721bf6b5e5ff64a3e004a8b1f54ae4841f776abaf0681b",
+    "src/components/ProviderSettings.tsx": "fe849e9fe9f24a09b840e4fdb5540dce098bd74698d525e9033719ec3a51f1d1",
+    "src/components/ModelAssignments.tsx": "1616cf4704be6f260be4c5adf24a3a53c405ec2cb6be0e1583e1d19039115e0e",
+    "src/components/ModelAssignments.css": "783e45bda9b812e6fe71c9b4306253db532a3d10bfa44b36dc2f42eeb4917cb0",
+    "src/components/ProviderSettings.css": "6be03b2e26abfc98e5464096798e84a9df87890d04f7c7bff0291e3244a7691e",
+    "src/App.css": "5aabb6c16fde081d2f3bf2ac8fb4c8a469346b1fcf7138d373ebcafc91043555",
+    "dist/index.html": "473cf3bf1bcee5fb0e67b31f1bc90ceedbf82afb778229072a7c484833005a77"
+  }
+}

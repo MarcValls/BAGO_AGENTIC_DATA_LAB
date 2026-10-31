@@ -1,0 +1,1 @@
+PASS: isolated persistence, stale revision, invalid/duplicate/catalog guards, chat filtering/selection, role assignment, agent create/update restrictions, draft routing, alternate adapter, unchanged registrations, existing-profile chat/task/GEX restrictions, readable history/profile, corrupt policy.

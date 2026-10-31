@@ -1,0 +1,24 @@
+{
+  "status": "PREPARED",
+  "candidate": "C:\\Users\\AMTEC_Terminal_1\u00ba\\Desktop\\BAGO5_ADL\\frontend\\.publication-candidate",
+  "baseline": [
+    {
+      "path": "frontend/tests/providers/provider-settings.test.tsx",
+      "sha256": "1dae924561a6e3c9b86ee4d4b854200df66cf46f501fbe6f8ec5f2e00aacf3fd"
+    },
+    {
+      "path": "frontend/tests/ui/chat-shell/chat-navigation.test.mjs",
+      "sha256": "253b4988283994e614a9f30490375e1cd21223f425609c7b807bc55e27b30423"
+    },
+    {
+      "path": "frontend/tests/ui/agent-evaluation-lab/agent-evaluation-lab-render.test.tsx",
+      "sha256": "1b439acb62a11105ac3a8b6a0493effb1a4d0a7d2d1345a43e669550aa82aac4"
+    }
+  ],
+  "changes": [
+    "Wait for asynchronous model field before native-validating submit; error assertions preserved",
+    "Use Vitest for JSX test; prior node:test produced zero Vitest tests",
+    "Test actual collapsed panel portal, permission toggle, archive navigation and settings callback; removed obsolete prop and static-copy assertions"
+  ],
+  "production_source_changed": false
+}

@@ -1,0 +1,59 @@
+"""Managed RED reproduction or final full npm regression/build, scoped to F01."""
+from pathlib import Path
+import argparse
+import datetime as dt
+import hashlib
+import json
+import shutil
+import subprocess
+import sys
+
+HERE = Path(__file__).resolve().parent
+FRONTEND = HERE.parents[1]
+
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--red', action='store_true')
+    parser.add_argument('--attempt', type=int, default=1)
+    args = parser.parse_args()
+    stage = 'red' if args.red else 'green'
+    assert args.attempt >= 1
+    prefix = stage + ('' if args.attempt == 1 else '-attempt' + str(args.attempt))
+    records = []
+    npm = shutil.which('npm.cmd') or shutil.which('npm')
+    assert npm
+    report = HERE / (prefix + '-vitest.json')
+    argv = [npm, 'test', '--', '--maxWorkers=2', '--reporter=json', '--outputFile=' + str(report)]
+    if args.red:
+        argv.extend(['tests/providers/provider-settings.test.tsx', '--testNamePattern', 'Model footer Exit'])
+    started = dt.datetime.now(dt.timezone.utc).isoformat()
+    for name, command in [(prefix + '-npm-test', argv), *([] if args.red else [('green-build', [npm, 'run', 'build'])])]:
+        out, err = HERE / (name + '.stdout.log'), HERE / (name + '.stderr.log')
+        with out.open('xb') as stdout, err.open('xb') as stderr:
+            run = subprocess.run(command, cwd=FRONTEND, stdout=stdout, stderr=stderr, timeout=900)
+        records.append({'command': command, 'returncode': run.returncode,
+                        'logs': [{'path': str(p.relative_to(FRONTEND)).replace('\\', '/'),
+                                  'sha256': hashlib.sha256(p.read_bytes()).hexdigest()} for p in (out, err)]})
+        if not args.red:
+            assert run.returncode == 0, records[-1]
+    data = json.loads(report.read_bytes())
+    if args.red:
+        assert records[0]['returncode'] != 0 and data['numFailedTests'] == 4
+        assert data['numPassedTests'] == 2
+        status = 'EXPECTED_REGRESSION_OBSERVED'
+    else:
+        assert data['success'] and data['numFailedTests'] == 0
+        status = 'PASS'
+    result = {'status': status, 'scope': 'simulated API component tests; full npm suite and build in green only',
+              'started_at': started, 'completed_at': dt.datetime.now(dt.timezone.utc).isoformat(),
+              'passed': data['numPassedTests'], 'failed': data['numFailedTests'], 'attempt': args.attempt,
+              'commands': records, 'browser': 'SEPARATE_CHECK', 'provider_calls': 'NOT_RUN'}
+    output = HERE / ('RED_RESULTS.json' if args.red else 'TEST_RESULTS.json')
+    with output.open('x', encoding='utf-8') as stream:
+        stream.write(json.dumps(result, ensure_ascii=False, indent=2) + '\n')
+    print(json.dumps(result, ensure_ascii=False))
+
+
+if __name__ == '__main__':
+    main()

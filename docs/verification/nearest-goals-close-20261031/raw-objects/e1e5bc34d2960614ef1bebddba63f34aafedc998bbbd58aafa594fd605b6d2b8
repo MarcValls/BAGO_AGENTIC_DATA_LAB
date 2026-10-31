@@ -1,0 +1,72 @@
+{
+  "changed_files": [
+    "src/api/server.py",
+    "src/runtime/ber/agent_runner.py",
+    "tests/runtime/ber/test_agent_runner.py",
+    "docs/ber/AGENT_RUNNER_API_V1.md"
+  ],
+  "next_consumers": [
+    "W15",
+    "W16"
+  ],
+  "outputs": [
+    {
+      "description": "W14 API protocol keeps the BAGO challenge ID server-side and sends only an ADL proposal ID to the UI.",
+      "frozen": true,
+      "id": "adl-ber-agent-runner-api-v1",
+      "kind": "agent-runner-websocket-api-v1",
+      "path": "docs/ber/AGENT_RUNNER_API_V1.md",
+      "sha256": "070f14fd8dda84fba5c61873fda848d0351b9aedfd91865dc23eeb709ec5600d"
+    },
+    {
+      "description": "Typed one-action ADL backend over persisted profiles, bound workspace, provider adapter and pinned BAGO BER; challenge remains server-held.",
+      "frozen": true,
+      "id": "adl-ber-agent-runner-backend-v1",
+      "kind": "agent-runner-backend-v1",
+      "path": "src/runtime/ber/agent_runner.py",
+      "sha256": "61a4196324403dd667b5245eac968943498f078c3f52374c59b2f51b02181a87"
+    }
+  ],
+  "payload_sha256": "72a876279c8d69b4f878f1af4f9b29da01a69d9fb1977de07fcd53d52aa1e401",
+  "repository_snapshot": {
+    "branch": "codex/adl-ber-integration-20261019",
+    "head": "585fe4635596b1bd253fb8ba6d5b736ebf133ee9",
+    "note": "Corrective W14 handoff aligns public proposal frames with frozen W13 server-side challenge boundary; concurrent out-of-scope work preserved."
+  },
+  "residual_risks": [
+    "The updated W14 handoff is staged as a materialized draft but teamctl handoff requires W14 to be CLAIMED; teamctl offers no reopen command for a DONE item, so orchestrator state transition is pending.",
+    "No live Ollama inference or end-to-end Agent Runner WebSocket decision/execution was exercised; provider and BER fakes cover backend behavior.",
+    "Container runtime remains unavailable for Ollama; unsupported runtime fails closed without legacy fallback.",
+    "W15 must display success only for completed with verified_success true and treat the LocalTrace as a projection, not authority."
+  ],
+  "role": "governance-action-engineer",
+  "status": "DONE",
+  "verification": [
+    {
+      "command": "python -m pytest tests/runtime/ber/test_agent_runner.py tests/runtime/ber/test_client.py tests/runtime/ber/test_observability.py -q",
+      "evidence": "28 passed in 23.61s. Regression asserts challenge_id absent from public proposal and confirms server-side approve/execute calls reuse the stored challenge.",
+      "result": "PASS"
+    },
+    {
+      "command": "python -m py_compile src/api/server.py src/runtime/ber/agent_runner.py tests/runtime/ber/test_agent_runner.py",
+      "evidence": "All scoped Python files compiled.",
+      "result": "PASS"
+    },
+    {
+      "command": "git diff --check -- src/api/server.py plus scoped-file trailing-whitespace scan",
+      "evidence": "No whitespace errors in server diff or trailing whitespace in scoped runner, test and API doc.",
+      "result": "PASS"
+    },
+    {
+      "command": "python -c \"import src.api.server\"",
+      "evidence": "FastAPI server imported successfully; existing dependency emitted a Python 3.14/Pydantic v1 compatibility warning.",
+      "result": "PASS"
+    },
+    {
+      "command": "python .bago/team/kit/scripts/teamctl.py --root . verify",
+      "evidence": "Coordination structure validates; pre-existing orphan warnings preserved. Corrective handoff remains pending orchestrator reopen because W14 was already DONE.",
+      "result": "PASS"
+    }
+  ],
+  "work_id": "W14"
+}

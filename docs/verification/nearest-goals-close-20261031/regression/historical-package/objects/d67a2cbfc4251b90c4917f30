@@ -1,0 +1,14 @@
+{
+  "argv": [
+    "C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\output\\bago-suite-repair-20261021\\work\\env\\windows-py314\\Scripts\\python.exe",
+    "-B",
+    "C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\output\\bago-suite-repair-20261021\\i2\\bago suite\\scripts\\suite_orchestrator.py",
+    "team",
+    "--root",
+    "C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\.bago\\goals\\github-update-20261022",
+    "verify"
+  ],
+  "returncode": 0,
+  "stdout": "{\n  \"claim\": \"registered evidence integrity and dependency contract only\",\n  \"lifecycle\": \"CLOSED\",\n  \"status\": \"PASS\",\n  \"terminal_gate\": \"VALIDATED_SCOPED_TASK\"\n}\n",
+  "stderr": ""
+}

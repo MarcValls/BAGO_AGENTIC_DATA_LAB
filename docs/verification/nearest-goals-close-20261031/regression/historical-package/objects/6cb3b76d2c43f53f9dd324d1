@@ -1,0 +1,69 @@
+"""V01: passive source review binding plus three focused candidate tests."""
+import difflib
+import hashlib
+import json
+from pathlib import Path
+import shutil
+import subprocess
+import sys
+import time
+
+P=Path(__file__).resolve().parents[2]
+ROOT=P.parents[2]
+F=ROOT/'frontend/.publication-candidate-2'
+OUT=P/'reviews/verification'
+FIX=P/'fixtures/verification'
+FIX.mkdir(parents=True,exist_ok=False)
+def read(p):return json.loads(p.read_bytes())
+def sha(p):return hashlib.sha256(p.read_bytes()).hexdigest()
+def save(name,value):(OUT/name).write_text(json.dumps(value,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
+def manifest(root):return {p.relative_to(root).as_posix():sha(p) for p in root.rglob('*') if p.is_file()}
+state=read(P/'.bago/team/runtime/state.json')
+inputs=[]
+for row in state['frozen_scope']['candidates']:
+    actual=sha(P/row['path'])
+    assert actual==row['sha256'],row['path']
+    inputs.append({'path':row['path'],'sha256':actual})
+declared=read(P/'inputs/MANIFEST.json')
+assert Path(declared['candidate']).resolve()==F.resolve()
+checked=[]
+for row in declared['files']:
+    candidate=F/row['path'];active=ROOT/'frontend'/row['path']
+    assert sha(candidate)==row['sha256'],row['path']
+    assert sha(active)==row['active_sha256'],row['path']
+    checked.append(row)
+source_before=manifest(F/'src')
+active_source_before=manifest(ROOT/'frontend/src')
+assert source_before==active_source_before,'production source differs'
+tests=[r['path'].removeprefix('frontend/') for r in declared['changed_tests']]
+test_before={rel:sha(F/rel) for rel in tests}
+baseline_before={rel:sha(ROOT/'frontend'/rel) for rel in tests}
+for rel in tests:
+    assert sha(P/'inputs/baseline'/rel)==baseline_before[rel]
+    assert sha(P/'inputs/candidate'/rel)==test_before[rel]
+    delta=''.join(difflib.unified_diff((P/'inputs/baseline'/rel).read_text(encoding='utf-8').splitlines(True),(F/rel).read_text(encoding='utf-8').splitlines(True),fromfile='baseline/'+rel,tofile='candidate/'+rel))
+    (OUT/(Path(rel).name+'.diff')).write_text(delta,encoding='utf-8')
+save('fingerprints-before.json',{'inputs':inputs,'declared_manifest_sha256':sha(P/'inputs/MANIFEST.json'),'candidate_source':source_before,'active_source':active_source_before,'candidate_tests':test_before,'active_baseline_tests':baseline_before,'declared_files_revalidated':checked,'metadata_resolution':'Explicit assignment and MANIFEST identify .publication-candidate-2; TEST_CANDIDATE candidate field is older .publication-candidate metadata, not the executed candidate.'})
+node=shutil.which('node')
+assert node
+vitest=ROOT/'frontend/node_modules/vitest/vitest.mjs'
+commands=[('vitest',[node,str(vitest),'run','--maxWorkers=2','tests/providers/provider-settings.test.tsx','tests/ui/agent-evaluation-lab/agent-evaluation-lab-render.test.tsx']),('node-navigation',[node,'--test','tests/ui/chat-shell/chat-navigation.test.mjs'])]
+calls=[]
+for label,argv in commands:
+    started=time.monotonic()
+    run=subprocess.run(argv,cwd=F,capture_output=True,text=True,encoding='utf-8',errors='replace',timeout=180)
+    (OUT/(label+'.stdout.log')).write_text(run.stdout,encoding='utf-8')
+    (OUT/(label+'.stderr.log')).write_text(run.stderr,encoding='utf-8')
+    calls.append({'label':label,'argv':argv,'cwd':str(F),'returncode':run.returncode,'elapsed_seconds':round(time.monotonic()-started,3),'stdout':str((OUT/(label+'.stdout.log')).relative_to(P)),'stdout_sha256':sha(OUT/(label+'.stdout.log')),'stderr':str((OUT/(label+'.stderr.log')).relative_to(P)),'stderr_sha256':sha(OUT/(label+'.stderr.log'))})
+source_after=manifest(F/'src')
+active_source_after=manifest(ROOT/'frontend/src')
+assert source_before==source_after==active_source_after
+assert {rel:sha(F/rel) for rel in tests}==test_before
+assert {rel:sha(ROOT/'frontend'/rel) for rel in tests}==baseline_before
+assert all(sha(P/r['path'])==r['sha256'] for r in inputs)
+save('commands.json',calls)
+save('fingerprints-after.json',{'candidate_source':source_after,'active_source':active_source_after,'candidate_tests':test_before,'active_baseline_tests':baseline_before,'inputs_unchanged':True,'source_and_tests_unchanged':True})
+failed=[c['label'] for c in calls if c['returncode']!=0]
+save('result.json',{'status':'FAIL' if failed else 'PASS','candidate':str(F),'P0':0,'P1':0,'failed_commands':failed,'commands':calls,'source_files_identical':len(source_before),'three_candidate_tests_unchanged':True,'inputs_hashes_revalidated':len(inputs),'production_source_unchanged':True,'review_conclusion':'Invariants preserved in the three test corrections; no production source change.','limits':['Focused test review only; complete frontend checks/build and publishing remain coordinator gates','DOM/static-render tests with synthetic API responses; no real provider or service connection','Older candidate path in TEST_CANDIDATE explicitly superseded by assignment and MANIFEST']})
+print(json.dumps({'status':'FAIL' if failed else 'PASS','source_files':len(source_before),'commands':[(c['label'],c['returncode']) for c in calls]}))
+raise SystemExit(1 if failed else 0)

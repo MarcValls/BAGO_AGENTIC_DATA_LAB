@@ -1,0 +1,130 @@
+import assert from 'node:assert/strict'
+import { createServer } from 'node:http'
+import { readFile, writeFile, mkdir } from 'node:fs/promises'
+import { dirname, extname, join, resolve } from 'node:path'
+import { fileURLToPath } from 'node:url'
+import { createHash } from 'node:crypto'
+import { chromium } from '../../../nearest-goals-check/node_modules/playwright-core/index.mjs'
+
+const frontend = resolve(dirname(fileURLToPath(import.meta.url)), '../../..')
+const attempt = process.argv[2] ?? 'browser-attempt1'
+assert(/^browser-attempt[1-9]\d*$/.test(attempt))
+const output = join(frontend, 'nearest-goals-check/footer-repair', attempt)
+await mkdir(output, { recursive: false })
+await mkdir(join(output, 'tmp'))
+process.env.TEMP = join(output, 'tmp')
+process.env.TMP = join(output, 'tmp')
+const brave = 'C:/Program Files/BraveSoftware/Brave-Browser/Application/brave.exe'
+const dist = join(frontend, 'dist')
+const mime = { '.js': 'text/javascript', '.css': 'text/css', '.svg': 'image/svg+xml', '.png': 'image/png', '.html': 'text/html' }
+const server = createServer(async (req, res) => {
+  try {
+    const rel = decodeURIComponent(new URL(req.url, 'http://localhost').pathname)
+    const file = resolve(dist, '.' + (rel === '/' ? '/index.html' : rel))
+    assert(file.startsWith(dist + '/') || file.startsWith(dist + '\\'))
+    const bytes = await readFile(file)
+    res.writeHead(200, { 'Content-Type': mime[extname(file)] || 'application/octet-stream' })
+    res.end(bytes)
+  } catch { res.writeHead(404); res.end('fixture asset unavailable') }
+})
+await new Promise(resolve => server.listen(0, '127.0.0.1', resolve))
+const origin = `http://127.0.0.1:${server.address().port}`
+const context = await chromium.launchPersistentContext(join(output, 'profile'), {
+  executablePath: brave, headless: true, viewport: { width: 1280, height: 900 },
+  serviceWorkers: 'block', args: ['--disable-extensions'],
+})
+const requests = [], unknown = [], external = [], pageErrors = [], checks = [], cases = []
+const catalog = Array.from({ length: 18 }, (_, index) => ({ provider_id: 'ollama-cloud', model_id: `footer-${index + 1}`,
+  display_name: `Modelo sintético ${index + 1}`, label: 'Proveedor sintético', state: 'ready' }))
+const policy = { models: [], main_chat: null, revision: 'synthetic-footer-r1', catalog }
+const fixture = path => {
+  if (path === '/api/providers/model-policy') return policy
+  if (path === '/api/providers/registry') return { registrations: [] }
+  if (path === '/api/providers/ollama/status') return { state: 'not_configured' }
+  if (path === '/api/providers/chat-models') return { models: [] }
+  if (path === '/api/providers/selection') return { provider_id: null, model_id: null }
+  if (path === '/api/agents/list') return { agents: [], warning_count: 0 }
+  if (path === '/api/conversations') return { conversations: [] }
+  if (path === '/api/project-folders/v1/active') return { project_id: 'synthetic-footer', title: 'Prueba de Salir', root: '/synthetic', scope: 'workspace' }
+  if (path === '/api/chat/context') return { workspace_root: '/synthetic', paths: [], cognition: { profile: 'baseline', capacity: 1, max_hops: 1, max_expansions: 1 }, memory: { kind: 'synthetic', state: 'absent', description: 'Synthetic UI test only' } }
+  return null
+}
+await context.addInitScript(() => localStorage.setItem('bago.ui.locale', 'es'))
+await context.route('**/*', async route => {
+  const request = route.request(), url = new URL(request.url())
+  if (url.origin !== origin) { external.push(request.url()); return route.abort() }
+  if (!url.pathname.startsWith('/api/')) return route.continue()
+  requests.push({ method: request.method(), path: url.pathname })
+  const data = fixture(url.pathname)
+  if (request.method() !== 'GET' || data === null) {
+    unknown.push({ method: request.method(), path: url.pathname })
+    return route.fulfill({ status: 500, contentType: 'application/json', body: JSON.stringify({ detail: { message: 'No fixture for this request' } }) })
+  }
+  return route.fulfill({ contentType: 'application/json', body: JSON.stringify(data) })
+})
+
+function record(name, passed, evidence) { checks.push({ name, passed, evidence }) }
+let fatal = null
+try {
+  for (const [name, viewport] of [['desktop', { width: 1280, height: 900 }], ['mobile', { width: 430, height: 932 }]]) {
+    const page = await context.newPage()
+    page.on('pageerror', error => pageErrors.push({ viewport: name, message: String(error) }))
+    await page.setViewportSize(viewport)
+    await page.goto(origin, { waitUntil: 'networkidle' })
+    await page.getByRole('button', { name: 'Configuración', exact: true }).click()
+    const dialog = page.locator('#settings-layer')
+    await dialog.waitFor({ state: 'visible' })
+    await dialog.getByRole('button', { name: 'Proveedores y modelos', exact: true }).click()
+    await dialog.getByRole('tab', { name: 'Modelos activos', exact: true }).click()
+    await dialog.getByRole('checkbox', { name: 'Orquestador · ollama-cloud|footer-1', exact: true }).waitFor()
+    const exit = dialog.getByRole('button', { name: 'Salir', exact: true })
+    await exit.waitFor({ state: 'attached' })
+    await page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))))
+    const geometry = await page.evaluate(() => {
+      const footer = document.querySelector('.model-assignments-actions')
+      const list = document.querySelector('.model-assignments-content')
+      const section = document.querySelector('.model-assignments')
+      const style = getComputedStyle(footer)
+      const rect = el => { const r = el.getBoundingClientRect(); return { left: r.left, top: r.top, right: r.right, bottom: r.bottom, width: r.width, height: r.height } }
+      return { footer: rect(footer), section: rect(section), buttons: [...footer.querySelectorAll('button')].map(rect),
+        background: style.backgroundColor, border: [style.borderTopWidth, style.borderRightWidth, style.borderBottomWidth, style.borderLeftWidth],
+        justify: style.justifyContent, list: { clientHeight: list.clientHeight, scrollHeight: list.scrollHeight, scrollTop: list.scrollTop },
+        viewport: { width: innerWidth, height: innerHeight }, dialogOpen: document.querySelector('#settings-layer').open }
+    })
+    await page.screenshot({ path: join(output, `${name}-models-before-exit.png`) })
+    record(`${name}:real App dialog open`, geometry.dialogOpen, geometry)
+    record(`${name}:transparent borderless footer`, geometry.background === 'rgba(0, 0, 0, 0)' && geometry.border.every(x => x === '0px'), geometry)
+    record(`${name}:footer aligned bottom right`, geometry.justify === 'flex-end' && Math.abs(geometry.footer.bottom - geometry.section.bottom) <= 1 && Math.abs(geometry.buttons.at(-1).right - geometry.footer.right) <= 1, geometry)
+    record(`${name}:both footer buttons initially inside viewport`, geometry.buttons.every(b => b.top >= 0 && b.bottom <= viewport.height && b.left >= 0 && b.right <= viewport.width), geometry)
+    const scroll = await page.locator('.model-assignments-content').evaluate(list => { const before = list.scrollTop; list.scrollTop = list.scrollHeight; return { before, after: list.scrollTop, height: list.clientHeight, total: list.scrollHeight } })
+    const footerAfter = await page.locator('.model-assignments-actions').boundingBox()
+    record(`${name}:list scrolls independently`, scroll.after > scroll.before && scroll.total > scroll.height && Math.abs(footerAfter.y - geometry.footer.top) <= 1, scroll)
+    await page.screenshot({ path: join(output, `${name}-models-after-list-scroll.png`) })
+    await dialog.getByRole('checkbox', { name: 'Orquestador · ollama-cloud|footer-1', exact: true }).check()
+    const beforeExit = requests.length
+    await exit.click()
+    await page.waitForFunction(() => !document.querySelector('#settings-layer').open)
+    record(`${name}:Exit closes actual Settings dialog`, !(await dialog.evaluate(node => node.open)), { beforeExit, afterExit: requests.length })
+    record(`${name}:Exit has no implicit mutation`, requests.every(r => r.method === 'GET'), requests)
+    await page.screenshot({ path: join(output, `${name}-after-exit.png`) })
+    await writeFile(join(output, `${name}-after-exit.html`), await page.content())
+    cases.push({ name, viewport, geometry, scroll })
+    await page.close()
+  }
+} catch (error) {
+  fatal = { message: String(error), stack: error.stack }
+  for (const page of context.pages()) await page.screenshot({ path: join(output, 'failure.png') }).catch(() => {})
+} finally {
+  await context.close()
+  await new Promise(resolve => server.close(resolve))
+}
+record('no external traffic', external.length === 0, external)
+record('all API routes synthetic and expected', unknown.length === 0, unknown)
+record('no App page errors', pageErrors.length === 0, pageErrors)
+const result = { status: !fatal && checks.every(c => c.passed) ? 'PASS' : 'FAIL', scope: 'actual built App, headless Brave, synthetic intercepted localhost API only',
+  headless: true, user_focus_changed: false, actualApp: true, provider_calls: 'NOT_RUN', production_servers_used: false,
+  brave_executable: brave, origin, catalog_models: catalog.length, cases, checks, requests, unknown, external, pageErrors, fatal }
+result.source_sha256 = Object.fromEntries(await Promise.all(['src/App.tsx', 'src/components/ProviderSettings.tsx', 'src/components/ModelAssignments.tsx', 'src/components/ModelAssignments.css', 'src/components/ProviderSettings.css', 'src/App.css', 'dist/index.html'].map(async name => [name, createHash('sha256').update(await readFile(join(frontend, name))).digest('hex')])))
+await writeFile(join(output, 'BROWSER_RESULTS.json'), JSON.stringify(result, null, 2) + '\n')
+console.log(JSON.stringify({ status: result.status, checks: checks.length, failed: checks.filter(c => !c.passed).map(c => c.name), fatal }))
+process.exitCode = result.status === 'PASS' ? 0 : 1

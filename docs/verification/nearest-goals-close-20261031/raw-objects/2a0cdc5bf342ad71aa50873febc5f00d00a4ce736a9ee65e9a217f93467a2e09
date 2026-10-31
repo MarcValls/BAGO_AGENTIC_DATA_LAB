@@ -1,0 +1,72 @@
+{
+  "changed_files": [
+    "src/api/server.py",
+    "src/runtime/ber/agent_runner.py",
+    "tests/runtime/ber/test_agent_runner.py",
+    "docs/ber/AGENT_RUNNER_API_V1.md"
+  ],
+  "next_consumers": [
+    "W15",
+    "W16"
+  ],
+  "outputs": [
+    {
+      "description": "Server-owned Agent Runner WebSocket protocol separating proposal, review, BAGO approval, execution, exact receipt verification and LocalTrace projection for W15.",
+      "frozen": true,
+      "id": "adl-ber-agent-runner-api-v1",
+      "kind": "agent-runner-websocket-api-v1",
+      "path": "docs/ber/AGENT_RUNNER_API_V1.md",
+      "sha256": "8a2eb9e47ce1c91e883f67d5d38a5d5f47fa437c6ede57c8e6052f4a2df898f2"
+    },
+    {
+      "description": "Typed one-action ADL backend boundary over persisted profiles, current workspace binding, provider adapter and pinned BAGO BER.",
+      "frozen": true,
+      "id": "adl-ber-agent-runner-backend-v1",
+      "kind": "agent-runner-backend-v1",
+      "path": "src/runtime/ber/agent_runner.py",
+      "sha256": "37e891c8d09aeedfdd9af2ef3f324d6f27d97a0c991b81c4510ef0db30c04266"
+    }
+  ],
+  "payload_sha256": "797ab6ed632055ff162715cba80e2c7b2f7c3d2c1180c7d23eac7042fa65a377",
+  "repository_snapshot": {
+    "branch": "codex/adl-ber-integration-20261019",
+    "head": "585fe4635596b1bd253fb8ba6d5b736ebf133ee9",
+    "note": "W14 implemented on the frozen W13 candidate. Concurrent worktree changes outside W14 scopes were preserved."
+  },
+  "residual_risks": [
+    "No live Ollama inference or end-to-end Agent Runner WebSocket decision/execution was exercised; deterministic provider and BER fakes verify the backend boundary only.",
+    "Container runtime remains unavailable for Ollama and the runner fails closed when provider status is unsupported; no fallback provider or legacy sandbox is used.",
+    "The LocalTrace is a redacted ADL projection of BER identities and is not authorization or receipt authority; W15 must show success only for completed with verified_success true.",
+    "Generated README closure and full repository verification remain for the mission terminal gate because they are outside W14 write scope."
+  ],
+  "role": "governance-action-engineer",
+  "status": "DONE",
+  "verification": [
+    {
+      "command": "python -m pytest tests/runtime/ber/test_agent_runner.py tests/runtime/ber/test_client.py tests/runtime/ber/test_observability.py -q",
+      "evidence": "28 passed in 23.60s; all Agent Runner tests use a deterministic fake provider and BER client, while the existing BER client and LocalTrace contract suites also pass.",
+      "result": "PASS"
+    },
+    {
+      "command": "python -m py_compile src/api/server.py src/runtime/ber/agent_runner.py tests/runtime/ber/test_agent_runner.py",
+      "evidence": "All three scoped Python files compiled.",
+      "result": "PASS"
+    },
+    {
+      "command": "git diff --check -- src/api/server.py plus scoped-file trailing-whitespace scan",
+      "evidence": "No whitespace errors in tracked server diff or trailing whitespace in the other scoped source, test and API documentation files.",
+      "result": "PASS"
+    },
+    {
+      "command": "python -c \"import src.api.server\"",
+      "evidence": "FastAPI server imported successfully under the current Python 3.14 environment; a LangChain Pydantic v1 compatibility warning was emitted by an existing dependency.",
+      "result": "PASS"
+    },
+    {
+      "command": "python .bago/team/kit/scripts/teamctl.py --root . verify",
+      "evidence": "Team coordination state validated; existing orphan handoffs were reported and preserved.",
+      "result": "PASS"
+    }
+  ],
+  "work_id": "W14"
+}

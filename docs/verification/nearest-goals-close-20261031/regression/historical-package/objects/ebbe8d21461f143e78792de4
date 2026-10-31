@@ -1,0 +1,95 @@
+"""Independent builder review, exact preserved CI evidence and real check CLI."""
+import copy
+import hashlib
+import importlib.util
+import json
+import os
+from pathlib import Path
+import re
+import subprocess
+
+G=Path(__file__).resolve().parents[2];R=G.parents[2];W=R/'.worktrees/readme-clarity-20261022';O=G/'reviews/V01';X=G/'fixtures/V01'
+X.mkdir(parents=True,exist_ok=False)
+def sha(p):return hashlib.sha256(p.read_bytes()).hexdigest()
+def read(p):return json.loads(p.read_bytes())
+def save(name,value):(O/name).write_text(json.dumps(value,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
+consumed=[]
+for wid in ('B01','T01'):
+    hp=G/'.bago/team/runtime/handoffs'/(wid+'.json');handoff=read(hp)
+    for row in handoff['outputs']:
+        assert sha(G/row['path'])==row['sha256'],row['path']
+    consumed.append({'work_id':wid,'handoff_sha256':sha(hp),'outputs':handoff['outputs']})
+for row in read(G/'deliveries/B01/attempt-2/MANIFEST.json')['files']:
+    assert sha(Path(row['target']))==sha(G/row['delivery'])==row['sha256']
+for row in read(G/'deliveries/T01/MANIFEST.json')['files']:
+    assert sha(W/row['target'])==sha(G/row['delivery'])==row['target_sha256']==row['delivery_sha256']
+bound=['scripts/generate_dynamic_readme.py','docs/readme_manifest.json','docs/readme_generation.md','docs/verification/readme-status-20261022.json','docs/verification/readme-20261022/ci-summary.json','README.md','tests/test_dynamic_readme.py','tests/test_readme_presentation.py']
+before={p:sha(W/p) for p in bound}
+assert before['README.md']=='0731c7d5a88f5528861c923ed6b947c0eb8a931a2c2572e0fdc814418d131bf1'
+manifest=read(W/'docs/readme_manifest.json');record=read(W/manifest['verification_record']);ci=record['ci'];summary=read(W/ci['evidence_path'])
+assert sha(G/'metadata.stdout')==summary['source_metadata_sha256']
+assert sha(G/'log.stdout')==summary['source_log_sha256']
+metadata=read(G/'metadata.stdout');raw=(G/'log.stdout').read_text(encoding='utf-8')
+assert metadata['databaseId']==39813814372 and metadata['status']=='completed' and metadata['conclusion']=='success'
+assert ci['candidate']==metadata['headSha']==summary['candidate']=='b0b2f2a2079019fe80e82b836e13c5580a189b70'
+assert ci['run_url']==metadata['url']==summary['run_url']
+assert ci['completed_at']==metadata['updatedAt']==summary['completed_at']
+assert all(line in raw for line in summary['summary_lines'])
+steps={step['name']:step for job in metadata['jobs'] for step in job['steps']}
+for name in ('Run complete test suite','Run frontend package tests','Run frontend UI tests','Run frontend Node contract tests','Build frontend'):
+    assert steps[name]['conclusion']=='success' and steps[name]['status']=='completed'
+patterns=[('Run complete test suite',r'539 passed'),('Run frontend package tests',r'Test Files\s+14 passed'),('Run frontend package tests',r'Tests\s+127 passed'),('Run frontend UI tests',r'# pass 49'),('Run frontend Node contract tests',r'# pass 13')]
+for step,pattern in patterns:
+    lines='\n'.join(line for line in raw.splitlines() if '\t'+step+'\t' in line)
+    assert re.search(pattern,lines),(step,pattern)
+trees=[]
+for commit in (ci['candidate'],'f253f3700990943755e63717a93d3be99f0e19fa'):
+    result=subprocess.run(['git','rev-parse',commit+'^{tree}'],cwd=W,capture_output=True,text=True,check=True)
+    trees.append(result.stdout.strip())
+assert trees[0]==trees[1]
+
+spec=importlib.util.spec_from_file_location('final_readme_builder',W/'scripts/generate_dynamic_readme.py')
+module=importlib.util.module_from_spec(spec);spec.loader.exec_module(module)
+text=module.render_readme(manifest=manifest,state=module.parse_state(),passing_tests=0)
+assert text==(W/'README.md').read_text(encoding='utf-8')
+assert text==module.render_readme(manifest=manifest,state=module.parse_state(),passing_tests=987654321)
+assert '987654321' not in text
+visible=re.sub(r'<details>.*?</details>','',text,flags=re.DOTALL)
+assert len(text.splitlines())<600 and len(visible.splitlines())<180
+assert text.count('<details>')==text.count('</details>')>0
+assert re.findall(r'^## (.+)$',text,re.MULTILINE)==['El laboratorio','La aplicación frontend','Tests y verificación','Ejecutar la demo local','Arquitectura de un vistazo','Historial y evidencia','Documentación del proyecto','Contrato de generación del README']
+for token in ('38665463586','ff9292fe4340a2bdab9658a2e804579fa4ef8fb0','BM-1001','BM-1004','evidence/l15_otel_jaeger_live.md','RDF / SPARQL / Knowledge Graphs'):
+    assert token in text
+assert 'Snapshot de CI' in text and 'Registro histórico de CI conservado en STATE.md' in text
+original_reader=module._read_json;negative=[]
+for mutation in ('missing_candidate','missing_evidence','collection_as_result','unsupported_schema','path_escape'):
+    value=copy.deepcopy(record);config=copy.deepcopy(manifest)
+    if mutation=='missing_candidate':value['ci'].pop('candidate')
+    elif mutation=='missing_evidence':value['ci']['checks'][0].pop('evidence_url')
+    elif mutation=='collection_as_result':value['ci']['checks'][0]['result']='COLLECTED'
+    elif mutation=='unsupported_schema':value['schema']='wrong'
+    else:config['verification_record']='../outside.json'
+    module._read_json=lambda path,payload=value:payload
+    try:module._render_verification(config)
+    except ValueError as exc:negative.append({'case':mutation,'result':'PASS','rejection':str(exc)})
+    else:raise AssertionError('invalid record accepted: '+mutation)
+module._read_json=original_reader
+
+old=subprocess.run(['git','show','f253f3700990943755e63717a93d3be99f0e19fa:README.md'],cwd=W,capture_output=True,text=True,encoding='utf-8',check=True).stdout
+def links(body):return set(re.findall(r'(?<!!)\[[^\]]+\]\(([^)]+)\)',body))
+new_local=[]
+for link in sorted(links(text)-links(old)):
+    if '://' in link or link.startswith('#'):continue
+    target=link.split('#',1)[0]
+    path=(W/target).resolve()
+    assert path.is_relative_to(W.resolve()) and path.is_file(),link
+    new_local.append({'link':link,'sha256':sha(path)})
+env=dict(os.environ,PYTHONDONTWRITEBYTECODE='1',PYTHONPATH=os.pathsep.join([str(R/'output/teamctl-p1-deps-20261022'),str(R/'output/rd142-deps')]),PYTEST_ADDOPTS='-p no:cacheprovider')
+argv=[str(R/'.venv/Scripts/python.exe'),'-B','scripts/generate_dynamic_readme.py','--check','--skip-tests']
+run=subprocess.run(argv,cwd=W,env=env,capture_output=True,text=True,encoding='utf-8',errors='replace',timeout=120)
+(O/'check.stdout.log').write_text(run.stdout,encoding='utf-8');(O/'check.stderr.log').write_text(run.stderr,encoding='utf-8')
+assert run.returncode==0 and 'NOT_RUN' in run.stdout and 'tests pasaron' not in run.stdout
+after={p:sha(W/p) for p in bound};assert before==after
+save('manifest.json',{'worktree':str(W),'before':before,'after':after,'unchanged':True,'consumed':consumed,'new_local_links':new_local,'ci':{'candidate':ci['candidate'],'run_url':ci['run_url'],'metadata_sha256':sha(G/'metadata.stdout'),'log_sha256':sha(G/'log.stdout'),'matching_trees':trees,'note':'Tree equality is not a separate CI execution on the merge.'},'check_command':{'argv':argv,'returncode':run.returncode,'stdout_sha256':sha(O/'check.stdout.log'),'stderr_sha256':sha(O/'check.stderr.log')},'negatives':negative})
+save('result.json',{'status':'PASS','P0':0,'P1':0,'readme_sha256':before['README.md'],'total_lines':len(text.splitlines()),'visible_lines':len(visible.splitlines()),'negative_controls':len(negative),'local_new_links_resolved':len(new_local),'real_check_skip_tests':'PASS; collection NOT_RUN, not execution','ci_evidence_reconstructed':True,'candidate_unchanged':True,'independence':'Reviewer authored tests T01 but did not edit builder generator/manifest/documentation/README.','limits':['Full suite and generated README full order remain coordinator I01 gates.','Provider/build/launch instructions are descriptions; no UI service/provider/build executed by V01.','Snapshot CI belongs to b0; historical Windows observation remains separate.']})
+print(json.dumps({'status':'PASS','readme_sha256':before['README.md'],'negative_controls':len(negative),'local_new_links_resolved':len(new_local),'check_returncode':run.returncode}))

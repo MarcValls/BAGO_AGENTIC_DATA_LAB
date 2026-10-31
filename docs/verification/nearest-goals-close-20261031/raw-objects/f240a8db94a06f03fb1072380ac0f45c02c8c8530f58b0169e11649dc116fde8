@@ -1,0 +1,54 @@
+{
+  "changed_files": [
+    "frontend/src/contracts/decision/evidence.ts",
+    "frontend/tests/contracts/evidence/evidence.test.ts",
+    "docs/decision-inspector/contracts/evidence/decision-evidence-v1.md"
+  ],
+  "outputs": [
+    {
+      "path": "frontend/src/contracts/decision/evidence.ts",
+      "kind": "decision_evidence_contract_v1"
+    },
+    {
+      "path": "frontend/tests/contracts/evidence/evidence.test.ts",
+      "kind": "contract_tests"
+    },
+    {
+      "path": "docs/decision-inspector/contracts/evidence/decision-evidence-v1.md",
+      "kind": "contract_documentation"
+    }
+  ],
+  "verification": [
+    {
+      "command": "frontend: .\\node_modules\\.bin\\tsc --target ES2020 --module commonjs --moduleResolution node --strict --esModuleInterop --skipLibCheck --outDir <temp> src/contracts/decision/evidence.ts tests/contracts/evidence/evidence.test.ts",
+      "evidence": "TypeScript compiler completed with exit code 0; compiled contract and Node test files into a disposable TEMP directory.",
+      "result": "PASS"
+    },
+    {
+      "command": "node --test <temp>/tests/contracts/evidence/evidence.test.js",
+      "evidence": "4 tests passed, 0 failed: unsupported/empty evidence claims, multiple and contradictory links, stale/current/unknown identity, missing provenance, retrieval mapping, unresolved references, deterministic serialization.",
+      "result": "PASS"
+    },
+    {
+      "command": "git diff --check",
+      "evidence": "No whitespace errors in reviewed repository diff.",
+      "result": "PASS"
+    },
+    {
+      "command": "python .codex-team-kit/scripts/teamctl.py inspect W02; python .codex-team-kit/scripts/teamctl.py verify",
+      "evidence": "W02 is CLAIMED by /root/evidence_contract, depends on DONE W01; teamctl verify passed after W03 handoff.",
+      "result": "PASS"
+    }
+  ],
+  "residual_risks": [
+    "AgentRun currently provides answer and citations but no reviewed claim decomposition or content digest; this contract does not fabricate either.",
+    "Current evidence freshness requires a consumer-supplied expected identity; without it status remains unknown.",
+    "Semantic support between claim text and cited artifact is not proven by structural contract validation."
+  ],
+  "next_consumers": [
+    "W04",
+    "W05",
+    "W06",
+    "W07"
+  ]
+}

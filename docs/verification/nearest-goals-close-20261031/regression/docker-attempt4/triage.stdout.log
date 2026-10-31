@@ -1,0 +1,253 @@
+........................................................................ [ 35%]
+...............F........................................................ [ 70%]
+................................................sFFFFF.......            [100%]
+=================================== FAILURES ===================================
+______ test_untrusted_evidence_reference_cannot_replace_host_mapped_check ______
+
+managed_work = {'candidate_id': '9bdf09833dd28ab922485c21a23e0f645efb5cb812712150dd3c1b07d4f8fada', 'harness': <adl_teamctl_integrity...nce_state': 'PENDING', ...}, 'workspace': PosixPath('/workspace/check-temp/triage/f0030/artifacts/domain_conformance')}
+
+    def test_untrusted_evidence_reference_cannot_replace_host_mapped_check(managed_work):
+        packet = evaluation(managed_work["candidate_id"], controls=[
+            {"id": "scope", "result": "PASS", "evidence_refs": ["producer-assertion"]}
+        ])
+        with pytest.raises(DomainConformanceError, match="do not match host policy"):
+>           verify(managed_work, packet)
+
+tests/contracts/evidence/test_domain_conformance.py:137: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/contracts/evidence/test_domain_conformance.py:58: in verify
+    return verify_domain_conformance(
+src/contracts/domain_conformance.py:111: in verify_domain_conformance
+    team._verify(root, state)
+.bago/team/kit/scripts/teamctl.py:493: in _verify
+    validate_handoff(root, state, wid)
+.bago/team/kit/scripts/teamctl.py:425: in validate_handoff
+    _handoff(root, state, wid, handoff)
+.bago/team/kit/scripts/teamctl.py:414: in _handoff
+    validate_handoff_evidence(root, handoff, state=state, wid=wid)
+.bago/team/kit/scripts/teamctl.py:381: in validate_handoff_evidence
+    _validate_execution(root, state, wid, entry)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+root = PosixPath('/workspace/check-temp/triage/f0030/artifacts/domain_conformance')
+state = {'candidate_id': '9bdf09833dd28ab922485c21a23e0f645efb5cb812712150dd3c1b07d4f8fada', 'candidate_manifest': [{'path': '...c04fb4645507e7478c33fce691'}, ...], 'created_at': '2026-10-31T19:16:51.286394+00:00', 'evidence_state': 'PENDING', ...}
+wid = 'P'
+entry = {'command': '["/usr/local/bin/python","-B","-c","from pathlib import Path;p=Path(\'products/P/result.txt\');p.parent.m...0d96515458fbf95aba700ff9f9f/receipt.json', 'execution_id': 'a2f5d0d96515458fbf95aba700ff9f9f', 'id': 'acceptance', ...}
+
+    def _validate_execution(root, state, wid, entry):
+        if entry['result'] == 'NOT_RUN':
+            return
+        eid = entry.get('execution_id')
+        saved = state['executions'].get(eid)
+        if not saved or saved.get('work_id') != wid or saved.get('state') != 'COMPLETED':
+            raise ValueError('verification has no completed managed execution')
+        matching = [(key, item) for key, item in state['executions'].items()
+                    if item.get('work_id') == wid and item.get('check_id') == entry['id']]
+        if matching and max(matching, key=lambda pair: pair[1]['started_at'])[0] != eid:
+            raise ValueError('verification is superseded by a later execution of this check')
+        path = local_path(root, saved['path'], exists=True)
+        if sha256_file(path) != saved['sha256']:
+>           raise ValueError('managed execution receipt changed')
+E           ValueError: managed execution receipt changed
+
+.bago/team/kit/scripts/teamctl.py:345: ValueError
+_______________________ test_workspace_binding_contract ________________________
+
+    def test_workspace_binding_contract() -> None:
+>       binding = WorkspaceBinding.from_git(
+            REPOSITORY_ROOT,
+            context_revision="l9-workspace-v1",
+        )
+
+tests/test_workspace_binding.py:21: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+src/context/workspace_binding.py:176: in from_git
+    git_root = Path(_git(requested_root, "rev-parse", "--show-toplevel")).resolve()
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+root = PosixPath('/workspace'), required = True
+arguments = ('rev-parse', '--show-toplevel')
+result = CompletedProcess(args=['git', '-C', '/workspace', 'rev-parse', '--show-toplevel'], returncode=128, stdout='', stderr='fatal: not a git repository (or any of the parent directories): .git\n')
+
+    def _git(root: Path, *arguments: str, required: bool = True) -> str:
+        try:
+            result = subprocess.run(
+                ["git", "-C", str(root), *arguments],
+                check=False,
+                capture_output=True,
+                text=True,
+                encoding="utf-8",
+            )
+        except OSError as error:
+            raise WorkspaceBindingError("git is required to bind a workspace") from error
+        output = result.stdout.strip()
+        if result.returncode != 0:
+            if required:
+                detail = result.stderr.strip() or "unknown git error"
+>               raise WorkspaceBindingError(f"git {' '.join(arguments)} failed: {detail}")
+E               src.context.workspace_binding.WorkspaceBindingError: git rev-parse --show-toplevel failed: fatal: not a git repository (or any of the parent directories): .git
+
+src/context/workspace_binding.py:92: WorkspaceBindingError
+__________ test_workspace_binding_does_not_authorize_material_effects __________
+
+    def test_workspace_binding_does_not_authorize_material_effects() -> None:
+>       binding = WorkspaceBinding.from_git(REPOSITORY_ROOT, context_revision="ctx-v1")
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_workspace_binding.py:65: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+src/context/workspace_binding.py:176: in from_git
+    git_root = Path(_git(requested_root, "rev-parse", "--show-toplevel")).resolve()
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+root = PosixPath('/workspace'), required = True
+arguments = ('rev-parse', '--show-toplevel')
+result = CompletedProcess(args=['git', '-C', '/workspace', 'rev-parse', '--show-toplevel'], returncode=128, stdout='', stderr='fatal: not a git repository (or any of the parent directories): .git\n')
+
+    def _git(root: Path, *arguments: str, required: bool = True) -> str:
+        try:
+            result = subprocess.run(
+                ["git", "-C", str(root), *arguments],
+                check=False,
+                capture_output=True,
+                text=True,
+                encoding="utf-8",
+            )
+        except OSError as error:
+            raise WorkspaceBindingError("git is required to bind a workspace") from error
+        output = result.stdout.strip()
+        if result.returncode != 0:
+            if required:
+                detail = result.stderr.strip() or "unknown git error"
+>               raise WorkspaceBindingError(f"git {' '.join(arguments)} failed: {detail}")
+E               src.context.workspace_binding.WorkspaceBindingError: git rev-parse --show-toplevel failed: fatal: not a git repository (or any of the parent directories): .git
+
+src/context/workspace_binding.py:92: WorkspaceBindingError
+__________ test_workspace_binding_is_deterministic_for_same_snapshot ___________
+
+    def test_workspace_binding_is_deterministic_for_same_snapshot() -> None:
+>       first = WorkspaceBinding.from_git(REPOSITORY_ROOT, context_revision="ctx-v1")
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_workspace_binding.py:33: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+src/context/workspace_binding.py:176: in from_git
+    git_root = Path(_git(requested_root, "rev-parse", "--show-toplevel")).resolve()
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+root = PosixPath('/workspace'), required = True
+arguments = ('rev-parse', '--show-toplevel')
+result = CompletedProcess(args=['git', '-C', '/workspace', 'rev-parse', '--show-toplevel'], returncode=128, stdout='', stderr='fatal: not a git repository (or any of the parent directories): .git\n')
+
+    def _git(root: Path, *arguments: str, required: bool = True) -> str:
+        try:
+            result = subprocess.run(
+                ["git", "-C", str(root), *arguments],
+                check=False,
+                capture_output=True,
+                text=True,
+                encoding="utf-8",
+            )
+        except OSError as error:
+            raise WorkspaceBindingError("git is required to bind a workspace") from error
+        output = result.stdout.strip()
+        if result.returncode != 0:
+            if required:
+                detail = result.stderr.strip() or "unknown git error"
+>               raise WorkspaceBindingError(f"git {' '.join(arguments)} failed: {detail}")
+E               src.context.workspace_binding.WorkspaceBindingError: git rev-parse --show-toplevel failed: fatal: not a git repository (or any of the parent directories): .git
+
+src/context/workspace_binding.py:92: WorkspaceBindingError
+__________________ test_workspace_binding_rejects_path_escape __________________
+
+    def test_workspace_binding_rejects_path_escape() -> None:
+>       binding = WorkspaceBinding.from_git(REPOSITORY_ROOT, context_revision="ctx-v1")
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_workspace_binding.py:41: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+src/context/workspace_binding.py:176: in from_git
+    git_root = Path(_git(requested_root, "rev-parse", "--show-toplevel")).resolve()
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+root = PosixPath('/workspace'), required = True
+arguments = ('rev-parse', '--show-toplevel')
+result = CompletedProcess(args=['git', '-C', '/workspace', 'rev-parse', '--show-toplevel'], returncode=128, stdout='', stderr='fatal: not a git repository (or any of the parent directories): .git\n')
+
+    def _git(root: Path, *arguments: str, required: bool = True) -> str:
+        try:
+            result = subprocess.run(
+                ["git", "-C", str(root), *arguments],
+                check=False,
+                capture_output=True,
+                text=True,
+                encoding="utf-8",
+            )
+        except OSError as error:
+            raise WorkspaceBindingError("git is required to bind a workspace") from error
+        output = result.stdout.strip()
+        if result.returncode != 0:
+            if required:
+                detail = result.stderr.strip() or "unknown git error"
+>               raise WorkspaceBindingError(f"git {' '.join(arguments)} failed: {detail}")
+E               src.context.workspace_binding.WorkspaceBindingError: git rev-parse --show-toplevel failed: fatal: not a git repository (or any of the parent directories): .git
+
+src/context/workspace_binding.py:92: WorkspaceBindingError
+_______________ test_workspace_binding_requires_context_revision _______________
+
+    def test_workspace_binding_requires_context_revision() -> None:
+        with pytest.raises(WorkspaceBindingError, match="context_revision is required"):
+>           WorkspaceBinding.from_git(REPOSITORY_ROOT, context_revision=" ")
+
+tests/test_workspace_binding.py:51: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+src/context/workspace_binding.py:176: in from_git
+    git_root = Path(_git(requested_root, "rev-parse", "--show-toplevel")).resolve()
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+root = PosixPath('/workspace'), required = True
+arguments = ('rev-parse', '--show-toplevel')
+result = CompletedProcess(args=['git', '-C', '/workspace', 'rev-parse', '--show-toplevel'], returncode=128, stdout='', stderr='fatal: not a git repository (or any of the parent directories): .git\n')
+
+    def _git(root: Path, *arguments: str, required: bool = True) -> str:
+        try:
+            result = subprocess.run(
+                ["git", "-C", str(root), *arguments],
+                check=False,
+                capture_output=True,
+                text=True,
+                encoding="utf-8",
+            )
+        except OSError as error:
+            raise WorkspaceBindingError("git is required to bind a workspace") from error
+        output = result.stdout.strip()
+        if result.returncode != 0:
+            if required:
+                detail = result.stderr.strip() or "unknown git error"
+>               raise WorkspaceBindingError(f"git {' '.join(arguments)} failed: {detail}")
+E               src.context.workspace_binding.WorkspaceBindingError: git rev-parse --show-toplevel failed: fatal: not a git repository (or any of the parent directories): .git
+
+src/context/workspace_binding.py:92: WorkspaceBindingError
+
+During handling of the above exception, another exception occurred:
+
+    def test_workspace_binding_requires_context_revision() -> None:
+>       with pytest.raises(WorkspaceBindingError, match="context_revision is required"):
+E       AssertionError: Regex pattern did not match.
+E         Expected regex: 'context_revision is required'
+E         Actual message: 'git rev-parse --show-toplevel failed: fatal: not a git repository (or any of the parent directories): .git'
+
+tests/test_workspace_binding.py:50: AssertionError
+=========================== short test summary info ============================
+FAILED tests/contracts/evidence/test_domain_conformance.py::test_untrusted_evidence_reference_cannot_replace_host_mapped_check
+FAILED tests/test_workspace_binding.py::test_workspace_binding_contract - src...
+FAILED tests/test_workspace_binding.py::test_workspace_binding_does_not_authorize_material_effects
+FAILED tests/test_workspace_binding.py::test_workspace_binding_is_deterministic_for_same_snapshot
+FAILED tests/test_workspace_binding.py::test_workspace_binding_rejects_path_escape
+FAILED tests/test_workspace_binding.py::test_workspace_binding_requires_context_revision
+6 failed, 198 passed, 1 skipped in 172.38s (0:02:52)

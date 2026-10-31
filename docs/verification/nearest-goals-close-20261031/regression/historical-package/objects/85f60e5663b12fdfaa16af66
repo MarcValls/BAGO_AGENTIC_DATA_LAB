@@ -1,0 +1,65 @@
+# B01 — README: aplicación, resultados y lectura jerárquica
+
+## Estado y ámbito
+
+PREPARED en worktree `C:\Users\AMTEC_Terminal_1º\Desktop\BAGO5_ADL\.worktrees\readme-clarity-20261022` sobre base obtenida por el coordinador
+`f253f3700990943755e63717a93d3be99f0e19fa`. Tres fuentes autorizadas: scripts/generate_dynamic_readme.py,
+docs/readme_manifest.json y docs/readme_generation.md. README se generó mediante el script,
+sin edición manual. No se edita el checkout principal, canon de fases/AWS, tests del verificador,
+registro canónico de CI, credenciales ni servicios. Sin commit ni push.
+
+Los snapshots finales están en deliveries/B01/attempt-2, con cada ruta real de destino y SHA
+en MANIFEST.json. source-bindings.json confirma que siguen idénticos al worktree y enlaza
+el registro de verificación suministrado por raíz. El build1 queda preservado en sus rutas
+originales; build2 usa directorios nuevos. No se reescriben los recibos anteriores.
+
+## Causa y cambio material
+
+Antes, el lector encontraba demo/estado/fases extensas sin una explicación de la app ni de
+las baterías frontend. El CI antiguo estaba hardcoded como último y STATE tenía fecha propia.
+Ahora el recorrido es propósito → aplicación frontend y arranque → tests con evidencia →
+demo local → arquitectura resumida. TOC enlazado y detalles plegados conservan fases,
+inventarios, Bruma, tutoriales, Jaeger, skills, roles, catálogo y fuentes canónicas.
+
+La app describe interacción, datos/tareas guardadas e ingesta con citas, revisión de ontología,
+calidad de catálogo/conexiones, Inspect y Settings, con fuentes reales. Todos los paths del
+manifiesto se validan, mostrando solo dos enlaces por fila para no amontonar la tabla.
+React/TypeScript/Vite y API FastAPI se enlazan a package/API. El arranque usa las dependencias
+pinneadas de requirements-test, npm ci/build y python -m src.api.server; el launcher Windows
+y sus límites permanecen enlazados. No se inició una app ni se probó conectividad de providers.
+
+Los resultados se leen únicamente del JSON versionado suministrado por raíz:
+CI39813814372, candidata b0b2f2a2079019fe80e82b836e13c5580a189b70, fecha y alcance explícitos.
+Sus539Python/127Vitest/49UI/13contratos y build son evidencia de ese predecesor, no PASS de la
+nueva candidata README. El histórico Windows f2 se conserva separado. El generador no consulta
+red ni actualiza STATE/L15, créditos o disponibilidad AWS. Passing_tests permanece compatible
+en la firma y no altera el contenido, evitando diferencias Windows skip/CI y colección→PASS.
+
+## Ejecución y verificación B01
+
+Suite team run-check B01 --check-id build, ejecución `2c4d84b27d18437cb269edbdcc7dc507`, exit0/PASS.
+El comando real ejecuta AST syntax, copia/compara las tres fuentes, genera README con
+--skip-tests y comprueba render(passing_tests=0) idéntico a render(987654321) y al README.
+La colección real informó550casos; suite NOT_RUN. No se convierte ese número en pass.
+Preview final: `fixtures/B01/attempt-2/README.preview.md`, SHA `0731c7d5a88f5528861c923ed6b947c0eb8a931a2c2572e0fdc814418d131bf1`,
+525 líneas brutas, con el detalle histórico plegado. git diff --check:0.
+Los logs, argv, cwd, fechas, entorno aislado y hashes se conservan en reviews/B01/attempt-2.
+
+Se usó el Python del checkout principal con overlays locales, y perfil/home/conversation DB
+aislados en fixtures/B01/attempt-2 para la colección. No se escriben los datos de usuario activos.
+La coordinación nativa pertenece al coordinador; el motor Spiral incluido NO se ejecutó.
+Se aplicó BAGO Core como disciplina de contexto/evidencia; .bago/bin/bago.py no existe en esta
+copia y no se simuló su status/verify. La coordinación real se realizó por la Suite disponible.
+
+## Límites y siguiente consumo
+
+La revisión focal del test-author y la revisión independiente tienen propietario separado.
+B01 no les atribuye PASS sobre estos últimos bytes. Full suite, generación normal sin skip,
+--check --skip-tests de cierre, prueba visual/render GitHub, publicación y aceptación global:
+NOT_RUN por B01, responsabilidad de los siguientes gates. El HTML details está en Markdown;
+su presencia no demuestra por sí sola la presentación en todos los clientes.
+
+El dataset Bruma y medios históricos se conservan con su alcance original; no se generan
+nuevos experimentos, consultas cloud ni escenarios comerciales. Arranque e integración se
+describen por sus entradas reales, sin afirmar una ejecución de servicios durante este trabajo.
+Ante divergencia de target SHA, el consumidor debe rechazar la entrega antes de continuar.

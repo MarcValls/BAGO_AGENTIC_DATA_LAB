@@ -1,0 +1,98 @@
+
+> bago-portfolio-ui@1.0.0 test:ui
+> node --test --test-concurrency=1 tests/ui/agent-evaluation-lab/agent-evaluation-lab.test.mjs tests/ui/agent-evaluation-lab/rendered.test.mjs tests/ui/agent-runner/agent-runner.test.mjs tests/ui/capabilities/mcp-governance.test.mjs tests/ui/chat-shell/chat-navigation.test.mjs tests/ui/knowledge/catalog-quality.test.mjs tests/ui/knowledge/grounded-source.test.mjs tests/ui/knowledge/ontology-review.test.mjs
+
+✔ normal inventory and model discovery use configured APIs and preserve returned identities (1.3452ms)
+✔ empty suites and history stay empty without fabricating examples (0.545ms)
+✔ API errors surface safe backend messages and never become successful runs (0.8489ms)
+✔ a provider request is made only through explicit run and is bound to saved revision/model (0.4614ms)
+✔ suite edits carry expected revision and case assertions (0.2749ms)
+19:44:54 [vite] (client) Re-optimizing dependencies because vite config has changed
+▶ Agent Evaluation Lab rendered behavior
+  ✔ shows loading state while inventory discovery is pending (84.3177ms)
+  ✔ renders empty inventory and history without invented data (85.337ms)
+  ✔ shows unavailable service and retry for a missing evaluation endpoint (8.799ms)
+  ✔ renders a failed discovery request as an explicit alert (10.8742ms)
+  ✔ preselects only the verified model and does not inherit an agent model that is unverified (43.0722ms)
+  ✔ loads persisted suite values into the editor and saves edits with the expected revision (109.6388ms)
+  ✔ opens the editor explicitly and hides it when browsing saved runs (143.7565ms)
+  ✔ calls the provider only after Run and renders saved LocalTrace and confirmed Jaeger identity (107.8405ms)
+  ✔ does not fabricate a Jaeger link when the run has only LocalTrace identity (74.2536ms)
+  ✔ labels a provisional trace ID as unsaved after LocalTrace persistence fails (33.7552ms)
+  ✔ renders an ERROR run as provider execution failure, distinct from assertion failure (33.5865ms)
+✔ Agent Evaluation Lab rendered behavior (737.7355ms)
+▶ Agent Runner P1-02 rendered regression
+  ✔ requires a selected profile and explicit task before a governed run can start (27.4583ms)
+  ✔ downloads the JSON export with a JSON filename (92.8068ms)
+✔ Agent Runner P1-02 rendered regression (120.6459ms)
+19:44:59 [vite] (client) Re-optimizing dependencies because vite config has changed
+19:45:00 [vite] (client) [optimizer] scanning dependencies...
+▶ BER Agent Runner UI
+  ✔ renders loading, empty and profile request error states (98.9271ms)
+  ✔ renders the exact proposal before review and sends only proposal_id with the chosen decision (140.0789ms)
+  ✔ shows success only for completed, verified_success and exact proposal, request, effect and receipt identities (116.0306ms)
+  ✔ downgrades completed frames with any mismatched ID to unverified and never renders success (117.4925ms)
+  ✔ requires the BAGO approval decision to match the prepared request when approval is required (123.5377ms)
+  ✔ rejects a proposal frame that exposes a BAGO challenge identifier (82.6319ms)
+  ✔ keeps rejection, cancellation, authorization denial and task answers distinct from success (227.2766ms)
+  ✔ renders authorization denial and provider-only task results as non-execution outcomes (186.6331ms)
+  ✔ renders backend errors as alerts without exposing exception details or falling back to sandbox (75.7217ms)
+✔ BER Agent Runner UI (1170.0569ms)
+19:45:05 [vite] (client) Re-optimizing dependencies because vite config has changed
+▶ Capability Manager MCP connection route
+  ✔ renders the catalog loading state and truthful empty state without demo controls (92.9756ms)
+  ✔ lists the actual MCP capability and exposes configuration and quick options without executing it (47.9298ms)
+  ✔ surfaces catalog errors with retry and makes no transport request (19.5344ms)
+✔ Capability Manager MCP connection route (161.7087ms)
+✔ shows linked-agent navigation and the selected project policy, separate from public-web consent (373.4899ms)
+19:45:13 [vite] (client) Re-optimizing dependencies because vite config has changed
+An update to CatalogQuality inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to CatalogQuality inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+▶ Local OpenMetadata catalog-quality route
+  ✔ checks health only on mount; no catalog write starts before explicit confirmation (99.7624ms)
+  ✔ renders all API checks, exact receipts, pretransport denial and cleanup state (63.0752ms)
+  ✔ distinguishes an unconfigured service and prevents running the live route (13.4883ms)
+  ✔ shows service errors and validation errors without a success record (46.2787ms)
+  ✔ marks cleanup failure explicitly even when individual checks returned (46.9273ms)
+✔ Local OpenMetadata catalog-quality route (271.3105ms)
+▶ Grounded local source route
+  ✔ does not read/index before explicit submission and declares authority as user input (46.5119ms)
+  ✔ shows accessible loading, sends exactly the four contract fields and renders backend evidence verbatim (104.3107ms)
+  ✔ states no evidence without rendering an answer, and displays the receipt/trace if returned (39.924ms)
+  ✔ reports unsupported and request errors without presenting a success result (61.6903ms)
+  ✔ rejects incomplete backend records instead of inventing citations or receipts (30.6538ms)
+✔ Grounded local source route (284.4005ms)
+▶ Local graph proposal and review UI
+  ✔ does not read automatically and requires explicit source selection and submission (74.973ms)
+  ✔ renders exact evidence and validator state and does not auto-approve proposals (67.8657ms)
+  ✔ sends only the explicitly selected exact proposal ID, then renders accepted receipt and query evidence (101.8525ms)
+  ✔ shows empty proposal response and rejects incomplete records without synthesizing accepted state (57.461ms)
+  ✔ does not claim acceptance when returned IDs differ from the exact selection (64.25ms)
+  ✔ reports unsupported and service errors without success state (44.8352ms)
+✔ Local graph proposal and review UI (412.7529ms)
+ℹ tests 47
+ℹ suites 7
+ℹ pass 47
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 33602.9779

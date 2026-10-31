@@ -1,0 +1,65 @@
+{
+  "changed_files": [
+    "tests/verification/agent-runner/test_websocket_integration.py",
+    "docs/ber/AGENT_RUNNER_VERIFICATION.md"
+  ],
+  "next_consumers": [
+    "W17"
+  ],
+  "outputs": [
+    {
+      "description": "Independent W16 adversarial verification of Agent Runner backend, WebSocket, UI and build, with explicit P0/P1/P2, NOT_RUN limits and W14 history distinction.",
+      "frozen": true,
+      "id": "adl-ber-agent-runner-verification-v1",
+      "kind": "independent-verification-report-v1",
+      "path": "docs/ber/AGENT_RUNNER_VERIFICATION.md",
+      "sha256": "5e9d598d34ae0a2879c945ccc0142c87c68b61b6eba0c0ccc78bb5af748c66dd"
+    }
+  ],
+  "payload_sha256": "0d06537296a3dc3764ab8069cc1906c23e75a17244ad6aaef2290af80db11683",
+  "repository_snapshot": {
+    "branch": "codex/adl-ber-integration-20261019",
+    "head": "585fe4635596b1bd253fb8ba6d5b736ebf133ee9",
+    "note": "W16 independently verified the current W14 corrective contract and W15R replacement test; historical pre-correction W14 remains archived and is explicitly distinguished in the report."
+  },
+  "residual_risks": [
+    "Live Ollama inference and live BER-backed execution were NOT_RUN; verification uses deterministic fakes and did not use credentials or create real effects.",
+    "Standalone container smoke and full repository suite/generated README closure remain for W17 terminal verification.",
+    "The Python 3.14/Pydantic v1 compatibility warning is emitted by an existing dependency and did not fail the focused checks."
+  ],
+  "role": "verification-engineer",
+  "status": "DONE",
+  "verification": [
+    {
+      "command": "python -m pytest tests/runtime/ber/test_agent_runner.py tests/runtime/ber/test_client.py tests/runtime/ber/test_observability.py tests/test_provider_cognition_repair.py -q",
+      "evidence": "41 passed; existing Python 3.14/Pydantic v1 compatibility warning.",
+      "result": "PASS"
+    },
+    {
+      "command": "python -m pytest tests/verification/agent-runner/test_websocket_integration.py tests/test_agent_execution_unavailable.py -q",
+      "evidence": "6 passed: five integrated fake-provider/fake-BER WebSocket adversarial tests plus the W15R malformed-start regression; no live credentials or effects.",
+      "result": "PASS"
+    },
+    {
+      "command": "node --test tests/ui/agent-runner/agent-runner.test.mjs (cwd frontend)",
+      "evidence": "9 UI Agent Runner tests passed.",
+      "result": "PASS"
+    },
+    {
+      "command": "npm run test:ui --prefix frontend",
+      "evidence": "17 UI tests passed.",
+      "result": "PASS"
+    },
+    {
+      "command": "npm run build --prefix frontend",
+      "evidence": "TypeScript and Vite production build passed; 129 modules transformed.",
+      "result": "PASS"
+    },
+    {
+      "command": "python .bago/team/kit/scripts/teamctl.py verify",
+      "evidence": "Coordination handoffs validate. Existing orphan handoff warnings AC01-AC10 and W01-W12 remain visible and preserved.",
+      "result": "PASS"
+    }
+  ],
+  "work_id": "W16"
+}

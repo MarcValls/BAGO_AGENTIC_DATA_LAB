@@ -1,0 +1,23 @@
+from pathlib import Path
+import argparse
+import json
+import subprocess
+import sys
+HERE = Path(__file__).resolve().parent
+G = HERE.parents[1]
+R = G.parents[2]
+parser = argparse.ArgumentParser()
+parser.add_argument('--attempt', default='2')
+args = parser.parse_args()
+tag = 'attempt-' + args.attempt
+argv = [str(R / '.venv/Scripts/python.exe'), '-B', str(HERE / 'build_check.py'), '--attempt', args.attempt]
+command = [str(R / 'output/bago-suite-repair-20261021/work/env/windows-py314/Scripts/python.exe'), '-B',
+           str(R / 'output/bago-suite-repair-20261021/i2/bago suite/scripts/suite_orchestrator.py'),
+           'team', '--root', str(G), 'run-check', 'B01', '--check-id', 'build', '--command-json', json.dumps(argv),
+           '--output', 'reviews/B01/' + tag + '/build-result.json', '--output', 'fixtures/B01/' + tag + '/README.preview.md',
+           '--output', 'deliveries/B01/' + tag + '/MANIFEST.json', '--allow-execute', '--timeout', '600']
+call = subprocess.run(command, capture_output=True, text=True, encoding='utf-8', errors='replace')
+(HERE / ('managed-build-' + args.attempt + '.json')).write_text(json.dumps({'argv': command, 'exit_code': call.returncode, 'stdout': call.stdout, 'stderr': call.stderr}, indent=2, ensure_ascii=False), encoding='utf-8')
+print(call.stdout)
+print(call.stderr, file=sys.stderr)
+raise SystemExit(call.returncode)

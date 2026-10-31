@@ -1,0 +1,428 @@
+{
+  "schema": "bago.goals.root-audit.v1",
+  "updated_at": "2026-10-31T18:36:11.966820+00:00",
+  "scope": ".bago/goals immediate 57 folders; historical candidates, not current product revalidation",
+  "counts": {
+    "P": 22,
+    "V": 21,
+    "S": 1,
+    "A": 10,
+    "D": 1,
+    "E": 2
+  },
+  "labels": {
+    "V": "Entrega técnica verificada en su alcance",
+    "A": "Auditoría/revisión/discovery terminado",
+    "D": "Cierre documentado con evidencia externa al goal",
+    "P": "Abierto/parcial/sin cierre concluyente",
+    "E": "Evidencia runtime sin cierre padre",
+    "S": "Sustituido explícitamente"
+  },
+  "items": [
+    {
+      "goal": "ADL-AGENT-EVALUATION-LAB-001",
+      "classification": "P",
+      "summary": "Implementación parcial; faltan revisión visual, Jaeger y lint.",
+      "source": ".bago/goals/ADL-AGENT-EVALUATION-LAB-001/implementation-runtime/evidence/W05_FINAL_STATUS.md",
+      "source_sha256": "fbef343c7ec8fb10eb90d3676e94f610865ae4ee016a58add54e1923bb17006c"
+    },
+    {
+      "goal": "ADL-AGENT-RUN-GOVERNED-001",
+      "classification": "P",
+      "summary": "PREPARED/NOT_FROZEN; integración NOT_RUN.",
+      "source": ".bago/goals/ADL-AGENT-RUN-GOVERNED-001/goal.md",
+      "source_sha256": "13247c146a47862b0bb3d4c620ff76a952f63d948596fd90b79f718977dbbcc9"
+    },
+    {
+      "goal": "ADL-BER-INTEGRATION-001",
+      "classification": "V",
+      "summary": "Cinco gates del candidato VALIDATED; mutating live NOT_RUN y delete BLOCKED.",
+      "source": ".bago/goals/ADL-BER-INTEGRATION-001/evidence/FINAL_VERIFICATION_20261019.md",
+      "source_sha256": "f6d02ccc3144a3a9f4ba259437000a984c22bfdb21cc07176d5db399f0d67427"
+    },
+    {
+      "goal": "ADL-CAPABILITY-MANAGER-001",
+      "classification": "V",
+      "summary": "MVP catálogo/propuestas verificado; ejecución general no disponible.",
+      "source": ".bago/goals/ADL-CAPABILITY-MANAGER-001/implementation-runtime/evidence/W04_FINAL_STATUS.md",
+      "source_sha256": "c52f7ef7d3c2ef8e70118c5643749fcf7f5d16cf43d73821c40c1c2e8c1881c8"
+    },
+    {
+      "goal": "adl-cases-20261022",
+      "classification": "P",
+      "summary": "Casos 01–03 con evidencia; restantes parciales/NOT_RUN.",
+      "source": ".bago/goals/adl-cases-20261022/goal.md",
+      "source_sha256": "71a274bbb87fb02873be6169c94f913df0b186b2038293d8ea7aefc62326b916"
+    },
+    {
+      "goal": "adl-chat-functions-and-copy-001",
+      "classification": "S",
+      "summary": "SUPERSEDED por navegación semántica; no reabrir frases fijas.",
+      "source": ".bago/goals/adl-chat-functions-and-copy-001/goal.md",
+      "source_sha256": "b02a1acc0df3e95dd17bbbadad25f9bb948f841885ac1400649440a5092fb06c"
+    },
+    {
+      "goal": "adl-chat-semantic-navigation-001",
+      "classification": "V",
+      "summary": "Navegación semántica VERIFIED en candidato documentado.",
+      "source": ".bago/goals/adl-chat-semantic-navigation-001/evidence/VERIFICATION.md",
+      "source_sha256": "c1403f8ab918f18e7b75b36cf0ad3073bd425792391b3dcc035f02b4ed7c3fd9"
+    },
+    {
+      "goal": "ADL-CHAT-UI-MODERNIZATION-001",
+      "classification": "V",
+      "summary": "Entrega visual W01 verificada; metadata inicial PREPARED desfasada.",
+      "source": ".bago/goals/ADL-CHAT-UI-MODERNIZATION-001/.bago/team/runtime/handoffs/W01.json",
+      "source_sha256": "a09aefaa20b562d7cf424a548310258334ebb06a0afca6b8f767447fd4dc0d07"
+    },
+    {
+      "goal": "ADL-CONVERSATION-LIBRARY-001",
+      "classification": "V",
+      "summary": "MVP persistente VERIFIED, diez criterios y reinicio; generación externa NOT_RUN.",
+      "source": ".bago/goals/ADL-CONVERSATION-LIBRARY-001/PHASE_1_VERIFICATION.md",
+      "source_sha256": "0114ed518ae68970d85714da779c3fdb29b41136c1d354a18a0a3de2cd3cf780"
+    },
+    {
+      "goal": "ADL-EXPORT-CI-AND-FULL-VERIFICATION-20261017",
+      "classification": "V",
+      "summary": "Cierre local VERIFIED; CI hospedado y externos NOT_RUN en ese incremento.",
+      "source": ".bago/goals/ADL-EXPORT-CI-AND-FULL-VERIFICATION-20261017/evidence/VERIFICATION_20261017.md",
+      "source_sha256": "b09c0c365008d6658ada0f6b0bc5b0fd8469749354bcd2825a6f4df45d6f0908"
+    },
+    {
+      "goal": "adl-external-connections-20261020",
+      "classification": "P",
+      "summary": "Contrato W01; sin cierre integral W12 ni conexión externa final.",
+      "source": ".bago/goals/adl-external-connections-20261020/CONTRACT.md",
+      "source_sha256": "15bc57b5f2cc7454e387523fcac03f9485939c303cd7d4069a34864a77dcf41f"
+    },
+    {
+      "goal": "ADL-EXTERNAL-LIVE-VALIDATION-20261017",
+      "classification": "P",
+      "summary": "Ollama live PASS; AWS BLOCKED y OpenMetadata/commercetools NOT_RUN.",
+      "source": ".bago/goals/ADL-EXTERNAL-LIVE-VALIDATION-20261017/evidence/EXTERNAL_VALIDATION_20261017.md",
+      "source_sha256": "a47d2f02e7c5bc67593ba9a10c38e723efb974ddbed9ca99c983136b1afc5dfe"
+    },
+    {
+      "goal": "ADL-FRONTEND-AUDITOR-JAEGER-001",
+      "classification": "P",
+      "summary": "EXECUTED/PARTIAL; límites de lint, credenciales y allowlist.",
+      "source": ".bago/goals/ADL-FRONTEND-AUDITOR-JAEGER-001/evidence/FINAL_PROOF.md",
+      "source_sha256": "12133bc2ee488fd1b806e250c74c3fa7d9d99deed296b0b0a7058ed6a8532a2a"
+    },
+    {
+      "goal": "ADL-OLLAMA-SPIRAL-001",
+      "classification": "V",
+      "summary": "Turno real y persistencia PASS_WITH_EXPLICIT_LIMITS; modelo gemma4:31b.",
+      "source": ".bago/goals/ADL-OLLAMA-SPIRAL-001/evidence/W05_INDEPENDENT_REVIEW.json",
+      "source_sha256": "c1e262d135d654f40c0bd3621f902a33e93881f75b37b711ce05055f9f6bb71b"
+    },
+    {
+      "goal": "ADL-ONE-SHOT-SIGNAL-AGENT-SPIRAL-001",
+      "classification": "A",
+      "summary": "Discovery terminado; implementación propuesta, no acreditada.",
+      "source": ".bago/goals/ADL-ONE-SHOT-SIGNAL-AGENT-SPIRAL-001/status.json",
+      "source_sha256": "797a99425da26875ab5f513484a602b917be908cb4d4ad9e4564cd41961ce92e"
+    },
+    {
+      "goal": "ADL-P1-02-REAL-AUDIT-SPIRAL-001",
+      "classification": "A",
+      "summary": "Auditoría real terminada con límites; ejecución de jobs ausente.",
+      "source": ".bago/goals/ADL-P1-02-REAL-AUDIT-SPIRAL-001/evidence/W05_INDEPENDENT_REVIEW.json",
+      "source_sha256": "c002af71e77f519b812b0369e3a4b59802c7bdafd5060da2399467baf40fbfb7"
+    },
+    {
+      "goal": "ADL-PROVIDER-REGISTRATION-001",
+      "classification": "P",
+      "summary": "Feature verificada; cierre padre incompleto por semantic-navigation.",
+      "source": ".bago/goals/ADL-PROVIDER-REGISTRATION-001/evidence/IMPLEMENTATION_STATUS.md",
+      "source_sha256": "a57d9be7333db6d05e3dacd1eac9a93e38c312acd3c7fe8c0a1ae463608a1751"
+    },
+    {
+      "goal": "adl-seven-verticals-20261020",
+      "classification": "P",
+      "summary": "Padre activo; subgates parciales no cierran verticales/promoción.",
+      "source": ".bago/goals/adl-seven-verticals-20261020/status.json",
+      "source_sha256": "62c0af49afec50e0f756f06b92998ef8e5451c735d35d618cf03bb2a69a69307"
+    },
+    {
+      "goal": "adl-ui-standard-pack-001",
+      "classification": "V",
+      "summary": "Paquete/preview VALIDATED; adopción producción NOT_RUN.",
+      "source": ".bago/goals/adl-ui-standard-pack-001/evidence/LOCAL_VERIFICATION.md",
+      "source_sha256": "38fa74d34dd74457a894d638d00ea0893cf1ad13778b3a7e9778b8f9256c8273"
+    },
+    {
+      "goal": "agent-saved-tasks-20261020",
+      "classification": "P",
+      "summary": "Feature verificada; full suite falló y recuperación skip-tests.",
+      "source": ".bago/goals/agent-saved-tasks-20261020/RESULT.md",
+      "source_sha256": "cfc9c8fa7cbabb4c48ae645f59340d1bdc0684f2ccce906bc30ac71f1682deb3"
+    },
+    {
+      "goal": "bago5-chat-cognition",
+      "classification": "V",
+      "summary": "Adaptación determinista/mock UI VALIDATED; inferencia live NOT_RUN en ese candidato.",
+      "source": ".bago/goals/bago5-chat-cognition/evidence/VERIFICATION.md",
+      "source_sha256": "164a18194bf54cea5f80b325a5a61609024dfc1c4b168937208d52c868d207fd"
+    },
+    {
+      "goal": "brave-browser-mcp-20261020",
+      "classification": "P",
+      "summary": "MCP/CDP sin cierre live; distinto de Native Messaging R5.",
+      "source": ".bago/goals/brave-browser-mcp-20261020/goal.md",
+      "source_sha256": "a8620b0f0793fa6c0c8d3c9c48d0fccffbb62b195b2ca4356397e122d9846071"
+    },
+    {
+      "goal": "chat-run-settings",
+      "classification": "V",
+      "summary": "VALIDATED; suite/build/revisión independiente y gate documentados.",
+      "source": ".bago/goals/chat-run-settings/status.json",
+      "source_sha256": "08b332f5578f514f32d5f3199ce8901ab7b30a2012aae29dee52650fb7c0a94f"
+    },
+    {
+      "goal": "close-fronts-20261023",
+      "classification": "P",
+      "summary": "AW06/AW04/AW07/AW05 y promoción pendientes; no cierre global.",
+      "source": ".bago/goals/close-fronts-20261023/DECISION.md",
+      "source_sha256": "ae130dff180ddc1fa4da16a69b6ab03e1ad3a0ec449f879d89c3d2291f25f0ba"
+    },
+    {
+      "goal": "contacts-independent-review-20261023",
+      "classification": "A",
+      "summary": "Revisión terminada FAIL para promoción; reparaciones en otro goal.",
+      "source": ".bago/goals/contacts-independent-review-20261023/REVIEW.md",
+      "source_sha256": "98f756bb60ca78317fc89c96bbf493735ac38e45ed34be5658a950af213ef2c7"
+    },
+    {
+      "goal": "contacts-repair-review-20261023",
+      "classification": "A",
+      "summary": "Revisión local F01/F02/F03 PASS; Google live/UI/global fuera de alcance.",
+      "source": ".bago/goals/contacts-repair-review-20261023/REVIEW.md",
+      "source_sha256": "7b221893d55390a97caf06f94f40442663808d535b168c60d040c867e666b32e"
+    },
+    {
+      "goal": "context-unification",
+      "classification": "D",
+      "summary": "Cierre VALIDATED documentado; evidencia principal fuera de esta carpeta.",
+      "source": ".bago/goals/context-unification/status.json",
+      "source_sha256": "cc985fed243569b59909001d6261a41bd21e7e88664e8e7f0f328b5e6352007f"
+    },
+    {
+      "goal": "context-viewer-20261020",
+      "classification": "P",
+      "summary": "API/renderizado verificados; suite falló con read_authorization_invalid.",
+      "source": ".bago/goals/context-viewer-20261020/evidence.md",
+      "source_sha256": "8693f8b11bdd478af90483101968a276a1a074cf5380c0d3400869267e8eefe6"
+    },
+    {
+      "goal": "CR-GEX-001",
+      "classification": "P",
+      "summary": "Contrato/vectores PREPARED/OPEN; runtime NOT_RUN.",
+      "source": ".bago/goals/CR-GEX-001/goal.md",
+      "source_sha256": "bdbdfd4ff2dbf0c5af01fdc307601a186c28e398eb6b7403e0cfa43146c69c08"
+    },
+    {
+      "goal": "crit-adl-skills-001-retest-1",
+      "classification": "V",
+      "summary": "Candidato histórico VALIDATED; 248 tests y CI exacto, no main actual.",
+      "source": ".bago/goals/crit-adl-skills-001-retest-1/evidence/LOCAL_VERIFICATION.md",
+      "source_sha256": "6a0a492cb265b1c7c016b374ef5c27f549a4b363c37e49b9b08b236674931d72"
+    },
+    {
+      "goal": "directory-code-duplicate-scan",
+      "classification": "V",
+      "summary": "Scanner API/UI y suite verificados; agent.run general fail-closed.",
+      "source": ".bago/goals/directory-code-duplicate-scan/evidence/VERIFICATION.md",
+      "source_sha256": "8b0f57dade593ffd565ea0fb44a8045a4784e25f63a2b401c1ea877ec949ce61"
+    },
+    {
+      "goal": "docker-independent-review-20261023",
+      "classification": "A",
+      "summary": "Revisión estática acotada PASS; no rerun Docker integral; HMR NOT_RUN.",
+      "source": ".bago/goals/docker-independent-review-20261023/FINAL_REVIEW.md",
+      "source_sha256": "c55d920c1b657087e0c5cf3b8d94c96898f29763af432e269ef69604dd68e79c"
+    },
+    {
+      "goal": "docker-live-edit-review-20261023",
+      "classification": "A",
+      "summary": "Investigación terminada con fallo de asset nuevo preservado.",
+      "source": ".bago/goals/docker-live-edit-review-20261023/REPORT.md",
+      "source_sha256": "15d40263522d64ed9fdfd02b5afe0c1cb999ab081033e92e3ef9fcd17f40e330"
+    },
+    {
+      "goal": "docker-runtime-final-20261023",
+      "classification": "E",
+      "summary": "Captura de runtime; inferencia/HMR NOT_RUN, sin cierre padre.",
+      "source": ".bago/goals/docker-runtime-final-20261023/04-docker-runtime-final.json",
+      "source_sha256": "7a3e5b5946cfb68d9b7e3945db637dbf86ddc2fe4e01055742547439dc849527"
+    },
+    {
+      "goal": "duplicate-responsibility-audit-20261020",
+      "classification": "A",
+      "summary": "AUDIT_SCOPE_CLOSED; remediaciones y P1 producto no cerrados por auditoría.",
+      "source": ".bago/goals/duplicate-responsibility-audit-20261020/goal.md",
+      "source_sha256": "aba9544821e872ed92badbf0e1a00d5ead77f07a7e96373821f168622aa1f599"
+    },
+    {
+      "goal": "eval-equal-height-20261020",
+      "classification": "P",
+      "summary": "Layout/build verificados; suite/README bloqueados por 403 de lectura.",
+      "source": ".bago/goals/eval-equal-height-20261020/evidence.md",
+      "source_sha256": "d665bdd4dd21158a1417af21f3ededcd1a4f26304d9a24098ee38cee6435d372"
+    },
+    {
+      "goal": "functional-reuse-20261023",
+      "classification": "A",
+      "summary": "Investigación/procedencia VERIFIED; ejecución de producto NOT_RUN.",
+      "source": ".bago/goals/functional-reuse-20261023/whatsapp_session/REPORT.md",
+      "source_sha256": "b55905355991b8161d3ac8409b84ee866e6e7d08e49b1d35e63d5f622d4f87da"
+    },
+    {
+      "goal": "github-update-20261022",
+      "classification": "V",
+      "summary": "Publicación histórica PR62 y CI exacta verificadas; reconciliación e independiente 31-Oct PASS. No valida checkout actual.",
+      "source": ".bago/goals/github-update-20261022/reconciliation-20261031/evidence-reconciliation.json",
+      "source_sha256": "88755aefd534272991dfbe1535476caa491d656cd517c8f32d0bb2d24f2a696e"
+    },
+    {
+      "goal": "integrated-services-20261023",
+      "classification": "P",
+      "summary": "Contenedor de demos/perfiles; no gate padre final encontrado.",
+      "source": ".bago/goals/integrated-services-20261023",
+      "source_sha256": null
+    },
+    {
+      "goal": "jaeger-via-adl-20261024",
+      "classification": "E",
+      "summary": "Evidencias context-chat/runtime; sin cierre formal padre.",
+      "source": ".bago/goals/jaeger-via-adl-20261024/context-chat-r5-live/CHAT_FINAL_STAMP.json",
+      "source_sha256": "e84b95fc98299852a495b5c7320c8c74b0fdeb5bfc5fc42234a739d9b3ac5369"
+    },
+    {
+      "goal": "L1-GOVERNED-EXECUTION-COMPLETION-001",
+      "classification": "V",
+      "summary": "VALIDATED para L1 acotado; no afirma identidad producción ni sandbox OS.",
+      "source": ".bago/goals/L1-GOVERNED-EXECUTION-COMPLETION-001/status.json",
+      "source_sha256": "8d5690edbdf3d9ea7495dfbfdeecf85058c30abab72455d8f59defb4a1aa4640"
+    },
+    {
+      "goal": "L1-GOVERNED-EXECUTION-EVIDENCE-001",
+      "classification": "A",
+      "summary": "Auditoría VALIDATED; implementación posterior en COMPLETION.",
+      "source": ".bago/goals/L1-GOVERNED-EXECUTION-EVIDENCE-001/status.json",
+      "source_sha256": "9a0b884a99c5e9b614199b33372fa93ed4df3104e6c2c347c9fa4a16ffbf506f"
+    },
+    {
+      "goal": "model-assignments-20261020",
+      "classification": "P",
+      "summary": "Política/UI verificadas; cierre global y full suite incompletos.",
+      "source": ".bago/goals/model-assignments-20261020/RESULT.md",
+      "source_sha256": "086404ba9078f7bfea6ca182c34a2b2efc43fe3072c2431b67b41d8357846153"
+    },
+    {
+      "goal": "model-footer-20261020",
+      "classification": "P",
+      "summary": "Footer/build verificados; suite falló, skip-tests no cierra.",
+      "source": ".bago/goals/model-footer-20261020/evidence.md",
+      "source_sha256": "708a530eef411efae1198961760cd7e666df60df80eaed5e7491fd1aa2205be6"
+    },
+    {
+      "goal": "one-command-demo-v1",
+      "classification": "V",
+      "summary": "Release histórico VALIDATED/RELEASED/FROZEN; scope sintético, AWS live NOT_RUN.",
+      "source": ".bago/goals/one-command-demo-v1/status.json",
+      "source_sha256": "9aa4dd80666bc9f0241fa1e1006cad5182699f597780d7a3b4168d0d466c7e92"
+    },
+    {
+      "goal": "openmetadata-lineage-28860",
+      "classification": "A",
+      "summary": "Auditoría/adapter MERGED/CI_PASS/UNRELEASED; no reparación upstream.",
+      "source": ".bago/goals/openmetadata-lineage-28860/status.json",
+      "source_sha256": "a22249ed685fdc769b678d9f2aaff0f2054987a664fdeaeecc4780362b00c165"
+    },
+    {
+      "goal": "operational-continuity-governance-20261031",
+      "classification": "P",
+      "summary": "NO_GO por aceptación pendiente; integridad recuperada y revisión formal DONE; relay/cognitive cerrados sólo en su alcance.",
+      "source": ".bago/goals/operational-continuity-governance-20261031/evidence/checks/current-operational-status.json",
+      "source_sha256": "08e38038d955589f893f1a9ab7af08d321fad599fda1104b1ea2e7330791d6d0"
+    },
+    {
+      "goal": "portfolio-demo-v1",
+      "classification": "V",
+      "summary": "Cierre histórico acotado; fallback OTEL aceptado y vídeo/tag; Jaeger D1 opcional.",
+      "source": ".bago/goals/portfolio-demo-v1/status.json",
+      "source_sha256": "08c6d16ed7f81dab06ed5a04ceb3dff32164cf7c18af5284d1b3b421d00dab11"
+    },
+    {
+      "goal": "provider-cognition-repair",
+      "classification": "V",
+      "summary": "Reparación acotada VALIDATED con inferencia/persistencia/trace e independiente.",
+      "source": ".bago/goals/provider-cognition-repair/evidence/W12-closure.md",
+      "source_sha256": "d9ce8c3498adbbc5ff6610cd45fe0a4f6a5ffe7ee734eb29bd95cf2478bbcd83"
+    },
+    {
+      "goal": "provider-status-line-20261020",
+      "classification": "P",
+      "summary": "UI verificada; suite falló con 403, skip-tests no cierra.",
+      "source": ".bago/goals/provider-status-line-20261020/evidence.md",
+      "source_sha256": "0f064c6525d7a7871e773b09fe5f92d496e75c748dafb9ef3e1e745b5cd3ad0a"
+    },
+    {
+      "goal": "readme-clarity-20261022",
+      "classification": "V",
+      "summary": "I01 y gate histórico CLOSED/VALIDATED_SCOPED_TASK; PR63, CI, hashes y revisión independiente actual PASS.",
+      "source": ".bago/goals/readme-clarity-20261022/reconciliation-20261031/evidence-reconciliation.json",
+      "source_sha256": "cf7b2bdbb8788c8e7513af095b8df004279182f5e62ece8f758af17ef108832c"
+    },
+    {
+      "goal": "readme-corporate-20261022",
+      "classification": "V",
+      "summary": "Documentación VALIDATED; Chat→Inspect FAIL pertenece a otro frente.",
+      "source": ".bago/goals/readme-corporate-20261022/FINAL_REPORT.md",
+      "source_sha256": "5601bd8f324f20ab41a4751976f4a39aa5c4537eddc697d4be3b73e16d8e6c57"
+    },
+    {
+      "goal": "readme-trust-audit-20261015",
+      "classification": "V",
+      "summary": "Auditoría/corrección README VALIDATED en candidato histórico.",
+      "source": ".bago/goals/readme-trust-audit-20261015/evidence/README_AUDIT.md",
+      "source_sha256": "ed763c66fb492645f2e940687b4c0ececd61f452b0ad93ea227e06b8d28464b6"
+    },
+    {
+      "goal": "square-color-ui-20261020",
+      "classification": "P",
+      "summary": "Visual/build verificados; suite 403 y fallback skip-tests.",
+      "source": ".bago/goals/square-color-ui-20261020/evidence.md",
+      "source_sha256": "1d4ae281d9a604a535071fe8c5fbc018327ba5ab6e3872f31d2e60a093857968"
+    },
+    {
+      "goal": "teamctl-p1-repair-20261022",
+      "classification": "V",
+      "summary": "VALIDATED_SCOPED_TASK AUTH001/B04/AUTH002; no validación global producto.",
+      "source": ".bago/goals/teamctl-p1-repair-20261022/repair-v2/reviews/integration/MISSION_CLOSURE.json",
+      "source_sha256": "cc9c86a53b2748bffe206eadb84ffa0513bb547247062b8b3c79c52ed7a1bd2a"
+    },
+    {
+      "goal": "whatsapp-communications-20261022",
+      "classification": "P",
+      "summary": "Envío Desktop NOT_RUN, sent=false; sin reintento automático autorizado.",
+      "source": ".bago/goals/whatsapp-communications-20261022/desktop-send-pending.json",
+      "source_sha256": "cb4b25f6891e7cabf83f1da0f6563dffaf042aa0698e0a9402d4188cf8d46dbc"
+    },
+    {
+      "goal": "workspace-compact-20261020",
+      "classification": "P",
+      "summary": "UI verificada; suite 403, skip-tests no cierra.",
+      "source": ".bago/goals/workspace-compact-20261020/evidence.md",
+      "source_sha256": "8f69a2cf313d5c32e59a31589d837ebadf25a5c9279d0cc93ca311111e2655f6"
+    }
+  ],
+  "limitations": [
+    "No global last closure proved.",
+    "17 root status.json files; metadata is not sole closure authority.",
+    "Nested dependency/fixture access errors in readme-clarity and integrated-services; 57 root coverage complete, not all nested bytes audited.",
+    "Root checkout main is 213 commits behind fetched origin/main; no rebase/merge undertaken."
+  ]
+}

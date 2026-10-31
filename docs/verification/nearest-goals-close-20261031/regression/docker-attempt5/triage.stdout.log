@@ -1,0 +1,21 @@
+............................F........................................... [ 35%]
+.....s.................................................................. [ 70%]
+.............................................................            [100%]
+=================================== FAILURES ===================================
+___ test_needs_authorization_return_does_not_expand_tool_or_workspace_grants ___
+
+setup = {'agent_id': 'agent_1234abcd', 'calls': [('child-fixture', [{'content': 'CHILD FIXTURE ONLY\n\nYou do not have app-con...nt object at 0x73c78b32e510>, 'comms': <src.communications.service.CommunicationService object at 0x73c78e224910>, ...}
+
+    def test_needs_authorization_return_does_not_expand_tool_or_workspace_grants(setup):
+        f=setup;f['delegation_outcome']='needs_authorization';propose(f)
+        result=execute(f).json()['agent_delegation']
+>       assert result['state']=='NEEDS_AUTHORIZATION'
+E       AssertionError: assert 'INCONCLUSIVE' == 'NEEDS_AUTHORIZATION'
+E         
+E         - NEEDS_AUTHORIZATION
+E         + INCONCLUSIVE
+
+tests/test_agent_delegation.py:151: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_agent_delegation.py::test_needs_authorization_return_does_not_expand_tool_or_workspace_grants
+1 failed, 203 passed, 1 skipped in 171.84s (0:02:51)

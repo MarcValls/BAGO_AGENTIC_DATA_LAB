@@ -1,0 +1,80 @@
+# Decisiones anteriores y pendientes que no deben repetirse
+
+Fecha de lectura y reconciliación: 2026-10-31. Proyecto: BAGO5_ADL, entendido
+según la instrucción vigente del usuario como BAGO5. Operación: auditoría
+documental; este archivo no cambia estados de goals ni cancela tareas.
+
+## Qué significa aquí «antes del último cierre»
+
+No se ha demostrado un único cierre global de BAGO5 que permita cortar todo el
+historial en una fecha común. Hay cierres por alcance y estados desfasados:
+
+- El handoff previo conservado en
+  `.bago/goals/operational-continuity-governance-20261031/evidence/control/preexisting-active-handoff.md`
+  apunta a `crit-adl-skills-001-retest-1`, commit `b042984d9d4b365153ff2fcf201dddc32fe39857`
+  del 14 de octubre. Existen documentos de cierre posteriores; ese puntero no
+  acredita ser el último cierre global.
+- BER registra continuación W18 del 19 de octubre y cinco gates aceptados para
+  un candidato concreto, no todo el producto.
+- La auditoría de duplicados registra cierre AUDIT del 22 de octubre con defectos
+  de producto aún abiertos. El README corporativo registra cierre documental,
+  fusionado el 22 de octubre a las 19:14:56 UTC, conservando Chat→Inspect FAIL.
+- Los cierres de relevo o auditoría cognitiva posteriores son cierres de sus
+  propias misiones; no cierran retroactivamente la misión original de continuidad.
+
+Por tanto se comparan las decisiones explícitas con el pendiente que cada una
+sustituye o aplaza. No se infiere cancelación por antigüedad, nombre de carpeta,
+silencio, falta de evidencia ni por un resumen que dice «cerrado» sin alcance.
+La misión actual de continuidad comenzó el 31 de octubre a las 12:32 UTC; su
+fecha tampoco vuelve obsoletos todos los pendientes anteriores.
+
+## Nueve reconciliaciones justificadas
+
+| Nº | Pendiente antiguo | Clasificación y efecto legítimo | Fuente exacta y límite conservado |
+|---|---|---|---|
+| 1 | Exigir una frase fija o regex para navegar desde el chat | **SUSTITUIDO**. Omitir la reimplementación de aquel requisito; conservar navegación semántica con destino permitido y tratamiento de ambigüedad. | `.bago/goals/adl-chat-functions-and-copy-001/goal.md:16` declara SUPERSEDED por `adl-chat-semantic-navigation-001/goal.md`. El sucesor, en Estado, registra VERIFIED dentro de su evidencia histórica. No acredita toda la UI actual. |
+| 2 | Checkpoints BER que todavía dicen que falta packaging standalone o no hay Runner habilitado | **SUSTITUIDOS EN EL ALCANCE W18**, no cancelación de BER. No repetir packaging o preparación del Runner solo por el texto antiguo. | `.bago/goals/ADL-BER-INTEGRATION-001/goal.md:108–110` declara supersesión, fecha 2026-10-19; `:134–141` acepta cinco gates para el candidato. Siguen `NOT_RUN` el ciclo real de propuesta mutante/aprobación/ejecución/recibo (`:125`), `BLOCKED` delete (`:127`) y `NOT_RUN` revisión manual de teclado/lector (`:81`). |
+| 3 | Verificar masivamente todos los modelos registrados durante el cierre de frentes | **APLAZADO EXPLÍCITAMENTE**. Excluirlo del gate de aquel cierre; conservar el bloque posterior solicitado. No llamarlo terminado ni cancelado. | `.bago/goals/close-fronts-20261023/DECISION.md:19`: lote solicitado/diseñado, sin implementación ni llamadas masivas nuevas; se retoma como bloque posterior. La prohibición de ampliar funciones se refiere a aquel cierre, no es una prohibición universal de trabajo futuro. |
+| 4 | Migración de contexto con texto `EXECUTED; verification pending` | **METADATO DESFASADO / CUBIERTO HISTÓRICAMENTE**. Reconciliar la lectura del pendiente antes de repetir una migración. No otorgar PASS actual a partir del estado antiguo. | `.bago/goals/context-unification/goal.md:20` frente a `.bago/state/PROJECT_STATE.json:9–15`: migration VALIDATED, 210 tests y 163/163 artefactos históricos byte-identical. Son evidencias de aquella migración y candidato. |
+| 5 | Auditoría de duplicados bloqueada por README y autorización del parche de ocho tests | **SUSTITUIDO SOLO PARA ESA CORRECCIÓN**. No conservar como pendientes las puertas que el cierre ya resolvió. | `.bago/goals/duplicate-responsibility-audit-20261020/goal.md:5–24` registra autorización «Verificar y aplicar solo si pasa», aplicación posterior al PASS, 535 tests y check con 536 recogidos. Declara supersedidos esos bloqueos concretos; demás parches PREPARED, P1 y límites permanecen. `:64` solo autorizó preparar correcciones aisladas, no borrar duplicados, publicar o fusionar todo. |
+| 6 | Docker Dev RC1 con revisión independiente pendiente | **SUSTITUIDO POR DICTAMEN FINAL ACOTADO**. No repetir la revisión anterior como si no existiera el final. | `.bago/goals/docker-independent-review-20261023/FINAL_REVIEW.md:6–12,22` da PASS y sucede REVIEW_PENDING para ZIP SHA-256 `20e46bfce827953143ce2e63ebc10886e2068597318d4eb587e8add2a8e67236`. El revisor no ejecutó Docker ni aplicó el patch; `:19` conserva alta de asset FAIL, HMR NOT_RUN y otras integraciones no probadas. |
+| 7 | Continuar indefinidamente los ensayos de live-edit de aquella revisión Docker | **OMITIR NUEVAS RONDAS EN ESA REVISIÓN POR CIERRE FINITO**, conservando el defecto. No es autorización para declarar el runtime reparado ni cancelar una reparación futura explícita. | `.bago/goals/docker-live-edit-review-20261023/REPORT.md:58–66`: ensayo tras READY completado, fallo conservado y «no más experimentos ni cambios de contenedor/config/pack por esta revisión». Alta en caliente FAIL; HMR de navegador/React NOT_RUN. Los 15 checks de integridad no son 15 pruebas independientes del producto. |
+| 8 | Límites antiguos del README: 108 líneas visibles, 600 brutas y plegado obligatorio | **RESTRICCIONES SUSTITUIDAS**. No imponerlas de nuevo como gate vigente del README corporativo posterior. No borrar el material técnico ni los contratos de evidencia. | `.bago/goals/readme-corporate-20261022/proposals/B01/PLAN.md:89–92` declara sustitución de esas restricciones; `FINAL_REPORT.md:64–66` valida la documentación dentro del alcance, con Chat→Inspect FAIL. La propuesta por sí sola no habría demostrado aplicación; el informe final aporta el cierre. Decisiones posteriores de landing deben leerse en su propio contrato, no reconstruirse desde aquel límite antiguo. |
+| 9 | Regla absoluta de coste cero/reproducibilidad como stop general | **NORMA ABSOLUTA RETIRADA** por instrucción explícita del usuario. Omitir ese stop general; no imponer automáticamente una norma que fue eliminada. | Instrucción vigente de esta conversación: «mantener coste cero y reproducibilidad. ESTA NORMA LA ELIMINAMOS». `.bago/canon/STATE.md:32–43` ya documenta el 18 de octubre la supersesión del stop coste-cero para créditos AWS, con llamadas acotadas. Esto no elimina hashes, integridad, recibos, scopes, límites de gasto o reproducibilidad exigidos explícitamente por contratos concretos. Tampoco autoriza gasto ilimitado o acceso nuevo a recursos. |
+
+## Qué sigue pendiente y no se puede omitir mediante esta comparación
+
+- Pruebas reales requeridas que solo tienen fixtures, simulaciones, pantallas,
+  catálogo o resultados históricos de otro candidato. Una ruta preparada no
+  equivale a ejecución y un PASS antiguo no valida código cambiado.
+- Aprobaciones, autorización del host, identidad de misión, scopes, STOP,
+  revocaciones, integridad de handoffs, recibos y aceptación humana obligatoria.
+  No son burocracia eliminable mediante la retirada de la norma coste-cero.
+- Los límites concretos de BER y Docker enumerados en la tabla. Ningún cierre
+  documental/auditado convierte sus FAIL, BLOCKED o NOT_RUN en PASS.
+- Los pendientes de UI, persistencia, acciones reales y source management que
+  el usuario pidió observar. Este documento no realiza ni acredita esas pruebas.
+- El lote de todos los modelos sigue como backlog aplazado; el inventario de
+  worktrees no autoriza borrados. `close-fronts-20261023/DECISION.md:31` lo expresa.
+
+## Decisiones de producto que deben guiar la lectura
+
+El usuario ha dicho expresamente que ADL se decidió como BAGO5 y que la aplicación
+es desktop-first. Esas instrucciones prevalecen sobre etiquetas o supuestos
+antiguos. No se encontró una reconciliación completa de ambas decisiones en el
+canon leído; este informe registra la diferencia sin editar el canon.
+
+Desktop-first no cancela Brave Native Messaging: es parte explícita de la misión
+autorizada. Tampoco cancela automáticamente teclado/accesibilidad ni una prueba
+visual de móvil que siga siendo criterio expreso de un contrato concreto. La
+identidad BAGO5 no convierte por sí misma un experimento ADL en producto validado.
+
+## Dictamen de la auditoría
+
+Hay pendientes que deben **sustituirse, reconciliarse o aplazarse**, y revisiones
+finitas que no requieren repetición. No se identificó autorización para cancelar
+en bloque los objetivos restantes. Este archivo propone una lectura justificada
+de las nueve reconciliaciones; no modifica criterios congelados ni registra
+aceptaciones o cierres adicionales. Las dos reconciliaciones históricas de
+publicación/README del lote actual tienen sus propios resultados y revisión
+independiente, separados de este análisis.

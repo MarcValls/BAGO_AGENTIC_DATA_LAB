@@ -1,0 +1,7 @@
+{
+  "candidate": "frontend/.publication-candidate-2",
+  "scope": "all 80 source files plus three reviewed tests; package/build identity not asserted",
+  "before": "e34d8c3437463e6e89c4e4a0bbf905e70175cc3804a72ebebaa74cead4ece02f",
+  "after": "e34d8c3437463e6e89c4e4a0bbf905e70175cc3804a72ebebaa74cead4ece02f",
+  "unchanged": true
+}

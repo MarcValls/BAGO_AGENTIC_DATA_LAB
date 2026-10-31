@@ -1,0 +1,115 @@
+{
+  "mission_id": "BAGO_NEAREST_OPEN_GOALS_20261031",
+  "operation": "VERIFICATION",
+  "title": "Close nearest historical UI goals on an exact current candidate",
+  "objective": "Revalidate eight already implemented goals; close only goals with all current acceptance requirements satisfied.",
+  "scope": "Candidate source 8065906; evidence/testing only. Preserve original checkout and historical failures.",
+  "constraints": [
+    "No production data or provider calls",
+    "No focus stealing; isolated headless browser",
+    "No rewriting frozen previous evidence",
+    "No change to original continuity mission or P1/P3/binding",
+    "No source implementation changes without exact new scope"
+  ],
+  "max_concurrency": 2,
+  "terminal_work_items": [
+    "CLOSE"
+  ],
+  "work_items": [
+    {
+      "id": "REGRESSION",
+      "title": "REGRESSION",
+      "role": "codex_orchestrator",
+      "depends_on": [],
+      "write_scopes": [
+        "docs/verification/nearest-goals-close-20261031/regression/**",
+        "README.md",
+        "README_DETAILS.md",
+        ".bago/data/**",
+        "output/**"
+      ],
+      "output_scopes": [
+        "docs/verification/nearest-goals-close-20261031/regression/**",
+        "README.md",
+        "README_DETAILS.md",
+        ".bago/data/**",
+        "output/**"
+      ],
+      "required_checks": [
+        "regression"
+      ]
+    },
+    {
+      "id": "VISUAL",
+      "title": "VISUAL",
+      "role": "runtime-integration-engineer",
+      "depends_on": [],
+      "write_scopes": [
+        "docs/verification/nearest-goals-close-20261031/visual/**",
+        "frontend/nearest-goals-check/**"
+      ],
+      "output_scopes": [
+        "docs/verification/nearest-goals-close-20261031/visual/**",
+        "frontend/nearest-goals-check/**"
+      ],
+      "required_checks": [
+        "visual"
+      ]
+    },
+    {
+      "id": "REVIEW",
+      "title": "REVIEW",
+      "role": "verification-engineer",
+      "depends_on": [
+        "REGRESSION",
+        "VISUAL"
+      ],
+      "write_scopes": [
+        "docs/verification/nearest-goals-close-20261031/review/**"
+      ],
+      "output_scopes": [
+        "docs/verification/nearest-goals-close-20261031/review/**"
+      ],
+      "required_checks": [
+        "review"
+      ]
+    },
+    {
+      "id": "CLOSE",
+      "title": "CLOSE",
+      "role": "codex_orchestrator",
+      "depends_on": [
+        "REVIEW"
+      ],
+      "write_scopes": [
+        "docs/verification/nearest-goals-close-20261031/closure/**"
+      ],
+      "output_scopes": [
+        "docs/verification/nearest-goals-close-20261031/closure/**"
+      ],
+      "required_checks": [
+        "acceptance"
+      ]
+    }
+  ],
+  "audit_scope": {
+    "include": [
+      "src/**",
+      "tests/**",
+      "frontend/src/**",
+      "frontend/tests/**",
+      "scripts/generate_dynamic_readme.py",
+      "requirements*.txt",
+      "docs/readme*",
+      "AGENTS.md"
+    ],
+    "exclude": [],
+    "evidence_roots": [
+      "docs/verification/nearest-goals-close-20261031"
+    ],
+    "fixture_roots": [
+      "output"
+    ],
+    "preserved_roots": []
+  }
+}

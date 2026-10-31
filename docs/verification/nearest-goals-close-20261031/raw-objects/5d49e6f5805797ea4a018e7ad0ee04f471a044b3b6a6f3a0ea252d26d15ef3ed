@@ -1,0 +1,50 @@
+{
+  "changed_files": [
+    "docs/decision-inspector/ux/BER_INSPECTOR_UX_V1.md"
+  ],
+  "next_consumers": [
+    "W06",
+    "W07",
+    "W08",
+    "W09"
+  ],
+  "outputs": [
+    {
+      "description": "BER-specific Decision Inspector information architecture, conclusion-to-claim-to-evidence-to-provenance drill-down, explicit uncertainty and action lifecycle states, accessible navigation, and downstream acceptance criteria.",
+      "kind": "decision-inspector-ux-contract-v1",
+      "path": "docs/decision-inspector/ux/BER_INSPECTOR_UX_V1.md",
+      "sha256": "90592a3e7ff5aab32f60a58908540f53386a77da7f1e045e36143f19613b3236"
+    }
+  ],
+  "payload_sha256": "e15a319eb2059e813224f73a391eab144d235f5fdbeb4c933330976f48b41683",
+  "residual_risks": [
+    "This is a design contract, not implementation or browser accessibility validation.",
+    "Existing UX_CONTRACT.md predates the current candidate snapshot; this BER-specific contract explicitly governs downstream BER UI work where repository identity or behavior differs.",
+    "No live BER runtime, BAGO authorization decision, execution or receipt was exercised."
+  ],
+  "role": "decision-ux-engineer",
+  "status": "DONE",
+  "verification": [
+    {
+      "command": "python .bago/team/kit/scripts/teamctl.py --root . claim W03 --agent /root/ber_decision_ux",
+      "evidence": "W03 transitioned READY -> CLAIMED after W01 was DONE and its handoff was read.",
+      "result": "PASS"
+    },
+    {
+      "command": "Static review of W01 reuse map, frontend Decision Inspector implementation, and frontend decision/action/trace contracts",
+      "evidence": "Contract is grounded in the frozen ADL candidate identity and existing source-owned data; it preserves BAGO authority, read-only presentation, receipt identity checks, and current missing-claim behavior.",
+      "result": "PASS"
+    },
+    {
+      "command": "git diff --check -- docs/decision-inspector/ux/BER_INSPECTOR_UX_V1.md",
+      "evidence": "No whitespace errors were reported for the new UX contract.",
+      "result": "PASS"
+    },
+    {
+      "command": "Get-FileHash docs/decision-inspector/ux/BER_INSPECTOR_UX_V1.md -Algorithm SHA256",
+      "evidence": "SHA-256 90592A3E7FF5AAB32F60A58908540F53386A77DA7F1E045E36143F19613B3236.",
+      "result": "PASS"
+    }
+  ],
+  "work_id": "W03"
+}

@@ -1,0 +1,9 @@
+{
+  "status": "FAIL",
+  "returncode": 1,
+  "container_name": "bago-near-goals-fa4e1b99a4",
+  "container_removed": true,
+  "image_id": "sha256:a78b74ba48e7c400f5189e966e4130394699cfd97ef5742b9c0103970c6a50b5",
+  "candidate_head": "8065906f4560f4f0b0951cc445b673ecad7ce175",
+  "inner_sha256": "a3ec5358b26f39b27d4ce7bc26b0d47bafc6b189b35d854c349c8fcdd459a782"
+}

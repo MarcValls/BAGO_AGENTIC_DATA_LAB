@@ -1,0 +1,956 @@
+{
+  "status": "FAIL",
+  "scope": "actual built App, headless Brave, synthetic intercepted localhost API only",
+  "headless": true,
+  "user_focus_changed": false,
+  "actualApp": true,
+  "provider_calls": "NOT_RUN",
+  "production_servers_used": false,
+  "brave_executable": "C:/Program Files/BraveSoftware/Brave-Browser/Application/brave.exe",
+  "origin": "http://127.0.0.1:59647",
+  "catalog_models": 18,
+  "cases": [
+    {
+      "name": "desktop",
+      "viewport": {
+        "width": 1280,
+        "height": 900
+      },
+      "geometry": {
+        "footer": {
+          "left": 23,
+          "top": 1482.75,
+          "right": 1257,
+          "bottom": 1533.75,
+          "width": 1234,
+          "height": 51
+        },
+        "section": {
+          "left": 23,
+          "top": 190.71875,
+          "right": 1257,
+          "bottom": 1533.75,
+          "width": 1234,
+          "height": 1343.03125
+        },
+        "buttons": [
+          {
+            "left": 1107.109375,
+            "top": 1494.75,
+            "right": 1191.65625,
+            "bottom": 1533.75,
+            "width": 84.546875,
+            "height": 39
+          },
+          {
+            "left": 1199.65625,
+            "top": 1494.75,
+            "right": 1257,
+            "bottom": 1533.75,
+            "width": 57.34375,
+            "height": 39
+          }
+        ],
+        "background": "rgba(0, 0, 0, 0)",
+        "border": [
+          "0px",
+          "0px",
+          "0px",
+          "0px"
+        ],
+        "justify": "flex-end",
+        "list": {
+          "clientHeight": 1239,
+          "scrollHeight": 1239,
+          "scrollTop": 0
+        },
+        "viewport": {
+          "width": 1280,
+          "height": 900
+        },
+        "dialogOpen": true
+      },
+      "scroll": {
+        "before": 0,
+        "after": 0,
+        "height": 1239,
+        "total": 1239
+      }
+    },
+    {
+      "name": "mobile",
+      "viewport": {
+        "width": 430,
+        "height": 932
+      },
+      "geometry": {
+        "footer": {
+          "left": 19,
+          "top": 1705.375,
+          "right": 411,
+          "bottom": 1756.375,
+          "width": 392,
+          "height": 51
+        },
+        "section": {
+          "left": 19,
+          "top": 180.59375,
+          "right": 411,
+          "bottom": 1756.375,
+          "width": 392,
+          "height": 1575.78125
+        },
+        "buttons": [
+          {
+            "left": 261.109375,
+            "top": 1717.375,
+            "right": 345.65625,
+            "bottom": 1756.375,
+            "width": 84.546875,
+            "height": 39
+          },
+          {
+            "left": 353.65625,
+            "top": 1717.375,
+            "right": 411,
+            "bottom": 1756.375,
+            "width": 57.34375,
+            "height": 39
+          }
+        ],
+        "background": "rgba(0, 0, 0, 0)",
+        "border": [
+          "0px",
+          "0px",
+          "0px",
+          "0px"
+        ],
+        "justify": "flex-end",
+        "list": {
+          "clientHeight": 1472,
+          "scrollHeight": 1472,
+          "scrollTop": 0
+        },
+        "viewport": {
+          "width": 430,
+          "height": 932
+        },
+        "dialogOpen": true
+      },
+      "scroll": {
+        "before": 0,
+        "after": 0,
+        "height": 1472,
+        "total": 1472
+      }
+    }
+  ],
+  "checks": [
+    {
+      "name": "desktop:real App dialog open",
+      "passed": true,
+      "evidence": {
+        "footer": {
+          "left": 23,
+          "top": 1482.75,
+          "right": 1257,
+          "bottom": 1533.75,
+          "width": 1234,
+          "height": 51
+        },
+        "section": {
+          "left": 23,
+          "top": 190.71875,
+          "right": 1257,
+          "bottom": 1533.75,
+          "width": 1234,
+          "height": 1343.03125
+        },
+        "buttons": [
+          {
+            "left": 1107.109375,
+            "top": 1494.75,
+            "right": 1191.65625,
+            "bottom": 1533.75,
+            "width": 84.546875,
+            "height": 39
+          },
+          {
+            "left": 1199.65625,
+            "top": 1494.75,
+            "right": 1257,
+            "bottom": 1533.75,
+            "width": 57.34375,
+            "height": 39
+          }
+        ],
+        "background": "rgba(0, 0, 0, 0)",
+        "border": [
+          "0px",
+          "0px",
+          "0px",
+          "0px"
+        ],
+        "justify": "flex-end",
+        "list": {
+          "clientHeight": 1239,
+          "scrollHeight": 1239,
+          "scrollTop": 0
+        },
+        "viewport": {
+          "width": 1280,
+          "height": 900
+        },
+        "dialogOpen": true
+      }
+    },
+    {
+      "name": "desktop:transparent borderless footer",
+      "passed": true,
+      "evidence": {
+        "footer": {
+          "left": 23,
+          "top": 1482.75,
+          "right": 1257,
+          "bottom": 1533.75,
+          "width": 1234,
+          "height": 51
+        },
+        "section": {
+          "left": 23,
+          "top": 190.71875,
+          "right": 1257,
+          "bottom": 1533.75,
+          "width": 1234,
+          "height": 1343.03125
+        },
+        "buttons": [
+          {
+            "left": 1107.109375,
+            "top": 1494.75,
+            "right": 1191.65625,
+            "bottom": 1533.75,
+            "width": 84.546875,
+            "height": 39
+          },
+          {
+            "left": 1199.65625,
+            "top": 1494.75,
+            "right": 1257,
+            "bottom": 1533.75,
+            "width": 57.34375,
+            "height": 39
+          }
+        ],
+        "background": "rgba(0, 0, 0, 0)",
+        "border": [
+          "0px",
+          "0px",
+          "0px",
+          "0px"
+        ],
+        "justify": "flex-end",
+        "list": {
+          "clientHeight": 1239,
+          "scrollHeight": 1239,
+          "scrollTop": 0
+        },
+        "viewport": {
+          "width": 1280,
+          "height": 900
+        },
+        "dialogOpen": true
+      }
+    },
+    {
+      "name": "desktop:footer aligned bottom right",
+      "passed": true,
+      "evidence": {
+        "footer": {
+          "left": 23,
+          "top": 1482.75,
+          "right": 1257,
+          "bottom": 1533.75,
+          "width": 1234,
+          "height": 51
+        },
+        "section": {
+          "left": 23,
+          "top": 190.71875,
+          "right": 1257,
+          "bottom": 1533.75,
+          "width": 1234,
+          "height": 1343.03125
+        },
+        "buttons": [
+          {
+            "left": 1107.109375,
+            "top": 1494.75,
+            "right": 1191.65625,
+            "bottom": 1533.75,
+            "width": 84.546875,
+            "height": 39
+          },
+          {
+            "left": 1199.65625,
+            "top": 1494.75,
+            "right": 1257,
+            "bottom": 1533.75,
+            "width": 57.34375,
+            "height": 39
+          }
+        ],
+        "background": "rgba(0, 0, 0, 0)",
+        "border": [
+          "0px",
+          "0px",
+          "0px",
+          "0px"
+        ],
+        "justify": "flex-end",
+        "list": {
+          "clientHeight": 1239,
+          "scrollHeight": 1239,
+          "scrollTop": 0
+        },
+        "viewport": {
+          "width": 1280,
+          "height": 900
+        },
+        "dialogOpen": true
+      }
+    },
+    {
+      "name": "desktop:both footer buttons initially inside viewport",
+      "passed": false,
+      "evidence": {
+        "footer": {
+          "left": 23,
+          "top": 1482.75,
+          "right": 1257,
+          "bottom": 1533.75,
+          "width": 1234,
+          "height": 51
+        },
+        "section": {
+          "left": 23,
+          "top": 190.71875,
+          "right": 1257,
+          "bottom": 1533.75,
+          "width": 1234,
+          "height": 1343.03125
+        },
+        "buttons": [
+          {
+            "left": 1107.109375,
+            "top": 1494.75,
+            "right": 1191.65625,
+            "bottom": 1533.75,
+            "width": 84.546875,
+            "height": 39
+          },
+          {
+            "left": 1199.65625,
+            "top": 1494.75,
+            "right": 1257,
+            "bottom": 1533.75,
+            "width": 57.34375,
+            "height": 39
+          }
+        ],
+        "background": "rgba(0, 0, 0, 0)",
+        "border": [
+          "0px",
+          "0px",
+          "0px",
+          "0px"
+        ],
+        "justify": "flex-end",
+        "list": {
+          "clientHeight": 1239,
+          "scrollHeight": 1239,
+          "scrollTop": 0
+        },
+        "viewport": {
+          "width": 1280,
+          "height": 900
+        },
+        "dialogOpen": true
+      }
+    },
+    {
+      "name": "desktop:list scrolls independently",
+      "passed": false,
+      "evidence": {
+        "before": 0,
+        "after": 0,
+        "height": 1239,
+        "total": 1239
+      }
+    },
+    {
+      "name": "desktop:Exit closes actual Settings dialog",
+      "passed": true,
+      "evidence": {
+        "beforeExit": 11,
+        "afterExit": 11
+      }
+    },
+    {
+      "name": "desktop:Exit has no implicit mutation",
+      "passed": true,
+      "evidence": [
+        {
+          "method": "GET",
+          "path": "/api/providers/chat-models"
+        },
+        {
+          "method": "GET",
+          "path": "/api/providers/selection"
+        },
+        {
+          "method": "GET",
+          "path": "/api/agents/list"
+        },
+        {
+          "method": "GET",
+          "path": "/api/project-folders/v1/active"
+        },
+        {
+          "method": "GET",
+          "path": "/api/conversations"
+        },
+        {
+          "method": "GET",
+          "path": "/api/chat/context"
+        },
+        {
+          "method": "GET",
+          "path": "/api/runtime/status"
+        },
+        {
+          "method": "GET",
+          "path": "/api/project-permissions"
+        },
+        {
+          "method": "GET",
+          "path": "/api/providers/ollama/status"
+        },
+        {
+          "method": "GET",
+          "path": "/api/providers/registry"
+        },
+        {
+          "method": "GET",
+          "path": "/api/providers/model-policy"
+        },
+        {
+          "method": "GET",
+          "path": "/api/providers/chat-models"
+        },
+        {
+          "method": "GET",
+          "path": "/api/providers/selection"
+        },
+        {
+          "method": "GET",
+          "path": "/api/agents/list"
+        },
+        {
+          "method": "GET",
+          "path": "/api/project-folders/v1/active"
+        },
+        {
+          "method": "GET",
+          "path": "/api/conversations"
+        },
+        {
+          "method": "GET",
+          "path": "/api/chat/context"
+        },
+        {
+          "method": "GET",
+          "path": "/api/runtime/status"
+        },
+        {
+          "method": "GET",
+          "path": "/api/project-permissions"
+        },
+        {
+          "method": "GET",
+          "path": "/api/providers/ollama/status"
+        },
+        {
+          "method": "GET",
+          "path": "/api/providers/registry"
+        },
+        {
+          "method": "GET",
+          "path": "/api/providers/model-policy"
+        }
+      ]
+    },
+    {
+      "name": "mobile:real App dialog open",
+      "passed": true,
+      "evidence": {
+        "footer": {
+          "left": 19,
+          "top": 1705.375,
+          "right": 411,
+          "bottom": 1756.375,
+          "width": 392,
+          "height": 51
+        },
+        "section": {
+          "left": 19,
+          "top": 180.59375,
+          "right": 411,
+          "bottom": 1756.375,
+          "width": 392,
+          "height": 1575.78125
+        },
+        "buttons": [
+          {
+            "left": 261.109375,
+            "top": 1717.375,
+            "right": 345.65625,
+            "bottom": 1756.375,
+            "width": 84.546875,
+            "height": 39
+          },
+          {
+            "left": 353.65625,
+            "top": 1717.375,
+            "right": 411,
+            "bottom": 1756.375,
+            "width": 57.34375,
+            "height": 39
+          }
+        ],
+        "background": "rgba(0, 0, 0, 0)",
+        "border": [
+          "0px",
+          "0px",
+          "0px",
+          "0px"
+        ],
+        "justify": "flex-end",
+        "list": {
+          "clientHeight": 1472,
+          "scrollHeight": 1472,
+          "scrollTop": 0
+        },
+        "viewport": {
+          "width": 430,
+          "height": 932
+        },
+        "dialogOpen": true
+      }
+    },
+    {
+      "name": "mobile:transparent borderless footer",
+      "passed": true,
+      "evidence": {
+        "footer": {
+          "left": 19,
+          "top": 1705.375,
+          "right": 411,
+          "bottom": 1756.375,
+          "width": 392,
+          "height": 51
+        },
+        "section": {
+          "left": 19,
+          "top": 180.59375,
+          "right": 411,
+          "bottom": 1756.375,
+          "width": 392,
+          "height": 1575.78125
+        },
+        "buttons": [
+          {
+            "left": 261.109375,
+            "top": 1717.375,
+            "right": 345.65625,
+            "bottom": 1756.375,
+            "width": 84.546875,
+            "height": 39
+          },
+          {
+            "left": 353.65625,
+            "top": 1717.375,
+            "right": 411,
+            "bottom": 1756.375,
+            "width": 57.34375,
+            "height": 39
+          }
+        ],
+        "background": "rgba(0, 0, 0, 0)",
+        "border": [
+          "0px",
+          "0px",
+          "0px",
+          "0px"
+        ],
+        "justify": "flex-end",
+        "list": {
+          "clientHeight": 1472,
+          "scrollHeight": 1472,
+          "scrollTop": 0
+        },
+        "viewport": {
+          "width": 430,
+          "height": 932
+        },
+        "dialogOpen": true
+      }
+    },
+    {
+      "name": "mobile:footer aligned bottom right",
+      "passed": true,
+      "evidence": {
+        "footer": {
+          "left": 19,
+          "top": 1705.375,
+          "right": 411,
+          "bottom": 1756.375,
+          "width": 392,
+          "height": 51
+        },
+        "section": {
+          "left": 19,
+          "top": 180.59375,
+          "right": 411,
+          "bottom": 1756.375,
+          "width": 392,
+          "height": 1575.78125
+        },
+        "buttons": [
+          {
+            "left": 261.109375,
+            "top": 1717.375,
+            "right": 345.65625,
+            "bottom": 1756.375,
+            "width": 84.546875,
+            "height": 39
+          },
+          {
+            "left": 353.65625,
+            "top": 1717.375,
+            "right": 411,
+            "bottom": 1756.375,
+            "width": 57.34375,
+            "height": 39
+          }
+        ],
+        "background": "rgba(0, 0, 0, 0)",
+        "border": [
+          "0px",
+          "0px",
+          "0px",
+          "0px"
+        ],
+        "justify": "flex-end",
+        "list": {
+          "clientHeight": 1472,
+          "scrollHeight": 1472,
+          "scrollTop": 0
+        },
+        "viewport": {
+          "width": 430,
+          "height": 932
+        },
+        "dialogOpen": true
+      }
+    },
+    {
+      "name": "mobile:both footer buttons initially inside viewport",
+      "passed": false,
+      "evidence": {
+        "footer": {
+          "left": 19,
+          "top": 1705.375,
+          "right": 411,
+          "bottom": 1756.375,
+          "width": 392,
+          "height": 51
+        },
+        "section": {
+          "left": 19,
+          "top": 180.59375,
+          "right": 411,
+          "bottom": 1756.375,
+          "width": 392,
+          "height": 1575.78125
+        },
+        "buttons": [
+          {
+            "left": 261.109375,
+            "top": 1717.375,
+            "right": 345.65625,
+            "bottom": 1756.375,
+            "width": 84.546875,
+            "height": 39
+          },
+          {
+            "left": 353.65625,
+            "top": 1717.375,
+            "right": 411,
+            "bottom": 1756.375,
+            "width": 57.34375,
+            "height": 39
+          }
+        ],
+        "background": "rgba(0, 0, 0, 0)",
+        "border": [
+          "0px",
+          "0px",
+          "0px",
+          "0px"
+        ],
+        "justify": "flex-end",
+        "list": {
+          "clientHeight": 1472,
+          "scrollHeight": 1472,
+          "scrollTop": 0
+        },
+        "viewport": {
+          "width": 430,
+          "height": 932
+        },
+        "dialogOpen": true
+      }
+    },
+    {
+      "name": "mobile:list scrolls independently",
+      "passed": false,
+      "evidence": {
+        "before": 0,
+        "after": 0,
+        "height": 1472,
+        "total": 1472
+      }
+    },
+    {
+      "name": "mobile:Exit closes actual Settings dialog",
+      "passed": true,
+      "evidence": {
+        "beforeExit": 22,
+        "afterExit": 22
+      }
+    },
+    {
+      "name": "mobile:Exit has no implicit mutation",
+      "passed": true,
+      "evidence": [
+        {
+          "method": "GET",
+          "path": "/api/providers/chat-models"
+        },
+        {
+          "method": "GET",
+          "path": "/api/providers/selection"
+        },
+        {
+          "method": "GET",
+          "path": "/api/agents/list"
+        },
+        {
+          "method": "GET",
+          "path": "/api/project-folders/v1/active"
+        },
+        {
+          "method": "GET",
+          "path": "/api/conversations"
+        },
+        {
+          "method": "GET",
+          "path": "/api/chat/context"
+        },
+        {
+          "method": "GET",
+          "path": "/api/runtime/status"
+        },
+        {
+          "method": "GET",
+          "path": "/api/project-permissions"
+        },
+        {
+          "method": "GET",
+          "path": "/api/providers/ollama/status"
+        },
+        {
+          "method": "GET",
+          "path": "/api/providers/registry"
+        },
+        {
+          "method": "GET",
+          "path": "/api/providers/model-policy"
+        },
+        {
+          "method": "GET",
+          "path": "/api/providers/chat-models"
+        },
+        {
+          "method": "GET",
+          "path": "/api/providers/selection"
+        },
+        {
+          "method": "GET",
+          "path": "/api/agents/list"
+        },
+        {
+          "method": "GET",
+          "path": "/api/project-folders/v1/active"
+        },
+        {
+          "method": "GET",
+          "path": "/api/conversations"
+        },
+        {
+          "method": "GET",
+          "path": "/api/chat/context"
+        },
+        {
+          "method": "GET",
+          "path": "/api/runtime/status"
+        },
+        {
+          "method": "GET",
+          "path": "/api/project-permissions"
+        },
+        {
+          "method": "GET",
+          "path": "/api/providers/ollama/status"
+        },
+        {
+          "method": "GET",
+          "path": "/api/providers/registry"
+        },
+        {
+          "method": "GET",
+          "path": "/api/providers/model-policy"
+        }
+      ]
+    },
+    {
+      "name": "no external traffic",
+      "passed": true,
+      "evidence": []
+    },
+    {
+      "name": "all API routes synthetic and expected",
+      "passed": true,
+      "evidence": []
+    },
+    {
+      "name": "no App page errors",
+      "passed": true,
+      "evidence": []
+    }
+  ],
+  "requests": [
+    {
+      "method": "GET",
+      "path": "/api/providers/chat-models"
+    },
+    {
+      "method": "GET",
+      "path": "/api/providers/selection"
+    },
+    {
+      "method": "GET",
+      "path": "/api/agents/list"
+    },
+    {
+      "method": "GET",
+      "path": "/api/project-folders/v1/active"
+    },
+    {
+      "method": "GET",
+      "path": "/api/conversations"
+    },
+    {
+      "method": "GET",
+      "path": "/api/chat/context"
+    },
+    {
+      "method": "GET",
+      "path": "/api/runtime/status"
+    },
+    {
+      "method": "GET",
+      "path": "/api/project-permissions"
+    },
+    {
+      "method": "GET",
+      "path": "/api/providers/ollama/status"
+    },
+    {
+      "method": "GET",
+      "path": "/api/providers/registry"
+    },
+    {
+      "method": "GET",
+      "path": "/api/providers/model-policy"
+    },
+    {
+      "method": "GET",
+      "path": "/api/providers/chat-models"
+    },
+    {
+      "method": "GET",
+      "path": "/api/providers/selection"
+    },
+    {
+      "method": "GET",
+      "path": "/api/agents/list"
+    },
+    {
+      "method": "GET",
+      "path": "/api/project-folders/v1/active"
+    },
+    {
+      "method": "GET",
+      "path": "/api/conversations"
+    },
+    {
+      "method": "GET",
+      "path": "/api/chat/context"
+    },
+    {
+      "method": "GET",
+      "path": "/api/runtime/status"
+    },
+    {
+      "method": "GET",
+      "path": "/api/project-permissions"
+    },
+    {
+      "method": "GET",
+      "path": "/api/providers/ollama/status"
+    },
+    {
+      "method": "GET",
+      "path": "/api/providers/registry"
+    },
+    {
+      "method": "GET",
+      "path": "/api/providers/model-policy"
+    }
+  ],
+  "unknown": [],
+  "external": [],
+  "pageErrors": [],
+  "fatal": null,
+  "source_sha256": {
+    "src/App.tsx": "1800630d38ba3f871a721bf6b5e5ff64a3e004a8b1f54ae4841f776abaf0681b",
+    "src/components/ProviderSettings.tsx": "fe849e9fe9f24a09b840e4fdb5540dce098bd74698d525e9033719ec3a51f1d1",
+    "src/components/ModelAssignments.tsx": "1616cf4704be6f260be4c5adf24a3a53c405ec2cb6be0e1583e1d19039115e0e",
+    "src/components/ModelAssignments.css": "783e45bda9b812e6fe71c9b4306253db532a3d10bfa44b36dc2f42eeb4917cb0",
+    "src/components/ProviderSettings.css": "6be03b2e26abfc98e5464096798e84a9df87890d04f7c7bff0291e3244a7691e",
+    "src/App.css": "5aabb6c16fde081d2f3bf2ac8fb4c8a469346b1fcf7138d373ebcafc91043555",
+    "dist/index.html": "473cf3bf1bcee5fb0e67b31f1bc90ceedbf82afb778229072a7c484833005a77"
+  }
+}

@@ -1,0 +1,42 @@
+{
+  "mission_id": "ADL_PUBLICATION_TEST_REVIEW_20261022",
+  "operation": "VERIFICATION",
+  "max_concurrency": 1,
+  "terminal_work_items": [
+    "V01"
+  ],
+  "audit_scope": {
+    "include": [
+      "inputs/**"
+    ],
+    "exclude": [],
+    "evidence_roots": [
+      "reviews"
+    ],
+    "fixture_roots": [
+      "fixtures"
+    ],
+    "preserved_roots": [
+      "preserved"
+    ]
+  },
+  "work_items": [
+    {
+      "id": "V01",
+      "role": "publication-test-verifier",
+      "title": "Review three stale frontend test corrections",
+      "depends_on": [],
+      "write_scopes": [
+        "reviews/verification/**",
+        "fixtures/verification/**"
+      ],
+      "output_scopes": [
+        "reviews/verification/**",
+        "fixtures/verification/**"
+      ],
+      "required_checks": [
+        "review"
+      ]
+    }
+  ]
+}

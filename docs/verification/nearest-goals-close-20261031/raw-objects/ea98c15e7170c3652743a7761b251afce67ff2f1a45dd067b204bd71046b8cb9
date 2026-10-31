@@ -1,0 +1,21 @@
+{
+  "id": "CR-FOOTER-PARENT-SIZING-20261031",
+  "contract_id": "BAGO_MODEL_FOOTER_COMPLETE_REPAIR_20261031",
+  "old_mission_contract_sha256": "6004fc03d1f7803d74aee3f91271493640441e6ae27cb8431ea90df7b78ff5ad",
+  "reason": "Actual App browser with 18 models proves footer below viewport and no independent list scrolling. Original goal requires both desktop/mobile geometry and Exit.",
+  "impacted_consumers": [
+    "footer-browser",
+    "ROOT REGRESSION",
+    "independent REVIEW"
+  ],
+  "required_invalidations": [
+    "Old browser FAIL remains unchanged; new CSS candidate requires fresh build/render and final source binding."
+  ],
+  "authorization_basis": "Current user instruction to finish nearest open goals; necessary project-local repair, no host authority increase.",
+  "scope_addition": [
+    "frontend/src/components/ProviderSettings.css"
+  ],
+  "preserve": [
+    "all original F01 receipts/results and baseline UI artifacts"
+  ]
+}

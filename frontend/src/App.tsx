@@ -398,7 +398,7 @@ function App() {
           </nav>
           <section className={`settings-layer-content ${settingsScroll.scrolling ? 'scroll-active' : ''}`} aria-label={settingsView === 'connections' ? t('commerce.capability_ui.connections') : settingsView === 'whatsapp' ? t("core.App.whatsapp_settings_4c4831") : settingsView === 'providers' ? t("core.App.provider_and_model_settings_d104f0") : t("core.App.cognition_and_context_settings_ab7e3e")} tabIndex={0} onScroll={settingsScroll.onScroll}>
             {settingsView === 'connections' ? (settingsOpen ? <ToolsConnectionsView /> : null) : settingsView === 'whatsapp' ? (settingsOpen ? <WhatsAppSettings /> : null) : settingsView === 'providers'
-              ? <ProviderSettings />
+              ? <ProviderSettings onExit={() => setSettingsOpen(false)} />
               : <CognitionSettings mode={cognitiveMode} onModeChange={setCognitiveMode} showWorkspaceLocations />}
           </section>
         </div>

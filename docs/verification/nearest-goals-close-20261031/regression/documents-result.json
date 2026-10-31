@@ -1,0 +1,17 @@
+{
+  "status": "PASS",
+  "checks": [
+    "missing_document_does_not_create_files",
+    "fixed_document_ids",
+    "workspace_mismatch_denied",
+    "real_markdown_read",
+    "no_store",
+    "real_nested_json_read",
+    "real_handoff_read",
+    "size_limit",
+    "invalid_encoding",
+    "directory_denied"
+  ],
+  "surface": "real candidate FastAPI in-process and real isolated files",
+  "user_workspace_modified": false
+}

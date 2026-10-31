@@ -1,0 +1,62 @@
+[
+  {
+    "label": "build",
+    "argv": [
+      "C:\\Program Files\\nodejs\\npm.cmd",
+      "run",
+      "build"
+    ],
+    "returncode": 0,
+    "started_at": "2026-10-31T18:43:38.783976+00:00",
+    "completed_at": "2026-10-31T18:43:42.126781+00:00",
+    "logs": {
+      "build.stderr.log": "351b524197fb492920789369e7f1a271420c757633fbb553b280a181ac4c31a4",
+      "build.stdout.log": "e62484396a696531c809f587e2d0ccbd2a640d4cd2b14f462a655a0b3db2b690"
+    }
+  },
+  {
+    "label": "test",
+    "argv": [
+      "C:\\Program Files\\nodejs\\npm.cmd",
+      "run",
+      "test"
+    ],
+    "returncode": 0,
+    "started_at": "2026-10-31T18:43:42.145591+00:00",
+    "completed_at": "2026-10-31T18:44:50.050738+00:00",
+    "logs": {
+      "test.stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "test.stdout.log": "052c0e678ab9b67ddd46f91133ad5681b4653fcfc73cf16cc1843b2f36b237aa"
+    }
+  },
+  {
+    "label": "test:ui",
+    "argv": [
+      "C:\\Program Files\\nodejs\\npm.cmd",
+      "run",
+      "test:ui"
+    ],
+    "returncode": 0,
+    "started_at": "2026-10-31T18:44:50.059855+00:00",
+    "completed_at": "2026-10-31T18:45:24.392237+00:00",
+    "logs": {
+      "test-ui.stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "test-ui.stdout.log": "55ffbc99aebb836a9ccb4e106a2fb4b7b5f6fefb1fd7ee3ab6597463684b1f17"
+    }
+  },
+  {
+    "label": "test:contracts",
+    "argv": [
+      "C:\\Program Files\\nodejs\\npm.cmd",
+      "run",
+      "test:contracts"
+    ],
+    "returncode": 0,
+    "started_at": "2026-10-31T18:45:24.403232+00:00",
+    "completed_at": "2026-10-31T18:45:26.496102+00:00",
+    "logs": {
+      "test-contracts.stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "test-contracts.stdout.log": "c5b0954a3050a63cd85cd51af2ad48080062b9677772f8134f11a9d875dbe712"
+    }
+  }
+]
