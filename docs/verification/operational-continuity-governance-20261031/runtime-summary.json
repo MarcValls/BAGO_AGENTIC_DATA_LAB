@@ -1,0 +1,71 @@
+{
+  "schema": "bago.operational-status.snapshot.v1",
+  "updated_at": "2026-10-31T15:38:35.356767Z",
+  "mission_id": "CODEX_GOVERNED_CONTINUITY_20261031",
+  "candidate_id": "0f74f0d818f422d2a9506957e6396070300bbb77d88c602605b4fa647e7cc774",
+  "state": "EXECUTED",
+  "closure_gate": "NO_GO",
+  "work_items": {
+    "P0": "VERIFIED",
+    "LOCAL_POLICY": "EXECUTED_INCONCLUSIVE",
+    "P2_HOST_R5": "VERIFIED",
+    "BRAVE_E2E_R5": "DONE",
+    "independent_review": "PENDING"
+  },
+  "teamctl": {
+    "inspect_brave_e2e_r5": "PASS",
+    "verify": "FAIL",
+    "pair": "FAIL",
+    "failure": "output sha256 mismatch: .bago/goals/operational-continuity-governance-20261031/status.json"
+  },
+  "brave_runtime": {
+    "attempt": 7,
+    "result": "PASS",
+    "browser": "Brave",
+    "fixture_origin": "http://127.0.0.1:18765",
+    "extension_id": "jeocgjmcakdgbogpcbmhmpcfkgamoaec",
+    "native_host": "com.bago.browser_bridge",
+    "protocol": "bago.browser-bridge.native.v2",
+    "valid_preview": {
+      "accepted": true,
+      "byte_length": 188,
+      "sha256": "9586130d1cd0699a6c43dd2aa5a725ae90573944f22197aad324dce9fe374f62",
+      "content_retained": false
+    },
+    "denials": ["altered_digest", "non_fixture_origin", "shell_request"],
+    "runtime_execution_id": "82c2292c60ea403e9dadb313be96202d",
+    "runtime_receipt_sha256": "552bb8d8f13d4a8cc31e7adcc9223c499c48c6548432412915a32288df2ccde6",
+    "cleanup_execution_id": "8d3041fd47fa4d4bb821aca94f642596",
+    "cleanup_receipt_sha256": "75da9ac53db22df4351fc3f771acb72a5eab5007ba214432e1f804c15759fbf4",
+    "cleanup": {
+      "registry_absent_registry32": true,
+      "registry_absent_registry64": true,
+      "manifest_absent": true,
+      "isolated_profile_absent": true,
+      "host_processes_absent": true,
+      "focus_preserved": true
+    },
+    "toolbar_gesture": "NOT_RUN",
+    "video": "NOT_RUN",
+    "service_worker_path": "NOT_VALIDATED",
+    "duplicate_host_processes_observed": true,
+    "duplicate_process_cause": "UNRESOLVED"
+  },
+  "p2": {
+    "tests_reported_passed": 69,
+    "package_sha256": "2aefdaa63fbfeadb79498acac429bee36e3fce3ac323664fa0733347a030e333"
+  },
+  "acceptance_criteria": {
+    "AC-01": "MET",
+    "AC-08": "MET",
+    "AC-09": "MET",
+    "all_others": "OPEN"
+  },
+  "handoff_sha256": "f547de10b5fee7482d2e987278af497520763cb053bb839a01c9fe9b3e832c02",
+  "limitations": [
+    "The runtime test used the extension popup connectNative API directly, not the toolbar gesture or full service-worker extraction path.",
+    "No external pages, credentials, GEX/ADL dispatch, or production profile were exercised.",
+    "Independent review and final user acceptance are pending.",
+    "The LOCAL_POLICY output hash mismatch blocks global teamctl verify and pair."
+  ]
+}
