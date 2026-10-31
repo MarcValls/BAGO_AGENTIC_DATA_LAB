@@ -1,22 +1,33 @@
 {
   "schema": "bago.operational-status.snapshot.v1",
-  "updated_at": "2026-10-31T15:38:35.356767Z",
+  "updated_at": "2026-10-31T15:54:45Z",
   "mission_id": "CODEX_GOVERNED_CONTINUITY_20261031",
   "candidate_id": "0f74f0d818f422d2a9506957e6396070300bbb77d88c602605b4fa647e7cc774",
   "state": "EXECUTED",
   "closure_gate": "NO_GO",
+  "independent_review": {
+    "role": "verification-engineer",
+    "result": "READ_ONLY_COMPLETE_NOT_FORMALLY_REGISTERED",
+    "p0_observed": 0,
+    "p1_open": 3,
+    "p2_open": 2,
+    "teamctl_handoff": "BLOCKED_BY_LOCAL_POLICY_HASH_MISMATCH"
+  },
   "work_items": {
     "P0": "VERIFIED",
     "LOCAL_POLICY": "EXECUTED_INCONCLUSIVE",
     "P2_HOST_R5": "VERIFIED",
     "BRAVE_E2E_R5": "DONE",
-    "independent_review": "PENDING"
+    "INDEPENDENT_REVIEW": "READ_ONLY_REVIEW_COMPLETE_BUT_NO_VALIDATED_HANDOFF",
+    "CLOSE": "PENDING"
   },
   "teamctl": {
-    "inspect_brave_e2e_r5": "PASS",
+    "inspect_brave_e2e_r5": "PASS_INTEGRITY_NOT_REQUESTED",
     "verify": "FAIL",
     "pair": "FAIL",
-    "failure": "output sha256 mismatch: .bago/goals/operational-continuity-governance-20261031/status.json"
+    "failure": "output sha256 mismatch: .bago/goals/operational-continuity-governance-20261031/status.json",
+    "local_policy_status_expected_sha256": "f5a22128f52634a073b0d92723812c4a54dfab4bb590c56cc4067f81d882b2ae",
+    "local_policy_status_actual_sha256": "142bf2347f6268812fbb9bf9e4f8f61466981b42a53cb45846eb858f84b1f432"
   },
   "brave_runtime": {
     "attempt": 7,
@@ -26,6 +37,16 @@
     "extension_id": "jeocgjmcakdgbogpcbmhmpcfkgamoaec",
     "native_host": "com.bago.browser_bridge",
     "protocol": "bago.browser-bridge.native.v2",
+    "trace_recorded_at": "2026-10-31T15:35:41.033Z",
+    "request_ids": [
+      "r5-hello-01",
+      "r5-valid-preview-01",
+      "r5-deny-digest-01",
+      "r5-deny-origin-01",
+      "r5-deny-shell-01"
+    ],
+    "event_types": ["ready", "preview_receipt", "denied", "denied", "denied"],
+    "event_timestamps_individual": false,
     "valid_preview": {
       "accepted": true,
       "byte_length": 188,
@@ -33,6 +54,8 @@
       "content_retained": false
     },
     "denials": ["altered_digest", "non_fixture_origin", "shell_request"],
+    "host_process_count_during_port": 2,
+    "process_to_message_correlation": "MISSING",
     "runtime_execution_id": "82c2292c60ea403e9dadb313be96202d",
     "runtime_receipt_sha256": "552bb8d8f13d4a8cc31e7adcc9223c499c48c6548432412915a32288df2ccde6",
     "cleanup_execution_id": "8d3041fd47fa4d4bb821aca94f642596",
@@ -47,25 +70,29 @@
     },
     "toolbar_gesture": "NOT_RUN",
     "video": "NOT_RUN",
-    "service_worker_path": "NOT_VALIDATED",
-    "duplicate_host_processes_observed": true,
-    "duplicate_process_cause": "UNRESOLVED"
+    "service_worker_path": "NOT_VALIDATED"
   },
   "p2": {
-    "tests_reported_passed": 69,
+    "tests": 69,
+    "failures": 0,
+    "errors": 0,
     "package_sha256": "2aefdaa63fbfeadb79498acac429bee36e3fce3ac323664fa0733347a030e333"
   },
   "acceptance_criteria": {
-    "AC-01": "MET",
-    "AC-08": "MET",
-    "AC-09": "MET",
-    "all_others": "OPEN"
+    "T1": "PARTIAL",
+    "T2": "OPEN",
+    "T3": "OPEN",
+    "T4": "OPEN",
+    "T5": "OPEN",
+    "T6": "OPEN",
+    "T7": "OPEN",
+    "T8": "MET",
+    "T9": "MET",
+    "T10": "OPEN",
+    "T11": "OPEN",
+    "T12": "OPEN"
   },
   "handoff_sha256": "f547de10b5fee7482d2e987278af497520763cb053bb839a01c9fe9b3e832c02",
-  "limitations": [
-    "The runtime test used the extension popup connectNative API directly, not the toolbar gesture or full service-worker extraction path.",
-    "No external pages, credentials, GEX/ADL dispatch, or production profile were exercised.",
-    "Independent review and final user acceptance are pending.",
-    "The LOCAL_POLICY output hash mismatch blocks global teamctl verify and pair."
-  ]
+  "published_evidence_limit": "Source receipts and handoff are not included in this GitHub branch; listed source hashes cannot be independently recomputed from the branch alone.",
+  "cognitive_spiral": "NOT_RUN"
 }
