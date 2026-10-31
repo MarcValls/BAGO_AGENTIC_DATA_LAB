@@ -1,0 +1,17 @@
+{
+  "collaboration_incomplete": false,
+  "evidence_status": "VALID",
+  "mandatory_not_satisfied": [],
+  "operation": "AUDIT",
+  "outcomes": {
+    "verify": "PASS",
+    "work": "PASS"
+  },
+  "owned_child_running": false,
+  "product_status": "PASS",
+  "published": false,
+  "status": "PASS",
+  "target": null,
+  "task_status": "CLOSED",
+  "unconsumed_or_missing": []
+}

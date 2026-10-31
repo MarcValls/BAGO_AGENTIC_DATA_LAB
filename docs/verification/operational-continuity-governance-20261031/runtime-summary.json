@@ -1,6 +1,6 @@
 {
   "schema": "bago.operational-status.snapshot.v1",
-  "updated_at": "2026-10-31T15:54:45Z",
+  "updated_at": "2026-10-31T16:18:06.911203+00:00",
   "mission_id": "CODEX_GOVERNED_CONTINUITY_20261031",
   "candidate_id": "0f74f0d818f422d2a9506957e6396070300bbb77d88c602605b4fa647e7cc774",
   "state": "EXECUTED",
@@ -45,7 +45,13 @@
       "r5-deny-origin-01",
       "r5-deny-shell-01"
     ],
-    "event_types": ["ready", "preview_receipt", "denied", "denied", "denied"],
+    "event_types": [
+      "ready",
+      "preview_receipt",
+      "denied",
+      "denied",
+      "denied"
+    ],
     "event_timestamps_individual": false,
     "valid_preview": {
       "accepted": true,
@@ -53,7 +59,11 @@
       "sha256": "9586130d1cd0699a6c43dd2aa5a725ae90573944f22197aad324dce9fe374f62",
       "content_retained": false
     },
-    "denials": ["altered_digest", "non_fixture_origin", "shell_request"],
+    "denials": [
+      "altered_digest",
+      "non_fixture_origin",
+      "shell_request"
+    ],
     "host_process_count_during_port": 2,
     "process_to_message_correlation": "MISSING",
     "runtime_execution_id": "82c2292c60ea403e9dadb313be96202d",
@@ -94,5 +104,18 @@
   },
   "handoff_sha256": "f547de10b5fee7482d2e987278af497520763cb053bb839a01c9fe9b3e832c02",
   "published_evidence_limit": "Source receipts and handoff are not included in this GitHub branch; listed source hashes cannot be independently recomputed from the branch alone.",
-  "cognitive_spiral": "NOT_RUN"
+  "cognitive_spiral": "NOT_RUN",
+  "cognitive_runtime_available": true,
+  "cooperative_relay": {
+    "mission_id": "RELAY_REVIEW_SNAPSHOT_20261031_R2",
+    "scope": "fixed snapshot consistency; original mission remains NO_GO",
+    "task_status": "CLOSED",
+    "evidence_status": "VALID",
+    "work": "89d59dd2115949aba0cc406ae67a7021",
+    "verify": "169c52f5bd164d45b4abc6a9aadfa3be",
+    "handoff_sha256": "22b6bc31cf76bdf4ee59ca5cf7b1bf98a480128602f112c759672cdeee88456f",
+    "r1": "FAIL_PRESERVED_STOPPED",
+    "stale_lease_rejected": true,
+    "wrong_digest_rejected": true
+  }
 }

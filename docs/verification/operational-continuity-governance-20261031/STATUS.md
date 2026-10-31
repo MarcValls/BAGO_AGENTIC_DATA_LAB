@@ -50,7 +50,7 @@ El preview fue de 188 bytes con SHA-256 `9586130d1cd0699a6c43dd2aa5a725ae9057394
 - Toolbar y vídeo: `NOT_RUN`; la prueba usó `connectNative` directamente desde el popup y preservó el foco. La ruta completa por clic y extracción del service worker no está validada.
 - Se observó un 404 de recurso en la fixture, aunque el contenido esperado y su digest coincidieron.
 - No se probaron páginas externas, credenciales, despacho GEX/ADL ni perfil de producción.
-- Cognitive Spiral: `NOT_RUN`. La ruta documentada `scripts/suite_orchestrator.py cognitive` no existe en este checkout ni en la instalación inspeccionada. No se simuló una ejecución.
+- Cognitive Spiral: `NOT_RUN`. Runtime real localizado en la instalación de la skill, identidad PASS para 1.4.7; no se ejecutaron ciclos cognitivos.
 - La rama publicada aún no está integrada en `main`. El registro local `.bago/goals/.../status.json` permanece desfasado porque restaurarlo o reemplazar su handoff alteraría la auditoría; esta página pública es más actual, pero la revisión formal sigue sin handoff validado.
 
 ## Evidencia disponible en GitHub
@@ -58,3 +58,6 @@ El preview fue de 188 bytes con SHA-256 `9586130d1cd0699a6c43dd2aa5a725ae9057394
 Esta rama publica [`runtime-summary.json`](runtime-summary.json) y la [captura de la fixture](fixture-brave-r5-attempt7.png). El handoff `BRAVE_E2E_R5` tiene SHA-256 `f547de10b5fee7482d2e987278af497520763cb053bb839a01c9fe9b3e832c02`; los recibos completos se conservan localmente y no están adjuntos aquí. La captura demuestra la fixture, no por sí sola la comunicación Native Messaging.
 
 **Dictamen final:** `NO_GO`. La transferencia Brave/host y limpieza pasaron en el alcance descrito; no hay aceptación global, T1 sigue parcial, existen P1/P2 abiertos y la integridad de `LOCAL_POLICY` bloquea el handoff formal.
+## Actualización: relevo cooperativo real
+
+La conclusión anterior de runtime ausente queda corregida: se omitió la raíz instalada de la skill. El relevo serial R2 ya se ejecutó con sucesor y verificador reales; cerrado PASS/VALID para consistencia del snapshot. R1 conserva FAIL/STOP; la misión original sigue NO_GO. Véase [RELAY.md](RELAY.md).

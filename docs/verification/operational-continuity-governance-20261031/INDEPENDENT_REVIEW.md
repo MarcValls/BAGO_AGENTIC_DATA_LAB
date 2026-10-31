@@ -49,8 +49,8 @@ La correlación work item→check→execution→receipt está explícita por IDs
 | T9 | `MET` | 13 escenarios registrados `PASS`; ejecución fallida permanece `FAIL`. |
 | T10–T12 | `OPEN` | Sin evidencia suficiente. |
 
-## Cognitive Spiral
+## Cognitive Spiral y corrección posterior
 
-`NOT_RUN`. La skill documenta `scripts/suite_orchestrator.py cognitive`, pero ese ejecutor no existe en este checkout ni en la ruta de instalación inspeccionada. No se simuló la Spiral ni se emitieron respuestas de host inventadas.
+`NOT_RUN`: no se ejecutaron ciclos cognitivos. La conclusión inicial sobre runtime ausente fue una búsqueda incompleta. El controlador real está en la raíz de la skill instalada y su identidad 1.4.7 pasó. El [relevo real R2](RELAY.md) se ejecutó y cerró; ese cierre solo valida consistencia del snapshot y no elimina los P1 de esta revisión.
 
 **P0:** ninguno observado dentro del material revisado; esto no equivale a una certificación de ausencia sistémica. **P1 abiertos:** tres, descritos arriba. **P2 abiertos:** dos. **Handoff validado:** no.
