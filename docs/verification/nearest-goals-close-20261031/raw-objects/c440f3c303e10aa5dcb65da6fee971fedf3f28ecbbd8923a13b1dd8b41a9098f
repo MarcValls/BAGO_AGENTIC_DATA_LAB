@@ -1,0 +1,105 @@
+{
+  "mission_id": "BAGO_NEAREST_OPEN_GOALS_CLOCK_REPAIR_20261031",
+  "operation": "REPAIR",
+  "title": "Repair observed regressed clock trace and close eligible nearest goals",
+  "objective": "Fix reproducible trace failure without inventing time evidence; verify current candidate and close only fully satisfied historical goal increments.",
+  "scope": "Two exact source files plus bounded verification evidence. Preserve old runtime, all failed attempts, unrelated dirty root and Browser Bridge P1/P3/binding.",
+  "constraints": [
+    "No global Codex config or host clock/permissions changes",
+    "No provider calls, credentials or production data",
+    "Preserve existing Native Timing contract; retain regressed wall-clock evidence",
+    "Old UI test results are reusable only with unchanged source hashes and explicit archived-runtime mapping",
+    "Never close goals with unmet required criteria",
+    "No merge into main"
+  ],
+  "max_concurrency": 1,
+  "terminal_work_items": [
+    "CLOSE"
+  ],
+  "work_items": [
+    {
+      "id": "REPAIR",
+      "title": "REPAIR",
+      "role": "trace-observability-engineer",
+      "depends_on": [],
+      "write_scopes": [
+        "src/api/server.py",
+        "tests/test_agent_delegation.py",
+        "docs/verification/nearest-goals-close-20261031/clock-repair/**"
+      ],
+      "output_scopes": [
+        "src/api/server.py",
+        "tests/test_agent_delegation.py",
+        "docs/verification/nearest-goals-close-20261031/clock-repair/**"
+      ],
+      "required_checks": [
+        "clock-regression"
+      ]
+    },
+    {
+      "id": "REGRESSION",
+      "title": "REGRESSION",
+      "role": "codex_orchestrator",
+      "depends_on": [
+        "REPAIR"
+      ],
+      "write_scopes": [
+        "docs/verification/nearest-goals-close-20261031/regression/**",
+        "README.md",
+        "README_DETAILS.md",
+        "output/**",
+        ".bago/data/**",
+        "frontend/.build/**",
+        "frontend/dist/**"
+      ],
+      "output_scopes": [
+        "docs/verification/nearest-goals-close-20261031/regression/**",
+        "README.md",
+        "README_DETAILS.md",
+        "output/**",
+        ".bago/data/**",
+        "frontend/.build/**",
+        "frontend/dist/**"
+      ],
+      "required_checks": [
+        "regression",
+        "readme-check"
+      ]
+    },
+    {
+      "id": "REVIEW",
+      "title": "REVIEW",
+      "role": "verification-engineer",
+      "depends_on": [
+        "REPAIR",
+        "REGRESSION"
+      ],
+      "write_scopes": [
+        "docs/verification/nearest-goals-close-20261031/review/**"
+      ],
+      "output_scopes": [
+        "docs/verification/nearest-goals-close-20261031/review/**"
+      ],
+      "required_checks": [
+        "review"
+      ]
+    },
+    {
+      "id": "CLOSE",
+      "title": "CLOSE",
+      "role": "codex_orchestrator",
+      "depends_on": [
+        "REVIEW"
+      ],
+      "write_scopes": [
+        "docs/verification/nearest-goals-close-20261031/closure/**"
+      ],
+      "output_scopes": [
+        "docs/verification/nearest-goals-close-20261031/closure/**"
+      ],
+      "required_checks": [
+        "acceptance"
+      ]
+    }
+  ]
+}

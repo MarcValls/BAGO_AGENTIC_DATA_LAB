@@ -1,0 +1,26 @@
+{
+  "image": "sha256:a78b74ba48e7c400f5189e966e4130394699cfd97ef5742b9c0103970c6a50b5",
+  "candidate_head": "8065906f4560f4f0b0951cc445b673ecad7ce175",
+  "argv": [
+    "docker",
+    "run",
+    "--rm",
+    "--name",
+    "bago-near-goals-fa4e1b99a4",
+    "--network",
+    "none",
+    "--mount",
+    "type=bind,source=C:\\Users\\AMTEC_Terminal_1\u00ba\\Desktop\\BAGO5_ADL\\.worktrees\\nearest-goals-close-20261031,target=/workspace",
+    "--workdir",
+    "/workspace",
+    "--env",
+    "PYTHONDONTWRITEBYTECODE=1",
+    "--entrypoint",
+    "python",
+    "sha256:a78b74ba48e7c400f5189e966e4130394699cfd97ef5742b9c0103970c6a50b5",
+    "-B",
+    "docs/verification/nearest-goals-close-20261031/regression/run_docker_backend.py",
+    "inner"
+  ],
+  "script_sha256": "4cdc3df6f3013f494592151270fda1855916fab14ef7522d57f12d28ea825578"
+}

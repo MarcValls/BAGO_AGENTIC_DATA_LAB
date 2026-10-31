@@ -1,0 +1,16 @@
+
+> bago-portfolio-ui@1.0.0 test
+> vitest run
+
+
+ RUN  v5.0.4 C:/Users/AMTEC_Terminal_1º/Desktop/BAGO5_ADL/.worktrees/nearest-goals-close-20261031/frontend
+
+
+ Test Files  88 passed (88)
+      Tests  821 passed (821)
+   Start at  19:43:43
+   Duration  66.70s (environment 39%, tests 35%, import 24%, transform 2%)
+
+    Isolate  88 workers spawned · ~2.25s startup each (spawn + environment, per file)
+             at least ~25.99s faster with isolate: false — reuses workers across files instead of one per file
+

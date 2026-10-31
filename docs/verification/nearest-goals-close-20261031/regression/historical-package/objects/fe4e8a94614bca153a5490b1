@@ -1,0 +1,38 @@
+"""Repeat reconciliation only after closure and prove no ledger/evidence change."""
+from pathlib import Path
+import hashlib
+import json
+import subprocess
+import sys
+
+here = Path(__file__).resolve().parent
+goal = here.parent
+assert goal.name in {'github-update-20261022', 'readme-clarity-20261022'}
+state_path = goal / '.bago/team/runtime/state.json'
+state = json.loads(state_path.read_bytes())
+assert state['lifecycle'] == 'CLOSED' and state['terminal_gate'] == 'VALIDATED_SCOPED_TASK'
+protected = json.loads((here / 'protected-before.json').read_bytes())
+paths = [state_path, goal / '.bago/team/runtime/events.jsonl', *(goal / path for path in protected)]
+
+def snapshot():
+    return {path.relative_to(goal).as_posix(): hashlib.sha256(path.read_bytes()).hexdigest()
+            for path in paths}
+
+before = snapshot()
+argv = [sys.executable, '-B', str(here / 'reconcile.py'), '--apply']
+run = subprocess.run(argv, capture_output=True, text=True, encoding='utf-8', timeout=180)
+after = snapshot()
+assert run.returncode == 0, run.stdout + run.stderr
+assert before == after, 'repeat changed legacy ledger or protected evidence'
+result = {'status': 'PASS', 'scope': 'repeat has no legacy ledger/evidence effect',
+          'argv': argv, 'returncode': run.returncode, 'stdout': run.stdout, 'stderr': run.stderr,
+          'files_compared': len(before), 'before': before, 'after': after,
+          'product_tests': 'NOT_RUN', 'independent_review': 'PENDING'}
+raw = (json.dumps(result, indent=2, ensure_ascii=False) + '\n').encode('utf-8')
+output = here / 'IDEMPOTENCE.json'
+if output.exists():
+    assert output.read_bytes() == raw, 'preserved idempotence receipt differs'
+else:
+    with output.open('xb') as stream:
+        stream.write(raw)
+print(json.dumps({'status': 'PASS', 'files_compared': len(before), 'ledger_unchanged': True}))

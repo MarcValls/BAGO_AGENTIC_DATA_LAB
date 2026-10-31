@@ -1,0 +1,5 @@
+{
+  "result": "FAIL",
+  "checks": [],
+  "fatal": "browser.newPage: Target page, context or browser has been closed\n    at C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\.worktrees\\nearest-goals-close-20261031\\docs\\verification\\nearest-goals-close-20261031\\regression\\cascade.mjs:45:27"
+}

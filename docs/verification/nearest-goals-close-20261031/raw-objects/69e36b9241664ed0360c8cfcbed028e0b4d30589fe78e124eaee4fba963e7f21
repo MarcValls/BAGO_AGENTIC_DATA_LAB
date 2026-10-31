@@ -1,0 +1,86 @@
+{
+  "status": "PASS",
+  "completed_at": "2026-10-31T20:10:25.102008+00:00",
+  "scope": "CSS-only follow-up: unchanged callback sources, six focused tests and fresh build",
+  "historical_full_vitest": {
+    "passed": 827,
+    "failed": 0,
+    "new_execution": false,
+    "original_execution_id": "7940dbf9c3b44d209d5858fee97b03ad",
+    "archived_receipt": ".bago/goals/nearest-open-goals-20261031/frontend-r1-runtime/executions/7940dbf9c3b44d209d5858fee97b03ad/receipt.json",
+    "receipt_sha256": "0d1096ea3dd209de883e56643f0f99c7f2fdcf91d38e629ae188ce216d827cc3",
+    "result_sha256": "1289f8550d771fc42649e8130328686f6c2054de7a5ec46cdec60211daed731e"
+  },
+  "focused_now": {
+    "passed": 6,
+    "failed": 0
+  },
+  "commands": [
+    {
+      "argv": [
+        "C:\\Program Files\\nodejs\\npm.cmd",
+        "test",
+        "--",
+        "tests/providers/provider-settings.test.tsx",
+        "--testNamePattern",
+        "Model footer Exit",
+        "--maxWorkers=2",
+        "--reporter=json",
+        "--outputFile=C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\.worktrees\\nearest-goals-close-20261031\\frontend\\nearest-goals-check\\footer-repair\\layout-r2\\focused-vitest.json"
+      ],
+      "returncode": 0,
+      "logs": [
+        {
+          "path": "nearest-goals-check/footer-repair/layout-r2/focused-tests.stdout.log",
+          "sha256": "19d93be51511dc1e463354325e686a38e609ea01e28c590580f86366aea6d3e3"
+        },
+        {
+          "path": "nearest-goals-check/footer-repair/layout-r2/focused-tests.stderr.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ]
+    },
+    {
+      "argv": [
+        "C:\\Program Files\\nodejs\\npm.cmd",
+        "run",
+        "build"
+      ],
+      "returncode": 0,
+      "logs": [
+        {
+          "path": "nearest-goals-check/footer-repair/layout-r2/build.stdout.log",
+          "sha256": "4d5706c50bf47f86e1d8d15238726a6ec2367087a0e45e90a5c393bfb3947785"
+        },
+        {
+          "path": "nearest-goals-check/footer-repair/layout-r2/build.stderr.log",
+          "sha256": "351b524197fb492920789369e7f1a271420c757633fbb553b280a181ac4c31a4"
+        }
+      ]
+    }
+  ],
+  "source_sha256": {
+    "src/App.tsx": "1800630d38ba3f871a721bf6b5e5ff64a3e004a8b1f54ae4841f776abaf0681b",
+    "src/components/ProviderSettings.tsx": "fe849e9fe9f24a09b840e4fdb5540dce098bd74698d525e9033719ec3a51f1d1",
+    "tests/providers/provider-settings.test.tsx": "ac3c8046669a9d59dd7262c696bc4ec9d73b8820874d4e90ac3970bbf17adbaa",
+    "src/components/ProviderSettings.css": "101b81c65d1204d0c8da5a538b69e2a6919eeee7a36cb6dfc7b8a12ae731bc6f"
+  },
+  "preserved_F01": {
+    "nearest-goals-check/footer-repair/TEST_RESULTS.json": "1289f8550d771fc42649e8130328686f6c2054de7a5ec46cdec60211daed731e",
+    "nearest-goals-check/footer-repair/RED_RESULTS.json": "8bb264764cb07f05c7c3e27b105bdded2f06bf3a6f2e94972147a0551860f3b9",
+    "nearest-goals-check/footer-repair/browser-attempt1/BROWSER_RESULTS.json": "a08ca10c77c536ef322031b90874da33bf72e50233fe82d3b5c0e417e6c5b731",
+    "nearest-goals-check/footer-repair/browser-attempt1/failure.png": "4b7b5c949dc21d196ccdd5297c1ab0eef22891d12b04857f3b43d137db775141",
+    "nearest-goals-check/footer-repair/browser-attempt2/BROWSER_RESULTS.json": "1c6004f5f3ff810904afea24c740a03b83cdd33178c2fc3a405fb80803e47774",
+    "nearest-goals-check/footer-repair/browser-attempt2/desktop-after-exit.html": "74876da5f43a98cfa54d49674e86e078bf9b141c33240f0beb041ceb569c9578",
+    "nearest-goals-check/footer-repair/browser-attempt2/desktop-after-exit.png": "4b18ec0a241ed4905c9b2889df1582a631c9434947d2d62433fd427e5687cb0d",
+    "nearest-goals-check/footer-repair/browser-attempt2/desktop-models-after-list-scroll.png": "3f7ede70846aacdae6db98aa233a0d4d72e63279cb8d0bd78c0d744d5dd8c871",
+    "nearest-goals-check/footer-repair/browser-attempt2/desktop-models-before-exit.png": "a0a8e73e3bcd7b4372c355115f09b698b7aa88c894ce5d298cab937f674de553",
+    "nearest-goals-check/footer-repair/browser-attempt2/mobile-after-exit.html": "288749ec34193bd5151d1fd4cd6ba454f19199d216a5a30edf120df979ae53b8",
+    "nearest-goals-check/footer-repair/browser-attempt2/mobile-after-exit.png": "b4b3c3a00c6a9fc5d3d78e296d409372dfa2999c78e2bbe9249c5ad70691721e",
+    "nearest-goals-check/footer-repair/browser-attempt2/mobile-models-after-list-scroll.png": "537195e0927bb8fce43f91a34b65dedde87c4c9f722e83538a67a65c405e6e8b",
+    "nearest-goals-check/footer-repair/browser-attempt2/mobile-models-before-exit.png": "2b0ced9796a563f573a58378e5a039c80d46ee435914d1ef0b0a4c6af50d181d"
+  },
+  "browser": "SEPARATE_CHECK",
+  "independent_review": "PENDING",
+  "provider_calls": "NOT_RUN"
+}

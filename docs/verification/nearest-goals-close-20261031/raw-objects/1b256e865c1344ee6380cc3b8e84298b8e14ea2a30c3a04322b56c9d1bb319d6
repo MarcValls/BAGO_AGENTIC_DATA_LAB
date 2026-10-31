@@ -1,0 +1,70 @@
+{
+  "changed_files": [
+    "src/contracts/decision/evidence.ts",
+    "docs/decision-inspector/contracts/evidence/decision-evidence-v1.md",
+    "tests/contracts/evidence/evidence.test.ts"
+  ],
+  "next_consumers": [
+    "W04",
+    "W05",
+    "W06",
+    "W07"
+  ],
+  "outputs": [
+    {
+      "description": "Conclusion, claim, evidence and provenance projection contract with explicit relation, freshness and deterministic serialization rules.",
+      "kind": "decision-evidence-contract-v1",
+      "path": "src/contracts/decision/evidence.ts",
+      "sha256": "a3af01404b0a7bb91735949c95ee70fabe37d80c706c83eb72603c4ec7195d7e"
+    },
+    {
+      "description": "Frozen contract mapping to existing ADL AgentRun and RetrievalResponse evidence fields, including consumer limits and frontend reconciliation note.",
+      "kind": "decision-evidence-contract-documentation-v1",
+      "path": "docs/decision-inspector/contracts/evidence/decision-evidence-v1.md",
+      "sha256": "3ee0a34a9995268ce45dbd21c6676709d494ee90b238bf6a7978acc6fa70da4a"
+    },
+    {
+      "description": "Tests unsupported claims, multiple and contradictory evidence, stale/current/unknown identity, absent provenance, unresolved references, invalid relations and deterministic JSON.",
+      "kind": "decision-evidence-contract-tests-v1",
+      "path": "tests/contracts/evidence/evidence.test.ts",
+      "sha256": "a351bc15a1dcc50e5d63259238466e38c25f3ea0a1047656e78ecdb23a1cdfc9"
+    }
+  ],
+  "payload_sha256": "e808df2e342e4136bbdf82bf0d6d40ec90c85565acbfbc02e969123bfa201e74",
+  "repository_snapshot": {
+    "branch": "codex/adl-ber-integration-20261019",
+    "head": "585fe4635596b1bd253fb8ba6d5b736ebf133ee9",
+    "head_tree": "9a31954f855d3e38c371eadc145fa488813b9aec",
+    "note": "W02 candidate identity and pre-existing dirty worktree state are inherited from frozen W01 reuse map; W02 changed only its assigned contract scopes."
+  },
+  "residual_risks": [
+    "The existing frontend/src/contracts/decision/evidence.ts remains a separate legacy copy outside W02 write scope; consumer integration must reconcile it in a properly scoped follow-up before claiming frontend consumption of this frozen contract.",
+    "The contract records source metadata and declared claim/evidence relations; it does not verify artifact bytes, citation entailment, BER authorization, BAGO receipt validity or runtime execution.",
+    "BAGO BER evidence references remain external supplied observations; this work does not validate their signature or authority."
+  ],
+  "role": "evidence-provenance-engineer",
+  "status": "DONE",
+  "verification": [
+    {
+      "command": "python .bago/team/kit/scripts/teamctl.py --root . claim W02 --agent /root/ber_evidence_contract",
+      "evidence": "W02 transitioned to CLAIMED before contract edits.",
+      "result": "PASS"
+    },
+    {
+      "command": "npx tsc --ignoreConfig --target ES2022 --module NodeNext --moduleResolution NodeNext --strict --esModuleInterop --skipLibCheck --types node --typeRoots node_modules/@types --outDir $env:TEMP/adl-ber-evidence-contract-w02 ../src/contracts/decision/evidence.ts ../tests/contracts/evidence/evidence.test.ts",
+      "evidence": "Strict TypeScript compilation completed with exit code 0; emitted outside the repository under the system temp directory.",
+      "result": "PASS"
+    },
+    {
+      "command": "node --test <temp>/tests/contracts/evidence/evidence.test.js",
+      "evidence": "4 tests passed; 0 failed. Cases cover explicit unsupported claims, multiple/contradictory links, snapshot freshness and missing provenance, retrieval adaptation, invalid links/relations and canonical JSON.",
+      "result": "PASS"
+    },
+    {
+      "command": "git diff --check -- src/contracts/decision/evidence.ts docs/decision-inspector/contracts/evidence/decision-evidence-v1.md tests/contracts/evidence/evidence.test.ts",
+      "evidence": "No whitespace errors reported for W02 paths.",
+      "result": "PASS"
+    }
+  ],
+  "work_id": "W02"
+}

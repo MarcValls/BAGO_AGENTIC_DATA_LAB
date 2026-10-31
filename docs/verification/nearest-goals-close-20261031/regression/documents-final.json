@@ -1,0 +1,19 @@
+{
+  "status": "PASS",
+  "checks": [
+    "missing_document_does_not_create_files",
+    "fixed_document_ids",
+    "workspace_mismatch_denied",
+    "real_markdown_read",
+    "no_store",
+    "real_nested_json_read",
+    "real_handoff_read",
+    "size_limit",
+    "invalid_encoding",
+    "directory_denied"
+  ],
+  "surface": "real candidate FastAPI in-process and real isolated files",
+  "user_workspace_modified": false,
+  "server_sha256": "f7f6ffc6ffec3d1396a61137e3ae2e3fa4cb70f7561bdb0643887a4923d65320",
+  "document_reader_sha256": "75deaf19bc7fd449663e68b465cac6f387575da8e0a20eabd2dddd3e71c02f34"
+}

@@ -1,0 +1,240 @@
+"""Reconcile one historical goal using its original, identified controller.
+
+Default: read-only evidence/identity checks. --apply: add evidence locally and,
+only for the existing README I01, consume its existing execution receipt.
+No source/README edits, network, migration, re-signing, or new product tests.
+"""
+from __future__ import annotations
+
+import argparse
+import datetime as dt
+import hashlib
+import json
+from pathlib import Path
+import subprocess
+import sys
+import xml.etree.ElementTree as ET
+
+HERE = Path(__file__).resolve().parent
+GOAL = HERE.parent
+REPO = GOAL.parents[2]
+STATE = GOAL / '.bago/team/runtime/state.json'
+LEGACY_CLI = REPO / 'output/bago-suite-repair-20261021/i2/bago suite/scripts/suite_orchestrator.py'
+LEGACY_PY = REPO / 'output/bago-suite-repair-20261021/work/env/windows-py314/Scripts/python.exe'
+CURRENT_CLI = REPO / '.bago/team/kit/scripts/teamctl.py'
+EXPECTED = {
+    'github-update-20261022': {
+        'pr': 62, 'head': 'b0b2f2a2079019fe80e82b836e13c5580a189b70',
+        'merge': 'f253f3700990943755e63717a93d3be99f0e19fa',
+        'run': '39813814372', 'mission': 'ADL_PUBLICATION_TEST_REVIEW_20261022',
+        'base_local': 'f2b34e51ce2e3607490f710f60070f1e4de5759e',
+    },
+    'readme-clarity-20261022': {
+        'pr': 63, 'head': '64a88fbc30bb1b2c0a4cd516281c71be1f65748b',
+        'merge': '2d521170fdf651da482b5bf9d5b229a41412a8d2',
+        'run': '39823019847', 'mission': 'ADL_README_CLARITY_20261022',
+    },
+}
+
+
+def read(path):
+    return json.loads(path.read_bytes())
+
+
+def sha(path):
+    assert path.is_file() and not path.is_symlink(), str(path)
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def canonical(value):
+    return json.dumps(value, sort_keys=True, separators=(',', ':'),
+                      ensure_ascii=False, allow_nan=False).encode('utf-8')
+
+
+def once(path, value):
+    raw = (json.dumps(value, ensure_ascii=False, indent=2) + '\n').encode('utf-8')
+    path.parent.mkdir(parents=True, exist_ok=True)
+    if path.exists():
+        assert path.read_bytes() == raw, f'preserved output differs: {path}'
+    else:
+        with path.open('xb') as stream:
+            stream.write(raw)
+
+
+def command(argv):
+    p = subprocess.run([str(x) for x in argv], cwd=REPO, capture_output=True,
+                       encoding='utf-8', errors='strict', timeout=180)
+    return {'argv': [str(x) for x in argv], 'returncode': p.returncode,
+            'stdout': p.stdout, 'stderr': p.stderr}
+
+
+def legacy(*args):
+    return command([LEGACY_PY, '-B', LEGACY_CLI, 'team', '--root', GOAL, *args])
+
+
+def protected_paths(state):
+    paths = {GOAL / 'mission.json'}
+    for row in state['frozen_scope']['candidates']:
+        paths.add(GOAL / row['path'])
+    for status in state['work_status'].values():
+        if status.get('handoff'):
+            hp = GOAL / status['handoff']['path']
+            paths.add(hp)
+            paths.update(GOAL / item['path'] for item in read(hp)['outputs'])
+    for execution in state.get('executions', {}).values():
+        rp = GOAL / execution['path']
+        paths.add(rp)
+        receipt = read(rp)
+        paths.update(GOAL / row['path'] for row in receipt.get('logs', []))
+        paths.update(GOAL / row['path'] for row in receipt.get('outputs', []))
+    return paths
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--apply', action='store_true')
+    args = parser.parse_args()
+    assert GOAL.name in EXPECTED and HERE.name == 'reconciliation-20261031'
+    assert GOAL.is_relative_to(REPO / '.bago/goals')
+    manifest = HERE / 'MANIFEST.json'
+    if manifest.exists():
+        for row in read(manifest)['files']:
+            target = GOAL / row['path']
+            assert target.resolve().is_relative_to(GOAL)
+            assert sha(target) == row['sha256'], f'reconciliation artifact changed: {target}'
+    expected = EXPECTED[GOAL.name]
+    state = read(STATE)
+    assert state['mission']['mission_id'] == expected['mission']
+    assert state['protocol_version'] == '0.2.0-suite-repair'
+    assert state['lifecycle'] in {'ACTIVE', 'CLOSED'}, 'STOP/pause blocks effects'
+    baseline_path = HERE / 'protected-before.json'
+    baseline = read(baseline_path) if baseline_path.exists() else {
+        p.relative_to(GOAL).as_posix(): sha(p) for p in sorted(protected_paths(state))
+    }
+    assert all(sha(GOAL / path) == digest for path, digest in baseline.items())
+
+    modern = command([sys.executable, '-B', CURRENT_CLI, '--root', GOAL, 'verify'])
+    assert modern['returncode'] == 1 and 'LEGACY_UNVERIFIED' in modern['stdout']
+    original = legacy('verify')
+    assert original['returncode'] == 0 and read_json_text(original['stdout'])['status'] == 'PASS'
+
+    pr_path = HERE / f"github-pr{expected['pr']}.json"
+    ci_path = HERE / 'github-ci.json'
+    pr, ci = read(pr_path), read(ci_path)
+    assert pr['number'] == expected['pr'] and pr['state'] == 'MERGED'
+    assert pr['headRefOid'] == expected['head']
+    assert pr['mergeCommit']['oid'] == expected['merge']
+    assert ci['headSha'] == expected['head'] and ci['status'] == 'completed'
+    assert ci['conclusion'] == 'success' and ci['url'].endswith('/' + expected['run'])
+    trees = command(['git', 'rev-parse', expected['head'] + '^{tree}', expected['merge'] + '^{tree}'])
+    assert trees['returncode'] == 0
+    tree_ids = trees['stdout'].splitlines()
+    assert len(tree_ids) == 2 and tree_ids[0] == tree_ids[1]
+    publication_proof = {'pr': pr, 'ci': ci, 'tree': tree_ids[0],
+                         'input_sha256': {pr_path.name: sha(pr_path), ci_path.name: sha(ci_path)}}
+    if GOAL.name == 'github-update-20261022':
+        ancestry = command(['git', 'merge-base', '--is-ancestor', expected['base_local'], expected['head']])
+        assert ancestry['returncode'] == 0
+        counts = junit_counts(REPO / 'docs/verification/github-update-20261022/backend-junit.xml')
+        assert counts == {'tests': 537, 'failed': 0, 'errors': 0, 'skipped': 1, 'passed': 536}
+        publication_proof['local_candidate_ancestor'] = ancestry
+        assert state['lifecycle'] == 'CLOSED' and state['terminal_gate'] == 'VALIDATED_SCOPED_TASK'
+    else:
+        receipt = read(GOAL / '.bago/team/runtime/executions/70abb24fbde1402c8cde8876b3bd4521/receipt.json')
+        assert receipt['result'] == 'PASS' and receipt['returncode'] == 0
+        assert receipt['work_id'] == 'I01' and receipt['check_id'] == 'final'
+        assert receipt['mission_id'] == expected['mission']
+        assert receipt['candidate_id'] == state['candidate_id'] and receipt['scope_sha256'] == state['scope_sha256']
+        for output in receipt['outputs']:
+            assert sha(GOAL / output['path']) == output['sha256']
+        result = read(GOAL / 'reviews/I01/RESULT.json')
+        assert result['status'] == 'PASS'
+        assert all(row['exit_code'] == 0 for row in result['commands'])
+        counts = junit_counts(GOAL / 'reviews/I01/full-suite.xml')
+        assert counts == {'tests': 550, 'failed': 0, 'errors': 0, 'skipped': 1, 'passed': 549}
+        readme = subprocess.run(['git', 'show', expected['head'] + ':README.md'], cwd=REPO,
+                                capture_output=True, timeout=30, check=True).stdout
+        assert hashlib.sha256(readme).hexdigest() == result['readme_sha256']
+        prior_ci = read(GOAL / 'ci/latest.json')
+        assert any(r['databaseId'] == 39823364746 and r['conclusion'] == 'cancelled' for r in prior_ci['runs'])
+        publication_proof['preserved_cancelled_ci'] = 39823364746
+    observed = {'status': 'PASS', 'scope': 'historical evidence reconciliation, not current product regression',
+                'goal': GOAL.name, 'historical_candidate': expected['head'],
+                'modern_controller_legacy_rejection': modern, 'original_controller_verify': original,
+                'publication': publication_proof, 'historical_local_junit': counts,
+                'independent_review_of_this_reconciliation': 'PENDING',
+                'current_checkout_tests': 'NOT_RUN', 'new_product_tests': 'NOT_RUN'}
+    if args.apply:
+        once(baseline_path, baseline)
+        snapshots = HERE / 'preserved'
+        snapshots.mkdir(exist_ok=True)
+        for src, name in [(STATE, 'legacy-state-before.json'),
+                          (GOAL / '.bago/team/runtime/events.jsonl', 'legacy-events-before.jsonl')]:
+            dst = snapshots / name
+            if not dst.exists():
+                with dst.open('xb') as output:
+                    output.write(src.read_bytes())
+        evidence_path = HERE / 'evidence-reconciliation.json'
+        if evidence_path.exists():
+            previous = read(evidence_path)
+            assert previous['publication'] == publication_proof
+            assert previous['historical_local_junit'] == counts
+        else:
+            once(evidence_path, observed)
+        if GOAL.name == 'readme-clarity-20261022' and state['lifecycle'] == 'ACTIVE':
+            handoff = {
+                'work_id': 'I01', 'role': 'readme-integrator', 'status': 'DONE',
+                'mission_id': state['mission']['mission_id'], 'candidate_id': state['candidate_id'],
+                'scope_sha256': state['scope_sha256'],
+                'changed_files': [],
+                'outputs': [{'kind': 'HISTORICAL_FINAL_GATE', 'path': item['path'], 'sha256': item['sha256']}
+                            for item in receipt['outputs']],
+                'verification': [{'id': 'final', 'command': receipt['command_text'], 'result': 'PASS',
+                                  'execution_id': receipt['execution_id'],
+                                  'evidence': '.bago/team/runtime/executions/' + receipt['execution_id'] + '/receipt.json'}],
+                'findings': [],
+                'residual_risks': [
+                    'Late acceptance on 2026-10-31 of the unchanged real 2026-10-22 receipt; no test rerun.',
+                    'Product scope is the historical README candidate 64a88fbc; current checkout is NOT_RUN.',
+                    'CI cancelled run39823364746 is preserved; run39823019847 succeeded for the same exact head.',
+                    'Modern controller rejects legacy state; original identified controller is used without migration.',
+                    'Independent review of new reconciliation is PENDING and is not claimed by this handoff.',
+                ],
+                'next_consumers': [],
+            }
+            handoff['payload_sha256'] = hashlib.sha256(canonical(handoff)).hexdigest()
+            hp = GOAL / 'reviews/I01/handoff-reconciliation-20261031-attempt2.json'
+            once(hp, handoff)
+            submitted = legacy('handoff', 'I01', '--file', hp)
+            once(HERE / 'legacy-I01-handoff-submission-attempt2.json', submitted)
+            assert submitted['returncode'] == 0, submitted
+            gate = legacy('close')
+            once(HERE / 'legacy-close.json', gate)
+            assert gate['returncode'] == 0, gate
+        after = legacy('verify')
+        assert after['returncode'] == 0, after
+        assert all(sha(GOAL / path) == digest for path, digest in baseline.items())
+        current = read(STATE)
+        assert current['lifecycle'] == 'CLOSED' and current['terminal_gate'] == 'VALIDATED_SCOPED_TASK'
+        once(HERE / 'legacy-verify-after.json', after)
+        print(json.dumps({'status': 'PASS', 'goal': GOAL.name,
+                          'legacy_gate': current['terminal_gate'], 'independent_review': 'PENDING'}, ensure_ascii=False))
+    else:
+        print(json.dumps(observed, ensure_ascii=False, indent=2))
+
+
+def read_json_text(text):
+    return json.loads(text)
+
+
+def junit_counts(path):
+    root = ET.fromstring(path.read_bytes())
+    suites = [root] if root.tag == 'testsuite' else root.findall('testsuite')
+    values = {key: sum(int(s.attrib.get(attr, 0)) for s in suites)
+              for key, attr in [('tests', 'tests'), ('failed', 'failures'), ('errors', 'errors'), ('skipped', 'skipped')]}
+    values['passed'] = values['tests'] - values['failed'] - values['errors'] - values['skipped']
+    return values
+
+
+if __name__ == '__main__':
+    main()

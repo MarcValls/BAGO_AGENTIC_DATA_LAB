@@ -1,0 +1,60 @@
+{
+  "result": "FAIL",
+  "checks": [
+    {
+      "goal": "all",
+      "id": "page_identity",
+      "result": "FAIL"
+    },
+    {
+      "goal": "context-viewer",
+      "id": "structured_lazy_documents",
+      "result": "PASS"
+    },
+    {
+      "goal": "context-viewer",
+      "id": "malformed_and_workspace_change",
+      "result": "PASS"
+    },
+    {
+      "goal": "workspace-compact",
+      "id": "compact_and_mobile",
+      "result": "PASS"
+    },
+    {
+      "goal": "model-assignments",
+      "id": "explicit_save_filter_reload",
+      "result": "PASS"
+    },
+    {
+      "goal": "model-footer",
+      "id": "footer_desktop_mobile_exit",
+      "result": "PASS"
+    },
+    {
+      "goal": "provider-status-line",
+      "id": "state_lines_accessibility",
+      "result": "FAIL"
+    },
+    {
+      "goal": "eval-equal-height",
+      "id": "all_desktop_states_and_mobile",
+      "result": "PASS"
+    },
+    {
+      "goal": "agent-saved-tasks",
+      "id": "explicit_dates_save_history_copy",
+      "result": "PASS"
+    },
+    {
+      "goal": "square-color-ui",
+      "id": "computed_container_geometry",
+      "result": "PASS"
+    },
+    {
+      "goal": "all",
+      "id": "no_framework_overlay_or_uncaught_errors",
+      "result": "PASS"
+    }
+  ]
+}

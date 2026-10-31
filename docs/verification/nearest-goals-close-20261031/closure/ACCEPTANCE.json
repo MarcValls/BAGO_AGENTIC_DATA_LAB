@@ -1,0 +1,38 @@
+{
+  "status": "VALIDATED_SCOPED_TASK",
+  "product_commit": "b1b4d524a0e936300a71da36e0c0276e061fa34e",
+  "accepted_at": "2026-10-31T20:48:09.192064+00:00",
+  "accepted_goals": [
+    "agent-saved-tasks-20261020",
+    "context-viewer-20261020",
+    "eval-equal-height-20261020",
+    "model-assignments-20261020",
+    "model-footer-20261020",
+    "provider-status-line-20261020",
+    "workspace-compact-20261020"
+  ],
+  "historical_accepted_goals": [
+    "github-update-20261022",
+    "readme-clarity-20261022"
+  ],
+  "remaining_goals": [
+    "square-color-ui-20261020"
+  ],
+  "initial_open_partial": 24,
+  "closed_this_operation": 9,
+  "remaining_open_partial": 15,
+  "original_continuity_mission": "NO_GO; outside this scoped closure",
+  "independent_review_sha256": "54f7453b00ed56f467aba13efbbdf7e68b9841754ad5f313b768066efecc8f87",
+  "goal_matrix_sha256": "cd6c70396d334f420ce0f281129f7343793a6a28cb244e20e9f667de1a7786b0",
+  "regression_sha256": "ddc5806cefcf64ffeafba4d91cf03689c3202203f26310b96b65fc0122eacf9a",
+  "initial_remote_base": "8065906f4560f4f0b0951cc445b673ecad7ce175",
+  "refreshed_remote_base": "8065906f4560f4f0b0951cc445b673ecad7ce175",
+  "acceptance_authority": "User delegated independent review and explicit scoped acceptance to the orchestrator.",
+  "limits": [
+    "No merge or deployment to main/original dirty checkout.",
+    "Windows full suite failures preserved; Linux Docker final suite PASS; Windows-only OCR/CIM skipped.",
+    "UI fixtures and local provider doubles do not establish live provider inference.",
+    "Not a global BAGO5 product closure or original continuity mission acceptance.",
+    "Square/color goal remains open for original surfaces not yet reviewed."
+  ]
+}

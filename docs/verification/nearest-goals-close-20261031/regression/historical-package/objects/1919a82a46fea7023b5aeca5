@@ -1,0 +1,106 @@
+{
+  "mission_id": "ADL_README_CLARITY_20261022",
+  "operation": "REPAIR",
+  "max_concurrency": 2,
+  "terminal_work_items": [
+    "I01"
+  ],
+  "audit_scope": {
+    "include": [
+      "inputs/**"
+    ],
+    "exclude": [],
+    "evidence_roots": [
+      "reviews"
+    ],
+    "fixture_roots": [
+      "fixtures"
+    ],
+    "preserved_roots": [
+      "preserved"
+    ]
+  },
+  "work_items": [
+    {
+      "id": "B01",
+      "role": "readme-builder",
+      "title": "readme-builder",
+      "depends_on": [],
+      "write_scopes": [
+        "deliveries/B01/**",
+        "reviews/B01/**",
+        "fixtures/B01/**"
+      ],
+      "output_scopes": [
+        "deliveries/B01/**",
+        "reviews/B01/**",
+        "fixtures/B01/**"
+      ],
+      "required_checks": [
+        "build"
+      ]
+    },
+    {
+      "id": "T01",
+      "role": "readme-test-author",
+      "title": "readme-test-author",
+      "depends_on": [],
+      "write_scopes": [
+        "deliveries/T01/**",
+        "reviews/T01/**",
+        "fixtures/T01/**"
+      ],
+      "output_scopes": [
+        "deliveries/T01/**",
+        "reviews/T01/**",
+        "fixtures/T01/**"
+      ],
+      "required_checks": [
+        "tests"
+      ]
+    },
+    {
+      "id": "V01",
+      "role": "readme-independent-review",
+      "title": "readme-independent-review",
+      "depends_on": [
+        "B01",
+        "T01"
+      ],
+      "write_scopes": [
+        "deliveries/V01/**",
+        "reviews/V01/**",
+        "fixtures/V01/**"
+      ],
+      "output_scopes": [
+        "deliveries/V01/**",
+        "reviews/V01/**",
+        "fixtures/V01/**"
+      ],
+      "required_checks": [
+        "review"
+      ]
+    },
+    {
+      "id": "I01",
+      "role": "readme-integrator",
+      "title": "readme-integrator",
+      "depends_on": [
+        "V01"
+      ],
+      "write_scopes": [
+        "deliveries/I01/**",
+        "reviews/I01/**",
+        "fixtures/I01/**"
+      ],
+      "output_scopes": [
+        "deliveries/I01/**",
+        "reviews/I01/**",
+        "fixtures/I01/**"
+      ],
+      "required_checks": [
+        "final"
+      ]
+    }
+  ]
+}

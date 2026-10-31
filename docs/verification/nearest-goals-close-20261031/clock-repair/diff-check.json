@@ -1,0 +1,16 @@
+{
+  "argv": [
+    "git",
+    "-c",
+    "core.whitespace=cr-at-eol",
+    "diff",
+    "--check",
+    "--",
+    "src/api/server.py",
+    "tests/test_agent_delegation.py"
+  ],
+  "returncode": 0,
+  "stdout": "",
+  "stderr": "",
+  "reason_for_cr_at_eol": "The tracked test file already uses CRLF (389 original lines); additions retain that convention. No persistent Git setting changed."
+}

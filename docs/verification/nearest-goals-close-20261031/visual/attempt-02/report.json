@@ -1,0 +1,678 @@
+{
+  "schema": "bago.nearest-goals.visual.v1",
+  "candidate": "8065906f4560f4f0b0951cc445b673ecad7ce175",
+  "started_at": "2026-10-31T18:37:09.534Z",
+  "browser": "Brave headless",
+  "browser_plugin": "Invocation failed: No browser is available; explicit fallback authorized",
+  "surface": "Actual candidate React components and CSS mounted in dedicated verification entry; synthetic intercepted API, not production app integration",
+  "provider_calls": "NOT_RUN",
+  "backend_effects": "NOT_RUN",
+  "checks": [
+    {
+      "goal": "all",
+      "id": "page_identity",
+      "result": "PASS",
+      "detail": {
+        "url": "http://127.0.0.1:5197/nearest-goals-check/?surface=workspace",
+        "title": "BAGO · Espacio de trabajo",
+        "note": "Candidate i18n owns document title; no static harness title assumption"
+      }
+    },
+    {
+      "goal": "context-viewer",
+      "id": "structured_lazy_documents",
+      "result": "PASS",
+      "detail": {
+        "documents": 3,
+        "lazy": true,
+        "syntheticContent": true
+      }
+    },
+    {
+      "goal": "context-viewer",
+      "id": "malformed_and_workspace_change",
+      "result": "PASS",
+      "detail": {
+        "previousContentCleared": true,
+        "missingVisible": true,
+        "malformedFallback": true
+      }
+    },
+    {
+      "goal": "workspace-compact",
+      "id": "compact_and_mobile",
+      "result": "PASS",
+      "detail": {
+        "client": 364,
+        "scroll": 364
+      }
+    },
+    {
+      "goal": "model-assignments",
+      "id": "explicit_save_filter_reload",
+      "result": "PASS",
+      "detail": {
+        "writeIntercepted": true,
+        "noBackendPersistenceClaim": true
+      }
+    },
+    {
+      "goal": "model-footer",
+      "id": "footer_desktop_mobile_exit",
+      "result": "PASS",
+      "detail": {
+        "desktop": {
+          "parentBottom": 830.1875,
+          "footerBottom": 830.1875,
+          "background": "rgba(0, 0, 0, 0)",
+          "border": "0px",
+          "client": 1416,
+          "scroll": 1416
+        },
+        "mobile": {
+          "parentBottom": 904.375,
+          "footerBottom": 904.375,
+          "background": "rgba(0, 0, 0, 0)",
+          "border": "0px",
+          "client": 366,
+          "scroll": 366
+        },
+        "exit": true
+      }
+    },
+    {
+      "goal": "provider-status-line",
+      "id": "state_lines_accessibility",
+      "result": "PASS",
+      "detail": [
+        {
+          "id": "provider-tab-ollama",
+          "usable": true,
+          "lineHeight": "3px",
+          "linePosition": "absolute",
+          "lineBottom": "0px",
+          "color": "rgb(36, 211, 107)",
+          "status": "REGISTRADO · ACTIVADO",
+          "oldDots": 0
+        },
+        {
+          "id": "provider-tab-codex",
+          "usable": true,
+          "lineHeight": "3px",
+          "linePosition": "absolute",
+          "lineBottom": "0px",
+          "color": "rgb(36, 211, 107)",
+          "status": "REGISTRADO · ACTIVADO",
+          "oldDots": 0
+        },
+        {
+          "id": "provider-tab-github-copilot",
+          "usable": false,
+          "lineHeight": "3px",
+          "linePosition": "absolute",
+          "lineBottom": "0px",
+          "color": "rgb(240, 68, 68)",
+          "status": "NO REGISTRADO · NO DISPONIBLE",
+          "oldDots": 0
+        },
+        {
+          "id": "provider-tab-anthropic",
+          "usable": false,
+          "lineHeight": "3px",
+          "linePosition": "absolute",
+          "lineBottom": "0px",
+          "color": "rgb(240, 68, 68)",
+          "status": "NO REGISTRADO · NO DISPONIBLE",
+          "oldDots": 0
+        },
+        {
+          "id": "provider-tab-openrouter",
+          "usable": false,
+          "lineHeight": "3px",
+          "linePosition": "absolute",
+          "lineBottom": "0px",
+          "color": "rgb(240, 68, 68)",
+          "status": "NO REGISTRADO · NO DISPONIBLE",
+          "oldDots": 0
+        },
+        {
+          "id": "provider-tab-opencode",
+          "usable": false,
+          "lineHeight": "3px",
+          "linePosition": "absolute",
+          "lineBottom": "0px",
+          "color": "rgb(240, 68, 68)",
+          "status": "NO REGISTRADO · NO DISPONIBLE",
+          "oldDots": 0
+        }
+      ]
+    },
+    {
+      "goal": "eval-equal-height",
+      "id": "all_desktop_states_and_mobile",
+      "result": "PASS",
+      "detail": {
+        "observed": [
+          {
+            "state": "initial",
+            "sidebar": {
+              "top": 127.1875,
+              "bottom": 478.328125,
+              "height": 351.140625
+            },
+            "panel": {
+              "top": 127.1875,
+              "bottom": 478.328125,
+              "height": 351.140625
+            }
+          },
+          {
+            "state": "review",
+            "sidebar": {
+              "top": 127.1875,
+              "bottom": 596.03125,
+              "height": 468.84375
+            },
+            "panel": {
+              "top": 127.1875,
+              "bottom": 596.03125,
+              "height": 468.84375
+            }
+          },
+          {
+            "state": "saved_result",
+            "sidebar": {
+              "top": 127.1875,
+              "bottom": 627.328125,
+              "height": 500.140625
+            },
+            "panel": {
+              "top": 127.1875,
+              "bottom": 627.328125,
+              "height": 500.140625
+            }
+          },
+          {
+            "state": "collapsed_sidebar",
+            "sidebar": {
+              "top": 127.1875,
+              "bottom": 627.328125,
+              "height": 500.140625
+            },
+            "panel": {
+              "top": 127.1875,
+              "bottom": 627.328125,
+              "height": 500.140625
+            }
+          },
+          {
+            "state": "new_suite",
+            "sidebar": {
+              "top": 127.1875,
+              "bottom": 1040.96875,
+              "height": 913.78125
+            },
+            "panel": {
+              "top": 127.1875,
+              "bottom": 1040.96875,
+              "height": 913.78125
+            }
+          }
+        ],
+        "mobile": {
+          "client": 364,
+          "scroll": 364
+        }
+      }
+    },
+    {
+      "goal": "agent-saved-tasks",
+      "id": "explicit_dates_save_history_copy",
+      "result": "PASS",
+      "detail": {
+        "savedSyntheticDate": true,
+        "explicitPostCalls": 1,
+        "copyTriggeredCalls": 0,
+        "oldFixtureUnchanged": true,
+        "escapedHistory": true,
+        "readonlyHistory": true,
+        "effectRuntime": "NOT_RUN",
+        "historyCopy": "PASS_SYNTHETIC_API"
+      }
+    },
+    {
+      "goal": "square-color-ui",
+      "id": "computed_container_geometry",
+      "result": "PASS",
+      "detail": {
+        "collected": [
+          {
+            "surface": "workspace",
+            "containers": [
+              {
+                "tag": "SECTION",
+                "class": "workspace-picker",
+                "radius": "0px",
+                "border": "rgb(197, 211, 228)",
+                "background": "rgba(0, 0, 0, 0)"
+              },
+              {
+                "tag": "SECTION",
+                "class": "context-locations workspace-context",
+                "radius": "0px",
+                "border": "rgb(197, 211, 228)",
+                "background": "rgba(0, 0, 0, 0)"
+              },
+              {
+                "tag": "SECTION",
+                "class": "workspace-memory",
+                "radius": "0px",
+                "border": "rgb(41, 61, 83)",
+                "background": "rgba(0, 0, 0, 0)"
+              }
+            ]
+          },
+          {
+            "surface": "models",
+            "containers": [
+              {
+                "tag": "SECTION",
+                "class": "model-assignments",
+                "radius": "0px",
+                "border": "rgb(219, 232, 246)",
+                "background": "rgba(0, 0, 0, 0)"
+              },
+              {
+                "tag": "SECTION",
+                "class": "model-provider-group",
+                "radius": "0px",
+                "border": "rgb(219, 232, 246)",
+                "background": "rgba(0, 0, 0, 0)"
+              }
+            ]
+          },
+          {
+            "surface": "providers",
+            "containers": [
+              {
+                "tag": "SECTION",
+                "class": "provider-settings",
+                "radius": "0px",
+                "border": "rgb(226, 232, 240)",
+                "background": "rgba(0, 0, 0, 0)"
+              },
+              {
+                "tag": "SECTION",
+                "class": "provider-pane",
+                "radius": "0px",
+                "border": "rgb(226, 232, 240)",
+                "background": "rgb(15, 27, 42)"
+              }
+            ]
+          },
+          {
+            "surface": "evaluation",
+            "containers": [
+              {
+                "tag": "SECTION",
+                "class": "evaluation-lab",
+                "radius": "0px",
+                "border": "rgb(52, 72, 95)",
+                "background": "rgb(11, 20, 34)"
+              },
+              {
+                "tag": "ASIDE",
+                "class": "eval-suites ",
+                "radius": "0px",
+                "border": "rgb(52, 72, 95)",
+                "background": "rgb(16, 29, 46)"
+              },
+              {
+                "tag": "SECTION",
+                "class": "eval-selection",
+                "radius": "0px",
+                "border": "rgb(107, 156, 197)",
+                "background": "rgb(16, 29, 46)"
+              }
+            ]
+          },
+          {
+            "surface": "tasks",
+            "containers": [
+              {
+                "tag": "SECTION",
+                "class": "agent-tasks",
+                "radius": "0px",
+                "border": "rgb(226, 232, 240)",
+                "background": "rgba(0, 0, 0, 0)"
+              },
+              {
+                "tag": "SECTION",
+                "class": "agent-task-editor",
+                "radius": "0px",
+                "border": "rgb(107, 156, 197)",
+                "background": "rgb(17, 31, 47)"
+              },
+              {
+                "tag": "DETAILS",
+                "class": "agent-task-dates",
+                "radius": "0px",
+                "border": "rgb(226, 232, 240)",
+                "background": "rgb(27, 37, 48)"
+              },
+              {
+                "tag": "SECTION",
+                "class": "agent-task-history",
+                "radius": "0px",
+                "border": "rgb(162, 149, 195)",
+                "background": "rgb(22, 30, 45)"
+              },
+              {
+                "tag": "DETAILS",
+                "class": "agent-task-run",
+                "radius": "0px",
+                "border": "rgb(45, 66, 87)",
+                "background": "rgb(14, 25, 39)"
+              },
+              {
+                "tag": "DETAILS",
+                "class": "agent-task-run",
+                "radius": "0px",
+                "border": "rgb(45, 66, 87)",
+                "background": "rgb(14, 25, 39)"
+              }
+            ]
+          }
+        ],
+        "otherAppScreens": "NOT_RUN",
+        "colors": "COMPUTED_AND_SCREENSHOT_RECORDED_FOR_TESTED_COMPONENTS"
+      }
+    },
+    {
+      "goal": "all",
+      "id": "no_framework_overlay_or_uncaught_errors",
+      "result": "PASS",
+      "detail": {
+        "uncaughtErrors": 0,
+        "consoleMessages": 1
+      }
+    }
+  ],
+  "screenshots": [
+    "workspace-expanded-desktop.png",
+    "workspace-missing-after-switch.png",
+    "workspace-mobile.png",
+    "models-desktop.png",
+    "models-mobile.png",
+    "provider-lines-desktop.png",
+    "provider-lines-mobile.png",
+    "evaluation-results-desktop.png",
+    "evaluation-mobile.png",
+    "tasks-desktop.png",
+    "tasks-mobile.png"
+  ],
+  "console": [
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+    }
+  ],
+  "requests": [
+    {
+      "path": "/api/chat/context",
+      "method": "GET",
+      "body": null
+    },
+    {
+      "path": "/api/chat/context/document/project-context",
+      "method": "GET",
+      "body": null
+    },
+    {
+      "path": "/api/chat/context/document/project-state",
+      "method": "GET",
+      "body": null
+    },
+    {
+      "path": "/api/chat/context/document/active-handoff",
+      "method": "GET",
+      "body": null
+    },
+    {
+      "path": "/api/chat/context/document/project-state",
+      "method": "GET",
+      "body": null
+    },
+    {
+      "path": "/api/workspace/select",
+      "method": "POST",
+      "body": {
+        "path": "C:/SYNTHETIC/nearest-goals/project-b"
+      }
+    },
+    {
+      "path": "/api/chat/context",
+      "method": "GET",
+      "body": null
+    },
+    {
+      "path": "/api/chat/context/document/project-context",
+      "method": "GET",
+      "body": null
+    },
+    {
+      "path": "/api/providers/model-policy",
+      "method": "GET",
+      "body": null
+    },
+    {
+      "path": "/api/providers/model-policy",
+      "method": "PUT",
+      "body": {
+        "models": [
+          {
+            "provider_id": "ollama-cloud",
+            "model_id": "alpha",
+            "chat": true,
+            "orchestrator": true,
+            "agent_types": [
+              "rag"
+            ]
+          },
+          {
+            "provider_id": "ollama-cloud",
+            "model_id": "beta",
+            "chat": true,
+            "orchestrator": true,
+            "agent_types": []
+          }
+        ],
+        "main_chat": "ollama-cloud|alpha",
+        "expected_revision": "policy_1"
+      }
+    },
+    {
+      "path": "/api/providers/model-policy",
+      "method": "GET",
+      "body": null
+    },
+    {
+      "path": "/api/chat/context",
+      "method": "GET",
+      "body": null
+    },
+    {
+      "path": "/api/providers/ollama/status",
+      "method": "GET",
+      "body": null
+    },
+    {
+      "path": "/api/providers/registry",
+      "method": "GET",
+      "body": null
+    },
+    {
+      "path": "/api/providers/ollama/models",
+      "method": "GET",
+      "body": null
+    },
+    {
+      "path": "/api/agents/list",
+      "method": "GET",
+      "body": null
+    },
+    {
+      "path": "/api/providers/ollama/models",
+      "method": "GET",
+      "body": null
+    },
+    {
+      "path": "/api/providers/ollama/status",
+      "method": "GET",
+      "body": null
+    },
+    {
+      "path": "/api/evaluations/suites",
+      "method": "GET",
+      "body": null
+    },
+    {
+      "path": "/api/evaluations/runs",
+      "method": "GET",
+      "body": null
+    },
+    {
+      "path": "/api/agents/list",
+      "method": "GET",
+      "body": null
+    },
+    {
+      "path": "/api/agents/fixture-agent/task",
+      "method": "GET",
+      "body": null
+    },
+    {
+      "path": "/api/agents/fixture-agent/task-runs",
+      "method": "GET",
+      "body": null
+    },
+    {
+      "path": "/api/agents/fixture-agent/task",
+      "method": "GET",
+      "body": null
+    },
+    {
+      "path": "/api/agents/fixture-agent/task-runs",
+      "method": "GET",
+      "body": null
+    },
+    {
+      "path": "/api/agents/fixture-agent/task",
+      "method": "PUT",
+      "body": {
+        "task": {
+          "prompt": "Revisa ventas de {{fecha_1}}",
+          "dates": [
+            {
+              "key": "fecha_1",
+              "label": "Entrega",
+              "value": "2026-11-05"
+            }
+          ]
+        },
+        "expected_revision": "revision_1"
+      }
+    },
+    {
+      "path": "/api/agents/fixture-agent/task-runs",
+      "method": "POST",
+      "body": {
+        "expected_revision": "revision_1793471839292",
+        "confirmed": true,
+        "source_run_id": null
+      }
+    },
+    {
+      "path": "/api/chat/context",
+      "method": "GET",
+      "body": null
+    },
+    {
+      "path": "/api/providers/model-policy",
+      "method": "GET",
+      "body": null
+    },
+    {
+      "path": "/api/providers/ollama/status",
+      "method": "GET",
+      "body": null
+    },
+    {
+      "path": "/api/providers/registry",
+      "method": "GET",
+      "body": null
+    },
+    {
+      "path": "/api/providers/ollama/models",
+      "method": "GET",
+      "body": null
+    },
+    {
+      "path": "/api/agents/list",
+      "method": "GET",
+      "body": null
+    },
+    {
+      "path": "/api/providers/ollama/models",
+      "method": "GET",
+      "body": null
+    },
+    {
+      "path": "/api/providers/ollama/status",
+      "method": "GET",
+      "body": null
+    },
+    {
+      "path": "/api/evaluations/suites",
+      "method": "GET",
+      "body": null
+    },
+    {
+      "path": "/api/evaluations/runs",
+      "method": "GET",
+      "body": null
+    },
+    {
+      "path": "/api/agents/list",
+      "method": "GET",
+      "body": null
+    },
+    {
+      "path": "/api/agents/fixture-agent/task",
+      "method": "GET",
+      "body": null
+    },
+    {
+      "path": "/api/agents/fixture-agent/task-runs",
+      "method": "GET",
+      "body": null
+    },
+    {
+      "path": "/api/agents/fixture-agent/task",
+      "method": "GET",
+      "body": null
+    },
+    {
+      "path": "/api/agents/fixture-agent/task-runs",
+      "method": "GET",
+      "body": null
+    }
+  ],
+  "page_identity": {
+    "title": "BAGO · Espacio de trabajo",
+    "url": "http://127.0.0.1:5197/nearest-goals-check/?surface=tasks"
+  },
+  "finished_at": "2026-10-31T18:37:22.607Z",
+  "result": "PASS",
+  "acceptance_scope": "Rendered candidate components only; no backend effect or full application integration validation"
+}

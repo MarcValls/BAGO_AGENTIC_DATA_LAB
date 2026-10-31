@@ -1,0 +1,5 @@
+Traceback (most recent call last):
+  File "C:\Users\AMTEC_Terminal_1º\Desktop\BAGO5_ADL\.worktrees\nearest-goals-close-20261031\.bago\goals\nearest-open-goals-20261031\accept_eligible.py", line 22, in <module>
+    assert matrix['candidate_head'] == final['candidate_head']
+           ~~~~~~^^^^^^^^^^^^^^^^^^
+KeyError: 'candidate_head'

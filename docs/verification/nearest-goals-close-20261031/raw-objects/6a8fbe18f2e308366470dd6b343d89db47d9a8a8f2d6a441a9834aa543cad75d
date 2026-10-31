@@ -1,0 +1,8 @@
+Traceback (most recent call last):
+  File "C:\Users\AMTEC_Terminal_1º\Desktop\BAGO5_ADL\.worktrees\nearest-goals-close-20261031\frontend\nearest-goals-check\footer-repair\run_footer_tests.py", line 56, in <module>
+    main()
+    ~~~~^^
+  File "C:\Users\AMTEC_Terminal_1º\Desktop\BAGO5_ADL\.worktrees\nearest-goals-close-20261031\frontend\nearest-goals-check\footer-repair\run_footer_tests.py", line 36, in main
+    assert run.returncode == 0, records[-1]
+           ^^^^^^^^^^^^^^^^^^^
+AssertionError: {'command': ['C:\\Program Files\\nodejs\\npm.cmd', 'test', '--', '--maxWorkers=2', '--reporter=json', '--outputFile=C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\.worktrees\\nearest-goals-close-20261031\\frontend\\nearest-goals-check\\footer-repair\\green-vitest.json'], 'returncode': 1, 'logs': [{'path': 'nearest-goals-check/footer-repair/green-npm-test.stdout.log', 'sha256': 'a45ddd70188b44b798ebce8ac3e61015367c1b9fc9e9ab6cb071b2922b418eb7'}, {'path': 'nearest-goals-check/footer-repair/green-npm-test.stderr.log', 'sha256': 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855'}]}

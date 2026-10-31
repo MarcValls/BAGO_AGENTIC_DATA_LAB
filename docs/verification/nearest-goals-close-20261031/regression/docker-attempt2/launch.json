@@ -1,0 +1,26 @@
+{
+  "image_id": "sha256:a78b74ba48e7c400f5189e966e4130394699cfd97ef5742b9c0103970c6a50b5",
+  "candidate_head": "8065906f4560f4f0b0951cc445b673ecad7ce175",
+  "archive_sha256": "30ac603f338ae1611189796c89abfb5169e467fa90d554f3ed082c9db6eb228b",
+  "source": "git archive HEAD plus unchanged check script and failed-selection XML; Linux checkout bytes",
+  "argv": [
+    "docker",
+    "run",
+    "--rm",
+    "-i",
+    "--name",
+    "bago-near-archive-bd5fe75f81",
+    "--network",
+    "none",
+    "--mount",
+    "type=bind,source=C:\\Users\\AMTEC_Terminal_1\u00ba\\Desktop\\BAGO5_ADL\\.worktrees\\nearest-goals-close-20261031\\docs\\verification\\nearest-goals-close-20261031\\regression\\docker-attempt2,target=/results",
+    "--entrypoint",
+    "python",
+    "sha256:a78b74ba48e7c400f5189e966e4130394699cfd97ef5742b9c0103970c6a50b5",
+    "-B",
+    "-c",
+    "\nfrom pathlib import Path\nimport runpy,shutil,sys,tarfile\nroot=Path('/workspace'); root.mkdir(exist_ok=True)\nwith tarfile.open(fileobj=sys.stdin.buffer,mode='r|') as archive:\n    archive.extractall(root,filter='data')\nimport os\nos.chdir(root)\nscope='docs/verification/nearest-goals-close-20261031/regression'\nmodule=runpy.run_path(str(root/scope/'run_docker_backend.py'))\ninner=module['inner']; out=root/scope/'docker-attempt2';out.mkdir(parents=True)\ninner.__globals__['ATTEMPT']=out\ncode=inner()\nshutil.copytree(out,'/results',dirs_exist_ok=True)\nif code==0:\n    for name in ('README.md','README_DETAILS.md'):\n        shutil.copyfile(root/name,Path('/results')/(name+'.generated'))\nraise SystemExit(code)\n"
+  ],
+  "network": "none",
+  "temporary_storage": "container writable layer; result export in project only"
+}

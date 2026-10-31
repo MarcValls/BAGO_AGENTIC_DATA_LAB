@@ -1,0 +1,63 @@
+# F02 — Salir y footer de Modelos activos en App real
+
+Estado del autor: IMPLEMENTED y VERIFIED en el alcance descrito; revisión
+independiente y aceptación del orquestador PENDING. No se cierra el repositorio
+ni se convierte al autor en verificador independiente.
+
+## Comportamiento reparado
+
+ProviderSettings acepta onExit opcional; App lo conecta a cerrar Settings.
+La instancia aislada conserva su vuelta a Proveedores. Salir no guarda ni llama
+a un proveedor. Dos reglas de ProviderSettings.css limitan el flex del padre
+solo cuando muestra el panel de modelos y evitan que sus tabs se compriman.
+No hay alturas en píxeles ni cambios en App.css o ModelAssignments congelado.
+
+La ampliación de alcance está registrada por el orquestador en
+CR-FOOTER-PARENT-SIZING-20261031. F01 quedó archivado CLAIMED con sus fallos;
+no se lo marca DONE ni se reescriben sus recibos o evidencias.
+
+## Pruebas y procedencia
+
+- F01: full npm real827PASS/0FAIL y build PASS, recibo
+  7940dbf9c3b44d209d5858fee97b03ad. Es evidencia anterior al cambio CSS;
+  no se repite ni se suma como una ejecución nueva. Las tres fuentes TSX/test
+  no cambiaron durante F02. TEST_RESULTS_R2.json valida el recibo archivado,
+  su identidad y hashes, outputs y logs, antes de reutilizar esta evidencia.
+- F02: seis pruebas focales PASS y build nuevo PASS, proceso real gestionado
+  por teamctl, recibo761c19aa831c4a4e9d7cce859496d629. Cubre salida de padre,
+  fallback aislado, normal/vacío/no disponible/error/carga y ausencia de guardado.
+- Brave headless, chromiumSandbox activo: veintiuna comprobaciones PASS contra
+  App real construida, recibo5aafa834b0c048b4acbf1671f002bcba. API localhost
+  interceptada con datos sintéticos, sin backend de producción, tráfico externo,
+  rutas desconocidas ni pageerrors. No se sustituyó el callback de App.
+
+## Resultado visual observado
+
+Catálogo de18modelos; medidas del navegador y ocho PNG nuevos:
+
+| Vista | Footer dentro del viewport | Scroll independiente de modelos | Proveedores en viewport corto |
+|---|---|---|---|
+| Escritorio1280×900 | y826–877 | clientHeight582, total1239, scroll657 | contenedor auto, scroll154 |
+| Móvil430×932 | y862–913 | clientHeight628, total1472, scroll844 | contenedor auto, scroll178 |
+
+Footer transparente, cuatro bordes0 y alineado abajo/derecha; ambos botones
+visibles antes de desplazar. Al volver a Proveedores, la regla de modelos no
+coincide, logo/status se renderizan y el scroll de ese panel sigue operativo.
+Tras volver a Modelos, cambiar una casilla y pulsar Salir, Settings se cierra en
+ambos viewports con cero PUT/POST. Capturas de escritorio/móvil revisadas por
+el autor; esto no constituye revisión independiente.
+
+## Intentos y límites conservados
+
+Permanecen los RED y fallos F01: un selector nuevo omitía «·»; primer full826/1,
+posterior827/0; primer browser tenía selector/fixtures incompletos; segundo
+browser probó el defecto real de layout. F02 conserva también el primer intento
+de browser: el sandbox del host bloqueó el proceso GPU y cerró el contexto antes
+de cargar App. El segundo ejecutó el mismo código con acceso host autorizado,
+headless y sandbox Chromium activo; pasó. No se cambió configuración Windows ni
+se tomó el foco del usuario. No se hace una afirmación sobre login, proveedores,
+datos reales, el backend o la aceptación global.
+
+El JSON final del browser incorpora hashes de fuentes y dist/index.html. Los
+outputs originales F01 se rehashean antes del handoff. README/gates globales,
+commit, publicación y revisión independiente pertenecen al orquestador.

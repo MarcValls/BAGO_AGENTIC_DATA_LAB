@@ -1,0 +1,51 @@
+"""Export finite reviewed historical evidence with exact bytes, not dependencies."""
+from pathlib import Path
+import hashlib
+import json
+import sys
+
+
+def main():
+    source = Path(sys.argv[1]).resolve()
+    candidate = Path(__file__).resolve().parents[3]
+    output = candidate / 'docs/verification/nearest-goals-close-20261031/regression/historical-package'
+    output.mkdir(parents=True, exist_ok=False)
+    inventory = []
+    objects = output / "objects"; objects.mkdir()
+
+    def copy(path, target):
+        assert path.is_file() and not path.is_symlink(), path
+        content = path.read_bytes()
+        digest=hashlib.sha256(content).hexdigest()
+        stored=objects/digest[:24]
+        if stored.exists(): assert stored.read_bytes()==content
+        else: stored.write_bytes(content)
+        inventory.append(dict(path=target.relative_to(output).as_posix(), object=stored.relative_to(output).as_posix(),sha256=digest,bytes=len(content)))
+
+    for slug in ('github-update-20261022', 'readme-clarity-20261022'):
+        root = source / '.bago/goals' / slug
+        reconciliation = root / 'reconciliation-20261031'
+        frozen = json.loads((reconciliation / 'MANIFEST.json').read_text(encoding='utf-8'))
+        protected = json.loads((reconciliation / 'protected-before.json').read_text(encoding='utf-8'))
+        paths = set(protected) | {x['path'] for x in frozen['files']} | {'mission.json'}
+        paths |= {p.relative_to(root).as_posix() for p in reconciliation.rglob('*') if p.is_file()}
+        for rel in sorted(paths):
+            path = root / rel
+            assert root.resolve() in path.resolve().parents, path
+            if rel in protected:
+                assert hashlib.sha256(path.read_bytes()).hexdigest() == protected[rel], rel
+            copy(path, output / slug / rel)
+    audit = source / '.bago/goals/operational-continuity-governance-20261031/evidence/control/goals-audit-20261031'
+    for name in ('HISTORICAL_CLOSURES_ACCEPTED.json', 'inventory.json', 'DECISIONS_AND_OMISSIONS.md'):
+        copy(audit / name, output / 'audit' / name)
+    for path in sorted((audit / 'near-goals-independent').iterdir()):
+        if path.is_file():
+            copy(path, output / 'independent-review' / path.name)
+    (output / 'EXPORT_MANIFEST.json').write_text(json.dumps({'schema': 'bago.historical-evidence-export.v1',
+        'scope': 'two historical reconciliations; no current application validation',
+        'files': inventory}, indent=2) + '\n', encoding='utf-8')
+    print(json.dumps({'status': 'PASS', 'files': len(inventory), 'bytes': sum(x['bytes'] for x in inventory)}))
+
+
+if __name__ == '__main__':
+    main()

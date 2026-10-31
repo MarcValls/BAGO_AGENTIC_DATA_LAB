@@ -1,0 +1,14 @@
+{
+  "base_at_creation": "8065906f4560f4f0b0951cc445b673ecad7ce175",
+  "reference": "selected clean integration candidate; unrelated dirty user files preserved at original root",
+  "goal_ids": [
+    "agent-saved-tasks-20261020",
+    "context-viewer-20261020",
+    "eval-equal-height-20261020",
+    "model-assignments-20261020",
+    "model-footer-20261020",
+    "provider-status-line-20261020",
+    "square-color-ui-20261020",
+    "workspace-compact-20261020"
+  ]
+}

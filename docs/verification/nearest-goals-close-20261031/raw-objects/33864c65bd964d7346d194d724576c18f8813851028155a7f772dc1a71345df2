@@ -1,0 +1,32 @@
+{
+  "work_id": "W06",
+  "role": "decision-ui-engineer",
+  "status": "DONE",
+  "changed_files": [
+    "frontend/src/features/decision-inspector/shared/InspectorState.tsx",
+    "frontend/src/features/decision-inspector/shared/InspectorState.css",
+    "frontend/src/features/decision-inspector/shell/InspectorShell.tsx",
+    "frontend/src/features/decision-inspector/shell/InspectorShell.css",
+    "frontend/tests/ui/decision-inspector/shell/shell.test.tsx"
+  ],
+  "outputs": [
+    { "kind": "shared_accessible_state_and_evidence_status_primitives", "path": "frontend/src/features/decision-inspector/shared/InspectorState.tsx", "sha256": "5819dfb666fcb45c4cb2c1cdc7f9e6c2319db5e012b9503949fedde5b79a2b10" },
+    { "kind": "shared_state_styles", "path": "frontend/src/features/decision-inspector/shared/InspectorState.css", "sha256": "3b689fc2807b20027d5549ad293887e77b0037b7d6f90d3268118b2db5ec97f4" },
+    { "kind": "decision_inspector_shell_and_identity_selection", "path": "frontend/src/features/decision-inspector/shell/InspectorShell.tsx", "sha256": "f265ac772b74a76abbfb4793404771f66a0529285d3b33ddd8d45d49ca409a7d" },
+    { "kind": "responsive_shell_styles", "path": "frontend/src/features/decision-inspector/shell/InspectorShell.css", "sha256": "35a3fd411452333ea5b892dbc00343a4afd30808931dd24adfeed0323ed2ba1e" },
+    { "kind": "shell_tests", "path": "frontend/tests/ui/decision-inspector/shell/shell.test.tsx", "sha256": "94e22c73b05c052d82e07ab00d158a9adf9148ce71443f76f6c56264ed3a65bd" }
+  ],
+  "verification": [
+    { "command": "tsc --target ES2020 --module commonjs --moduleResolution node --strict --esModuleInterop --skipLibCheck --jsx react-jsx --outDir <temp> tests/ui/decision-inspector/shell/shell.test.tsx; node --test <temp>/tests/ui/decision-inspector/shell/shell.test.js", "result": "PASS", "evidence": "4 tests passed: supplied-identity selection, server-rendered shell identity/navigation/missing data, loading/empty/error/unsupported/unknown announcements, unsupported status wording." },
+    { "command": "npm run build", "result": "PASS", "evidence": "TypeScript project build and Vite production build completed; 107 modules transformed. Existing unrelated CSS syntax warning in frontend/src/index.css (border-color declaration missing colon)." },
+    { "command": "git diff --check -- frontend/src/features/decision-inspector frontend/tests/ui/decision-inspector/shell", "result": "PASS", "evidence": "No whitespace errors in W06 scoped paths." },
+    { "command": "python .codex-team-kit/scripts/teamctl.py verify", "result": "PASS", "evidence": "W06 dependencies W02 and W03 are DONE with valid handoffs; CR-001 adapted frontend write scopes." }
+  ],
+  "residual_risks": [
+    "Shell is intentionally not integrated into App.tsx; W10 owns integration.",
+    "No conclusion is synthesized: empty, unknown, unsupported, and absent section data remain explicit.",
+    "Keyboard semantics and visible focus styling are implemented, but manual screen-reader and keyboard usability review remains for W11.",
+    "Production build reports a pre-existing CSS syntax warning at frontend/src/index.css: border-color #646cff is missing a colon."
+  ],
+  "next_consumers": ["W07", "W08", "W09", "W10"]
+}

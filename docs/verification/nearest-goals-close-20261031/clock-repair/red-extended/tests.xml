@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="3" skipped="0" tests="4" time="4.146" timestamp="2026-10-31T20:50:29.985642+01:00" hostname="DESKTOP-1NJ5EQ8"><testcase classname="tests.test_agent_delegation" name="test_parent_trace_clock_regression_preserves_child_outcome_and_replay_scope[completed-PASSED]" time="0.295"><failure message="AssertionError: {'agent_config_sha256': '71e0befe8475c8f33a9de131b86e8f0da0fe3b88c5dcadc99d3d988335f6316b', 'agent_id': 'agent_1234abcd', 'agent_name': 'Saved fixture', 'assigned_tools': ['filesystem_plan'], ...}&#10;assert 'INCONCLUSIVE' == 'PASSED'&#10;  &#10;  - PASSED&#10;  + INCONCLUSIVE">setup = {'agent_id': 'agent_1234abcd', 'calls': [('child-fixture', [{'content': 'CHILD FIXTURE ONLY\n\nYou do not have app-con...t at 0x00000238786096A0&gt;, 'comms': &lt;src.communications.service.CommunicationService object at 0x0000023878609400&gt;, ...}
+outcome = 'completed', expected = 'PASSED'
+
+    @pytest.mark.parametrize(('outcome','expected'),[
+        ('completed','PASSED'),
+        ('needs_authorization','NEEDS_AUTHORIZATION'),
+        ('out_of_scope','OUT_OF_SCOPE'),
+    ])
+    def test_parent_trace_clock_regression_preserves_child_outcome_and_replay_scope(setup,outcome,expected):
+        f=setup;f['delegation_outcome']=outcome
+        # The service's default clock remains real time.time. Only Unix nanoseconds
+        # regress; native child intervals still retain their monotonic durations.
+        regressed_end=server.time.time_ns()-10_000_000_000
+        f['monkeypatch'].setattr(server.time,'time_ns',lambda:regressed_end)
+        propose(f)
+        response=execute(f)
+        assert response.status_code==200,response.text
+        result=response.json();delegation=result['agent_delegation']
+&gt;       assert delegation['state']==expected,delegation
+E       AssertionError: {'agent_config_sha256': '71e0befe8475c8f33a9de131b86e8f0da0fe3b88c5dcadc99d3d988335f6316b', 'agent_id': 'agent_1234abcd', 'agent_name': 'Saved fixture', 'assigned_tools': ['filesystem_plan'], ...}
+E       assert 'INCONCLUSIVE' == 'PASSED'
+E         
+E         - PASSED
+E         + INCONCLUSIVE
+
+tests\test_agent_delegation.py:181: AssertionError</failure></testcase><testcase classname="tests.test_agent_delegation" name="test_parent_trace_clock_regression_preserves_child_outcome_and_replay_scope[needs_authorization-NEEDS_AUTHORIZATION]" time="0.280"><failure message="AssertionError: {'agent_config_sha256': '71e0befe8475c8f33a9de131b86e8f0da0fe3b88c5dcadc99d3d988335f6316b', 'agent_id': 'agent_1234abcd', 'agent_name': 'Saved fixture', 'assigned_tools': ['filesystem_plan'], ...}&#10;assert 'INCONCLUSIVE' == 'NEEDS_AUTHORIZATION'&#10;  &#10;  - NEEDS_AUTHORIZATION&#10;  + INCONCLUSIVE">setup = {'agent_id': 'agent_1234abcd', 'calls': [('child-fixture', [{'content': 'CHILD FIXTURE ONLY\n\nYou do not have app-con...t at 0x0000023878680190&gt;, 'comms': &lt;src.communications.service.CommunicationService object at 0x0000023878680050&gt;, ...}
+outcome = 'needs_authorization', expected = 'NEEDS_AUTHORIZATION'
+
+    @pytest.mark.parametrize(('outcome','expected'),[
+        ('completed','PASSED'),
+        ('needs_authorization','NEEDS_AUTHORIZATION'),
+        ('out_of_scope','OUT_OF_SCOPE'),
+    ])
+    def test_parent_trace_clock_regression_preserves_child_outcome_and_replay_scope(setup,outcome,expected):
+        f=setup;f['delegation_outcome']=outcome
+        # The service's default clock remains real time.time. Only Unix nanoseconds
+        # regress; native child intervals still retain their monotonic durations.
+        regressed_end=server.time.time_ns()-10_000_000_000
+        f['monkeypatch'].setattr(server.time,'time_ns',lambda:regressed_end)
+        propose(f)
+        response=execute(f)
+        assert response.status_code==200,response.text
+        result=response.json();delegation=result['agent_delegation']
+&gt;       assert delegation['state']==expected,delegation
+E       AssertionError: {'agent_config_sha256': '71e0befe8475c8f33a9de131b86e8f0da0fe3b88c5dcadc99d3d988335f6316b', 'agent_id': 'agent_1234abcd', 'agent_name': 'Saved fixture', 'assigned_tools': ['filesystem_plan'], ...}
+E       assert 'INCONCLUSIVE' == 'NEEDS_AUTHORIZATION'
+E         
+E         - NEEDS_AUTHORIZATION
+E         + INCONCLUSIVE
+
+tests\test_agent_delegation.py:181: AssertionError</failure></testcase><testcase classname="tests.test_agent_delegation" name="test_parent_trace_clock_regression_preserves_child_outcome_and_replay_scope[out_of_scope-OUT_OF_SCOPE]" time="0.272"><failure message="AssertionError: {'agent_config_sha256': '71e0befe8475c8f33a9de131b86e8f0da0fe3b88c5dcadc99d3d988335f6316b', 'agent_id': 'agent_1234abcd', 'agent_name': 'Saved fixture', 'assigned_tools': ['filesystem_plan'], ...}&#10;assert 'INCONCLUSIVE' == 'OUT_OF_SCOPE'&#10;  &#10;  - OUT_OF_SCOPE&#10;  + INCONCLUSIVE">setup = {'agent_id': 'agent_1234abcd', 'calls': [('child-fixture', [{'content': 'CHILD FIXTURE ONLY\n\nYou do not have app-con...t at 0x0000023878683390&gt;, 'comms': &lt;src.communications.service.CommunicationService object at 0x0000023878681310&gt;, ...}
+outcome = 'out_of_scope', expected = 'OUT_OF_SCOPE'
+
+    @pytest.mark.parametrize(('outcome','expected'),[
+        ('completed','PASSED'),
+        ('needs_authorization','NEEDS_AUTHORIZATION'),
+        ('out_of_scope','OUT_OF_SCOPE'),
+    ])
+    def test_parent_trace_clock_regression_preserves_child_outcome_and_replay_scope(setup,outcome,expected):
+        f=setup;f['delegation_outcome']=outcome
+        # The service's default clock remains real time.time. Only Unix nanoseconds
+        # regress; native child intervals still retain their monotonic durations.
+        regressed_end=server.time.time_ns()-10_000_000_000
+        f['monkeypatch'].setattr(server.time,'time_ns',lambda:regressed_end)
+        propose(f)
+        response=execute(f)
+        assert response.status_code==200,response.text
+        result=response.json();delegation=result['agent_delegation']
+&gt;       assert delegation['state']==expected,delegation
+E       AssertionError: {'agent_config_sha256': '71e0befe8475c8f33a9de131b86e8f0da0fe3b88c5dcadc99d3d988335f6316b', 'agent_id': 'agent_1234abcd', 'agent_name': 'Saved fixture', 'assigned_tools': ['filesystem_plan'], ...}
+E       assert 'INCONCLUSIVE' == 'OUT_OF_SCOPE'
+E         
+E         - OUT_OF_SCOPE
+E         + INCONCLUSIVE
+
+tests\test_agent_delegation.py:181: AssertionError</failure></testcase><testcase classname="tests.test_agent_delegation" name="test_parent_trace_normal_clock_keeps_ordered_interval_and_duration" time="0.073" /></testsuite></testsuites>

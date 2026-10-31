@@ -1,0 +1,262 @@
+{
+  "created_at": "2026-10-19T19:33:27+00:00",
+  "mission": {
+    "max_concurrency": 3,
+    "mission_id": "AGENT_DECISION_INSPECTOR_BER_RUNNER_FOLLOWUP_V1",
+    "objective": "Consume the completed Agent Decision Inspector contracts and connect ADL Agent Runner to the pinned BAGO Embedded Runtime, preserving explicit proposals, user approval, BAGO receipts, ADL traces, fail-closed behavior, and blocked filesystem.delete.",
+    "parent_mission_id": "AGENT_DECISION_INSPECTOR_V1",
+    "terminal_work_items": [
+      "W17"
+    ],
+    "title": "Governed BER Agent Runner follow-up",
+    "work_items": [
+      {
+        "deliverables": [
+          "Runner boundary and flow",
+          "Frozen backend/frontend message contract",
+          "Explicit blocked effects and runtime limits"
+        ],
+        "depends_on": [],
+        "done_when": [
+          "Prior W01-W12 handoffs remain preserved",
+          "Only the persisted agent profile and registered BER effects can be used",
+          "Human approval is bound to one prepared request and is required for material writes and process execution",
+          "No delete, arbitrary shell, or execution-success claims without a matched BAGO receipt",
+          "Standalone package and local smoke evidence are recorded"
+        ],
+        "frozen_outputs": [
+          "adl-ber-agent-runner-api-v1"
+        ],
+        "id": "W13",
+        "read_scopes": [
+          "src/contracts/**",
+          "src/adapters/**",
+          "docs/decision-inspector/**",
+          "docs/ber/**",
+          "src/api/server.py",
+          "frontend/src/components/AgentRunner.tsx"
+        ],
+        "role": "team-orchestrator",
+        "title": "Freeze BER Agent Runner scope and review prior mission contracts",
+        "write_scopes": [
+          ".bago/team/runtime/**",
+          ".bago/goals/ADL-BER-INTEGRATION-001/**",
+          "docs/ber/AGENT_RUNNER_SCOPE.md"
+        ]
+      },
+      {
+        "deliverables": [
+          "Server-owned bounded runner",
+          "Proposal and approval messages",
+          "BER receipt-linked completion",
+          "Adversarial backend tests"
+        ],
+        "depends_on": [
+          "W13"
+        ],
+        "done_when": [
+          "Client-supplied agent config is never execution authority",
+          "Unknown effects, mismatched approval, replay, denied authorization, unavailable provider/runtime, failed execution, and missing receipt all fail closed",
+          "Existing BAGO BER API remains the effect executor and source of authority/receipts",
+          "filesystem.delete remains unavailable",
+          "Tests validate no job/success is recorded before verified BER receipt"
+        ],
+        "frozen_outputs": [
+          "adl-ber-agent-runner-backend-v1"
+        ],
+        "id": "W14",
+        "read_scopes": [
+          "docs/ber/AGENT_RUNNER_SCOPE.md",
+          "src/runtime/ber/**",
+          "src/contracts/action/**",
+          "src/adapters/action/**",
+          "src/observability/**",
+          "src/providers/ollama.py"
+        ],
+        "role": "governance-action-engineer",
+        "title": "Implement backend Agent Runner over BER with fail-closed authorization",
+        "write_scopes": [
+          "src/api/server.py",
+          "src/runtime/ber/agent_runner.py",
+          "tests/runtime/ber/test_agent_runner.py",
+          "docs/ber/AGENT_RUNNER_API_V1.md"
+        ]
+      },
+      {
+        "deliverables": [
+          "Task entry and workspace binding",
+          "Action review and explicit approval/rejection",
+          "Receipt-backed terminal status",
+          "Accessible UI tests"
+        ],
+        "depends_on": [
+          "W14"
+        ],
+        "done_when": [
+          "UI displays proposed action and exact effect arguments before approval",
+          "Approval/rejection is a user action bound to the current proposal id",
+          "Unknown/error/pending states are not presented as success",
+          "Run success requires an exact receipt identity from the backend",
+          "Keyboard-accessible loading, empty, error, approval, rejection and success states pass tests"
+        ],
+        "frozen_outputs": [],
+        "id": "W15",
+        "read_scopes": [
+          "docs/ber/AGENT_RUNNER_API_V1.md",
+          "src/contracts/action/**",
+          "src/contracts/trace/**",
+          "frontend/src/features/decision-inspector/actions/**"
+        ],
+        "role": "decision-ui-engineer",
+        "title": "Connect Agent Runner UI to the governed proposal and receipt flow",
+        "write_scopes": [
+          "frontend/src/components/AgentRunner.tsx",
+          "frontend/src/components/AgentRunner.css",
+          "frontend/tests/ui/agent-runner/**",
+          "frontend/tests/ui/agent-evaluation-lab/rendered.test.mjs"
+        ]
+      },
+      {
+        "deliverables": [
+          "Independent verification report",
+          "Adversarial test results",
+          "P0/P1/P2 classification"
+        ],
+        "depends_on": [
+          "W15R"
+        ],
+        "done_when": [
+          "Unauthorized and rejected action cases prove no material effect",
+          "Wrong/stale/replayed approval and mismatched/missing receipt cases are covered",
+          "Provider/runtime errors cannot yield success",
+          "filesystem.delete and arbitrary shell attempts are denied",
+          "No P0/P1 finding remains open; all NOT_RUN scopes are explicit"
+        ],
+        "frozen_outputs": [
+          "adl-ber-agent-runner-verification-v1"
+        ],
+        "id": "W16",
+        "read_scopes": [
+          "src/runtime/ber/**",
+          "src/api/server.py",
+          "frontend/src/components/AgentRunner.tsx",
+          "tests/runtime/ber/**",
+          "frontend/tests/ui/agent-runner/**",
+          "docs/ber/AGENT_RUNNER_API_V1.md"
+        ],
+        "role": "verification-engineer",
+        "title": "Independently verify the live runner flow and adversarial boundaries",
+        "write_scopes": [
+          "tests/verification/agent-runner/**",
+          "docs/ber/AGENT_RUNNER_VERIFICATION.md"
+        ]
+      },
+      {
+        "deliverables": [
+          "Backend WebSocket regression test aligned with the governed start/error contract"
+        ],
+        "depends_on": [
+          "W15"
+        ],
+        "done_when": [
+          "The test sends a valid bounded start frame or an invalid frame and cannot wait indefinitely",
+          "Assertions match current stable error codes and fail-closed behavior",
+          "No real provider inference or BER effect is invoked"
+        ],
+        "frozen_outputs": [
+          "agent-runner-websocket-start-regression-v1"
+        ],
+        "id": "W15R",
+        "read_scopes": [
+          "src/api/server.py",
+          "src/runtime/ber/agent_runner.py",
+          "tests/runtime/ber/test_agent_runner.py",
+          "docs/ber/AGENT_RUNNER_API_V1.md"
+        ],
+        "role": "governance-action-engineer",
+        "title": "Replace obsolete backend test for the governed WebSocket start contract",
+        "write_scopes": [
+          "tests/test_agent_execution_unavailable.py"
+        ]
+      },
+      {
+        "deliverables": [
+          "Validated handoff index",
+          "Final runner status and residual limits"
+        ],
+        "depends_on": [
+          "W16"
+        ],
+        "done_when": [
+          "W13-W16 and W15R handoffs validate",
+          "Independent verification has P0=0 and P1=0",
+          "Backend, UI, full relevant tests and standalone container smoke pass on the same candidate",
+          "Runner is enabled only with its BER-backed path and remains fail-closed for unsupported effects",
+          "No publish/deploy occurred"
+        ],
+        "frozen_outputs": [
+          "adl-ber-agent-runner-v1-terminal-gate"
+        ],
+        "id": "W17",
+        "read_scopes": [
+          ".bago/team/runtime/**",
+          "docs/ber/AGENT_RUNNER_*.md",
+          "src/runtime/ber/**",
+          "src/api/server.py",
+          "frontend/src/components/AgentRunner.tsx",
+          "tests/**"
+        ],
+        "role": "team-orchestrator",
+        "title": "Terminal BER Agent Runner mission gate",
+        "write_scopes": [
+          ".bago/team/runtime/**",
+          ".bago/goals/ADL-BER-INTEGRATION-001/**",
+          "docs/ber/AGENT_RUNNER_FINAL_STATUS.md"
+        ]
+      }
+    ]
+  },
+  "mission_sha256": "0da52c5717258d8c2e3560308825f8018c13f2ea6330e9065d16291ccf88073d",
+  "mission_source": "C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\.worktrees\\adl-ber-integration-20261019\\.bago\\goals\\ADL-BER-INTEGRATION-001\\AGENT_DECISION_INSPECTOR_BER_RUNNER_FOLLOWUP.json",
+  "protocol_version": "0.1.0",
+  "terminal_gate": "OPEN",
+  "updated_at": "2026-10-19T19:36:35+00:00",
+  "work_status": {
+    "W13": {
+      "agent": "/root",
+      "claimed_at": "2026-10-19T19:33:35+00:00",
+      "done_at": "2026-10-19T19:33:35+00:00",
+      "status": "DONE"
+    },
+    "W14": {
+      "agent": "/root/ber_action_contract",
+      "claimed_at": "2026-10-19T19:33:35+00:00",
+      "done_at": "2026-10-19T19:33:35+00:00",
+      "status": "DONE"
+    },
+    "W15": {
+      "agent": "/root/ber_inspector_shell",
+      "claimed_at": "2026-10-19T19:33:35+00:00",
+      "done_at": "2026-10-19T19:33:36+00:00",
+      "status": "DONE"
+    },
+    "W15R": {
+      "agent": "/root/ber_action_contract",
+      "claimed_at": "2026-10-19T19:33:48+00:00",
+      "done_at": "2026-10-19T19:34:24+00:00",
+      "status": "DONE"
+    },
+    "W16": {
+      "agent": "/root/decision_inspector_verifier",
+      "claimed_at": "2026-10-19T19:34:46+00:00",
+      "done_at": "2026-10-19T19:36:13+00:00",
+      "status": "DONE"
+    },
+    "W17": {
+      "agent": "/root",
+      "claimed_at": "2026-10-19T19:36:35+00:00",
+      "done_at": null,
+      "status": "CLAIMED"
+    }
+  }
+}

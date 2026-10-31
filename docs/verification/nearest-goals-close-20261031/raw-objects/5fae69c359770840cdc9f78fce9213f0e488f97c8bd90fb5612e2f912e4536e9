@@ -1,0 +1,44 @@
+{
+  "changed_files": [
+    ".codex-team/missions/agent-chat-control-plane-v1.json",
+    ".codex-team/state.json",
+    "docs/agent-chat-control/contracts/CONTROL_PLANE_V1.md",
+    "docs/agent-chat-control/coordination/archive/AGENT_DECISION_INSPECTOR_V1-state.json",
+    "docs/agent-chat-control/coordination/archive/AGENT_DECISION_INSPECTOR_V1-mission.json"
+  ],
+  "next_consumers": [
+    "AC02",
+    "AC03"
+  ],
+  "outputs": [
+    {
+      "description": "Frozen provider, agent-draft, and authorization contract",
+      "path": "docs/agent-chat-control/contracts/CONTROL_PLANE_V1.md",
+      "sha256": "109120ea519a587cda26c891e7802bf7027284d2496513720cdb260401d8259d"
+    },
+    {
+      "description": "Follow-up mission DAG",
+      "path": ".codex-team/missions/agent-chat-control-plane-v1.json",
+      "sha256": "8cdaaff7997828cb7f7bd170cab1eb0b33767e237f5c84f5c7470be3cf314dca"
+    }
+  ],
+  "payload_sha256": "fb1cf77a445e2d8f7cbbeb0742c348d478416f7123d5cd4e2b008e0a6fb52ea4",
+  "residual_risks": [
+    "Ollama Cloud is not authenticated in this runtime; live provider call not run."
+  ],
+  "role": "team-orchestrator",
+  "status": "DONE",
+  "verification": [
+    {
+      "command": "python -m json.tool .codex-team/missions/agent-chat-control-plane-v1.json",
+      "evidence": "Mission parses as JSON",
+      "result": "PASS"
+    },
+    {
+      "command": "Manual contract-to-repository boundary review",
+      "evidence": "API-key vs CLI auth and user confirmation are distinguished; arbitrary actions remain non-executable",
+      "result": "PASS"
+    }
+  ],
+  "work_id": "AC01"
+}

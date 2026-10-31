@@ -1,0 +1,20 @@
+{
+  "git_head": "8065906f4560f4f0b0951cc445b673ecad7ce175",
+  "source_before": {
+    "src/api/server.py": "1124ccf14f65f7beb27a27308999a572ef7f7bfcba5ab182352adda7ae6d5e1a",
+    "tests/test_agent_delegation.py": "32784a4c08a8c6815a95e346ddd72290ec8eb89f686269b4352991c90314d0b8"
+  },
+  "source_after": {
+    "src/api/server.py": "f7f6ffc6ffec3d1396a61137e3ae2e3fa4cb70f7561bdb0643887a4923d65320",
+    "tests/test_agent_delegation.py": "32784a4c08a8c6815a95e346ddd72290ec8eb89f686269b4352991c90314d0b8"
+  },
+  "source_after_readback": {
+    "src/api/server.py": "f7f6ffc6ffec3d1396a61137e3ae2e3fa4cb70f7561bdb0643887a4923d65320",
+    "tests/test_agent_delegation.py": "32784a4c08a8c6815a95e346ddd72290ec8eb89f686269b4352991c90314d0b8"
+  },
+  "scope": [
+    "src/api/server.py",
+    "tests/test_agent_delegation.py"
+  ],
+  "source_edits": "Only _record_agent_chat_trace and deterministic delegation tests; no authorization, replay or fallback changes"
+}

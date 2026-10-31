@@ -1,0 +1,109 @@
+{
+  "schema": "bago.nearest-goals.independent-closure-matrix.v1",
+  "mission_id": "BAGO_NEAREST_OPEN_GOALS_CLOCK_REPAIR_20261031",
+  "work_id": "REVIEW",
+  "candidate_git_head": "b1b4d524a0e936300a71da36e0c0276e061fa34e",
+  "teamctl_candidate_id": "9bdf09833dd28ab922485c21a23e0f645efb5cb812712150dd3c1b07d4f8fada",
+  "regression_handoff_payload_sha256": "66449e732b9eb2637959331298f7bef96383a4b398ba3fcab536351a42cc996e",
+  "overall": "GO_SCOPED_CLOSE",
+  "global_product_closure": "NOT_CLAIMED",
+  "eligible_count": 7,
+  "partial_count": 1,
+  "goals": {
+    "context-viewer-20261020": {
+      "eligible_for_closure": true,
+      "state": "VALIDATED_SCOPED",
+      "decision": "The fixed-document reader criteria are met: lazy structured rendering, JSON nesting, missing/malformed/foreign and workspace-switch states, mobile layout, and actual bounded reads from isolated filesystem fixtures.",
+      "evidence": [
+        {"path": "docs/verification/nearest-goals-close-20261031/visual/attempt-03/report.json", "sha256": "cd7916823dc01365fb7c3e3379d9f6f2f0d370b3484bc65119fe3573c3e1503c", "checks": "11 rendered component checks; API responses intercepted"},
+        {"path": "docs/verification/nearest-goals-close-20261031/visual/context-supplement/report.json", "sha256": "3288c94abb56e92319101fad975ae052954a9be0aa5c48710556c1ad16387e6f", "checks": "4 supplementary component checks; API responses intercepted"},
+        {"path": "docs/verification/nearest-goals-close-20261031/regression/documents-final.json", "sha256": "cd8c8d07a9a42f640d2d6e5c4b3aed939a3cbb8b068b8327fa38383a562aee10", "checks": "10 PASS using candidate FastAPI and isolated real files; user workspace unchanged"}
+      ],
+      "limits": ["No production workspace or user data was read.", "Browser rendering evidence uses intercepted API fixtures; API/file behavior was exercised separately against the real candidate FastAPI and isolated files."]
+    },
+    "workspace-compact-20261020": {
+      "eligible_for_closure": true,
+      "state": "VALIDATED_SCOPED",
+      "decision": "Compact workspace criteria pass. The documented current flow supersedes the old inline-picker expectation: Context returns to Projects with focus and preserves the draft; the old standalone picker remains as a fallback when no callback is provided.",
+      "evidence": [
+        {"path": "docs/verification/nearest-goals-close-20261031/visual/attempt-03/report.json", "sha256": "cd7916823dc01365fb7c3e3379d9f6f2f0d370b3484bc65119fe3573c3e1503c", "checks": "one picker, three document viewers, compact memory section, obsolete scope absent, mobile overflow"},
+        {"path": "frontend/tests/project-folders/selection.test.tsx", "sha256": "dfcef802a57692cbffc13350291ab615082ac0189c9e78d5b8eed3aac9f8c65c", "checks": "callback route preserves focus; standalone fallback still works"},
+        {"path": "docs/progress/SPRINT_20261025_07.md", "sha256": "ccc93fb92504d0c6119c3f843918e3088610c08a94399ea46623bdcac7d61c21", "checks": "documents global workspace selection, return-to-form, drafts and focus"},
+        {"path": "docs/public-web/MANUAL.md", "sha256": "d8e3a8c1a4f0ec6e0c26921d31a55b7393f2a1565d627f991f62e0e4f6511ba9", "checks": "documents current Context/Projects interaction"},
+        {"path": "docs/verification/nearest-goals-close-20261031/regression/frontend-integrity/report.json", "sha256": "c6ac70cc584902358832fd9b2fe5e73dd45ba98c93c501ed8ad75e44f68ee886", "checks": "current frontend source bindings and preserved UI execution provenance verified"}
+      ],
+      "limits": ["Full Electron/App navigation was not separately launched for this goal; callback, focus and fallback behavior are covered by the exact component test and the documented current flow."]
+    },
+    "eval-equal-height-20261020": {
+      "eligible_for_closure": true,
+      "state": "VALIDATED_SCOPED",
+      "decision": "All five requested desktop states have equal sidebar/panel bounds, and the mobile stacked layout has no horizontal overflow. This is a bounded geometry goal; no model inference is required.",
+      "evidence": [
+        {"path": "docs/verification/nearest-goals-close-20261031/visual/attempt-03/report.json", "sha256": "cd7916823dc01365fb7c3e3379d9f6f2f0d370b3484bc65119fe3573c3e1503c", "checks": "all_desktop_states_and_mobile PASS"},
+        {"path": "docs/verification/nearest-goals-close-20261031/visual/source-bindings.json", "sha256": "b5355decc775e0b5612586e13ac53dd959185f4c2fbaf6234b2dd368cde1750c", "checks": "AgentEvaluationLab TSX/CSS match the rendered candidate sources"}
+      ],
+      "limits": ["Rendered run data is fixture-backed; no inference or saved suite was performed."]
+    },
+    "model-assignments-20261020": {
+      "eligible_for_closure": true,
+      "state": "VALIDATED_SCOPED",
+      "decision": "Current-candidate isolated checks cover policy persistence, revision conflicts, duplicate/unknown model rejection, chat filtering, role-specific assignment, create/update restrictions, disabled existing agents and saved-task/GEX denials. Component checks cover explicit save, filtering and reload.",
+      "evidence": [
+        {"path": "docs/verification/nearest-goals-close-20261031/review/verify_model_assignments.py", "sha256": "d6047f36ff978353c953a685eacb0ebdcbbf9ee744b8c7704f84cea091f6ecfb", "checks": "independent isolated verifier executed against candidate b1b4d52; exit 0"},
+        {"path": "docs/verification/nearest-goals-close-20261031/review/model-assignments.stdout.log", "sha256": "78af0c0147efcd58578826084b71b04db00e7fea127556f8737ffa106a5cfdf9", "checks": "PASS summary for isolated policy contract"},
+        {"path": "docs/verification/nearest-goals-close-20261031/regression/final-attempt1/generate.xml", "sha256": "53c3c400d84215bcf6ed898ee780e82b0c96bc00b1b9146f43388e84824572f3", "checks": "full final Python suite PASS; includes current model-policy tests"},
+        {"path": "docs/verification/nearest-goals-close-20261031/visual/attempt-03/report.json", "sha256": "cd7916823dc01365fb7c3e3379d9f6f2f0d370b3484bc65119fe3573c3e1503c", "checks": "explicit_save_filter_reload PASS; ModelAssignments source binding unchanged"}
+      ],
+      "limits": ["Synthetic model catalog and local doubles only; no live provider credentials or inference.", "Current App browser test confirms the Settings model panel and Exit path, but production provider behavior remains NOT_RUN."]
+    },
+    "model-footer-20261020": {
+      "eligible_for_closure": true,
+      "state": "VALIDATED_SCOPED",
+      "decision": "F02 restores the original acceptance in actual App: transparent borderless footer remains at the bottom/right inside the Settings model tab, the list scrolls independently on desktop/mobile, and Exit closes Settings without an implicit save. Explicit Save/reload behavior is covered by the rendered component check.",
+      "evidence": [
+        {"path": "frontend/nearest-goals-check/footer-repair/layout-r2/F02-handoff.json", "sha256": "8d8269bf6932caf4a38f71f4742308749c2f74da926bd0b4f9a8223a18770d0d", "checks": "F02 DONE, exact candidate/scope, both required checks PASS"},
+        {"path": "frontend/nearest-goals-check/footer-repair/layout-r2/browser-attempt2/BROWSER_RESULTS.json", "sha256": "db5e888389b1249f02df14eb88a6edce898f9035bff177a788ff86a02a8e38a3", "checks": "21 actual-App checks PASS; desktop/mobile; 18 models; visible footer, independent scroll, Exit closes, zero implicit mutation"},
+        {"path": "docs/verification/nearest-goals-close-20261031/visual/attempt-03/report.json", "sha256": "cd7916823dc01365fb7c3e3379d9f6f2f0d370b3484bc65119fe3573c3e1503c", "checks": "explicit save/filter/reload and footer behavior in component rendering"}
+      ],
+      "limits": ["Actual-App browser APIs were intercepted synthetic localhost responses; production backend integration and real provider calls are NOT_RUN.", "The initial F02 Brave GPU failure and F01 failure evidence remain preserved; this verdict uses attempt2 only after its source and hashes were checked."]
+    },
+    "provider-status-line-20261020": {
+      "eligible_for_closure": true,
+      "state": "VALIDATED_SCOPED",
+      "decision": "The six provider tabs have the requested 3px bottom status line, green/red state mapping, no legacy status dot and accessible text. F02's exact source diff only adds model-tab sizing and Exit wiring; it does not change provider status mapping. Actual-App F02 also preserves normal provider-tab status/logo behavior.",
+      "evidence": [
+        {"path": "docs/verification/nearest-goals-close-20261031/visual/attempt-03/report.json", "sha256": "cd7916823dc01365fb7c3e3379d9f6f2f0d370b3484bc65119fe3573c3e1503c", "checks": "state_lines_accessibility PASS across six tabs"},
+        {"path": "frontend/nearest-goals-check/footer-repair/layout-r2/browser-attempt2/BROWSER_RESULTS.json", "sha256": "db5e888389b1249f02df14eb88a6edce898f9035bff177a788ff86a02a8e38a3", "checks": "actual-App provider tab normal sizing/logo/status preserved"},
+        {"path": "docs/verification/nearest-goals-close-20261031/regression/frontend-integrity/report.json", "sha256": "c6ac70cc584902358832fd9b2fe5e73dd45ba98c93c501ed8ad75e44f68ee886", "checks": "F02 source bindings and exact outputs verified"}
+      ],
+      "limits": ["No credentials or live provider health checks were used; those are outside this UI goal.", "The six-color line assertion was not repeated in the actual-App F02 run; the reviewed F02 diff is limited to Exit wiring and model-tab sizing."]
+    },
+    "agent-saved-tasks-20261020": {
+      "eligible_for_closure": true,
+      "state": "VALIDATED_SCOPED",
+      "decision": "The final candidate backend suite includes 19 saved-task tests and 3 independent saved-task tests; the preserved 827-test Vitest run, source-integrity mapping and rendered interaction checks cover task editing, explicit run, history/date immutability and no implicit calls. The task contract does not require a billable live model call.",
+      "evidence": [
+        {"path": "docs/verification/nearest-goals-close-20261031/regression/final-attempt1/generate.xml", "sha256": "53c3c400d84215bcf6ed898ee780e82b0c96bc00b1b9146f43388e84824572f3", "checks": "19 tests.test_saved_agent_tasks + 3 tests.test_saved_agent_tasks_independent PASS on final candidate"},
+        {"path": "docs/verification/nearest-goals-close-20261031/regression/frontend-integrity/report.json", "sha256": "c6ac70cc584902358832fd9b2fe5e73dd45ba98c93c501ed8ad75e44f68ee886", "checks": "827 Vitest provenance and current source bindings verified; six F02 tests and build fresh"},
+        {"path": "docs/verification/nearest-goals-close-20261031/visual/attempt-03/report.json", "sha256": "cd7916823dc01365fb7c3e3379d9f6f2f0d370b3484bc65119fe3573c3e1503c", "checks": "explicit task-date save, history/copy interactions and no automatic run checked with fixtures"}
+      ],
+      "limits": ["No live provider inference was performed, as allowed by the task contract.", "The browser route was synthetic; backend durability and authorization were verified independently by candidate-bound tests rather than one production-endpoint browser session."]
+    },
+    "square-color-ui-20261020": {
+      "eligible_for_closure": false,
+      "state": "PARTIAL",
+      "decision": "Do not close. The current candidate visual report exercises Workspace, Models, Providers, Evaluation and Tasks; the original Chat, Capabilities, Builder and Inspector surfaces are NOT_RUN in the current review package. The report mixes product screens and component regions, so this review does not convert those names into a screen-count fraction.",
+      "evidence": [
+        {"path": "docs/verification/nearest-goals-close-20261031/visual/goal-matrix.json", "sha256": "957c93ff2cb8f1ce0c7f97ac12254c9c799f53b6306a79c6e0c7baa5ff82048a", "checks": "explicitly preserves PARTIAL, 5 of 8 surfaces"},
+        {"path": "docs/verification/nearest-goals-close-20261031/visual/attempt-03/report.json", "sha256": "cd7916823dc01365fb7c3e3379d9f6f2f0d370b3484bc65119fe3573c3e1503c", "checks": "11 assertions; does not cover all original screens"}
+      ],
+      "limits": ["Historical evidence.md describes a broader screen set, but the current review package lacks candidate-bound rendered evidence for Chat, Capabilities, Builder and Inspector; do not promote that historical prose to current validation."]
+    }
+  },
+  "not_closed_globally": [
+    "This is per-goal scoped eligibility, not final product or mission closure; the orchestrator owns explicit acceptance and close.",
+    "Windows full-suite failures remain preserved; the final complete suite was Docker/Linux on the exact candidate.",
+    "Actual-App browser routes used synthetic intercepted APIs; no production server/provider integration or live inference is claimed.",
+    "The repaired clock endpoints are derived from persisted floating-point seconds, not captured raw nanoseconds; duration remains unknown on backward wall-clock movement."
+  ]
+}

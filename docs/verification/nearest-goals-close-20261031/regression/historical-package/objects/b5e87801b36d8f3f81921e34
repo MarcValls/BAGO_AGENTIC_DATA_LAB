@@ -1,0 +1,76 @@
+# T01 — pruebas de presentación y evidencia del README
+
+Estado final de esta entrega: VERIFIED en alcance focal. Diecisiete pruebas
+pasaron contra las fuentes finales estables, recibo `09bf27edc5b044b8993459a9a0d46e75`, exit0.
+Consultar `final/result.json` y el handoff para identidad y evidencia. Alcance de edición de producto:
+solo `tests/test_dynamic_readme.py` y `tests/test_readme_presentation.py` del
+worktree `.worktrees/readme-clarity-20261022`, base
+`f253f3700990943755e63717a93d3be99f0e19fa`. No se edita README a mano.
+
+## Auditoría previa
+
+El renderer anterior ignoraba `passing_tests` y obtenía el estado de CI de STATE,
+que conserva run38665463586/SHAff9292fe… de 2026-10-15. El README no presentaba las
+baterías frontend ni el arranque de la aplicación antes de la arquitectura y
+los detalles históricos. Una consulta read-only de GitHub para el merge f253f370
+devolvió lista vacía de ejecuciones: eso no niega la CI de su cabeza PR b0b2f2a2.
+La evidencia descargada y congelada por el coordinador identifica ese b0 exacto,
+run39813814372, Ubuntu/Python3.11/Node22 y backend539, Vitest127/UI49/contratos13.
+No se promueve esa observación a ejecución de los cambios posteriores del README.
+
+El launcher real es INICIAR_APP.cmd→scripts/run-local-ui.ps1. Requiere dependencias,
+construye frontend y sirve API en un puerto disponible8080–9000. La API manual y
+el modo Vite de desarrollo se distinguen de la demo de fixtures. Leer esos archivos
+no acredita arrancar la aplicación; T01 no inicia servicios.
+
+## Cambios mínimos a pruebas anteriores y justificación
+
+| Aserción anterior | Sustitución | Motivo y límite conservado |
+|---|---|---|
+| Etiqueta «Último resultado completo de CI registrado» | «Registro histórico de CI conservado en STATE.md» | El resultado viejo sigue explícito con run/SHA/fecha y advertencia; ya no se presenta como snapshot actual |
+| Roadmap como heading principal H2 | Roadmap H3 | Se anida dentro de historial sin eliminar fases ni evidencia |
+| Bruma Market como heading principal H2 | Bruma Market H3 | Conserva casos, enlaces, decisiones y ausencia de acciones ejecutadas, dentro de historia |
+| Prohibición absoluta de details | Bloques details presentes y equilibrados | Permite la presentación solicitada sin ocultar/eliminar contenido histórico |
+| Menos de450líneas totales | Menos de180visibles fuera de details y menos de600totales | La candidata conserva525líneas de historia/detalles; se limita la primera lectura sin borrar material para cumplir un límite plano obsoleto |
+
+Se mantienen límites de lectura/tamaño, mermaid entrecomillado, fuentes reales, fecha y
+SHA históricos, NOT_RUN, ausencia de badges ficticios de tests y no conversión de
+conteo recogido en PASS. No se alteran las pruebas de instalación CI/ffmpeg, otras
+fixtures ni workflows. `git diff --check` de la prueba modificada produjo código0.
+
+## Once casos nuevos y criterio finito
+
+- Orden exacto de ocho secciones: propósito, frontend, tests, demo, arquitectura,
+  historia, documentación y contrato del README.
+- Registro de CI versionado coherente con ci-summary: identidad/fecha/URL,
+  fingerprints de fuentes descargadas y baterías539/127/49/13 separadas.
+- Render idéntico con passing_tests0 y987654321; el segundo no se publica como PASS.
+- Arranque frontend enlaza fuentes y comandos reales; la demo queda separada y
+  no se afirma una sesión iniciada.
+- Cinco negativas parametrizadas: candidata ausente, evidencia ausente,
+  resultado COLLECTED, schema no soportado y ruta que sale del repositorio.
+- NOT_RUN explícito permanece tal; no se inventa PASS al renderizarlo.
+- main--check--skip-tests usa solo collector, informaNOT_RUN, no ejecuta suite ni
+  modifica README temporal; su conteo sentinela no cambia resultados publicados.
+
+Los dos primeros tests evitan confundir la salida de pytest local, la colección,
+el historial Windowsf2(536+1SKIP) y el snapshot CIb0(539sinSKIP). Ningún número se
+suma entre baterías, y los resultados no se presentan como CI del merge ni del
+nuevo candidato sin una ejecución específica.
+
+## Ejecución prevista y conservación
+
+`run_tests.py` ejecuta únicamente los dos archivos de pruebas y registra argv,
+cwd, código, stdout/stderr y hashes. Sus subprocess de collection no ejecutan la
+suite completa. Generación completa del README y regresión global corresponden
+al coordinador. El harness copia ambos tests a deliveries/T01 y comprueba sus
+SHA contra el worktree; fija hashes antes/después de tests, generador, manifiesto,
+contrato de documentación, registro, resumen de CI y README final.
+
+No se modifica fuente de generador/manifest/documentación por este agente. La
+revisión independiente V01 del constructor es una fase posterior, condicionada
+a los handoffs B01/T01, con distinta entrega y evidencia propia.
+
+Primer preview: recibo `5be39775878b4866854f905d5015a4f2`,17PASS, sin drift.
+La repetición final se justifica por los cambios de presentación posteriores del
+constructor y conserva el primer recibo y sus outputs en sus paths originales.

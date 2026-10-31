@@ -1,0 +1,10 @@
+--- baseline/tests/providers/provider-settings.test.tsx
++++ candidate/tests/providers/provider-settings.test.tsx
+@@ -255,6 +255,7 @@
+     render(<ProviderSettings />)
+     fireEvent.click(screen.getByRole('tab', { name: /OpenAI/ }))
+     await screen.findByText(/respuesta comprobada:/)
++    await waitFor(() => expect((screen.getByLabelText('Modelo predeterminado') as HTMLInputElement).value).toBe('gpt-test'))
+     fireEvent.click(screen.getByRole('button', { name: 'Guardar y comprobar acceso' }))
+     expect(await screen.findByText('La credencial fue rechazada.')).toBeTruthy()
+     await waitFor(() => expect(screen.queryByText(/respuesta comprobada:/)).toBeNull())

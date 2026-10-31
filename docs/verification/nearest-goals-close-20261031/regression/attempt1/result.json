@@ -1,0 +1,60 @@
+{
+  "status": "FAIL",
+  "candidate_head": "8065906f4560f4f0b0951cc445b673ecad7ce175",
+  "python": "C:\\Python314\\python.exe",
+  "commands": [
+    {
+      "label": "smoke",
+      "argv": [
+        "C:\\Python314\\python.exe",
+        "-B",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/test_agent_chat_trace.py::test_real_agent_tool_loop_traces_allowed_and_denied_exact_file_reads",
+        "tests/test_provider_cognition_repair.py::test_help_uses_model_and_persists_focus_only_when_cognition_enabled",
+        "tests/test_workspace_read.py"
+      ],
+      "returncode": 0,
+      "started_at": "2026-10-31T18:32:34.771702+00:00",
+      "completed_at": "2026-10-31T18:32:41.720824+00:00",
+      "counts": {
+        "tests": 7,
+        "errors": 0,
+        "failures": 0,
+        "skipped": 0
+      },
+      "logs": {
+        "smoke.stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "smoke.stdout.log": "008d323f5dd00f13657f1522a743805e496bc89e6e6208528f16d519e6f85b39",
+        "smoke.xml": "8e41d0e83011da9d6d9c1e076225ecb16019672e972ac9b96a6a53a94684df21"
+      }
+    },
+    {
+      "label": "generate",
+      "argv": [
+        "C:\\Python314\\python.exe",
+        "-B",
+        "scripts/generate_dynamic_readme.py"
+      ],
+      "returncode": 1,
+      "started_at": "2026-10-31T18:32:41.737241+00:00",
+      "completed_at": "2026-10-31T18:42:20.663846+00:00",
+      "counts": {
+        "tests": 1904,
+        "errors": 21,
+        "failures": 57,
+        "skipped": 3
+      },
+      "logs": {
+        "generate.stderr.log": "3e31757de5f89d6e51b96a389fd4a808b9d105799afb8535791f1e944bc5db21",
+        "generate.stdout.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "generate.xml": "c36456af4ed39ce45390f27f4ab90ebb295c57b73dff01d8aa80d362698dd5d1"
+      }
+    }
+  ],
+  "limits": [
+    "Historical checks remain unchanged.",
+    "No frontend/browser or external inference claim in this report."
+  ]
+}

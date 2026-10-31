@@ -1,0 +1,157 @@
+FFF.                                                                     [100%]
+================================== FAILURES ===================================
+_ test_parent_trace_clock_regression_preserves_child_outcome_and_replay_scope[completed-PASSED] _
+
+setup = {'agent_id': 'agent_1234abcd', 'calls': [], 'client': <starlette.testclient.TestClient object at 0x0000022201305940>, 'comms': <src.communications.service.CommunicationService object at 0x00000222013056A0>, ...}
+outcome = 'completed', expected = 'PASSED'
+
+    @pytest.mark.parametrize(('outcome','expected'),[
+        ('completed','PASSED'),
+        ('needs_authorization','NEEDS_AUTHORIZATION'),
+        ('out_of_scope','OUT_OF_SCOPE'),
+    ])
+    def test_parent_trace_clock_regression_preserves_child_outcome_and_replay_scope(setup,outcome,expected):
+        f=setup;f['delegation_outcome']=outcome
+        # The service's default clock remains real time.time. Only Unix nanoseconds
+        # regress; native child intervals still retain their monotonic durations.
+        regressed_end=server.time.time_ns()-10_000_000_000
+        f['monkeypatch'].setattr(server.time,'time_ns',lambda:regressed_end)
+>       propose(f)
+
+tests\test_agent_delegation.py:177: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+tests\test_agent_delegation.py:72: in propose
+    proposal=server._agent_delegations().propose(agent_id=fixture['agent_id'],task='Prepare synthetic.txt only.',
+src\services\agent_delegation.py:107: in propose
+    with _LOCK:self._save(record,new=True)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src\services\agent_delegation.py:67: in _save
+    write(self._path(record['binding']['proposal_id']),value,new=new)
+src\services\agent_producers.py:29: in write
+    with path.open('xb') as stream:stream.write(raw);stream.flush();os.fsync(stream.fileno())
+         ^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = WindowsPath('C:/Users/AMTEC_Terminal_1º/Desktop/BAGO5_ADL/.worktrees/nearest-goals-close-20261031/docs/verification/ne...t/p/test_parent_trace_clock_regres0/traces/agent-delegations/records/delegation_a031befc2e664832bd710887d24fe673.json')
+mode = 'xb', buffering = -1, encoding = None, errors = None, newline = None
+
+    def open(self, mode='r', buffering=-1, encoding=None,
+             errors=None, newline=None):
+        """
+        Open the file pointed to by this path and return a file object, as
+        the built-in open() function does.
+        """
+        if "b" not in mode:
+            encoding = io.text_encoding(encoding)
+>       return io.open(self, mode, buffering, encoding, errors, newline)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: 'C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\.worktrees\\nearest-goals-close-20261031\\docs\\verification\\nearest-goals-close-20261031\\clock-repair\\red\\t\\p\\test_parent_trace_clock_regres0\\traces\\agent-delegations\\records\\delegation_a031befc2e664832bd710887d24fe673.json'
+
+C:\Python314\Lib\pathlib\__init__.py:771: FileNotFoundError
+_ test_parent_trace_clock_regression_preserves_child_outcome_and_replay_scope[needs_authorization-NEEDS_AUTHORIZATION] _
+
+setup = {'agent_id': 'agent_1234abcd', 'calls': [], 'client': <starlette.testclient.TestClient object at 0x00000222014F42D0>, 'comms': <src.communications.service.CommunicationService object at 0x00000222014F4190>, ...}
+outcome = 'needs_authorization', expected = 'NEEDS_AUTHORIZATION'
+
+    @pytest.mark.parametrize(('outcome','expected'),[
+        ('completed','PASSED'),
+        ('needs_authorization','NEEDS_AUTHORIZATION'),
+        ('out_of_scope','OUT_OF_SCOPE'),
+    ])
+    def test_parent_trace_clock_regression_preserves_child_outcome_and_replay_scope(setup,outcome,expected):
+        f=setup;f['delegation_outcome']=outcome
+        # The service's default clock remains real time.time. Only Unix nanoseconds
+        # regress; native child intervals still retain their monotonic durations.
+        regressed_end=server.time.time_ns()-10_000_000_000
+        f['monkeypatch'].setattr(server.time,'time_ns',lambda:regressed_end)
+>       propose(f)
+
+tests\test_agent_delegation.py:177: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+tests\test_agent_delegation.py:72: in propose
+    proposal=server._agent_delegations().propose(agent_id=fixture['agent_id'],task='Prepare synthetic.txt only.',
+src\services\agent_delegation.py:107: in propose
+    with _LOCK:self._save(record,new=True)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src\services\agent_delegation.py:67: in _save
+    write(self._path(record['binding']['proposal_id']),value,new=new)
+src\services\agent_producers.py:29: in write
+    with path.open('xb') as stream:stream.write(raw);stream.flush();os.fsync(stream.fileno())
+         ^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = WindowsPath('C:/Users/AMTEC_Terminal_1º/Desktop/BAGO5_ADL/.worktrees/nearest-goals-close-20261031/docs/verification/ne...t/p/test_parent_trace_clock_regres1/traces/agent-delegations/records/delegation_4fc9b1bc59124d6b8e2a85627999923e.json')
+mode = 'xb', buffering = -1, encoding = None, errors = None, newline = None
+
+    def open(self, mode='r', buffering=-1, encoding=None,
+             errors=None, newline=None):
+        """
+        Open the file pointed to by this path and return a file object, as
+        the built-in open() function does.
+        """
+        if "b" not in mode:
+            encoding = io.text_encoding(encoding)
+>       return io.open(self, mode, buffering, encoding, errors, newline)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: 'C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\.worktrees\\nearest-goals-close-20261031\\docs\\verification\\nearest-goals-close-20261031\\clock-repair\\red\\t\\p\\test_parent_trace_clock_regres1\\traces\\agent-delegations\\records\\delegation_4fc9b1bc59124d6b8e2a85627999923e.json'
+
+C:\Python314\Lib\pathlib\__init__.py:771: FileNotFoundError
+_ test_parent_trace_clock_regression_preserves_child_outcome_and_replay_scope[out_of_scope-OUT_OF_SCOPE] _
+
+setup = {'agent_id': 'agent_1234abcd', 'calls': [], 'client': <starlette.testclient.TestClient object at 0x00000222014F5950>, 'comms': <src.communications.service.CommunicationService object at 0x00000222014F5810>, ...}
+outcome = 'out_of_scope', expected = 'OUT_OF_SCOPE'
+
+    @pytest.mark.parametrize(('outcome','expected'),[
+        ('completed','PASSED'),
+        ('needs_authorization','NEEDS_AUTHORIZATION'),
+        ('out_of_scope','OUT_OF_SCOPE'),
+    ])
+    def test_parent_trace_clock_regression_preserves_child_outcome_and_replay_scope(setup,outcome,expected):
+        f=setup;f['delegation_outcome']=outcome
+        # The service's default clock remains real time.time. Only Unix nanoseconds
+        # regress; native child intervals still retain their monotonic durations.
+        regressed_end=server.time.time_ns()-10_000_000_000
+        f['monkeypatch'].setattr(server.time,'time_ns',lambda:regressed_end)
+>       propose(f)
+
+tests\test_agent_delegation.py:177: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+tests\test_agent_delegation.py:72: in propose
+    proposal=server._agent_delegations().propose(agent_id=fixture['agent_id'],task='Prepare synthetic.txt only.',
+src\services\agent_delegation.py:107: in propose
+    with _LOCK:self._save(record,new=True)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src\services\agent_delegation.py:67: in _save
+    write(self._path(record['binding']['proposal_id']),value,new=new)
+src\services\agent_producers.py:29: in write
+    with path.open('xb') as stream:stream.write(raw);stream.flush();os.fsync(stream.fileno())
+         ^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = WindowsPath('C:/Users/AMTEC_Terminal_1º/Desktop/BAGO5_ADL/.worktrees/nearest-goals-close-20261031/docs/verification/ne...t/p/test_parent_trace_clock_regres2/traces/agent-delegations/records/delegation_7fc7617a5d894afb96e8a4ccaa8960a8.json')
+mode = 'xb', buffering = -1, encoding = None, errors = None, newline = None
+
+    def open(self, mode='r', buffering=-1, encoding=None,
+             errors=None, newline=None):
+        """
+        Open the file pointed to by this path and return a file object, as
+        the built-in open() function does.
+        """
+        if "b" not in mode:
+            encoding = io.text_encoding(encoding)
+>       return io.open(self, mode, buffering, encoding, errors, newline)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: 'C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\.worktrees\\nearest-goals-close-20261031\\docs\\verification\\nearest-goals-close-20261031\\clock-repair\\red\\t\\p\\test_parent_trace_clock_regres2\\traces\\agent-delegations\\records\\delegation_7fc7617a5d894afb96e8a4ccaa8960a8.json'
+
+C:\Python314\Lib\pathlib\__init__.py:771: FileNotFoundError
+============================== warnings summary ===============================
+..\..\..\..\..\..\Python314\Lib\site-packages\langchain_core\utils\pydantic.py:42
+  C:\Python314\Lib\site-packages\langchain_core\utils\pydantic.py:42: UserWarning: Core Pydantic V1 functionality isn't compatible with Python 3.14 or greater.
+    from pydantic.v1 import BaseModel as BaseModelV1
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED tests/test_agent_delegation.py::test_parent_trace_clock_regression_preserves_child_outcome_and_replay_scope[completed-PASSED]
+FAILED tests/test_agent_delegation.py::test_parent_trace_clock_regression_preserves_child_outcome_and_replay_scope[needs_authorization-NEEDS_AUTHORIZATION]
+FAILED tests/test_agent_delegation.py::test_parent_trace_clock_regression_preserves_child_outcome_and_replay_scope[out_of_scope-OUT_OF_SCOPE]
+3 failed, 1 passed, 1 warning in 3.94s

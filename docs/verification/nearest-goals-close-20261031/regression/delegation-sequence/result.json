@@ -1,0 +1,1290 @@
+{
+  "status": "FAIL",
+  "iterations": 240,
+  "failures": [
+    {
+      "index": 154,
+      "test": "test_needs_authorization_return_does_not_expand_tool_or_workspace_grants",
+      "exception": "AssertionError()",
+      "frames": [
+        {
+          "function": "<module>",
+          "locals": {}
+        },
+        {
+          "function": "test_needs_authorization_return_does_not_expand_tool_or_workspace_grants",
+          "locals": {
+            "result": "{'agent_config_sha256': '71e0befe8475c8f33a9de131b86e8f0da0fe3b88c5dcadc99d3d988335f6316b', 'agent_id': 'agent_1234abcd', 'agent_name': 'Saved fixture', 'assigned_tools': ['filesystem_plan'], 'expires_at': 1793476712.9341855, 'model_id': 'child-fixture', 'parent_conversation_id': 'conv_090a71376adc4a748cdf584e599c77ac', 'parent_message_id': 'msg_e5e1d84d00064effbe9dfd43d0882ad3', 'parent_revision': 2, 'parent_trace_id': 'trace-aaaaaaaaaaaaaaaa', 'proposal_id': 'delegation_d666d598b3584d7c92f535faf36fb2f4', 'provider_id': 'ollama-cloud', 'schema': 'agent-delegation.v1', 'task': 'Prepare synthetic.txt only.', 'task_sha256': '4da0745b4ac42e1e184cf65db7e45b67c3aae16d61698d5142f69dd13ad1130a', 'proposal_sha256': '6436930dc872b29b851e070fb8aaaba57f3e5a72ef69da52efb87e4b2ef5e777', 'state': 'INCONCLUSIVE', 'child_conversation_id': 'conv_cc018c1d236a49e9aaf9a7eb2a05edd0', 'child_revision': 2, 'child_trace_id': 'trace-83fa8cfe9ab445da', 'child_trace_sha256': None, 'child_trace_state': 'pending_finalization', 'receipt_id': 'delegation-receipt_2ae19f79bc104950a4eafb0a576361bc', 'receipt_sha256': '735015b9236f22d69873aa10ddfa465ba26c53c2d6a25fbbc1a86b7560fd0608', 'error_code': 'delegation_result_persistence_uncertain', 'assistant_message': 'Synthetic child answer.', 'tools_executed': False, 'target_written': False, 'orchestration_status': 'NEEDS_AUTHORIZATION'}"
+          }
+        }
+      ],
+      "events": [
+        {
+          "function": "cached_metadata",
+          "line": 3684,
+          "error": "FileNotFoundError(2, 'No such file or directory')",
+          "metadata": "{'version': 1, 'trace_id': 'trace-83fa8cfe9ab445da', 'execution_id': 'agent-chat-e6b54ac3d9df4ef494d3035dd15ba589', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_cc018c1d236a49e9aaf9a7eb2a05edd0', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+        },
+        {
+          "function": "_finish",
+          "line": 204,
+          "error": "ValueError('event timestamps must be non-negative and ordered')",
+          "metadata": "None"
+        },
+        {
+          "method": "_finish",
+          "error": "ValueError('event timestamps must be non-negative and ordered')",
+          "traceback": "Traceback (most recent call last):\n  File \"<string>\", line 25, in recorded\n  File \"/workspace/src/services/agent_delegation.py\", line 204, in _finish\n    trace=self.record_trace(record)\n          ^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/workspace/src/api/server.py\", line 4659, in _delegation_trace\n    return _record_agent_chat_trace(agent_id=\"app-assistant\",provider_id=\"application\",model_id=\"not_used\",started_at_ns=int(record[\"started_at\"]*1e9),ended_at_ns=time.time_ns(),\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/workspace/src/api/server.py\", line 3801, in _record_agent_chat_trace\n    event = TraceEvent(\n            ^^^^^^^^^^^\n  File \"<string>\", line 14, in __init__\n  File \"/workspace/src/observability/local_trace.py\", line 83, in __post_init__\n    raise ValueError(\"event timestamps must be non-negative and ordered\")\nValueError: event timestamps must be non-negative and ordered\n"
+        },
+        {
+          "function": "_verify_trace",
+          "line": 141,
+          "error": "DelegationError('delegation_child_trace_unverified')",
+          "metadata": "None"
+        },
+        {
+          "function": "_observe_child",
+          "line": 166,
+          "error": "DelegationError('delegation_child_trace_unverified')",
+          "metadata": "None"
+        },
+        {
+          "method": "_observe_child",
+          "error": "DelegationError('delegation_child_trace_unverified')",
+          "traceback": "Traceback (most recent call last):\n  File \"/workspace/src/services/agent_delegation.py\", line 254, in execute\n    self._finish(record,{'OUT_OF_SCOPE':'OUT_OF_SCOPE','NEEDS_AUTHORIZATION':'NEEDS_AUTHORIZATION','NEEDS_REVIEW':'NEEDS_REVIEW'}.get(outcome,'PASSED'))\n  File \"<string>\", line 25, in recorded\n  File \"/workspace/src/services/agent_delegation.py\", line 204, in _finish\n    trace=self.record_trace(record)\n          ^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/workspace/src/api/server.py\", line 4659, in _delegation_trace\n    return _record_agent_chat_trace(agent_id=\"app-assistant\",provider_id=\"application\",model_id=\"not_used\",started_at_ns=int(record[\"started_at\"]*1e9),ended_at_ns=time.time_ns(),\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/workspace/src/api/server.py\", line 3801, in _record_agent_chat_trace\n    event = TraceEvent(\n            ^^^^^^^^^^^\n  File \"<string>\", line 14, in __init__\n  File \"/workspace/src/observability/local_trace.py\", line 83, in __post_init__\n    raise ValueError(\"event timestamps must be non-negative and ordered\")\nValueError: event timestamps must be non-negative and ordered\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"<string>\", line 25, in recorded\n  File \"/workspace/src/services/agent_delegation.py\", line 166, in _observe_child\n    record['child_execution_id']=self._verify_trace(record,record['child_trace_id'],record['child_trace_sha256'],trace.get('execution_id'))\n                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/workspace/src/services/agent_delegation.py\", line 141, in _verify_trace\n    if not trace_sha256 or hashlib.sha256(raw).hexdigest()!=trace_sha256:raise DelegationError('delegation_child_trace_unverified')\n                                                                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nsrc.services.agent_delegation.DelegationError: delegation_child_trace_unverified\n"
+        }
+      ]
+    }
+  ],
+  "all_events": [
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-6ecd14fd34554783', 'execution_id': 'agent-chat-0b77ea0f173142aea3d7d30a5d47531c', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_83c31feca2bd46eca5c286e6704805fa', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    },
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-e578da456ca2431f', 'execution_id': 'agent-chat-12581a764c2e471e82dbfe0a810bfdc4', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_e991e0a524f64ce59ee603440968661c', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    },
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-51248d7432394328', 'execution_id': 'agent-chat-4075c85781f943cebc520492df467b04', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_c81cecdee74245a1bf44604b54b8c21e', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    },
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-d3ab2a8bdbcc44c2', 'execution_id': 'agent-chat-3acc2e99d06a4657b054d9cfbd6d8661', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_0a2a3bd28a90489697f83e348e904d53', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    },
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-04ab4c20731b4834', 'execution_id': 'agent-chat-1b658b43bd804ae29cefc63f1c2be992', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_53d9fff5d2cf4ee28fbeac1a56de825d', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    },
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-f507f73f82e64239', 'execution_id': 'agent-chat-e757a6629c5d42909f05e3d7cad8c8a1', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_767f50bf8bd5428e974b4422ebb6f4c9', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    },
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-72823ce38125424d', 'execution_id': 'agent-chat-f4109db767504f75aff4aee5f813f107', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_38753711c40e4a34a2314801c7305065', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    },
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-a3f199193a3d43bf', 'execution_id': 'agent-chat-4e5a524a62ad4ed498fb861497471d38', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_5a273b12d84b4b17b429c3c01d817869', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    },
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-48f416316c564d9c', 'execution_id': 'agent-chat-ddcb2510e3fa478e8babbe6d8ba588b7', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_aca9dcbf9a034979b6252d7835692b43', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    },
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-abdd3d3e371e47a3', 'execution_id': 'agent-chat-1b04ca61a8b04ecab10f50204d6b81a7', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_709d44de384e421392a0390cad409fc5', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    },
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-6d8251bb3cf34ba3', 'execution_id': 'agent-chat-1bd5bca5f88a4252a98ff526770ad65e', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_a1b05a1f4c754510b44062fbf8a4f6e3', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    },
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-f18bd43fd73545c3', 'execution_id': 'agent-chat-52714aa838b6466dbaa9b542ec09be06', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_66382d6ce56641d58d7ea81f8e15591c', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    },
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-5842ebc8feff48a4', 'execution_id': 'agent-chat-57727232f1924b24b3646ec0765dc0be', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_d3288c422d48447e8e61b42bd8029e80', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    },
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-f829077c8cf544e4', 'execution_id': 'agent-chat-1e98c69564d945e59067ed665bd1506f', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_1c2a77aa9b3143b3955938ff678dfc5c', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    },
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-7321f375d54c4e40', 'execution_id': 'agent-chat-6f8be49b55eb4272a1ba6ecf3d25c9df', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_033e88939f0143ec9b0eebcc4bfa3116', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    },
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-be345686ae494ac2', 'execution_id': 'agent-chat-025369f143d5493287d79d2fc2b47de8', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_9a732318584a49758b6f5abe48006a02', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    },
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-852feb9c2855413b', 'execution_id': 'agent-chat-5cd46901ddf940178693cccdd1241aca', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_368c8e2e7068480ca22e7e68a58fc871', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    },
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-7947ba3779c148c1', 'execution_id': 'agent-chat-dd28f1655584423d90643560c69d9b2e', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_91bf1b5cc76142efa25443a03f2c3f40', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    },
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-742ce70fc942443c', 'execution_id': 'agent-chat-a15f1a73d5a146f18baedd9bcc4ed250', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_da50d0036076432b81070a8ba6f77dbf', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    },
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-333ceca23dd24bc2', 'execution_id': 'agent-chat-9ca0808218f642b38ae01e92480c5a57', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_4407af8757394707b6747151e0a2dd62', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    },
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-18a01955ea624fb9', 'execution_id': 'agent-chat-6589695676184044881f90ee38402eb2', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_2c1263b969f24d2683e0f2839671fd23', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    },
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-cc8025ae2f714650', 'execution_id': 'agent-chat-a5a77d3850d84ffcbd839c88a6e04cce', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_63699c0b72104537b2701e1f6a5c046e', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    },
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-b491ea0a17524144', 'execution_id': 'agent-chat-b647e4daf60343d2b749794f16978a6f', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_d98536d1a7444487a66e16afff394234', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    },
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-ad78622fe0824f42', 'execution_id': 'agent-chat-4468a082807144919ace87b007360636', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_6f85d4c931224f408a36c9f78ecaae7b', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    },
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-62d4192ce6614c08', 'execution_id': 'agent-chat-d8fb39e3d3484881896df0b18de84186', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_3e1b72e471074f28b30170b68e90a4a0', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    },
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-6d33ea147c754c17', 'execution_id': 'agent-chat-2109441047a144c799662b2932262d36', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_613f2f9a651a42219dbca0431bf83c45', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    },
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-03f486900fb544e5', 'execution_id': 'agent-chat-2105e7a29fd44673aaebea15bf30c926', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_b1b73aa1cafd49789a3284b05ae6f3fe', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    },
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-9112ef72fc9a4bcf', 'execution_id': 'agent-chat-dde54bdfde734e48b4d15b4f1eea0da9', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_33963e3b46d84d9794d967058b1d0af1', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    },
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-9b38ecd9c6c6433a', 'execution_id': 'agent-chat-ba6f17b4261049929ac2a9be1e39a74b', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_94480c5132224f48a742aa521432c4cf', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    },
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-02138a6a9648428b', 'execution_id': 'agent-chat-d0d96f5a3ce049bb942e42cd79bd8ed4', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_e634ebfff26645569befcf365126b821', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    },
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-2cc225f73e3c4581', 'execution_id': 'agent-chat-79cdc1810785461a8a708a13de90fa5d', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_6bc4dd24114441e4a594b0f7c972b7e7', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    },
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-d89dd9f4729c4af0', 'execution_id': 'agent-chat-26f494ac85f14bb0a2a5bd02df388755', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_73465121e18a45dd8c04cd4332a6dc0b', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    },
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-7a7c79df0f0b48fe', 'execution_id': 'agent-chat-06570c5edd45402eb5d88349f7f4c7b5', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_9305b87677db40eba4607ab9d35861c6', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    },
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-4c9564a003ca4c56', 'execution_id': 'agent-chat-564ea6480ae24a7184e0982471ec510c', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_3826681635264d3e84ffe0b54321ee78', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    },
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-d1af246733504e02', 'execution_id': 'agent-chat-55265d1478984edfbbb9ec0243eec848', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_c41af374dd0942ee94d34c8233d7afec', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    },
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-a6ea3a28907a4374', 'execution_id': 'agent-chat-7964de5d99874463af0395aa1d020e95', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_a83c260a3f314c8082a53da3f5f1a7e1', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    },
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-5c1aa4d83b4046b5', 'execution_id': 'agent-chat-b3fba0190b3644cdb14d49ac7a0cb349', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_bbeec35736de4c82863d18b54504fe86', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    },
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-34bcee644d3b4d35', 'execution_id': 'agent-chat-dd7296608a1540e698f3af32c92b9c09', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_5f991141ea5649e99f27d3fba8027d0e', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    },
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-62d39d602ba1497d', 'execution_id': 'agent-chat-dc01bdbf482b41f58d6092844841672a', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_643fa9dcbe56486b8a6880210e953a03', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    },
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-7adfc31b1c124408', 'execution_id': 'agent-chat-ff69796f266340aa92424584540c03f2', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_c68bd4149a454f8da1796510c249956e', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    },
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-80fd292e70494939', 'execution_id': 'agent-chat-70a5ad7858ea455393e1ca1c4f3b796a', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_6f99dca64c9748f789b3ba4df59e0192', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    },
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-fe50f8b283fd4d28', 'execution_id': 'agent-chat-79220dadfd004186aa578dc493eefa52', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_db2604acacb94d1b9224a769fc98ebcb', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    },
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-21d4e3ca5c304a0d', 'execution_id': 'agent-chat-62765de878c04fb09f86f0d7902bd2a3', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_59167484e64745b693968d2eb5564237', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    },
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-7b93b3f2618e45ac', 'execution_id': 'agent-chat-b3912ea720104671b4b9885a8068fd87', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_1df46385c8694b22b03d922174508cac', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    },
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-10cdaeea3a254755', 'execution_id': 'agent-chat-10ea751d56834cbf99cd1e52872c409f', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_6d4c56b9abef4c8c9309dee8bcc80aef', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    },
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-f6d659ab4ce242fe', 'execution_id': 'agent-chat-e2751701e7834d5ba096ad6b1c799ab6', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_42a2aecf7e6a49b0a6e779392a9c509e', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    },
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-a9c712a0c0ec4e07', 'execution_id': 'agent-chat-947269cb1549456da41d56ccb4041613', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_acd90f5088f9491b8d72ab81b670abc5', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    },
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-08af059e53004aa7', 'execution_id': 'agent-chat-6f24006f2a6346c1b54ac79750baf39e', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_f534a891e7744143b0795e14b6137237', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    },
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-dc9e956439984e7d', 'execution_id': 'agent-chat-af44438ee9d8409f95736d94bcbb5750', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_086e5697838b45cdaff4ab438aced737', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    },
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-aadbc36bd8b847ea', 'execution_id': 'agent-chat-e0bf2f94e79b4248bf88e05e0892884c', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_4e90ed4f922f4d8e8c4bcfb3368342d5', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    },
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-f87019f9e9d5480f', 'execution_id': 'agent-chat-4dac972eb8764a59958c6ed31cd9dc48', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_65686e1d38474acfa358fbe813d479dc', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    },
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-702885d79fb4484c', 'execution_id': 'agent-chat-dd73198401094e51ab78e4fd168a526d', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_36f707aa939a43d88e68f696662e4f01', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    },
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-9fd5983750c047ab', 'execution_id': 'agent-chat-371aa31ad7fb4822be0990d8d1cc1923', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_4558f60611c4442aa6194b7c22532201', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    },
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-b2c22b253f5a49b9', 'execution_id': 'agent-chat-0c0ac4490972482aa488127b578346e3', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_61948731d3454963bc673d7ee3754e59', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    },
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-23191e8d66d64dd2', 'execution_id': 'agent-chat-fb961df3d5e84e299a4d405834725ef4', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_7797881f1cd045d68bb33b22762225cc', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    },
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-02fcf679547b4501', 'execution_id': 'agent-chat-6e51118d598e4c769849cbcfa81ce54c', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_42be8cb949134d5da6021382d3a71035', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    },
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-ed017d6f9a6e402d', 'execution_id': 'agent-chat-c010c09d4c3d46a998337b094fa867c7', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_55ce78f8a83c4cc5a8c3099b40cd2480', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    },
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-4a17f5c48c0c4ff3', 'execution_id': 'agent-chat-c6ef4c9225a64b8880c9954c33ef5a07', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_155d193cec3c4f818890f90919b42d7b', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    },
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-680a3e83542643b6', 'execution_id': 'agent-chat-c97447e9dc834be4a941162661877412', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_8f5795f88f064e8da554eaf01cd6fdff', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    },
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-ecd764b15af14620', 'execution_id': 'agent-chat-2fd51af9390a418c9bff64f5090c8e22', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_c756352fac90437a996f8a95b784c087', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    },
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-91389b4c64154d75', 'execution_id': 'agent-chat-b6c78eb1095e44b29a5b5496afec0f35', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_e16aa7e2be5f456e8acc09830d5e58a9', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    },
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-41c7d7b0acf04745', 'execution_id': 'agent-chat-483b49ebce8f4207b684fec67ce1139a', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_bf5403780297437580aeb35d99c47b7c', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    },
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-710c8803d8324b1c', 'execution_id': 'agent-chat-328b7ad6c06e49488ffb9edc42d3a9ed', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_65a3d03c81434647a07d6467c616c355', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    },
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-ae2a0cf8a4a24fb6', 'execution_id': 'agent-chat-670064d5e18144e29b63decd91d48a05', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_97cb675d08a347138afea72c00294714', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    },
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-f3b9cf17dc5445db', 'execution_id': 'agent-chat-d431eb0b49944693bace47a91e0f4f33', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_57316d54916f4268b59edea052b182c0', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    },
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-6c713e52e4df48ab', 'execution_id': 'agent-chat-f9eb946983764ec7af670ff65a361daa', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_3a398d299b9c48c08cf4744e6ab3c979', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    },
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-2bcdf0f9fb65498a', 'execution_id': 'agent-chat-b965a861770f4ba4afe2ba7c2ddccf2b', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_9253f36888d946eba735efbe74c57852', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    },
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-fac5ea181a5a4640', 'execution_id': 'agent-chat-118eee7c3aa34b5f88f767947e121d24', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_d134dbed76e44e31a3d426e8c393227a', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    },
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-0c7d6b5a02724709', 'execution_id': 'agent-chat-3cdcb0d76a29422fada1194c83dead6f', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_a91107a1817b4da2aefa98ef99c8ace6', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    },
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-04fa738128c442be', 'execution_id': 'agent-chat-0800c6c912a34aa580d2e60f990ac75a', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_8d828ad43f094e389af1f8603d71d422', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    },
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-63b3459f580a4348', 'execution_id': 'agent-chat-17d103c443c34ea786fa5eca6ae0cf4c', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_c1a98b5605c8497c8ddffdd3830efcd3', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    },
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-e0b52c2d0f9e47ee', 'execution_id': 'agent-chat-fc1e6458c70347a6afd41ad32ab7d814', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_6f6dbd4b9d7149bba8dc98595bb7ae11', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    },
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-17603b3efe114d77', 'execution_id': 'agent-chat-b70cd2078ea44b3682ece6e2296758b5', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_8b68abd2dc294320a354e6caad267659', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    },
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-7f48da0e1ba34103', 'execution_id': 'agent-chat-7f1a5cc489b3481eb880fd895d35939a', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_17a468a42096490a8f82529eaededad2', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    },
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-ff5d87d2c849454e', 'execution_id': 'agent-chat-664008a4d0f54be3990711104d6f59e8', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_d8ac2836ac90492bb38f30c3cb283fd9', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    },
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-a9881ab4a8a84fbf', 'execution_id': 'agent-chat-f1c10375441242b485772a80998f1801', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_853f30c71339483eb1fb7847e0889227', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    },
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-905249cb36b54f56', 'execution_id': 'agent-chat-2ee861b9b4e74a9a81c2c87c977ef8db', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_cb40d837ec1e44cf9a635fae4ec1f2d1', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    },
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-24a14093475944d3', 'execution_id': 'agent-chat-dad2fe21aaa3425c8bff342abf5967eb', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_b7da7a77bdc9462b9f80d2950ef2f6c8', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    },
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-d70801f88ff54474', 'execution_id': 'agent-chat-8fc2ca1cc44b4c2483cb24505d70da2b', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_fdd0491ee99446bb8607ff1e6d82e4e5', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    },
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-098901956a5042b3', 'execution_id': 'agent-chat-7d3e64b4214c4bdaa539617aa096784b', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_9f769388e4744240aea812b5864997bd', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    },
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-19b1852a27244f8b', 'execution_id': 'agent-chat-09648a532a9c4af986746449e1606f51', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_688d9c477b0a4badba5abbeab70d58a4', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    },
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-6ece4ec356de419e', 'execution_id': 'agent-chat-8556c4b1148047628de89d96a1d3f1f5', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_51bec5811855412c8d5240f92af44c8e', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    },
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-1b79762d49c94eff', 'execution_id': 'agent-chat-8561c8a09568463db62b7147215661d6', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_99dcc3bddc704fe1b8c5f37417e1405c', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    },
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-aaf88c113fc34284', 'execution_id': 'agent-chat-224128330780448098eab6ce57226264', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_b28d377503b842adbefb4a9b7b9b9a6b', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    },
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-8814b0c3b6714036', 'execution_id': 'agent-chat-673c13040da04040ba845877c247f168', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_cfef372c3b9f4c8fb5129eb53f9b6ae3', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    },
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-75a750b504c8452a', 'execution_id': 'agent-chat-3dc6231db4a84f3d9ebda0a3f275c294', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_ab114d27de184caea641ad8a0ca6c6f0', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    },
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-b50a5a7c550741ad', 'execution_id': 'agent-chat-068bef23722a4602a638c86383800684', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_7a30c4d76411466e86c89e50d0baa45d', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    },
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-7a88042d48364a55', 'execution_id': 'agent-chat-e37025933a99408bab4cc8410ebe9bec', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_1724c4ead07c499db8990b94514b2417', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    },
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-3261c5d6f50446f6', 'execution_id': 'agent-chat-2f5675ffd72d4a28b4d3555668e9e7c2', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_541ed1588d58425eb73343933491594f', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    },
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-adfbce31f91f4aa4', 'execution_id': 'agent-chat-1c1cd1bc3a8e4624b2f90b4ff0553528', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_3fd32ab93afd4324aaa5e1f2389f1829', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    },
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-346a6fa89f9e48bf', 'execution_id': 'agent-chat-ce69aab36ff94f12997b0e06ffd6bf2e', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_103de6b226344c9da3092f83df79cd94', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    },
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-1668213776ad41c7', 'execution_id': 'agent-chat-2af0ec3c960e494eac898c85ee6b73e2', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_a37096cd278f48d9ab332b72d654661c', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    },
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-c2eb4c0cb5d248dd', 'execution_id': 'agent-chat-899aa3a88243483e8941fbe8797102b7', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_4ecf62cd8a094b29aad3277d5ea8ff79', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    },
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-ac754aa6d11b4d03', 'execution_id': 'agent-chat-f496c3140774490f939edac9370cd374', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_69fb6d4129cf440bab1e61de2cc50923', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    },
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-914c17c2116948a7', 'execution_id': 'agent-chat-a2952d795c0447d7a349367c9a959c4e', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_0c5bc7bbe7c1437db3ce84d77a379673', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    },
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-92ac7bbf5e304dd6', 'execution_id': 'agent-chat-5703c9c130dd4ba3b55403aed16a6580', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_3572a3401ef340ee8a4910b05e491d26', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    },
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-2678fb4f18a14a4d', 'execution_id': 'agent-chat-90f2ba4b2c894bde8bb783c2984f488d', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_1171fa96f7394b33b2c1bbb192da0731', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    },
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-302d7b8ca5974811', 'execution_id': 'agent-chat-cc645ca5cf8f47f49d32a24a6f8d24c0', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_d0658d6041f9462dbdf7cea31753277f', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    },
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-02fbace2f3c34146', 'execution_id': 'agent-chat-75021ee7708d48a1b61f5e9725e52430', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_60e1a2197ebe4cc7baeb8c8b205a49ff', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    },
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-5dddb37009b7409d', 'execution_id': 'agent-chat-d89b52ba8c4947d5b9d7d5556689f9f9', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_d6befe5f4c7c43c4a717b5b6a6dc97cd', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    },
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-1a02db5a6c33414a', 'execution_id': 'agent-chat-f622726580af4c768eabc0cea8588e4d', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_922965e19c7c49d7983755b54b7f93f0', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    },
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-8be22b712e454cac', 'execution_id': 'agent-chat-aa4c1af009c6478e835dc01a96447915', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_3dcff386efe74b1cbd26d06241933269', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    },
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-27da236b8e494a54', 'execution_id': 'agent-chat-c0a22ff30b864f29b79bc143da502cca', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_86315176e62e430e8896f2c441ce190a', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    },
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-bb086c47fdbd415d', 'execution_id': 'agent-chat-b9b55b1fff7a424e9991fe9d789f57b6', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_b07cbae0c4bf4fd08e651b3575780fae', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    },
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-f1a36d39b76b4b9f', 'execution_id': 'agent-chat-6083466c55974d5582bbddde03ce6c11', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_4ad7d20bf02a4a9ea4c5ef770da02d64', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    },
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-80d2e22e53e6481b', 'execution_id': 'agent-chat-8d9d743695ec41c1916b139f26dee8d6', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_3347517ce5454483922dba0599e6fe0e', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    },
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-7eb82d34af964335', 'execution_id': 'agent-chat-a9a4779e68dc453db44c1b87bcc53514', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_6c8967fb896d40e4aca1aeeb03e40155', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    },
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-802b4c3b66c445cc', 'execution_id': 'agent-chat-1d8e4865c17a4459a25b61e341e12f5a', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_4d3f644c199b43f89ea6642165e4fcf9', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    },
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-35109eb2fa6847fb', 'execution_id': 'agent-chat-88ec952600654d7989bc815c5bbb170a', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_daef4eccdded44498dd426a50b14459d', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    },
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-359994510f8c421d', 'execution_id': 'agent-chat-812cae0ce542467aa34192bcbd8649ed', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_35c276c84001464799b70a0abe74f0ae', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    },
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-9ae27dfcdda54932', 'execution_id': 'agent-chat-d9d1cb690d674728ac06076537ce3597', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_4423e732f1104a06a29ef2b6a45baf07', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    },
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-6cd0e2ef81ed4089', 'execution_id': 'agent-chat-a260849609f1423cb490ddf4dc43d409', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_64c726dad6094af3b3a6d2fc2efed09e', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    },
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-95eac2adefb94024', 'execution_id': 'agent-chat-c1ca8dfd9cdb4177ac6929bbeed1629a', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_9a0a972b4e8b4906a0030682941fc83a', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    },
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-7c978f525a554fd5', 'execution_id': 'agent-chat-d654630449dc4d23b0d1f60ee2cc5fbc', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_4820e5cdb1364f29a48f7f163b569b29', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    },
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-bb3cf5403ad142e3', 'execution_id': 'agent-chat-3ed78e5b276c4968a744ceb2630dbf28', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_9a7112ee592f4865a74c8bbd6b1b11e3', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    },
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-4ccdbb23e2264794', 'execution_id': 'agent-chat-21311eba0a2246b8994bae1c8983c03d', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_bf61f8f203034709b81f991c90f2eb23', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    },
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-9999c7d899554b59', 'execution_id': 'agent-chat-973c4a49f4c741f5997d7a99b9383310', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_1ac91453c76d4af189d99a754e398246', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    },
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-d14ed04d6f21470f', 'execution_id': 'agent-chat-930fefba4ff34e629771c303398a1ade', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_d1bd0f4b0a61497e9b3d093f9855fb0e', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    },
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-5f84905b52cd43cb', 'execution_id': 'agent-chat-16098bc800824118a0c775bbd0ed6588', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_4b5fbafc52cc48258219e16ec5a5305c', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    },
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-9239d84a9f1942b2', 'execution_id': 'agent-chat-32932d76a8cc467097e4a480190b2d32', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_7c64a5b733d746778b53cae24406d168', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    },
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-6f34945016ef4ded', 'execution_id': 'agent-chat-9909bd86eb754c1b89ad646c06d87aa3', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_d0ab6f6fa0944ad492ea06ab33777cf3', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    },
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-5839c7a80ffd42a3', 'execution_id': 'agent-chat-149549b0b5104ce28b44eb2bccf72bf6', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_794d38da4a2e4c3fa2cf756f32b31661', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    },
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-92c9f1228e1f43a1', 'execution_id': 'agent-chat-4d1b5635eb7d4757a7dccf68d87151a8', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_d81108d54a6c46f6b82c8899841300cc', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    },
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-b7800d0608804542', 'execution_id': 'agent-chat-f248781d04a749eb9f6160e76f0d229e', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_6930a2d40487406da8a34029c958a538', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    },
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-77ee2831fe024ae6', 'execution_id': 'agent-chat-5d3bf5fa83e04e638bb855cb0d4871ea', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_100ac5230df640689f170920f6c3aedd', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    },
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-625a898308864912', 'execution_id': 'agent-chat-55314ed026c94e8aa6ec26d59e094319', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_17d3e04de2074271ac14930c137458f5', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    },
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-d432cfde270843cf', 'execution_id': 'agent-chat-f2dfc6aff05245df9c0b6bafea15384b', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_8a4d9d674a0646059c0e8c3929b1a513', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    },
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-41a8d4cde3cf4804', 'execution_id': 'agent-chat-c5b4a5d6f2f94b76a3768cfe2ff37459', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_4ab9c54f23844530a7fcaebbf8ac9c8b', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    },
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-83fa8cfe9ab445da', 'execution_id': 'agent-chat-e6b54ac3d9df4ef494d3035dd15ba589', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_cc018c1d236a49e9aaf9a7eb2a05edd0', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    },
+    {
+      "function": "_finish",
+      "line": 204,
+      "error": "ValueError('event timestamps must be non-negative and ordered')",
+      "metadata": "None"
+    },
+    {
+      "method": "_finish",
+      "error": "ValueError('event timestamps must be non-negative and ordered')",
+      "traceback": "Traceback (most recent call last):\n  File \"<string>\", line 25, in recorded\n  File \"/workspace/src/services/agent_delegation.py\", line 204, in _finish\n    trace=self.record_trace(record)\n          ^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/workspace/src/api/server.py\", line 4659, in _delegation_trace\n    return _record_agent_chat_trace(agent_id=\"app-assistant\",provider_id=\"application\",model_id=\"not_used\",started_at_ns=int(record[\"started_at\"]*1e9),ended_at_ns=time.time_ns(),\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/workspace/src/api/server.py\", line 3801, in _record_agent_chat_trace\n    event = TraceEvent(\n            ^^^^^^^^^^^\n  File \"<string>\", line 14, in __init__\n  File \"/workspace/src/observability/local_trace.py\", line 83, in __post_init__\n    raise ValueError(\"event timestamps must be non-negative and ordered\")\nValueError: event timestamps must be non-negative and ordered\n"
+    },
+    {
+      "function": "_verify_trace",
+      "line": 141,
+      "error": "DelegationError('delegation_child_trace_unverified')",
+      "metadata": "None"
+    },
+    {
+      "function": "_observe_child",
+      "line": 166,
+      "error": "DelegationError('delegation_child_trace_unverified')",
+      "metadata": "None"
+    },
+    {
+      "method": "_observe_child",
+      "error": "DelegationError('delegation_child_trace_unverified')",
+      "traceback": "Traceback (most recent call last):\n  File \"/workspace/src/services/agent_delegation.py\", line 254, in execute\n    self._finish(record,{'OUT_OF_SCOPE':'OUT_OF_SCOPE','NEEDS_AUTHORIZATION':'NEEDS_AUTHORIZATION','NEEDS_REVIEW':'NEEDS_REVIEW'}.get(outcome,'PASSED'))\n  File \"<string>\", line 25, in recorded\n  File \"/workspace/src/services/agent_delegation.py\", line 204, in _finish\n    trace=self.record_trace(record)\n          ^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/workspace/src/api/server.py\", line 4659, in _delegation_trace\n    return _record_agent_chat_trace(agent_id=\"app-assistant\",provider_id=\"application\",model_id=\"not_used\",started_at_ns=int(record[\"started_at\"]*1e9),ended_at_ns=time.time_ns(),\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/workspace/src/api/server.py\", line 3801, in _record_agent_chat_trace\n    event = TraceEvent(\n            ^^^^^^^^^^^\n  File \"<string>\", line 14, in __init__\n  File \"/workspace/src/observability/local_trace.py\", line 83, in __post_init__\n    raise ValueError(\"event timestamps must be non-negative and ordered\")\nValueError: event timestamps must be non-negative and ordered\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"<string>\", line 25, in recorded\n  File \"/workspace/src/services/agent_delegation.py\", line 166, in _observe_child\n    record['child_execution_id']=self._verify_trace(record,record['child_trace_id'],record['child_trace_sha256'],trace.get('execution_id'))\n                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/workspace/src/services/agent_delegation.py\", line 141, in _verify_trace\n    if not trace_sha256 or hashlib.sha256(raw).hexdigest()!=trace_sha256:raise DelegationError('delegation_child_trace_unverified')\n                                                                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nsrc.services.agent_delegation.DelegationError: delegation_child_trace_unverified\n"
+    },
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-455179050fe24da4', 'execution_id': 'agent-chat-8ad80558ffa249d49d820923f631833f', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_8127a98269f948c0b86d3916d78ff1d3', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    },
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-dc5728fada5c43de', 'execution_id': 'agent-chat-d6ca9091010b48c88b5feb4be63f04da', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_78746172316040479564eb18dc2707cc', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    },
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-63a98ddc9a744d2b', 'execution_id': 'agent-chat-d2aad37087a74259a79d2ea1241f5d58', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_eee0a4950a75498787bc1fb5dd5a17db', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    },
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-628c365eef224f90', 'execution_id': 'agent-chat-7f3addd81a84494f9cf44429116fc604', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_ecc23c319224465ca59a0d2d776afcac', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    },
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-ea6819f3e450405c', 'execution_id': 'agent-chat-e60e95f41fa64b0c99dc9a1596317b18', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_4979dcfce73a45428056f265ffd997a2', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    },
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-6acaabd1502941e5', 'execution_id': 'agent-chat-ffe5bf0d52064ab1b07e1b75250a71d4', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_89a87ca1ba874bea8d2eac3b0935c257', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    },
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-9a52fba1cfb74d9b', 'execution_id': 'agent-chat-0292659d50fa4187a10b33c63d1e43d6', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_230842396ea544b2becd4d9ce0fabcb1', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    },
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-9389b3a8ff7744a6', 'execution_id': 'agent-chat-f1b4f76e79954efb88e29faf5bc41500', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_06bd99de3bfb41d6b4d78c449994a797', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    },
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-982a6617ec2c4427', 'execution_id': 'agent-chat-d476d069bb974d8687419c4dd33c986c', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_4fb6bf859acc4f7eb9b2520ca3a43721', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    },
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-10f3f20b549045bb', 'execution_id': 'agent-chat-173caaf6293a4d379ba6a12bb82b2fb5', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_45855d75e820459daa402bd01b221472', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    },
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-9871f7a91a544791', 'execution_id': 'agent-chat-077fc710489f4ec7900513c7f09026be', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_f4b9c7d379f04910afc9f92294b686dc', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    },
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-075a7768163841b3', 'execution_id': 'agent-chat-e636ac33f16d4c5291b13b15b8332da8', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_82c3dd7c3ed64627bd100d9719b6d453', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    },
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-7d584fa1f3b54080', 'execution_id': 'agent-chat-4846ecd6f10c4efd8a446b9f7ec3be79', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_dd1f459eb3a94cf7bd0cf2f3323079ce', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    },
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-7421a17300b34062', 'execution_id': 'agent-chat-8ad45ba4d6f9444ab2a91107351d5ecf', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_5bab55bf5fd647598d11adefcfa475c1', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    },
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-67541e6849804a2d', 'execution_id': 'agent-chat-96d4afacf8fe4948812b4a19d25a9316', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_1935a2e34b8e43c69a3fc93edc8cb03d', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    },
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-157b3325892a489c', 'execution_id': 'agent-chat-ba98191862b24a6b904b761e3797e6bd', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_f66aa69705f74ad390d5ef879a2515d5', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    },
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-db0c0f3a514e4199', 'execution_id': 'agent-chat-b073e6858cab4d01a685ffef86fb18ae', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_e3f4c8553f72404bb2a9cccace7c0afd', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    },
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-942e364c059b4478', 'execution_id': 'agent-chat-c89c12de37d148c0834098bdd8f96eb3', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_e101ed71368148c990ea8dfc676afa05', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    },
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-1d4babd809f440bf', 'execution_id': 'agent-chat-56cf092b4f8f4c969627b89e25f69c0c', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_6b3b53ca445f4d89983da3dab721d4ef', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    },
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-34c9a95163314635', 'execution_id': 'agent-chat-9783f6a6a6a54993878cc3da90ca7710', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_ddec9acec8874ed0b5be2640fc8806a4', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    },
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-c8a697b6ac454f39', 'execution_id': 'agent-chat-724c1175cc934b939d2cca672ee66b23', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_5e2f580dda8c40b0bbe3ee19d7cbb8cd', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    },
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-f0114f3109e14fb8', 'execution_id': 'agent-chat-6c96bd55f4aa429d9f3f30edd6abcea4', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_df3ea2d6cfb44898a5c76d7695af22ec', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    },
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-d85cb7c831834770', 'execution_id': 'agent-chat-6effa8f3365c42928b83c9861ecee588', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_648e12acd2c5450f93e6bffa5eecb6c3', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    },
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-990f166ecc734520', 'execution_id': 'agent-chat-94e4419809e74fe5ba28fefc7fd971cb', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_2af5c7c512c04897be46d107d8f65e1c', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    },
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-20f0372b79c744d7', 'execution_id': 'agent-chat-a6fe8a561b3c472d9c0d3686f8b9653b', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_518422b212c34ceaad10b2bf793dc104', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    },
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-2f84608f12804b95', 'execution_id': 'agent-chat-6485bfabd91f41848b518d96a702555e', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_39f9f57a6cf943faa0c80165fac325e6', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    },
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-48bf36cdfe9e48bf', 'execution_id': 'agent-chat-873669c307384da59668eae6c4a6c681', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_dac5ddff97ec4f66a74fc9f861fec74a', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    },
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-3e4df4f62f9046c0', 'execution_id': 'agent-chat-cdd72f2385c44935b441fdddbe70d582', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_403c929eb6314e41a3779c0ca2c5dd3c', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    },
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-b2b3b1d37422401c', 'execution_id': 'agent-chat-221d80d5490c4953b0d4566817c8e7bc', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_9eb2ca7571634a149303845a2375e652', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    },
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-4597978af40e40fd', 'execution_id': 'agent-chat-965828f7fe914fcfb0a1f20a9589ec31', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_a5b9de6669af45bb854a9f2194d4d94b', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    },
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-f2f009b51a534220', 'execution_id': 'agent-chat-fe1373fe005346cc906ef76aaac7caf1', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_c0d9f75b85ee40c39573f5d799e188e2', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    },
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-1c823c6ed6594ca6', 'execution_id': 'agent-chat-dc11fc2a04424fbca6124f36c0b4ac48', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_150d7e6d9ebe4fb788dd1a6d119c21d4', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    },
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-9215edd040a445d6', 'execution_id': 'agent-chat-127a839a50c048fda2c7f5ba4de7b75b', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_917cab4300704146a784fa4e87733f49', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    },
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-a810c11d049c4f64', 'execution_id': 'agent-chat-7bb67ac565674ecbaf097489c19588ec', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_dbf35c3003ef4d349361cef18b19d415', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    },
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-dcd822cd1a3b4360', 'execution_id': 'agent-chat-ab9782a22f804602ac30482f0c5fdf97', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_d1a38e834733406d9065fcb0edb75f81', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    },
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-c629a155f2044c76', 'execution_id': 'agent-chat-6cb30842c9a5491882317abde1ea9839', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_8fe623792c594efaaa827ac204fddcfd', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    },
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-2010135c0be54d24', 'execution_id': 'agent-chat-e4ad5582171c4edcb351918cc79f6abf', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_25c1bfc84b1a46088a98e0575c27329c', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    },
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-e56542aba37b4095', 'execution_id': 'agent-chat-3ac9e562bcc24750908df753270d9c42', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_0b9fb25e27ba45c993e2971a9223508c', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    },
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-57e59e3fdbd647a3', 'execution_id': 'agent-chat-4b680c46cfc3456f93d2d66bbfb473ed', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_6b79ddb1015d4293a81dda41c308914c', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    },
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-937baa95a062461a', 'execution_id': 'agent-chat-143d6419f298484ba098bdf6522c8b6f', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_076c5eb28adb4bd0ac6d640fc9ae3388', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    },
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-10a9f0bb1df9472c', 'execution_id': 'agent-chat-692f11550c5645f6a41da22cd5d8f9ab', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_9abc6223839a407d98e187b34c600d16', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    },
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-ebb3b86e351b4282', 'execution_id': 'agent-chat-b37731a2d2a34a9983b4328e96079a2a', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_e2ce55533bbc438aa2a1541c3fbb10a5', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    },
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-d527a38aebc248a8', 'execution_id': 'agent-chat-464e60352777409d8b8319960195476a', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_931061d2ad0a4212a004ac5fc3f7fc89', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    },
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-b7456f3935a44f50', 'execution_id': 'agent-chat-60f6b3a5e2334236a4889ea4f0aebf26', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_f85e241b312849718a0e34ccf7c15f42', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    },
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-d165c4fe1dde4695', 'execution_id': 'agent-chat-cfd8bf9b1c5549b6b390a7c0888a0d4e', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_dae7bc4f7bcb45c7adf0bce875c4e08d', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    },
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-0e2f55ddf1bc4a6f', 'execution_id': 'agent-chat-1fd2d89ce8104445b232b2b1adb87dad', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_c50c2db5bee248038903a1bf1e1c5c4d', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    },
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-0b1c3ba6dd3440fc', 'execution_id': 'agent-chat-f698ab671d8c4da096b6f31328de3c07', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_8519462f9b8946b997b9e91c155e140f', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    },
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-38b3628b11174011', 'execution_id': 'agent-chat-90d887beedea49d8b146ec426dd9ce4a', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_995ed23bdd54414d83a02cc65a051533', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    },
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-9a1d51e308e740e5', 'execution_id': 'agent-chat-49d738c3a2b9471fb60ceb24fbde2819', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_144a4e5efcf1490e845c6c035532d45e', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    },
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-4cd6c89af1ce4021', 'execution_id': 'agent-chat-3918a07a43a3479696e1e4fb9f4505e8', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_51f8e926237f43b4a626d2f8a6ce9a97', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    },
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-b01b3c8160e14954', 'execution_id': 'agent-chat-08b592e31f7f4c4593e4b2c443b8c92b', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_7c76b7f7e6f24b07942d4b0dec37110b', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    },
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-f1094ad52f894fc9', 'execution_id': 'agent-chat-208a94cc8bcf4c91a1145479f34ae896', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_021861a8329b47d29648ae683e171616', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    },
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-e13838ca6d344d49', 'execution_id': 'agent-chat-a36e048ac8d9456bafa4054cad0093f5', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_345295c99136439385b1b0ce48651603', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    },
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-659d96e3d52a4c16', 'execution_id': 'agent-chat-e6ad85a5f77c49a08ad4e24745d2360f', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_d5548d7ac45041a1b1f9d9da4e8d81f4', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    },
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-867d068f17774787', 'execution_id': 'agent-chat-d695ca0e7910464da6293fae37f17c12', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_0f7a76b2d3004c17963157b6854a46a5', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    },
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-f3da698d6246453b', 'execution_id': 'agent-chat-440c811d362846e6924187d16a566004', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_bb31c444010c4e348c68c441a4e5ef70', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    },
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-2f5e9a61552d4809', 'execution_id': 'agent-chat-b6aad7d4d71a449a93eca8299a27eb7f', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_96bd3817905e4055911f689d724ef801', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    },
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-8e799d6ff39d4a6d', 'execution_id': 'agent-chat-a30e81949e8a4ab6ad17d93db91e7c5c', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_5acf71363e504cbfb3752994e6d17f94', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    },
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-665276fe84bb4987', 'execution_id': 'agent-chat-4822d355a0f04e32a3dde20267497202', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_7e525777378b47ed8951dd9353b0eda8', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    },
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-5e829b38fa904042', 'execution_id': 'agent-chat-e1788cc79b334aa49cbeaadf07045273', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_f52d679f982b4e91a8567f0beb37e4a7', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    },
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-9ce814cd28614772', 'execution_id': 'agent-chat-a93b993292b54143882a7b5a1d1fdd6b', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_bb2c7c301d634e7ba5f19c85e0fa54af', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    },
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-0ee8999dc4174020', 'execution_id': 'agent-chat-3c3c363d509248ffb90a711eafe8f69d', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_4e9793b1a03445c58a40f5ce7c5f79f4', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    },
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-17817fa7cc284e81', 'execution_id': 'agent-chat-e7a826d8e5b5459e96325f1d74d39b3f', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_79bcf1be2fae4879bf17b7a833c4eae1', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    },
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-e5a830386e8f4959', 'execution_id': 'agent-chat-21cf0fb862d84ffabac415bb8f534b2f', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_b5a4fdce2cba408d844bdca20992dcd7', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    },
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-411d98d8311b4b73', 'execution_id': 'agent-chat-101622b47ea443f48bb140c88df04e2c', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_2da70ac4f778498d8f05f28565f2af31', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    },
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-6156e8c9fdd840c9', 'execution_id': 'agent-chat-519ca771a70b4c6a92f571556f8ea411', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_bdc66b9f704147aabdea4edee093415e', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    },
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-107289afc2354fd7', 'execution_id': 'agent-chat-cced03cdb3254885a86f6f1381370ccd', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_2d2147c1256b4a9a87be0054af9f09f3', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    },
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-280f06defa6e4601', 'execution_id': 'agent-chat-c9f6ca4662a14ee999872e0be443d84c', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_166cd31a3c4d4c01a3a2add2b4df62fd', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    },
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-a8ba8fb2b0ae4d58', 'execution_id': 'agent-chat-7afb43e1dca745b0b3ecad0999216283', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_12ccfc7e0a71433080ac8321cfc6bff9', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    },
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-87064fa3691c4827', 'execution_id': 'agent-chat-9feab034ade449dd9807acfa5cfe3d52', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_205fa3404e6d43eaa7d83a5e2011cbc0', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    },
+    {
+      "function": "cached_metadata",
+      "line": 3684,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "metadata": "{'version': 1, 'trace_id': 'trace-376b70749c164963', 'execution_id': 'agent-chat-d9f39da01d604ce6bee65132fc969782', 'agent_id': 'agent_1234abcd', 'conversation_id': 'conv_b377d756ec1e4adcbd09b30e04b90b90', 'local_state': 'failed', 'export_state': 'not_attempted', 'sidecar_state': 'not_attempted', 'trace_state': 'local_trace_failed'}"
+    }
+  ],
+  "source": "original current fixture/API; diagnostic wrappers rethrow exceptions unchanged"
+}

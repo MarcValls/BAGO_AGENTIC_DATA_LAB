@@ -1,0 +1,45 @@
+{
+  "work_id": "W12",
+  "role": "team-orchestrator",
+  "status": "DONE",
+  "changed_files": [
+    "docs/decision-inspector/FINAL_STATUS.md"
+  ],
+  "outputs": [
+    {
+      "id": "agent-decision-inspector-v1-terminal-gate",
+      "path": "docs/decision-inspector/FINAL_STATUS.md",
+      "description": "Terminal evidence index, bounded verdict and remaining NOT_RUN/blocked limitations for the Agent Decision Inspector mission.",
+      "sha256": "96ae4e82aafa8c6b7a152028684c787f649c1420ebdb5e34bab896e096d4a66c"
+    }
+  ],
+  "verification": [
+    {
+      "command": "python .bago/team/kit/scripts/teamctl.py --root . verify",
+      "result": "PASS_WITH_WARNINGS",
+      "evidence": "W01-W11 dependencies validate; preserved orphan handoff warnings AC01.json through AC10.json remain visible."
+    },
+    {
+      "command": "npm exec --prefix frontend vitest -- run frontend/tests/ui/decision-inspector",
+      "result": "PASS",
+      "evidence": "5 files, 30 tests passed, 0 failed; independently rerun by W11."
+    },
+    {
+      "command": "npm run build --prefix frontend",
+      "result": "PASS",
+      "evidence": "TypeScript and Vite production build passed; 127 modules transformed; independently rerun by W11."
+    },
+    {
+      "command": "python -m pytest tests/runtime/ber -q",
+      "result": "PASS",
+      "evidence": "ADL BER client focused suite: 4 passed."
+    }
+  ],
+  "residual_risks": [
+    "Manual keyboard/screen-reader review NOT_RUN.",
+    "This closes only the Decision Inspector mission; ADL BER standalone packaging, L0-L15 parity, and live BER-to-AgentRunner integration remain unverified/blocked.",
+    "Agent Runner remains fail-closed and filesystem.delete remains blocked.",
+    "Orphan handoff warnings AC01-AC10 are preserved."
+  ],
+  "next_consumers": []
+}

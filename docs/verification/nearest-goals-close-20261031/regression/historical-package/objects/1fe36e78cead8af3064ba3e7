@@ -1,0 +1,66 @@
+# V01 — revisión independiente de tres ajustes de pruebas frontend
+
+**PASS en el alcance asignado**, P0=0/P1=0. Candidata efectiva:
+`frontend/.publication-candidate-2`. Ejecución Suite
+`6c49ffe7b4fc40cb8ba6559339724163`, exit0. Resultado dirigido: Vitest 5.0.4,
+dos archivos/15 pruebas PASS; Node, un archivo/una prueba PASS. Ambos stderr
+vacíos. Ninguna prueba se omitió. No se aplicaron cambios al activo ni se publicó.
+
+## Identidad y conservación
+
+Antes de consumir la candidata, se revalidaron los SHA de las 18 entradas
+congeladas de esta misión y todos los archivos del MANIFEST. Los tres snapshots
+baseline coinciden con los tests activos; los tres snapshots candidate coinciden
+con la candidata. Los 80 archivos de `candidate/src` y `frontend/src` son idénticos,
+incluido el conjunto de paths. Hashes antes/después de src, tres tests candidatos,
+tres tests activos y entradas son iguales. `fingerprints-before.json` y
+`fingerprints-after.json` conservan esa vinculación. Los tres `.diff` muestran
+exactamente lo revisado.
+
+El campo `candidate` de TEST_CANDIDATE.json conserva la ruta de la primera copia.
+La asignación explícita actual y MANIFEST.json identifican la segunda copia y
+son la autoridad de esta ejecución. No se atribuye a la segunda copia el resultado
+de la primera. El fallo anterior descrito por el coordinador no se usa como
+aceptación y no fue reescrito por esta revisión.
+
+## Comparación de invariantes
+
+| Cambio | Revisión del código y las aserciones | Conclusión |
+|---|---|---|
+| ProviderSettings | Solo añade esperar al modelo real `gpt-test` antes de pulsar submit. El formulario productivo tiene `required` cuando está integrado. Conserva rechazo401, mensaje de error, retirada de confirmación previa y recarga de estado | Evita una carrera con validación HTML; no modifica valores, mocks de error ni aserciones de autorización |
+| AgentEvaluationLab JSX | Solo cambia import de `test` de node:test a Vitest. Conserva renderToStaticMarkup, role=status y texto del estado inicial de carga | La prueba se registra en el runner que la ejecuta; mantiene ambas aserciones |
+| Navegación del chat | Sustituye prop sidebarTarget y roles/texto antiguos por portal interno y rol presentes en AgentChat actual. Comprueba panel cerrado/abierto, montaje dentro del slot, chat principal, agente seleccionado, Archived y callback settings | Prueba el contrato productivo existente; no cambia producción ni afloja navegación |
+| Lectura autorizada | Añade checkbox inicialmente false, ausencia de rutas, presencia tras activar y ausencia tras desactivar | Conserva y refuerza comprobación visible de consentimiento por defecto desactivado |
+
+La antigua aserción exacta sobre `.chat-composer-info` y su texto de privacidad
+no corresponde a ningún elemento de la fuente actual. Retirarla no elimina una
+comprobación funcional de escritura o ejecución de trabajos: aquella aserción
+solo comprobaba texto estático. La prueba nueva verifica el control de permiso
+que existe. Esta revisión no presenta el test DOM como prueba de seguridad del
+backend, de confinamiento de archivos o de proveedores reales.
+
+El mock nuevo de `/api/providers/chat-models` devuelve503 sintético para mostrar
+el botón actual `Open provider settings`; el callback sigue comprobado como true.
+`/api/providers/selection` queda explícitamente simulado. Requests inesperadas
+siguen lanzando error, no se introduce un mock global que acepte cualquier ruta.
+El encabezado esperado `Chat with Support agent` coincide con AgentChat actual y
+conserva la comprobación de identidad del agente. El filtro de archivo conserva
+la comprobación de request `status=archived`.
+
+## Ejecución independiente
+
+`review.py` ejecutó dos comandos con cwd absoluto a la candidata, recogidos en
+`commands.json` con argv, códigos, duración y hashes de logs:
+
+1. `node <frontend/node_modules/vitest/vitest.mjs> run --maxWorkers=2 tests/providers/provider-settings.test.tsx tests/ui/agent-evaluation-lab/agent-evaluation-lab-render.test.tsx` → exit0, 15 PASS.
+2. `node --test tests/ui/chat-shell/chat-navigation.test.mjs` → exit0, 1 PASS.
+
+Respuestas API simuladas; render DOM/static markup. Vite opera en middleware de
+prueba; no se invocó servicio de aplicación, proveedor ni credencial real.
+
+Resultado SHA-256:
+`14ea9dd8673b4c7bb79d0d5b4a997f272fc36d55d1d73cd914e24e6ae5171885`.
+
+Las comprobaciones completas de frontend, build, aplicación de los tres cambios,
+inspección final y actualización GitHub corresponden al coordinador. Esta revisión
+es independiente y dirigida; no declara esos pasos ejecutados ni cierra misión.

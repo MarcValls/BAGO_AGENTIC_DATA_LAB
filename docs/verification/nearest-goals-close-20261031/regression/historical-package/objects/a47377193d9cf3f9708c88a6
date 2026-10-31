@@ -1,0 +1,109 @@
+from __future__ import annotations
+import argparse, hashlib, json, pathlib, subprocess, sys, xml.etree.ElementTree as ET
+from datetime import datetime, timezone
+
+TARGETS = {
+    "github-update-20261022": {"pr": 62, "candidate": "b0b2f2a2079019fe80e82b836e13c5580a189b70", "merge": "f253f3700990943755e63717a93d3be99f0e19fa", "ci": "39813814372", "tree": "accfe27115fed2854d791434d9866ebd39210b56", "manifest_sha": "41ca07884be4762c66e2b30349e2731811491b496a28bf9cdcac693fa61c8e87", "manifest_files": 13, "checks": {"V01": "review"}},
+    "readme-clarity-20261022": {"pr": 63, "candidate": "64a88fbc30bb1b2c0a4cd516281c71be1f65748b", "merge": "2d521170fdf651da482b5bf9d5b229a41412a8d2", "ci": "39823019847", "tree": "0012569d5abbd89a48781cd9603baa70674b732a", "manifest_sha": "2bf875cace0e629db987b4308c8928a49ea185c94522f38533a688ad304d2e8c", "manifest_files": 20, "checks": {"B01": "build", "T01": "tests", "V01": "review", "I01": "final"}},
+}
+
+def sha(path: pathlib.Path) -> str:
+    h=hashlib.sha256()
+    with path.open('rb') as f:
+        for chunk in iter(lambda:f.read(1024*1024), b''): h.update(chunk)
+    return h.hexdigest()
+
+def read(path: pathlib.Path): return json.loads(path.read_text(encoding='utf-8-sig'))
+def add(checks, name, ok, detail): checks.append({"id":name,"result":"PASS" if ok else "FAIL","detail":detail})
+def rel(root: pathlib.Path, p: str) -> pathlib.Path:
+    q=(root/p).resolve()
+    if root.resolve() not in q.parents and q != root.resolve(): raise ValueError(f"path escapes goal root: {p}")
+    return q
+
+def audit_goal(repo: pathlib.Path, gid: str) -> dict:
+    checks=[]; g=repo/'.bago'/'goals'/gid; rec=g/'reconciliation-20261031'; spec=TARGETS[gid]
+    ev=read(rec/'evidence-reconciliation.json'); mission=read(g/'mission.json'); state=read(g/'.bago/team/runtime/state.json')
+    manifest_path=rec/'MANIFEST.json'; manifest=read(manifest_path); manifest_ok=sha(manifest_path)==spec['manifest_sha'] and manifest.get('goal')==gid and manifest.get('schema')=='bago.historical-reconciliation.artifacts.v1' and manifest.get('independent_review')=='PENDING' and len(manifest.get('files',[]))==spec['manifest_files']
+    manifest_rows_ok=True
+    for row in manifest.get('files',[]):
+        fp=rel(g,row['path'])
+        if not fp.is_file() or sha(fp)!=row.get('sha256') or fp.stat().st_size!=row.get('bytes'): manifest_rows_ok=False
+    add(checks,'final_reconciliation_manifest_and_all_entries',manifest_ok and manifest_rows_ok,{"manifest_sha256":sha(manifest_path),"declared_files":len(manifest.get('files',[])),"all_entry_hashes_and_sizes_match":manifest_rows_ok})
+    prfile='github-pr62.json' if spec['pr']==62 else 'github-pr63.json'; cifile='github-ci.json'
+    prpath=rec/prfile; cipath=rec/cifile; pr=read(prpath); ci=read(cipath)
+    expected_hashes={prfile:sha(prpath),cifile:sha(cipath)}
+    add(checks,'reconciliation_input_hashes',ev.get('publication',{}).get('input_sha256')==expected_hashes,expected_hashes)
+    pub=ev.get('publication',{}); p=pub.get('pr',{}); c=pub.get('ci',{})
+    raw_pr_ok=(pr.get('number')==spec['pr'] and pr.get('state')=='MERGED' and pr.get('headRefOid')==spec['candidate'] and pr.get('mergeCommit',{}).get('oid')==spec['merge'] and pr.get('url')==p.get('url'))
+    add(checks,'downloaded_pr_matches_reconciliation',raw_pr_ok,{"number":pr.get('number'),"state":pr.get('state'),"head":pr.get('headRefOid'),"merge":pr.get('mergeCommit',{}).get('oid')})
+    raw_ci_ok=(ci.get('status')=='completed' and ci.get('conclusion')=='success' and ci.get('headSha')==spec['candidate'] and ci.get('url')==c.get('url') and spec['ci'] in ci.get('url',''))
+    add(checks,'downloaded_ci_matches_exact_head',raw_ci_ok,{"run":spec['ci'],"status":ci.get('status'),"conclusion":ci.get('conclusion'),"head":ci.get('headSha')})
+    add(checks,'published_candidate_and_tree_bound',pub.get('tree')==spec['tree'] and ev.get('historical_candidate')==spec['candidate'] and p.get('headRefOid')==spec['candidate'] and c.get('headSha')==spec['candidate'],{"candidate":spec['candidate'],"tree":pub.get('tree')})
+    git_head_tree=subprocess.run(['git','-C',str(repo),'show','-s','--format=%T',spec['candidate']],capture_output=True,text=True)
+    git_merge_tree=subprocess.run(['git','-C',str(repo),'show','-s','--format=%T',spec['merge']],capture_output=True,text=True)
+    git_ancestor=subprocess.run(['git','-C',str(repo),'merge-base','--is-ancestor',spec['candidate'],spec['merge']],capture_output=True,text=True)
+    git_ok=git_head_tree.returncode==0 and git_merge_tree.returncode==0 and git_head_tree.stdout.strip()==spec['tree'] and git_merge_tree.stdout.strip()==spec['tree'] and git_ancestor.returncode==0
+    add(checks,'local_git_objects_tree_and_ancestry',git_ok,{"head_tree":git_head_tree.stdout.strip(),"merge_tree":git_merge_tree.stdout.strip(),"ancestor_rc":git_ancestor.returncode})
+    add(checks,'mission_and_terminal_status_closed',mission.get('mission_id')==state.get('mission',{}).get('mission_id') and state.get('lifecycle')=='CLOSED' and state.get('task_state')=='CLOSED' and state.get('evidence_state')=='VERIFIED' and state.get('product_state')=='SCOPED_ACCEPTANCE_PASSED' and state.get('terminal_gate')=='VALIDATED_SCOPED_TASK',{"mission_id":state.get('mission'),"lifecycle":state.get('lifecycle'),"terminal":state.get('terminal_gate')})
+    add(checks,'historical_only_scope_explicit',ev.get('status')=='PASS' and ev.get('scope')=='historical evidence reconciliation, not current product regression' and ev.get('current_checkout_tests')=='NOT_RUN' and ev.get('new_product_tests')=='NOT_RUN',{"scope":ev.get('scope'),"current_checkout_tests":ev.get('current_checkout_tests'),"new_product_tests":ev.get('new_product_tests')})
+    add(checks,'legacy_controller_boundary_preserved',ev.get('modern_controller_legacy_rejection',{}).get('returncode')==1 and 'LEGACY_UNVERIFIED' in ev.get('modern_controller_legacy_rejection',{}).get('stdout','') and ev.get('original_controller_verify',{}).get('returncode')==0 and 'PASS' in ev.get('original_controller_verify',{}).get('stdout',''),{"modern":"LEGACY_UNVERIFIED","original_rc":ev.get('original_controller_verify',{}).get('returncode')})
+    if gid=='github-update-20261022':
+        add(checks,'historical_junit_counts',ev.get('historical_local_junit')=={"tests":537,"failed":0,"errors":0,"skipped":1,"passed":536},ev.get('historical_local_junit'))
+    else:
+        add(checks,'historical_junit_counts',ev.get('historical_local_junit')=={"tests":550,"failed":0,"errors":0,"skipped":1,"passed":549},ev.get('historical_local_junit'))
+        close=read(rec/'legacy-close.json'); verify=read(rec/'legacy-verify-after.json')
+        add(checks,'readme_i01_close_and_postclose_verify',close.get('returncode')==0 and json.loads(close.get('stdout','{}')).get('task_state')=='CLOSED' and json.loads(close.get('stdout','{}')).get('terminal_gate')=='VALIDATED_SCOPED_TASK' and verify.get('returncode')==0 and json.loads(verify.get('stdout','{}')).get('lifecycle')=='CLOSED',{"close_rc":close.get('returncode'),"verify_rc":verify.get('returncode')})
+        add(checks,'cancelled_ci_preserved',ev.get('publication',{}).get('preserved_cancelled_ci')==39823364746,ev.get('publication',{}).get('preserved_cancelled_ci'))
+    # Work item handoffs and all declared outputs/check receipts are re-hashed against current bytes.
+    work=state.get('work_status',{}); handoff_results=[]; required=spec['checks']; outputs_ok=True; checks_ok=True; handoffs_ok=True
+    for wid, checkid in required.items():
+        st=work.get(wid,{}); hp=rel(g,f'.bago/team/runtime/handoffs/{wid}.json')
+        if st.get('status')!='DONE' or not hp.is_file() or sha(hp)!=st.get('handoff',{}).get('sha256'): handoffs_ok=False
+        h=read(hp) if hp.is_file() else {}
+        if h.get('status')!='DONE' or h.get('candidate_id')!=state.get('candidate_id') or h.get('scope_sha256')!=state.get('scope_sha256'): handoffs_ok=False
+        for out in h.get('outputs',[]):
+            op=rel(g,out['path'])
+            if not op.is_file() or sha(op)!=out.get('sha256'): outputs_ok=False
+        vlist=[v for v in h.get('verification',[]) if v.get('id')==checkid and v.get('result')=='PASS']
+        if not vlist: checks_ok=False
+        for v in vlist:
+            execution=state.get('executions',{}).get(v.get('execution_id'),{})
+            rp=rel(g,execution.get('path','')) if execution.get('path') else None
+            if not rp or not rp.is_file() or sha(rp)!=execution.get('sha256') or execution.get('result')!='PASS' or execution.get('state')!='COMPLETED': checks_ok=False
+        handoff_results.append({"work_id":wid,"handoff_sha256":sha(hp) if hp.is_file() else None,"required_check":checkid,"pass_receipt_ids":[v.get('execution_id') for v in vlist]})
+    add(checks,'work_item_handoffs_bound',handoffs_ok,handoff_results)
+    add(checks,'handoff_outputs_hashes_current',outputs_ok,"All outputs declared by required work-item handoffs hashed against current bytes")
+    add(checks,'required_check_receipts_hashes_current',checks_ok,"Required PASS receipts match state digests and COMPLETED state")
+    # Idempotence receipt is historical execution evidence; verify its before/after identity and that current bytes still equal its after snapshot.
+    idem=read(rec/'IDEMPOTENCE.json'); before=idem.get('before',{}); after=idem.get('after',{}); current_match=True
+    for key,digest in after.items():
+        path=rel(g,key)
+        if not path.is_file() or sha(path)!=digest: current_match=False
+    add(checks,'idempotence_snapshot_and_current_bytes',idem.get('status')=='PASS' and idem.get('returncode')==0 and bool(after) and before==after and idem.get('files_compared')==len(after) and current_match,{"files_compared":idem.get('files_compared'),"before_equals_after":before==after,"current_matches_after":current_match})
+    protected=read(rec/'protected-before.json'); protected_ok=True
+    for key,digest in protected.items():
+        path=rel(g,key)
+        if not path.is_file() or sha(path)!=digest: protected_ok=False
+    add(checks,'protected_historical_inputs_current',protected_ok,{"count":len(protected)})
+    # README history specifically: verify original gate receipt/log/junit values, but never rerun the historical full suite.
+    if gid=='readme-clarity-20261022':
+        result=read(g/'reviews/I01/RESULT.json'); runs=result.get('commands',[]); junit=g/'reviews/I01/full-suite.xml'
+        generated=next((x for x in runs if x.get('label')=='generate'),{}); checked=next((x for x in runs if x.get('label')=='check'),{})
+        counts=result.get('counts',{}); xml=(ET.parse(junit).getroot().find('testsuite') if junit.is_file() else None)
+        xml_counts={"tests":int(xml.attrib.get('tests','-1')),"failures":int(xml.attrib.get('failures','-1')),"errors":int(xml.attrib.get('errors','-1')),"skipped":int(xml.attrib.get('skipped','0'))} if xml is not None else {}
+        jhash=counts.get('tests')==xml_counts.get('tests') and counts.get('failures')==xml_counts.get('failures') and counts.get('errors')==xml_counts.get('errors') and counts.get('skipped')==xml_counts.get('skipped')
+        add(checks,'historical_readme_gate_receipts',generated.get('exit_code')==0 and checked.get('exit_code')==0 and result.get('status')=='PASS' and jhash and counts.get('passed')==549 and counts.get('skipped')==1,{"generate_rc":generated.get('exit_code'),"check_rc":checked.get('exit_code'),"result":result.get('status'),"counts":counts,"junit_counts":xml_counts})
+        add(checks,'independence_not_overstated',True,"T01 and V01 share host handle /root/p1_compatibility; historical V01 independence is not established. This review is independent of the package and does not relabel V01.")
+    all_pass=all(x['result']=='PASS' for x in checks)
+    return {"goal":gid,"status":"PASS" if all_pass else "FAIL","scope":"independent integrity and closure review of historical reconciliation only","historical_candidate":spec['candidate'],"publication":{"pr":spec['pr'],"merge":spec['merge'],"ci_run":spec['ci'],"tree":spec['tree']},"handoffs":handoff_results,"checks":checks,"limitations":["No current checkout/product tests executed.","Downloaded GitHub JSON is local session evidence; this review verifies its bytes and internal cross-binding, not a fresh live GitHub query.","Original Suite 1.4.2 controller closure is historical and does not satisfy the modern teamctl LEGACY_UNVERIFIED gate.","Historical V01 reviewer independence from T01 is not proven; this audit independently checks the overall reconciliation package and does not change V01's label."]}
+
+def main():
+    ap=argparse.ArgumentParser(); ap.add_argument('--repo-root',required=True); ap.add_argument('--out-dir',required=True); args=ap.parse_args()
+    repo=pathlib.Path(args.repo_root).resolve(); out=pathlib.Path(args.out_dir).resolve(); out.mkdir(parents=True,exist_ok=True)
+    results=[audit_goal(repo,gid) for gid in TARGETS]
+    report={"schema":"bago.near-goals-independent-review.v1","reviewed_at_utc":datetime.now(timezone.utc).isoformat(),"repo_root":str(repo),"worktree_candidate":".worktrees/nearest-goals-close-20261031","worktree_base":"8065906f4560f4f0b0951cc445b673ecad7ce175","reviewer":"independent current Codex agent","status":"PASS" if all(r['status']=='PASS' for r in results) else "FAIL","goals":results,"decision":"GO_HISTORICAL_CLOSURES_ONLY" if all(r['status']=='PASS' for r in results) else "NO_GO"}
+    p=out/'RESULT.json'; p.write_text(json.dumps(report,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
+    print(json.dumps({"status":report['status'],"decision":report['decision'],"result":str(p),"checks":{r['goal']:sum(c['result']=='PASS' for c in r['checks']) for r in results}},ensure_ascii=False))
+    return 0 if report['status']=='PASS' else 1
+if __name__=='__main__': sys.exit(main())
+

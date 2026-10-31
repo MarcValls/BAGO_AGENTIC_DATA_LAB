@@ -1,0 +1,19 @@
+{
+  "status": "PASS",
+  "P0": 0,
+  "P1": 0,
+  "readme_sha256": "0731c7d5a88f5528861c923ed6b947c0eb8a931a2c2572e0fdc814418d131bf1",
+  "total_lines": 525,
+  "visible_lines": 108,
+  "negative_controls": 5,
+  "local_new_links_resolved": 15,
+  "real_check_skip_tests": "PASS; collection NOT_RUN, not execution",
+  "ci_evidence_reconstructed": true,
+  "candidate_unchanged": true,
+  "independence": "Reviewer authored tests T01 but did not edit builder generator/manifest/documentation/README.",
+  "limits": [
+    "Full suite and generated README full order remain coordinator I01 gates.",
+    "Provider/build/launch instructions are descriptions; no UI service/provider/build executed by V01.",
+    "Snapshot CI belongs to b0; historical Windows observation remains separate."
+  ]
+}

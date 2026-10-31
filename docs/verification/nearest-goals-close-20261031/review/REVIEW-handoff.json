@@ -1,0 +1,88 @@
+{
+  "candidate_id": "9bdf09833dd28ab922485c21a23e0f645efb5cb812712150dd3c1b07d4f8fada",
+  "changed_files": [
+    "docs/verification/nearest-goals-close-20261031/review/RESULT.json",
+    "docs/verification/nearest-goals-close-20261031/review/goal-matrix.json",
+    "docs/verification/nearest-goals-close-20261031/review/REVIEW.md",
+    "docs/verification/nearest-goals-close-20261031/review/verify_model_assignments.py",
+    "docs/verification/nearest-goals-close-20261031/review/model-assignments.stdout.log",
+    "docs/verification/nearest-goals-close-20261031/review/model-assignments.stderr.log",
+    "docs/verification/nearest-goals-close-20261031/review/verify_review.py"
+  ],
+  "findings": [
+    {
+      "affects_correction": false,
+      "description": "square-color-ui-20261020 remains PARTIAL; Chat, Capabilities, Builder and Inspector were not rendered in this candidate-bound review.",
+      "id": "SQUARE-COLOR-COVERAGE",
+      "scope": "COVERAGE",
+      "severity": "P2",
+      "status": "OPEN"
+    }
+  ],
+  "mission_id": "BAGO_NEAREST_OPEN_GOALS_CLOCK_REPAIR_20261031",
+  "next_consumers": [
+    "CLOSE"
+  ],
+  "outputs": [
+    {
+      "kind": "review-evidence",
+      "path": "docs/verification/nearest-goals-close-20261031/review/RESULT.json",
+      "sha256": "54f7453b00ed56f467aba13efbbdf7e68b9841754ad5f313b768066efecc8f87"
+    },
+    {
+      "kind": "review-evidence",
+      "path": "docs/verification/nearest-goals-close-20261031/review/goal-matrix.json",
+      "sha256": "cd6c70396d334f420ce0f281129f7343793a6a28cb244e20e9f667de1a7786b0"
+    },
+    {
+      "kind": "review-evidence",
+      "path": "docs/verification/nearest-goals-close-20261031/review/REVIEW.md",
+      "sha256": "f676efbf0f6ef2d6a6c9ae7848e2c1502f935ea175acba9eb7d152e2040a8106"
+    },
+    {
+      "kind": "review-evidence",
+      "path": "docs/verification/nearest-goals-close-20261031/review/verify_model_assignments.py",
+      "sha256": "d6047f36ff978353c953a685eacb0ebdcbbf9ee744b8c7704f84cea091f6ecfb"
+    },
+    {
+      "kind": "review-evidence",
+      "path": "docs/verification/nearest-goals-close-20261031/review/model-assignments.stdout.log",
+      "sha256": "78af0c0147efcd58578826084b71b04db00e7fea127556f8737ffa106a5cfdf9"
+    },
+    {
+      "kind": "review-evidence",
+      "path": "docs/verification/nearest-goals-close-20261031/review/model-assignments.stderr.log",
+      "sha256": "78212ddb96dfcb21bda93d7ae04967f99d42fbfff524e355fab05127c174a045"
+    },
+    {
+      "kind": "review-evidence",
+      "path": "docs/verification/nearest-goals-close-20261031/review/verify_review.py",
+      "sha256": "2ea4b964cb5db6c52e720c865105e9ee6e1223bee9646b694df7e9021f242a74"
+    },
+    {
+      "kind": "review-evidence",
+      "path": "docs/verification/nearest-goals-close-20261031/review/review-check.json",
+      "sha256": "fb63b969c5c88a4c2f919dc5b708a860ca726ceb3a278e83069fc2f34d437e4a"
+    }
+  ],
+  "payload_sha256": "0f791982d97e8fe53885a0019a9a7f897e012e4d61f62b50fedd65473f986bb1",
+  "residual_risks": [
+    "The Windows full-suite failure is preserved; the final full suite passed only in Docker/Linux on exact candidate b1b4d524a0e936300a71da36e0c0276e061fa34e.",
+    "Actual-App browser APIs used synthetic intercepted localhost fixtures; production integration, Electron launch and live inference remain NOT_RUN.",
+    "Seven goals are eligible for scoped closure; square-color-ui-20261020 remains PARTIAL. This handoff is not global product acceptance or mission closure.",
+    "Clock timestamps remain persisted floating-point seconds; backward wall-clock cases preserve endpoint evidence but duration is unknown."
+  ],
+  "role": "verification-engineer",
+  "scope_sha256": "0af844db09c04531999970ed71e0bce9ed1f51245b48416d0453a7bc7cef9df9",
+  "status": "DONE",
+  "verification": [
+    {
+      "command": "[\"python\",\"-B\",\"docs/verification/nearest-goals-close-20261031/review/verify_review.py\"]",
+      "evidence": ".bago/team/runtime/executions/47d9dc143f8f4d478c409fe9748ae816/receipt.json",
+      "execution_id": "47d9dc143f8f4d478c409fe9748ae816",
+      "id": "review",
+      "result": "PASS"
+    }
+  ],
+  "work_id": "REVIEW"
+}

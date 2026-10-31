@@ -1,0 +1,36 @@
+{
+  "status": "EXPECTED_REGRESSION_OBSERVED",
+  "scope": "simulated API component tests; full npm suite and build in green only",
+  "started_at": "2026-10-31T19:55:43.384849+00:00",
+  "completed_at": "2026-10-31T19:55:46.274023+00:00",
+  "passed": 2,
+  "failed": 4,
+  "commands": [
+    {
+      "command": [
+        "C:\\Program Files\\nodejs\\npm.cmd",
+        "test",
+        "--",
+        "--maxWorkers=2",
+        "--reporter=json",
+        "--outputFile=C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\.worktrees\\nearest-goals-close-20261031\\frontend\\nearest-goals-check\\footer-repair\\red-vitest.json",
+        "tests/providers/provider-settings.test.tsx",
+        "--testNamePattern",
+        "Model footer Exit"
+      ],
+      "returncode": 1,
+      "logs": [
+        {
+          "path": "nearest-goals-check/footer-repair/red-npm-test.stdout.log",
+          "sha256": "55731831169bb7147389e02fa8cdb856605235b7d6a9505dedc7b1d432166836"
+        },
+        {
+          "path": "nearest-goals-check/footer-repair/red-npm-test.stderr.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ]
+    }
+  ],
+  "browser": "SEPARATE_CHECK",
+  "provider_calls": "NOT_RUN"
+}

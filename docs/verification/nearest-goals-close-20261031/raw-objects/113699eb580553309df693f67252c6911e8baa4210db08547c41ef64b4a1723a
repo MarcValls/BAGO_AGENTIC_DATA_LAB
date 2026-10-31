@@ -1,0 +1,1 @@
+{"status":"FAIL","checks":17,"failed":["desktop:both footer buttons initially inside viewport","desktop:list scrolls independently","mobile:both footer buttons initially inside viewport","mobile:list scrolls independently"],"fatal":null}

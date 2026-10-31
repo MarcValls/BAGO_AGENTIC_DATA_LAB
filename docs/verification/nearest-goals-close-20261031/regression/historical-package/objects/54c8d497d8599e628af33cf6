@@ -1,0 +1,1114 @@
+"""Render README.md from repository state and a small canonical manifest.
+
+README.md is an output artifact. Human-maintained project decisions live in
+the manifest and the project documents; repository facts are discovered from
+the checkout every time this script runs.
+"""
+
+from __future__ import annotations
+
+import argparse
+import ast
+import json
+import re
+import subprocess
+import sys
+from pathlib import Path
+from typing import Any
+
+
+REPO_ROOT = Path(__file__).resolve().parents[1]
+README_PATH = REPO_ROOT / "README.md"
+MANIFEST_PATH = REPO_ROOT / "docs" / "readme_manifest.json"
+INLINE = chr(96)
+FENCE = INLINE * 3
+
+
+def _run(command: list[str], *, check: bool = True) -> str:
+    result = subprocess.run(
+        command,
+        cwd=REPO_ROOT,
+        check=False,
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+    )
+    if check and result.returncode != 0:
+        details = (result.stdout + result.stderr).strip()
+        raise RuntimeError(
+            f"Command failed ({result.returncode}): {' '.join(command)}\n{details}"
+        )
+    return (result.stdout + result.stderr).strip()
+
+
+def _read_json(path: Path) -> dict[str, Any]:
+    return json.loads(path.read_text(encoding="utf-8"))
+
+
+def _relative(path: Path) -> str:
+    return path.relative_to(REPO_ROOT).as_posix()
+
+
+def _matches(pattern: str) -> list[str]:
+    return sorted(
+        {
+            _relative(path)
+            for path in REPO_ROOT.glob(pattern)
+            if path.is_file()
+        }
+    )
+
+
+def _matches_many(patterns: list[str]) -> list[str]:
+    result: set[str] = set()
+    for pattern in patterns:
+        result.update(_matches(pattern))
+    return sorted(result)
+
+
+def _test_function_count(path: Path) -> int:
+    """Count test functions for the generator's compatibility tests."""
+    try:
+        tree = ast.parse(path.read_text(encoding="utf-8"))
+    except (OSError, SyntaxError):
+        return 0
+
+    def is_pytest_fixture(node: ast.AST) -> bool:
+        for decorator in getattr(node, "decorator_list", []):
+            target = decorator.func if isinstance(decorator, ast.Call) else decorator
+            if isinstance(target, ast.Name) and target.id == "fixture":
+                return True
+            if isinstance(target, ast.Attribute) and target.attr == "fixture":
+                return True
+        return False
+
+    return sum(
+        isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef))
+        and node.name.startswith("test_")
+        and not is_pytest_fixture(node)
+        for node in ast.walk(tree)
+    )
+
+
+def collected_test_count() -> int:
+    """Count pytest cases, including parametrized cases, without executing them."""
+    output = _run(
+        [
+            sys.executable,
+            "-m",
+            "pytest",
+            "tests",
+            "--collect-only",
+            "-q",
+            "--disable-warnings",
+        ]
+    )
+    match = re.search(r"\b(?P<count>\d+)\s+tests? collected\b", output)
+    if not match:
+        raise RuntimeError("pytest collection completed without a parseable case count")
+    return int(match.group("count"))
+
+
+def executed_test_count() -> int:
+    """Run the complete suite and return its passing count."""
+    output = _run(
+        [
+            sys.executable,
+            "-m",
+            "pytest",
+            "tests",
+            "-q",
+            "--disable-warnings",
+        ]
+    )
+    match = re.search(r"(?P<count>\d+)\s+passed\b", output)
+    if not match:
+        raise RuntimeError("pytest completed without a parseable passing count")
+    return int(match.group("count"))
+
+
+def parse_state() -> dict[str, str]:
+    """Read the current, top-level state block from .bago/canon/STATE.md."""
+    text = (REPO_ROOT / ".bago/canon/STATE.md").read_text(encoding="utf-8")
+
+    def field(name: str) -> str:
+        pattern = rf"^\*\*{re.escape(name)}:\*\*\s*(.*?)(?=^\*\*|\Z)"
+        match = re.search(pattern, text, flags=re.MULTILINE | re.DOTALL)
+        return " ".join(match.group(1).split()) if match else "NOT_DECLARED"
+
+    status = field("Status")
+    status_match = re.search(
+        r"\b(PROPOSED|PREPARED|EXECUTED|VERIFIED|VALIDATED|NOT_RUN)\b",
+        status,
+    )
+    return {
+        "updated": field("Updated"),
+        "current_phase": field("Current phase"),
+        "status": status,
+        "status_label": status_match.group(1) if status_match else "NOT_DECLARED",
+        "tests": field("Latest CI full-suite record"),
+        "next_phase": field("Next phase"),
+    }
+
+
+def parse_roles() -> list[list[str]]:
+    """Extract the current target-role table from .bago/canon/LAB_CONTRACT.md."""
+    text = (REPO_ROOT / ".bago/canon/LAB_CONTRACT.md").read_text(encoding="utf-8")
+    start = text.find("### Vacantes Prioritarias Identificadas")
+    if start < 0:
+        return []
+    end = text.find("\n## ", start)
+    section = text[start : end if end >= 0 else None]
+    rows: list[list[str]] = []
+    for line in section.splitlines():
+        if not re.match(r"^\|\s*\*\*", line):
+            continue
+        cells = [
+            cell.strip().replace("**", "")
+            for cell in line.strip().strip("|").split("|")
+        ]
+        if len(cells) == 5:
+            rows.append(cells)
+    return rows
+
+
+def _is_table_separator(line: str) -> bool:
+    cells = [cell.strip() for cell in line.strip().strip("|").split("|")]
+    return bool(cells) and all(re.fullmatch(r":?-{3,}:?", cell) for cell in cells)
+
+
+def parse_skills() -> list[list[str]]:
+    """Extract the technical skill table from .bago/canon/JOB_SKILL_MATRIX.md."""
+    text = (REPO_ROOT / ".bago/canon/JOB_SKILL_MATRIX.md").read_text(encoding="utf-8")
+    start = text.find("### Technical Skills")
+    end = text.find("### Soft Skills", start)
+    section = text[start : end if end >= 0 else None]
+    rows: list[list[str]] = []
+    for line in section.splitlines():
+        if (
+            not line.startswith("|")
+            or _is_table_separator(line)
+            or line.startswith("| Skill")
+        ):
+            continue
+        cells = [cell.strip() for cell in line.strip().strip("|").split("|")]
+        if len(cells) == 6:
+            rows.append(cells)
+    return rows
+
+
+def parse_skill_matrix_convention() -> str:
+    """Read the technical skill matrix's symbol convention from its canon."""
+    text = (REPO_ROOT / ".bago/canon/JOB_SKILL_MATRIX.md").read_text(encoding="utf-8")
+    for line in text.splitlines():
+        if line.startswith("**Matrix convention:**"):
+            return line
+    raise ValueError("Technical skill matrix convention is missing")
+
+
+def parse_soft_skills() -> list[list[str]]:
+    """Extract the strategic/soft skill table from .bago/canon/JOB_SKILL_MATRIX.md."""
+    text = (REPO_ROOT / ".bago/canon/JOB_SKILL_MATRIX.md").read_text(encoding="utf-8")
+    start = text.find("### Soft Skills")
+    if start < 0:
+        return []
+    section = text[start:]
+    rows: list[list[str]] = []
+    for line in section.splitlines():
+        if (
+            not line.startswith("|")
+            or _is_table_separator(line)
+            or line.startswith("| Skill")
+        ):
+            continue
+        cells = [cell.strip() for cell in line.strip().strip("|").split("|")]
+        if len(cells) == 4:
+            rows.append(cells)
+    return rows
+
+
+def phase_inventory(
+    manifest: dict[str, Any], state: dict[str, str]
+) -> list[dict[str, Any]]:
+    """Attach real artifact presence and current lifecycle status to each phase."""
+    current_id = state["current_phase"].split(" ", maxsplit=1)[0]
+    phases: list[dict[str, Any]] = []
+    for phase in manifest["phases"]:
+        checks: list[dict[str, Any]] = []
+        for check in phase.get("checks", []):
+            patterns = list(check.get("patterns", []))
+            matches = _matches_many(patterns)
+            missing = [pattern for pattern in patterns if not _matches(pattern)]
+            checks.append(
+                {
+                    "kind": check["kind"],
+                    "patterns": patterns,
+                    "matches": matches,
+                    "missing": missing,
+                }
+            )
+        status = phase["status"]
+        if phase["id"] == current_id:
+            scope = re.search(r"(\s*\([^)]*\))$", str(status))
+            status = state["status_label"] + (scope.group(1) if scope else "")
+        if any(check["missing"] for check in checks):
+            status = f"{status}; ARTIFACT GAP"
+        phases.append(
+            {
+                **phase,
+                "status": status,
+                "checks": checks,
+            }
+        )
+    return phases
+
+
+def _cell(value: Any) -> str:
+    return str(value).replace("|", r"\|").replace("\n", " ")
+
+
+def _inline(value: Any) -> str:
+    return f"{INLINE}{value}{INLINE}"
+
+
+def _markdown_list(paths: list[str]) -> str:
+    if not paths:
+        return "- Ninguno detectado."
+    return "\n".join(f"- {_inline(path)}" for path in paths)
+
+
+def _files_under(
+    directory: str,
+    pattern: str = "*",
+    *,
+    excluded_dirs: tuple[str, ...] = (),
+) -> list[str]:
+    root = REPO_ROOT / directory
+    if not root.exists():
+        return []
+    return sorted(
+        _relative(path)
+        for path in root.rglob(pattern)
+        if path.is_file()
+        and not any(directory_name in path.parts for directory_name in excluded_dirs)
+        and "__pycache__" not in path.parts
+        and path.suffix != ".pyc"
+    )
+
+
+def _render_phase_table(phases: list[dict[str, Any]]) -> str:
+    lines = [
+        "| Fase | Estado declarado | Objetivo | Área |",
+        "|---|---|---|---|",
+    ]
+    for phase in phases:
+        lines.append(
+            f"| {_cell(phase['id'])} | {_cell(phase['status'])} | "
+            f"{_cell(phase.get('target', '-'))} | {_cell(phase['name'])} |"
+        )
+    return "\n".join(lines)
+
+
+def _links(paths: list[str], *, limit: int | None = None) -> str:
+    selected = paths if limit is None else paths[:limit]
+    if not selected:
+        return "—"
+    links = " · ".join(f"[{_inline(path)}]({path})" for path in selected)
+    remainder = len(paths) - len(selected)
+    return links + (f" · (+{remainder} archivos)" if remainder else "")
+
+
+def _render_phase_evidence(phases: list[dict[str, Any]]) -> str:
+    """Render phase evidence as readable Markdown groups without wide tables."""
+    sections: list[str] = []
+    for phase in phases:
+        by_kind = {check["kind"]: check for check in phase.get("checks", [])}
+        code = by_kind.get("code", {}).get("matches", [])
+        tests = by_kind.get("tests", {}).get("matches", [])
+        evidence = by_kind.get("evidence", {}).get("matches", [])
+        missing = [
+            pattern
+            for check in phase.get("checks", [])
+            for pattern in check.get("missing", [])
+        ]
+        sections.append(
+            "\n".join(
+                [
+                    f"### {_cell(phase['id'])} — {_cell(phase['name'])}",
+                    f"**Estado:** {_cell(phase['status'])}",
+                    "",
+                    f"**Código localizado:** {_links(code, limit=3)}",
+                    f"**Tests:** {_links(tests, limit=3)}",
+                    f"**Evidencia:** {_links(evidence, limit=4)}",
+                    f"**Patrones sin resolver:** {_inline(', '.join(missing) if missing else 'ninguno')}",
+                ]
+            )
+        )
+    return "\n\n".join(sections)
+
+
+def _render_business_demo(manifest: dict[str, Any]) -> str:
+    """Render the app-produced fictional Bruma order cases and provenance."""
+    config = manifest.get("business_demo", {})
+    required = (
+        "guide", "orders", "decisions", "run_evidence", "input_orders",
+        "policy", "qa", "profiles", "video", "subtitles", "hash_manifest",
+    )
+    missing = [key for key in required if not config.get(key)]
+    if missing:
+        raise ValueError("Business demo metadata is missing: " + ", ".join(missing))
+    absent = [path for path in config.values() if not (REPO_ROOT / path).is_file()]
+    if absent:
+        raise FileNotFoundError("Business demo artifacts missing: " + ", ".join(absent))
+
+    orders_data = _read_json(REPO_ROOT / config["orders"])
+    decisions_data = _read_json(REPO_ROOT / config["decisions"])
+    run_data = _read_json(REPO_ROOT / config["run_evidence"])
+    orders = {item["order_id"]: item for item in orders_data.get("orders", [])}
+    lines = [
+        "| Pedido | Envío | Retraso | Decisión registrada | Importe de envío elegible |",
+        "|---|---|---:|---|---:|",
+    ]
+    for item in decisions_data.get("decisions", []):
+        order = orders.get(item["order_id"], {})
+        delay = order.get("delay_hours")
+        delay_text = f"{delay} h" if delay is not None else "sin dato"
+        amount = item.get("refund_shipping_fee_eur")
+        amount_text = f"€{amount:.2f} (solo envío)" if amount is not None else "—"
+        lines.append(
+            f"| {item['order_id']} | {_cell(order.get('shipping_method', 'desconocido'))} | "
+            f"{delay_text} | `{item['decision']}` | {amount_text} |"
+        )
+
+    runs = run_data.get("runs", [])
+    trace_ids = [
+        run.get("trace", {}).get("trace_id", "")
+        for run in runs
+        if run.get("trace", {}).get("trace_id")
+    ]
+    sources = [source for run in run_data.get("runs", []) for source in run.get("sources", [])]
+    source_ids = sorted({source.get("file_sha256", "") for source in sources if source.get("file_sha256")})
+    order_hash = next(
+        (source.get("file_sha256") for source in sources if source.get("path") == config["input_orders"]),
+        "NOT_RECORDED",
+    )
+    no_actions = not decisions_data.get("actions_executed", [])
+    validation = run_data.get("validation", {})
+    status = run_data.get("status", "NOT_DECLARED")
+    return "\n".join(
+        [
+            "## Recorrido comercial de la app: Bruma Market",
+            "",
+            "Este tutorial usa pedidos y políticas totalmente ficticios. Documenta dos conversaciones de agentes ejecutadas en la app: un extractor produce JSON y un revisor aplica la política con evidencia autorizada. No son pedidos ni clientes reales.",
+            "",
+            *lines,
+            "",
+            f"**Ejecución registrada:** `{status}`; cuatro casos QA: `{', '.join(validation.get('decisions', []))}`; `actions_executed` vacío: `{no_actions}`. Ningún reembolso se ejecutó.",
+            f"**Trazas de las conversaciones:** {', '.join(_inline(trace_id) for trace_id in trace_ids) or 'sin ID registrado'} (`local_only`; no Jaeger export). SHA-256 del CSV autorizado: `{order_hash}`. SHA distintos presentes en recibos: {len(source_ids)}.",
+            "",
+            "La regla estricta solo cubre envíos EXPRESS con más de 24 h de retraso y devuelve únicamente la tarifa de envío. Exactamente 24 h no cumple; STANDARD no entra en la regla; sin hora de entrega queda pendiente.",
+            "",
+            f"**Revisa el tutorial:** [guía paso a paso]({config['guide']}) · [vídeo MP4]({config['video']}) · [subtítulos]({config['subtitles']}) · [hash manifest]({config['hash_manifest']}). Entradas: [CSV de pedidos]({config['input_orders']}), [política]({config['policy']}) y [QA esperado]({config['qa']}). Resultados y receipts: [extracción JSON]({config['orders']}), [decisiones]({config['decisions']}), [recibos de lectura y trazas]({config['run_evidence']}) y [perfiles/runs guardados]({config['profiles']}).",
+            "",
+            "**Límite del conjunto:** solo contiene pedidos sintéticos, política, QA y recibos de lectura. No aporta directorio de clientes, facturas ni albaranes; esos casos requieren datos y escenarios propios antes de afirmar que están demostrados.",
+            "",
+        ]
+    )
+
+def _render_canonical_documents(manifest: dict[str, Any]) -> str:
+    groups: dict[str, list[tuple[str, str, str]]] = {
+        "Gobierno del proyecto": [],
+        "Demo y portfolio": [],
+        "Versionado": [],
+    }
+    for document in manifest.get("canonical_documents", []):
+        path = str(document["path"])
+        state = "PRESENTE" if (REPO_ROOT / path).is_file() else "FALTA"
+        if path.startswith(".bago/canon/"):
+            group = "Gobierno del proyecto"
+        elif path == "VERSION":
+            group = "Versionado"
+        else:
+            group = "Demo y portfolio"
+        groups[group].append((path, str(document["role"]), state))
+    if not any(groups.values()):
+        return "No hay documentos canónicos declarados."
+
+    coverage = {
+        "Gobierno del proyecto": "Estado, contrato, arquitectura, roadmap, aprendizaje y skills",
+        "Demo y portfolio": "Tutoriales, walkthrough, snapshot y notas de release",
+        "Versionado": "Versión declarada del repositorio",
+    }
+    lines = ["| Área | Cobertura | Fuentes presentes / declaradas |", "|---|---|---|"]
+    for group, documents in groups.items():
+        if not documents:
+            continue
+        present = sum(state == "PRESENTE" for _, _, state in documents)
+        result = f"{present}/{len(documents)} presentes"
+        if present < len(documents):
+            result += f"; {len(documents) - present} ausente(s)"
+        lines.append(f"| {group} | {coverage[group]} | {result} |")
+    lines.append("")
+    for group, documents in groups.items():
+        if not documents:
+            continue
+        lines.extend((f"**{group}:**", ""))
+        lines.extend(
+            f"- [{_inline(path)}]({path}) — {_cell(role)}"
+            + (" — **FALTA en este checkout**" if state == "FALTA" else "")
+            for path, role, state in documents
+        )
+        lines.append("")
+    while lines and not lines[-1]:
+        lines.pop()
+    return "\n".join(lines)
+
+def _render_one_command_demo(manifest: dict[str, Any]) -> str:
+    config = manifest.get("one_command_demo", {})
+    if not config:
+        return ""
+    artifacts = config.get("artifacts", [])
+    artifact_lines = "\n".join(f"- `{name}`" for name in artifacts)
+    return "\n".join(
+        [
+            "## One-Command Governed Knowledge Agent Demo",
+            "",
+            "A deterministic, credential-free local demonstration of the existing governed-agent path; it composes fixtures, typed execution, receipts, trace and structural evaluation without contacting external services.",
+            "",
+            "```text",
+            "QUESTION → AGENT → GOVERNED RETRIEVAL → EXECUTION → RECEIPTS → TRACE → EVALUATION",
+            "```",
+            "",
+            f"**Run:** `{config.get('command', 'python demo.py')}` (Python 3.11+, after `python -m pip install -r requirements.txt`).",
+            "",
+            f"Example question: {config.get('example_question', '')}",
+            "",
+            f"Expected fixture result: `{config.get('expected_result', 'PASS')}`; 2 retrieval hits, 15 trace events, evaluation score 1.0. Run-specific IDs/hashes may vary.",
+            "",
+            "Artifacts in `demo_output/`:",
+            artifact_lines,
+            "",
+            f"Read the artifact contract, Windows setup, governance controls and limits in [`{config.get('documentation', 'docs/one_command_demo.md')}`]({config.get('documentation', 'docs/one_command_demo.md')}); use [`{config.get('walkthrough', 'docs/one_command_demo_walkthrough.md')}`]({config.get('walkthrough', 'docs/one_command_demo_walkthrough.md')}) for the 30-second, 90-second and 5-minute explanations.",
+            "",
+            "The injected provider is a fixture, not an AWS call; this local demo does not prove production answer quality or sandbox isolation. AWS and remote integrations remain scoped by `STATE.md`.",
+            "",
+        ]
+    )
+
+
+def _render_releases(manifest: dict[str, Any]) -> str:
+    releases = manifest.get("releases", [])
+    if not releases:
+        return ""
+    out: list[str] = ["## Releases congelados", ""]
+    for release in releases:
+        tag = str(release.get("tag", ""))
+        repo = str(manifest.get("project", {}).get("repository", "")).rstrip("/")
+        tag_url = f"{repo}/releases/tag/{tag}" if repo and tag else ""
+        header = release.get("title", tag) or tag
+        out.append(f"### `{tag}` — {release.get('date', '')}")
+        out.append("")
+        out.append(f"**{header}**")
+        out.append("")
+        if release.get("summary"):
+            out.append(str(release["summary"]))
+            out.append("")
+        if tag_url:
+            out.append(f"- Tag: <{tag_url}>")
+        docs = release.get("docs", []) or []
+        if docs:
+            doc_links = ", ".join(_inline(d) for d in docs if d)
+            out.append(f"- Docs: {doc_links}")
+        if release.get("video"):
+            duration = release.get("duration", "60-90s")
+            sha = release.get("video_sha256") or ""
+            fset = release.get("video_frame_set_sha256") or ""
+            out.append(f"- Vídeo: {_inline(str(release['video']))} ({duration})")
+            if sha:
+                out.append(f"- SHA-256 sidecar: {_inline(str(sha))}")
+            if fset:
+                out.append(
+                    "- Frame-set SHA-256 (deterministic): "
+                    f"`{fset}` — byte-stable across encoder runs"
+                )
+        boundaries = release.get("boundaries", {}) or {}
+        if boundaries:
+            out.append("- Boundaries:")
+            for key, value in boundaries.items():
+                out.append(f"  - `{key}`: {value}")
+        out.append("")
+    return "\n".join(out)
+
+
+def _render_sync_agent(manifest: dict[str, Any]) -> str:
+    config = manifest.get("sync_agent", {})
+    lines = [
+        "| Componente | Estado | Función |",
+        "|---|---|---|",
+    ]
+    labels = {
+        "definition": "Definición del agente",
+        "executor": "Ejecutor gobernado",
+        "documentation": "Documentación",
+    }
+    roles = {
+        "definition": "contrato operativo",
+        "executor": "commit, push, PR y merge con receipts",
+        "documentation": "uso y límites",
+    }
+    for key in ("definition", "executor", "documentation"):
+        path = str(config.get(key, ""))
+        if not path:
+            continue
+        state = "PRESENTE" if (REPO_ROOT / path).is_file() else "FALTA"
+        lines.append(
+            f"| {_inline(path)} | {_cell(state)} | "
+            f"{_cell(labels[key] + ': ' + roles[key])} |"
+        )
+    return "\n".join(lines) or "No hay agente de sincronización declarado."
+
+
+def _render_flowchart(phases: list[dict[str, Any]]) -> str:
+    lines = [FENCE + "mermaid", "flowchart LR"]
+    for phase in phases:
+        label = f"{phase['id']} {phase['name']} ({phase['status']})"
+        lines.append(f"    {phase['id']}[\"{_mermaid_label(label)}\"]")
+    for left, right in zip(phases, phases[1:]):
+        lines.append(f"    {left['id']} --> {right['id']}")
+    lines.append(FENCE)
+    return "\n".join(lines)
+
+
+def _render_architecture(manifest: dict[str, Any]) -> str:
+    architecture = manifest["architecture"]
+    lines = [
+        f"**Principio:** {architecture['principle']}",
+        "",
+        FENCE + "mermaid",
+        "flowchart LR",
+    ]
+    nodes = [
+        "RAG",
+        "RDF",
+        "SPARQL",
+        "INFERENCE",
+        "CONSTRAINTS",
+        "LLM",
+        "GATEWAY",
+        "SANDBOX",
+        "RECEIPT",
+    ]
+    labels = [
+        "Governed RAG",
+        "RDF/Turtle",
+        "SPARQL local",
+        "Inference",
+        "Constraints",
+        "LLM context",
+        "ExecutionGateway",
+        "SandboxManager",
+        "Receipt",
+    ]
+    for node, label in zip(nodes, labels):
+        lines.append(f"    {node}[\"{_mermaid_label(label)}\"]")
+    for left, right in zip(nodes, nodes[1:]):
+        lines.append(f"    {left} --> {right}")
+    lines.extend([FENCE, "", "Pipeline actual:", ""])
+    lines.extend(
+        f"{index}. {step}" for index, step in enumerate(architecture["pipeline"], 1)
+    )
+    return "\n".join(lines)
+
+
+def _mermaid_label(value: str) -> str:
+    """Quote Mermaid labels and keep embedded quotes parser-safe."""
+    return str(value).replace('"', "&quot;")
+
+
+def _render_roles(rows: list[list[str]]) -> str:
+    if not rows:
+        return "No se pudo extraer la tabla de vacantes desde .bago/canon/LAB_CONTRACT.md."
+    lines = [
+        "| Empresa | Rol | Fit | Gap principal | Timeline |",
+        "|---|---|---:|---|---|",
+    ]
+    lines.extend("| " + " | ".join(_cell(cell) for cell in row) + " |" for row in rows)
+    return "\n".join(lines)
+
+
+def _render_skills(rows: list[list[str]], convention: str) -> str:
+    if not rows:
+        return "No se pudo extraer la tabla técnica desde .bago/canon/JOB_SKILL_MATRIX.md."
+    lines = [
+        convention,
+        "",
+        "| Skill | Demanda | Nivel actual | Nivel objetivo | Primera evidencia | Entrevista |",
+        "|---|---|---|---|---|---|",
+    ]
+    for skill, demand, current, target, evidence, interview in rows:
+        lines.append(
+            f"| {_cell(skill)} | {_cell(demand)} | {_cell(current)} | "
+            f"{_cell(target)} | {_cell(evidence)} | {_cell(interview)} |"
+        )
+    return "\n".join(lines)
+
+
+def _render_soft_skills(rows: list[list[str]]) -> str:
+    if not rows:
+        return "No se pudo extraer la tabla estratégica desde .bago/canon/JOB_SKILL_MATRIX.md."
+    lines = [
+        "| Skill | Nivel actual | Nivel objetivo | Evidencia |",
+        "|---|---|---|---|",
+    ]
+    lines.extend(
+        "| " + " | ".join(_cell(cell) for cell in row) + " |"
+        for row in rows
+    )
+    return "\n".join(lines)
+
+
+def _render_agent_catalog() -> str:
+    """Render the committed reference-only agent catalog by responsibility."""
+    manifest_path = REPO_ROOT / "agents" / "CATALOG_MANIFEST.json"
+    if not manifest_path.is_file():
+        return "No hay catálogo de agentes comprometido en este checkout."
+    catalog = _read_json(manifest_path)
+    lines = [
+        f"Alcance: `{catalog.get('scope', 'NOT_DECLARED')}` · "
+        f"activación: `{catalog.get('activation', 'NOT_DECLARED')}`.",
+        "El catálogo es de referencia; la definición operativa sigue en `.github/agents`.",
+        "",
+        "| Grupo | Archivos | Responsabilidad |",
+        "|---|---:|---|",
+    ]
+    for group, responsibility in catalog.get("groups", {}).items():
+        count = len(_files_under(f"agents/{group}"))
+        lines.append(f"| {_inline(group)} | {count} | {_cell(responsibility)} |")
+    return "\n".join(lines)
+
+
+def render_first_user_tutorial(manifest: dict[str, Any]) -> str:
+    """Render and validate the first-user tutorial declared in the manifest."""
+    tutorial = manifest.get("first_user_tutorial")
+    if not tutorial:
+        return "No hay un videotutorial de primer uso declarado."
+
+    if tutorial.get("evidence_mode") == "synthetic_ui_capture":
+        required_files = ("video", "subtitles", "guide", "historical_video", "historical_subtitles", "historical_trace", "historical_input")
+        missing_keys = [key for key in required_files if not tutorial.get(key)]
+        if missing_keys:
+            raise ValueError("Tutorial metadata is missing: " + ", ".join(missing_keys))
+        missing_files = [key for key in required_files if not (REPO_ROOT / tutorial[key]).is_file()]
+        if missing_files:
+            paths = ", ".join(tutorial[key] for key in missing_files)
+            raise FileNotFoundError("Tutorial artifacts missing: " + paths)
+        return "\n".join([
+            "Recorrido narrado en español sobre la UI actual, grabado con Playwright y respuestas API sintéticas en un contexto aislado.",
+            "No muestra consultas reales, respuestas de proveedor, agentes guardados ni trabajos ejecutados.",
+            "La sesión real anterior permanece separada como evidencia histórica; su traza acredita solo el alcance que contiene.",
+            "",
+            f"- Vídeo actual: [{_inline('MP4')}]({tutorial['video']})",
+            f"- Subtítulos actuales: [{_inline('SRT')}]({tutorial['subtitles']})",
+            f"- Guía: [{_inline(Path(tutorial['guide']).name)}]({tutorial['guide']})",
+            f"- Vídeo histórico: [{_inline('MP4 2026-10-10')}]({tutorial['historical_video']})",
+            f"- Subtítulos históricos: [{_inline('SRT 2026-10-10')}]({tutorial['historical_subtitles']})",
+            f"- LocalTrace histórica: [{_inline(Path(tutorial['historical_trace']).name)}]({tutorial['historical_trace']})",
+            f"- Archivo leído en la sesión histórica: [{_inline(Path(tutorial['historical_input']).name)}]({tutorial['historical_input']})",
+        ])
+
+    required_files = ("video", "subtitles", "guide", "trace", "input")
+    required_values = ("provider", "global_model", "agent_model", "credential_redaction")
+    missing_keys = [key for key in required_files + required_values if not tutorial.get(key)]
+    if missing_keys:
+        raise ValueError("Tutorial metadata is missing: " + ", ".join(missing_keys))
+    missing_files = [
+        tutorial[key]
+        for key in required_files
+        if not (REPO_ROOT / tutorial[key]).is_file()
+    ]
+    if missing_files:
+        raise FileNotFoundError("Tutorial artifacts missing: " + ", ".join(missing_files))
+
+    return "\n".join(
+        [
+            "Guía visual narrada en español para recorrer el chat, los agentes y los ajustes del proveedor.",
+            f"La pantalla completa de configuración se conserva; el campo de {tutorial['credential_redaction']} aparece censurado.",
+            f"La guía distingue el modelo global del asistente ({_inline(tutorial['global_model'])}) del modelo fijado al agente lector ({_inline(tutorial['agent_model'])}).",
+            f"La traza enlazada registra una lectura acotada y respuesta real de {tutorial['provider']}; no acredita una auditoría del código ni ejecución de trabajos.",
+            "",
+            f"- Vídeo: [{_inline('MP4')}]({tutorial['video']})",
+            f"- Subtítulos: [{_inline('SRT')}]({tutorial['subtitles']})",
+            f"- Guía y límites: [{_inline(Path(tutorial['guide']).name)}]({tutorial['guide']})",
+            f"- LocalTrace: [{_inline(Path(tutorial['trace']).name)}]({tutorial['trace']})",
+            f"- Archivo de ejemplo: [{_inline(Path(tutorial['input']).name)}]({tutorial['input']})",
+        ]
+    )
+
+
+def _render_frontend(manifest: dict[str, Any]) -> list[str]:
+    """Describe the actual app entrypoints, not inferred provider availability."""
+    config = manifest["frontend"]
+    paths = [config[key] for key in ("entry", "package", "api", "setup_guide", "launcher")]
+    paths.extend(path for layer in config["layers"] for path in layer["sources"])
+    missing = [path for path in paths if not (REPO_ROOT / path).is_file()]
+    if missing:
+        raise FileNotFoundError("Frontend sources missing: " + ", ".join(missing))
+    package = _read_json(REPO_ROOT / config["package"])
+    for name in ("dev", "build", "test", "test:ui", "test:contracts"):
+        if not package.get("scripts", {}).get(name):
+            raise ValueError("Frontend script is missing: " + name)
+    lines = [
+        "## La aplicación frontend", "",
+        f"La app [React + TypeScript + Vite]({config['package']}) permite trabajar con agentes y datos, y abrir una capa de inspección para revisar las observaciones que devuelve la [API FastAPI]({config['api']}).", "",
+        "| Capa | Qué contiene | Fuente |", "|---|---|---|",
+    ]
+    for layer in config["layers"]:
+        links = " · ".join(
+            f"[{Path(path).parent.name if Path(path).stem == 'index' else Path(path).stem}]({path})"
+            for path in layer["sources"][:2]
+        )
+        if len(layer["sources"]) > 2:
+            links += f" (+{len(layer['sources']) - 2} fuentes en el manifiesto)"
+        lines.append(f"| {_cell(layer['name'])} | {_cell(layer['description'])} | {links} |")
+    lines.extend([
+        "", "Chat y borradores, tareas y ejecuciones tienen recorridos distintos. La disponibilidad de un modelo, proveedor o motor BER se comprueba en su recorrido; ver una pantalla no acredita que una acción se haya ejecutado.", "",
+        "**Arranque desde la raíz del repositorio**, con Python 3.11+, Node.js 22 y el entorno Python activado. `requirements-test.txt` fija las dependencias de la app y sus pruebas, incluida la API:", "",
+        FENCE + "bash", *config["start_commands"], FENCE, "",
+        "Abre <http://127.0.0.1:8080>. La API sirve `frontend/dist` después del build; la configuración de proveedores se realiza en Settings. Estos comandos describen el arranque, no una sesión iniciada por este README.", "",
+        f"En Windows, el [lanzador local]({config['launcher']}) construye la UI y selecciona un puerto libre; consulta sus [requisitos y límites]({config['setup_guide']}). Para desarrollo, `npm run dev --prefix frontend` usa Vite con proxy hacia la API local.", "",
+    ])
+    return lines
+
+
+def _verification_record(manifest: dict[str, Any]) -> tuple[str, dict[str, Any]]:
+    """Read the local identity-bound record selected by the canonical manifest."""
+    path = manifest["verification_record"]
+    relative = Path(path)
+    if relative.is_absolute() or ".." in relative.parts:
+        raise ValueError("Verification record must be repository-relative")
+    record = _read_json(REPO_ROOT / relative)
+    if record.get("schema") != "bago.readme.verification.v1":
+        raise ValueError("Unsupported README verification record schema")
+    if not record.get("recorded_at"):
+        raise ValueError("README verification record requires its observation date")
+    ci = record.get("ci", {})
+    for key in ("candidate", "completed_at", "run_url", "scope", "checks"):
+        if not ci.get(key):
+            raise ValueError("README CI record is missing " + key)
+    if not re.fullmatch(r"[a-f0-9]{40}", ci["candidate"]):
+        raise ValueError("README CI record requires an exact commit SHA")
+    for check in ci["checks"]:
+        for key in ("name", "command", "result", "summary", "evidence_url"):
+            if not check.get(key):
+                raise ValueError("README CI check is missing " + key)
+        if check["result"] not in ("PASS", "FAIL", "NOT_RUN", "SKIPPED"):
+            raise ValueError("Unsupported README check result")
+    return path, record
+
+
+def _render_verification(manifest: dict[str, Any]) -> list[str]:
+    path, record = _verification_record(manifest)
+    ci = record["ci"]
+    lines = [
+        "## Tests y verificación", "",
+        f"**Snapshot de CI:** [{ci['completed_at']}]({ci['run_url']}) · candidata `{ci['candidate']}`.",
+        f"**Alcance:** {_cell(ci['scope'])}",
+        f"Registro versionado observado el {_cell(record['recorded_at'])}: [{path}]({path}). No es una consulta en vivo ni cubre cambios posteriores a esa candidata.", "",
+        "| Batería | Resultado registrado | Evidencia |", "|---|---|---|",
+    ]
+    for check in ci["checks"]:
+        lines.append(f"| {_cell(check['name'])} | `{check['result']}` · {_cell(check['summary'])} | [{_inline(check['command'])}]({check['evidence_url']}) |")
+    lines.extend([
+        "", "<details>", "<summary>Repetir las comprobaciones en tu checkout</summary>", "",
+        FENCE + "bash", "python -m pytest tests -q", "npm test --prefix frontend",
+        "npm run test:ui --prefix frontend", "npm run test:contracts --prefix frontend",
+        "npm run build --prefix frontend", "python scripts/generate_dynamic_readme.py --check --skip-tests", FENCE, "",
+        "La colección de pytest no es una ejecución: `--check --skip-tests` informa `NOT_RUN`. El conteo de una ejecución local se imprime en terminal; no sustituye ni modifica el snapshot versionado de CI.", "", "</details>", "",
+    ])
+    historical = record.get("historical", [])
+    if historical:
+        lines.extend(["<details>", "<summary>Resultados locales e históricos, con alcance propio</summary>", ""])
+        for item in historical:
+            for key in ("label", "candidate", "observed_at", "scope", "summary", "evidence_url"):
+                if not item.get(key):
+                    raise ValueError("Historical verification record is missing " + key)
+            summary = _cell(item["summary"]).rstrip(".")
+            scope = _cell(item["scope"]).rstrip(".")
+            lines.append(f"- [{_cell(item['label'])}]({item['evidence_url']}) · {_cell(item['observed_at'])} · candidata `{item['candidate']}`: {summary}. Alcance: {scope}.")
+        lines.extend(["", "</details>", ""])
+    return lines
+
+
+def _details(summary: str, content: list[str]) -> list[str]:
+    return ["<details>", f"<summary>{summary}</summary>", "", *content, "", "</details>", ""]
+
+
+def render_readme(
+    *,
+    manifest: dict[str, Any],
+    state: dict[str, str],
+    passing_tests: int,
+) -> str:
+    # Kept in the public helper signature for existing callers. Test outcomes
+    # come from the versioned verification record, never from test collection
+    # or a host-dependent local passing/skipped count.
+    project = manifest["project"]
+    phases = phase_inventory(manifest, state)
+    branch = project["default_branch"]
+    branch_badge = branch.replace("/", "-")
+    repository = project["repository"].rstrip("/")
+    ci_workflow = project.get("ci_workflow", ".github/workflows/readme-consistency.yml")
+    current_phase_id = state["current_phase"].split(" ", 1)[0]
+    current_phase = next((phase for phase in phases if phase["id"] == current_phase_id), None)
+    current_status = current_phase["status"] if current_phase else state["status_label"]
+    tutorial = manifest.get("first_user_tutorial", {})
+    guide = tutorial.get("guide", "docs/agent-chat-control/TUTORIAL_PRIMER_USO.md")
+    video = tutorial.get("video", "docs/agent-chat-control/assets/ADL_videotutorial_ui_actual_2026-10-19.mp4")
+    subtitles = tutorial.get("subtitles", "docs/agent-chat-control/assets/ADL_videotutorial_ui_actual_2026-10-19.es.srt")
+    trace = tutorial.get("historical_trace", tutorial.get("trace", "docs/agent-chat-control/assets/trace-c7ec5fcc40284a42.json"))
+    input_file = tutorial.get("historical_input", tutorial.get("input", "output/tutorial/sample-note.txt"))
+    render_first_user_tutorial(manifest)  # Fail closed if a declared artifact is missing.
+    jaeger_capture = manifest.get("jaeger_capture", "")
+    if not jaeger_capture or not (REPO_ROOT / jaeger_capture).is_file():
+        raise FileNotFoundError(f"Declared Jaeger capture is missing: {jaeger_capture or 'NOT_DECLARED'}")
+
+    lines = [
+        f"# {project['emoji']} {project['title']}",
+        "",
+        f"[![CI]({repository}/actions/workflows/{ci_workflow}/badge.svg)]({repository}/actions/workflows/{ci_workflow})",
+        f"[![README consistency]({repository}/actions/workflows/readme-consistency.yml/badge.svg)]({repository}/actions/workflows/readme-consistency.yml)",
+        f"[![Branch](https://img.shields.io/badge/branch-{branch_badge}-green)]({repository}/tree/{branch})",
+        f"[![License](https://img.shields.io/badge/license-{project['license']}-blue)](LICENSE)",
+        "",
+        f"> {project['description']}",
+        "> README generado desde fuentes canónicas y artefactos del checkout.",
+        "",
+        "## El laboratorio",
+        "",
+        "Un laboratorio experimental de AI Engineering gobernada: reúne agentes, datos, recuperación, ejecución y observabilidad en un recorrido donde se puede inspeccionar qué se propuso, qué se autorizó y qué efecto quedó registrado. Una respuesta del modelo, por sí sola, no demuestra autorización ni ejecución.",
+        "",
+        "## Ejecutar la demo local",
+        "",
+        "La demo principal usa fixtures locales y no llama a AWS ni a otros proveedores externos.",
+        "",
+        FENCE + "bash",
+        "python -m pip install -r requirements.txt",
+        "python demo.py",
+        FENCE,
+        "",
+        "La guía explica la instalación en Windows y POSIX, los artefactos y sus límites: [demo de una orden](docs/one_command_demo.md) · [recorrido de artefactos](docs/one_command_demo_walkthrough.md).",
+        "",
+        "**Demo gobernada:** pregunta → agente → recuperación con citas → ejecución tipada → receipts → LocalTrace → evaluación. Genera cinco JSON (`summary`, `agent_run`, `receipts`, `trace`, `evaluation`) en `demo_output/`; el proveedor es un fixture y no contacta AWS. [Contrato y requisitos](docs/one_command_demo.md) · [lectura de artefactos](docs/one_command_demo_walkthrough.md).",
+        "",
+        "## Estado actual",
+        "",
+        "| Campo | Valor |",
+        "|---|---|",
+        f"| Rama pública | {_inline(branch)} |",
+        f"| Resumen actualizado | {_cell(state['updated'])} |",
+        f"| Fase actual | **{_cell(state['current_phase'])}** · {_cell(current_status)} |",
+        f"| Siguiente bloque declarado | {_cell(state['next_phase'])} |",
+        f"| Último resultado completo de CI registrado | {_cell(state['tests'])} |",
+        "",
+        f"**Alcance declarado:** {_cell(state['status'])}",
+        "",
+        "La fecha corresponde a la actualización del resumen. Cada observación externa conserva la fecha y el alcance de su evidencia; este README no representa una consulta en vivo.",
+        "",
+        "## Roadmap y evidencia por fase",
+        "",
+        "Cada bloque muestra los archivos localizados mediante los patrones declarados en el checkout. Los patrones sin coincidencias aparecen indicados; eso no demuestra que el recurso no exista fuera de este repositorio.",
+        "",
+        _render_flowchart(phases),
+        "",
+        "La tabla muestra estados declarados en el manifiesto del proyecto; consulta las fuentes canónicas para conocer el alcance comprobado.",
+        "",
+        _render_phase_table(phases),
+        "",
+        _render_phase_evidence(phases),
+        "",
+        "## Arquitectura de un vistazo",
+        "",
+        _render_architecture(manifest),
+        "",
+        *_render_business_demo(manifest).splitlines(),
+        "",
+        "## Evidencia de ejecución y límites",
+        "",
+        "### Jaeger y OpenTelemetry (L15)",
+        "",
+        "La evidencia L15 del 2026-10-08 enlaza la traza BAGO `trace-5b385699ffda0529` con la traza consultada en Jaeger `04b58bb123bb6cc94a8cc0d60c7145ae`: 15 spans proyectados y 15 observados, 13 operaciones y estado `PASS`. La captura del grafo que acompaña la demo corresponde a otra ejecución local del 2026-10-07 (`94ee6c8d7a05b27487489a97da7480a5`), también con 15 spans; es una referencia visual y no la captura de la traza del informe L15.",
+        "",
+        f"![Grafo de Jaeger: traza agent.run 94ee6c8d7a05b27487489a97da7480a5, 15 spans, validada localmente el 2026-10-07]({jaeger_capture})",
+        "",
+        "[Informe y datos completos L15](evidence/l15_otel_jaeger_live.md) · [intento de captura del freeze](evidence/l15_jaeger_capture_attempt.md) · [guía para reproducir Jaeger](docs/otel_jaeger.md).",
+        "",
+        "- CI histórica: el registro fechado de `STATE.md` se conserva en el detalle del estado canónico. El snapshot de verificación anterior identifica por separado su candidata y su ejecución.",
+        "- [Estado y límites AWS](.bago/canon/STATE.md): las observaciones de crédito y cuota pertenecen a la evidencia histórica allí fechada. No son un saldo vigente ni una comprobación actual de disponibilidad o facturación.",
+        "- [Consulta de créditos Free Tier](evidence/l6_aws_free_tier.md) · [último recibo Bedrock](evidence/l6_aws_live.md) · [intento Nova Lite](evidence/aws-live-attempts/20261018_nova_lite_throttled.md) · [intento Nova Micro](evidence/aws-live-attempts/20261018_nova_micro_throttled.md).",
+        "",
+        "La demo local evalúa trazas y controles estructurales; no prueba calidad general de respuestas, aislamiento de producción ni integraciones cloud en vivo.",
+        "",
+        "## Ver la interfaz en acción",
+        "",
+        f"- [Guía y límites]({guide})",
+        f"- [Vídeo narrado]({video}) · [subtítulos]({subtitles})",
+        f"- [Traza de la sesión histórica]({trace}) · [archivo de ejemplo histórico]({input_file})",
+        "",
+        "La grabación actual es una captura de UI con respuestas sintéticas y no demuestra una ejecución real. La traza y el archivo enlazados pertenecen a la sesión histórica del 2026-10-10.",
+        "",
+        "## Alineación profesional y matriz de skills",
+        "",
+        "Datos copiados de los documentos canónicos; porcentajes, niveles, salarios y plazos son estimaciones históricas del proyecto, no evaluaciones independientes ni ofertas laborales vigentes.",
+        "",
+        "### Roles objetivo",
+        "",
+        _render_roles(parse_roles()),
+        "",
+        "### Skills técnicas",
+        "",
+        _render_skills(parse_skills(), parse_skill_matrix_convention()),
+        "",
+        "### Skills estratégicas y personales",
+        "",
+        _render_soft_skills(parse_soft_skills()),
+        "",
+        "## Agente de sincronización y catálogo de agentes",
+        "",
+        "El [catálogo de agentes](agents/CATALOG_MANIFEST.json) es de referencia; las definiciones operativas están en `.github/agents/`. El [agente de sincronización](docs/bago-sync-agent.md) enlaza definición, ejecutor gobernado y documentación.",
+        "",
+        "## Fuentes canónicas del proyecto",
+        "",
+        _render_canonical_documents(manifest),
+        "",
+        "- [Índice de contexto BAGO](.bago/INDEX.md)",
+        "- [Contrato del laboratorio y estimaciones de planificación](.bago/canon/LAB_CONTRACT.md)",
+        "- [Matriz de skills](.bago/canon/JOB_SKILL_MATRIX.md); sus porcentajes son estimaciones del proyecto, no evaluaciones independientes.",
+        "- [Catálogo de agentes](agents/CATALOG_MANIFEST.json), de referencia; las definiciones operativas están en `.github/agents/`.",
+        "- [Agente de sincronización: documentación](docs/bago-sync-agent.md) · [definición](.github/agents/bago-sync-agent.agent.md)",
+        "",
+        "## Reproducir y verificar",
+        "",
+        FENCE + "bash",
+        "python -m pytest tests -q",
+        "python scripts/generate_dynamic_readme.py --check --skip-tests",
+        "python scripts/run_public_e2e_demo.py --check",
+        FENCE,
+        "",
+        "La CI completa ejecuta la suite, valida este README y comprueba las demos y servicios locales. `--check --skip-tests` solo comprueba el render y recoge casos; informa `NOT_RUN` y no acredita que pasen.",
+        "",
+        "Las llamadas AWS requieren autorización explícita y evidencia de identidad, cuota y créditos disponibles. Los recibos de coste estimado no prueban facturación real; revisa el alcance actual en `STATE.md` antes de una ejecución live.",
+        "",
+        "## Contrato de generación del README",
+        "",
+        "`README.md` es un artefacto generado. No lo edites manualmente; modifica las fuentes canónicas y ejecuta el generador.",
+        "",
+        "- [Contrato de generación y revisión](docs/readme_generation.md)",
+        "- Manifiesto de contenido: `docs/readme_manifest.json`",
+        "- [Registro congelado portfolio-demo-v1](docs/cv_linkedin/portfolio-demo-v1.md)",
+        "",
+        "MIT License · [LICENSE](LICENSE)",
+        "",
+    ]
+    # The opening path is app/use -> exact verification snapshot -> demo/design.
+    # Preserve detailed project history without making it the first screen.
+    first_section = next(i for i, line in enumerate(lines) if line.startswith("## "))
+    intro, body = lines[:first_section], lines[first_section:]
+    sections: dict[str, list[str]] = {}
+    current: list[str] = []
+    for line in body:
+        if line.startswith("## "):
+            if current:
+                sections[current[0]] = current
+            current = [line]
+        else:
+            current.append(line)
+    if current:
+        sections[current[0]] = current
+    def nested(heading: str) -> list[str]:
+        return ["#" + line if line.startswith("## ") else line for line in sections[heading]]
+
+    toc = [
+        "[Propósito](#el-laboratorio) · [Aplicación frontend](#la-aplicación-frontend) · "
+        "[Tests y resultados](#tests-y-verificación) · [Demo local](#ejecutar-la-demo-local) · "
+        "[Arquitectura](#arquitectura-de-un-vistazo) · [Historial y evidencia](#historial-y-evidencia) · "
+        "[Documentación](#documentación-del-proyecto)", "",
+    ]
+    architecture = [
+        "## Arquitectura de un vistazo", "",
+        f"**Principio:** {manifest['architecture']['principle']}", "",
+        "La [interfaz React](frontend/src/App.tsx) consume la [API FastAPI](src/api/server.py). "
+        "Los recorridos de agente separan propuesta, autorización, ejecución y evidencia; "
+        "los recibos y LocalTrace permiten inspeccionar las observaciones.", "",
+        "[Arquitectura canónica](.bago/canon/ARCHITECTURE.md) · "
+        "[Contratos del Decision Inspector](docs/decision-inspector/MANUAL_PARA_DUMMIES.md)", "",
+        *_details("Ver el pipeline declarado y sus fronteras", [line.replace("Pipeline actual:", "Pipeline declarado en el manifiesto:") for line in _render_architecture(manifest).splitlines()]),
+    ]
+    history = [
+        "## Historial y evidencia", "",
+        "Los bloques siguientes conservan las fuentes y fechas del proyecto. Un estado histórico "
+        "de fase, captura o integración no valida automáticamente la candidata de este README.", "",
+        *_details("Estado canónico y roadmap L0–L15", [
+            f"**Estado registrado:** {_cell(state['updated'])} · {_cell(state['current_phase'])} · `{state['status_label']}`.", "",
+            "Fuente y decisiones posteriores: [STATE.md](.bago/canon/STATE.md). Su fecha es independiente del snapshot de tests.", "",
+            f"**Declaración histórica del canon ({_cell(state['updated'])}; no es disponibilidad ni crédito vigente):** {_cell(state['status'])}", "",
+            f"**Registro histórico de CI conservado en STATE.md:** {_cell(state['tests'])}", "",
+            *nested("## Roadmap y evidencia por fase"),
+        ]),
+        *_details("Demos, grabaciones e integraciones históricas", [
+            *nested("## Recorrido comercial de la app: Bruma Market"),
+            *nested("## Evidencia de ejecución y límites"),
+            *nested("## Ver la interfaz en acción"),
+        ]),
+        *_details("Roles, skills y catálogo de agentes", [
+            *nested("## Alineación profesional y matriz de skills"),
+            *nested("## Agente de sincronización y catálogo de agentes"),
+        ]),
+    ]
+    documentation = [
+        "## Documentación del proyecto", "",
+        "[Índice BAGO](.bago/INDEX.md) · [Contrato del laboratorio](.bago/canon/LAB_CONTRACT.md) · "
+        "[Guía de la demo](docs/one_command_demo.md) · [Generación del README](docs/readme_generation.md)", "",
+        *_details("Fuentes canónicas y documentos de referencia", nested("## Fuentes canónicas del proyecto")),
+        *sections["## Contrato de generación del README"],
+    ]
+    lines = (intro + toc + sections["## El laboratorio"] + _render_frontend(manifest)
+             + _render_verification(manifest) + sections["## Ejecutar la demo local"]
+             + architecture + history + documentation)
+    return "\n".join(lines)
+
+def main(argv: list[str] | None = None) -> int:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument(
+        "--check",
+        action="store_true",
+        help="fail if README.md is not identical to the generated output",
+    )
+    parser.add_argument(
+        "--skip-tests",
+        action="store_true",
+        help="collect pytest cases without executing them or recording a pass result",
+    )
+    args = parser.parse_args(argv)
+
+    test_count = collected_test_count() if args.skip_tests else executed_test_count()
+    manifest = _read_json(MANIFEST_PATH)
+    state = parse_state()
+    rendered = render_readme(
+        manifest=manifest,
+        state=state,
+        passing_tests=test_count,
+    )
+    current = README_PATH.read_text(encoding="utf-8") if README_PATH.exists() else ""
+    if args.check:
+        if current != rendered:
+            print("README desactualizado: ejecuta python scripts/generate_dynamic_readme.py")
+            return 1
+        print(f"README verificado; suite NOT_RUN ({test_count} casos recogidos)" if args.skip_tests else f"README verificado; {test_count} tests pasaron")
+        return 0
+    README_PATH.write_text(rendered, encoding="utf-8", newline="\n")
+    print(f"README generado; suite NOT_RUN ({test_count} casos recogidos)" if args.skip_tests else f"README generado tras {test_count} tests pasados")
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

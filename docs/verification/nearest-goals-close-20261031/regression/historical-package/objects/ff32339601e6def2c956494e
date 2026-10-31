@@ -1,0 +1,39 @@
+"""T01 focused pytest and exact test delivery binding; no full suite execution."""
+import hashlib
+import argparse
+import json
+import os
+from pathlib import Path
+import shutil
+import subprocess
+
+G=Path(__file__).resolve().parents[2]
+R=G.parents[2]
+W=R/'.worktrees/readme-clarity-20261022'
+O=G/'reviews/T01';X=G/'fixtures/T01';D=G/'deliveries/T01'
+parser=argparse.ArgumentParser();parser.add_argument('--final',action='store_true');args=parser.parse_args()
+if args.final:
+    O=O/'final';X=X/'final'
+O.mkdir(parents=True,exist_ok=True)
+X.mkdir(parents=True,exist_ok=False)
+def sha(p):return hashlib.sha256(p.read_bytes()).hexdigest()
+def save(name,value):(O/name).write_text(json.dumps(value,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
+files=['tests/test_dynamic_readme.py','tests/test_readme_presentation.py']
+deliveries=[]
+for rel in files:
+    source=W/rel;destination=D/rel;destination.parent.mkdir(parents=True,exist_ok=True)
+    shutil.copy2(source,destination)
+    assert sha(source)==sha(destination)
+    deliveries.append({'target':rel,'delivery':destination.relative_to(G).as_posix(),'target_sha256':sha(source),'delivery_sha256':sha(destination)})
+bound=files+['scripts/generate_dynamic_readme.py','docs/readme_manifest.json','docs/readme_generation.md','docs/verification/readme-status-20261022.json','docs/verification/readme-20261022/ci-summary.json','README.md']
+before={rel:sha(W/rel) for rel in bound}
+env=dict(os.environ,PYTHONDONTWRITEBYTECODE='1',PYTHONPATH=os.pathsep.join([str(R/'output/teamctl-p1-deps-20261022'),str(R/'output/rd142-deps')]),PYTEST_ADDOPTS='-p no:cacheprovider')
+argv=[str(R/'.venv/Scripts/python.exe'),'-B','-m','pytest',*files,'-q','--basetemp',str(X/'pytest')]
+run=subprocess.run(argv,cwd=W,env=env,capture_output=True,text=True,encoding='utf-8',errors='replace',timeout=180)
+(O/'stdout.log').write_text(run.stdout,encoding='utf-8');(O/'stderr.log').write_text(run.stderr,encoding='utf-8')
+after={rel:sha(W/rel) for rel in bound}
+assert before==after,'worktree candidate changed during focused test run'
+save('target-sha-manifest.json',{'worktree':str(W),'deliveries':deliveries,'before':before,'after':after,'unchanged':True})
+save('result.json',{'status':'PASS' if run.returncode==0 else 'FAIL','argv':argv,'cwd':str(W),'returncode':run.returncode,'stdout_sha256':sha(O/'stdout.log'),'stderr_sha256':sha(O/'stderr.log'),'scope':'Two README test files only; their collection subprocess does not execute the full suite.','full_suite':'NOT_RUN; coordinator responsibility','delivery_count':len(deliveries),'candidate_unchanged':True})
+print(json.dumps({'status':'PASS' if run.returncode==0 else 'FAIL','returncode':run.returncode,'tests':files}))
+raise SystemExit(run.returncode)

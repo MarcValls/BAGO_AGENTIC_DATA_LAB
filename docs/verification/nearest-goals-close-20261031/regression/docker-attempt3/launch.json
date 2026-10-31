@@ -1,0 +1,26 @@
+{
+  "image_id": "sha256:a78b74ba48e7c400f5189e966e4130394699cfd97ef5742b9c0103970c6a50b5",
+  "candidate_head": "8065906f4560f4f0b0951cc445b673ecad7ce175",
+  "archive_sha256": "30ac603f338ae1611189796c89abfb5169e467fa90d554f3ed082c9db6eb228b",
+  "source": "git archive HEAD plus unchanged check script and failed-selection XML; Linux checkout bytes",
+  "argv": [
+    "docker",
+    "run",
+    "--rm",
+    "-i",
+    "--name",
+    "bago-near-archive-54138813dd",
+    "--network",
+    "none",
+    "--mount",
+    "type=bind,source=C:\\Users\\AMTEC_Terminal_1\u00ba\\Desktop\\BAGO5_ADL\\.worktrees\\nearest-goals-close-20261031\\docs\\verification\\nearest-goals-close-20261031\\regression\\docker-attempt3,target=/results",
+    "--entrypoint",
+    "python",
+    "sha256:a78b74ba48e7c400f5189e966e4130394699cfd97ef5742b9c0103970c6a50b5",
+    "-B",
+    "-c",
+    "\nfrom pathlib import Path\nimport runpy,shutil,sys,tarfile\nroot=Path('/workspace'); root.mkdir(exist_ok=True)\nwith tarfile.open(fileobj=sys.stdin.buffer,mode='r|') as archive:\n    archive.extractall(root,filter='data')\nimport os\nos.chdir(root)\nscope='docs/verification/nearest-goals-close-20261031/regression'\nmodule=runpy.run_path(str(root/scope/'run_docker_backend.py'))\ninner=module['inner']; out=root/scope/'docker-attempt3';out.mkdir(parents=True)\ninner.__globals__['ATTEMPT']=out\n\nimport subprocess\n(root/'delegation_diag_plugin.py').write_text(\"\\nimport functools,json,traceback\\nfrom pathlib import Path\\ndef pytest_configure(config):\\n    from src.services.agent_delegation import AgentDelegations\\n    for name in ('_observe_child','_finish'):\\n        original=getattr(AgentDelegations,name)\\n        def decorate(fn,label):\\n            @functools.wraps(fn)\\n            def observed(*args,**kwargs):\\n                try:return fn(*args,**kwargs)\\n                except Exception as error:\\n                    record={'method':label,'type':type(error).__name__,'exception':str(error),\\n                            'traceback':traceback.format_exc()}\\n                    path=Path('/workspace/output/delegation-diagnostics.jsonl')\\n                    with path.open('a',encoding='utf-8') as stream:stream.write(json.dumps(record)+'\\\\n')\\n                    raise\\n            return observed\\n        setattr(AgentDelegations,name,decorate(original,name))\\n\",encoding='utf-8')\noriginal_run=subprocess.run\ndef diagnosed(argv,*args,**kwargs):\n    if isinstance(argv,list) and '-m' in argv and 'pytest' in argv:\n        argv=[*argv,'--showlocals','--tb=long','-p','delegation_diag_plugin']\n        kwargs['env']=dict(kwargs.get('env',os.environ),PYTHONPATH=str(root))\n    return original_run(argv,*args,**kwargs)\nsubprocess.run=diagnosed\n\ncode=inner()\nshutil.copytree(out,'/results',dirs_exist_ok=True)\n\ndiagnostic=root/'output/delegation-diagnostics.jsonl'\nif diagnostic.exists():shutil.copyfile(diagnostic,'/results/delegation-diagnostics.jsonl')\nfor folder in (root/'output/ngd1/triage').glob('test_no_parent_grant*'):\n    if folder.is_dir():shutil.copytree(folder,Path('/results')/'failed-fixture'/folder.name,dirs_exist_ok=True)\n\nif code==0:\n    for name in ('README.md','README_DETAILS.md'):\n        shutil.copyfile(root/name,Path('/results')/(name+'.generated'))\nraise SystemExit(code)\n"
+  ],
+  "network": "none",
+  "temporary_storage": "container writable layer; result export in project only"
+}

@@ -1,0 +1,18 @@
+import hashlib
+import json
+from pathlib import Path
+import shutil
+G=Path(__file__).resolve().parents[2];O=G/'reviews/V01';D=G/'deliveries/V01'
+def read(p):return json.loads(p.read_bytes())
+def digest(v):return hashlib.sha256(json.dumps(v,sort_keys=True,separators=(',',':'),ensure_ascii=False,allow_nan=False).encode()).hexdigest()
+s=read(G/'.bago/team/runtime/state.json');assert read(O/'result.json')['status']=='PASS'
+eid='bf13eb1825b34f8892067f1977185a1b';rel='.bago/team/runtime/executions/'+eid+'/receipt.json';r=read(G/rel)
+assert r['result']=='PASS' and r['returncode']==0
+D.mkdir(parents=True,exist_ok=True)
+for name in ('REPORT.md','result.json','manifest.json'):
+    shutil.copy2(O/name,D/name)
+files=sorted(p for directory in (O,D) for p in directory.rglob('*') if p.is_file() and p.name!='handoff.json')
+h={'work_id':'V01','role':'readme-independent-review','status':'DONE','mission_id':s['mission']['mission_id'],'candidate_id':s['candidate_id'],'scope_sha256':s['scope_sha256'],'changed_files':[p.relative_to(G).as_posix() for p in files],'outputs':[{'kind':'INDEPENDENT_REVIEW','path':p.relative_to(G).as_posix(),'sha256':hashlib.sha256(p.read_bytes()).hexdigest()} for p in files],'verification':[{'id':'review','command':r['command_text'],'result':'PASS','execution_id':eid,'evidence':rel}],'findings':[],'residual_risks':['Scoped independent review PASS, not full-suite or publication closure; I01 remains.','Reviewer authored T01 tests but did not implement builder sources; actual CLI and raw CI evidence reconstructed independently.','Record is a dated predecessor CI snapshot; collection550 is NOT_RUN and never550PASS.'],'next_consumers':['I01']}
+h['payload_sha256']=digest(h)
+(O/'handoff.json').write_text(json.dumps(h,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
+print(json.dumps({'status':'PREPARED','outputs':len(files),'payload_sha256':h['payload_sha256']}))

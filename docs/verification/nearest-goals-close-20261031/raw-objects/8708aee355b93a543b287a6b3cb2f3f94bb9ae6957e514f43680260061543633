@@ -1,0 +1,17 @@
+Traceback (most recent call last):
+  File "C:\Users\AMTEC_Terminal_1º\Desktop\BAGO5_ADL\.worktrees\nearest-goals-close-20261031\.bago\goals\nearest-open-goals-20261031\export_historical.py", line 48, in <module>
+    main()
+    ~~~~^^
+  File "C:\Users\AMTEC_Terminal_1º\Desktop\BAGO5_ADL\.worktrees\nearest-goals-close-20261031\.bago\goals\nearest-open-goals-20261031\export_historical.py", line 34, in main
+    copy(path, output / slug / rel)
+    ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\AMTEC_Terminal_1º\Desktop\BAGO5_ADL\.worktrees\nearest-goals-close-20261031\.bago\goals\nearest-open-goals-20261031\export_historical.py", line 19, in copy
+    target.write_bytes(content)
+    ~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Python314\Lib\pathlib\__init__.py", line 796, in write_bytes
+    with self.open(mode='wb') as f:
+         ~~~~~~~~~^^^^^^^^^^^
+  File "C:\Python314\Lib\pathlib\__init__.py", line 771, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: 'C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\.worktrees\\nearest-goals-close-20261031\\docs\\verification\\nearest-goals-close-20261031\\regression\\historical\\github-update-20261022\\inputs\\candidate\\tests\\ui\\agent-evaluation-lab\\agent-evaluation-lab-render.test.tsx'

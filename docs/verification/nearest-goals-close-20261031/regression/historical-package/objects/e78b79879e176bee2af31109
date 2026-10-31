@@ -1,0 +1,28 @@
+{
+  "argv": [
+    "C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\output\\bago-suite-repair-20261021\\work\\env\\windows-py314\\Scripts\\python.exe",
+    "-B",
+    "C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\output\\bago-suite-repair-20261021\\i2\\bago suite\\scripts\\suite_orchestrator.py",
+    "team",
+    "--root",
+    "C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\.bago\\goals\\readme-clarity-20261022",
+    "run-check",
+    "B01",
+    "--check-id",
+    "build",
+    "--command-json",
+    "[\"C:\\\\Users\\\\AMTEC_Terminal_1\\u00ba\\\\Desktop\\\\BAGO5_ADL\\\\.venv\\\\Scripts\\\\python.exe\", \"-B\", \"C:\\\\Users\\\\AMTEC_Terminal_1\\u00ba\\\\Desktop\\\\BAGO5_ADL\\\\.bago\\\\goals\\\\readme-clarity-20261022\\\\reviews\\\\B01\\\\build_check.py\", \"--attempt\", \"2\"]",
+    "--output",
+    "reviews/B01/attempt-2/build-result.json",
+    "--output",
+    "fixtures/B01/attempt-2/README.preview.md",
+    "--output",
+    "deliveries/B01/attempt-2/MANIFEST.json",
+    "--allow-execute",
+    "--timeout",
+    "600"
+  ],
+  "exit_code": 0,
+  "stdout": "{\n  \"execution_id\": \"2c4d84b27d18437cb269edbdcc7dc507\",\n  \"outputs\": [\n    {\n      \"path\": \"reviews/B01/attempt-2/build-result.json\",\n      \"sha256\": \"dd611ceb9fd9d85366fa756c8ef7c3a1007fab473b33be34a2e23681ee3c22fd\"\n    },\n    {\n      \"path\": \"fixtures/B01/attempt-2/README.preview.md\",\n      \"sha256\": \"0731c7d5a88f5528861c923ed6b947c0eb8a931a2c2572e0fdc814418d131bf1\"\n    },\n    {\n      \"path\": \"deliveries/B01/attempt-2/MANIFEST.json\",\n      \"sha256\": \"4f36ada212a5ba241f67253d0b977af43154b9ba03c030046501a1efcfd95453\"\n    }\n  ],\n  \"paused_during_execution\": false,\n  \"receipt\": \".bago/team/runtime/executions/2c4d84b27d18437cb269edbdcc7dc507/receipt.json\",\n  \"returncode\": 0,\n  \"status\": \"PASS\",\n  \"verification\": {\n    \"command\": \"[\\\"C:\\\\\\\\Users\\\\\\\\AMTEC_Terminal_1º\\\\\\\\Desktop\\\\\\\\BAGO5_ADL\\\\\\\\.venv\\\\\\\\Scripts\\\\\\\\python.exe\\\",\\\"-B\\\",\\\"C:\\\\\\\\Users\\\\\\\\AMTEC_Terminal_1º\\\\\\\\Desktop\\\\\\\\BAGO5_ADL\\\\\\\\.bago\\\\\\\\goals\\\\\\\\readme-clarity-20261022\\\\\\\\reviews\\\\\\\\B01\\\\\\\\build_check.py\\\",\\\"--attempt\\\",\\\"2\\\"]\",\n    \"evidence\": \".bago/team/runtime/executions/2c4d84b27d18437cb269edbdcc7dc507/receipt.json\",\n    \"execution_id\": \"2c4d84b27d18437cb269edbdcc7dc507\",\n    \"id\": \"build\",\n    \"result\": \"PASS\"\n  }\n}\n",
+  "stderr": ""
+}

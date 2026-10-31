@@ -1,0 +1,63 @@
+{
+  "changed_files": [
+    "frontend/src/features/decision-inspector/evidence/EvidenceExplorer.tsx",
+    "frontend/src/features/decision-inspector/evidence/EvidenceExplorer.css",
+    "frontend/tests/ui/decision-inspector/evidence/evidence-explorer.test.tsx"
+  ],
+  "next_consumers": [
+    "W10",
+    "W11"
+  ],
+  "outputs": [
+    {
+      "description": "Evidence explorer now preserves and displays source-provided evidence without claim links, including explicit missing relation and provenance labels; it continues to avoid deriving claims from answer text.",
+      "kind": "claim_evidence_provenance_explorer-v1",
+      "path": "frontend/src/features/decision-inspector/evidence/EvidenceExplorer.tsx",
+      "sha256": "d9f0e109421f58ae80c4e3ad5023f06c2a96248aba3ba6e8a7eb2fb8f49ae19b"
+    },
+    {
+      "description": "Responsive styles for the unlinked evidence inventory.",
+      "kind": "evidence_explorer_unlinked_inventory_styles-v1",
+      "path": "frontend/src/features/decision-inspector/evidence/EvidenceExplorer.css",
+      "sha256": "2ed4f9cd7323e1a361cfe756fe01bf28d0326a3c46775d3629fa71b0e45b4274"
+    },
+    {
+      "description": "UI regression cases for evidence without structured claims and unlinked evidence beside structured claims.",
+      "kind": "evidence_explorer_unlinked_inventory_tests-v1",
+      "path": "frontend/tests/ui/decision-inspector/evidence/evidence-explorer.test.tsx",
+      "sha256": "e3954dfdce25b18a5b45d1af6e8a8320d831b6d8ec0e985793eea6a2efdfd212"
+    }
+  ],
+  "payload_sha256": "ae71b19a951ae08dd0c145b10c4a8bd2ac7a4bf7e5ccc3584f1a8b9530d2ac38",
+  "residual_risks": [
+    "This component continues to import the existing frontend evidence contract copy. Per W02 and the coordinator instruction, it does not claim canonical W02 contract consumption; W10 must reconcile the frontend copy with src/contracts/decision/evidence.ts before final integration.",
+    "The current AgentRun does not supply structured claim decomposition; the explorer preserves citations as unlinked evidence and does not infer claims or relations.",
+    "Expected freshness can be computed only when a consumer supplies an expected comparable snapshot; absent fields remain Not provided/unknown.",
+    "Manual keyboard and screen-reader usability review remains for W11."
+  ],
+  "role": "decision-ui-engineer",
+  "status": "DONE",
+  "verification": [
+    {
+      "command": "python .bago/team/kit/scripts/teamctl.py --root . verify",
+      "evidence": "W02, W03 and W06 dependency handoffs validated before W07 work; existing AC01-AC10 orphan warnings preserved.",
+      "result": "PASS"
+    },
+    {
+      "command": "npx tsc --ignoreConfig --target ES2022 --module Preserve --moduleResolution Bundler --strict --jsx react-jsx --esModuleInterop --skipLibCheck --types node --typeRoots node_modules/@types --outDir .build/decision-inspector-w07 tests/ui/decision-inspector/evidence/evidence-explorer.test.tsx .build/decision-inspector-w07/css-modules.d.ts",
+      "evidence": "Focused TypeScript compilation completed with exit code 0. The temporary CSS declaration and emitted test output were in frontend/.build/decision-inspector-w07 and were removed after verification.",
+      "result": "PASS"
+    },
+    {
+      "command": "node --experimental-loader <temp>/css-loader.mjs --test <temp>/tests/ui/decision-inspector/evidence/evidence-explorer.test.js",
+      "evidence": "6 UI tests passed, 0 failed, including source-provided provenance, unsupported/missing/contradictory/context-only states, no fabricated claims, unlinked evidence inventory, stale snapshots, and loading/error/unsupported/empty announcements. CSS loader handled stylesheet imports in the isolated temporary output.",
+      "result": "PASS"
+    },
+    {
+      "command": "git diff --check -- frontend/src/features/decision-inspector/evidence frontend/tests/ui/decision-inspector/evidence",
+      "evidence": "No whitespace errors in W07 paths.",
+      "result": "PASS"
+    }
+  ],
+  "work_id": "W07"
+}

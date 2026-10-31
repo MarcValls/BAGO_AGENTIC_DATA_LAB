@@ -1,0 +1,168 @@
+{
+  "schema": "bago.goal-coverage.v1",
+  "mission_id": "BAGO_NEAREST_OPEN_GOALS_20261031",
+  "candidate_id": "9bdf09833dd28ab922485c21a23e0f645efb5cb812712150dd3c1b07d4f8fada",
+  "head": "8065906f4560f4f0b0951cc445b673ecad7ce175",
+  "scope": "Actual React components and CSS, fixture-backed browser rendering. No production resources, credentials, backend writes, or external providers. Browser Brave headless; no foreground window requested.",
+  "goals": {
+    "context-viewer-20261020": {
+      "rendered": "PASS",
+      "criteria": [
+        "three fixed sources lazy load",
+        "Markdown sections and nested JSON",
+        "Reload",
+        "malformed fallback",
+        "missing/error visibility",
+        "foreign document rejection",
+        "workspace change clears previous content",
+        "mobile no overflow"
+      ],
+      "evidence": [
+        "attempt-03/report.json",
+        "context-supplement/report.json"
+      ],
+      "remaining": [
+        "real filesystem/API integration belongs to REGRESSION; intercepted API does not prove filesystem access",
+        "full App/Electron integration NOT_RUN"
+      ]
+    },
+    "workspace-compact-20261020": {
+      "rendered": "PASS",
+      "criteria": [
+        "one picker",
+        "three structured viewers",
+        "one compact memory section",
+        "obsolete PROJECT SCOPE absent",
+        "mobile no overflow"
+      ],
+      "evidence": [
+        "attempt-03/report.json"
+      ],
+      "remaining": [
+        "full App/Electron navigation integration NOT_RUN"
+      ]
+    },
+    "eval-equal-height-20261020": {
+      "rendered": "PASS",
+      "criteria": [
+        "desktop equal sidebar/panel top and bottom: initial, review, stored result, collapsed sidebar, new editor",
+        "mobile stacked no overflow"
+      ],
+      "evidence": [
+        "attempt-03/report.json"
+      ],
+      "remaining": [
+        "run results are synthetic persisted-API fixtures, not model inference"
+      ]
+    },
+    "model-footer-20261020": {
+      "rendered": "PASS",
+      "criteria": [
+        "transparent borderless footer",
+        "bottom/right alignment inside parent",
+        "visible within viewport desktop/mobile",
+        "one explicit Save PUT",
+        "Exit returns to workspace component",
+        "Refresh/reload retained"
+      ],
+      "evidence": [
+        "attempt-03/report.json"
+      ],
+      "remaining": [
+        "PUT intercepted; backend durability belongs to REGRESSION",
+        "component parent is documented verification wrapper; full App/Electron Settings layout NOT_RUN"
+      ]
+    },
+    "provider-status-line-20261020": {
+      "rendered": "PASS",
+      "criteria": [
+        "all six actual tabs have bottom ::after line of 3px",
+        "green/red matches usable",
+        "no legacy dot",
+        "accessible state text retained"
+      ],
+      "evidence": [
+        "attempt-03/report.json"
+      ],
+      "remaining": [
+        "provider states synthetic; no credential/provider validation"
+      ]
+    },
+    "model-assignments-20261020": {
+      "rendered": "PASS_SCOPED",
+      "criteria": [
+        "actual component displays synthetic catalog",
+        "draft change causes no PUT",
+        "Save one PUT",
+        "reload preserves synthetic selection",
+        "filter reduces displayed models"
+      ],
+      "evidence": [
+        "attempt-03/report.json"
+      ],
+      "remaining": [
+        "backend persistence/revision guards/chat-routing/role enforcement/GEX require REGRESSION",
+        "no external inference",
+        "full App/Electron integration NOT_RUN"
+      ]
+    },
+    "agent-saved-tasks-20261020": {
+      "rendered": "PASS_SCOPED",
+      "criteria": [
+        "edit/save date causes no automatic POST",
+        "one explicit Run POST",
+        "date substitution returned by synthetic route",
+        "original historical fixture unchanged",
+        "history no editable inputs",
+        "historical HTML escaped",
+        "Relanzar prefills dates without POST"
+      ],
+      "evidence": [
+        "attempt-03/report.json"
+      ],
+      "remaining": [
+        "durable SQLite snapshots/provider callback/authorization belong to REGRESSION",
+        "no real provider calls",
+        "full App/Electron integration NOT_RUN"
+      ]
+    },
+    "square-color-ui-20261020": {
+      "rendered": "PARTIAL",
+      "criteria": [
+        "computed zero radius for actual containers in Workspace/Models/Providers/Evaluation/Tasks",
+        "computed task/workspace color accents and screenshots retained"
+      ],
+      "evidence": [
+        "attempt-03/report.json"
+      ],
+      "remaining": [
+        "original Chat/Capabilities/Builder/Inspector surfaces NOT_RUN",
+        "full original screen set not covered; do not close this goal from VISUAL alone"
+      ]
+    }
+  },
+  "global_closure": "NOT_CLAIMED; root must combine current REGRESSION, independent REVIEW and explicit per-goal acceptance",
+  "console": "One generic HTTP404 resource console entry in main run; synthetic missing-document response is exercised. No uncaught page errors and no framework overlays. Do not describe console as completely clear.",
+  "attempt_history": [
+    {
+      "path": "report.json",
+      "result": "FAIL",
+      "classification": "Two harness expectations, title owned by i18n and bottom line implemented via ::after, corrected in later attempt; no source product modification"
+    },
+    {
+      "path": "attempt-02/report.json",
+      "result": "PASS",
+      "qualification": "Visual review later identified harness parent clipping footer below mobile viewport; wrapper corrected and viewport visibility assertion added in attempt03"
+    },
+    {
+      "path": "attempt-03/report.json",
+      "result": "PASS",
+      "checks": 11
+    },
+    {
+      "path": "context-supplement/report.json",
+      "result": "PASS",
+      "checks": 4
+    }
+  ]
+}

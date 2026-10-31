@@ -1,0 +1,36 @@
+{
+  "phase": "green",
+  "test_result": "PASS",
+  "returncode": 0,
+  "argv": [
+    "C:\\Python314\\python.exe",
+    "-B",
+    "-m",
+    "pytest",
+    "-q",
+    "-p",
+    "no:cacheprovider",
+    "tests/test_agent_delegation.py",
+    "--basetemp=\\\\?\\C:\\Users\\AMTEC_Terminal_1\u00ba\\Desktop\\BAGO5_ADL\\.worktrees\\nearest-goals-close-20261031\\docs\\verification\\nearest-goals-close-20261031\\clock-repair\\green\\t\\p",
+    "--junitxml=C:\\Users\\AMTEC_Terminal_1\u00ba\\Desktop\\BAGO5_ADL\\.worktrees\\nearest-goals-close-20261031\\docs\\verification\\nearest-goals-close-20261031\\clock-repair\\green\\tests.xml"
+  ],
+  "started_at": "2026-10-31T19:50:50.768499+00:00",
+  "finished_at": "2026-10-31T19:51:20.327485+00:00",
+  "counts": {
+    "tests": 41,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "sources": {
+    "src/api/server.py": "f7f6ffc6ffec3d1396a61137e3ae2e3fa4cb70f7561bdb0643887a4923d65320",
+    "tests/test_agent_delegation.py": "32784a4c08a8c6815a95e346ddd72290ec8eb89f686269b4352991c90314d0b8"
+  },
+  "logs": {
+    "stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout.log": "e52d9990b0bbc1310870fe2397ccedd526d5cdfc0f02295a47946944305cc8ef",
+    "tests.xml": "7c0b749a60532ba5575bd97fa3b6a21cdd157663a2c23a1cfb479262b801b9c6"
+  },
+  "network": "Provider functions are synthetic fixture callbacks; no live inference",
+  "temp_scope": "C:\\Users\\AMTEC_Terminal_1\u00ba\\Desktop\\BAGO5_ADL\\.worktrees\\nearest-goals-close-20261031\\docs\\verification\\nearest-goals-close-20261031\\clock-repair\\green\\t"
+}

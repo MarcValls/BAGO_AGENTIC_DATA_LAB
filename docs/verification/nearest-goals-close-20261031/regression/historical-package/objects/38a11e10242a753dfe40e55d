@@ -1,0 +1,5 @@
+Traceback (most recent call last):
+  File "C:\Users\AMTEC_Terminal_1º\Desktop\BAGO5_ADL\.bago\goals\readme-clarity-20261022\reviews\V01\review.py", line 37, in <module>
+    assert all(line in raw for line in summary['summary_lines'])
+           ~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError

@@ -1,0 +1,24 @@
+{
+  "state": "PREPARED",
+  "candidate_base": "f253f3700990943755e63717a93d3be99f0e19fa",
+  "files": [
+    {
+      "path": "scripts/generate_dynamic_readme.py",
+      "delivery": "deliveries/B01/scripts/generate_dynamic_readme.py",
+      "target": "C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\.worktrees\\readme-clarity-20261022\\scripts\\generate_dynamic_readme.py",
+      "sha256": "79ad9b3c885487613d7feb044d22f0b4f4a5df617002e58d0b53a44c4c53e44a"
+    },
+    {
+      "path": "docs/readme_manifest.json",
+      "delivery": "deliveries/B01/docs/readme_manifest.json",
+      "target": "C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\.worktrees\\readme-clarity-20261022\\docs\\readme_manifest.json",
+      "sha256": "ab35cbbcf351085243040534cc887dbb23340e4a91c4b0b036a824858af5a390"
+    },
+    {
+      "path": "docs/readme_generation.md",
+      "delivery": "deliveries/B01/docs/readme_generation.md",
+      "target": "C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\.worktrees\\readme-clarity-20261022\\docs\\readme_generation.md",
+      "sha256": "3ec75ca0453bfdb0e5eb4f72504b9efe0f267dc7c9acf04796dc9f9a29f8781a"
+    }
+  ]
+}

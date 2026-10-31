@@ -1,0 +1,2 @@
+smoke 0 {'tests': 7, 'errors': 0, 'failures': 0, 'skipped': 0}
+generate 1 {'tests': 1904, 'errors': 21, 'failures': 57, 'skipped': 3}

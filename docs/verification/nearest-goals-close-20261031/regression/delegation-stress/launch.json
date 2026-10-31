@@ -1,0 +1,21 @@
+{
+  "image_id": "sha256:3d92378210d9a4b5411f2f74f9bfe08bd1f90787c5426b589e8b95486c243480",
+  "argv": [
+    "docker",
+    "run",
+    "--rm",
+    "-i",
+    "--name",
+    "bago-delegation-diag-7265cba983",
+    "--network",
+    "none",
+    "--mount",
+    "type=bind,source=C:\\Users\\AMTEC_Terminal_1\u00ba\\Desktop\\BAGO5_ADL\\.worktrees\\nearest-goals-close-20261031\\docs\\verification\\nearest-goals-close-20261031\\regression\\delegation-stress,target=/results",
+    "--entrypoint",
+    "python",
+    "sha256:3d92378210d9a4b5411f2f74f9bfe08bd1f90787c5426b589e8b95486c243480",
+    "-B",
+    "-c",
+    "\nfrom pathlib import Path\nimport functools,importlib.util,json,os,shutil,sys,tarfile,traceback\nroot=Path('/workspace');root.mkdir(exist_ok=True)\nwith tarfile.open(fileobj=sys.stdin.buffer,mode='r|') as archive:archive.extractall(root,filter='data')\nos.chdir(root);sys.path.insert(0,str(root));os.environ['BAGO_DATA_ROOT']=str(root/'stress-data')\nimport pytest\nspec=importlib.util.spec_from_file_location('fixture_module',root/'tests/test_agent_delegation.py');test=importlib.util.module_from_spec(spec);spec.loader.exec_module(test)\nevents=[]\ndef observe(owner,name):\n    fn=getattr(owner,name)\n    @functools.wraps(fn)\n    def recorded(*args,**kwargs):\n        try:\n            result=fn(*args,**kwargs)\n            if name=='_finalize_native_agent_chat_trace' and result.get('local_state')=='failed':events.append({'method':name,'returned':result})\n            return result\n        except Exception as error:\n            events.append({'method':name,'error':repr(error),'traceback':traceback.format_exc()})\n            raise\n    setattr(owner,name,recorded)\nfor name in ('_finalize_native_agent_chat_trace','_native_chat_compatibility_evidence'):observe(test.server,name)\nfor name in ('_observe_child','_finish'):observe(test.AgentDelegations,name)\nout=root/'stress-results';out.mkdir();failures=[]\nfor index in range(100):\n    case=root/'cases'/str(index);case.mkdir(parents=True);start=len(events)\n    with pytest.MonkeyPatch.context() as patch:\n        fixture=test.setup.__wrapped__(case,patch)\n        desired='NEEDS_AUTHORIZATION' if index%2 else 'PASSED'\n        if index%2:fixture['delegation_outcome']='needs_authorization'\n        test.propose(fixture)\n        response=test.execute(fixture).json();record=response['agent_delegation']\n        if record['state']!=desired:\n            failures.append({'index':index,'expected':desired,'response':response,'events':events[start:]})\n            shutil.copytree(case,out/('case-'+str(index)))\n        fixture['client'].close()\n    if len(failures)>=4:break\nresult={'status':'FAIL' if failures else 'PASS','iterations':index+1,'failures':failures,'all_events':events,'source':'original current fixture/API; diagnostic wrappers rethrow exceptions unchanged'}\n(out/'result.json').write_text(json.dumps(result,indent=2,default=str)+'\\n')\nshutil.copytree(out,'/results',dirs_exist_ok=True)\nprint(json.dumps({'status':result['status'],'iterations':index+1,'failures':len(failures)}))\nraise SystemExit(1 if failures else 0)\n"
+  ]
+}

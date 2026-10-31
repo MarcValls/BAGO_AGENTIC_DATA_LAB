@@ -1,0 +1,79 @@
+import collections,datetime,hashlib,json,pathlib
+h=pathlib.Path(__file__).resolve().parent
+repo=next(p for p in h.parents if (p/'.git').exists()); goals=repo/'.bago/goals'
+data='''ADL-AGENT-EVALUATION-LAB-001|P|Implementación parcial; faltan revisión visual, Jaeger y lint.|implementation-runtime/evidence/W05_FINAL_STATUS.md
+ADL-AGENT-RUN-GOVERNED-001|P|PREPARED/NOT_FROZEN; integración NOT_RUN.|goal.md
+ADL-BER-INTEGRATION-001|V|Cinco gates del candidato VALIDATED; mutating live NOT_RUN y delete BLOCKED.|evidence/FINAL_VERIFICATION_20261019.md
+ADL-CAPABILITY-MANAGER-001|V|MVP catálogo/propuestas verificado; ejecución general no disponible.|implementation-runtime/evidence/W04_FINAL_STATUS.md
+adl-cases-20261022|P|Casos 01–03 con evidencia; restantes parciales/NOT_RUN.|goal.md
+adl-chat-functions-and-copy-001|S|SUPERSEDED por navegación semántica; no reabrir frases fijas.|goal.md
+adl-chat-semantic-navigation-001|V|Navegación semántica VERIFIED en candidato documentado.|evidence/VERIFICATION.md
+ADL-CHAT-UI-MODERNIZATION-001|V|Entrega visual W01 verificada; metadata inicial PREPARED desfasada.|.bago/team/runtime/handoffs/W01.json
+ADL-CONVERSATION-LIBRARY-001|V|MVP persistente VERIFIED, diez criterios y reinicio; generación externa NOT_RUN.|PHASE_1_VERIFICATION.md
+ADL-EXPORT-CI-AND-FULL-VERIFICATION-20261017|V|Cierre local VERIFIED; CI hospedado y externos NOT_RUN en ese incremento.|evidence/VERIFICATION_20261017.md
+adl-external-connections-20261020|P|Contrato W01; sin cierre integral W12 ni conexión externa final.|CONTRACT.md
+ADL-EXTERNAL-LIVE-VALIDATION-20261017|P|Ollama live PASS; AWS BLOCKED y OpenMetadata/commercetools NOT_RUN.|evidence/EXTERNAL_VALIDATION_20261017.md
+ADL-FRONTEND-AUDITOR-JAEGER-001|P|EXECUTED/PARTIAL; límites de lint, credenciales y allowlist.|evidence/FINAL_PROOF.md
+ADL-OLLAMA-SPIRAL-001|V|Turno real y persistencia PASS_WITH_EXPLICIT_LIMITS; modelo gemma4:31b.|evidence/W05_INDEPENDENT_REVIEW.json
+ADL-ONE-SHOT-SIGNAL-AGENT-SPIRAL-001|A|Discovery terminado; implementación propuesta, no acreditada.|status.json
+ADL-P1-02-REAL-AUDIT-SPIRAL-001|A|Auditoría real terminada con límites; ejecución de jobs ausente.|evidence/W05_INDEPENDENT_REVIEW.json
+ADL-PROVIDER-REGISTRATION-001|P|Feature verificada; cierre padre incompleto por semantic-navigation.|evidence/IMPLEMENTATION_STATUS.md
+adl-seven-verticals-20261020|P|Padre activo; subgates parciales no cierran verticales/promoción.|status.json
+adl-ui-standard-pack-001|V|Paquete/preview VALIDATED; adopción producción NOT_RUN.|evidence/LOCAL_VERIFICATION.md
+agent-saved-tasks-20261020|V|VALIDATED_SCOPED: aceptación y revisión independiente del alcance; producto b1b4d524a0e9. Suite Linux final PASS; Windows global no validado.|closure-20261031/ACCEPTANCE.json
+bago5-chat-cognition|V|Adaptación determinista/mock UI VALIDATED; inferencia live NOT_RUN en ese candidato.|evidence/VERIFICATION.md
+brave-browser-mcp-20261020|P|MCP/CDP sin cierre live; distinto de Native Messaging R5.|goal.md
+chat-run-settings|V|VALIDATED; suite/build/revisión independiente y gate documentados.|status.json
+close-fronts-20261023|P|AW06/AW04/AW07/AW05 y promoción pendientes; no cierre global.|DECISION.md
+contacts-independent-review-20261023|A|Revisión terminada FAIL para promoción; reparaciones en otro goal.|REVIEW.md
+contacts-repair-review-20261023|A|Revisión local F01/F02/F03 PASS; Google live/UI/global fuera de alcance.|REVIEW.md
+context-unification|D|Cierre VALIDATED documentado; evidencia principal fuera de esta carpeta.|status.json
+context-viewer-20261020|V|VALIDATED_SCOPED: aceptación y revisión independiente del alcance; producto b1b4d524a0e9. Suite Linux final PASS; Windows global no validado.|closure-20261031/ACCEPTANCE.json
+CR-GEX-001|P|Contrato/vectores PREPARED/OPEN; runtime NOT_RUN.|goal.md
+crit-adl-skills-001-retest-1|V|Candidato histórico VALIDATED; 248 tests y CI exacto, no main actual.|evidence/LOCAL_VERIFICATION.md
+directory-code-duplicate-scan|V|Scanner API/UI y suite verificados; agent.run general fail-closed.|evidence/VERIFICATION.md
+docker-independent-review-20261023|A|Revisión estática acotada PASS; no rerun Docker integral; HMR NOT_RUN.|FINAL_REVIEW.md
+docker-live-edit-review-20261023|A|Investigación terminada con fallo de asset nuevo preservado.|REPORT.md
+docker-runtime-final-20261023|E|Captura de runtime; inferencia/HMR NOT_RUN, sin cierre padre.|04-docker-runtime-final.json
+duplicate-responsibility-audit-20261020|A|AUDIT_SCOPE_CLOSED; remediaciones y P1 producto no cerrados por auditoría.|goal.md
+eval-equal-height-20261020|V|VALIDATED_SCOPED: aceptación y revisión independiente del alcance; producto b1b4d524a0e9. Suite Linux final PASS; Windows global no validado.|closure-20261031/ACCEPTANCE.json
+functional-reuse-20261023|A|Investigación/procedencia VERIFIED; ejecución de producto NOT_RUN.|whatsapp_session/REPORT.md
+github-update-20261022|V|Publicación histórica PR62 y CI exacta verificadas; reconciliación e independiente 31-Oct PASS. No valida checkout actual.|reconciliation-20261031/evidence-reconciliation.json
+integrated-services-20261023|P|Contenedor de demos/perfiles; no gate padre final encontrado.|.
+jaeger-via-adl-20261024|E|Evidencias context-chat/runtime; sin cierre formal padre.|context-chat-r5-live/CHAT_FINAL_STAMP.json
+L1-GOVERNED-EXECUTION-COMPLETION-001|V|VALIDATED para L1 acotado; no afirma identidad producción ni sandbox OS.|status.json
+L1-GOVERNED-EXECUTION-EVIDENCE-001|A|Auditoría VALIDATED; implementación posterior en COMPLETION.|status.json
+model-assignments-20261020|V|VALIDATED_SCOPED: aceptación y revisión independiente del alcance; producto b1b4d524a0e9. Suite Linux final PASS; Windows global no validado.|closure-20261031/ACCEPTANCE.json
+model-footer-20261020|V|VALIDATED_SCOPED: aceptación y revisión independiente del alcance; producto b1b4d524a0e9. Suite Linux final PASS; Windows global no validado.|closure-20261031/ACCEPTANCE.json
+one-command-demo-v1|V|Release histórico VALIDATED/RELEASED/FROZEN; scope sintético, AWS live NOT_RUN.|status.json
+openmetadata-lineage-28860|A|Auditoría/adapter MERGED/CI_PASS/UNRELEASED; no reparación upstream.|status.json
+operational-continuity-governance-20261031|P|NO_GO por aceptación pendiente; integridad recuperada y revisión formal DONE; relay/cognitive cerrados sólo en su alcance.|evidence/checks/current-operational-status.json
+portfolio-demo-v1|V|Cierre histórico acotado; fallback OTEL aceptado y vídeo/tag; Jaeger D1 opcional.|status.json
+provider-cognition-repair|V|Reparación acotada VALIDATED con inferencia/persistencia/trace e independiente.|evidence/W12-closure.md
+provider-status-line-20261020|V|VALIDATED_SCOPED: aceptación y revisión independiente del alcance; producto b1b4d524a0e9. Suite Linux final PASS; Windows global no validado.|closure-20261031/ACCEPTANCE.json
+readme-clarity-20261022|V|I01 y gate histórico CLOSED/VALIDATED_SCOPED_TASK; PR63, CI, hashes y revisión independiente actual PASS.|reconciliation-20261031/evidence-reconciliation.json
+readme-corporate-20261022|V|Documentación VALIDATED; Chat→Inspect FAIL pertenece a otro frente.|FINAL_REPORT.md
+readme-trust-audit-20261015|V|Auditoría/corrección README VALIDATED en candidato histórico.|evidence/README_AUDIT.md
+square-color-ui-20261020|P|PARTIAL: Do not close. The current candidate visual report exercises Workspace, Models, Providers, Evaluation and Tasks; the original Chat, Capabilities, Builder and Inspector surfaces are NOT_RUN in the current review package. The report mixes product screens and component regions, so this review does not convert those names into a screen-count fraction. Producto b1b4d524a0e9. No cerrado.|evidence.md
+teamctl-p1-repair-20261022|V|VALIDATED_SCOPED_TASK AUTH001/B04/AUTH002; no validación global producto.|repair-v2/reviews/integration/MISSION_CLOSURE.json
+whatsapp-communications-20261022|P|Envío Desktop NOT_RUN, sent=false; sin reintento automático autorizado.|desktop-send-pending.json
+workspace-compact-20261020|V|VALIDATED_SCOPED: aceptación y revisión independiente del alcance; producto b1b4d524a0e9. Suite Linux final PASS; Windows global no validado.|closure-20261031/ACCEPTANCE.json'''
+items=[]
+for line in data.splitlines():
+ name,kind,summary,source=line.split('|');p=goals/name/source
+ assert p.exists(),str(p)
+ items.append({'goal':name,'classification':kind,'summary':summary,'source':str(p.relative_to(repo)).replace('\\','/'),'source_sha256':hashlib.sha256(p.read_bytes()).hexdigest() if p.is_file() else None})
+actual={p.name for p in goals.iterdir() if p.is_dir()}
+assert {x['goal'] for x in items}==actual and len(items)==57
+counts=dict(collections.Counter(x['classification'] for x in items)); assert counts=={'P': 15, 'V': 28, 'S': 1, 'A': 10, 'D': 1, 'E': 2}
+labels={'V':'Entrega técnica verificada en su alcance','A':'Auditoría/revisión/discovery terminado','D':'Cierre documentado con evidencia externa al goal','P':'Abierto/parcial/sin cierre concluyente','E':'Evidencia runtime sin cierre padre','S':'Sustituido explícitamente'}
+snapshot={'schema':'bago.goals.root-audit.v1','updated_at':datetime.datetime.now(datetime.timezone.utc).isoformat(),'scope':'.bago/goals immediate 57 folders; historical candidates plus explicitly accepted scoped closures; not global product validation','counts':counts,'labels':labels,'items':items,'limitations':['No global last closure proved.','17 root status.json files; metadata is not sole closure authority.','Nested dependency/fixture access errors in readme-clarity and integrated-services; 57 root coverage complete, not all nested bytes audited.','Root checkout main is 213 commits behind fetched origin/main; no rebase/merge undertaken.']}
+(h/'inventory.json').write_text(json.dumps(snapshot,ensure_ascii=False,indent=2),encoding='utf-8')
+text='# Qué está terminado en .bago/goals\n\nCorte: '+snapshot['updated_at']+'. Inventario documental de 57 carpetas raíz; cierres históricos y cierres acotados aceptados el 31-Oct, vinculados a sus candidatos. No reejecuta las suites históricas. Las verificaciones citadas pertenecen a sus candidatos históricos. No hay cierre global del producto acreditado.\n\n'
+text+='| Grupo | Número | Interpretación |\n|---|---:|---|\n'
+for k in ('V','A','D','P','E','S'):text+=f"| {k} | {counts[k]} | {labels[k]} |\n"
+text+='\n| Objetivo | Grupo | Alcance real | Fuente local |\n|---|---|---|---|\n'
+for x in items:text+=f"| {x['goal']} | {x['classification']} | {x['summary']} | [{pathlib.Path(x['source']).name}]({(repo/x['source']).as_posix()}) |\n"
+text+='\nLa ausencia de evidencia aquí no demuestra que no exista en otro worktree. No se suman suites solapadas ni se equipara discovery con implementación. Sólo los objetivos aceptados en closure-20261031 se promueven a V. Los restantes conservan su clasificación y sus motivos documentados; no se declara cierre global del producto.\n'
+(h/'GOALS_STATUS.md').write_text(text,encoding='utf-8')
+print(json.dumps({'status':'VERIFIED_DOCUMENTARY_INVENTORY','roots':57,'counts':counts,'report':str(h/'GOALS_STATUS.md')},ensure_ascii=False))

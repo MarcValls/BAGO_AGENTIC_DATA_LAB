@@ -1,0 +1,177 @@
+"""Copy a finite evidence allowlist, preserving originals and raw hashes. No Git writes."""
+from pathlib import Path
+from collections import Counter
+import datetime as dt
+import hashlib
+import json
+import os
+import re
+import subprocess
+
+CONTROL = Path(__file__).resolve().parent
+REPO = CONTROL.parents[2]
+PUB = REPO / 'docs/verification/nearest-goals-close-20261031'
+CODE_HEAD = 'b1b4d524a0e936300a71da36e0c0276e061fa34e'
+SKIP = {'node_modules', 'npm-cache', '.build', 'dist', '__pycache__', 'profile', 'tmp', 'temp', '.pytest_cache'}
+
+
+def sha(data):
+    return hashlib.sha256(data).hexdigest()
+
+
+def direct(path):
+    return [p for p in path.iterdir() if p.is_file() and p.name != '.lock'] if path.is_dir() else []
+
+
+def once(path, data):
+    path.parent.mkdir(parents=True, exist_ok=True)
+    if path.exists():
+        assert path.read_bytes() == data, f'existing bytes differ: {path.relative_to(REPO)}'
+    else:
+        with path.open('xb') as stream:
+            stream.write(data)
+
+
+def write_json(path, value):
+    once(path, (json.dumps(value, indent=2, ensure_ascii=False) + '\n').encode('utf-8'))
+
+
+def main():
+    assert not (CONTROL / 'publication-file-list.json').exists(), 'preserve proposal; use a new explicit version'
+    selected = set(direct(CONTROL))
+    selected.discard(CONTROL / 'publication-file-list.json')
+    for folder in ('regression', 'clock-repair', 'visual'):
+        root = PUB / folder
+        selected.update(direct(root))
+        for child in root.iterdir():
+            if child.is_dir() and child.name not in SKIP:
+                selected.update(direct(child))
+    roots = [PUB / 'regression/historical-package', REPO / 'frontend/nearest-goals-check/footer-repair',
+             REPO / '.bago/team/runtime', REPO / 'frontend/.bago/team/runtime']
+    roots += [CONTROL / name for name in ('baseline-runtime', 'baseline-runtime-live', 'frontend-r1-runtime', 'preserved-runtime')]
+    for root in roots:
+        for directory, dirs, names in os.walk(root):
+            dirs[:] = [name for name in dirs if name not in SKIP]
+            for name in names:
+                if name != '.lock' and not name.endswith('.pyc'):
+                    p = Path(directory) / name
+                    if p.is_file():
+                        selected.add(p)
+    for p in direct(REPO / 'frontend/nearest-goals-check'):
+        if p.suffix in {'.mjs', '.tsx', '.html', '.json'} or p.name == '.gitignore':
+            selected.add(p)
+    selected.update(direct(REPO / 'frontend/tests/ui/providers-footer'))
+    sources = ['frontend/src/App.tsx', 'frontend/src/components/ProviderSettings.css',
+               'frontend/src/components/ProviderSettings.tsx', 'frontend/tests/providers/provider-settings.test.tsx',
+               'src/api/server.py', 'tests/test_agent_delegation.py']
+    selected.update(REPO / name for name in sources)
+    payloads = {}
+    for path in sorted(selected):
+        assert not path.is_symlink()
+        before = path.stat()
+        data = path.read_bytes()
+        after = path.stat()
+        assert (before.st_size, before.st_mtime_ns) == (after.st_size, after.st_mtime_ns), 'file changed during read'
+        payloads[path] = data
+
+    # Values are never printed or included in the scan report.
+    token_patterns = {
+        'provider_key': r'\bsk-(?:proj-)?[A-Za-z0-9_-]{20,}\b',
+        'github_token': r'\b(?:gh[pousr]_[A-Za-z0-9]{20,}|github_pat_[A-Za-z0-9_]{20,})\b',
+        'aws_access_key': r'\b(?:AKIA|ASIA)[A-Z0-9]{16}\b',
+        'private_key': r'-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----',
+        'bearer_value': r'(?i)\bBearer[ \t]+[A-Za-z0-9._~-]{8,}',
+    }
+    scan = []
+    blocked = []
+    for path, data in payloads.items():
+        try:
+            text = data.decode('utf-8')
+        except UnicodeDecodeError:
+            continue
+        rel = path.relative_to(REPO).as_posix()
+        if re.search(r'"Config"\s*:', text) and re.search(r'"Env"\s*:', text) and 'RootFS' in text:
+            blocked.append({'source': rel, 'reason': 'full Docker Config/Env dump excluded'})
+            continue
+        for kind, pattern in token_patterns.items():
+            matches = list(re.finditer(pattern, text))
+            if not matches:
+                continue
+            fixture = all(re.search(r'FIXTURE|SYNTHETIC|SENTINEL|REDACTED|PLACEHOLDER|TEST|DEMO|FAKE', m.group(), re.I) for m in matches)
+            scan.append({'source': rel, 'kind': kind, 'count': len(matches),
+                         'classification': 'EXPLICIT_FIXTURE_MARKER' if fixture else 'REQUIRES_PRIVATE_REVIEW'})
+    unknown = [row for row in scan if row['classification'] != 'EXPLICIT_FIXTURE_MARKER']
+    if unknown:
+        write_json(CONTROL / 'publication-private-scan-review.json', {'status': 'BLOCKED', 'findings': unknown})
+        raise RuntimeError('potential credentials require private review; no values emitted')
+    for row in blocked:
+        payloads.pop(REPO / row['source'])
+
+    existing = {}
+    for path, data in payloads.items():
+        if path.is_relative_to(PUB):
+            existing.setdefault(sha(data), path.relative_to(PUB).as_posix())
+    rows = []
+    for path, data in sorted(payloads.items()):
+        digest = sha(data)
+        if path.is_relative_to(PUB):
+            destination = path.relative_to(PUB).as_posix()
+        else:
+            destination = existing.get(digest, 'raw-objects/' + digest)
+            once(PUB / destination, data)
+            existing.setdefault(digest, destination)
+        rows.append({'source': path.relative_to(REPO).as_posix(), 'published': destination,
+                     'bytes': len(data), 'sha256': digest})
+    mapping = {row['source']: row for row in rows}
+    normalization = []
+    for source in sources:
+        raw = payloads[REPO / source]
+        blob = subprocess.check_output(['git', 'show', CODE_HEAD + ':' + source], cwd=REPO)
+        assert raw == blob or raw.replace(b'\r\n', b'\n') == blob, source
+        oid = subprocess.check_output(['git', 'rev-parse', CODE_HEAD + ':' + source], cwd=REPO, text=True).strip()
+        normalization.append({'source': source, 'git_head': CODE_HEAD, 'git_blob_oid': oid,
+                              'raw_sha256': sha(raw), 'git_blob_sha256': sha(blob),
+                              'equivalence': 'IDENTICAL' if raw == blob else 'CRLF_TO_LF_EXACT',
+                              'raw_object': mapping[source]['published']})
+    attrs = b'# Preserve raw evidence, snapshots and recorded SHA-256 byte identity.\n** -text -whitespace\n'
+    once(PUB / '.gitattributes', attrs)
+    verifier = (CONTROL / 'verify_publication.py').read_bytes()
+    once(PUB / 'verify_publication.py', verifier)
+    write_json(PUB / 'SECRET_SCAN.json', {'status': 'NO_UNRESOLVED_PATTERN_FINDINGS', 'scope': 'selected finite text payloads only; not a guarantee of absence',
+                                         'values_disclosed': False, 'findings': scan, 'excluded': blocked,
+                                         'binary_payloads': 'not text-scanned; PNG screenshots are synthetic UI artifacts'})
+    note = ('# Finite evidence publication\n\nRun `python verify_publication.py` from this directory, or pass `--root` after copying/extracting it. '
+            'The index resolves original repository-relative paths to published raw payloads; no Windows path or live runtime is required. '
+            'Raw sources recover handoff bytes. Git/Linux tests used the LF blobs at code HEAD ' + CODE_HEAD + '; '
+            'the six mappings prove exact CRLF-to-LF equivalence without editing either source. '
+            'Runtime snapshots are dated evidence, not current host authority. Legacy records are preserved without migration. '
+            'No product validation or independent acceptance is implied by checksum PASS. '
+            'node_modules, npm caches, build/dist, browser profiles, temp fixtures and Docker Config/Env dumps are excluded. '
+            'The root orchestrator will add final review/closure before publication. '
+            'An optional single local ZIP should be made only after that final addition; no giant project archive is needed.\n')
+    once(PUB / 'PUBLICATION_README.md', note.encode('utf-8'))
+    tooling_names = ['.gitattributes', 'verify_publication.py', 'SECRET_SCAN.json', 'PUBLICATION_README.md']
+    tooling = [{'path': name, 'sha256': sha((PUB / name).read_bytes())} for name in tooling_names]
+    index = {'schema': 'bago.nearest-goals.publication.v1', 'code_candidate': CODE_HEAD,
+             'snapshot_created_at': dt.datetime.now(dt.timezone.utc).isoformat(), 'files': rows,
+             'source_normalization': normalization, 'tooling': tooling,
+             'limits': ['Finite byte verification only; no replay of old absolute paths.',
+                        'Original runtimes are not staged, deleted or replaced.',
+                        'Historical-package already contains its own portable export graph.',
+                        'Root adds final review/closure; snapshots do not confer authority.']}
+    write_json(PUB / 'PUBLICATION_INDEX.json', index)
+    physical = {row['published'] for row in rows} | set(tooling_names) | {'PUBLICATION_INDEX.json'}
+    files_to_publish = [{'path': (PUB / name).relative_to(REPO).as_posix(),
+                         'bytes': (PUB / name).stat().st_size, 'sha256': sha((PUB / name).read_bytes())} for name in sorted(physical)]
+    proposal = {'schema': 'bago.finite-publication-file-list.v1', 'status': 'PREPARED_NOT_STAGED',
+                'code_candidate': CODE_HEAD, 'logical_files': len(rows), 'physical_files': len(files_to_publish),
+                'total_published_bytes': sum(row['bytes'] for row in files_to_publish),
+                'files_to_publish': files_to_publish, 'mapping': rows, 'source_normalization': normalization,
+                'excluded': blocked, 'git_operations': 'READ_ONLY', 'current_runtime_staging': 'FORBIDDEN',
+                'zip': 'OPTIONAL_LOCAL_ONLY_AFTER_FINAL_REVIEW; finite evidence folder, not caches/fixtures'}
+    write_json(CONTROL / 'publication-file-list.json', proposal)
+    print(json.dumps({k: proposal[k] for k in ('status', 'logical_files', 'physical_files', 'total_published_bytes')}))
+
+
+if __name__ == '__main__':
+    main()

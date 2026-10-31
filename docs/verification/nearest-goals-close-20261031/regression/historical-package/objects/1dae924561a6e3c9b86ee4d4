@@ -1,0 +1,350 @@
+// @vitest-environment jsdom
+import React from 'react'
+import { afterEach, describe, expect, it, vi } from 'vitest'
+import { cleanup, fireEvent, render, screen, waitFor, within } from '@testing-library/react'
+import ProviderSettings from '../../src/components/ProviderSettings'
+import AgentBuilder from '../../src/components/AgentBuilder'
+
+const response = (body: unknown, status = 200) => ({ ok: status < 400, status, json: async () => body })
+const unconfigured = { provider_id: 'openai-platform', state: 'not_configured', model_id: null, auth_mode: null, has_credential: false, base_url: null, runtime_support: 'chat_and_agent_runner' }
+const configured = { ...unconfigured, state: 'configured_unverified', model_id: 'gpt-test', auth_mode: 'api_key', has_credential: true, updated_at: '2026-10-20T10:00:00Z' }
+
+afterEach(() => { cleanup(); vi.unstubAllGlobals(); vi.restoreAllMocks() })
+
+describe('Provider settings behavior with simulated API responses', () => {
+  it('marks Ollama as registered after saving its key even when no model is selected', async () => {
+    let current = { state: 'not_configured', auth_mode: null as string | null, model_id: null as string | null }
+    vi.stubGlobal('fetch', vi.fn(async (input: string, init?: RequestInit) => {
+      const url = String(input)
+      if (url === '/api/providers/registry') return response({ registrations: [] })
+      if (url === '/api/providers/ollama/status') return response(current)
+      if (url === '/api/providers/ollama/config' && init?.method === 'PUT') {
+        const body = JSON.parse(String(init.body))
+        expect(body.api_key).toBe('OLLAMA_KEY_FIXTURE')
+        current = { state: 'configured_unverified', auth_mode: 'api_key', model_id: null }
+        return response(current)
+      }
+      if (url === '/api/providers/ollama/models') return response({ models: Array.from({ length: 23 }, (_, index) => ({
+        provider_id: 'ollama-cloud', model_id: `model-${index + 1}`, display_name: `Model ${index + 1}`,
+      })) })
+      throw new Error(`Unexpected request: ${url}`)
+    }))
+
+    render(<ProviderSettings />)
+    const providerTab = screen.getByRole('tab', { name: /Ollama/ })
+    await waitFor(() => expect(providerTab.className).toContain('unavailable'))
+    fireEvent.change(screen.getByLabelText(/API key/, { selector: 'input[type=password]' }), { target: { value: 'OLLAMA_KEY_FIXTURE' } })
+    fireEvent.click(screen.getByRole('button', { name: 'Guardar acceso', exact: true }))
+
+    expect(await screen.findByText('23 modelos encontrados. Comprueba el acceso al elegido.')).toBeTruthy()
+    await waitFor(() => expect(providerTab.className).toContain('usable'))
+    expect(within(providerTab).getByRole('status').getAttribute('aria-label')).toBe('REGISTRADO · ACTIVADO')
+  })
+
+  it.each(['changed', 'unchanged', 'save-failed', 'verify-failed'])('uses one Ollama action to save and verify (%s)', async scenario => {
+    let current = { state: 'ready', auth_mode: 'api_key', model_id: 'model-a' }
+    const mutations: Array<{ url: string; body: any }> = []
+    vi.stubGlobal('fetch', vi.fn(async (input: string, init?: RequestInit) => {
+      const url = String(input)
+      if (init?.method === 'PUT' || init?.method === 'POST') mutations.push({ url, body: JSON.parse(String(init.body)) })
+      if (url === '/api/providers/registry') return response({ registrations: [] })
+      if (url === '/api/providers/ollama/status') return response(current)
+      if (url === '/api/providers/ollama/models') return response({ models: ['model-a', 'model-b'].map(model_id => ({ provider_id: 'ollama-cloud', model_id, display_name: model_id })) })
+      if (url === '/api/providers/ollama/config') {
+        if (scenario === 'save-failed') return response({ detail: { message: 'No se pudo guardar el modelo.' } }, 503)
+        current = { ...current, state: 'configured_unverified', model_id: JSON.parse(String(init?.body)).model_id }
+        return response(current)
+      }
+      if (url === '/api/providers/ollama/verify') {
+        if (scenario === 'verify-failed') return response({ detail: { message: 'Acceso rechazado.' } }, 401)
+        current = { ...current, state: 'ready' }
+        return response({ ...current, generation_performed: true })
+      }
+      throw new Error(`Unexpected request: ${url}`)
+    }))
+    render(<ProviderSettings />)
+    await screen.findByText('2 modelos encontrados. Comprueba el acceso al elegido.')
+    fireEvent.click(within(screen.getByRole('tablist', { name: 'Configuración de Ollama' })).getByRole('tab', { name: 'Modelo', exact: true }))
+    const panel = within(screen.getByRole('tabpanel', { name: 'Modelo', exact: true }))
+    const selectedModel = scenario === 'unchanged' ? 'model-a' : 'model-b'
+    fireEvent.change(panel.getByRole('combobox'), { target: { value: selectedModel } })
+    expect(screen.queryByRole('button', { name: 'Guardar modelo', exact: true })).toBeNull()
+    fireEvent.click(panel.getByRole('button', { name: 'Guardar y comprobar acceso', exact: true }))
+    if (scenario === 'save-failed') await screen.findByText('No se pudo guardar el modelo.')
+    else if (scenario === 'verify-failed') await screen.findByText('Acceso rechazado.')
+    else await screen.findByText(`Acceso comprobado: ${selectedModel}.`)
+    const save = '/api/providers/ollama/config', verify = '/api/providers/ollama/verify'
+    expect(mutations.map(item => item.url)).toEqual(scenario === 'unchanged' ? [verify] : scenario === 'save-failed' ? [save] : [save, verify])
+    if (scenario !== 'unchanged') expect(mutations[0].body).toEqual({ auth_mode: 'api_key', model_id: selectedModel })
+    if (scenario.endsWith('failed')) expect(screen.queryByText(/^Acceso comprobado:/)).toBeNull()
+  })
+
+  it('requires explicit access saving before the model action can submit an unsaved key', async () => {
+    const mutations: string[] = []
+    vi.stubGlobal('fetch', vi.fn(async (input: string, init?: RequestInit) => {
+      const url = String(input)
+      if (init?.method) mutations.push(url)
+      if (url === '/api/providers/registry') return response({ registrations: [] })
+      if (url === '/api/providers/ollama/status') return response({ state: 'ready', auth_mode: 'api_key', model_id: 'model-a' })
+      if (url === '/api/providers/ollama/models') return response({ models: [{ provider_id: 'ollama-cloud', model_id: 'model-a', display_name: 'model-a' }] })
+      throw new Error(`Unexpected request: ${url}`)
+    }))
+    render(<ProviderSettings />)
+    await screen.findByText('1 modelos encontrados. Comprueba el acceso al elegido.')
+    const key = screen.getByLabelText(/API key/, { selector: 'input[type=password]' }) as HTMLInputElement
+    fireEvent.change(key, { target: { value: 'UNSAVED_KEY_FIXTURE' } })
+    fireEvent.click(within(screen.getByRole('tablist', { name: 'Configuración de Ollama' })).getByRole('tab', { name: 'Modelo', exact: true }))
+    fireEvent.click(screen.getByRole('button', { name: 'Guardar y comprobar acceso', exact: true }))
+    await screen.findByText('Guarda primero los cambios en Acceso.')
+    expect(screen.getByRole('tabpanel', { name: 'Acceso', exact: true })).toBeTruthy()
+    expect(key.value).toBe('UNSAVED_KEY_FIXTURE')
+    expect(mutations).toEqual([])
+  })
+
+  it('shows access and model as separate Ollama tabs, preserves drafts and supports keyboard navigation', async () => {
+    const requests: string[] = []
+    vi.stubGlobal('fetch', vi.fn(async (input: string) => {
+      const url = String(input)
+      requests.push(url)
+      if (url === '/api/providers/registry') return response({ registrations: [] })
+      if (url === '/api/providers/ollama/status') return response({ state: 'ready', auth_mode: 'api_key', model_id: 'model-a' })
+      if (url === '/api/providers/ollama/models') return response({ models: [
+        { provider_id: 'ollama-cloud', model_id: 'model-a', display_name: 'Model A' },
+        { provider_id: 'ollama-cloud', model_id: 'model-b', display_name: 'Model B' },
+      ] })
+      throw new Error(`Unexpected request: ${url}`)
+    }))
+    render(<ProviderSettings />)
+    const tabs = within(screen.getByRole('tablist', { name: 'Configuración de Ollama' }))
+    expect(tabs.getAllByRole('tab')).toHaveLength(2)
+    const access = tabs.getByRole('tab', { name: 'Acceso', exact: true })
+    const model = tabs.getByRole('tab', { name: 'Modelo', exact: true })
+    const accessPanel = screen.getByRole('tabpanel', { name: 'Acceso', exact: true })
+    expect(screen.queryByRole('tabpanel', { name: 'Modelo', exact: true })).toBeNull()
+    const key = within(accessPanel).getByLabelText(/API key/, { selector: 'input[type=password]' }) as HTMLInputElement
+    await screen.findByText('2 modelos encontrados. Comprueba el acceso al elegido.')
+    fireEvent.change(key, { target: { value: 'UNSAVED_KEY_FIXTURE' } })
+    fireEvent.click(model)
+    expect(screen.queryByRole('tabpanel', { name: 'Acceso', exact: true })).toBeNull()
+    const select = within(screen.getByRole('tabpanel', { name: 'Modelo', exact: true })).getByRole('combobox') as HTMLSelectElement
+    fireEvent.change(select, { target: { value: 'model-b' } })
+    fireEvent.keyDown(model, { key: 'ArrowLeft' })
+    expect(document.activeElement).toBe(access)
+    expect(key.value).toBe('UNSAVED_KEY_FIXTURE')
+    fireEvent.keyDown(access, { key: 'End' })
+    expect(document.activeElement).toBe(model)
+    expect(select.value).toBe('model-b')
+    expect(requests.filter(url => url === '/api/providers/ollama/models')).toHaveLength(1)
+    expect(requests).not.toContain('/api/providers/ollama/config')
+    expect(requests).not.toContain('/api/providers/ollama/verify')
+  })
+
+  it('logs Codex in through its native API-key endpoint and clears the password field', async () => {
+    let connected = false
+    const calls: any[] = []
+    const popup = vi.spyOn(window, 'open').mockReturnValue(null)
+    vi.stubGlobal('fetch', vi.fn(async (input: string, init?: RequestInit) => {
+      const url = String(input)
+      if (url === '/api/providers/registry') return response({ registrations: [] })
+      if (url === '/api/providers/ollama/status') return response({ state: 'not_configured' })
+      if (url === '/api/providers/codex/session') return response({ authenticated: connected, auth_mode: connected ? 'api_key' : null, models: connected ? [{ model_id: 'codex-test', display_name: 'Codex test', is_default: true }] : [] })
+      if (url === '/api/providers/codex/login') {
+        calls.push(JSON.parse(String(init?.body)))
+        connected = true
+        return response({ state: 'completed' })
+      }
+      throw new Error(`Unexpected request: ${url}`)
+    }))
+    render(<ProviderSettings />)
+    fireEvent.click(screen.getByRole('tab', { name: /OpenAI/ }))
+    const codex = within(screen.getByRole('region', { name: 'ChatGPT / Codex' }))
+    await waitFor(() => expect((codex.getByRole('radio', { name: 'API key' }) as HTMLInputElement).disabled).toBe(false))
+    fireEvent.click(codex.getByRole('radio', { name: 'API key' }))
+    fireEvent.change(codex.getByLabelText('API key de Codex'), { target: { value: 'CODEX_KEY_FIXTURE' } })
+    fireEvent.click(codex.getByRole('button', { name: 'Conectar API key a Codex' }))
+    expect(await codex.findByText('API key conectada a Codex.')).toBeTruthy()
+    expect(calls).toEqual([{ auth_mode: 'api_key', api_key: 'CODEX_KEY_FIXTURE' }])
+    expect((codex.getByLabelText('API key de Codex') as HTMLInputElement).value).toBe('')
+    expect(codex.getByLabelText('Modelo de Codex')).toBeTruthy()
+    expect(codex.getByText('La prueba consume uso facturable de API.')).toBeTruthy()
+    expect(popup).not.toHaveBeenCalled()
+    expect(screen.queryByText(/igual que en la extensión Codex/)).toBeNull()
+  })
+
+  it('opens the official ChatGPT authorization URL and waits for login completion', async () => {
+    let connected = false
+    const authWindow = { opener: window, location: { href: '' }, close: vi.fn() }
+    vi.spyOn(window, 'open').mockReturnValue(authWindow as unknown as Window)
+    vi.stubGlobal('fetch', vi.fn(async (input: string, init?: RequestInit) => {
+      const url = String(input)
+      if (url === '/api/providers/registry') return response({ registrations: [] })
+      if (url === '/api/providers/ollama/status') return response({ state: 'not_configured' })
+      if (url === '/api/providers/codex/session') return response({ authenticated: connected, auth_mode: connected ? 'chatgpt' : null, models: [] })
+      if (url === '/api/providers/codex/login') {
+        expect(JSON.parse(String(init?.body))).toEqual({ auth_mode: 'chatgpt' })
+        return response({ login_id: 'test-login', auth_url: 'https://auth.openai.com/oauth/authorize?state=fixture', state: 'pending' })
+      }
+      if (url === '/api/providers/codex/login/test-login') {
+        connected = true
+        return response({ state: 'completed' })
+      }
+      throw new Error(`Unexpected request: ${url}`)
+    }))
+    render(<ProviderSettings />)
+    fireEvent.click(screen.getByRole('tab', { name: /OpenAI/ }))
+    const codex = within(screen.getByRole('region', { name: 'ChatGPT / Codex' }))
+    const login = codex.getByRole('button', { name: 'Iniciar sesión con ChatGPT' }) as HTMLButtonElement
+    await waitFor(() => expect(login.disabled).toBe(false))
+    fireEvent.click(login)
+    await codex.findByRole('link', { name: 'Abrir página de autorización de Codex' })
+    expect(authWindow.location.href).toBe('https://auth.openai.com/oauth/authorize?state=fixture')
+    expect(authWindow.opener).toBeNull()
+    expect(await codex.findByText('ChatGPT conectado.', {}, { timeout: 3000 })).toBeTruthy()
+  })
+
+  it('shows integration before registration, saves a write-only key, and waits for a real verification response', async () => {
+    let current = { ...unconfigured }
+    const requests: Array<{ url: string; body: any }> = []
+    let finishVerification: ((value: any) => void) | undefined
+    vi.stubGlobal('fetch', vi.fn(async (input: string, init?: RequestInit) => {
+      const url = String(input)
+      if (url === '/api/providers/registry') return response({ registrations: [current] })
+      if (url === '/api/providers/ollama/status') return response({ state: 'not_configured', auth_mode: null, model_id: null })
+      if (url === '/api/providers/codex/session') return response({ authenticated: false, models: [] })
+      if (url.endsWith('/verify')) return new Promise(resolve => { finishVerification = resolve })
+      if (url === '/api/providers/registry/openai-platform' && init?.method === 'PUT') {
+        requests.push({ url, body: JSON.parse(String(init.body)) })
+        current = { ...configured }
+        return response(current)
+      }
+      throw new Error(`Unexpected request: ${url}`)
+    }))
+    render(<ProviderSettings />)
+    await waitFor(() => expect(screen.queryByText('Cargando registros guardados…')).toBeNull())
+    expect(screen.getAllByRole('status', { name: 'NO REGISTRADO · NO DISPONIBLE' }).length).toBeGreaterThan(0)
+    expect(document.querySelectorAll('.provider-tab small')).toHaveLength(0)
+    fireEvent.click(screen.getByRole('tab', { name: /OpenAI/ }))
+    expect(await screen.findByText('Disponible para chat de agentes y Agent Runner')).toBeTruthy()
+    expect(screen.queryByText('El registro no confirma acceso en vivo')).toBeNull()
+    const saveAndVerify = screen.getByRole('button', { name: 'Guardar y comprobar acceso' }) as HTMLButtonElement
+    fireEvent.change(screen.getByLabelText(/API key/, { selector: 'input[type=password]' }), { target: { value: 'TEST_SECRET_WRITE_ONLY' } })
+    fireEvent.change(screen.getByLabelText('Modelo predeterminado'), { target: { value: 'gpt-test' } })
+    fireEvent.click(saveAndVerify)
+    await waitFor(() => expect(finishVerification).toBeDefined())
+    expect(requests[0].body.api_key).toBe('TEST_SECRET_WRITE_ONLY')
+    expect((screen.getByLabelText(/API key/, { selector: 'input[type=password]' }) as HTMLInputElement).value).toBe('')
+    expect(screen.queryByText(/Acceso comprobado para OpenAI Platform/)).toBeNull()
+    expect(screen.getByRole('button', { name: /Comprobando acceso/ })).toBeTruthy()
+    expect(screen.queryByText(/Acceso comprobado para OpenAI Platform/)).toBeNull()
+    finishVerification?.(response({ ...configured, state: 'ready', last_verified_at: '2026-10-20T10:05:00Z', generation_performed: true }))
+    expect(await screen.findByText(/Acceso comprobado para OpenAI Platform/)).toBeTruthy()
+    expect(screen.getByRole('status', { name: 'REGISTRADO · ACTIVADO' })).toBeTruthy()
+  })
+
+  it('removes a previous confirmation when verification fails and reloads server status', async () => {
+    let ready = true
+    vi.stubGlobal('fetch', vi.fn(async (input: string) => {
+      const url = String(input)
+      if (url === '/api/providers/registry') return response({ registrations: [{ ...configured, state: ready ? 'ready' : 'needs_authentication', last_verified_at: ready ? '2026-10-20T10:00:00Z' : undefined }] })
+      if (url === '/api/providers/ollama/status') return response({ state: 'not_configured' })
+      if (url === '/api/providers/codex/session') return response({ authenticated: false, models: [] })
+      if (url.endsWith('/verify')) { ready = false; return response({ detail: { message: 'La credencial fue rechazada.' } }, 401) }
+      if (url === '/api/providers/registry/openai-platform') return response(configured)
+      throw new Error(`Unexpected request: ${url}`)
+    }))
+    render(<ProviderSettings />)
+    fireEvent.click(screen.getByRole('tab', { name: /OpenAI/ }))
+    await screen.findByText(/respuesta comprobada:/)
+    fireEvent.click(screen.getByRole('button', { name: 'Guardar y comprobar acceso' }))
+    expect(await screen.findByText('La credencial fue rechazada.')).toBeTruthy()
+    await waitFor(() => expect(screen.queryByText(/respuesta comprobada:/)).toBeNull())
+    expect(screen.getByText('Disponible para chat de agentes y Agent Runner')).toBeTruthy()
+  })
+
+  it('groups OpenAI in one tab and keeps ChatGPT and API credentials bound to their own registrations', async () => {
+    const codex = { ...configured, provider_id: 'codex', auth_mode: 'codex_cli', model_id: 'codex-test', state: 'ready', has_credential: false }
+    const requests: Array<{ url: string; body: any }> = []
+    vi.stubGlobal('fetch', vi.fn(async (input: string, init?: RequestInit) => {
+      const url = String(input)
+      if (url === '/api/providers/registry') return response({ registrations: [codex, unconfigured] })
+      if (url === '/api/providers/ollama/status') return response({ state: 'not_configured' })
+      if (url === '/api/providers/codex/session') return response({ authenticated: true, models: [{ model_id: 'codex-test', display_name: 'Codex test', is_default: true }] })
+      if (init?.method === 'PUT') {
+        requests.push({ url, body: JSON.parse(String(init.body)) })
+        return response(url.endsWith('/codex') ? codex : configured)
+      }
+      if (url.endsWith('/verify')) return response(url.includes('/codex/') ? codex : { ...configured, state: 'ready' })
+      throw new Error(`Unexpected request: ${url}`)
+    }))
+    render(<ProviderSettings />)
+    await waitFor(() => expect(screen.queryByText('Cargando registros guardados…')).toBeNull())
+    const tabs = within(screen.getByRole('tablist', { name: 'Proveedores' }))
+    expect(tabs.getAllByRole('tab')).toHaveLength(6)
+    expect(tabs.queryByRole('tab', { name: /OpenAI Platform/ })).toBeNull()
+    fireEvent.click(tabs.getByRole('tab', { name: /OpenAI/ }))
+    const chatgpt = within(screen.getByRole('region', { name: 'ChatGPT / Codex' }))
+    const platform = within(screen.getByRole('region', { name: 'OpenAI Platform' }))
+    const codexModel = await chatgpt.findByLabelText('Modelo de Codex') as HTMLSelectElement
+    expect(codexModel.value).toBe('codex-test')
+    expect(chatgpt.queryByLabelText(/API key/, { selector: 'input[type=password]' })).toBeNull()
+    expect((platform.getByLabelText('Modelo predeterminado') as HTMLInputElement).value).toBe('')
+    fireEvent.change(platform.getByLabelText(/API key/, { selector: 'input' }), { target: { value: 'PLATFORM_KEY_FIXTURE' } })
+    fireEvent.change(platform.getByLabelText('Modelo predeterminado'), { target: { value: 'gpt-test' } })
+    fireEvent.click(platform.getByRole('button', { name: 'Guardar y comprobar acceso' }))
+    await platform.findByText(/Acceso comprobado para OpenAI Platform/)
+    expect(codexModel.value).toBe('codex-test')
+    fireEvent.click(chatgpt.getByRole('button', { name: 'Guardar y comprobar acceso' }))
+    await chatgpt.findByText(/Acceso comprobado para codex-test/)
+    expect(requests[0].url).toBe('/api/providers/registry/openai-platform')
+    expect(requests[0].body).toMatchObject({ auth_mode: 'api_key', model_id: 'gpt-test', api_key: 'PLATFORM_KEY_FIXTURE' })
+    expect(requests[1]).toEqual({ url: '/api/providers/registry/codex', body: { auth_mode: 'codex_cli', model_id: 'codex-test' } })
+    expect((platform.getByLabelText(/API key/, { selector: 'input' }) as HTMLInputElement).value).toBe('')
+    expect((platform.getByLabelText('Modelo predeterminado') as HTMLInputElement).value).toBe('gpt-test')
+  })
+})
+
+describe('Agent provider selection with simulated API responses', () => {
+  it('preserves an unpinned legacy profile when the user saves unrelated edits', async () => {
+    let payload: any
+    vi.stubGlobal('fetch', vi.fn(async (input: string, init?: RequestInit) => {
+      if (String(input) === '/api/providers/chat-models') return response({ models: [] })
+      if (String(input) === '/api/agents/agent_legacy') { payload = JSON.parse(String(init?.body)); return response({ id: 'agent_legacy', config: payload }) }
+      throw new Error('Unexpected request')
+    }))
+    render(<AgentBuilder agentId="agent_legacy" initialAgent={{ name: 'Renamed legacy', description: 'Review', system_prompt: 'Review only', type: 'tool', tools: [] }} />)
+    await waitFor(() => expect(screen.queryByText('Cargando proveedores…')).toBeNull())
+    fireEvent.click(screen.getByRole('button', { name: /Preview/ }))
+    fireEvent.click(screen.getByRole('button', { name: 'Save changes' }))
+    await screen.findByText(/Agent saved successfully/)
+    expect(payload.provider_id).toBeUndefined()
+    expect(payload.model_id).toBeUndefined()
+  })
+
+  it('shows inventory errors, retries and saves the provider/model chosen by the user', async () => {
+    let attempts = 0
+    let saved: any
+    vi.stubGlobal('fetch', vi.fn(async (input: string, init?: RequestInit) => {
+      if (String(input) === '/api/providers/chat-models') {
+        attempts += 1
+        if (attempts === 1) return response({}, 503)
+        return response({ models: [
+          { provider_id: 'github-copilot', label: 'GitHub Copilot', state: 'configured_unverified', model_id: 'copilot-model', agent_types: ['tool'] },
+        ] })
+      }
+      if (String(input) === '/api/agents/create') { saved = JSON.parse(String(init?.body)); return response({ id: 'agent_saved', config: saved }) }
+      throw new Error('Unexpected request')
+    }))
+    render(<AgentBuilder initialAgent={{ name: 'Review agent', description: 'Review', system_prompt: 'Review only', type: 'tool', tools: [] }} />)
+    expect(screen.getByRole('status').textContent).toContain('Cargando proveedores')
+    expect(await screen.findByText('No se pudo cargar el registro de proveedores.')).toBeTruthy()
+    fireEvent.click(screen.getByRole('button', { name: 'Reintentar' }))
+    await waitFor(() => expect((screen.getByLabelText('Proveedor') as HTMLSelectElement).disabled).toBe(false))
+    fireEvent.change(screen.getByLabelText('Proveedor'), { target: { value: 'github-copilot' } })
+    expect((screen.getByLabelText('Modelo') as HTMLSelectElement).value).toBe('copilot-model')
+    fireEvent.click(screen.getByRole('button', { name: /Preview/ }))
+    fireEvent.click(screen.getByRole('button', { name: /Save Agent/ }))
+    await screen.findByText(/Agent saved successfully/)
+    expect(saved.provider_id).toBe('github-copilot')
+    expect(saved.model_id).toBe('copilot-model')
+  })
+})

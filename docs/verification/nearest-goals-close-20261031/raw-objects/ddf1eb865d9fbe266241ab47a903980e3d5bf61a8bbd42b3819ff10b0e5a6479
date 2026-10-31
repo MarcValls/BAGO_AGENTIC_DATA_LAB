@@ -1,0 +1,4 @@
+tools 0 {}
+dom 0 {}
+triage 1 {'tests': 205, 'failures': 6, 'errors': 0, 'skipped': 1}
+{"status": "FAIL", "returncode": 1, "candidate_head": "8065906f4560f4f0b0951cc445b673ecad7ce175", "image_id": "sha256:3d92378210d9a4b5411f2f74f9bfe08bd1f90787c5426b589e8b95486c243480", "container_removed": true, "inner_sha256": "c81b6fbad9b5f413f96e6a36202c9522b83964ce426f5c22ef56bb3fe3c4e7ce", "windows_full_suite": "FAIL preserved"}

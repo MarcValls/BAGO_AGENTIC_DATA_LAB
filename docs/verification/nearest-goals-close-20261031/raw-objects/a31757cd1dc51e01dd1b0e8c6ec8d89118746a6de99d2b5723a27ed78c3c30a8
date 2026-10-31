@@ -1,0 +1,67 @@
+{
+  "changed_files": [
+    "frontend/src/adapters/action/agentRun.ts",
+    "frontend/src/adapters/trace/localTraceAdapter.ts",
+    "frontend/src/contracts/action/action.ts",
+    "frontend/src/contracts/decision/evidence.ts",
+    "frontend/src/contracts/trace/trace.ts",
+    "frontend/src/features/decision-inspector/actions/ActionReview.tsx",
+    "frontend/src/features/decision-inspector/integration/DecisionInspector.tsx",
+    "frontend/tests/ui/decision-inspector/actions/action-review.test.tsx",
+    "frontend/tests/ui/decision-inspector/evidence/evidence-explorer.test.tsx",
+    "frontend/tests/ui/decision-inspector/integration/integration.test.tsx"
+  ],
+  "next_consumers": [
+    "W11"
+  ],
+  "outputs": [
+    {
+      "description": "The integrated evidence, trace and action surfaces consume frontend contract/adapter mirrors kept byte-identical to the frozen root W02, W04 and W05 sources. The inspector retains the existing AgentRun source model and never fabricates claims or correlation IDs.",
+      "kind": "decision-inspector-integrated-contract-consumers-v1",
+      "path": "frontend/src/features/decision-inspector/integration/DecisionInspector.tsx",
+      "sha256": "ddcd6e585e76ab8e0eaebfdf5666ee7eebf909c4479654702e09ee899c6c2735"
+    },
+    {
+      "description": "Integration checks verify the five frontend contract/adapter mirrors against canonical source files byte-for-byte.",
+      "kind": "decision-inspector-contract-mirror-check-v1",
+      "path": "frontend/tests/ui/decision-inspector/integration/integration.test.tsx",
+      "sha256": "9436747821334cae0c39358abba078dfc9c10f31866265e9679bbcaf1d4cc536"
+    }
+  ],
+  "payload_sha256": "7437b942acd4df92ed763d3860d03d966370b8ec1c386486def807a550a13286",
+  "residual_risks": [
+    "The Decision Inspector currently consumes ADL AgentRun artifacts; no live BER execution result is wired into the API or Runner.",
+    "The BAGO Embedded Runtime remains an explicitly managed local client; end-to-end ADL standalone packaging and L0-L15 compatibility remain unverified.",
+    "Agent Runner remains fail-closed and filesystem.delete remains blocked."
+  ],
+  "role": "team-orchestrator",
+  "status": "DONE",
+  "verification": [
+    {
+      "command": "npm run build --prefix frontend",
+      "evidence": "TypeScript project build and Vite production bundle completed successfully.",
+      "result": "PASS"
+    },
+    {
+      "command": "npm exec --prefix frontend vitest -- run frontend/tests/ui/decision-inspector",
+      "evidence": "All 5 UI files passed; 27 tests passed, 0 failed.",
+      "result": "PASS"
+    },
+    {
+      "command": "python -m pytest tests/runtime/ber -q",
+      "evidence": "ADL BER client regression suite passed: 4 tests.",
+      "result": "PASS"
+    },
+    {
+      "command": "git diff --check -- frontend/src/contracts frontend/src/adapters/action/agentRun.ts frontend/src/adapters/trace/localTraceAdapter.ts frontend/src/features/decision-inspector frontend/tests/ui/decision-inspector",
+      "evidence": "No whitespace errors in integration and consumer paths.",
+      "result": "PASS"
+    },
+    {
+      "command": "python .bago/team/kit/scripts/teamctl.py --root . verify",
+      "evidence": "W01-W09 dependency handoffs validate; preserved AC01-AC10 orphan warnings remain.",
+      "result": "PASS"
+    }
+  ],
+  "work_id": "W10"
+}

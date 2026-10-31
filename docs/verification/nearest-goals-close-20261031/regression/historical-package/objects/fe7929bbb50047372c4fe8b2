@@ -1,0 +1,38 @@
+{
+  "worktree": "C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\.worktrees\\readme-clarity-20261022",
+  "deliveries": [
+    {
+      "target": "tests/test_dynamic_readme.py",
+      "delivery": "deliveries/T01/tests/test_dynamic_readme.py",
+      "target_sha256": "0bd58b9d873242124c0d8877f4c7d0763a68b3f72f960ec8a11dabc7bf04272d",
+      "delivery_sha256": "0bd58b9d873242124c0d8877f4c7d0763a68b3f72f960ec8a11dabc7bf04272d"
+    },
+    {
+      "target": "tests/test_readme_presentation.py",
+      "delivery": "deliveries/T01/tests/test_readme_presentation.py",
+      "target_sha256": "340b142a772681c95312843fc297ad17234310cbf1442324c0e1192f555178ae",
+      "delivery_sha256": "340b142a772681c95312843fc297ad17234310cbf1442324c0e1192f555178ae"
+    }
+  ],
+  "before": {
+    "tests/test_dynamic_readme.py": "0bd58b9d873242124c0d8877f4c7d0763a68b3f72f960ec8a11dabc7bf04272d",
+    "tests/test_readme_presentation.py": "340b142a772681c95312843fc297ad17234310cbf1442324c0e1192f555178ae",
+    "scripts/generate_dynamic_readme.py": "54c8d497d8599e628af33cf60c9a1b867b0ddb5e890695486442ba269e15312b",
+    "docs/readme_manifest.json": "3d7c554938e6611fdf043bce63381db2fc2432902db8ed1b3722413ab8889b81",
+    "docs/readme_generation.md": "3ec75ca0453bfdb0e5eb4f72504b9efe0f267dc7c9acf04796dc9f9a29f8781a",
+    "docs/verification/readme-status-20261022.json": "2f01d74b4f6f3a90b4bc788565bd9e8311513f85b61c872e80f669439c28c9ab",
+    "docs/verification/readme-20261022/ci-summary.json": "927f31209019c70321e56599ae5d25fd6c06b1f5527d30152afdd9812afbfdc1",
+    "README.md": "0731c7d5a88f5528861c923ed6b947c0eb8a931a2c2572e0fdc814418d131bf1"
+  },
+  "after": {
+    "tests/test_dynamic_readme.py": "0bd58b9d873242124c0d8877f4c7d0763a68b3f72f960ec8a11dabc7bf04272d",
+    "tests/test_readme_presentation.py": "340b142a772681c95312843fc297ad17234310cbf1442324c0e1192f555178ae",
+    "scripts/generate_dynamic_readme.py": "54c8d497d8599e628af33cf60c9a1b867b0ddb5e890695486442ba269e15312b",
+    "docs/readme_manifest.json": "3d7c554938e6611fdf043bce63381db2fc2432902db8ed1b3722413ab8889b81",
+    "docs/readme_generation.md": "3ec75ca0453bfdb0e5eb4f72504b9efe0f267dc7c9acf04796dc9f9a29f8781a",
+    "docs/verification/readme-status-20261022.json": "2f01d74b4f6f3a90b4bc788565bd9e8311513f85b61c872e80f669439c28c9ab",
+    "docs/verification/readme-20261022/ci-summary.json": "927f31209019c70321e56599ae5d25fd6c06b1f5527d30152afdd9812afbfdc1",
+    "README.md": "0731c7d5a88f5528861c923ed6b947c0eb8a931a2c2572e0fdc814418d131bf1"
+  },
+  "unchanged": true
+}

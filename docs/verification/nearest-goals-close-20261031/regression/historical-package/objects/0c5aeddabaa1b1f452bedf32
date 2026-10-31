@@ -1,0 +1,17 @@
+{
+  "command": [
+    "C:\\Python314\\python.exe",
+    "C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\.bago\\goals\\operational-continuity-governance-20261031\\evidence\\control\\goals-audit-20261031\\near-goals-independent\\review.py",
+    "--repo-root",
+    "C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL",
+    "--out-dir",
+    "C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\.bago\\goals\\operational-continuity-governance-20261031\\evidence\\control\\goals-audit-20261031\\near-goals-independent"
+  ],
+  "cwd": "C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\.worktrees\\nearest-goals-close-20261031",
+  "started_at_utc": "2026-10-31T18:35:30.330241+00:00",
+  "returncode": 0,
+  "stdout": "{\"status\": \"PASS\", \"decision\": \"GO_HISTORICAL_CLOSURES_ONLY\", \"result\": \"C:\\\\Users\\\\AMTEC_Terminal_1º\\\\Desktop\\\\BAGO5_ADL\\\\.bago\\\\goals\\\\operational-continuity-governance-20261031\\\\evidence\\\\control\\\\goals-audit-20261031\\\\near-goals-independent\\\\RESULT.json\", \"checks\": {\"github-update-20261022\": 15, \"readme-clarity-20261022\": 19}}\n",
+  "stderr": "",
+  "script_sha256": "a47377193d9cf3f9708c88a612709c49f060d6d14adcc1720149783bb8b16d87",
+  "result_sha256": "84e7d9b20dc7a4e4ed988e4a6fd5461459a453aac9e4045f7ef155742115b93e"
+}

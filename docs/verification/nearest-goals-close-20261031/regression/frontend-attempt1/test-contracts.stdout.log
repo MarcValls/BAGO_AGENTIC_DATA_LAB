@@ -1,0 +1,27 @@
+
+> bago-portfolio-ui@1.0.0 test:contracts
+> node --test tests/contracts/node-contracts.test.mjs
+
+▶ Node TypeScript contracts through Vite SSR
+  ✔ proposal, authorization, availability and execution remain distinct (2.8527ms)
+  ✔ expired permit is separate from the recorded ALLOW decision (0.1971ms)
+  ✔ rejection and execution failure remain visible with their reason and receipt (0.3016ms)
+  ✔ declared missing receipt and mismatched receipt are not treated as success (0.2852ms)
+  ✔ known requests expose missing receipts while unprovided identities remain unknown (0.2663ms)
+  ✔ unsupported claims remain explicit and multiple or contradictory links are retained (0.3933ms)
+  ✔ stale, current, and missing snapshot identity are distinguished (0.1851ms)
+  ✔ retrieval adapter carries supplied source and revision, but never asserts freshness (0.2539ms)
+  ✔ references must resolve and serialization is key-order deterministic (1.1862ms)
+  ✔ sequence chronology is sorted independently from parent causality and reports gaps (0.7623ms)
+  ✔ correlations remain absent unless explicitly supplied; failures and redaction pass through (0.1606ms)
+  ✔ duplicate identities are retained and made visible rather than silently deduplicated (0.2894ms)
+  ✔ explicit claim and action correlation is carried without inference (0.2434ms)
+✔ Node TypeScript contracts through Vite SSR (20.4246ms)
+ℹ tests 13
+ℹ suites 1
+ℹ pass 13
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1452.8621

@@ -1,0 +1,78 @@
+{
+  "status": "PASS",
+  "scope": "historical evidence reconciliation, not current product regression",
+  "goal": "github-update-20261022",
+  "historical_candidate": "b0b2f2a2079019fe80e82b836e13c5580a189b70",
+  "modern_controller_legacy_rejection": {
+    "argv": [
+      "C:\\Python314\\python.exe",
+      "-B",
+      "C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\.bago\\team\\kit\\scripts\\teamctl.py",
+      "--root",
+      "C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\.bago\\goals\\github-update-20261022",
+      "verify"
+    ],
+    "returncode": 1,
+    "stdout": "{\n  \"status\": \"FAIL\",\n  \"reason\": \"LEGACY_UNVERIFIED: historical state is readable but cannot satisfy modern gates; initialize a new explicit mission\",\n  \"exception\": \"ValueError\"\n}\n",
+    "stderr": ""
+  },
+  "original_controller_verify": {
+    "argv": [
+      "C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\output\\bago-suite-repair-20261021\\work\\env\\windows-py314\\Scripts\\python.exe",
+      "-B",
+      "C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\output\\bago-suite-repair-20261021\\i2\\bago suite\\scripts\\suite_orchestrator.py",
+      "team",
+      "--root",
+      "C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\.bago\\goals\\github-update-20261022",
+      "verify"
+    ],
+    "returncode": 0,
+    "stdout": "{\n  \"claim\": \"registered evidence integrity and dependency contract only\",\n  \"lifecycle\": \"CLOSED\",\n  \"status\": \"PASS\",\n  \"terminal_gate\": \"VALIDATED_SCOPED_TASK\"\n}\n",
+    "stderr": ""
+  },
+  "publication": {
+    "pr": {
+      "headRefOid": "b0b2f2a2079019fe80e82b836e13c5580a189b70",
+      "mergeCommit": {
+        "oid": "f253f3700990943755e63717a93d3be99f0e19fa"
+      },
+      "mergedAt": "2026-10-22T16:31:02Z",
+      "number": 62,
+      "state": "MERGED",
+      "url": "https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/pull/62"
+    },
+    "ci": {
+      "conclusion": "success",
+      "headSha": "b0b2f2a2079019fe80e82b836e13c5580a189b70",
+      "status": "completed",
+      "url": "https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/actions/runs/39813814372"
+    },
+    "tree": "accfe27115fed2854d791434d9866ebd39210b56",
+    "input_sha256": {
+      "github-pr62.json": "6f1cbd110ecdda834eab285cb8d6745d2a9d2ca423f19df8b4bb55bbcbaf8e6b",
+      "github-ci.json": "a3e5e37f90b1c8058ec1b4d7406a4978c86c616ff420e89a9afb5a765b6746a9"
+    },
+    "local_candidate_ancestor": {
+      "argv": [
+        "git",
+        "merge-base",
+        "--is-ancestor",
+        "f2b34e51ce2e3607490f710f60070f1e4de5759e",
+        "b0b2f2a2079019fe80e82b836e13c5580a189b70"
+      ],
+      "returncode": 0,
+      "stdout": "",
+      "stderr": ""
+    }
+  },
+  "historical_local_junit": {
+    "tests": 537,
+    "failed": 0,
+    "errors": 0,
+    "skipped": 1,
+    "passed": 536
+  },
+  "independent_review_of_this_reconciliation": "PENDING",
+  "current_checkout_tests": "NOT_RUN",
+  "new_product_tests": "NOT_RUN"
+}

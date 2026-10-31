@@ -1,0 +1,72 @@
+{
+  "changed_files": [
+    "frontend/src/App.tsx",
+    "frontend/src/App.css",
+    "frontend/src/components/AgentChat.tsx",
+    "frontend/src/components/AgentChat.css",
+    "frontend/src/components/ProviderSettings.tsx",
+    "frontend/src/components/ProviderSettings.css"
+  ],
+  "next_consumers": [
+    "AC04"
+  ],
+  "outputs": [
+    {
+      "description": "Chat-first application shell; Inspector, builder, runner, all portfolio views, and provider settings remain reachable.",
+      "path": "frontend/src/App.tsx",
+      "sha256": "b0d7a18d1b3979734564416312c4b1db4927441ee5c65ce24fbd63e781055a68"
+    },
+    {
+      "description": "Control chat, authoritative application-agent inventory, deterministic allowlisted commands, reviewed creation flow, and ID-bound agent chats including legacy agents with unassigned models.",
+      "path": "frontend/src/components/AgentChat.tsx",
+      "sha256": "97f6cd0c17815afd09f332707b4850f3d29d7c539e329027eed01cf9a5534c8c"
+    },
+    {
+      "description": "User-selectable Ollama API-key or local CLI configuration, server-backed status/model discovery, write-only key form, and local CLI setup guidance.",
+      "path": "frontend/src/components/ProviderSettings.tsx",
+      "sha256": "95f335f5e289479397d9f673369dfa8bf2a9c5207142555e43f2a258cf6d4d35"
+    }
+  ],
+  "payload_sha256": "5a32ae2844c10dfdd6abbae61677af80fd5f86012c5948c04bfb1b51f472b228",
+  "residual_risks": [
+    "Live Ollama authentication, model availability, and response behavior remain unverified until the user configures a provider and initiates a model request.",
+    "Legacy agent compatibility was implemented against the AC06 contract and code handoff; the original ignored legacy record was not copied into or exercised from this isolated worktree.",
+    "Command routing uses deterministic allowlisted phrase matching; general job dispatch and arbitrary application actions are outside this v1 slice.",
+    "npm ci reported two dependency audit findings (one moderate and one high); package manifests were not modified."
+  ],
+  "role": "decision-ui-engineer",
+  "status": "DONE",
+  "verification": [
+    {
+      "command": "npm run build",
+      "evidence": "TypeScript and Vite production build succeeded; 126 modules transformed.",
+      "result": "PASS"
+    },
+    {
+      "command": "git diff --check",
+      "evidence": "No whitespace errors; Git reported only CRLF conversion warnings.",
+      "result": "PASS"
+    },
+    {
+      "command": "Static review of UI secret handling and API mapping",
+      "evidence": "API key is component-only, sent only to provider config, cleared in finally, and not written to browser storage or chat. Chat calls match AC02/AC06 response and request shapes.",
+      "result": "PASS"
+    },
+    {
+      "command": "Automated tests",
+      "evidence": "Not requested for AC03.",
+      "result": "NOT_RUN"
+    },
+    {
+      "command": "Live Ollama model/provider requests",
+      "evidence": "No provider calls were initiated and no inference usage was spent.",
+      "result": "NOT_RUN"
+    },
+    {
+      "command": "Browser integration/manual interaction",
+      "evidence": "Only the requested static production build was executed.",
+      "result": "NOT_RUN"
+    }
+  ],
+  "work_id": "AC03"
+}

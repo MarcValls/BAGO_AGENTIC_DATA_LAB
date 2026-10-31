@@ -1,0 +1,23 @@
+{
+  "run_id": 39813814372,
+  "candidate": "b0b2f2a2079019fe80e82b836e13c5580a189b70",
+  "conclusion": "success",
+  "completed_at": "2026-10-22T16:43:10Z",
+  "run_url": "https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/actions/runs/39813814372",
+  "job_url": "https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/actions/runs/39813814372/job/119950050254",
+  "source_metadata_sha256": "3aa7524cda44a4943a775563720dc614f09a5ad6f5963d7b8c67ef8984fa9c95",
+  "source_log_sha256": "e70fe3d18c38fd830f1de91a0c67ca9ebf0aaf08fe832aeb49571471ee0fe111",
+  "summary_lines": [
+    "verify\tRun complete test suite\t2026-10-22T16:34:19.9543550Z 539 passed in 151.32s (0:02:31)",
+    "verify\tRun frontend package tests\t2026-10-22T16:38:37.7078195Z  Test Files  14 passed (14)",
+    "verify\tRun frontend package tests\t2026-10-22T16:38:37.7079756Z       Tests  127 passed (127)",
+    "verify\tRun frontend UI tests\t2026-10-22T16:38:43.6400885Z # pass 49",
+    "verify\tRun frontend UI tests\t2026-10-22T16:38:43.6401344Z # fail 0",
+    "verify\tRun frontend UI tests\t2026-10-22T16:38:43.6402291Z # skipped 0",
+    "verify\tVerify grounded knowledge, catalog and MCP interfaces\t2026-10-22T16:38:46.5931469Z # fail 0",
+    "verify\tVerify grounded knowledge, catalog and MCP interfaces\t2026-10-22T16:38:46.5932525Z # skipped 0",
+    "verify\tRun frontend Node contract tests\t2026-10-22T16:38:53.0545543Z # pass 13",
+    "verify\tRun frontend Node contract tests\t2026-10-22T16:38:53.0545867Z # fail 0",
+    "verify\tRun frontend Node contract tests\t2026-10-22T16:38:53.0546969Z # skipped 0"
+  ]
+}

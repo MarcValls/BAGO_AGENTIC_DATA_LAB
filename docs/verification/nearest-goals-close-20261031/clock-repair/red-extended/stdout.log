@@ -1,0 +1,97 @@
+FFF.                                                                     [100%]
+================================== FAILURES ===================================
+_ test_parent_trace_clock_regression_preserves_child_outcome_and_replay_scope[completed-PASSED] _
+
+setup = {'agent_id': 'agent_1234abcd', 'calls': [('child-fixture', [{'content': 'CHILD FIXTURE ONLY\n\nYou do not have app-con...t at 0x00000238786096A0>, 'comms': <src.communications.service.CommunicationService object at 0x0000023878609400>, ...}
+outcome = 'completed', expected = 'PASSED'
+
+    @pytest.mark.parametrize(('outcome','expected'),[
+        ('completed','PASSED'),
+        ('needs_authorization','NEEDS_AUTHORIZATION'),
+        ('out_of_scope','OUT_OF_SCOPE'),
+    ])
+    def test_parent_trace_clock_regression_preserves_child_outcome_and_replay_scope(setup,outcome,expected):
+        f=setup;f['delegation_outcome']=outcome
+        # The service's default clock remains real time.time. Only Unix nanoseconds
+        # regress; native child intervals still retain their monotonic durations.
+        regressed_end=server.time.time_ns()-10_000_000_000
+        f['monkeypatch'].setattr(server.time,'time_ns',lambda:regressed_end)
+        propose(f)
+        response=execute(f)
+        assert response.status_code==200,response.text
+        result=response.json();delegation=result['agent_delegation']
+>       assert delegation['state']==expected,delegation
+E       AssertionError: {'agent_config_sha256': '71e0befe8475c8f33a9de131b86e8f0da0fe3b88c5dcadc99d3d988335f6316b', 'agent_id': 'agent_1234abcd', 'agent_name': 'Saved fixture', 'assigned_tools': ['filesystem_plan'], ...}
+E       assert 'INCONCLUSIVE' == 'PASSED'
+E         
+E         - PASSED
+E         + INCONCLUSIVE
+
+tests\test_agent_delegation.py:181: AssertionError
+_ test_parent_trace_clock_regression_preserves_child_outcome_and_replay_scope[needs_authorization-NEEDS_AUTHORIZATION] _
+
+setup = {'agent_id': 'agent_1234abcd', 'calls': [('child-fixture', [{'content': 'CHILD FIXTURE ONLY\n\nYou do not have app-con...t at 0x0000023878680190>, 'comms': <src.communications.service.CommunicationService object at 0x0000023878680050>, ...}
+outcome = 'needs_authorization', expected = 'NEEDS_AUTHORIZATION'
+
+    @pytest.mark.parametrize(('outcome','expected'),[
+        ('completed','PASSED'),
+        ('needs_authorization','NEEDS_AUTHORIZATION'),
+        ('out_of_scope','OUT_OF_SCOPE'),
+    ])
+    def test_parent_trace_clock_regression_preserves_child_outcome_and_replay_scope(setup,outcome,expected):
+        f=setup;f['delegation_outcome']=outcome
+        # The service's default clock remains real time.time. Only Unix nanoseconds
+        # regress; native child intervals still retain their monotonic durations.
+        regressed_end=server.time.time_ns()-10_000_000_000
+        f['monkeypatch'].setattr(server.time,'time_ns',lambda:regressed_end)
+        propose(f)
+        response=execute(f)
+        assert response.status_code==200,response.text
+        result=response.json();delegation=result['agent_delegation']
+>       assert delegation['state']==expected,delegation
+E       AssertionError: {'agent_config_sha256': '71e0befe8475c8f33a9de131b86e8f0da0fe3b88c5dcadc99d3d988335f6316b', 'agent_id': 'agent_1234abcd', 'agent_name': 'Saved fixture', 'assigned_tools': ['filesystem_plan'], ...}
+E       assert 'INCONCLUSIVE' == 'NEEDS_AUTHORIZATION'
+E         
+E         - NEEDS_AUTHORIZATION
+E         + INCONCLUSIVE
+
+tests\test_agent_delegation.py:181: AssertionError
+_ test_parent_trace_clock_regression_preserves_child_outcome_and_replay_scope[out_of_scope-OUT_OF_SCOPE] _
+
+setup = {'agent_id': 'agent_1234abcd', 'calls': [('child-fixture', [{'content': 'CHILD FIXTURE ONLY\n\nYou do not have app-con...t at 0x0000023878683390>, 'comms': <src.communications.service.CommunicationService object at 0x0000023878681310>, ...}
+outcome = 'out_of_scope', expected = 'OUT_OF_SCOPE'
+
+    @pytest.mark.parametrize(('outcome','expected'),[
+        ('completed','PASSED'),
+        ('needs_authorization','NEEDS_AUTHORIZATION'),
+        ('out_of_scope','OUT_OF_SCOPE'),
+    ])
+    def test_parent_trace_clock_regression_preserves_child_outcome_and_replay_scope(setup,outcome,expected):
+        f=setup;f['delegation_outcome']=outcome
+        # The service's default clock remains real time.time. Only Unix nanoseconds
+        # regress; native child intervals still retain their monotonic durations.
+        regressed_end=server.time.time_ns()-10_000_000_000
+        f['monkeypatch'].setattr(server.time,'time_ns',lambda:regressed_end)
+        propose(f)
+        response=execute(f)
+        assert response.status_code==200,response.text
+        result=response.json();delegation=result['agent_delegation']
+>       assert delegation['state']==expected,delegation
+E       AssertionError: {'agent_config_sha256': '71e0befe8475c8f33a9de131b86e8f0da0fe3b88c5dcadc99d3d988335f6316b', 'agent_id': 'agent_1234abcd', 'agent_name': 'Saved fixture', 'assigned_tools': ['filesystem_plan'], ...}
+E       assert 'INCONCLUSIVE' == 'OUT_OF_SCOPE'
+E         
+E         - OUT_OF_SCOPE
+E         + INCONCLUSIVE
+
+tests\test_agent_delegation.py:181: AssertionError
+============================== warnings summary ===============================
+..\..\..\..\..\..\Python314\Lib\site-packages\langchain_core\utils\pydantic.py:42
+  C:\Python314\Lib\site-packages\langchain_core\utils\pydantic.py:42: UserWarning: Core Pydantic V1 functionality isn't compatible with Python 3.14 or greater.
+    from pydantic.v1 import BaseModel as BaseModelV1
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED tests/test_agent_delegation.py::test_parent_trace_clock_regression_preserves_child_outcome_and_replay_scope[completed-PASSED]
+FAILED tests/test_agent_delegation.py::test_parent_trace_clock_regression_preserves_child_outcome_and_replay_scope[needs_authorization-NEEDS_AUTHORIZATION]
+FAILED tests/test_agent_delegation.py::test_parent_trace_clock_regression_preserves_child_outcome_and_replay_scope[out_of_scope-OUT_OF_SCOPE]
+3 failed, 1 passed, 1 warning in 4.20s

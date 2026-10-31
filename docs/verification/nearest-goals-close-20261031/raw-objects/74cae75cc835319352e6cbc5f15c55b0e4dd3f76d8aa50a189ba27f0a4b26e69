@@ -1,0 +1,48 @@
+from pathlib import Path
+import datetime, hashlib, importlib.util, json, subprocess, sys
+
+root = Path(__file__).resolve().parents[3]
+base = root / 'docs/verification/nearest-goals-close-20261031'
+out = base / 'closure'
+out.mkdir(exist_ok=True)
+kit = root / '.bago/team/kit/scripts'
+sys.path.insert(0, str(kit))
+spec = importlib.util.spec_from_file_location('team', kit / 'teamctl.py')
+team = importlib.util.module_from_spec(spec); spec.loader.exec_module(team)
+sha = lambda p: hashlib.sha256(p.read_bytes()).hexdigest()
+state = json.loads((root / '.bago/team/runtime/state.json').read_text())
+assert state['work_status']['CLOSE']['status'] == 'CLAIMED'
+assert state['work_status']['REVIEW']['status'] == 'DONE'
+for wid in ('REPAIR', 'REGRESSION', 'REVIEW'):
+    team.validate_handoff(root, state, wid)
+matrix_path = base / 'review/goal-matrix.json'
+matrix = json.loads(matrix_path.read_text())
+final = json.loads((base / 'regression/final-attempt1/result.json').read_text())
+assert final['status'] == 'PASS'
+assert matrix['candidate_head'] == final['candidate_head']
+accepted = sorted(k for k,v in matrix['goals'].items() if v['eligible_for_closure'])
+remaining = sorted(k for k,v in matrix['goals'].items() if not v['eligible_for_closure'])
+assert len(accepted) == 7 and remaining == ['square-color-ui-20261020']
+historical = ['github-update-20261022', 'readme-clarity-20261022']
+assert subprocess.check_output(['git','rev-parse','origin/main'],cwd=root,text=True).strip() == '8065906f4560f4f0b0951cc445b673ecad7ce175'
+assert subprocess.check_output(['git','merge-base','HEAD','origin/main'],cwd=root,text=True).strip() == '8065906f4560f4f0b0951cc445b673ecad7ce175'
+for p in ('src','tests','frontend/src','frontend/tests'):
+    assert subprocess.run(['git','diff','--quiet','HEAD','--',p],cwd=root).returncode == 0
+payload = dict(status='VALIDATED_SCOPED_TASK', product_commit=final['candidate_head'],
+    accepted_at=datetime.datetime.now(datetime.timezone.utc).isoformat(),
+    accepted_goals=accepted, historical_accepted_goals=historical, remaining_goals=remaining,
+    initial_open_partial=24, closed_this_operation=9, remaining_open_partial=15,
+    original_continuity_mission='NO_GO; outside this scoped closure',
+    independent_review_sha256=sha(base/'review/RESULT.json'),
+    goal_matrix_sha256=sha(matrix_path),
+    regression_sha256=sha(base/'regression/final-attempt1/result.json'),
+    initial_remote_base='8065906f4560f4f0b0951cc445b673ecad7ce175',
+    refreshed_remote_base='8065906f4560f4f0b0951cc445b673ecad7ce175',
+    acceptance_authority='User delegated independent review and explicit scoped acceptance to the orchestrator.',
+    limits=['No merge or deployment to main/original dirty checkout.',
+        'Windows full suite failures preserved; Linux Docker final suite PASS; Windows-only OCR/CIM skipped.',
+        'UI fixtures and local provider doubles do not establish live provider inference.',
+        'Not a global BAGO5 product closure or original continuity mission acceptance.',
+        'Square/color goal remains open for original surfaces not yet reviewed.'])
+(out/'ACCEPTANCE.json').write_text(json.dumps(payload,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
+print(json.dumps({'status':'PASS','accepted_goals':accepted,'remaining_open_partial':15}))

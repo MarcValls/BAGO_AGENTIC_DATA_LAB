@@ -1,0 +1,82 @@
+{
+  "status": "APPLIED_VERIFIED",
+  "original_root": "C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL",
+  "candidate_root": "C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\.worktrees\\nearest-goals-close-20261031",
+  "product_commit": "b1b4d524a0e936300a71da36e0c0276e061fa34e",
+  "accepted_goals": [
+    "agent-saved-tasks-20261020",
+    "context-viewer-20261020",
+    "eval-equal-height-20261020",
+    "model-assignments-20261020",
+    "model-footer-20261020",
+    "provider-status-line-20261020",
+    "workspace-compact-20261020"
+  ],
+  "remaining_goals": [
+    "square-color-ui-20261020"
+  ],
+  "historical_accepted_goals": [
+    "github-update-20261022",
+    "readme-clarity-20261022"
+  ],
+  "remaining_summaries_refreshed": [
+    "square-color-ui-20261020"
+  ],
+  "root_goals": 57,
+  "counts_after": {
+    "P": 15,
+    "V": 28,
+    "S": 1,
+    "A": 10,
+    "D": 1,
+    "E": 2
+  },
+  "acceptance_sha256": "5cb07d89e99acefb36de2419f4c4c42040fa8e4f5850bf6996b88aa2e122478f",
+  "matrix_sha256": "cd6c70396d334f420ce0f281129f7343793a6a28cb244e20e9f667de1a7786b0",
+  "snapshot": "C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\.bago\\goals\\operational-continuity-governance-20261031\\evidence\\control\\goals-audit-20261031\\pre-closure-20261031\\fae37ec711462f164984b141",
+  "copies": [
+    ".bago\\goals\\agent-saved-tasks-20261020\\closure-20261031\\ACCEPTANCE.json",
+    ".bago\\goals\\agent-saved-tasks-20261020\\closure-20261031\\goal-matrix.json",
+    ".bago\\goals\\context-viewer-20261020\\closure-20261031\\ACCEPTANCE.json",
+    ".bago\\goals\\context-viewer-20261020\\closure-20261031\\goal-matrix.json",
+    ".bago\\goals\\eval-equal-height-20261020\\closure-20261031\\ACCEPTANCE.json",
+    ".bago\\goals\\eval-equal-height-20261020\\closure-20261031\\goal-matrix.json",
+    ".bago\\goals\\model-assignments-20261020\\closure-20261031\\ACCEPTANCE.json",
+    ".bago\\goals\\model-assignments-20261020\\closure-20261031\\goal-matrix.json",
+    ".bago\\goals\\model-footer-20261020\\closure-20261031\\ACCEPTANCE.json",
+    ".bago\\goals\\model-footer-20261020\\closure-20261031\\goal-matrix.json",
+    ".bago\\goals\\provider-status-line-20261020\\closure-20261031\\ACCEPTANCE.json",
+    ".bago\\goals\\provider-status-line-20261020\\closure-20261031\\goal-matrix.json",
+    ".bago\\goals\\workspace-compact-20261020\\closure-20261031\\ACCEPTANCE.json",
+    ".bago\\goals\\workspace-compact-20261020\\closure-20261031\\goal-matrix.json"
+  ],
+  "apply": true,
+  "executed_at": "2026-10-31T20:48:53.423612+00:00",
+  "unchanged_classification_source_bindings_refreshed": [],
+  "audit_command": [
+    "C:\\Python314\\python.exe",
+    "-B",
+    "C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\.bago\\goals\\operational-continuity-governance-20261031\\evidence\\control\\goals-audit-20261031\\build_report.py"
+  ],
+  "audit_stdout": "{\"status\": \"VERIFIED_DOCUMENTARY_INVENTORY\", \"roots\": 57, \"counts\": {\"P\": 15, \"V\": 28, \"S\": 1, \"A\": 10, \"D\": 1, \"E\": 2}, \"report\": \"C:\\\\Users\\\\AMTEC_Terminal_1º\\\\Desktop\\\\BAGO5_ADL\\\\.bago\\\\goals\\\\operational-continuity-governance-20261031\\\\evidence\\\\control\\\\goals-audit-20261031\\\\GOALS_STATUS.md\"}\n",
+  "audit_stderr": "",
+  "output_sha256": {
+    ".bago/goals/operational-continuity-governance-20261031/evidence/control/goals-audit-20261031/build_report.py": "668894c0be46fc4b2c8dbae75b1c673d157ca5e3c027103ad0d02cb2e68a755b",
+    ".bago/goals/operational-continuity-governance-20261031/evidence/control/goals-audit-20261031/inventory.json": "92a94baf1d66d6ef5b47fedea6527197dbe05ea21b724199edb4b26e0ba01dc4",
+    ".bago/goals/operational-continuity-governance-20261031/evidence/control/goals-audit-20261031/GOALS_STATUS.md": "bc8c9d0b8e2f57d0641180767c08a53e6a96dc62072dd997a5126d8bc8845793",
+    ".bago/goals/agent-saved-tasks-20261020/closure-20261031/ACCEPTANCE.json": "5cb07d89e99acefb36de2419f4c4c42040fa8e4f5850bf6996b88aa2e122478f",
+    ".bago/goals/agent-saved-tasks-20261020/closure-20261031/goal-matrix.json": "cd6c70396d334f420ce0f281129f7343793a6a28cb244e20e9f667de1a7786b0",
+    ".bago/goals/context-viewer-20261020/closure-20261031/ACCEPTANCE.json": "5cb07d89e99acefb36de2419f4c4c42040fa8e4f5850bf6996b88aa2e122478f",
+    ".bago/goals/context-viewer-20261020/closure-20261031/goal-matrix.json": "cd6c70396d334f420ce0f281129f7343793a6a28cb244e20e9f667de1a7786b0",
+    ".bago/goals/eval-equal-height-20261020/closure-20261031/ACCEPTANCE.json": "5cb07d89e99acefb36de2419f4c4c42040fa8e4f5850bf6996b88aa2e122478f",
+    ".bago/goals/eval-equal-height-20261020/closure-20261031/goal-matrix.json": "cd6c70396d334f420ce0f281129f7343793a6a28cb244e20e9f667de1a7786b0",
+    ".bago/goals/model-assignments-20261020/closure-20261031/ACCEPTANCE.json": "5cb07d89e99acefb36de2419f4c4c42040fa8e4f5850bf6996b88aa2e122478f",
+    ".bago/goals/model-assignments-20261020/closure-20261031/goal-matrix.json": "cd6c70396d334f420ce0f281129f7343793a6a28cb244e20e9f667de1a7786b0",
+    ".bago/goals/model-footer-20261020/closure-20261031/ACCEPTANCE.json": "5cb07d89e99acefb36de2419f4c4c42040fa8e4f5850bf6996b88aa2e122478f",
+    ".bago/goals/model-footer-20261020/closure-20261031/goal-matrix.json": "cd6c70396d334f420ce0f281129f7343793a6a28cb244e20e9f667de1a7786b0",
+    ".bago/goals/provider-status-line-20261020/closure-20261031/ACCEPTANCE.json": "5cb07d89e99acefb36de2419f4c4c42040fa8e4f5850bf6996b88aa2e122478f",
+    ".bago/goals/provider-status-line-20261020/closure-20261031/goal-matrix.json": "cd6c70396d334f420ce0f281129f7343793a6a28cb244e20e9f667de1a7786b0",
+    ".bago/goals/workspace-compact-20261020/closure-20261031/ACCEPTANCE.json": "5cb07d89e99acefb36de2419f4c4c42040fa8e4f5850bf6996b88aa2e122478f",
+    ".bago/goals/workspace-compact-20261020/closure-20261031/goal-matrix.json": "cd6c70396d334f420ce0f281129f7343793a6a28cb244e20e9f667de1a7786b0"
+  }
+}

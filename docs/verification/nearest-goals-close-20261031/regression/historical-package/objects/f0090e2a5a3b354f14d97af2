@@ -1,0 +1,22 @@
+{
+  "status": "PASS",
+  "argv": [
+    "C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\.venv\\Scripts\\python.exe",
+    "-B",
+    "-m",
+    "pytest",
+    "tests/test_dynamic_readme.py",
+    "tests/test_readme_presentation.py",
+    "-q",
+    "--basetemp",
+    "C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\.bago\\goals\\readme-clarity-20261022\\fixtures\\T01\\final\\pytest"
+  ],
+  "cwd": "C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\.worktrees\\readme-clarity-20261022",
+  "returncode": 0,
+  "stdout_sha256": "e4d756aece07f27405b3b19d8c5aeae22501c0efa86d81bcf00a0c3a82d1f3eb",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "scope": "Two README test files only; their collection subprocess does not execute the full suite.",
+  "full_suite": "NOT_RUN; coordinator responsibility",
+  "delivery_count": 2,
+  "candidate_unchanged": true
+}

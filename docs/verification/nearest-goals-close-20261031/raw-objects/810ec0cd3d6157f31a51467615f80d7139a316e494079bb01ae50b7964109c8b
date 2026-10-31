@@ -1,0 +1,42 @@
+from pathlib import Path
+import hashlib, importlib.util, json, sys
+
+root=Path(__file__).resolve().parents[3]
+base=root/'docs/verification/nearest-goals-close-20261031'
+out=base/'closure'
+accept=json.loads((out/'ACCEPTANCE.json').read_text(encoding='utf-8'))
+matrix=json.loads((base/'review/goal-matrix.json').read_text(encoding='utf-8'))
+lines=['# Cierre de los objetivos más próximos', '',
+    'De los 24 objetivos inicialmente abiertos o parciales, se cierran 9 en su alcance: dos entregas históricas reconciliadas y siete incrementos de interfaz revalidados. Quedan 15 abiertos o parciales.', '',
+    '| Objetivo | Dictamen de alcance |', '|---|---|']
+for name in accept['historical_accepted_goals']:
+    lines.append(f'| {name} | Entrega histórica y publicación contrastadas; aceptación independiente recuperable. |')
+for name in accept['accepted_goals']:
+    lines.append(f'| {name} | Aceptación acotada; criterios y límites en la matriz independiente. |')
+lines += ['', 'Se preservan los fallos anteriores. La regresión final en Docker sobre el commit '+accept['product_commit']+' produjo 1792 PASS y 2 SKIP, más 114 subtests. Los skips corresponden a OCR WinRT y CIM de Windows; la suite Windows completa anterior sigue registrada como FAIL.', '',
+    'Se repararon dos defectos reales: una regresión del reloj podía convertir el resultado de una delegación en INCONCLUSIVE al construir su traza; el footer de Modelos podía quedar fuera del área visible y Salir no cerraba Configuración. La segunda reparación superó 21 comprobaciones en la App real con APIs sintéticas, en escritorio y móvil, sin acceder a proveedores ni tomar el foco.', '',
+    'El cierre de Workspace aplica la decisión posterior que centraliza la selección de carpeta en Proyectos y conserva el retorno con foco desde Contexto. No se reinstala el selector anterior.', '',
+    'Square/color sigue parcial: faltan Chat, Capabilities, Builder e Inspector respecto del conjunto originalmente exigido; la matriz describe la cobertura exacta. No se declara cierre global de BAGO5 ni de la misión de continuidad, que continúa NO_GO por sus criterios pendientes.', '',
+    'Las reparaciones quedan en la rama codex/nearest-goals-close-20261031; no se integran en main ni sustituyen los archivos sucios del checkout original.', '',
+    '[Aceptación](ACCEPTANCE.json) · [Revisión independiente](../review/RESULT.json) · [Matriz por objetivo](../review/goal-matrix.json) · [Regresión](../regression/SUMMARY.json) · [Paquete de evidencias](../publication/INDEX.md)', '']
+(out/'RESULTADO.md').write_text('\n'.join(lines),encoding='utf-8')
+(out/'GUIA_BREVE.md').write_text('''# Comprobar el footer de Modelos
+
+1. Abre Configuración → Proveedores y modelos → Modelos activos.
+2. Con una lista larga, desplaza los modelos: Guardar y Salir permanecen visibles abajo.
+3. Cambiar casillas prepara un borrador; Guardar aplica la selección explícita.
+4. Salir cierra Configuración y vuelve a la pantalla anterior sin guardar el borrador.
+5. Al volver a Proveedores, se conserva el espacio de sus pestañas, estado y desplazamiento.
+
+La prueba conservada utilizó 18 modelos sintéticos, una App real compilada y APIs locales interceptadas. Las comprobaciones de persistencia y restricciones se ejecutaron por separado contra el backend real con archivos aislados y proveedores de prueba. No acredita inferencia externa ni una instalación Electron final.
+''',encoding='utf-8')
+kit=root/'.bago/team/kit/scripts';sys.path.insert(0,str(kit))
+spec=importlib.util.spec_from_file_location('team',kit/'teamctl.py');team=importlib.util.module_from_spec(spec);spec.loader.exec_module(team)
+state=json.loads((root/'.bago/team/runtime/state.json').read_text())
+eid,entry=max(((eid,v) for eid,v in state['executions'].items() if v['work_id']=='CLOSE' and v['check_id']=='acceptance'),key=lambda x:x[1]['started_at'])
+receipt=json.loads((root/entry['path']).read_text()); assert receipt['result']=='PASS'
+outputs=[dict(kind='scoped-acceptance',path=p.relative_to(root).as_posix(),sha256=hashlib.sha256(p.read_bytes()).hexdigest()) for p in sorted(out.rglob('*')) if p.is_file()]
+draft=dict(work_id='CLOSE',role='codex_orchestrator',status='DONE',mission_id=state['mission']['mission_id'],candidate_id=state['candidate_id'],scope_sha256=state['scope_sha256'],changed_files=[p['path'] for p in outputs],outputs=outputs,verification=[dict(id='acceptance',command=receipt['command_text'],result='PASS',evidence=entry['path'],execution_id=eid)],residual_risks=accept['limits'],next_consumers=[])
+draft['payload_sha256']=team.handoff_payload_hash(draft)
+target=Path(__file__).with_name('CLOSE-handoff.json');target.write_text(json.dumps(draft,indent=2)+'\n',encoding='utf-8')
+print(json.dumps({'status':'PREPARED','outputs':len(outputs),'draft':str(target)}))

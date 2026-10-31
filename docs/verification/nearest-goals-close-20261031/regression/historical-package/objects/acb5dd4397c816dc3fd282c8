@@ -1,0 +1,35 @@
+[
+  {
+    "label": "vitest",
+    "argv": [
+      "C:\\Program Files\\nodejs\\node.EXE",
+      "C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\frontend\\node_modules\\vitest\\vitest.mjs",
+      "run",
+      "--maxWorkers=2",
+      "tests/providers/provider-settings.test.tsx",
+      "tests/ui/agent-evaluation-lab/agent-evaluation-lab-render.test.tsx"
+    ],
+    "cwd": "C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\frontend\\.publication-candidate-2",
+    "returncode": 0,
+    "elapsed_seconds": 4.324,
+    "stdout": "reviews\\verification\\vitest.stdout.log",
+    "stdout_sha256": "7d3c5c4555f45afc50b76cbc18e469622f4f0f45b317e0c1d0f4b33855ab3898",
+    "stderr": "reviews\\verification\\vitest.stderr.log",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "label": "node-navigation",
+    "argv": [
+      "C:\\Program Files\\nodejs\\node.EXE",
+      "--test",
+      "tests/ui/chat-shell/chat-navigation.test.mjs"
+    ],
+    "cwd": "C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\frontend\\.publication-candidate-2",
+    "returncode": 0,
+    "elapsed_seconds": 2.026,
+    "stdout": "reviews\\verification\\node-navigation.stdout.log",
+    "stdout_sha256": "ddd522391be5f103b9f7854e91ae7d57fbd8ab4142b30374201b5eb9b7e7978a",
+    "stderr": "reviews\\verification\\node-navigation.stderr.log",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+]

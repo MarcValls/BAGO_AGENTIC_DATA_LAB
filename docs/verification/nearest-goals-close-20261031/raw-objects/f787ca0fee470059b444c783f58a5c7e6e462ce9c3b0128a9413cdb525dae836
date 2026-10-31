@@ -1,0 +1,47 @@
+{
+  "work_id": "W15R",
+  "role": "governance-action-engineer",
+  "status": "DONE",
+  "changed_files": [
+    "tests/test_agent_execution_unavailable.py"
+  ],
+  "outputs": [
+    {
+      "id": "agent-runner-websocket-start-regression-v1",
+      "kind": "websocket-start-regression-test-v1",
+      "path": "tests/test_agent_execution_unavailable.py",
+      "sha256": "8c1ce00916f3d5dd9cffd28fbd078c03332fc52d45e5908859e211bebba87b4b",
+      "frozen": true,
+      "description": "Malformed WebSocket start JSON receives invalid_message before AgentRunner or BER client construction; no provider inference or effect is invoked."
+    }
+  ],
+  "next_consumers": [
+    "W16"
+  ],
+  "repository_snapshot": {
+    "branch": "codex/adl-ber-integration-20261019",
+    "head": "585fe4635596b1bd253fb8ba6d5b736ebf133ee9",
+    "note": "W15R changes only the assigned legacy WebSocket regression test."
+  },
+  "verification": [
+    {
+      "command": "python -c \"import subprocess,sys; r=subprocess.run([sys.executable,'-m','pytest','tests/test_agent_execution_unavailable.py','-q'],timeout=30); raise SystemExit(r.returncode)\"",
+      "result": "PASS",
+      "evidence": "1 passed in 1.01s within the 30 second process timeout; malformed input returned error code invalid_message."
+    },
+    {
+      "command": "git diff --check -- tests/test_agent_execution_unavailable.py",
+      "result": "PASS",
+      "evidence": "No whitespace errors in the W15R-owned file."
+    },
+    {
+      "command": "python .bago/team/kit/scripts/teamctl.py --root . verify",
+      "result": "PASS",
+      "evidence": "Coordination state validated; pre-existing orphan handoff warnings AC01-AC10 and W01-W12 were preserved."
+    }
+  ],
+  "residual_risks": [
+    "The regression covers malformed start rejection only; valid proposal, approval and execution paths are covered by the assigned BER Agent Runner test suite and remain for independent W16 verification.",
+    "FastAPI import emitted the existing Pydantic v1 compatibility warning under Python 3.14; the focused test passed."
+  ]
+}

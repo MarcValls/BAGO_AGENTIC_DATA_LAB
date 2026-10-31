@@ -1,0 +1,9 @@
+{
+  "status": "FAIL",
+  "returncode": 1,
+  "image_id": "sha256:a78b74ba48e7c400f5189e966e4130394699cfd97ef5742b9c0103970c6a50b5",
+  "candidate_head": "8065906f4560f4f0b0951cc445b673ecad7ce175",
+  "container_removed": true,
+  "inner_result_sha256": "ac74042a1bedf48cc3eae13e971909728a3bb739418b1c25af82bffb3ff36d36",
+  "windows_full_suite": "FAIL preserved; not reclassified as PASS"
+}

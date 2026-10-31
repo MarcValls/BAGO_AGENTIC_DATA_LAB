@@ -1,0 +1,33 @@
+
+==================================== ERRORS ====================================
+________________________ ERROR collecting test session _________________________
+/root/.local/lib/python3.11/site-packages/pluggy/_caller.py:197: in __call__
+    return self._hookexec(
+/root/.local/lib/python3.11/site-packages/pluggy/_manager.py:183: in _hookexec
+    return self._inner_hookexec(hook_name, methods, kwargs, firstresult)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/root/.local/lib/python3.11/site-packages/_pytest/capture.py:883: in pytest_make_collect_report
+    out, err = self.read_global_capture()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+/root/.local/lib/python3.11/site-packages/_pytest/capture.py:803: in read_global_capture
+    return self._global_capturing.readouterr()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/root/.local/lib/python3.11/site-packages/_pytest/capture.py:706: in readouterr
+    out = self.out.snap() if self.out else ""
+          ^^^^^^^^^^^^^^^
+/root/.local/lib/python3.11/site-packages/_pytest/capture.py:594: in snap
+    self.tmpfile.truncate()
+E   FileNotFoundError: [Errno 2] No such file or directory
+=============================== warnings summary ===============================
+../root/.local/lib/python3.11/site-packages/_pytest/cacheprovider.py:475
+  /root/.local/lib/python3.11/site-packages/_pytest/cacheprovider.py:475: PytestCacheWarning: could not create cache path /workspace/.pytest_cache/v/cache/nodeids: [Errno 13] Permission denied: '/workspace/.pytest_cache/v/cache'
+    config.cache.set("cache/nodeids", sorted(self.cached_nodeids))
+
+../root/.local/lib/python3.11/site-packages/_pytest/cacheprovider.py:429
+  /root/.local/lib/python3.11/site-packages/_pytest/cacheprovider.py:429: PytestCacheWarning: could not create cache path /workspace/.pytest_cache/v/cache/lastfailed: [Errno 13] Permission denied: '/workspace/.pytest_cache/v/cache'
+    config.cache.set("cache/lastfailed", self.lastfailed)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+ERROR  - FileNotFoundError: [Errno 2] No such file or directory
+2 warnings, 1 error in 1.06s

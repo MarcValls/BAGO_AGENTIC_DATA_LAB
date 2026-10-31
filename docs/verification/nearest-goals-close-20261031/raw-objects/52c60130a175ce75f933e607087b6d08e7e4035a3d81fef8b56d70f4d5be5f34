@@ -1,0 +1,31 @@
+{
+  "changed_files": [
+    ".bago/goals/adl-external-connections-20261020/CONTRACT.md",
+    ".bago/goals/adl-external-connections-20261020/mission.json"
+  ],
+  "next_consumers": [
+    "W03",
+    "W08"
+  ],
+  "outputs": [
+    {
+      "contract_id": "adl-external-connections-v1",
+      "path": ".bago/goals/adl-external-connections-20261020/CONTRACT.md",
+      "sha256": "15bc57b5f2cc7454e387523fcac03f9485939c303cd7d4069a34864a77dcf41f"
+    }
+  ],
+  "payload_sha256": "2192819556d56398993fd60ca5273228c04f3a657b8f0fda37970eba24d61e56",
+  "residual_risks": [
+    "Live external account/service access not yet checked; no new services authorized for deployment."
+  ],
+  "role": "team-orchestrator",
+  "status": "DONE",
+  "verification": [
+    {
+      "command": "Review existing GovernedMCPAdapter, installed MCP protocol/schema, Docker CLI and local demo routes",
+      "evidence": "Private credential, explicit authorization, transport, invocation and receipt contracts frozen before consumers start.",
+      "result": "PASS"
+    }
+  ],
+  "work_id": "W01"
+}

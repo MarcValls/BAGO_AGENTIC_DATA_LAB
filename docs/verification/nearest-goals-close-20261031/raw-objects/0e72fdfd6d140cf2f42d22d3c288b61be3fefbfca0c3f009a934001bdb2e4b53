@@ -1,0 +1,70 @@
+{
+  "changed_files": [
+    "src/contracts/action/action.ts",
+    "src/adapters/action/agentRun.ts",
+    "docs/decision-inspector/contracts/action/decision-action-v1.md",
+    "tests/contracts/action/action.test.ts"
+  ],
+  "next_consumers": [
+    "W09",
+    "W10",
+    "W11"
+  ],
+  "outputs": [
+    {
+      "description": "Read-only action lifecycle contract separating intent, capability, eligibility, authorization, availability, execution and exact receipt linkage.",
+      "kind": "decision-action-contract-v1",
+      "path": "src/contracts/action/action.ts",
+      "sha256": "69b78aa2443e7d80764501ecc12c88829a9ff7db84c26581345de7a68fcbaf1d"
+    },
+    {
+      "description": "Display-only adapter projecting supplied ADL AgentRun action observations while preserving unknowns and strict receipt identity.",
+      "kind": "decision-action-agent-run-adapter-v1",
+      "path": "src/adapters/action/agentRun.ts",
+      "sha256": "21270e44db634764ffe4211013ce2ae685aa2fecbac850cb0d56acd5b14d160b"
+    },
+    {
+      "description": "Frozen action lifecycle mapping, authority boundary, correlation rules and verification limits.",
+      "kind": "decision-action-contract-documentation-v1",
+      "path": "docs/decision-inspector/contracts/action/decision-action-v1.md",
+      "sha256": "b0d3c62d463edcf089a77a9980e7d50db6d55f9baab5c51a5a49f415ba7ece21"
+    },
+    {
+      "description": "Contract tests for distinct states, expiry/revocation, denial, failed/unverified execution, missing/mismatched receipt identities and duplicate candidates.",
+      "kind": "decision-action-contract-tests-v1",
+      "path": "tests/contracts/action/action.test.ts",
+      "sha256": "170e6340fa59c5302863d1570785c3d411eaab9c325848947b5b95f34934474b"
+    }
+  ],
+  "payload_sha256": "5b032b97ceab6ec9c7204281c2f953c887eb06e882b6baab4fc728a436368a0d",
+  "repository_snapshot": {
+    "branch": "codex/adl-ber-integration-20261019",
+    "head": "585fe4635596b1bd253fb8ba6d5b736ebf133ee9",
+    "note": "Frozen candidate from W01; other mission work is concurrent and preserved."
+  },
+  "residual_risks": [
+    "This is an ADL AgentRun display projection; it does not establish BAGO BER authority, validate signatures, authorize actions or prove runtime execution.",
+    "Existing frontend/src/contracts/action/action.ts remains a separate legacy copy outside W05 scope; frontend consumers must reconcile it in their assigned integration scope.",
+    "Exact request and supplied permit identity are required to mark a receipt matched; existing receipts lacking these fields remain visibly mismatched or unknown."
+  ],
+  "role": "governance-action-engineer",
+  "status": "DONE",
+  "verification": [
+    {
+      "command": "frontend/node_modules/.bin/tsc --ignoreConfig --target ES2022 --module NodeNext --moduleResolution NodeNext --strict --esModuleInterop --skipLibCheck --types node --typeRoots frontend/node_modules/@types --outDir <TEMP> src/contracts/action/action.ts src/adapters/action/agentRun.ts tests/contracts/action/action.test.ts",
+      "evidence": "Strict TypeScript compilation exited 0; emitted files were outside the repository.",
+      "result": "PASS"
+    },
+    {
+      "command": "node --test <TEMP>/tests/contracts/action/action.test.js",
+      "evidence": "6 tests passed, 0 failed.",
+      "result": "PASS"
+    },
+    {
+      "command": "git diff --check -- src/contracts/action/action.ts src/adapters/action/agentRun.ts tests/contracts/action/action.test.ts docs/decision-inspector/contracts/action/decision-action-v1.md",
+      "evidence": "No whitespace errors reported.",
+      "result": "PASS"
+    }
+  ],
+  "work_id": "W05"
+}

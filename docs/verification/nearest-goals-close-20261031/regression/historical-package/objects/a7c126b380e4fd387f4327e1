@@ -1,0 +1,24 @@
+import hashlib
+import json
+from pathlib import Path
+G=Path(__file__).resolve().parents[2];O=G/'reviews/T01';D=G/'deliveries/T01'
+def read(p):return json.loads(p.read_bytes())
+def digest(v):return hashlib.sha256(json.dumps(v,sort_keys=True,separators=(',',':'),ensure_ascii=False,allow_nan=False).encode()).hexdigest()
+s=read(G/'.bago/team/runtime/state.json')
+matches=[(eid,e) for eid,e in s['executions'].items() if e.get('work_id')=='T01' and e.get('check_id')=='tests']
+eid,e=max(matches,key=lambda pair:pair[1]['started_at']);r=read(G/e['path'])
+assert e['state']=='COMPLETED' and r['result']=='PASS' and r['returncode']==0
+assert '--final' in r['command_argv']
+result=read(O/'final/result.json');assert result['status']=='PASS'
+assert '17 passed' in (O/'final/stdout.log').read_text(encoding='utf-8')
+binding=read(O/'final/target-sha-manifest.json')
+(D/'MANIFEST.json').write_text(json.dumps({'worktree':binding['worktree'],'files':binding['deliveries'],'tested_fingerprint':binding['after'],'execution_id':eid},indent=2,ensure_ascii=False)+'\n',encoding='utf-8')
+report=(O/'REPORT.md').read_text(encoding='utf-8')
+report=report.replace('Estado inicial de esta entrega: PREPARED; consultar `result.json` y el handoff\nregistrado para la ejecución y verificación final.','Estado final de esta entrega: VERIFIED en alcance focal. Diecisiete pruebas\npasaron contra las fuentes finales estables, recibo `'+eid+'`, exit0.\nConsultar `final/result.json` y el handoff para identidad y evidencia.')
+report+='\nPrimer preview: recibo `5be39775878b4866854f905d5015a4f2`,17PASS, sin drift.\nLa repetición final se justifica por los cambios de presentación posteriores del\nconstructor y conserva el primer recibo y sus outputs en sus paths originales.\n'
+(O/'REPORT.md').write_text(report,encoding='utf-8')
+files=sorted(p for directory in (O,D) for p in directory.rglob('*') if p.is_file() and p.name!='handoff.json')
+h={'work_id':'T01','role':'readme-test-author','status':'DONE','mission_id':s['mission']['mission_id'],'candidate_id':s['candidate_id'],'scope_sha256':s['scope_sha256'],'changed_files':[p.relative_to(G).as_posix() for p in files],'outputs':[{'kind':'TEST_DELIVERY','path':p.relative_to(G).as_posix(),'sha256':hashlib.sha256(p.read_bytes()).hexdigest()} for p in files],'verification':[{'id':'tests','command':r['command_text'],'result':'PASS','execution_id':eid,'evidence':e['path']}],'findings':[],'residual_risks':['Focused README tests only; full suite, final generated README orders and publication belong to coordinator.','Published counts are the dated b0 CI snapshot and separately scoped Windows history, never collected/current-candidate PASS.'],'next_consumers':['V01']}
+h['payload_sha256']=digest(h)
+(O/'handoff.json').write_text(json.dumps(h,indent=2,ensure_ascii=False)+'\n',encoding='utf-8')
+print(json.dumps({'status':'PREPARED','execution_id':eid,'outputs':len(files),'payload_sha256':h['payload_sha256']}))

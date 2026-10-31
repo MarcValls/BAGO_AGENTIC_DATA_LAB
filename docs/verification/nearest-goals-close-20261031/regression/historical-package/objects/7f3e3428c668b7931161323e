@@ -1,0 +1,26 @@
+{
+  "project": "ADL README presentation",
+  "base_commit": "f253f370",
+  "candidate_root": "C:\\Users\\AMTEC_Terminal_1\u00ba\\Desktop\\BAGO5_ADL\\.worktrees\\readme-clarity-20261022",
+  "operation": "REPAIR",
+  "acceptance": [
+    "Frontend and startup visible before architecture",
+    "Executed test results bound to dated CI commit; collection never PASS",
+    "Historical details preserved with clear hierarchy",
+    "Independent presentation and generation tests PASS",
+    "Full generator and --check --skip-tests PASS",
+    "Only verified candidate published; preserve local changes"
+  ],
+  "source_owners": {
+    "controller_candidate": [
+      "scripts/generate_dynamic_readme.py",
+      "docs/readme_manifest.json",
+      "docs/readme_generation.md"
+    ],
+    "p1_compatibility": [
+      "tests/test_dynamic_readme.py",
+      "tests/test_readme_presentation.py"
+    ]
+  },
+  "handoff_rule": "Snapshot proposed files under deliveries with target hashes; integration checks these against the worktree. Native collaboration is distinct from Spiral engine execution."
+}
