@@ -10,7 +10,7 @@ requires-python = ">=3.11"
 dependencies = []
 
 [project.optional-dependencies]
-pdf = ["pypdf==6.21.2"]
+pdf = ["pypdf==6.21.4"]
 ocr = ["Pillow==13.0.0"]
 
 [project.scripts]

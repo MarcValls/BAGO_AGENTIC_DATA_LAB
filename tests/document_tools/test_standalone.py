@@ -8,6 +8,7 @@ import os
 import subprocess
 import sys
 import tempfile
+import tomllib
 import unittest
 import zipfile
 
@@ -67,6 +68,11 @@ class StandaloneAcceptance(unittest.TestCase):
         return execute('extract',self.root,{'paths': paths or ['invoice.txt','payment.txt'],**args})
 
     def test_multiformat_exact_locations_and_unavailable_ocr(self):
+        dependency = capabilities()['formats']['.pdf']['dependency']
+        self.assertEqual(dependency, 'pypdf==6.21.4')
+        self.assertIn(dependency, (REPO/'requirements-documents.txt').read_text().splitlines())
+        metadata = tomllib.loads((REPO/'tools/document-toolkit/pyproject.toml').read_text())
+        self.assertEqual(metadata['project']['optional-dependencies']['pdf'], [dependency])
         names=['invoice.txt','transfer.csv','message.eml','letter.docx','ledger.xlsx']
         if capabilities()['formats']['.pdf']['available']:names.append('invoice.pdf')
         result=self.extract(names)
