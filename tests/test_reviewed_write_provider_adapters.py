@@ -11,7 +11,7 @@ def schema(name):
     return {"type": "function", "function": {"name": name, "description": "Bounded ADL proposal", "parameters": {"type": "object", "properties": {}, "additionalProperties": False}}}
 
 
-@pytest.mark.parametrize("name", ["public_web_read", "propose_workspace_write"])
+@pytest.mark.parametrize("name", ["public_web_read", "propose_workspace_write", "resolve_agent_scope", "resolve_agent_result"])
 def test_codex_exposes_only_explicit_proposal_schema(monkeypatch, tmp_path, name):
     captured = {}
     class Client:

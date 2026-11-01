@@ -163,6 +163,23 @@ def test_no_parent_grant_is_inherited_and_replay_different_scope_never_invokes_a
     assert f['store'].list('agent',f['agent_id']) and len(f['store'].list('agent',f['agent_id']))==1
 
 
+@pytest.mark.parametrize('reason',[None,True,7,{},[]])
+def test_malformed_result_reason_never_promotes_child_to_passed(setup,reason):
+    f=setup;original=server.provider_runtime.chat_turn
+    def classify(provider,model,messages,**kwargs):
+        names={item.get('function',{}).get('name') for item in kwargs.get('tools',[])}
+        if 'resolve_agent_result' in names:
+            return {'tool_calls':[{'function':{'name':'resolve_agent_result','arguments':{'decision':'completed','reason':reason}}}]}
+        return original(provider,model,messages,**kwargs)
+    f['monkeypatch'].setattr(server.provider_runtime,'chat_turn',classify)
+    propose(f);response=execute(f)
+    assert response.status_code==200,response.text
+    delegation=response.json()['agent_delegation']
+    assert delegation['state']=='NEEDS_REVIEW',delegation
+    assert not delegation['tools_executed'] and not delegation['target_written']
+    assert not (f['workspace']/'corpus/synthetic.txt').exists()
+
+
 @pytest.mark.parametrize(('outcome','expected'),[
     ('completed','PASSED'),
     ('needs_authorization','NEEDS_AUTHORIZATION'),

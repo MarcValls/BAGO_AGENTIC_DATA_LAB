@@ -3,6 +3,7 @@ from __future__ import annotations
 import hashlib
 import json
 import os
+import re
 from pathlib import Path
 import subprocess
 import sys
@@ -13,8 +14,10 @@ import pytest
 from src.agent_tasks.store import TaskError, TaskStore
 from src.agent_tasks.task_execution import (
     AgentSelection, ModelSelection, PlanAcceptInput, PlanPrepareInput,
-    PlanEditInput, TaskExecutionAdapters, TaskExecutionService, digest,
+    PlanEditInput, TaskExecutionAdapters, TaskExecutionService,
+    build_host_task_execution_adapters, digest,
 )
+from src.project_permissions import ProjectContext, ProjectPermissions
 
 
 PROJECT = {"project_id": "p1", "root": "C:/project", "binding": "C:/project",
@@ -137,6 +140,176 @@ def test_original_task_objective_is_hashed_and_reaches_prepare_and_independent_r
     assert revised["plan_sha256"] == digest(revised["plan"])
     assert observations["prepare"] == [objective, objective]
     assert observations["review"][-1] == {"plan": objective, "context": objective}
+
+
+def test_rejected_plan_review_is_durable_diagnostic_only_and_never_accepted(tmp_path):
+    proposed = [{"step_id": "inventory", "type": "filesystem", "operation": "inventory",
+        "arguments": {"path": "demo-usuario"}, "depends_on": []}]
+    reviewed = {}
+    raw_secret = "sk-review-secret-1234567890"
+    short_secrets = ("tiny-password", "short-key")
+
+    def reject(plan, context):
+        reviewed["plan"] = plan
+        return {"status": "rejected", "reviewer_id": REVIEWER_ID, "reviewer_sha256": REVIEWER_SHA,
+            "reason": f'Rejected because api_key={raw_secret}; Bearer abcdefghijklmnopqrstuvwxyz0123456789; JSON {{"password":"{short_secrets[0]}", \'api_key\': \'{short_secrets[1]}\'}}',
+            "receipt": {"plan_sha256": digest(plan), "provider_id": "codex", "model_id": "gpt-test",
+                "reviewer_id": REVIEWER_ID, "reviewer_sha256": REVIEWER_SHA, "reason": raw_secret}}
+
+    service, request, calls, _ = make_service(tmp_path, steps=proposed, review_plan=reject)
+    reserved_ids = []
+    original_reserve = service.store.reserve_execution
+
+    def capture_reservation(**kwargs):
+        reserved, created = original_reserve(**kwargs)
+        reserved_ids.append(reserved["execution_id"])
+        return reserved, created
+
+    service.store.reserve_execution = capture_reservation
+    with pytest.raises(TaskError, match="no lo aprobó"):
+        service.prepare(request)
+    result = service.get(reserved_ids[0])
+
+    assert result["status"] == "FAILED_NO_EFFECT"
+    assert result["plan_status"] == "FAILED_NO_EFFECT"
+    assert result["plan"] is None
+    assert result["step_results"] == {}
+    assert calls["execute"] == 0
+    events = result["events"]
+    rejection = next(event["payload"] for event in events if event["event_type"] == "PLAN_REVIEW_NON_APPROVED")
+    assert rejection["status"] == "rejected"
+    assert rejection["plan_sha256"] == digest(reviewed["plan"])
+    assert rejection["plan_summary"]["steps"] == [{
+        "step_id": "inventory", "type": "filesystem", "operation": "inventory",
+        "argument_keys": ["path"], "depends_on": [], "status": "READY", "reason_code": None,
+        "prepared_sha256": "b" * 64, "required_checks": [], "expected_input_count": 0,
+        "expected_output_count": 0,
+    }]
+    assert "scopes" not in rejection["plan_summary"]
+    assert "arguments" not in json.dumps(rejection)
+    assert raw_secret not in json.dumps(rejection)
+    assert "abcdefghijklmnopqrstuvwxyz0123456789" not in json.dumps(rejection)
+    assert all(secret not in json.dumps(rejection) for secret in short_secrets)
+    assert "api_key=[REDACTED]" in rejection["review"]["reason"]
+    assert rejection["review"]["reviewer_id"] == REVIEWER_ID
+    assert rejection["review"]["reviewer_sha256"] == REVIEWER_SHA
+    assert any(event["event_type"] == "PREPARATION_FAILED" for event in events)
+    with pytest.raises(TaskError):
+        service.accept(result["plan_id"], PlanAcceptInput(expected_plan_sha256=result["plan_sha256"],
+            expected_plan_revision=1, idempotency_key="56a4813e-30c2-48a4-a139-91ca11d18bf9", confirmed=True))
+    assert calls["execute"] == 0
+
+
+def test_rejected_plan_review_is_retained_but_stop_remains_terminal(tmp_path):
+    reserved_ids = []
+    service = None
+
+    def reject_after_stop(plan, context):
+        service.store.request_execution_stop(reserved_ids[0], "test_stop")
+        return {"status": "rejected", "reviewer_id": REVIEWER_ID, "reviewer_sha256": REVIEWER_SHA,
+            "reason": "Rejected plan after STOP", "receipt": {"plan_sha256": digest(plan)}}
+
+    service, request, calls, _ = make_service(tmp_path, review_plan=reject_after_stop)
+    original_reserve = service.store.reserve_execution
+
+    def capture_reservation(**kwargs):
+        reserved, created = original_reserve(**kwargs)
+        reserved_ids.append(reserved["execution_id"])
+        return reserved, created
+
+    service.store.reserve_execution = capture_reservation
+    with pytest.raises(TaskError):
+        service.prepare(request)
+    result = service.get(reserved_ids[0])
+
+    assert result["status"] == "STOPPED_BEFORE_EFFECT"
+    assert result["plan_status"] == "STOPPED_BEFORE_EFFECT"
+    assert result["plan"] is None
+    assert result["step_results"] == {}
+    assert calls["execute"] == 0
+    events = service.store.list_execution_events(reserved_ids[0])
+    assert any(event["event_type"] == "PLAN_REVIEW_NON_APPROVED" for event in events)
+    assert any(event["event_type"] == "PREPARATION_STOPPED_AFTER_ACTION" for event in events)
+
+
+def test_real_host_inventory_uses_exact_read_subdirectory_scope(tmp_path):
+    project_root = tmp_path / "project"
+    demo = project_root / "demo-usuario"
+    demo.mkdir(parents=True)
+    (demo / "sample.txt").write_text("inventory fixture", encoding="utf-8")
+    (project_root / "outside.txt").write_text("not inventoried", encoding="utf-8")
+    (project_root / ".bago" / "state").mkdir(parents=True)
+    binding = json.dumps({"project_id": "inventory-project", "root": str(project_root)},
+        sort_keys=True, separators=(",", ":"))
+    context = ProjectContext("inventory-project", project_root, binding, "Temporary inventory test")
+    permissions = ProjectPermissions(lambda: context)
+    initial = permissions.snapshot()
+    permissions.save(expected_project_id="inventory-project", expected_binding=binding,
+        expected_revision=initial["revision"], read_directories=["demo-usuario"],
+        write_directories=[], confirmed=True)
+    snapshot = permissions.snapshot()
+    author = "agent_12345678"
+    reviewer = "agent_87654321"
+    profile_sha = hashlib.sha256(b"inventory-profile").hexdigest()
+    reviewer_sha = hashlib.sha256(b"inventory-reviewer").hexdigest()
+    review_observed = {}
+
+    def generate(provider, model, messages):
+        return json.dumps({"steps": [{"step_id": "inventory-subdir", "type": "filesystem",
+            "operation": "inventory", "arguments": {"path": "demo-usuario"}, "depends_on": []}]})
+
+    def review(plan, review_context):
+        review_observed["plan"] = plan
+        return {"status": "approved", "reviewer_id": reviewer, "reviewer_sha256": reviewer_sha,
+            "receipt": {"plan_sha256": digest(plan)}}
+
+    adapters = build_host_task_execution_adapters(
+        project_snapshot=permissions.snapshot,
+        current_agent=lambda agent_id: {"agent_id": author, "profile_sha256": profile_sha,
+            "type": "tool", "tools": ["filesystem_inventory"]},
+        select_agent=lambda selection, task_text, model_selection: {"agent_id": author,
+            "profile_sha256": profile_sha, "type": "tool", "tools": ["filesystem_inventory"],
+            "task_scope": "Inventory names and hashes under demo-usuario.", "created_for_task": True},
+        model_catalog=lambda: {"models": [{"provider_id": "codex", "model_id": "inventory-test",
+            "state": "ready", "orchestrator_enabled": True, "agent_types": ["tool"]}]},
+        model_eligible=lambda provider, model, role: True,
+        probe_model=lambda provider, model: {"status": "PASS",
+            "generation_sha256": hashlib.sha256(b"probe").hexdigest()},
+        generate_plan=generate,
+        review_plan=review,
+        workspace_root=lambda: tmp_path,
+        project_permissions=lambda: permissions,
+        development_service=lambda: None,
+        development_reviewer=lambda change, review_context: {"status": "approved", "reviewer_id": reviewer,
+            "reviewer_sha256": reviewer_sha, "receipt": {"review_id": "not-used"}},
+    )
+    service = TaskExecutionService(TaskStore(tmp_path / "task-state" / "tasks.sqlite3"), adapters)
+    request = PlanPrepareInput.model_validate({"request_id": "7aa022ef-4132-458d-8d9b-58e4b3638cee",
+        "task_text": "Inventory demo-usuario without reading file text or changing files.",
+        "expected_project_id": snapshot["project_id"], "expected_binding": snapshot["binding"],
+        "expected_permissions_revision": snapshot["revision"], "model_selection": {"mode": "explicit",
+            "provider_id": "codex", "model_id": "inventory-test"}, "agent_selection": {"mode": "auto"}})
+
+    prepared = service.prepare(request)
+
+    assert prepared["status"] == "AWAITING_ACCEPTANCE"
+    step = prepared["plan"]["steps"][0]
+    expected_scope = [{"kind": "read", "path": "demo-usuario"}]
+    assert step["required_scopes"] == expected_scope
+    assert step["granted_scopes"] == expected_scope
+    assert permissions.snapshot()["read_directories"] == ["demo-usuario"]
+    assert permissions.snapshot()["write_directories"] == []
+    accepted = service.accept(prepared["plan_id"], PlanAcceptInput(
+        expected_plan_sha256=prepared["plan_sha256"], expected_plan_revision=1,
+        idempotency_key="b3262bc4-b8fb-4e99-91e7-3a33653e8e10", confirmed=True))
+    assert accepted["status"] == "SUCCEEDED"
+    receipt = accepted["step_results"]["inventory-subdir"]["receipt"]
+    assert receipt["operation"] == "inventory"
+    assert receipt["effect_executed"] is False
+    assert re.fullmatch(r"[a-f0-9]{64}", receipt["inventory_sha256"])
+    assert review_observed["plan"]["scopes"] == {"requested": expected_scope, "granted": expected_scope}
+    assert permissions.snapshot()["read_directories"] == ["demo-usuario"]
+    assert permissions.snapshot()["write_directories"] == []
 
 
 def test_single_acceptance_executes_once_and_idempotent_replay_returns_saved_receipt(tmp_path):

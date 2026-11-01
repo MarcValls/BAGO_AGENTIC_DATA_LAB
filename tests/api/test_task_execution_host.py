@@ -128,3 +128,45 @@ def test_decorated_default_selector_does_not_grant_revoked_model_policy(monkeypa
     with pytest.raises(TaskError) as error:server._task_default_model()
     assert error.value.code=='model_not_eligible'
 
+
+@pytest.mark.parametrize('review_fit',['in_scope','out_of_scope','unclear'])
+def test_plan_review_selects_saved_scope_not_review_word_in_builder_instructions(monkeypatch,tmp_path,review_fit):
+    from src.api import server
+    monkeypatch.setattr(server,'AGENTS_DIR',tmp_path/'agents')
+    monkeypatch.setattr(server,'_task_model_eligible',lambda *args:True)
+    monkeypatch.setattr(server,'_check_agent_model',lambda *args:None)
+    monkeypatch.setattr(server,'_load_model_enabled_agent',server._load_agent)
+    records=[]
+    for name,scope,model in [('Author','Inventariar demo-usuario','fixture'),
+            ('Builder','Crear calcular_pedidos.py; antes de escribir, revisar el plan','fixture'),
+            ('OtherModel','Review plans','other-model'),('Reviewer','Revisión independiente de planes','fixture')]:
+        records.append(server._write_agent(server.AgentConfig.model_validate({
+            'name':name,'description':scope,'task_scope':scope,'type':'tool',
+            'system_prompt':'BUILD_WRITES' if name=='Builder' else 'REVIEW_ONLY',
+            'provider_id':'codex','model_id':model,'tools':[]})))
+    author,builder,foreign,reviewer=records
+    monkeypatch.setattr(server,'_read_agent_records',lambda:(records,[]))
+    classified=[]
+    async def classify(provider,model,agent,task):
+        assert (provider,model)==('codex','fixture')
+        assert 'Inventariar demo-usuario' in task and 'independiente' in task
+        classified.append(agent.id)
+        return ('out_of_scope' if agent.id==builder.id else review_fit,'Controlled scope classification')
+    monkeypatch.setattr(server,'_classify_agent_task_scope',classify)
+    def turn(provider,model,messages,**kwargs):
+        assert 'BUILD_WRITES' not in messages[0]['content']
+        assert kwargs.get('require_text') is True and not kwargs.get('tools')
+        return {'content':json.dumps({'approved':True,'reason':'Synthetic review only, no effects.'})}
+    monkeypatch.setattr(server.provider_runtime,'chat_turn',turn)
+    plan={'task_text':'Inventariar demo-usuario','steps':[]}
+    result=server._task_review_plan(plan,{'task_text':plan['task_text'],
+        'model':{'provider_id':'codex','model_id':'fixture'},'agent':{'agent_id':author.id}})
+    assert classified==[builder.id,reviewer.id]
+    assert result['status']=='approved' and result['reviewer_id'] not in {author.id,builder.id,foreign.id}
+    if review_fit=='in_scope':assert result['reviewer_id']==reviewer.id
+    else:
+        created=server._load_agent(result['reviewer_id'])
+        assert created.config.tools==[] and created.config.provider_id=='codex'
+        assert created.config.task_scope=='Revisar de forma independiente la coherencia, dependencias, scopes y riesgos de planes.'
+    assert not list(tmp_path.glob('**/*.sqlite*'))
+

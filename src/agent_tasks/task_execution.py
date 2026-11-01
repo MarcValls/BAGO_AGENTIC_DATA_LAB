@@ -30,6 +30,81 @@ def digest(value: Any) -> str:
     return hashlib.sha256(canonical_bytes(value)).hexdigest()
 
 
+def _non_approved_review_evidence(plan: dict[str, Any], review: dict[str, Any]) -> dict[str, Any]:
+    """Bind a bounded diagnostic projection to the exact plan/review without storing scopes or raw arguments."""
+    reason = review.get("reason")
+    reason = reason if isinstance(reason, str) else ""
+    safe_reason = reason[:2000]
+    safe_reason = re.sub(r"(?i)\b(bearer\s+)[A-Za-z0-9._~+/=-]+", r"\1[REDACTED]", safe_reason)
+    safe_reason = re.sub(r"(?i)\b(sk-[A-Za-z0-9_-]{8,}|gh[pousr]_[A-Za-z0-9_]{8,})\b", "[REDACTED]", safe_reason)
+    safe_reason = re.sub(r"\b(?:AKIA|ASIA)[A-Z0-9]{16}\b", "[REDACTED]", safe_reason)
+    safe_reason = re.sub(r"(?i)([\"']?(?:api[_-]?key|access[_-]?token|refresh[_-]?token|password|secret|authorization|token)[\"']?\s*[:=]\s*)(?:\"[^\"]*\"|'[^']*'|[^\s,;}]+)",
+        r"\1[REDACTED]", safe_reason)
+    safe_reason = re.sub(r"(?i)\b(token|secret|password)\s+[A-Za-z0-9._~+/=-]{8,}", r"\1 [REDACTED]", safe_reason)
+    safe_reason = re.sub(r"\b[A-Za-z0-9_+/=-]{40,}\b", "[REDACTED]", safe_reason)
+
+    receipt = review.get("receipt")
+    receipt_fields = ("plan_sha256", "provider_id", "model_id", "goal_sha256", "reviewed_at_ns",
+        "expires_at_ns", "response_sha256", "reviewer_id", "reviewer_sha256")
+    safe_receipt = {}
+    if isinstance(receipt, dict):
+        for key in receipt_fields:
+            value = receipt.get(key)
+            if isinstance(value, str) and len(value) <= 256:
+                safe_receipt[key] = value
+            elif type(value) is int and 0 <= value <= 2**63 - 1:
+                safe_receipt[key] = value
+
+    steps = []
+    proposed_steps = plan.get("steps")
+    for step in proposed_steps if isinstance(proposed_steps, list) else []:
+        if not isinstance(step, dict):
+            continue
+        arguments = step.get("arguments")
+        steps.append({
+            "step_id": step.get("step_id") if isinstance(step.get("step_id"), str) else None,
+            "type": step.get("type") if isinstance(step.get("type"), str) else None,
+            "operation": step.get("operation") if isinstance(step.get("operation"), str) else None,
+            "argument_keys": sorted(key for key in arguments if isinstance(key, str)) if isinstance(arguments, dict) else [],
+            "depends_on": [item[:64] for item in step.get("depends_on", []) if isinstance(item, str)][:50]
+                if isinstance(step.get("depends_on"), list) else [],
+            "status": step.get("status") if isinstance(step.get("status"), str) else None,
+            "reason_code": step.get("reason_code") if isinstance(step.get("reason_code"), str) else None,
+            "prepared_sha256": step.get("prepared_sha256") if isinstance(step.get("prepared_sha256"), str) else None,
+            "required_checks": [item[:100] for item in step.get("required_checks", []) if isinstance(item, str)][:100]
+                if isinstance(step.get("required_checks"), list) else [],
+            "expected_input_count": len(step.get("expected_inputs", [])) if isinstance(step.get("expected_inputs"), list) else 0,
+            "expected_output_count": len(step.get("expected_outputs", [])) if isinstance(step.get("expected_outputs"), list) else 0,
+        })
+
+    agent = plan.get("agent") if isinstance(plan.get("agent"), dict) else {}
+    model = plan.get("model") if isinstance(plan.get("model"), dict) else {}
+    project = plan.get("project") if isinstance(plan.get("project"), dict) else {}
+    return {
+        "schema": "bago.plan-review-rejection.v1",
+        "status": review.get("status") if review.get("status") in {"rejected", "blocked"} else "rejected",
+        "plan_sha256": digest(plan),
+        "plan_summary": {
+            "task_text_sha256": hashlib.sha256(str(plan.get("task_text", "")).encode("utf-8")).hexdigest(),
+            "project_id": project.get("project_id")[:512] if isinstance(project.get("project_id"), str) else None,
+            "agent_id": agent.get("agent_id")[:256] if isinstance(agent.get("agent_id"), str) else None,
+            "agent_profile_sha256": agent.get("profile_sha256")[:64] if isinstance(agent.get("profile_sha256"), str) else None,
+            "provider_id": model.get("provider_id")[:128] if isinstance(model.get("provider_id"), str) else None,
+            "model_id": model.get("model_id")[:256] if isinstance(model.get("model_id"), str) else None,
+            "required_checks": [item[:100] for item in plan.get("required_checks", []) if isinstance(item, str)][:100]
+                if isinstance(plan.get("required_checks"), list) else [],
+            "steps": steps,
+        },
+        "review": {
+            "reviewer_id": review.get("reviewer_id")[:256] if isinstance(review.get("reviewer_id"), str) else None,
+            "reviewer_sha256": review.get("reviewer_sha256")[:64] if isinstance(review.get("reviewer_sha256"), str) else None,
+            "reason": safe_reason,
+            "reason_sha256": hashlib.sha256(reason.encode("utf-8")).hexdigest(),
+            "receipt": safe_receipt,
+        },
+    }
+
+
 class ModelSelection(BaseModel):
     model_config = ConfigDict(extra="forbid", strict=True)
     mode: str
@@ -296,7 +371,8 @@ def build_host_task_execution_adapters(*, project_snapshot: Callable[[], dict[st
         elif operation in {"move", "rename", "trash", "restore"}:
             if source: pairs.extend((("read", source), ("write", source)))
             if operation != "trash" and target: pairs.append(("write", target))
-        required = { (kind, fs_scope(path)) for kind, path in pairs if isinstance(path, str) }
+        required = { (kind, path if operation == "inventory" else fs_scope(path))
+            for kind, path in pairs if isinstance(path, str) }
         return [{"kind": kind, "path": path} for kind, path in sorted(required)]
 
     def prepared_scopes(required: list[dict[str, str]], snapshot: dict[str, Any]) -> list[dict[str, str]]:
@@ -713,6 +789,26 @@ class TaskExecutionService:
         finally:
             self.store.end_preparation_action(execution_id)
 
+    def _record_non_approved_review(self, execution_id: str, evidence: dict[str, Any]) -> bool:
+        # Keep the state check and immutable event append in one transaction. Reuse
+        # TaskStore's existing event writer; do not create a second event format/API.
+        with self.store._db() as db:
+            db.execute("BEGIN IMMEDIATE")
+            row = db.execute("SELECT status FROM task_executions WHERE execution_id=?", (execution_id,)).fetchone()
+            if row is None:
+                raise TaskError("execution_not_found", "No se encontró la ejecución solicitada.", 404)
+            if row["status"] not in {"PREPARING", "STOP_REQUESTED", "STOPPED_BEFORE_EFFECT"}:
+                return False
+            existing = db.execute("SELECT payload_json FROM task_execution_events WHERE execution_id=? AND event_type='PLAN_REVIEW_NON_APPROVED'",
+                (execution_id,)).fetchone()
+            encoded = canonical_bytes(evidence).decode("utf-8")
+            if existing is not None:
+                if existing["payload_json"] != encoded:
+                    raise TaskError("review_evidence_conflict", "La evidencia de revisión ya está fijada.", 409)
+                return True
+            TaskStore._append_execution_event(db, execution_id, "PLAN_REVIEW_NON_APPROVED", evidence)
+            return True
+
     def _select_plan(self, request: PlanPrepareInput, project: dict[str, Any], execution_id: str) -> tuple[dict[str, Any], dict[str, Any], PlanProposal]:
         self._require_preparing(execution_id)
         try:
@@ -885,6 +981,11 @@ class TaskExecutionService:
                         or not re.fullmatch(r"[a-f0-9]{64}", reviewer_sha)):
                     raise TaskError("independent_reviewer_required", "El cambio de código requiere revisión aprobada por otro agente.", 409)
             if review["status"] != "approved":
+                evidence = _non_approved_review_evidence(plan, review)
+                if not self._record_non_approved_review(execution_id, evidence):
+                    self._require_preparing(execution_id)
+                # A concurrent STOP remains authoritative even though the completed review is retained.
+                self._require_preparing(execution_id)
                 raise TaskError("required_check_failed", "La revisión del plan no lo aprobó; no se puede aceptar.", 409)
             plan["review"] = {"status": "approved", "reviewer_id": review.get("reviewer_id"),
                 "reviewer_sha256": review.get("reviewer_sha256"), "receipt": review.get("receipt")}
