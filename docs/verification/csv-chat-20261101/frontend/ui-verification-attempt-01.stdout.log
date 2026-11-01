@@ -1,0 +1,31 @@
+
+> bago-portfolio-ui@1.0.0 test
+> vitest run tests/csv-chat/main-chat-csv.test.tsx tests/ui/knowledge/chat-resource-submit.test.tsx tests/workspace/csv-preview.test.tsx tests/workspace/csv-parser.test.tsx tests/web-research/public-web-chat.test.tsx tests/providers/chat-selection-race.test.tsx tests/chat-right-panel/general-context.test.tsx
+
+
+ RUN  v5.0.4 /workspace/scratch/54b1628604af/BAGO_AGENTIC_DATA_LAB/frontend
+
+
+ Test Files  7 passed (7)
+      Tests  74 passed (74)
+   Start at  21:33:43
+   Duration  4.72s (tests 69%, environment 18%, import 9%, transform 4%)
+
+
+> bago-portfolio-ui@1.0.0 build
+> tsc -b && vite build
+
+vite v8.3.4 building client environment for production...
+transforming...
+✓ 466 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                            0.73 kB │ gzip:   0.41 kB
+dist/ui-kit-preview.html                   0.73 kB │ gzip:   0.41 kB
+dist/assets/uiKitPreview-BXNbx56n.css     10.14 kB │ gzip:   2.67 kB
+dist/assets/app-Bn_dHBls.css             244.55 kB │ gzip:  44.21 kB
+dist/assets/uiKitPreview-BOaX4Gki.js       7.73 kB │ gzip:   2.46 kB
+dist/assets/jsx-runtime-m3dJAGn0.js      220.10 kB │ gzip:  68.84 kB
+dist/assets/app-CVhT8VU7.js            1,180.61 kB │ gzip: 304.06 kB
+
+✓ built in 251ms

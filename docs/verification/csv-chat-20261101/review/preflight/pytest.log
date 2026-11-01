@@ -1,0 +1,62 @@
+.............................FF..........................                [100%]
+=================================== FAILURES ===================================
+____________________ test_governed_csv_http_flow[bad_width] ____________________
+
+case = 'bad_width'
+
+    @pytest.mark.parametrize("case", CASES)
+    def test_governed_csv_http_flow(case):
+        completed = subprocess.run([sys.executable, str(Path(__file__).resolve()), "--case", case],
+                                   cwd=REPO, capture_output=True, text=True, timeout=75)
+>       assert completed.returncode == 0, completed.stdout[-4000:] + "\n" + completed.stderr[-10000:]
+E       AssertionError: 
+E         Traceback (most recent call last):
+E           File "/workspace/scratch/54b1628604af/BAGO_AGENTIC_DATA_LAB/tests/test_csv_chat_flow.py", line 621, in <module>
+E             child_main(sys.argv[2])
+E           File "/workspace/scratch/54b1628604af/BAGO_AGENTIC_DATA_LAB/tests/test_csv_chat_flow.py", line 591, in child_main
+E             report = exercise(case, rig)
+E                      ^^^^^^^^^^^^^^^^^^^
+E           File "/workspace/scratch/54b1628604af/BAGO_AGENTIC_DATA_LAB/tests/test_csv_chat_flow.py", line 582, in exercise
+E             return rig.assert_denied(rig.chat(), codes[case], io=True, provider=not before_provider)
+E                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           File "/workspace/scratch/54b1628604af/BAGO_AGENTIC_DATA_LAB/tests/test_csv_chat_flow.py", line 297, in assert_denied
+E             assert actual_code in ({code} if isinstance(code, str) else set(code)), (actual_code, data)
+E                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E         AssertionError: ('CSV_MALFORMED', {'operation': 'chat', 'assistant_message': 'El CSV tiene filas o comillas incorrectas. Corrige el archivo antes de calcular resultados. Código: CSV_MALFORMED.', 'conversation_id': 'conv_5fab1e6b34704efa94bfce8981e5e313', 'revision': 2, 'conversation': {'id': 'conv_5fab1e6b34704efa94bfce8981e5e313', 'project_id': 'workspace_e004c719a4674fb8876c3d75ea1fe314', 'owner_kind': 'assistant', 'owner_id': 'app-assistant', 'title': 'Analiza pedidos: importe descontado por pedido, pendientes por estado ', 'status': 'active', 'created_at': '2026-11-01T05:01:46.517Z', 'updated_at': '2026-11-01T05:01:46.586Z', 'revision': 2, 'labels': [], 'messages': [{'id': 'msg_881e17293d0c4091bdb7faf251617695', 'sequence': 1, 'role': 'user', 'content': 'Analiza pedidos: importe descontado por pedido, pendientes por estado y total general.', 'created_at': '2026-11-01T05:01:46.556Z', 'status': 'complete', 'references': {}}, {'id': 'msg_df674a0f1e9841c583bb212be33e67f2', 'sequence': 2, 'role': 'assistant', 'content': 'El CSV tiene filas o comillas incorrectas. Corrige el archivo antes de calcular resultados. Código: CSV_MALFORMED.', 'created_at': '2026-11-01T05:01:46.586Z', 'status': 'complete', 'references': {'read_events': [{'kind': 'csv_read', 'tool_name': 'query_csv', 'decision': 'FAIL', 'path': 'demo-usuario/archivo/pedidos-final.csv', 'reason_code': 'CSV_MALFORMED', 'executed': True, 'outcome': 'WITHHELD', 'conversation_id': 'conv_5fab1e6b34704efa94bfce8981e5e313', 'request_revision': 0, 'file_sha256': 'f47a33245cb42a1f42fe4c947d21bda44d5c97eb7cbdacd4112fdd859709cdbf'}], 'csv_analysis': {'status': 'failed', 'error': {'code': 'CSV_MALFORMED'}}, 'trace': {'trace_id': 'trace-e6dad383e7434c0c', 'trace_state': 'local_only', 'execution_id': 'agent-chat-02ad367f4f4b47ce8f7813fcd28f4eaf', 'trace_sha256': 'cba1e864dec0f9447e15c925594fa1ddf5860f1e7c7e86b084db031719328677'}}}]}, 'sources': [], 'read_events': [{'kind': 'csv_read', 'tool_name': 'query_csv', 'decision': 'FAIL', 'path': 'demo-usuario/archivo/pedidos-final.csv', 'reason_code': 'CSV_MALFORMED', 'executed': True, 'outcome': 'WITHHELD', 'conversation_id': 'conv_5fab1e6b34704efa94bfce8981e5e313', 'request_revision': 0, 'file_sha256': 'f47a33245cb42a1f42fe4c947d21bda44d5c97eb7cbdacd4112fdd859709cdbf'}], 'csv_analysis': {'status': 'failed', 'error': {'code': 'CSV_MALFORMED'}}, 'trace': {'trace_id': 'trace-e6dad383e7434c0c', 'trace_state': 'local_only', 'execution_id': 'agent-chat-02ad367f4f4b47ce8f7813fcd28f4eaf', 'trace_sha256': 'cba1e864dec0f9447e15c925594fa1ddf5860f1e7c7e86b084db031719328677'}})
+E         
+E       assert 1 == 0
+E        +  where 1 = CompletedProcess(args=['/workspace/scratch/54b1628604af/adl-venv/bin/python', '/workspace/scratch/54b1628604af/BAGO_AG...4b47ce8f7813fcd28f4eaf\', \'trace_sha256\': \'cba1e864dec0f9447e15c925594fa1ddf5860f1e7c7e86b084db031719328677\'}})\n').returncode
+
+tests/test_csv_chat_flow.py:615: AssertionError
+________________ test_governed_csv_http_flow[duplicate_headers] ________________
+
+case = 'duplicate_headers'
+
+    @pytest.mark.parametrize("case", CASES)
+    def test_governed_csv_http_flow(case):
+        completed = subprocess.run([sys.executable, str(Path(__file__).resolve()), "--case", case],
+                                   cwd=REPO, capture_output=True, text=True, timeout=75)
+>       assert completed.returncode == 0, completed.stdout[-4000:] + "\n" + completed.stderr[-10000:]
+E       AssertionError: 
+E         Traceback (most recent call last):
+E           File "/workspace/scratch/54b1628604af/BAGO_AGENTIC_DATA_LAB/tests/test_csv_chat_flow.py", line 621, in <module>
+E             child_main(sys.argv[2])
+E           File "/workspace/scratch/54b1628604af/BAGO_AGENTIC_DATA_LAB/tests/test_csv_chat_flow.py", line 591, in child_main
+E             report = exercise(case, rig)
+E                      ^^^^^^^^^^^^^^^^^^^
+E           File "/workspace/scratch/54b1628604af/BAGO_AGENTIC_DATA_LAB/tests/test_csv_chat_flow.py", line 582, in exercise
+E             return rig.assert_denied(rig.chat(), codes[case], io=True, provider=not before_provider)
+E                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           File "/workspace/scratch/54b1628604af/BAGO_AGENTIC_DATA_LAB/tests/test_csv_chat_flow.py", line 297, in assert_denied
+E             assert actual_code in ({code} if isinstance(code, str) else set(code)), (actual_code, data)
+E                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E         AssertionError: ('CSV_HEADER_DUPLICATE', {'operation': 'chat', 'assistant_message': 'La consulta CSV no pudo completarse de forma verificable. Revisa el archivo, los permisos y la interpretación. Código: CSV_HEADER_DUPLICATE.', 'conversation_id': 'conv_83afd579ba874b178972c900ec51592e', 'revision': 2, 'conversation': {'id': 'conv_83afd579ba874b178972c900ec51592e', 'project_id': 'workspace_e6cab16c7dc94ce1bc14f91ccc578f6b', 'owner_kind': 'assistant', 'owner_id': 'app-assistant', 'title': 'Analiza pedidos: importe descontado por pedido, pendientes por estado ', 'status': 'active', 'created_at': '2026-11-01T05:01:48.146Z', 'updated_at': '2026-11-01T05:01:48.220Z', 'revision': 2, 'labels': [], 'messages': [{'id': 'msg_f2f55254bb7b47b3aba34c587b704e15', 'sequence': 1, 'role': 'user', 'content': 'Analiza pedidos: importe descontado por pedido, pendientes por estado y total general.', 'created_at': '2026-11-01T05:01:48.191Z', 'status': 'complete', 'references': {}}, {'id': 'msg_ea8b9a90006e4f9b8a8fcbdb3ffcb7cd', 'sequence': 2, 'role': 'assistant', 'content': 'La consulta CSV no pudo completarse de forma verificable. Revisa el archivo, los permisos y la interpretación. Código: CSV_HEADER_DUPLICATE.', 'created_at': '2026-11-01T05:01:48.220Z', 'status': 'complete', 'references': {'read_events': [{'kind': 'csv_read', 'tool_name': 'query_csv', 'decision': 'FAIL', 'path': 'demo-usuario/archivo/pedidos-final.csv', 'reason_code': 'CSV_HEADER_DUPLICATE', 'executed': True, 'outcome': 'WITHHELD', 'conversation_id': 'conv_83afd579ba874b178972c900ec51592e', 'request_revision': 0, 'file_sha256': '921520be8279e81db6a46688da4ae835cadd820a6892a557e3bfe1b06746b711'}], 'csv_analysis': {'status': 'failed', 'error': {'code': 'CSV_HEADER_DUPLICATE'}}, 'trace': {'trace_id': 'trace-e2f6ab550720493e', 'trace_state': 'local_only', 'execution_id': 'agent-chat-f13a15db86b34295a89f10a5fd4fa0bf', 'trace_sha256': 'fc5d00c92ff398aef588ee0ab40e7be69f6a6aa61a46cf44e6e6d28687f1f8cd'}}}]}, 'sources': [], 'read_events': [{'kind': 'csv_read', 'tool_name': 'query_csv', 'decision': 'FAIL', 'path': 'demo-usuario/archivo/pedidos-final.csv', 'reason_code': 'CSV_HEADER_DUPLICATE', 'executed': True, 'outcome': 'WITHHELD', 'conversation_id': 'conv_83afd579ba874b178972c900ec51592e', 'request_revision': 0, 'file_sha256': '921520be8279e81db6a46688da4ae835cadd820a6892a557e3bfe1b06746b711'}], 'csv_analysis': {'status': 'failed', 'error': {'code': 'CSV_HEADER_DUPLICATE'}}, 'trace': {'trace_id': 'trace-e2f6ab550720493e', 'trace_state': 'local_only', 'execution_id': 'agent-chat-f13a15db86b34295a89f10a5fd4fa0bf', 'trace_sha256': 'fc5d00c92ff398aef588ee0ab40e7be69f6a6aa61a46cf44e6e6d28687f1f8cd'}})
+E         
+E       assert 1 == 0
+E        +  where 1 = CompletedProcess(args=['/workspace/scratch/54b1628604af/adl-venv/bin/python', '/workspace/scratch/54b1628604af/BAGO_AG...b34295a89f10a5fd4fa0bf\', \'trace_sha256\': \'fc5d00c92ff398aef588ee0ab40e7be69f6a6aa61a46cf44e6e6d28687f1f8cd\'}})\n').returncode
+
+tests/test_csv_chat_flow.py:615: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_csv_chat_flow.py::test_governed_csv_http_flow[bad_width] - ...
+FAILED tests/test_csv_chat_flow.py::test_governed_csv_http_flow[duplicate_headers]
+2 failed, 55 passed in 93.16s (0:01:33)

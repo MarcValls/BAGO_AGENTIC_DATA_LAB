@@ -123,6 +123,26 @@ class AgentCreateRequest(BaseModel):
             raise ValueError("Model identifier is invalid.")
         return value
 
+class CsvReadOptions(BaseModel):
+    model_config = ConfigDict(extra="forbid", strict=True)
+    path: str = Field(min_length=1, max_length=512)
+    delimiter: Literal["auto", ",", ";", "\t", "|"] = "auto"
+    decimal_separator: Literal[".", ","] = "."
+
+
+class CsvReadRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid", strict=True)
+    message: str = Field(min_length=1, max_length=8000)
+    csv_read: CsvReadOptions
+
+
+class ReadProjectExpectation(BaseModel):
+    model_config = ConfigDict(extra="forbid", strict=True)
+    project_id: str = Field(min_length=1, max_length=128)
+    binding: str = Field(min_length=1, max_length=4096)
+    revision: str = Field(min_length=1, max_length=128)
+
+
 class ControlChatRequest(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
@@ -136,6 +156,7 @@ class ControlChatRequest(BaseModel):
     workspace_read_authorization_id: str | None = Field(default=None, max_length=128)
     workspace_scan_authorization_id: str | None = Field(default=None, max_length=128)
     cognitive_mode: Literal["baseline", "bago5"] = "baseline"
+    csv_read: CsvReadOptions | None = None
 
 class ProviderSelectionRequest(BaseModel):
     model_config = ConfigDict(extra="forbid")
@@ -199,6 +220,16 @@ class WorkspaceReadAuthorizationRequest(BaseModel):
     conversation_id: str
     revision: int = Field(ge=0)
     paths: list[str] = Field(min_length=1, max_length=20)
+    csv_request: CsvReadRequest | None = None
+    expected_project: ReadProjectExpectation | None = None
+
+
+class WorkspaceReadRevokeRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid", strict=True)
+    owner_kind: Literal["assistant", "agent"]
+    owner_id: str = Field(min_length=1, max_length=128)
+    conversation_id: str
+    revision: int = Field(ge=0)
 
 class WorkspaceScanAuthorizationRequest(BaseModel):
     model_config = ConfigDict(extra="forbid")

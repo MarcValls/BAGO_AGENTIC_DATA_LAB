@@ -1,0 +1,686 @@
+{
+  "status": "PASS",
+  "scope": "57 real HTTP cases, synthetic files and state, controlled provider interpretation",
+  "started_at": "2026-11-01T05:03:35.051641+00:00",
+  "finished_at": "2026-11-01T05:05:11.559833+00:00",
+  "command": [
+    "/workspace/scratch/54b1628604af/adl-venv/bin/python",
+    "-m",
+    "pytest",
+    "-q",
+    "tests/test_csv_chat_flow.py"
+  ],
+  "pass": 57,
+  "fail": 0,
+  "original_csv": {
+    "bytes": 183,
+    "sha256": "8fe7a2979043c0e992f4e13d84055045ae1fec91bb896d365fe996367acbafe5",
+    "expected_row_totals": [
+      "199.80",
+      "54.00",
+      "47.50"
+    ],
+    "expected_pending": "247.30",
+    "expected_total": "301.30"
+  },
+  "historical_and_existing_files_unchanged": {
+    "paths": [
+      "docs/verification/user-demand-20261101",
+      ".bago/team/runtime",
+      "src/knowledge/local_rag.py",
+      "src/conversations/library.py"
+    ],
+    "git_diff_exit_code": 0
+  },
+  "runtime_state_location": "/tmp",
+  "interpreter": "controlled query plan; no live AI model",
+  "not_run": [
+    "Windows",
+    "live provider",
+    "user installation",
+    "deployment",
+    "global STOP outside CSV route"
+  ],
+  "source_sha256": {
+    "src/agent_tools/workspace_read.py": "acf2e35f8e3e72cf75c2eb6ee4bd7ac5ad9b4a4ce9e9483a33c49ebcb44a3e0c",
+    "src/agent_tools/csv_chat.py": "6a7f0cfd520bf6d3c71589c7e7106b2788a87f9cb78cae47157aaf7403143719",
+    "src/api/server.py": "a7949d8df192c142232ff05602d1b46a184443c02a504656c13fd4a6de33c629",
+    "src/api/schemas.py": "9f971639f7ea49e4ca892a22b6ffd543fa9226a5772440c7120712c2e4189937",
+    "src/conversations/library.py": "2e94d45fd7cdc66e45cc5516285e0c00543909943e4239b535b006c9e1634ad7",
+    "tools/document-toolkit/document_toolkit/parsers.py": "6697263b88ad8a2fa6f6dcb8feac8200cb1f4f07e3f65845f7fb6d6e0ea944d5",
+    "tools/document-toolkit/document_toolkit/csv_query.py": "21186a611031209fa0072ef43148478ea4fea9802228e83aa8f90eb670298f64",
+    "tests/test_csv_chat_flow.py": "d80036c69d66c23f972aba27cac94455a0709c7cf2822feb21b8990d5ea96b43"
+  },
+  "test_summary": [
+    {
+      "case": "F10",
+      "status": "PASS",
+      "csv_read_count": 1,
+      "query_provider_calls": 1,
+      "error_code": null
+    },
+    {
+      "case": "F11",
+      "status": "PASS",
+      "csv_read_count": 1,
+      "query_provider_calls": 1,
+      "error_code": null
+    },
+    {
+      "case": "F12",
+      "status": "PASS",
+      "csv_read_count": 1,
+      "query_provider_calls": 1,
+      "error_code": null
+    },
+    {
+      "case": "absent",
+      "status": "PASS",
+      "csv_read_count": 0,
+      "query_provider_calls": 0,
+      "error_code": "READ_AUTHORIZATION_REQUIRED"
+    },
+    {
+      "case": "invented",
+      "status": "PASS",
+      "csv_read_count": 0,
+      "query_provider_calls": 0,
+      "error_code": "READ_AUTHORIZATION_REQUIRED"
+    },
+    {
+      "case": "expired",
+      "status": "PASS",
+      "csv_read_count": 0,
+      "query_provider_calls": 0,
+      "error_code": "READ_AUTHORIZATION_EXPIRED"
+    },
+    {
+      "case": "revoked",
+      "status": "PASS",
+      "csv_read_count": 0,
+      "query_provider_calls": 0,
+      "error_code": "READ_AUTHORIZATION_REVOKED"
+    },
+    {
+      "case": "replay",
+      "status": "PASS",
+      "csv_read_count": 1,
+      "query_provider_calls": 1,
+      "error_code": null
+    },
+    {
+      "case": "owner_id",
+      "status": "PASS",
+      "csv_read_count": 0,
+      "query_provider_calls": 0,
+      "error_code": "conversation_not_found"
+    },
+    {
+      "case": "owner_kind",
+      "status": "PASS",
+      "csv_read_count": 0,
+      "query_provider_calls": 0,
+      "error_code": "conversation_not_found"
+    },
+    {
+      "case": "conversation",
+      "status": "PASS",
+      "csv_read_count": 0,
+      "query_provider_calls": 0,
+      "error_code": "READ_AUTHORIZATION_SCOPE_MISMATCH"
+    },
+    {
+      "case": "revision",
+      "status": "PASS",
+      "csv_read_count": 0,
+      "query_provider_calls": 0,
+      "error_code": "READ_AUTHORIZATION_SCOPE_MISMATCH"
+    },
+    {
+      "case": "message",
+      "status": "PASS",
+      "csv_read_count": 0,
+      "query_provider_calls": 0,
+      "error_code": "READ_AUTHORIZATION_REQUEST_MISMATCH"
+    },
+    {
+      "case": "path",
+      "status": "PASS",
+      "csv_read_count": 0,
+      "query_provider_calls": 0,
+      "error_code": "READ_AUTHORIZATION_REQUEST_MISMATCH"
+    },
+    {
+      "case": "delimiter",
+      "status": "PASS",
+      "csv_read_count": 0,
+      "query_provider_calls": 0,
+      "error_code": "READ_AUTHORIZATION_REQUEST_MISMATCH"
+    },
+    {
+      "case": "decimal_separator",
+      "status": "PASS",
+      "csv_read_count": 0,
+      "query_provider_calls": 0,
+      "error_code": "READ_AUTHORIZATION_REQUEST_MISMATCH"
+    },
+    {
+      "case": "legacy_ticket",
+      "status": "PASS",
+      "csv_read_count": 0,
+      "query_provider_calls": 0,
+      "error_code": "READ_AUTHORIZATION_REQUIRED"
+    },
+    {
+      "case": "archived",
+      "status": "PASS",
+      "csv_read_count": 0,
+      "query_provider_calls": 0,
+      "error_code": "invalid_csv_chat_request"
+    },
+    {
+      "case": "project",
+      "status": "PASS",
+      "csv_read_count": 0,
+      "query_provider_calls": 0,
+      "error_code": "conversation_not_found"
+    },
+    {
+      "case": "binding",
+      "status": "PASS",
+      "csv_read_count": 0,
+      "query_provider_calls": 0,
+      "error_code": "project_context_changed"
+    },
+    {
+      "case": "policy_revoked",
+      "status": "PASS",
+      "csv_read_count": 0,
+      "query_provider_calls": 0,
+      "error_code": "revision_conflict"
+    },
+    {
+      "case": "policy_regranted",
+      "status": "PASS",
+      "csv_read_count": 0,
+      "query_provider_calls": 0,
+      "error_code": "revision_conflict"
+    },
+    {
+      "case": "absolute_path",
+      "status": "PASS",
+      "csv_read_count": 0,
+      "query_provider_calls": 0,
+      "error_code": "CSV_EXACT_FILE_REQUIRED"
+    },
+    {
+      "case": "traversal",
+      "status": "PASS",
+      "csv_read_count": 0,
+      "query_provider_calls": 0,
+      "error_code": "CSV_EXACT_FILE_REQUIRED"
+    },
+    {
+      "case": "windows_path",
+      "status": "PASS",
+      "csv_read_count": 0,
+      "query_provider_calls": 0,
+      "error_code": "CSV_EXACT_FILE_REQUIRED"
+    },
+    {
+      "case": "symlink",
+      "status": "PASS",
+      "csv_read_count": 0,
+      "query_provider_calls": 0,
+      "error_code": "project_path_denied"
+    },
+    {
+      "case": "hardlink",
+      "status": "PASS",
+      "csv_read_count": 0,
+      "query_provider_calls": 0,
+      "error_code": "project_path_denied"
+    },
+    {
+      "case": "hidden_path",
+      "status": "PASS",
+      "csv_read_count": 0,
+      "query_provider_calls": 0,
+      "error_code": "project_path_denied"
+    },
+    {
+      "case": "bad_quotes",
+      "status": "PASS",
+      "csv_read_count": 1,
+      "query_provider_calls": 0,
+      "error_code": "CSV_MALFORMED"
+    },
+    {
+      "case": "bad_width",
+      "status": "PASS",
+      "csv_read_count": 1,
+      "query_provider_calls": 0,
+      "error_code": "CSV_MALFORMED"
+    },
+    {
+      "case": "duplicate_headers",
+      "status": "PASS",
+      "csv_read_count": 1,
+      "query_provider_calls": 0,
+      "error_code": "CSV_HEADER_DUPLICATE"
+    },
+    {
+      "case": "line_limit",
+      "status": "PASS",
+      "csv_read_count": 1,
+      "query_provider_calls": 0,
+      "error_code": "CSV_LINE_LIMIT"
+    },
+    {
+      "case": "byte_limit",
+      "status": "PASS",
+      "csv_read_count": 0,
+      "query_provider_calls": 0,
+      "error_code": "invalid_read_scope"
+    },
+    {
+      "case": "not_utf8",
+      "status": "PASS",
+      "csv_read_count": 1,
+      "query_provider_calls": 0,
+      "error_code": "NOT_UTF8_TEXT"
+    },
+    {
+      "case": "unknown_column",
+      "status": "PASS",
+      "csv_read_count": 1,
+      "query_provider_calls": 1,
+      "error_code": "CSV_UNKNOWN_COLUMN"
+    },
+    {
+      "case": "invalid_operator",
+      "status": "PASS",
+      "csv_read_count": 1,
+      "query_provider_calls": 1,
+      "error_code": "CSV_EXPRESSION_INVALID"
+    },
+    {
+      "case": "no_plan",
+      "status": "PASS",
+      "csv_read_count": 1,
+      "query_provider_calls": 1,
+      "error_code": "CSV_INTERPRETATION_REQUIRED"
+    },
+    {
+      "case": "multiple_plans",
+      "status": "PASS",
+      "csv_read_count": 1,
+      "query_provider_calls": 1,
+      "error_code": "CSV_INTERPRETATION_REQUIRED"
+    },
+    {
+      "case": "duplicate_plan_keys",
+      "status": "PASS",
+      "csv_read_count": 1,
+      "query_provider_calls": 1,
+      "error_code": "CSV_INVALID_QUERY"
+    },
+    {
+      "case": "provider_error",
+      "status": "PASS",
+      "csv_read_count": 1,
+      "query_provider_calls": 1,
+      "error_code": "CSV_PROVIDER_FAILED"
+    },
+    {
+      "case": "numeric_error",
+      "status": "PASS",
+      "csv_read_count": 1,
+      "query_provider_calls": 1,
+      "error_code": "CSV_NUMERIC_FORMAT"
+    },
+    {
+      "case": "division_zero",
+      "status": "PASS",
+      "csv_read_count": 1,
+      "query_provider_calls": 1,
+      "error_code": "CSV_DIVISION_BY_ZERO"
+    },
+    {
+      "case": "changed_before",
+      "status": "PASS",
+      "csv_read_count": 0,
+      "query_provider_calls": 0,
+      "error_code": "FILE_CHANGED_SINCE_AUTHORIZATION"
+    },
+    {
+      "case": "changed_during",
+      "status": "PASS",
+      "csv_read_count": 1,
+      "query_provider_calls": 0,
+      "error_code": "FILE_CHANGED_DURING_READ"
+    },
+    {
+      "case": "changed_after",
+      "status": "PASS",
+      "csv_read_count": 1,
+      "query_provider_calls": 1,
+      "error_code": "FILE_CHANGED_SINCE_AUTHORIZATION"
+    },
+    {
+      "case": "replaced_after",
+      "status": "PASS",
+      "csv_read_count": 1,
+      "query_provider_calls": 1,
+      "error_code": "FILE_CHANGED_SINCE_AUTHORIZATION"
+    },
+    {
+      "case": "revoke_during_provider",
+      "status": "PASS",
+      "csv_read_count": 1,
+      "query_provider_calls": 1,
+      "error_code": "READ_AUTHORIZATION_REVOKED"
+    },
+    {
+      "case": "expiry_during_provider",
+      "status": "PASS",
+      "csv_read_count": 1,
+      "query_provider_calls": 1,
+      "error_code": "READ_AUTHORIZATION_EXPIRED"
+    },
+    {
+      "case": "stop_before",
+      "status": "PASS",
+      "csv_read_count": 0,
+      "query_provider_calls": 0,
+      "error_code": "STOP_ACTIVE"
+    },
+    {
+      "case": "stop_during_provider",
+      "status": "PASS",
+      "csv_read_count": 1,
+      "query_provider_calls": 1,
+      "error_code": "STOP_ACTIVE"
+    },
+    {
+      "case": "stop_before_publication",
+      "status": "PASS",
+      "csv_read_count": 1,
+      "query_provider_calls": 1,
+      "error_code": "STOP_ACTIVE"
+    },
+    {
+      "case": "revoke_before_publication",
+      "status": "PASS",
+      "csv_read_count": 1,
+      "query_provider_calls": 1,
+      "error_code": "READ_AUTHORIZATION_REVOKED"
+    },
+    {
+      "case": "legacy_stop",
+      "status": "PASS",
+      "csv_read_count": 0,
+      "query_provider_calls": 0,
+      "error_code": "STOP_STATE_UNVERIFIABLE"
+    },
+    {
+      "case": "invalid_stop",
+      "status": "PASS",
+      "csv_read_count": 0,
+      "query_provider_calls": 0,
+      "error_code": "STOP_STATE_UNVERIFIABLE"
+    },
+    {
+      "case": "mixed_grants",
+      "status": "PASS",
+      "csv_read_count": 0,
+      "query_provider_calls": 0,
+      "error_code": "invalid_csv_chat_request"
+    },
+    {
+      "case": "decimal_comma",
+      "status": "PASS",
+      "csv_read_count": 1,
+      "query_provider_calls": 1,
+      "error_code": null
+    },
+    {
+      "case": "display_limit",
+      "status": "PASS",
+      "csv_read_count": 1,
+      "query_provider_calls": 1,
+      "error_code": null
+    }
+  ],
+  "evidence": [
+    {
+      "path": "docs/verification/csv-chat-20261101/review/http/F10.json",
+      "sha256": "0c794339d37dfd4e43e8d2402df67f91230ec5223d761efb1b2a6f06909c4438"
+    },
+    {
+      "path": "docs/verification/csv-chat-20261101/review/http/F11.json",
+      "sha256": "cf485df7ae765497d573ca64cc76d53c3b8aab984d0e34923c0d2b6274809a64"
+    },
+    {
+      "path": "docs/verification/csv-chat-20261101/review/http/F12.json",
+      "sha256": "e0cc6cedb30defaec3e13c57981d525728ae59d993eb27ae04575660a2acc22f"
+    },
+    {
+      "path": "docs/verification/csv-chat-20261101/review/http/absent.json",
+      "sha256": "d5105656594900607ce22330caeaf584d5c3c875962aa02232878c0b8e8c925f"
+    },
+    {
+      "path": "docs/verification/csv-chat-20261101/review/http/absolute_path.json",
+      "sha256": "ad386aeca25c5e45ec6c25215c73c709076ee0d47bdfef4c72f8c8c772e6f89b"
+    },
+    {
+      "path": "docs/verification/csv-chat-20261101/review/http/archived.json",
+      "sha256": "024ca63842f5d9e9e2944bbd61bca2ad9b5565f2490d9b8b9fa7556102db1b5b"
+    },
+    {
+      "path": "docs/verification/csv-chat-20261101/review/http/bad_quotes.json",
+      "sha256": "8e83f4ae975cbcb44a63dcd4e5e5cbcb7718e5a9150f5a700a7aac50e3c57eb9"
+    },
+    {
+      "path": "docs/verification/csv-chat-20261101/review/http/bad_width.json",
+      "sha256": "55196e72594bc5ed4b677bc325bc9731bbb9168169442c41a3d0a8ebde8df493"
+    },
+    {
+      "path": "docs/verification/csv-chat-20261101/review/http/binding.json",
+      "sha256": "cdc2a3a509aadf845721d6996acc2645934248d0827f0c32caca6401030ebf02"
+    },
+    {
+      "path": "docs/verification/csv-chat-20261101/review/http/byte_limit.json",
+      "sha256": "eae98449ebf8e6d5c436671d8e326ed6558c37fdeaf714c0ae12ae16acc8afd9"
+    },
+    {
+      "path": "docs/verification/csv-chat-20261101/review/http/changed_after.json",
+      "sha256": "028324b5112538db3bb930165b5758cea5cec287de3667da2f72043c6fad6cf6"
+    },
+    {
+      "path": "docs/verification/csv-chat-20261101/review/http/changed_before.json",
+      "sha256": "da61b5e940bce9b7a80a0ae2a60914e1cb33ea1445ae9ff8e793feda3d4d2f28"
+    },
+    {
+      "path": "docs/verification/csv-chat-20261101/review/http/changed_during.json",
+      "sha256": "13b4a12d517f301f97cf2084874b3ec7149705e97d0cd62d5077495c2ff6e288"
+    },
+    {
+      "path": "docs/verification/csv-chat-20261101/review/http/conversation.json",
+      "sha256": "f43824feabffe218815ad18a997163f18b52fbc82632af80ce772391395b0bc1"
+    },
+    {
+      "path": "docs/verification/csv-chat-20261101/review/http/decimal_comma.json",
+      "sha256": "86cd328aadff8cbc3abecd2c2a95db7657c3671f362b6a2b60c4323ca756fa64"
+    },
+    {
+      "path": "docs/verification/csv-chat-20261101/review/http/decimal_separator.json",
+      "sha256": "a0e012fc465a93d2f61a8fa88ee0c8902964daa78cd0eb07d367763d4589d587"
+    },
+    {
+      "path": "docs/verification/csv-chat-20261101/review/http/delimiter.json",
+      "sha256": "70f3f05fe9d08dc1f0d96c2b9000fb2aaa197de8dedc495b6cab0e6cd78ac90b"
+    },
+    {
+      "path": "docs/verification/csv-chat-20261101/review/http/display_limit.json",
+      "sha256": "e1ee90fed229a76f7528b2fa71a8e005144cab760bd7f93f50368c20b28efbfb"
+    },
+    {
+      "path": "docs/verification/csv-chat-20261101/review/http/division_zero.json",
+      "sha256": "49f4aa1d0e4c4d50b6fce30cc2485f927ee3313c16428bb152f855ee1c801e06"
+    },
+    {
+      "path": "docs/verification/csv-chat-20261101/review/http/duplicate_headers.json",
+      "sha256": "5b6ea4cdbaae2d4e659cea3f4727cc770a539decceeaa1706eb4d931c0d8704b"
+    },
+    {
+      "path": "docs/verification/csv-chat-20261101/review/http/duplicate_plan_keys.json",
+      "sha256": "c448ded39a16dc4fd4493a1abae09e87af3edc3abb9c72cf9952aaed7d216339"
+    },
+    {
+      "path": "docs/verification/csv-chat-20261101/review/http/expired.json",
+      "sha256": "d4d36eaee1f9d0b43d1852b6c6f5d871df1f9f4026fac69c8d39a865b6d7cd96"
+    },
+    {
+      "path": "docs/verification/csv-chat-20261101/review/http/expiry_during_provider.json",
+      "sha256": "1ed5f777385f63a075e685e85c9710654b12904bf6ae275e5813042f3f507ab8"
+    },
+    {
+      "path": "docs/verification/csv-chat-20261101/review/http/hardlink.json",
+      "sha256": "45079d01d3c2cc6ab6419300382323f6fa56936ec56e75107db96b8cdd7ddb9e"
+    },
+    {
+      "path": "docs/verification/csv-chat-20261101/review/http/hidden_path.json",
+      "sha256": "c17a0c535c59fd67574ebb4c57497f102fbb7f8585f52a5640926c06b9cdca4d"
+    },
+    {
+      "path": "docs/verification/csv-chat-20261101/review/http/invalid_operator.json",
+      "sha256": "48ae23730d2947bb8eb642a3d30ab4038a6a6b5dc93db7e1bc1d59f488b49226"
+    },
+    {
+      "path": "docs/verification/csv-chat-20261101/review/http/invalid_stop.json",
+      "sha256": "f385d8926142567ba372126b7bc50e0c23a7810ad0500f34f4c335e321b39fb9"
+    },
+    {
+      "path": "docs/verification/csv-chat-20261101/review/http/invented.json",
+      "sha256": "8cdad8426e3c8186d2cc92305a7794f5b27a569aa34581039ff749fa9b5d2209"
+    },
+    {
+      "path": "docs/verification/csv-chat-20261101/review/http/legacy_stop.json",
+      "sha256": "11cbc64586bcf8302be714f813c3631b4561f73887193fa96d104a0610b2451f"
+    },
+    {
+      "path": "docs/verification/csv-chat-20261101/review/http/legacy_ticket.json",
+      "sha256": "6c416c30b0e35c83b933c92f4f273ae6d13cf565556864cd3e4f9f72acc9bfc3"
+    },
+    {
+      "path": "docs/verification/csv-chat-20261101/review/http/line_limit.json",
+      "sha256": "ead497193a50d85b4d8cbc8e59df85dafcb14a0852667fb92f2213fef067557d"
+    },
+    {
+      "path": "docs/verification/csv-chat-20261101/review/http/message.json",
+      "sha256": "7e82d04acf8969d6b81283bef776ba17f46fd86de58550cf7fa7865c78549524"
+    },
+    {
+      "path": "docs/verification/csv-chat-20261101/review/http/mixed_grants.json",
+      "sha256": "8d941539746120f56e68fa64d574be17338e3a3f3b3dff86462017802b6b2e3e"
+    },
+    {
+      "path": "docs/verification/csv-chat-20261101/review/http/multiple_plans.json",
+      "sha256": "e762850f36f12a522ca43676ee2646b5aadb7844332a67afc24fceb571da62e0"
+    },
+    {
+      "path": "docs/verification/csv-chat-20261101/review/http/no_plan.json",
+      "sha256": "23a3a8be42d1fb9f6f6b5e2f76faade561c2b2b5d17391c9a63fc91b1e8b2597"
+    },
+    {
+      "path": "docs/verification/csv-chat-20261101/review/http/not_utf8.json",
+      "sha256": "97ab9c181d21a1d788a686185d1564f7e651429d7d2ca89b193327242ab3e3fa"
+    },
+    {
+      "path": "docs/verification/csv-chat-20261101/review/http/numeric_error.json",
+      "sha256": "eb0009f2e96931a6ff1d7ce7388f63eddb82243d4e5011e21194db9ad8955531"
+    },
+    {
+      "path": "docs/verification/csv-chat-20261101/review/http/owner_id.json",
+      "sha256": "7734438f5271404cc7abab2e247b1ab24f7ff0cfa447c21f4415d217b29b264d"
+    },
+    {
+      "path": "docs/verification/csv-chat-20261101/review/http/owner_kind.json",
+      "sha256": "6392031ee5d0217f1c8507b89930107650920c328c9515b7c018eea411076cb0"
+    },
+    {
+      "path": "docs/verification/csv-chat-20261101/review/http/path.json",
+      "sha256": "49ddf349f268493dbb0671c902a62373c91a3145c369bd4148262794de595d82"
+    },
+    {
+      "path": "docs/verification/csv-chat-20261101/review/http/policy_regranted.json",
+      "sha256": "8499efcc7dd609960794e811824420846696c757f8e092d0cce3c8df7fde26ea"
+    },
+    {
+      "path": "docs/verification/csv-chat-20261101/review/http/policy_revoked.json",
+      "sha256": "6d7038e79bd85af71da1f56aaeb653d2b02e976d91e9e07f222e175f844c85e7"
+    },
+    {
+      "path": "docs/verification/csv-chat-20261101/review/http/project.json",
+      "sha256": "b95650ae0ba96bb630328bb15ec74886577c4b031869cec3c65bdf11f5ad3900"
+    },
+    {
+      "path": "docs/verification/csv-chat-20261101/review/http/provider_error.json",
+      "sha256": "489658a0ee28d62296d4a107a538f4c50277e7ac1d9a36094f619fb4262f0124"
+    },
+    {
+      "path": "docs/verification/csv-chat-20261101/review/http/replaced_after.json",
+      "sha256": "621ce07f115753ea524455bc7990d2e955fc8075cdc577fc1dc4e88c6851e239"
+    },
+    {
+      "path": "docs/verification/csv-chat-20261101/review/http/replay.json",
+      "sha256": "29b63a0cd98994755d49ecd31c626fe320b47ef1fd2fe32297eef95f93272908"
+    },
+    {
+      "path": "docs/verification/csv-chat-20261101/review/http/revision.json",
+      "sha256": "aa5b06980f891c7581fc2dbd3fb2539ac4126ca280979811bc91f2f1cbec8136"
+    },
+    {
+      "path": "docs/verification/csv-chat-20261101/review/http/revoke_before_publication.json",
+      "sha256": "e28b27e262fa6c1b04b13e176741cab49c6a2f5579f938f2ba7f3824336d9d55"
+    },
+    {
+      "path": "docs/verification/csv-chat-20261101/review/http/revoke_during_provider.json",
+      "sha256": "c8c593345835327b2a005d83b4799ced39746a47637fece37d0c10564b7a173c"
+    },
+    {
+      "path": "docs/verification/csv-chat-20261101/review/http/revoked.json",
+      "sha256": "2848e6ff34385d2011f1fad168af3f0b2f1553c7609d83e3806ff3694e830094"
+    },
+    {
+      "path": "docs/verification/csv-chat-20261101/review/http/stop_before.json",
+      "sha256": "3031c9674268b448b83ba589e30108166c056b151d461e35f0f814cb7bcb1616"
+    },
+    {
+      "path": "docs/verification/csv-chat-20261101/review/http/stop_before_publication.json",
+      "sha256": "55d72aed8fd1cbfc61d484e9a30d2991bd47674d944d78a7d7c16813bed349f5"
+    },
+    {
+      "path": "docs/verification/csv-chat-20261101/review/http/stop_during_provider.json",
+      "sha256": "f46f6613af90888321183404b7504470b7955e0feefe906a379b88557550ecd9"
+    },
+    {
+      "path": "docs/verification/csv-chat-20261101/review/http/symlink.json",
+      "sha256": "46ad00c08b07e882a7841ae1c6d96c7a5c2b6c2587c66d419807f9d568501740"
+    },
+    {
+      "path": "docs/verification/csv-chat-20261101/review/http/traversal.json",
+      "sha256": "2e1738142c467d5e7e0b1330c0fbe391afb04c29300043fd1da171dea8f9dafd"
+    },
+    {
+      "path": "docs/verification/csv-chat-20261101/review/http/unknown_column.json",
+      "sha256": "8ffbe2f0d1806acc30c625d2cafa8fc1f8f17edbf4776af07d50a6ea5b2cac59"
+    },
+    {
+      "path": "docs/verification/csv-chat-20261101/review/http/windows_path.json",
+      "sha256": "8ded842749db74bac0b753fa4fcd8d8e29856f1f7ee7844e64832ba94696dd45"
+    }
+  ],
+  "pytest_log_sha256": "5ee778a7433810cac3941f76e93265975f6096ed7662963495e514b5183ede95"
+}

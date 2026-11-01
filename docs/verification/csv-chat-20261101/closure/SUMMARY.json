@@ -1,0 +1,51 @@
+{
+  "status": "SCOPED_VERIFICATION_PASS",
+  "checked_at": "2026-11-01T05:14:15.364048+00:00",
+  "initial_base": "16b74a590889d6b42d7889abc8cd114b35c5dbf1",
+  "refreshed_base_before_publication": "16b74a590889d6b42d7889abc8cd114b35c5dbf1",
+  "merge_base": "16b74a590889d6b42d7889abc8cd114b35c5dbf1",
+  "branch": "codex/governed-csv-chat-20261101",
+  "full_suite": {
+    "passed": 1981,
+    "skipped": 2,
+    "subtests_passed": 114,
+    "junit_testcases_including_subtests": 2097,
+    "errors": 0,
+    "failures": 0,
+    "pytest_seconds": 231.952,
+    "managed_execution_id": "bbf7918dfaf04ca6b9effb2c30c380be"
+  },
+  "readme_check": {
+    "status": "PASS",
+    "suite": "NOT_RUN during consistency/collection command; full execution above",
+    "managed_execution_id": "3c05882794a7477fbce594fc5487a75a"
+  },
+  "independent_http": {
+    "passed": 57,
+    "managed_execution_id": "b04ecccbdb5c4b33b568a715e70a2218"
+  },
+  "frontend": {
+    "passed": 79,
+    "build": "PASS",
+    "browser": "desktop/mobile Chromium Linux PASS in /tmp; controlled interpretation"
+  },
+  "demo": {
+    "status": "PASS",
+    "optimization_guard": "PASS"
+  },
+  "historical_files_preserved": 211,
+  "source_set_sha256": "fd4b61bcf20c3c11daa9d70e4a78d13e0d9e3e6e67ce263a69f69ed13aa3eca7",
+  "open_observation": {
+    "id": "CSV-RUNTIME-REPLACEMENT",
+    "scope": "EVIDENCE",
+    "status": "OPEN",
+    "actor": "unidentified",
+    "details": "../review/SQLITE_RUNTIME_INCIDENT.md"
+  },
+  "not_run": [
+    "live model semantic interpretation",
+    "user Windows/Brave installation",
+    "deployment",
+    "global STOP outside CSV route"
+  ]
+}

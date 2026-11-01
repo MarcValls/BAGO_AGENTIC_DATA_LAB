@@ -1,0 +1,317 @@
+{
+  "schema": "csv-query.result.v1",
+  "plan": {
+    "derive": [
+      {
+        "name": "importe",
+        "expression": {
+          "op": "mul",
+          "args": [
+            {
+              "op": "mul",
+              "args": [
+                {
+                  "column": "unidades"
+                },
+                {
+                  "column": "precio_unitario"
+                }
+              ]
+            },
+            {
+              "op": "sub",
+              "args": [
+                {
+                  "number": "1"
+                },
+                {
+                  "op": "div",
+                  "args": [
+                    {
+                      "column": "descuento_pct"
+                    },
+                    {
+                      "number": "100"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      }
+    ],
+    "select": [
+      "pedido",
+      "cliente",
+      "importe"
+    ],
+    "group_by": [
+      "estado"
+    ],
+    "aggregates": [
+      {
+        "op": "sum",
+        "column": "importe",
+        "as": "total"
+      }
+    ],
+    "filters": [],
+    "limit": 100
+  },
+  "interpretation": {
+    "derived": [
+      {
+        "name": "importe",
+        "expression": {
+          "op": "mul",
+          "args": [
+            {
+              "op": "mul",
+              "args": [
+                {
+                  "column": "unidades"
+                },
+                {
+                  "column": "precio_unitario"
+                }
+              ]
+            },
+            {
+              "op": "sub",
+              "args": [
+                {
+                  "number": "1"
+                },
+                {
+                  "op": "div",
+                  "args": [
+                    {
+                      "column": "descuento_pct"
+                    },
+                    {
+                      "number": "100"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        "text": "((\"unidades\" × \"precio_unitario\") × (1 − (\"descuento_pct\" ÷ 100)))"
+      }
+    ],
+    "filters": [],
+    "filter_combination": "all",
+    "group_by": [
+      "estado"
+    ],
+    "aggregates": [
+      {
+        "op": "sum",
+        "column": "importe",
+        "as": "total"
+      }
+    ],
+    "decimal_separator": ".",
+    "constant_decimal_separator": "."
+  },
+  "columns": [
+    "estado",
+    "total"
+  ],
+  "rows": [
+    {
+      "values": {
+        "estado": "pendiente",
+        "total": "247.3000"
+      },
+      "source_rows": [
+        2,
+        4
+      ],
+      "source_locations": [
+        {
+          "row": 2,
+          "start_line": 2,
+          "end_line": 2
+        },
+        {
+          "row": 4,
+          "start_line": 4,
+          "end_line": 4
+        }
+      ]
+    },
+    {
+      "values": {
+        "estado": "entregado",
+        "total": "54.00"
+      },
+      "source_rows": [
+        3
+      ],
+      "source_locations": [
+        {
+          "row": 3,
+          "start_line": 3,
+          "end_line": 3
+        }
+      ]
+    }
+  ],
+  "selected_columns": [
+    "pedido",
+    "cliente",
+    "importe"
+  ],
+  "selected_rows": [
+    {
+      "values": {
+        "pedido": "P001",
+        "cliente": "Alba",
+        "importe": "199.800"
+      },
+      "source_rows": [
+        2
+      ],
+      "source_locations": [
+        {
+          "row": 2,
+          "start_line": 2,
+          "end_line": 2
+        }
+      ]
+    },
+    {
+      "values": {
+        "pedido": "P002",
+        "cliente": "Bruno",
+        "importe": "54.00"
+      },
+      "source_rows": [
+        3
+      ],
+      "source_locations": [
+        {
+          "row": 3,
+          "start_line": 3,
+          "end_line": 3
+        }
+      ]
+    },
+    {
+      "values": {
+        "pedido": "P003",
+        "cliente": "Carmen",
+        "importe": "47.5000"
+      },
+      "source_rows": [
+        4
+      ],
+      "source_locations": [
+        {
+          "row": 4,
+          "start_line": 4,
+          "end_line": 4
+        }
+      ]
+    }
+  ],
+  "selected_truncated": false,
+  "grand_totals": {
+    "values": {
+      "total": "301.3000"
+    },
+    "source_rows": [
+      2,
+      3,
+      4
+    ],
+    "source_locations": [
+      {
+        "row": 2,
+        "start_line": 2,
+        "end_line": 2
+      },
+      {
+        "row": 3,
+        "start_line": 3,
+        "end_line": 3
+      },
+      {
+        "row": 4,
+        "start_line": 4,
+        "end_line": 4
+      }
+    ],
+    "scope": "all_matched_rows_after_filters"
+  },
+  "coverage": {
+    "total_rows": 3,
+    "matched_rows": 3,
+    "returned_rows": 2,
+    "total_result_rows": 2,
+    "complete_input": true
+  },
+  "truncated": false,
+  "provenance": {
+    "source_columns": [
+      {
+        "name": "pedido",
+        "column": 1
+      },
+      {
+        "name": "cliente",
+        "column": 2
+      },
+      {
+        "name": "unidades",
+        "column": 4
+      },
+      {
+        "name": "precio_unitario",
+        "column": 5
+      },
+      {
+        "name": "descuento_pct",
+        "column": 6
+      },
+      {
+        "name": "estado",
+        "column": 7
+      }
+    ],
+    "matched_source_rows": [
+      2,
+      3,
+      4
+    ],
+    "matched_source_locations": [
+      {
+        "row": 2,
+        "start_line": 2,
+        "end_line": 2
+      },
+      {
+        "row": 3,
+        "start_line": 3,
+        "end_line": 3
+      },
+      {
+        "row": 4,
+        "start_line": 4,
+        "end_line": 4
+      }
+    ],
+    "arithmetic": "Decimal",
+    "precision": 38,
+    "rounding": "ROUND_HALF_EVEN",
+    "rounded": false,
+    "numeric_missing_policy": "reject_query",
+    "formulas_executed": false,
+    "aggregate_scope": "all_matched_rows_after_filters"
+  },
+  "plan_sha256": "f7154681f3f47a36ff372f966781e5e7941da97d0255fc32610146d267f18405",
+  "result_sha256": "9b8217516efdd74dc783ff3c88526bf0caaac695dfd74799e30b4ca517f34cab"
+}

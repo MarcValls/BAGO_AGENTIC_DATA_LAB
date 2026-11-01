@@ -126,6 +126,145 @@ def _text(data):
     return data.decode("utf-8-sig", errors="strict")
 
 
+
+_CSV_DELIMITERS = (",", ";", "\t", "|")
+
+
+def _validate_csv_quotes(text, delimiter):
+    """Enforce strict table quoting beyond csv.reader's strict=True checks."""
+    field_start, quoted, closed = True, False, False
+    index = 0
+    while index < len(text):
+        char = text[index]
+        if quoted:
+            if char == '"':
+                if index + 1 < len(text) and text[index + 1] == '"':
+                    index += 2
+                    continue
+                quoted, closed = False, True
+        elif closed:
+            if char == delimiter or char in "\r\n":
+                field_start, closed = True, False
+            else:
+                raise DocumentError("CSV_MALFORMED_QUOTES")
+        elif char == '"':
+            if not field_start:
+                raise DocumentError("CSV_MALFORMED_QUOTES")
+            quoted, field_start = True, False
+        elif char == delimiter or char in "\r\n":
+            field_start = True
+        else:
+            field_start = False
+        index += 1
+    if quoted:
+        raise DocumentError("CSV_MALFORMED_QUOTES")
+
+
+def _csv_records(text, delimiter, *, dialect=None):
+    """Shared record locations; preserve the existing extraction dialect.
+
+    The calculation table chooses strict RFC-style double quotes. Legacy
+    extraction keeps Sniffer's complete dialect, including quotechar and
+    skipinitialspace, so adding this table does not reinterpret old documents.
+    """
+    if dialect is None:
+        _validate_csv_quotes(text, delimiter)
+        reader = csv.reader(io.StringIO(text, newline=""), delimiter=delimiter,
+                            quotechar='"', doublequote=True, strict=True)
+    else:
+        reader = csv.reader(io.StringIO(text, newline=""), dialect)
+    previous_line = 0
+    try:
+        for row, cells in enumerate(reader, 1):
+            yield {"row": row, "start_line": previous_line + 1,
+                   "end_line": reader.line_num, "cells": cells}
+            previous_line = reader.line_num
+    except csv.Error:
+        raise DocumentError("CSV_MALFORMED") from None
+
+
+def parse_csv_table(data, *, delimiter="auto", max_rows=250, max_columns=128,
+                    max_cells=32000):
+    """Decode one complete bounded UTF-8 CSV snapshot for exact calculations.
+
+    max_rows includes the header. Auto detection requires exactly one consistent
+    multi-column dialect; ambiguous separators require an explicit user choice.
+    Header names and cell bytes-as-text are never silently trimmed or repaired.
+    """
+    if not isinstance(data, bytes) or len(data) > 256 * 1024:
+        raise DocumentError("CSV_BYTE_LIMIT")
+    if any(type(value) is not int or value < 1 for value in (max_rows, max_columns, max_cells)):
+        raise DocumentError("CSV_INVALID_LIMIT")
+    if max_rows > 250 or max_columns > 128 or max_cells > 32000:
+        raise DocumentError("CSV_INVALID_LIMIT")
+    if delimiter not in ("auto", *_CSV_DELIMITERS):
+        raise DocumentError("CSV_DELIMITER_INVALID")
+    try:
+        text = data.decode("utf-8-sig")
+    except UnicodeDecodeError:
+        raise DocumentError("CSV_NOT_UTF8") from None
+    if not text or "\x00" in text:
+        raise DocumentError("CSV_EMPTY_OR_BINARY")
+    total_lines = sum(1 for _ in io.StringIO(text, newline=""))
+    if total_lines > max_rows:
+        raise DocumentError("CSV_ROW_LIMIT")
+
+    def records_for(sep):
+        records, cells_seen = [], 0
+        for record in _csv_records(text, sep):
+            if len(records) >= max_rows:
+                raise DocumentError("CSV_ROW_LIMIT")
+            if len(record["cells"]) > max_columns:
+                raise DocumentError("CSV_COLUMN_LIMIT")
+            cells_seen += len(record["cells"])
+            if cells_seen > max_cells:
+                raise DocumentError("CSV_CELL_LIMIT")
+            records.append(record)
+        if not records or not records[0]["cells"]:
+            raise DocumentError("CSV_EMPTY_OR_BINARY")
+        return records
+
+    if delimiter == "auto":
+        candidates, single, errors = [], [], []
+        structural_separator = False
+        for sep in _CSV_DELIMITERS:
+            try:
+                records = records_for(sep)
+                widths = {len(record["cells"]) for record in records}
+                structural_separator |= any(width > 1 for width in widths)
+                if len(widths) == 1 and next(iter(widths)) > 1:
+                    candidates.append((sep, records))
+                elif widths == {1}:
+                    single.append((sep, records))
+            except DocumentError as error:
+                errors.append(error)
+        if len(candidates) > 1:
+            raise DocumentError("CSV_DELIMITER_AMBIGUOUS")
+        if candidates:
+            delimiter, records = candidates[0]
+        elif any(error.code.endswith("_LIMIT") for error in errors):
+            raise next(error for error in errors if error.code.endswith("_LIMIT"))
+        elif single and not structural_separator:
+            delimiter, records = single[0]
+        else:
+            # Never fall back to a different one-column interpretation of a
+            # malformed multi-column file.
+            limits = next((error for error in errors if error.code.endswith("_LIMIT")), None)
+            raise limits or DocumentError("CSV_MALFORMED")
+    else:
+        records = records_for(delimiter)
+
+    columns = records[0]["cells"]
+    if any(not column.strip() or len(column) > 256 for column in columns):
+        raise DocumentError("CSV_HEADER_INVALID")
+    if len({column.strip().casefold() for column in columns}) != len(columns):
+        raise DocumentError("CSV_HEADER_DUPLICATE")
+    if any(len(record["cells"]) != len(columns) for record in records[1:]):
+        raise DocumentError("CSV_COLUMN_COUNT")
+    return {"columns": columns, "rows": records[1:], "delimiter": delimiter,
+            "total_lines": total_lines}
+
+
 def parse(data, suffix, limits):
     collector = Collector(limits)
     if suffix == ".txt":
@@ -137,10 +276,10 @@ def parse(data, suffix, limits):
             dialect = csv.Sniffer().sniff(text[:4096], delimiters=",;\t|")
         except csv.Error:
             dialect = csv.excel
-        for row, cells in enumerate(csv.reader(io.StringIO(text, newline=""), dialect), 1):
-            for column, value in enumerate(cells, 1):
-                collector.add(value, {"row": row, "column": column})
-            if row >= limits.max_cells:
+        for record in _csv_records(text, dialect.delimiter, dialect=dialect):
+            for column, value in enumerate(record["cells"], 1):
+                collector.add(value, {"row": record["row"], "column": column})
+            if record["row"] >= limits.max_cells:
                 collector.truncated = True; break
     elif suffix == ".docx":
         return _docx(data, collector)

@@ -107,6 +107,8 @@
 .chat-tools-options { max-height: min(38vh, 300px); overflow-y: auto; overscroll-behavior: contain; }
 @media (max-width: 760px) {
   .chat-composer-actions:has(> .workspace-read-toggle) { overflow-x: auto; overscroll-behavior-x: contain; scrollbar-width: thin; }
+  /* A scrolling actions row clips the upward resource menu, blocking CSV selection. */
+  .chat-composer-actions:has(.chat-tools-menu[open]) { overflow: visible; }
   .chat-context-controls { flex: 0 0 auto; }
   .chat-context-controls .chat-provider-picker { flex: 0 0 150px; }
 }

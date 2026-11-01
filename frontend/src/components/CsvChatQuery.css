@@ -1,0 +1,24 @@
+.csv-chat-query { padding: 18px; color: var(--vs-text, #e4edf7); }
+.csv-chat-query h2 { margin: 0 0 10px; font-size: 1.1rem; }
+.csv-chat-query p { line-height: 1.5; }
+.csv-chat-note { font-size: .82rem; opacity: .82; }
+.csv-chat-query form { display: grid; gap: 12px; }
+.csv-chat-query label { display: grid; gap: 6px; font-size: .85rem; }
+.csv-chat-query input:not([type=checkbox]), .csv-chat-query select, .csv-chat-query textarea { min-width: 0; width: 100%; padding: 9px; border: 1px solid var(--vs-line, #65717d); border-radius: 3px; background: var(--vs-work, #14243a); color: inherit; font: inherit; }
+.csv-chat-query textarea { resize: vertical; }
+.csv-chat-browser { margin: 14px 0; padding: 12px; border: 1px solid #65717d; border-radius: 3px; }
+.csv-chat-browser-heading, .csv-chat-actions { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; }
+.csv-chat-browser ul { list-style: none; display: flex; flex-wrap: wrap; gap: 8px; padding: 0; }
+.csv-chat-query button { min-height: 34px; padding: 6px 10px; border: 1px solid var(--vs-line, #65717d); border-radius: 3px; background: var(--vs-work, #14243a); color: inherit; font: inherit; cursor: pointer; }
+.csv-chat-query button[aria-pressed=true] { border-color: #7cb8f1; box-shadow: inset 0 0 0 1px #7cb8f1; }
+.csv-chat-query button:disabled { opacity: .55; cursor: default; }
+.csv-chat-query :focus-visible { outline: 2px solid #78b2f0; outline-offset: 2px; }
+.csv-chat-options { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+.csv-chat-query .csv-chat-consent { display: flex; align-items: flex-start; gap: 10px; }
+.csv-chat-consent input { margin-top: 3px; }
+.csv-chat-error { border-left: 3px solid #dc6b62; padding: 8px 12px; white-space: pre-wrap; overflow-wrap: anywhere; }
+.csv-source-modes { display: flex; flex-wrap: wrap; gap: 8px; padding: 12px 18px; border-bottom: 1px solid #65717d; }
+.csv-source-modes button { padding: 7px 12px; border: 1px solid #65717d; border-radius: 3px; background: transparent; color: inherit; cursor: pointer; }
+.csv-source-modes button[aria-pressed=true] { border-color: #7cb8f1; font-weight: 650; }
+.csv-chat-analysis { max-height: 24rem; overflow: auto; white-space: pre-wrap; overflow-wrap: anywhere; font-size: .78rem; }
+@media (max-width: 600px) { .csv-chat-options { grid-template-columns: 1fr; } .csv-chat-query { padding: 12px; } }

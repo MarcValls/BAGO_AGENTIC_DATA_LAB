@@ -1,0 +1,24 @@
+{
+  "status": "PASS",
+  "verification": {
+    "id": "browser",
+    "command": "[\"env\",\"ADL_PLAYWRIGHT_MODULE=/workspace/scratch/54b1628604af/csv-browser-runtime/node_modules/playwright\",\"PLAYWRIGHT_BROWSERS_PATH=/workspace/scratch/54b1628604af/pw-browsers-156\",\"ADL_EXPECTED_DATA_ROOT=/tmp/adl-csv-browser-fixture-20261101/data\",\"ADL_EVIDENCE_DIR=/workspace/scratch/54b1628604af/BAGO_AGENTIC_DATA_LAB/docs/verification/csv-chat-20261101/frontend/causal-browser\",\"node\",\"/workspace/scratch/54b1628604af/BAGO_AGENTIC_DATA_LAB/frontend/tests/csv-chat/browser-f11.cjs\",\"desktop\",\"mobile\"]",
+    "result": "PASS",
+    "evidence": ".bago/team/runtime/executions/a95adc5a5fa74d459498ef672215d4e6/receipt.json",
+    "execution_id": "a95adc5a5fa74d459498ef672215d4e6"
+  },
+  "execution_id": "a95adc5a5fa74d459498ef672215d4e6",
+  "receipt": ".bago/team/runtime/executions/a95adc5a5fa74d459498ef672215d4e6/receipt.json",
+  "returncode": 0,
+  "outputs": [
+    {
+      "path": "BAGO_AGENTIC_DATA_LAB/docs/verification/csv-chat-20261101/frontend/causal-browser/desktop.json",
+      "sha256": "df7aec38fe0c089f4ed2f69a311b16d0f13ebbb02d277a004ea7012316f1e4d0"
+    },
+    {
+      "path": "BAGO_AGENTIC_DATA_LAB/docs/verification/csv-chat-20261101/frontend/causal-browser/mobile.json",
+      "sha256": "c3a5f3844ad02b0ccca28180265432e33fbe30efa3a4071d23c7b0d7a6ffa854"
+    }
+  ],
+  "paused_during_execution": false
+}

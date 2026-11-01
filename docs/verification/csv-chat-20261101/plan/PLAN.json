@@ -1,0 +1,146 @@
+{
+  "schema": "bago.app_game.change_plan.v1",
+  "change_id": "CSV_CHAT_GOVERNED_20261101",
+  "baseline_id": "CSV_MAIN_16b74a5",
+  "baseline_snapshot_sha256": "32359432b30d468634705c51af5623cc1bd1efec020e382b7707cce05c0e07cd",
+  "intent": "Integrar el recorrido solicitado por Marc, conservar F10-F12 y verificar lectura, calculos, identidad y denegaciones.",
+  "change_scope": [
+    "README.md",
+    "README_DETAILS.md",
+    "docs/verification/csv-chat-20261101/STATUS.md",
+    "docs/verification/csv-chat-20261101/backend/**",
+    "docs/verification/csv-chat-20261101/closure/**",
+    "docs/verification/csv-chat-20261101/frontend/**",
+    "docs/verification/csv-chat-20261101/parser/**",
+    "docs/verification/csv-chat-20261101/plan/**",
+    "docs/verification/csv-chat-20261101/review/**",
+    "frontend/src/**",
+    "frontend/tests/**",
+    "scripts/demo_csv_chat.py",
+    "src/agent_tools/csv_chat.py",
+    "src/agent_tools/workspace_read.py",
+    "src/api/schemas.py",
+    "src/api/server.py",
+    "tests/test_csv_chat_access.py",
+    "tests/test_csv_chat_flow.py",
+    "tests/test_csv_query.py",
+    "tools/document-toolkit/document_toolkit/csv_query.py",
+    "tools/document-toolkit/document_toolkit/parsers.py"
+  ],
+  "features": [
+    {
+      "id": "csv-chat",
+      "assertion": "Main chat consumes one exact request-bound CSV grant and returns deterministic results with source evidence.",
+      "check_refs": [
+        "access",
+        "query",
+        "ui",
+        "flow"
+      ]
+    }
+  ],
+  "preservation": {
+    "required_properties": []
+  },
+  "authorized_changes": [],
+  "tests": [
+    {
+      "test_id": "access",
+      "target_type": "FEATURE",
+      "target_id": "csv-chat",
+      "boundary": "INTEGRATION",
+      "mandatory": true,
+      "expected": "PASS"
+    },
+    {
+      "test_id": "query",
+      "target_type": "FEATURE",
+      "target_id": "csv-chat",
+      "boundary": "UNIT",
+      "mandatory": true,
+      "expected": "PASS"
+    },
+    {
+      "test_id": "ui",
+      "target_type": "FEATURE",
+      "target_id": "csv-chat",
+      "boundary": "INTEGRATION",
+      "mandatory": true,
+      "expected": "PASS"
+    },
+    {
+      "test_id": "flow",
+      "target_type": "FEATURE",
+      "target_id": "csv-chat",
+      "boundary": "INTEGRATION",
+      "mandatory": true,
+      "expected": "PASS"
+    },
+    {
+      "test_id": "readme",
+      "target_type": "FEATURE",
+      "target_id": "csv-chat",
+      "boundary": "INTEGRATION",
+      "mandatory": true,
+      "expected": "PASS"
+    },
+    {
+      "test_id": "readme-check",
+      "target_type": "FEATURE",
+      "target_id": "csv-chat",
+      "boundary": "SOURCE",
+      "mandatory": true,
+      "expected": "PASS"
+    }
+  ],
+  "standard_first": {
+    "decision": "EXTEND",
+    "justification": "Reuse WorkspaceReadAuthorizations, ProjectPermissions leases, fixed toolkit byte parser and existing main chat persistence/trace.",
+    "candidates_considered": [
+      "workspace_read",
+      "document_toolkit.parsers",
+      "ProjectPermissions",
+      "teamctl STOP",
+      "local_rag (unchanged)"
+    ]
+  },
+  "extensions": {
+    "capability_demonstrations": [
+      {
+        "capability_id": "CSV-F10-F12",
+        "state": "PROPOSED",
+        "preconditions": [
+          "Original 183-byte CSV fixture",
+          "Selected project with saved READ for exact file",
+          "Active main conversation",
+          "One-turn CSV consent"
+        ],
+        "steps": [
+          "Select original CSV in Consultar archivo",
+          "Authorize exact question/options for current revision",
+          "Run main chat endpoint with real IO and controlled interpreter transport",
+          "Compare row totals 199.80/54.00/47.50, pending 247.30, total 301.30 and file SHA",
+          "Repeat denial vectors and Table/Text regressions"
+        ],
+        "observable": "Persisted main-chat answer, plan, rows, hashes, receipts and no source mutation",
+        "expected_result": "Verified computation over actual authorized bytes; no output on invalid grants, STOP or mismatched context",
+        "check_refs": [
+          "access",
+          "query",
+          "ui",
+          "flow"
+        ],
+        "evidence_refs": [],
+        "limits": [
+          "Controlled interpreter tests do not prove live provider interpretation or Windows runtime."
+        ]
+      }
+    ],
+    "protected_properties": [
+      "Existing workspace read limits and text behavior",
+      "Historical evidence bytes",
+      "Table/Text viewer and task UI",
+      "No new persistent CSV ingestion or general file grant"
+    ]
+  }
+}

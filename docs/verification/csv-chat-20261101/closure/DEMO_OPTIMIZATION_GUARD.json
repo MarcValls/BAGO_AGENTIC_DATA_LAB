@@ -1,0 +1,11 @@
+{
+  "command": [
+    "/workspace/scratch/54b1628604af/adl-venv/bin/python",
+    "-O",
+    "scripts/demo_csv_chat.py"
+  ],
+  "exit_code": 1,
+  "expected_rejection": true,
+  "stdout": "",
+  "stderr": "Traceback (most recent call last):\n  File \"/workspace/scratch/54b1628604af/BAGO_AGENTIC_DATA_LAB/scripts/demo_csv_chat.py\", line 27, in <module>\n    raise RuntimeError(\"Run this verification without -O/PYTHONOPTIMIZE; its assertions must remain enabled.\")\nRuntimeError: Run this verification without -O/PYTHONOPTIMIZE; its assertions must remain enabled.\n"
+}

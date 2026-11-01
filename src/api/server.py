@@ -19,7 +19,7 @@ import threading
 import time
 import uuid
 from contextvars import ContextVar
-from contextlib import asynccontextmanager
+from contextlib import asynccontextmanager, nullcontext
 from collections import deque
 from datetime import datetime, timezone
 from pathlib import Path
@@ -72,8 +72,13 @@ from src.agent_tools.workspace_read import (
     READ_WORKSPACE_FILE,
     READ_WORKSPACE_TOOL,
     WORKSPACE_READ_AUTHORIZATIONS,
+    WorkspaceReadAuthorizationError,
     normalize_workspace_path,
     read_workspace_file,
+)
+from src.agent_tools.csv_chat import (
+    CsvChatError, check_csv_stop, csv_effect_guard, csv_failure_message, issue_csv_authorization,
+    run_csv_analysis, validate_csv_active,
 )
 from src.project_permissions import ProjectContext, ProjectPermissions, PermissionError as ProjectPermissionError
 from src.agent_tools.code_duplicates import (
@@ -93,6 +98,7 @@ from src.runtime.ber import BerClient
 from src.runtime.ber.agent_runner import MAX_TASK_CHARS, AgentRunner, AgentRunnerError
 
 from src.api.schemas import (
+    WorkspaceReadRevokeRequest,
     AGENT_TOOL_ALLOWLIST,
     AgentChatRequest,
     AgentConfig,
@@ -503,6 +509,7 @@ async def conversation_project_scope(request: Request, call_next):
                                           "/api/workspace-read/authorizations",
                                           "/api/workspace-scan/authorizations",
                                           "/api/workspace-scan/run"}
+                              or path.startswith("/api/workspace-read/authorizations/")
                               or (path == "/api/capabilities/proposals" and request.method == "POST")
                               or re.fullmatch(r"/api/agents/[^/]+/chat", path) is not None
                               or (request.method == "POST" and re.fullmatch(
@@ -2515,13 +2522,36 @@ async def create_workspace_read_authorization(request: WorkspaceReadAuthorizatio
     conversation = _owned_conversation(request.conversation_id, request.owner_kind, request.owner_id)
     if conversation["revision"] != request.revision:
         raise _conversation_error(ConversationConflict(request.conversation_id))
+    if conversation.get("status") != "active":
+        raise HTTPException(409, detail={"code": "conversation_inactive", "message": "Open an active conversation."})
     try:
+        if request.csv_request is not None:
+            return issue_csv_authorization(workspace_root=current_workspace_root(),
+                permissions=_current_project_permissions(),
+                identity={"owner_kind": request.owner_kind, "owner_id": request.owner_id,
+                          "conversation_id": request.conversation_id, "revision": request.revision},
+                paths=request.paths, csv_request=request.csv_request.model_dump(),
+                expected_project=request.expected_project.model_dump() if request.expected_project else None)
         return WORKSPACE_READ_AUTHORIZATIONS.issue(
             current_workspace_root(), owner_kind=request.owner_kind, owner_id=request.owner_id,
             conversation_id=request.conversation_id, revision=request.revision, paths=request.paths,
         )
+    except (CsvChatError, ProjectPermissionError) as error:
+        raise HTTPException(getattr(error, "status", 403), detail={"code": error.code,
+            "message": csv_failure_message(error.code)}) from None
     except (OSError, ValueError, SandboxError):
         raise HTTPException(status_code=422, detail={"code": "invalid_read_scope", "message": "Choose existing, readable project files within the per-file limits."}) from None
+
+
+@app.delete("/api/workspace-read/authorizations/{token}")
+async def revoke_workspace_read_authorization(token: str, request: WorkspaceReadRevokeRequest):
+    _owned_conversation(request.conversation_id, request.owner_kind, request.owner_id)
+    # The request revision is the ticket's original revision. A running turn
+    # already appended its user message, but must remain revocable.
+    revoked = WORKSPACE_READ_AUTHORIZATIONS.revoke(token, owner_kind=request.owner_kind,
+        owner_id=request.owner_id, conversation_id=request.conversation_id,
+        revision=request.revision, workspace_root=current_workspace_root())
+    return {"revoked": revoked}
 
 
 @app.post("/api/workspace-scan/authorizations")
@@ -3056,7 +3086,25 @@ async def control_chat(request: ControlChatRequest) -> dict[str, Any]:
     conversation = _owned_conversation(request.conversation_id, "assistant", "app-assistant")
     if conversation["revision"] != request.revision:
         raise _conversation_error(ConversationConflict(request.conversation_id))
-    if request.capability_id is not None:
+    csv_grant = None
+    if request.csv_read is not None:
+        if (request.operation != "chat" or request.capability_id is not None or request.view is not None
+                or request.web_read_authorization_id or request.workspace_scan_authorization_id
+                or conversation.get("status") != "active"):
+            raise HTTPException(422, detail={"code": "invalid_csv_chat_request", "message": "Use one active main-chat CSV request without other tool grants."})
+        workspace_root = current_workspace_root()
+        try:
+            check_csv_stop(workspace_root)
+            csv_grant = WORKSPACE_READ_AUTHORIZATIONS.begin_csv(request.workspace_read_authorization_id,
+                owner_kind="assistant", owner_id="app-assistant", conversation_id=request.conversation_id,
+                revision=request.revision, workspace_root=workspace_root,
+                csv_request={"message": request.message, "csv_read": request.csv_read.model_dump()})
+        except (CsvChatError, WorkspaceReadAuthorizationError) as error:
+            raise HTTPException(getattr(error, "status", 403), detail={"code": error.code,
+                "message": csv_failure_message(error.code)}) from None
+        project_read_context = None
+        authorized_paths, authorized_directories, authorized_web = [], [], None
+    elif request.capability_id is not None:
         # Selecting a form never consumes an attached grant or inspects a directory.
         workspace_root = None
         project_read_context = None
@@ -3085,6 +3133,7 @@ async def control_chat(request: ControlChatRequest) -> dict[str, Any]:
 
     async def finish_turn(operation: str, assistant_message: str, **payload: Any) -> dict[str, Any]:
         nonlocal revision
+        csv_publish_guard = payload.pop("_csv_publish_guard", None)
         payload.setdefault("sources", sources)
         payload.setdefault("read_events", read_events)
         if provider_observation["observed"] and provider_id not in {"application", ""} and model_id not in {"not_used", ""}:
@@ -3114,6 +3163,8 @@ async def control_chat(request: ControlChatRequest) -> dict[str, Any]:
             references["sources"] = payload["sources"]
         if payload.get("read_events"):
             references["read_events"] = payload["read_events"]
+        if payload.get("csv_analysis"):
+            references["csv_analysis"] = payload["csv_analysis"]
         if payload.get("cognitive_trace"):
             references["cognitive_trace"] = payload["cognitive_trace"]
         if payload.get("trace"):
@@ -3125,7 +3176,8 @@ async def control_chat(request: ControlChatRequest) -> dict[str, Any]:
         if payload.get("communication_draft"):
             references["communication_draft"] = payload["communication_draft"]
             references["communication_draft_id"] = payload["communication_draft"]["id"]
-        CONVERSATIONS.append_message(request.conversation_id, revision, "assistant", assistant_message, references)
+        with csv_publish_guard() if csv_publish_guard is not None else nullcontext():
+            CONVERSATIONS.append_message(request.conversation_id, revision, "assistant", assistant_message, references)
         saved = CONVERSATIONS.get(request.conversation_id)
         if auto_execute_delegation and payload.get("agent_delegation"):
             proposal = payload["agent_delegation"]
@@ -3147,6 +3199,56 @@ async def control_chat(request: ControlChatRequest) -> dict[str, Any]:
                     "conversation_id":request.conversation_id,"revision":revision,"conversation":latest,
                     "agent_delegation":_agent_delegations().get(proposal["proposal_id"],parent_conversation_id=request.conversation_id)}
         return {"operation": operation, "assistant_message": assistant_message, "conversation_id": request.conversation_id, "revision": saved["revision"], "conversation": saved, **payload}
+
+    if csv_grant is not None:
+        identity = {"owner_kind": "assistant", "owner_id": "app-assistant",
+                    "conversation_id": request.conversation_id, "revision": request.revision}
+
+        def check_csv_conversation():
+            current = _owned_conversation(request.conversation_id, "assistant", "app-assistant")
+            if current["revision"] != revision or current.get("status") != "active":
+                raise CsvChatError("CSV_CONVERSATION_CHANGED", status=409)
+
+        def publish_guard():
+            return csv_effect_guard(workspace_root=workspace_root,
+                permissions=_current_project_permissions(), token=request.workspace_read_authorization_id,
+                grant=csv_grant, identity=identity, check_conversation=check_csv_conversation)
+
+        try:
+            with publish_guard():
+                pass
+            selection = provider_runtime.active_selection()
+            provider_id, model_id = selection["provider_id"], selection["model_id"]
+
+            def interpret(messages, **kwargs):
+                result = provider_runtime.chat_turn(provider_id, model_id, messages, **kwargs)
+                provider_observation["observed"] = True
+                return result
+
+            csv_result = await asyncio.to_thread(run_csv_analysis, workspace_root=workspace_root,
+                permissions=_current_project_permissions(), token=request.workspace_read_authorization_id,
+                grant=csv_grant, identity=identity,
+                csv_request={"message": request.message, "csv_read": request.csv_read.model_dump()},
+                interpret=interpret, check_conversation=check_csv_conversation)
+            sources[:] = csv_result["sources"]
+            read_events[:] = csv_result["read_events"]
+            return await finish_turn("chat", csv_result["answer"], sources=sources, read_events=read_events,
+                csv_analysis=csv_result["csv_analysis"],
+                **({"_csv_publish_guard": publish_guard} if csv_result["csv_analysis"]["status"] == "answered" else {}))
+        except (CsvChatError, WorkspaceReadAuthorizationError, ProjectPermissionError,
+                ollama.ProviderError, registration.RegistrationError, provider_runtime.ProviderRuntimeError) as error:
+            code = getattr(error, "code", "CSV_PROVIDER_FAILED")
+            executed = any(event.get("executed") for event in read_events)
+            sources.clear()
+            read_events[:] = [{"kind": "csv_read", "tool_name": "query_csv", "decision": "FAIL" if executed else "DENY",
+                "path": request.csv_read.path, "reason_code": code, "executed": executed,
+                "outcome": "WITHHELD" if executed else "DENIED"}]
+            return await finish_turn("chat", csv_failure_message(code),
+                csv_analysis={"status": "failed", "error": {"code": code}})
+        except (ConversationConflict, ConversationNotFound) as error:
+            raise _conversation_error(error) from None
+        finally:
+            WORKSPACE_READ_AUTHORIZATIONS.finish_csv(request.workspace_read_authorization_id)
 
     if request.capability_id == "workspace.scan_duplicates":
         return await finish_turn(

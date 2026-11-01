@@ -1,0 +1,77 @@
+{
+  "http_status": 200,
+  "code": "READ_AUTHORIZATION_REVOKED",
+  "io_executed": true,
+  "query_provider_called": true,
+  "no_cells_in_response_or_history": true,
+  "case": "revoke_before_publication",
+  "status": "PASS",
+  "verification": "REAL_HTTP_FILES_POLICY_STORE_CONTROLLED_INTERPRETER",
+  "started_at": 1793509342.174584,
+  "seconds": 1.219,
+  "source_sha256": {
+    "src/agent_tools/workspace_read.py": "acf2e35f8e3e72cf75c2eb6ee4bd7ac5ad9b4a4ce9e9483a33c49ebcb44a3e0c",
+    "src/agent_tools/csv_chat.py": "6a7f0cfd520bf6d3c71589c7e7106b2788a87f9cb78cae47157aaf7403143719",
+    "src/api/server.py": "a7949d8df192c142232ff05602d1b46a184443c02a504656c13fd4a6de33c629",
+    "src/api/schemas.py": "9f971639f7ea49e4ca892a22b6ffd543fa9226a5772440c7120712c2e4189937",
+    "src/conversations/library.py": "2e94d45fd7cdc66e45cc5516285e0c00543909943e4239b535b006c9e1634ad7",
+    "tools/document-toolkit/document_toolkit/parsers.py": "6697263b88ad8a2fa6f6dcb8feac8200cb1f4f07e3f65845f7fb6d6e0ea944d5",
+    "tools/document-toolkit/document_toolkit/csv_query.py": "21186a611031209fa0072ef43148478ea4fea9802228e83aa8f90eb670298f64"
+  },
+  "server_source_sha256_at_import": "a7949d8df192c142232ff05602d1b46a184443c02a504656c13fd4a6de33c629",
+  "http": [
+    {
+      "method": "POST",
+      "path": "/api/conversations",
+      "status": 200,
+      "code": null
+    },
+    {
+      "method": "GET",
+      "path": "/api/project-permissions",
+      "status": 200,
+      "code": null
+    },
+    {
+      "method": "GET",
+      "path": "/api/project-permissions",
+      "status": 200,
+      "code": null
+    },
+    {
+      "method": "PUT",
+      "path": "/api/project-permissions",
+      "status": 200,
+      "code": null
+    },
+    {
+      "method": "POST",
+      "path": "/api/workspace-read/authorizations",
+      "status": 200,
+      "code": null
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/workspace-read/authorizations/[REDACTED]",
+      "status": 200,
+      "code": null
+    },
+    {
+      "method": "POST",
+      "path": "/api/chat/control",
+      "status": 200,
+      "code": null
+    },
+    {
+      "method": "GET",
+      "path": "/api/conversations/conv_67abd271872a4ed79026500f8732f923",
+      "status": 200,
+      "code": null
+    }
+  ],
+  "csv_read_count": 1,
+  "query_provider_calls": 1,
+  "sqlite_root_location": "/tmp",
+  "live_provider": "NOT_RUN",
+  "windows": "NOT_RUN"
+}

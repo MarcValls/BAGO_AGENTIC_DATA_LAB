@@ -1,0 +1,58 @@
+{
+  "preflight": {
+    "status": "FAIL",
+    "passed": 1894,
+    "failed": 30,
+    "skipped": 2,
+    "duration_seconds": 150.35,
+    "log": "preflight-failures.log",
+    "causes": [
+      {
+        "tests": 28,
+        "observed_environment": {
+          "OTEL_TRACES_SAMPLER": "parentbased_traceidratio",
+          "OTEL_TRACES_SAMPLER_ARG": "0.01"
+        },
+        "symptom": "Recording exporters received no sampled spans."
+      },
+      {
+        "tests": 2,
+        "observed_environment": {
+          "BAGO_DATA_ROOT": "csv-preflight-data"
+        },
+        "symptom": "The invocation overrode default-root tests that intentionally set BAGO_APP_ROOT."
+      }
+    ]
+  },
+  "setup_attempts": [
+    {
+      "status": "COLLECTION_ERROR",
+      "reason": "Subset uses observability imports normally installed in sys.path by full collection; PYTHONPATH=.:src made explicit. The selected BAGO_APP_ROOT directory had not been created."
+    },
+    {
+      "status": "COLLECTION_ERROR",
+      "reason": "Directory creation was behind an rg command that exited2; directory explicitly created in a separate command."
+    }
+  ],
+  "affected_groups_recheck": {
+    "status": "PASS",
+    "passed": 157,
+    "duration_seconds": 2.45,
+    "env": {
+      "OTEL_TRACES_SAMPLER": "always_on",
+      "OTEL_TRACES_SAMPLER_ARG": "1",
+      "BAGO_APP_ROOT": "/workspace/scratch/54b1628604af/csv-suite-app",
+      "PYTHONPATH": ".:src"
+    },
+    "BAGO_DATA_ROOT": "unset",
+    "files": [
+      "tests/development_mission/test_native_failures.py",
+      "tests/test_l15_otel_bridge.py",
+      "tests/test_capability_manager.py",
+      "tests/test_conversation_library.py",
+      "tests/test_public_web_repair.py"
+    ],
+    "code_or_expectation_changes": false
+  },
+  "final_full_suite": "PENDING generator gate after W12"
+}

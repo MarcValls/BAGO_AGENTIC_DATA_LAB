@@ -21,6 +21,8 @@ import JobHistory from './JobHistory'
 import Communications from './Communications'
 import type { Draft as CommunicationDraft } from '../types/communications'
 import ChatTools from './ChatTools'
+import type {CsvChatSubmission} from '../types/csvChat'
+import {csvRequestFingerprint, isProjectCsvPath} from '../types/csvChat'
 import WindowPanel from './WindowPanel'
 import TabStrip from './TabStrip'
 import AssistantMarkdown from './AssistantMarkdown'
@@ -44,12 +46,12 @@ type ChatProviderSelection = { provider_id: string; model_id: string; label?: st
 type MessageTrace = { localId: string; state: string; jaegerId?: string; jaegerUrl?: string }
 function safePublicLink(value: string): string | undefined {try {const url = new URL(value);return url.protocol === 'https:' && !url.username && !url.password && !url.port ? url.href : undefined} catch {return undefined}}
 
-type WorkspaceSource = { source_type?: 'public_web' | 'document'; locations?:Array<Record<string,unknown>>; requested_url?: string; final_url?: string; captured_at?: string; raw_sha256?: string; text_sha256?: string; snapshot_id?: string; snapshot_manifest_sha256?: string; path: string; start_line: number; end_line: number; file_sha256?: string; content_sha256?: string }
+type WorkspaceSource = { source_type?: 'public_web' | 'document' | 'csv'; locations?:Array<Record<string,unknown>>; requested_url?: string; final_url?: string; captured_at?: string; raw_sha256?: string; text_sha256?: string; snapshot_id?: string; snapshot_manifest_sha256?: string; path: string; start_line: number; end_line: number; file_sha256?: string; content_sha256?: string }
 type WorkspaceReadEvent = { filesystem_proposal?:FilesystemProposal; delivery_review?:{review_id:string;decision:string;errors:string[];missing:string[];pending:string[];send_executed:boolean}; production?:{work_id:string}; tool_name?:string; receipt_id?:string; executed?:boolean; outcome?:string; next_cursor?:string|null; corpus_coverage?:{total:number;offset:number;batch_selected:number;complete:boolean}; output?:{download_url?:string;sha256?:string;path?:string}; decision: 'ALLOW' | 'DENY' | 'FAIL'; kind?: string; path: string | null; reason_code?: string; file_sha256?: string; content_sha256?: string; files_scanned?: number; files_skipped?: number; bytes_scanned?: number; lines_scanned?: number; finding_count?: number; truncated?: boolean; manifest_sha256?: string }
 type CognitiveTrace = { mode: 'baseline' | 'bago5'; enabled: boolean; profile?: string | null; method?: string; focus: Array<{ id: string; kind: string; label: string; score: number }>; capacity?: number; max_hops?: number; trace_id?: string; trace_state?: string }
-type Message = { uiContent?:Error; workspaceWriteProposal?:WriteProposalSummary; workspaceWriteProposalError?:string; status?: string; workspaceProposal?: WorkspaceProposal; communicationDraft?: CommunicationDraft; communicationDraftId?: string; agentDelegation?: AgentDelegationProposal; id: string; role: 'user' | 'assistant'; content: string; trace?: MessageTrace; cognitiveTrace?: CognitiveTrace; sources?: WorkspaceSource[]; readEvents?: WorkspaceReadEvent[]; agentBuilderDraft?: AgentConfig; inlineJobHistory?: boolean; inlineDirectoryScan?: boolean; scanOutcome?: ScanOutcome; pendingNavigation?: ExistingView; navigationDecision?: 'accepted' | 'declined' }
+type Message = { csvAnalysis?: Record<string, unknown>; uiContent?:Error; workspaceWriteProposal?:WriteProposalSummary; workspaceWriteProposalError?:string; status?: string; workspaceProposal?: WorkspaceProposal; communicationDraft?: CommunicationDraft; communicationDraftId?: string; agentDelegation?: AgentDelegationProposal; id: string; role: 'user' | 'assistant'; content: string; trace?: MessageTrace; cognitiveTrace?: CognitiveTrace; sources?: WorkspaceSource[]; readEvents?: WorkspaceReadEvent[]; agentBuilderDraft?: AgentConfig; inlineJobHistory?: boolean; inlineDirectoryScan?: boolean; scanOutcome?: ScanOutcome; pendingNavigation?: ExistingView; navigationDecision?: 'accepted' | 'declined' }
 type ConversationSummary = { id: string; owner_kind: 'assistant' | 'agent'; owner_id: string; title: string; status: 'active' | 'archived' | 'deleted'; labels?: string[]; created_at?: string; updated_at: string; revision: number }
-type StoredConversation = ConversationSummary & { messages: Array<{ id: string; role: 'user' | 'assistant'; content: string; status?: string; references?: { agent_delegation?: AgentDelegationProposal; workspace_write_proposal?:unknown; workspace_proposal?: WorkspaceProposal; communication_draft_id?: string; communication_draft?: CommunicationDraft; trace?: { trace_id?: string; trace_state?: string; jaeger_trace_id?: string; jaeger_url?: string } & Partial<ScanTrace>; cognitive_trace?: CognitiveTrace; sources?: WorkspaceSource[]; read_events?: Array<WorkspaceReadEvent & Partial<ScanReceipt>>; scan_result?: ScanReport; control_capability?: string } }> }
+type StoredConversation = ConversationSummary & { messages: Array<{ id: string; role: 'user' | 'assistant'; content: string; status?: string; references?: { csv_analysis?: Record<string, unknown>; agent_delegation?: AgentDelegationProposal; workspace_write_proposal?:unknown; workspace_proposal?: WorkspaceProposal; communication_draft_id?: string; communication_draft?: CommunicationDraft; trace?: { trace_id?: string; trace_state?: string; jaeger_trace_id?: string; jaeger_url?: string } & Partial<ScanTrace>; cognitive_trace?: CognitiveTrace; sources?: WorkspaceSource[]; read_events?: Array<WorkspaceReadEvent & Partial<ScanReceipt>>; scan_result?: ScanReport; control_capability?: string } }> }
 type LibraryMode = 'active' | 'archived' | 'deleted'
 type ConversationSortKey = 'labels' | 'title' | 'created_at' | 'updated_at'
 type ConversationSort = { key: ConversationSortKey; direction: 'asc' | 'desc' }
@@ -477,6 +479,11 @@ export default function AgentChat({ onInspectionSelection, onInspectExecution, o
   const conversationScopeRef = useRef(conversationScope)
   conversationScopeRef.current = conversationScope
   const matchesOwner = (conversation: ConversationSummary) => conversation.owner_kind === ownerKind && conversation.owner_id === ownerId
+  const csvContextKey = JSON.stringify([ownerKind, ownerId, activeProject?.project_id, activeProject?.root, activeConversation?.id, activeConversation?.revision, workspaceScopeVersion])
+  const csvContextRef = useRef(csvContextKey)
+  csvContextRef.current = csvContextKey
+  const csvRecoveryRequired = useRef<{key:string;generation:number}|null>(null)
+  const csvRecoveryBlocked = csvRecoveryRequired.current?.key === csvContextKey && csvRecoveryRequired.current.generation === conversationLoadGeneration.current
   const correctionContext = useRef<HumanCorrectionContext>({ownerKind,ownerId,conversation:activeConversation,messages})
   correctionContext.current = {ownerKind,ownerId,conversation:activeConversation,messages}
   function correctionSourceCurrent(source: HumanCorrectionSource) {
@@ -494,7 +501,7 @@ export default function AgentChat({ onInspectionSelection, onInspectExecution, o
   const correctionPermissions=`permisos READ/WRITE persistentes del proyecto, web pública ${allowPublicWebRead?'activada':'desactivada'}, carpeta ${documentConsent?'con permiso actual':'sin permiso actual'}`
   const correctionPermissionIdentity=JSON.stringify({projectId:activeProject?.project_id,projectRoot:activeProject?.root,providerId:selectedAgent?.config.provider_id??chatProviderSelection?.provider_id,modelId:selectedAgent?.config.model_id??chatProviderSelection?.model_id,savingChatProvider,chatProviderSelectionFailed,cognitiveMode,allowPublicWebRead,publicWebUrls,documentRoot,documentConsent,documentOutputConsent,documentOutputDirectory,reviewWork,reviewContact,draftConsent})
 
-  const clearInspectionSelection = () => {setActiveConversation(null);setMessages([]);onInspectionSelection?.(null)}
+  const clearInspectionSelection = () => {setActiveConversation(null);setMessages([]);setError('');onInspectionSelection?.(null)}
 
   useEffect(() => {setAllowPublicWebRead(false);setPublicWebUrls('');setDocumentConsent(false);setDocumentOutputConsent(false);setDraftConsent(false)}, [activeConversation?.id, ownerId])
 
@@ -532,6 +539,7 @@ export default function AgentChat({ onInspectionSelection, onInspectExecution, o
         ...(message.references?.cognitive_trace ? { cognitiveTrace: message.references.cognitive_trace } : {}),
         ...(message.references?.sources?.length ? { sources: message.references.sources } : {}),
         ...(!scanOutcome && Array.isArray((message.references as any)?.read_events) ? { readEvents: (message.references as any).read_events } : {}),
+        ...(message.references?.csv_analysis && typeof message.references.csv_analysis === 'object' ? {csvAnalysis: message.references.csv_analysis} : {}),
       }
     }))
   }
@@ -639,6 +647,7 @@ export default function AgentChat({ onInspectionSelection, onInspectExecution, o
     if (creatingConversationRef.current) return
     creatingConversationRef.current = true
     setCreatingConversation(true)
+    setError('')
     const generation = ++conversationLoadGeneration.current
     const scope = conversationScopeRef.current
     const current = () => generation === conversationLoadGeneration.current && scope === conversationScopeRef.current
@@ -865,32 +874,74 @@ export default function AgentChat({ onInspectionSelection, onInspectExecution, o
     } finally { setCapabilityBusy(false) }
   }
 
-  const sendMessage = async (event?: FormEvent, correctionRequest?: PreparedHumanCorrection) => {
+  const sendMessage = async (event?: FormEvent, correctionRequest?: PreparedHumanCorrection, csvRequest?: CsvChatSubmission, csvSignal?: AbortSignal) => {
     event?.preventDefault()
     if (correctionRequest && (correctionRequest.source!==humanCorrection?.source || !correctionSourceCurrent(correctionRequest.source) || !/^[a-f0-9]{64}$/.test(correctionRequest.sourceSha256))) {
       setError(new Error('El contexto de la respuesta cambió. La corrección no se ha enviado.'));return
     }
-    const content = correctionRequest ? correctionRequest.content : input.trim()
+    if (csvRequest && (selectedAgent || csvRequest.contextKey !== csvContextRef.current || csvRequest.expected_project.project_id !== activeProject?.project_id || csvRequest.projectRoot !== activeProject?.root || !isProjectCsvPath(csvRequest.csv_read.path))) throw localMessage('csvChat.contextChanged')
+    if (csvRequest && csvSignal?.aborted) return false
+    if (csvRecoveryBlocked) {
+      const diagnostic = localMessage('csvChat.reloadRequired')
+      setError(diagnostic)
+      if (csvRequest) throw diagnostic
+      return false
+    }
+    const content = csvRequest ? csvRequest.message : correctionRequest ? correctionRequest.content : input.trim()
     if (!content || sending || chatDispatchPending.current || (!selectedAgent && (chatProviderMutation.current.pending || chatProviderMutation.current.failed))) return
-    const explicitCapabilityId=!correctionRequest && !selectedAgent && preparedCapabilityRef.current?.id==='workspace.scan_duplicates' && preparedCapabilityRef.current.text===input ? preparedCapabilityRef.current.id : undefined
+    const explicitCapabilityId=!csvRequest && !correctionRequest && !selectedAgent && preparedCapabilityRef.current?.id==='workspace.scan_duplicates' && preparedCapabilityRef.current.text===input ? preparedCapabilityRef.current.id : undefined
     chatDispatchPending.current = true
-    if (!correctionRequest) setInput('')
+    if (!correctionRequest && !csvRequest) setInput('')
     setError('')
     setLibraryError('')
-    const readWebForThisMessage = allowPublicWebRead
-    const documentRootForThisMessage = selectedAgent && documentConsent ? documentRoot : ''
+    const readWebForThisMessage = !csvRequest && allowPublicWebRead
+    const documentRootForThisMessage = !csvRequest && selectedAgent && documentConsent ? documentRoot : ''
     const outputDocumentsForThisMessage = documentOutputConsent
     const selectedReviewForThisMessage=reviewContext.runs.find(run=>run.work_id===reviewWork)
     const contactForThisMessage=reviewContact,draftForThisMessage=draftConsent
-    setDraftConsent(false)
-    setDocumentConsent(false);setDocumentOutputConsent(false)
+    if (!csvRequest) {setDraftConsent(false);setDocumentConsent(false);setDocumentOutputConsent(false)}
     const urlsForThisMessage = publicWebUrls
-    setAllowPublicWebRead(false)
+    if (!csvRequest) setAllowPublicWebRead(false)
     setSending(true)
     const generation = conversationLoadGeneration.current
     const scope = conversationScopeRef.current
-    const current = () => generation === conversationLoadGeneration.current && scope === conversationScopeRef.current && (!correctionRequest || correctionSourceCurrent(correctionRequest.source))
+    const sameContext = () => generation === conversationLoadGeneration.current && scope === conversationScopeRef.current && (!correctionRequest || correctionSourceCurrent(correctionRequest.source)) && (!csvRequest || csvRequest.contextKey === csvContextRef.current)
+    const current = () => sameContext() && (!csvRequest || !csvSignal?.aborted)
     let attemptedConversation: StoredConversation | null = null
+    let csvAuthorizationId: string | undefined
+    let csvRevocation: Promise<void> | null = null
+    let csvCompleted = false
+    let csvControlResponse: Promise<Response> | null = null
+    const synchronizeCancelledCsv = async (): Promise<StoredConversation | null> => {
+      if (!csvControlResponse || !attemptedConversation || !sameContext()) return null
+      // Revocation is immediate, but an aborted UI wait does not end the server
+      // request. Wait for its actual HTTP settlement before reading the revision.
+      // Never apply the late response body or the reloaded conversation content.
+      await csvControlResponse
+      if (!sameContext()) return null
+      const response = await fetch(`/api/conversations/${encodeURIComponent(attemptedConversation.id)}`)
+      if (!response.ok) throw localMessage('csvChat.reloadRequired')
+      const loaded = await response.json() as StoredConversation
+      if (!sameContext()) return null
+      if (loaded.id !== attemptedConversation.id || !matchesOwner(loaded) || loaded.status !== 'active'
+        || !Number.isInteger(loaded.revision) || loaded.revision < attemptedConversation.revision) throw localMessage('csvChat.reloadRequired')
+      return loaded
+    }
+    const revokeCsv = () => {
+      if (!csvAuthorizationId || !attemptedConversation || csvCompleted) return Promise.resolve()
+      if (!csvRevocation) csvRevocation = (async () => {
+        try {
+          const response = await fetch(`/api/workspace-read/authorizations/${encodeURIComponent(csvAuthorizationId!)}`, {method:'DELETE', headers:{'Content-Type':'application/json'},
+            body:JSON.stringify({owner_kind:'assistant',owner_id:'app-assistant',conversation_id:attemptedConversation!.id,revision:attemptedConversation!.revision})})
+          const outcome = response.ok ? await response.json().catch(() => null) : null
+          if (!response.ok || outcome?.revoked !== true) throw localMessage('csvChat.cancelFailed')
+        } catch {throw localMessage('csvChat.cancelFailed')}
+      })()
+      return csvRevocation
+    }
+    let signalCancellation: (() => void) | undefined
+    const cancelled = new Promise<null>(resolve => {signalCancellation = () => {void revokeCsv().catch(() => {}); resolve(null)}})
+    csvSignal?.addEventListener('abort', signalCancellation!, {once:true})
     let failedDetail: any = null
     try {
       let conversation = activeConversation
@@ -903,15 +954,33 @@ export default function AgentChat({ onInspectionSelection, onInspectExecution, o
         const summary = await createResponse.json() as ConversationSummary
         conversation = { ...summary, messages: [] }
         if (!current() || !matchesOwner(conversation)) return
-        setActiveConversation(conversation)
+        if (!csvRequest) setActiveConversation(conversation)
       }
       attemptedConversation = conversation
-      const localCapabilityIntent = !selectedAgent ? (correctionRequest || explicitCapabilityId ? {operation:'chat' as const} : inferIntent(content, cognitiveMode)) : null
+      const localCapabilityIntent = !selectedAgent ? (csvRequest || correctionRequest || explicitCapabilityId ? {operation:'chat' as const} : inferIntent(content, cognitiveMode)) : null
       if (localCapabilityIntent?.operation === 'list_capabilities' || localCapabilityIntent?.operation === 'propose_capability') {
         await beginCapabilityRequest(content, localCapabilityIntent.operation, conversation.id)
         return
       }
       setMessages((previous) => [...previous, { id: idFor(), role: 'user', content }])
+      if (csvRequest) {
+        let expectedRequestSha: string
+        try {expectedRequestSha = await csvRequestFingerprint(content, csvRequest.csv_read)}
+        catch {throw localMessage('csvChat.hashUnavailable')}
+        if (!current()) return false
+        const authorizationResponse = await fetch('/api/workspace-read/authorizations', {method:'POST', headers:{'Content-Type':'application/json'},
+          body:JSON.stringify({owner_kind:'assistant',owner_id:'app-assistant',conversation_id:conversation.id,revision:conversation.revision,paths:[csvRequest.csv_read.path],
+            csv_request:{message:content,csv_read:csvRequest.csv_read},expected_project:csvRequest.expected_project})})
+        if (!authorizationResponse.ok) throw await responseError(authorizationResponse)
+        const authorization = await authorizationResponse.json()
+        if (!authorization || typeof authorization !== 'object') throw localMessage('csvChat.grantMismatch')
+        if (typeof authorization.authorization_id === 'string' && authorization.authorization_id.trim()) csvAuthorizationId = authorization.authorization_id
+        if (!csvAuthorizationId || !Array.isArray(authorization.paths) || authorization.paths.length !== 1 || authorization.paths[0] !== csvRequest.csv_read.path
+          || authorization.project_id !== csvRequest.expected_project.project_id || authorization.policy_revision !== csvRequest.expected_project.revision
+          || JSON.stringify(authorization.binding) !== JSON.stringify(csvRequest.expected_project.binding)
+          || typeof authorization.request_sha256 !== 'string' || !/^[a-f0-9]{64}$/.test(authorization.request_sha256) || authorization.request_sha256 !== expectedRequestSha) throw localMessage('csvChat.grantMismatch')
+        if (!current()) {await revokeCsv(); if (csvSignal?.aborted) throw localMessage('csvChat.cancelled'); return false}
+      }
       let documentAuthorizationId: string | undefined
       if (documentRootForThisMessage && selectedAgent) {
         const authorizationResponse = await fetch('/api/document-tools/authorizations', {
@@ -947,7 +1016,7 @@ export default function AgentChat({ onInspectionSelection, onInspectExecution, o
         webReadAuthorizationId = authorization.authorization_id
       }
       if (!current()) return
-      let response: Response
+      let response: Response | null
       let data: any
       let intent: ReturnType<typeof inferIntent> | null = null
       if (selectedAgent) {
@@ -957,12 +1026,15 @@ export default function AgentChat({ onInspectionSelection, onInspectExecution, o
         })
       } else {
         intent = localCapabilityIntent ?? inferIntent(content, cognitiveMode)
-        response = await fetch('/api/chat/control', {
+        const pendingResponse = fetch('/api/chat/control', {
           method: 'POST', headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ operation: intent.operation, message: content, conversation_id: conversation.id, revision: conversation.revision, ...(explicitCapabilityId ? {capability_id:explicitCapabilityId} : {}), ...(intent.operation === 'chat' ? { cognitive_mode: cognitiveMode } : {}), ...(webReadAuthorizationId ? {web_read_authorization_id: webReadAuthorizationId} : {}), ...(intent.view ? { view: intent.view } : {}) }),
+          body: JSON.stringify({ operation: intent.operation, message: content, conversation_id: conversation.id, revision: conversation.revision, ...(explicitCapabilityId ? {capability_id:explicitCapabilityId} : {}), ...(intent.operation === 'chat' ? { cognitive_mode: cognitiveMode } : {}), ...(webReadAuthorizationId ? {web_read_authorization_id: webReadAuthorizationId} : {}), ...(intent.view ? { view: intent.view } : {}), ...(csvRequest ? {workspace_read_authorization_id:csvAuthorizationId,csv_read:csvRequest.csv_read} : {}) }),
         })
+        if (csvRequest) csvControlResponse = pendingResponse
+        response = csvRequest ? await Promise.race([pendingResponse, cancelled]) : await pendingResponse
       }
-      if (!current()) return
+      if (csvRequest && (!response || !current())) {await revokeCsv(); if (csvSignal?.aborted) throw localMessage('csvChat.cancelled'); return false}
+      if (!current() || !response) return
       if (!response.ok) {
         let body: any = null
         try { body = await response.json() } catch { /* preserve the HTTP error */ }
@@ -970,6 +1042,7 @@ export default function AgentChat({ onInspectionSelection, onInspectExecution, o
         throw apiError(body,response.status,'commerce')
       }
       data = await response.json()
+      if (csvRequest && !current()) {await revokeCsv(); if (csvSignal?.aborted) throw localMessage('csvChat.cancelled'); return false}
       if (!current()) return
       if (selectedAgent) {
         const provider = selectedAgent.config.provider_id || 'ollama-cloud'
@@ -984,7 +1057,13 @@ export default function AgentChat({ onInspectionSelection, onInspectExecution, o
         setMessages((previous) => [...previous, { id: idFor(), role: 'assistant', content: '', readEvents: data.read_events }])
       }
       if (!data.conversation || data.conversation.id !== conversation.id || !matchesOwner(data.conversation) || !Array.isArray(data.conversation.messages)) throw new Error("commerce.the_server_did_not_return_the_saved_conversation")
+      if (csvRequest && data.operation !== 'chat') throw localMessage('csvChat.contextChanged')
+      csvCompleted = Boolean(csvRequest)
       applyConversation(data.conversation as StoredConversation)
+      if (csvRequest) {
+        setConversationList(previous => [data.conversation, ...previous.filter(item => item.id !== data.conversation.id)])
+        return true
+      }
       if (data.communication_draft) {
         const lastAssistant = [...data.conversation.messages].reverse().find((message: Message) => message.role === 'assistant')
         if (!lastAssistant || typeof data.communication_draft.id !== 'string') throw new Error("commerce.the_draft_has_no_valid_conversation_reference")
@@ -1036,6 +1115,36 @@ export default function AgentChat({ onInspectionSelection, onInspectExecution, o
       }
       if(correctionRequest && generation===conversationLoadGeneration.current && scope===conversationScopeRef.current) closeHumanCorrection()
     } catch (cause) {
+      if (csvRequest) {
+        let revocationError: Error | null = null
+        try {await revokeCsv()}
+        catch {
+          revocationError = localMessage('csvChat.cancelFailed')
+          // Closing the modal must not hide an unconfirmed revocation. Keep the
+          // diagnostic in this chat only; never attach it to a different scope.
+          if (sameContext()) setError(revocationError)
+        }
+        if (csvSignal?.aborted) {
+          let loaded: StoredConversation | null = null
+          let diagnostic = revocationError ?? localMessage('csvChat.cancelled')
+          try {loaded = await synchronizeCancelledCsv()}
+          catch {
+            diagnostic = localMessage('csvChat.reloadRequired')
+            if (sameContext()) csvRecoveryRequired.current = {key:csvRequest.contextKey,generation}
+          }
+          if (sameContext()) {
+            setError(diagnostic)
+            if (loaded && attemptedConversation) {
+              const original = attemptedConversation
+              setActiveConversation(previous => !sameContext() || previous && (previous.id !== original.id || previous.owner_kind !== original.owner_kind || previous.owner_id !== original.owner_id || previous.revision !== original.revision)
+                ? previous : {...(previous ?? original),revision:loaded!.revision,updated_at:loaded!.updated_at})
+            }
+          }
+          throw diagnostic
+        }
+        if (!current()) return false
+        if (revocationError) {setError(revocationError);throw revocationError}
+      }
       if (!current()) return
       // A failed response is still a failure. Restore only evidence bound to this
       // exact attempt, without clearing the current messages or the original error.
@@ -1058,7 +1167,9 @@ export default function AgentChat({ onInspectionSelection, onInspectExecution, o
           }
         } catch { /* The provider failure remains visible if evidence cannot be restored. */ }
       }
+      if (csvRequest) throw cause instanceof Error ? cause : localMessage('csvChat.unsent')
     } finally {
+      csvSignal?.removeEventListener('abort', signalCancellation!)
       chatDispatchPending.current = false
       setSending(false)
     }
@@ -1266,7 +1377,7 @@ export default function AgentChat({ onInspectionSelection, onInspectExecution, o
             if ((event.target as HTMLElement).closest('input,textarea,[contenteditable="true"]') || !message.content) return
             event.preventDefault(); const rect = event.currentTarget.getBoundingClientRect()
             openMessageMenu(message, event.currentTarget, rect.left + 16, rect.top + 36)
-          }}><div className="control-message-heading"><span id={`message-author-${message.id}`} className="message-speaker">{message.role === 'user' ? t('commerce.you') : selectedAgent?.config.name ?? t('commerce.assistant')}</span>{message.content && <div className="control-message-actions"><button type="button" className="message-action" onClick={() => void copyMessage(message)}>{messageCopyState?.id === message.id ? messageCopyState.state === 'copied' ? t('commerce.copied') : t('commerce.copy_failed') : message.role === 'user' ? t('commerce.copy_message') : t('commerce.copy_response')}</button>{message.role==='assistant' && <button type="button" className="message-action" disabled={messageEditDisabled||Boolean(humanCorrection)||!activeConversation} onClick={event=>openHumanCorrection(message,event.currentTarget)}>Corregir interpretación</button>}{canEditMessage(message) && <button type="button" className="message-action" onClick={() => editLatestMessage(message)} disabled={messageEditDisabled}>{t('commerce.edit')}</button>}</div>}</div>{message.status === 'failed' && <p role="status">{t('commerce.failed_response_no_response_was_received_from_the_provider')}</p>}{message.content && <div className="control-message-content">{message.role === 'assistant' ? <AssistantMarkdown content={message.uiContent?errorMessage(message.uiContent):message.content} /> : message.content}</div>}{(message.communicationDraftId || message.communicationDraft) && <Communications key={`communication-${message.id}`} inline initialDraft={message.communicationDraft} draftId={message.communicationDraftId} conversationId={activeConversation?.id} onOpenFull={onOpenCommunication} />}{message.agentBuilderDraft && <AgentBuilder key={message.id} inline initialAgent={message.agentBuilderDraft} onAgentCreated={() => void refreshAgents()} />}{message.agentDelegation && latestDelegationMessageIds.has(message.id) && !selectedAgent && activeConversation?.owner_kind === 'assistant' && activeConversation.owner_id === 'app-assistant' && <AgentDelegation key={`delegation-${message.agentDelegation.proposal_id}`} proposal={message.agentDelegation} parentConversationId={activeConversation.id} parentRevision={activeConversation.revision} disabled={activeConversation.status !== 'active' || sending} onConversationUpdate={(conversation) => { if (conversation.id === activeConversation.id && conversation.owner_kind === 'assistant' && conversation.owner_id === 'app-assistant') applyConversation(conversation as StoredConversation) }} onOpenChild={identity => void openDelegatedChild(identity)} onInspectChild={onInspectExecution ? identity => onInspectExecution({conversationId:identity.conversationId,revision:identity.revision,traceId:identity.traceId}) : undefined} />}{message.inlineJobHistory && <JobHistory key={message.id} inline />}{message.workspaceProposal && <WorkspaceManager inline proposal={message.workspaceProposal} />}{message.workspaceWriteProposalError&&<p role="alert">{errorMessage(message.workspaceWriteProposalError)}</p>}{message.workspaceWriteProposal&&activeConversation&&<WorkspaceWriteReview proposal={message.workspaceWriteProposal} ownerKind={ownerKind} ownerId={ownerId} conversationId={activeConversation.id} conversationRevision={activeConversation.revision} />}{message.inlineDirectoryScan && message.id === latestDirectoryScanPromptId && !selectedAgent && activeConversation?.owner_kind === 'assistant' && <DirectoryScanRun key={`scan-form-${message.id}`} conversationId={activeConversation.id} revision={activeConversation.revision} disabled={activeConversation.status !== 'active'} showForm onConversationUpdate={(conversation) => applyConversation(conversation as StoredConversation)} />}{message.scanOutcome && activeConversation?.owner_kind === 'assistant' && <DirectoryScanRun key={`scan-results-${message.id}`} conversationId={activeConversation.id} revision={activeConversation.revision} showForm={false} initialOutcome={message.scanOutcome} onConversationUpdate={(conversation) => applyConversation(conversation as StoredConversation)} />}{message.scanOutcome && activeConversation && onInspectExecution && <button type="button" onClick={() => onInspectExecution({conversationId:activeConversation.id,revision:activeConversation.revision,traceId:message.scanOutcome!.trace.trace_id})}>{t('commerce.inspect_scan_execution')}</button>}{message.pendingNavigation && <section className="chat-navigation-confirmation" aria-label={t('commerce.confirm_screen_change')}><p>{t('commerce.switch_screen',{view:viewLabels[message.pendingNavigation]})}</p>{message.navigationDecision === 'accepted' ? <span role="status">{t('commerce.switching_screen')}</span> : message.navigationDecision === 'declined' ? <span role="status">{t('commerce.staying_in_chat')}</span> : <div className="draft-actions"><button type="button" className="secondary-action" onClick={() => setMessages((previous) => previous.map((item) => item.id === message.id ? { ...item, navigationDecision: 'declined' } : item))}>{t('commerce.stay_in_chat')}</button><button type="button" className="primary-action" onClick={() => { setMessages((previous) => previous.map((item) => item.id === message.id ? { ...item, navigationDecision: 'accepted' } : item)); onNavigate(message.pendingNavigation as ExistingView) }}>{t('commerce.yes_switch_screen')}</button></div>}</section>}{message.cognitiveTrace && <details><summary>{t('commerce.response_context')}</summary><CognitiveContextPanel trace={message.cognitiveTrace} /></details>}{message.sources?.some(source => source.source_type !== 'public_web') ? <details className="message-sources" aria-label={t('commerce.project_files_read')}><summary>{t('commerce.files_count',{count:formatNumber(message.sources.filter(source => source.source_type !== 'public_web').length)})}</summary><ul>{message.sources.filter(source => source.source_type !== 'public_web').map(source => <li key={`${source.path}:${source.start_line}-${source.end_line}`}><code>{source.path}{source.source_type === 'document' ? ' · '+JSON.stringify(source.locations?.slice(0,3) || []) : `:${source.start_line}-${source.end_line}`}</code>{source.content_sha256 && <small> SHA-256 {source.content_sha256}</small>}</li>)}</ul></details> : null}{message.sources?.some(source => source.source_type === 'public_web') ? <details className="message-sources" aria-label={t('commerce.public_web_sources_read')}><summary>{t('commerce.web_count',{count:formatNumber(message.sources.filter(source => source.source_type === 'public_web').length)})}</summary><ul>{message.sources.filter(source => source.source_type === 'public_web').map(source => <li key={`${source.snapshot_id ?? source.path}:${source.start_line}-${source.end_line}`}><code>{source.path}{source.source_type === 'document' ? ' · '+JSON.stringify(source.locations?.slice(0,3) || []) : `:${source.start_line}-${source.end_line}`}</code>{safePublicLink(source.final_url ?? source.path) ? <a href={safePublicLink(source.final_url ?? source.path)} target="_blank" rel="noreferrer">{t('commerce.open_public_url')}</a> : <span>{t('commerce.url_cannot_be_opened')}</span>}<small>{t('commerce.captured_utc')} {source.captured_at ?? t('commerce.not_recorded')} {t('commerce.text_sha_256')} {source.text_sha256 ?? source.content_sha256 ?? t('commerce.not_recorded_124')} {t('commerce.raw_hash')} {source.raw_sha256 ?? t('commerce.not_recorded_124')}</small>{source.requested_url && <small>{t('commerce.requested')} {source.requested_url}</small>}{source.snapshot_id && <code>{t('commerce.snapshot_label')} {source.snapshot_id}</code>}{source.snapshot_manifest_sha256 && <code>{t('commerce.manifest_sha_256')} {source.snapshot_manifest_sha256}</code>}</li>)}</ul></details> : null}{message.readEvents?.length ? <details className="message-sources" aria-label={t('commerce.read_only_analysis_evidence')}><summary>{t('commerce.reads')} {message.readEvents.some(event => event.decision !== 'ALLOW') ? message.readEvents.filter(event => event.decision !== 'ALLOW').map(event => `${humanState(event.decision)}${event.reason_code ? `: ${event.reason_code}` : ''}`).join(' · ') : t('commerce.no_issues_recorded')}</summary><ul>{message.readEvents.map((event, index) => <li key={`${event.path}:${index}`}><code>{event.decision} {event.path || t('commerce.unresolved_path')} {event.reason_code ? `· ${event.reason_code}` : ''}</code>{event.kind === 'document_tool' && <section aria-label={t('agentTools.receipt')}><p>{event.tool_name} · {event.executed ? (t('agentTools.executed')) : (t('agentTools.notExecuted'))} · {event.outcome || event.reason_code}</p>{event.corpus_coverage && <p>{t('agentTools.inventoryBatch')} {event.corpus_coverage.offset+event.corpus_coverage.batch_selected} / {event.corpus_coverage.total} · {event.corpus_coverage.complete ? (t('agentTools.complete')) : (t('agentTools.pendingBatches'))}</p>}{event.next_cursor && <button type="button" onClick={()=>{setInput(t('agentTools.continueInventory',{cursor:event.next_cursor}));composerRef.current?.focus()}}>{t('agentTools.nextBatch')}</button>}{event.output?.download_url?.startsWith('/api/document-tools/reports/') && <a href={event.output.download_url} download>{t('agentTools.downloadReport')}</a>}<small>{event.receipt_id}</small></section>}{event.kind === 'public_web_read' && <small> {t('commerce.public_web_read')} {event.decision}</small>}{event.kind === 'directory_code_scan' && <small>{t('commerce.scan_counts',{files:formatNumber(event.files_scanned??0),lines:formatNumber(event.lines_scanned??0),findings:formatNumber(event.finding_count??0),capped:event.truncated?t('commerce.capped'):'',hash:event.manifest_sha256??t('commerce.unavailable')})}</small>}</li>)}</ul></details> : null}{message.readEvents?.filter(event=>event.filesystem_proposal).map(event=><AgentServiceReview key={event.filesystem_proposal!.proposal_id} proposal={event.filesystem_proposal!} ownerId={ownerId} conversationId={activeConversation?.id||''} revision={activeConversation?.revision||0}/>)}{message.readEvents?.filter(event=>event.delivery_review).slice(-1).map(event=><section key={event.delivery_review!.review_id} aria-label={t('agentTools.deliveryReview')}><h3>{t('agentTools.deliveryReview')}</h3><p role="status">{event.delivery_review!.decision==='bloqueada'?t('agentTools.blocked'):event.delivery_review!.decision==='lista_para_revision'?t('agentTools.readyReview'):t('agentTools.needsClarification')}</p>{event.delivery_review!.pending.length>0&&<p>{t('agentTools.contentPending')}</p>}<p>{t('agentTools.noSend')}</p><details><summary>{t('agentTools.details')}</summary><pre>{JSON.stringify(event.delivery_review,null,2)}</pre></details></section>)}{message.trace && <div className="message-trace" aria-label={t('commerce.execution_trace_evidence')}>{activeConversation && onInspectExecution && <button type="button" onClick={() => onInspectExecution({conversationId:activeConversation.id,revision:activeConversation.revision,traceId:message.trace!.localId})}>{t('commerce.inspect_execution')}</button>}<details><summary>{t('commerce.trace_details')} {humanState(message.trace.state)}</summary><code>Local: {message.trace.localId}</code>{message.trace.jaegerId && <code>Jaeger: {message.trace.jaegerId}</code>}{message.trace.jaegerUrl && <a href={message.trace.jaegerUrl} target="_blank" rel="noreferrer">{t('commerce.open_in_jaeger')}</a>}</details></div>}</article>)}
+          }}><div className="control-message-heading"><span id={`message-author-${message.id}`} className="message-speaker">{message.role === 'user' ? t('commerce.you') : selectedAgent?.config.name ?? t('commerce.assistant')}</span>{message.content && <div className="control-message-actions"><button type="button" className="message-action" onClick={() => void copyMessage(message)}>{messageCopyState?.id === message.id ? messageCopyState.state === 'copied' ? t('commerce.copied') : t('commerce.copy_failed') : message.role === 'user' ? t('commerce.copy_message') : t('commerce.copy_response')}</button>{message.role==='assistant' && <button type="button" className="message-action" disabled={messageEditDisabled||Boolean(humanCorrection)||!activeConversation} onClick={event=>openHumanCorrection(message,event.currentTarget)}>Corregir interpretación</button>}{canEditMessage(message) && <button type="button" className="message-action" onClick={() => editLatestMessage(message)} disabled={messageEditDisabled}>{t('commerce.edit')}</button>}</div>}</div>{message.status === 'failed' && <p role="status">{t('commerce.failed_response_no_response_was_received_from_the_provider')}</p>}{message.content && <div className="control-message-content">{message.role === 'assistant' ? <AssistantMarkdown content={message.uiContent?errorMessage(message.uiContent):message.content} /> : message.content}</div>}{(message.communicationDraftId || message.communicationDraft) && <Communications key={`communication-${message.id}`} inline initialDraft={message.communicationDraft} draftId={message.communicationDraftId} conversationId={activeConversation?.id} onOpenFull={onOpenCommunication} />}{message.agentBuilderDraft && <AgentBuilder key={message.id} inline initialAgent={message.agentBuilderDraft} onAgentCreated={() => void refreshAgents()} />}{message.agentDelegation && latestDelegationMessageIds.has(message.id) && !selectedAgent && activeConversation?.owner_kind === 'assistant' && activeConversation.owner_id === 'app-assistant' && <AgentDelegation key={`delegation-${message.agentDelegation.proposal_id}`} proposal={message.agentDelegation} parentConversationId={activeConversation.id} parentRevision={activeConversation.revision} disabled={activeConversation.status !== 'active' || sending} onConversationUpdate={(conversation) => { if (conversation.id === activeConversation.id && conversation.owner_kind === 'assistant' && conversation.owner_id === 'app-assistant') applyConversation(conversation as StoredConversation) }} onOpenChild={identity => void openDelegatedChild(identity)} onInspectChild={onInspectExecution ? identity => onInspectExecution({conversationId:identity.conversationId,revision:identity.revision,traceId:identity.traceId}) : undefined} />}{message.inlineJobHistory && <JobHistory key={message.id} inline />}{message.workspaceProposal && <WorkspaceManager inline proposal={message.workspaceProposal} />}{message.workspaceWriteProposalError&&<p role="alert">{errorMessage(message.workspaceWriteProposalError)}</p>}{message.workspaceWriteProposal&&activeConversation&&<WorkspaceWriteReview proposal={message.workspaceWriteProposal} ownerKind={ownerKind} ownerId={ownerId} conversationId={activeConversation.id} conversationRevision={activeConversation.revision} />}{message.inlineDirectoryScan && message.id === latestDirectoryScanPromptId && !selectedAgent && activeConversation?.owner_kind === 'assistant' && <DirectoryScanRun key={`scan-form-${message.id}`} conversationId={activeConversation.id} revision={activeConversation.revision} disabled={activeConversation.status !== 'active'} showForm onConversationUpdate={(conversation) => applyConversation(conversation as StoredConversation)} />}{message.scanOutcome && activeConversation?.owner_kind === 'assistant' && <DirectoryScanRun key={`scan-results-${message.id}`} conversationId={activeConversation.id} revision={activeConversation.revision} showForm={false} initialOutcome={message.scanOutcome} onConversationUpdate={(conversation) => applyConversation(conversation as StoredConversation)} />}{message.scanOutcome && activeConversation && onInspectExecution && <button type="button" onClick={() => onInspectExecution({conversationId:activeConversation.id,revision:activeConversation.revision,traceId:message.scanOutcome!.trace.trace_id})}>{t('commerce.inspect_scan_execution')}</button>}{message.pendingNavigation && <section className="chat-navigation-confirmation" aria-label={t('commerce.confirm_screen_change')}><p>{t('commerce.switch_screen',{view:viewLabels[message.pendingNavigation]})}</p>{message.navigationDecision === 'accepted' ? <span role="status">{t('commerce.switching_screen')}</span> : message.navigationDecision === 'declined' ? <span role="status">{t('commerce.staying_in_chat')}</span> : <div className="draft-actions"><button type="button" className="secondary-action" onClick={() => setMessages((previous) => previous.map((item) => item.id === message.id ? { ...item, navigationDecision: 'declined' } : item))}>{t('commerce.stay_in_chat')}</button><button type="button" className="primary-action" onClick={() => { setMessages((previous) => previous.map((item) => item.id === message.id ? { ...item, navigationDecision: 'accepted' } : item)); onNavigate(message.pendingNavigation as ExistingView) }}>{t('commerce.yes_switch_screen')}</button></div>}</section>}{message.csvAnalysis && <details className="message-sources" aria-label={t('csvChat.evidence')}><summary>{t('csvChat.interpretation')}</summary><pre className="csv-chat-analysis">{JSON.stringify(message.csvAnalysis,null,2)}</pre></details>}{message.cognitiveTrace && <details><summary>{t('commerce.response_context')}</summary><CognitiveContextPanel trace={message.cognitiveTrace} /></details>}{message.sources?.some(source => source.source_type !== 'public_web') ? <details className="message-sources" aria-label={t('commerce.project_files_read')}><summary>{t('commerce.files_count',{count:formatNumber(message.sources.filter(source => source.source_type !== 'public_web').length)})}</summary><ul>{message.sources.filter(source => source.source_type !== 'public_web').map(source => <li key={`${source.path}:${source.start_line}-${source.end_line}`}><code>{source.path}{source.source_type === 'document' ? ' · '+JSON.stringify(source.locations?.slice(0,3) || []) : `:${source.start_line}-${source.end_line}`}</code>{source.file_sha256 && source.source_type === 'csv' && <small>{t('csvChat.sourceHash')}: {source.file_sha256}</small>}{source.content_sha256 && <small> SHA-256 {source.content_sha256}</small>}</li>)}</ul></details> : null}{message.sources?.some(source => source.source_type === 'public_web') ? <details className="message-sources" aria-label={t('commerce.public_web_sources_read')}><summary>{t('commerce.web_count',{count:formatNumber(message.sources.filter(source => source.source_type === 'public_web').length)})}</summary><ul>{message.sources.filter(source => source.source_type === 'public_web').map(source => <li key={`${source.snapshot_id ?? source.path}:${source.start_line}-${source.end_line}`}><code>{source.path}{source.source_type === 'document' ? ' · '+JSON.stringify(source.locations?.slice(0,3) || []) : `:${source.start_line}-${source.end_line}`}</code>{safePublicLink(source.final_url ?? source.path) ? <a href={safePublicLink(source.final_url ?? source.path)} target="_blank" rel="noreferrer">{t('commerce.open_public_url')}</a> : <span>{t('commerce.url_cannot_be_opened')}</span>}<small>{t('commerce.captured_utc')} {source.captured_at ?? t('commerce.not_recorded')} {t('commerce.text_sha_256')} {source.text_sha256 ?? source.content_sha256 ?? t('commerce.not_recorded_124')} {t('commerce.raw_hash')} {source.raw_sha256 ?? t('commerce.not_recorded_124')}</small>{source.requested_url && <small>{t('commerce.requested')} {source.requested_url}</small>}{source.snapshot_id && <code>{t('commerce.snapshot_label')} {source.snapshot_id}</code>}{source.snapshot_manifest_sha256 && <code>{t('commerce.manifest_sha_256')} {source.snapshot_manifest_sha256}</code>}</li>)}</ul></details> : null}{message.readEvents?.length ? <details className="message-sources" aria-label={t('commerce.read_only_analysis_evidence')}><summary>{t('commerce.reads')} {message.readEvents.some(event => event.decision !== 'ALLOW') ? message.readEvents.filter(event => event.decision !== 'ALLOW').map(event => `${humanState(event.decision)}${event.reason_code ? `: ${event.reason_code}` : ''}`).join(' · ') : t('commerce.no_issues_recorded')}</summary><ul>{message.readEvents.map((event, index) => <li key={`${event.path}:${index}`}><code>{event.decision} {event.path || t('commerce.unresolved_path')} {event.reason_code ? `· ${event.reason_code}` : ''}</code>{event.kind === 'document_tool' && <section aria-label={t('agentTools.receipt')}><p>{event.tool_name} · {event.executed ? (t('agentTools.executed')) : (t('agentTools.notExecuted'))} · {event.outcome || event.reason_code}</p>{event.corpus_coverage && <p>{t('agentTools.inventoryBatch')} {event.corpus_coverage.offset+event.corpus_coverage.batch_selected} / {event.corpus_coverage.total} · {event.corpus_coverage.complete ? (t('agentTools.complete')) : (t('agentTools.pendingBatches'))}</p>}{event.next_cursor && <button type="button" onClick={()=>{setInput(t('agentTools.continueInventory',{cursor:event.next_cursor}));composerRef.current?.focus()}}>{t('agentTools.nextBatch')}</button>}{event.output?.download_url?.startsWith('/api/document-tools/reports/') && <a href={event.output.download_url} download>{t('agentTools.downloadReport')}</a>}<small>{event.receipt_id}</small></section>}{event.kind === 'public_web_read' && <small> {t('commerce.public_web_read')} {event.decision}</small>}{event.kind === 'directory_code_scan' && <small>{t('commerce.scan_counts',{files:formatNumber(event.files_scanned??0),lines:formatNumber(event.lines_scanned??0),findings:formatNumber(event.finding_count??0),capped:event.truncated?t('commerce.capped'):'',hash:event.manifest_sha256??t('commerce.unavailable')})}</small>}</li>)}</ul></details> : null}{message.readEvents?.filter(event=>event.filesystem_proposal).map(event=><AgentServiceReview key={event.filesystem_proposal!.proposal_id} proposal={event.filesystem_proposal!} ownerId={ownerId} conversationId={activeConversation?.id||''} revision={activeConversation?.revision||0}/>)}{message.readEvents?.filter(event=>event.delivery_review).slice(-1).map(event=><section key={event.delivery_review!.review_id} aria-label={t('agentTools.deliveryReview')}><h3>{t('agentTools.deliveryReview')}</h3><p role="status">{event.delivery_review!.decision==='bloqueada'?t('agentTools.blocked'):event.delivery_review!.decision==='lista_para_revision'?t('agentTools.readyReview'):t('agentTools.needsClarification')}</p>{event.delivery_review!.pending.length>0&&<p>{t('agentTools.contentPending')}</p>}<p>{t('agentTools.noSend')}</p><details><summary>{t('agentTools.details')}</summary><pre>{JSON.stringify(event.delivery_review,null,2)}</pre></details></section>)}{message.trace && <div className="message-trace" aria-label={t('commerce.execution_trace_evidence')}>{activeConversation && onInspectExecution && <button type="button" onClick={() => onInspectExecution({conversationId:activeConversation.id,revision:activeConversation.revision,traceId:message.trace!.localId})}>{t('commerce.inspect_execution')}</button>}<details><summary>{t('commerce.trace_details')} {humanState(message.trace.state)}</summary><code>Local: {message.trace.localId}</code>{message.trace.jaegerId && <code>Jaeger: {message.trace.jaegerId}</code>}{message.trace.jaegerUrl && <a href={message.trace.jaegerUrl} target="_blank" rel="noreferrer">{t('commerce.open_in_jaeger')}</a>}</details></div>}</article>)}
           {capabilityDraft && <section className="capability-chat-card" aria-labelledby="capability-draft-title"><div className="draft-heading"><div><p className="section-eyebrow">{t('commerce.proposal_review')}</p><h3 id="capability-draft-title">{t('commerce.review_before_saving')}</h3></div><span className="draft-status">{t('commerce.not_saved')}</span></div><label>{t('commerce.capability')}<select value={capabilityDraft.capabilityId} onChange={(event) => setCapabilityDraft({ ...capabilityDraft, capabilityId: event.target.value })} disabled={capabilityBusy}><option value="">{t('commerce.choose_a_catalog_entry')}</option>{capabilityDraft.capabilities.map((item) => <option key={item.id} value={item.id}>{item.id} · {item.status} · {item.effect}</option>)}</select></label>{capabilityDraft.capabilityId && <p className="capability-chat-selected">{capabilityDraft.capabilities.find((item) => item.id === capabilityDraft.capabilityId)?.summary}</p>}<label>{t('commerce.request_summary')}<input value={capabilityDraft.summary} maxLength={500} onChange={(event) => setCapabilityDraft({ ...capabilityDraft, summary: event.target.value })} disabled={capabilityBusy} /></label><label>{t('commerce.requested_scope')}<textarea value={capabilityDraft.requestedScope} maxLength={1000} rows={3} onChange={(event) => setCapabilityDraft({ ...capabilityDraft, requestedScope: event.target.value })} disabled={capabilityBusy} /></label><div className="draft-actions"><button type="button" className="secondary-action" onClick={() => setCapabilityDraft(null)} disabled={capabilityBusy}>{t('commerce.discard')}</button><button type="button" className="primary-action" onClick={() => void saveCapabilityProposal()} disabled={capabilityBusy || !capabilityDraft.capabilityId || !capabilityDraft.summary.trim() || !capabilityDraft.requestedScope.trim()}>{capabilityBusy ? t('commerce.saving') : t('commerce.save_proposal')}</button></div></section>}
           {capabilityProposals.map((proposal) => <article className="capability-chat-saved" key={proposal.id}><div><strong>{proposal.capability_id}</strong><span>{humanState(proposal.status)} {t('commerce.revision')} {proposal.revision}</span></div><p>{proposal.summary}</p><p><strong>{t('commerce.requested_scope_148')}</strong> {proposal.requested_scope}</p><code>{proposal.id}</code>{proposal.status === 'PENDING_REVIEW' && <button type="button" className="secondary-action" onClick={() => void cancelChatProposal(proposal)} disabled={capabilityBusy}>{t('commerce.cancel_proposal')}</button>}</article>)}
           {error && <p className="chat-error" role="alert">{errorMessage(error)}{errorMessage(error).toLowerCase().includes('ollama') || errorMessage(error).toLowerCase().includes('provider') ? <button type="button" onClick={onOpenProviderSettings}>{t('commerce.open_provider_settings')}</button> : null}</p>}
@@ -1291,6 +1402,9 @@ export default function AgentChat({ onInspectionSelection, onInspectExecution, o
             <label className="workspace-read-toggle"><input type="checkbox" checked={allowPublicWebRead} onChange={event => setAllowPublicWebRead(event.target.checked)} disabled={sending || Boolean(activeConversation && activeConversation.status !== 'active')} /><span>{t('commerce.allow_public_web_reading')}</span></label>
             <div className="chat-context-controls">
               <ChatTools conversationId={activeConversation?.id} conversationRevision={activeConversation?.revision}
+                csvContext={!selectedAgent ? {projectId:activeProject?.project_id ?? null,projectRoot:activeProject?.root ?? null,contextKey:csvContextKey,
+                  disabled:sending || csvRecoveryBlocked || orchestratorSelectionBlocked || Boolean(activeConversation && activeConversation.status !== 'active'),notice:error,
+                  onSubmit:async (request,signal) => Boolean(await sendMessage(undefined,undefined,request,signal))} : undefined}
                 freelancerEnabled={!selectedAgent && activeConversation?.owner_kind === 'assistant'
                   && activeConversation.owner_id === 'app-assistant' && activeConversation.status === 'active'}
                 onOpenCommunication={onOpenCommunication} />

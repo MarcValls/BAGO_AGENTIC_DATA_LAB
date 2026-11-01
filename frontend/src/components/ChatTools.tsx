@@ -9,6 +9,8 @@ import Contacts from './Contacts'
 import Communications from './Communications'
 import type { AddressContact } from '../types/contacts'
 import FreelancerChatTool from './FreelancerChatTool'
+import CsvChatQuery from './CsvChatQuery'
+import type {CsvChatContext} from '../types/csvChat'
 
 const tools = [
   { id: 'contacts', get label(){return t('commerce.contacts')} },
@@ -19,12 +21,13 @@ const tools = [
 ] as const
 type ToolId = typeof tools[number]['id']
 
-export default function ChatTools({conversationId, conversationRevision, freelancerEnabled = false, onOpenCommunication}: {conversationId?: string; conversationRevision?: number; freelancerEnabled?: boolean; onOpenCommunication?: (id: string) => void}) {
+export default function ChatTools({conversationId, conversationRevision, freelancerEnabled = false, onOpenCommunication, csvContext}: {conversationId?: string; conversationRevision?: number; freelancerEnabled?: boolean; onOpenCommunication?: (id: string) => void; csvContext?: CsvChatContext}) {
   useI18n()
 
   const [selectedContact, setSelectedContact] = useState<AddressContact | null>(null)
   useEffect(() => {setSelectedContact(null)}, [conversationId])
   const [activeTool, setActiveTool] = useState<ToolId | null>(null)
+  const [sourceMode, setSourceMode] = useState<'text' | 'csv'>('text')
   const menuRef = useRef<HTMLDetailsElement>(null)
   const launcherRef = useRef<HTMLElement>(null)
   const dialogRef = useRef<HTMLDialogElement>(null)
@@ -48,6 +51,7 @@ export default function ChatTools({conversationId, conversationRevision, freelan
 
   const openTool = (tool: ToolId) => {
     if (menuRef.current) menuRef.current.open = false
+    if (tool === 'source') setSourceMode(csvContext ? 'csv' : 'text')
     setActiveTool(tool)
   }
 
@@ -71,7 +75,13 @@ export default function ChatTools({conversationId, conversationRevision, freelan
       <header className="chat-tool-dialog-heading"><strong>{selectedTool?.label}</strong><button type="button" onClick={() => setActiveTool(null)} aria-label={t('commerce.close_tool')}>{t('commerce.close')} <span aria-hidden="true">×</span></button></header>
       <div className="chat-tool-dialog-body">
         {activeTool === 'contacts' && <><Contacts inline onUseContact={setSelectedContact} />{selectedContact && <Communications key={selectedContact.id} inline initialContact={selectedContact} conversationId={conversationId} onOpenFull={onOpenCommunication} />}</>}
-        {activeTool === 'source' && <KnowledgeIngest />}
+        {activeTool === 'source' && <>
+          {csvContext && <div className="csv-source-modes" role="group" aria-label={t('commerce.consult_file')}>
+            <button type="button" aria-pressed={sourceMode === 'csv'} disabled={csvContext.disabled} onClick={() => setSourceMode('csv')}>{t('csvChat.mode')}</button>
+            <button type="button" aria-pressed={sourceMode === 'text'} disabled={csvContext.disabled} onClick={() => setSourceMode('text')}>{t('csvChat.textMode')}</button>
+          </div>}
+          {csvContext && sourceMode === 'csv' ? <CsvChatQuery {...csvContext} onSent={() => setActiveTool(null)}/> : <KnowledgeIngest />}
+        </>}
         {activeTool === 'relations' && <OntologyReview />}
         {activeTool === 'catalog' && <CatalogQuality />}
         {activeTool === 'freelancer' && <FreelancerChatTool conversationId={conversationId} conversationRevision={conversationRevision} enabled={freelancerEnabled} />}

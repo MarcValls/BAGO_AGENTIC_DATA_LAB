@@ -1,0 +1,32 @@
+{
+  "status": "PASS",
+  "verification": {
+    "id": "flow",
+    "command": "[\"/workspace/scratch/54b1628604af/adl-venv/bin/python\",\"/workspace/scratch/54b1628604af/BAGO_AGENTIC_DATA_LAB/docs/verification/csv-chat-20261101/review/run_verification.py\"]",
+    "result": "PASS",
+    "evidence": ".bago/team/runtime/executions/b04ecccbdb5c4b33b568a715e70a2218/receipt.json",
+    "execution_id": "b04ecccbdb5c4b33b568a715e70a2218"
+  },
+  "execution_id": "b04ecccbdb5c4b33b568a715e70a2218",
+  "receipt": ".bago/team/runtime/executions/b04ecccbdb5c4b33b568a715e70a2218/receipt.json",
+  "returncode": 0,
+  "outputs": [
+    {
+      "path": "BAGO_AGENTIC_DATA_LAB/tests/test_csv_chat_flow.py",
+      "sha256": "d80036c69d66c23f972aba27cac94455a0709c7cf2822feb21b8990d5ea96b43"
+    },
+    {
+      "path": "BAGO_AGENTIC_DATA_LAB/docs/verification/csv-chat-20261101/review/run_verification.py",
+      "sha256": "4699013a1c51be7a943abfd84c5855f4f46eab7876e0601ca9e863170bd813db"
+    },
+    {
+      "path": "BAGO_AGENTIC_DATA_LAB/docs/verification/csv-chat-20261101/review/SUMMARY.json",
+      "sha256": "9c466b426397a42e6de2357bfaf1d1e18397b8680e0733ea7cd7d2fa2db79997"
+    },
+    {
+      "path": "BAGO_AGENTIC_DATA_LAB/docs/verification/csv-chat-20261101/review/pytest.log",
+      "sha256": "5ee778a7433810cac3941f76e93265975f6096ed7662963495e514b5183ede95"
+    }
+  ],
+  "paused_during_execution": false
+}

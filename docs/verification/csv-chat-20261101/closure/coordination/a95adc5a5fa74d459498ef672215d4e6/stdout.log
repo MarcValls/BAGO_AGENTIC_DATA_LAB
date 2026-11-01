@@ -1,0 +1,2 @@
+{"mode":"desktop","status":"PASS","http_status":200,"conversation_id":"conv_cd4452728ba7405d84632f98ea27de18","page_errors":[],"console_errors":[],"evidence":"/workspace/scratch/54b1628604af/BAGO_AGENTIC_DATA_LAB/docs/verification/csv-chat-20261101/frontend/causal-browser/desktop.json"}
+{"mode":"mobile","status":"PASS","http_status":200,"conversation_id":"conv_395a0d6ad5ee42ab98408eec00bcdcf3","page_errors":[],"console_errors":[],"evidence":"/workspace/scratch/54b1628604af/BAGO_AGENTIC_DATA_LAB/docs/verification/csv-chat-20261101/frontend/causal-browser/mobile.json"}

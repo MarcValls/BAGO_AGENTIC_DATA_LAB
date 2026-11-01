@@ -1,0 +1,20 @@
+{
+  "status": "PASS",
+  "verification": {
+    "id": "ui",
+    "command": "[\"node\",\"-e\",\"const {spawnSync}=require('node:child_process');const {writeFileSync}=require('node:fs');const file=\\\"/workspace/scratch/54b1628604af/BAGO_AGENTIC_DATA_LAB/docs/verification/csv-chat-20261101/frontend/ui-check-04.result.json\\\";const commands=[[\\\"npm\\\", \\\"--prefix\\\", \\\"/workspace/scratch/54b1628604af/BAGO_AGENTIC_DATA_LAB/frontend\\\", \\\"test\\\", \\\"--\\\", \\\"tests/csv-chat/main-chat-csv.test.tsx\\\", \\\"tests/ui/knowledge/chat-resource-submit.test.tsx\\\", \\\"tests/workspace/csv-preview.test.tsx\\\", \\\"tests/workspace/csv-parser.test.tsx\\\", \\\"tests/web-research/public-web-chat.test.tsx\\\", \\\"tests/providers/chat-selection-race.test.tsx\\\", \\\"tests/chat-right-panel/general-context.test.tsx\\\"], [\\\"npm\\\", \\\"--prefix\\\", \\\"/workspace/scratch/54b1628604af/BAGO_AGENTIC_DATA_LAB/frontend\\\", \\\"run\\\", \\\"build\\\"], [\\\"node\\\", \\\"--check\\\", \\\"/workspace/scratch/54b1628604af/BAGO_AGENTIC_DATA_LAB/frontend/tests/csv-chat/browser-f11.cjs\\\"], [\\\"git\\\", \\\"-C\\\", \\\"/workspace/scratch/54b1628604af/BAGO_AGENTIC_DATA_LAB\\\", \\\"diff\\\", \\\"--check\\\", \\\"--\\\", \\\"frontend/src\\\", \\\"frontend/tests\\\"]];const results=[];for(const [command,...args] of commands){const result=spawnSync(command,args,{stdio:'inherit'});results.push({command:[command,...args],returncode:result.status,error:result.error?String(result.error):null});writeFileSync(file,JSON.stringify({results},null,2)+'\\\\n');if(result.error){console.error(result.error);process.exit(1)}if(result.status!==0)process.exit(result.status||1)}\"]",
+    "result": "PASS",
+    "evidence": ".bago/team/runtime/executions/5956795675394e7e945d59823ec2bb45/receipt.json",
+    "execution_id": "5956795675394e7e945d59823ec2bb45"
+  },
+  "execution_id": "5956795675394e7e945d59823ec2bb45",
+  "receipt": ".bago/team/runtime/executions/5956795675394e7e945d59823ec2bb45/receipt.json",
+  "returncode": 0,
+  "outputs": [
+    {
+      "path": "BAGO_AGENTIC_DATA_LAB/docs/verification/csv-chat-20261101/frontend/ui-check-04.result.json",
+      "sha256": "20a008e448eab7201e386b0a3d435390ef0583623724689f9f66d7a376fc7f9b"
+    }
+  ],
+  "paused_during_execution": false
+}

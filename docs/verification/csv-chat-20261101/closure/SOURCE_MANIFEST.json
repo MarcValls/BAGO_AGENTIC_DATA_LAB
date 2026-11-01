@@ -1,0 +1,106 @@
+{
+  "source_set_sha256": "fd4b61bcf20c3c11daa9d70e4a78d13e0d9e3e6e67ce263a69f69ed13aa3eca7",
+  "files": [
+    {
+      "path": "frontend/src/components/AgentChat.tsx",
+      "sha256": "67e11ac4ddffc22e274c3ca6ef07e6b23f054ec3c5e8fadac9c6ee7e0763d4fd",
+      "bytes": 131930
+    },
+    {
+      "path": "frontend/src/components/AgentChatOverrides.css",
+      "sha256": "8cee233b22f59e8b2f2fc629b30e4b73e19cb0f28d881eedcb46644167ca5ac6",
+      "bytes": 9926
+    },
+    {
+      "path": "frontend/src/components/ChatTools.tsx",
+      "sha256": "1d187357301c946ef52f42f36e71ad305e3927ec0cb564e525f3b1b51dbb029e",
+      "bytes": 5271
+    },
+    {
+      "path": "frontend/src/components/CsvChatQuery.css",
+      "sha256": "2dffc84f2506b4743c8e68d0b7d032309023fbafb16eb374615155220a36b6ee",
+      "bytes": 2418
+    },
+    {
+      "path": "frontend/src/components/CsvChatQuery.tsx",
+      "sha256": "9af54dfa434a2aae515178a1a4db78da7cc39d991668f0bb4f42522c49cab3b3",
+      "bytes": 11113
+    },
+    {
+      "path": "frontend/src/i18n/domains/csvChat.ts",
+      "sha256": "ea257308052e5d4bb7265fdd6cb2f176468d9d38a2a963948381b1f0121ce6fe",
+      "bytes": 7601
+    },
+    {
+      "path": "frontend/src/i18n/index.ts",
+      "sha256": "8f3f14c98a9693935ad37efcd3d41d3a03333a97b2d6dd20d6a5e99e47a141dd",
+      "bytes": 5645
+    },
+    {
+      "path": "frontend/src/types/csvChat.ts",
+      "sha256": "8fc708223d645bdfa24a3a5542ba3042e049672f8d1d0d46874ea408431bb641",
+      "bytes": 1542
+    },
+    {
+      "path": "frontend/tests/csv-chat/browser-f11.cjs",
+      "sha256": "457cbe340f24c130933cb9c3c0aae8e54e088cb34cb84b603195bce92b18de04",
+      "bytes": 13295
+    },
+    {
+      "path": "frontend/tests/csv-chat/main-chat-csv.test.tsx",
+      "sha256": "0c08e12b4497402eeb8dc6dc1d365105d5c8e220f6a02fcd496851b2e5e2ccde",
+      "bytes": 24211
+    },
+    {
+      "path": "scripts/demo_csv_chat.py",
+      "sha256": "06d3e8a2db8c75811f6d7cd8e9a150793cc73f56999b97a6d70ddfad8b7b90bc",
+      "bytes": 9067
+    },
+    {
+      "path": "src/agent_tools/csv_chat.py",
+      "sha256": "6a7f0cfd520bf6d3c71589c7e7106b2788a87f9cb78cae47157aaf7403143719",
+      "bytes": 20423
+    },
+    {
+      "path": "src/agent_tools/workspace_read.py",
+      "sha256": "acf2e35f8e3e72cf75c2eb6ee4bd7ac5ad9b4a4ce9e9483a33c49ebcb44a3e0c",
+      "bytes": 24612
+    },
+    {
+      "path": "src/api/schemas.py",
+      "sha256": "9f971639f7ea49e4ca892a22b6ffd543fa9226a5772440c7120712c2e4189937",
+      "bytes": 14294
+    },
+    {
+      "path": "src/api/server.py",
+      "sha256": "a7949d8df192c142232ff05602d1b46a184443c02a504656c13fd4a6de33c629",
+      "bytes": 269525
+    },
+    {
+      "path": "tests/test_csv_chat_access.py",
+      "sha256": "a545083ef6b58bc145f7cfaf68bf4b74dbb035a713d193693c8ec2144793a302",
+      "bytes": 17934
+    },
+    {
+      "path": "tests/test_csv_chat_flow.py",
+      "sha256": "d80036c69d66c23f972aba27cac94455a0709c7cf2822feb21b8990d5ea96b43",
+      "bytes": 34310
+    },
+    {
+      "path": "tests/test_csv_query.py",
+      "sha256": "4e5da2fc8feeab6ae6574f8faa591386e4459cb514770fdce3806d7090b642c1",
+      "bytes": 17074
+    },
+    {
+      "path": "tools/document-toolkit/document_toolkit/csv_query.py",
+      "sha256": "21186a611031209fa0072ef43148478ea4fea9802228e83aa8f90eb670298f64",
+      "bytes": 20482
+    },
+    {
+      "path": "tools/document-toolkit/document_toolkit/parsers.py",
+      "sha256": "6697263b88ad8a2fa6f6dcb8feac8200cb1f4f07e3f65845f7fb6d6e0ea944d5",
+      "bytes": 16451
+    }
+  ],
+  "scope": "Changed implementation, tests and executable demonstration; historical evidence excluded."
+}

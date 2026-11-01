@@ -1,0 +1,1454 @@
+{
+  "case": "F11",
+  "mode": "mobile",
+  "url": "http://127.0.0.1:5173",
+  "viewport": {
+    "width": 390,
+    "height": 844
+  },
+  "browser": "141.0.7390.37",
+  "started_at": "2026-11-01T04:56:17.422Z",
+  "verification": "CONTROLLED_INTERPRETATION_REAL_BACKEND",
+  "source_binding_note": "Hashes record the working tree at invocation. A running server may predate these files; bind final evidence to a fresh server launch separately.",
+  "request": {
+    "message": "Analiza pedidos: importe descontado por pedido, pendientes por estado y total general.",
+    "csv_read": {
+      "path": "demo-usuario/archivo/pedidos-final.csv",
+      "delimiter": "auto",
+      "decimal_separator": "."
+    }
+  },
+  "source_files_sha256": {
+    "frontend/src/components/AgentChat.tsx": "67e11ac4ddffc22e274c3ca6ef07e6b23f054ec3c5e8fadac9c6ee7e0763d4fd",
+    "frontend/src/components/ChatTools.tsx": "1d187357301c946ef52f42f36e71ad305e3927ec0cb564e525f3b1b51dbb029e",
+    "frontend/src/components/AgentChatOverrides.css": "8cee233b22f59e8b2f2fc629b30e4b73e19cb0f28d881eedcb46644167ca5ac6",
+    "frontend/src/components/CsvChatQuery.tsx": "9af54dfa434a2aae515178a1a4db78da7cc39d991668f0bb4f42522c49cab3b3",
+    "frontend/src/components/CsvChatQuery.css": "2dffc84f2506b4743c8e68d0b7d032309023fbafb16eb374615155220a36b6ee",
+    "frontend/src/types/csvChat.ts": "8fc708223d645bdfa24a3a5542ba3042e049672f8d1d0d46874ea408431bb641",
+    "frontend/src/i18n/index.ts": "8f3f14c98a9693935ad37efcd3d41d3a03333a97b2d6dd20d6a5e99e47a141dd",
+    "frontend/src/i18n/domains/csvChat.ts": "ea257308052e5d4bb7265fdd6cb2f176468d9d38a2a963948381b1f0121ce6fe",
+    "frontend/tests/csv-chat/main-chat-csv.test.tsx": "0c08e12b4497402eeb8dc6dc1d365105d5c8e220f6a02fcd496851b2e5e2ccde",
+    "frontend/tests/csv-chat/browser-f11.cjs": "457cbe340f24c130933cb9c3c0aae8e54e088cb34cb84b603195bce92b18de04",
+    "src/agent_tools/workspace_read.py": "acf2e35f8e3e72cf75c2eb6ee4bd7ac5ad9b4a4ce9e9483a33c49ebcb44a3e0c",
+    "src/agent_tools/csv_chat.py": "6a7f0cfd520bf6d3c71589c7e7106b2788a87f9cb78cae47157aaf7403143719",
+    "src/api/server.py": "a7949d8df192c142232ff05602d1b46a184443c02a504656c13fd4a6de33c629",
+    "src/api/schemas.py": "9f971639f7ea49e4ca892a22b6ffd543fa9226a5772440c7120712c2e4189937",
+    "tools/document-toolkit/document_toolkit/parsers.py": "6697263b88ad8a2fa6f6dcb8feac8200cb1f4f07e3f65845f7fb6d6e0ea944d5",
+    "tools/document-toolkit/document_toolkit/csv_query.py": "21186a611031209fa0072ef43148478ea4fea9802228e83aa8f90eb670298f64"
+  },
+  "page_errors": [],
+  "console_errors": [],
+  "mutations": [
+    {
+      "method": "POST",
+      "path": "/api/conversations",
+      "body": {
+        "owner_kind": "assistant",
+        "owner_id": "app-assistant"
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/api/workspace-read/authorizations",
+      "body": {
+        "owner_kind": "assistant",
+        "owner_id": "app-assistant",
+        "conversation_id": "conv_395a0d6ad5ee42ab98408eec00bcdcf3",
+        "revision": 0,
+        "paths": [
+          "demo-usuario/archivo/pedidos-final.csv"
+        ],
+        "csv_request": {
+          "message": "Analiza pedidos: importe descontado por pedido, pendientes por estado y total general.",
+          "csv_read": {
+            "path": "demo-usuario/archivo/pedidos-final.csv",
+            "delimiter": "auto",
+            "decimal_separator": "."
+          }
+        },
+        "expected_project": {
+          "project_id": "workspace_d0649b09a6d9464b91bfe813d2aabd12",
+          "binding": "{\"config_identity\":[27,1607614,68,1793508884504743760,\"9fdf86815f3ae63b6b3d8b8a02cccd84eea031694326c0f5e6acf937d096a74a\"],\"workspace_root\":\"/tmp/adl-csv-browser-fixture-20261101/project\"}",
+          "revision": "76914bb1e2511ada9085fd3700fe115ea54cc11ae6798200924d28ae68a49515"
+        }
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/api/chat/control",
+      "body": {
+        "operation": "chat",
+        "message": "Analiza pedidos: importe descontado por pedido, pendientes por estado y total general.",
+        "conversation_id": "conv_395a0d6ad5ee42ab98408eec00bcdcf3",
+        "revision": 0,
+        "cognitive_mode": "baseline",
+        "workspace_read_authorization_id": "[REDACTED]",
+        "csv_read": {
+          "path": "demo-usuario/archivo/pedidos-final.csv",
+          "delimiter": "auto",
+          "decimal_separator": "."
+        }
+      }
+    }
+  ],
+  "status": "PASS",
+  "runtime_storage_before": {
+    "application_root": "/workspace/scratch/54b1628604af/BAGO_AGENTIC_DATA_LAB",
+    "effective_source_root": "/workspace/scratch/54b1628604af/BAGO_AGENTIC_DATA_LAB",
+    "application_root_matches_source": true,
+    "data_root": "/tmp/adl-csv-browser-fixture-20261101/data",
+    "mode": "external_data_root",
+    "data_root_exists": true,
+    "resolver_creates_directories": false,
+    "external_overrides": [],
+    "effective_paths": {
+      "conversations": "/tmp/adl-csv-browser-fixture-20261101/data/conversations/library.sqlite3",
+      "capabilities": "/tmp/adl-csv-browser-fixture-20261101/data/capabilities",
+      "evaluations": "/tmp/adl-csv-browser-fixture-20261101/data/evaluations",
+      "contacts": "/tmp/adl-csv-browser-fixture-20261101/data/contacts",
+      "communications": "/tmp/adl-csv-browser-fixture-20261101/data/communications",
+      "tasks": "/tmp/adl-csv-browser-fixture-20261101/data/tasks",
+      "providers": "/tmp/adl-csv-browser-fixture-20261101/data/providers/provider-registry.json",
+      "ollama_config": "/tmp/adl-csv-browser-fixture-20261101/data/providers/ollama.json",
+      "model_policy": "/tmp/adl-csv-browser-fixture-20261101/data/providers/model-policy.json",
+      "active_provider": "/tmp/adl-csv-browser-fixture-20261101/data/providers/active-provider.json",
+      "agents": "/tmp/adl-csv-browser-fixture-20261101/data/agents/created",
+      "workspace_config": "/tmp/adl-csv-browser-fixture-20261101/data/config",
+      "gex_runtime": "/tmp/adl-csv-browser-fixture-20261101/data/gex/runtime",
+      "gex_identity": "/tmp/adl-csv-browser-fixture-20261101/data/gex/identity.sqlite3",
+      "knowledge": "/tmp/adl-csv-browser-fixture-20261101/data/knowledge/local-knowledge.sqlite3",
+      "knowledge_traces": "/tmp/adl-csv-browser-fixture-20261101/data/traces/grounded-rag",
+      "ontology": "/tmp/adl-csv-browser-fixture-20261101/data/knowledge/ontology.sqlite3",
+      "ontology_traces": "/tmp/adl-csv-browser-fixture-20261101/data/traces/ontology",
+      "whatsapp": "/tmp/adl-csv-browser-fixture-20261101/data/whatsapp",
+      "web_research": "/tmp/adl-csv-browser-fixture-20261101/data/web-research",
+      "document_exports": "/tmp/adl-csv-browser-fixture-20261101/data/document-exports",
+      "connections": "/tmp/adl-csv-browser-fixture-20261101/data/connections/registry.json",
+      "etl_metadata": "/tmp/adl-csv-browser-fixture-20261101/data/etl/metadata.sqlite3",
+      "jobs": "/tmp/adl-csv-browser-fixture-20261101/data/jobs/history",
+      "traces": "/tmp/adl-csv-browser-fixture-20261101/data/traces",
+      "storage_aliases": "/tmp/adl-csv-browser-fixture-20261101/data/storage-aliases.json"
+    },
+    "host_bound_profile_configured": false,
+    "storage_alias_configuration_present": false,
+    "process_id": 38526,
+    "server_source_path": "/workspace/scratch/54b1628604af/BAGO_AGENTIC_DATA_LAB/src/api/server.py",
+    "server_source_sha256_at_import": "a7949d8df192c142232ff05602d1b46a184443c02a504656c13fd4a6de33c629"
+  },
+  "database_before": {
+    "path": "/tmp/adl-csv-browser-fixture-20261101/data/conversations/library.sqlite3",
+    "inode": "1607749",
+    "device": "27",
+    "size": "36864",
+    "mtime_ns": "1793508975542523861",
+    "sha256": "8de08dfc579c35f5d60032b915cfe166b6dfd15f2ff7c7483d9a3f2e48e35895"
+  },
+  "selection_overflow": {
+    "scrollWidth": 372,
+    "clientWidth": 372
+  },
+  "http_status": 200,
+  "response": {
+    "operation": "chat",
+    "assistant_message": "He leído **demo-usuario/archivo/pedidos-final.csv**: 3 filas de datos.\n\n**Interpretación aplicada** (revisa que coincide con tu pregunta):\n\n- importe = ((\"unidades\" × \"precio\\_unitario\") × (1 − (\"descuento\\_pct\" ÷ 100)))\n\n- Agrupación: estado\n\n- Cálculos: total: suma de importe\n\n- Separador decimal: punto (.). Sin separadores de miles implícitos.\n\n**Detalle**\n\n| Filas CSV | pedido | cliente | importe |\n| --- | --- | --- | --- |\n| 2 | P001 | Alba | 199.800 |\n| 3 | P002 | Bruno | 54.00 |\n| 4 | P003 | Carmen | 47.5000 |\n\n**Resultado de la consulta**\n\n| Filas CSV | estado | total |\n| --- | --- | --- |\n| 2, 4 | pendiente | 247.3000 |\n| 3 | entregado | 54.00 |\n\n**Totales de todas las filas que cumplen los filtros**\n\n| Filas CSV | total |\n| --- | --- |\n| 2, 3, 4 | 301.3000 |\n\nCobertura: 3 de 3 filas. Los agregados usan todas las filas coincidentes del archivo completo autorizado.\n\nArchivo SHA-256: 8fe7a2979043c0e992f4e13d84055045ae1fec91bb896d365fe996367acbafe5\n\nPlan SHA-256: f7154681f3f47a36ff372f966781e5e7941da97d0255fc32610146d267f18405\n\nResultado SHA-256: 9b8217516efdd74dc783ff3c88526bf0caaac695dfd74799e30b4ca517f34cab",
+    "conversation_id": "conv_395a0d6ad5ee42ab98408eec00bcdcf3",
+    "revision": 2,
+    "conversation": {
+      "id": "conv_395a0d6ad5ee42ab98408eec00bcdcf3",
+      "project_id": "workspace_d0649b09a6d9464b91bfe813d2aabd12",
+      "owner_kind": "assistant",
+      "owner_id": "app-assistant",
+      "title": "Analiza pedidos: importe descontado por pedido, pendientes por estado ",
+      "status": "active",
+      "created_at": "2026-11-01T04:56:18.447Z",
+      "updated_at": "2026-11-01T04:56:19.042Z",
+      "revision": 2,
+      "labels": [],
+      "messages": [
+        {
+          "id": "msg_cf5efa2195d045848f04962af0950e74",
+          "sequence": 1,
+          "role": "user",
+          "content": "Analiza pedidos: importe descontado por pedido, pendientes por estado y total general.",
+          "created_at": "2026-11-01T04:56:18.987Z",
+          "status": "complete",
+          "references": {}
+        },
+        {
+          "id": "msg_8be7faaac950443a8da8abba4c4d30d1",
+          "sequence": 2,
+          "role": "assistant",
+          "content": "He leído **demo-usuario/archivo/pedidos-final.csv**: 3 filas de datos.\n\n**Interpretación aplicada** (revisa que coincide con tu pregunta):\n\n- importe = ((\"unidades\" × \"precio\\_unitario\") × (1 − (\"descuento\\_pct\" ÷ 100)))\n\n- Agrupación: estado\n\n- Cálculos: total: suma de importe\n\n- Separador decimal: punto (.). Sin separadores de miles implícitos.\n\n**Detalle**\n\n| Filas CSV | pedido | cliente | importe |\n| --- | --- | --- | --- |\n| 2 | P001 | Alba | 199.800 |\n| 3 | P002 | Bruno | 54.00 |\n| 4 | P003 | Carmen | 47.5000 |\n\n**Resultado de la consulta**\n\n| Filas CSV | estado | total |\n| --- | --- | --- |\n| 2, 4 | pendiente | 247.3000 |\n| 3 | entregado | 54.00 |\n\n**Totales de todas las filas que cumplen los filtros**\n\n| Filas CSV | total |\n| --- | --- |\n| 2, 3, 4 | 301.3000 |\n\nCobertura: 3 de 3 filas. Los agregados usan todas las filas coincidentes del archivo completo autorizado.\n\nArchivo SHA-256: 8fe7a2979043c0e992f4e13d84055045ae1fec91bb896d365fe996367acbafe5\n\nPlan SHA-256: f7154681f3f47a36ff372f966781e5e7941da97d0255fc32610146d267f18405\n\nResultado SHA-256: 9b8217516efdd74dc783ff3c88526bf0caaac695dfd74799e30b4ca517f34cab",
+          "created_at": "2026-11-01T04:56:19.042Z",
+          "status": "complete",
+          "references": {
+            "sources": [
+              {
+                "path": "demo-usuario/archivo/pedidos-final.csv",
+                "start_line": 1,
+                "end_line": 4,
+                "decision": "ALLOW",
+                "file_sha256": "8fe7a2979043c0e992f4e13d84055045ae1fec91bb896d365fe996367acbafe5",
+                "content_sha256": "8fe7a2979043c0e992f4e13d84055045ae1fec91bb896d365fe996367acbafe5",
+                "total_lines": 4,
+                "truncated": false,
+                "project_id": "workspace_d0649b09a6d9464b91bfe813d2aabd12",
+                "policy_revision": "76914bb1e2511ada9085fd3700fe115ea54cc11ae6798200924d28ae68a49515",
+                "source_type": "csv",
+                "total_rows": 3,
+                "columns": [
+                  "pedido",
+                  "cliente",
+                  "producto",
+                  "unidades",
+                  "precio_unitario",
+                  "descuento_pct",
+                  "estado"
+                ],
+                "delimiter": ","
+              }
+            ],
+            "read_events": [
+              {
+                "path": "demo-usuario/archivo/pedidos-final.csv",
+                "start_line": 1,
+                "end_line": 4,
+                "decision": "ALLOW",
+                "file_sha256": "8fe7a2979043c0e992f4e13d84055045ae1fec91bb896d365fe996367acbafe5",
+                "content_sha256": "8fe7a2979043c0e992f4e13d84055045ae1fec91bb896d365fe996367acbafe5",
+                "total_lines": 4,
+                "truncated": false,
+                "project_id": "workspace_d0649b09a6d9464b91bfe813d2aabd12",
+                "policy_revision": "76914bb1e2511ada9085fd3700fe115ea54cc11ae6798200924d28ae68a49515",
+                "source_type": "csv",
+                "total_rows": 3,
+                "columns": [
+                  "pedido",
+                  "cliente",
+                  "producto",
+                  "unidades",
+                  "precio_unitario",
+                  "descuento_pct",
+                  "estado"
+                ],
+                "delimiter": ",",
+                "kind": "csv_read",
+                "tool_name": "query_csv",
+                "executed": true,
+                "outcome": "SUCCESS",
+                "request_sha256": "1a549cc39ddf908e6794db35ccc94fa8031c9c429ae7cb0aadebce0e839a3f14",
+                "plan_sha256": "f7154681f3f47a36ff372f966781e5e7941da97d0255fc32610146d267f18405",
+                "result_sha256": "9b8217516efdd74dc783ff3c88526bf0caaac695dfd74799e30b4ca517f34cab",
+                "conversation_id": "conv_395a0d6ad5ee42ab98408eec00bcdcf3",
+                "request_revision": 0,
+                "owner_kind": "assistant",
+                "owner_id": "app-assistant"
+              }
+            ],
+            "csv_analysis": {
+              "status": "answered",
+              "path": "demo-usuario/archivo/pedidos-final.csv",
+              "file_sha256": "8fe7a2979043c0e992f4e13d84055045ae1fec91bb896d365fe996367acbafe5",
+              "request_sha256": "1a549cc39ddf908e6794db35ccc94fa8031c9c429ae7cb0aadebce0e839a3f14",
+              "schema": "csv-query.result.v1",
+              "plan": {
+                "derive": [
+                  {
+                    "name": "importe",
+                    "expression": {
+                      "op": "mul",
+                      "args": [
+                        {
+                          "op": "mul",
+                          "args": [
+                            {
+                              "column": "unidades"
+                            },
+                            {
+                              "column": "precio_unitario"
+                            }
+                          ]
+                        },
+                        {
+                          "op": "sub",
+                          "args": [
+                            {
+                              "number": "1"
+                            },
+                            {
+                              "op": "div",
+                              "args": [
+                                {
+                                  "column": "descuento_pct"
+                                },
+                                {
+                                  "number": "100"
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  }
+                ],
+                "select": [
+                  "pedido",
+                  "cliente",
+                  "importe"
+                ],
+                "group_by": [
+                  "estado"
+                ],
+                "aggregates": [
+                  {
+                    "op": "sum",
+                    "column": "importe",
+                    "as": "total"
+                  }
+                ],
+                "filters": [],
+                "limit": 100
+              },
+              "interpretation": {
+                "derived": [
+                  {
+                    "name": "importe",
+                    "expression": {
+                      "op": "mul",
+                      "args": [
+                        {
+                          "op": "mul",
+                          "args": [
+                            {
+                              "column": "unidades"
+                            },
+                            {
+                              "column": "precio_unitario"
+                            }
+                          ]
+                        },
+                        {
+                          "op": "sub",
+                          "args": [
+                            {
+                              "number": "1"
+                            },
+                            {
+                              "op": "div",
+                              "args": [
+                                {
+                                  "column": "descuento_pct"
+                                },
+                                {
+                                  "number": "100"
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    "text": "((\"unidades\" × \"precio_unitario\") × (1 − (\"descuento_pct\" ÷ 100)))"
+                  }
+                ],
+                "filters": [],
+                "filter_combination": "all",
+                "group_by": [
+                  "estado"
+                ],
+                "aggregates": [
+                  {
+                    "op": "sum",
+                    "column": "importe",
+                    "as": "total"
+                  }
+                ],
+                "decimal_separator": ".",
+                "constant_decimal_separator": "."
+              },
+              "columns": [
+                "estado",
+                "total"
+              ],
+              "rows": [
+                {
+                  "values": {
+                    "estado": "pendiente",
+                    "total": "247.3000"
+                  },
+                  "source_rows": [
+                    2,
+                    4
+                  ],
+                  "source_locations": [
+                    {
+                      "row": 2,
+                      "start_line": 2,
+                      "end_line": 2
+                    },
+                    {
+                      "row": 4,
+                      "start_line": 4,
+                      "end_line": 4
+                    }
+                  ]
+                },
+                {
+                  "values": {
+                    "estado": "entregado",
+                    "total": "54.00"
+                  },
+                  "source_rows": [
+                    3
+                  ],
+                  "source_locations": [
+                    {
+                      "row": 3,
+                      "start_line": 3,
+                      "end_line": 3
+                    }
+                  ]
+                }
+              ],
+              "selected_columns": [
+                "pedido",
+                "cliente",
+                "importe"
+              ],
+              "selected_rows": [
+                {
+                  "values": {
+                    "pedido": "P001",
+                    "cliente": "Alba",
+                    "importe": "199.800"
+                  },
+                  "source_rows": [
+                    2
+                  ],
+                  "source_locations": [
+                    {
+                      "row": 2,
+                      "start_line": 2,
+                      "end_line": 2
+                    }
+                  ]
+                },
+                {
+                  "values": {
+                    "pedido": "P002",
+                    "cliente": "Bruno",
+                    "importe": "54.00"
+                  },
+                  "source_rows": [
+                    3
+                  ],
+                  "source_locations": [
+                    {
+                      "row": 3,
+                      "start_line": 3,
+                      "end_line": 3
+                    }
+                  ]
+                },
+                {
+                  "values": {
+                    "pedido": "P003",
+                    "cliente": "Carmen",
+                    "importe": "47.5000"
+                  },
+                  "source_rows": [
+                    4
+                  ],
+                  "source_locations": [
+                    {
+                      "row": 4,
+                      "start_line": 4,
+                      "end_line": 4
+                    }
+                  ]
+                }
+              ],
+              "selected_truncated": false,
+              "grand_totals": {
+                "values": {
+                  "total": "301.3000"
+                },
+                "source_rows": [
+                  2,
+                  3,
+                  4
+                ],
+                "source_locations": [
+                  {
+                    "row": 2,
+                    "start_line": 2,
+                    "end_line": 2
+                  },
+                  {
+                    "row": 3,
+                    "start_line": 3,
+                    "end_line": 3
+                  },
+                  {
+                    "row": 4,
+                    "start_line": 4,
+                    "end_line": 4
+                  }
+                ],
+                "scope": "all_matched_rows_after_filters"
+              },
+              "coverage": {
+                "total_rows": 3,
+                "matched_rows": 3,
+                "returned_rows": 2,
+                "total_result_rows": 2,
+                "complete_input": true
+              },
+              "truncated": false,
+              "provenance": {
+                "source_columns": [
+                  {
+                    "name": "pedido",
+                    "column": 1
+                  },
+                  {
+                    "name": "cliente",
+                    "column": 2
+                  },
+                  {
+                    "name": "unidades",
+                    "column": 4
+                  },
+                  {
+                    "name": "precio_unitario",
+                    "column": 5
+                  },
+                  {
+                    "name": "descuento_pct",
+                    "column": 6
+                  },
+                  {
+                    "name": "estado",
+                    "column": 7
+                  }
+                ],
+                "matched_source_rows": [
+                  2,
+                  3,
+                  4
+                ],
+                "matched_source_locations": [
+                  {
+                    "row": 2,
+                    "start_line": 2,
+                    "end_line": 2
+                  },
+                  {
+                    "row": 3,
+                    "start_line": 3,
+                    "end_line": 3
+                  },
+                  {
+                    "row": 4,
+                    "start_line": 4,
+                    "end_line": 4
+                  }
+                ],
+                "arithmetic": "Decimal",
+                "precision": 38,
+                "rounding": "ROUND_HALF_EVEN",
+                "rounded": false,
+                "numeric_missing_policy": "reject_query",
+                "formulas_executed": false,
+                "aggregate_scope": "all_matched_rows_after_filters"
+              },
+              "plan_sha256": "f7154681f3f47a36ff372f966781e5e7941da97d0255fc32610146d267f18405",
+              "result_sha256": "9b8217516efdd74dc783ff3c88526bf0caaac695dfd74799e30b4ca517f34cab"
+            },
+            "trace": {
+              "trace_id": "trace-b0f3b6928d11490b",
+              "trace_state": "local_only",
+              "execution_id": "agent-chat-f364c9c7939040aeb02ccfd223a79a24",
+              "trace_sha256": "2deb5f245c8145aae51e4ee21558cbf10fbf6f63732c6334bfd4a7c58704f1cc"
+            }
+          }
+        }
+      ]
+    },
+    "sources": [
+      {
+        "path": "demo-usuario/archivo/pedidos-final.csv",
+        "start_line": 1,
+        "end_line": 4,
+        "decision": "ALLOW",
+        "file_sha256": "8fe7a2979043c0e992f4e13d84055045ae1fec91bb896d365fe996367acbafe5",
+        "content_sha256": "8fe7a2979043c0e992f4e13d84055045ae1fec91bb896d365fe996367acbafe5",
+        "total_lines": 4,
+        "truncated": false,
+        "project_id": "workspace_d0649b09a6d9464b91bfe813d2aabd12",
+        "policy_revision": "76914bb1e2511ada9085fd3700fe115ea54cc11ae6798200924d28ae68a49515",
+        "source_type": "csv",
+        "total_rows": 3,
+        "columns": [
+          "pedido",
+          "cliente",
+          "producto",
+          "unidades",
+          "precio_unitario",
+          "descuento_pct",
+          "estado"
+        ],
+        "delimiter": ","
+      }
+    ],
+    "read_events": [
+      {
+        "path": "demo-usuario/archivo/pedidos-final.csv",
+        "start_line": 1,
+        "end_line": 4,
+        "decision": "ALLOW",
+        "file_sha256": "8fe7a2979043c0e992f4e13d84055045ae1fec91bb896d365fe996367acbafe5",
+        "content_sha256": "8fe7a2979043c0e992f4e13d84055045ae1fec91bb896d365fe996367acbafe5",
+        "total_lines": 4,
+        "truncated": false,
+        "project_id": "workspace_d0649b09a6d9464b91bfe813d2aabd12",
+        "policy_revision": "76914bb1e2511ada9085fd3700fe115ea54cc11ae6798200924d28ae68a49515",
+        "source_type": "csv",
+        "total_rows": 3,
+        "columns": [
+          "pedido",
+          "cliente",
+          "producto",
+          "unidades",
+          "precio_unitario",
+          "descuento_pct",
+          "estado"
+        ],
+        "delimiter": ",",
+        "kind": "csv_read",
+        "tool_name": "query_csv",
+        "executed": true,
+        "outcome": "SUCCESS",
+        "request_sha256": "1a549cc39ddf908e6794db35ccc94fa8031c9c429ae7cb0aadebce0e839a3f14",
+        "plan_sha256": "f7154681f3f47a36ff372f966781e5e7941da97d0255fc32610146d267f18405",
+        "result_sha256": "9b8217516efdd74dc783ff3c88526bf0caaac695dfd74799e30b4ca517f34cab",
+        "conversation_id": "conv_395a0d6ad5ee42ab98408eec00bcdcf3",
+        "request_revision": 0,
+        "owner_kind": "assistant",
+        "owner_id": "app-assistant"
+      }
+    ],
+    "csv_analysis": {
+      "status": "answered",
+      "path": "demo-usuario/archivo/pedidos-final.csv",
+      "file_sha256": "8fe7a2979043c0e992f4e13d84055045ae1fec91bb896d365fe996367acbafe5",
+      "request_sha256": "1a549cc39ddf908e6794db35ccc94fa8031c9c429ae7cb0aadebce0e839a3f14",
+      "schema": "csv-query.result.v1",
+      "plan": {
+        "derive": [
+          {
+            "name": "importe",
+            "expression": {
+              "op": "mul",
+              "args": [
+                {
+                  "op": "mul",
+                  "args": [
+                    {
+                      "column": "unidades"
+                    },
+                    {
+                      "column": "precio_unitario"
+                    }
+                  ]
+                },
+                {
+                  "op": "sub",
+                  "args": [
+                    {
+                      "number": "1"
+                    },
+                    {
+                      "op": "div",
+                      "args": [
+                        {
+                          "column": "descuento_pct"
+                        },
+                        {
+                          "number": "100"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        ],
+        "select": [
+          "pedido",
+          "cliente",
+          "importe"
+        ],
+        "group_by": [
+          "estado"
+        ],
+        "aggregates": [
+          {
+            "op": "sum",
+            "column": "importe",
+            "as": "total"
+          }
+        ],
+        "filters": [],
+        "limit": 100
+      },
+      "interpretation": {
+        "derived": [
+          {
+            "name": "importe",
+            "expression": {
+              "op": "mul",
+              "args": [
+                {
+                  "op": "mul",
+                  "args": [
+                    {
+                      "column": "unidades"
+                    },
+                    {
+                      "column": "precio_unitario"
+                    }
+                  ]
+                },
+                {
+                  "op": "sub",
+                  "args": [
+                    {
+                      "number": "1"
+                    },
+                    {
+                      "op": "div",
+                      "args": [
+                        {
+                          "column": "descuento_pct"
+                        },
+                        {
+                          "number": "100"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            "text": "((\"unidades\" × \"precio_unitario\") × (1 − (\"descuento_pct\" ÷ 100)))"
+          }
+        ],
+        "filters": [],
+        "filter_combination": "all",
+        "group_by": [
+          "estado"
+        ],
+        "aggregates": [
+          {
+            "op": "sum",
+            "column": "importe",
+            "as": "total"
+          }
+        ],
+        "decimal_separator": ".",
+        "constant_decimal_separator": "."
+      },
+      "columns": [
+        "estado",
+        "total"
+      ],
+      "rows": [
+        {
+          "values": {
+            "estado": "pendiente",
+            "total": "247.3000"
+          },
+          "source_rows": [
+            2,
+            4
+          ],
+          "source_locations": [
+            {
+              "row": 2,
+              "start_line": 2,
+              "end_line": 2
+            },
+            {
+              "row": 4,
+              "start_line": 4,
+              "end_line": 4
+            }
+          ]
+        },
+        {
+          "values": {
+            "estado": "entregado",
+            "total": "54.00"
+          },
+          "source_rows": [
+            3
+          ],
+          "source_locations": [
+            {
+              "row": 3,
+              "start_line": 3,
+              "end_line": 3
+            }
+          ]
+        }
+      ],
+      "selected_columns": [
+        "pedido",
+        "cliente",
+        "importe"
+      ],
+      "selected_rows": [
+        {
+          "values": {
+            "pedido": "P001",
+            "cliente": "Alba",
+            "importe": "199.800"
+          },
+          "source_rows": [
+            2
+          ],
+          "source_locations": [
+            {
+              "row": 2,
+              "start_line": 2,
+              "end_line": 2
+            }
+          ]
+        },
+        {
+          "values": {
+            "pedido": "P002",
+            "cliente": "Bruno",
+            "importe": "54.00"
+          },
+          "source_rows": [
+            3
+          ],
+          "source_locations": [
+            {
+              "row": 3,
+              "start_line": 3,
+              "end_line": 3
+            }
+          ]
+        },
+        {
+          "values": {
+            "pedido": "P003",
+            "cliente": "Carmen",
+            "importe": "47.5000"
+          },
+          "source_rows": [
+            4
+          ],
+          "source_locations": [
+            {
+              "row": 4,
+              "start_line": 4,
+              "end_line": 4
+            }
+          ]
+        }
+      ],
+      "selected_truncated": false,
+      "grand_totals": {
+        "values": {
+          "total": "301.3000"
+        },
+        "source_rows": [
+          2,
+          3,
+          4
+        ],
+        "source_locations": [
+          {
+            "row": 2,
+            "start_line": 2,
+            "end_line": 2
+          },
+          {
+            "row": 3,
+            "start_line": 3,
+            "end_line": 3
+          },
+          {
+            "row": 4,
+            "start_line": 4,
+            "end_line": 4
+          }
+        ],
+        "scope": "all_matched_rows_after_filters"
+      },
+      "coverage": {
+        "total_rows": 3,
+        "matched_rows": 3,
+        "returned_rows": 2,
+        "total_result_rows": 2,
+        "complete_input": true
+      },
+      "truncated": false,
+      "provenance": {
+        "source_columns": [
+          {
+            "name": "pedido",
+            "column": 1
+          },
+          {
+            "name": "cliente",
+            "column": 2
+          },
+          {
+            "name": "unidades",
+            "column": 4
+          },
+          {
+            "name": "precio_unitario",
+            "column": 5
+          },
+          {
+            "name": "descuento_pct",
+            "column": 6
+          },
+          {
+            "name": "estado",
+            "column": 7
+          }
+        ],
+        "matched_source_rows": [
+          2,
+          3,
+          4
+        ],
+        "matched_source_locations": [
+          {
+            "row": 2,
+            "start_line": 2,
+            "end_line": 2
+          },
+          {
+            "row": 3,
+            "start_line": 3,
+            "end_line": 3
+          },
+          {
+            "row": 4,
+            "start_line": 4,
+            "end_line": 4
+          }
+        ],
+        "arithmetic": "Decimal",
+        "precision": 38,
+        "rounding": "ROUND_HALF_EVEN",
+        "rounded": false,
+        "numeric_missing_policy": "reject_query",
+        "formulas_executed": false,
+        "aggregate_scope": "all_matched_rows_after_filters"
+      },
+      "plan_sha256": "f7154681f3f47a36ff372f966781e5e7941da97d0255fc32610146d267f18405",
+      "result_sha256": "9b8217516efdd74dc783ff3c88526bf0caaac695dfd74799e30b4ca517f34cab"
+    },
+    "provider_response_observation": {
+      "provider_id": "csv-controlled-fixture",
+      "model_id": "query-plan-fixture",
+      "observed_at": "2026-11-01T04:56:19.035155Z"
+    },
+    "trace": {
+      "trace_id": "trace-b0f3b6928d11490b",
+      "trace_state": "local_only",
+      "execution_id": "agent-chat-f364c9c7939040aeb02ccfd223a79a24",
+      "trace_sha256": "2deb5f245c8145aae51e4ee21558cbf10fbf6f63732c6334bfd4a7c58704f1cc"
+    }
+  },
+  "reload_http_status": 200,
+  "reload_conversation": {
+    "id": "conv_395a0d6ad5ee42ab98408eec00bcdcf3",
+    "project_id": "workspace_d0649b09a6d9464b91bfe813d2aabd12",
+    "owner_kind": "assistant",
+    "owner_id": "app-assistant",
+    "title": "Analiza pedidos: importe descontado por pedido, pendientes por estado ",
+    "status": "active",
+    "created_at": "2026-11-01T04:56:18.447Z",
+    "updated_at": "2026-11-01T04:56:19.042Z",
+    "revision": 2,
+    "labels": [],
+    "messages": [
+      {
+        "id": "msg_cf5efa2195d045848f04962af0950e74",
+        "sequence": 1,
+        "role": "user",
+        "content": "Analiza pedidos: importe descontado por pedido, pendientes por estado y total general.",
+        "created_at": "2026-11-01T04:56:18.987Z",
+        "status": "complete",
+        "references": {}
+      },
+      {
+        "id": "msg_8be7faaac950443a8da8abba4c4d30d1",
+        "sequence": 2,
+        "role": "assistant",
+        "content": "He leído **demo-usuario/archivo/pedidos-final.csv**: 3 filas de datos.\n\n**Interpretación aplicada** (revisa que coincide con tu pregunta):\n\n- importe = ((\"unidades\" × \"precio\\_unitario\") × (1 − (\"descuento\\_pct\" ÷ 100)))\n\n- Agrupación: estado\n\n- Cálculos: total: suma de importe\n\n- Separador decimal: punto (.). Sin separadores de miles implícitos.\n\n**Detalle**\n\n| Filas CSV | pedido | cliente | importe |\n| --- | --- | --- | --- |\n| 2 | P001 | Alba | 199.800 |\n| 3 | P002 | Bruno | 54.00 |\n| 4 | P003 | Carmen | 47.5000 |\n\n**Resultado de la consulta**\n\n| Filas CSV | estado | total |\n| --- | --- | --- |\n| 2, 4 | pendiente | 247.3000 |\n| 3 | entregado | 54.00 |\n\n**Totales de todas las filas que cumplen los filtros**\n\n| Filas CSV | total |\n| --- | --- |\n| 2, 3, 4 | 301.3000 |\n\nCobertura: 3 de 3 filas. Los agregados usan todas las filas coincidentes del archivo completo autorizado.\n\nArchivo SHA-256: 8fe7a2979043c0e992f4e13d84055045ae1fec91bb896d365fe996367acbafe5\n\nPlan SHA-256: f7154681f3f47a36ff372f966781e5e7941da97d0255fc32610146d267f18405\n\nResultado SHA-256: 9b8217516efdd74dc783ff3c88526bf0caaac695dfd74799e30b4ca517f34cab",
+        "created_at": "2026-11-01T04:56:19.042Z",
+        "status": "complete",
+        "references": {
+          "sources": [
+            {
+              "path": "demo-usuario/archivo/pedidos-final.csv",
+              "start_line": 1,
+              "end_line": 4,
+              "decision": "ALLOW",
+              "file_sha256": "8fe7a2979043c0e992f4e13d84055045ae1fec91bb896d365fe996367acbafe5",
+              "content_sha256": "8fe7a2979043c0e992f4e13d84055045ae1fec91bb896d365fe996367acbafe5",
+              "total_lines": 4,
+              "truncated": false,
+              "project_id": "workspace_d0649b09a6d9464b91bfe813d2aabd12",
+              "policy_revision": "76914bb1e2511ada9085fd3700fe115ea54cc11ae6798200924d28ae68a49515",
+              "source_type": "csv",
+              "total_rows": 3,
+              "columns": [
+                "pedido",
+                "cliente",
+                "producto",
+                "unidades",
+                "precio_unitario",
+                "descuento_pct",
+                "estado"
+              ],
+              "delimiter": ","
+            }
+          ],
+          "read_events": [
+            {
+              "path": "demo-usuario/archivo/pedidos-final.csv",
+              "start_line": 1,
+              "end_line": 4,
+              "decision": "ALLOW",
+              "file_sha256": "8fe7a2979043c0e992f4e13d84055045ae1fec91bb896d365fe996367acbafe5",
+              "content_sha256": "8fe7a2979043c0e992f4e13d84055045ae1fec91bb896d365fe996367acbafe5",
+              "total_lines": 4,
+              "truncated": false,
+              "project_id": "workspace_d0649b09a6d9464b91bfe813d2aabd12",
+              "policy_revision": "76914bb1e2511ada9085fd3700fe115ea54cc11ae6798200924d28ae68a49515",
+              "source_type": "csv",
+              "total_rows": 3,
+              "columns": [
+                "pedido",
+                "cliente",
+                "producto",
+                "unidades",
+                "precio_unitario",
+                "descuento_pct",
+                "estado"
+              ],
+              "delimiter": ",",
+              "kind": "csv_read",
+              "tool_name": "query_csv",
+              "executed": true,
+              "outcome": "SUCCESS",
+              "request_sha256": "1a549cc39ddf908e6794db35ccc94fa8031c9c429ae7cb0aadebce0e839a3f14",
+              "plan_sha256": "f7154681f3f47a36ff372f966781e5e7941da97d0255fc32610146d267f18405",
+              "result_sha256": "9b8217516efdd74dc783ff3c88526bf0caaac695dfd74799e30b4ca517f34cab",
+              "conversation_id": "conv_395a0d6ad5ee42ab98408eec00bcdcf3",
+              "request_revision": 0,
+              "owner_kind": "assistant",
+              "owner_id": "app-assistant"
+            }
+          ],
+          "csv_analysis": {
+            "status": "answered",
+            "path": "demo-usuario/archivo/pedidos-final.csv",
+            "file_sha256": "8fe7a2979043c0e992f4e13d84055045ae1fec91bb896d365fe996367acbafe5",
+            "request_sha256": "1a549cc39ddf908e6794db35ccc94fa8031c9c429ae7cb0aadebce0e839a3f14",
+            "schema": "csv-query.result.v1",
+            "plan": {
+              "derive": [
+                {
+                  "name": "importe",
+                  "expression": {
+                    "op": "mul",
+                    "args": [
+                      {
+                        "op": "mul",
+                        "args": [
+                          {
+                            "column": "unidades"
+                          },
+                          {
+                            "column": "precio_unitario"
+                          }
+                        ]
+                      },
+                      {
+                        "op": "sub",
+                        "args": [
+                          {
+                            "number": "1"
+                          },
+                          {
+                            "op": "div",
+                            "args": [
+                              {
+                                "column": "descuento_pct"
+                              },
+                              {
+                                "number": "100"
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                }
+              ],
+              "select": [
+                "pedido",
+                "cliente",
+                "importe"
+              ],
+              "group_by": [
+                "estado"
+              ],
+              "aggregates": [
+                {
+                  "op": "sum",
+                  "column": "importe",
+                  "as": "total"
+                }
+              ],
+              "filters": [],
+              "limit": 100
+            },
+            "interpretation": {
+              "derived": [
+                {
+                  "name": "importe",
+                  "expression": {
+                    "op": "mul",
+                    "args": [
+                      {
+                        "op": "mul",
+                        "args": [
+                          {
+                            "column": "unidades"
+                          },
+                          {
+                            "column": "precio_unitario"
+                          }
+                        ]
+                      },
+                      {
+                        "op": "sub",
+                        "args": [
+                          {
+                            "number": "1"
+                          },
+                          {
+                            "op": "div",
+                            "args": [
+                              {
+                                "column": "descuento_pct"
+                              },
+                              {
+                                "number": "100"
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  "text": "((\"unidades\" × \"precio_unitario\") × (1 − (\"descuento_pct\" ÷ 100)))"
+                }
+              ],
+              "filters": [],
+              "filter_combination": "all",
+              "group_by": [
+                "estado"
+              ],
+              "aggregates": [
+                {
+                  "op": "sum",
+                  "column": "importe",
+                  "as": "total"
+                }
+              ],
+              "decimal_separator": ".",
+              "constant_decimal_separator": "."
+            },
+            "columns": [
+              "estado",
+              "total"
+            ],
+            "rows": [
+              {
+                "values": {
+                  "estado": "pendiente",
+                  "total": "247.3000"
+                },
+                "source_rows": [
+                  2,
+                  4
+                ],
+                "source_locations": [
+                  {
+                    "row": 2,
+                    "start_line": 2,
+                    "end_line": 2
+                  },
+                  {
+                    "row": 4,
+                    "start_line": 4,
+                    "end_line": 4
+                  }
+                ]
+              },
+              {
+                "values": {
+                  "estado": "entregado",
+                  "total": "54.00"
+                },
+                "source_rows": [
+                  3
+                ],
+                "source_locations": [
+                  {
+                    "row": 3,
+                    "start_line": 3,
+                    "end_line": 3
+                  }
+                ]
+              }
+            ],
+            "selected_columns": [
+              "pedido",
+              "cliente",
+              "importe"
+            ],
+            "selected_rows": [
+              {
+                "values": {
+                  "pedido": "P001",
+                  "cliente": "Alba",
+                  "importe": "199.800"
+                },
+                "source_rows": [
+                  2
+                ],
+                "source_locations": [
+                  {
+                    "row": 2,
+                    "start_line": 2,
+                    "end_line": 2
+                  }
+                ]
+              },
+              {
+                "values": {
+                  "pedido": "P002",
+                  "cliente": "Bruno",
+                  "importe": "54.00"
+                },
+                "source_rows": [
+                  3
+                ],
+                "source_locations": [
+                  {
+                    "row": 3,
+                    "start_line": 3,
+                    "end_line": 3
+                  }
+                ]
+              },
+              {
+                "values": {
+                  "pedido": "P003",
+                  "cliente": "Carmen",
+                  "importe": "47.5000"
+                },
+                "source_rows": [
+                  4
+                ],
+                "source_locations": [
+                  {
+                    "row": 4,
+                    "start_line": 4,
+                    "end_line": 4
+                  }
+                ]
+              }
+            ],
+            "selected_truncated": false,
+            "grand_totals": {
+              "values": {
+                "total": "301.3000"
+              },
+              "source_rows": [
+                2,
+                3,
+                4
+              ],
+              "source_locations": [
+                {
+                  "row": 2,
+                  "start_line": 2,
+                  "end_line": 2
+                },
+                {
+                  "row": 3,
+                  "start_line": 3,
+                  "end_line": 3
+                },
+                {
+                  "row": 4,
+                  "start_line": 4,
+                  "end_line": 4
+                }
+              ],
+              "scope": "all_matched_rows_after_filters"
+            },
+            "coverage": {
+              "total_rows": 3,
+              "matched_rows": 3,
+              "returned_rows": 2,
+              "total_result_rows": 2,
+              "complete_input": true
+            },
+            "truncated": false,
+            "provenance": {
+              "source_columns": [
+                {
+                  "name": "pedido",
+                  "column": 1
+                },
+                {
+                  "name": "cliente",
+                  "column": 2
+                },
+                {
+                  "name": "unidades",
+                  "column": 4
+                },
+                {
+                  "name": "precio_unitario",
+                  "column": 5
+                },
+                {
+                  "name": "descuento_pct",
+                  "column": 6
+                },
+                {
+                  "name": "estado",
+                  "column": 7
+                }
+              ],
+              "matched_source_rows": [
+                2,
+                3,
+                4
+              ],
+              "matched_source_locations": [
+                {
+                  "row": 2,
+                  "start_line": 2,
+                  "end_line": 2
+                },
+                {
+                  "row": 3,
+                  "start_line": 3,
+                  "end_line": 3
+                },
+                {
+                  "row": 4,
+                  "start_line": 4,
+                  "end_line": 4
+                }
+              ],
+              "arithmetic": "Decimal",
+              "precision": 38,
+              "rounding": "ROUND_HALF_EVEN",
+              "rounded": false,
+              "numeric_missing_policy": "reject_query",
+              "formulas_executed": false,
+              "aggregate_scope": "all_matched_rows_after_filters"
+            },
+            "plan_sha256": "f7154681f3f47a36ff372f966781e5e7941da97d0255fc32610146d267f18405",
+            "result_sha256": "9b8217516efdd74dc783ff3c88526bf0caaac695dfd74799e30b4ca517f34cab"
+          },
+          "trace": {
+            "trace_id": "trace-b0f3b6928d11490b",
+            "trace_state": "local_only",
+            "execution_id": "agent-chat-f364c9c7939040aeb02ccfd223a79a24",
+            "trace_sha256": "2deb5f245c8145aae51e4ee21558cbf10fbf6f63732c6334bfd4a7c58704f1cc"
+          }
+        }
+      }
+    ]
+  },
+  "persisted_after_reload": true,
+  "reopened_conversation_id": "conv_395a0d6ad5ee42ab98408eec00bcdcf3",
+  "rendered_after_reload": true,
+  "runtime_storage_after": {
+    "application_root": "/workspace/scratch/54b1628604af/BAGO_AGENTIC_DATA_LAB",
+    "effective_source_root": "/workspace/scratch/54b1628604af/BAGO_AGENTIC_DATA_LAB",
+    "application_root_matches_source": true,
+    "data_root": "/tmp/adl-csv-browser-fixture-20261101/data",
+    "mode": "external_data_root",
+    "data_root_exists": true,
+    "resolver_creates_directories": false,
+    "external_overrides": [],
+    "effective_paths": {
+      "conversations": "/tmp/adl-csv-browser-fixture-20261101/data/conversations/library.sqlite3",
+      "capabilities": "/tmp/adl-csv-browser-fixture-20261101/data/capabilities",
+      "evaluations": "/tmp/adl-csv-browser-fixture-20261101/data/evaluations",
+      "contacts": "/tmp/adl-csv-browser-fixture-20261101/data/contacts",
+      "communications": "/tmp/adl-csv-browser-fixture-20261101/data/communications",
+      "tasks": "/tmp/adl-csv-browser-fixture-20261101/data/tasks",
+      "providers": "/tmp/adl-csv-browser-fixture-20261101/data/providers/provider-registry.json",
+      "ollama_config": "/tmp/adl-csv-browser-fixture-20261101/data/providers/ollama.json",
+      "model_policy": "/tmp/adl-csv-browser-fixture-20261101/data/providers/model-policy.json",
+      "active_provider": "/tmp/adl-csv-browser-fixture-20261101/data/providers/active-provider.json",
+      "agents": "/tmp/adl-csv-browser-fixture-20261101/data/agents/created",
+      "workspace_config": "/tmp/adl-csv-browser-fixture-20261101/data/config",
+      "gex_runtime": "/tmp/adl-csv-browser-fixture-20261101/data/gex/runtime",
+      "gex_identity": "/tmp/adl-csv-browser-fixture-20261101/data/gex/identity.sqlite3",
+      "knowledge": "/tmp/adl-csv-browser-fixture-20261101/data/knowledge/local-knowledge.sqlite3",
+      "knowledge_traces": "/tmp/adl-csv-browser-fixture-20261101/data/traces/grounded-rag",
+      "ontology": "/tmp/adl-csv-browser-fixture-20261101/data/knowledge/ontology.sqlite3",
+      "ontology_traces": "/tmp/adl-csv-browser-fixture-20261101/data/traces/ontology",
+      "whatsapp": "/tmp/adl-csv-browser-fixture-20261101/data/whatsapp",
+      "web_research": "/tmp/adl-csv-browser-fixture-20261101/data/web-research",
+      "document_exports": "/tmp/adl-csv-browser-fixture-20261101/data/document-exports",
+      "connections": "/tmp/adl-csv-browser-fixture-20261101/data/connections/registry.json",
+      "etl_metadata": "/tmp/adl-csv-browser-fixture-20261101/data/etl/metadata.sqlite3",
+      "jobs": "/tmp/adl-csv-browser-fixture-20261101/data/jobs/history",
+      "traces": "/tmp/adl-csv-browser-fixture-20261101/data/traces",
+      "storage_aliases": "/tmp/adl-csv-browser-fixture-20261101/data/storage-aliases.json"
+    },
+    "host_bound_profile_configured": false,
+    "storage_alias_configuration_present": false,
+    "process_id": 38526,
+    "server_source_path": "/workspace/scratch/54b1628604af/BAGO_AGENTIC_DATA_LAB/src/api/server.py",
+    "server_source_sha256_at_import": "a7949d8df192c142232ff05602d1b46a184443c02a504656c13fd4a6de33c629"
+  },
+  "database_after": {
+    "path": "/tmp/adl-csv-browser-fixture-20261101/data/conversations/library.sqlite3",
+    "inode": "1607749",
+    "device": "27",
+    "size": "49152",
+    "mtime_ns": "1793508979042485982",
+    "sha256": "4a4c80c9cd0720ba34a7c811b77b8ab2e9ba56d9d8238e3b078ee8b998f7fa6c"
+  },
+  "finished_at": "2026-11-01T04:56:21.324Z"
+}

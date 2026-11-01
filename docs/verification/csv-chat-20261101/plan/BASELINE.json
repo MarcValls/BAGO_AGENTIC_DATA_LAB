@@ -1,0 +1,13 @@
+{
+  "base_sha": "16b74a590889d6b42d7889abc8cd114b35c5dbf1",
+  "branch": "codex/governed-csv-chat-20261101",
+  "pr112": {
+    "state": "closed",
+    "merged": true,
+    "head_sha": "752ebc47289167149fea9ead50bbee7933f18517",
+    "merge_sha": "16b74a590889d6b42d7889abc8cd114b35c5dbf1"
+  },
+  "source_baseline_sha256": "32359432b30d468634705c51af5623cc1bd1efec020e382b7707cce05c0e07cd",
+  "historical_flow_sha256": "fe92438a50bfccc977df72eaae75b3dbface1176fa681f784a6384d1cdae2749",
+  "platform": "Linux / Python 3.12; Windows and live user provider initially NOT_RUN"
+}
