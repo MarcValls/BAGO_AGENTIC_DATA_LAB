@@ -1,0 +1,83 @@
+{
+  "status": "PASS",
+  "base_ref": "origin/main",
+  "base_sha": "ed0efc83cc39a40aac231d9aa0da77a5d30a91e7",
+  "head": "ed0efc83cc39a40aac231d9aa0da77a5d30a91e7",
+  "commit_state": "Implementation is uncommitted; HEAD names base only. Exact source bytes above are the tested candidate.",
+  "sources": [
+    {
+      "path": "frontend/src/components/WorkspaceManager.tsx",
+      "snapshot": "sources/frontend/src/components/WorkspaceManager.tsx",
+      "sha256": "f26f56728425fa88b9e08b8f0f937ae3f9d5478c47f8a31ce6cd04b42756c468",
+      "bytes": 35356,
+      "base_exists": true
+    },
+    {
+      "path": "frontend/src/components/CsvTablePreview.tsx",
+      "snapshot": "sources/frontend/src/components/CsvTablePreview.tsx",
+      "sha256": "bdad8478d3a25819f8f382f940e2b6dc2c2401de82ae53aa4d8bd57f88f8b843",
+      "bytes": 1637,
+      "base_exists": false
+    },
+    {
+      "path": "frontend/src/components/CsvTablePreview.css",
+      "snapshot": "sources/frontend/src/components/CsvTablePreview.css",
+      "sha256": "7316746c5b658a531e583d0aa9aeb936a087f0380c477cf340c3fdf4601d2e66",
+      "bytes": 1196,
+      "base_exists": false
+    },
+    {
+      "path": "frontend/src/utils/delimitedText.ts",
+      "snapshot": "sources/frontend/src/utils/delimitedText.ts",
+      "sha256": "a0f372f18b3aa1c781647325598d642114f255a30edc28374153a3f2efe9efc0",
+      "bytes": 2410,
+      "base_exists": false
+    },
+    {
+      "path": "frontend/src/i18n/domains/commerce.ts",
+      "snapshot": "sources/frontend/src/i18n/domains/commerce.ts",
+      "sha256": "29abdf4c07726681a4c512b0251b837c368d38bae4839aeca25833281d9ef48e",
+      "bytes": 129329,
+      "base_exists": true
+    },
+    {
+      "path": "frontend/tests/workspace/csv-preview.test.tsx",
+      "snapshot": "sources/frontend/tests/workspace/csv-preview.test.tsx",
+      "sha256": "bf9624b66a0f714576945e5c90faeb1bf112aeea5e10a17cec5468e9f151a185",
+      "bytes": 5264,
+      "base_exists": false
+    },
+    {
+      "path": "frontend/tests/workspace/csv-parser.test.tsx",
+      "snapshot": "sources/frontend/tests/workspace/csv-parser.test.tsx",
+      "sha256": "910bc29f5e483d10eafcc30d1c91db7967c74fbc1471e2151744de634f6ebdcf",
+      "bytes": 2491,
+      "base_exists": false
+    }
+  ],
+  "all_actual_changes_within_declared_sources_or_build_outputs": true,
+  "tracked_generated_outputs": [
+    "frontend/.build/app.tsbuildinfo",
+    "frontend/.build/app/App.js",
+    "frontend/.build/app/components/AgentBuilder.js",
+    "frontend/.build/app/components/AgentChat.js",
+    "frontend/.build/app/components/AgentRunner.js",
+    "frontend/.build/app/components/Authorization.js",
+    "frontend/.build/app/components/Evaluation.js",
+    "frontend/.build/app/components/JobHistory.js",
+    "frontend/.build/app/components/Retrieval.js",
+    "frontend/.build/app/components/Summary.js",
+    "frontend/.build/app/components/Trace.js",
+    "frontend/.build/app/features/decision-inspector/actions/ActionReview.js",
+    "frontend/.build/app/features/decision-inspector/evidence/EvidenceExplorer.js",
+    "frontend/.build/app/features/decision-inspector/integration/DecisionInspector.js",
+    "frontend/.build/app/features/decision-inspector/shared/InspectorState.js",
+    "frontend/.build/app/features/decision-inspector/shell/InspectorShell.js",
+    "frontend/.build/app/features/decision-inspector/trace/TraceTimeline.js",
+    "frontend/.build/node.tsbuildinfo",
+    "frontend/.build/node/vite.config.js",
+    "frontend/dist/index.html"
+  ],
+  "source_scope_boundary": "User authorization + post-change hash/diff check; per-goal teamctl does not sandbox actual frontend source writes.",
+  "build_asset_checks": "PASS: every listed dist asset rehashed against CSV_BUILD; no browser session launched."
+}

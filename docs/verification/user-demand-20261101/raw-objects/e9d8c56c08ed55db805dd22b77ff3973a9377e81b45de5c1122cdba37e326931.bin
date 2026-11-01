@@ -1,0 +1,122 @@
+[
+  {
+    "path": "LIVE_ACTIONS_VERIFICATION.json",
+    "sha256": "1add1a063b5dbf32700ab89aa45cce6f87bdef8f40b99253873c032167498141"
+  },
+  {
+    "path": "R25-before-runs.json",
+    "sha256": "d73d337afaf631945694bd25401e19d2eb93ce4c50304d1f6aae9b1f5f56a6db"
+  },
+  {
+    "path": "R25-before-task.json",
+    "sha256": "317912fd184595f0c1589921e439598401329f0063b33198c5c399588c0413f6"
+  },
+  {
+    "path": "R25-dirty-stored-task.json",
+    "sha256": "317912fd184595f0c1589921e439598401329f0063b33198c5c399588c0413f6"
+  },
+  {
+    "path": "R25_DIRTY_CONFIRM-driver.json",
+    "sha256": "10f41a4d4e85551c259e22826bd343a6e464cc06ddb854314c5d3f832a2d90cd"
+  },
+  {
+    "path": "R25_DRAFT_EDITED-driver.json",
+    "sha256": "36d6f1078816faa468375264944fb353d295f77f91702d62bc809466ccfc173e"
+  },
+  {
+    "path": "R25_HISTORY_OPEN-driver.json",
+    "sha256": "17c2e391fc0113b2a8a3a4a0ba235d8468e146332730b36b426b3ef321f38069"
+  },
+  {
+    "path": "R25_KEEP_DRAFT-driver.json",
+    "sha256": "161cffff15d438df54ece6f90c6d712c3ece0e131b89ed93431bd142e153212c"
+  },
+  {
+    "path": "R25_READY-driver.json",
+    "sha256": "786edcec9f2cb2d1fa89b984018d165a1e907f351ffc5b3281d8233e96bb4a0a"
+  },
+  {
+    "path": "R25_RESTORED-driver.json",
+    "sha256": "bfd4435df9bd5ff7af2ab1cfd200c367f0768d59dca6d58b0b15504823d66d75"
+  },
+  {
+    "path": "R26-after-runs.json",
+    "sha256": "d73d337afaf631945694bd25401e19d2eb93ce4c50304d1f6aae9b1f5f56a6db"
+  },
+  {
+    "path": "R26-after-task.json",
+    "sha256": "317912fd184595f0c1589921e439598401329f0063b33198c5c399588c0413f6"
+  },
+  {
+    "path": "R26-context-raw.json",
+    "sha256": "869fd3e776bc049ab2d36ed02caf287ab34418c561f2c9ae3ece70b12fe885a1"
+  },
+  {
+    "path": "R26-negative-http-attempt2.json",
+    "sha256": "97626d582a8bc93b796cfaf1e5403ae2f9c39846080860425c1b683e31b23118"
+  },
+  {
+    "path": "R26-negative-http.json",
+    "sha256": "bc6f4dd3823065de2a1272c81e5a75096958878935ae2393f04386a362c819fe"
+  },
+  {
+    "path": "R26_BEFORE_CONSENT-driver.json",
+    "sha256": "d0d17a54d3a7c476314889f1cb06f953d7efcbed23d1760231da48c9300696ad"
+  },
+  {
+    "path": "R26_BEFORE_CONSENT.png",
+    "sha256": "47fe449053a1af34668dccc68b63644e77f4d228b3a1fe79c07f241cead31f9f"
+  },
+  {
+    "path": "R26_CONSENT-driver.json",
+    "sha256": "c5cf05f8660089701e120cfd4fe1ccbed97b463731925cc4139a4e3d23a5cac5"
+  },
+  {
+    "path": "R26_PERSISTED_REOPEN-driver.json",
+    "sha256": "12057207ed988df3ebe3766e8fb777689ad0ad35d636267d0a869ca2c4fe4a6c"
+  },
+  {
+    "path": "R26_PERSISTED_REOPEN.png",
+    "sha256": "cfde7c9a114bf2af8f4e18fe79e59efd83b2c116a7b7e857ee0d2c38452e5a59"
+  },
+  {
+    "path": "R26_RESULT_RECORDED-driver.json",
+    "sha256": "64aa807925bba41ece962024739e320e39f1da8e406dbf36897cd35ee715afe6"
+  },
+  {
+    "path": "R26_RESULT_RECORDED.png",
+    "sha256": "2f83e0f499f866dfcc14318b3a9255211c25ae7fc26d951cb7609d28139d3c56"
+  },
+  {
+    "path": "R27_COPY_DRAFT-driver.json",
+    "sha256": "71a58155989ba506b19e59a0344018f9694773e3df36ff843d7926615bcd753b"
+  },
+  {
+    "path": "R27_FINAL_REVIEW-driver.json",
+    "sha256": "b5f0a81289ae970d001b95ec566428c770f4b1a64d7cb42f1dcc9df21c9b02f1"
+  },
+  {
+    "path": "R27_FINAL_REVIEW.png",
+    "sha256": "4c1b2b617976722ee3ce4169af5f77ef51a9f337430aa6381d35fcf0fdf067e2"
+  },
+  {
+    "path": "R27_RECOVER-driver.json",
+    "sha256": "19550fb0056e49ef39aadbeed975ac151d1e9cbeb4cbfd2c07c587343c709f0d"
+  },
+  {
+    "path": "SOURCE_EXPECTED.json",
+    "sha256": "4c94415436eafef8785daaf2fdf546bb9ab52d67cda18c56ae80f789e2b97566"
+  },
+  {
+    "path": "independent-source-review/REPORT.json",
+    "sha256": "483479f44eb8638c1019ddef470a0084c3569628900669ffce6bbc07ec3f4f25"
+  },
+  {
+    "path": "independent-source-review/REPORT.md",
+    "sha256": "ca05b899505225e6d82ec12e5ac95e6871786d2caa542d78ff151956dffd2082"
+  },
+  {
+    "path": "independent-source-review/SOURCE_MANIFEST.json",
+    "sha256": "c89c9dba9637c3f85145f4041780affeccdbf6fab4e61b57267513cb15d1c942"
+  }
+]

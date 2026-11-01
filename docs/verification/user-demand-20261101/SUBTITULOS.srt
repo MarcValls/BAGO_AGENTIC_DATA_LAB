@@ -1,0 +1,125 @@
+1
+00:00:27,925 --> 00:01:04,017
+F01 | FAIL | Abrir BAGO y empezar directamente en el chat
+La recarga vuelve a abrir Proyecto e Historial sobre el chat; cierre manual necesario.
+
+2
+00:01:04,919 --> 00:02:12,318
+F02 | PASS | Activar el modelo real del orquestador desde Configuracion
+Acceso real a Codex comprobado para gpt-6-luna y modelo habilitado. Limite corregido: las ejecuciones reales posteriores usaron gpt-6.1-sol segun la traza; no se afirma que el chat usara Luna.
+
+3
+00:02:12,983 --> 00:03:20,092
+F03 | FAIL | Redactar una respuesta para un cliente y calcular un presupuesto
+La peticion de calculo y texto se desvia al borrador de Comunicaciones y exige un contacto; no calcula 199,80 ni redacta. No se envia nada.
+
+4
+00:03:20,862 --> 00:03:56,426
+F04 | PASS | Reformular: calcular y explicar un presupuesto en el chat
+El chat devuelve 222,00 de subtotal, 22,20 de descuento y 199,80 de total; incluye pregunta de fecha de entrega.
+
+5
+00:03:57,189 --> 00:04:35,428
+F05 | PASS | Abrir la carpeta de pruebas y establecer el proyecto
+La interfaz registra el proyecto y activa exactamente D:/301020256_PRUEBA_BAGO5_ADL; crea solo los archivos minimos revisados y conserva permisos separados.
+
+6
+00:04:36,074 --> 00:05:25,520
+F06 | PASS | Crear documentos de negocio desde la gestion de archivos
+BAGO crea demo-usuario/pedidos.csv tras revisar y confirmar. Carpeta creada, archivo de 183 bytes y contenido CSV leido y verificado.
+
+7
+00:05:26,326 --> 00:05:52,037
+F07 | PASS | Corregir un pedido y sobrescribir el archivo existente
+Sobrescritura real completada: Bruno pasa a 6 unidades, se conservan cabecera y demas filas; lectura posterior confirma el cambio.
+
+8
+00:05:52,798 --> 00:06:23,295
+F08 | PASS | Mover y renombrar el archivo de pedidos
+El origen desaparece; pedidos-final.csv existe en la subcarpeta archivo y conserva exactamente SHA-256 8fe7a2979043c0e992f4e13d84055045ae1fec91bb896d365fe996367acbafe5.
+
+9
+00:06:24,293 --> 00:06:48,677
+F09 | PASS | Borrar un archivo de prueba y recuperarlo desde la papelera
+El archivo desaparece al enviarlo a la papelera; BAGO indica integridad PASS y la restauracion recupera exactamente los mismos 183 bytes y SHA-256.
+
+10
+00:06:49,325 --> 00:07:46,504
+F10 | BLOCKED | Pedir al chat que lea y analice el CSV del proyecto
+No se leen datos: BAGO pide seleccionar archivo autorizado para este envio pese a la ruta en el mensaje. Lectura y analisis siguen NOT_RUN; se abre el flujo explicito de archivo.
+
+11
+00:07:47,246 --> 00:10:08,132
+F11 | BLOCKED | Seleccionar el archivo y autorizar la lectura para el chat
+Consultar archivo rechaza CSV: path is not an allowed text or Markdown source. No indexacion ni calculo; limitacion de formatos visible.
+
+12
+00:10:09,238 --> 00:12:23,487
+F12 | FAIL | Autorizar lectura del proyecto y usarla desde el chat
+READ demo-usuario guardado y confirmado, pero el chat vuelve a pedir el archivo pese a la ruta explicita. No produce tabla ni importes ni lectura verificable.
+
+13
+00:12:24,522 --> 00:14:41,149
+F13 | BLOCKED | Desarrollar una utilidad Python para calcular pedidos con validaciones
+BAGO guarda perfil pero no valida el alcance; no crea Python ni pruebas. El endpoint Tareas solo genera texto y declara sin escritura, comandos ni herramientas live: no se atribuye a una denegacion del usuario.
+
+14
+00:14:41,789 --> 00:19:06,343
+F14 | PASS | Revisar el agente creado para la tarea y sus herramientas
+Perfil y tarea guardados. Ejecucion real taskrun_8f7aaadbce8a4e4892e95b009cb7fc53 recibe plan de 1958 caracteres, distinto de la solicitud de 420. Archivos y pruebas siguen NOT_RUN.
+
+15
+00:19:07,135 --> 00:19:07,871
+F15 | FAIL | Distinguir la solicitud enviada de la respuesta recibida
+El historial muestra primero la solicitud bajo Respuesta recibida y sin etiqueta; el texto real de respuesta aparece debajo. Relanzar solo copia a borrador sin ejecutar. Defecto de presentacion confirmado.
+
+16
+00:19:08,514 --> 00:20:12,876
+F16 | BLOCKED | Coordinar dos encargos independientes en paralelo
+La peticion de dos agentes en paralelo no se despacha: la respuesta dice que faltan asignacion y permisos. No hay dos resultados ni concurrencia demostrada.
+
+17
+00:20:13,643 --> 00:21:11,086
+F17 | PASS | Inspeccionar la ejecucion y distinguir respuesta de acciones reales
+Inspector ligado a la conversacion actual: cuatro registros, evento assistant.control COMPLETED y datos registrados. La UI avisa que esto no certifica tarea ni evaluacion PASS; no prueba efectos inexistentes.
+
+18
+00:21:11,724 --> 00:22:58,654
+F18 | FAIL | Navegar por los agentes con la barra lateral contraida
+Con barra contraida, pulsar Agentes vuelve a expandir la barra. Permite navegar a Mis agentes, pero no conserva el modo contraido con desplegable.
+
+19
+00:24:49,492 --> 00:25:27,556
+R19 | PASS | Repeticion grabada: abrir el CSV real en Tabla
+Recaptura verificada en video: siete cabeceras y tres filas; Tabla/Texto funcionan y conservan SHA y mtime. Sin edicion pendiente.
+
+20
+00:25:51,941 --> 00:25:55,377
+R20 | PASS | Repeticion grabada: celdas CSV complejas y texto inerte
+Recaptura de dos filas complejas correcta; HTML y =2+2 siguen siendo texto. Valores cotejados con CSV guardado y captura semantica.
+
+21
+00:26:36,932 --> 00:31:28,504
+R21 | PASS | Repeticion grabada: error CSV y recuperacion sin escribir
+CSV con comillas sin cerrar muestra aviso; descartado y reabierto sin cambios de bytes ni fecha. Primer selector fallido fue de automatización.
+
+22
+00:31:46,159 --> 00:32:42,935
+R24 | PASS | Crear revisor independiente sin herramientas
+Segundo perfil guardado desde UI, proveedor Codex gpt-6.1-sol y cero herramientas; listo para revisión textual.
+
+23
+00:33:24,321 --> 00:34:46,207
+R25 | PASS | Editar tarea manualmente sin ejecutar ni guardar automáticamente
+Edición manual carga la tarea real; borrador bloquea ejecutar; cancelar conserva borrador y descarte confirmado recarga original sin escrituras.
+
+24
+00:34:46,530 --> 00:36:21,805
+R26 | PASS | Revisión real de una respuesta por otro agente
+Revisión real contestada y guardada; reapertura conserva resultado e IDs. Original intacto. Otro perfil, mismo modelo: no acredita aceptación automática.
+
+25
+00:36:58,168 --> 00:38:00,287
+R27 | PASS | Copiar como borrador sin ejecutar y recuperar original
+Copiar bloquea ejecutar hasta guardar; descarte confirmado restaura original y revisión real sigue persistida. 18 comprobaciones LIVE PASS.
+

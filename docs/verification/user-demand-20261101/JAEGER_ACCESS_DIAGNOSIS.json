@@ -1,0 +1,68 @@
+{
+  "at": "2026-11-01T01:30:23.440537+00:00",
+  "current_runtime_chat_trace_references": [
+    {
+      "message_id": "msg_4277c26af8bb48c8b497753294fc12e4",
+      "conversation_id": "conv_cd362410203546dd8feeb22bee085237",
+      "trace": {
+        "trace_id": "trace-cce4f9ba79374bc2",
+        "trace_state": "local_only",
+        "execution_id": "agent-chat-5e3f74fcf7a04d82abea1d4df8a207e9",
+        "trace_sha256": "cd56e7e67096ff7d04fedd2e2dc7ab9f4fb6c95f02d583a13c6f70e70315d516"
+      }
+    },
+    {
+      "message_id": "msg_9f808e43386d4356bb67d4a83cfd885f",
+      "conversation_id": "conv_cd362410203546dd8feeb22bee085237",
+      "trace": {
+        "trace_id": "trace-fc6414ff31cf4c4f",
+        "trace_state": "local_only",
+        "execution_id": "agent-chat-d39891c06e6b4cf5b1a971c90b991d89",
+        "trace_sha256": "7ef36fa6ffea8bc9a39ad625b0d924fdeeb40659cabb3f51c3cbcaf4d093bf06"
+      }
+    },
+    {
+      "message_id": "msg_323324ef64db411abecf1b7a2ff80b07",
+      "conversation_id": "conv_a8f2f2ba51194f39bb62dafd2a26773e",
+      "trace": {
+        "trace_id": "trace-2e5efe3436bc43f3",
+        "trace_state": "local_only",
+        "execution_id": "agent-chat-a869284f8b074fd5827fe739d2590f5a",
+        "trace_sha256": "faa138a57209971b88eedd0fa64f71d09db3c63c466861f02bf807c8f370535c"
+      }
+    },
+    {
+      "message_id": "msg_cb66911f38f14983b0a03564effd364a",
+      "conversation_id": "conv_a8f2f2ba51194f39bb62dafd2a26773e",
+      "trace": {
+        "trace_id": "trace-ed4c8050f13c4f10",
+        "trace_state": "local_only",
+        "execution_id": "agent-chat-889717f2001a40d4adf2a3c6b43f9e35",
+        "trace_sha256": "562ce97aa08e0157558586b4c3ddb9c2c0c4cf20c9d886fad989239b9b8c2393"
+      }
+    },
+    {
+      "message_id": "msg_411aef4dabd64faeb5dc35f12517099a",
+      "conversation_id": "conv_a8f2f2ba51194f39bb62dafd2a26773e",
+      "trace": {
+        "trace_id": "trace-b54ca4fdb48943f8",
+        "trace_state": "local_only",
+        "execution_id": "agent-chat-424924ea289b4a72a98b6d35a36a9b1c",
+        "trace_sha256": "86220237943a214aaefcd4903c5b767a05597bdbb06ff42a73ad86a084a5a81a"
+      }
+    },
+    {
+      "message_id": "msg_d18e42d48da344cc916d316f2b37b1c3",
+      "conversation_id": "conv_a8f2f2ba51194f39bb62dafd2a26773e",
+      "trace": {
+        "trace_id": "trace-eb6156313f7542ba",
+        "trace_state": "local_only",
+        "execution_id": "agent-chat-813769e4121a4c34a0f4a7d5dff40e68",
+        "trace_sha256": "b711962f70ec6febdeb8a6eff2461fd59d08a4a2829ec131f234bbb9d1c89cc2"
+      }
+    }
+  ],
+  "task_run": "taskrun_8f7aaadbce8a4e4892e95b009cb7fc53",
+  "task_route_jaeger_integration": "NOT_IMPLEMENTED in current src/api/task_routes.py; no trace metadata exposed by its run/review contract",
+  "ui_chat_access": "Per-message trace details still present; Jaeger link rendered only when jaegerUrl exists."
+}

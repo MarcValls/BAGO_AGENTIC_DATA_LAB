@@ -1,0 +1,93 @@
+{
+  "status": "PASS",
+  "base_sha": "ed0efc83cc39a40aac231d9aa0da77a5d30a91e7",
+  "head": "ed0efc83cc39a40aac231d9aa0da77a5d30a91e7",
+  "sources": [
+    {
+      "path": "frontend/src/components/AgentTasks.tsx",
+      "snapshot": "sources/frontend/src/components/AgentTasks.tsx",
+      "sha256": "14dd34982a6d23da5858afd0e54fe887a68ce9056d80c55609eb5fd309a784e4",
+      "bytes": 17984
+    },
+    {
+      "path": "frontend/src/components/AgentTaskResponse.css",
+      "snapshot": "sources/frontend/src/components/AgentTaskResponse.css",
+      "sha256": "a05d157e1f037080afb0d36bf42990bae6cdb4a3089540592c0c324e88b9a031",
+      "bytes": 681
+    },
+    {
+      "path": "frontend/src/i18n/domains/agents.ts",
+      "snapshot": "sources/frontend/src/i18n/domains/agents.ts",
+      "sha256": "4c236fcdd6e8487d009cb125f5dd6692184586293247fca11203869144645a39",
+      "bytes": 149619
+    },
+    {
+      "path": "frontend/tests/ui/agent-tasks/saved-tasks.test.tsx",
+      "snapshot": "sources/frontend/tests/ui/agent-tasks/saved-tasks.test.tsx",
+      "sha256": "7087fa7bd799d30b562822fb6a4d1ab51e5c8e47154b5f4ad2424d93ae82c271",
+      "bytes": 18169
+    },
+    {
+      "path": "frontend/tests/ui/agent-tasks/response-display.test.tsx",
+      "snapshot": "sources/frontend/tests/ui/agent-tasks/response-display.test.tsx",
+      "sha256": "356a83e79c22a428cc8a0949ff0ae85a09696b3f388a8e0eabc40908052d4d6f",
+      "bytes": 5549
+    }
+  ],
+  "preserved_csv_sources": [
+    {
+      "path": "frontend/src/components/WorkspaceManager.tsx",
+      "snapshot": "sources/frontend/src/components/WorkspaceManager.tsx",
+      "sha256": "f26f56728425fa88b9e08b8f0f937ae3f9d5478c47f8a31ce6cd04b42756c468",
+      "bytes": 35356,
+      "base_exists": true
+    },
+    {
+      "path": "frontend/src/components/CsvTablePreview.tsx",
+      "snapshot": "sources/frontend/src/components/CsvTablePreview.tsx",
+      "sha256": "bdad8478d3a25819f8f382f940e2b6dc2c2401de82ae53aa4d8bd57f88f8b843",
+      "bytes": 1637,
+      "base_exists": false
+    },
+    {
+      "path": "frontend/src/components/CsvTablePreview.css",
+      "snapshot": "sources/frontend/src/components/CsvTablePreview.css",
+      "sha256": "7316746c5b658a531e583d0aa9aeb936a087f0380c477cf340c3fdf4601d2e66",
+      "bytes": 1196,
+      "base_exists": false
+    },
+    {
+      "path": "frontend/src/utils/delimitedText.ts",
+      "snapshot": "sources/frontend/src/utils/delimitedText.ts",
+      "sha256": "a0f372f18b3aa1c781647325598d642114f255a30edc28374153a3f2efe9efc0",
+      "bytes": 2410,
+      "base_exists": false
+    },
+    {
+      "path": "frontend/src/i18n/domains/commerce.ts",
+      "snapshot": "sources/frontend/src/i18n/domains/commerce.ts",
+      "sha256": "29abdf4c07726681a4c512b0251b837c368d38bae4839aeca25833281d9ef48e",
+      "bytes": 129329,
+      "base_exists": true
+    },
+    {
+      "path": "frontend/tests/workspace/csv-preview.test.tsx",
+      "snapshot": "sources/frontend/tests/workspace/csv-preview.test.tsx",
+      "sha256": "bf9624b66a0f714576945e5c90faeb1bf112aeea5e10a17cec5468e9f151a185",
+      "bytes": 5264,
+      "base_exists": false
+    },
+    {
+      "path": "frontend/tests/workspace/csv-parser.test.tsx",
+      "snapshot": "sources/frontend/tests/workspace/csv-parser.test.tsx",
+      "sha256": "910bc29f5e483d10eafcc30d1c91db7967c74fbc1471e2151744de634f6ebdcf",
+      "bytes": 2491,
+      "base_exists": false
+    }
+  ],
+  "preserved_csv_handoff_sha256": "ce3b60eee4c929a8b0147a67f57a5f9a9189a42af539bcc20efd4735a981be2a",
+  "combined_build_manifest": "evidence/COMBINED_BUILD.json",
+  "scope_check": "PASS: only five new response UI paths, seven unchanged CSV paths and generated frontend build outputs.",
+  "commit_state": "Uncommitted source candidate; exact raw hashes are authoritative, HEAD still identifies base.",
+  "coordination_scope": "Per-goal teamctl evidence/snapshot validation; actual source writes governed by explicit user-authorized paths, no OS sandbox claim."
+}

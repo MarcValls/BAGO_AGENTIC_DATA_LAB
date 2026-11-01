@@ -1,0 +1,10 @@
+{
+  "status": "PASS",
+  "checks": {
+    "two_rows": true,
+    "comma": true,
+    "quoted": true,
+    "html_literal": true,
+    "formula_literal": true
+  }
+}

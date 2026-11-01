@@ -1,0 +1,63 @@
+"""Execute the unmodified README generator and then its consistency check in Linux."""
+from pathlib import Path
+from datetime import datetime,timezone
+import hashlib,importlib.metadata,json,os,re,shutil,subprocess,sys,xml.etree.ElementTree as ET
+
+ROOT=Path.cwd();OUT=ROOT/'.readme-results';OUT.mkdir();PUBLIC=Path('/results')
+sha=lambda p:hashlib.sha256(p.read_bytes()).hexdigest()
+source=json.loads((ROOT/'.readme-gate/source.json').read_text())
+subprocess.run(['git','init','--quiet',str(ROOT)],check=True)
+with (ROOT/'.readme-gate/candidate.pack').open('rb') as stream:
+    subprocess.run(['git','index-pack','--stdin'],cwd=ROOT,stdin=stream,check=True,capture_output=True)
+subprocess.run(['git','update-ref','refs/heads/codex/csv-table-preview-20261101',source['head']],cwd=ROOT,check=True)
+subprocess.run(['git','symbolic-ref','HEAD','refs/heads/codex/csv-table-preview-20261101'],cwd=ROOT,check=True)
+(ROOT/'.git/shallow').write_text(source['head']+'\n')
+subprocess.run(['git','read-tree','HEAD'],cwd=ROOT,check=True)
+subprocess.run(['git','remote','add','origin','https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB.git'],cwd=ROOT,check=True)
+assert subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip()==source['head']
+assert all(sha(ROOT/v['path'])==v['sha256'] for v in source['sources'])
+temp=ROOT/'.readme-temp';temp.mkdir()
+env=dict(os.environ)
+for name in ['BAGO_DATA_ROOT','BAGO_APP_ROOT','BAGO_CONVERSATION_DB_PATH','PYTEST_ADDOPTS']:
+    env.pop(name,None)
+env.update(TMPDIR=str(temp),TEMP=str(temp),TMP=str(temp),PYTHONDONTWRITEBYTECODE='1',PYTHONUTF8='1')
+steps=[('tools',[sys.executable,'-B','-c',"import importlib.metadata,json,shutil; assert all(shutil.which(n) for n in ['git','node','ffmpeg']); print(json.dumps({n:importlib.metadata.version(n) for n in ['pytest','fastapi','pydantic','jsonschema','httpx','pypdf','Pillow','websockets']}))"]),
+       ('dom',['node','-e',"const{JSDOM}=require('./frontend/node_modules/jsdom');console.log(process.version,new JSDOM('<p>fixture</p>').window.document.querySelector('p').textContent)"]),
+       ('generate',[sys.executable,'-B','scripts/generate_dynamic_readme.py']),
+       ('consistency',[sys.executable,'-B','scripts/generate_dynamic_readme.py','--check','--skip-tests'])]
+records=[]
+def progress(value):
+    (PUBLIC/'progress.json').write_text(json.dumps(value,indent=2)+'\n');print(json.dumps(value[-1] if isinstance(value,list) and value else value),flush=True)
+for label,argv in steps:
+    record={'label':label,'argv':argv,'started_at':datetime.now(timezone.utc).isoformat(),'state':'RUNNING'}
+    progress(records+[record])
+    current=dict(env,PYTEST_ADDOPTS=f'--basetemp={temp/label} --junitxml={OUT/(label+".xml")} -p no:cacheprovider')
+    with (OUT/(label+'.stdout.log')).open('wb') as stdout,(OUT/(label+'.stderr.log')).open('wb') as stderr:
+        try:p=subprocess.run(argv,cwd=ROOT,env=current,stdout=stdout,stderr=stderr,timeout=1500);code=p.returncode
+        except subprocess.TimeoutExpired:code=124
+    record.update(returncode=code,state='COMPLETED',finished_at=datetime.now(timezone.utc).isoformat())
+    xml=OUT/(label+'.xml')
+    if xml.exists():
+        suites=list(ET.parse(xml).getroot().iter('testsuite'))
+        record['junit_counts_including_subtests']={k:sum(int(s.get(k,0)) for s in suites) for k in ['tests','failures','errors','skipped']}
+    text=(OUT/(label+'.stdout.log')).read_text(errors='replace')
+    matched=re.search(r'README generado tras (\d+) tests pasados',text)
+    if matched:record['pytest_passed']=int(matched.group(1))
+    record['files']=[{'path':p.name,'sha256':sha(p)} for p in sorted(OUT.glob(label+'.*'))]
+    records.append(record)
+    for p in OUT.glob(label+'.*'):shutil.copyfile(p,PUBLIC/p.name)
+    progress(records)
+    if code:break
+ok=len(records)==len(steps) and all(v['returncode']==0 for v in records)
+assert all(sha(ROOT/v['path'])==v['sha256'] for v in source['sources'])
+result={'status':'PASS' if ok else 'FAIL','steps':records,'head':source['head'],'python':sys.version,'network':'none',
+        'instrumentation':'Original generator/test sources unmodified; PYTEST_ADDOPTS adds JUnit/temp/cache only, no tests excluded.',
+        'source_overlay_hashes_verified_before_after':True,'readme_writeback_authorized_only_after_PASS':True}
+if ok:
+    result['generated_files']=[]
+    for name in ['README.md','README_DETAILS.md']:
+        shutil.copyfile(ROOT/name,PUBLIC/(name+'.generated'))
+        result['generated_files'].append({'path':name,'sha256':sha(ROOT/name),'bytes':(ROOT/name).stat().st_size})
+(PUBLIC/'inner-result.json').write_text(json.dumps(result,indent=2)+'\n')
+print(json.dumps({'status':result['status'],'steps':len(records)}),flush=True)
+raise SystemExit(0 if ok else 1)

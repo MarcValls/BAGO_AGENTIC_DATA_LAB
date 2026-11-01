@@ -1,0 +1,10 @@
+.workspace-manager .wm-csv-preview { min-width:0; }
+.workspace-manager .wm-csv-note { color:var(--text-muted,#a9bdd0); font-size:.9rem; }
+.workspace-manager .wm-csv-scroll { max-width:100%; max-height:min(58vh,34rem); overflow:auto; border:1px solid var(--border-color,#47637a); }
+.workspace-manager .wm-csv-scroll:focus-visible { outline:2px solid var(--focus-color,#79d1ef); outline-offset:2px; }
+.workspace-manager .wm-csv-scroll table { border-collapse:separate; border-spacing:0; min-width:100%; font-size:.9rem; }
+.workspace-manager .wm-csv-scroll caption { text-align:left; padding:.6rem .75rem; color:var(--text-muted,#a9bdd0); }
+.workspace-manager .wm-csv-scroll :is(th,td) { min-width:7rem; max-width:28rem; padding:.65rem .75rem; text-align:left; vertical-align:top; white-space:pre-wrap; overflow-wrap:anywhere; border-right:1px solid var(--border-color,#47637a); border-bottom:1px solid var(--border-color,#47637a); }
+.workspace-manager .wm-csv-scroll th { position:sticky; top:0; background:var(--surface-panel,#10202f); z-index:1; }
+.workspace-manager .wm-csv-scroll tr:last-child td { border-bottom:0; }
+.workspace-manager .wm-csv-scroll :is(th,td):last-child { border-right:0; }

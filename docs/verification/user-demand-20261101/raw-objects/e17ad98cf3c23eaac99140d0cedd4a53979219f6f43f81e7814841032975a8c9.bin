@@ -1,0 +1,17 @@
+# Solicitud y respuesta: entrega combinada
+
+IMPLEMENTED y pruebas/build VERIFIED. Revisión visual independiente, aceptación, README/cierre y publicación PENDING.
+
+Mismo worktree csv-table-preview-20261101, rama codex/csv-table-preview-20261101, base origin/main ed0efc83cc39a40aac231d9aa0da77a5d30a91e7. No commit/push. Cinco fuentes nuevas de esta misión disjuntas de los siete archivos CSV; snapshots y hashes de ambas familias en SOURCE_BINDING. CSV handoff original y sus evidencias se conservan sin reescribir.
+
+Problema confirmado por root: en taskrun_8f7aaadbce8a4e4892e95b009cb7fc53 la solicitud420caracteres y respuesta1958 tienen hashes distintos; la UI anteponía el prompt sin título bajo Respuesta recibida. Esta entrega corrige la presentación; no afirma haber corregido un eco de backend inexistente ni ejecutado nuevas herramientas/inferencia.
+
+AgentTasks ahora presenta primero Respuesta del agente y texto íntegro con whitespace/escape React, sin el máximo320px del pre. Una nota precisa que answered es respuesta del modelo, no evidencia de efectos ni verificación. Solicitud enviada es un desplegable separado con rendered_prompt (texto efectivamente enviado y fechas), no la plantilla sin sustituciones. El botón Copiar como nueva tarea conserva literalmente la operación de copiar task_snapshot al borrador, forzar dirty y exigir guardar antes de ejecutar. No se ejecuta automáticamente al copiar ni al guardar.
+
+127pruebas PASS/0FAIL,11suites: historial/tareas existentes,5casos nuevos (ES/EN, respuesta larga distinta y escaped, petición efectiva, copiar sinPOST, empty, failed, answeredvacío rechazado), catálogoagents y regresiones CSV/workspace/projectfolders/i18ncommerce/teclado. Fixtures de API sintéticas, no se presentan como backend real. Build combinado TypeScript+Vite PASS. Las fuentes CSV y su handoff permanecieron byteidénticos durante ambos checks.
+
+Runtime listo en frontend/dist: app-isU5IlZU.js SHA5c42d9d02dcd1b1d5a9a1f352647c54ffcb980e73ac82442e0e1ae48132e0bd8; app-DnreUfqM.css SHA9874db0cd48e5c7d3a08077e0c582132e664f66ce808e8106b12d6cf49bf5a74; indexSHA08f2c23068658148542e6d11cd2d7dc85febf00548530771bbf77241dee15469. Este build combinado es posterior al buildCSV original y tiene su propio recibo, sin sustituir evidencia histórica.
+
+Visual root en MISMA ventana Brave pendiente: desplegar run real, observar respuesta primero y solicitud separada, recorrer respuesta completa sin corte, abrir Solicitud enviada y contrastar ambos textos; botón debe decir Copiar como nueva tarea y sólo preparar borrador. No iniciar un run real salvo autorización específica del flujo vigente. Probar además Tabla/Texto CSV del mismo candidato como ya previsto. El implementador no abrió navegador ni cambió foco/runtime/puertos.
+
+No cambios backend, README, AGENTS raíz, configuración global, raíz sucia, HOST/GOV ni código CSV congelado. Estado answered/contratos validadores no se alteran. Warning de chunkVite>500kB conservado. Fullsuitebackend/generaciónREADME NOT_RUN por este implementador; siguen en el cierre correspondiente. EstadoUI es DONE con handoff, no misióncompleta ni aceptación del usuario.

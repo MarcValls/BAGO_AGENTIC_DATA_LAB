@@ -1,0 +1,100 @@
+{
+  "status": "PASS",
+  "sources": [
+    {
+      "path": "src/agent_tasks/store.py",
+      "sha256": "07a9c5f68e6ad975d26a03584f3f2c85ec9e869a8661cf77a2b86cdee3e45cf3"
+    },
+    {
+      "path": "src/api/task_routes.py",
+      "sha256": "283d6061dcb7e83e8062c7e0041ab7cbd9be6c540ee3d0eb5644d23644f09183"
+    },
+    {
+      "path": "tests/test_task_response_reviews.py",
+      "sha256": "0765aba9bd1e5e5c1a6714e69aa52ec4bd2ffba692be7e75a1b4218317a90f91"
+    },
+    {
+      "path": "frontend/src/components/AgentTasks.tsx",
+      "sha256": "1c6b45a9bd0ad783d93ae6925cdde84fcf0a0335d253d1317340637fa51b10db"
+    },
+    {
+      "path": "frontend/src/components/AgentTaskResponse.css",
+      "sha256": "2124c35844d3b6fbd7219b77cc3bdd451841f57155fe143eab96d7fb7bc9dabc"
+    },
+    {
+      "path": "frontend/src/i18n/domains/agents.ts",
+      "sha256": "b639b670258cb0c26d85a95b179a6c115fc8861836463bd45c7eda0b372bc3af"
+    },
+    {
+      "path": "frontend/tests/ui/agent-tasks/saved-tasks.test.tsx",
+      "sha256": "b7409b03dafc757fb6580382b7b846d04ed5fe2799d9b9fcad0d46f790aeb073"
+    },
+    {
+      "path": "frontend/tests/ui/agent-tasks/response-display.test.tsx",
+      "sha256": "a742e9a9ba388d9322391ff1185ac5a4c920763dd5ca496b3acfd175ce09038e"
+    },
+    {
+      "path": "frontend/tests/ui/agent-tasks/task-actions.test.tsx",
+      "sha256": "28187c846e490889b6bf91e13464772a5b3fbd423cdf9516f02138605da6b92d"
+    },
+    {
+      "path": "frontend/src/components/WorkspaceManager.tsx",
+      "sha256": "f26f56728425fa88b9e08b8f0f937ae3f9d5478c47f8a31ce6cd04b42756c468"
+    },
+    {
+      "path": "frontend/src/components/CsvTablePreview.tsx",
+      "sha256": "bdad8478d3a25819f8f382f940e2b6dc2c2401de82ae53aa4d8bd57f88f8b843"
+    },
+    {
+      "path": "frontend/src/components/CsvTablePreview.css",
+      "sha256": "7316746c5b658a531e583d0aa9aeb936a087f0380c477cf340c3fdf4601d2e66"
+    },
+    {
+      "path": "frontend/src/utils/delimitedText.ts",
+      "sha256": "a0f372f18b3aa1c781647325598d642114f255a30edc28374153a3f2efe9efc0"
+    },
+    {
+      "path": "frontend/src/i18n/domains/commerce.ts",
+      "sha256": "29abdf4c07726681a4c512b0251b837c368d38bae4839aeca25833281d9ef48e"
+    },
+    {
+      "path": "frontend/tests/workspace/csv-preview.test.tsx",
+      "sha256": "bf9624b66a0f714576945e5c90faeb1bf112aeea5e10a17cec5468e9f151a185"
+    },
+    {
+      "path": "frontend/tests/workspace/csv-parser.test.tsx",
+      "sha256": "910bc29f5e483d10eafcc30d1c91db7967c74fbc1471e2151744de634f6ebdcf"
+    }
+  ],
+  "runs": [
+    {
+      "argv": [
+        "C:\\Program Files\\nodejs\\node.EXE",
+        "C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\.worktrees\\csv-table-preview-20261101\\frontend\\node_modules\\vitest\\vitest.mjs",
+        "run",
+        "--reporter=json",
+        "--outputFile=C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\.worktrees\\csv-table-preview-20261101\\.bago\\goals\\task-response-actions-20261101\\workspace\\ui\\tests-attempt2\\vitest.json",
+        "tests/ui/agent-tasks",
+        "tests/i18n/agents/agents.test.tsx",
+        "tests/workspace/csv-parser.test.tsx",
+        "tests/workspace/csv-preview.test.tsx",
+        "tests/workspace/manager.test.tsx",
+        "tests/project-folders",
+        "tests/i18n/commerce",
+        "tests/service-tabs/service-tabs.test.tsx"
+      ],
+      "returncode": 0,
+      "seconds": 10.581
+    }
+  ],
+  "source_unchanged": true,
+  "old_handoffs_preserved": true,
+  "scope": "Frontend DOM tests with synthetic API; actual backend separately tested with real HTTP/SQLite. Root LIVE/visual pending.",
+  "tests": {
+    "numTotalTests": 137,
+    "numPassedTests": 137,
+    "numFailedTests": 0,
+    "numTotalTestSuites": 12,
+    "success": true
+  }
+}

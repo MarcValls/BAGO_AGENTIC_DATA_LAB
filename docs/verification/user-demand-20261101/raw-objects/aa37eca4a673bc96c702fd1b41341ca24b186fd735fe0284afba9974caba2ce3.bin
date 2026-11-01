@@ -1,0 +1,40 @@
+"""Real combined frontend check; preserve frozen CSV sources and their old evidence."""
+from pathlib import Path
+import hashlib,json,os,shutil,subprocess,sys,time
+ROOT=Path(__file__).resolve().parents[1]
+REPO=next(p for p in ROOT.parents if (p/'.git').exists())
+FRONTEND=REPO/'frontend'
+def sha(p):return hashlib.sha256(p.read_bytes()).hexdigest()
+scope=json.loads((ROOT/'SOURCE_SCOPE.json').read_text(encoding='utf-8-sig'))
+csv=REPO/'.bago/goals/csv-table-preview-20261101/workspace'
+csv_binding=json.loads((csv/'evidence/SOURCE_BINDING.json').read_text(encoding='utf-8'))
+assert all(sha(REPO/s['path'])==s['sha256'] for s in csv_binding['sources']), 'Frozen CSV sources changed'
+csv_handoff=sha(csv/'evidence/handoff-UI.json')
+names=scope['actual_repository_source_scopes']+scope['preserved_source_scopes']
+assert len(names)==len(set(names)), 'Overlapping source scopes'
+sources=[{'path':p,'sha256':sha(REPO/p)} for p in names]
+kind=sys.argv[1];folder=ROOT/'evidence'/kind;folder.mkdir(exist_ok=False)
+if kind=='tests':
+ commands=[[shutil.which('node'),str(FRONTEND/'node_modules/vitest/vitest.mjs'),'run','--reporter=json','--outputFile='+str(folder/'vitest.json'),
+  'tests/ui/agent-tasks','tests/i18n/agents/agents.test.tsx','tests/workspace/csv-parser.test.tsx','tests/workspace/csv-preview.test.tsx','tests/workspace/manager.test.tsx',
+  'tests/project-folders','tests/i18n/commerce','tests/service-tabs/service-tabs.test.tsx']]
+else:
+ commands=[[shutil.which('node'),str(FRONTEND/'node_modules/typescript/bin/tsc'),'-b'],[shutil.which('node'),str(FRONTEND/'node_modules/vite/bin/vite.js'),'build']]
+env=dict(os.environ);env['TEMP']=str(FRONTEND/'.build/temp-response');env['TMP']=env['TEMP'];Path(env['TEMP']).mkdir(parents=True,exist_ok=True)
+runs=[]
+for n,argv in enumerate(commands):
+ started=time.time()
+ with (folder/f'{n}.stdout.log').open('xb') as out,(folder/f'{n}.stderr.log').open('xb') as err:
+  proc=subprocess.run(argv,cwd=FRONTEND,env=env,stdout=out,stderr=err,timeout=300)
+ runs.append({'argv':argv,'returncode':proc.returncode,'duration_seconds':round(time.time()-started,3)})
+ if proc.returncode:break
+passed=len(runs)==len(commands) and all(r['returncode']==0 for r in runs)
+summary={'status':'PASS' if passed else 'FAIL','kind':kind,'base_sha':scope['base_sha'],'sources':sources,'runs':runs,
+ 'source_bytes_unchanged_during_check':all(sha(REPO/s['path'])==s['sha256'] for s in sources),'csv_handoff_unchanged':sha(csv/'evidence/handoff-UI.json')==csv_handoff,
+ 'csv_handoff_sha256':csv_handoff,'browser':'NOT_RUN; root owns existing visible session'}
+if kind=='tests' and (folder/'vitest.json').exists():
+ result=json.loads((folder/'vitest.json').read_text(encoding='utf-8'));summary['tests']={k:result[k] for k in ['numTotalTests','numPassedTests','numFailedTests','numTotalTestSuites','success']};passed=passed and result['success'] is True
+if kind=='build' and passed:summary['assets']=[{'path':p.relative_to(REPO).as_posix(),'bytes':p.stat().st_size,'sha256':sha(p)} for p in sorted((FRONTEND/'dist').rglob('*')) if p.is_file()]
+passed=passed and summary['source_bytes_unchanged_during_check'] and summary['csv_handoff_unchanged'];summary['status']='PASS' if passed else 'FAIL'
+output='RESPONSE_TESTS.json' if kind=='tests' else 'COMBINED_BUILD.json'
+(ROOT/'evidence'/output).write_text(json.dumps(summary,ensure_ascii=False,indent=2)+'\n',encoding='utf-8');print(json.dumps(summary,ensure_ascii=False));sys.exit(0 if passed else 1)

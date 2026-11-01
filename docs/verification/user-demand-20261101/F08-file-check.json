@@ -1,0 +1,7 @@
+{
+  "status": "PASS",
+  "source_absent": true,
+  "destination": "D:\\301020256_PRUEBA_BAGO5_ADL\\demo-usuario\\archivo\\pedidos-final.csv",
+  "destination_sha256": "8fe7a2979043c0e992f4e13d84055045ae1fec91bb896d365fe996367acbafe5",
+  "expected_sha256": "8fe7a2979043c0e992f4e13d84055045ae1fec91bb896d365fe996367acbafe5"
+}

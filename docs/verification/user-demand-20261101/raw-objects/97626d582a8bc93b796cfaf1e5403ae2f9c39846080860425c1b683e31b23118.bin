@@ -1,0 +1,52 @@
+{
+  "checks": {
+    "all_rejected": true,
+    "no_new_reviews": true,
+    "source_unchanged": true,
+    "author_excluded": true
+  },
+  "results": [
+    {
+      "case": "without_confirmation",
+      "http": 403,
+      "body": {
+        "detail": {
+          "code": "task_review_confirmation_required",
+          "message": "Confirma la revisión textual por otro agente."
+        }
+      }
+    },
+    {
+      "case": "same_author",
+      "http": 409,
+      "body": {
+        "detail": {
+          "code": "task_review_same_agent",
+          "message": "Selecciona un agente guardado distinto del autor."
+        }
+      }
+    },
+    {
+      "case": "stale_source",
+      "http": 409,
+      "body": {
+        "detail": {
+          "code": "task_review_source_changed",
+          "message": "La ejecución cambió. Actualiza antes de revisar."
+        }
+      }
+    },
+    {
+      "case": "stale_reviewer",
+      "http": 409,
+      "body": {
+        "detail": {
+          "code": "task_review_profile_changed",
+          "message": "El perfil revisor cambió. Selecciónalo de nuevo."
+        }
+      }
+    }
+  ],
+  "status": "PASS",
+  "scope": "Real HTTP rejection; no second model request. Prior tooling mismatch was PowerShell DateTime timezone serialization, not record changes. Raw urllib JSON now compared exactly."
+}

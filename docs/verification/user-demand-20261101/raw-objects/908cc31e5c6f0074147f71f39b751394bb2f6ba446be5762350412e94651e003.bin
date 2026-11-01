@@ -1,0 +1,12 @@
+{
+  "checks": {
+    "invalid_alert": true,
+    "dirty_before": true,
+    "valid_table_reopened": true,
+    "clean_reopened": true,
+    "bytes_unchanged": true,
+    "mtime_unchanged": true
+  },
+  "status": "PASS",
+  "tooling_note": "Initial label selector failed; role textbox retry actually entered invalid CSV. Earlier R21_ERROR was not used as negative evidence."
+}

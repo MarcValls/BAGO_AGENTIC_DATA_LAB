@@ -1,0 +1,165 @@
+{
+  "schema": "bago.readme.fullsuite-input.v1",
+  "head": "ed0efc83cc39a40aac231d9aa0da77a5d30a91e7",
+  "uncommitted_overlay": [
+    {
+      "path": "frontend/src/components/AgentTasks.tsx",
+      "snapshot": "ui-sources/frontend/src/components/AgentTasks.tsx",
+      "sha256": "1c6b45a9bd0ad783d93ae6925cdde84fcf0a0335d253d1317340637fa51b10db",
+      "bytes": 32602
+    },
+    {
+      "path": "frontend/src/components/AgentTaskResponse.css",
+      "snapshot": "ui-sources/frontend/src/components/AgentTaskResponse.css",
+      "sha256": "2124c35844d3b6fbd7219b77cc3bdd451841f57155fe143eab96d7fb7bc9dabc",
+      "bytes": 1600
+    },
+    {
+      "path": "frontend/src/i18n/domains/agents.ts",
+      "snapshot": "ui-sources/frontend/src/i18n/domains/agents.ts",
+      "sha256": "b639b670258cb0c26d85a95b179a6c115fc8861836463bd45c7eda0b372bc3af",
+      "bytes": 154700
+    },
+    {
+      "path": "frontend/tests/ui/agent-tasks/saved-tasks.test.tsx",
+      "snapshot": "ui-sources/frontend/tests/ui/agent-tasks/saved-tasks.test.tsx",
+      "sha256": "b7409b03dafc757fb6580382b7b846d04ed5fe2799d9b9fcad0d46f790aeb073",
+      "bytes": 18175
+    },
+    {
+      "path": "frontend/tests/ui/agent-tasks/response-display.test.tsx",
+      "snapshot": "ui-sources/frontend/tests/ui/agent-tasks/response-display.test.tsx",
+      "sha256": "a742e9a9ba388d9322391ff1185ac5a4c920763dd5ca496b3acfd175ce09038e",
+      "bytes": 5543
+    },
+    {
+      "path": "frontend/tests/ui/agent-tasks/task-actions.test.tsx",
+      "snapshot": "ui-sources/frontend/tests/ui/agent-tasks/task-actions.test.tsx",
+      "sha256": "28187c846e490889b6bf91e13464772a5b3fbd423cdf9516f02138605da6b92d",
+      "bytes": 10462
+    },
+    {
+      "path": "src/agent_tasks/store.py",
+      "snapshot": "backend-sources/src/agent_tasks/store.py",
+      "sha256": "07a9c5f68e6ad975d26a03584f3f2c85ec9e869a8661cf77a2b86cdee3e45cf3"
+    },
+    {
+      "path": "src/api/task_routes.py",
+      "snapshot": "backend-sources/src/api/task_routes.py",
+      "sha256": "283d6061dcb7e83e8062c7e0041ab7cbd9be6c540ee3d0eb5644d23644f09183"
+    },
+    {
+      "path": "tests/test_task_response_reviews.py",
+      "snapshot": "backend-sources/tests/test_task_response_reviews.py",
+      "sha256": "0765aba9bd1e5e5c1a6714e69aa52ec4bd2ffba692be7e75a1b4218317a90f91"
+    },
+    {
+      "path": "frontend/src/components/WorkspaceManager.tsx",
+      "snapshot": "sources/frontend/src/components/WorkspaceManager.tsx",
+      "sha256": "f26f56728425fa88b9e08b8f0f937ae3f9d5478c47f8a31ce6cd04b42756c468",
+      "bytes": 35356,
+      "base_exists": true
+    },
+    {
+      "path": "frontend/src/components/CsvTablePreview.tsx",
+      "snapshot": "sources/frontend/src/components/CsvTablePreview.tsx",
+      "sha256": "bdad8478d3a25819f8f382f940e2b6dc2c2401de82ae53aa4d8bd57f88f8b843",
+      "bytes": 1637,
+      "base_exists": false
+    },
+    {
+      "path": "frontend/src/components/CsvTablePreview.css",
+      "snapshot": "sources/frontend/src/components/CsvTablePreview.css",
+      "sha256": "7316746c5b658a531e583d0aa9aeb936a087f0380c477cf340c3fdf4601d2e66",
+      "bytes": 1196,
+      "base_exists": false
+    },
+    {
+      "path": "frontend/src/utils/delimitedText.ts",
+      "snapshot": "sources/frontend/src/utils/delimitedText.ts",
+      "sha256": "a0f372f18b3aa1c781647325598d642114f255a30edc28374153a3f2efe9efc0",
+      "bytes": 2410,
+      "base_exists": false
+    },
+    {
+      "path": "frontend/src/i18n/domains/commerce.ts",
+      "snapshot": "sources/frontend/src/i18n/domains/commerce.ts",
+      "sha256": "29abdf4c07726681a4c512b0251b837c368d38bae4839aeca25833281d9ef48e",
+      "bytes": 129329,
+      "base_exists": true
+    },
+    {
+      "path": "frontend/tests/workspace/csv-preview.test.tsx",
+      "snapshot": "sources/frontend/tests/workspace/csv-preview.test.tsx",
+      "sha256": "bf9624b66a0f714576945e5c90faeb1bf112aeea5e10a17cec5468e9f151a185",
+      "bytes": 5264,
+      "base_exists": false
+    },
+    {
+      "path": "frontend/tests/workspace/csv-parser.test.tsx",
+      "snapshot": "sources/frontend/tests/workspace/csv-parser.test.tsx",
+      "sha256": "910bc29f5e483d10eafcc30d1c91db7967c74fbc1471e2151744de634f6ebdcf",
+      "bytes": 2491,
+      "base_exists": false
+    }
+  ],
+  "archive": {
+    "path": "inputs/candidate.tar",
+    "sha256": "61a9135c6e36e0864f0b29673d0570c70dbfb2d74503c912b9b842c53fcde109",
+    "bytes": 371220480
+  },
+  "git_pack": {
+    "path": "inputs/candidate.pack",
+    "sha256": "daf0281043164d647a70ab68ca92e079ea5a7b7cb27159cd935436f7569197aa",
+    "bytes": 96910671
+  },
+  "readme_before": [
+    {
+      "path": "README.md",
+      "sha256": "25bd1ddba0d5a7c9f0f163b6c16f0bd742397e1ca18ac5923f55805d8fb7e9cd"
+    },
+    {
+      "path": "README_DETAILS.md",
+      "sha256": "e929d796e86386efeeccdb2d28c9be62cb41f21175cf473ccba61262358ae43a"
+    }
+  ],
+  "requirements": [
+    {
+      "path": "requirements.txt",
+      "sha256": "7c1c94071ed3c3cd703be92058d4a8b0f8e1e9b826d4f3344e5bc5b5bb96b100"
+    },
+    {
+      "path": "requirements-test.txt",
+      "sha256": "2c2c5115e2de7eb77637ccdc623df92a259afaa406e684588d0cbc8f753a0478"
+    },
+    {
+      "path": "requirements-whatsapp.txt",
+      "sha256": "d759ca6494b4764dd3a0b873604299d875556b48aa2b6dd36ed212368fc18d1a"
+    },
+    {
+      "path": "requirements-documents.txt",
+      "sha256": "3d63fa4f24498b208e74d87c49c9685e24f349d8917ec67217285640d1e2b918"
+    },
+    {
+      "path": "frontend/package-lock.json",
+      "sha256": "61e35732d55a55e3071af9cd5692fd9024e478c38b53a61613225e93211a64fe"
+    }
+  ],
+  "dependency_files": 4962,
+  "dependency_bytes": 108323631,
+  "source_identity": "Fetched base Git tree plus exact raw-byte overlay of16tested source files; no product edits, no user runtime data, no .git/auth/config directory copied.",
+  "scripts": [
+    {
+      "path": "prepare_inputs.py",
+      "sha256": "a04e5152abf939edac65fb8b939f01fe3056d000084b225d4be72691682d11e2"
+    },
+    {
+      "path": "inner.py",
+      "sha256": "76f5209c62e0409bccf28a69cb88618703f9b1b490fca58ffac959fd4eb2148f"
+    },
+    {
+      "path": "run_docker_gate.py",
+      "sha256": "27f438a67ad617ced9f1ad61c879189fee40c7793cd39f6f595711214274b69b"
+    }
+  ]
+}

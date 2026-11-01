@@ -1,0 +1,14 @@
+.agent-tasks .agent-task-result h4 { margin:1rem 0 .5rem; font-size:.95rem; }
+.agent-tasks .agent-task-answer-scope { color:var(--text-muted,#a9bed0); font-size:.8rem; line-height:1.5; }
+.agent-tasks .agent-task-answer { max-height:none; overflow:visible; max-width:100%; box-sizing:border-box; white-space:pre-wrap; overflow-wrap:anywhere; }
+.agent-tasks .agent-task-sent-request { margin:1rem 0; padding:.7rem; border:1px solid var(--border-color,#2d4257); border-radius:4px; }
+.agent-tasks .agent-task-sent-request > summary { font-weight:600; }
+.agent-tasks .agent-task-sent-request > summary:focus-visible { outline:2px solid var(--focus-color,#79d1ef); outline-offset:3px; }
+.agent-tasks .agent-task-action-dialog { margin:1rem 0; padding:1rem; border:2px solid var(--border-color,#54748e); background:var(--surface-panel,#101d2d); min-width:0; }
+.agent-tasks .agent-task-action-dialog :is(pre,code) { white-space:pre-wrap; overflow-wrap:anywhere; max-width:100%; }
+.agent-tasks .agent-task-action-dialog pre { max-height:none; background:var(--surface-input,#091522); padding:.75rem; }
+.agent-tasks .agent-task-action-dialog > label { display:block; margin:.75rem 0; }
+.agent-tasks .agent-task-action-dialog .agent-task-review-consent { display:flex; align-items:flex-start; gap:.65rem; }
+.agent-tasks .agent-task-review-consent input { flex:0 0 auto; width:1rem; height:1rem; margin:.2rem 0 0; }
+.agent-tasks .agent-task-review-result { border:1px solid var(--border-color,#2d4257); padding:.75rem; margin:1rem 0; min-width:0; }
+.agent-tasks .agent-task-review-result code { display:block; }

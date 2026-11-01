@@ -1,0 +1,23 @@
+{
+  "actual_repository_source_scopes": [
+    "frontend/src/components/AgentTasks.tsx",
+    "frontend/src/components/AgentTaskResponse.css",
+    "frontend/src/i18n/domains/agents.ts",
+    "frontend/tests/ui/agent-tasks/saved-tasks.test.tsx",
+    "frontend/tests/ui/agent-tasks/response-display.test.tsx"
+  ],
+  "branch": "codex/csv-table-preview-20261101",
+  "base_sha": "ed0efc83cc39a40aac231d9aa0da77a5d30a91e7",
+  "preserved_source_scopes": [
+    "frontend/src/components/WorkspaceManager.tsx",
+    "frontend/src/components/CsvTablePreview.tsx",
+    "frontend/src/components/CsvTablePreview.css",
+    "frontend/src/utils/delimitedText.ts",
+    "frontend/src/i18n/domains/commerce.ts",
+    "frontend/tests/workspace/csv-preview.test.tsx",
+    "frontend/tests/workspace/csv-parser.test.tsx"
+  ],
+  "scope_enforcement": "Explicit user authorization plus diff and hash checks, not OS sandbox",
+  "csv_handoff": "Separate existing frozen CSV handoff preserved; combined build gets new evidence only",
+  "observed_problem_evidence": "C:/Users/AMTEC_Terminal_1º/Desktop/BAGO5_ADL/.bago/goals/user-demand-video-20261101/F14-response-comparison.json"
+}

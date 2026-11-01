@@ -1,0 +1,9 @@
+from pathlib import Path
+import subprocess,json,sys
+R=Path(__file__).resolve().parent;REPO=R.parents[4]
+gate=REPO/'.bago/goals/task-response-actions-20261101/readme-gate/verify_gate.py'
+p=subprocess.run([sys.executable,'-B',str(gate)],capture_output=True,text=True,encoding='utf-8');assert p.returncode==0,p.stdout+p.stderr
+readme=json.loads(p.stdout);visual=json.loads((R.parent/'review/RESULT.json').read_text(encoding='utf-8'))
+assert visual['status']=='PASS' and all(visual['checks'].values())
+result={'status':'PASS','readme_gate':readme,'visual_gate':'PASS','verdict':'GO_SCOPED','acceptance':'Requested bounded repair is implemented and independently observed with real UI evidence. Model review is advisory, different profile may share model.','limits':['Current repair only; historical video FAIL/BLOCKED remain open.','No merge authorized; GitHub publication verified separately.','Full-suite runtime dependency difference pypdf6.21.2 vs pin6.21.4 documented.']}
+(R/'RESULT.json').write_text(json.dumps(result,ensure_ascii=False,indent=2)+'\n',encoding='utf-8');print(json.dumps(result))

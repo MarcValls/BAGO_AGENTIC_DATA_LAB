@@ -2,6 +2,8 @@ import {t, useI18n, formatNumber, apiError, errorMessage, localMessage} from '..
 import { useEffect, useId, useRef, useState } from 'react'
 import type {ReactNode, KeyboardEvent} from 'react'
 import ServiceTabs from './ServiceTabs'
+import CsvTablePreview from './CsvTablePreview'
+import {delimitedFile} from '../utils/delimitedText'
 import './WorkspaceManager.css'
 
 type Workspace = { id: string; root: string; name: string; title: string; context_files: Array<{ path: string; sha256: string }> }
@@ -65,6 +67,8 @@ export default function WorkspaceManager({ inline = false, onSelected, proposal,
   const [files, setFiles] = useState<FileRecord[]>([]), [excluded, setExcluded] = useState<Array<{ path: string; reason: string }>>([])
   const [directory, setDirectory] = useState(''), [path, setPath] = useState(''), [text, setText] = useState(''), [destination, setDestination] = useState('')
   const [file, setFile] = useState<FileRecord | null>(null), [trash, setTrash] = useState<Trash[]>([])
+  const [contentView, setContentView] = useState<'table' | 'text'>('table')
+  const delimiter = delimitedFile(path)
   const [tab, setTab] = useState<'files' | 'trash' | 'git'>('files')
   const [git, setGit] = useState<Git | null>(null), [selection, setSelection] = useState<string[]>([]), [stage, setStage] = useState<{ revision: string; head: string | null; paths: string[] } | null>(null)
   const [message, setMessage] = useState(''), [branch, setBranch] = useState(''), [diff, setDiff] = useState('')
@@ -134,7 +138,7 @@ export default function WorkspaceManager({ inline = false, onSelected, proposal,
   async function read(relative: string) {
     if (!workspace) return
     setBusy(true); setError('')
-    try { const data = await action(workspace.id, 'read', { path: relative }); if (identity.current === workspace.id) { setFile(data); setPath(data.path); setText(data.text); setTab('files') } }
+    try { const data = await action(workspace.id, 'read', { path: relative }); if (identity.current === workspace.id) { setFile(data); setPath(data.path); setText(data.text); setContentView('table'); setTab('files') } }
     catch (e) { setError(e as Error) } finally { setBusy(false) }
   }
   async function execute() {
@@ -193,7 +197,10 @@ export default function WorkspaceManager({ inline = false, onSelected, proposal,
 <div className="wm-files"><div className="wm-card"><h3>{t('commerce.explorer')}</h3><label>{t('commerce.folder')}<select value={directory} onChange={e => setDirectory(e.target.value)}><option value="">{t('commerce.entire_project')}</option>{folders.map(folder => <option key={folder}>{folder}</option>)}</select></label>
           <ul>{visible.map(item => <li key={item.path}><button disabled={busy || dirty} onClick={() => void read(item.path)}>{item.path}</button><small>{formatNumber(item.size)} bytes</small></li>)}</ul>
           {!visible.length && <p>{t('commerce.no_files_in_this_folder')}</p>}<details><summary>{t('commerce.excluded_entries',{count:formatNumber(excluded.length)})}</summary>{excluded.map(item => <p key={item.path}>{item.path}: {item.reason}</p>)}</details>
-        </div><div className="wm-card"><h3>{file ? t('commerce.edit_file') : t('commerce.create_file')}</h3><label>{t('commerce.relative_path')}<input value={path} readOnly={Boolean(file)} onChange={e => setPath(e.target.value)} /></label><label>{t('commerce.content')}<textarea rows={12} value={text} onChange={e => setText(e.target.value)} /></label>
+        </div><div className="wm-card"><h3>{file ? t('commerce.edit_file') : t('commerce.create_file')}</h3><label>{t('commerce.relative_path')}<input value={path} readOnly={Boolean(file)} onChange={e => setPath(e.target.value)} /></label>
+          {delimiter && <ServiceTabs<'table'|'text'> id={`${uid}-content`} label={t('commerce.csv.views')} value={contentView} onChange={setContentView} items={[{id:'table',label:t('commerce.csv.table')},{id:'text',label:t('commerce.csv.text')}]} />}
+          {delimiter && <section role="tabpanel" tabIndex={0} id={`${uid}-content-panel-table`} aria-labelledby={`${uid}-content-tab-table`} hidden={contentView !== 'table'}><CsvTablePreview text={text} delimiter={delimiter}/></section>}
+          <section role={delimiter ? 'tabpanel' : undefined} tabIndex={delimiter ? 0 : undefined} id={`${uid}-content-panel-text`} aria-labelledby={delimiter ? `${uid}-content-tab-text` : undefined} hidden={Boolean(delimiter) && contentView !== 'text'}><label>{t('commerce.content')}<textarea rows={12} value={text} onChange={e => setText(e.target.value)} /></label></section>
           {file && <details><summary>{t('commerce.file_review')}</summary><code>{file.sha256}</code></details>}{dirty && <p role="status">{t('commerce.unsaved_edits_save_or_discard_before_switching_file_or_project')}</p>}
           <button disabled={busy || !path} onClick={() => mutate('write', { path, text, expected_sha256: file?.sha256 ?? null }, localMessage('commerce.save_file_review',{path}))}>{t('commerce.review_save')}</button>
           <button disabled={busy} onClick={() => { setFile(null); setPath(''); setText(''); setError('') }}>{t('commerce.discard_edits_new_file')}</button>

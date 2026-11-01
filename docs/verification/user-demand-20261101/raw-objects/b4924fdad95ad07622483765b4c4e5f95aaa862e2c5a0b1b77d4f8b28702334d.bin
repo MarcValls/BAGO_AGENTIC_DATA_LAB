@@ -1,0 +1,41 @@
+"""Run real frontend checks and bind results to the permitted source bytes."""
+from pathlib import Path
+import hashlib,json,os,shutil,subprocess,sys,time
+ROOT=Path(__file__).resolve().parents[1]
+REPO=next(p for p in ROOT.parents if (p/'.git').exists())
+FRONTEND=REPO/'frontend'
+def sha(p):return hashlib.sha256(p.read_bytes()).hexdigest()
+kind=sys.argv[1]
+folder=ROOT/'evidence'/kind
+folder.mkdir(exist_ok=False)
+scope=json.loads((ROOT/'SOURCE_SCOPE.json').read_text(encoding='utf-8-sig'))
+sources=[{'path':p,'sha256':sha(REPO/p)} for p in scope['actual_repository_source_scopes']]
+if kind=='tests':
+ argv=[shutil.which('node'),str(FRONTEND/'node_modules/vitest/vitest.mjs'),'run','--reporter=json','--outputFile='+str(folder/'vitest.json'),
+       'tests/workspace/csv-parser.test.tsx','tests/workspace/csv-preview.test.tsx','tests/workspace/manager.test.tsx','tests/project-folders','tests/i18n/commerce','tests/service-tabs/service-tabs.test.tsx']
+ commands=[argv]
+else:
+ commands=[[shutil.which('node'),str(FRONTEND/'node_modules/typescript/bin/tsc'),'-b'],
+           [shutil.which('node'),str(FRONTEND/'node_modules/vite/bin/vite.js'),'build']]
+environment=dict(os.environ);environment['TEMP']=str(FRONTEND/'.build/temp-csv');environment['TMP']=environment['TEMP']
+Path(environment['TEMP']).mkdir(parents=True,exist_ok=True)
+runs=[]
+for n,argv in enumerate(commands):
+ started=time.time()
+ with (folder/f'{n}.stdout.log').open('xb') as stdout,(folder/f'{n}.stderr.log').open('xb') as stderr:
+  proc=subprocess.run(argv,cwd=FRONTEND,env=environment,stdout=stdout,stderr=stderr,timeout=300)
+ runs.append({'argv':argv,'returncode':proc.returncode,'duration_seconds':round(time.time()-started,3)})
+ if proc.returncode:break
+passed=all(r['returncode']==0 for r in runs) and len(runs)==len(commands)
+summary={'status':'PASS' if passed else 'FAIL','kind':kind,'base_sha':scope['base_sha'],'sources':sources,'runs':runs,
+         'source_bytes_unchanged_during_check':all(sha(REPO/v['path'])==v['sha256'] for v in sources),'browser':'NOT_RUN; root owns existing visible Brave window'}
+if kind=='tests' and (folder/'vitest.json').exists():
+ result=json.loads((folder/'vitest.json').read_text(encoding='utf-8'))
+ summary['tests']={key:result[key] for key in ['numTotalTests','numPassedTests','numFailedTests','numTotalTestSuites','success']}
+ passed=passed and result['success'] is True
+if kind=='build' and passed:
+ summary['assets']=[{'path':p.relative_to(REPO).as_posix(),'bytes':p.stat().st_size,'sha256':sha(p)} for p in sorted((FRONTEND/'dist').rglob('*')) if p.is_file()]
+passed=passed and summary['source_bytes_unchanged_during_check'];summary['status']='PASS' if passed else 'FAIL'
+(ROOT/'evidence'/f'CSV_{kind.upper()}.json').write_text(json.dumps(summary,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
+print(json.dumps(summary,ensure_ascii=False))
+sys.exit(0 if passed else 1)

@@ -1,0 +1,6 @@
+.agent-tasks .agent-task-result h4 { margin:1rem 0 .5rem; font-size:.95rem; }
+.agent-tasks .agent-task-answer-scope { color:var(--text-muted,#a9bed0); font-size:.8rem; line-height:1.5; }
+.agent-tasks .agent-task-answer { max-height:none; overflow:visible; max-width:100%; box-sizing:border-box; white-space:pre-wrap; overflow-wrap:anywhere; }
+.agent-tasks .agent-task-sent-request { margin:1rem 0; padding:.7rem; border:1px solid var(--border-color,#2d4257); border-radius:4px; }
+.agent-tasks .agent-task-sent-request > summary { font-weight:600; }
+.agent-tasks .agent-task-sent-request > summary:focus-visible { outline:2px solid var(--focus-color,#79d1ef); outline-offset:3px; }

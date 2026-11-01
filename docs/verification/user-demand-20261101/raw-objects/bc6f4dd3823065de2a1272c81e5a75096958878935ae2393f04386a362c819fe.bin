@@ -1,0 +1,76 @@
+{
+  "checks": {
+    "all_rejected": true,
+    "no_new_reviews": false,
+    "source_unchanged": false,
+    "author_excluded": true
+  },
+  "results": [
+    {
+      "case": "without_confirmation",
+      "request": {
+        "reviewer_agent_id": "agent_38709d316a754f5a983a2d0551102726",
+        "expected_source_sha256": "7c6db027daa384a643a8375624b45271617b2963ae0cfa6fbe13f43b143ea12e",
+        "expected_reviewer_sha256": "8f2cb2bcba4a2419f6b281d3c04f7efcf27d5e6a0691e422c9a820905b934786",
+        "confirmed": false
+      },
+      "http": 403,
+      "body": {
+        "detail": {
+          "code": "task_review_confirmation_required",
+          "message": "Confirma la revisión textual por otro agente."
+        }
+      }
+    },
+    {
+      "case": "same_author",
+      "request": {
+        "reviewer_agent_id": "agent_128fb855a6284deeb0fe45a9588bec33",
+        "expected_source_sha256": "7c6db027daa384a643a8375624b45271617b2963ae0cfa6fbe13f43b143ea12e",
+        "expected_reviewer_sha256": "8f2cb2bcba4a2419f6b281d3c04f7efcf27d5e6a0691e422c9a820905b934786",
+        "confirmed": true
+      },
+      "http": 409,
+      "body": {
+        "detail": {
+          "code": "task_review_same_agent",
+          "message": "Selecciona un agente guardado distinto del autor."
+        }
+      }
+    },
+    {
+      "case": "stale_source",
+      "request": {
+        "reviewer_agent_id": "agent_38709d316a754f5a983a2d0551102726",
+        "expected_source_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+        "expected_reviewer_sha256": "8f2cb2bcba4a2419f6b281d3c04f7efcf27d5e6a0691e422c9a820905b934786",
+        "confirmed": true
+      },
+      "http": 409,
+      "body": {
+        "detail": {
+          "code": "task_review_source_changed",
+          "message": "La ejecución cambió. Actualiza antes de revisar."
+        }
+      }
+    },
+    {
+      "case": "stale_reviewer",
+      "request": {
+        "reviewer_agent_id": "agent_38709d316a754f5a983a2d0551102726",
+        "expected_source_sha256": "7c6db027daa384a643a8375624b45271617b2963ae0cfa6fbe13f43b143ea12e",
+        "expected_reviewer_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+        "confirmed": true
+      },
+      "http": 409,
+      "body": {
+        "detail": {
+          "code": "task_review_profile_changed",
+          "message": "El perfil revisor cambió. Selecciónalo de nuevo."
+        }
+      }
+    }
+  ],
+  "status": "FAIL",
+  "scope": "Real HTTP rejection; no second model request and no new review records."
+}

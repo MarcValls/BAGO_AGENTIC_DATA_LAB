@@ -1,0 +1,20 @@
+{
+  "status": "PASS",
+  "returncode": 0,
+  "container_removed": true,
+  "image_id": "sha256:3d92378210d9a4b5411f2f74f9bfe08bd1f90787c5426b589e8b95486c243480",
+  "head": "ed0efc83cc39a40aac231d9aa0da77a5d30a91e7",
+  "writeback": true,
+  "generated_files": [
+    {
+      "path": "README.md",
+      "sha256": "aeb823c75ef3cf24def0e39f97d58e32e2f8f1375e71b4156a0b8c320a507b63",
+      "bytes": 2800
+    },
+    {
+      "path": "README_DETAILS.md",
+      "sha256": "7a2682fea70897ae318537835912743ed0f1193922ada9a7d6c04b41b11ef003",
+      "bytes": 61191
+    }
+  ]
+}

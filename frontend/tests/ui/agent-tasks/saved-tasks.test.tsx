@@ -66,7 +66,7 @@ it('prepares a historical copy, preserves source through date edits and save, an
   expect(history.querySelector('input')).toBeNull()
   expect(container.querySelector('script')).toBeNull()
   expect(screen.getByText('<script>alert(1)</script>')).toBeTruthy()
-  fireEvent.click(within(history).getByRole('button', { name: 'Relanzar', hidden: true }))
+  fireEvent.click(within(history).getByRole('button', { name: t('agents.AgentTasks.relanzar'), hidden: true }))
   expect((screen.getByRole('button', { name: t('agents.AgentTasks.ejecutar_tarea') }) as HTMLButtonElement).disabled).toBe(true)
   expect(calls.filter(call => call.method !== 'GET')).toHaveLength(0)
   fireEvent.change(screen.getByLabelText('Fecha 1', { exact: true }), { target: { value: '2027-01-01' } })

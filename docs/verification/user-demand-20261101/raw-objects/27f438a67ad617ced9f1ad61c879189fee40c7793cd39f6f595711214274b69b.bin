@@ -1,0 +1,44 @@
+"""Finite owned Docker process: no shell, network, global config or unrelated cleanup."""
+from pathlib import Path
+import argparse,hashlib,json,shutil,subprocess,sys,uuid
+from prepare_inputs import HERE,REPO,prepare
+
+def sha(p):return hashlib.sha256(p.read_bytes()).hexdigest()
+def main():
+    parser=argparse.ArgumentParser();parser.add_argument('--attempt',default='attempt1');args=parser.parse_args()
+    if args.attempt not in {'attempt1','attempt2','attempt3'}:raise ValueError('explicit finite attempt name required')
+    attempt=HERE/args.attempt;attempt.mkdir(exist_ok=False)
+    manifest=json.loads((HERE/'INPUT_MANIFEST.json').read_text()) if (HERE/'INPUT_MANIFEST.json').exists() else prepare()
+    assert shutil.disk_usage(REPO).free>2*1024**3,'Less than2GiB disk free'
+    assert subprocess.check_output(['git','rev-parse','HEAD'],cwd=REPO,text=True).strip()==manifest['head']
+    assert all(sha(REPO/v['path'])==v['sha256'] for v in manifest['uncommitted_overlay'])
+    archive=HERE/manifest['archive']['path'];assert sha(archive)==manifest['archive']['sha256']
+    image=subprocess.check_output(['docker','image','inspect','--format','{{.Id}}','bago-nearest-goals-tests:20261031'],text=True).strip()
+    expected='sha256:3d92378210d9a4b5411f2f74f9bfe08bd1f90787c5426b589e8b95486c243480'
+    assert image==expected,'Image tag changed; inspect rather than assume compatible'
+    unique='bago-readme-actions-'+uuid.uuid4().hex[:12]
+    bootstrap="from pathlib import Path;import os,sys,tarfile;root=Path('/tmp')/'"+unique+"';root.mkdir();archive=tarfile.open(fileobj=sys.stdin.buffer,mode='r|');archive.extractall(root,filter='data');archive.close();os.chdir(root);exec((root/'.readme-gate/inner.py').read_text())"
+    argv=['docker','run','--rm','-i','--name',unique,'--network','none','--cpus','2','--memory','4g','--mount',f'type=bind,source={attempt},target=/results','--entrypoint','python',image,'-B','-c',bootstrap]
+    launch={'image_id':image,'argv':argv,'archive_sha256':manifest['archive']['sha256'],'head':manifest['head'],'source_overlay_files':len(manifest['uncommitted_overlay']),
+            'scope':'New owned container only, ephemeral Linux /tmp source, no ports/host network/privileged, only results mount; no Docker configuration contents read.'}
+    (attempt/'launch.json').write_text(json.dumps(launch,indent=2)+'\n')
+    try:
+        with archive.open('rb') as stdin,(attempt/'docker.stdout.log').open('wb') as stdout,(attempt/'docker.stderr.log').open('wb') as stderr:
+            run=subprocess.run(argv,cwd=REPO,stdin=stdin,stdout=stdout,stderr=stderr,timeout=1900);code=run.returncode
+    except subprocess.TimeoutExpired:
+        subprocess.run(['docker','stop','--time','5',unique],capture_output=True,timeout=30);code=124
+    remains=subprocess.check_output(['docker','ps','-aq','--filter','name=^/'+unique+'$'],text=True).strip()
+    inner=json.loads((attempt/'inner-result.json').read_text()) if (attempt/'inner-result.json').exists() else None
+    ok=code==0 and not remains and inner is not None and inner['status']=='PASS'
+    result={'status':'PASS' if ok else 'FAIL','returncode':code,'container_removed':not bool(remains),'image_id':image,'head':manifest['head'],'writeback':False}
+    if ok:
+        assert all(sha(REPO/v['path'])==v['sha256'] for v in manifest['uncommitted_overlay'])
+        assert all(sha(REPO/v['path'])==v['sha256'] for v in manifest['readme_before']), 'README changed while suite ran; do not overwrite'
+        for record in inner['generated_files']:
+            artifact=attempt/(record['path']+'.generated');assert sha(artifact)==record['sha256']
+        for record in inner['generated_files']:shutil.copyfile(attempt/(record['path']+'.generated'),REPO/record['path'])
+        result['writeback']=True;result['generated_files']=inner['generated_files']
+    (attempt/'RESULT.json').write_text(json.dumps(result,indent=2)+'\n')
+    print(json.dumps(result));return 0 if ok else 1
+
+if __name__=='__main__':raise SystemExit(main())

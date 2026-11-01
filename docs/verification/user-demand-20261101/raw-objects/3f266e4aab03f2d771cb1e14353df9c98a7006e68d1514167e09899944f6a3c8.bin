@@ -1,0 +1,14 @@
+from pathlib import Path
+import json,hashlib,urllib.request,datetime
+R=Path(__file__).resolve().parent;W=R.parent;REPO=R.parents[4]
+read=lambda n:json.loads((R/n).read_text(encoding='utf-8-sig'))
+sha=lambda p:hashlib.sha256(p.read_bytes()).hexdigest()
+checks={'input_hashes':all(sha(R/v['path'])==v['sha256'] for v in read('INPUT_MANIFEST.json')),'current_source_bytes':all(sha(REPO/v['path'])==v['sha256'] for v in read('SOURCE_EXPECTED.json'))}
+if (R/'LIVE_ACTIONS_VERIFICATION.json').exists():
+    live=read('LIVE_ACTIONS_VERIFICATION.json');checks.update(live['checks']);c=read('R26-context-raw.json');source=c['source_run'];url='http://127.0.0.1:8080/api/agents/'+source['agent_id']+'/task-runs/'+source['run_id']+'/reviews'
+    actual=json.load(urllib.request.urlopen(url,timeout=15));checks['live_readback_source_unchanged']=actual['source_run']==source;checks['live_readback_review_unchanged']=actual['reviews']==c['reviews']
+    (R/'READBACK.json').write_text(json.dumps(actual,ensure_ascii=False,indent=2),encoding='utf-8')
+else:
+    for name in ['R19-check.json','R20-check.json','R21-check.json']:checks[name]=read(name)['status']=='PASS'
+result={'status':'PASS' if all(checks.values()) else 'FAIL','checks':checks,'at':datetime.datetime.now(datetime.timezone.utc).isoformat(),'scope':'Root independently observed the existing Brave UI after implementation handoff. Source bytes and raw evidence retained. Profile-separated model review is advisory, not validation. No global or original frozen evidence was altered.'}
+(R/'RESULT.json').write_text(json.dumps(result,ensure_ascii=False,indent=2)+'\n',encoding='utf-8');print(json.dumps(result));raise SystemExit(0 if all(checks.values()) else 1)

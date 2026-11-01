@@ -1,0 +1,19 @@
+{
+  "status": "PASS",
+  "duration_seconds": 2281.25,
+  "bytes": 17389963,
+  "sha256": "7aac98961fda90ac45fc89266c55a89f85be675a9670c573bba377f5ab0708d2",
+  "flow_counts": {
+    "FAIL": 5,
+    "PASS": 16,
+    "BLOCKED": 4
+  },
+  "scope": "Actual Brave viewport recordings with burned explanatory text, timeline CSV/MD/JSON and optional SRT. Silent video; no generated voice. Failed gray GDI attempt excluded; useful segments A+B retained.",
+  "decode_exit": 0,
+  "has_audio": false,
+  "resolution": [
+    1920,
+    1170
+  ],
+  "normalization": "Reencoded real A+B frames onto a fixed 1920x1170 canvas for compatible playback; source captures retained. No content or timestamps synthesized."
+}

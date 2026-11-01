@@ -1,0 +1,280 @@
+--- a/frontend/src/components/WorkspaceManager.tsx
++++ b/frontend/src/components/WorkspaceManager.tsx
+@@ -2,6 +2,8 @@
+ import { useEffect, useId, useRef, useState } from 'react'
+ import type {ReactNode, KeyboardEvent} from 'react'
+ import ServiceTabs from './ServiceTabs'
++import CsvTablePreview from './CsvTablePreview'
++import {delimitedFile} from '../utils/delimitedText'
+ import './WorkspaceManager.css'
+ 
+ type Workspace = { id: string; root: string; name: string; title: string; context_files: Array<{ path: string; sha256: string }> }
+@@ -65,6 +67,8 @@
+   const [files, setFiles] = useState<FileRecord[]>([]), [excluded, setExcluded] = useState<Array<{ path: string; reason: string }>>([])
+   const [directory, setDirectory] = useState(''), [path, setPath] = useState(''), [text, setText] = useState(''), [destination, setDestination] = useState('')
+   const [file, setFile] = useState<FileRecord | null>(null), [trash, setTrash] = useState<Trash[]>([])
++  const [contentView, setContentView] = useState<'table' | 'text'>('table')
++  const delimiter = delimitedFile(path)
+   const [tab, setTab] = useState<'files' | 'trash' | 'git'>('files')
+   const [git, setGit] = useState<Git | null>(null), [selection, setSelection] = useState<string[]>([]), [stage, setStage] = useState<{ revision: string; head: string | null; paths: string[] } | null>(null)
+   const [message, setMessage] = useState(''), [branch, setBranch] = useState(''), [diff, setDiff] = useState('')
+@@ -134,7 +138,7 @@
+   async function read(relative: string) {
+     if (!workspace) return
+     setBusy(true); setError('')
+-    try { const data = await action(workspace.id, 'read', { path: relative }); if (identity.current === workspace.id) { setFile(data); setPath(data.path); setText(data.text); setTab('files') } }
++    try { const data = await action(workspace.id, 'read', { path: relative }); if (identity.current === workspace.id) { setFile(data); setPath(data.path); setText(data.text); setContentView('table'); setTab('files') } }
+     catch (e) { setError(e as Error) } finally { setBusy(false) }
+   }
+   async function execute() {
+@@ -193,7 +197,10 @@
+ <div className="wm-files"><div className="wm-card"><h3>{t('commerce.explorer')}</h3><label>{t('commerce.folder')}<select value={directory} onChange={e => setDirectory(e.target.value)}><option value="">{t('commerce.entire_project')}</option>{folders.map(folder => <option key={folder}>{folder}</option>)}</select></label>
+           <ul>{visible.map(item => <li key={item.path}><button disabled={busy || dirty} onClick={() => void read(item.path)}>{item.path}</button><small>{formatNumber(item.size)} bytes</small></li>)}</ul>
+           {!visible.length && <p>{t('commerce.no_files_in_this_folder')}</p>}<details><summary>{t('commerce.excluded_entries',{count:formatNumber(excluded.length)})}</summary>{excluded.map(item => <p key={item.path}>{item.path}: {item.reason}</p>)}</details>
+-        </div><div className="wm-card"><h3>{file ? t('commerce.edit_file') : t('commerce.create_file')}</h3><label>{t('commerce.relative_path')}<input value={path} readOnly={Boolean(file)} onChange={e => setPath(e.target.value)} /></label><label>{t('commerce.content')}<textarea rows={12} value={text} onChange={e => setText(e.target.value)} /></label>
++        </div><div className="wm-card"><h3>{file ? t('commerce.edit_file') : t('commerce.create_file')}</h3><label>{t('commerce.relative_path')}<input value={path} readOnly={Boolean(file)} onChange={e => setPath(e.target.value)} /></label>
++          {delimiter && <ServiceTabs<'table'|'text'> id={`${uid}-content`} label={t('commerce.csv.views')} value={contentView} onChange={setContentView} items={[{id:'table',label:t('commerce.csv.table')},{id:'text',label:t('commerce.csv.text')}]} />}
++          {delimiter && <section role="tabpanel" tabIndex={0} id={`${uid}-content-panel-table`} aria-labelledby={`${uid}-content-tab-table`} hidden={contentView !== 'table'}><CsvTablePreview text={text} delimiter={delimiter}/></section>}
++          <section role={delimiter ? 'tabpanel' : undefined} tabIndex={delimiter ? 0 : undefined} id={`${uid}-content-panel-text`} aria-labelledby={delimiter ? `${uid}-content-tab-text` : undefined} hidden={Boolean(delimiter) && contentView !== 'text'}><label>{t('commerce.content')}<textarea rows={12} value={text} onChange={e => setText(e.target.value)} /></label></section>
+           {file && <details><summary>{t('commerce.file_review')}</summary><code>{file.sha256}</code></details>}{dirty && <p role="status">{t('commerce.unsaved_edits_save_or_discard_before_switching_file_or_project')}</p>}
+           <button disabled={busy || !path} onClick={() => mutate('write', { path, text, expected_sha256: file?.sha256 ?? null }, localMessage('commerce.save_file_review',{path}))}>{t('commerce.review_save')}</button>
+           <button disabled={busy} onClick={() => { setFile(null); setPath(''); setText(''); setError('') }}>{t('commerce.discard_edits_new_file')}</button>
+--- /dev/null
++++ b/frontend/src/components/CsvTablePreview.tsx
+@@ -0,0 +1,25 @@
++import {useMemo} from 'react'
++import {t, formatNumber} from '../i18n'
++import {parseDelimitedPreview} from '../utils/delimitedText'
++import './CsvTablePreview.css'
++
++export default function CsvTablePreview({text, delimiter}: {text: string; delimiter: ',' | '\t'}) {
++  const preview = useMemo(() => parseDelimitedPreview(text, delimiter), [text, delimiter])
++  const [header = [], ...body] = preview.rows
++  const width = Math.max(0, ...preview.rows.map(row => row.length))
++  return <div className="wm-csv-preview">
++    <p className="wm-csv-note">{t('commerce.csv.read_only')}</p>
++    {preview.error && <p role="alert" className="wm-error">{t(`commerce.csv.${preview.error}`)}</p>}
++    {preview.truncated && <p role="status">{t('commerce.csv.limited')}</p>}
++    {preview.ragged && <p role="status">{t('commerce.csv.ragged')}</p>}
++    {!preview.error && (preview.rows.length ? <>
++      <div className="wm-csv-scroll" role="region" aria-label={t('commerce.csv.preview')} tabIndex={0}>
++        <table><caption>{t('commerce.csv.caption', {count: formatNumber(body.length)})}</caption>
++          <thead><tr>{Array.from({length: width}, (_, column) => <th scope="col" key={column}>{header[column] || t('commerce.csv.column', {number: formatNumber(column + 1)})}</th>)}</tr></thead>
++          <tbody>{body.map((row, index) => <tr key={index}>{Array.from({length: width}, (_, column) => <td key={column}>{row[column] ?? ''}</td>)}</tr>)}</tbody>
++        </table>
++      </div>
++      {!body.length && <p>{t('commerce.csv.no_records')}</p>}
++    </> : <p>{t(preview.truncated ? 'commerce.csv.no_complete_records' : 'commerce.csv.empty')}</p>)}
++  </div>
++}
+--- /dev/null
++++ b/frontend/src/components/CsvTablePreview.css
+@@ -0,0 +1,10 @@
++.workspace-manager .wm-csv-preview { min-width:0; }
++.workspace-manager .wm-csv-note { color:var(--text-muted,#a9bdd0); font-size:.9rem; }
++.workspace-manager .wm-csv-scroll { max-width:100%; max-height:min(58vh,34rem); overflow:auto; border:1px solid var(--border-color,#47637a); }
++.workspace-manager .wm-csv-scroll:focus-visible { outline:2px solid var(--focus-color,#79d1ef); outline-offset:2px; }
++.workspace-manager .wm-csv-scroll table { border-collapse:separate; border-spacing:0; min-width:100%; font-size:.9rem; }
++.workspace-manager .wm-csv-scroll caption { text-align:left; padding:.6rem .75rem; color:var(--text-muted,#a9bdd0); }
++.workspace-manager .wm-csv-scroll :is(th,td) { min-width:7rem; max-width:28rem; padding:.65rem .75rem; text-align:left; vertical-align:top; white-space:pre-wrap; overflow-wrap:anywhere; border-right:1px solid var(--border-color,#47637a); border-bottom:1px solid var(--border-color,#47637a); }
++.workspace-manager .wm-csv-scroll th { position:sticky; top:0; background:var(--surface-panel,#10202f); z-index:1; }
++.workspace-manager .wm-csv-scroll tr:last-child td { border-bottom:0; }
++.workspace-manager .wm-csv-scroll :is(th,td):last-child { border-right:0; }
+--- /dev/null
++++ b/frontend/src/utils/delimitedText.ts
+@@ -0,0 +1,49 @@
++/** Read-only RFC-style CSV/TSV preview. Never serializes or normalizes the editor text. */
++export const PREVIEW_ROWS = 200
++export const PREVIEW_COLUMNS = 50
++export const PREVIEW_CHARACTERS = 200_000
++export type DelimitedError = 'unclosed_quote' | 'unexpected_quote' | 'after_quote'
++export type DelimitedPreview = {rows: string[][]; truncated: boolean; ragged: boolean; error: DelimitedError | null}
++
++export function delimitedFile(path: string): ',' | '\t' | null {
++  return /\.csv$/i.test(path) ? ',' : /\.tsv$/i.test(path) ? '\t' : null
++}
++
++export function parseDelimitedPreview(text: string, delimiter: ',' | '\t' = ','): DelimitedPreview {
++  const rows: string[][] = []
++  let row: string[] = [], field = '', quoted = false, closedQuote = false, endedRow = true
++  let truncated = false
++  const end = Math.min(text.length, PREVIEW_CHARACTERS)
++  const fail = (error: DelimitedError): DelimitedPreview => ({rows: [], truncated: false, ragged: false, error})
++  const finishField = () => { row.push(field); field = ''; closedQuote = false }
++  for (let i = text.charCodeAt(0) === 0xfeff ? 1 : 0; i < end; i++) {
++    const character = text[i]
++    if (quoted) {
++      if (character === '"') {
++        if (text[i + 1] === '"' && i + 1 < end) { field += '"'; i++ }
++        else { quoted = false; closedQuote = true }
++      } else field += character
++      endedRow = false
++      continue
++    }
++    if (character === delimiter) { finishField(); endedRow = false }
++    else if (character === '\r' || character === '\n') {
++      if (character === '\r' && text[i + 1] === '\n') i++
++      finishField(); rows.push(row); row = []; endedRow = true
++      if (rows.length >= PREVIEW_ROWS + 1 && i + 1 < text.length) { truncated = true; break }
++    } else if (closedQuote) return fail('after_quote')
++    else if (character === '"') {
++      if (field !== '') return fail('unexpected_quote')
++      quoted = true; endedRow = false
++    } else { field += character; endedRow = false }
++  }
++  if (text.length > end) truncated = true
++  if (!truncated) {
++    if (quoted) return fail('unclosed_quote')
++    if (!endedRow) { finishField(); rows.push(row) }
++  }
++  const width = rows[0]?.length ?? 0
++  const ragged = rows.some(record => record.length !== width)
++  if (rows.some(record => record.length > PREVIEW_COLUMNS)) truncated = true
++  return {rows: rows.map(record => record.slice(0, PREVIEW_COLUMNS)), truncated, ragged, error: null}
++}
+--- a/frontend/src/i18n/domains/commerce.ts
++++ b/frontend/src/i18n/domains/commerce.ts
+@@ -1,5 +1,20 @@
+ // Manually authored product presentation catalog. Protocol values and user content are not translated.
+ export const es = {
++  "commerce.csv.views": "Vista del contenido",
++  "commerce.csv.table": "Tabla",
++  "commerce.csv.text": "Texto",
++  "commerce.csv.preview": "Tabla del archivo delimitado",
++  "commerce.csv.read_only": "Vista de lectura. La primera fila se muestra como encabezado. Usa Texto para editar.",
++  "commerce.csv.caption": "{count} filas de datos en la vista previa",
++  "commerce.csv.column": "Columna {number}",
++  "commerce.csv.empty": "El archivo está vacío.",
++  "commerce.csv.no_records": "Solo hay encabezados; no hay filas de datos.",
++  "commerce.csv.no_complete_records": "No hay filas completas dentro del límite de la vista previa. Consulta Texto.",
++  "commerce.csv.limited": "Vista previa limitada a 200 filas, 50 columnas y 200 000 caracteres. El resto no se muestra ni se valida; el contenido completo sigue en Texto.",
++  "commerce.csv.ragged": "Algunas filas tienen distinto número de columnas. Se muestran sin modificar el texto original.",
++  "commerce.csv.unclosed_quote": "Hay un campo con comillas sin cerrar. Abre Texto para revisar el formato.",
++  "commerce.csv.unexpected_quote": "Hay comillas dentro de un campo sin delimitar. Abre Texto para revisar el formato.",
++  "commerce.csv.after_quote": "Hay caracteres inesperados después de cerrar las comillas. Abre Texto para revisar el formato.",
+   "commerce.project_folder.form_title": "Carpeta y nombre del proyecto",
+   "commerce.project_folder.global_scope": "La carpeta activa se usa en ADL. Los chats se separan por proyecto registrado.",
+   "commerce.project_folder.active": "Carpeta activa:",
+@@ -812,6 +827,21 @@
+   "commerce.providers.original_detail": "Detalle técnico original"
+ } as const
+ export const en: {[K in keyof typeof es]: string} = {
++  "commerce.csv.views": "Content view",
++  "commerce.csv.table": "Table",
++  "commerce.csv.text": "Text",
++  "commerce.csv.preview": "Delimited file table",
++  "commerce.csv.read_only": "Read-only view. The first row is shown as headers. Use Text to edit.",
++  "commerce.csv.caption": "{count} data rows in the preview",
++  "commerce.csv.column": "Column {number}",
++  "commerce.csv.empty": "The file is empty.",
++  "commerce.csv.no_records": "Only headers; there are no data rows.",
++  "commerce.csv.no_complete_records": "No complete records within the preview limit. Open Text.",
++  "commerce.csv.limited": "Preview limited to 200 rows, 50 columns and 200,000 characters. Remaining content is neither displayed nor validated; full content is still available in Text.",
++  "commerce.csv.ragged": "Some rows have different column counts. They are displayed without changing the original text.",
++  "commerce.csv.unclosed_quote": "A quoted field is not closed. Open Text to review the format.",
++  "commerce.csv.unexpected_quote": "There are quotes inside an unquoted field. Open Text to review the format.",
++  "commerce.csv.after_quote": "Unexpected characters follow a closing quote. Open Text to review the format.",
+   "commerce.project_folder.form_title": "Project folder and name",
+   "commerce.project_folder.global_scope": "The active folder is used across ADL. Chats are separated by registered project.",
+   "commerce.project_folder.active": "Active folder:",
+--- /dev/null
++++ b/frontend/tests/workspace/csv-preview.test.tsx
+@@ -0,0 +1,65 @@
++// @vitest-environment jsdom
++import React from 'react'
++import {afterEach,beforeEach,expect,it,vi} from 'vitest'
++import {cleanup,fireEvent,render,screen,waitFor,within} from '@testing-library/react'
++import WorkspaceManager from '../../src/components/WorkspaceManager'
++import CsvTablePreview from '../../src/components/CsvTablePreview'
++import {resetLocaleForTests,setLocale} from '../../src/i18n'
++import {folderFixture,workspace} from '../project-folders/fixtures'
++
++beforeEach(()=>{localStorage.clear();resetLocaleForTests();setLocale('es')})
++afterEach(()=>{cleanup();vi.unstubAllGlobals()})
++
++async function openFile(text:string,path='datos.csv') {
++ const w=workspace();const file={path,text,sha256:'a'.repeat(64),size:text.length}
++ const fixture=folderFixture({workspaces:[w],actions:body=>body.operation==='list_files'?{files:[file],excluded:[]}:body.operation==='trash_list'?{items:[]}:body.operation==='read'?file:{}})
++ render(<WorkspaceManager proposal={{intent:'files'}}/>)
++ await screen.findByRole('option',{name:'PROJECT FIXTURE · selected-project'})
++ fireEvent.change(screen.getByLabelText('Proyecto gestionado'),{target:{value:w.id}})
++ fireEvent.click(await screen.findByRole('button',{name:path}))
++ await screen.findByRole('heading',{name:'Editar archivo'})
++ return fixture
++}
++
++it('opens CSV as a semantic escaped table, switches with keyboard, and never writes or marks dirty by viewing',async()=>{
++ const text='nombre,nota\r\n"A, B","<img src=x onerror=alert(1)>"\r\n'
++ const f=await openFile(text)
++ const table=await screen.findByRole('table');expect(within(table).getByRole('columnheader',{name:'nombre'})).toBeTruthy()
++ expect(within(table).getByRole('cell',{name:'A, B'})).toBeTruthy();expect(within(table).getByRole('cell',{name:'<img src=x onerror=alert(1)>'})).toBeTruthy();expect(table.querySelector('img')).toBeNull()
++ expect((screen.getByLabelText('Proyecto gestionado') as HTMLSelectElement).disabled).toBe(false)
++ const calls=f.calls.length
++ fireEvent.keyDown(screen.getByRole('tab',{name:'Tabla'}),{key:'ArrowRight'})
++ const editor=screen.getByLabelText('Contenido') as HTMLTextAreaElement;expect(editor.value).toBe(text.replace(/\r\n/g,'\n'))
++ fireEvent.keyDown(screen.getByRole('tab',{name:'Texto'}),{key:'Home'})
++ expect(screen.getByRole('table')).toBeTruthy();expect(f.calls).toHaveLength(calls)
++ expect(screen.queryByText(/Cambios de edición sin guardar/)).toBeNull()
++ // Saving remains a reviewed operation, with the exact original state rather than the textarea DOM normalization.
++ fireEvent.click(screen.getByRole('button',{name:'Revisar guardado'}))
++ const details=within(screen.getByRole('dialog')).getByText(/expected_sha256/)
++ expect(JSON.parse(details.textContent!).text).toBe(text)
++ expect(f.calls).toHaveLength(calls)
++})
++it('reflects edits in the preview without an implicit write and leaves unsaved state intact when switching',async()=>{
++ const f=await openFile('name,value\nA,1')
++ await screen.findByRole('table');const before=f.calls.length
++ fireEvent.click(screen.getByRole('tab',{name:'Texto'}));fireEvent.change(screen.getByLabelText('Contenido'),{target:{value:'name,value\nB,2'}})
++ expect(screen.getByText(/Cambios de edición sin guardar/)).toBeTruthy()
++ fireEvent.click(screen.getByRole('tab',{name:'Tabla'}));expect(screen.getByRole('cell',{name:'B'})).toBeTruthy();expect(screen.getByRole('cell',{name:'2'})).toBeTruthy()
++ expect(f.calls).toHaveLength(before);expect((screen.getByLabelText('Proyecto gestionado') as HTMLSelectElement).disabled).toBe(true)
++})
++it('keeps plain files in the existing editable text view without CSV tabs',async()=>{
++ await openFile('<plain>','notes.txt');expect((screen.getByLabelText('Contenido') as HTMLTextAreaElement).value).toBe('<plain>');expect(screen.queryByRole('tab',{name:'Tabla'})).toBeNull()
++})
++it('shows errors with Text still available and preserves malformed input unchanged',async()=>{
++ await openFile('name\n"unclosed');expect(await screen.findByRole('alert')).toHaveProperty('textContent',expect.stringContaining('comillas sin cerrar'))
++ expect(screen.queryByRole('table')).toBeNull();fireEvent.click(screen.getByRole('tab',{name:'Texto'}));expect((screen.getByLabelText('Contenido') as HTMLTextAreaElement).value).toBe('name\n"unclosed')
++})
++it('renders empty, header-only, ragged and truncated states explicitly',()=>{
++ const {rerender}=render(<CsvTablePreview text="" delimiter=","/>);expect(screen.getByText('El archivo está vacío.')).toBeTruthy()
++ rerender(<CsvTablePreview text="name,value" delimiter=","/>);expect(screen.getByText('Solo hay encabezados; no hay filas de datos.')).toBeTruthy()
++ rerender(<CsvTablePreview text={'name,value\nA\nB,2,extra'} delimiter=","/>);expect(screen.getByText(/distinto número de columnas/)).toBeTruthy();expect(screen.getByRole('cell',{name:'extra'})).toBeTruthy()
++ rerender(<CsvTablePreview text={['name',...Array(240).fill('A')].join('\n')} delimiter=","/>);expect(screen.getByText(/Vista previa limitada/)).toBeTruthy();expect(screen.getAllByRole('row')).toHaveLength(201)
++})
++it('uses the same table/text path for TSV',async()=>{
++ await openFile('name\tvalue\n"A\tB"\t1,2','datos.tsv');expect(await screen.findByRole('cell',{name:'1,2'})).toBeTruthy();expect(screen.getAllByRole('columnheader')).toHaveLength(2)
++})
+--- /dev/null
++++ b/frontend/tests/workspace/csv-parser.test.tsx
+@@ -0,0 +1,30 @@
++import {expect,it} from 'vitest'
++import {delimitedFile,parseDelimitedPreview,PREVIEW_CHARACTERS,PREVIEW_COLUMNS,PREVIEW_ROWS} from '../../src/utils/delimitedText'
++
++it('decodes quoted delimiters, escaped quotes, exact CRLF inside fields and trailing empty fields',()=>{
++ const text='nombre,nota,fin\r\n"A, B","Dice ""hola""\r\ny adiós",\r\n'
++ expect(parseDelimitedPreview(text)).toEqual({rows:[['nombre','nota','fin'],['A, B','Dice "hola"\r\ny adiós','']],error:null,ragged:false,truncated:false})
++ expect(text).toBe('nombre,nota,fin\r\n"A, B","Dice ""hola""\r\ny adiós",\r\n')
++})
++it('preserves empty fields and explicit blank records without adding a phantom terminal record',()=>{
++ expect(parseDelimitedPreview('')).toEqual({rows:[],error:null,ragged:false,truncated:false})
++ expect(parseDelimitedPreview(',\n\n')).toMatchObject({rows:[['',''],['']],ragged:true})
++ expect(parseDelimitedPreview('"",')).toMatchObject({rows:[['','']]})
++ expect(parseDelimitedPreview('a\r\nb\r\nc')).toMatchObject({rows:[['a'],['b'],['c']]})
++})
++it('accepts BOM and TSV without converting tabs or comma content',()=>{
++ expect(delimitedFile('REPORT.CSV')).toBe(',');expect(delimitedFile('datos.tsv')).toBe('\t');expect(delimitedFile('notes.txt')).toBeNull()
++ expect(parseDelimitedPreview('\ufeff"name"\tvalue\n"A\tB"\t1,2','\t')).toMatchObject({rows:[['name','value'],['A\tB','1,2']],error:null})
++})
++it.each([['a\n"broken','unclosed_quote'],['a\nb"c','unexpected_quote'],['a\n"b"x','after_quote']])('reports malformed quoted input %s without a misleading partial table',(text,error)=>{
++ expect(parseDelimitedPreview(text)).toMatchObject({rows:[],error})
++})
++it('preserves ragged records for a visible width warning',()=>{
++ expect(parseDelimitedPreview('a,b\n1\n2,3,4')).toMatchObject({rows:[['a','b'],['1'],['2','3','4']],ragged:true,error:null})
++})
++it('bounds rows, columns and character scanning without calling an unfinished bounded field invalid',()=>{
++ const rows=parseDelimitedPreview(['header',...Array.from({length:PREVIEW_ROWS+20},(_,i)=>String(i))].join('\n'))
++ expect(rows.rows).toHaveLength(PREVIEW_ROWS+1);expect(rows.truncated).toBe(true)
++ const wide=parseDelimitedPreview(Array(PREVIEW_COLUMNS+10).fill('cell').join(','));expect(wide.rows[0]).toHaveLength(PREVIEW_COLUMNS);expect(wide.truncated).toBe(true)
++ const huge=parseDelimitedPreview('header\n"'+'x'.repeat(PREVIEW_CHARACTERS+10));expect(huge.rows).toEqual([['header']]);expect(huge.error).toBeNull();expect(huge.truncated).toBe(true)
++})

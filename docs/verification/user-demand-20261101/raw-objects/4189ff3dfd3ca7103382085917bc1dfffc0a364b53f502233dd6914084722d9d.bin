@@ -1,0 +1,63 @@
+{
+  "status": "PASS",
+  "kind": "tests",
+  "base_sha": "ed0efc83cc39a40aac231d9aa0da77a5d30a91e7",
+  "sources": [
+    {
+      "path": "frontend/src/components/WorkspaceManager.tsx",
+      "sha256": "f26f56728425fa88b9e08b8f0f937ae3f9d5478c47f8a31ce6cd04b42756c468"
+    },
+    {
+      "path": "frontend/src/components/CsvTablePreview.tsx",
+      "sha256": "bdad8478d3a25819f8f382f940e2b6dc2c2401de82ae53aa4d8bd57f88f8b843"
+    },
+    {
+      "path": "frontend/src/components/CsvTablePreview.css",
+      "sha256": "7316746c5b658a531e583d0aa9aeb936a087f0380c477cf340c3fdf4601d2e66"
+    },
+    {
+      "path": "frontend/src/utils/delimitedText.ts",
+      "sha256": "a0f372f18b3aa1c781647325598d642114f255a30edc28374153a3f2efe9efc0"
+    },
+    {
+      "path": "frontend/src/i18n/domains/commerce.ts",
+      "sha256": "29abdf4c07726681a4c512b0251b837c368d38bae4839aeca25833281d9ef48e"
+    },
+    {
+      "path": "frontend/tests/workspace/csv-preview.test.tsx",
+      "sha256": "bf9624b66a0f714576945e5c90faeb1bf112aeea5e10a17cec5468e9f151a185"
+    },
+    {
+      "path": "frontend/tests/workspace/csv-parser.test.tsx",
+      "sha256": "910bc29f5e483d10eafcc30d1c91db7967c74fbc1471e2151744de634f6ebdcf"
+    }
+  ],
+  "runs": [
+    {
+      "argv": [
+        "C:\\Program Files\\nodejs\\node.EXE",
+        "C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\.worktrees\\csv-table-preview-20261101\\frontend\\node_modules\\vitest\\vitest.mjs",
+        "run",
+        "--reporter=json",
+        "--outputFile=C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\.worktrees\\csv-table-preview-20261101\\.bago\\goals\\csv-table-preview-20261101\\workspace\\evidence\\tests\\vitest.json",
+        "tests/workspace/csv-parser.test.tsx",
+        "tests/workspace/csv-preview.test.tsx",
+        "tests/workspace/manager.test.tsx",
+        "tests/project-folders",
+        "tests/i18n/commerce",
+        "tests/service-tabs/service-tabs.test.tsx"
+      ],
+      "returncode": 0,
+      "duration_seconds": 9.663
+    }
+  ],
+  "source_bytes_unchanged_during_check": true,
+  "browser": "NOT_RUN; root owns existing visible Brave window",
+  "tests": {
+    "numTotalTests": 65,
+    "numPassedTests": 65,
+    "numFailedTests": 0,
+    "numTotalTestSuites": 8,
+    "success": true
+  }
+}

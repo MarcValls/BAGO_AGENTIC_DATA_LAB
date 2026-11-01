@@ -1,0 +1,17 @@
+# Gate real del README
+
+Scope autorizado: generar README.md y README_DETAILS.md en este worktree mediante scripts/generate_dynamic_readme.py, ejecutar su suite completa y después --check --skip-tests. No editar producto, canónicos, BE/UI handoffs, SQLite de runtime, HEAD, navegador ni configuración global.
+
+Inspección: el generador normal ejecuta `python -m pytest tests -q --disable-warnings` y sólo escribe ambos README si pasa. --skip-tests únicamente recoge tests y se declara NOT_RUN para ejecución; no sustituye el primer gate. La CI del repositorio usa Ubuntu/Python3.11 y Node22.
+
+Docker local existente: imagen sha256:3d92378210d9a4b5411f2f74f9bfe08bd1f90787c5426b589e8b95486c243480. El sandbox de la sesión delegada denegó acceso a npipe/docker_engine; el host raíz ejecuta el runner revisable, sin ampliar el scope del producto. No se lee ni publica el contenido de Docker config.
+
+Fuente: Git archive del HEAD ed0efc83cc39a40aac231d9aa0da77a5d30a91e7 más overlay de las16fuentes rawbyte verificadas (6UI+3backend+7CSV). Git shallow real se reconstruye sólo dentro del contenedor con el pack de objetos del mismo HEAD. Las dependencias de frontend existentes se capturan con inventario; no se instala ni descarga nada durante la prueba. Todo queda en readme-gate o almacenamiento efímero normal de Docker.
+
+Ejecución: contenedor con UUID propio, --network none, sin puertos/privileged/hostnetwork,2CPU/4GiB. Se extrae la copia a un directorio Linux nuevo para evitar archivos antiguos de imagen y límites de FUSE/ACL Windows. Sólo resultados se montan hacia el proyecto. Preflight real git/node/ffmpeg/imports y JSDOM; después generador real completo y consistencia. Fuentes se rehashean antes/después; --skip-tests del segundo comando no cuenta como nueva ejecución de suite.
+
+Límite de entorno confirmado: imagen tiene pypdf6.21.2, mientras requirements-documents.txt fija6.21.4. El resultado acredita la imagen exacta observada, no el entorno de pins de CI. La diferencia se conserva explícitamente por instrucción del orquestador; no se cambian producto/contrato para ocultarla. La CI de la rama, cuando se publique, deberá instalar los pins actuales; esa CI es una evidencia separada, actualmente NOT_RUN en este gate.
+
+Sólo si todos los pasos Docker pasan se conservan README*.generated y se copian al worktree, tras comprobar que HEAD,16fuentes y README iniciales no cambiaron durante la suite. Después check_final.py ejecuta --check --skip-tests de verdad en la fuente Windows final con temporales/datos de colección aislados dentro del proyecto. No se declara una nueva suite Windows completa: NOT_RUN aquí; las pruebas focalizadas ya tienen sus recibos propios.
+
+Publicación finita: conservar INPUT_MANIFEST, scripts, logs, JUnit, RESULT y hashes de los README. inputs/candidate.tar y candidate.pack son temporales locales grandes para ejecutar Docker, no artefactos que deban añadirse a Git. Ningún recibo o fallo anterior se reescribe. Si se necesita corregir un canónico, se consulta antes con root; no se hará una corrección directa del generado.
