@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 import React from 'react'
 import {afterEach,beforeEach,expect,it,vi} from 'vitest'
-import {cleanup,fireEvent,render,screen,waitFor,within} from '@testing-library/react'
+import {act,cleanup,fireEvent,render,screen,waitFor,within} from '@testing-library/react'
 import AgentTasks from '../../../src/components/AgentTasks'
 import {resetLocaleForTests,setLocale,t} from '../../../src/i18n'
 
@@ -34,6 +34,8 @@ function fixture(options:{reviewers?:typeof target[];reviewError?:boolean;invali
  return {state,calls}
 }
 async function loaded(){
+ // Flush the agent-list effect and its follow-up task/history reload.
+ await act(async()=>{})
  await waitFor(()=>{
   expect((screen.getByRole('combobox',{name:t('agents.AgentTasks.agente_para_tareas')}) as HTMLSelectElement).disabled).toBe(false)
   expect((screen.getByRole('textbox',{name:t('agents.AgentTaskForm.tarea')}) as HTMLTextAreaElement).value).toBe(task.prompt)
