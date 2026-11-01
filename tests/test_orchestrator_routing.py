@@ -310,6 +310,62 @@ def test_task_scoped_draft_prompt_only_offers_connected_handlers():
     assert "mcp.execute" not in prompt and "sandbox.run" not in prompt
 
 
+def test_host_bound_new_profile_does_not_need_llm_to_reprove_identical_scope_or_gain_effects(setup):
+    f=setup
+    f['file'].unlink()
+    task='Inventory selected fixture files without reading text or writing anything.'
+    _install_task_agent_factory(f,f['monkeypatch'],tools=['filesystem_inventory'])
+    classified=[]
+    async def false_negative(*args):
+        classified.append(args)
+        return 'out_of_scope','A controlled false negative must not defeat identical host-written scope.'
+    f['monkeypatch'].setattr(server,'_classify_agent_task_scope',false_negative)
+    def route(*args,**kwargs):
+        return {'tool_calls':[{'function':{'name':'resolve_control_request','arguments':{
+            'decision':'create_agent_for_task','task':task,'reply':'Prepare a bounded task profile.'}}}]}
+    f['monkeypatch'].setattr(server.provider_runtime,'chat_turn',route)
+    response=f['client'].post('/api/chat/control',json={'message':task,'conversation_id':f['parent']['id'],'revision':0})
+    assert response.status_code==200,response.text
+    record=response.json()['agent_delegation']
+    assert record['state']=='PROPOSED' and record['task']==task
+    assert record['child_conversation_id'] is None
+    assert record['assigned_tools']==['filesystem_inventory']
+    assert not record.get('tools_executed') and not record.get('target_written')
+    assert classified==[] and f['comms'].runs()==[]
+
+
+def test_changed_new_profile_keeps_semantic_scope_check_and_does_not_execute(setup):
+    f=setup
+    f['file'].unlink()
+    task='Inventory selected fixture files without writing.'
+    _install_task_agent_factory(f,f['monkeypatch'],tools=['filesystem_inventory'])
+    load=server._load_model_enabled_agent
+    def changed(agent_id):
+        record=load(agent_id)
+        record.config.system_prompt='Different profile after creation'
+        return record
+    f['monkeypatch'].setattr(server,'_load_model_enabled_agent',changed)
+    classified=[]
+    async def deny(*args):
+        classified.append(args)
+        return 'unclear','Changed profile must be checked'
+    f['monkeypatch'].setattr(server,'_classify_agent_task_scope',deny)
+    def route(provider,model,messages,**kwargs):
+        if 'Host routing outcome (trusted control result' in messages[0]['content']:
+            prefix='Refreshed saved agents (metadata only; supersedes the previous availability list): '
+            current=json.JSONDecoder().raw_decode(messages[0]['content'].rsplit(prefix,1)[1])[0]
+            assert len(current)==1 and current[0]['task_scope']==task
+            return {'tool_calls':[{'function':{'name':'resolve_control_request','arguments':{
+                'decision':'clarify','reply':'No validated profile.'}}}]}
+        return {'tool_calls':[{'function':{'name':'resolve_control_request','arguments':{
+            'decision':'create_agent_for_task','task':task,'reply':'Prepare a profile.'}}}]}
+    f['monkeypatch'].setattr(server.provider_runtime,'chat_turn',route)
+    response=f['client'].post('/api/chat/control',json={'message':task,'conversation_id':f['parent']['id'],'revision':0})
+    assert response.status_code==200,response.text
+    assert response.json()['operation']=='chat' and len(classified)==1
+    assert not response.json().get('agent_delegation') and f['comms'].runs()==[]
+
+
 def test_unvalidated_auto_created_profile_is_not_replaced_by_repeated_creation(setup):
     f = setup
     f["file"].unlink()

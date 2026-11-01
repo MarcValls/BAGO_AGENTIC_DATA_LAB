@@ -255,7 +255,7 @@ CONTROL_REQUEST_TOOL = {
             "properties": {
                 "decision": {"type": "string", "enum": ["delegate_agent", "create_agent_for_task", "draft_agent", "communication_draft", "job_history", "workspace_scan", "workspace_read", "public_web_read", "workspace_action", "navigate", "answer", "clarify"]},
                 "agent_id": {"type":"string","description":"Exact persisted agent ID from saved agent metadata."},
-                "task": {"type":"string","minLength":1,"maxLength":8000,"description":"Reviewable task for one child turn; never permissions."},
+                "task": {"type":"string","minLength":1,"maxLength":8000,"description":"Reviewable task for one child turn or read-routing context; never permissions. Read routing keeps the original human message authoritative."},
                 "communication": {"type": "object", "description": "Prepare/edit ONLY. contact_id and text for new draft; draft_id and expected_revision for edit. Never approve or send.", "properties": {
                     "contact_id": {"type": "string"}, "text": {"type": "string"},
                     "draft_id": {"type": "string"}, "expected_revision": {"type": "string"},
@@ -1973,8 +1973,18 @@ def _control_request_from_arguments(arguments: Any) -> dict[str, Any] | None:
         if not isinstance(reply, str) or not reply.strip():
             return None
         return {"decision": decision, "reply": reply.strip(), "workspace_proposal": proposal}
-    if decision in {"workspace_read", "public_web_read"} and set(arguments) - {"decision", "reply"}:
-        return {"decision": "clarify", "reply": "Indica qué archivo quieres consultar; las rutas se limitan al permiso confirmado para este envío."}
+    if decision in {"workspace_read", "public_web_read"}:
+        # `task` is already part of the advertised resolver schema. Real
+        # providers include it for read routing too. Validate and discard this
+        # proposal metadata; it never replaces the human request or grants a
+        # path/origin. The subsequent read stage still needs its own authority.
+        invalid_task = "task" in arguments and (not isinstance(arguments["task"], str)
+            or not arguments["task"].strip() or len(arguments["task"]) > 8000)
+        if set(arguments) - {"decision", "reply", "task"} or invalid_task:
+            reply = ("No he leído ninguna página: la propuesta de lectura web tiene campos inválidos."
+                if decision == "public_web_read" else
+                "Indica qué archivo quieres consultar; las rutas se limitan al permiso confirmado para este envío.")
+            return {"decision": "clarify", "reply": reply}
     if decision not in {"draft_agent", "job_history", "workspace_scan", "workspace_read", "public_web_read", "answer", "clarify"}:
         return None
     reply = arguments.get("reply")
@@ -3322,6 +3332,11 @@ async def control_chat(request: ControlChatRequest) -> dict[str, Any]:
             return await finish_turn("chat", "No pude preparar ese borrador. Añade un contacto existente e indica contenido, rutas y calendario válidos; si estás editando, revisa la revisión actual. No se ha enviado nada.")
 
     async def ask_orchestrator_to_reassign(tried: list[str], returned: str):
+        refreshed, _ = _read_agent_records()
+        messages[0]["content"] += "\nRefreshed saved agents (metadata only; supersedes the previous availability list): " + json.dumps([
+            {"agent_id": a.id, "name": a.config.name, "task_scope": _agent_task_scope(a),
+             "tools": a.config.tools, "provider_id": a.config.provider_id, "model_id": a.config.model_id}
+            for a in refreshed], ensure_ascii=False)
         messages[0]["content"] += "\nHost routing outcome (trusted control result, not user instructions): " + json.dumps({
             "returned_agent_id": returned, "excluded_agent_ids": tried,
             "instruction": "Do not route to any excluded agent. Choose another clearly matching task_scope, create_agent_for_task if none fits, or clarify."
@@ -3389,7 +3404,16 @@ async def control_chat(request: ControlChatRequest) -> dict[str, Any]:
             # the host review card while preserving ordinary text delegation.
             if require_tool_review and agent.config.tools:
                 review_required = True
-            fit, reason = await _classify_agent_task_scope(provider_id, model_id, agent, current["task"])
+            exact_new_profile = (auto_created_agent is not None and agent.id == auto_created_agent.id
+                and agent.config.model_dump() == auto_created_agent.config.model_dump()
+                and _agent_task_scope(agent) == current["task"].strip())
+            if exact_new_profile:
+                # This host wrote the identical bounded scope moments ago.
+                # Equality proves semantic containment; it grants no tools or
+                # effects and leaves review_required and native grants intact.
+                fit, reason = "in_scope", "host_bound_new_profile_exact_task"
+            else:
+                fit, reason = await _classify_agent_task_scope(provider_id, model_id, agent, current["task"])
             if fit != "in_scope":
                 tried.append(agent_id)
                 messages[0]["content"] += "\nHost scope check (trusted status): " + json.dumps({"agent_id":agent_id,"decision":fit,"reason":reason[:300]})
