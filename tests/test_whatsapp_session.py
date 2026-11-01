@@ -26,6 +26,19 @@ def test_config_survives_new_service(session):
     assert WhatsAppSession(session.root).status()["label"] == "BAGO empresa"
 
 
+def test_legacy_enabled_is_not_automatic_authority(session):
+    (session.root / "config.json").write_text(json.dumps({"label": "Legacy", "enabled": True}))
+    assert session.status()["configured"] is True
+    assert session.authorization_identity() is None
+    session.configure("Explicit connection configuration", True)
+    identity = session.authorization_identity()
+    assert isinstance(identity, str) and len(identity) == 64
+    session.configure("Renamed", True)
+    assert session.authorization_identity() == identity
+    assert WhatsAppSession(session.root).authorization_identity() == identity
+    assert "authorization" not in json.loads((session.root / "config.json").read_text())
+
+
 @pytest.mark.parametrize("observation,state", [({"authenticated": True, "qr": False}, "connected"),
     ({"authenticated": False, "qr": True}, "linking"), ({}, "unknown"),
     ({"authenticated": True, "qr": True}, "linking")])

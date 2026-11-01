@@ -2,6 +2,7 @@
 import React from 'react'
 import {afterEach, beforeEach, expect, it, vi} from 'vitest'
 import {act, cleanup, fireEvent, render, screen, waitFor, within} from '@testing-library/react'
+import {readPublicWebPreference} from '../../src/utils/publicWebPreference'
 import AgentChat from '../../src/components/AgentChat'
 import {resetLocaleForTests, setLocale, t} from '../../src/i18n'
 
@@ -22,6 +23,7 @@ async function fixture(mode: 'baseline' | 'bago5' = 'baseline', fail = false) {
   const calls: Call[] = []
   const onNavigate = vi.fn()
   let conversation: any = null
+  let webGrantSequence = 0
   vi.stubGlobal('fetch', vi.fn(async (url: string, init?: RequestInit) => {
     const method = init?.method ?? 'GET'
     const body = init?.body ? JSON.parse(String(init.body)) : null
@@ -37,10 +39,10 @@ async function fixture(mode: 'baseline' | 'bago5' = 'baseline', fail = false) {
       return reply(conversation)
     }
     if (url === '/api/capabilities') return reply({capabilities: [{id: 'workspace.read_text', name: 'Lectura fixture', status: 'AVAILABLE', effect: 'read'}]})
-    if (url === '/api/web-read/authorizations') return reply({authorization_id: 'explicit-web-grant', allowed_origins: ['https://example.com']})
+    if (url === '/api/web-read/authorizations') return reply({authorization_id: `explicit-web-grant-${++webGrantSequence}`, allowed_origins: ['https://example.com']})
     if (url === '/api/chat/control') {
       if (fail) return reply({detail: 'Fallo sintético del proveedor'}, 503)
-      conversation = {...conversation, revision: 3, messages: [{id: 'user-fixture', role: 'user', content: body.message}, {id: 'assistant-fixture', role: 'assistant', content: 'Respuesta fixture'}]}
+      conversation = {...conversation, revision: conversation.revision + 2, messages: [{id: 'user-fixture', role: 'user', content: body.message}, {id: 'assistant-fixture', role: 'assistant', content: 'Respuesta fixture'}]}
       return reply({operation: body.operation, conversation, ...(body.operation === 'list_agents' ? {agents: []} : {})})
     }
     return reply({models: [], proposals: []})
@@ -168,16 +170,26 @@ it('uses saved project permissions independently from the explicit one-turn web 
   const accessDialog = await screen.findByRole('dialog', {name: 'Permisos del proyecto'})
   expect(within(accessDialog).getByText('src', {selector: '.project-permissions__scope code'})).toBeTruthy()
   fireEvent.click(within(accessDialog).getByRole('button', {name: 'Cerrar'}))
+  const message = naturalMessages[0] + ' Usa https://example.com/'
+  fireEvent.change(f.input, {target: {value: message}})
   fireEvent.click(screen.getByLabelText('Permitir lectura web p\u00fablica'))
-  fireEvent.change(screen.getByLabelText('URL HTTPS de entrada \u00b7 una por l\u00ednea'), {target: {value: 'https://example.com/'}})
-  await send(f.input, naturalMessages[0])
+  expect(screen.queryByLabelText('URL HTTPS de entrada \u00b7 una por l\u00ednea')).toBeNull()
+  await send(f.input, message)
   await screen.findByText('Respuesta fixture')
-  expect(f.control()[0].body).toMatchObject({operation: 'chat', web_read_authorization_id: 'explicit-web-grant'})
+  expect(f.control()[0].body).toMatchObject({operation: 'chat', web_read_authorization_id: 'explicit-web-grant-1'})
   expect(f.control()[0].body).not.toHaveProperty('workspace_read_authorization_id')
   const grants = f.mutations().filter(call => call.url.endsWith('/authorizations'))
   expect(grants).toHaveLength(1)
   for (const grant of grants) expect(grant.body).toMatchObject({owner_kind: 'assistant', owner_id: 'app-assistant', conversation_id: 'conv-shortcuts', revision: 1})
-  expect((screen.getByLabelText('Permitir lectura web p\u00fablica') as HTMLInputElement).checked).toBe(false)
+  expect((screen.getByLabelText('Permitir lectura web p\u00fablica') as HTMLInputElement).checked).toBe(true)
+  const identity = {projectId:'project-1',root:'D:/work/project',ownerKind:'assistant' as const,ownerId:'app-assistant',conversationId:'conv-shortcuts'}
+  expect(readPublicWebPreference(identity).preference).toEqual({enabled:true,urls:'https://example.com/'})
+  await send(f.input, 'Continúa en https://example.com/next')
+  await waitFor(() => expect(f.control()).toHaveLength(2))
+  expect(f.control()[1].body).toMatchObject({conversation_id:'conv-shortcuts',revision:3,web_read_authorization_id:'explicit-web-grant-2'})
+  expect(f.control()[1].body).not.toHaveProperty('workspace_read_authorization_id')
+  expect(f.mutations().filter(call => call.url === '/api/web-read/authorizations')[1].body).toMatchObject({owner_kind:'assistant',owner_id:'app-assistant',conversation_id:'conv-shortcuts',revision:3})
+  expect(JSON.stringify(localStorage)).not.toContain('explicit-web-grant')
 })
 
 it('keeps provider errors visible and never retries a natural mission automatically', async () => {

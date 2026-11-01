@@ -3,12 +3,13 @@ import {PROVIDER_RESPONSE_OBSERVED_EVENT, readProviderResponseObservation} from 
 import './AgentChat.css'
 import './AgentChatOverrides.css'
 import './ChatMessage.css'
+import './AgentChatWebNotice.css'
 import './WindowsSurface.css'
 import type {InspectionSelection} from '../types/inspection'
 import { FormEvent, useCallback, useEffect, useId, useLayoutEffect, useMemo, useRef, useState, type KeyboardEvent as ReactKeyboardEvent, type MouseEvent as ReactMouseEvent, type PointerEvent as ReactPointerEvent } from 'react'
-import type { UIEvent } from 'react'
+import type { UIEvent, ReactNode } from 'react'
 import { createPortal } from 'react-dom'
-import { Capability, CapabilityProposal, capabilityResponseError } from './CapabilityManager'
+import { Capability, CapabilityProposal, capabilityResponseError, type CapabilityChatRequest } from './CapabilityManager'
 import AgentBuilder from './AgentBuilder'
 import DevelopmentPanel from './DevelopmentPanel'
 import ProjectPermissions from './ProjectPermissions'
@@ -19,7 +20,7 @@ import WorkspaceWriteReview,{isWriteProposalSummary,type WriteProposalSummary} f
 import DirectoryScanRun, { type ScanOutcome, type ScanReceipt, type ScanReport, type ScanTrace } from './DirectoryScanRun'
 import JobHistory from './JobHistory'
 import Communications from './Communications'
-import type { Draft as CommunicationDraft } from '../types/communications'
+import type { Draft as CommunicationDraft, Contact as CommunicationContact } from '../types/communications'
 import ChatTools from './ChatTools'
 import type {CsvChatSubmission} from '../types/csvChat'
 import {csvRequestFingerprint, isProjectCsvPath} from '../types/csvChat'
@@ -27,6 +28,9 @@ import WindowPanel from './WindowPanel'
 import TabStrip from './TabStrip'
 import AssistantMarkdown from './AssistantMarkdown'
 import AgentDelegation, { type AgentDelegationProposal } from './AgentDelegation'
+import TaskExecutionPanel from './TaskExecutionPanel'
+import {extractPublicHttpsUrls, parsePublicWebScope} from '../utils/publicWebUrls'
+import {publicWebPreferenceKey, readPublicWebPreference, writePublicWebPreference, emptyPublicWebNotice, readPublicWebNotice, writePublicWebNotice, type PublicWebIdentity, type PublicWebNoticeState} from '../utils/publicWebPreference'
 
 type AgentConfig = {
   name: string
@@ -49,7 +53,7 @@ function safePublicLink(value: string): string | undefined {try {const url = new
 type WorkspaceSource = { source_type?: 'public_web' | 'document' | 'csv'; locations?:Array<Record<string,unknown>>; requested_url?: string; final_url?: string; captured_at?: string; raw_sha256?: string; text_sha256?: string; snapshot_id?: string; snapshot_manifest_sha256?: string; path: string; start_line: number; end_line: number; file_sha256?: string; content_sha256?: string }
 type WorkspaceReadEvent = { filesystem_proposal?:FilesystemProposal; delivery_review?:{review_id:string;decision:string;errors:string[];missing:string[];pending:string[];send_executed:boolean}; production?:{work_id:string}; tool_name?:string; receipt_id?:string; executed?:boolean; outcome?:string; next_cursor?:string|null; corpus_coverage?:{total:number;offset:number;batch_selected:number;complete:boolean}; output?:{download_url?:string;sha256?:string;path?:string}; decision: 'ALLOW' | 'DENY' | 'FAIL'; kind?: string; path: string | null; reason_code?: string; file_sha256?: string; content_sha256?: string; files_scanned?: number; files_skipped?: number; bytes_scanned?: number; lines_scanned?: number; finding_count?: number; truncated?: boolean; manifest_sha256?: string }
 type CognitiveTrace = { mode: 'baseline' | 'bago5'; enabled: boolean; profile?: string | null; method?: string; focus: Array<{ id: string; kind: string; label: string; score: number }>; capacity?: number; max_hops?: number; trace_id?: string; trace_state?: string }
-type Message = { csvAnalysis?: Record<string, unknown>; uiContent?:Error; workspaceWriteProposal?:WriteProposalSummary; workspaceWriteProposalError?:string; status?: string; workspaceProposal?: WorkspaceProposal; communicationDraft?: CommunicationDraft; communicationDraftId?: string; agentDelegation?: AgentDelegationProposal; id: string; role: 'user' | 'assistant'; content: string; trace?: MessageTrace; cognitiveTrace?: CognitiveTrace; sources?: WorkspaceSource[]; readEvents?: WorkspaceReadEvent[]; agentBuilderDraft?: AgentConfig; inlineJobHistory?: boolean; inlineDirectoryScan?: boolean; scanOutcome?: ScanOutcome; pendingNavigation?: ExistingView; navigationDecision?: 'accepted' | 'declined' }
+type Message = { csvAnalysis?: Record<string, unknown>; inlineResource?: InlineResource; uiContent?:Error; workspaceWriteProposal?:WriteProposalSummary; workspaceWriteProposalError?:string; status?: string; workspaceProposal?: WorkspaceProposal; communicationDraft?: CommunicationDraft; communicationDraftId?: string; agentDelegation?: AgentDelegationProposal; id: string; role: 'user' | 'assistant'; content: string; trace?: MessageTrace; cognitiveTrace?: CognitiveTrace; sources?: WorkspaceSource[]; readEvents?: WorkspaceReadEvent[]; agentBuilderDraft?: AgentConfig; inlineJobHistory?: boolean; inlineDirectoryScan?: boolean; scanOutcome?: ScanOutcome; pendingNavigation?: ExistingView; navigationDecision?: 'accepted' | 'declined' }
 type ConversationSummary = { id: string; owner_kind: 'assistant' | 'agent'; owner_id: string; title: string; status: 'active' | 'archived' | 'deleted'; labels?: string[]; created_at?: string; updated_at: string; revision: number }
 type StoredConversation = ConversationSummary & { messages: Array<{ id: string; role: 'user' | 'assistant'; content: string; status?: string; references?: { csv_analysis?: Record<string, unknown>; agent_delegation?: AgentDelegationProposal; workspace_write_proposal?:unknown; workspace_proposal?: WorkspaceProposal; communication_draft_id?: string; communication_draft?: CommunicationDraft; trace?: { trace_id?: string; trace_state?: string; jaeger_trace_id?: string; jaeger_url?: string } & Partial<ScanTrace>; cognitive_trace?: CognitiveTrace; sources?: WorkspaceSource[]; read_events?: Array<WorkspaceReadEvent & Partial<ScanReceipt>>; scan_result?: ScanReport; control_capability?: string } }> }
 type LibraryMode = 'active' | 'archived' | 'deleted'
@@ -57,7 +61,35 @@ type ConversationSortKey = 'labels' | 'title' | 'created_at' | 'updated_at'
 type ConversationSort = { key: ConversationSortKey; direction: 'asc' | 'desc' }
 type ControlOperation = 'chat' | 'help' | 'list_agents' | 'draft_agent' | 'navigate' | 'list_capabilities' | 'propose_capability'
 type ExistingView = 'communications' | 'whatsapp_settings' | 'inspector' | 'builder' | 'chat' | 'workspace' | 'runner' | 'control' | 'jobs' | 'traces' | 'summary' | 'retrieval' | 'authorization' | 'evaluation' | 'evaluation_lab' | 'provider_settings' | 'cognition_settings' | 'capabilities'
+export type ChatInlineView = ExistingView | 'agents' | 'tools' | 'connections' | 'contacts'
+type InlineResource = {view: ChatInlineView; selection?: InspectionSelection; draftId?: string; agentId?: string; contact?: CommunicationContact}
+export type ChatInlineContext = {
+  conversationId: string|null; revision: number|null; messageId: string|null; agentId?: string; draftId?: string; contact?: CommunicationContact
+  selection: InspectionSelection|null; onClose: () => void
+  onOpenView: (view: ChatInlineView, details?: Omit<InlineResource, 'view'>) => void
+  onPrepareChat: (request: CapabilityChatRequest) => void; onAgentsChanged: () => void
+}
 type CapabilityDraft = { capabilities: Capability[]; capabilityId: string; summary: string; requestedScope: string; conversationId: string | null }
+type PendingWebChoice = {id: string; content: string; urls: string[]; contextKey: string; inputRevision: number; webRevision: number; permissionIdentity: string; conversationRevision: number|null; loadGeneration: number}
+
+/** Hash the exact source, not the model's interpretation, before restoring a task plan. */
+function MessageTaskExecution({taskText, source}: {taskText: string; source: string}) {
+  const [identity, setIdentity] = useState<{source: string; digest: string}|null>(null)
+  const [failed, setFailed] = useState(false)
+  useEffect(() => {
+    let current = true
+    setFailed(false)
+    void (async () => {
+      try {
+        const hash = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(source))
+        if (current) setIdentity({source, digest: Array.from(new Uint8Array(hash), byte => byte.toString(16).padStart(2, '0')).join('')})
+      } catch {if (current) setFailed(true)}
+    })()
+    return () => {current = false}
+  }, [source])
+  if (!identity || identity.source !== source) return failed ? <p role="status">{t('commerce.chat_task.identity_unavailable')}</p> : null
+  return <TaskExecutionPanel key={identity.digest} taskText={taskText} sourceIdentity={`chat:${identity.digest}`} />
+}
 
 function CognitiveContextPanel({ trace }: { trace: CognitiveTrace }) {
   useI18n()
@@ -97,7 +129,9 @@ function revealScrollbarWhileScrolling(event: UIEvent<HTMLElement>) {
 export type PreparedChatPrompt = {id:string; text:string; capabilityId?:'workspace.scan_duplicates'}
 
 interface AgentChatProps {
+  renderInlineView?: (view: ChatInlineView, context: ChatInlineContext) => ReactNode
   hidden?: boolean
+  initialProjectPanelOpen?: boolean
   preparedPrompt?: PreparedChatPrompt|null
   onPreparedPromptHandled?: (id:string)=>void
   /** Explicit selection is the product policy; latest retains reusable embedding compatibility. */
@@ -172,7 +206,7 @@ function inferIntent(message: string, cognitiveMode: 'baseline' | 'bago5'): { op
   return { operation: 'chat' }
 }
 
-export default function AgentChat({ onInspectionSelection, onInspectExecution, onNavigate, onManageAgents, onOpenCommunication, onOpenProviderSettings, onOpenCognitionSettings, cognitiveMode, historySelection = 'latest', workspaceScopeVersion = 0, hidden = false, preparedPrompt, onPreparedPromptHandled }: AgentChatProps) {
+export default function AgentChat({ onInspectionSelection, onInspectExecution: inspectOutside, onNavigate: navigateOutside, onManageAgents: manageAgentsOutside, onOpenCommunication: communicationOutside, onOpenProviderSettings: providerSettingsOutside, onOpenCognitionSettings: cognitionSettingsOutside, renderInlineView, cognitiveMode, historySelection = 'latest', workspaceScopeVersion = 0, hidden = false, initialProjectPanelOpen = true, preparedPrompt, onPreparedPromptHandled }: AgentChatProps) {
   useI18n()
   const english = getLocale() === 'en'
   const [reviewContext,setReviewContext]=useState<{runs:Array<{work_id:string;owner_id:string;producer_name?:string;conversation_id:string;source_root:string;candidate_id:string;scope_sha256:string;artifacts:Array<{path:string;sha256:string}>;business_acceptance:string}>;contacts:Array<{id:string;name:string;phone:string}>}>({runs:[],contacts:[]})
@@ -223,7 +257,8 @@ export default function AgentChat({ onInspectionSelection, onInspectExecution, o
   // Route identity belongs to one exact, untouched catalog draft, not its wording.
   const preparedCapabilityRef=useRef<{id:'workspace.scan_duplicates';text:string}|null>(null)
   const [input, setInputState] = useState('')
-  const setInput=useCallback((value:string|((previous:string)=>string))=>{preparedCapabilityRef.current=null;setInputState(value)},[])
+  const inputRevision = useRef(0)
+  const setInput=useCallback((value:string|((previous:string)=>string))=>{inputRevision.current++;preparedCapabilityRef.current=null;setInputState(value)},[])
   const [humanCorrection, setHumanCorrection] = useState<{source: HumanCorrectionSource; origin: HTMLElement}|null>(null)
   const correctionReturnFocus = useRef<HTMLElement|null>(null)
   useEffect(()=>{if(!humanCorrection && correctionReturnFocus.current){const origin=correctionReturnFocus.current;correctionReturnFocus.current=null;if(origin.isConnected)origin.focus();else composerRef.current?.focus()}},[humanCorrection])
@@ -231,8 +266,18 @@ export default function AgentChat({ onInspectionSelection, onInspectExecution, o
   const [messageContextMenu, setMessageContextMenu] = useState<{ id: string; agentId: string | null; latestUserId: string | undefined; conversationId: string | null; revision: number | null; x: number; y: number; origin: HTMLElement } | null>(null)
   useEffect(()=>{if(hidden){setMessageContextMenu(null);setConversationContextMenu(null)}},[hidden])
   const messageMenuRef = useRef<HTMLDivElement>(null)
-  const [allowPublicWebRead, setAllowPublicWebRead] = useState(false)
-  const [publicWebUrls, setPublicWebUrls] = useState('')
+  const [webProjectContext, setWebProjectContext] = useState<{scope: string; projectId: string; root: string}|null>(null)
+  const [webPreference, setWebPreferenceState] = useState({key: '', enabled: false, urls: '', failed: false})
+  const webPreferenceRef = useRef(webPreference)
+  webPreferenceRef.current = webPreference
+  const webPreferenceRevision = useRef(0)
+  const [webNotice, setWebNoticeState] = useState<{key: string; state: PublicWebNoticeState}>({key: '', state: emptyPublicWebNotice()})
+  const webNoticeRef = useRef(webNotice)
+  webNoticeRef.current = webNotice
+  function setWebNotice(value: typeof webNotice) {webNoticeRef.current = value; setWebNoticeState(value)}
+  const [pendingWebChoice, setPendingWebChoice] = useState<PendingWebChoice|null>(null)
+  const [conversationResource, setConversationResource] = useState<{resource: InlineResource; scope: string; conversationId: string|null}|null>(null)
+  function setWebPreference(value: typeof webPreference) { webPreferenceRef.current = value; setWebPreferenceState(value) }
   async function loadReviewContext(signal?:AbortSignal){
     if(!selectedAgent?.config.tools?.some(tool=>tool.startsWith('delivery_')))return
     try{
@@ -484,6 +529,69 @@ export default function AgentChat({ onInspectionSelection, onInspectExecution, o
   csvContextRef.current = csvContextKey
   const csvRecoveryRequired = useRef<{key:string;generation:number}|null>(null)
   const csvRecoveryBlocked = csvRecoveryRequired.current?.key === csvContextKey && csvRecoveryRequired.current.generation === conversationLoadGeneration.current
+  const webProjectReady = webProjectContext?.scope === conversationScope
+  const webIdentity: PublicWebIdentity|null = webProjectReady && activeConversation && matchesOwner(activeConversation)
+    ? {projectId: webProjectContext.projectId, root: webProjectContext.root, ownerKind, ownerId, conversationId: activeConversation.id} : null
+  const webPreferenceContextKey = webIdentity ? publicWebPreferenceKey(webIdentity)
+    : webProjectReady && !activeConversation ? JSON.stringify(['draft', webProjectContext.projectId, webProjectContext.root, ownerKind, ownerId]) : ''
+  const webContextKeyRef = useRef(webPreferenceContextKey)
+  webContextKeyRef.current = webPreferenceContextKey
+  const allowPublicWebRead = Boolean(webPreferenceContextKey && webPreference.key === webPreferenceContextKey && webPreference.enabled && !webPreference.failed)
+  const publicWebUrls = webPreference.key === webPreferenceContextKey ? webPreference.urls : ''
+  useLayoutEffect(() => {
+    if (webPreferenceRef.current.key === webPreferenceContextKey && webNoticeRef.current.key === webPreferenceContextKey) return
+    const loaded = webIdentity ? readPublicWebPreference(webIdentity) : {preference: {enabled: false, urls: ''}, failed: false}
+    const notice = webIdentity ? readPublicWebNotice(webIdentity) : {state: emptyPublicWebNotice(), failed: false}
+    let failed = loaded.failed || notice.failed
+    // Valid prior consent survives migration. Its next real reply receives the first local notice.
+    if (loaded.preference.enabled && !notice.state.activationId && !failed) {
+      notice.state = {...notice.state, activationId: idFor(), pending: true}
+      if (webIdentity && !writePublicWebNotice(webIdentity, notice.state)) failed = true
+    }
+    setWebNotice({key: webPreferenceContextKey, state: notice.state})
+    setWebPreference({key: webPreferenceContextKey, ...loaded.preference, enabled: !failed && loaded.preference.enabled, failed})
+  }, [webPreferenceContextKey])
+  function changeWebPreference(enabled: boolean, urls = publicWebUrls) {
+    if (!webPreferenceContextKey) return
+    ++webPreferenceRevision.current
+    const wasEnabled = webPreferenceRef.current.key === webPreferenceContextKey && webPreferenceRef.current.enabled && !webPreferenceRef.current.failed
+    const previous = webNoticeRef.current.key === webPreferenceContextKey ? webNoticeRef.current.state : emptyPublicWebNotice()
+    const notice = enabled && !wasEnabled ? {...previous, activationId: idFor(), pending: true}
+      : !enabled ? {...previous, pending: false} : previous
+    let saved = !webIdentity || writePublicWebPreference(webIdentity, {enabled, urls})
+    if (saved && webIdentity) saved = writePublicWebNotice(webIdentity, notice)
+    setWebNotice({key: webPreferenceContextKey, state: saved ? notice : {...notice, pending: false}})
+    setWebPreference({key: webPreferenceContextKey, enabled: saved && enabled, urls, failed: !saved})
+  }
+  function openInlineResource(view: ChatInlineView, messageId?: string, details: Omit<InlineResource, 'view'> = {}) {
+    if (!renderInlineView) return
+    const resource = {view, ...details}
+    if (messageId) setMessages(previous => previous.map(message => message.id === messageId ? {...message, inlineResource: resource} : message))
+    else setConversationResource({resource, scope: conversationScope, conversationId: activeConversation?.id ?? null})
+  }
+  const onNavigate = (view: ExistingView) => renderInlineView ? openInlineResource(view) : navigateOutside(view)
+  const onManageAgents = renderInlineView ? () => openInlineResource('agents') : manageAgentsOutside
+  const onOpenProviderSettings = () => renderInlineView ? openInlineResource('provider_settings') : providerSettingsOutside()
+  const onOpenCognitionSettings = () => renderInlineView ? openInlineResource('cognition_settings') : cognitionSettingsOutside()
+  const onOpenCommunication = renderInlineView ? (draftId: string) => openInlineResource('communications', messages.find(message => message.communicationDraftId === draftId || message.communicationDraft?.id === draftId)?.id, {draftId}) : communicationOutside
+  const onInspectExecution = renderInlineView ? (selection: InspectionSelection) => openInlineResource('inspector', undefined, {selection}) : inspectOutside
+  function inspectMessage(messageId: string, selection: InspectionSelection) {
+    if (renderInlineView) openInlineResource('inspector', messageId, {selection})
+    else inspectOutside?.(selection)
+  }
+  function inlineContext(resource: InlineResource, messageId: string|null): ChatInlineContext {
+    const message = messageId ? messages.find(item => item.id === messageId) : null
+    const traceId = message?.trace?.localId ?? message?.scanOutcome?.trace.trace_id
+    const selection = resource.selection ?? (activeConversation && (!messageId || traceId)
+      ? {conversationId: activeConversation.id, revision: activeConversation.revision, ...(traceId ? {traceId} : {})} : null)
+    return {conversationId: activeConversation?.id ?? null, revision: activeConversation?.revision ?? null,
+      messageId, agentId: resource.agentId ?? selectedAgent?.id, draftId: resource.draftId, contact: resource.contact,
+      selection,
+      onClose: () => messageId ? setMessages(previous => previous.map(message => message.id === messageId ? {...message, inlineResource: undefined} : message)) : setConversationResource(null),
+      onOpenView: (view, details) => openInlineResource(view, messageId ?? undefined, details),
+      onPrepareChat: request => setPreparedPromptReview({id: idFor(), text: request.prompt, ...(request.capabilityId === 'workspace.scan_duplicates' ? {capabilityId: request.capabilityId} : {})}),
+      onAgentsChanged: () => {void refreshAgents({background: true})}}
+  }
   const correctionContext = useRef<HumanCorrectionContext>({ownerKind,ownerId,conversation:activeConversation,messages})
   correctionContext.current = {ownerKind,ownerId,conversation:activeConversation,messages}
   function correctionSourceCurrent(source: HumanCorrectionSource) {
@@ -503,12 +611,13 @@ export default function AgentChat({ onInspectionSelection, onInspectExecution, o
 
   const clearInspectionSelection = () => {setActiveConversation(null);setMessages([]);setError('');onInspectionSelection?.(null)}
 
-  useEffect(() => {setAllowPublicWebRead(false);setPublicWebUrls('');setDocumentConsent(false);setDocumentOutputConsent(false);setDraftConsent(false)}, [activeConversation?.id, ownerId])
+  useEffect(() => {setDocumentConsent(false);setDocumentOutputConsent(false);setDraftConsent(false)}, [activeConversation?.id, ownerId])
 
   const applyConversation = (conversation: StoredConversation) => {
     const inlineAgentDrafts = new Map(messages.filter((message) => message.agentBuilderDraft).map((message) => [message.id, message.agentBuilderDraft as AgentConfig]))
     const inlineJobHistoryIds = new Set(messages.filter((message) => message.inlineJobHistory).map((message) => message.id))
     const inlineDirectoryScanIds = new Set(messages.filter((message) => message.inlineDirectoryScan).map((message) => message.id))
+    const inlineResources = new Map(messages.filter(message => message.inlineResource).map(message => [message.id, message.inlineResource]))
     const pendingNavigations = new Map(messages.filter((message) => message.pendingNavigation).map((message) => [message.id, { view: message.pendingNavigation as ExistingView, decision: message.navigationDecision }]))
     setActiveConversation(conversation)
     setMessages(conversation.messages.map((message) => {
@@ -534,6 +643,7 @@ export default function AgentChat({ onInspectionSelection, onInspectExecution, o
         ...(message.references?.workspace_proposal ? { workspaceProposal: message.references.workspace_proposal } : {}),
         ...(message.references?.control_capability === 'workspace.scan_duplicates' || inlineDirectoryScanIds.has(message.id) ? { inlineDirectoryScan: true } : {}),
         ...(scanOutcome ? { scanOutcome } : {}),
+        ...(inlineResources.has(message.id) ? {inlineResource: inlineResources.get(message.id)} : {}),
         ...(pendingNavigations.has(message.id) ? { pendingNavigation: pendingNavigations.get(message.id)?.view, navigationDecision: pendingNavigations.get(message.id)?.decision } : {}),
         ...(!scanOutcome && trace?.trace_id ? { trace: { localId: trace.trace_id, state: trace.trace_state || 'unknown', jaegerId: trace.jaeger_trace_id, jaegerUrl: trace.jaeger_url } } : {}),
         ...(message.references?.cognitive_trace ? { cognitiveTrace: message.references.cognitive_trace } : {}),
@@ -592,19 +702,25 @@ export default function AgentChat({ onInspectionSelection, onInspectExecution, o
     }
   }, [refreshAgents])
   useEffect(() => {
+    const projectScope = conversationScopeRef.current
+    let disposed = false
     clearInspectionSelection()
     setConversationList([])
     setActiveProject(null)
+    setWebProjectContext(null)
     void fetch('/api/project-folders/v1/active').then(async response => {
       if (!response.ok) throw await responseError(response)
       return response.json()
     }).then(value => {
-      if (conversationScopeRef.current.endsWith(`:${workspaceScopeVersion}`)) {
+      if (!disposed && conversationScopeRef.current === projectScope) {
         setActiveProject({project_id:typeof value.project_id==='string'?value.project_id:null,title:typeof value.title==='string'?value.title:'',scope:typeof value.scope==='string'?value.scope:'unknown',root:typeof value.root==='string'?value.root:null})
+        if (typeof value.project_id === 'string' && value.project_id.trim() && typeof value.root === 'string' && value.root.trim()) {
+          setWebProjectContext({scope: projectScope, projectId: value.project_id, root: value.root})
+        }
       }
-    }).catch(() => { setActiveProject(null) })
+    }).catch(() => { if (!disposed && conversationScopeRef.current === projectScope) {setActiveProject(null);setWebProjectContext(null)} })
     void refreshConversationList()
-    return () => {conversationLoadGeneration.current++}
+    return () => {disposed = true;conversationLoadGeneration.current++}
   }, [ownerKind, ownerId, libraryMode, historySelection, workspaceScopeVersion])
   useEffect(() => { void refreshConversationProposals(activeConversation?.id ?? null) }, [activeConversation?.id])
   useEffect(() => { messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' }) }, [messages])
@@ -874,7 +990,16 @@ export default function AgentChat({ onInspectionSelection, onInspectExecution, o
     } finally { setCapabilityBusy(false) }
   }
 
-  const sendMessage = async (event?: FormEvent, correctionRequest?: PreparedHumanCorrection, csvRequest?: CsvChatSubmission, csvSignal?: AbortSignal) => {
+  function webChoiceCurrent(choice: PendingWebChoice) {
+    return choice === pendingWebChoice && allowPublicWebRead && !sending && !chatDispatchPending.current
+      && choice.contextKey === webPreferenceContextKey && choice.inputRevision === inputRevision.current
+      && choice.webRevision === webPreferenceRevision.current && choice.permissionIdentity === correctionPermissionIdentity
+      && choice.loadGeneration === conversationLoadGeneration.current
+      && choice.conversationRevision === (activeConversation?.revision ?? null) && choice.content === input.trim()
+      && (!activeConversation || activeConversation.status === 'active')
+  }
+
+  const sendMessage = async (event?: FormEvent, correctionRequest?: PreparedHumanCorrection, csvRequest?: CsvChatSubmission, csvSignal?: AbortSignal, acceptedWebChoice?: PendingWebChoice) => {
     event?.preventDefault()
     if (correctionRequest && (correctionRequest.source!==humanCorrection?.source || !correctionSourceCurrent(correctionRequest.source) || !/^[a-f0-9]{64}$/.test(correctionRequest.sourceSha256))) {
       setError(new Error('El contexto de la respuesta cambió. La corrección no se ha enviado.'));return
@@ -889,19 +1014,52 @@ export default function AgentChat({ onInspectionSelection, onInspectExecution, o
     }
     const content = csvRequest ? csvRequest.message : correctionRequest ? correctionRequest.content : input.trim()
     if (!content || sending || chatDispatchPending.current || (!selectedAgent && (chatProviderMutation.current.pending || chatProviderMutation.current.failed))) return
+    let webUrlsForSend = publicWebUrls
+    if (acceptedWebChoice) {
+      if (csvRequest || correctionRequest || !webChoiceCurrent(acceptedWebChoice)) {setError('commerce.web_preference.message_stale'); return}
+      webUrlsForSend = acceptedWebChoice.urls.join('\n')
+      changeWebPreference(true, webUrlsForSend)
+      if (webPreferenceRef.current.failed) return
+    }
+    if (!csvRequest && allowPublicWebRead) {
+      // Enviar is the explicit action. Only this user's message may seed an empty scope.
+      const extracted = extractPublicHttpsUrls(content)
+      if (extracted.invalid || extracted.urls.length > 8) {setError('commerce.enter_1_to_8_public_https_urls_one_per_line'); return}
+      if (!webUrlsForSend.trim() && extracted.urls.length) {
+        webUrlsForSend = extracted.urls.join('\n')
+        changeWebPreference(true, webUrlsForSend)
+        if (webPreferenceRef.current.failed) return
+      }
+      const approved = parsePublicWebScope(webUrlsForSend)
+      if (webUrlsForSend !== '' && !approved.valid) {setError('commerce.enter_1_to_8_public_https_urls_one_per_line'); return}
+      if (extracted.urls.some(url => !approved.origins.includes(new URL(url).origin))) {
+        if (correctionRequest) {setError('commerce.web_preference.corrected_new_origin'); return}
+        setPendingWebChoice({id: idFor(), content, urls: extracted.urls, contextKey: webPreferenceContextKey,
+          inputRevision: inputRevision.current, webRevision: webPreferenceRevision.current,
+          permissionIdentity: correctionPermissionIdentity, conversationRevision: activeConversation?.revision ?? null,
+          loadGeneration: conversationLoadGeneration.current})
+        setError('')
+        return
+      }
+    }
     const explicitCapabilityId=!csvRequest && !correctionRequest && !selectedAgent && preparedCapabilityRef.current?.id==='workspace.scan_duplicates' && preparedCapabilityRef.current.text===input ? preparedCapabilityRef.current.id : undefined
     chatDispatchPending.current = true
+    setPendingWebChoice(null)
     if (!correctionRequest && !csvRequest) setInput('')
     setError('')
     setLibraryError('')
-    const readWebForThisMessage = !csvRequest && allowPublicWebRead
+    const webEnabledForThisMessage = !csvRequest && allowPublicWebRead
+    const readWebForThisMessage = !csvRequest && allowPublicWebRead && parsePublicWebScope(webUrlsForSend).valid
+    const noticeActivationForThisMessage = !csvRequest && allowPublicWebRead && webNoticeRef.current.key === webPreferenceContextKey && webNoticeRef.current.state.pending
+      ? webNoticeRef.current.state.activationId : null
+    const webRevisionForThisMessage = webPreferenceRevision.current
+    let webKeyForThisMessage = webPreferenceContextKey
     const documentRootForThisMessage = !csvRequest && selectedAgent && documentConsent ? documentRoot : ''
     const outputDocumentsForThisMessage = documentOutputConsent
     const selectedReviewForThisMessage=reviewContext.runs.find(run=>run.work_id===reviewWork)
     const contactForThisMessage=reviewContact,draftForThisMessage=draftConsent
     if (!csvRequest) {setDraftConsent(false);setDocumentConsent(false);setDocumentOutputConsent(false)}
-    const urlsForThisMessage = publicWebUrls
-    if (!csvRequest) setAllowPublicWebRead(false)
+    const urlsForThisMessage = webUrlsForSend
     setSending(true)
     const generation = conversationLoadGeneration.current
     const scope = conversationScopeRef.current
@@ -954,9 +1112,20 @@ export default function AgentChat({ onInspectionSelection, onInspectExecution, o
         const summary = await createResponse.json() as ConversationSummary
         conversation = { ...summary, messages: [] }
         if (!current() || !matchesOwner(conversation)) return
+        // Only the explicitly initiated first send may carry a draft choice into its new conversation.
+        if (webEnabledForThisMessage && webProjectContext && webRevisionForThisMessage === webPreferenceRevision.current && webPreferenceRef.current.key === webKeyForThisMessage && webPreferenceRef.current.enabled) {
+          const identity: PublicWebIdentity = {projectId: webProjectContext.projectId, root: webProjectContext.root, ownerKind, ownerId, conversationId: conversation.id}
+          const saved = writePublicWebPreference(identity, {enabled: true, urls: urlsForThisMessage}) && writePublicWebNotice(identity, webNoticeRef.current.state)
+          if (!saved) {setWebPreference({...webPreferenceRef.current, enabled: false, failed: true});throw new Error('commerce.web_preference.storage_error')}
+          webKeyForThisMessage = publicWebPreferenceKey(identity)
+          setWebPreference({key: webKeyForThisMessage, enabled: true, urls: urlsForThisMessage, failed: false})
+          setWebNotice({key: webKeyForThisMessage, state: webNoticeRef.current.state})
+          webContextKeyRef.current = webKeyForThisMessage
+        }
         if (!csvRequest) setActiveConversation(conversation)
       }
       attemptedConversation = conversation
+      const previousAssistantIds = new Set(conversation.messages.filter(message => message.role === 'assistant').map(message => message.id))
       const localCapabilityIntent = !selectedAgent ? (csvRequest || correctionRequest || explicitCapabilityId ? {operation:'chat' as const} : inferIntent(content, cognitiveMode)) : null
       if (localCapabilityIntent?.operation === 'list_capabilities' || localCapabilityIntent?.operation === 'propose_capability') {
         await beginCapabilityRequest(content, localCapabilityIntent.operation, conversation.id)
@@ -998,20 +1167,17 @@ export default function AgentChat({ onInspectionSelection, onInspectExecution, o
       }
       let webReadAuthorizationId: string | undefined
       if (readWebForThisMessage) {
-        const urls = [...new Set(urlsForThisMessage.split(/\r?\n/).map(value => value.trim()).filter(Boolean))]
-        if (!urls.length || urls.length > 8) throw new Error("commerce.enter_1_to_8_public_https_urls_one_per_line")
-        const origins = [...new Set(urls.map(value => {
-          let url: URL
-          try {url = new URL(value)} catch {throw new Error("commerce.the_web_reading_url_is_invalid")}
-          if (url.protocol !== 'https:' || url.username || url.password || url.port) throw new Error("commerce.web_reading_requires_https_without_credentials_or_alternate_ports")
-          return url.origin
-        }))]
+        const webChoiceCurrent = () => current() && webKeyForThisMessage === webContextKeyRef.current && webKeyForThisMessage === webPreferenceRef.current.key && webRevisionForThisMessage === webPreferenceRevision.current && webPreferenceRef.current.enabled && !webPreferenceRef.current.failed
+        if (!webChoiceCurrent()) throw new Error('commerce.web_preference.changed')
+        const {urls, origins, valid} = parsePublicWebScope(urlsForThisMessage)
+        if (!valid) throw new Error('commerce.enter_1_to_8_public_https_urls_one_per_line')
         const authorizationResponse = await fetch('/api/web-read/authorizations', {
           method: 'POST', headers: {'Content-Type': 'application/json'},
           body: JSON.stringify({owner_kind: ownerKind, owner_id: ownerId, conversation_id: conversation.id, revision: conversation.revision, urls}),
         })
         if (!authorizationResponse.ok) throw await responseError(authorizationResponse)
         const authorization = await authorizationResponse.json()
+        if (!webChoiceCurrent()) throw new Error('commerce.web_preference.changed')
         if (typeof authorization.authorization_id !== 'string' || !authorization.authorization_id.trim() || !Array.isArray(authorization.allowed_origins) || authorization.allowed_origins.length !== origins.length || !origins.every(origin => authorization.allowed_origins.includes(origin))) throw new Error("commerce.the_server_did_not_confirm_the_requested_web_scope_the_turn_was_not_sent")
         webReadAuthorizationId = authorization.authorization_id
       }
@@ -1106,6 +1272,27 @@ export default function AgentChat({ onInspectionSelection, onInspectExecution, o
         setMessages((previous) => previous.map((message) => message.id === assistantMessageId ? { ...message, pendingNavigation: view } : message))
       } else if (!selectedAgent && !['chat', 'help', 'agent_delegation'].includes(data.operation)) {
         throw new Error("commerce.the_server_returned_an_unsupported_chat_operation")
+      }
+      // Attach only to a new, successful saved assistant response of this exact attempt.
+      const receivedReply = [...data.conversation.messages].reverse().find((message: Message) => message.role === 'assistant'
+        && typeof message.id === 'string' && !previousAssistantIds.has(message.id) && message.status !== 'failed'
+        && typeof message.content === 'string' && Boolean(message.content.trim()))
+      const notice = webNoticeRef.current
+      if (receivedReply && Number.isSafeInteger(data.conversation.revision) && data.conversation.revision > conversation.revision
+          && current() && noticeActivationForThisMessage && webEnabledForThisMessage
+          && notice.key === webKeyForThisMessage && webContextKeyRef.current === webKeyForThisMessage
+          && notice.state.pending && notice.state.activationId === noticeActivationForThisMessage
+          && webPreferenceRef.current.enabled && !webPreferenceRef.current.failed
+          && !notice.state.notices.some(item => item.activationId === noticeActivationForThisMessage)) {
+        const state: PublicWebNoticeState = {...notice.state, pending: false,
+          notices: [...notice.state.notices, {activationId: noticeActivationForThisMessage, messageId: receivedReply.id,
+            origins: parsePublicWebScope(urlsForThisMessage).origins}]}
+        const identity: PublicWebIdentity = {projectId: webProjectContext!.projectId, root: webProjectContext!.root, ownerKind, ownerId, conversationId: conversation.id}
+        setWebNotice({key: webKeyForThisMessage, state})
+        if (!writePublicWebNotice(identity, state)) {
+          writePublicWebPreference(identity, {enabled: false, urls: urlsForThisMessage})
+          setWebPreference({...webPreferenceRef.current, enabled: false, failed: true})
+        }
       }
       const query = new URLSearchParams({ owner_kind: ownerKind, owner_id: ownerId, status: libraryMode })
       const listResponse = await fetch(`/api/conversations?${query}`)
@@ -1369,7 +1556,7 @@ export default function AgentChat({ onInspectionSelection, onInspectExecution, o
         <div className="control-chat-transcript-frame">
         <div ref={messagesContainerRef} className="control-chat-messages" aria-live="polite" onScroll={revealConversationScrollControls}>
           {messages.length === 0 && <div className="chat-welcome"><div className="welcome-mark" aria-hidden="true">✳</div><h3>{selectedAgent ? t('commerce.chat_with',{name:selectedAgent.config.name}) : t('commerce.your_workspace_through_chat')}</h3>{!selectedAgent && <div className="prompt-suggestions"><button type="button" disabled={sending || orchestratorSelectionBlocked} onClick={() => {if (!chatProviderMutation.current.pending && !chatProviderMutation.current.failed) setInput('Lista mis agentes')}}>{t('commerce.list_my_agents')}</button><button type="button" disabled={sending || orchestratorSelectionBlocked} onClick={() => {if (!chatProviderMutation.current.pending && !chatProviderMutation.current.failed) setInput('Quiero crear un agente para…')}}>{t('commerce.create_an_agent')}</button><button type="button" disabled={sending || orchestratorSelectionBlocked} onClick={() => {if (!chatProviderMutation.current.pending && !chatProviderMutation.current.failed) setInput('Abre el Decision Inspector')}}>{t('commerce.open_the_inspector')}</button></div>}</div>}
-          {messages.map((message) => <article key={message.id} className={`control-message control-message-${message.role}`} tabIndex={0} aria-labelledby={`message-author-${message.id}`} onContextMenu={event => {
+          {messages.map((message, messageIndex) => <article key={message.id} className={`control-message control-message-${message.role}`} tabIndex={0} aria-labelledby={`message-author-${message.id}`} onContextMenu={event => {
             if ((event.target as HTMLElement).closest('input,textarea,[contenteditable="true"]') || !message.content) return
             event.preventDefault(); openMessageMenu(message, event.currentTarget, event.clientX, event.clientY)
           }} onKeyDown={event => {
@@ -1377,7 +1564,25 @@ export default function AgentChat({ onInspectionSelection, onInspectExecution, o
             if ((event.target as HTMLElement).closest('input,textarea,[contenteditable="true"]') || !message.content) return
             event.preventDefault(); const rect = event.currentTarget.getBoundingClientRect()
             openMessageMenu(message, event.currentTarget, rect.left + 16, rect.top + 36)
-          }}><div className="control-message-heading"><span id={`message-author-${message.id}`} className="message-speaker">{message.role === 'user' ? t('commerce.you') : selectedAgent?.config.name ?? t('commerce.assistant')}</span>{message.content && <div className="control-message-actions"><button type="button" className="message-action" onClick={() => void copyMessage(message)}>{messageCopyState?.id === message.id ? messageCopyState.state === 'copied' ? t('commerce.copied') : t('commerce.copy_failed') : message.role === 'user' ? t('commerce.copy_message') : t('commerce.copy_response')}</button>{message.role==='assistant' && <button type="button" className="message-action" disabled={messageEditDisabled||Boolean(humanCorrection)||!activeConversation} onClick={event=>openHumanCorrection(message,event.currentTarget)}>Corregir interpretación</button>}{canEditMessage(message) && <button type="button" className="message-action" onClick={() => editLatestMessage(message)} disabled={messageEditDisabled}>{t('commerce.edit')}</button>}</div>}</div>{message.status === 'failed' && <p role="status">{t('commerce.failed_response_no_response_was_received_from_the_provider')}</p>}{message.content && <div className="control-message-content">{message.role === 'assistant' ? <AssistantMarkdown content={message.uiContent?errorMessage(message.uiContent):message.content} /> : message.content}</div>}{(message.communicationDraftId || message.communicationDraft) && <Communications key={`communication-${message.id}`} inline initialDraft={message.communicationDraft} draftId={message.communicationDraftId} conversationId={activeConversation?.id} onOpenFull={onOpenCommunication} />}{message.agentBuilderDraft && <AgentBuilder key={message.id} inline initialAgent={message.agentBuilderDraft} onAgentCreated={() => void refreshAgents()} />}{message.agentDelegation && latestDelegationMessageIds.has(message.id) && !selectedAgent && activeConversation?.owner_kind === 'assistant' && activeConversation.owner_id === 'app-assistant' && <AgentDelegation key={`delegation-${message.agentDelegation.proposal_id}`} proposal={message.agentDelegation} parentConversationId={activeConversation.id} parentRevision={activeConversation.revision} disabled={activeConversation.status !== 'active' || sending} onConversationUpdate={(conversation) => { if (conversation.id === activeConversation.id && conversation.owner_kind === 'assistant' && conversation.owner_id === 'app-assistant') applyConversation(conversation as StoredConversation) }} onOpenChild={identity => void openDelegatedChild(identity)} onInspectChild={onInspectExecution ? identity => onInspectExecution({conversationId:identity.conversationId,revision:identity.revision,traceId:identity.traceId}) : undefined} />}{message.inlineJobHistory && <JobHistory key={message.id} inline />}{message.workspaceProposal && <WorkspaceManager inline proposal={message.workspaceProposal} />}{message.workspaceWriteProposalError&&<p role="alert">{errorMessage(message.workspaceWriteProposalError)}</p>}{message.workspaceWriteProposal&&activeConversation&&<WorkspaceWriteReview proposal={message.workspaceWriteProposal} ownerKind={ownerKind} ownerId={ownerId} conversationId={activeConversation.id} conversationRevision={activeConversation.revision} />}{message.inlineDirectoryScan && message.id === latestDirectoryScanPromptId && !selectedAgent && activeConversation?.owner_kind === 'assistant' && <DirectoryScanRun key={`scan-form-${message.id}`} conversationId={activeConversation.id} revision={activeConversation.revision} disabled={activeConversation.status !== 'active'} showForm onConversationUpdate={(conversation) => applyConversation(conversation as StoredConversation)} />}{message.scanOutcome && activeConversation?.owner_kind === 'assistant' && <DirectoryScanRun key={`scan-results-${message.id}`} conversationId={activeConversation.id} revision={activeConversation.revision} showForm={false} initialOutcome={message.scanOutcome} onConversationUpdate={(conversation) => applyConversation(conversation as StoredConversation)} />}{message.scanOutcome && activeConversation && onInspectExecution && <button type="button" onClick={() => onInspectExecution({conversationId:activeConversation.id,revision:activeConversation.revision,traceId:message.scanOutcome!.trace.trace_id})}>{t('commerce.inspect_scan_execution')}</button>}{message.pendingNavigation && <section className="chat-navigation-confirmation" aria-label={t('commerce.confirm_screen_change')}><p>{t('commerce.switch_screen',{view:viewLabels[message.pendingNavigation]})}</p>{message.navigationDecision === 'accepted' ? <span role="status">{t('commerce.switching_screen')}</span> : message.navigationDecision === 'declined' ? <span role="status">{t('commerce.staying_in_chat')}</span> : <div className="draft-actions"><button type="button" className="secondary-action" onClick={() => setMessages((previous) => previous.map((item) => item.id === message.id ? { ...item, navigationDecision: 'declined' } : item))}>{t('commerce.stay_in_chat')}</button><button type="button" className="primary-action" onClick={() => { setMessages((previous) => previous.map((item) => item.id === message.id ? { ...item, navigationDecision: 'accepted' } : item)); onNavigate(message.pendingNavigation as ExistingView) }}>{t('commerce.yes_switch_screen')}</button></div>}</section>}{message.csvAnalysis && <details className="message-sources" aria-label={t('csvChat.evidence')}><summary>{t('csvChat.interpretation')}</summary><pre className="csv-chat-analysis">{JSON.stringify(message.csvAnalysis,null,2)}</pre></details>}{message.cognitiveTrace && <details><summary>{t('commerce.response_context')}</summary><CognitiveContextPanel trace={message.cognitiveTrace} /></details>}{message.sources?.some(source => source.source_type !== 'public_web') ? <details className="message-sources" aria-label={t('commerce.project_files_read')}><summary>{t('commerce.files_count',{count:formatNumber(message.sources.filter(source => source.source_type !== 'public_web').length)})}</summary><ul>{message.sources.filter(source => source.source_type !== 'public_web').map(source => <li key={`${source.path}:${source.start_line}-${source.end_line}`}><code>{source.path}{source.source_type === 'document' ? ' · '+JSON.stringify(source.locations?.slice(0,3) || []) : `:${source.start_line}-${source.end_line}`}</code>{source.file_sha256 && source.source_type === 'csv' && <small>{t('csvChat.sourceHash')}: {source.file_sha256}</small>}{source.content_sha256 && <small> SHA-256 {source.content_sha256}</small>}</li>)}</ul></details> : null}{message.sources?.some(source => source.source_type === 'public_web') ? <details className="message-sources" aria-label={t('commerce.public_web_sources_read')}><summary>{t('commerce.web_count',{count:formatNumber(message.sources.filter(source => source.source_type === 'public_web').length)})}</summary><ul>{message.sources.filter(source => source.source_type === 'public_web').map(source => <li key={`${source.snapshot_id ?? source.path}:${source.start_line}-${source.end_line}`}><code>{source.path}{source.source_type === 'document' ? ' · '+JSON.stringify(source.locations?.slice(0,3) || []) : `:${source.start_line}-${source.end_line}`}</code>{safePublicLink(source.final_url ?? source.path) ? <a href={safePublicLink(source.final_url ?? source.path)} target="_blank" rel="noreferrer">{t('commerce.open_public_url')}</a> : <span>{t('commerce.url_cannot_be_opened')}</span>}<small>{t('commerce.captured_utc')} {source.captured_at ?? t('commerce.not_recorded')} {t('commerce.text_sha_256')} {source.text_sha256 ?? source.content_sha256 ?? t('commerce.not_recorded_124')} {t('commerce.raw_hash')} {source.raw_sha256 ?? t('commerce.not_recorded_124')}</small>{source.requested_url && <small>{t('commerce.requested')} {source.requested_url}</small>}{source.snapshot_id && <code>{t('commerce.snapshot_label')} {source.snapshot_id}</code>}{source.snapshot_manifest_sha256 && <code>{t('commerce.manifest_sha_256')} {source.snapshot_manifest_sha256}</code>}</li>)}</ul></details> : null}{message.readEvents?.length ? <details className="message-sources" aria-label={t('commerce.read_only_analysis_evidence')}><summary>{t('commerce.reads')} {message.readEvents.some(event => event.decision !== 'ALLOW') ? message.readEvents.filter(event => event.decision !== 'ALLOW').map(event => `${humanState(event.decision)}${event.reason_code ? `: ${event.reason_code}` : ''}`).join(' · ') : t('commerce.no_issues_recorded')}</summary><ul>{message.readEvents.map((event, index) => <li key={`${event.path}:${index}`}><code>{event.decision} {event.path || t('commerce.unresolved_path')} {event.reason_code ? `· ${event.reason_code}` : ''}</code>{event.kind === 'document_tool' && <section aria-label={t('agentTools.receipt')}><p>{event.tool_name} · {event.executed ? (t('agentTools.executed')) : (t('agentTools.notExecuted'))} · {event.outcome || event.reason_code}</p>{event.corpus_coverage && <p>{t('agentTools.inventoryBatch')} {event.corpus_coverage.offset+event.corpus_coverage.batch_selected} / {event.corpus_coverage.total} · {event.corpus_coverage.complete ? (t('agentTools.complete')) : (t('agentTools.pendingBatches'))}</p>}{event.next_cursor && <button type="button" onClick={()=>{setInput(t('agentTools.continueInventory',{cursor:event.next_cursor}));composerRef.current?.focus()}}>{t('agentTools.nextBatch')}</button>}{event.output?.download_url?.startsWith('/api/document-tools/reports/') && <a href={event.output.download_url} download>{t('agentTools.downloadReport')}</a>}<small>{event.receipt_id}</small></section>}{event.kind === 'public_web_read' && <small> {t('commerce.public_web_read')} {event.decision}</small>}{event.kind === 'directory_code_scan' && <small>{t('commerce.scan_counts',{files:formatNumber(event.files_scanned??0),lines:formatNumber(event.lines_scanned??0),findings:formatNumber(event.finding_count??0),capped:event.truncated?t('commerce.capped'):'',hash:event.manifest_sha256??t('commerce.unavailable')})}</small>}</li>)}</ul></details> : null}{message.readEvents?.filter(event=>event.filesystem_proposal).map(event=><AgentServiceReview key={event.filesystem_proposal!.proposal_id} proposal={event.filesystem_proposal!} ownerId={ownerId} conversationId={activeConversation?.id||''} revision={activeConversation?.revision||0}/>)}{message.readEvents?.filter(event=>event.delivery_review).slice(-1).map(event=><section key={event.delivery_review!.review_id} aria-label={t('agentTools.deliveryReview')}><h3>{t('agentTools.deliveryReview')}</h3><p role="status">{event.delivery_review!.decision==='bloqueada'?t('agentTools.blocked'):event.delivery_review!.decision==='lista_para_revision'?t('agentTools.readyReview'):t('agentTools.needsClarification')}</p>{event.delivery_review!.pending.length>0&&<p>{t('agentTools.contentPending')}</p>}<p>{t('agentTools.noSend')}</p><details><summary>{t('agentTools.details')}</summary><pre>{JSON.stringify(event.delivery_review,null,2)}</pre></details></section>)}{message.trace && <div className="message-trace" aria-label={t('commerce.execution_trace_evidence')}>{activeConversation && onInspectExecution && <button type="button" onClick={() => onInspectExecution({conversationId:activeConversation.id,revision:activeConversation.revision,traceId:message.trace!.localId})}>{t('commerce.inspect_execution')}</button>}<details><summary>{t('commerce.trace_details')} {humanState(message.trace.state)}</summary><code>Local: {message.trace.localId}</code>{message.trace.jaegerId && <code>Jaeger: {message.trace.jaegerId}</code>}{message.trace.jaegerUrl && <a href={message.trace.jaegerUrl} target="_blank" rel="noreferrer">{t('commerce.open_in_jaeger')}</a>}</details></div>}</article>)}
+          }}><div className="control-message-heading"><span id={`message-author-${message.id}`} className="message-speaker">{message.role === 'user' ? t('commerce.you') : selectedAgent?.config.name ?? t('commerce.assistant')}</span>{message.content && <div className="control-message-actions"><button type="button" className="message-action" onClick={() => void copyMessage(message)}>{messageCopyState?.id === message.id ? messageCopyState.state === 'copied' ? t('commerce.copied') : t('commerce.copy_failed') : message.role === 'user' ? t('commerce.copy_message') : t('commerce.copy_response')}</button>{message.role==='assistant' && <button type="button" className="message-action" disabled={messageEditDisabled||Boolean(humanCorrection)||!activeConversation} onClick={event=>openHumanCorrection(message,event.currentTarget)}>Corregir interpretación</button>}{canEditMessage(message) && <button type="button" className="message-action" onClick={() => editLatestMessage(message)} disabled={messageEditDisabled}>{t('commerce.edit')}</button>}</div>}</div>{message.status === 'failed' && <p role="status">{t('commerce.failed_response_no_response_was_received_from_the_provider')}</p>}{message.content && <div className="control-message-content">{message.role === 'assistant' ? <AssistantMarkdown content={message.uiContent?errorMessage(message.uiContent):message.content} /> : message.content}</div>}{(message.communicationDraftId || message.communicationDraft) && <Communications key={`communication-${message.id}`} inline initialDraft={message.communicationDraft} draftId={message.communicationDraftId} conversationId={activeConversation?.id} onOpenFull={onOpenCommunication} />}{message.agentBuilderDraft && <AgentBuilder key={message.id} inline initialAgent={message.agentBuilderDraft} onAgentCreated={() => void refreshAgents()} />}{message.agentDelegation && latestDelegationMessageIds.has(message.id) && !selectedAgent && activeConversation?.owner_kind === 'assistant' && activeConversation.owner_id === 'app-assistant' && <AgentDelegation key={`delegation-${message.agentDelegation.proposal_id}`} proposal={message.agentDelegation} parentConversationId={activeConversation.id} parentRevision={activeConversation.revision} disabled={activeConversation.status !== 'active' || sending} onConversationUpdate={(conversation) => { if (conversation.id === activeConversation.id && conversation.owner_kind === 'assistant' && conversation.owner_id === 'app-assistant') applyConversation(conversation as StoredConversation) }} onOpenChild={identity => void openDelegatedChild(identity)} onInspectChild={onInspectExecution ? identity => inspectMessage(message.id, {conversationId:identity.conversationId,revision:identity.revision,traceId:identity.traceId}) : undefined} />}{message.inlineJobHistory && <JobHistory key={message.id} inline />}{message.workspaceProposal && <WorkspaceManager inline proposal={message.workspaceProposal} />}{message.workspaceWriteProposalError&&<p role="alert">{errorMessage(message.workspaceWriteProposalError)}</p>}{message.workspaceWriteProposal&&activeConversation&&<WorkspaceWriteReview proposal={message.workspaceWriteProposal} ownerKind={ownerKind} ownerId={ownerId} conversationId={activeConversation.id} conversationRevision={activeConversation.revision} />}{message.inlineDirectoryScan && message.id === latestDirectoryScanPromptId && !selectedAgent && activeConversation?.owner_kind === 'assistant' && <DirectoryScanRun key={`scan-form-${message.id}`} conversationId={activeConversation.id} revision={activeConversation.revision} disabled={activeConversation.status !== 'active'} showForm onConversationUpdate={(conversation) => applyConversation(conversation as StoredConversation)} />}{message.scanOutcome && activeConversation?.owner_kind === 'assistant' && <DirectoryScanRun key={`scan-results-${message.id}`} conversationId={activeConversation.id} revision={activeConversation.revision} showForm={false} initialOutcome={message.scanOutcome} onConversationUpdate={(conversation) => applyConversation(conversation as StoredConversation)} />}{message.scanOutcome && activeConversation && onInspectExecution && <button type="button" onClick={() => inspectMessage(message.id, {conversationId:activeConversation.id,revision:activeConversation.revision,traceId:message.scanOutcome!.trace.trace_id})}>{t('commerce.inspect_scan_execution')}</button>}{message.pendingNavigation && <section className="chat-navigation-confirmation" aria-label={t('commerce.confirm_screen_change')}><p>{t('commerce.switch_screen',{view:viewLabels[message.pendingNavigation]})}</p>{message.navigationDecision === 'accepted' ? <span role="status">{t('commerce.switching_screen')}</span> : message.navigationDecision === 'declined' ? <span role="status">{t('commerce.staying_in_chat')}</span> : <div className="draft-actions"><button type="button" className="secondary-action" onClick={() => setMessages((previous) => previous.map((item) => item.id === message.id ? { ...item, navigationDecision: 'declined' } : item))}>{t('commerce.stay_in_chat')}</button><button type="button" className="primary-action" onClick={() => { setMessages((previous) => previous.map((item) => item.id === message.id ? { ...item, navigationDecision: 'accepted' } : item)); renderInlineView ? openInlineResource(message.pendingNavigation as ExistingView, message.id) : navigateOutside(message.pendingNavigation as ExistingView) }}>{renderInlineView ? t('commerce.chat_inline.open_here') : t('commerce.yes_switch_screen')}</button></div>}</section>}{message.csvAnalysis && <details className="message-sources" aria-label={t('csvChat.evidence')}><summary>{t('csvChat.interpretation')}</summary><pre className="csv-chat-analysis">{JSON.stringify(message.csvAnalysis,null,2)}</pre></details>}{message.cognitiveTrace && <details><summary>{t('commerce.response_context')}</summary><CognitiveContextPanel trace={message.cognitiveTrace} /></details>}{message.sources?.some(source => source.source_type !== 'public_web') ? <details className="message-sources" aria-label={t('commerce.project_files_read')}><summary>{t('commerce.files_count',{count:formatNumber(message.sources.filter(source => source.source_type !== 'public_web').length)})}</summary><ul>{message.sources.filter(source => source.source_type !== 'public_web').map(source => <li key={`${source.path}:${source.start_line}-${source.end_line}`}><code>{source.path}{source.source_type === 'document' ? ' · '+JSON.stringify(source.locations?.slice(0,3) || []) : `:${source.start_line}-${source.end_line}`}</code>{source.file_sha256 && source.source_type === 'csv' && <small>{t('csvChat.sourceHash')}: {source.file_sha256}</small>}{source.content_sha256 && <small> SHA-256 {source.content_sha256}</small>}</li>)}</ul></details> : null}{message.sources?.some(source => source.source_type === 'public_web') ? <details className="message-sources" aria-label={t('commerce.public_web_sources_read')}><summary>{t('commerce.web_count',{count:formatNumber(message.sources.filter(source => source.source_type === 'public_web').length)})}</summary><ul>{message.sources.filter(source => source.source_type === 'public_web').map(source => <li key={`${source.snapshot_id ?? source.path}:${source.start_line}-${source.end_line}`}><code>{source.path}{source.source_type === 'document' ? ' · '+JSON.stringify(source.locations?.slice(0,3) || []) : `:${source.start_line}-${source.end_line}`}</code>{safePublicLink(source.final_url ?? source.path) ? <a href={safePublicLink(source.final_url ?? source.path)} target="_blank" rel="noreferrer">{t('commerce.open_public_url')}</a> : <span>{t('commerce.url_cannot_be_opened')}</span>}<small>{t('commerce.captured_utc')} {source.captured_at ?? t('commerce.not_recorded')} {t('commerce.text_sha_256')} {source.text_sha256 ?? source.content_sha256 ?? t('commerce.not_recorded_124')} {t('commerce.raw_hash')} {source.raw_sha256 ?? t('commerce.not_recorded_124')}</small>{source.requested_url && <small>{t('commerce.requested')} {source.requested_url}</small>}{source.snapshot_id && <code>{t('commerce.snapshot_label')} {source.snapshot_id}</code>}{source.snapshot_manifest_sha256 && <code>{t('commerce.manifest_sha_256')} {source.snapshot_manifest_sha256}</code>}</li>)}</ul></details> : null}{message.readEvents?.length ? <details className="message-sources" aria-label={t('commerce.read_only_analysis_evidence')}><summary>{t('commerce.reads')} {message.readEvents.some(event => event.decision !== 'ALLOW') ? message.readEvents.filter(event => event.decision !== 'ALLOW').map(event => `${humanState(event.decision)}${event.reason_code ? `: ${event.reason_code}` : ''}`).join(' · ') : t('commerce.no_issues_recorded')}</summary><ul>{message.readEvents.map((event, index) => <li key={`${event.path}:${index}`}><code>{event.decision} {event.path || t('commerce.unresolved_path')} {event.reason_code ? `· ${event.reason_code}` : ''}</code>{event.kind === 'document_tool' && <section aria-label={t('agentTools.receipt')}><p>{event.tool_name} · {event.executed ? (t('agentTools.executed')) : (t('agentTools.notExecuted'))} · {event.outcome || event.reason_code}</p>{event.corpus_coverage && <p>{t('agentTools.inventoryBatch')} {event.corpus_coverage.offset+event.corpus_coverage.batch_selected} / {event.corpus_coverage.total} · {event.corpus_coverage.complete ? (t('agentTools.complete')) : (t('agentTools.pendingBatches'))}</p>}{event.next_cursor && <button type="button" onClick={()=>{setInput(t('agentTools.continueInventory',{cursor:event.next_cursor}));composerRef.current?.focus()}}>{t('agentTools.nextBatch')}</button>}{event.output?.download_url?.startsWith('/api/document-tools/reports/') && <a href={event.output.download_url} download>{t('agentTools.downloadReport')}</a>}<small>{event.receipt_id}</small></section>}{event.kind === 'public_web_read' && <small> {t('commerce.public_web_read')} {event.decision}</small>}{event.kind === 'directory_code_scan' && <small>{t('commerce.scan_counts',{files:formatNumber(event.files_scanned??0),lines:formatNumber(event.lines_scanned??0),findings:formatNumber(event.finding_count??0),capped:event.truncated?t('commerce.capped'):'',hash:event.manifest_sha256??t('commerce.unavailable')})}</small>}</li>)}</ul></details> : null}{message.readEvents?.filter(event=>event.filesystem_proposal).map(event=><AgentServiceReview key={event.filesystem_proposal!.proposal_id} proposal={event.filesystem_proposal!} ownerId={ownerId} conversationId={activeConversation?.id||''} revision={activeConversation?.revision||0}/>)}{message.readEvents?.filter(event=>event.delivery_review).slice(-1).map(event=><section key={event.delivery_review!.review_id} aria-label={t('agentTools.deliveryReview')}><h3>{t('agentTools.deliveryReview')}</h3><p role="status">{event.delivery_review!.decision==='bloqueada'?t('agentTools.blocked'):event.delivery_review!.decision==='lista_para_revision'?t('agentTools.readyReview'):t('agentTools.needsClarification')}</p>{event.delivery_review!.pending.length>0&&<p>{t('agentTools.contentPending')}</p>}<p>{t('agentTools.noSend')}</p><details><summary>{t('agentTools.details')}</summary><pre>{JSON.stringify(event.delivery_review,null,2)}</pre></details></section>)}{message.trace && <div className="message-trace" aria-label={t('commerce.execution_trace_evidence')}>{activeConversation && onInspectExecution && <button type="button" onClick={() => inspectMessage(message.id, {conversationId:activeConversation.id,revision:activeConversation.revision,traceId:message.trace!.localId})}>{t('commerce.inspect_execution')}</button>}<details><summary>{t('commerce.trace_details')} {humanState(message.trace.state)}</summary><code>Local: {message.trace.localId}</code>{message.trace.jaegerId && <code>Jaeger: {message.trace.jaegerId}</code>}{message.trace.jaegerUrl && <a href={message.trace.jaegerUrl} target="_blank" rel="noreferrer">{t('commerce.open_in_jaeger')}</a>}</details></div>}{message.role === 'assistant' && webNotice.key === webPreferenceContextKey && webNotice.state.notices.filter(notice => notice.messageId === message.id).map(notice => <section key={notice.activationId} role="note" aria-label={t('commerce.public_web_reading_scope')} className="chat-web-notice">
+            <strong><span aria-hidden="true">⚠</span> {t('commerce.web_notice.title')}</strong><p>{t('commerce.web_notice.explanation')}</p>
+            {notice.origins.length ? <><p>{t('commerce.web_notice.sites')}</p><ul aria-label={t('commerce.requested_web_origins')}>{notice.origins.map(origin => <li key={origin}><code>{origin}</code></li>)}</ul></> : <p>{t('commerce.web_notice.no_sites')}</p>}
+            <small>{t('commerce.web_notice.not_execution')}</small>
+          </section>)}{message.inlineResource && renderInlineView?.(message.inlineResource.view, inlineContext(message.inlineResource, message.id))}{message.role === 'assistant' && message.content && message.status !== 'failed' && webProjectReady && webProjectContext && activeConversation?.status === 'active' && (() => {
+            const request = messages.slice(0, messageIndex).reverse().find(item => item.role === 'user' && item.content.trim())
+            if (!request) return null
+            const source = JSON.stringify([webProjectContext.projectId, webProjectContext.root, ownerKind, ownerId, activeConversation.id, request.id, request.content, message.id, message.content])
+            return <section aria-label={t('commerce.chat_task.response_controls')}><MessageTaskExecution taskText={request.content} source={source} /></section>
+          })()}</article>)}
+          {pendingWebChoice && pendingWebChoice.contextKey === webPreferenceContextKey && <article className="control-message control-message-user" aria-label={t('commerce.web_preference.pending_message')} data-pending-message-id={pendingWebChoice.id}>
+            <strong>{t('commerce.web_preference.pending_message')}</strong><p className="control-message-content" style={{whiteSpace: 'pre-wrap'}}>{pendingWebChoice.content}</p>
+            <section aria-label={t('commerce.web_preference.pending_sites')}><p>{t('commerce.web_preference.replace_notice')}</p><ul>{[...new Set(pendingWebChoice.urls.map(url => new URL(url).origin))].map(origin => <li key={origin}><code>{origin}</code></li>)}</ul>
+              {!webChoiceCurrent(pendingWebChoice) && <p role="status">{t('commerce.web_preference.message_stale')}</p>}
+              <button type="button" disabled={!webChoiceCurrent(pendingWebChoice)} onClick={() => void sendMessage(undefined, undefined, undefined, undefined, pendingWebChoice)}>{t('commerce.web_preference.allow_and_send')}</button>
+              <button type="button" onClick={() => setPendingWebChoice(null)}>{t('commerce.web_preference.keep_editing')}</button>
+            </section>
+          </article>}
+          {conversationResource && conversationResource.scope === conversationScope && conversationResource.conversationId === (activeConversation?.id ?? null) && renderInlineView?.(conversationResource.resource.view, inlineContext(conversationResource.resource, null))}
           {capabilityDraft && <section className="capability-chat-card" aria-labelledby="capability-draft-title"><div className="draft-heading"><div><p className="section-eyebrow">{t('commerce.proposal_review')}</p><h3 id="capability-draft-title">{t('commerce.review_before_saving')}</h3></div><span className="draft-status">{t('commerce.not_saved')}</span></div><label>{t('commerce.capability')}<select value={capabilityDraft.capabilityId} onChange={(event) => setCapabilityDraft({ ...capabilityDraft, capabilityId: event.target.value })} disabled={capabilityBusy}><option value="">{t('commerce.choose_a_catalog_entry')}</option>{capabilityDraft.capabilities.map((item) => <option key={item.id} value={item.id}>{item.id} · {item.status} · {item.effect}</option>)}</select></label>{capabilityDraft.capabilityId && <p className="capability-chat-selected">{capabilityDraft.capabilities.find((item) => item.id === capabilityDraft.capabilityId)?.summary}</p>}<label>{t('commerce.request_summary')}<input value={capabilityDraft.summary} maxLength={500} onChange={(event) => setCapabilityDraft({ ...capabilityDraft, summary: event.target.value })} disabled={capabilityBusy} /></label><label>{t('commerce.requested_scope')}<textarea value={capabilityDraft.requestedScope} maxLength={1000} rows={3} onChange={(event) => setCapabilityDraft({ ...capabilityDraft, requestedScope: event.target.value })} disabled={capabilityBusy} /></label><div className="draft-actions"><button type="button" className="secondary-action" onClick={() => setCapabilityDraft(null)} disabled={capabilityBusy}>{t('commerce.discard')}</button><button type="button" className="primary-action" onClick={() => void saveCapabilityProposal()} disabled={capabilityBusy || !capabilityDraft.capabilityId || !capabilityDraft.summary.trim() || !capabilityDraft.requestedScope.trim()}>{capabilityBusy ? t('commerce.saving') : t('commerce.save_proposal')}</button></div></section>}
           {capabilityProposals.map((proposal) => <article className="capability-chat-saved" key={proposal.id}><div><strong>{proposal.capability_id}</strong><span>{humanState(proposal.status)} {t('commerce.revision')} {proposal.revision}</span></div><p>{proposal.summary}</p><p><strong>{t('commerce.requested_scope_148')}</strong> {proposal.requested_scope}</p><code>{proposal.id}</code>{proposal.status === 'PENDING_REVIEW' && <button type="button" className="secondary-action" onClick={() => void cancelChatProposal(proposal)} disabled={capabilityBusy}>{t('commerce.cancel_proposal')}</button>}</article>)}
           {error && <p className="chat-error" role="alert">{errorMessage(error)}{errorMessage(error).toLowerCase().includes('ollama') || errorMessage(error).toLowerCase().includes('provider') ? <button type="button" onClick={onOpenProviderSettings}>{t('commerce.open_provider_settings')}</button> : null}</p>}
@@ -1399,7 +1604,7 @@ export default function AgentChat({ onInspectionSelection, onInspectExecution, o
             <button className="primary-action" type="submit" disabled={sending || orchestratorSelectionBlocked || !input.trim() || Boolean(activeConversation && activeConversation.status !== 'active')}>{sending ? 'Sending.' : t('commerce.send')}</button>
           </div>
           <div className="chat-composer-actions">
-            <label className="workspace-read-toggle"><input type="checkbox" checked={allowPublicWebRead} onChange={event => setAllowPublicWebRead(event.target.checked)} disabled={sending || Boolean(activeConversation && activeConversation.status !== 'active')} /><span>{t('commerce.allow_public_web_reading')}</span></label>
+            <label className="workspace-read-toggle"><input type="checkbox" checked={allowPublicWebRead} onChange={event => {const enabled = event.target.checked;const extracted = enabled && !publicWebUrls ? extractPublicHttpsUrls(input) : null;changeWebPreference(enabled, extracted && !extracted.invalid && extracted.urls.length <= 8 ? extracted.urls.join('\n') : publicWebUrls)}} disabled={!webPreferenceContextKey || (sending && !allowPublicWebRead) || Boolean(activeConversation && activeConversation.status !== 'active')} /><span>{t('commerce.allow_public_web_reading')}</span></label>
             <div className="chat-context-controls">
               <ChatTools conversationId={activeConversation?.id} conversationRevision={activeConversation?.revision}
                 csvContext={!selectedAgent ? {projectId:activeProject?.project_id ?? null,projectRoot:activeProject?.root ?? null,contextKey:csvContextKey,
@@ -1412,10 +1617,13 @@ export default function AgentChat({ onInspectionSelection, onInspectExecution, o
               {!selectedAgent && <label className="chat-provider-picker"><span className="visually-hidden">{t('commerce.orchestrator_model')}</span><select aria-label={t('commerce.orchestrator_model')} value={!chatProviderSelectionFailed && chatProviderSelection ? `${chatProviderSelection.provider_id}|${chatProviderSelection.model_id}` : ''} onChange={event => void changeChatProvider(event.target.value)} aria-busy={savingChatProvider} data-provider-selection-state={savingChatProvider ? 'pending' : chatProviderSelectionFailed ? 'failed' : chatProviderSelection ? 'confirmed' : 'unselected'} disabled={sending || savingChatProvider || chatProviders.length === 0}><option value="" disabled>{chatProviders.length ? t('commerce.select_a_model') : t('commerce.configure_a_provider')}</option>{chatProviders.map(provider => <option key={`${provider.provider_id}|${provider.model_id}`} value={`${provider.provider_id}|${provider.model_id}`}>{provider.label} · {provider.display_name ?? provider.model_id}{provider.state === 'configured_unverified' ? t('commerce.unverified') : ''}</option>)}</select></label>}
             </div>
           </div>
-          {allowPublicWebRead && <section aria-label={t('commerce.public_web_reading_scope')}><label className="workspace-read-paths">{t('commerce.entry_https_urls_one_per_line')}<textarea rows={3} value={publicWebUrls} onChange={event => setPublicWebUrls(event.target.value)} placeholder="https://www.ejemplo.com/" maxLength={16384} disabled={sending} /></label><p>{t('commerce.this_turn_only_public_pages_from_these_origins')}</p><ul aria-label={t('commerce.requested_web_origins')}>{[...new Set(publicWebUrls.split(/\r?\n/).map(value => {try {return new URL(value.trim()).origin} catch {return value.trim() ? t('commerce.invalid_url',{url:value.trim()}) : ''}}).filter(Boolean))].map(origin => <li key={origin}><code>{origin}</code></li>)}</ul></section>}
+          {!webPreferenceContextKey && <p className="muted-state" role="status">{t('commerce.web_preference.identity_pending')}</p>}
+          {webPreference.failed && <p className="chat-error" role="alert">{t('commerce.web_preference.storage_error')}</p>}
+
+          {input.trim() && extractPublicHttpsUrls(input).urls.length > 0 && <section aria-label={t('commerce.web_preference.detected_links')}><small>{t('commerce.web_preference.detected_notice')}</small><ul>{extractPublicHttpsUrls(input).urls.slice(0, 8).map(url => <li key={url}><code>{url}</code></li>)}</ul></section>}
 
         </form>
-        {!selectedAgent && <DevelopmentPanel key="app-assistant-context" ownerId={ownerId} projectRoot={activeProject?.root ?? null} portalTarget={developmentPanelTarget} disabled={sending} showChanges={false} historyContent={!agentPanelOpen ? conversationLibrary : undefined} workspaceContent={
+        {!selectedAgent && <DevelopmentPanel initialOpen={initialProjectPanelOpen} key="app-assistant-context" ownerId={ownerId} projectRoot={activeProject?.root ?? null} portalTarget={developmentPanelTarget} disabled={sending} showChanges={false} historyContent={!agentPanelOpen ? conversationLibrary : undefined} workspaceContent={
           <ProjectPermissions
             projectId={activeProject?.project_id ?? null}
             projectRoot={activeProject?.root ?? null}
@@ -1423,7 +1631,7 @@ export default function AgentChat({ onInspectionSelection, onInspectExecution, o
             onBrowseWorkspace={() => onNavigate('workspace')}
           />
         } />}
-        {selectedAgent && <DevelopmentPanel key={selectedAgent.id} ownerId={selectedAgent.id} projectRoot={activeProject?.root ?? null} portalTarget={developmentPanelTarget} disabled={sending} showChanges={Boolean(selectedAgent.config.tools?.some(tool=>tool.startsWith('development_')))} workspaceContent={
+        {selectedAgent && <DevelopmentPanel initialOpen={initialProjectPanelOpen} key={selectedAgent.id} ownerId={selectedAgent.id} projectRoot={activeProject?.root ?? null} portalTarget={developmentPanelTarget} disabled={sending} showChanges={Boolean(selectedAgent.config.tools?.some(tool=>tool.startsWith('development_')))} workspaceContent={
           <ProjectPermissions
             projectId={activeProject?.project_id ?? null}
             projectRoot={activeProject?.root ?? null}

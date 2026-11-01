@@ -1,7 +1,8 @@
 import {useI18n,t,localMessage,errorMessage,apiError,formatDate,formatNumber} from '../i18n'
 import type {TranslationKey} from '../i18n'
 import './CapabilityManager.css'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useId, useRef, useState } from 'react'
+import type { KeyboardEvent } from 'react'
 
 export type Capability = {
   id: string
@@ -17,11 +18,13 @@ export type Capability = {
   fingerprint: string
 }
 
-const CAPABILITY_GROUPS: Array<{id: string; title: TranslationKey; description: TranslationKey; capabilityIds: string[]}> = [
+type CapabilityGroup = {id: string; title: TranslationKey; description: TranslationKey; capabilityIds: string[]}
+
+const CAPABILITY_GROUPS: CapabilityGroup[] = [
   {id:'documents',title:'commerce.capability_ui.group_documents',description:'commerce.capability_ui.group_documents_help',capabilityIds:['document_inventory','document_extract','document_relate','document_plan_rename','document_export']},
   {id:'workspace',title:'commerce.capability_ui.group_workspace',description:'commerce.capability_ui.group_workspace_help',capabilityIds:['workspace.read_text','workspace.scan_duplicates','filesystem_inventory','filesystem_plan']},
   {id:'agents',title:'commerce.capability_ui.group_agents',description:'commerce.capability_ui.group_agents_help',capabilityIds:['agent.run','agent.evaluate']},
-  {id:'development',title:'commerce.capability_ui.group_development',description:'commerce.capability_ui.group_development_help',capabilityIds:['development_read','development_inspect','development_prepare','development_revise','development_check','development_review']},
+  {id:'development',title:'capability.tabs.group_development',description:'commerce.capability_ui.group_development_help',capabilityIds:['development_read','development_inspect','development_prepare','development_revise','development_check','development_review']},
   {id:'delivery',title:'commerce.capability_ui.group_delivery',description:'commerce.capability_ui.group_delivery_help',capabilityIds:['delivery_review','delivery_revalidate','delivery_prepare_draft']},
   {id:'connections',title:'commerce.capability_ui.group_connections',description:'commerce.capability_ui.group_connections_help',capabilityIds:['mcp.execute','sandbox.execute']},
 ]
@@ -67,14 +70,33 @@ export default function CapabilityManager({onPrepareChat, onNavigate}: Capabilit
 
   const [capabilities, setCapabilities] = useState<Capability[]>([])
   const [proposals, setProposals] = useState<CapabilityProposal[]>([])
+  const [activeGroupId, setActiveGroupId] = useState('all')
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<any>('')
   const [canceling, setCanceling] = useState<string | null>(null)
-  const capabilityGroups = [...CAPABILITY_GROUPS, {
-    id:'other', title:'commerce.capability_ui.group_other' as TranslationKey,
-    description:'commerce.capability_ui.group_other_help' as TranslationKey,
-    capabilityIds:capabilities.map((item) => item.id).filter((id) => !CAPABILITY_GROUPS.some((group) => group.capabilityIds.includes(id))),
-  }]
+  const idPrefix = useId().replace(/:/g, '')
+  const tabRefs = useRef<Record<string, HTMLButtonElement | null>>({})
+  const capabilityGroups = capabilityGroupsFor(capabilities)
+  const activeGroup = capabilityGroups.find((group) => group.id === activeGroupId) ?? capabilityGroups[0]
+  const groupCapabilities = activeGroup?.id === 'all' ? capabilities : activeGroup ? capabilities.filter((capability) => activeGroup.capabilityIds.includes(capability.id)) : []
+  const tabId = (groupId: string) => `capability-tab-${idPrefix}-${groupId}`
+  const panelId = `capability-panel-${idPrefix}`
+
+  const activateGroup = (groupId: string, moveFocus = false) => {
+    setActiveGroupId(groupId)
+    if (moveFocus) tabRefs.current[groupId]?.focus()
+  }
+
+  const onTabKeyDown = (event: KeyboardEvent<HTMLButtonElement>, index: number) => {
+    let nextIndex: number | undefined
+    if (event.key === 'ArrowRight') nextIndex = (index + 1) % capabilityGroups.length
+    else if (event.key === 'ArrowLeft') nextIndex = (index - 1 + capabilityGroups.length) % capabilityGroups.length
+    else if (event.key === 'Home') nextIndex = 0
+    else if (event.key === 'End') nextIndex = capabilityGroups.length - 1
+    if (nextIndex === undefined) return
+    event.preventDefault()
+    activateGroup(capabilityGroups[nextIndex].id, true)
+  }
 
   const refresh = useCallback(async () => {
     setLoading(true)
@@ -90,6 +112,7 @@ export default function CapabilityManager({onPrepareChat, onNavigate}: Capabilit
       const proposalData = await proposalResponse.json()
       if (!Array.isArray(catalog.capabilities) || catalog.capabilities.some((item: unknown) => !item || typeof item !== 'object' || typeof (item as Capability).id !== 'string' || typeof (item as Capability).status !== 'string' || typeof (item as Capability).effect !== 'string')) throw localMessage('commerce.capability_ui.bad_catalog')
       setCapabilities(catalog.capabilities)
+      setActiveGroupId('all')
       setProposals(Array.isArray(proposalData.proposals) ? proposalData.proposals : [])
     } catch (cause) {
       setError(cause instanceof Error ? cause : localMessage('agents.aux.CapabilityManager.capability_data_could_not_be_loaded'))
@@ -122,13 +145,40 @@ export default function CapabilityManager({onPrepareChat, onNavigate}: Capabilit
       {error && <div className="capability-error" role="alert"><p>{errorMessage(error)}</p><button type="button" onClick={()=>void refresh()}>{t('commerce.capability_ui.retry')}</button></div>}
       {!loading && !error && capabilities.length === 0 && <p className="capability-state">{t("core.CapabilityManager.no_capability_records_were_returned_by_the_199420")}</p>}
       {!loading && !error && capabilities.length > 0 && <p className="capability-catalog-notice">{t('commerce.capability_ui.source_notice')}</p>}
-      {!loading && !error && capabilities.length > 0 && <div className="capability-groups">
-        {capabilityGroups.map((group) => {
-          const groupCapabilities = capabilities.filter((capability) => group.capabilityIds.includes(capability.id))
-          return groupCapabilities.length === 0 ? null : <details className="capability-group" id={`capability-group-${group.id}`} key={group.id} open>
-            <summary className="capability-group-summary"><span className="capability-group-title">{t(group.title)}</span><span className="capability-group-count">{groupCapabilities.length}</span></summary>
-            <p className="capability-group-help">{t(group.description)}</p>
-            <ul className="capability-list">
+      {!loading && !error && capabilities.length > 0 && <>
+        <details className="capability-quick-menu">
+          <summary>{t('commerce.capability_ui.quick_options')}</summary>
+          <p>{t('commerce.capability_ui.quick_options_help')}</p>
+          <nav aria-label={t('commerce.capability_ui.quick_options')}>
+            {capabilityGroups.map((group) => <button type="button" key={group.id} aria-controls={panelId} aria-pressed={activeGroup?.id === group.id} onClick={() => activateGroup(group.id)}>{t(group.title)}</button>)}
+          </nav>
+        </details>
+        <div className="capability-tabs" role="tablist" aria-label={t('core.CapabilityManager.capabilities_9460f1')}>
+          {capabilityGroups.map((group, index) => {
+            const count = group.id === 'all' ? capabilities.length : capabilities.filter((capability) => group.capabilityIds.includes(capability.id)).length
+            const selected = activeGroup?.id === group.id
+            return <button
+              key={group.id}
+              ref={(element) => { tabRefs.current[group.id] = element }}
+              id={tabId(group.id)}
+              type="button"
+              role="tab"
+              aria-selected={selected}
+              aria-controls={panelId}
+              aria-label={`${t(group.title)} (${count})`}
+              tabIndex={selected ? 0 : -1}
+              onClick={() => activateGroup(group.id)}
+              onKeyDown={(event) => onTabKeyDown(event, index)}
+            >
+              <span>{t(group.title)}</span><span className="capability-tab-count" aria-hidden="true">{count}</span>
+            </button>
+          })}
+        </div>
+        {activeGroup && <section className="capability-group-panel" role="tabpanel" id={panelId} aria-labelledby={tabId(activeGroup.id)} tabIndex={0}>
+          <p className="capability-group-help">{t(activeGroup.description)}</p>
+          {groupCapabilities.length === 0
+            ? <p className="capability-empty-category">{t('capability.tabs.empty_category', {category:t(activeGroup.title)})}</p>
+            : <ul className="capability-list">
         {groupCapabilities.map((capability) => <li key={capability.id}><article className="capability-card">
           <div className="capability-card-heading"><div><h3>{capabilityPresentation(capability.id).name}</h3><code>{capability.id}</code></div><span className={`capability-status status-${capability.status.toLowerCase()}`}>{observedStateLabel(capability.status)}</span></div>
           <p className="capability-card-summary">{capabilityPresentation(capability.id).summary}</p>
@@ -151,10 +201,9 @@ export default function CapabilityManager({onPrepareChat, onNavigate}: Capabilit
           </div>
 
         </article></li>)}
-            </ul>
-          </details>
-        })}
-      </div>}
+          </ul>}
+        </section>}
+      </>}
       <section className={`capability-proposals ${!loading && !error && proposals.length === 0 ? 'is-empty' : ''}`} aria-labelledby="capability-proposals-title">
         <div className="capability-section-heading">
           <div className="capability-section-title"><h3 id="capability-proposals-title">{t("core.CapabilityManager.proposals_834cfc")}</h3><span>{loading ? '—' : proposals.length}</span></div>
@@ -168,16 +217,18 @@ export default function CapabilityManager({onPrepareChat, onNavigate}: Capabilit
           {proposal.status === 'PENDING_REVIEW' && <button type="button" className="secondary-action" disabled={canceling === proposal.id} onClick={() => void cancelProposal(proposal)}>{canceling === proposal.id ? t("core.CapabilityManager.cancelling_91b104") : t("core.CapabilityManager.cancel_proposal_15fe06")}</button>}
         </article>)}</div>
       </section>
-      {capabilities.length > 0 && <details className="capability-quick-menu">
-        <summary>{t('commerce.capability_ui.quick_options')}</summary>
-        <p>{t('commerce.capability_ui.quick_options_help')}</p>
-        <nav aria-label={t('commerce.capability_ui.quick_options')}>
-          {capabilityGroups.map((group) => capabilities.some((capability) => group.capabilityIds.includes(capability.id)) && <button type="button" key={group.id} onClick={() => document.getElementById(`capability-group-${group.id}`)?.scrollIntoView({behavior:'smooth',block:'start'})}>{t(group.title)}</button>)}
-        </nav>
-      </details>}
       <p className="capability-footer">{t("core.CapabilityManager.a_proposal_records_a_request_for_review_e95b81")}</p>
     </section>
   )
+}
+
+function capabilityGroupsFor(capabilities: Capability[]): CapabilityGroup[] {
+  const unknownIds = capabilities.map((item) => item.id).filter((id) => !CAPABILITY_GROUPS.some((group) => group.capabilityIds.includes(id)))
+  return [
+    {id:'all', title:'capability.tabs.all', description:'capability.tabs.all_help', capabilityIds:capabilities.map((item) => item.id)},
+    ...CAPABILITY_GROUPS,
+    {id:'uncategorized', title:'capability.tabs.uncategorized', description:'capability.tabs.uncategorized_help', capabilityIds:unknownIds},
+  ]
 }
 
 /** Presentation only: preserve the exact observed protocol value alongside its label. */

@@ -6,7 +6,9 @@ import {es as coreEs,en as coreEn} from './domains/core'
 import {es as commerceEs,en as commerceEn} from './domains/commerce'
 import {es as agentsEs,en as agentsEn} from './domains/agents'
 import {es as agentToolsEs,en as agentToolsEn} from './domains/agentTools'
-export const catalogs={es:{...commonEs,...statesEs,...coreEs,...commerceEs,...agentsEs,...agentToolsEs,...csvChatEs},en:{...commonEn,...statesEn,...coreEn,...commerceEn,...agentsEn,...agentToolsEn,...csvChatEn}}
+import {es as capabilityTabsEs,en as capabilityTabsEn} from './domains/capabilityTabs'
+import {es as whatsappSettingsEs,en as whatsappSettingsEn} from './domains/whatsappSettings'
+export const catalogs={es:{...commonEs,...statesEs,...coreEs,...commerceEs,...agentsEs,...agentToolsEs,...capabilityTabsEs,...whatsappSettingsEs,...csvChatEs},en:{...commonEn,...statesEn,...coreEn,...commerceEn,...agentsEn,...agentToolsEn,...capabilityTabsEn,...whatsappSettingsEn,...csvChatEn}}
 export type Locale='es'|'en'
 export type TranslationKey=keyof typeof catalogs.es
 export type MessageParameters=Record<string,string|number>

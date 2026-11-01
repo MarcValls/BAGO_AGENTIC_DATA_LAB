@@ -22,6 +22,7 @@ def test_absolute_deadline_interrupts_real_protocol_socket(monkeypatch,phase,tmp
         def __getattr__(self,name):return getattr(client,name)
         def do_handshake(self):pass
     class Context:
+        def load_verify_locations(self,**kwargs):pass
         def wrap_socket(self,sock,**kwargs):return TLSProxy()
     def server():
         try:

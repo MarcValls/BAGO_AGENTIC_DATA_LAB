@@ -13,6 +13,7 @@ import shutil
 import subprocess
 import threading
 import time
+import uuid
 from datetime import datetime, timezone
 from urllib.parse import urlencode
 
@@ -157,8 +158,25 @@ class WhatsAppSession:
         if not isinstance(label, str) or not label.strip() or len(label) > 100 or type(enabled) is not bool:
             raise ValueError("invalid_configuration")
         with self.lock:
-            atomic_json(self.root / "config.json", {"label": label.strip(), "enabled": enabled})
+            previous = self._config()
+            session_id = previous.get("session_id")
+            if not isinstance(session_id, str) or not re.fullmatch(r"[a-f0-9]{32}", session_id):
+                session_id = uuid.uuid4().hex
+            atomic_json(self.root / "config.json", {"label": label.strip(), "enabled": enabled, "session_id": session_id})
             return self.status()
+
+    def authorization_identity(self):
+        """Stable owned-profile identity created only by explicit configuration.
+
+        Legacy enabled is connection configuration, never an automatic-send grant.
+        A fresh session/profile cannot inherit another session's authorization.
+        """
+        with self.lock:
+            session_id = self._config().get("session_id")
+            if not isinstance(session_id, str) or not re.fullmatch(r"[a-f0-9]{32}", session_id):
+                return None
+            value = {"session_id": session_id, "profile": str(self.profile.resolve())}
+            return hashlib.sha256(json.dumps(value, sort_keys=True, separators=(",", ":")).encode("utf-8")).hexdigest()
 
     def open(self):
         with self.lock:

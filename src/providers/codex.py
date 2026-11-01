@@ -31,7 +31,7 @@ CONFIG = {
     )},
 }
 CONFIG["features"]["skip_host_skill_discovery"] = True
-TOOL_NAMES = {"sandbox.run", "read_workspace_file", "scan_code_duplicates", "public_web_read", "propose_workspace_write", "resolve_control_request"}
+TOOL_NAMES = {"sandbox.run", "read_workspace_file", "scan_code_duplicates", "public_web_read", "propose_workspace_write", "resolve_control_request", "resolve_agent_scope", "resolve_agent_result"}
 _LOGIN_LOCK = threading.RLock()
 _LOGIN_FLOWS: dict[str, dict[str, Any]] = {}
 

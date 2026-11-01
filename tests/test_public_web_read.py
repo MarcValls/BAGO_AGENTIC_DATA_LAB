@@ -195,6 +195,7 @@ def test_network_uses_validated_ip_and_hostname_tls(monkeypatch,tmp_path):
         def getresponse(self):self.sock=None;return Response()
         def close(self):pass
     class TLS:
+        def load_verify_locations(self,**kwargs):pass
         def wrap_socket(self,sock,server_hostname,**kwargs):tls_names.append(server_hostname);return sock
     monkeypatch.setattr(core,'public_addresses',lambda host,**kwargs:['93.184.216.34'])
     monkeypatch.setattr(core.socket,'create_connection',lambda target,**kwargs:connected.append(target) or Socket())

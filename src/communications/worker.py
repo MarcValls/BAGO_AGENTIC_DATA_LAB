@@ -27,6 +27,9 @@ class CommunicationWorker:
             self.handle.close()
             self.handle = None
             return False
+        # Only the exclusive owner may bind immediate dispatch to its lifecycle.
+        # Constructing a second worker must not replace an active owner's STOP.
+        self.service.stop_requested = self.stop_event.is_set
         try:
             self.service.recover()
         except Exception:

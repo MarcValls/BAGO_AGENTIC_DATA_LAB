@@ -40,12 +40,15 @@ async function setup(options:{stored?:any;role?:string;failed?:boolean}={}){
  await openDelegatedChild('Agente fixture');await act(async()=>{})
  return {calls,inspect}
 }
-function send(){fireEvent.change(screen.getByPlaceholderText('Escribe a Agente fixture.'),{target:{value:'Prepara un informe'}});fireEvent.click(screen.getByRole('button',{name:'Enviar'}))}
+function send(message='Prepara un informe'){fireEvent.change(screen.getByPlaceholderText('Escribe a Agente fixture.'),{target:{value:message}});fireEvent.click(screen.getByRole('button',{name:'Enviar'}))}
 it('uses project WRITE policy without per-turn opt-in, preserves Markdown and never autoapplies a proposal',async()=>{
  const {calls,inspect}=await setup()
  expect(screen.queryByLabelText('Proponer archivos')).toBeNull()
- fireEvent.click(screen.getByLabelText('Permitir lectura web p\u00fablica'));fireEvent.change(screen.getByLabelText('URL HTTPS de entrada \u00b7 una por l\u00ednea'),{target:{value:'https://example.org/'}})
- send();await screen.findByDisplayValue(review.proposed_text)
+ fireEvent.click(screen.getByLabelText('Permitir lectura web p\u00fablica'))
+ send('Prepara un informe con https://example.org/')
+ await screen.findByDisplayValue(review.proposed_text)
+ expect(screen.queryByLabelText('URL HTTPS de entrada · una por línea')).toBeNull()
+ expect(calls.filter(c=>c.path==='/api/web-read/authorizations')).toHaveLength(1)
  const sent=calls.find(c=>c.path.endsWith('/chat'))!
  expect(sent.body).toMatchObject({web_read_authorization_id:'web-grant',conversation_id:context.conversation_id,revision:7})
  expect(sent.body).not.toHaveProperty('allow_workspace_write_proposals')
@@ -62,7 +65,7 @@ it('does not infer proposal authorization from a request without the per-turn ch
 })
 it('restores the trusted summary into the same review card with only a read request',async()=>{
  const {calls}=await setup({stored:summary});await screen.findByDisplayValue(review.proposed_text)
- expect(calls.map(c=>c.body.operation)).toEqual(['review_write']);expect((screen.getByRole('button',{name:'Confirmar y escribir'}) as HTMLButtonElement).disabled).toBe(true)
+ expect(calls.map(c=>c.body.operation)).toEqual(['review_write']);expect((screen.getByRole('button',{name:'Aceptar plan y ejecutar'}) as HTMLButtonElement).disabled).toBe(false);expect(calls.some(c=>c.body?.operation==='apply_write')).toBe(false)
 })
 it.each([
  {...summary,context:{...context,owner_id:'foreign'}},
@@ -70,7 +73,7 @@ it.each([
  {...summary,context:{...context,conversation_revision:99}},
  {...summary,path:'../outside'},null,
 ])('rejects persisted foreign or malformed summary without SDK action',async(stored)=>{
- const {calls}=await setup({stored});await screen.findByRole('alert');expect(screen.queryByRole('button',{name:'Confirmar y escribir'})).toBeNull();expect(calls).toEqual([])
+ const {calls}=await setup({stored});await screen.findByRole('alert');expect(screen.queryByRole('button',{name:'Aceptar plan y ejecutar'})).toBeNull();expect(calls).toEqual([])
 })
 it('does not trust a proposal reference attached to a user message',async()=>{
  const {calls}=await setup({stored:summary,role:'user'});await screen.findByRole('alert');expect(calls).toEqual([])

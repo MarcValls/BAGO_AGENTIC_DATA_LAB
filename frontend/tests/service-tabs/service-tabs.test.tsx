@@ -71,7 +71,7 @@ it('keeps operation review visible and unconfirmed when switching Workspace area
  fireEvent.click(screen.getByLabelText('Crear una carpeta hija'));fireEvent.change(screen.getByLabelText('Nombre de carpeta'),{target:{value:'nuevo'}});fireEvent.change(screen.getByLabelText('Título del proyecto'),{target:{value:'Nuevo'}})
  fireEvent.click(screen.getByRole('button',{name:'Usar carpeta'}));await screen.findByRole('dialog');fireEvent.click(screen.getByRole('tab',{name:'Contexto y memoria'}))
  const review=screen.getByRole('dialog',{name:'Revisar operación del espacio de trabajo'});expect(review.textContent).toContain('D:/isolated/nuevo')
- expect((within(review).getByRole('button',{name:'Confirmar y ejecutar'}) as HTMLButtonElement).disabled).toBe(true)
+ expect((within(review).getByRole('button',{name:'Aceptar plan y ejecutar'}) as HTMLButtonElement).disabled).toBe(false);expect(within(review).queryByRole('checkbox')).toBeNull()
 })
 it('has scoped hidden rules and automatic width for nested contact containment, without fixed minimum containers',()=>{
  const css=readFileSync('src/ServiceSurfaces.css','utf8');expect(css).toContain("[role='tabpanel'][hidden]");expect(css).toContain(".communications-library[hidden] { display: none; }")

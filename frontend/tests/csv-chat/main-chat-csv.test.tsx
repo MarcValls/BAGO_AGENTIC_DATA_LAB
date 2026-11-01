@@ -92,7 +92,7 @@ it('F11 selects metadata, authorizes an exact question and options, then shows t
   const composer = screen.getByLabelText('Mensaje al asistente o agente seleccionado') as HTMLTextAreaElement
   fireEvent.change(composer, {target: {value: 'Mi borrador todavía no enviado'}})
   fireEvent.click(screen.getByLabelText('Permitir lectura web pública'))
-  fireEvent.change(screen.getByLabelText('URL HTTPS de entrada · una por línea'), {target: {value: 'https://example.org/'}})
+  expect(screen.queryByLabelText('URL HTTPS de entrada · una por línea')).toBeNull()
   const dialog = await openCsv()
   expect(mutations(f.calls)).toEqual([])
   expect(within(dialog).queryByText('notes.md')).toBeNull()

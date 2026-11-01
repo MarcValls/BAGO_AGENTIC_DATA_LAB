@@ -46,3 +46,12 @@ excluded/bago-app-game-development/
 /.bago_user_data/
 /.bago/data/
 /.bago/data/
+
+# Project-local disposable test data; historical receipts stay in goal evidence.
+/.bago/wa-root-*/
+/.bago/wa-t-*/
+/.bago/pt-r4-*/
+/.bago/be-r4-test-*/
+/.ptih*/
+/.ptbe*/
+/.pytest-be/

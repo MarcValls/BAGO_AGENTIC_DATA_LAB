@@ -2,6 +2,7 @@
 import React from 'react'
 import {afterEach,beforeEach,expect,it,vi} from 'vitest'
 import {act,cleanup,fireEvent,render,screen,waitFor} from '@testing-library/react'
+import {readPublicWebPreference} from '../../src/utils/publicWebPreference'
 import AgentChat from '../../src/components/AgentChat'
 import {resetLocaleForTests,setLocale,t} from '../../src/i18n'
 import {openDelegatedChild,withPersistedDelegation} from '../helpers/delegated-agent-chat'
@@ -11,6 +12,9 @@ const deferred=()=>{let resolve!:(value:any)=>void,reject!:(value:any)=>void;con
 const oldSelection={provider_id:'github-copilot',model_id:'old-model'}
 const selected={provider_id:'ollama-cloud',model_id:'gemma4:31b'}
 const selectedValue='ollama-cloud|gemma4:31b'
+const draftMessage='Synthetic fixture message https://example.com/'
+const webIdentity={projectId:'project-race',root:'D:/work/race',ownerKind:'assistant' as const,ownerId:'app-assistant',conversationId:'assistant-conv'}
+function expectWebChoice(){expect((screen.getByLabelText(t('commerce.allow_public_web_reading')) as HTMLInputElement).checked).toBe(true);expect(readPublicWebPreference(webIdentity).preference).toEqual({enabled:true,urls:'https://example.com/'})}
 beforeEach(()=>{localStorage.clear();resetLocaleForTests();setLocale('en');HTMLElement.prototype.scrollIntoView=()=>{}})
 afterEach(()=>{cleanup();vi.unstubAllGlobals();vi.restoreAllMocks()})
 
@@ -25,6 +29,7 @@ async function setup(options:{delegatedAgent?:boolean}={}){
  vi.stubGlobal('fetch',vi.fn(async(url:string,init?:RequestInit)=>{
    const body=init?.body?JSON.parse(String(init.body)):null
    calls.push({url,method:init?.method,body})
+   if(url==='/api/project-folders/v1/active')return response({project_id:webIdentity.projectId,title:'Race fixture',scope:'project',root:webIdentity.root})
    if(url==='/api/agents/list')return response({agents:[actor]})
    if(url==='/api/providers/chat-models')return response({models:[
      {...oldSelection,label:'Copilot',state:'ready',chat_enabled:true},
@@ -46,7 +51,8 @@ async function setup(options:{delegatedAgent?:boolean}={}){
  await waitFor(()=>expect(picker.value).toBe('github-copilot|old-model'))
  await screen.findByRole('region',{name:conversation.title})
  const input=screen.getByRole('textbox',{name:t('commerce.message_the_assistant_or_selected_agent')}) as HTMLTextAreaElement
- fireEvent.change(input,{target:{value:'Synthetic fixture message'}})
+ await waitFor(()=>expect((screen.getByLabelText(t('commerce.allow_public_web_reading')) as HTMLInputElement).disabled).toBe(false))
+ fireEvent.change(input,{target:{value:draftMessage}})
  return {put,chat,calls,picker,input,conversation,retry:()=>{currentPut=deferred();return currentPut},refresh:()=>{const value=deferred();nextSelection=value;act(()=>window.dispatchEvent(new Event('adl-model-policy-changed')));return value}}
 }
 const writes=(calls:Array<{method?:string}>)=>calls.filter(c=>c.method==='POST')
@@ -56,21 +62,26 @@ it('blocks Send, Enter, form submission and suggestions until the exact selectio
  fireEvent.click(screen.getByLabelText(t('commerce.allow_public_web_reading')))
  act(()=>{fireEvent.change(f.picker,{target:{value:selectedValue}});fireEvent.submit(f.input.form!)})
  expect(writes(f.calls)).toHaveLength(0)
- expect(f.input.value).toBe('Synthetic fixture message')
- expect((screen.getByLabelText(t('commerce.allow_public_web_reading')) as HTMLInputElement).checked).toBe(true)
+ expect(f.calls.filter(call=>call.url==='/api/web-read/authorizations')).toHaveLength(0)
+ expect(f.input.value).toBe(draftMessage)
+ expectWebChoice()
  expect((screen.getByRole('button',{name:t('commerce.send'),exact:true}) as HTMLButtonElement).disabled).toBe(true)
  expect((screen.getByRole('button',{name:t('commerce.create_an_agent')}) as HTMLButtonElement).disabled).toBe(true)
  fireEvent.keyDown(f.input,{key:'Enter'});fireEvent.submit(f.input.form!)
  expect(writes(f.calls)).toHaveLength(0)
+ expect(f.calls.filter(call=>call.url==='/api/web-read/authorizations')).toHaveLength(0)
  fireEvent.change(f.picker,{target:{value:'github-copilot|old-model'}})
  expect(f.calls.filter(c=>c.method==='PUT')).toHaveLength(1)
  await act(async()=>f.put.resolve(response(selected)))
  expect(f.picker.value).toBe(selectedValue)
  expect((screen.getByRole('button',{name:t('commerce.send'),exact:true}) as HTMLButtonElement).disabled).toBe(false)
- // Avoid requesting web read; the checked consent above was never consumed by a blocked send.
+ // OFF is explicit: the URL remains in the draft but must not authorize a web grant.
  fireEvent.click(screen.getByLabelText(t('commerce.allow_public_web_reading')))
  fireEvent.submit(f.input.form!)
  await waitFor(()=>expect(f.calls.filter(c=>c.url==='/api/chat/control')).toHaveLength(1))
+ expect(f.calls.filter(call=>call.url==='/api/web-read/authorizations')).toHaveLength(0)
+ expect(f.calls.find(call=>call.url==='/api/chat/control')!.body.web_read_authorization_id).toBeUndefined()
+ expect(readPublicWebPreference(webIdentity).preference.enabled).toBe(false)
  expect(f.picker.disabled).toBe(true)
  fireEvent.change(f.picker,{target:{value:'github-copilot|old-model'}})
  expect(f.calls.filter(c=>c.method==='PUT')).toHaveLength(1)
@@ -92,8 +103,9 @@ it.each(['http','network','mismatch','malformed'] as const)('keeps submission bl
  act(()=>setLocale('es'))
  fireEvent.keyDown(f.input,{key:'Enter'});fireEvent.submit(f.input.form!)
  expect(writes(f.calls)).toHaveLength(0)
- expect(f.input.value).toBe('Synthetic fixture message')
- expect((screen.getByLabelText(t('commerce.allow_public_web_reading')) as HTMLInputElement).checked).toBe(true)
+ expect(f.calls.filter(call=>call.url==='/api/web-read/authorizations')).toHaveLength(0)
+ expect(f.input.value).toBe(draftMessage)
+ expectWebChoice()
  expect((screen.getByRole('button',{name:t('commerce.send'),exact:true}) as HTMLButtonElement).disabled).toBe(true)
  expect(f.picker.disabled).toBe(false) // User can explicitly choose and confirm a model again.
 })
@@ -119,9 +131,10 @@ it('recovers a failed selection only after a new explicit exact PUT, retaining t
  fireEvent.change(f.picker,{target:{value:'github-copilot|old-model'}})
  fireEvent.submit(f.input.form!)
  expect(writes(f.calls)).toHaveLength(0)
+ expect(f.calls.filter(call=>call.url==='/api/web-read/authorizations')).toHaveLength(0)
  await act(async()=>retry.resolve(response(oldSelection)))
  expect(f.picker.value).toBe('github-copilot|old-model')
- expect(f.input.value).toBe('Synthetic fixture message')
+ expect(f.input.value).toBe(draftMessage)
  expect((screen.getByRole('button',{name:t('commerce.send'),exact:true}) as HTMLButtonElement).disabled).toBe(false)
  expect(f.calls.filter(c=>c.method==='PUT')).toHaveLength(2)
 })

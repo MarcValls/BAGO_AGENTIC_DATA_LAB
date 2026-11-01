@@ -18,7 +18,7 @@ import ChatNavigation, { CHAT_SECTIONS } from './components/ChatNavigation'
 import CommunicationsNavigation, {COMMUNICATION_SECTIONS,isCommunicationSection,type CommunicationSection} from './components/CommunicationsNavigation'
 import GovernedFixtureRunner from './components/GovernedFixtureRunner'
 import AgentTasks from './components/AgentTasks'
-import AgentChat, {type PreparedChatPrompt} from './components/AgentChat'
+import AgentChat, {type PreparedChatPrompt, type ChatInlineView, type ChatInlineContext} from './components/AgentChat'
 import Communications from './components/Communications'
 import type { Contact as CommunicationContact } from './types/communications'
 import WhatsAppSettings from './components/WhatsAppSettings'
@@ -107,6 +107,35 @@ function useScrollActivity() {
   }, [])
 
   return { scrolling, onScroll }
+}
+
+/** Existing application resources, hosted by the message that requested them. */
+function InlineChatResource({view, context, cognitiveMode, onCognitiveMode, workspaceRefresh, onWorkspaceChanged}: {
+  view: ChatInlineView; context: ChatInlineContext; cognitiveMode: CognitiveMode; onCognitiveMode: (mode: CognitiveMode) => void
+  workspaceRefresh: number; onWorkspaceChanged: () => void
+}) {
+  const open = context.onOpenView
+  let content
+  if (view === 'workspace') content = <WorkspaceManager inline refreshKey={workspaceRefresh} onSelected={onWorkspaceChanged} contextPanel={({openProjectSelection, refreshKey}) => <CognitionSettings key={refreshKey} mode={cognitiveMode} onModeChange={onCognitiveMode} workspaceOnly onRequestWorkspaceSelection={openProjectSelection} />} />
+  else if (view === 'agents') content = <AgentManagement onCreate={() => open('builder')} onTest={agentId => open('runner', {agentId})} onEvaluate={agentId => open('evaluation_lab', {agentId})} />
+  else if (view === 'builder') content = <AgentBuilder inline onBack={() => open('agents')} onAgentCreated={() => {context.onAgentsChanged(); open('agents')}} />
+  else if (view === 'runner' || view === 'control') content = <AgentTasks initialAgentId={context.agentId} />
+  else if (view === 'evaluation_lab') content = <AgentEvaluationLab initialAgentId={context.agentId} />
+  else if (view === 'provider_settings') content = <div className="settings-layer-content"><ProviderSettings onExit={context.onClose} /></div>
+  else if (view === 'cognition_settings') content = <CognitionSettings mode={cognitiveMode} onModeChange={onCognitiveMode} onRequestWorkspaceSelection={() => open('workspace')} />
+  else if (view === 'whatsapp_settings') content = <WhatsAppSettings />
+  else if (view === 'connections') content = <ToolsConnectionsView />
+  else if (view === 'tools') content = <AgentToolsView onOpenConnections={() => open('connections')} onCreateAgent={() => open('builder')} />
+  else if (view === 'communications') content = <><button type="button" onClick={() => open('contacts')}>{t('commerce.chat_inline.contacts')}</button><Communications inline draftId={context.draftId} initialContact={context.contact} conversationId={context.conversationId ?? undefined} onOpenFull={draftId => open('communications', {draftId})} /></>
+  else if (view === 'contacts') content = <Contacts inline onUseContact={contact => open('communications', {contact})} />
+  else if (view === 'capabilities') content = <CapabilityManager onPrepareChat={context.onPrepareChat} onNavigate={destination => open(destination)} />
+  else if (view === 'jobs') content = <JobHistory inline />
+  else if (view === 'chat') content = <p role="status">{t('commerce.chat_inline.already_here')}</p>
+  else {
+    const inspectionView = view === 'traces' ? 'trace' : view
+    content = context.messageId && !context.selection ? <p role="status">{t('commerce.chat_inline.inspection_unbound')}</p> : <ChatInspection embedded view={inspectionView} selection={context.selection} onSelect={selection => open(view, {selection})} onViewChange={next => open(next === 'trace' ? 'traces' : next, {selection: context.selection ?? undefined})} />
+  }
+  return <section className="capability-chat-card" aria-label={t('commerce.chat_inline.resource')}><header className="draft-heading"><strong>{t('commerce.chat_inline.resource')}</strong><button type="button" onClick={context.onClose}>{t('commerce.chat_inline.close')}</button></header>{content}</section>
 }
 
 function App() {
@@ -357,7 +386,7 @@ function App() {
       <div className="app-main">
         <main className={`app-view ${activeInteractionView === 'chat' ? 'app-view--chat' : ''} ${appScroll.scrolling ? 'scroll-active' : ''}`} aria-label={t("core.App.p0_view_b10ac6",{p0:String(activeInteractionLabel)})} tabIndex={0} onScroll={appScroll.onScroll}>
           {activeInteractionView !== 'chat' && <header className="app-view-return-bar"><button ref={returnToChatRef} type="button" className="app-view-return-chat" onClick={returnToChat} aria-label={t('core.App.return_to_chat')}><span aria-hidden="true">×</span>{t('core.App.return_to_chat')}</button></header>}
-          {<AgentChat hidden={activeInteractionView !== 'chat'} preparedPrompt={preparedChatPrompt} onPreparedPromptHandled={consumePreparedPrompt} historySelection="explicit" workspaceScopeVersion={workspaceRefresh} onInspectionSelection={selectInspection} onInspectExecution={inspectExecution} onOpenCommunication={(id) => { setCommunicationsDraftId(id); setCommunicationsSection('message'); setActiveInteractionView('communications') }} onNavigate={navigateFromChat} onManageAgents={() => { setSidebarCollapsed(false); setActiveInteractionView('agents') }} onOpenProviderSettings={openProviderSettings} onOpenCognitionSettings={openCognitionSettings} cognitiveMode={cognitiveMode} />}
+          {<AgentChat initialProjectPanelOpen={false} renderInlineView={(view, context) => <InlineChatResource view={view} context={context} cognitiveMode={cognitiveMode} onCognitiveMode={setCognitiveMode} workspaceRefresh={workspaceRefresh} onWorkspaceChanged={() => setWorkspaceRefresh(value => value + 1)} />} hidden={activeInteractionView !== 'chat'} preparedPrompt={preparedChatPrompt} onPreparedPromptHandled={consumePreparedPrompt} historySelection="explicit" workspaceScopeVersion={workspaceRefresh} onInspectionSelection={selectInspection} onInspectExecution={inspectExecution} onOpenCommunication={(id) => { setCommunicationsDraftId(id); setCommunicationsSection('message'); setActiveInteractionView('communications') }} onNavigate={navigateFromChat} onManageAgents={() => { setSidebarCollapsed(false); setActiveInteractionView('agents') }} onOpenProviderSettings={openProviderSettings} onOpenCognitionSettings={openCognitionSettings} cognitiveMode={cognitiveMode} />}
           {isCommunicationSection(activeInteractionView) && <div className="communications-section-host">
             <div className="communications-section-panel" hidden={activeInteractionView==='contacts'}><Communications activeSection={communicationsSection} draftId={communicationsDraftId} initialContact={communicationContact}/></div>
             <div className="communications-section-panel" hidden={activeInteractionView!=='contacts'}><Contacts onUseContact={contact=>{setCommunicationContact({...contact});setCommunicationsSection('message');setActiveInteractionView('communications')}}/></div>
@@ -368,8 +397,8 @@ function App() {
           {activeInteractionView === 'agents' && <AgentManagement onCreate={() => setActiveInteractionView('builder')} onTest={id => { setManagedAgentId(id); setActiveInteractionView('runner') }} onEvaluate={id => { setManagedAgentId(id); setActiveInteractionView('evaluation_lab') }} />}
           {activeInteractionView === 'tools' && <AgentToolsView onOpenConnections={() => { setSettingsView('connections'); setSettingsOpen(true) }} onCreateAgent={() => setActiveInteractionView('builder')} />}
           {activeInteractionView === 'builder' && <AgentBuilder onBack={() => setActiveInteractionView('agents')} onAgentCreated={() => setDemoRefresh((previous) => previous + 1)} />}
-          {activeInteractionView === 'runner' && <><AgentTasks initialAgentId={managedAgentId} /><details className="agent-tasks-advanced" open={advancedRunsOpen} onToggle={event => setAdvancedRunsOpen(event.currentTarget.open)}><summary>{t("core.App.advanced_governed_demonstration_execution_b685a6")}</summary>{advancedRunsOpen && <GovernedFixtureRunner apiBase={window.location.origin} />}</details></>}
-          {activeInteractionView === 'evaluation_lab' && <AgentEvaluationLab initialAgentId={managedAgentId} />}
+          {activeInteractionView === 'runner' && <AgentTasks initialAgentId={managedAgentId} />}
+          {activeInteractionView === 'evaluation_lab' && <><AgentEvaluationLab initialAgentId={managedAgentId} /><details className="agent-tasks-advanced" open={advancedRunsOpen} onToggle={event => setAdvancedRunsOpen(event.currentTarget.open)}><summary>{t("core.App.advanced_governed_demonstration_execution_b685a6")}</summary>{advancedRunsOpen && <GovernedFixtureRunner apiBase={window.location.origin} />}</details></>}
         </main>
       </div>
 
