@@ -1,5 +1,15 @@
 // Authored UI labels only. Runtime evidence and user content are not translated.
 export const es = {
+  "agents.TaskExecution.inventory.title": "Inventario leído",
+  "agents.TaskExecution.inventory.region": "Resultados de la lectura de carpeta",
+  "agents.TaskExecution.inventory.path": "Ruta relativa",
+  "agents.TaskExecution.inventory.kind": "Tipo",
+  "agents.TaskExecution.inventory.size": "Tamaño (bytes)",
+  "agents.TaskExecution.inventory.file": "Archivo",
+  "agents.TaskExecution.inventory.directory": "Carpeta",
+  "agents.TaskExecution.inventory.empty": "La lectura terminó: la carpeta está vacía.",
+  "agents.TaskExecution.inventory.invalid": "No se puede mostrar un inventario verificado: el resultado de lectura falta o es incoherente. Consulta el recibo técnico.",
+  "agents.TaskExecution.inventory.bounds": "Lectura no recursiva · máximo 1000 entradas y 16 MiB por archivo.",
   "agents.TaskExecution.storageBlocked": "No se pudo conservar la identidad de preparación en esta sesión. No se inició la solicitud; comprueba el almacenamiento del navegador.",
   "agents.TaskExecution.cancelPlan": "Cancelar plan",
   "agents.TaskExecution.project": "Proyecto",
@@ -989,6 +999,16 @@ export const es = {
   "agents.hierarchy.traceUnavailable": "La traza seleccionada no está disponible. No se muestran datos de otra ejecución.",
 } as const
 export const en: {[K in keyof typeof es]: string} = {
+  "agents.TaskExecution.inventory.title": "Observed inventory",
+  "agents.TaskExecution.inventory.region": "Folder read results",
+  "agents.TaskExecution.inventory.path": "Relative path",
+  "agents.TaskExecution.inventory.kind": "Type",
+  "agents.TaskExecution.inventory.size": "Size (bytes)",
+  "agents.TaskExecution.inventory.file": "File",
+  "agents.TaskExecution.inventory.directory": "Directory",
+  "agents.TaskExecution.inventory.empty": "The read completed: the folder is empty.",
+  "agents.TaskExecution.inventory.invalid": "A verified inventory cannot be displayed: the read result is missing or inconsistent. Inspect the technical receipt.",
+  "agents.TaskExecution.inventory.bounds": "Non-recursive read · at most 1000 entries and 16 MiB per file.",
   "agents.TaskExecution.storageBlocked": "The preparation identity could not be retained in this session. The request was not started; check browser storage.",
   "agents.TaskExecution.cancelPlan": "Cancel plan",
   "agents.TaskExecution.project": "Project",

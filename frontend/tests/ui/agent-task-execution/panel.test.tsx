@@ -220,3 +220,68 @@ it('does not start preparation when its recoverable identity cannot be persisted
   expect(f.calls.some(c=>c.method==='POST')).toBe(false)
  }finally{storage.mockRestore()}
 })
+
+const nativeInventory=()=>({root:context.root,recursive:false,entries:[
+ {path:'report.csv',kind:'file',snapshot:{sha256:'e'.repeat(64),size:23,mtime_ns:1793517900000000000,inode:12345}},
+ {path:'archive',kind:'directory',snapshot:null},
+]})
+function inventoryFixture(inventory:any=nativeInventory(),status='SUCCEEDED',stepStatus='SUCCEEDED',receiptStatus='PASS'){
+ const f=fixture(),record=prepared() as any
+ record.status=status;record.plan.steps=[{step_id:'s1',type:'filesystem',operation:'inventory',arguments:{path:'.'},depends_on:[]}]
+ record.step_results={s1:{step_id:'s1',status:stepStatus,receipt:{receipt_id:'native-read-fixture',operation:'inventory',status:receiptStatus,effect_executed:false,inventory_sha256:'f'.repeat(64),inventory},receipt_sha256:'d'.repeat(64)}}
+ f.state.record=record
+ return f
+}
+it.each(['es','en'] as const)('renders actual native file and directory inventory inside its succeeded step in %s',async locale=>{
+ setLocale(locale);const f=inventoryFixture(),view=render(<TaskExecutionPanel taskText="List the folder"/>);await open()
+ const table=await screen.findByRole('table',{name:t('agents.TaskExecution.inventory.title')})
+ expect(table.closest('li')?.textContent).toContain('s1')
+ const rows=within(table).getAllByRole('row');expect(rows).toHaveLength(3)
+ expect(within(rows[1]).getAllByRole('cell').map(cell=>cell.textContent)).toEqual(['report.csv',t('agents.TaskExecution.inventory.file'),'23','e'.repeat(64)])
+ expect(within(rows[2]).getAllByRole('cell').map(cell=>cell.textContent)).toEqual(['archive',t('agents.TaskExecution.inventory.directory'),'—','—'])
+ expect(view.container.querySelector('.task-execution-inventory-scroll')?.getAttribute('tabindex')).toBe('0')
+ expect(f.calls.some(call=>call.url.includes('filesystem'))).toBe(false);expect(f.state.accepts).toBe(0)
+})
+it('distinguishes a genuinely empty observed inventory from a missing result',async()=>{
+ const f=inventoryFixture({...nativeInventory(),entries:[]});render(<TaskExecutionPanel taskText="List the empty folder"/>);await open()
+ expect(await screen.findByText(t('agents.TaskExecution.inventory.empty'))).toBeTruthy()
+ expect(screen.queryByRole('table')).toBeNull();expect(screen.queryByText(t('agents.TaskExecution.inventory.invalid'))).toBeNull();expect(f.state.accepts).toBe(0)
+})
+it.each(['AWAITING_ACCEPTANCE','PREPARING','FAILED_NO_EFFECT','STOPPED_BEFORE_EFFECT','DENIED','STALE'])('does not promote inventory in a nonexecuted %s record to a visible read result',async status=>{
+ inventoryFixture(nativeInventory(),status);render(<TaskExecutionPanel taskText="List folder"/>);await open();await screen.findByText(t(`agents.TaskExecution.state.${status}`))
+ expect(screen.queryByRole('table')).toBeNull();expect(screen.queryByText(t('agents.TaskExecution.inventory.empty'))).toBeNull()
+})
+it.each(['PREPARED','RUNNING','FAILED','STOPPED'])('does not expose an inventory whose durable step is %s',async status=>{
+ inventoryFixture(nativeInventory(),'SUCCEEDED',status);render(<TaskExecutionPanel taskText="List folder"/>);await open();await screen.findByText(t('agents.TaskExecution.state.SUCCEEDED'))
+ expect(screen.queryByRole('table')).toBeNull();expect(screen.queryByText(t('agents.TaskExecution.inventory.empty'))).toBeNull()
+})
+it('does not use a result embedded only in the proposed plan as observed evidence',async()=>{
+ const f=inventoryFixture(),record=f.state.record as any
+ Object.assign(record.plan.steps[0],record.step_results.s1);record.step_results={}
+ render(<TaskExecutionPanel taskText="List folder"/>);await open();await screen.findByText(t('agents.TaskExecution.state.SUCCEEDED'))
+ expect(screen.queryByRole('table')).toBeNull()
+})
+it.each([
+ ['missing payload',undefined],['wrong collection',{...nativeInventory(),entries:{}}],['recursive',{...nativeInventory(),recursive:true}],
+ ['file without snapshot',{...nativeInventory(),entries:[{path:'report.csv',kind:'file',snapshot:null}]}],
+ ['directory with fabricated size',{...nativeInventory(),entries:[{path:'archive',kind:'directory',snapshot:{sha256:'e'.repeat(64),size:0,mtime_ns:0,inode:0}}]}],
+ ['invalid hash',{...nativeInventory(),entries:[{path:'bad.csv',kind:'file',snapshot:{sha256:'not-a-hash',size:23,mtime_ns:0,inode:0}}]}],
+ ['oversize file',{...nativeInventory(),entries:[{path:'large.csv',kind:'file',snapshot:{sha256:'e'.repeat(64),size:16*1024*1024+1,mtime_ns:0,inode:0}}]}],
+ ['too many entries',{...nativeInventory(),entries:Array.from({length:1001},(_,i)=>({path:`dir-${i}`,kind:'directory',snapshot:null}))}],
+ ['duplicate path',{...nativeInventory(),entries:[nativeInventory().entries[0],nativeInventory().entries[0]]}],
+ ['path traversal',{...nativeInventory(),entries:[{path:'../private',kind:'directory',snapshot:null}]}],
+ ['absolute path',{...nativeInventory(),entries:[{path:'C:/private',kind:'directory',snapshot:null}]}],
+])('reports malformed inventory (%s) without rendering a successful result table',async(_name,value)=>{
+ const f=inventoryFixture(value);if(value===undefined)delete(f.state.record as any).step_results.s1.receipt.inventory
+ render(<TaskExecutionPanel taskText="List folder"/>);await open();expect(await screen.findByText(t('agents.TaskExecution.inventory.invalid'))).toBeTruthy()
+ expect(screen.queryByRole('table')).toBeNull();expect(screen.queryByText(t('agents.TaskExecution.inventory.empty'))).toBeNull();expect(f.state.accepts).toBe(0)
+})
+it('requires a PASS receipt and renders untrusted long file names only as inert text',async()=>{
+ const inventory=nativeInventory(),name='<img onerror=alert(1)>-'+ 'x'.repeat(300)+'.csv';inventory.entries[0].path=name
+ const f=inventoryFixture(inventory),view=render(<TaskExecutionPanel taskText="List folder"/>);await open()
+ const table=await screen.findByRole('table',{name:t('agents.TaskExecution.inventory.title')})
+ expect(within(table).getByText(name)).toBeTruthy();expect(table.querySelectorAll('img,script,a,input,button')).toHaveLength(0)
+ expect(view.container.querySelector('.task-execution-inventory-scroll')).toBeTruthy();expect(f.calls).toHaveLength(4)
+ view.unmount();sessionStorage.clear();inventoryFixture(nativeInventory(),'SUCCEEDED','SUCCEEDED','FAIL')
+ render(<TaskExecutionPanel taskText="List folder"/>);await open();await screen.findByText(t('agents.TaskExecution.inventory.invalid'));expect(screen.queryByRole('table')).toBeNull()
+})

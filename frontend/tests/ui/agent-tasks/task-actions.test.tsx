@@ -60,7 +60,7 @@ it.each(['es','en'] as const)('loads the current saved task and focuses its edit
  fireEvent.click(screen.getByRole('button',{name:locale==='es'?'Editar tarea manualmente':'Edit task manually'}))
  await screen.findByText(t('agents.AgentTasks.manual_edit_notice'))
  const editor=screen.getByRole('textbox',{name:t('agents.AgentTaskForm.tarea')}) as HTMLTextAreaElement
- expect(editor.value).toBe('Server current task');expect(document.activeElement).toBe(editor)
+ expect(editor.value).toBe('Server current task');await waitFor(()=>expect(document.activeElement).toBe(editor))
  expect(f.calls.filter(c=>c.method!=='GET')).toEqual([])
  fireEvent.change(editor,{target:{value:'Reviewed draft change'}})
  expect((screen.getByRole('button',{name:t('agents.AgentTasks.ejecutar_tarea')}) as HTMLButtonElement).disabled).toBe(true)

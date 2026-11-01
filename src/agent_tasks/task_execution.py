@@ -602,7 +602,8 @@ def build_host_task_execution_adapters(*, project_snapshot: Callable[[], dict[st
                 if native.get("decision") != "ALLOW" or native.get("outcome") != "VERIFIED":
                     raise TaskError("execution_inconclusive", "El inventario no devolvió una lectura verificada.", 503)
                 return {"status":"PASS", "effect_executed":False, "operation":"inventory",
-                    "outputs":[], "receipt_id":native.get("receipt_id"), "inventory_sha256":digest(inventory)}
+                    "outputs":[], "receipt_id":native.get("receipt_id"), "inventory_sha256":digest(inventory),
+                    "inventory":inventory}
             proposal_id = step.get("prepared_ref")
             if not proposal_id:
                 planned, native = session.invoke("filesystem_plan", {"operation":step["operation"], **step["arguments"]}, ["filesystem_plan"])

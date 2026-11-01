@@ -232,7 +232,7 @@ def test_rejected_plan_review_is_retained_but_stop_remains_terminal(tmp_path):
     assert any(event["event_type"] == "PREPARATION_STOPPED_AFTER_ACTION" for event in events)
 
 
-def test_real_host_inventory_uses_exact_read_subdirectory_scope(tmp_path):
+def test_real_host_inventory_returns_native_result_with_exact_read_subdirectory_scope(tmp_path, monkeypatch):
     project_root = tmp_path / "project"
     demo = project_root / "demo-usuario"
     demo.mkdir(parents=True)
@@ -253,6 +253,17 @@ def test_real_host_inventory_uses_exact_read_subdirectory_scope(tmp_path):
     profile_sha = hashlib.sha256(b"inventory-profile").hexdigest()
     reviewer_sha = hashlib.sha256(b"inventory-reviewer").hexdigest()
     review_observed = {}
+    native_reads = []
+    from src.agent_tools.agent_services import AgentServiceSession
+    original_invoke = AgentServiceSession.invoke
+
+    def record_native_inventory(session, name, args, assigned):
+        result, native = original_invoke(session, name, args, assigned)
+        if name == "filesystem_inventory":
+            native_reads.append(result)
+        return result, native
+
+    monkeypatch.setattr(AgentServiceSession, "invoke", record_native_inventory)
 
     def generate(provider, model, messages):
         return json.dumps({"steps": [{"step_id": "inventory-subdir", "type": "filesystem",
@@ -307,9 +318,36 @@ def test_real_host_inventory_uses_exact_read_subdirectory_scope(tmp_path):
     assert receipt["operation"] == "inventory"
     assert receipt["effect_executed"] is False
     assert re.fullmatch(r"[a-f0-9]{64}", receipt["inventory_sha256"])
+    assert receipt["inventory"] == native_reads[-1]
+    assert len(native_reads) == 2  # One existing preparation read and one accepted execution read.
+    inventory = receipt["inventory"]
+    assert inventory["root"] == str(project_root)
+    assert inventory["recursive"] is False
+    assert len(inventory["entries"]) == 1
+    entry = inventory["entries"][0]
+    assert {key: entry[key] for key in ("path", "kind")} == {"path": "demo-usuario/sample.txt", "kind": "file"}
+    snapshot = entry["snapshot"]
+    assert set(snapshot) == {"sha256", "size", "mtime_ns", "inode"}
+    assert snapshot["sha256"] == hashlib.sha256(b"inventory fixture").hexdigest()
+    assert snapshot["size"] == len(b"inventory fixture")
+    assert type(snapshot["mtime_ns"]) is int
+    assert type(snapshot["inode"]) is int
+    assert receipt["inventory_sha256"] == digest(inventory)
+    assert "inventory fixture" not in json.dumps(inventory)
     assert review_observed["plan"]["scopes"] == {"requested": expected_scope, "granted": expected_scope}
     assert permissions.snapshot()["read_directories"] == ["demo-usuario"]
     assert permissions.snapshot()["write_directories"] == []
+
+    stopped_request = request.model_copy(update={"request_id": "00000000-0000-4000-8000-000000000003"})
+    stopped_plan = service.prepare(stopped_request)
+    stopped = service.stop(stopped_plan["execution_id"], "user_stop")
+    assert stopped["status"] == "STOPPED_BEFORE_EFFECT"
+    assert stopped["step_results"] == {}
+    assert len(native_reads) == 3  # STOP prevents the second, accepted-execution read.
+    with pytest.raises(TaskError):
+        service.accept(stopped_plan["plan_id"], PlanAcceptInput(expected_plan_sha256=stopped_plan["plan_sha256"],
+            expected_plan_revision=1, idempotency_key="b3262bc4-b8fb-4e99-91e7-3a33653e8e11", confirmed=True))
+    assert len(native_reads) == 3
 
 
 def test_single_acceptance_executes_once_and_idempotent_replay_returns_saved_receipt(tmp_path):

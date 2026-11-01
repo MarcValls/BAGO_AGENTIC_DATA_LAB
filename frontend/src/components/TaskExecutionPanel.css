@@ -14,3 +14,10 @@
 .task-execution pre{margin:7px 0;white-space:pre-wrap;overflow-wrap:anywhere;max-height:240px;overflow:auto;font-size:.75rem}
 .task-execution-profile{display:grid;gap:8px;min-width:0;border:1px solid #54728a;border-radius:4px}
 .task-execution :focus-visible{outline:2px solid #8ac9f0;outline-offset:3px}
+.task-execution-inventory{min-width:0;margin-block:8px;border:1px solid #344c63;padding:8px}
+.task-execution-inventory h4{margin:0 0 5px;font-size:.85rem}.task-execution-inventory p{margin:5px 0}
+.task-execution-inventory-scroll{max-height:260px;max-width:100%;overflow:auto;min-width:0}
+.task-execution-inventory table{width:100%;border-collapse:collapse;table-layout:fixed;font-size:.78rem}
+.task-execution-inventory th,.task-execution-inventory td{padding:6px;text-align:start;vertical-align:top;border-bottom:1px solid #344c63;overflow-wrap:anywhere}
+.task-execution-inventory th:first-child{width:35%}.task-execution-inventory th:nth-child(2){width:15%}.task-execution-inventory th:nth-child(3){width:15%}
+.task-execution-inventory-sha{font-family:monospace}.task-execution-inventory-error{color:#ffd09d}

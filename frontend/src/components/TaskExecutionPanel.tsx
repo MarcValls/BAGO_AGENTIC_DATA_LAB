@@ -51,6 +51,38 @@ async function request(path:string,options:RequestInit={}):Promise<any>{
 }
 const post=(body:unknown):RequestInit=>({method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)})
 
+type InventoryEntry={path:string;kind:'file'|'directory';snapshot:null|{sha256:string;size:number}}
+function inventoryEntries(value:unknown):InventoryEntry[]|null{
+  if(!object(value)||!text(value.root)||value.recursive!==false||!Array.isArray(value.entries)||value.entries.length>1000)return null
+  const paths=new Set<string>()
+  for(const entry of value.entries){
+    if(!object(entry)||!text(entry.path)||entry.path.startsWith('/')||/[\\:\u0000-\u001f\u007f]/.test(entry.path)||entry.path.split('/').some((part:string)=>!part||part==='.'||part==='..')||paths.has(entry.path))return null
+    paths.add(entry.path)
+    if(entry.kind==='directory'){if(entry.snapshot!==null)return null}
+    else if(entry.kind==='file'){
+      const snapshot=entry.snapshot
+      if(!object(snapshot)||!hash(snapshot.sha256)||!Number.isSafeInteger(snapshot.size)||snapshot.size<0||snapshot.size>16*1024*1024||!Number.isInteger(snapshot.mtime_ns)||snapshot.mtime_ns<0||!Number.isInteger(snapshot.inode)||snapshot.inode<0)return null
+      // Large SDK mtime_ns/inode integers are not used for decisions or reformatted.
+    }else return null
+  }
+  return value.entries as InventoryEntry[]
+}
+function InventoryResult({executionStatus,step,result}:{executionStatus:string;step:ObjectValue;result:unknown}){
+  // Proposed plan fields are never evidence: use only the durable step result.
+  if(!['RUNNING','SUCCEEDED','PARTIAL','INCONCLUSIVE','STOP_REQUESTED'].includes(executionStatus)||step.type!=='filesystem'||step.operation!=='inventory'||!object(result)||result.step_id!==step.step_id||result.status!=='SUCCEEDED')return null
+  const receipt=result.receipt
+  const entries=object(receipt)&&receipt.status==='PASS'&&receipt.operation==='inventory'?inventoryEntries(receipt.inventory):null
+  if(entries===null)return <p className="task-execution-inventory-error" role="alert">{t('agents.TaskExecution.inventory.invalid')}</p>
+  return <section className="task-execution-inventory">
+    <h4>{t('agents.TaskExecution.inventory.title')}</h4>
+    <p className="task-execution-hint">{t('agents.TaskExecution.inventory.bounds')}</p>
+    {entries.length===0?<p role="status">{t('agents.TaskExecution.inventory.empty')}</p>:<div className="task-execution-inventory-scroll" role="region" aria-label={t('agents.TaskExecution.inventory.region')} tabIndex={0}>
+      <table aria-label={t('agents.TaskExecution.inventory.title')}><thead><tr><th scope="col">{t('agents.TaskExecution.inventory.path')}</th><th scope="col">{t('agents.TaskExecution.inventory.kind')}</th><th scope="col">{t('agents.TaskExecution.inventory.size')}</th><th scope="col">SHA-256</th></tr></thead>
+      <tbody>{entries.map(entry=><tr key={entry.path}><td>{entry.path}</td><td>{entry.kind==='file'?t('agents.TaskExecution.inventory.file'):t('agents.TaskExecution.inventory.directory')}</td><td>{entry.snapshot?.size??'—'}</td><td className="task-execution-inventory-sha">{entry.snapshot?.sha256??'—'}</td></tr>)}</tbody></table>
+    </div>}
+  </section>
+}
+
 /** Plans are real backend records; text task answers are never promoted to effects. */
 export default function TaskExecutionPanel({taskText='',sourceIdentity='new-task'}:{taskText?:string;sourceIdentity?:string}){
   useI18n()
@@ -224,7 +256,7 @@ export default function TaskExecutionPanel({taskText='',sourceIdentity='new-task
         <p>{record.plan.model.provider_id} / {record.plan.model.model_id} · {record.plan.model.probe_state==='operation_ready'?t('agents.TaskExecution.operationReady'):t('agents.TaskExecution.notProbed')}</p>
         <p>{t('agents.TaskExecution.review')}: {String(record.plan.review.status)} {record.plan.review.reviewer_id||''}</p>
         {record.status==='SUCCEEDED'&&!steps.some((step:any)=>step.receipt||step.receipt_id)&&<p role="alert">{t('agents.TaskExecution.missingReceipt')}</p>}
-        <ol className="task-execution-steps">{steps.map((step:any,index:number)=><li key={step.step_id||index}><strong>{step.step_id||index+1}</strong> · {step.operation||step.type||t('agents.TaskExecution.step')} {step.arguments?.source||''}{step.arguments?.source&&step.arguments?.target?' → ':''}{step.arguments?.target||step.arguments?.path||''}{step.status&&<span> · {statuses.includes(step.status)?stateLabel(step.status):step.status}</span>}{step.reason_code&&<span role="alert"> · {step.reason_code}</span>}{typeof step.arguments?.content==='string'&&<details><summary>{t('agents.TaskExecution.content')}</summary><pre>{step.arguments.content}</pre></details>}{(step.receipt||step.receipt_id)&&<details><summary>{t('agents.TaskExecution.receipt')}</summary><pre>{json(step)}</pre></details>}</li>)}</ol>
+        <ol className="task-execution-steps">{steps.map((step:any,index:number)=><li key={step.step_id||index}><strong>{step.step_id||index+1}</strong> · {step.operation||step.type||t('agents.TaskExecution.step')} {step.arguments?.source||''}{step.arguments?.source&&step.arguments?.target?' → ':''}{step.arguments?.target||step.arguments?.path||''}{step.status&&<span> · {statuses.includes(step.status)?stateLabel(step.status):step.status}</span>}{step.reason_code&&<span role="alert"> · {step.reason_code}</span>}{typeof step.arguments?.content==='string'&&<details><summary>{t('agents.TaskExecution.content')}</summary><pre>{step.arguments.content}</pre></details>}<InventoryResult executionStatus={record.status} step={record.plan.steps[index]} result={record.step_results?.[record.plan.steps[index].step_id]}/>{(step.receipt||step.receipt_id)&&<details><summary>{t('agents.TaskExecution.receipt')}</summary><pre>{json(step)}</pre></details>}</li>)}</ol>
         {editing&&<fieldset disabled={saving} className="task-execution-profile"><legend>{t('agents.TaskExecution.editing')}</legend>{profileDraft?<><label>{t('agents.TaskExecution.name')}<input value={profileDraft.name||''} onChange={event=>setProfileDraft({...profileDraft,name:event.target.value})}/></label><label>{t('agents.TaskExecution.description')}<textarea rows={2} value={profileDraft.description||''} onChange={event=>setProfileDraft({...profileDraft,description:event.target.value})}/></label><label>{t('agents.TaskExecution.instructions')}<textarea rows={4} value={profileDraft.system_prompt||''} onChange={event=>setProfileDraft({...profileDraft,system_prompt:event.target.value})}/></label><button type="button" disabled={!profileDraft.name?.trim()||!profileDraft.description?.trim()} onClick={()=>void saveProfile()}>{t('agents.TaskExecution.saveAgent')}</button></>:<p role="status">{t('agents.TaskExecution.loading')}</p>}<button type="button" onClick={()=>{editingRef.current=false;setEditing(false);setProfile(null);setProfileDraft(null)}}>{t('agents.TaskExecution.cancelEdit')}</button></fieldset>}
         <div className="task-execution-actions">{record.status==='AWAITING_ACCEPTANCE'&&<button type="button" className="primary-action" disabled={!canAccept} onClick={()=>void accept()}>{t('agents.TaskExecution.accept')}</button>}{(dispatching||active(record.status)||record.status==='AWAITING_ACCEPTANCE')&&<button type="button" disabled={stopping} onClick={()=>void stop()}>{record.status==='AWAITING_ACCEPTANCE'&&!dispatching?t('agents.TaskExecution.cancelPlan'):t('agents.TaskExecution.stop')}</button>}<button type="button" disabled={loading} onClick={()=>void refresh()}>{t('agents.TaskExecution.refresh')}</button></div>
         <p className="task-execution-hint">{t('agents.TaskExecution.stopScope')}</p>

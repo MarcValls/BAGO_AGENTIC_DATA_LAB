@@ -170,3 +170,31 @@ def test_plan_review_selects_saved_scope_not_review_word_in_builder_instructions
         assert created.config.task_scope=='Revisar de forma independiente la coherencia, dependencias, scopes y riesgos de planes.'
     assert not list(tmp_path.glob('**/*.sqlite*'))
 
+
+@pytest.mark.parametrize('assigned',[[],['filesystem_inventory'],['filesystem_inventory','filesystem_plan','unknown_tool']])
+def test_plan_review_receives_real_connected_metadata_only_for_assigned_tools(monkeypatch,assigned):
+    from types import SimpleNamespace
+    from src.api import server
+    from src.agent_tools.filesystem_tools import descriptors
+    reviewer=SimpleNamespace(id='reviewer',config=SimpleNamespace(provider_id='codex',model_id='fixture',type='tool',system_prompt='Review the plan only.'))
+    monkeypatch.setattr(server,'_read_agent_records',lambda:([reviewer],[]))
+    monkeypatch.setattr(server,'_task_model_eligible',lambda *args:True)
+    async def classify(*args):return 'in_scope','Controlled matching reviewer'
+    monkeypatch.setattr(server,'_classify_agent_task_scope',classify)
+    monkeypatch.setattr(server,'_task_profile_snapshot',lambda identity:{'profile_sha256':'a'*64})
+    monkeypatch.setattr(server,'_write_agent',lambda *args:pytest.fail('No profile creation needed'))
+    monkeypatch.setattr(server,'_current_project_permissions',lambda:pytest.fail('Review metadata cannot change or mint permissions'))
+    observed={}
+    def turn(provider,model,messages,**kwargs):
+        observed.update(json.loads(messages[-1]['content']))
+        assert kwargs=={'require_text':True}
+        return {'content':json.dumps({'approved':True,'reason':'Controlled plan-only review'})}
+    monkeypatch.setattr(server.provider_runtime,'chat_turn',turn)
+    plan={'task_text':'Inventariar demo-usuario','steps':[{'type':'filesystem','operation':'inventory',
+        'arguments':{'path':'demo-usuario'},'expected_outputs':[]}]}
+    result=server._task_review_plan(plan,{'task_text':plan['task_text'],
+        'model':{'provider_id':'codex','model_id':'fixture'},'agent':{'agent_id':'author','tools':assigned}})
+    assert observed['connected_tools']==[item for item in descriptors() if item['id'] in assigned]
+    assert observed['plan']==plan and observed['task_text']==plan['task_text']
+    assert result['status']=='approved' and result['reviewer_id']=='reviewer'
+

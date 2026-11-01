@@ -4916,6 +4916,7 @@ def _task_generate_plan(provider_id, model_id, messages):
 
 def _task_review_plan(plan, context):
     from src.agent_tasks.plan_review import review_task_plan
+    from src.agent_tools.filesystem_tools import descriptors as filesystem_descriptors
 
     def create_reviewer(configuration):
         config = AgentConfig.model_validate(configuration)
@@ -4925,7 +4926,9 @@ def _task_review_plan(plan, context):
     return review_task_plan(plan, context, load_agents=_read_agent_records,
         model_eligible=_task_model_eligible, classify_scope=_classify_agent_task_scope,
         create_reviewer=create_reviewer, profile_snapshot=_task_profile_snapshot,
-        chat_turn=provider_runtime.chat_turn, now_ns=time.time_ns)
+        chat_turn=provider_runtime.chat_turn, now_ns=time.time_ns,
+        tool_descriptors=[item for item in filesystem_descriptors()
+            if item["id"] in context.get("agent", {}).get("tools", [])])
 
 
 _TASK_EXECUTION_HOST_LOCK = threading.RLock()
