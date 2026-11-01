@@ -1,0 +1,26 @@
+{
+  "status": "PASS",
+  "scope": "independent read-only verification of exported evidence bytes and status claims",
+  "mission_id": "BAGO_CONTINUITY_PUBLICATION_20261101",
+  "candidate_id": "9bdf09833dd28ab922485c21a23e0f645efb5cb812712150dd3c1b07d4f8fada",
+  "export_handoff_sha256": "75a5beff92ecb2691dd1fb4498dab8078cad4310dda49fb18721ec59ddd3e93c",
+  "publication_index_sha256": "225bb5e30aab53408cc3b1a59e3e0cdde97c3ca57d5d4ebd5c1ddd39c6903c80",
+  "counts": {
+    "handoff_outputs": 152,
+    "index_entries": 153,
+    "payloads_hash_matched": 153,
+    "available_sources_hash_matched": 153,
+    "check_artifacts_pass": 3
+  },
+  "checks_sha256": {
+    "readme-generate": "53540c335ae16dee12e2fd14ca70637eaafe9a15c05c7e696319ca4b7fd5c367",
+    "readme-check": "b9097bbdd6ecdd366bbd8c827854bde703f033a1756398856b1f94268884ed61",
+    "portable-evidence": "03ad0e3678238f109c39e2ab8ada661315ccc30d7291e947264c7280c3e5ef80"
+  },
+  "limits": [
+    "This check establishes local projection integrity and status consistency only.",
+    "It does not establish GitHub remote availability, product validation, or native /goal resume.",
+    "GOV grant/control stores and private TaskStore/lease/token/reasoning records are intentionally omitted."
+  ],
+  "issues": []
+}

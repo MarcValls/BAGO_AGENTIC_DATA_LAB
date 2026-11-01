@@ -1,0 +1,29 @@
+{
+  "mission_id": "CODEX_GOVERNED_CONTINUITY_20261031",
+  "candidate_id": "0f74f0d818f422d2a9506957e6396070300bbb77d88c602605b4fa647e7cc774",
+  "scope_sha256": "0af844db09c04531999970ed71e0bce9ed1f51245b48416d0453a7bc7cef9df9",
+  "work_id": "BRAVE_E2E_R5",
+  "authorization": "Orchestrator confirmed user authorization for this exact temporary HKCU Native Messaging key and cleanup.",
+  "exact_registry_key": "HKCU\\Software\\BraveSoftware\\Brave-Browser\\NativeMessagingHosts\\com.bago.browser_bridge",
+  "pre_effect_checks": {
+    "mission_active": true,
+    "pause_history_count": 0,
+    "work_claimed": true,
+    "native_messaging_key_absent": true,
+    "manifest_absent": true,
+    "isolated_profile_absent": true,
+    "packaged_host_sha256": "2aefdaa63fbfeadb79498acac429bee36e3fce3ac323664fa0733347a030e333",
+    "foreground_before": {
+      "pid": 6328,
+      "process": "ChatGPT (Beta)",
+      "title": "ChatGPT (Beta)"
+    },
+    "preexisting_brave_processes": [
+      14760,
+      23064,
+      16556,
+      20308
+    ]
+  },
+  "recorded_at_utc": "2026-10-31T15:20:27.729017+00:00"
+}

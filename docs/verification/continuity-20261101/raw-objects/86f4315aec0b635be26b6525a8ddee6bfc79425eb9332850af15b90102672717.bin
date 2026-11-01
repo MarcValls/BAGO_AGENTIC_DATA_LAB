@@ -1,0 +1,451 @@
+{
+  "schema": "bago.continuity.governance.acceptance.v1",
+  "result": "FAIL",
+  "mission_id": "BAGO_CONTINUITY_ACCEPTANCE_20261101",
+  "checks": [
+    {
+      "case": "registration_and_lease_grant_no_authority",
+      "tests": [
+        "T2",
+        "T3"
+      ],
+      "result": "PASS"
+    },
+    {
+      "case": "authorized_real_effect_replay_and_required_verification",
+      "tests": [
+        "T7",
+        "T12"
+      ],
+      "result": "FAIL"
+    },
+    {
+      "case": "revoked_permit_blocks_actual_canary_write",
+      "tests": [
+        "T5"
+      ],
+      "result": "PASS"
+    },
+    {
+      "case": "expired_permit_is_distinct_from_unissued",
+      "tests": [
+        "T2"
+      ],
+      "result": "PASS"
+    },
+    {
+      "case": "scope_and_delegated_identity_do_not_inherit_authority",
+      "tests": [
+        "T4",
+        "T11"
+      ],
+      "result": "PASS"
+    },
+    {
+      "case": "durable_STOP_blocks_later_process_and_claim",
+      "tests": [
+        "T6"
+      ],
+      "result": "PASS"
+    },
+    {
+      "case": "failed_real_process_never_becomes_success",
+      "tests": [
+        "T9",
+        "T12"
+      ],
+      "result": "PASS"
+    },
+    {
+      "case": "receipt_mismatch_blocks_consumption_and_closure",
+      "tests": [
+        "T9",
+        "T12"
+      ],
+      "result": "PASS"
+    }
+  ],
+  "details": {
+    "registration_and_lease_grant_no_authority": {
+      "registered_mission": "gov-registration",
+      "challenge_state": "pending",
+      "without_authorization": {
+        "type": "AuthorizationError",
+        "code": "authorization_permit_required",
+        "message": "La ejecución requiere un Permit emitido por AuthorizationBoundary"
+      },
+      "relay_lease_is_not_permit": {
+        "type": "AuthorizationError",
+        "code": "authorization_permit_invalid",
+        "message": "Permit desconocido"
+      },
+      "actual_file_unchanged": {
+        "exists": true,
+        "sha256": "f62fca0bf989804c43da8fd0be6d218d07ea84d77381b7e924897913dda70186",
+        "mtime_ns": 1793491032638365200
+      },
+      "host_grant_origin": "Current user GO + OK, ACEPTO; mission BAGO_CONTINUITY_ACCEPTANCE_20261101"
+    },
+    "authorized_real_effect_replay_and_required_verification": {
+      "error": "AssertionError({'status': 'FAIL', 'run_id': '5e4cf90e46c240b39c4f833866d6b31d', 'receipt': 'receipts/d8f86a0bb0c34994bac8931ae96438a9.json', 'outcome': 'FAIL', 'interruption': 'NONE', 'evidence_error': None, 'supervision_error': None, 'process_outcome': 'FAIL'})",
+      "traceback": "Traceback (most recent call last):\n  File \"C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\.bago\\goals\\operational-continuity-governance-20261031\\evidence\\acceptance-20261101\\workspace\\governance\\acceptance.py\", line 108, in check\n    try:detail=fn();rows.append({'case':name,'tests':tests,'result':'PASS'});details[name]=redact(detail)\n               ~~^^\n  File \"C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\.bago\\goals\\operational-continuity-governance-20261031\\evidence\\acceptance-20261101\\workspace\\governance\\acceptance.py\", line 128, in positive\n    assert (w/'canary.txt').read_text()=='AUTHORIZED_EFFECT\\n',run\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: {'status': 'FAIL', 'run_id': '5e4cf90e46c240b39c4f833866d6b31d', 'receipt': 'receipts/d8f86a0bb0c34994bac8931ae96438a9.json', 'outcome': 'FAIL', 'interruption': 'NONE', 'evidence_error': None, 'supervision_error': None, 'process_outcome': 'FAIL'}\n"
+    },
+    "revoked_permit_blocks_actual_canary_write": {
+      "revocation": {
+        "permit_id": "permit-91c3513595064f5eab3077df900262e4",
+        "decision_id": "authdec-6a2aede728ba4218bf5036ac2a93cd19",
+        "proof_id": "authproof-454e83950e624346b40a13e93c98fdac",
+        "operation_fingerprint": "759595d271bda59783bc06e356881a5d4fdc0819292aeb9ba5c425cd87128d8d",
+        "request_id": "exec-3ae0df1b0a98459ab4b04bc5af24f2fb",
+        "effect_id": "filesystem.write",
+        "session_id": "gov-parent",
+        "issued_at": "2026-10-31T23:57:13.895143+00:00",
+        "expires_at": "2026-10-31T23:59:13.895143+00:00",
+        "world_state_digest": "91198008dea3652e58b2b1a84b6c2fa3c6ffd437359234647bfd4ec3a4ef5bbe",
+        "state": "revoked",
+        "proof": {
+          "proof_id": "authproof-454e83950e624346b40a13e93c98fdac",
+          "principal_id": "governance-test",
+          "authenticated_session_id": "gov-parent",
+          "interaction_id": "GO+OK_ACEPTO:GOV-revoked",
+          "operation_fingerprint": "759595d271bda59783bc06e356881a5d4fdc0819292aeb9ba5c425cd87128d8d",
+          "effect_id": "filesystem.write",
+          "user_decision": "approve",
+          "issued_at": "2026-10-31T23:57:13.895143+00:00",
+          "expires_at": "2026-10-31T23:59:13.895143+00:00",
+          "provenance": {
+            "kind": "direct_user_interaction",
+            "channel": "chatgpt-user-authorized-continuity-test",
+            "verified_by": "local_host_canary_scope:b74a6937b8179b76fdf20cd16a49896fac5e08558dd8dc051c64716d479c0354",
+            "contract": "bago.authorization/v2"
+          }
+        },
+        "decision": {
+          "decision_id": "authdec-6a2aede728ba4218bf5036ac2a93cd19",
+          "result": "allow",
+          "proof_id": "authproof-454e83950e624346b40a13e93c98fdac",
+          "operation_fingerprint": "759595d271bda59783bc06e356881a5d4fdc0819292aeb9ba5c425cd87128d8d",
+          "effect_id": "filesystem.write",
+          "reason": "verified_direct_user_interaction",
+          "decided_at": "2026-10-31T23:57:13.895143+00:00"
+        },
+        "revoked_at": "2026-10-31T23:57:13.899864+00:00",
+        "revocation_reason": "Explicit canary-only revocation test"
+      },
+      "rejected_after_revocation": {
+        "type": "AuthorizationError",
+        "code": "authorization_permit_replay",
+        "message": "Permit ya consumido o revocado"
+      },
+      "unchanged_file": {
+        "exists": true,
+        "sha256": "f62fca0bf989804c43da8fd0be6d218d07ea84d77381b7e924897913dda70186",
+        "mtime_ns": 1793491033774026500
+      }
+    },
+    "expired_permit_is_distinct_from_unissued": {
+      "rejected_expired": {
+        "type": "AuthorizationError",
+        "code": "authorization_permit_expired",
+        "message": "Permit expirado"
+      },
+      "unchanged_file": {
+        "exists": true,
+        "sha256": "f62fca0bf989804c43da8fd0be6d218d07ea84d77381b7e924897913dda70186",
+        "mtime_ns": 1793491033895383400
+      },
+      "clock_control": "Only this test process; no persisted system clock change"
+    },
+    "scope_and_delegated_identity_do_not_inherit_authority": {
+      "request_target_mismatch": {
+        "type": "AuthorizationError",
+        "code": "authorization_world_state_stale",
+        "message": "El estado del mundo cambió después de la autorización"
+      },
+      "host_scope_validator": {
+        "type": "PermissionError",
+        "code": null,
+        "message": "host_grant_scope_denied"
+      },
+      "child_session_rejected": {
+        "type": "AuthorizationError",
+        "code": "authorization_permit_session_mismatch",
+        "message": "Permit ligado a otra sesión"
+      },
+      "foreign_worker_rejected": {
+        "type": "ControlError",
+        "code": null,
+        "message": "missing, stale or foreign worker lease"
+      },
+      "unchanged_other_file": {
+        "exists": true,
+        "sha256": "f62fca0bf989804c43da8fd0be6d218d07ea84d77381b7e924897913dda70186",
+        "mtime_ns": 1793491034028823200
+      },
+      "boundary": "Logical admission, not OS filesystem isolation"
+    },
+    "durable_STOP_blocks_later_process_and_claim": {
+      "native_STOP": {
+        "schema": "bago.suite.task.control.v1",
+        "status": "PASS",
+        "mission_id": "gov-stopped",
+        "operation": "REPAIR",
+        "control": "STOPPED",
+        "task_status": "OPEN",
+        "candidate": {
+          "id": "canary-fixed-input",
+          "scope_sha256": "8a800749feb74d87ce94d2737253554298df114c1bed53beed01dc4e7a4d2a7a",
+          "suite": {
+            "kind": "explicit-local-governance-fixture"
+          }
+        },
+        "round": 1,
+        "max_rounds": 1,
+        "scope": [
+          "seed.txt"
+        ],
+        "checks": [
+          {
+            "id": "verify",
+            "receipt": null,
+            "receipt_hash": null,
+            "consumed": 0,
+            "outcome": "NOT_RUN"
+          },
+          {
+            "id": "work",
+            "receipt": null,
+            "receipt_hash": null,
+            "consumed": 0,
+            "outcome": "NOT_RUN"
+          }
+        ],
+        "runs": [],
+        "assignments": [],
+        "host_interrupt": "NOT_RUN; only owned supervised child processes can be interrupted",
+        "collaboration": {
+          "enabled": true,
+          "mode": "COOPERATIVE_SERIAL",
+          "host_authentication": "NOT_PROVIDED",
+          "workers": [
+            {
+              "id": "exec-A",
+              "role": "executor"
+            },
+            {
+              "id": "exec-B",
+              "role": "executor"
+            },
+            {
+              "id": "verifier",
+              "role": "verifier"
+            }
+          ],
+          "work": [
+            {
+              "check_id": "verify",
+              "state": "AVAILABLE",
+              "worker": null,
+              "generation": 0,
+              "expires_at": null,
+              "checkpoint_id": null
+            },
+            {
+              "check_id": "work",
+              "state": "SUSPENDED",
+              "worker": "exec-A",
+              "generation": 2,
+              "expires_at": null,
+              "checkpoint_id": null
+            }
+          ],
+          "handoffs": [],
+          "claims_used": 1,
+          "checkpoints_used": 0
+        },
+        "interruption_requested": true
+      },
+      "reopened_state": {
+        "schema": "bago.suite.task.control.v1",
+        "status": "PASS",
+        "mission_id": "gov-stopped",
+        "operation": "REPAIR",
+        "control": "STOPPED",
+        "task_status": "OPEN",
+        "candidate": {
+          "id": "canary-fixed-input",
+          "scope_sha256": "8a800749feb74d87ce94d2737253554298df114c1bed53beed01dc4e7a4d2a7a",
+          "suite": {
+            "kind": "explicit-local-governance-fixture"
+          }
+        },
+        "round": 1,
+        "max_rounds": 1,
+        "scope": [
+          "seed.txt"
+        ],
+        "checks": [
+          {
+            "id": "verify",
+            "receipt": null,
+            "receipt_hash": null,
+            "consumed": 0,
+            "outcome": "NOT_RUN"
+          },
+          {
+            "id": "work",
+            "receipt": null,
+            "receipt_hash": null,
+            "consumed": 0,
+            "outcome": "NOT_RUN"
+          }
+        ],
+        "runs": [],
+        "assignments": [],
+        "host_interrupt": "NOT_RUN; only owned supervised child processes can be interrupted",
+        "collaboration": {
+          "enabled": true,
+          "mode": "COOPERATIVE_SERIAL",
+          "host_authentication": "NOT_PROVIDED",
+          "workers": [
+            {
+              "id": "exec-A",
+              "role": "executor"
+            },
+            {
+              "id": "exec-B",
+              "role": "executor"
+            },
+            {
+              "id": "verifier",
+              "role": "verifier"
+            }
+          ],
+          "work": [
+            {
+              "check_id": "verify",
+              "state": "AVAILABLE",
+              "worker": null,
+              "generation": 0,
+              "expires_at": null,
+              "checkpoint_id": null
+            },
+            {
+              "check_id": "work",
+              "state": "SUSPENDED",
+              "worker": "exec-A",
+              "generation": 2,
+              "expires_at": null,
+              "checkpoint_id": null
+            }
+          ],
+          "handoffs": [],
+          "claims_used": 1,
+          "checkpoints_used": 0
+        }
+      },
+      "effect_launch_rejected": {
+        "type": "ControlError",
+        "code": null,
+        "message": "STOP is persistent; explicit resume is required"
+      },
+      "claim_rejected": {
+        "type": "ControlError",
+        "code": null,
+        "message": "STOP is persistent; explicit resume is required"
+      },
+      "unchanged_file": {
+        "exists": true,
+        "sha256": "f62fca0bf989804c43da8fd0be6d218d07ea84d77381b7e924897913dda70186",
+        "mtime_ns": 1793491034206658500
+      },
+      "native_permit_was_issued": true,
+      "automatic_resume": "NOT_PERFORMED"
+    },
+    "failed_real_process_never_becomes_success": {
+      "native_failed_run": {
+        "status": "FAIL",
+        "run_id": "65cf4dc8528f44b6aeec54f2c0efc432",
+        "receipt": "receipts/6ed9387f26cd48e9901f5059f03a1527.json",
+        "outcome": "FAIL",
+        "interruption": "NONE",
+        "evidence_error": null,
+        "supervision_error": null,
+        "process_outcome": "FAIL"
+      },
+      "consumption_preserves_FAIL": {
+        "status": "PASS",
+        "evidence_status": "VALID",
+        "product_status": "FAIL",
+        "check_id": "work"
+      },
+      "close_rejected": {
+        "status": "INCONCLUSIVE",
+        "operation": "REPAIR",
+        "task_status": "OPEN",
+        "product_status": "NOT_VERIFIED",
+        "evidence_status": "INCOMPLETE",
+        "outcomes": {
+          "work": "FAIL",
+          "verify": "NOT_RUN"
+        },
+        "mandatory_not_satisfied": [
+          "work",
+          "verify"
+        ],
+        "unconsumed_or_missing": [
+          "verify"
+        ],
+        "owned_child_running": false,
+        "target": null,
+        "published": false,
+        "collaboration_incomplete": true
+      },
+      "canary": {
+        "exists": true,
+        "sha256": "f62fca0bf989804c43da8fd0be6d218d07ea84d77381b7e924897913dda70186",
+        "mtime_ns": 1793491034381811600
+      }
+    },
+    "receipt_mismatch_blocks_consumption_and_closure": {
+      "real_run": {
+        "status": "PASS",
+        "run_id": "87655015bcb444ba902c65558c3182e9",
+        "receipt": "receipts/7e74d7292fbe4f9d996e9ec3c0fd241c.json",
+        "outcome": "PASS",
+        "interruption": "NONE",
+        "evidence_error": null,
+        "supervision_error": null,
+        "process_outcome": "PASS"
+      },
+      "original_receipt_sha256": "e0a4f7ed87fd7e843b9ed879458373075777a0f3a9756f7cf7148178a77db4cc",
+      "tampered_sha256": "1c04ff821488b4abd7c60b4e4674c6ae6d7da4b506bec231f5a0f1a603c99743",
+      "consume_rejected": {
+        "type": "ControlError",
+        "code": null,
+        "message": "receipt bytes changed"
+      },
+      "close_rejected": {
+        "type": "ControlError",
+        "code": null,
+        "message": "receipt bytes changed"
+      }
+    }
+  },
+  "limits": [
+    "Deterministic local workers, not LLM/host sessions.",
+    "TaskStore/relay and Gateway are actual native implementations; logical admission is not OS isolation.",
+    "Authorization issuance uses the same protected local-host seam as the cognitive adapter, with truthful GO-origin scoped canary grants; no GUI/TTY identity is fabricated.",
+    "STOP here fences cooperative ledger admission and owned subprocesses; arbitrary external processes are not claimed stopped.",
+    "No global Codex configuration, product source, original mission receipts or toolkit were modified."
+  ],
+  "sources": {
+    "C:\\Users\\AMTEC_Terminal_1º\\.codex\\skills\\bago-operating-suite\\runtime\\BAGO-4.11.10\\backend\\.bago\\core\\authorization_boundary.py": "23d9a1bb2ecf9e27f9e3f8341a7c4629644d64a9e698a1be6273c14d1fd30b09",
+    "C:\\Users\\AMTEC_Terminal_1º\\.codex\\skills\\bago-operating-suite\\runtime\\BAGO-4.11.10\\backend\\.bago\\core\\execution_gateway.py": "c889d61353709c0fff94497a8eba3b8602e8ab124c985c9a721bd67dee94903a",
+    "C:\\Users\\AMTEC_Terminal_1º\\.codex\\skills\\bago-operating-suite\\runtime\\BAGO-4.11.10\\backend\\.bago\\core\\execution_adapters\\filesystem.py": "53111f4649a58fdae1ceb078c0215bd15be8cc0d25c70a1f544f9b3c9bc1713a",
+    "C:\\Users\\AMTEC_Terminal_1º\\.codex\\skills\\bago-operating-suite\\runtime\\BAGO-4.11.10\\backend\\.bago\\core\\filesystem_effects.py": "88b2986bb4d0dd799fb7c088b8484d2c9595e76b3c36dcdbe2f35f8eb5833663",
+    "C:\\Users\\AMTEC_Terminal_1º\\.codex\\skills\\bago-operating-suite\\scripts\\suite_control.py": "052a62a161d71617cc9c8f736d8c58d89aabadc27795122c7705d02443aa8bf0",
+    "C:\\Users\\AMTEC_Terminal_1º\\.codex\\skills\\bago-operating-suite\\scripts\\suite_relay.py": "aaedb95c76611967ca01668ea0101067e158d8389356a3c10ebaa592d117456b",
+    "C:\\Users\\AMTEC_Terminal_1º\\.codex\\skills\\bago-operating-suite\\modules\\cognitive-mission\\src\\mission_runtime.py": "d1a21bd347b9faaf7da5e1219efa3de1442dd4631bb1370467d5426de64db31e"
+  }
+}

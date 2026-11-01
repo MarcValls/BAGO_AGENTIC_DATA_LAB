@@ -1,0 +1,52 @@
+{
+  "schema": "bago.browser-bridge.brave-r5.resume-preflight.v1",
+  "attempt": 7,
+  "recorded_at_utc": "2026-10-31T15:35:12.3033680Z",
+  "mission_id": "CODEX_GOVERNED_CONTINUITY_20261031",
+  "candidate_id": "0f74f0d818f422d2a9506957e6396070300bbb77d88c602605b4fa647e7cc774",
+  "scope_sha256": "0af844db09c04531999970ed71e0bce9ed1f51245b48416d0453a7bc7cef9df9",
+  "work_id": "BRAVE_E2E_R5",
+  "role": "runtime-integration-engineer",
+  "brave_status": "CLAIMED",
+  "p2_status": "DONE",
+  "p2_handoff_sha256": "b3bf64cf73804d3762192dbe437e817967958d9e0f9f3ef5dc20aa13484a8a72",
+  "pause_history_count": 0,
+  "interruptions_count": 0,
+  "terminal_gate": "OPEN",
+  "registry_key": "HKCU\\Software\\Google\\Chrome\\NativeMessagingHosts\\com.bago.browser_bridge",
+  "registry_views": [
+    {
+      "view": "Registry32",
+      "absent": true
+    },
+    {
+      "view": "Registry64",
+      "absent": true
+    }
+  ],
+  "manifest_absent": true,
+  "profile_absent": true,
+  "chrome_process_count": 0,
+  "host_exe_sha256": "2aefdaa63fbfeadb79498acac429bee36e3fce3ac323664fa0733347a030e333",
+  "extension_id": "jeocgjmcakdgbogpcbmhmpcfkgamoaec",
+  "diagnostic_sha256": "3e586c3221c5f7e0418ae4d0832eda3e8a4a97f2250707a0fa3cdef45f5a0252",
+  "diagnostic_connectNative": "function",
+  "diagnostic_expected_no_host_error": "Specified native messaging host not found.",
+  "diagnostic_worker_target": {
+    "targetId": "B1743395EBFE2A8202AFDAA8C1B5BB5B",
+    "type": "service_worker",
+    "title": "Service Worker chrome-extension://jeocgjmcakdgbogpcbmhmpcfkgamoaec/service_worker.js",
+    "url": "chrome-extension://jeocgjmcakdgbogpcbmhmpcfkgamoaec/service_worker.js",
+    "attached": true,
+    "canAccessOpener": false,
+    "browserContextId": "D9E325A616429C3423A24D3F25EBA2B0"
+  },
+  "runner_sha256": "80bddbb1e8d5a58c850940e6c8b052337b395c3df2d539492b2a2a3d46d97917",
+  "node_sha256": "a22be9437ed1eb493a70da241895d994e96f96398132f23b71b9caeb1ccb5697",
+  "interaction": "connectNative from extension popup document; no toolbar gesture",
+  "video": "NOT_RUN if ffmpeg bundle missing",
+  "declared_outputs": [
+    ".worktrees/browser-bridge-runtime-validation-20261030/.bago/goals/browser-bridge-runtime-validation-20261030/revision5/evidence/runtime/brave-native-messaging-runtime-attempt7.json",
+    ".worktrees/browser-bridge-runtime-validation-20261030/.bago/goals/browser-bridge-runtime-validation-20261030/revision5/checks/e2e/cleanup-result-attempt7.json"
+  ]
+}

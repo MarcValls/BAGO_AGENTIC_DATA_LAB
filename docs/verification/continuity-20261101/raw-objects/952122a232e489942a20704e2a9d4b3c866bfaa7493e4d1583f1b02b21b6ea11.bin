@@ -1,0 +1,68 @@
+{
+  "mission_id": "BAGO_CONTINUITY_ACCEPTANCE_20261101",
+  "phase": "B",
+  "answer": 43,
+  "predecessor_sha256": "b3fc51fd205edf57bd4f3edec7b227c672297c3adfaff203be83bc073b20ec19",
+  "accepted_handoff_sha256": "ffac78ce9af8bbb1d20bbda10c53e51e3cfe20e417f6aa96149ccf4ee2c5702c",
+  "continuity_marker": "HOSTCTX-B-24f0c6be232885eeb9cc9889",
+  "marker_source": "instruction_context",
+  "probe_result": {
+    "phase": "B",
+    "token_present": false,
+    "boundary": {
+      "result": "WRITE_DENIED",
+      "error": "PermissionError: [Errno 13] Permission denied: 'C:\\\\Users\\\\AMTEC_Terminal_1\u00ba\\\\Desktop\\\\BAGO5_ADL\\\\.bago\\\\goals\\\\operational-continuity-governance-20261031\\\\evidence\\\\acceptance-20261101\\\\workspace\\\\host\\\\attempt2\\\\outside-canary.txt'"
+    },
+    "lease_probe": {
+      "argv": [
+        "C:\\Python314\\python.exe",
+        "-B",
+        "C:\\Users\\AMTEC_Terminal_1\u00ba\\.codex\\skills\\bago-operating-suite\\scripts\\suite_orchestrator.py",
+        "task",
+        "collaborate",
+        "heartbeat",
+        "--state-dir",
+        "C:\\Users\\AMTEC_Terminal_1\u00ba\\Desktop\\BAGO5_ADL\\.bago\\goals\\operational-continuity-governance-20261031\\evidence\\acceptance-20261101\\workspace\\host\\attempt2\\relay-state",
+        "--check",
+        "work",
+        "--worker",
+        "native-B"
+      ],
+      "returncode": 1,
+      "stdout": "{\n  \"error\": \"missing, stale or foreign worker lease\",\n  \"error_type\": \"ControlError\",\n  \"evidence_status\": \"INVALID_OR_BLOCKED\",\n  \"product_status\": \"NOT_VERIFIED\",\n  \"schema\": \"bago.suite.task.control.v1\",\n  \"status\": \"FAIL\",\n  \"task_status\": \"NOT_CLOSED\"\n}\n",
+      "stderr": ""
+    }
+  },
+  "probe_sha256": "1f8bbcf3900f551388386dcc2652b17ad7b0216b6988ea20560d74d767764728",
+  "boundary": {
+    "result": "WRITE_DENIED",
+    "error": "PermissionError: [Errno 13] Permission denied: 'C:\\\\Users\\\\AMTEC_Terminal_1\u00ba\\\\Desktop\\\\BAGO5_ADL\\\\.bago\\\\goals\\\\operational-continuity-governance-20261031\\\\evidence\\\\acceptance-20261101\\\\workspace\\\\host\\\\attempt2\\\\outside-canary.txt'"
+  },
+  "token_present": false,
+  "lease_probe": {
+    "argv": [
+      "C:\\Python314\\python.exe",
+      "-B",
+      "C:\\Users\\AMTEC_Terminal_1\u00ba\\.codex\\skills\\bago-operating-suite\\scripts\\suite_orchestrator.py",
+      "task",
+      "collaborate",
+      "heartbeat",
+      "--state-dir",
+      "C:\\Users\\AMTEC_Terminal_1\u00ba\\Desktop\\BAGO5_ADL\\.bago\\goals\\operational-continuity-governance-20261031\\evidence\\acceptance-20261101\\workspace\\host\\attempt2\\relay-state",
+      "--check",
+      "work",
+      "--worker",
+      "native-B"
+    ],
+    "returncode": 1,
+    "stdout": "{\n  \"error\": \"missing, stale or foreign worker lease\",\n  \"error_type\": \"ControlError\",\n  \"evidence_status\": \"INVALID_OR_BLOCKED\",\n  \"product_status\": \"NOT_VERIFIED\",\n  \"schema\": \"bago.suite.task.control.v1\",\n  \"status\": \"FAIL\",\n  \"task_status\": \"NOT_CLOSED\"\n}\n",
+    "stderr": ""
+  },
+  "boundary_attempts": 1,
+  "tool_permissions": "default",
+  "predecessor_hash_verified": true,
+  "checkpoint_candidate_id": "bounded-native-host-r1",
+  "isolation_check": "PASS",
+  "native_goal_resumed": false,
+  "verification_scope": "Local phase B arithmetic, predecessor checkpoint digest and actual single boundary probe. Independent host acceptance remains pending."
+}

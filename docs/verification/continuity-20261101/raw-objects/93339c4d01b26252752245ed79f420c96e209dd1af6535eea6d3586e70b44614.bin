@@ -1,0 +1,114 @@
+[
+  {
+    "label": "tools",
+    "argv": [
+      "/usr/local/bin/python",
+      "-B",
+      "-c",
+      "import importlib.metadata,json,shutil; assert all(shutil.which(n) for n in ['git','node','ffmpeg']); print(json.dumps({n:importlib.metadata.version(n) for n in ['pytest','fastapi','pydantic','jsonschema','httpx','pypdf','Pillow','websockets']}))"
+    ],
+    "started_at": "2026-11-01T01:30:56.419876+00:00",
+    "state": "COMPLETED",
+    "returncode": 0,
+    "finished_at": "2026-11-01T01:30:56.539082+00:00",
+    "files": [
+      {
+        "path": "tools.stderr.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": "tools.stdout.log",
+        "sha256": "feb76e92c6bea9db0c65fa8413f1dbe5670991152adf2bf56ffcdf9d648ae98c"
+      }
+    ]
+  },
+  {
+    "label": "dom",
+    "argv": [
+      "node",
+      "-e",
+      "const{JSDOM}=require('./frontend/node_modules/jsdom');console.log(process.version,new JSDOM('<p>fixture</p>').window.document.querySelector('p').textContent)"
+    ],
+    "started_at": "2026-11-01T01:30:56.550402+00:00",
+    "state": "COMPLETED",
+    "returncode": 0,
+    "finished_at": "2026-11-01T01:30:57.090928+00:00",
+    "files": [
+      {
+        "path": "dom.stderr.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": "dom.stdout.log",
+        "sha256": "9ab2f08435053c6aadd16f41611ec5bf1b4743f46ee15c5a44d506a0c5f12952"
+      }
+    ]
+  },
+  {
+    "label": "generate",
+    "argv": [
+      "/usr/local/bin/python",
+      "-B",
+      "scripts/generate_dynamic_readme.py"
+    ],
+    "started_at": "2026-11-01T01:30:57.104415+00:00",
+    "state": "COMPLETED",
+    "returncode": 0,
+    "finished_at": "2026-11-01T01:37:07.352729+00:00",
+    "junit_counts_including_subtests": {
+      "tests": 1908,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 2
+    },
+    "pytest_passed": 1792,
+    "files": [
+      {
+        "path": "generate.stderr.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": "generate.stdout.log",
+        "sha256": "0b738a39861f48b4b9e91b199718acfdbd4e5ef30e38ec16f2b0554c1a5b4761"
+      },
+      {
+        "path": "generate.xml",
+        "sha256": "8496ba62f1f5e19f8822753dfaf0fab786d8a095797ca5a0a8c803647d14cf93"
+      }
+    ]
+  },
+  {
+    "label": "consistency",
+    "argv": [
+      "/usr/local/bin/python",
+      "-B",
+      "scripts/generate_dynamic_readme.py",
+      "--check",
+      "--skip-tests"
+    ],
+    "started_at": "2026-11-01T01:37:07.379691+00:00",
+    "state": "COMPLETED",
+    "returncode": 0,
+    "finished_at": "2026-11-01T01:37:16.833125+00:00",
+    "junit_counts_including_subtests": {
+      "tests": 0,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "files": [
+      {
+        "path": "consistency.stderr.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": "consistency.stdout.log",
+        "sha256": "ff4fbc6b097973a416be8687d64be2c82d7fb29c895b2e4381d85188df5f1c79"
+      },
+      {
+        "path": "consistency.xml",
+        "sha256": "c7de795bda16527addce88bfc64283eb39f16092efcc66fc0a8d1088a51e5fc0"
+      }
+    ]
+  }
+]

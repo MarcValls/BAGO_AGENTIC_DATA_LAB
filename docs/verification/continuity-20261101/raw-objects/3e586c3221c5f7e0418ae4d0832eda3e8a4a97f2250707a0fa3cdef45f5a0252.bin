@@ -1,0 +1,50 @@
+{
+  "status": "DIAGNOSTIC_COMPLETE",
+  "registry_modified": false,
+  "host_name": "com.bago.browser_bridge",
+  "extension_page_url": "chrome-extension://jeocgjmcakdgbogpcbmhmpcfkgamoaec/popup.html",
+  "page_title": "BAGO Browser Bridge",
+  "api_probe": {
+    "extension_id": "jeocgjmcakdgbogpcbmhmpcfkgamoaec",
+    "connectNative_type": "function",
+    "connect_call": "returned-port",
+    "port_name": "",
+    "disconnect_error": "Specified native messaging host not found."
+  },
+  "service_workers": [
+    "chrome-extension://jeocgjmcakdgbogpcbmhmpcfkgamoaec/service_worker.js"
+  ],
+  "cdp_targets": {
+    "targetInfos": [
+      {
+        "targetId": "B1743395EBFE2A8202AFDAA8C1B5BB5B",
+        "type": "service_worker",
+        "title": "Service Worker chrome-extension://jeocgjmcakdgbogpcbmhmpcfkgamoaec/service_worker.js",
+        "url": "chrome-extension://jeocgjmcakdgbogpcbmhmpcfkgamoaec/service_worker.js",
+        "attached": true,
+        "canAccessOpener": false,
+        "browserContextId": "D9E325A616429C3423A24D3F25EBA2B0"
+      },
+      {
+        "targetId": "6979A955F50AF5D86C5B8EBC7F537B5C",
+        "type": "page",
+        "title": "BAGO Browser Bridge",
+        "url": "chrome-extension://jeocgjmcakdgbogpcbmhmpcfkgamoaec/popup.html",
+        "attached": true,
+        "canAccessOpener": false,
+        "browserContextId": "D9E325A616429C3423A24D3F25EBA2B0"
+      },
+      {
+        "targetId": "E67B7F67E77F3FF9A6B7C08BAF427D6E",
+        "type": "page",
+        "title": "about:blank",
+        "url": "about:blank",
+        "attached": true,
+        "canAccessOpener": false,
+        "browserContextId": "D9E325A616429C3423A24D3F25EBA2B0"
+      }
+    ]
+  },
+  "profile_absent_after": true,
+  "recorded_at_utc": "2026-10-31T15:34:30.376Z"
+}

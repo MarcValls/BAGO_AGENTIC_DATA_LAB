@@ -1,0 +1,26 @@
+{
+  "status": "FAIL",
+  "browser": "Brave",
+  "fixture_url": "http://127.0.0.1:18765/",
+  "extension_id": "jeocgjmcakdgbogpcbmhmpcfkgamoaec",
+  "host_name": "com.bago.browser_bridge",
+  "toolbar_gesture": "NOT_RUN",
+  "video": {
+    "status": "NOT_RUN",
+    "reason": "Playwright ffmpeg-1013 bundle is unavailable; no binary was copied or installed."
+  },
+  "interaction": "Native Messaging API invoked in the loaded extension service worker; no toolbar click or window activation.",
+  "protocol_responses": [],
+  "browser_errors": [
+    "Failed to load resource: the server responded with a status of 404 (File not found)"
+  ],
+  "page_title": "Fixture Browser Bridge",
+  "document_epoch": "AACD50069A76795FD8F6A1C27773FA38",
+  "origin": "http://127.0.0.1:18765",
+  "sha256": "9586130d1cd0699a6c43dd2aa5a725ae90573944f22197aad324dce9fe374f62",
+  "byte_length": 188,
+  "service_worker": "chrome-extension://jeocgjmcakdgbogpcbmhmpcfkgamoaec/service_worker.js",
+  "error": "worker.evaluate: Error: Specified native messaging host not found.\n    at eval (eval at evaluate (:370:30), <anonymous>:40:50)\n    at run (C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\.worktrees\\browser-bridge-runtime-validation-20261030\\scripts\\browser_bridge\\runtime\\brave_native_messaging_r5.cjs:107:35)",
+  "screenshot": ".bago/goals/browser-bridge-runtime-validation-20261030/revision5/screenshots/fixture-brave-r5-attempt4.png",
+  "recorded_at_utc": "2026-10-31T15:27:33.564Z"
+}

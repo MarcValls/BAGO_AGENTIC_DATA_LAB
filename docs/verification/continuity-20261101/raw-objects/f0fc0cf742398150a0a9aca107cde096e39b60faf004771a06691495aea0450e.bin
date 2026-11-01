@@ -1,0 +1,74 @@
+{
+  "status": "DIAGNOSTIC_COMPLETE",
+  "extension_id": "jeocgjmcakdgbogpcbmhmpcfkgamoaec",
+  "registry_modified": false,
+  "fixture_title": "Fixture Browser Bridge",
+  "service_workers_after_fixture": [
+    "chrome-extension://jeocgjmcakdgbogpcbmhmpcfkgamoaec/service_worker.js"
+  ],
+  "pages_before_extensions": [
+    "http://127.0.0.1:18765/"
+  ],
+  "cdp_targets_before_extensions": {
+    "targetInfos": [
+      {
+        "targetId": "DE17218A18FA6496EB5F03BB33074ED7",
+        "type": "service_worker",
+        "title": "Service Worker chrome-extension://jeocgjmcakdgbogpcbmhmpcfkgamoaec/service_worker.js",
+        "url": "chrome-extension://jeocgjmcakdgbogpcbmhmpcfkgamoaec/service_worker.js",
+        "attached": true,
+        "canAccessOpener": false,
+        "browserContextId": "DE11F3D45CAE9FCC56041F596C11A1BB"
+      },
+      {
+        "targetId": "6C0D5CEBF35FC95560783CAE43E62022",
+        "type": "page",
+        "title": "Fixture Browser Bridge",
+        "url": "http://127.0.0.1:18765/",
+        "attached": true,
+        "canAccessOpener": false,
+        "browserContextId": "DE11F3D45CAE9FCC56041F596C11A1BB"
+      }
+    ]
+  },
+  "extensions_url": "chrome://extensions/",
+  "extensions_body_text": "",
+  "extension_cards": [],
+  "service_workers_after_extensions_page": [
+    "chrome-extension://jeocgjmcakdgbogpcbmhmpcfkgamoaec/service_worker.js"
+  ],
+  "cdp_targets_after_extensions": {
+    "targetInfos": [
+      {
+        "targetId": "DE17218A18FA6496EB5F03BB33074ED7",
+        "type": "service_worker",
+        "title": "Service Worker chrome-extension://jeocgjmcakdgbogpcbmhmpcfkgamoaec/service_worker.js",
+        "url": "chrome-extension://jeocgjmcakdgbogpcbmhmpcfkgamoaec/service_worker.js",
+        "attached": true,
+        "canAccessOpener": false,
+        "browserContextId": "DE11F3D45CAE9FCC56041F596C11A1BB"
+      },
+      {
+        "targetId": "C925AA2C9AECFB943CD8D2AF161A5966",
+        "type": "page",
+        "title": "Extensiones",
+        "url": "chrome://extensions/",
+        "attached": true,
+        "canAccessOpener": false,
+        "browserContextId": "DE11F3D45CAE9FCC56041F596C11A1BB"
+      },
+      {
+        "targetId": "6C0D5CEBF35FC95560783CAE43E62022",
+        "type": "page",
+        "title": "Fixture Browser Bridge",
+        "url": "http://127.0.0.1:18765/",
+        "attached": true,
+        "canAccessOpener": false,
+        "browserContextId": "DE11F3D45CAE9FCC56041F596C11A1BB"
+      }
+    ]
+  },
+  "remaining_profile_pids_before_cleanup": [],
+  "profile_absent_after": true,
+  "recorded_at_utc": "2026-10-31T15:32:07.630Z"
+}

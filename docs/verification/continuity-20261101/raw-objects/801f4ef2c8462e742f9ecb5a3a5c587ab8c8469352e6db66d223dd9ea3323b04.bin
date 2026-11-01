@@ -1,0 +1,307 @@
+[
+  {
+    "argv": [
+      "C:\\Python314\\python.exe",
+      "-B",
+      "C:\\Users\\AMTEC_Terminal_1º\\.codex\\skills\\bago-operating-suite\\scripts\\suite_orchestrator.py",
+      "task",
+      "init",
+      "--state-dir",
+      "C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\.bago\\goals\\operational-continuity-governance-20261031\\evidence\\acceptance-20261101\\workspace\\host\\relay-state",
+      "--workspace",
+      "C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\.bago\\goals\\operational-continuity-governance-20261031\\evidence\\acceptance-20261101\\workspace\\host\\worker",
+      "--plan",
+      "C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\.bago\\goals\\operational-continuity-governance-20261031\\evidence\\acceptance-20261101\\workspace\\host\\plan.json"
+    ],
+    "returncode": 0,
+    "result": {
+      "assignments": [],
+      "candidate": {
+        "id": "bounded-native-host-r1",
+        "scope_sha256": "8a7d288aaf449248b451c8c7bceec87380a7232d1fc99bb02af38576d7f0238e",
+        "suite": {
+          "candidate": "CONTEXT-LIFECYCLE-NATIVE-RC2",
+          "display_name": "BAGO5os 1.4.7",
+          "identity_sha256": "082ab22f16d418da4c07352e153232ee56cde70f2382ae4bcaa9905e28737d6d",
+          "package_id": "bago-operating-suite",
+          "payload_files": 600,
+          "payload_sha256": "e8a211b01420776dabafe8efdb98ea78c35c1156efcdfd0baeb7eb33aa121114",
+          "release_id": "BAGO-SUITE-147-BAGO-SKILL-RC2",
+          "schema": "bago.suite.candidate-identity.v1",
+          "scope": "exact installed skill bytes; unsigned integrity, not publisher authentication",
+          "version": "1.4.7"
+        }
+      },
+      "checks": [
+        {
+          "consumed": 0,
+          "id": "prepare",
+          "outcome": "NOT_RUN",
+          "receipt": null,
+          "receipt_hash": null
+        },
+        {
+          "consumed": 0,
+          "id": "verify",
+          "outcome": "NOT_RUN",
+          "receipt": null,
+          "receipt_hash": null
+        },
+        {
+          "consumed": 0,
+          "id": "work",
+          "outcome": "NOT_RUN",
+          "receipt": null,
+          "receipt_hash": null
+        }
+      ],
+      "collaboration": {
+        "enabled": false
+      },
+      "control": "ACTIVE",
+      "host_interrupt": "NOT_RUN; only owned supervised child processes can be interrupted",
+      "max_rounds": 4,
+      "mission_id": "host-native-acceptance-20261101",
+      "operation": "AUDIT",
+      "round": 0,
+      "runs": [],
+      "schema": "bago.suite.task.control.v1",
+      "scope": [
+        "AGENTS.md",
+        "CONTRACT.json",
+        "boundary_probe.py",
+        "verify_native.py"
+      ],
+      "status": "PASS",
+      "task_status": "OPEN"
+    },
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "C:\\Python314\\python.exe",
+      "-B",
+      "C:\\Users\\AMTEC_Terminal_1º\\.codex\\skills\\bago-operating-suite\\scripts\\suite_orchestrator.py",
+      "task",
+      "collaborate",
+      "enable",
+      "--state-dir",
+      "C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\.bago\\goals\\operational-continuity-governance-20261031\\evidence\\acceptance-20261101\\workspace\\host\\relay-state",
+      "--config",
+      "C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\.bago\\goals\\operational-continuity-governance-20261031\\evidence\\acceptance-20261101\\workspace\\host\\config.json"
+    ],
+    "returncode": 0,
+    "result": {
+      "authority": "HOST_ONLY",
+      "config": {
+        "lease_seconds": 1200,
+        "max_checkpoints": 8,
+        "max_claims": 8,
+        "max_handoffs": 4,
+        "schema": "bago.suite.collaboration.v1",
+        "verification_checks": [
+          "verify"
+        ],
+        "workers": [
+          {
+            "id": "native-A",
+            "role": "executor"
+          },
+          {
+            "id": "native-B",
+            "role": "executor"
+          },
+          {
+            "id": "independent-review",
+            "role": "verifier"
+          }
+        ]
+      },
+      "mode": "COOPERATIVE_SERIAL",
+      "spawned": false,
+      "status": "PASS"
+    },
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "C:\\Python314\\python.exe",
+      "-B",
+      "C:\\Users\\AMTEC_Terminal_1º\\.codex\\skills\\bago-operating-suite\\scripts\\suite_orchestrator.py",
+      "task",
+      "round",
+      "--state-dir",
+      "C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\.bago\\goals\\operational-continuity-governance-20261031\\evidence\\acceptance-20261101\\workspace\\host\\relay-state"
+    ],
+    "returncode": 0,
+    "result": {
+      "assignments": [],
+      "candidate": {
+        "id": "bounded-native-host-r1",
+        "scope_sha256": "8a7d288aaf449248b451c8c7bceec87380a7232d1fc99bb02af38576d7f0238e",
+        "suite": {
+          "candidate": "CONTEXT-LIFECYCLE-NATIVE-RC2",
+          "display_name": "BAGO5os 1.4.7",
+          "identity_sha256": "082ab22f16d418da4c07352e153232ee56cde70f2382ae4bcaa9905e28737d6d",
+          "package_id": "bago-operating-suite",
+          "payload_files": 600,
+          "payload_sha256": "e8a211b01420776dabafe8efdb98ea78c35c1156efcdfd0baeb7eb33aa121114",
+          "release_id": "BAGO-SUITE-147-BAGO-SKILL-RC2",
+          "schema": "bago.suite.candidate-identity.v1",
+          "scope": "exact installed skill bytes; unsigned integrity, not publisher authentication",
+          "version": "1.4.7"
+        }
+      },
+      "checks": [
+        {
+          "consumed": 0,
+          "id": "prepare",
+          "outcome": "NOT_RUN",
+          "receipt": null,
+          "receipt_hash": null
+        },
+        {
+          "consumed": 0,
+          "id": "verify",
+          "outcome": "NOT_RUN",
+          "receipt": null,
+          "receipt_hash": null
+        },
+        {
+          "consumed": 0,
+          "id": "work",
+          "outcome": "NOT_RUN",
+          "receipt": null,
+          "receipt_hash": null
+        }
+      ],
+      "collaboration": {
+        "checkpoints_used": 0,
+        "claims_used": 0,
+        "enabled": true,
+        "handoffs": [],
+        "host_authentication": "NOT_PROVIDED",
+        "mode": "COOPERATIVE_SERIAL",
+        "work": [
+          {
+            "check_id": "prepare",
+            "checkpoint_id": null,
+            "expires_at": null,
+            "generation": 0,
+            "state": "AVAILABLE",
+            "worker": null
+          },
+          {
+            "check_id": "verify",
+            "checkpoint_id": null,
+            "expires_at": null,
+            "generation": 0,
+            "state": "AVAILABLE",
+            "worker": null
+          },
+          {
+            "check_id": "work",
+            "checkpoint_id": null,
+            "expires_at": null,
+            "generation": 0,
+            "state": "AVAILABLE",
+            "worker": null
+          }
+        ],
+        "workers": [
+          {
+            "id": "native-A",
+            "role": "executor"
+          },
+          {
+            "id": "native-B",
+            "role": "executor"
+          },
+          {
+            "id": "independent-review",
+            "role": "verifier"
+          }
+        ]
+      },
+      "control": "ACTIVE",
+      "host_interrupt": "NOT_RUN; only owned supervised child processes can be interrupted",
+      "max_rounds": 4,
+      "mission_id": "host-native-acceptance-20261101",
+      "operation": "AUDIT",
+      "round": 1,
+      "runs": [],
+      "schema": "bago.suite.task.control.v1",
+      "scope": [
+        "AGENTS.md",
+        "CONTRACT.json",
+        "boundary_probe.py",
+        "verify_native.py"
+      ],
+      "status": "PASS",
+      "task_status": "OPEN"
+    },
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "C:\\Python314\\python.exe",
+      "-B",
+      "C:\\Users\\AMTEC_Terminal_1º\\.codex\\skills\\bago-operating-suite\\scripts\\suite_orchestrator.py",
+      "task",
+      "collaborate",
+      "claim",
+      "--state-dir",
+      "C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\.bago\\goals\\operational-continuity-governance-20261031\\evidence\\acceptance-20261101\\workspace\\host\\relay-state",
+      "--check",
+      "prepare",
+      "--worker",
+      "native-A"
+    ],
+    "returncode": 0,
+    "result": {
+      "authority": "HOST_ONLY; lease is local coordination, not a permit",
+      "check_id": "prepare",
+      "checkpoint": null,
+      "expires_at": 1793492259.375149,
+      "generation": 1,
+      "spawned": false,
+      "status": "PASS",
+      "worker": "native-A"
+    },
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "C:\\Python314\\python.exe",
+      "-B",
+      "C:\\Users\\AMTEC_Terminal_1º\\.codex\\skills\\bago-operating-suite\\scripts\\suite_orchestrator.py",
+      "task",
+      "run-check",
+      "--state-dir",
+      "C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\.bago\\goals\\operational-continuity-governance-20261031\\evidence\\acceptance-20261101\\workspace\\host\\relay-state",
+      "--check",
+      "prepare",
+      "--worker",
+      "native-A",
+      "--timeout",
+      "450",
+      "--",
+      "C:\\Python314\\python.exe",
+      "-B",
+      "C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\.bago\\goals\\operational-continuity-governance-20261031\\evidence\\acceptance-20261101\\workspace\\host\\native_session.py",
+      "A"
+    ],
+    "returncode": 1,
+    "result": {
+      "evidence_error": "[Errno 2] No such file or directory: 'C:\\\\Users\\\\AMTEC_Terminal_1º\\\\Desktop\\\\BAGO5_ADL\\\\.bago\\\\goals\\\\operational-continuity-governance-20261031\\\\evidence\\\\acceptance-20261101\\\\workspace\\\\host\\\\worker\\\\phase-A.json'",
+      "interruption": "TERMINATED",
+      "outcome": "ERROR",
+      "process_outcome": "INTERRUPTED",
+      "receipt": null,
+      "run_id": "f724a6c3680c47aeab470e0f25449599",
+      "status": "FAIL",
+      "supervision_error": null
+    },
+    "stderr": ""
+  }
+]

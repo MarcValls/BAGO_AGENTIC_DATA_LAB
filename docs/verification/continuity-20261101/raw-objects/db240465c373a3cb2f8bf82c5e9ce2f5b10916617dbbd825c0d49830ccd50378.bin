@@ -1,0 +1,129 @@
+{
+  "checkpoint": {
+    "artifacts": [
+      {
+        "path": "phase-A.json",
+        "root": "workspace",
+        "schema": null,
+        "sha256": "b3fc51fd205edf57bd4f3edec7b227c672297c3adfaff203be83bc073b20ec19",
+        "size": 2904
+      },
+      {
+        "path": "probe-A.json",
+        "root": "workspace",
+        "schema": null,
+        "sha256": "ce7d735f19d0bf941bdd3a4c930ed522c73d5c8db255c016a83f6c33fbac3a90",
+        "size": 1297
+      }
+    ],
+    "candidate": {
+      "id": "bounded-native-host-r1",
+      "scope_sha256": "67605bf6125fc79f60f80a762a214250182cf0474d9683815cf400e752ca9eff",
+      "suite": {
+        "candidate": "CONTEXT-LIFECYCLE-NATIVE-RC2",
+        "display_name": "BAGO5os 1.4.7",
+        "identity_sha256": "082ab22f16d418da4c07352e153232ee56cde70f2382ae4bcaa9905e28737d6d",
+        "package_id": "bago-operating-suite",
+        "payload_files": 600,
+        "payload_sha256": "e8a211b01420776dabafe8efdb98ea78c35c1156efcdfd0baeb7eb33aa121114",
+        "release_id": "BAGO-SUITE-147-BAGO-SKILL-RC2",
+        "schema": "bago.suite.candidate-identity.v1",
+        "scope": "exact installed skill bytes; unsigned integrity, not publisher authentication",
+        "version": "1.4.7"
+      }
+    },
+    "check_id": "work",
+    "checkpoint_id": "d7dae8feebff48dc864ee6fe767939b5",
+    "context": {
+      "artifacts": [
+        {
+          "path": "phase-A.json",
+          "root": "workspace"
+        },
+        {
+          "path": "probe-A.json",
+          "root": "workspace"
+        }
+      ],
+      "completed": [
+        "phase A actual tool execution and receipt; trace stored under sessions/A"
+      ],
+      "decisions": [
+        "No token in prompts or child environment. Roles are logical only. Native goal remains paused."
+      ],
+      "pending": [
+        "New native session B must verify predecessor digest, record fresh context marker, execute scoped effects and produce phase-B receipt."
+      ],
+      "risks": [
+        "Boundary outcome requires reviewing actual probe, not a narrative assertion."
+      ],
+      "schema": "bago.suite.relay.context.v1",
+      "summary": "Real native session A wrote phase-A receipt; successor must inspect and continue exact artifacts, no inherited permissions."
+    },
+    "context_claims_are_not_evidence": true,
+    "created_at": "2026-11-01T00:02:00.309348+00:00",
+    "generation": 1,
+    "mission_id": "host-native-acceptance-20261101",
+    "observed_checks": [
+      {
+        "consumed": 1,
+        "id": "prepare",
+        "outcome": "PASS",
+        "receipt": "receipts/e17288ce28c149d9b02e49119bb44200.json",
+        "receipt_hash": "b43737653442051537b960a1c95424a39a4880b6c1f79d25e2817119756b60a1"
+      },
+      {
+        "consumed": 0,
+        "id": "verify",
+        "outcome": "NOT_RUN",
+        "receipt": null,
+        "receipt_hash": null
+      },
+      {
+        "consumed": 0,
+        "id": "work",
+        "outcome": "NOT_RUN",
+        "receipt": null,
+        "receipt_hash": null
+      }
+    ],
+    "round": 1,
+    "schema": "bago.suite.relay.checkpoint.v1",
+    "worker": "native-A",
+    "workspace": "C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\.bago\\goals\\operational-continuity-governance-20261031\\evidence\\acceptance-20261101\\workspace\\host\\attempt2\\worker"
+  },
+  "handoff_id": "1ed8b4c6a756435690ad6bd7418bf537",
+  "old_lease_revoked": true,
+  "packet": {
+    "candidate": {
+      "id": "bounded-native-host-r1",
+      "scope_sha256": "67605bf6125fc79f60f80a762a214250182cf0474d9683815cf400e752ca9eff",
+      "suite": {
+        "candidate": "CONTEXT-LIFECYCLE-NATIVE-RC2",
+        "display_name": "BAGO5os 1.4.7",
+        "identity_sha256": "082ab22f16d418da4c07352e153232ee56cde70f2382ae4bcaa9905e28737d6d",
+        "package_id": "bago-operating-suite",
+        "payload_files": 600,
+        "payload_sha256": "e8a211b01420776dabafe8efdb98ea78c35c1156efcdfd0baeb7eb33aa121114",
+        "release_id": "BAGO-SUITE-147-BAGO-SKILL-RC2",
+        "schema": "bago.suite.candidate-identity.v1",
+        "scope": "exact installed skill bytes; unsigned integrity, not publisher authentication",
+        "version": "1.4.7"
+      }
+    },
+    "check_id": "work",
+    "checkpoint_id": "d7dae8feebff48dc864ee6fe767939b5",
+    "checkpoint_sha256": "4e12ffb478ef3a559839208b5811cf97ebb226957a451110eea21a8f49e06fd6",
+    "created_at": "2026-11-01T00:02:00.384112+00:00",
+    "from_worker": "native-A",
+    "generation": 2,
+    "handoff_id": "1ed8b4c6a756435690ad6bd7418bf537",
+    "mission_id": "host-native-acceptance-20261101",
+    "reason": "Explicit bounded phase boundary; a new real session verifies persisted context.",
+    "schema": "bago.suite.relay.handoff.v1",
+    "to_worker": "native-B"
+  },
+  "sha256": "876819c6e5f884fbd2b7f4ae53febe5786da9fa5c971309cb57c782bf9bac44a",
+  "spawned": false,
+  "status": "PASS"
+}

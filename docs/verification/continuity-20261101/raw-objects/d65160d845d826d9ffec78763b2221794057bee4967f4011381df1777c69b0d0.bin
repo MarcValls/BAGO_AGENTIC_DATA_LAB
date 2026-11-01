@@ -1,0 +1,98 @@
+"""Freeze stable HOST artifacts, leaving live TaskStore mutable for independent REVIEW."""
+from pathlib import Path
+import hashlib, json, re, subprocess, sys
+
+ROOT=Path(__file__).resolve().parent
+WORKSPACE=ROOT.parent
+REPO=next(p for p in ROOT.parents if (p/'.git').exists())
+def load(p):return json.loads(p.read_text(encoding='utf-8-sig'))
+def sha(p):return hashlib.sha256(p.read_bytes()).hexdigest()
+def write(p,obj):p.write_text(json.dumps(obj,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
+
+attempt=ROOT/'attempt2'
+events={phase:[json.loads(l) for l in (attempt/f'sessions/{phase}/events.filtered.jsonl').read_text(encoding='utf-8').splitlines() if l] for phase in ['A','B']}
+b=load(attempt/'worker/phase-B.json')
+marker=b['continuity_marker']
+source_paths=[REPO/'AGENTS.md',REPO/'.bago/team/kit/protocol/TEAM_PROTOCOL.md',
+ REPO/'plugins/bago-agent-decision-engineering-team/skills/trace-observability-engineer/SKILL.md',
+ Path.home()/'.codex/skills/bago-operating-suite/modules/agent-relay/HOST_ADAPTER_CONTRACT.md',
+ Path.home()/'.codex/skills/bago-operating-suite/scripts/suite_orchestrator.py',
+ Path.home()/'.codex/skills/bago-operating-suite/scripts/suite_control.py',
+ Path.home()/'.codex/skills/bago-operating-suite/scripts/suite_relay.py']
+supp={'schema':'bago.native-host.trace-supplement.v1','source_bindings':[{'path':str(p),'sha256':sha(p)} for p in source_paths],
+ 'successor_marker_absent_from_A_trace':marker not in (attempt/'sessions/A/events.filtered.jsonl').read_text(encoding='utf-8'),
+ 'successor_marker_absent_from_contract':marker not in (attempt/'worker/CONTRACT.json').read_text(encoding='utf-8'),
+ 'trace_index':[{'phase':phase,'session_ids':load(attempt/f'sessions/{phase}/PROCESS.json')['session_ids'],
+   'command_event_ids':[e['item']['id'] for e in rows if e.get('type')=='item.completed' and e.get('item',{}).get('type')=='command_execution'],
+   'completed_turn_count':sum(e.get('type')=='turn.completed' for e in rows)} for phase,rows in events.items()],
+ 'context_attribution':'Both phases report instruction_context. No direct AGENTS read tool was observed before receipt creation; B executes verify_native.py which reads AGENTS after creation. This corroborates repository instruction loading, not a cryptographic host prompt attestation.',
+ 'private_reasoning':'No reasoning events retained. --ephemeral prevents rollout persistence by documented CLI contract; token counts are retained, not reasoning text.',
+ 'permissions':'Native child kept workspace-write with -C worker, no --add-dir and no bypass. The outside canary was actually denied. TaskStore roles are not OS permissions.',
+ 'native_goal':'NOT_RUN: no root /goal resume tool available; new sessions and TaskStore work are distinct.',
+ 'stop_limit':'In first attempt STOP terminated immediate supervised Python child and revoked leases; Windows node/codex descendants needed explicit owned-process cleanup. owned-native-stop-result.json records remainingCount0. No process-tree atomicity claim.',
+ 'independent_relay_verify':'PENDING: relay verify check is reserved to independent-review; live state is not included as a frozen output.'}
+assert supp['successor_marker_absent_from_A_trace'] and supp['successor_marker_absent_from_contract']
+write(ROOT/'TRACE_SUPPLEMENT.json',supp)
+
+report='''# HOST: resultado observable
+
+Estado: EXECUTED y evaluación del autor VERIFIED en el alcance descrito; revisión independiente PENDING. No es el cierre de la misión original ni una reanudación nativa de `/goal`.
+
+## Ejecución real
+
+- Codex CLI 0.166.0: dos invocaciones nuevas seriales `exec --ephemeral --json -s workspace-write -C .../host/attempt2/worker`, sin worktree, configuración global, bypass, ventanas ni navegación.
+- A: `01a19468-c3b7-7650-b9ce-e56bcf4a4feb`, PID16708, exit0, cuatro comandos reales; produjo42 y recibo SHA b3fc51fd205edf57bd4f3edec7b227c672297c3adfaff203be83bc073b20ec19.
+- B: `01a19469-e119-7ff1-8efa-1bf9e6ac94ac`, PID22272, exit0, cuatro comandos reales; comprobó el predecesor, produjo43 y recibo SHA 952122a232e489942a20704e2a9d4b3c866bfaa7493e4d1583f1b02b21b6ea11.
+- TaskStore instalado identificado por su CLI como BAGO5os1.4.7 CONTEXT-LIFECYCLE-NATIVE-RC2. Se reutilizaron init/enable/round/claim/run-check/consume/finish/checkpoint/offer/accept y rechazo de lease anterior. No scheduler nuevo.
+- Oferta `1ed8b4c6a756435690ad6bd7418bf537`, digest de packet `876819c6e5f884fbd2b7f4ae53febe5786da9fa5c971309cb57c782bf9bac44a`: aceptado por CLI contra ese digest exacto. B leyó el envelope aceptado y verificó su SHA de archivo y el SHA del predecesor. El campo de B `accepted_handoff_sha256` significa SHA del archivo envelope, no del packet; ambos se conservan y se distinguen.
+
+## Pruebas y alcance
+
+- T1: progresión automática del ensayo HOST a través de ejecuciónA, recibo, checkpoint, offer/accept, sesiónB, verificación de su efecto y consumo. No se afirma que todas las futuras operaciones del producto sean automáticas.
+- T10: nonces A/B distintos en AGENTS local, ausentes de prompt/CONTRACT; nonceB también ausente de recibo y trazaA. Ambas sesiones devolvieron el suyo como instruction_context. No hubo lectura manual directa de AGENTS antes de crear recibos; B verificó AGENTS después mediante verify_native.py. Evidencia de carga de instrucciones locales en sesiones nuevas, no una certificación del prompt interno del host.
+- T4: Python ejecutado por cada sesión intentó escribir una canaria hermana fuera de -C. Ambas operaciones devolvieron PermissionError real; SHA final igual al inicial. Es una prueba concreta de sandbox, no una garantía universal de aislamiento de red o lectura.
+- T11: supervisor no transmitió BAGO_RELAY_TOKEN al adaptador; tampoco apareció en herramientas de los hijos. Heartbeat sin lease rechazado exactamente por missing/stale/foreign lease. El rol no concede permisos.
+- Evaluación del autor:31checks PASS en HOST_EVALUATION.json. Ejecución teamctl `91ab8cb0c1cf43f2aaa804e9320adf77`. La comprobación es posterior a los procesos originales y no vuelve a ejecutar el modelo.
+
+## Fallos conservados y límites
+
+1. Primer comando exterior usó ruta relativa incorrecta y falló. Segundo abrió sesión `01a19465-d014-73c2-ae1e-a5317639e590`, pero el sandbox exterior denegó sockets Windows10013; no hubo inferencia/efectos. STOP de ese ledger y limpieza de los descendientes propios están registrados.
+2. STOP del controlador Windows termina su hijo inmediato; no se demostró terminación atómica del árbol. Los node/codex del intento bloqueado se terminaron explícitamente por sus IDs propios y se verificó ausencia. No confundir este límite con impedir una operación nueva después de STOP.
+3. Lanzamiento exterior del intento2 desde el host raíz conservó workspace-write de los hijos. Su recibo exterior tiene FAIL por ausencia del output requerido mal nombrado; se conserva. La evaluación posterior usa su propio output real y recibo PASS, sin reinterpretar el fallo anterior.
+4. Warnings preexistentes de config `model_providers.ollama-local.notify` ignorada y tres skills Azure sin frontmatter: registrados, no modificados fuera de scope.
+5. `/goal resume` nativo NOT_RUN: el host controla ese estado. No se usó `codex exec resume` ni se simuló equivalencia.
+6. La verificación independiente y aceptación son de REVIEW. El check verify del relay permanece pendiente para ese consumidor; su SQLite/estado mutable no se congela como output del handoff.
+
+Las trazas JSONL se filtran antes de persistir; no se conservan eventos reasoning. Los tokens de lease permanecieron en memoria del adaptador y en el entorno del CLI autorizado, nunca en argv/prompts/reportes. No se modificaron fuentes del producto, P1, P3, binding, instrucciones raíz ni configuración global.
+'''
+(ROOT/'HOST_RESULTADO.md').write_text(report,encoding='utf-8')
+
+# Finite public-artifact scan: never inspect auth/config/environment values.
+artifact_files=[]
+for p in ROOT.rglob('*'):
+    if not p.is_file() or any(part in {'tmp','__pycache__','relay-state'} for part in p.relative_to(ROOT).parts):continue
+    if p.suffix in {'.json','.jsonl','.log','.txt','.md','.py'} and p.name not in {'handoff-HOST.json','PUBLIC_ARTIFACT_SCAN.json'}:artifact_files.append(p)
+suspects=[]
+for p in artifact_files:
+    text=p.read_text(encoding='utf-8-sig',errors='replace')
+    # Report only location/category, never matching values.
+    for category,pattern in [('api_key',r'\bsk-[A-Za-z0-9_-]{15,}\b'),('bearer',r'(?i)bearer\s+[A-Za-z0-9._~+/=-]{20,}')]:
+        if re.search(pattern,text):suspects.append({'path':str(p.relative_to(ROOT)),'category':category})
+write(ROOT/'PUBLIC_ARTIFACT_SCAN.json',{'status':'PASS' if not suspects else 'REVIEW_REQUIRED','files_scanned':len(artifact_files),'suspects':suspects,'scope':'Finite public HOST artifacts only; no auth/config/SQLite/environment dump inspected.'})
+assert not suspects, 'Potential secret patterns need review; values intentionally not printed.'
+
+inspect=json.loads(subprocess.check_output([sys.executable,'-B',str(REPO/'.bago/team/kit/scripts/teamctl.py'),'--root',str(WORKSPACE),'inspect','HOST'],text=True,encoding='utf-8'))
+receipt=load(WORKSPACE/'.bago/team/runtime/executions/91ab8cb0c1cf43f2aaa804e9320adf77/receipt.json')
+verification={'id':'native-host-relay','command':receipt['command_text'],'result':'PASS','evidence':'.bago/team/runtime/executions/91ab8cb0c1cf43f2aaa804e9320adf77/receipt.json','execution_id':'91ab8cb0c1cf43f2aaa804e9320adf77'}
+stable=[ROOT/'HOST_RESULTADO.md',ROOT/'HOST_EVALUATION.json',ROOT/'TRACE_SUPPLEMENT.json',ROOT/'PUBLIC_ARTIFACT_SCAN.json',ROOT/'verify_host.py',ROOT/'materialize_handoff.py',ROOT/'owned-native-stop-result.json',ROOT/'NATIVE_EXECUTION.json',ROOT/'relay-events.public.json']
+stable += [p for p in artifact_files if p.is_relative_to(attempt)]
+stable=list(dict.fromkeys(stable))
+handoff={'work_id':'HOST','role':'trace-observability-engineer','status':'DONE','mission_id':inspect['mission_id'],'candidate_id':inspect['candidate_id'],'scope_sha256':inspect['scope_sha256'],
+ 'changed_files':[str(p.relative_to(WORKSPACE)).replace('\\','/') for p in stable],
+ 'outputs':[{'path':str(p.relative_to(WORKSPACE)).replace('\\','/'),'kind':'stable-host-evidence','sha256':sha(p)} for p in stable],
+ 'verification':[verification],
+ 'residual_risks':['Author evaluation is not independent review; REVIEW required.','Native /goal resume unavailable/NOT_RUN.','Windows STOP immediate child is not full descendant-tree termination.','T1/T4/T10/T11 claims are bounded to observed HOST fixture, not universal product guarantees.','B emits accepted envelope-file SHA; exact packet digest acknowledgment belongs to real host-adapter CLI accept.','Mutable relay verify check remains pending to independent-review; ledger is not a frozen output.','Historical failures, preexisting config/skills warnings and cleanup are preserved.'],
+ 'next_consumers':['REVIEW']}
+handoff['payload_sha256']=hashlib.sha256(json.dumps(handoff,sort_keys=True,separators=(',',':'),ensure_ascii=False,allow_nan=False).encode()).hexdigest()
+write(ROOT/'handoff-HOST.json',handoff)
+print(json.dumps({'status':'PREPARED','outputs':len(stable),'handoff':str(ROOT/'handoff-HOST.json'),'payload_sha256':handoff['payload_sha256']}))

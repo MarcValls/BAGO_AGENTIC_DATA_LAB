@@ -1,0 +1,214 @@
+{
+  "schema": "bago.native-host-relay.v1",
+  "status": "EXECUTED_PENDING_REVIEW",
+  "boundary": "real Codex CLI sessions plus installed TaskStore; not native Goal resumption",
+  "independent_verification": "PENDING_REVIEW",
+  "offer_sha256": "876819c6e5f884fbd2b7f4ae53febe5786da9fa5c971309cb57c782bf9bac44a",
+  "handoff_id": "1ed8b4c6a756435690ad6bd7418bf537",
+  "final_state": {
+    "assignments": [],
+    "candidate": {
+      "id": "bounded-native-host-r1",
+      "scope_sha256": "67605bf6125fc79f60f80a762a214250182cf0474d9683815cf400e752ca9eff",
+      "suite": {
+        "candidate": "CONTEXT-LIFECYCLE-NATIVE-RC2",
+        "display_name": "BAGO5os 1.4.7",
+        "identity_sha256": "082ab22f16d418da4c07352e153232ee56cde70f2382ae4bcaa9905e28737d6d",
+        "package_id": "bago-operating-suite",
+        "payload_files": 600,
+        "payload_sha256": "e8a211b01420776dabafe8efdb98ea78c35c1156efcdfd0baeb7eb33aa121114",
+        "release_id": "BAGO-SUITE-147-BAGO-SKILL-RC2",
+        "schema": "bago.suite.candidate-identity.v1",
+        "scope": "exact installed skill bytes; unsigned integrity, not publisher authentication",
+        "version": "1.4.7"
+      }
+    },
+    "candidate_identity_check": "NOT_RUN; recorded identity only",
+    "checks": [
+      {
+        "consumed": 1,
+        "id": "prepare",
+        "outcome": "PASS",
+        "receipt": "receipts/e17288ce28c149d9b02e49119bb44200.json",
+        "receipt_hash": "b43737653442051537b960a1c95424a39a4880b6c1f79d25e2817119756b60a1"
+      },
+      {
+        "consumed": 0,
+        "id": "verify",
+        "outcome": "NOT_RUN",
+        "receipt": null,
+        "receipt_hash": null
+      },
+      {
+        "consumed": 1,
+        "id": "work",
+        "outcome": "PASS",
+        "receipt": "receipts/c3b07ba4a527476ab9fb1a6f49a97d94.json",
+        "receipt_hash": "3f52ac1454e0f1da505256931a52550daab81634b243c3c9e7dffe3ba2a0ae4e"
+      }
+    ],
+    "collaboration": {
+      "checkpoints_used": 2,
+      "claims_used": 3,
+      "enabled": true,
+      "handoffs": [
+        {
+          "check_id": "work",
+          "id": "1ed8b4c6a756435690ad6bd7418bf537",
+          "sha256": "876819c6e5f884fbd2b7f4ae53febe5786da9fa5c971309cb57c782bf9bac44a",
+          "state": "ACCEPTED"
+        }
+      ],
+      "host_authentication": "NOT_PROVIDED",
+      "mode": "COOPERATIVE_SERIAL",
+      "work": [
+        {
+          "check_id": "prepare",
+          "checkpoint_id": null,
+          "expires_at": null,
+          "generation": 2,
+          "state": "DONE",
+          "worker": "native-A"
+        },
+        {
+          "check_id": "verify",
+          "checkpoint_id": null,
+          "expires_at": null,
+          "generation": 0,
+          "state": "AVAILABLE",
+          "worker": null
+        },
+        {
+          "check_id": "work",
+          "checkpoint_id": "d7dae8feebff48dc864ee6fe767939b5",
+          "expires_at": null,
+          "generation": 4,
+          "state": "DONE",
+          "worker": "native-B"
+        }
+      ],
+      "workers": [
+        {
+          "id": "native-A",
+          "role": "executor"
+        },
+        {
+          "id": "native-B",
+          "role": "executor"
+        },
+        {
+          "id": "independent-review",
+          "role": "verifier"
+        }
+      ]
+    },
+    "control": "ACTIVE",
+    "host_interrupt": "NOT_RUN; only owned supervised child processes can be interrupted",
+    "max_rounds": 4,
+    "mission_id": "host-native-acceptance-20261101",
+    "operation": "AUDIT",
+    "round": 1,
+    "runs": [
+      {
+        "check_id": "prepare",
+        "command": "[\"C:\\\\Python314\\\\python.exe\",\"-B\",\"C:\\\\Users\\\\AMTEC_Terminal_1º\\\\Desktop\\\\BAGO5_ADL\\\\.bago\\\\goals\\\\operational-continuity-governance-20261031\\\\evidence\\\\acceptance-20261101\\\\workspace\\\\host\\\\attempt2\\\\native_session.py\",\"A\"]",
+        "cwd": "C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\.bago\\goals\\operational-continuity-governance-20261031\\evidence\\acceptance-20261101\\workspace\\host\\attempt2\\worker",
+        "finished": "2026-11-01T00:01:42.200407+00:00",
+        "id": "176cff969af54190897db02ecd456a60",
+        "interruption": "NONE",
+        "pid": 17660,
+        "receipt": "receipts/e17288ce28c149d9b02e49119bb44200.json",
+        "returncode": 0,
+        "round": 1,
+        "started": "2026-11-01T00:00:55.341033+00:00",
+        "state": "FINISHED"
+      },
+      {
+        "check_id": "work",
+        "command": "[\"C:\\\\Python314\\\\python.exe\",\"-B\",\"C:\\\\Users\\\\AMTEC_Terminal_1º\\\\Desktop\\\\BAGO5_ADL\\\\.bago\\\\goals\\\\operational-continuity-governance-20261031\\\\evidence\\\\acceptance-20261101\\\\workspace\\\\host\\\\attempt2\\\\native_session.py\",\"B\"]",
+        "cwd": "C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\.bago\\goals\\operational-continuity-governance-20261031\\evidence\\acceptance-20261101\\workspace\\host\\attempt2\\worker",
+        "finished": "2026-11-01T00:03:05.871120+00:00",
+        "id": "d8e52cae72c54fb8af4cb7febf2d3dba",
+        "interruption": "NONE",
+        "pid": 2444,
+        "receipt": "receipts/c3b07ba4a527476ab9fb1a6f49a97d94.json",
+        "returncode": 0,
+        "round": 1,
+        "started": "2026-11-01T00:02:08.692723+00:00",
+        "state": "FINISHED"
+      }
+    ],
+    "schema": "bago.suite.task.control.v1",
+    "scope": [
+      "AGENTS.md",
+      "CONTRACT.json",
+      "boundary_probe.py",
+      "verify_native.py"
+    ],
+    "status": "PASS",
+    "task_status": "OPEN"
+  },
+  "canary_sha256_after": "191b8bff4456e8f32fb1b161948af0411a42a307d4cbd615ae9f65f1f776ff2a",
+  "native_processes": [
+    {
+      "schema": "bago.native-session.observation.v1",
+      "phase": "A",
+      "pid": 16708,
+      "argv": [
+        "C:\\Program Files\\nodejs\\node.EXE",
+        "C:\\Users\\AMTEC_Terminal_1º\\AppData\\Roaming\\npm\\node_modules\\@openai\\codex\\bin\\codex.js",
+        "exec",
+        "--ephemeral",
+        "--json",
+        "--color",
+        "never",
+        "-s",
+        "workspace-write",
+        "-C",
+        "C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\.bago\\goals\\operational-continuity-governance-20261031\\evidence\\acceptance-20261101\\workspace\\host\\attempt2\\worker",
+        "-"
+      ],
+      "returncode": 0,
+      "session_ids": [
+        "01a19468-c3b7-7650-b9ce-e56bcf4a4feb"
+      ],
+      "duration_seconds": 46.623,
+      "filtered_reasoning_events": 0,
+      "persisted_events": 15,
+      "supervised_child_inherited_lease": false,
+      "receipt_exists": true,
+      "failure": null,
+      "receipt_sha256": "b3fc51fd205edf57bd4f3edec7b227c672297c3adfaff203be83bc073b20ec19"
+    },
+    {
+      "schema": "bago.native-session.observation.v1",
+      "phase": "B",
+      "pid": 22272,
+      "argv": [
+        "C:\\Program Files\\nodejs\\node.EXE",
+        "C:\\Users\\AMTEC_Terminal_1º\\AppData\\Roaming\\npm\\node_modules\\@openai\\codex\\bin\\codex.js",
+        "exec",
+        "--ephemeral",
+        "--json",
+        "--color",
+        "never",
+        "-s",
+        "workspace-write",
+        "-C",
+        "C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\.bago\\goals\\operational-continuity-governance-20261031\\evidence\\acceptance-20261101\\workspace\\host\\attempt2\\worker",
+        "-"
+      ],
+      "returncode": 0,
+      "session_ids": [
+        "01a19469-e119-7ff1-8efa-1bf9e6ac94ac"
+      ],
+      "duration_seconds": 56.963,
+      "filtered_reasoning_events": 0,
+      "persisted_events": 16,
+      "supervised_child_inherited_lease": false,
+      "receipt_exists": true,
+      "failure": null,
+      "receipt_sha256": "952122a232e489942a20704e2a9d4b3c866bfaa7493e4d1583f1b02b21b6ea11"
+    }
+  ]
+}

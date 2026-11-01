@@ -1,0 +1,25 @@
+{
+  "mission_id": "CODEX_GOVERNED_CONTINUITY_20261031",
+  "candidate_id": "0f74f0d818f422d2a9506957e6396070300bbb77d88c602605b4fa647e7cc774",
+  "scope_sha256": "0af844db09c04531999970ed71e0bce9ed1f51245b48416d0453a7bc7cef9df9",
+  "work_id": "BRAVE_E2E_R5",
+  "work_status": "CLAIMED",
+  "p2_handoff_sha256": "b3bf64cf73804d3762192dbe437e817967958d9e0f9f3ef5dc20aa13484a8a72",
+  "p2_exe_sha256": "2aefdaa63fbfeadb79498acac429bee36e3fce3ac323664fa0733347a030e333",
+  "cr014_decision": "APPROVED_BY_USER",
+  "cr014_scope": "Native host argv contract only; no registry-install authorization inferred",
+  "checks": {
+    "mission_active": true,
+    "pause_history_empty": true,
+    "p2_inspect": "PASS (direct inspect); global verify remains blocked by unrelated LOCAL_POLICY status output hash mismatch",
+    "native_host_registry_key": "ABSENT",
+    "brave_version": "156.1.98.63",
+    "fixture_http": 200,
+    "fixture_title": "Fixture Browser Bridge",
+    "role_skill_present": false
+  },
+  "runtime_result": "NOT_RUN",
+  "reason": "The required HKCU NativeMessagingHosts registration is absent. Creating the registration and a host manifest would create a new Native Messaging access path. The mission output scopes do not explicitly authorize this OS registry effect, and the active-time confirmation policy requires user confirmation for a security-sensitive access change. No registry key or manifest was created and no Native Messaging call was attempted.",
+  "browser_focus": "Not changed; no UI action performed. Existing Brave windows were left untouched.",
+  "recorded_at_utc": "2026-10-31T12:40:04.320090+00:00"
+}

@@ -1,0 +1,9 @@
+{
+  "claim": "No process tree interruption guarantee",
+  "cause": "STOP killed supervised Python child; Windows native node/codex descendants required explicit host cleanup",
+  "remainingCount": 0,
+  "ownedIds": [
+    15988,
+    13692
+  ]
+}

@@ -1,0 +1,35 @@
+{
+    "schema":  "bago.browser-bridge.brave-r5.runtime.v1",
+    "status":  "FAIL",
+    "runtime_exit_code":  1,
+    "runtime_output":  "{\"status\":\"FAIL\",\"browser\":\"Brave\",\"fixture_url\":\"http://127.0.0.1:18765/\",\"extension_id\":\"jeocgjmcakdgbogpcbmhmpcfkgamoaec\",\"host_name\":\"com.bago.browser_bridge\",\"registry_key\":\"HKCU\\\\Software\\\\Google\\\\Chrome\\\\NativeMessagingHosts\\\\com.bago.browser_bridge\",\"registry_view\":\"Registry64 (Chromium lookup checks Registry32 then Registry64)\",\"toolbar_gesture\":\"NOT_RUN\",\"video\":{\"status\":\"NOT_RUN\",\"reason\":\"Playwright ffmpeg-1013 bundle is unavailable; no binary was copied or installed.\"},\"interaction\":\"Native Messaging API invoked in the loaded extension service worker; no toolbar click or window activation.\",\"protocol_responses\":[],\"browser_errors\":[\"Failed to load resource: the server responded with a status of 404 (File not found)\"],\"page_title\":\"Fixture Browser Bridge\",\"document_epoch\":\"C922EC0FCF2D2E734C1EF89156EC2B5C\",\"origin\":\"http://127.0.0.1:18765\",\"sha256\":\"9586130d1cd0699a6c43dd2aa5a725ae90573944f22197aad324dce9fe374f62\",\"byte_length\":188,\"service_worker\":\"chrome-extension://jeocgjmcakdgbogpcbmhmpcfkgamoaec/service_worker.js\",\"error\":\"worker.evaluate: Target page, context or browser has been closed\\n    at run (C:\\\\Users\\\\AMTEC_Terminal_1º\\\\Desktop\\\\BAGO5_ADL\\\\.worktrees\\\\browser-bridge-runtime-validation-20261030\\\\scripts\\\\browser_bridge\\\\runtime\\\\brave_native_messaging_r5.cjs:128:35)\",\"screenshot\":\".bago/goals/browser-bridge-runtime-validation-20261030/revision5/screenshots/fixture-brave-r5-attempt6.png\",\"recorded_at_utc\":\"2026-10-31T15:33:02.787Z\"}",
+    "error":  "Brave runtime runner exited 1: {\"status\":\"FAIL\",\"browser\":\"Brave\",\"fixture_url\":\"http://127.0.0.1:18765/\",\"extension_id\":\"jeocgjmcakdgbogpcbmhmpcfkgamoaec\",\"host_name\":\"com.bago.browser_bridge\",\"registry_key\":\"HKCU\\\\Software\\\\Google\\\\Chrome\\\\NativeMessagingHosts\\\\com.bago.browser_bridge\",\"registry_view\":\"Registry64 (Chromium lookup checks Registry32 then Registry64)\",\"toolbar_gesture\":\"NOT_RUN\",\"video\":{\"status\":\"NOT_RUN\",\"reason\":\"Playwright ffmpeg-1013 bundle is unavailable; no binary was copied or installed.\"},\"interaction\":\"Native Messaging API invoked in the loaded extension service worker; no toolbar click or window activation.\",\"protocol_responses\":[],\"browser_errors\":[\"Failed to load resource: the server responded with a status of 404 (File not found)\"],\"page_title\":\"Fixture Browser Bridge\",\"document_epoch\":\"C922EC0FCF2D2E734C1EF89156EC2B5C\",\"origin\":\"http://127.0.0.1:18765\",\"sha256\":\"9586130d1cd0699a6c43dd2aa5a725ae90573944f22197aad324dce9fe374f62\",\"byte_length\":188,\"service_worker\":\"chrome-extension://jeocgjmcakdgbogpcbmhmpcfkgamoaec/service_worker.js\",\"error\":\"worker.evaluate: Target page, context or browser has been closed\\n    at run (C:\\\\Users\\\\AMTEC_Terminal_1º\\\\Desktop\\\\BAGO5_ADL\\\\.worktrees\\\\browser-bridge-runtime-validation-20261030\\\\scripts\\\\browser_bridge\\\\runtime\\\\brave_native_messaging_r5.cjs:128:35)\",\"screenshot\":\".bago/goals/browser-bridge-runtime-validation-20261030/revision5/screenshots/fixture-brave-r5-attempt6.png\",\"recorded_at_utc\":\"2026-10-31T15:33:02.787Z\"}",
+    "cleanup_errors":  [
+
+                       ],
+    "mission_id":  "CODEX_GOVERNED_CONTINUITY_20261031",
+    "candidate_id":  "0f74f0d818f422d2a9506957e6396070300bbb77d88c602605b4fa647e7cc774",
+    "scope_sha256":  "0af844db09c04531999970ed71e0bce9ed1f51245b48416d0453a7bc7cef9df9",
+    "registry_key":  "HKCU\\Software\\Google\\Chrome\\NativeMessagingHosts\\com.bago.browser_bridge",
+    "registry_view_created":  "Registry64",
+    "manifest_sha256":  "47c3f22d589609756f54078eecb8cfb04c63229ac9b5c81d3a145429bf820ccd",
+    "runtime_result":  "FAIL",
+    "video_status":  "NOT_RUN",
+    "video_reason":  "Playwright ffmpeg-1013 bundle is unavailable; no binary was copied or installed.",
+    "registry_absent_after":  true,
+    "manifest_absent_after":  true,
+    "profile_absent_after":  true,
+    "focus_preserved":  true,
+    "foreground_before":  {
+                              "pid":  20980,
+                              "process":  "ChatGPT Classic",
+                              "title":  "ChatGPT Classic"
+                          },
+    "foreground_after":  {
+                             "pid":  20980,
+                             "process":  "ChatGPT Classic",
+                             "title":  "ChatGPT Classic"
+                         },
+    "toolbar_gesture":  "NOT_RUN",
+    "recorded_at_utc":  "2026-10-31T15:33:03.3728425Z"
+}

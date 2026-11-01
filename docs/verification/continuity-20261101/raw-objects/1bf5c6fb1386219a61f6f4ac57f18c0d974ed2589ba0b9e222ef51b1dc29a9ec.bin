@@ -1,0 +1,21 @@
+{
+    "status":  "PASS",
+    "registry_absent":  true,
+    "manifest_absent":  true,
+    "isolated_profile_absent":  true,
+    "isolated_processes_absent":  true,
+    "revision5_host_processes_absent":  true,
+    "registry_path":  "HKCU\\Software\\Google\\Chrome\\NativeMessagingHosts\\com.bago.browser_bridge",
+    "registry_views_checked":  [
+                                   "Registry32",
+                                   "Registry64"
+                               ],
+    "screenshot_sha256":  "614bb7bb7ea375f271736bbc733600b641516052429ca8994c9aafdb647d1f9d",
+    "video_status":  "NOT_RUN",
+    "video_reason":  "Playwright ffmpeg-1013 bundle is unavailable; no binary was copied or installed.",
+    "runtime_evidence_sha256":  "a39a9b4d0367d03ad205b97cb78d79151a8b9db89b7b92e16aa92658a5bcfec9",
+    "cleanup_record_sha256":  "a010c28a699587b5c074084453ce96eec9539c18f0663786bbff39dffb41c382",
+    "runtime_check_execution_id":  "82c2292c60ea403e9dadb313be96202d",
+    "candidate_id":  "0f74f0d818f422d2a9506957e6396070300bbb77d88c602605b4fa647e7cc774",
+    "scope_sha256":  "0af844db09c04531999970ed71e0bce9ed1f51245b48416d0453a7bc7cef9df9"
+}

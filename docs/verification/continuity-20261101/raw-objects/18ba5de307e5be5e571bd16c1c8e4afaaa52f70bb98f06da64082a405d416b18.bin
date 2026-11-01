@@ -1,0 +1,87 @@
+{
+  "schema": "bago.continuity.governance.matrix.v1",
+  "mission_id": "BAGO_CONTINUITY_ACCEPTANCE_20261101",
+  "updated_at": "2026-11-01T00:03:11.237470+00:00",
+  "matrix": {
+    "T2": {
+      "status": "PASS",
+      "scope": "Native Gateway rejects missing and expired Permit; actual canary hash/mtime unchanged.",
+      "cases": [
+        "registration_and_lease_grant_no_authority",
+        "expired_permit_is_distinct_from_unissued"
+      ]
+    },
+    "T3": {
+      "status": "PASS",
+      "scope": "Actual TaskStore registration and relay lease cannot be used as native Permit; untrusted approval channel rejected.",
+      "cases": [
+        "registration_and_lease_grant_no_authority"
+      ],
+      "supplement": "untrusted_approval_rejected"
+    },
+    "T4": {
+      "status": "PARTIAL",
+      "scope": "Native request fingerprint, workspace target validation and bounded host grant reject other target; second real canary unchanged. OS enforcement belongs to HOST and is NOT_RUN here.",
+      "cases": [
+        "scope_and_delegated_identity_do_not_inherit_authority"
+      ]
+    },
+    "T5": {
+      "status": "PASS",
+      "scope": "Issued native Permit is revoked through revoke_permit; next Gateway effect is denied and actual canary unchanged.",
+      "cases": [
+        "revoked_permit_blocks_actual_canary_write"
+      ]
+    },
+    "T6": {
+      "status": "PASS_SCOPED",
+      "scope": "STOP persisted in real SQLite survives a new TaskStore instance and blocks subsequent Popen, lease claim and fresh native issuance through the checked adapter. No automatic resume performed. Not a running-process/descendant kill test.",
+      "cases": [
+        "durable_STOP_blocks_later_process_and_claim"
+      ]
+    },
+    "T7": {
+      "status": "PASS",
+      "scope": "Real filesystem.write executes once with readback receipt. Same-process consumed Permit replay and same-round managed check repeat reject; canary bytes/mtime remain unchanged.",
+      "cases": [
+        "authorized_real_effect_replay_and_required_verification"
+      ]
+    },
+    "T9": {
+      "status": "PASS",
+      "scope": "Actual child exit7 remains FAIL; altered managed receipt blocks consumption/closure; zero-exit real write with missing required TaskStore artifact has no verification receipt and remains NOT_VERIFIED.",
+      "cases": [
+        "failed_real_process_never_becomes_success",
+        "receipt_mismatch_blocks_consumption_and_closure"
+      ],
+      "supplement": "missing TaskStore receipt"
+    },
+    "T11": {
+      "status": "PASS_SCOPED",
+      "scope": "Different session, foreign worker lease and another PID using parent Permit are rejected. Positive worker requires its own fresh native issuance after validating current GO canary grant and ACTIVE TaskStore; no inherited native authority. Not a host/OS identity attestation.",
+      "cases": [
+        "scope_and_delegated_identity_do_not_inherit_authority",
+        "authorized_real_effect_replay_and_required_verification"
+      ]
+    },
+    "T12": {
+      "status": "PASS",
+      "scope": "Successful work cannot close with verifier pending; failed execution, receipt mismatch and missing required output block closure. After real verifier process, consume and finish, the positive fixture closes PASS.",
+      "cases": [
+        "authorized_real_effect_replay_and_required_verification",
+        "failed_real_process_never_becomes_success",
+        "receipt_mismatch_blocks_consumption_and_closure"
+      ],
+      "supplement": "missing TaskStore receipt"
+    }
+  },
+  "main_execution_id": "2158111884aa407a84bd8e336dfb89cc",
+  "supplement_execution_id": "cc8e7ef8a1e24f4e9a99aec5e0b029ad",
+  "harness_sha256": "f60df162e09bbab3f607c5b223797d076dd76e678f7906f2dec6ef086e774ae6",
+  "not_run": [
+    "OS sandbox enforcement and genuine Codex agents belong to HOST.",
+    "Interactive human rejection UI/TTY flow is not provided by this local native-boundary harness.",
+    "No claim of killing arbitrary running descendants or global Codex goal resume."
+  ],
+  "evidence_manifest": "governance/evidence-manifest.json"
+}

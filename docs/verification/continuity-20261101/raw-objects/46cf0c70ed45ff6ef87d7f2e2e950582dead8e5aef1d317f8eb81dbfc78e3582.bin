@@ -1,0 +1,6 @@
+{
+  "status": "PASS",
+  "files_scanned": 49,
+  "suspects": [],
+  "scope": "Finite public HOST artifacts only; no auth/config/SQLite/environment dump inspected."
+}

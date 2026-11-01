@@ -1,0 +1,31 @@
+{
+    "schema":  "bago.browser-bridge.brave-r5.runtime.v1",
+    "status":  "FAIL",
+    "runtime_exit_code":  null,
+    "runtime_output":  null,
+    "error":  "El término \u0027Get-FileHash\u0027 no se reconoce como nombre de un cmdlet, función, archivo de script o programa ejecutable. Compruebe si escribió correctamente el nombre o, si incluyó una ruta de acceso, compruebe que dicha ruta es correcta e inténtelo de nuevo.",
+    "cleanup_errors":  [
+
+                       ],
+    "mission_id":  "CODEX_GOVERNED_CONTINUITY_20261031",
+    "candidate_id":  "0f74f0d818f422d2a9506957e6396070300bbb77d88c602605b4fa647e7cc774",
+    "scope_sha256":  "0af844db09c04531999970ed71e0bce9ed1f51245b48416d0453a7bc7cef9df9",
+    "registry_key":  "HKCU\\Software\\BraveSoftware\\Brave-Browser\\NativeMessagingHosts\\com.bago.browser_bridge",
+    "manifest_sha256":  null,
+    "registry_absent_after":  true,
+    "manifest_absent_after":  true,
+    "profile_absent_after":  true,
+    "focus_preserved":  true,
+    "foreground_before":  {
+                              "pid":  20980,
+                              "process":  "ChatGPT Classic",
+                              "title":  "ChatGPT Classic"
+                          },
+    "foreground_after":  {
+                             "pid":  20980,
+                             "process":  "ChatGPT Classic",
+                             "title":  "ChatGPT Classic"
+                         },
+    "toolbar_gesture":  "NOT_RUN",
+    "recorded_at_utc":  "2026-10-31T15:24:59.9980849Z"
+}

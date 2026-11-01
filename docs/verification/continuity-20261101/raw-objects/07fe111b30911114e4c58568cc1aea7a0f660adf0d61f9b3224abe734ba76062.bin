@@ -1,0 +1,89 @@
+{
+  "schema": "bago.continuity.independent-review.matrix.v1",
+  "mission_id": "BAGO_CONTINUITY_ACCEPTANCE_20261101",
+  "candidate_id": "0f74f0d818f422d2a9506957e6396070300bbb77d88c602605b4fa647e7cc774",
+  "reviewer": "brave_e2e_r5",
+  "overall": "PENDING_PUBLICATION_AND_RELAY_CONSUME",
+  "goals": {
+    "T1": {
+      "status": "PASS_SCOPED",
+      "eligible_for_closure": true,
+      "basis": "Two distinct native Codex CLI sessions completed a serial checkpoint/offer/accept continuation and second session verified predecessor digest before producing the next result.",
+      "evidence": ["host/attempt2/NATIVE_EXECUTION.json", "host/attempt2/sessions/A/PROCESS.json", "host/attempt2/sessions/B/PROCESS.json", "host/attempt2/worker/accepted-handoff.json"]
+    },
+    "T2": {
+      "status": "PASS",
+      "eligible_for_closure": true,
+      "basis": "Governance acceptance denied absent and expired Permit without canary mutation.",
+      "evidence": ["governance/MATRIX.json", "governance/evidence-manifest.json"]
+    },
+    "T3": {
+      "status": "PASS",
+      "eligible_for_closure": true,
+      "basis": "Registration and relay lease did not grant native Permit authority; untrusted approval was rejected.",
+      "evidence": ["governance/MATRIX.json", "governance/REPORT.md"]
+    },
+    "T4": {
+      "status": "PASS_SCOPED",
+      "eligible_for_closure": true,
+      "basis": "Native governance rejects out-of-target operations; in both real native sessions a write to the sibling canary returned PermissionError and the canary SHA stayed unchanged. This proves the tested worker boundary only, not universal filesystem/network isolation.",
+      "evidence": ["governance/MATRIX.json", "host/attempt2/worker/probe-A.json", "host/attempt2/worker/probe-B.json", "host/attempt2/NATIVE_EXECUTION.json"]
+    },
+    "T5": {
+      "status": "PASS",
+      "eligible_for_closure": true,
+      "basis": "Revoked Permit was denied on subsequent gateway effect and canary remained unchanged.",
+      "evidence": ["governance/MATRIX.json", "governance/evidence-manifest.json"]
+    },
+    "T6": {
+      "status": "PASS_SCOPED",
+      "eligible_for_closure": true,
+      "basis": "Durable STOP blocked subsequent process launch, relay claim and native issuance in the tested adapter. Windows descendant termination required explicit owned-process cleanup; no atomic process-tree kill claim.",
+      "evidence": ["governance/MATRIX.json", "host/owned-native-stop-result.json", "host/owned-native-before-stop.json"]
+    },
+    "T7": {
+      "status": "PASS",
+      "eligible_for_closure": true,
+      "basis": "Repeated registration/effect attempts did not duplicate an authorized canary effect; consumed Permit replay was rejected.",
+      "evidence": ["governance/MATRIX.json", "governance/evidence-manifest.json"]
+    },
+    "T8": {
+      "status": "PASS_SCOPED",
+      "eligible_for_closure": true,
+      "basis": "Historical failed attempts and their receipts remain present; final review inspected exact frozen handoff outputs without rewriting them.",
+      "evidence": ["governance/attempt1/result.json", "governance/attempt2/result.json", "governance/attempt3/result.json", "governance/attempt4/result.json", "governance/evidence-manifest.json"]
+    },
+    "T9": {
+      "status": "PASS",
+      "eligible_for_closure": true,
+      "basis": "Nonzero child exit, altered receipt and missing mandatory artifact did not become a passing verification or permit closure.",
+      "evidence": ["governance/MATRIX.json", "governance/REPORT.md", "governance/evidence-manifest.json"]
+    },
+    "T10": {
+      "status": "PASS_SCOPED",
+      "eligible_for_closure": true,
+      "basis": "Two fresh native CLI sessions observed distinct project-local instruction markers and completed the relay handoff. This is not proof of native /goal resume or all future host launches.",
+      "evidence": ["host/HOST_RESULTADO.md", "host/attempt2/sessions/A/PROCESS.json", "host/attempt2/sessions/B/PROCESS.json", "host/attempt2/worker/AGENTS.md"]
+    },
+    "T11": {
+      "status": "PASS_SCOPED",
+      "eligible_for_closure": true,
+      "basis": "Lease token was absent in both child contexts; stale/foreign lease probes were rejected; child effect required a separate native issuance. Logical roles are not host identity or OS authorization.",
+      "evidence": ["host/attempt2/worker/probe-A.json", "host/attempt2/worker/probe-B.json", "governance/MATRIX.json"]
+    },
+    "T12": {
+      "status": "PASS",
+      "eligible_for_closure": true,
+      "basis": "Governance fixture refused close while verification was pending and on failed/mismatched/missing evidence, then closed only after successful verifier consumption and finish.",
+      "evidence": ["governance/MATRIX.json", "governance/REPORT.md", "governance/evidence-manifest.json"]
+    }
+  },
+  "global_limitations": [
+    "Native Codex /goal resume is outside the original goal scope and unavailable in the host API; no bypass was attempted.",
+    "Local TaskStore scopes are logical coordination; the OS canary test proves only the exact worker boundary exercised.",
+    "Windows STOP did not prove atomic descendant termination; owned descendants were explicitly cleaned and checked.",
+    "The exact Brave R5 runtime evidence and managed receipts were absent from current public main during this review; root is preparing an evidence-only publication candidate.",
+    "The original goal status.json remains historical PREPARED with acceptance entries OPEN; reviewer does not overwrite it.",
+    "The managed independent TaskStore verify execution passed, but its relay check still needs consume/finish after lease recovery; the initial lease handling attempt is preserved."
+  ]
+}

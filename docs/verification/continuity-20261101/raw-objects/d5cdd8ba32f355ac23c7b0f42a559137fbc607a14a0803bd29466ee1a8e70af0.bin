@@ -1,0 +1,13 @@
+# Native governance acceptance
+
+Main check: eight cases PASS through installed AuthorizationBoundary, ExecutionGateway, FilesystemEffectAdapter, TaskStore and relay. Supplement: missing mandatory verification artifact and untrusted approval channel both reject correctly. The positive worker actually writes the canary via Gateway, observes a filesystem-write SHA256 receipt, then proves replay leaves exact bytes and mtime unchanged. A separate native managed verifier reads the real canary.
+
+Authority origin is the current user GO + OK, ACEPTO for mission BAGO_CONTINUITY_ACCEPTANCE_20261101. Every test issuance is bound to its own one-file canary grant under governance; the bounded adapter rechecks the actual TaskStore is ACTIVE and OPEN. It reuses the protected local-host issuance seam documented by cognitive MissionAuthority. No GUI click, native TTY authentication or remote host identity is invented.
+
+Native authorization is process-local: the JSON ledger is only a projection. An actual child PID rejects the parent token. For the positive effect that child independently validates the immutable GO grant digest and current TaskStore state, then obtains and consumes a fresh single-use native Permit. This is an explicit bounded test adapter, not automatic authority inheritance.
+
+STOP evidence concerns durable cooperative admission before another owned launch or claim; no running descendant-kill or OS isolation claim. Read the per-T matrix for T4 PARTIAL and T6/T11 scoped limits; HOST owns real agent and OS tests. The failed-child case distinguishes a valid consumed receipt from a FAIL product outcome. The missing-artifact case preserves a real executed effect and its native Gateway receipt while the TaskStore check is ERROR, has no verification receipt and cannot close.
+
+All attempts remain: attempts1/2 failed at harness import setup before native effect issuance (api import path was missing); attempt3 exposed the correctly process-local parent token. Attempt4 uses an independently issued child token and passes all eight cases. No installed toolkit or product source was edited. Source hashes are in attempt4/result.json. Deterministic test workers are not LLM agents.
+
+Evidence copies are byte-exact under evidence/, with original locations and hashes in evidence-manifest.json. Raw child token files are retained privately inside disposable attempt trees and are not included in public handoff outputs. No original mission receipt, P1/P3/binding, global configuration or host scope was touched.

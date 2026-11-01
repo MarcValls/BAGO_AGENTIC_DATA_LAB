@@ -1,0 +1,69 @@
+{
+  "schema": "bago.native-host.trace-supplement.v1",
+  "source_bindings": [
+    {
+      "path": "C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\AGENTS.md",
+      "sha256": "d11c7dc1a2a14487556fa916c83a2faa500b7131f59d980e448731a0f71a4874"
+    },
+    {
+      "path": "C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\.bago\\team\\kit\\protocol\\TEAM_PROTOCOL.md",
+      "sha256": "26508c678346577b26b0e98d5019c0fd096bde350189f99f2a016878759ba022"
+    },
+    {
+      "path": "C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\plugins\\bago-agent-decision-engineering-team\\skills\\trace-observability-engineer\\SKILL.md",
+      "sha256": "1fcdaa1849d0f3edcf3b52342a4563e89323bc12033ac5906c445220b321d5a3"
+    },
+    {
+      "path": "C:\\Users\\AMTEC_Terminal_1º\\.codex\\skills\\bago-operating-suite\\modules\\agent-relay\\HOST_ADAPTER_CONTRACT.md",
+      "sha256": "31d3e89e20b36ae55c8f0b26fe503c395ae8cc0b40096edc4fa0417118820549"
+    },
+    {
+      "path": "C:\\Users\\AMTEC_Terminal_1º\\.codex\\skills\\bago-operating-suite\\scripts\\suite_orchestrator.py",
+      "sha256": "e6b3429dd8ab8e1aa307c16f77e6bded750b02a98bfe4356d988df25ffeb4daa"
+    },
+    {
+      "path": "C:\\Users\\AMTEC_Terminal_1º\\.codex\\skills\\bago-operating-suite\\scripts\\suite_control.py",
+      "sha256": "052a62a161d71617cc9c8f736d8c58d89aabadc27795122c7705d02443aa8bf0"
+    },
+    {
+      "path": "C:\\Users\\AMTEC_Terminal_1º\\.codex\\skills\\bago-operating-suite\\scripts\\suite_relay.py",
+      "sha256": "aaedb95c76611967ca01668ea0101067e158d8389356a3c10ebaa592d117456b"
+    }
+  ],
+  "successor_marker_absent_from_A_trace": true,
+  "successor_marker_absent_from_contract": true,
+  "trace_index": [
+    {
+      "phase": "A",
+      "session_ids": [
+        "01a19468-c3b7-7650-b9ce-e56bcf4a4feb"
+      ],
+      "command_event_ids": [
+        "item_3",
+        "item_4",
+        "item_5",
+        "item_6"
+      ],
+      "completed_turn_count": 1
+    },
+    {
+      "phase": "B",
+      "session_ids": [
+        "01a19469-e119-7ff1-8efa-1bf9e6ac94ac"
+      ],
+      "command_event_ids": [
+        "item_3",
+        "item_4",
+        "item_6",
+        "item_7"
+      ],
+      "completed_turn_count": 1
+    }
+  ],
+  "context_attribution": "Both phases report instruction_context. No direct AGENTS read tool was observed before receipt creation; B executes verify_native.py which reads AGENTS after creation. This corroborates repository instruction loading, not a cryptographic host prompt attestation.",
+  "private_reasoning": "No reasoning events retained. --ephemeral prevents rollout persistence by documented CLI contract; token counts are retained, not reasoning text.",
+  "permissions": "Native child kept workspace-write with -C worker, no --add-dir and no bypass. The outside canary was actually denied. TaskStore roles are not OS permissions.",
+  "native_goal": "NOT_RUN: no root /goal resume tool available; new sessions and TaskStore work are distinct.",
+  "stop_limit": "In first attempt STOP terminated immediate supervised Python child and revoked leases; Windows node/codex descendants needed explicit owned-process cleanup. owned-native-stop-result.json records remainingCount0. No process-tree atomicity claim.",
+  "independent_relay_verify": "PENDING: relay verify check is reserved to independent-review; live state is not included as a frozen output."
+}

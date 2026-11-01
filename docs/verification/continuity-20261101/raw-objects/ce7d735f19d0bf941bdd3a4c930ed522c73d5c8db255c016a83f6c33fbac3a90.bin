@@ -1,0 +1,27 @@
+{
+  "phase": "A",
+  "token_present": false,
+  "boundary": {
+    "result": "WRITE_DENIED",
+    "error": "PermissionError: [Errno 13] Permission denied: 'C:\\\\Users\\\\AMTEC_Terminal_1\u00ba\\\\Desktop\\\\BAGO5_ADL\\\\.bago\\\\goals\\\\operational-continuity-governance-20261031\\\\evidence\\\\acceptance-20261101\\\\workspace\\\\host\\\\attempt2\\\\outside-canary.txt'"
+  },
+  "lease_probe": {
+    "argv": [
+      "C:\\Python314\\python.exe",
+      "-B",
+      "C:\\Users\\AMTEC_Terminal_1\u00ba\\.codex\\skills\\bago-operating-suite\\scripts\\suite_orchestrator.py",
+      "task",
+      "collaborate",
+      "heartbeat",
+      "--state-dir",
+      "C:\\Users\\AMTEC_Terminal_1\u00ba\\Desktop\\BAGO5_ADL\\.bago\\goals\\operational-continuity-governance-20261031\\evidence\\acceptance-20261101\\workspace\\host\\attempt2\\relay-state",
+      "--check",
+      "prepare",
+      "--worker",
+      "native-A"
+    ],
+    "returncode": 1,
+    "stdout": "{\n  \"error\": \"missing, stale or foreign worker lease\",\n  \"error_type\": \"ControlError\",\n  \"evidence_status\": \"INVALID_OR_BLOCKED\",\n  \"product_status\": \"NOT_VERIFIED\",\n  \"schema\": \"bago.suite.task.control.v1\",\n  \"status\": \"FAIL\",\n  \"task_status\": \"NOT_CLOSED\"\n}\n",
+    "stderr": ""
+  }
+}

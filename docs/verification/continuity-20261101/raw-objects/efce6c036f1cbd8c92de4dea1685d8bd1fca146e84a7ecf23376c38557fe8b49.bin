@@ -1,0 +1,99 @@
+'use strict';
+
+const fs = require('node:fs');
+const path = require('node:path');
+const { execFileSync } = require('node:child_process');
+
+const root = path.resolve(__dirname, '../../..');
+const revision = path.join(root, '.bago/goals/browser-bridge-runtime-validation-20261030/revision5');
+const runtime = path.join(revision, 'evidence/runtime');
+const profile = path.join(runtime, 'profile-worker-diagnostic-attempt5');
+const output = path.join(runtime, 'brave-worker-diagnostic-attempt5.json');
+const braveExe = 'C:/Program Files/BraveSoftware/Brave-Browser/Application/brave.exe';
+const extensionDir = path.join(root, 'extensions/bago-browser-bridge');
+const extensionId = 'jeocgjmcakdgbogpcbmhmpcfkgamoaec';
+const playwrightPath = path.join(root, '.bago/goals/browser-bridge-runtime-validation-20261030/tooling/playwright/node_modules/playwright-core');
+
+async function main() {
+  if (fs.existsSync(profile) || fs.existsSync(output)) throw new Error('Refusing to overwrite diagnostic profile/evidence.');
+  const result = { status: 'FAIL', extension_id: extensionId, registry_modified: false };
+  let context;
+  try {
+    const { chromium } = require(playwrightPath);
+    context = await chromium.launchPersistentContext(profile, {
+      executablePath: braveExe,
+      headless: false,
+      viewport: { width: 1280, height: 800 },
+      ignoreDefaultArgs: ['--disable-extensions'],
+      args: [
+        `--disable-extensions-except=${extensionDir}`,
+        `--load-extension=${extensionDir}`,
+        '--enable-extensions', '--no-first-run', '--no-default-browser-check',
+        '--start-minimized', '--window-position=-32000,-32000', '--window-size=1280,800',
+      ],
+    });
+    const fixture = context.pages()[0] || await context.newPage();
+    await fixture.goto('http://127.0.0.1:18765/', { waitUntil: 'domcontentloaded', timeout: 15000 });
+    result.fixture_title = await fixture.title();
+    await fixture.waitForTimeout(5000);
+    result.service_workers_after_fixture = context.serviceWorkers().map((worker) => worker.url());
+    result.pages_before_extensions = context.pages().map((page) => page.url());
+    try {
+      const cdp = await context.browser().newBrowserCDPSession();
+      result.cdp_targets_before_extensions = await cdp.send('Target.getTargets');
+      await cdp.detach();
+    } catch (error) { result.cdp_targets_error = String(error); }
+
+    const extensions = await context.newPage();
+    await extensions.goto('brave://extensions/', { waitUntil: 'domcontentloaded', timeout: 15000 });
+    await extensions.waitForTimeout(1000);
+    result.extensions_url = extensions.url();
+    result.extensions_body_text = (await extensions.locator('body').innerText().catch(() => '')).slice(0, 12000);
+    result.extension_cards = await extensions.evaluate((wantedId) => {
+      const manager = document.querySelector('extensions-manager');
+      const root = manager && manager.shadowRoot;
+      if (!root) return { manager_present: Boolean(manager), details: 'manager shadow root unavailable' };
+      const items = Array.from(root.querySelectorAll('extensions-item'));
+      return items.map((item) => {
+        const sr = item.shadowRoot;
+        return {
+          id: item.id || (sr && sr.querySelector('#extension-id')?.textContent?.trim()) || '',
+          wanted: item.id === wantedId,
+          name: sr?.querySelector('#name')?.textContent?.trim() || '',
+          error: sr?.querySelector('#errors')?.innerText?.slice(0, 4000) || '',
+          warnings: sr?.querySelector('#warnings')?.innerText?.slice(0, 4000) || '',
+        };
+      });
+    }, extensionId);
+    await extensions.waitForTimeout(1000);
+    result.service_workers_after_extensions_page = context.serviceWorkers().map((worker) => worker.url());
+    try {
+      const cdp = await context.browser().newBrowserCDPSession();
+      result.cdp_targets_after_extensions = await cdp.send('Target.getTargets');
+      await cdp.detach();
+    } catch (error) { result.cdp_targets_after_error = String(error); }
+    result.status = 'DIAGNOSTIC_COMPLETE';
+  } catch (error) {
+    result.error = String(error && error.stack ? error.stack : error);
+  } finally {
+    if (context) {
+      try { await context.close(); } catch (error) { result.close_error = String(error); }
+    }
+    try {
+      const matches = execFileSync('powershell.exe', ['-NoProfile', '-Command',
+        `$p='${profile.replaceAll("'", "''")}'; Get-CimInstance Win32_Process | Where-Object { $_.Name -eq 'brave.exe' -and $_.CommandLine -and $_.CommandLine.IndexOf("--user-data-dir=$p", [System.StringComparison]::OrdinalIgnoreCase) -ge 0 } | Select-Object -ExpandProperty ProcessId | ConvertTo-Json -Compress`], { encoding: 'utf8', windowsHide: true }).trim();
+      let pids = matches ? JSON.parse(matches) : [];
+      if (!Array.isArray(pids)) pids = [pids];
+      result.remaining_profile_pids_before_cleanup = pids;
+      if (pids.length) throw new Error(`isolated Brave child remains: ${pids.join(',')}`);
+      if (fs.existsSync(profile)) fs.rmSync(profile, { recursive: true, force: false });
+      result.profile_absent_after = !fs.existsSync(profile);
+    } catch (error) { result.cleanup_error = String(error); result.status = 'FAIL'; }
+    result.recorded_at_utc = new Date().toISOString();
+    fs.writeFileSync(output, `${JSON.stringify(result, null, 2)}\n`, { flag: 'wx' });
+  }
+  process.stdout.write(`${JSON.stringify(result)}\n`);
+  if (result.status !== 'DIAGNOSTIC_COMPLETE') process.exitCode = 1;
+}
+
+main().catch((error) => { process.stderr.write(`${String(error)}\n`); process.exitCode = 1; });

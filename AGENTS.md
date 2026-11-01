@@ -27,16 +27,21 @@ The person or agent closing any repository work is responsible for refreshing
 the generated README before reporting completion:
 
 1. Run `python scripts/generate_dynamic_readme.py` after the work is complete.
-   This renders the navigable `README.md` from its title, summary, quick-link
-   and vector-panel manifest, plus the complete `README_DETAILS.md` from
-   canonical sources. The generator runs the full test suite before writing
-   either generated file.
+   This renders `README.md` from its canonical sources and runs the full test
+   suite to record the passing count.
 2. Run `python scripts/generate_dynamic_readme.py --check --skip-tests` and
    require PASS.
 3. Include both results in the closure evidence. If either command fails, keep
    the work open until repaired or record the precise blocker and mark closure
    incomplete.
 
-Never edit `README.md` or `README_DETAILS.md` manually. Change the owner
-canonical source or `docs/readme_svg_manifest.json`, its navigation targets,
-and linked SVG panels, then regenerate and compare both outputs.
+Never edit `README.md` manually; make any needed correction in its canonical
+source and regenerate it.
+
+## Continuity and receipt of delegated work
+
+- Continue through each necessary and already authorized stage in the current task; do not end after naming a next action that can be performed now.
+- Recheck mission identity, candidate, scopes, approval, STOP, and revocation before every effect. Registration and delegation never grant additional authority.
+- A delegated recap remains pending until it is actually received. Once received, bind it to its work item and candidate and validate scope, changed paths, checks, evidence, and residual risks before recording or acting on it. A recap alone is not execution proof or independent verification.
+- Do not close while required recaps, handoffs, checks, approvals, or acceptance criteria are pending. Continue other independent authorized work where possible; report the exact blocker for the affected item.
+- Never auto-resume across explicit STOP, pending authorization, revocation, scope conflict, critical error, mandatory human decision, or host restriction. Use a resume mechanism only if it exists and its contract permits the action.

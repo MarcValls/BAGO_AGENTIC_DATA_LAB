@@ -1,0 +1,8 @@
+2026-11-01T00:00:58.978109Z ERROR codex_core::session::session: failed to load skill C:\Users\AMTEC_Terminal_1º\.codex\skills\bago-operating-suite\modules\architecture-audit\SKILL.md: missing YAML frontmatter delimited by ---
+2026-11-01T00:00:58.978147Z ERROR codex_core::session::session: failed to load skill C:\Users\AMTEC_Terminal_1º\.codex\skills\bago-operating-suite\modules\editorial\SKILL.md: missing field `description`
+2026-11-01T00:00:58.978156Z ERROR codex_core::session::session: failed to load skill C:\Users\AMTEC_Terminal_1º\.codex\skills\bago-operating-suite\modules\frontend-contracts\SKILL.md: missing YAML frontmatter delimited by ---
+2026-11-01T00:00:58.978163Z ERROR codex_core::session::session: failed to load skill C:\Users\AMTEC_Terminal_1º\.codex\skills\bago-operating-suite\modules\procedural-behavior\SKILL.md: missing YAML frontmatter delimited by ---
+2026-11-01T00:00:58.978170Z ERROR codex_core::session::session: failed to load skill C:\Users\AMTEC_Terminal_1º\.codex\skills\bago-operating-suite\modules\pytest-checkpoint\SKILL.md: missing field `description`
+2026-11-01T00:00:58.978176Z ERROR codex_core::session::session: failed to load skill C:\Users\AMTEC_Terminal_1º\.agents\skills\azure-app-onboard\deploy\SKILL.md: missing YAML frontmatter delimited by ---
+2026-11-01T00:00:58.978182Z ERROR codex_core::session::session: failed to load skill C:\Users\AMTEC_Terminal_1º\.agents\skills\azure-app-onboard\prepare\SKILL.md: missing YAML frontmatter delimited by ---
+2026-11-01T00:00:58.978189Z ERROR codex_core::session::session: failed to load skill C:\Users\AMTEC_Terminal_1º\.agents\skills\azure-app-onboard\scaffold\SKILL.md: missing YAML frontmatter delimited by ---

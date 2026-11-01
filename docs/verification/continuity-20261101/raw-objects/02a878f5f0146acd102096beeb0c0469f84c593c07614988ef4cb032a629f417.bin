@@ -1,0 +1,1043 @@
+[
+  {
+    "argv": [
+      "C:\\Python314\\python.exe",
+      "-B",
+      "C:\\Users\\AMTEC_Terminal_1º\\.codex\\skills\\bago-operating-suite\\scripts\\suite_orchestrator.py",
+      "task",
+      "init",
+      "--state-dir",
+      "C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\.bago\\goals\\operational-continuity-governance-20261031\\evidence\\acceptance-20261101\\workspace\\host\\attempt2\\relay-state",
+      "--workspace",
+      "C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\.bago\\goals\\operational-continuity-governance-20261031\\evidence\\acceptance-20261101\\workspace\\host\\attempt2\\worker",
+      "--plan",
+      "C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\.bago\\goals\\operational-continuity-governance-20261031\\evidence\\acceptance-20261101\\workspace\\host\\attempt2\\plan.json"
+    ],
+    "returncode": 0,
+    "result": {
+      "assignments": [],
+      "candidate": {
+        "id": "bounded-native-host-r1",
+        "scope_sha256": "67605bf6125fc79f60f80a762a214250182cf0474d9683815cf400e752ca9eff",
+        "suite": {
+          "candidate": "CONTEXT-LIFECYCLE-NATIVE-RC2",
+          "display_name": "BAGO5os 1.4.7",
+          "identity_sha256": "082ab22f16d418da4c07352e153232ee56cde70f2382ae4bcaa9905e28737d6d",
+          "package_id": "bago-operating-suite",
+          "payload_files": 600,
+          "payload_sha256": "e8a211b01420776dabafe8efdb98ea78c35c1156efcdfd0baeb7eb33aa121114",
+          "release_id": "BAGO-SUITE-147-BAGO-SKILL-RC2",
+          "schema": "bago.suite.candidate-identity.v1",
+          "scope": "exact installed skill bytes; unsigned integrity, not publisher authentication",
+          "version": "1.4.7"
+        }
+      },
+      "checks": [
+        {
+          "consumed": 0,
+          "id": "prepare",
+          "outcome": "NOT_RUN",
+          "receipt": null,
+          "receipt_hash": null
+        },
+        {
+          "consumed": 0,
+          "id": "verify",
+          "outcome": "NOT_RUN",
+          "receipt": null,
+          "receipt_hash": null
+        },
+        {
+          "consumed": 0,
+          "id": "work",
+          "outcome": "NOT_RUN",
+          "receipt": null,
+          "receipt_hash": null
+        }
+      ],
+      "collaboration": {
+        "enabled": false
+      },
+      "control": "ACTIVE",
+      "host_interrupt": "NOT_RUN; only owned supervised child processes can be interrupted",
+      "max_rounds": 4,
+      "mission_id": "host-native-acceptance-20261101",
+      "operation": "AUDIT",
+      "round": 0,
+      "runs": [],
+      "schema": "bago.suite.task.control.v1",
+      "scope": [
+        "AGENTS.md",
+        "CONTRACT.json",
+        "boundary_probe.py",
+        "verify_native.py"
+      ],
+      "status": "PASS",
+      "task_status": "OPEN"
+    },
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "C:\\Python314\\python.exe",
+      "-B",
+      "C:\\Users\\AMTEC_Terminal_1º\\.codex\\skills\\bago-operating-suite\\scripts\\suite_orchestrator.py",
+      "task",
+      "collaborate",
+      "enable",
+      "--state-dir",
+      "C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\.bago\\goals\\operational-continuity-governance-20261031\\evidence\\acceptance-20261101\\workspace\\host\\attempt2\\relay-state",
+      "--config",
+      "C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\.bago\\goals\\operational-continuity-governance-20261031\\evidence\\acceptance-20261101\\workspace\\host\\attempt2\\config.json"
+    ],
+    "returncode": 0,
+    "result": {
+      "authority": "HOST_ONLY",
+      "config": {
+        "lease_seconds": 1200,
+        "max_checkpoints": 8,
+        "max_claims": 8,
+        "max_handoffs": 4,
+        "schema": "bago.suite.collaboration.v1",
+        "verification_checks": [
+          "verify"
+        ],
+        "workers": [
+          {
+            "id": "native-A",
+            "role": "executor"
+          },
+          {
+            "id": "native-B",
+            "role": "executor"
+          },
+          {
+            "id": "independent-review",
+            "role": "verifier"
+          }
+        ]
+      },
+      "mode": "COOPERATIVE_SERIAL",
+      "spawned": false,
+      "status": "PASS"
+    },
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "C:\\Python314\\python.exe",
+      "-B",
+      "C:\\Users\\AMTEC_Terminal_1º\\.codex\\skills\\bago-operating-suite\\scripts\\suite_orchestrator.py",
+      "task",
+      "round",
+      "--state-dir",
+      "C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\.bago\\goals\\operational-continuity-governance-20261031\\evidence\\acceptance-20261101\\workspace\\host\\attempt2\\relay-state"
+    ],
+    "returncode": 0,
+    "result": {
+      "assignments": [],
+      "candidate": {
+        "id": "bounded-native-host-r1",
+        "scope_sha256": "67605bf6125fc79f60f80a762a214250182cf0474d9683815cf400e752ca9eff",
+        "suite": {
+          "candidate": "CONTEXT-LIFECYCLE-NATIVE-RC2",
+          "display_name": "BAGO5os 1.4.7",
+          "identity_sha256": "082ab22f16d418da4c07352e153232ee56cde70f2382ae4bcaa9905e28737d6d",
+          "package_id": "bago-operating-suite",
+          "payload_files": 600,
+          "payload_sha256": "e8a211b01420776dabafe8efdb98ea78c35c1156efcdfd0baeb7eb33aa121114",
+          "release_id": "BAGO-SUITE-147-BAGO-SKILL-RC2",
+          "schema": "bago.suite.candidate-identity.v1",
+          "scope": "exact installed skill bytes; unsigned integrity, not publisher authentication",
+          "version": "1.4.7"
+        }
+      },
+      "checks": [
+        {
+          "consumed": 0,
+          "id": "prepare",
+          "outcome": "NOT_RUN",
+          "receipt": null,
+          "receipt_hash": null
+        },
+        {
+          "consumed": 0,
+          "id": "verify",
+          "outcome": "NOT_RUN",
+          "receipt": null,
+          "receipt_hash": null
+        },
+        {
+          "consumed": 0,
+          "id": "work",
+          "outcome": "NOT_RUN",
+          "receipt": null,
+          "receipt_hash": null
+        }
+      ],
+      "collaboration": {
+        "checkpoints_used": 0,
+        "claims_used": 0,
+        "enabled": true,
+        "handoffs": [],
+        "host_authentication": "NOT_PROVIDED",
+        "mode": "COOPERATIVE_SERIAL",
+        "work": [
+          {
+            "check_id": "prepare",
+            "checkpoint_id": null,
+            "expires_at": null,
+            "generation": 0,
+            "state": "AVAILABLE",
+            "worker": null
+          },
+          {
+            "check_id": "verify",
+            "checkpoint_id": null,
+            "expires_at": null,
+            "generation": 0,
+            "state": "AVAILABLE",
+            "worker": null
+          },
+          {
+            "check_id": "work",
+            "checkpoint_id": null,
+            "expires_at": null,
+            "generation": 0,
+            "state": "AVAILABLE",
+            "worker": null
+          }
+        ],
+        "workers": [
+          {
+            "id": "native-A",
+            "role": "executor"
+          },
+          {
+            "id": "native-B",
+            "role": "executor"
+          },
+          {
+            "id": "independent-review",
+            "role": "verifier"
+          }
+        ]
+      },
+      "control": "ACTIVE",
+      "host_interrupt": "NOT_RUN; only owned supervised child processes can be interrupted",
+      "max_rounds": 4,
+      "mission_id": "host-native-acceptance-20261101",
+      "operation": "AUDIT",
+      "round": 1,
+      "runs": [],
+      "schema": "bago.suite.task.control.v1",
+      "scope": [
+        "AGENTS.md",
+        "CONTRACT.json",
+        "boundary_probe.py",
+        "verify_native.py"
+      ],
+      "status": "PASS",
+      "task_status": "OPEN"
+    },
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "C:\\Python314\\python.exe",
+      "-B",
+      "C:\\Users\\AMTEC_Terminal_1º\\.codex\\skills\\bago-operating-suite\\scripts\\suite_orchestrator.py",
+      "task",
+      "collaborate",
+      "claim",
+      "--state-dir",
+      "C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\.bago\\goals\\operational-continuity-governance-20261031\\evidence\\acceptance-20261101\\workspace\\host\\attempt2\\relay-state",
+      "--check",
+      "prepare",
+      "--worker",
+      "native-A"
+    ],
+    "returncode": 0,
+    "result": {
+      "authority": "HOST_ONLY; lease is local coordination, not a permit",
+      "check_id": "prepare",
+      "checkpoint": null,
+      "expires_at": 1793492452.1503308,
+      "generation": 1,
+      "spawned": false,
+      "status": "PASS",
+      "worker": "native-A"
+    },
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "C:\\Python314\\python.exe",
+      "-B",
+      "C:\\Users\\AMTEC_Terminal_1º\\.codex\\skills\\bago-operating-suite\\scripts\\suite_orchestrator.py",
+      "task",
+      "run-check",
+      "--state-dir",
+      "C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\.bago\\goals\\operational-continuity-governance-20261031\\evidence\\acceptance-20261101\\workspace\\host\\attempt2\\relay-state",
+      "--check",
+      "prepare",
+      "--worker",
+      "native-A",
+      "--timeout",
+      "450",
+      "--",
+      "C:\\Python314\\python.exe",
+      "-B",
+      "C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\.bago\\goals\\operational-continuity-governance-20261031\\evidence\\acceptance-20261101\\workspace\\host\\attempt2\\native_session.py",
+      "A"
+    ],
+    "returncode": 0,
+    "result": {
+      "evidence_error": null,
+      "interruption": "NONE",
+      "outcome": "PASS",
+      "process_outcome": "PASS",
+      "receipt": "receipts/e17288ce28c149d9b02e49119bb44200.json",
+      "run_id": "176cff969af54190897db02ecd456a60",
+      "status": "PASS",
+      "supervision_error": null
+    },
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "C:\\Python314\\python.exe",
+      "-B",
+      "C:\\Users\\AMTEC_Terminal_1º\\.codex\\skills\\bago-operating-suite\\scripts\\suite_orchestrator.py",
+      "task",
+      "consume",
+      "--state-dir",
+      "C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\.bago\\goals\\operational-continuity-governance-20261031\\evidence\\acceptance-20261101\\workspace\\host\\attempt2\\relay-state",
+      "--check",
+      "prepare",
+      "--worker",
+      "native-A"
+    ],
+    "returncode": 0,
+    "result": {
+      "check_id": "prepare",
+      "evidence_status": "VALID",
+      "product_status": "PASS",
+      "status": "PASS"
+    },
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "C:\\Python314\\python.exe",
+      "-B",
+      "C:\\Users\\AMTEC_Terminal_1º\\.codex\\skills\\bago-operating-suite\\scripts\\suite_orchestrator.py",
+      "task",
+      "collaborate",
+      "finish",
+      "--state-dir",
+      "C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\.bago\\goals\\operational-continuity-governance-20261031\\evidence\\acceptance-20261101\\workspace\\host\\attempt2\\relay-state",
+      "--check",
+      "prepare",
+      "--worker",
+      "native-A"
+    ],
+    "returncode": 0,
+    "result": {
+      "check_id": "prepare",
+      "product_status": "LIMITED_TO_CHECK; mission closure is separate",
+      "status": "PASS",
+      "work_state": "DONE",
+      "worker": "native-A"
+    },
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "C:\\Python314\\python.exe",
+      "-B",
+      "C:\\Users\\AMTEC_Terminal_1º\\.codex\\skills\\bago-operating-suite\\scripts\\suite_orchestrator.py",
+      "task",
+      "collaborate",
+      "claim",
+      "--state-dir",
+      "C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\.bago\\goals\\operational-continuity-governance-20261031\\evidence\\acceptance-20261101\\workspace\\host\\attempt2\\relay-state",
+      "--check",
+      "work",
+      "--worker",
+      "native-A"
+    ],
+    "returncode": 0,
+    "result": {
+      "authority": "HOST_ONLY; lease is local coordination, not a permit",
+      "check_id": "work",
+      "checkpoint": null,
+      "expires_at": 1793492513.769614,
+      "generation": 1,
+      "spawned": false,
+      "status": "PASS",
+      "worker": "native-A"
+    },
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "C:\\Python314\\python.exe",
+      "-B",
+      "C:\\Users\\AMTEC_Terminal_1º\\.codex\\skills\\bago-operating-suite\\scripts\\suite_orchestrator.py",
+      "task",
+      "collaborate",
+      "checkpoint",
+      "--state-dir",
+      "C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\.bago\\goals\\operational-continuity-governance-20261031\\evidence\\acceptance-20261101\\workspace\\host\\attempt2\\relay-state",
+      "--check",
+      "work",
+      "--worker",
+      "native-A",
+      "--context",
+      "C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\.bago\\goals\\operational-continuity-governance-20261031\\evidence\\acceptance-20261101\\workspace\\host\\attempt2\\context.json"
+    ],
+    "returncode": 0,
+    "result": {
+      "checkpoint_id": "eefde34159e949dea86018d74d96396b",
+      "packet": {
+        "artifacts": [
+          {
+            "path": "phase-A.json",
+            "root": "workspace",
+            "schema": null,
+            "sha256": "b3fc51fd205edf57bd4f3edec7b227c672297c3adfaff203be83bc073b20ec19",
+            "size": 2904
+          },
+          {
+            "path": "probe-A.json",
+            "root": "workspace",
+            "schema": null,
+            "sha256": "ce7d735f19d0bf941bdd3a4c930ed522c73d5c8db255c016a83f6c33fbac3a90",
+            "size": 1297
+          }
+        ],
+        "candidate": {
+          "id": "bounded-native-host-r1",
+          "scope_sha256": "67605bf6125fc79f60f80a762a214250182cf0474d9683815cf400e752ca9eff",
+          "suite": {
+            "candidate": "CONTEXT-LIFECYCLE-NATIVE-RC2",
+            "display_name": "BAGO5os 1.4.7",
+            "identity_sha256": "082ab22f16d418da4c07352e153232ee56cde70f2382ae4bcaa9905e28737d6d",
+            "package_id": "bago-operating-suite",
+            "payload_files": 600,
+            "payload_sha256": "e8a211b01420776dabafe8efdb98ea78c35c1156efcdfd0baeb7eb33aa121114",
+            "release_id": "BAGO-SUITE-147-BAGO-SKILL-RC2",
+            "schema": "bago.suite.candidate-identity.v1",
+            "scope": "exact installed skill bytes; unsigned integrity, not publisher authentication",
+            "version": "1.4.7"
+          }
+        },
+        "check_id": "work",
+        "checkpoint_id": "eefde34159e949dea86018d74d96396b",
+        "context": {
+          "artifacts": [
+            {
+              "path": "phase-A.json",
+              "root": "workspace"
+            },
+            {
+              "path": "probe-A.json",
+              "root": "workspace"
+            }
+          ],
+          "completed": [
+            "phase A actual tool execution and receipt; trace stored under sessions/A"
+          ],
+          "decisions": [
+            "No token in prompts or child environment. Roles are logical only. Native goal remains paused."
+          ],
+          "pending": [
+            "New native session B must verify predecessor digest, record fresh context marker, execute scoped effects and produce phase-B receipt."
+          ],
+          "risks": [
+            "Boundary outcome requires reviewing actual probe, not a narrative assertion."
+          ],
+          "schema": "bago.suite.relay.context.v1",
+          "summary": "Real native session A wrote phase-A receipt; successor must inspect and continue exact artifacts, no inherited permissions."
+        },
+        "context_claims_are_not_evidence": true,
+        "created_at": "2026-11-01T00:01:57.242874+00:00",
+        "generation": 1,
+        "mission_id": "host-native-acceptance-20261101",
+        "observed_checks": [
+          {
+            "consumed": 1,
+            "id": "prepare",
+            "outcome": "PASS",
+            "receipt": "receipts/e17288ce28c149d9b02e49119bb44200.json",
+            "receipt_hash": "b43737653442051537b960a1c95424a39a4880b6c1f79d25e2817119756b60a1"
+          },
+          {
+            "consumed": 0,
+            "id": "verify",
+            "outcome": "NOT_RUN",
+            "receipt": null,
+            "receipt_hash": null
+          },
+          {
+            "consumed": 0,
+            "id": "work",
+            "outcome": "NOT_RUN",
+            "receipt": null,
+            "receipt_hash": null
+          }
+        ],
+        "round": 1,
+        "schema": "bago.suite.relay.checkpoint.v1",
+        "worker": "native-A",
+        "workspace": "C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\.bago\\goals\\operational-continuity-governance-20261031\\evidence\\acceptance-20261101\\workspace\\host\\attempt2\\worker"
+      },
+      "sha256": "9d2e9ef12d72475533cf86937b4b4171d62389c0ee4c4549be65ffc32bc57406",
+      "status": "PASS"
+    },
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "C:\\Python314\\python.exe",
+      "-B",
+      "C:\\Users\\AMTEC_Terminal_1º\\.codex\\skills\\bago-operating-suite\\scripts\\suite_orchestrator.py",
+      "task",
+      "collaborate",
+      "offer",
+      "--state-dir",
+      "C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\.bago\\goals\\operational-continuity-governance-20261031\\evidence\\acceptance-20261101\\workspace\\host\\attempt2\\relay-state",
+      "--check",
+      "work",
+      "--worker",
+      "native-A",
+      "--to-worker",
+      "native-B",
+      "--context",
+      "C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\.bago\\goals\\operational-continuity-governance-20261031\\evidence\\acceptance-20261101\\workspace\\host\\attempt2\\context.json",
+      "--reason",
+      "Explicit bounded phase boundary; a new real session verifies persisted context."
+    ],
+    "returncode": 0,
+    "result": {
+      "checkpoint": {
+        "artifacts": [
+          {
+            "path": "phase-A.json",
+            "root": "workspace",
+            "schema": null,
+            "sha256": "b3fc51fd205edf57bd4f3edec7b227c672297c3adfaff203be83bc073b20ec19",
+            "size": 2904
+          },
+          {
+            "path": "probe-A.json",
+            "root": "workspace",
+            "schema": null,
+            "sha256": "ce7d735f19d0bf941bdd3a4c930ed522c73d5c8db255c016a83f6c33fbac3a90",
+            "size": 1297
+          }
+        ],
+        "candidate": {
+          "id": "bounded-native-host-r1",
+          "scope_sha256": "67605bf6125fc79f60f80a762a214250182cf0474d9683815cf400e752ca9eff",
+          "suite": {
+            "candidate": "CONTEXT-LIFECYCLE-NATIVE-RC2",
+            "display_name": "BAGO5os 1.4.7",
+            "identity_sha256": "082ab22f16d418da4c07352e153232ee56cde70f2382ae4bcaa9905e28737d6d",
+            "package_id": "bago-operating-suite",
+            "payload_files": 600,
+            "payload_sha256": "e8a211b01420776dabafe8efdb98ea78c35c1156efcdfd0baeb7eb33aa121114",
+            "release_id": "BAGO-SUITE-147-BAGO-SKILL-RC2",
+            "schema": "bago.suite.candidate-identity.v1",
+            "scope": "exact installed skill bytes; unsigned integrity, not publisher authentication",
+            "version": "1.4.7"
+          }
+        },
+        "check_id": "work",
+        "checkpoint_id": "d7dae8feebff48dc864ee6fe767939b5",
+        "context": {
+          "artifacts": [
+            {
+              "path": "phase-A.json",
+              "root": "workspace"
+            },
+            {
+              "path": "probe-A.json",
+              "root": "workspace"
+            }
+          ],
+          "completed": [
+            "phase A actual tool execution and receipt; trace stored under sessions/A"
+          ],
+          "decisions": [
+            "No token in prompts or child environment. Roles are logical only. Native goal remains paused."
+          ],
+          "pending": [
+            "New native session B must verify predecessor digest, record fresh context marker, execute scoped effects and produce phase-B receipt."
+          ],
+          "risks": [
+            "Boundary outcome requires reviewing actual probe, not a narrative assertion."
+          ],
+          "schema": "bago.suite.relay.context.v1",
+          "summary": "Real native session A wrote phase-A receipt; successor must inspect and continue exact artifacts, no inherited permissions."
+        },
+        "context_claims_are_not_evidence": true,
+        "created_at": "2026-11-01T00:02:00.309348+00:00",
+        "generation": 1,
+        "mission_id": "host-native-acceptance-20261101",
+        "observed_checks": [
+          {
+            "consumed": 1,
+            "id": "prepare",
+            "outcome": "PASS",
+            "receipt": "receipts/e17288ce28c149d9b02e49119bb44200.json",
+            "receipt_hash": "b43737653442051537b960a1c95424a39a4880b6c1f79d25e2817119756b60a1"
+          },
+          {
+            "consumed": 0,
+            "id": "verify",
+            "outcome": "NOT_RUN",
+            "receipt": null,
+            "receipt_hash": null
+          },
+          {
+            "consumed": 0,
+            "id": "work",
+            "outcome": "NOT_RUN",
+            "receipt": null,
+            "receipt_hash": null
+          }
+        ],
+        "round": 1,
+        "schema": "bago.suite.relay.checkpoint.v1",
+        "worker": "native-A",
+        "workspace": "C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\.bago\\goals\\operational-continuity-governance-20261031\\evidence\\acceptance-20261101\\workspace\\host\\attempt2\\worker"
+      },
+      "handoff_id": "1ed8b4c6a756435690ad6bd7418bf537",
+      "old_lease_revoked": true,
+      "packet": {
+        "candidate": {
+          "id": "bounded-native-host-r1",
+          "scope_sha256": "67605bf6125fc79f60f80a762a214250182cf0474d9683815cf400e752ca9eff",
+          "suite": {
+            "candidate": "CONTEXT-LIFECYCLE-NATIVE-RC2",
+            "display_name": "BAGO5os 1.4.7",
+            "identity_sha256": "082ab22f16d418da4c07352e153232ee56cde70f2382ae4bcaa9905e28737d6d",
+            "package_id": "bago-operating-suite",
+            "payload_files": 600,
+            "payload_sha256": "e8a211b01420776dabafe8efdb98ea78c35c1156efcdfd0baeb7eb33aa121114",
+            "release_id": "BAGO-SUITE-147-BAGO-SKILL-RC2",
+            "schema": "bago.suite.candidate-identity.v1",
+            "scope": "exact installed skill bytes; unsigned integrity, not publisher authentication",
+            "version": "1.4.7"
+          }
+        },
+        "check_id": "work",
+        "checkpoint_id": "d7dae8feebff48dc864ee6fe767939b5",
+        "checkpoint_sha256": "4e12ffb478ef3a559839208b5811cf97ebb226957a451110eea21a8f49e06fd6",
+        "created_at": "2026-11-01T00:02:00.384112+00:00",
+        "from_worker": "native-A",
+        "generation": 2,
+        "handoff_id": "1ed8b4c6a756435690ad6bd7418bf537",
+        "mission_id": "host-native-acceptance-20261101",
+        "reason": "Explicit bounded phase boundary; a new real session verifies persisted context.",
+        "schema": "bago.suite.relay.handoff.v1",
+        "to_worker": "native-B"
+      },
+      "sha256": "876819c6e5f884fbd2b7f4ae53febe5786da9fa5c971309cb57c782bf9bac44a",
+      "spawned": false,
+      "status": "PASS"
+    },
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "C:\\Python314\\python.exe",
+      "-B",
+      "C:\\Users\\AMTEC_Terminal_1º\\.codex\\skills\\bago-operating-suite\\scripts\\suite_orchestrator.py",
+      "task",
+      "collaborate",
+      "heartbeat",
+      "--state-dir",
+      "C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\.bago\\goals\\operational-continuity-governance-20261031\\evidence\\acceptance-20261101\\workspace\\host\\attempt2\\relay-state",
+      "--check",
+      "work",
+      "--worker",
+      "native-A"
+    ],
+    "returncode": 1,
+    "result": {
+      "error": "missing, stale or foreign worker lease",
+      "error_type": "ControlError",
+      "evidence_status": "INVALID_OR_BLOCKED",
+      "product_status": "NOT_VERIFIED",
+      "schema": "bago.suite.task.control.v1",
+      "status": "FAIL",
+      "task_status": "NOT_CLOSED"
+    },
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "C:\\Python314\\python.exe",
+      "-B",
+      "C:\\Users\\AMTEC_Terminal_1º\\.codex\\skills\\bago-operating-suite\\scripts\\suite_orchestrator.py",
+      "task",
+      "collaborate",
+      "accept",
+      "--state-dir",
+      "C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\.bago\\goals\\operational-continuity-governance-20261031\\evidence\\acceptance-20261101\\workspace\\host\\attempt2\\relay-state",
+      "--handoff",
+      "1ed8b4c6a756435690ad6bd7418bf537",
+      "--worker",
+      "native-B",
+      "--ack-sha256",
+      "876819c6e5f884fbd2b7f4ae53febe5786da9fa5c971309cb57c782bf9bac44a"
+    ],
+    "returncode": 0,
+    "result": {
+      "accepted_sha256": "876819c6e5f884fbd2b7f4ae53febe5786da9fa5c971309cb57c782bf9bac44a",
+      "authority": "HOST_ONLY; lease is local coordination, not a permit",
+      "check_id": "work",
+      "checkpoint": {
+        "artifacts": [
+          {
+            "path": "phase-A.json",
+            "root": "workspace",
+            "schema": null,
+            "sha256": "b3fc51fd205edf57bd4f3edec7b227c672297c3adfaff203be83bc073b20ec19",
+            "size": 2904
+          },
+          {
+            "path": "probe-A.json",
+            "root": "workspace",
+            "schema": null,
+            "sha256": "ce7d735f19d0bf941bdd3a4c930ed522c73d5c8db255c016a83f6c33fbac3a90",
+            "size": 1297
+          }
+        ],
+        "candidate": {
+          "id": "bounded-native-host-r1",
+          "scope_sha256": "67605bf6125fc79f60f80a762a214250182cf0474d9683815cf400e752ca9eff",
+          "suite": {
+            "candidate": "CONTEXT-LIFECYCLE-NATIVE-RC2",
+            "display_name": "BAGO5os 1.4.7",
+            "identity_sha256": "082ab22f16d418da4c07352e153232ee56cde70f2382ae4bcaa9905e28737d6d",
+            "package_id": "bago-operating-suite",
+            "payload_files": 600,
+            "payload_sha256": "e8a211b01420776dabafe8efdb98ea78c35c1156efcdfd0baeb7eb33aa121114",
+            "release_id": "BAGO-SUITE-147-BAGO-SKILL-RC2",
+            "schema": "bago.suite.candidate-identity.v1",
+            "scope": "exact installed skill bytes; unsigned integrity, not publisher authentication",
+            "version": "1.4.7"
+          }
+        },
+        "check_id": "work",
+        "checkpoint_id": "d7dae8feebff48dc864ee6fe767939b5",
+        "context": {
+          "artifacts": [
+            {
+              "path": "phase-A.json",
+              "root": "workspace"
+            },
+            {
+              "path": "probe-A.json",
+              "root": "workspace"
+            }
+          ],
+          "completed": [
+            "phase A actual tool execution and receipt; trace stored under sessions/A"
+          ],
+          "decisions": [
+            "No token in prompts or child environment. Roles are logical only. Native goal remains paused."
+          ],
+          "pending": [
+            "New native session B must verify predecessor digest, record fresh context marker, execute scoped effects and produce phase-B receipt."
+          ],
+          "risks": [
+            "Boundary outcome requires reviewing actual probe, not a narrative assertion."
+          ],
+          "schema": "bago.suite.relay.context.v1",
+          "summary": "Real native session A wrote phase-A receipt; successor must inspect and continue exact artifacts, no inherited permissions."
+        },
+        "context_claims_are_not_evidence": true,
+        "created_at": "2026-11-01T00:02:00.309348+00:00",
+        "generation": 1,
+        "mission_id": "host-native-acceptance-20261101",
+        "observed_checks": [
+          {
+            "consumed": 1,
+            "id": "prepare",
+            "outcome": "PASS",
+            "receipt": "receipts/e17288ce28c149d9b02e49119bb44200.json",
+            "receipt_hash": "b43737653442051537b960a1c95424a39a4880b6c1f79d25e2817119756b60a1"
+          },
+          {
+            "consumed": 0,
+            "id": "verify",
+            "outcome": "NOT_RUN",
+            "receipt": null,
+            "receipt_hash": null
+          },
+          {
+            "consumed": 0,
+            "id": "work",
+            "outcome": "NOT_RUN",
+            "receipt": null,
+            "receipt_hash": null
+          }
+        ],
+        "round": 1,
+        "schema": "bago.suite.relay.checkpoint.v1",
+        "worker": "native-A",
+        "workspace": "C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\.bago\\goals\\operational-continuity-governance-20261031\\evidence\\acceptance-20261101\\workspace\\host\\attempt2\\worker"
+      },
+      "expires_at": 1793492526.0174875,
+      "generation": 3,
+      "handoff_id": "1ed8b4c6a756435690ad6bd7418bf537",
+      "spawned": false,
+      "status": "PASS",
+      "worker": "native-B"
+    },
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "C:\\Python314\\python.exe",
+      "-B",
+      "C:\\Users\\AMTEC_Terminal_1º\\.codex\\skills\\bago-operating-suite\\scripts\\suite_orchestrator.py",
+      "task",
+      "run-check",
+      "--state-dir",
+      "C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\.bago\\goals\\operational-continuity-governance-20261031\\evidence\\acceptance-20261101\\workspace\\host\\attempt2\\relay-state",
+      "--check",
+      "work",
+      "--worker",
+      "native-B",
+      "--timeout",
+      "450",
+      "--",
+      "C:\\Python314\\python.exe",
+      "-B",
+      "C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\.bago\\goals\\operational-continuity-governance-20261031\\evidence\\acceptance-20261101\\workspace\\host\\attempt2\\native_session.py",
+      "B"
+    ],
+    "returncode": 0,
+    "result": {
+      "evidence_error": null,
+      "interruption": "NONE",
+      "outcome": "PASS",
+      "process_outcome": "PASS",
+      "receipt": "receipts/c3b07ba4a527476ab9fb1a6f49a97d94.json",
+      "run_id": "d8e52cae72c54fb8af4cb7febf2d3dba",
+      "status": "PASS",
+      "supervision_error": null
+    },
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "C:\\Python314\\python.exe",
+      "-B",
+      "C:\\Users\\AMTEC_Terminal_1º\\.codex\\skills\\bago-operating-suite\\scripts\\suite_orchestrator.py",
+      "task",
+      "consume",
+      "--state-dir",
+      "C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\.bago\\goals\\operational-continuity-governance-20261031\\evidence\\acceptance-20261101\\workspace\\host\\attempt2\\relay-state",
+      "--check",
+      "work",
+      "--worker",
+      "native-B"
+    ],
+    "returncode": 0,
+    "result": {
+      "check_id": "work",
+      "evidence_status": "VALID",
+      "product_status": "PASS",
+      "status": "PASS"
+    },
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "C:\\Python314\\python.exe",
+      "-B",
+      "C:\\Users\\AMTEC_Terminal_1º\\.codex\\skills\\bago-operating-suite\\scripts\\suite_orchestrator.py",
+      "task",
+      "collaborate",
+      "finish",
+      "--state-dir",
+      "C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\.bago\\goals\\operational-continuity-governance-20261031\\evidence\\acceptance-20261101\\workspace\\host\\attempt2\\relay-state",
+      "--check",
+      "work",
+      "--worker",
+      "native-B"
+    ],
+    "returncode": 0,
+    "result": {
+      "check_id": "work",
+      "product_status": "LIMITED_TO_CHECK; mission closure is separate",
+      "status": "PASS",
+      "work_state": "DONE",
+      "worker": "native-B"
+    },
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "C:\\Python314\\python.exe",
+      "-B",
+      "C:\\Users\\AMTEC_Terminal_1º\\.codex\\skills\\bago-operating-suite\\scripts\\suite_orchestrator.py",
+      "task",
+      "status",
+      "--state-dir",
+      "C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\.bago\\goals\\operational-continuity-governance-20261031\\evidence\\acceptance-20261101\\workspace\\host\\attempt2\\relay-state"
+    ],
+    "returncode": 0,
+    "result": {
+      "assignments": [],
+      "candidate": {
+        "id": "bounded-native-host-r1",
+        "scope_sha256": "67605bf6125fc79f60f80a762a214250182cf0474d9683815cf400e752ca9eff",
+        "suite": {
+          "candidate": "CONTEXT-LIFECYCLE-NATIVE-RC2",
+          "display_name": "BAGO5os 1.4.7",
+          "identity_sha256": "082ab22f16d418da4c07352e153232ee56cde70f2382ae4bcaa9905e28737d6d",
+          "package_id": "bago-operating-suite",
+          "payload_files": 600,
+          "payload_sha256": "e8a211b01420776dabafe8efdb98ea78c35c1156efcdfd0baeb7eb33aa121114",
+          "release_id": "BAGO-SUITE-147-BAGO-SKILL-RC2",
+          "schema": "bago.suite.candidate-identity.v1",
+          "scope": "exact installed skill bytes; unsigned integrity, not publisher authentication",
+          "version": "1.4.7"
+        }
+      },
+      "candidate_identity_check": "NOT_RUN; recorded identity only",
+      "checks": [
+        {
+          "consumed": 1,
+          "id": "prepare",
+          "outcome": "PASS",
+          "receipt": "receipts/e17288ce28c149d9b02e49119bb44200.json",
+          "receipt_hash": "b43737653442051537b960a1c95424a39a4880b6c1f79d25e2817119756b60a1"
+        },
+        {
+          "consumed": 0,
+          "id": "verify",
+          "outcome": "NOT_RUN",
+          "receipt": null,
+          "receipt_hash": null
+        },
+        {
+          "consumed": 1,
+          "id": "work",
+          "outcome": "PASS",
+          "receipt": "receipts/c3b07ba4a527476ab9fb1a6f49a97d94.json",
+          "receipt_hash": "3f52ac1454e0f1da505256931a52550daab81634b243c3c9e7dffe3ba2a0ae4e"
+        }
+      ],
+      "collaboration": {
+        "checkpoints_used": 2,
+        "claims_used": 3,
+        "enabled": true,
+        "handoffs": [
+          {
+            "check_id": "work",
+            "id": "1ed8b4c6a756435690ad6bd7418bf537",
+            "sha256": "876819c6e5f884fbd2b7f4ae53febe5786da9fa5c971309cb57c782bf9bac44a",
+            "state": "ACCEPTED"
+          }
+        ],
+        "host_authentication": "NOT_PROVIDED",
+        "mode": "COOPERATIVE_SERIAL",
+        "work": [
+          {
+            "check_id": "prepare",
+            "checkpoint_id": null,
+            "expires_at": null,
+            "generation": 2,
+            "state": "DONE",
+            "worker": "native-A"
+          },
+          {
+            "check_id": "verify",
+            "checkpoint_id": null,
+            "expires_at": null,
+            "generation": 0,
+            "state": "AVAILABLE",
+            "worker": null
+          },
+          {
+            "check_id": "work",
+            "checkpoint_id": "d7dae8feebff48dc864ee6fe767939b5",
+            "expires_at": null,
+            "generation": 4,
+            "state": "DONE",
+            "worker": "native-B"
+          }
+        ],
+        "workers": [
+          {
+            "id": "native-A",
+            "role": "executor"
+          },
+          {
+            "id": "native-B",
+            "role": "executor"
+          },
+          {
+            "id": "independent-review",
+            "role": "verifier"
+          }
+        ]
+      },
+      "control": "ACTIVE",
+      "host_interrupt": "NOT_RUN; only owned supervised child processes can be interrupted",
+      "max_rounds": 4,
+      "mission_id": "host-native-acceptance-20261101",
+      "operation": "AUDIT",
+      "round": 1,
+      "runs": [
+        {
+          "check_id": "prepare",
+          "command": "[\"C:\\\\Python314\\\\python.exe\",\"-B\",\"C:\\\\Users\\\\AMTEC_Terminal_1º\\\\Desktop\\\\BAGO5_ADL\\\\.bago\\\\goals\\\\operational-continuity-governance-20261031\\\\evidence\\\\acceptance-20261101\\\\workspace\\\\host\\\\attempt2\\\\native_session.py\",\"A\"]",
+          "cwd": "C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\.bago\\goals\\operational-continuity-governance-20261031\\evidence\\acceptance-20261101\\workspace\\host\\attempt2\\worker",
+          "finished": "2026-11-01T00:01:42.200407+00:00",
+          "id": "176cff969af54190897db02ecd456a60",
+          "interruption": "NONE",
+          "pid": 17660,
+          "receipt": "receipts/e17288ce28c149d9b02e49119bb44200.json",
+          "returncode": 0,
+          "round": 1,
+          "started": "2026-11-01T00:00:55.341033+00:00",
+          "state": "FINISHED"
+        },
+        {
+          "check_id": "work",
+          "command": "[\"C:\\\\Python314\\\\python.exe\",\"-B\",\"C:\\\\Users\\\\AMTEC_Terminal_1º\\\\Desktop\\\\BAGO5_ADL\\\\.bago\\\\goals\\\\operational-continuity-governance-20261031\\\\evidence\\\\acceptance-20261101\\\\workspace\\\\host\\\\attempt2\\\\native_session.py\",\"B\"]",
+          "cwd": "C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\.bago\\goals\\operational-continuity-governance-20261031\\evidence\\acceptance-20261101\\workspace\\host\\attempt2\\worker",
+          "finished": "2026-11-01T00:03:05.871120+00:00",
+          "id": "d8e52cae72c54fb8af4cb7febf2d3dba",
+          "interruption": "NONE",
+          "pid": 2444,
+          "receipt": "receipts/c3b07ba4a527476ab9fb1a6f49a97d94.json",
+          "returncode": 0,
+          "round": 1,
+          "started": "2026-11-01T00:02:08.692723+00:00",
+          "state": "FINISHED"
+        }
+      ],
+      "schema": "bago.suite.task.control.v1",
+      "scope": [
+        "AGENTS.md",
+        "CONTRACT.json",
+        "boundary_probe.py",
+        "verify_native.py"
+      ],
+      "status": "PASS",
+      "task_status": "OPEN"
+    },
+    "stderr": ""
+  }
+]

@@ -1,0 +1,222 @@
+$ErrorActionPreference = 'Stop'
+$browserRoot = (Resolve-Path (Join-Path $PSScriptRoot '..\..\..')).Path
+$mainRoot = (Resolve-Path (Join-Path $browserRoot '..\..')).Path
+$revision = Join-Path $browserRoot '.bago\goals\browser-bridge-runtime-validation-20261030\revision5'
+$runtimeDir = Join-Path $revision 'evidence\runtime'
+$profile = Join-Path $runtimeDir 'profile-brave-r5-attempt7'
+$manifestPath = Join-Path $runtimeDir 'com.bago.browser_bridge.json'
+$resultPath = Join-Path $runtimeDir 'brave-native-messaging-runtime-attempt7.json'
+$cleanupPath = Join-Path $revision 'checks\e2e\cleanup-result-attempt7.json'
+$runner = Join-Path $browserRoot 'scripts\browser_bridge\runtime\brave_native_messaging_r5.cjs'
+$exe = Join-Path $revision 'build\BagoBrowserBridgeHost.exe'
+$brave = 'C:\Program Files\BraveSoftware\Brave-Browser\Application\brave.exe'
+$hostName = 'com.bago.browser_bridge'
+$extensionId = 'jeocgjmcakdgbogpcbmhmpcfkgamoaec'
+$registrySubKey = 'Software\Google\Chrome\NativeMessagingHosts\com.bago.browser_bridge'
+$registryPath = "Registry::HKEY_CURRENT_USER\$registrySubKey"
+$expectedExeSha256 = '2aefdaa63fbfeadb79498acac429bee36e3fce3ac323664fa0733347a030e333'
+$createdManifest = $false
+$createdRegistryKey = $false
+$manifestSha256 = $null
+$runtimeExitCode = $null
+$runtimeText = $null
+$errorText = $null
+$cleanupErrors = [System.Collections.Generic.List[string]]::new()
+$status = 'FAIL'
+
+Add-Type @'
+using System;
+using System.Runtime.InteropServices;
+public static class BraveR5FocusProbe {
+    [DllImport("user32.dll")] public static extern IntPtr GetForegroundWindow();
+    [DllImport("user32.dll")] public static extern uint GetWindowThreadProcessId(IntPtr hWnd, out uint processId);
+}
+'@
+function Get-ForegroundSnapshot {
+    $hwnd = [BraveR5FocusProbe]::GetForegroundWindow()
+    [uint32]$fgId = 0
+    [void][BraveR5FocusProbe]::GetWindowThreadProcessId($hwnd, [ref]$fgId)
+    $proc = Get-Process -Id $fgId -ErrorAction SilentlyContinue
+    [ordered]@{ pid = $fgId; process = $proc.ProcessName; title = $proc.MainWindowTitle }
+}
+function Convert-TeamCtlOutput($lines) {
+    $text = ($lines | ForEach-Object { [string]$_ }) -join "`n"
+    $jsonStart = $text.IndexOf('{')
+    if ($jsonStart -lt 0) { throw 'teamctl emitted no JSON response.' }
+    return ($text.Substring($jsonStart) | ConvertFrom-Json)
+}
+function Get-Sha256Python([string]$path) {
+    $hashLines = & python -c "import hashlib,sys; print(hashlib.sha256(open(sys.argv[1], 'rb').read()).hexdigest())" $path 2>&1
+    if ($LASTEXITCODE -ne 0) { throw "Python SHA-256 failed for ${path}: $($hashLines -join ' ')" }
+    return (($hashLines | Select-Object -Last 1).ToString().Trim().ToLowerInvariant())
+}
+$foregroundBefore = Get-ForegroundSnapshot
+
+try {
+    if (Test-Path -LiteralPath $cleanupPath) { throw 'Refusing to overwrite existing cleanup evidence.' }
+    if (Test-Path -LiteralPath $resultPath) { throw 'Refusing to overwrite existing runtime evidence.' }
+    $statePath = Join-Path $mainRoot '.bago\team\runtime\state.json'
+    $state = Get-Content -LiteralPath $statePath -Raw -Encoding UTF8 | ConvertFrom-Json
+    if ($state.mission.mission_id -ne 'CODEX_GOVERNED_CONTINUITY_20261031' -or
+        $state.candidate_id -ne '0f74f0d818f422d2a9506957e6396070300bbb77d88c602605b4fa647e7cc774' -or
+        $state.scope_sha256 -ne '0af844db09c04531999970ed71e0bce9ed1f51245b48416d0453a7bc7cef9df9' -or
+        $state.lifecycle -ne 'ACTIVE' -or $state.task_state -ne 'ACTIVE' -or $state.terminal_gate -ne 'OPEN' -or
+        $state.work_status.BRAVE_E2E_R5.status -ne 'CLAIMED' -or $state.work_status.P2_HOST_R5.status -ne 'DONE' -or
+        $state.pause_history.Count -ne 0 -or $state.interruptions.Count -ne 0) {
+        throw 'Mission, candidate, scope, STOP/pause, or dependency no longer matches the approved runtime operation.'
+    }
+    $p2Handoff = Join-Path $mainRoot '.bago\team\runtime\handoffs\P2_HOST_R5.json'
+    if (-not (Test-Path -LiteralPath $p2Handoff -PathType Leaf)) { throw 'P2 handoff is missing.' }
+    $p2 = Get-Content -LiteralPath $p2Handoff -Raw -Encoding UTF8 | ConvertFrom-Json
+    if ($p2.status -ne 'DONE' -or $p2.candidate_id -ne $state.candidate_id -or $p2.scope_sha256 -ne $state.scope_sha256) { throw 'P2 handoff identity mismatch.' }
+    $p2HandoffSha = Get-Sha256Python $p2Handoff
+    if ($p2HandoffSha -ne $state.work_status.P2_HOST_R5.handoff.sha256) { throw 'P2 handoff ledger hash mismatch.' }
+    $crPath = Join-Path $browserRoot '.bago\goals\browser-bridge-runtime-validation-20261030\revision4\evidence\runtime\CR-014-BRAVE-NATIVE-HOST-PARENT-WINDOW-ARG-20261030.json'
+    $cr = Get-Content -LiteralPath $crPath -Raw -Encoding UTF8 | ConvertFrom-Json
+    if ($cr.decision -ne 'APPROVED_BY_USER' -or $cr.approval_response -ne '1' -or $cr.approved_by -ne 'user') { throw 'CR-014 authorization is absent or does not match.' }
+    $teamctl = Join-Path $mainRoot '.bago\team\kit\scripts\teamctl.py'
+    $identityLines = & python $teamctl --root $mainRoot identity 2>&1
+    if ($LASTEXITCODE -ne 0) { throw 'teamctl identity failed.' }
+    $identity = Convert-TeamCtlOutput $identityLines
+    if ($identity.status -ne 'PASS' -or $identity.candidate_id -ne $state.candidate_id) { throw 'teamctl identity candidate mismatch.' }
+    foreach ($workId in @('P2_HOST_R5', 'BRAVE_E2E_R5')) {
+        $inspectLines = & python $teamctl --root $mainRoot inspect $workId 2>&1
+        if ($LASTEXITCODE -ne 0) { throw "teamctl inspect failed for $workId." }
+        $inspected = Convert-TeamCtlOutput $inspectLines
+        if ($inspected.status -ne 'PASS' -or $inspected.candidate_id -ne $state.candidate_id -or $inspected.scope_sha256 -ne $state.scope_sha256) { throw "teamctl inspect identity/state mismatch for $workId." }
+    }
+    $actualExeHash = Get-Sha256Python $exe
+    if ($actualExeHash -ne $expectedExeSha256) { throw "Packaged host hash mismatch: $actualExeHash" }
+    if (-not (Test-Path -LiteralPath $brave -PathType Leaf)) { throw 'Installed Brave executable is missing.' }
+    if (-not (Test-Path -LiteralPath $runner -PathType Leaf)) { throw 'Approved runtime runner is missing.' }
+    foreach ($view in @([Microsoft.Win32.RegistryView]::Registry32, [Microsoft.Win32.RegistryView]::Registry64)) {
+        $base = [Microsoft.Win32.RegistryKey]::OpenBaseKey([Microsoft.Win32.RegistryHive]::CurrentUser, $view)
+        try {
+            $existing = $base.OpenSubKey($registrySubKey)
+            if ($null -ne $existing) { $existing.Dispose(); throw "Exact effective Google Native Messaging key exists in $view; refusing to overwrite it." }
+        } finally { $base.Dispose() }
+    }
+    if (Test-Path -LiteralPath $manifestPath) { throw 'Exact temporary manifest appeared after preflight; refusing to overwrite it.' }
+    if (Test-Path -LiteralPath $profile) { throw 'Exact isolated profile appeared after preflight; refusing to reuse it.' }
+
+    $manifest = [ordered]@{
+        name = $hostName
+        description = 'BAGO Browser Bridge revision5 local fixture test host'
+        path = $exe
+        type = 'stdio'
+        allowed_origins = @("chrome-extension://$extensionId/")
+    }
+    $manifestJson = $manifest | ConvertTo-Json -Depth 4
+    [System.IO.File]::WriteAllText($manifestPath, $manifestJson + "`n", [System.Text.UTF8Encoding]::new($false))
+    $createdManifest = $true
+    $manifestSha256 = Get-Sha256Python $manifestPath
+
+    $registryBase = [Microsoft.Win32.RegistryKey]::OpenBaseKey([Microsoft.Win32.RegistryHive]::CurrentUser, [Microsoft.Win32.RegistryView]::Registry64)
+    $registryKey = $registryBase.CreateSubKey($registrySubKey)
+    if ($null -eq $registryKey) { throw 'Unable to create the exact Brave Native Messaging key.' }
+    $createdRegistryKey = $true
+    try {
+        if ($registryKey.GetValueNames().Count -gt 0 -or $registryKey.SubKeyCount -gt 0) { throw 'New Brave key is not empty; refusing to overwrite registration data.' }
+        $registryKey.SetValue('', $manifestPath, [Microsoft.Win32.RegistryValueKind]::String)
+        $registryKey.Flush()
+    } finally { $registryKey.Dispose(); $registryBase.Dispose() }
+
+    $node = (Get-Command node.exe -ErrorAction Stop).Source
+    $nodeOutput = & $node $runner 2>&1
+    $runtimeExitCode = $LASTEXITCODE
+    $runtimeText = ($nodeOutput | ForEach-Object { [string]$_ }) -join "`n"
+    if ($runtimeExitCode -ne 0) { throw "Brave runtime runner exited ${runtimeExitCode}: $runtimeText" }
+    $status = 'PASS'
+} catch {
+    $errorText = $_.Exception.Message
+} finally {
+    try {
+        $profilePids = @(Get-CimInstance Win32_Process | Where-Object {
+            $_.Name -eq 'brave.exe' -and $_.CommandLine -and $_.CommandLine.IndexOf("--user-data-dir=$profile", [System.StringComparison]::OrdinalIgnoreCase) -ge 0
+        } | Select-Object -ExpandProperty ProcessId)
+        foreach ($ownedPid in $profilePids) { Stop-Process -Id $ownedPid -Force -ErrorAction Stop }
+        if ($profilePids.Count -gt 0) { Start-Sleep -Milliseconds 500 }
+        $remainingPids = @(Get-CimInstance Win32_Process | Where-Object {
+            $_.Name -eq 'brave.exe' -and $_.CommandLine -and $_.CommandLine.IndexOf("--user-data-dir=$profile", [System.StringComparison]::OrdinalIgnoreCase) -ge 0
+        } | Select-Object -ExpandProperty ProcessId)
+        if ($remainingPids.Count -gt 0) { throw "Isolated Brave process(es) still active: $($remainingPids -join ',')" }
+        if (Test-Path -LiteralPath $profile) {
+            $runtimeRoot = [System.IO.Path]::GetFullPath($runtimeDir).TrimEnd('\') + '\'
+            $profileFull = [System.IO.Path]::GetFullPath($profile)
+            if (-not $profileFull.StartsWith($runtimeRoot, [System.StringComparison]::OrdinalIgnoreCase) -or $profileFull -ne [System.IO.Path]::GetFullPath((Join-Path $runtimeDir 'profile-brave-r5-attempt7'))) { throw 'Refusing to remove a profile outside the exact revision5 evidence path.' }
+            $profileItem = Get-Item -LiteralPath $profileFull -Force
+            if (($profileItem.Attributes -band [System.IO.FileAttributes]::ReparsePoint) -ne 0) { throw 'Isolated profile became a reparse point; refusing recursive cleanup.' }
+            Remove-Item -LiteralPath $profileFull -Recurse -Force
+        }
+    } catch { $cleanupErrors.Add("profile: $($_.Exception.Message)") }
+
+    if ($createdRegistryKey) {
+        try {
+            $registryBase = [Microsoft.Win32.RegistryKey]::OpenBaseKey([Microsoft.Win32.RegistryHive]::CurrentUser, [Microsoft.Win32.RegistryView]::Registry64)
+            $key = $registryBase.OpenSubKey($registrySubKey, $true)
+            if ($null -ne $key) {
+                try {
+                    $registered = [string]$key.GetValue('')
+                    if (-not [string]::Equals($registered, $manifestPath, [System.StringComparison]::OrdinalIgnoreCase)) { throw 'Brave registration changed during test; preserving it.' }
+                    $valueNames = @($key.GetValueNames() | Where-Object { $_ -ne '' })
+                    if ($valueNames.Count -gt 0 -or $key.SubKeyCount -gt 0) { throw 'Brave registration acquired unrelated values/subkeys; preserving it.' }
+                } finally { $key.Dispose() }
+                $registryBase.DeleteSubKey($registrySubKey, $false)
+            }
+            if ($null -ne $registryBase) { $registryBase.Dispose() }
+        } catch { if ($null -ne $registryBase) { $registryBase.Dispose() }; $cleanupErrors.Add("registry: $($_.Exception.Message)") }
+    }
+    if ($createdManifest -and (Test-Path -LiteralPath $manifestPath)) {
+        try {
+            $currentManifestHash = Get-Sha256Python $manifestPath
+            if ($currentManifestHash -ne $manifestSha256) { throw 'Manifest changed during test; preserving it.' }
+            Remove-Item -LiteralPath $manifestPath -Force
+        } catch { $cleanupErrors.Add("manifest: $($_.Exception.Message)") }
+    }
+    if ($cleanupErrors.Count -gt 0) { $status = 'FAIL' }
+    $runtimeArtifact = $null
+    if (Test-Path -LiteralPath $resultPath -PathType Leaf) {
+        $runtimeArtifact = Get-Content -LiteralPath $resultPath -Raw -Encoding UTF8 | ConvertFrom-Json
+    } else { $status = 'FAIL' }
+    $runtimeStatus = if ($null -ne $runtimeArtifact) { $runtimeArtifact.status } else { 'NOT_RUN' }
+    $videoStatus = if ($null -ne $runtimeArtifact) { $runtimeArtifact.video.status } else { 'NOT_RUN' }
+    $videoReason = if ($null -ne $runtimeArtifact) { $runtimeArtifact.video.reason } else { 'Runtime result missing.' }
+    $foregroundAfter = Get-ForegroundSnapshot
+    $focusPreserved = ($foregroundBefore.pid -eq $foregroundAfter.pid -and $foregroundBefore.process -eq $foregroundAfter.process -and $foregroundBefore.title -eq $foregroundAfter.title)
+    $manifestPresentAfter = Test-Path -LiteralPath $manifestPath
+    $registryPresentAfter = Test-Path -LiteralPath $registryPath
+    $profilePresentAfter = Test-Path -LiteralPath $profile
+    if ($registryPresentAfter -or $manifestPresentAfter -or $profilePresentAfter) { $status = 'FAIL' }
+    if (-not $focusPreserved) { $status = 'FAIL' }
+    $result = [ordered]@{
+        schema = 'bago.browser-bridge.brave-r5.runtime.v1'
+        status = $status
+        runtime_exit_code = $runtimeExitCode
+        runtime_output = $runtimeText
+        error = $errorText
+        cleanup_errors = @($cleanupErrors)
+        mission_id = 'CODEX_GOVERNED_CONTINUITY_20261031'
+        candidate_id = '0f74f0d818f422d2a9506957e6396070300bbb77d88c602605b4fa647e7cc774'
+        scope_sha256 = '0af844db09c04531999970ed71e0bce9ed1f51245b48416d0453a7bc7cef9df9'
+        registry_key = 'HKCU\Software\Google\Chrome\NativeMessagingHosts\com.bago.browser_bridge'
+        registry_view_created = 'Registry64'
+        manifest_sha256 = $manifestSha256
+        runtime_result = $runtimeStatus
+        video_status = $videoStatus
+        video_reason = $videoReason
+        registry_absent_after = -not $registryPresentAfter
+        manifest_absent_after = -not $manifestPresentAfter
+        profile_absent_after = -not $profilePresentAfter
+        focus_preserved = $focusPreserved
+        foreground_before = $foregroundBefore
+        foreground_after = $foregroundAfter
+        toolbar_gesture = 'NOT_RUN'
+        recorded_at_utc = [DateTime]::UtcNow.ToString('o')
+    }
+    $e2eDir = Split-Path -Parent $cleanupPath
+    if (-not (Test-Path -LiteralPath $e2eDir)) { New-Item -ItemType Directory -Path $e2eDir -Force | Out-Null }
+    [System.IO.File]::WriteAllText($cleanupPath, ($result | ConvertTo-Json -Depth 8) + "`n", [System.Text.UTF8Encoding]::new($false))
+}
+
+Write-Output (Get-Content -LiteralPath $cleanupPath -Raw -Encoding UTF8)
+if ($status -ne 'PASS') { exit 1 }

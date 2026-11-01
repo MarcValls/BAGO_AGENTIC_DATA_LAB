@@ -1,0 +1,7 @@
+# Recuperación de integridad LOCAL_POLICY
+
+Estado: VERIFIED. teamctl verify y pair PASS; revisión independiente admitida y CLAIMED. Misión original sigue NO_GO por aceptación pendiente.
+
+Se restauraron exactamente los bytes históricos de status.json ligados al handoff: SHA-256 f5a22128f52634a073b0d92723812c4a54dfab4bb590c56cc4067f81d882b2ae. No se editó el handoff ni ningún recibo. La versión mutable previa (142bf234...) se conserva en status-current-before-recovery.json.
+
+La referencia operativa actual es [current-operational-status.json](../../checks/current-operational-status.json), no el status.json histórico. Los resultados de auditorías previas se conservan como evidencia histórica de sus respectivos candidatos y momentos.

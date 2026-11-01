@@ -1,0 +1,2 @@
+/raw-objects/** -text -diff
+/verify_publication.py text eol=lf

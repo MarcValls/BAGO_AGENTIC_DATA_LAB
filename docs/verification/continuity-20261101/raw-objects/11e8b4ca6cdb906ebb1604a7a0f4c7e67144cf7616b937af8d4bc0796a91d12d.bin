@@ -1,0 +1,24 @@
+{
+  "schema": "bago.suite.collaboration.v1",
+  "workers": [
+    {
+      "id": "native-A",
+      "role": "executor"
+    },
+    {
+      "id": "native-B",
+      "role": "executor"
+    },
+    {
+      "id": "independent-review",
+      "role": "verifier"
+    }
+  ],
+  "verification_checks": [
+    "verify"
+  ],
+  "lease_seconds": 1200,
+  "max_claims": 8,
+  "max_handoffs": 4,
+  "max_checkpoints": 8
+}
