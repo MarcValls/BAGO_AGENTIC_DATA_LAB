@@ -1,6 +1,6 @@
 """HTTP editing and explicit human confirmation; chat exposes editing only."""
 from fastapi import APIRouter, HTTPException
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, StrictBool, StrictStr
 from src.communications import CommunicationError
 from src.api.connection_routes import BoundedConnectionRoute
 
@@ -36,6 +36,15 @@ class Confirmation(BaseModel):
     confirmed: bool
 
 
+class WhatsAppAuthorization(BaseModel):
+    model_config = ConfigDict(extra="forbid", strict=True)
+    enabled: StrictBool
+    expected_project_id: StrictStr
+    expected_binding: StrictStr
+    expected_session_identity: StrictStr
+    expected_authorization_revision: StrictStr
+
+
 def create_communication_router(service=None, service_factory=None):
     router = APIRouter(prefix="/api/communications", tags=["communications"], route_class=BoundedConnectionRoute)
 
@@ -49,6 +58,14 @@ def create_communication_router(service=None, service_factory=None):
     @router.get("/contacts")
     def contacts():
         return {"contacts": call("contacts")}
+
+    @router.get("/whatsapp-authorization")
+    def whatsapp_authorization():
+        return call("whatsapp_authorization")
+
+    @router.put("/whatsapp-authorization")
+    def configure_whatsapp_authorization(body: WhatsAppAuthorization):
+        return call("set_whatsapp_authorization", **body.model_dump())
 
     @router.post("/contacts")
     def contact(body: ContactRequest):

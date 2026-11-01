@@ -50,7 +50,6 @@ export default function DevelopmentPanel({ownerId, projectRoot = null, portalTar
   const [candidate, setCandidate] = useState<DevelopmentChange | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
-  const [confirmed, setConfirmed] = useState(false)
   const [busy, setBusy] = useState(false)
   const [notice, setNotice] = useState('')
   const lock = useRef(false)
@@ -58,7 +57,7 @@ export default function DevelopmentPanel({ownerId, projectRoot = null, portalTar
   const base = '/api/development/changes'
   const refresh = useCallback(async () => {
     const version = ++generation.current
-    setLoading(true); setError(''); setCandidate(null); setConfirmed(false); setNotice('')
+    setLoading(true); setError(''); setCandidate(null); setNotice('')
     try {
       const data = await readResponse(await fetch(base))
       if (version !== generation.current) return
@@ -71,7 +70,7 @@ export default function DevelopmentPanel({ownerId, projectRoot = null, portalTar
   async function inspect(id: string) {
     if (lock.current) return
     const version = ++generation.current
-    setCandidate(null); setConfirmed(false); setError(''); setNotice(''); setLoading(true)
+    setCandidate(null); setError(''); setNotice(''); setLoading(true)
     try {
       const data = await readResponse(await fetch(base + '/' + encodeURIComponent(id)))
       if (version !== generation.current) return
@@ -83,7 +82,7 @@ export default function DevelopmentPanel({ownerId, projectRoot = null, portalTar
   const checked = Boolean(candidate?.checks.length && candidate.checks.every(c => c.status === 'PASS'))
   const reviewed = Boolean(candidate?.reviews.length && candidate.reviews.every(r => r.approved === true))
   async function act(operation: 'apply' | 'rollback') {
-    if (lock.current || !candidate || !confirmed || disabled || (operation === 'apply' ? candidate.apply_eligible !== true || !checked || !reviewed : candidate.status !== 'APPLIED' || candidate.rollback_eligible !== true)) return
+    if (lock.current || !candidate || disabled || (operation === 'apply' ? candidate.apply_eligible !== true || !checked || !reviewed : candidate.status !== 'APPLIED' || candidate.rollback_eligible !== true)) return
     lock.current = true; setBusy(true); setError(''); setNotice('')
     const version = generation.current
     try {
@@ -93,10 +92,10 @@ export default function DevelopmentPanel({ownerId, projectRoot = null, portalTar
       }))
       if (version !== generation.current) return
       if (!supported(data) || data.change_id !== candidate.change_id || data.patch_sha256 !== candidate.patch_sha256) throw new Error('No se pudo verificar el resultado de la operación. Actualiza los cambios.')
-      setCandidate(data); setConfirmed(false)
+      setCandidate(data)
       setChanges(previous => previous.map(c => c.change_id === data.change_id ? data : c))
       setNotice('Resultado recibido: ' + data.status)
-    } catch (cause) {if (version === generation.current) {setError(cause instanceof Error ? cause.message : 'No se pudo completar la operación.'); setConfirmed(false); setCandidate(null)}}
+    } catch (cause) {if (version === generation.current) {setError(cause instanceof Error ? cause.message : 'No se pudo completar la operación.'); setCandidate(null)}}
     finally {lock.current = false; setBusy(false)}
   }
   const drawer = <div className="development-drawer-anchor" data-open={open}>
@@ -129,9 +128,8 @@ export default function DevelopmentPanel({ownerId, projectRoot = null, portalTar
       <h4>Pruebas</h4>{candidate.checks.length ? <ul>{candidate.checks.map((c, i) => <li key={i}>{c.check_id}: {c.status}</li>)}</ul> : <p>Faltan pruebas.</p>}
       <h4>Revisión</h4>{candidate.reviews.length ? <ul>{candidate.reviews.map((r, i) => <li key={i}>{r.reviewer_id}: {r.approved ? "Aprobada" : "Rechazada"} · {r.reason}</li>)}</ul> : <p>Falta la revisión.</p>}
       {!checked || !reviewed ? <p>La aplicación requiere pruebas y revisión aprobadas.</p> : null}
-      <label><input type="checkbox" checked={confirmed} disabled={busy || disabled} onChange={e => setConfirmed(e.target.checked)}/>He revisado las diferencias y confirmo esta operación</label>
-      <div className="project-sidebar-actions"><button type="button" disabled={busy || disabled || !confirmed || candidate.apply_eligible !== true || !checked || !reviewed} onClick={() => void act('apply')}>Aplicar cambio</button>
-      <button type="button" disabled={busy || disabled || !confirmed || candidate.status !== 'APPLIED' || candidate.rollback_eligible !== true} onClick={() => void act('rollback')}>Revertir cambio</button></div>
+      <div className="project-sidebar-actions"><button type="button" disabled={busy || disabled || candidate.apply_eligible !== true || !checked || !reviewed} onClick={() => void act('apply')}>{t('agents.TaskExecution.accept')}</button>
+      <button type="button" disabled={busy || disabled || candidate.status !== 'APPLIED' || candidate.rollback_eligible !== true} onClick={() => void act('rollback')}>Revertir cambio</button></div>
     </div>}
     {busy && <p role="status">Procesando la operación…</p>}
     {notice && <p role="status">{notice}</p>}

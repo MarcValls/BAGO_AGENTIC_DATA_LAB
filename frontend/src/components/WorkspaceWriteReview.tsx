@@ -37,12 +37,12 @@ export default function WorkspaceWriteReview({proposal,ownerKind,ownerId,convers
  const epoch=useRef(0)
  const pendingReviews=useRef(new Map<string,Promise<unknown>>())
  const [reviewScope,setReviewScope]=useState('')
- const [review,setReview]=useState<Review|null>(null),[text,setText]=useState(''),[approved,setApproved]=useState(false),[busy,setBusy]=useState(false),[error, setError] = useState<string|Error>('')
+  const [review,setReview]=useState<Review|null>(null),[text,setText]=useState(''),[busy,setBusy]=useState(false),[error, setError] = useState<string|Error>('')
  const [tab,setTab]=useState<'content'|'diff'>('content')
  const dirty=review!==null&&text!==review.proposed_text
  const accept=(value:unknown)=>{
   if(!validReview(value,proposal,binding))throw new Error("commerce.the_review_does_not_match_the_proposal_project_or_conversation")
-  setReview(value);setReviewScope(scope);setText(value.proposed_text);setApproved(false)
+  setReview(value);setReviewScope(scope);setText(value.proposed_text)
   return value
  }
  async function action(operation:string,args:Record<string,unknown>,signal?:AbortSignal){
@@ -65,7 +65,7 @@ export default function WorkspaceWriteReview({proposal,ownerKind,ownerId,convers
  async function load(){
   const generation=++epoch.current,captured=scope
   const current=()=>generation===epoch.current&&captured===scopeRef.current
-  setApproved(false);setReview(null);setReviewScope('');setBusy(true);setError('')
+  setReview(null);setReviewScope('');setBusy(true);setError('')
   if(!bound){setBusy(false);setError("commerce.the_proposal_does_not_belong_to_the_current_agent_or_conversation");return}
   try{const result=await action('review_write',{proposal_id:proposal.proposal_id});if(current())accept(result)}
   catch(cause){if(current())setError(cause instanceof Error ? cause :"commerce.could_not_load_the_review")}
@@ -76,7 +76,7 @@ export default function WorkspaceWriteReview({proposal,ownerKind,ownerId,convers
   if(!bound||reviewScope!==scope||busy||!review||review.status!=='PROPOSED'||!dirty)return
   const generation=epoch.current,captured=scope,submitted=text,previous=review
   const current=()=>generation===epoch.current&&captured===scopeRef.current
-  setBusy(true);setApproved(false);setError('')
+  setBusy(true);setError('')
   try{
    const result=await action('revise_write',{proposal_id:previous.proposal_id,expected_revision:previous.revision,text:submitted})
    if(!current())return
@@ -86,10 +86,10 @@ export default function WorkspaceWriteReview({proposal,ownerKind,ownerId,convers
   finally{if(current())setBusy(false)}
  }
  async function apply(){
-  if(!bound||reviewScope!==scope||busy||!review||review.status!=='PROPOSED'||dirty||!approved)return
+  if(!bound||reviewScope!==scope||busy||!review||review.status!=='PROPOSED'||dirty)return
   const generation=epoch.current,captured=scope,seen=review
   const current=()=>generation===epoch.current&&captured===scopeRef.current
-  setBusy(true);setApproved(false);setError('')
+  setBusy(true);setError('')
   try{
    const result=await action('apply_write',{proposal_id:seen.proposal_id,expected_revision:seen.revision,review_sha256:seen.review_sha256,confirmation:{confirmed:true,operation:'apply_write',workspace_id:seen.workspace_id,proposal_id:seen.proposal_id,revision:seen.revision,review_sha256:seen.review_sha256}})
    if(current()){const loaded=accept(result);if(loaded.status==='PROPOSED')setError("commerce.the_service_did_not_confirm_application_check_the_status_before_authorizing_again")}
@@ -110,11 +110,11 @@ export default function WorkspaceWriteReview({proposal,ownerKind,ownerId,convers
   <button type="button" disabled={busy} onClick={()=>void load()}>{t('commerce.reload_review')}</button>
   {review&&reviewScope===scope&&<>
    <ServiceTabs<'content'|'diff'> id={uid} label={t('commerce.file_review')} value={tab} onChange={setTab} items={[{id:'content',label:t('commerce.content')},{id:'diff',label:t('commerce.changes')}]}/>
-   <section role="tabpanel" id={`${uid}-panel-content`} aria-labelledby={`${uid}-tab-content`} tabIndex={0} hidden={tab!=='content'}><label>{t('commerce.proposed_content')}<textarea rows={12} value={text} maxLength={1048576} disabled={busy} readOnly={review.status!=='PROPOSED'} onChange={event=>{setText(event.target.value);setApproved(false)}}/></label><button type="button" disabled={busy||!dirty||review.status!=='PROPOSED'} onClick={()=>void revise()}>{t('commerce.save_proposal_and_review')}</button></section>
+   <section role="tabpanel" id={`${uid}-panel-content`} aria-labelledby={`${uid}-tab-content`} tabIndex={0} hidden={tab!=='content'}><label>{t('commerce.proposed_content')}<textarea rows={12} value={text} maxLength={1048576} disabled={busy} readOnly={review.status!=='PROPOSED'} onChange={event=>setText(event.target.value)}/></label><button type="button" disabled={busy||!dirty||review.status!=='PROPOSED'} onClick={()=>void revise()}>{t('commerce.save_proposal_and_review')}</button></section>
    <section role="tabpanel" id={`${uid}-panel-diff`} aria-labelledby={`${uid}-tab-diff`} tabIndex={0} hidden={tab!=='diff'}><pre>{dirty?t('commerce.save_the_proposal_to_update_the_changes'):review.diff||t('commerce.no_differences_recorded')}</pre><details><summary>{t('commerce.previous_content')}</summary><pre>{review.before_text||t('commerce.new_or_empty_file')}</pre></details></section>
    <details><summary>{t('commerce.identity_and_revision')}</summary><code>{review.proposal_id}</code><code>{review.revision}</code><code>{t('commerce.base')} {review.before_sha256??t('commerce.new_file')}</code><code>{t('commerce.content_285')} {review.proposed_sha256}</code><code>{t('commerce.revision_286')} {review.review_sha256}</code></details>
    {dirty&&<p role="status">{t('commerce.unsaved_edits_save_and_review_before_confirming')}</p>}
-   {review.status==='PROPOSED'&&<><label className="wm-check"><input type="checkbox" checked={approved} disabled={busy||dirty} onChange={event=>setApproved(event.target.checked)}/>{t('commerce.i_reviewed_the_project_file_and_content_of_this_revision')}</label><button type="button" disabled={busy||dirty||!approved} onClick={()=>void apply()}>{t('commerce.confirm_and_write')}</button></>}
+   {review.status==='PROPOSED'&&<button type="button" disabled={busy||dirty} onClick={()=>void apply()}>{t('agents.TaskExecution.accept')}</button>}
    {review.status==='CONFLICT'&&<p role="alert">{t('commerce.the_file_or_proposal_changed_this_write_is_not_authorized')}</p>}
    {review.status==='UNCERTAIN'&&<p role="alert">{t('commerce.the_outcome_cannot_be_confirmed_the_write_will_not_be_retried_automatically')}</p>}
    {review.status==='APPLIED'&&!review.receipt&&<p role="alert">{t('commerce.applied_according_to_the_service_receipt_unavailable')}</p>}

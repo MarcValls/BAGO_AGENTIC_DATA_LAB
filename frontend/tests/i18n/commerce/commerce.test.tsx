@@ -82,8 +82,7 @@ describe('commerce presentation catalogs and live preference',()=>{
   fireEvent.change(screen.getByLabelText('Título del proyecto'),{target:{value:'Original title'}})
   fireEvent.click(screen.getByRole('button',{name:'Usar carpeta'}))
   const review=await screen.findByRole('dialog')
-  const approval=within(review).getByRole('checkbox') as HTMLInputElement
-  fireEvent.click(approval)
+  const approval=within(review).getByRole('button',{name:'Aceptar plan y ejecutar'}) as HTMLButtonElement
   const count=f.fetcher.mock.calls.length
   switchTo('en')
   expect(within(review).getByText('D:/ProjectRoot/original-folder')).toBeTruthy()
@@ -91,8 +90,8 @@ describe('commerce presentation catalogs and live preference',()=>{
   expect(within(review).getByText('folder_plan_1')).toBeTruthy()
   expect(within(review).getByText('1'.repeat(64))).toBeTruthy()
   expect(within(review).getByText('Preparing this plan has not created files or changed the active folder. Confirm only the target and changes you reviewed.')).toBeTruthy()
-  expect(within(review).getByRole('checkbox')).toBe(approval)
-  expect(approval.checked).toBe(true)
+  expect(within(review).queryByRole('checkbox')).toBeNull()
+  expect(within(review).getByRole('button',{name:'Accept plan and execute'})).toBe(approval)
   expect(f.fetcher.mock.calls.length).toBe(count)
   expect(f.mutations().map(c=>c.url)).toEqual(['/api/project-folders/v1/plans'])
  })
@@ -106,27 +105,29 @@ describe('commerce presentation catalogs and live preference',()=>{
   vi.stubGlobal('fetch',fetcher)
   render(<WorkspaceWriteReview proposal={proposal} ownerKind="agent" ownerId="agent-original" conversationId="conversation-original" conversationRevision={2} />)
   const editor=await screen.findByLabelText('Contenido propuesto') as HTMLTextAreaElement
-  const consent=screen.getByRole('checkbox') as HTMLInputElement
-  fireEvent.click(consent)
+  const consent=screen.getByRole('button',{name:'Aceptar plan y ejecutar'}) as HTMLButtonElement
   const count=fetcher.mock.calls.length
   switchTo('en')
   expect(screen.getByLabelText('Proposed content')).toBe(editor)
   expect(editor.value).toBe('EXACT proposed content')
-  expect(consent.checked).toBe(true)
-  expect(screen.getByRole('button',{name:'Confirm and write'}).hasAttribute('disabled')).toBe(false)
+  expect(consent.disabled).toBe(false)
+  expect(screen.getByRole('button',{name:'Accept plan and execute'}).hasAttribute('disabled')).toBe(false)
   expect(fetcher.mock.calls.length).toBe(count)
   fireEvent.change(editor,{target:{value:'EXACT edited content'}})
   switchTo('es')
   expect(editor.value).toBe('EXACT edited content')
-  expect(consent.checked).toBe(false)
-  expect(screen.getByRole('button',{name:'Confirmar y escribir'}).hasAttribute('disabled')).toBe(true)
+  expect(consent.disabled).toBe(true)
+  expect(screen.getByRole('button',{name:'Aceptar plan y ejecutar'}).hasAttribute('disabled')).toBe(true)
   expect(fetcher.mock.calls.length).toBe(count)
  })
  it('keeps WhatsApp session settings and their technical reason without opening a browser',async()=>{
-  const fetcher=vi.fn(async()=>response({state:'connected',configured:true,label:'Original session',checked_at:'2026-10-23T12:30:00Z',reason:'EXACT backend reason',browser_available:true,persistent_profile:true}))
+  const fetcher=vi.fn(async(url:string)=>response(url==='/api/communications/whatsapp-authorization'
+   ?{available:true,enabled:false,revision:'none',grant_id:null,project:{project_id:'private-project',root:'D:/private-fixture',binding:'opaque-binding'},session_identity:'a'.repeat(64),validity:'until_revoked',granted_at:null,revoked_at:null}
+   :{state:'connected',configured:true,label:'Original session',checked_at:'2026-10-23T12:30:00Z',reason:'EXACT backend reason',browser_available:true,persistent_profile:true}))
   vi.stubGlobal('fetch',fetcher)
   render(<WhatsAppSettings />)
   const name=await screen.findByDisplayValue('Original session') as HTMLInputElement
+  fireEvent.click(screen.getByText('Avanzado'))
   fireEvent.change(name,{target:{value:'User session label'}})
   const count=fetcher.mock.calls.length
   switchTo('en')

@@ -79,8 +79,10 @@ Si el agente devuelve una tarea por estar fuera de su alcance, BAGO5 registra la
 3. Elige el modelo disponible para ese interlocutor. Si no hay ninguno, configura el proveedor en Settings.
 4. Escribe lo que quieres obtener, con una tarea concreta. Por ejemplo: «Resume los servicios descritos en esta página y cita las fuentes que hayas leído».
 5. Si necesitas consultar la web, marca **Permitir lectura web pública**.
-6. Pega una o varias URL HTTPS en **URL HTTPS de entrada · una por línea**. Se admiten hasta ocho entradas distintas. Revisa los orígenes que aparecen debajo.
-7. Pulsa **Send**. El permiso vale para ese turno, esa conversación y ese interlocutor. La casilla vuelve a quedar desmarcada.
+6. Escribe las URL HTTPS en tu mensaje y pulsa **Enviar**: si aún no hay sitios autorizados, ese envío define el alcance. No hay otra caja para pegar URL. Se admiten hasta ocho enlaces HTTPS escritos en tu mensaje. La primera respuesta nueva y válida después de activar la lectura incluye un aviso ámbar con el alcance; no ocupa permanentemente el compositor. Se conserva con ese mensaje y sólo vuelve a aparecer tras otra activación. Activar la casilla sin enlaces permite conversar normalmente y no concede lectura de sitios. Si incluyes un sitio nuevo, aparece una tarjeta ligada a ese mensaje pendiente: **Permitir estos sitios** revisa la lista y envía ese mismo texto en una sola acción. Si editas el mensaje, cambias de conversación o desactivas el permiso, esa solicitud anterior ya no se puede utilizar.
+7. La elección queda guardada en este cliente para esa conversación, interlocutor, proyecto y carpeta exactos. Los siguientes mensajes conservan el alcance sin repetir la casilla. Cada mensaje solicita un permiso nuevo, ligado a su revisión y de un solo uso; no se guardan tokens. **Desactivar lectura web** impide nuevos permisos desde este cliente, incluso mientras se espera una respuesta; no cancela lecturas ya iniciadas ni otros clientes. Una conversación nueva inicia desactivada; otra conversación recupera sólo su propia elección. Si la identidad o el almacenamiento no se pueden comprobar, la lectura web queda desactivada.
+
+Los controles de una respuesta —fuentes, lecturas, traza y preparación de una ejecución— se muestran dentro de ese mensaje. **Preparar ejecución real** utiliza la solicitud humana asociada y abre el plan en la misma conversación; mostrar el control no prepara ni ejecuta nada. El permiso web ON/OFF pertenece a la conversación y permanece junto al compositor.
 
 Al desplazarte por una conversación larga aparecen unos segundos los botones **Ir al principio de la conversación** y **Ir al final de la conversación**.
 
@@ -271,7 +273,7 @@ Este recorrido sirve para estudiar una empresa o página pública con un agente 
 
 1. Define antes qué quieres comprobar, qué páginas están autorizadas y qué resultado esperas. Por ejemplo: identificar servicios publicados y distinguirlos de una interpretación del agente.
 2. Crea o selecciona el agente y comprueba el modelo asignado. Usa una conversación nueva para mantener claro el alcance.
-3. Autoriza la lectura web por turno y envía la tarea desde Chat.
+3. Activa la lectura web para esa conversación, revisa sus orígenes y envía la tarea desde Chat. Cada turno obtiene un permiso nuevo dentro del alcance guardado.
 4. Espera el resultado real. Una respuesta del modelo sin una fuente leída correctamente no acredita el análisis de la página.
 5. Abre Fuentes web y contrasta afirmaciones con el texto capturado. Revisa URLs, UTC y hashes; después abre la ejecución de esa misma respuesta.
 6. Si se usa Jaeger, comprueba que la traza exportada se recupera por su identificador. Una confirmación del exportador por sí sola no demuestra esa consulta.
@@ -286,7 +288,7 @@ Esta guía describe el recorrido; no afirma que un experimento concreto haya pas
 | Lo que ves | Qué hacer |
 | --- | --- |
 | No hay modelos disponibles | Revisar proveedor y Modelos activos en Settings. No basta con tener un nombre de modelo guardado. |
-| La lectura web es denegada | Revisar HTTPS, origen autorizado, conversación y turno. Volver a autorizar expresamente un turno nuevo si corresponde. |
+| La lectura web es denegada | Revisar HTTPS, origen autorizado, conversación y turno. La elección de esa conversación se conserva; cada envío obtiene un permiso nuevo. Para otro sitio, escribe su URL en el mensaje del chat y revisa la tarjeta de sitios de ese mensaje. |
 | La página devuelve poco texto | Puede depender de JavaScript, autenticación o un tipo no admitido. No dar por leído contenido ausente. |
 | Falta una fuente o traza | Mantener «no disponible» y consultar la ejecución correcta. No sustituirla por la demo histórica. |
 | No aparecen documentos de contexto | Revisar la carpeta activa y si existen los archivos reconocidos. |

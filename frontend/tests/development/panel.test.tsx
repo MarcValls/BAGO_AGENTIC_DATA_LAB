@@ -21,34 +21,34 @@ it('shows loading and empty states',async()=>{
 })
 it('shows service failure without mutation controls',async()=>{
   vi.stubGlobal('fetch',vi.fn(async()=>response({detail:{message:'Servicio no disponible'}},false)))
-  render(<DevelopmentPanel ownerId="engineer"/>);expect(await screen.findByRole('alert')).toHaveProperty('textContent','Servicio no disponible');expect(screen.queryByText('Aplicar cambio')).toBeNull()
+  render(<DevelopmentPanel ownerId="engineer"/>);expect(await screen.findByRole('alert')).toHaveProperty('textContent','Servicio no disponible');expect(screen.queryByText('Aceptar plan y ejecutar')).toBeNull()
 })
 it('rejects unsupported candidates',async()=>{
   vi.stubGlobal('fetch',vi.fn(async()=>response({changes:[{change_id:'unknown'}]})))
   render(<DevelopmentPanel ownerId="engineer"/>);expect((await screen.findByRole('alert')).textContent).toContain('no compatible')
 })
 it('requires human confirmation, sends exact hash once, and shows returned state',async()=>{
-  const f=await open();const button=screen.getByText('Aplicar cambio') as HTMLButtonElement
-  expect(button.disabled).toBe(true);fireEvent.click(screen.getByLabelText('He revisado las diferencias y confirmo esta operación'))
+  const f=await open();const button=screen.getByText('Aceptar plan y ejecutar') as HTMLButtonElement
+  expect(button.disabled).toBe(false);expect(f.mock.calls.filter(c=>c[1])).toHaveLength(0)
   fireEvent.click(button);fireEvent.click(button)
   await screen.findByText('Resultado recibido: APPLIED')
   const writes=f.mock.calls.filter(c=>c[1]);expect(writes).toHaveLength(1)
   expect(writes[0][0]).toBe('/api/development/changes/change_1/apply')
   expect(JSON.parse(String(writes[0][1]?.body))).toEqual({expected_sha256:'a'.repeat(64),confirmed:true})
-  expect((screen.getByText('Revertir cambio') as HTMLButtonElement).disabled).toBe(true)
+  expect((screen.getByText('Revertir cambio') as HTMLButtonElement).disabled).toBe(false);expect(writes).toHaveLength(1)
 })
 it.each([{checks:[]},{reviews:[]},{checks:[{check_id:'unit',status:'FAIL'}]},{reviews:[{reviewer_id:'r',approved:false,reason:'failure'}]},{apply_eligible:undefined}])('blocks incomplete or rejected candidate %j',async extra=>{
-  await open(change(extra));fireEvent.click(screen.getByLabelText('He revisado las diferencias y confirmo esta operación'));expect((screen.getByText('Aplicar cambio') as HTMLButtonElement).disabled).toBe(true)
+  await open(change(extra));expect((screen.getByText('Aceptar plan y ejecutar') as HTMLButtonElement).disabled).toBe(true)
 })
 it('only allows rollback for an applied eligible candidate',async()=>{
   const f=await open(change({status:'APPLIED',apply_eligible:false,rollback_eligible:true}))
-  fireEvent.click(screen.getByLabelText('He revisado las diferencias y confirmo esta operación'));fireEvent.click(screen.getByText('Revertir cambio'))
+  fireEvent.click(screen.getByText('Revertir cambio'))
   await waitFor(()=>expect(f.mock.calls.some(c=>c[0].endsWith('/rollback'))).toBe(true))
 })
 it('invalidates review after an apply failure',async()=>{
   const c=change();vi.stubGlobal('fetch',vi.fn(async(path:string,init?:RequestInit)=>response(init?{detail:'El candidato cambió'}:path.endsWith('/changes')?{changes:[c]}:c,!init)))
   render(<DevelopmentPanel ownerId="engineer"/>);fireEvent.click(await screen.findByText('change_1 · PREPARED'));await screen.findByText(/\+fixture/)
-  fireEvent.click(screen.getByLabelText('He revisado las diferencias y confirmo esta operación'));fireEvent.click(screen.getByText('Aplicar cambio'))
-  expect((await screen.findByRole('alert')).textContent).toContain('El candidato cambió');expect(screen.queryByText('Aplicar cambio')).toBeNull()
+  fireEvent.click(screen.getByText('Aceptar plan y ejecutar'))
+  expect((await screen.findByRole('alert')).textContent).toContain('El candidato cambió');expect(screen.queryByText('Aceptar plan y ejecutar')).toBeNull()
 })
 
