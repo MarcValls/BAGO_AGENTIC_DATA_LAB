@@ -4816,7 +4816,9 @@ def _task_model_eligible(provider_id, model_id, role):
 
 def _task_default_model(selection=None):
     from src.agent_tasks.store import TaskError
-    catalog = provider_runtime.model_catalog().get("models", [])
+    # Reuse the existing policy-decorated catalog shown by the UI. The raw
+    # discovery rows do not contain orchestrator_enabled or agent_types.
+    catalog = chat_model_catalog().get("models", [])
     eligible = [item for item in catalog if item.get("state") in {"ready","configured_unverified"}
         and item.get("orchestrator_enabled") is True
         and _task_model_eligible(item["provider_id"],item["model_id"],"orchestrator")]

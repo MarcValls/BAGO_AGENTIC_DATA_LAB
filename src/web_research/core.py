@@ -8,6 +8,7 @@ from html.parser import HTMLParser
 import http.client
 import ipaddress
 import json
+import os
 from pathlib import Path
 import queue
 import re
@@ -168,6 +169,24 @@ class _DeadlineSocket:
         self.deadline.check();return value
 
 
+def verified_tls_context():
+    """Verified TLS with existing application CAs; explicit host overrides win.
+
+    Windows' default store can lack public issuers present in the certifi
+    bundle already shipped with requests. Loading that bundle affects this
+    context only. The standalone SDK still works without that optional package.
+    """
+    context=ssl.create_default_context()
+    if 'SSL_CERT_FILE' in os.environ or 'SSL_CERT_DIR' in os.environ:
+        return context
+    try:
+        import certifi
+    except ImportError:
+        return context
+    context.load_verify_locations(cafile=certifi.where())
+    return context
+
+
 def https_get(url,remaining):
     """Pinned public IP/TLS and absolute request/status/header/body deadline."""
     guard=_Deadline(remaining);connection=None;response=None
@@ -176,7 +195,7 @@ def https_get(url,remaining):
         connection=http.client.HTTPSConnection(parsed.hostname,443,timeout=min(8,max(.001,guard.at-time.monotonic())))
         sock=guard.register(socket.create_connection((addresses[0],443),timeout=min(8,max(.001,guard.at-time.monotonic()))))
         sock.settimeout(max(.001,min(5,guard.at-time.monotonic())))
-        tls_sock=guard.register(ssl.create_default_context().wrap_socket(sock,server_hostname=parsed.hostname,do_handshake_on_connect=False))
+        tls_sock=guard.register(verified_tls_context().wrap_socket(sock,server_hostname=parsed.hostname,do_handshake_on_connect=False))
         tls_sock.settimeout(max(.001,min(5,guard.at-time.monotonic())));tls_sock.do_handshake();guard.check()
         connection.sock=_DeadlineSocket(tls_sock,guard)
         connection.request('GET',urlunsplit(('','',parsed.path or '/',parsed.query,'')),headers={'User-Agent':'BAGO-PublicWebReader/0.1','Accept':'text/html,text/plain,application/xhtml+xml','Accept-Encoding':'identity','Connection':'close'})
@@ -197,6 +216,9 @@ def https_get(url,remaining):
         return status,headers,b''.join(chunks),addresses[0]
     except WebReadError:
         guard.check();raise
+    except ssl.SSLCertVerificationError:
+        guard.check()
+        raise WebReadError('TLS_VERIFICATION_FAILED','HTTPS certificate or hostname verification failed.','FAIL') from None
     except (OSError,ssl.SSLError,http.client.HTTPException):
         guard.check()
         raise WebReadError('NETWORK_FAILURE','HTTPS retrieval did not complete.','FAIL') from None

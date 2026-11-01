@@ -102,3 +102,29 @@ def test_host_expired_plan_review_prevents_real_write(monkeypatch,tmp_path_facto
     assert response.json()["status"]=="FAILED_NO_EFFECT"
     assert not (project/"o/result.txt").exists()
 
+
+@pytest.mark.parametrize('explicit',[False,True])
+def test_real_default_selector_reuses_decorated_policy_catalog_not_raw_discovery(monkeypatch,explicit):
+    from types import SimpleNamespace
+    from src.api import server
+    raw={'models':[{'provider_id':'codex','model_id':'fixture','state':'configured_unverified'}]}
+    monkeypatch.setattr(server.provider_runtime,'model_catalog',lambda:raw)
+    monkeypatch.setattr(server.provider_runtime,'active_selection',lambda:{'provider_id':'codex','model_id':'fixture'})
+    monkeypatch.setattr(server.model_policy,'read',lambda:(None,'fixture'))
+    monkeypatch.setattr(server.model_policy,'permits',lambda *a:True)
+    monkeypatch.setattr(server.model_policy,'permits_orchestrator',lambda provider,model:(provider,model)==('codex','fixture'))
+    selection=SimpleNamespace(mode='explicit',provider_id='codex',model_id='fixture') if explicit else None
+    assert server._task_default_model(selection)==('codex','fixture')
+
+
+def test_decorated_default_selector_does_not_grant_revoked_model_policy(monkeypatch):
+    from src.api import server
+    from src.agent_tasks.store import TaskError
+    monkeypatch.setattr(server.provider_runtime,'model_catalog',lambda:{'models':[
+        {'provider_id':'codex','model_id':'fixture','state':'ready'}]})
+    monkeypatch.setattr(server.model_policy,'read',lambda:(None,'fixture'))
+    monkeypatch.setattr(server.model_policy,'permits',lambda *a:True)
+    monkeypatch.setattr(server.model_policy,'permits_orchestrator',lambda *a:False)
+    with pytest.raises(TaskError) as error:server._task_default_model()
+    assert error.value.code=='model_not_eligible'
+

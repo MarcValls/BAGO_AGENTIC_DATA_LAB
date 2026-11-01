@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 import React from 'react'
 import {afterEach,beforeEach,expect,it,vi} from 'vitest'
-import {cleanup,fireEvent,render,screen,waitFor,within} from '@testing-library/react'
+import {act,cleanup,fireEvent,render,screen,waitFor,within} from '@testing-library/react'
 import TaskExecutionPanel from '../../../src/components/TaskExecutionPanel'
 import {resetLocaleForTests,setLocale,t} from '../../../src/i18n'
 
@@ -135,17 +135,63 @@ it('a profile changed elsewhere during optional editing is not overwritten or si
  fireEvent.click(screen.getByRole('button',{name:t('agents.TaskExecution.saveAgent')}));await screen.findByText(t('agents.TaskExecution.profileChanged'))
  expect(f.calls.some(c=>c.method==='PUT')).toBe(false);expect((screen.getByRole('button',{name:t('agents.TaskExecution.accept')}) as HTMLButtonElement).disabled).toBe(true)
 })
-it('a slower obsolete preparation cannot replace the latest selected plan',async()=>{
+it('does not create a second preparation while the first POST awaits its ID',async()=>{
  const f=fixture(),original=globalThis.fetch;let first=true,release:(value:any)=>void=()=>{}
+ f.state.record={...prepared(),status:'PREPARING',plan_sha256:'',plan:null} as any
  vi.stubGlobal('fetch',vi.fn(async(url:string,init?:RequestInit)=>{
-  if(url==='/api/task-executions/plans'&&first){first=false;return await new Promise(resolve=>{release=resolve})}
+  if(url==='/api/task-executions/plans'&&first){first=false;const value=await original(url,init);return await new Promise(resolve=>{release=()=>resolve(value)})}
   return original(url,init)
  }))
  render(<TaskExecutionPanel taskText="Write result.txt"/>);await open();await waitFor(()=>expect(first).toBe(false))
- fireEvent.change(screen.getByLabelText(t('agents.TaskExecution.model')),{target:{value:JSON.stringify(['fixture','model-a'])}});await plan()
- release(reply({...prepared(),plan_sha256:'f'.repeat(64)}));await new Promise(resolve=>setTimeout(resolve,5))
+ try{
+  fireEvent.change(screen.getByLabelText(t('agents.TaskExecution.model')),{target:{value:JSON.stringify(['fixture','model-a'])}})
+  fireEvent.change(screen.getByLabelText(t('agents.TaskExecution.agent')),{target:{value:agent}})
+  fireEvent.change(screen.getByLabelText(t('agents.TaskExecution.task')),{target:{value:'Changed during pending preparation'}})
+  await act(async()=>{await new Promise(resolve=>setTimeout(resolve,450))})
+  expect(f.calls.filter(c=>c.url==='/api/task-executions/plans')).toHaveLength(1)
+  for(const control of [screen.getByLabelText(t('agents.TaskExecution.model')),screen.getByLabelText(t('agents.TaskExecution.agent')),screen.getByLabelText(t('agents.TaskExecution.task'))])expect((control as HTMLInputElement).disabled).toBe(true)
+ }finally{await act(async()=>{release(null)})}
+ await screen.findByText(t('agents.TaskExecution.state.PREPARING'))
+ expect((screen.getByLabelText(t('agents.TaskExecution.model')) as HTMLSelectElement).value).toBe('auto')
+ expect((screen.getByLabelText(t('agents.TaskExecution.agent')) as HTMLSelectElement).value).toBe('auto')
+ expect((screen.getByLabelText(t('agents.TaskExecution.task')) as HTMLTextAreaElement).value).toBe('Write result.txt')
+ fireEvent.click(screen.getByRole('button',{name:t('agents.TaskExecution.refresh')}))
+ await waitFor(()=>expect(f.calls.some(c=>c.url===`/api/task-executions/${executionId}`)).toBe(true))
+ fireEvent.click(screen.getByRole('button',{name:t('agents.TaskExecution.cancelPlan')}))
+ await screen.findByText(t('agents.TaskExecution.state.STOPPED_BEFORE_EFFECT'))
+ expect(f.calls.filter(c=>c.url==='/api/task-executions/plans')).toHaveLength(1)
+ expect(f.calls.find(c=>c.url.endsWith('/stop'))!.body).toEqual({reason:'user_stop'});expect(f.state.accepts).toBe(0)
+})
+it('an obsolete response from a different source identity cannot replace the current source plan',async()=>{
+ const f=fixture(),original=globalThis.fetch;let first=true,release:()=>void=()=>{}
+ vi.stubGlobal('fetch',vi.fn(async(url:string,init?:RequestInit)=>{
+  if(url==='/api/task-executions/plans'&&first){first=false;await original(url,init);return await new Promise(resolve=>{release=()=>resolve(reply({...prepared(),plan_sha256:'f'.repeat(64)}))})}
+  return original(url,init)
+ }))
+ const view=render(<TaskExecutionPanel sourceIdentity="old-human-source" taskText="Original task"/>);await open();await waitFor(()=>expect(first).toBe(false))
+ view.rerender(<TaskExecutionPanel sourceIdentity="new-human-source" taskText="New explicit human task"/>);await plan()
+ await act(async()=>{release()})
  fireEvent.click(screen.getByRole('button',{name:t('agents.TaskExecution.accept')}));await screen.findByText(t('agents.TaskExecution.state.SUCCEEDED'))
+ const preparations=f.calls.filter(c=>c.url==='/api/task-executions/plans')
+ expect(preparations).toHaveLength(2);expect(preparations.map(c=>c.body.task_text)).toEqual(['Original task','New explicit human task'])
  expect(f.calls.find(c=>c.url.endsWith('/accept'))!.body.expected_plan_sha256).toBe(hash)
+})
+it.each(['es','en'] as const)('shows a bounded human cause from preparation failure events in %s',async locale=>{
+ setLocale(locale);const f=fixture()
+ f.state.record={...prepared(),status:'FAILED_NO_EFFECT',plan:null,events:[{event_type:'PREPARATION_FAILED',payload:{reason_code:'profile_revision_changed'}},{event_type:'PREPARATION_FAILED',payload:{reason_code:'model_not_eligible'}}]} as any
+ render(<TaskExecutionPanel taskText="Write result.txt"/>);await open()
+ expect(await screen.findByRole('alert')).toHaveProperty('textContent',t('agents.TaskExecution.failure.model_not_eligible'))
+ expect(screen.queryByText(t('agents.TaskExecution.failure.profile_revision_changed'))).toBeNull()
+ expect(screen.queryByRole('button',{name:t('agents.TaskExecution.accept')})).toBeNull()
+ expect(screen.queryByText(t('agents.TaskExecution.state.SUCCEEDED'))).toBeNull();expect(f.state.accepts).toBe(0)
+})
+it.each(['__proto__','<script>untrusted reason</script>'])('unknown failure reason %s remains technical data instead of becoming a human instruction',async reason=>{
+ const f=fixture();f.state.record={...prepared(),status:'FAILED_NO_EFFECT',plan:null,events:[{event_type:'PREPARATION_FAILED',payload:{reason_code:reason}}]} as any
+ const view=render(<TaskExecutionPanel taskText="Write result.txt"/>);await open()
+ expect(await screen.findByRole('alert')).toHaveProperty('textContent',t('agents.TaskExecution.failure.unknown'))
+ const details=screen.getByText(t('agents.TaskExecution.evidence')).closest('details')!
+ expect(details.open).toBe(false);expect(details.querySelector('pre')?.textContent).toContain(reason)
+ expect(view.container.querySelector('script')).toBeNull();expect(f.state.accepts).toBe(0)
 })
 it('persists the exact preparation identity before POST and recovers a lost response after remount with the same request ID',async()=>{
  const f=fixture(),original=globalThis.fetch;let loseFirst=true

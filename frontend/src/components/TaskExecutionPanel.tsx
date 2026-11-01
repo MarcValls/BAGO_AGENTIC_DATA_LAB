@@ -13,6 +13,23 @@ const hash=(v:unknown):v is string=>typeof v==='string'&&/^[a-f0-9]{64}$/.test(v
 const statuses=['PREPARING','AWAITING_ACCEPTANCE','ACCEPTED','RUNNING','SUCCEEDED','FAILED_NO_EFFECT','PARTIAL','INCONCLUSIVE','STOP_REQUESTED','STOPPED_BEFORE_EFFECT','STALE','DENIED']
 const stateLabels:Record<string,()=>string>={PREPARING:()=>t('agents.TaskExecution.state.PREPARING'),AWAITING_ACCEPTANCE:()=>t('agents.TaskExecution.state.AWAITING_ACCEPTANCE'),ACCEPTED:()=>t('agents.TaskExecution.state.ACCEPTED'),RUNNING:()=>t('agents.TaskExecution.state.RUNNING'),SUCCEEDED:()=>t('agents.TaskExecution.state.SUCCEEDED'),FAILED_NO_EFFECT:()=>t('agents.TaskExecution.state.FAILED_NO_EFFECT'),PARTIAL:()=>t('agents.TaskExecution.state.PARTIAL'),INCONCLUSIVE:()=>t('agents.TaskExecution.state.INCONCLUSIVE'),STOP_REQUESTED:()=>t('agents.TaskExecution.state.STOP_REQUESTED'),STOPPED_BEFORE_EFFECT:()=>t('agents.TaskExecution.state.STOPPED_BEFORE_EFFECT'),STALE:()=>t('agents.TaskExecution.state.STALE'),DENIED:()=>t('agents.TaskExecution.state.DENIED')}
 const stateLabel=(status:string)=>stateLabels[status]?.()||status
+const preparationFailureLabels=new Map<string,()=>string>([
+  ['model_not_eligible',()=>t('agents.TaskExecution.failure.model_not_eligible')],
+  ['model_probe_failed',()=>t('agents.TaskExecution.failure.model_probe_failed')],
+  ['independent_reviewer_required',()=>t('agents.TaskExecution.failure.independent_reviewer_required')],
+  ['required_check_failed',()=>t('agents.TaskExecution.failure.required_check_failed')],
+  ['permissions_revision_changed',()=>t('agents.TaskExecution.failure.permissions_revision_changed')],
+  ['project_binding_mismatch',()=>t('agents.TaskExecution.failure.permissions_revision_changed')],
+  ['profile_revision_changed',()=>t('agents.TaskExecution.failure.profile_revision_changed')],
+  ['agent_scope_mismatch',()=>t('agents.TaskExecution.failure.agent_scope_mismatch')],
+])
+function preparationFailure(record:Execution|null){
+  if(record?.status!=='FAILED_NO_EFFECT'||record.plan!==null)return ''
+  const event=Array.isArray(record.events)?[...record.events].reverse().find(value=>object(value)&&value.event_type==='PREPARATION_FAILED'):null
+  const payload=event?.payload
+  const reason=object(payload)&&typeof payload.reason_code==='string'?payload.reason_code:''
+  return preparationFailureLabels.get(reason)?.()||t('agents.TaskExecution.failure.unknown')
+}
 const active=(status:string)=>['PREPARING','ACCEPTED','RUNNING','STOP_REQUESTED'].includes(status)
 const modelKey=(m:{provider_id:string;model_id:string})=>JSON.stringify([m.provider_id,m.model_id])
 const json=(v:unknown)=>JSON.stringify(v,null,2)
@@ -46,10 +63,13 @@ export default function TaskExecutionPanel({taskText='',sourceIdentity='new-task
   const [editing,setEditing]=useState(false),[profile,setProfile]=useState<Profile|null>(null),[profileDraft,setProfileDraft]=useState<ObjectValue|null>(null),[saving,setSaving]=useState(false)
   const generation=useRef(0),prepareKey=useRef(''),prepareIds=useRef(new Map<string,string>()),acceptKeys=useRef(new Map<string,string>())
   const lock=useRef(false),editingRef=useRef(false),mounted=useRef(true),recordRef=useRef<Execution|null>(null)
-  const restored=useRef(false)
+  const restored=useRef(false),preparingRef=useRef(false)
   const eligible=models.filter(item=>item.orchestrator_enabled===true&&['ready','configured_unverified'].includes(item.state))
   const compatible=profiles.filter(item=>text(item.config.provider_id)&&text(item.config.model_id)&&eligible.some(m=>m.provider_id===item.config.provider_id&&m.model_id===item.config.model_id&&(!m.agent_types||m.agent_types.includes(item.config.type))))
   const frozen=dispatching||Boolean(record&&active(record.status))
+  // UI-only pending lock: keep it out of the scheduling effect dependencies,
+  // otherwise setPreparing(true) would invalidate its own pending response.
+  const controlsBlocked=preparing||frozen
   recordRef.current=record
   useEffect(()=>{mounted.current=true;return()=>{mounted.current=false;generation.current++}},[])
   useEffect(()=>{setTask(taskText);setRecord(null);recordRef.current=null;prepareKey.current='';restored.current=false;generation.current++},[taskText,sourceIdentity])
@@ -109,7 +129,7 @@ export default function TaskExecutionPanel({taskText='',sourceIdentity='new-task
     if(prepareKey.current===key||prepareKey.current==='recovery-failed')return
     const current=++generation.current
     const timer=setTimeout(()=>{
-      prepareKey.current=key;setPreparing(true);setError('')
+      prepareKey.current=key;preparingRef.current=true;setPreparing(true);setError('')
       const fingerprint=canonical({source_identity:sourceIdentity,source_task_text:taskText,input})
       let requestId=prepareIds.current.get(key)
       if(!requestId){
@@ -118,19 +138,19 @@ export default function TaskExecutionPanel({taskText='',sourceIdentity='new-task
         prepareIds.current.set(key,requestId)
       }
       try{sessionStorage.setItem(pendingKey,JSON.stringify({request_id:requestId,fingerprint,source_identity:sourceIdentity,source_task_text:taskText,input}))}
-      catch{setPreparing(false);setError(t('agents.TaskExecution.storageBlocked'));return}
+      catch{preparingRef.current=false;setPreparing(false);setError(t('agents.TaskExecution.storageBlocked'));return}
       void request('/api/task-executions/plans',post({request_id:requestId,...input})).then(value=>{
         if(!mounted.current||current!==generation.current||editingRef.current)return
         const next=execution(value)
         if(next.plan&&(next.plan.project.project_id!==context.project_id||next.plan.project.binding!==context.binding))throw Error(t('agents.TaskExecution.bindingChanged'))
         keep(next)
-      }).catch(cause=>{if(mounted.current&&current===generation.current)setError(cause instanceof Error?cause.message:t('agents.TaskExecution.requestFailed'))}).finally(()=>{if(mounted.current&&current===generation.current)setPreparing(false)})
+      }).catch(cause=>{if(mounted.current&&current===generation.current)setError(cause instanceof Error?cause.message:t('agents.TaskExecution.requestFailed'))}).finally(()=>{if(mounted.current&&current===generation.current){preparingRef.current=false;setPreparing(false)}})
     },350)
-    return()=>{clearTimeout(timer);if(current===generation.current)generation.current++;setPreparing(false)}
+    return()=>{clearTimeout(timer);if(current===generation.current)generation.current++;preparingRef.current=false;setPreparing(false)}
   },[open,context,loading,editing,saving,task,model,agent,retry,frozen,unknown,record])
 
   function invalidate(change:()=>void){
-    if(frozen)return
+    if(preparingRef.current||frozen)return
     generation.current++;prepareKey.current='';setRecord(null);recordRef.current=null;setUnknown(false);setError('');setPreparing(false)
     try{sessionStorage.removeItem(storageKey);sessionStorage.removeItem(pendingKey)}catch{/* No authority in this projection. */}
     change()
@@ -187,15 +207,16 @@ export default function TaskExecutionPanel({taskText='',sourceIdentity='new-task
     <button type="button" className="task-execution-toggle" aria-expanded={open} aria-controls={`${uid}-body`} onClick={()=>setOpen(value=>!value)}><span id={`${uid}-title`}>{t('agents.TaskExecution.title')}</span><span aria-hidden="true">{open?'−':'+'}</span></button>
     {open&&<div id={`${uid}-body`} className="task-execution-body">
       <p className="task-execution-hint">{t('agents.TaskExecution.scope')}</p>
-      <label>{t('agents.TaskExecution.task')}<textarea value={task} maxLength={8000} rows={3} disabled={frozen||editing||saving} onChange={event=>invalidate(()=>setTask(event.target.value))}/></label>
-      <div className="task-execution-choices"><label>{t('agents.TaskExecution.model')}<select value={model} disabled={loading||frozen||editing||saving} onChange={event=>invalidate(()=>setModel(event.target.value))}><option value="auto">{t('agents.TaskExecution.auto')}</option>{models.map(m=><option key={modelKey(m)} value={modelKey(m)} disabled={!eligible.includes(m)}>{m.provider_id} · {m.model_id} · {m.state==='ready'?t('agents.TaskExecution.ready'):m.state==='configured_unverified'?t('agents.TaskExecution.probe'):t('agents.TaskExecution.unavailable')}</option>)}</select></label>
-      <label>{t('agents.TaskExecution.agent')}<select value={agent} disabled={loading||frozen||editing||saving} onChange={event=>invalidate(()=>setAgent(event.target.value))}><option value="auto">{t('agents.TaskExecution.autoAgent')}</option>{compatible.map(a=><option key={a.id} value={a.id}>{a.config.name||a.id} · {a.config.provider_id} / {a.config.model_id}</option>)}</select></label></div>
+      <label>{t('agents.TaskExecution.task')}<textarea value={task} maxLength={8000} rows={3} disabled={controlsBlocked||editing||saving} onChange={event=>invalidate(()=>setTask(event.target.value))}/></label>
+      <div className="task-execution-choices"><label>{t('agents.TaskExecution.model')}<select value={model} disabled={loading||controlsBlocked||editing||saving} onChange={event=>invalidate(()=>setModel(event.target.value))}><option value="auto">{t('agents.TaskExecution.auto')}</option>{models.map(m=><option key={modelKey(m)} value={modelKey(m)} disabled={!eligible.includes(m)}>{m.provider_id} · {m.model_id} · {m.state==='ready'?t('agents.TaskExecution.ready'):m.state==='configured_unverified'?t('agents.TaskExecution.probe'):t('agents.TaskExecution.unavailable')}</option>)}</select></label>
+      <label>{t('agents.TaskExecution.agent')}<select value={agent} disabled={loading||controlsBlocked||editing||saving} onChange={event=>invalidate(()=>setAgent(event.target.value))}><option value="auto">{t('agents.TaskExecution.autoAgent')}</option>{compatible.map(a=><option key={a.id} value={a.id}>{a.config.name||a.id} · {a.config.provider_id} / {a.config.model_id}</option>)}</select></label></div>
       {loading&&<p role="status">{t('agents.TaskExecution.loading')}</p>}
       {!loading&&context&&!eligible.length&&<p role="alert">{t('agents.TaskExecution.noModel')}</p>}
       {preparing&&<p role="status">{t('agents.TaskExecution.preparing')}</p>}
       {error&&<p role="alert">{error}</p>}
       {unknown&&<p role="status">{t('agents.TaskExecution.unknown')}</p>}
       {record&&<p className="task-execution-state" role="status">{dispatching?t('agents.TaskExecution.dispatching'):stateLabel(record.status)}</p>}
+      {preparationFailure(record)&&<p role="alert">{preparationFailure(record)}</p>}
       {record&&!record.plan&&<><button type="button" onClick={()=>void refresh()}>{t('agents.TaskExecution.refresh')}</button><button type="button" disabled={stopping} onClick={()=>void stop()}>{record.status==='PREPARING'?t('agents.TaskExecution.cancelPlan'):t('agents.TaskExecution.stop')}</button><details><summary>{t('agents.TaskExecution.evidence')}</summary><pre>{json(record)}</pre></details></>}
       {record?.plan&&<>
         <p>{t('agents.TaskExecution.project')}: {record.plan.project.root}</p>
