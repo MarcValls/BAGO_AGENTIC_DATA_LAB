@@ -2,3 +2,4 @@
 *.mp4 -text -diff
 *.png -text -diff
 *.srt whitespace=-blank-at-eof
+/verify_publication.py text eol=lf
