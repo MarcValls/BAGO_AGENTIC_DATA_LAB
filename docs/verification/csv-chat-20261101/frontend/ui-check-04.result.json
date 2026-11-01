@@ -1,0 +1,56 @@
+{
+  "results": [
+    {
+      "command": [
+        "npm",
+        "--prefix",
+        "/workspace/scratch/54b1628604af/BAGO_AGENTIC_DATA_LAB/frontend",
+        "test",
+        "--",
+        "tests/csv-chat/main-chat-csv.test.tsx",
+        "tests/ui/knowledge/chat-resource-submit.test.tsx",
+        "tests/workspace/csv-preview.test.tsx",
+        "tests/workspace/csv-parser.test.tsx",
+        "tests/web-research/public-web-chat.test.tsx",
+        "tests/providers/chat-selection-race.test.tsx",
+        "tests/chat-right-panel/general-context.test.tsx"
+      ],
+      "returncode": 0,
+      "error": null
+    },
+    {
+      "command": [
+        "npm",
+        "--prefix",
+        "/workspace/scratch/54b1628604af/BAGO_AGENTIC_DATA_LAB/frontend",
+        "run",
+        "build"
+      ],
+      "returncode": 0,
+      "error": null
+    },
+    {
+      "command": [
+        "node",
+        "--check",
+        "/workspace/scratch/54b1628604af/BAGO_AGENTIC_DATA_LAB/frontend/tests/csv-chat/browser-f11.cjs"
+      ],
+      "returncode": 0,
+      "error": null
+    },
+    {
+      "command": [
+        "git",
+        "-C",
+        "/workspace/scratch/54b1628604af/BAGO_AGENTIC_DATA_LAB",
+        "diff",
+        "--check",
+        "--",
+        "frontend/src",
+        "frontend/tests"
+      ],
+      "returncode": 0,
+      "error": null
+    }
+  ]
+}

@@ -1,0 +1,4 @@
+pedido,cliente,producto,unidades,precio_unitario,descuento_pct,estado
+P001,Alba,Camiseta,12,18.50,10,pendiente
+P002,Bruno,Gorra,6,9.00,0,entregado
+P003,Carmen,Taza,8,6.25,5,pendiente

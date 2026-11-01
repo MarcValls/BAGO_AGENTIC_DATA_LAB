@@ -1,0 +1,20 @@
+{
+  "observed_at": "2026-11-01T04:47:41.443962+00:00",
+  "method": "GET",
+  "url": "http://127.0.0.1:8080/api/conversations/conv_556e4116cfdf495d92448dc469f36b47",
+  "status": 200,
+  "body": {
+    "id": "conv_556e4116cfdf495d92448dc469f36b47",
+    "project_id": "workspace_e13ad9e213254518b7ce37e496eee812",
+    "owner_kind": "assistant",
+    "owner_id": "app-assistant",
+    "title": "New conversation",
+    "status": "active",
+    "created_at": "2026-11-01T04:44:45.223Z",
+    "updated_at": "2026-11-01T04:44:45.223Z",
+    "revision": 0,
+    "labels": [],
+    "messages": []
+  },
+  "context": "After post-review-browser mobile HTTP200 answered rev2; opening the exact conversation in UI yielded this API rev0/empty record."
+}

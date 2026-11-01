@@ -1,4 +1,5 @@
 import {es as statesEs,en as statesEn} from './domains/states'
+import {es as csvChatEs,en as csvChatEn} from './domains/csvChat'
 import {useSyncExternalStore} from 'react'
 import {es as commonEs,en as commonEn} from './domains/common'
 import {es as coreEs,en as coreEn} from './domains/core'
@@ -7,7 +8,7 @@ import {es as agentsEs,en as agentsEn} from './domains/agents'
 import {es as agentToolsEs,en as agentToolsEn} from './domains/agentTools'
 import {es as capabilityTabsEs,en as capabilityTabsEn} from './domains/capabilityTabs'
 import {es as whatsappSettingsEs,en as whatsappSettingsEn} from './domains/whatsappSettings'
-export const catalogs={es:{...commonEs,...statesEs,...coreEs,...commerceEs,...agentsEs,...agentToolsEs,...capabilityTabsEs,...whatsappSettingsEs},en:{...commonEn,...statesEn,...coreEn,...commerceEn,...agentsEn,...agentToolsEn,...capabilityTabsEn,...whatsappSettingsEn}}
+export const catalogs={es:{...commonEs,...statesEs,...coreEs,...commerceEs,...agentsEs,...agentToolsEs,...capabilityTabsEs,...whatsappSettingsEs,...csvChatEs},en:{...commonEn,...statesEn,...coreEn,...commerceEn,...agentsEn,...agentToolsEn,...capabilityTabsEn,...whatsappSettingsEn,...csvChatEn}}
 export type Locale='es'|'en'
 export type TranslationKey=keyof typeof catalogs.es
 export type MessageParameters=Record<string,string|number>

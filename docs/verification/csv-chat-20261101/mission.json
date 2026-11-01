@@ -1,0 +1,223 @@
+{
+  "mission_id": "CSV_CHAT_GOVERNED_20261101",
+  "operation": "REPAIR",
+  "title": "Lectura gobernada CSV desde chat principal",
+  "objective": "Integrar el recorrido solicitado por Marc, conservar F10-F12 y verificar lectura, calculos, identidad y denegaciones.",
+  "max_concurrency": 3,
+  "terminal_work_items": [
+    "W13"
+  ],
+  "work_items": [
+    {
+      "id": "W01",
+      "title": "Inspect current main, historical flows and reuse contract",
+      "role": "team-orchestrator",
+      "depends_on": [],
+      "write_scopes": [
+        "BAGO_AGENTIC_DATA_LAB/docs/verification/csv-chat-20261101/plan/**"
+      ],
+      "output_scopes": [
+        "BAGO_AGENTIC_DATA_LAB/docs/verification/csv-chat-20261101/plan/**"
+      ],
+      "required_checks": [
+        "baseline"
+      ],
+      "read_scopes": [
+        "BAGO_AGENTIC_DATA_LAB/**"
+      ],
+      "deliverables": [
+        "Inspect current main, historical flows and reuse contract"
+      ],
+      "done_when": [
+        "Required checks PASS with persisted evidence"
+      ],
+      "frozen_outputs": []
+    },
+    {
+      "id": "W02",
+      "title": "Integrate request-bound CSV reads into main chat",
+      "role": "governance-action-engineer",
+      "depends_on": [
+        "W01"
+      ],
+      "write_scopes": [
+        "BAGO_AGENTIC_DATA_LAB/src/agent_tools/workspace_read.py",
+        "BAGO_AGENTIC_DATA_LAB/src/agent_tools/csv_chat.py",
+        "BAGO_AGENTIC_DATA_LAB/src/api/server.py",
+        "BAGO_AGENTIC_DATA_LAB/src/api/schemas.py",
+        "BAGO_AGENTIC_DATA_LAB/tests/test_csv_chat_access.py",
+        "BAGO_AGENTIC_DATA_LAB/docs/verification/csv-chat-20261101/backend/**"
+      ],
+      "output_scopes": [
+        "BAGO_AGENTIC_DATA_LAB/src/agent_tools/workspace_read.py",
+        "BAGO_AGENTIC_DATA_LAB/src/agent_tools/csv_chat.py",
+        "BAGO_AGENTIC_DATA_LAB/src/api/server.py",
+        "BAGO_AGENTIC_DATA_LAB/src/api/schemas.py",
+        "BAGO_AGENTIC_DATA_LAB/tests/test_csv_chat_access.py",
+        "BAGO_AGENTIC_DATA_LAB/docs/verification/csv-chat-20261101/backend/**"
+      ],
+      "required_checks": [
+        "access"
+      ],
+      "read_scopes": [
+        "BAGO_AGENTIC_DATA_LAB/**"
+      ],
+      "deliverables": [
+        "Integrate request-bound CSV reads into main chat"
+      ],
+      "done_when": [
+        "Required checks PASS with persisted evidence"
+      ],
+      "frozen_outputs": []
+    },
+    {
+      "id": "W03",
+      "title": "Extend shipped CSV parser with bounded Decimal queries",
+      "role": "evidence-provenance-engineer",
+      "depends_on": [
+        "W01"
+      ],
+      "write_scopes": [
+        "BAGO_AGENTIC_DATA_LAB/tools/document-toolkit/document_toolkit/parsers.py",
+        "BAGO_AGENTIC_DATA_LAB/tools/document-toolkit/document_toolkit/csv_query.py",
+        "BAGO_AGENTIC_DATA_LAB/tests/test_csv_query.py",
+        "BAGO_AGENTIC_DATA_LAB/docs/verification/csv-chat-20261101/parser/**"
+      ],
+      "output_scopes": [
+        "BAGO_AGENTIC_DATA_LAB/tools/document-toolkit/document_toolkit/parsers.py",
+        "BAGO_AGENTIC_DATA_LAB/tools/document-toolkit/document_toolkit/csv_query.py",
+        "BAGO_AGENTIC_DATA_LAB/tests/test_csv_query.py",
+        "BAGO_AGENTIC_DATA_LAB/docs/verification/csv-chat-20261101/parser/**"
+      ],
+      "required_checks": [
+        "query"
+      ],
+      "read_scopes": [
+        "BAGO_AGENTIC_DATA_LAB/**"
+      ],
+      "deliverables": [
+        "Extend shipped CSV parser with bounded Decimal queries"
+      ],
+      "done_when": [
+        "Required checks PASS with persisted evidence"
+      ],
+      "frozen_outputs": []
+    },
+    {
+      "id": "W04",
+      "title": "Select and authorize CSV from main chat",
+      "role": "decision-ui-engineer",
+      "depends_on": [
+        "W01"
+      ],
+      "write_scopes": [
+        "BAGO_AGENTIC_DATA_LAB/frontend/src/**",
+        "BAGO_AGENTIC_DATA_LAB/frontend/tests/**",
+        "BAGO_AGENTIC_DATA_LAB/docs/verification/csv-chat-20261101/frontend/**"
+      ],
+      "output_scopes": [
+        "BAGO_AGENTIC_DATA_LAB/frontend/src/**",
+        "BAGO_AGENTIC_DATA_LAB/frontend/tests/**",
+        "BAGO_AGENTIC_DATA_LAB/docs/verification/csv-chat-20261101/frontend/**"
+      ],
+      "required_checks": [
+        "ui"
+      ],
+      "read_scopes": [
+        "BAGO_AGENTIC_DATA_LAB/**"
+      ],
+      "deliverables": [
+        "Select and authorize CSV from main chat"
+      ],
+      "done_when": [
+        "Required checks PASS with persisted evidence"
+      ],
+      "frozen_outputs": []
+    },
+    {
+      "id": "W12",
+      "title": "Independently verify complete CSV chat and adversarial boundaries",
+      "role": "verification-engineer",
+      "depends_on": [
+        "W02",
+        "W03",
+        "W04"
+      ],
+      "write_scopes": [
+        "BAGO_AGENTIC_DATA_LAB/tests/test_csv_chat_flow.py",
+        "BAGO_AGENTIC_DATA_LAB/docs/verification/csv-chat-20261101/review/**"
+      ],
+      "output_scopes": [
+        "BAGO_AGENTIC_DATA_LAB/tests/test_csv_chat_flow.py",
+        "BAGO_AGENTIC_DATA_LAB/docs/verification/csv-chat-20261101/review/**"
+      ],
+      "required_checks": [
+        "flow"
+      ],
+      "read_scopes": [
+        "BAGO_AGENTIC_DATA_LAB/**"
+      ],
+      "deliverables": [
+        "Independently verify complete CSV chat and adversarial boundaries"
+      ],
+      "done_when": [
+        "Required checks PASS with persisted evidence"
+      ],
+      "frozen_outputs": []
+    },
+    {
+      "id": "W13",
+      "title": "Preserve evidence and refresh generated README",
+      "role": "team-orchestrator",
+      "depends_on": [
+        "W12"
+      ],
+      "write_scopes": [
+        "BAGO_AGENTIC_DATA_LAB/docs/verification/csv-chat-20261101/closure/**",
+        "BAGO_AGENTIC_DATA_LAB/docs/verification/csv-chat-20261101/STATUS.md",
+        "BAGO_AGENTIC_DATA_LAB/README.md",
+        "BAGO_AGENTIC_DATA_LAB/README_DETAILS.md",
+        "BAGO_AGENTIC_DATA_LAB/scripts/demo_csv_chat.py"
+      ],
+      "output_scopes": [
+        "BAGO_AGENTIC_DATA_LAB/docs/verification/csv-chat-20261101/closure/**",
+        "BAGO_AGENTIC_DATA_LAB/docs/verification/csv-chat-20261101/STATUS.md",
+        "BAGO_AGENTIC_DATA_LAB/README.md",
+        "BAGO_AGENTIC_DATA_LAB/README_DETAILS.md",
+        "BAGO_AGENTIC_DATA_LAB/scripts/demo_csv_chat.py"
+      ],
+      "required_checks": [
+        "readme",
+        "readme-check"
+      ],
+      "read_scopes": [
+        "BAGO_AGENTIC_DATA_LAB/**"
+      ],
+      "deliverables": [
+        "Preserve evidence and refresh generated README"
+      ],
+      "done_when": [
+        "Required checks PASS with persisted evidence"
+      ],
+      "frozen_outputs": []
+    }
+  ],
+  "constraints": [
+    "User request defines the CSV mission; default inspector mission was read for routing only.",
+    "No general file authorization, no CSV RAG allowlist expansion, no remote merge.",
+    "Historical user-demand-20261101 evidence is immutable."
+  ],
+  "audit_scope": {
+    "include": [
+      "BAGO_AGENTIC_DATA_LAB/src/agent_tools/workspace_read.py",
+      "BAGO_AGENTIC_DATA_LAB/src/api/server.py",
+      "BAGO_AGENTIC_DATA_LAB/src/api/schemas.py",
+      "BAGO_AGENTIC_DATA_LAB/tools/document-toolkit/document_toolkit/parsers.py",
+      "BAGO_AGENTIC_DATA_LAB/frontend/src/components/AgentChat.tsx",
+      "BAGO_AGENTIC_DATA_LAB/frontend/src/components/ChatTools.tsx"
+    ],
+    "preserved_roots": [
+      "BAGO_AGENTIC_DATA_LAB/docs/verification/user-demand-20261101"
+    ]
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "status": "PASS",
+  "verification": {
+    "id": "readme",
+    "command": "[\"/workspace/scratch/54b1628604af/adl-venv/bin/python\",\"-c\",\"import os,subprocess,sys; from pathlib import Path; repo=Path(\\\"BAGO_AGENTIC_DATA_LAB\\\").resolve(); app=Path(\\\"/tmp/adl-csv-suite-app-20261101\\\"); app.mkdir(exist_ok=True); env=dict(os.environ, BAGO_APP_ROOT=str(app), OTEL_TRACES_SAMPLER=\\\"always_on\\\", OTEL_TRACES_SAMPLER_ARG=\\\"1\\\", PYTHONPATH=str(repo)+os.pathsep+str(repo/\\\"src\\\"), PYTEST_ADDOPTS=\\\"--junitxml=\\\"+str(repo/\\\"docs/verification/csv-chat-20261101/closure/full-suite.xml\\\")); env.pop(\\\"BAGO_DATA_ROOT\\\",None); sys.exit(subprocess.call([sys.executable,\\\"scripts/generate_dynamic_readme.py\\\"],cwd=repo,env=env))\"]",
+    "result": "PASS",
+    "evidence": ".bago/team/runtime/executions/bbf7918dfaf04ca6b9effb2c30c380be/receipt.json",
+    "execution_id": "bbf7918dfaf04ca6b9effb2c30c380be"
+  },
+  "execution_id": "bbf7918dfaf04ca6b9effb2c30c380be",
+  "receipt": ".bago/team/runtime/executions/bbf7918dfaf04ca6b9effb2c30c380be/receipt.json",
+  "returncode": 0,
+  "outputs": [
+    {
+      "path": "BAGO_AGENTIC_DATA_LAB/docs/verification/csv-chat-20261101/closure/full-suite.xml",
+      "sha256": "14db20310bd548fb59c62b894489c844278c3300fa0b0c19bcc450b27d5eee52"
+    }
+  ],
+  "paused_during_execution": false
+}

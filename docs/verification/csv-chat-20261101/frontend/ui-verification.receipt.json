@@ -1,0 +1,20 @@
+{
+  "status": "FAIL",
+  "verification": {
+    "id": "ui",
+    "command": "[\"node\",\"-e\",\"const {spawnSync}=require('node:child_process');const {writeFileSync}=require('node:fs');const log=\\\"/workspace/scratch/54b1628604af/BAGO_AGENTIC_DATA_LAB/docs/verification/csv-chat-20261101/frontend/ui-verification.log\\\";const commands=[[\\\"npm\\\", \\\"--prefix\\\", \\\"/workspace/scratch/54b1628604af/BAGO_AGENTIC_DATA_LAB/frontend\\\", \\\"test\\\", \\\"--\\\", \\\"tests/csv-chat/main-chat-csv.test.tsx\\\", \\\"tests/ui/knowledge/chat-resource-submit.test.tsx\\\", \\\"tests/workspace/csv-preview.test.tsx\\\", \\\"tests/workspace/csv-parser.test.tsx\\\", \\\"tests/web-research/public-web-chat.test.tsx\\\", \\\"tests/providers/chat-selection-race.test.tsx\\\", \\\"tests/chat-right-panel/general-context.test.tsx\\\"], [\\\"npm\\\", \\\"--prefix\\\", \\\"/workspace/scratch/54b1628604af/BAGO_AGENTIC_DATA_LAB/frontend\\\", \\\"run\\\", \\\"build\\\"], [\\\"node\\\", \\\"--check\\\", \\\"/workspace/scratch/54b1628604af/BAGO_AGENTIC_DATA_LAB/frontend/tests/csv-chat/browser-f11.cjs\\\"], [\\\"git\\\", \\\"-C\\\", \\\"/workspace/scratch/54b1628604af/BAGO_AGENTIC_DATA_LAB\\\", \\\"diff\\\", \\\"--check\\\", \\\"--\\\", \\\"frontend/src\\\", \\\"frontend/tests\\\"]];let output='';for(const [command,...args] of commands){const result=spawnSync(command,args,{encoding:'utf8',maxBuffer:4000000});const chunk=JSON.stringify([command,...args])+'\\\\n'+(result.stdout||'')+(result.stderr||'')+'\\\\nRETURN_CODE='+result.status+'\\\\n';output+=chunk;process.stdout.write(chunk);writeFileSync(log,output);if(result.error){console.error(result.error);process.exit(1)}if(result.status!==0)process.exit(result.status||1)}\"]",
+    "result": "FAIL",
+    "evidence": ".bago/team/runtime/executions/1404fa6045b54f0cb0ad708dd59d8fa7/receipt.json",
+    "execution_id": "1404fa6045b54f0cb0ad708dd59d8fa7"
+  },
+  "execution_id": "1404fa6045b54f0cb0ad708dd59d8fa7",
+  "receipt": ".bago/team/runtime/executions/1404fa6045b54f0cb0ad708dd59d8fa7/receipt.json",
+  "returncode": 1,
+  "outputs": [
+    {
+      "path": "BAGO_AGENTIC_DATA_LAB/docs/verification/csv-chat-20261101/frontend/ui-verification.log",
+      "sha256": "fdf2664d6a8909160de88c94da260eae2dc2e95b9c4832919cda48965eb9fddd"
+    }
+  ],
+  "paused_during_execution": false
+}

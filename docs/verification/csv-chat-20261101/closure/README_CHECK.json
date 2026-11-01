@@ -1,0 +1,15 @@
+{
+  "status": "PASS",
+  "verification": {
+    "id": "readme-check",
+    "command": "[\"/workspace/scratch/54b1628604af/adl-venv/bin/python\",\"-c\",\"import os,subprocess,sys; from pathlib import Path; repo=Path(\\\"BAGO_AGENTIC_DATA_LAB\\\").resolve(); env=dict(os.environ,BAGO_APP_ROOT=\\\"/tmp/adl-csv-suite-app-20261101\\\",OTEL_TRACES_SAMPLER=\\\"always_on\\\",OTEL_TRACES_SAMPLER_ARG=\\\"1\\\",PYTHONPATH=str(repo)+os.pathsep+str(repo/\\\"src\\\")); env.pop(\\\"BAGO_DATA_ROOT\\\",None); env.pop(\\\"PYTEST_ADDOPTS\\\",None); sys.exit(subprocess.call([sys.executable,\\\"scripts/generate_dynamic_readme.py\\\",\\\"--check\\\",\\\"--skip-tests\\\"],cwd=repo,env=env))\"]",
+    "result": "PASS",
+    "evidence": ".bago/team/runtime/executions/3c05882794a7477fbce594fc5487a75a/receipt.json",
+    "execution_id": "3c05882794a7477fbce594fc5487a75a"
+  },
+  "execution_id": "3c05882794a7477fbce594fc5487a75a",
+  "receipt": ".bago/team/runtime/executions/3c05882794a7477fbce594fc5487a75a/receipt.json",
+  "returncode": 0,
+  "outputs": [],
+  "paused_during_execution": false
+}

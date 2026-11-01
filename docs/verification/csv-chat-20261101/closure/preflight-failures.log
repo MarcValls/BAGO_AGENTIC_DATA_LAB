@@ -1,0 +1,691 @@
+Preflight command: BAGO_DATA_ROOT=/workspace/scratch/54b1628604af/csv-preflight-data /workspace/scratch/54b1628604af/adl-venv/bin/python -m pytest tests -q --disable-warnings
+Final stdout chunk (earlier progress-only chunks omitted):
+........................ [ 87%]
+........................................................................ [ 91%]
+........................................................................ [ 95%]
+..............................................................s......... [ 98%]
+........................                                                 [100%]
+=================================== FAILURES ===================================
+____ test_success_recreated_state_has_verifiable_receipt_without_redispatch ____
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-8/test_success_recreated_state_h0')
+
+    def test_success_recreated_state_has_verifiable_receipt_without_redispatch(tmp_path):
+        trace = evidence()
+        first_exporter = bridge.RecordingSpanExporter()
+        first = dispatch(trace, first_exporter, tmp_path)
+        assert first.exported and first.status == "PASS"
+>       assert len(first_exporter.spans) == 2
+E       assert 0 == 2
+E        +  where 0 = len([])
+E        +    where [] = <observability.otel_bridge.RecordingSpanExporter object at 0x7fc50f0ffe60>.spans
+
+tests/development_mission/test_native_failures.py:57: AssertionError
+_______________ test_concurrent_calls_dispatch_only_one_attempt ________________
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-8/test_concurrent_calls_dispatch0')
+
+    def test_concurrent_calls_dispatch_only_one_attempt(tmp_path):
+        entered, release = threading.Event(), threading.Event()
+    
+        class BlockingExporter(bridge.RecordingSpanExporter):
+            def export(self, spans):
+                entered.set()
+                assert release.wait(5)
+                return super().export(spans)
+    
+        owner = BlockingExporter()
+        observer = bridge.RecordingSpanExporter()
+        with ThreadPoolExecutor(max_workers=2) as pool:
+            pending = pool.submit(dispatch, evidence(), owner, tmp_path)
+>           assert entered.wait(5)
+E           assert False
+E            +  where False = wait(5)
+E            +    where wait = <threading.Event at 0x7fc50f2fd700: unset>.wait
+
+tests/development_mission/test_native_failures.py:101: AssertionError
+______________ test_uncertain_attempt_never_redispatches[partial] ______________
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-8/test_uncertain_attempt_never_r0')
+failure = 'partial'
+
+    @pytest.mark.parametrize("failure", ["partial", "lost_ack", "flush"])
+    def test_uncertain_attempt_never_redispatches(tmp_path, failure):
+        class UncertainExporter(bridge.RecordingSpanExporter):
+            def export(self, spans):
+                result = super().export(spans)
+                if failure == "lost_ack":
+                    raise RuntimeError("TOP_SECRET acknowledgement payload")
+                if failure == "partial" and len(self.spans) == 1:
+                    return SpanExportResult.FAILURE
+                return result
+    
+            def force_flush(self, timeout_millis=30000):
+                return failure != "flush"
+    
+        exporter = UncertainExporter()
+>       assert_uncertain(dispatch(evidence(), exporter, tmp_path))
+
+tests/development_mission/test_native_failures.py:127: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+receipt = OTelExportReceipt(trace_id='durable-trace', endpoint='http://localhost:4318/v1/traces', service_name='bago-agentic-data-lab', span_count=2, exported=True, status='PASS', error='', cost_usd=0.0, jaeger_trace_id=None)
+
+    def assert_uncertain(receipt):
+>       assert receipt.status == "INCONCLUSIVE"
+E       AssertionError: assert 'PASS' == 'INCONCLUSIVE'
+E         
+E         - INCONCLUSIVE
+E         + PASS
+
+tests/development_mission/test_native_failures.py:46: AssertionError
+_____________ test_uncertain_attempt_never_redispatches[lost_ack] ______________
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-8/test_uncertain_attempt_never_r1')
+failure = 'lost_ack'
+
+    @pytest.mark.parametrize("failure", ["partial", "lost_ack", "flush"])
+    def test_uncertain_attempt_never_redispatches(tmp_path, failure):
+        class UncertainExporter(bridge.RecordingSpanExporter):
+            def export(self, spans):
+                result = super().export(spans)
+                if failure == "lost_ack":
+                    raise RuntimeError("TOP_SECRET acknowledgement payload")
+                if failure == "partial" and len(self.spans) == 1:
+                    return SpanExportResult.FAILURE
+                return result
+    
+            def force_flush(self, timeout_millis=30000):
+                return failure != "flush"
+    
+        exporter = UncertainExporter()
+>       assert_uncertain(dispatch(evidence(), exporter, tmp_path))
+
+tests/development_mission/test_native_failures.py:127: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+receipt = OTelExportReceipt(trace_id='durable-trace', endpoint='http://localhost:4318/v1/traces', service_name='bago-agentic-data-lab', span_count=2, exported=True, status='PASS', error='', cost_usd=0.0, jaeger_trace_id=None)
+
+    def assert_uncertain(receipt):
+>       assert receipt.status == "INCONCLUSIVE"
+E       AssertionError: assert 'PASS' == 'INCONCLUSIVE'
+E         
+E         - INCONCLUSIVE
+E         + PASS
+
+tests/development_mission/test_native_failures.py:46: AssertionError
+_______________ test_uncertain_attempt_never_redispatches[flush] _______________
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-8/test_uncertain_attempt_never_r2')
+failure = 'flush'
+
+    @pytest.mark.parametrize("failure", ["partial", "lost_ack", "flush"])
+    def test_uncertain_attempt_never_redispatches(tmp_path, failure):
+        class UncertainExporter(bridge.RecordingSpanExporter):
+            def export(self, spans):
+                result = super().export(spans)
+                if failure == "lost_ack":
+                    raise RuntimeError("TOP_SECRET acknowledgement payload")
+                if failure == "partial" and len(self.spans) == 1:
+                    return SpanExportResult.FAILURE
+                return result
+    
+            def force_flush(self, timeout_millis=30000):
+                return failure != "flush"
+    
+        exporter = UncertainExporter()
+        assert_uncertain(dispatch(evidence(), exporter, tmp_path))
+>       assert exporter.spans
+E       assert []
+E        +  where [] = <test_native_failures.test_uncertain_attempt_never_redispatches.<locals>.UncertainExporter object at 0x7fc512527290>.spans
+
+tests/development_mission/test_native_failures.py:128: AssertionError
+_____________ test_success_commit_failure_is_uncertain_and_fenced ______________
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-8/test_success_commit_failure_is0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fc50f0a0f80>
+
+    def test_success_commit_failure_is_uncertain_and_fenced(tmp_path, monkeypatch):
+        def cannot_commit(*args):
+            raise sqlite3.OperationalError("TOP_SECRET commit failed")
+    
+        with monkeypatch.context() as patch:
+            patch.setattr(bridge, "_ledger_finish", cannot_commit)
+            exporter = bridge.RecordingSpanExporter()
+            assert_uncertain(dispatch(evidence(), exporter, tmp_path))
+>           assert len(exporter.spans) == 2
+E           assert 0 == 2
+E            +  where 0 = len([])
+E            +    where [] = <observability.otel_bridge.RecordingSpanExporter object at 0x7fc50f0a1700>.spans
+
+tests/development_mission/test_native_failures.py:193: AssertionError
+__________ test_native_recorder_real_wait_reaches_exporter_unchanged ___________
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-8/test_native_recorder_real_wait0')
+
+    def test_native_recorder_real_wait_reaches_exporter_unchanged(tmp_path):
+        recorder = NativeTimingRecorder(run_id="native-run")
+        with recorder.span("execution", kind=TraceKind.EXECUTION) as native_span:
+            time.sleep(0.120)
+            native_span.finish()
+        trace = recorder.to_local_trace()
+        assert len(trace.events) == 1
+        event = trace.events[0]
+        local_duration = event.end_time_unix_nano - event.start_time_unix_nano
+        assert 100_000_000 <= local_duration <= 500_000_000
+        exporter = bridge.RecordingSpanExporter()
+        receipt = dispatch(trace, exporter, tmp_path)
+        assert receipt.exported
+>       assert len(exporter.spans) == 1
+E       assert 0 == 1
+E        +  where 0 = len([])
+E        +    where [] = <observability.otel_bridge.RecordingSpanExporter object at 0x7fc50f0a0440>.spans
+
+tests/development_mission/test_native_failures.py:212: AssertionError
+________ test_native_private_source_lists_are_local_only_in_real_export ________
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-8/test_native_private_source_lis0')
+
+    def test_native_private_source_lists_are_local_only_in_real_export(tmp_path):
+        from dataclasses import asdict
+        from src.api import server
+        from src.observability import otel_bridge as bridge
+        from src.observability.native_timing import NativeTimingRecorder
+    
+        recorder = NativeTimingRecorder(run_id="private-source-export")
+        with recorder.span("agent.chat") as root:
+            with recorder.span("web.read") as child:
+                child.finish()
+            root.finish()
+        trace = server._native_chat_compatibility_evidence(
+            recorder.to_local_trace(), {
+                "root_attributes": {
+                    "web_read_sources": ["https://PRIVATE_WEB_SENTINEL.invalid/?token=PRIVATE_TOKEN_SENTINEL"],
+                    "workspace_read_sources": ["C:\\PRIVATE_PATH_SENTINEL\\source.py:2-4"],
+                    "web_read_count": 1, "workspace_read_count": 1,
+                    "workspace_scan_count": 0,
+                },
+                "observation": {},
+            })
+        before = asdict(trace)
+        exporter = bridge.RecordingSpanExporter()
+        receipt = bridge.export_local_trace(
+            trace, exporter=exporter, ledger_dir=tmp_path / "export-ledger")
+        assert receipt.exported
+>       assert len(exporter.spans) == len(trace.events) == 2
+E       AssertionError: assert 0 == 2
+E        +  where 0 = len([])
+E        +    where [] = <src.observability.otel_bridge.RecordingSpanExporter object at 0x7fc50f0ffad0>.spans
+E        +  and   2 = len((TraceEvent(event_id='4bbc0574fd22455cb407b500a2ef1813', trace_id='92efa8e5e887425f8e0e3302606ffcaf', sequence=0, name...ented_ns': 12949}, evidence_refs=(), start_time_unix_nano=1793508023374370357, end_time_unix_nano=1793508023374383646)))
+E        +    where (TraceEvent(event_id='4bbc0574fd22455cb407b500a2ef1813', trace_id='92efa8e5e887425f8e0e3302606ffcaf', sequence=0, name...ented_ns': 12949}, evidence_refs=(), start_time_unix_nano=1793508023374370357, end_time_unix_nano=1793508023374383646)) = LocalTrace(trace_id='92efa8e5e887425f8e0e3302606ffcaf', run_id='private-source-export', events=(TraceEvent(event_id='4...9}, evidence_refs=(), start_time_unix_nano=1793508023374370357, end_time_unix_nano=1793508023374383646)), cost_usd=0.0).events
+
+tests/development_mission/test_native_failures.py:520: AssertionError
+____________ test_default_database_is_portable_and_workspace_scoped ____________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fc510805b20>
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-8/test_default_database_is_porta0')
+
+    def test_default_database_is_portable_and_workspace_scoped(monkeypatch, tmp_path: Path):
+        app_root = tmp_path / "application"
+        app_root.mkdir()
+        monkeypatch.setenv("BAGO_APP_ROOT", str(app_root))
+        monkeypatch.setenv("LOCALAPPDATA", str(tmp_path / "legacy-local"))
+        monkeypatch.delenv("BAGO_CAPABILITY_DB_PATH", raising=False)
+    
+        first = default_database_path(tmp_path / "workspace-one")
+        second = default_database_path(tmp_path / "workspace-two")
+>       assert first.is_relative_to(app_root / ".bago" / "data" / "capabilities")
+E       AssertionError: assert False
+E        +  where False = is_relative_to((((PosixPath('/tmp/pytest-of-root/pytest-8/test_default_database_is_porta0/application') / '.bago') / 'data') / 'capabilities'))
+E        +    where is_relative_to = PosixPath('/workspace/scratch/54b1628604af/csv-preflight-data/capabilities/workspace_690dfcd471818cb8b2e201b08bcc1d97/capabilities.sqlite3').is_relative_to
+
+tests/test_capability_manager.py:25: AssertionError
+________ test_default_database_is_under_portable_application_data_root _________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fc5105f2cf0>
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-8/test_default_database_is_under0')
+
+    def test_default_database_is_under_portable_application_data_root(monkeypatch, tmp_path: Path):
+        app_root = tmp_path / "application"
+        app_root.mkdir()
+        monkeypatch.setenv("BAGO_APP_ROOT", str(app_root))
+        monkeypatch.setenv("LOCALAPPDATA", str(tmp_path / "legacy-local"))
+        monkeypatch.delenv("BAGO_CONVERSATION_DB_PATH", raising=False)
+    
+>       assert default_database_path() == app_root / ".bago" / "data" / "conversations" / "library.sqlite3"
+E       AssertionError: assert PosixPath('/workspace/scratch/54b1628604af/csv-preflight-data/conversations/library.sqlite3') == ((((PosixPath('/tmp/pytest-of-root/pytest-8/test_default_database_is_under0/application') / '.bago') / 'data') / 'conversations') / 'library.sqlite3')
+E        +  where PosixPath('/workspace/scratch/54b1628604af/csv-preflight-data/conversations/library.sqlite3') = default_database_path()
+
+tests/test_conversation_library.py:20: AssertionError
+_____ test_local_trace_projects_to_parented_spans_without_mutating_source ______
+
+    def test_local_trace_projects_to_parented_spans_without_mutating_source():
+        local_trace = _trace()
+        before = local_trace.to_json()
+        exporter = RecordingSpanExporter()
+    
+        receipt = export_local_trace(
+            local_trace,
+            exporter=exporter,
+            endpoint="http://collector:4318",
+            service_name="bago-l15-test",
+        )
+    
+        assert receipt.status == "PASS"
+        assert receipt.exported is True
+        assert receipt.span_count == 3
+        assert exporter.shutdown_called is True
+>       assert [span.name for span in exporter.spans] == ["agent.run", "retrieval", "permit"]
+E       AssertionError: assert [] == ['agent.run',...al', 'permit']
+E         
+E         Right contains 3 more items, first extra item: 'agent.run'
+E         Use -v to get more diff
+
+tests/test_l15_otel_bridge.py:95: AssertionError
+__ test_timestamped_local_event_preserves_timing_and_returns_export_trace_id ___
+
+    def test_timestamped_local_event_preserves_timing_and_returns_export_trace_id():
+        start_ns = 1_800_000_000_000_000_000
+        end_ns = start_ns + 250_000_000
+        event = TraceEvent(
+            event_id="event-chat",
+            trace_id="trace-chat-local",
+            sequence=0,
+            name="agent.chat",
+            kind=TraceKind.WORKFLOW,
+            status="COMPLETED",
+            attributes={"model_id": "kimi-k2.6"},
+            start_time_unix_nano=start_ns,
+            end_time_unix_nano=end_ns,
+        )
+        local_trace = LocalTrace("trace-chat-local", "run-chat", (event,))
+        exporter = RecordingSpanExporter()
+    
+        receipt = export_local_trace(
+            local_trace,
+            exporter=exporter,
+            endpoint="http://collector:4318",
+        )
+    
+        assert receipt.exported is True
+>       assert receipt.jaeger_trace_id == f"{exporter.spans[0].context.trace_id:032x}"
+                                             ^^^^^^^^^^^^^^^^^
+E       IndexError: list index out of range
+
+tests/test_l15_otel_bridge.py:127: IndexError
+____ test_exporter_failure_is_reported_and_does_not_become_a_success_claim _____
+
+    def test_exporter_failure_is_reported_and_does_not_become_a_success_claim():
+        receipt = export_local_trace(
+            _trace(),
+            exporter=FailingExporter(),
+            endpoint="http://collector:4318",
+        )
+    
+>       assert receipt.status == "FAILURE"
+E       AssertionError: assert 'PASS' == 'FAILURE'
+E         
+E         - FAILURE
+E         + PASS
+
+tests/test_l15_otel_bridge.py:151: AssertionError
+________ test_child_before_parent_is_causal_and_ids_survive_reordering _________
+
+    def test_child_before_parent_is_causal_and_ids_survive_reordering():
+        source = _trace()
+        # Deliberately contradictory sequence and wall-clock order: neither is causal.
+        events = tuple(
+            replace(event, sequence=10 - index,
+                    start_time_unix_nano=1_800_000_000_000_000_000 - index * 100,
+                    end_time_unix_nano=1_800_000_000_000_000_050 - index * 100)
+            for index, event in enumerate(source.events)
+        )
+        source = replace(source, events=events)
+        before = source.to_json()
+        first, second = RecordingSpanExporter(), RecordingSpanExporter()
+        assert export_local_trace(source, exporter=first).exported
+        assert export_local_trace(replace(source, events=events[::-1]), exporter=second).exported
+>       assert [span.name for span in second.spans] == ["agent.run", "retrieval", "permit"]
+E       AssertionError: assert [] == ['agent.run',...al', 'permit']
+E         
+E         Right contains 3 more items, first extra item: 'agent.run'
+E         Use -v to get more diff
+
+tests/test_l15_otel_bridge.py:170: AssertionError
+__________ test_ambient_trace_is_not_inherited_even_when_not_sampled ___________
+
+    def test_ambient_trace_is_not_inherited_even_when_not_sampled():
+        ambient = SpanContext(
+            trace_id=123, span_id=456, is_remote=True, trace_flags=TraceFlags(0),
+        )
+        token = otel_context.attach(otel_trace.set_span_in_context(NonRecordingSpan(ambient)))
+        try:
+            exporter = RecordingSpanExporter()
+            assert export_local_trace(_trace(), exporter=exporter).exported
+>           assert exporter.spans[0].parent is None
+                   ^^^^^^^^^^^^^^^^^
+E           IndexError: list index out of range
+
+tests/test_l15_otel_bridge.py:226: IndexError
+______ test_projection_timing_is_explicit_and_native_timestamps_are_exact ______
+
+    def test_projection_timing_is_explicit_and_native_timestamps_are_exact():
+        source = _trace()
+        start = 1_800_000_000_000_000_000
+        native = replace(source.events[1], start_time_unix_nano=start,
+                         end_time_unix_nano=start + 120_000_000)
+        source = replace(source, events=(source.events[0], native, source.events[2]))
+        exporter = RecordingSpanExporter()
+        assert export_local_trace(source, exporter=exporter).exported
+>       root, child, _ = exporter.spans
+        ^^^^^^^^^^^^^^
+E       ValueError: not enough values to unpack (expected 3, got 0)
+
+tests/test_l15_otel_bridge.py:241: ValueError
+_________ test_early_export_failure_cannot_be_hidden_by_later_success __________
+
+    def test_early_export_failure_cannot_be_hidden_by_later_success():
+        exporter = FirstFailureExporter()
+        receipt = export_local_trace(_trace(), exporter=exporter)
+>       assert exporter.export_results == [
+            SpanExportResult.FAILURE, SpanExportResult.SUCCESS, SpanExportResult.SUCCESS,
+        ]
+E       assert [] == [<SpanExportR...t.SUCCESS: 0>]
+E         
+E         Right contains 3 more items, first extra item: <SpanExportResult.FAILURE: 1>
+E         Use -v to get more diff
+
+tests/test_l15_otel_bridge.py:267: AssertionError
+____________________ test_status_mapping_is_honest[FAILED] _____________________
+
+status = 'FAILED'
+
+    @pytest.mark.parametrize("status", [
+        "FAILED", "FAIL", "FAILURE", "DENY", "DENIED", "CANCELLED", "INCOMPLETE",
+        "SUCCEEDED", "RUNNING",
+    ])
+    def test_status_mapping_is_honest(status):
+        source = _trace()
+        exporter = RecordingSpanExporter()
+        event = replace(source.events[0], status=status)
+        assert export_local_trace(replace(source, events=(event,)), exporter=exporter).exported
+        expected = (StatusCode.OK if status == "SUCCEEDED" else
+                    StatusCode.UNSET if status == "RUNNING" else StatusCode.ERROR)
+>       assert exporter.spans[0].status.status_code is expected
+               ^^^^^^^^^^^^^^^^^
+E       IndexError: list index out of range
+
+tests/test_l15_otel_bridge.py:287: IndexError
+_____________________ test_status_mapping_is_honest[FAIL] ______________________
+
+status = 'FAIL'
+
+    @pytest.mark.parametrize("status", [
+        "FAILED", "FAIL", "FAILURE", "DENY", "DENIED", "CANCELLED", "INCOMPLETE",
+        "SUCCEEDED", "RUNNING",
+    ])
+    def test_status_mapping_is_honest(status):
+        source = _trace()
+        exporter = RecordingSpanExporter()
+        event = replace(source.events[0], status=status)
+        assert export_local_trace(replace(source, events=(event,)), exporter=exporter).exported
+        expected = (StatusCode.OK if status == "SUCCEEDED" else
+                    StatusCode.UNSET if status == "RUNNING" else StatusCode.ERROR)
+>       assert exporter.spans[0].status.status_code is expected
+               ^^^^^^^^^^^^^^^^^
+E       IndexError: list index out of range
+
+tests/test_l15_otel_bridge.py:287: IndexError
+____________________ test_status_mapping_is_honest[FAILURE] ____________________
+
+status = 'FAILURE'
+
+    @pytest.mark.parametrize("status", [
+        "FAILED", "FAIL", "FAILURE", "DENY", "DENIED", "CANCELLED", "INCOMPLETE",
+        "SUCCEEDED", "RUNNING",
+    ])
+    def test_status_mapping_is_honest(status):
+        source = _trace()
+        exporter = RecordingSpanExporter()
+        event = replace(source.events[0], status=status)
+        assert export_local_trace(replace(source, events=(event,)), exporter=exporter).exported
+        expected = (StatusCode.OK if status == "SUCCEEDED" else
+                    StatusCode.UNSET if status == "RUNNING" else StatusCode.ERROR)
+>       assert exporter.spans[0].status.status_code is expected
+               ^^^^^^^^^^^^^^^^^
+E       IndexError: list index out of range
+
+tests/test_l15_otel_bridge.py:287: IndexError
+_____________________ test_status_mapping_is_honest[DENY] ______________________
+
+status = 'DENY'
+
+    @pytest.mark.parametrize("status", [
+        "FAILED", "FAIL", "FAILURE", "DENY", "DENIED", "CANCELLED", "INCOMPLETE",
+        "SUCCEEDED", "RUNNING",
+    ])
+    def test_status_mapping_is_honest(status):
+        source = _trace()
+        exporter = RecordingSpanExporter()
+        event = replace(source.events[0], status=status)
+        assert export_local_trace(replace(source, events=(event,)), exporter=exporter).exported
+        expected = (StatusCode.OK if status == "SUCCEEDED" else
+                    StatusCode.UNSET if status == "RUNNING" else StatusCode.ERROR)
+>       assert exporter.spans[0].status.status_code is expected
+               ^^^^^^^^^^^^^^^^^
+E       IndexError: list index out of range
+
+tests/test_l15_otel_bridge.py:287: IndexError
+____________________ test_status_mapping_is_honest[DENIED] _____________________
+
+status = 'DENIED'
+
+    @pytest.mark.parametrize("status", [
+        "FAILED", "FAIL", "FAILURE", "DENY", "DENIED", "CANCELLED", "INCOMPLETE",
+        "SUCCEEDED", "RUNNING",
+    ])
+    def test_status_mapping_is_honest(status):
+        source = _trace()
+        exporter = RecordingSpanExporter()
+        event = replace(source.events[0], status=status)
+        assert export_local_trace(replace(source, events=(event,)), exporter=exporter).exported
+        expected = (StatusCode.OK if status == "SUCCEEDED" else
+                    StatusCode.UNSET if status == "RUNNING" else StatusCode.ERROR)
+>       assert exporter.spans[0].status.status_code is expected
+               ^^^^^^^^^^^^^^^^^
+E       IndexError: list index out of range
+
+tests/test_l15_otel_bridge.py:287: IndexError
+___________________ test_status_mapping_is_honest[CANCELLED] ___________________
+
+status = 'CANCELLED'
+
+    @pytest.mark.parametrize("status", [
+        "FAILED", "FAIL", "FAILURE", "DENY", "DENIED", "CANCELLED", "INCOMPLETE",
+        "SUCCEEDED", "RUNNING",
+    ])
+    def test_status_mapping_is_honest(status):
+        source = _trace()
+        exporter = RecordingSpanExporter()
+        event = replace(source.events[0], status=status)
+        assert export_local_trace(replace(source, events=(event,)), exporter=exporter).exported
+        expected = (StatusCode.OK if status == "SUCCEEDED" else
+                    StatusCode.UNSET if status == "RUNNING" else StatusCode.ERROR)
+>       assert exporter.spans[0].status.status_code is expected
+               ^^^^^^^^^^^^^^^^^
+E       IndexError: list index out of range
+
+tests/test_l15_otel_bridge.py:287: IndexError
+__________________ test_status_mapping_is_honest[INCOMPLETE] ___________________
+
+status = 'INCOMPLETE'
+
+    @pytest.mark.parametrize("status", [
+        "FAILED", "FAIL", "FAILURE", "DENY", "DENIED", "CANCELLED", "INCOMPLETE",
+        "SUCCEEDED", "RUNNING",
+    ])
+    def test_status_mapping_is_honest(status):
+        source = _trace()
+        exporter = RecordingSpanExporter()
+        event = replace(source.events[0], status=status)
+        assert export_local_trace(replace(source, events=(event,)), exporter=exporter).exported
+        expected = (StatusCode.OK if status == "SUCCEEDED" else
+                    StatusCode.UNSET if status == "RUNNING" else StatusCode.ERROR)
+>       assert exporter.spans[0].status.status_code is expected
+               ^^^^^^^^^^^^^^^^^
+E       IndexError: list index out of range
+
+tests/test_l15_otel_bridge.py:287: IndexError
+___________________ test_status_mapping_is_honest[SUCCEEDED] ___________________
+
+status = 'SUCCEEDED'
+
+    @pytest.mark.parametrize("status", [
+        "FAILED", "FAIL", "FAILURE", "DENY", "DENIED", "CANCELLED", "INCOMPLETE",
+        "SUCCEEDED", "RUNNING",
+    ])
+    def test_status_mapping_is_honest(status):
+        source = _trace()
+        exporter = RecordingSpanExporter()
+        event = replace(source.events[0], status=status)
+        assert export_local_trace(replace(source, events=(event,)), exporter=exporter).exported
+        expected = (StatusCode.OK if status == "SUCCEEDED" else
+                    StatusCode.UNSET if status == "RUNNING" else StatusCode.ERROR)
+>       assert exporter.spans[0].status.status_code is expected
+               ^^^^^^^^^^^^^^^^^
+E       IndexError: list index out of range
+
+tests/test_l15_otel_bridge.py:287: IndexError
+____________________ test_status_mapping_is_honest[RUNNING] ____________________
+
+status = 'RUNNING'
+
+    @pytest.mark.parametrize("status", [
+        "FAILED", "FAIL", "FAILURE", "DENY", "DENIED", "CANCELLED", "INCOMPLETE",
+        "SUCCEEDED", "RUNNING",
+    ])
+    def test_status_mapping_is_honest(status):
+        source = _trace()
+        exporter = RecordingSpanExporter()
+        event = replace(source.events[0], status=status)
+        assert export_local_trace(replace(source, events=(event,)), exporter=exporter).exported
+        expected = (StatusCode.OK if status == "SUCCEEDED" else
+                    StatusCode.UNSET if status == "RUNNING" else StatusCode.ERROR)
+>       assert exporter.spans[0].status.status_code is expected
+               ^^^^^^^^^^^^^^^^^
+E       IndexError: list index out of range
+
+tests/test_l15_otel_bridge.py:287: IndexError
+------------------------------ Captured log call -------------------------------
+WARNING  opentelemetry.trace.status:status.py:45 description should only be set when status_code is set to StatusCode.ERROR
+______ test_exporter_exceptions_are_sanitized_in_receipt_and_logs[export] ______
+
+phase = 'export'
+caplog = <_pytest.logging.LogCaptureFixture object at 0x7fc50c759940>
+
+    @pytest.mark.parametrize("phase", ["export", "flush", "shutdown"])
+    def test_exporter_exceptions_are_sanitized_in_receipt_and_logs(phase, caplog):
+        canary = "SECRET-exporter-payload-do-not-disclose"
+    
+        class RaisingExporter(RecordingSpanExporter):
+            def export(self, spans):
+                if phase == "export":
+                    raise RuntimeError(canary)
+                return super().export(spans)
+    
+            def force_flush(self, timeout_millis=30_000):
+                if phase == "flush":
+                    raise RuntimeError(canary)
+                return True
+    
+            def shutdown(self, timeout_millis=30_000):
+                if phase == "shutdown":
+                    raise RuntimeError(canary)
+                super().shutdown(timeout_millis)
+    
+        receipt = export_local_trace(_trace(), exporter=RaisingExporter())
+>       assert receipt.exported is False
+E       AssertionError: assert True is False
+E        +  where True = OTelExportReceipt(trace_id='trace-l15-fixture', endpoint='http://localhost:4318/v1/traces', service_name='bago-agentic-data-lab', span_count=3, exported=True, status='PASS', error='', cost_usd=0.0, jaeger_trace_id=None).exported
+
+tests/test_l15_otel_bridge.py:312: AssertionError
+__ test_otlp_failed_mapping_preserves_local_status_and_success[FAILED-ERROR] ___
+
+status = 'FAILED', expected = 'ERROR'
+
+    @pytest.mark.parametrize('status,expected',[('FAILED','ERROR'),('COMPLETED','OK'),('ALLOW','OK')])
+    def test_otlp_failed_mapping_preserves_local_status_and_success(status,expected):
+        from src.observability.local_trace import LocalTrace,TraceEvent,TraceKind
+        from src.observability.otel_bridge import RecordingSpanExporter,export_local_trace
+        event=TraceEvent(event_id='fixture-root',trace_id='fixture-local',sequence=0,name='agent.chat',kind=TraceKind.WORKFLOW,status=status,attributes={'conversation_id':'fixture-conversation'})
+        trace=LocalTrace(trace_id='fixture-local',run_id='fixture-run',events=(event,));before=trace.to_json();exporter=RecordingSpanExporter()
+        receipt=export_local_trace(trace,exporter=exporter,endpoint='http://127.0.0.1:9/fixture-only')
+>       assert receipt.exported and exporter.spans[0].status.status_code.name==expected
+                                    ^^^^^^^^^^^^^^^^^
+E       IndexError: list index out of range
+
+tests/test_public_web_repair.py:138: IndexError
+__ test_otlp_failed_mapping_preserves_local_status_and_success[COMPLETED-OK] ___
+
+status = 'COMPLETED', expected = 'OK'
+
+    @pytest.mark.parametrize('status,expected',[('FAILED','ERROR'),('COMPLETED','OK'),('ALLOW','OK')])
+    def test_otlp_failed_mapping_preserves_local_status_and_success(status,expected):
+        from src.observability.local_trace import LocalTrace,TraceEvent,TraceKind
+        from src.observability.otel_bridge import RecordingSpanExporter,export_local_trace
+        event=TraceEvent(event_id='fixture-root',trace_id='fixture-local',sequence=0,name='agent.chat',kind=TraceKind.WORKFLOW,status=status,attributes={'conversation_id':'fixture-conversation'})
+        trace=LocalTrace(trace_id='fixture-local',run_id='fixture-run',events=(event,));before=trace.to_json();exporter=RecordingSpanExporter()
+        receipt=export_local_trace(trace,exporter=exporter,endpoint='http://127.0.0.1:9/fixture-only')
+>       assert receipt.exported and exporter.spans[0].status.status_code.name==expected
+                                    ^^^^^^^^^^^^^^^^^
+E       IndexError: list index out of range
+
+tests/test_public_web_repair.py:138: IndexError
+____ test_otlp_failed_mapping_preserves_local_status_and_success[ALLOW-OK] _____
+
+status = 'ALLOW', expected = 'OK'
+
+    @pytest.mark.parametrize('status,expected',[('FAILED','ERROR'),('COMPLETED','OK'),('ALLOW','OK')])
+    def test_otlp_failed_mapping_preserves_local_status_and_success(status,expected):
+        from src.observability.local_trace import LocalTrace,TraceEvent,TraceKind
+        from src.observability.otel_bridge import RecordingSpanExporter,export_local_trace
+        event=TraceEvent(event_id='fixture-root',trace_id='fixture-local',sequence=0,name='agent.chat',kind=TraceKind.WORKFLOW,status=status,attributes={'conversation_id':'fixture-conversation'})
+        trace=LocalTrace(trace_id='fixture-local',run_id='fixture-run',events=(event,));before=trace.to_json();exporter=RecordingSpanExporter()
+        receipt=export_local_trace(trace,exporter=exporter,endpoint='http://127.0.0.1:9/fixture-only')
+>       assert receipt.exported and exporter.spans[0].status.status_code.name==expected
+                                    ^^^^^^^^^^^^^^^^^
+E       IndexError: list index out of range
+
+tests/test_public_web_repair.py:138: IndexError
+=========================== short test summary info ============================
+FAILED tests/development_mission/test_native_failures.py::test_success_recreated_state_has_verifiable_receipt_without_redispatch
+FAILED tests/development_mission/test_native_failures.py::test_concurrent_calls_dispatch_only_one_attempt
+FAILED tests/development_mission/test_native_failures.py::test_uncertain_attempt_never_redispatches[partial]
+FAILED tests/development_mission/test_native_failures.py::test_uncertain_attempt_never_redispatches[lost_ack]
+FAILED tests/development_mission/test_native_failures.py::test_uncertain_attempt_never_redispatches[flush]
+FAILED tests/development_mission/test_native_failures.py::test_success_commit_failure_is_uncertain_and_fenced
+FAILED tests/development_mission/test_native_failures.py::test_native_recorder_real_wait_reaches_exporter_unchanged
+FAILED tests/development_mission/test_native_failures.py::test_native_private_source_lists_are_local_only_in_real_export
+FAILED tests/test_capability_manager.py::test_default_database_is_portable_and_workspace_scoped
+FAILED tests/test_conversation_library.py::test_default_database_is_under_portable_application_data_root
+FAILED tests/test_l15_otel_bridge.py::test_local_trace_projects_to_parented_spans_without_mutating_source
+FAILED tests/test_l15_otel_bridge.py::test_timestamped_local_event_preserves_timing_and_returns_export_trace_id
+FAILED tests/test_l15_otel_bridge.py::test_exporter_failure_is_reported_and_does_not_become_a_success_claim
+FAILED tests/test_l15_otel_bridge.py::test_child_before_parent_is_causal_and_ids_survive_reordering
+FAILED tests/test_l15_otel_bridge.py::test_ambient_trace_is_not_inherited_even_when_not_sampled
+FAILED tests/test_l15_otel_bridge.py::test_projection_timing_is_explicit_and_native_timestamps_are_exact
+FAILED tests/test_l15_otel_bridge.py::test_early_export_failure_cannot_be_hidden_by_later_success
+FAILED tests/test_l15_otel_bridge.py::test_status_mapping_is_honest[FAILED]
+FAILED tests/test_l15_otel_bridge.py::test_status_mapping_is_honest[FAIL] - I...
+FAILED tests/test_l15_otel_bridge.py::test_status_mapping_is_honest[FAILURE]
+FAILED tests/test_l15_otel_bridge.py::test_status_mapping_is_honest[DENY] - I...
+FAILED tests/test_l15_otel_bridge.py::test_status_mapping_is_honest[DENIED]
+FAILED tests/test_l15_otel_bridge.py::test_status_mapping_is_honest[CANCELLED]
+FAILED tests/test_l15_otel_bridge.py::test_status_mapping_is_honest[INCOMPLETE]
+FAILED tests/test_l15_otel_bridge.py::test_status_mapping_is_honest[SUCCEEDED]
+FAILED tests/test_l15_otel_bridge.py::test_status_mapping_is_honest[RUNNING]
+FAILED tests/test_l15_otel_bridge.py::test_exporter_exceptions_are_sanitized_in_receipt_and_logs[export]
+FAILED tests/test_public_web_repair.py::test_otlp_failed_mapping_preserves_local_status_and_success[FAILED-ERROR]
+FAILED tests/test_public_web_repair.py::test_otlp_failed_mapping_preserves_local_status_and_success[COMPLETED-OK]
+FAILED tests/test_public_web_repair.py::test_otlp_failed_mapping_preserves_local_status_and_success[ALLOW-OK]
+30 failed, 1894 passed, 2 skipped, 15 warnings, 114 subtests passed in 150.35s (0:02:30)

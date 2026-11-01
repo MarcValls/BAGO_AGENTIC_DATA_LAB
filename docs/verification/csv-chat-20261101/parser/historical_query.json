@@ -1,0 +1,57 @@
+{
+  "derive": [
+    {
+      "name": "importe",
+      "expression": {
+        "op": "mul",
+        "args": [
+          {
+            "op": "mul",
+            "args": [
+              {
+                "column": "unidades"
+              },
+              {
+                "column": "precio_unitario"
+              }
+            ]
+          },
+          {
+            "op": "sub",
+            "args": [
+              {
+                "number": "1"
+              },
+              {
+                "op": "div",
+                "args": [
+                  {
+                    "column": "descuento_pct"
+                  },
+                  {
+                    "number": "100"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ],
+  "select": [
+    "pedido",
+    "cliente",
+    "importe"
+  ],
+  "group_by": [
+    "estado"
+  ],
+  "aggregates": [
+    {
+      "op": "sum",
+      "column": "importe",
+      "as": "total"
+    }
+  ]
+}

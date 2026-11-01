@@ -1,0 +1,53 @@
+{
+  "case": "F11",
+  "mode": "mobile",
+  "url": "http://127.0.0.1:5173",
+  "viewport": {
+    "width": 390,
+    "height": 844
+  },
+  "browser": "141.0.7390.37",
+  "started_at": "2026-11-01T04:31:59.056Z",
+  "verification": "CONTROLLED_INTERPRETATION_REAL_BACKEND",
+  "source_binding_note": "Hashes record the working tree at invocation. A running server may predate these files; bind final evidence to a fresh server launch separately.",
+  "request": {
+    "message": "Analiza pedidos: importe descontado por pedido, pendientes por estado y total general.",
+    "csv_read": {
+      "path": "demo-usuario/archivo/pedidos-final.csv",
+      "delimiter": "auto",
+      "decimal_separator": "."
+    }
+  },
+  "source_files_sha256": {
+    "frontend/src/components/AgentChat.tsx": "f4e6f495c0802c50657c18551c9e78beb5bc01ad8d4e9a3e599962d607be22b3",
+    "frontend/src/components/ChatTools.tsx": "1d187357301c946ef52f42f36e71ad305e3927ec0cb564e525f3b1b51dbb029e",
+    "frontend/src/components/CsvChatQuery.tsx": "d446399bcf6d29a305da21dc84971c9d9c206d6f3c220de7e6bd2bcda1527d27",
+    "frontend/src/components/CsvChatQuery.css": "2dffc84f2506b4743c8e68d0b7d032309023fbafb16eb374615155220a36b6ee",
+    "frontend/src/types/csvChat.ts": "b397f183e56a000d9401c89956860fa3b5c18995c2c0cc1c198d87554b53ad6b",
+    "frontend/src/i18n/index.ts": "8f3f14c98a9693935ad37efcd3d41d3a03333a97b2d6dd20d6a5e99e47a141dd",
+    "frontend/src/i18n/domains/csvChat.ts": "dd129f57aa0bcccb059438a5ed720fb8fdb5e03dcd85b6061c8c365aeb0617e4",
+    "frontend/tests/csv-chat/main-chat-csv.test.tsx": "3a2e44a42eb588d8878f9489ff0b346dfdc8b601008d2f375d49ae939095b0bd",
+    "frontend/tests/csv-chat/browser-f11.cjs": "20a7aa669d9111a242a3d0bc72999278bb6c48e90a9c7bdcafcc452430fb1d58",
+    "src/agent_tools/workspace_read.py": "acf2e35f8e3e72cf75c2eb6ee4bd7ac5ad9b4a4ce9e9483a33c49ebcb44a3e0c",
+    "src/agent_tools/csv_chat.py": "020a2b0678de8b8f8220ea611951a1099034e55eaa2ed4d5203bb48c3327e1d4",
+    "src/api/server.py": "a7949d8df192c142232ff05602d1b46a184443c02a504656c13fd4a6de33c629",
+    "src/api/schemas.py": "9f971639f7ea49e4ca892a22b6ffd543fa9226a5772440c7120712c2e4189937",
+    "tools/document-toolkit/document_toolkit/parsers.py": "6697263b88ad8a2fa6f6dcb8feac8200cb1f4f07e3f65845f7fb6d6e0ea944d5",
+    "tools/document-toolkit/document_toolkit/csv_query.py": "21186a611031209fa0072ef43148478ea4fea9802228e83aa8f90eb670298f64"
+  },
+  "page_errors": [],
+  "console_errors": [],
+  "mutations": [
+    {
+      "method": "POST",
+      "path": "/api/conversations",
+      "body": {
+        "owner_kind": "assistant",
+        "owner_id": "app-assistant"
+      }
+    }
+  ],
+  "status": "FAIL",
+  "error": "locator.click: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('button', { name: 'Consultar archivo', exact: true })\u001b[22m\n\u001b[2m    - locator resolved to <button type=\"button\">Consultar archivo</button>\u001b[22m\n\u001b[2m  - attempting click action\u001b[22m\n\u001b[2m    2 × waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is visible, enabled and stable\u001b[22m\n\u001b[2m      - scrolling into view if needed\u001b[22m\n\u001b[2m      - done scrolling\u001b[22m\n\u001b[2m      - <div aria-live=\"polite\" class=\"control-chat-messages\">…</div> from <div class=\"control-chat-transcript-frame\">…</div> subtree intercepts pointer events\u001b[22m\n\u001b[2m    - retrying click action\u001b[22m\n\u001b[2m    - waiting 20ms\u001b[22m\n\u001b[2m    2 × waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is visible, enabled and stable\u001b[22m\n\u001b[2m      - scrolling into view if needed\u001b[22m\n\u001b[2m      - done scrolling\u001b[22m\n\u001b[2m      - <div aria-live=\"polite\" class=\"control-chat-messages\">…</div> from <div class=\"control-chat-transcript-frame\">…</div> subtree intercepts pointer events\u001b[22m\n\u001b[2m    - retrying click action\u001b[22m\n\u001b[2m      - waiting 100ms\u001b[22m\n\u001b[2m    58 × waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m       - element is visible, enabled and stable\u001b[22m\n\u001b[2m       - scrolling into view if needed\u001b[22m\n\u001b[2m       - done scrolling\u001b[22m\n\u001b[2m       - <div aria-live=\"polite\" class=\"control-chat-messages\">…</div> from <div class=\"control-chat-transcript-frame\">…</div> subtree intercepts pointer events\u001b[22m\n\u001b[2m     - retrying click action\u001b[22m\n\u001b[2m       - waiting 500ms\u001b[22m\n\n    at run (/workspace/scratch/54b1628604af/BAGO_AGENTIC_DATA_LAB/frontend/tests/csv-chat/browser-f11.cjs:83:82)",
+  "finished_at": "2026-11-01T04:32:30.280Z"
+}
