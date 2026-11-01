@@ -411,7 +411,25 @@ def test_code_change_blocks_new_proposal_until_process_restart(env, monkeypatch)
 
 
 @pytest.mark.parametrize("mutation", ["missing", "limits", "effect", "decision", "output", "origin"])
-def test_normative_receipt_semantic_tampering_never_verified(env, mutation):
+def test_normative_receipt_semantic_tampering_never_verified(env, mutation, monkeypatch):
+    # This test measures receipt semantics, not wall-clock synchronization.
+    # A clock step backwards between permit issuance and dispatch correctly
+    # fails closed; exercise that separately from these tampering cases.
+    from src.execution import gex_service
+    from src.execution.identity import session as identity_session
+    from src.execution.ledger import sqlite_ledger
+    from src.execution.permit import permit_v1
+
+    stable_now = datetime.now(timezone.utc)
+
+    class StableDateTime(datetime):
+        @classmethod
+        def now(cls, tz=None):
+            return stable_now.astimezone(tz) if tz is not None else stable_now.replace(tzinfo=None)
+
+    for module in (gc, gex_service, identity_session, sqlite_ledger, permit_v1):
+        monkeypatch.setattr(module, "datetime", StableDateTime)
+
     with env["client"]() as (http, router):
         headers, _ = session(http, env)
         view = propose(http, headers)

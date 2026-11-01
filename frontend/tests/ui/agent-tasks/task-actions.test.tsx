@@ -45,12 +45,11 @@ async function loaded(){
 async function openReview(){
  await loaded();const history=screen.getByRole('region',{name:t('agents.AgentTasks.historial_de_tareas')})
  fireEvent.click(history.querySelector('summary')!);fireEvent.click(within(history).getByRole('button',{name:t('agents.AgentTasks.independent_review')}))
- return await screen.findByRole('dialog',{name:t('agents.AgentTasks.independent_review')})
+ return await screen.findByRole('region',{name:t('agents.AgentTasks.independent_review')})
 }
 async function consent(dialog:HTMLElement){
- const select=await within(dialog).findByLabelText(t('agents.AgentTasks.reviewer_label'))
- fireEvent.change(select,{target:{value:B}});fireEvent.click(within(dialog).getByLabelText(t('agents.AgentTasks.review_consent')))
- fireEvent.click(within(dialog).getByRole('button',{name:t('agents.AgentTasks.confirm_review')}))
+ await within(dialog).findByLabelText(t('agents.AgentTasks.reviewer_label'))
+ expect(within(dialog).queryByRole('checkbox')).toBeNull()
 }
 beforeEach(()=>{localStorage.clear();resetLocaleForTests();setLocale('es')})
 afterEach(()=>{cleanup();vi.unstubAllGlobals()})
@@ -61,7 +60,7 @@ it.each(['es','en'] as const)('loads the current saved task and focuses its edit
  fireEvent.click(screen.getByRole('button',{name:locale==='es'?'Editar tarea manualmente':'Edit task manually'}))
  await screen.findByText(t('agents.AgentTasks.manual_edit_notice'))
  const editor=screen.getByRole('textbox',{name:t('agents.AgentTaskForm.tarea')}) as HTMLTextAreaElement
- expect(editor.value).toBe('Server current task');expect(document.activeElement).toBe(editor)
+ expect(editor.value).toBe('Server current task');await waitFor(()=>expect(document.activeElement).toBe(editor))
  expect(f.calls.filter(c=>c.method!=='GET')).toEqual([])
  fireEvent.change(editor,{target:{value:'Reviewed draft change'}})
  expect((screen.getByRole('button',{name:t('agents.AgentTasks.ejecutar_tarea')}) as HTMLButtonElement).disabled).toBe(true)
@@ -85,12 +84,13 @@ it('retains the draft and surfaces a failed manual reload',async()=>{
  expect((screen.getByRole('textbox',{name:t('agents.AgentTaskForm.tarea')}) as HTMLTextAreaElement).value).toBe(task.prompt)
  expect(f.calls.filter(c=>c.method!=='GET')).toEqual([])
 })
-it.each(['es','en'] as const)('requires a different selected profile and confirmation, persists the bound review and never runs the original task in %s',async locale=>{
+it.each(['es','en'] as const)('automatically reviews with the only separate profile, preserves bound evidence and never runs the original task in %s',async locale=>{
  setLocale(locale);const f=fixture();render(<AgentTasks initialAgentId={A}/>);const dialog=await openReview()
  const select=await within(dialog).findByLabelText(t('agents.AgentTasks.reviewer_label'))
+ expect(dialog.closest('details.agent-task-run')?.querySelector('.agent-task-run-meta')?.textContent).toContain(source.run_id)
+ expect(dialog.closest('.agent-task-history')).toBe(screen.getByRole('region',{name:t('agents.AgentTasks.historial_de_tareas')}))
  expect(within(select).queryByRole('option',{name:/Author/})).toBeNull()
- expect((within(dialog).getByRole('button',{name:t('agents.AgentTasks.confirm_review')}) as HTMLButtonElement).disabled).toBe(true)
- expect(f.calls.filter(c=>c.method!=='GET')).toEqual([])
+ expect(within(dialog).queryByRole('checkbox')).toBeNull()
  await consent(dialog);expect(await within(dialog).findByText('Reviewer exact answer <script>inert</script>')).toBeTruthy()
  expect(dialog.querySelector('script')).toBeNull();expect(within(dialog).getByText(t('agents.AgentTasks.review_advisory'))).toBeTruthy()
  const posts=f.calls.filter(c=>c.method==='POST');expect(posts).toHaveLength(1)
@@ -105,7 +105,7 @@ it.each(['es','en'] as const)('requires a different selected profile and confirm
 it('explains missing other profiles honestly and cannot submit self-review',async()=>{
  const f=fixture({reviewers:[]});render(<AgentTasks initialAgentId={A}/>);const dialog=await openReview()
  expect(await within(dialog).findByText(t('agents.AgentTasks.no_reviewer'))).toBeTruthy()
- expect((within(dialog).getByRole('button',{name:t('agents.AgentTasks.confirm_review')}) as HTMLButtonElement).disabled).toBe(true)
+ expect(within(dialog).queryByRole('button',{name:t('agents.AgentTasks.confirm_review')})).toBeNull()
  expect(f.calls.filter(c=>c.method!=='GET')).toEqual([])
 })
 it('shows a stale reviewer rejection without rendering a successful review or running the original',async()=>{

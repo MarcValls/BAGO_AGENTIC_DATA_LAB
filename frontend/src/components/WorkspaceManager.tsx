@@ -51,11 +51,11 @@ export default function WorkspaceManager({ inline = false, onSelected, proposal,
   const [name, setName] = useState(''), [title, setTitle] = useState('')
   const [folderPath,setFolderPath]=useState(''),[folderMode,setFolderMode]=useState<'existing'|'create_child'>('existing')
   const [activeRoot,setActiveRoot]=useState<string|null>(null),[contextRefresh,setContextRefresh]=useState(0)
-  const [folderPlan,setFolderPlan]=useState<{plan:FolderPlan;revision:number}|null>(null),[folderAccepted,setFolderAccepted]=useState(false)
+  const [folderPlan,setFolderPlan]=useState<{plan:FolderPlan;revision:number}|null>(null)
   const [folderReceipt,setFolderReceipt]=useState<Record<string,unknown>|null>(null),[folderBusy,setFolderBusy]=useState(false)
   const folderRevision=useRef(0),folderEdited=useRef(false),folderPathEdited=useRef(false),folderMounted=useRef(true),folderInput=useRef<HTMLInputElement|null>(null),folderHeading=useRef<HTMLHeadingElement|null>(null),folderOrigin=useRef<HTMLButtonElement|null>(null)
   const [focusRequest,setFocusRequest]=useState(0),focusTarget=useRef<'folder'|'origin'>('folder')
-  const invalidateFolderPlan=()=>{folderRevision.current++;setFolderPlan(null);setFolderAccepted(false)}
+  const invalidateFolderPlan=()=>{folderRevision.current++;setFolderPlan(null)}
   const editFolder=(update:()=>void,pathChanged=false)=>{invalidateFolderPlan();folderEdited.current=true;if(pathChanged)folderPathEdited.current=true;update()}
   const openProjectSelection=()=>{focusTarget.current='folder';setArea('projects');setFocusRequest(value=>value+1)}
   const cancelFolderReview=()=>{if(folderBusy)return;invalidateFolderPlan();focusTarget.current='origin';setArea('projects');setFocusRequest(value=>value+1)}
@@ -98,7 +98,7 @@ export default function WorkspaceManager({ inline = false, onSelected, proposal,
     if(folderBusy||busy||loading||dirty||!activeRoot||!config)return
     if(inputOverride){invalidateFolderPlan();folderEdited.current=true;folderPathEdited.current=true;setFolderMode(inputOverride.mode);setFolderPath(inputOverride.path);setName(inputOverride.name);setTitle(inputOverride.title)}
     const input=inputOverride??{mode:folderMode,path:folderPath,name,title,expected_workspace_root:activeRoot}
-    const revision=folderRevision.current;setFolderBusy(true);setError('');setNotice('');setReview(null);setAccepted(false);setFolderPlan(null);setFolderAccepted(false);setFolderReceipt(null)
+    const revision=folderRevision.current;setFolderBusy(true);setError('');setNotice('');setReview(null);setAccepted(false);setFolderPlan(null);setFolderReceipt(null)
     try{const data=await folderRequest('/api/project-folders/v1/plans',input);if(!folderMounted.current||folderRevision.current!==revision)return;setFolderPlan({plan:validateFolderPlan(data,input),revision})}
     catch(cause){if(folderMounted.current&&folderRevision.current===revision)setError(cause as Error)}finally{if(folderMounted.current)setFolderBusy(false)}
   }
@@ -112,8 +112,8 @@ export default function WorkspaceManager({ inline = false, onSelected, proposal,
     }catch(cause){if(folderMounted.current&&revision===folderRevision.current)setError(cause as Error)}finally{if(folderMounted.current)setFolderBusy(false)}
   }
   async function applyFolder(){
-    if(!folderPlan||!folderAccepted||folderBusy||busy||loading||dirty||folderPlan.revision!==folderRevision.current)return
-    const exact=folderPlan;setFolderBusy(true);setError('');setNotice('');setFolderAccepted(false)
+    if(!folderPlan||folderBusy||busy||loading||dirty||folderPlan.revision!==folderRevision.current)return
+    const exact=folderPlan;setFolderBusy(true);setError('');setNotice('')
     try{const data=await folderRequest(`/api/project-folders/v1/plans/${encodeURIComponent(exact.plan.plan_id)}/apply`,{plan_sha256:exact.plan.plan_sha256,confirmed:true})
       if(!folderMounted.current)return
       if(isRecord(data?.receipt))setFolderReceipt(data.receipt)
@@ -144,7 +144,7 @@ export default function WorkspaceManager({ inline = false, onSelected, proposal,
   async function execute() {
     if(folderBusy)return
     if(review&&['create','bind'].includes(review.operation)){setReview(null);setAccepted(false);setError(localMessage('commerce.project_folder.old_review'));return}
-    if (!review || !accepted || !workspace || review.workspaceId !== workspace.id) return
+    if (!review || (review.operation==='delete_trash'&&!accepted) || !workspace || review.workspaceId !== workspace.id) return
     setBusy(true); setError(''); setNotice('')
     const id = review.workspaceId
     try {
@@ -233,11 +233,11 @@ export default function WorkspaceManager({ inline = false, onSelected, proposal,
       <h4 id={`${uid}-plan-files`}>{t('commerce.project_folder.files')}</h4><ul className="wm-folder-plan-files" aria-labelledby={`${uid}-plan-files`}>{folderPlan.plan.files.map(entry=><li key={entry.path}><code>{entry.path}</code><span>{t(entry.action==='create'?'commerce.project_folder.create':'commerce.project_folder.preserve')}</span></li>)}</ul>
       <details className="wm-folder-directories"><summary>{t('commerce.project_folder.directories')} ({formatNumber(folderPlan.plan.directories.length)})</summary><ul>{folderPlan.plan.directories.map(entry=><li key={entry.path}><code>{entry.path}</code> · {t(entry.action==='create'?'commerce.project_folder.create':'commerce.project_folder.preserve')}</li>)}</ul></details>
       <details><summary>{t('commerce.operation_details')}</summary><code>{folderPlan.plan.plan_id}</code><code>{folderPlan.plan.plan_sha256}</code></details>
-      <div className="wm-folder-review-actions"><label className="wm-check"><input type="checkbox" checked={folderAccepted} disabled={folderBusy} onChange={event=>setFolderAccepted(event.target.checked)}/>{t('commerce.i_reviewed_the_scope_and_confirm_this_operation')}</label>
-      <button type="button" disabled={!folderAccepted||folderBusy||busy||loading||dirty||folderPlan.revision!==folderRevision.current} onClick={()=>void applyFolder()}>{t('commerce.confirm_and_execute')}</button>
+      <div className="wm-folder-review-actions">
+      <button type="button" disabled={folderBusy||busy||loading||dirty||folderPlan.revision!==folderRevision.current} onClick={()=>void applyFolder()}>{t('agents.TaskExecution.accept')}</button>
       <button type="button" disabled={folderBusy} onClick={cancelFolderReview}>{t('commerce.cancel')}</button></div>
     </section>}
     {folderReceipt && <details className="wm-folder-receipt"><summary>{t('commerce.project_folder.receipt')}</summary><pre>{JSON.stringify(folderReceipt,null,2)}</pre></details>}
-    {review && !['create','bind'].includes(review.operation) && <section className="wm-review" role="dialog" aria-modal="true" aria-label={t('commerce.review_workspace_operation')}><h3>{t('commerce.review_operation')}</h3><p>{errorMessage(review.label)}</p><p>{t('commerce.project')} <code>{workspace?.root ?? review.workspaceId}</code></p><details><summary>{t('commerce.operation_details')}</summary><code>{review.workspaceId}</code><pre>{JSON.stringify(review.args, null, 2)}</pre></details><label className="wm-check"><input type="checkbox" checked={accepted} onChange={e => setAccepted(e.target.checked)} />{t('commerce.i_reviewed_the_scope_and_confirm_this_operation')}</label><button disabled={busy || folderBusy || !accepted || review.workspaceId !== workspace?.id} onClick={() => void execute()}>{t('commerce.confirm_and_execute')}</button><button disabled={busy} onClick={() => { setReview(null); setAccepted(false) }}>{t('commerce.cancel')}</button></section>}
+    {review && !['create','bind'].includes(review.operation) && <section className="wm-review" role="dialog" aria-modal="true" aria-label={t('commerce.review_workspace_operation')}><h3>{t('commerce.review_operation')}</h3><p>{errorMessage(review.label)}</p><p>{t('commerce.project')} <code>{workspace?.root ?? review.workspaceId}</code></p><details><summary>{t('commerce.operation_details')}</summary><code>{review.workspaceId}</code><pre>{JSON.stringify(review.args, null, 2)}</pre></details>{review.operation==='delete_trash'&&<label className="wm-check"><input type="checkbox" checked={accepted} onChange={e => setAccepted(e.target.checked)} />{t('commerce.i_reviewed_the_scope_and_confirm_this_operation')}</label>}<button disabled={busy || folderBusy || (review.operation==='delete_trash'&&!accepted) || review.workspaceId !== workspace?.id} onClick={() => void execute()}>{review.operation==='delete_trash'?t('commerce.confirm_and_execute'):t('agents.TaskExecution.accept')}</button><button disabled={busy} onClick={() => { setReview(null); setAccepted(false) }}>{t('commerce.cancel')}</button></section>}
   </section>
 }

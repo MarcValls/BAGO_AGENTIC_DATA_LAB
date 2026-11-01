@@ -1,0 +1,34 @@
+/* Message-local warning; selectors also withstand the application's visual reset. */
+.control-chat .control-message .chat-web-notice,
+#root .app-shell .control-chat .control-message .chat-web-notice {
+  margin-block: 12px;
+  padding: 12px 14px;
+  border: 1px solid #b56a00;
+  border-inline-start-width: 4px;
+  border-radius: 4px;
+  background: #fff3cd;
+  color: #3d2600;
+  font-size: .875rem;
+  line-height: 1.5;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.control-chat .control-message .chat-web-notice :is(p, li, code, strong, small),
+#root .app-shell .control-chat .control-message .chat-web-notice :is(p, li, code, strong, small) {
+  color: #3d2600;
+  background: transparent;
+}
+.control-chat .control-message .chat-web-notice > strong,
+#root .app-shell .control-chat .control-message .chat-web-notice > strong {
+  display: block;
+  font-weight: 700;
+}
+.control-chat .control-message .chat-web-notice p,
+#root .app-shell .control-chat .control-message .chat-web-notice p {
+  margin-block: 6px;
+}
+.control-chat .control-message .chat-web-notice ul,
+#root .app-shell .control-chat .control-message .chat-web-notice ul {
+  margin-block: 6px;
+  padding-inline-start: 20px;
+}

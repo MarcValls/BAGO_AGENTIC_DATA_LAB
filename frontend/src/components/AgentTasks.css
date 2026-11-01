@@ -1,7 +1,8 @@
 .agent-tasks { box-sizing: border-box; max-width: none; margin: 0 0 20px; min-width: 0; padding: 16px; }
-.agent-tasks-heading { display: flex; align-items: end; gap: 24px; margin-bottom: 16px; }
+.agent-tasks-heading { display: flex; align-items: center; justify-content: space-between; gap: 24px; margin-bottom: 16px; }
 .agent-tasks-heading h2 { margin: 0; font-size: 1.4rem; }
-.agent-tasks-heading label { display: grid; gap: 5px; flex: 1; max-width: 480px; }
+.agent-tasks-heading > label { display: grid; gap: 5px; flex: 0 1 480px; width: 100%; min-width: 0; max-width: 480px; margin: 0; margin-inline-start: auto; }
+.agent-tasks-heading select { box-sizing: border-box; max-width: 100%; }
 .agent-tasks select { width: 100%; min-width: 0; padding: 9px; color: inherit; background: #0b1522; border: 1px solid #344c63; border-radius: 5px; font: inherit; }
 .agent-tasks button { cursor: pointer; padding: 8px 12px; color: inherit; background: #172b40; border: 1px solid #365773; border-radius: 5px; font: inherit; }
 .agent-tasks button:disabled { opacity: .5; cursor: not-allowed; }
@@ -28,5 +29,14 @@
 .agent-task-run-meta code { overflow-wrap: anywhere; }
 .agent-tasks-advanced { border: 1px solid #30475b; border-left: 3px solid #527f9f; border-radius: 5px; padding: 12px; margin-top: 20px; }
 .agent-tasks-advanced > summary { cursor: pointer; }
+.agent-task-review-panel { border: 1px solid #365773; border-radius: 7px; padding: 12px; margin-block: 12px; min-width: 0; background: #101d2d; }
+.agent-task-review-panel h3 { margin-top: 0; }
+.agent-task-review-panel pre { max-height: 260px; overflow: auto; white-space: pre-wrap; overflow-wrap: anywhere; }
+.agent-task-review-panel code { overflow-wrap: anywhere; }
+.agent-task-review-panel > p { font-size: .85rem; }
 @media (max-width: 950px) { .agent-tasks-layout { grid-template-columns: minmax(0, 1fr); } }
-@media (max-width: 600px) { .agent-tasks { padding: 12px; } .agent-tasks-heading { align-items: stretch; flex-direction: column; gap: 10px; } .agent-task-editor, .agent-task-history { padding: 12px; } }
+@media (max-width: 600px) { .agent-tasks { padding: 12px; } .agent-tasks-heading { align-items: stretch; flex-direction: column; gap: 10px; } .agent-tasks-heading > label { flex: initial; max-width: none; margin-inline-start: 0; } .agent-task-editor, .agent-task-history { padding: 12px; } }
+@container app-view (max-width: 600px) {
+  .agent-tasks-heading { align-items: stretch; flex-direction: column; gap: 10px; }
+  .agent-tasks-heading > label { flex: initial; max-width: none; margin-inline-start: 0; }
+}

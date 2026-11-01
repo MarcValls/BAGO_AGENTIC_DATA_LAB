@@ -13,8 +13,8 @@ const useFolder=()=>screen.getByRole('button',{name:'Usar carpeta'})
 const dialog=()=>screen.getByRole('dialog',{name:'Revisar operación del espacio de trabajo'})
 async function ready(){await waitFor(()=>expect((useFolder() as HTMLButtonElement).disabled).toBe(false))}
 async function prepare(){fireEvent.click(useFolder());await screen.findByRole('dialog',{name:'Revisar operación del espacio de trabajo'})}
-const accept=()=>fireEvent.click(within(dialog()).getByRole('checkbox'))
-const confirm=()=>fireEvent.click(within(dialog()).getByRole('button',{name:'Confirmar y ejecutar'}))
+const accept=()=>expect(within(dialog()).queryByRole('checkbox')).toBeNull()
+const confirm=()=>fireEvent.click(within(dialog()).getByRole('button',{name:'Aceptar plan y ejecutar'}))
 function deferred<T>(){let resolve!:(value:T)=>void;const promise=new Promise<T>(r=>{resolve=r});return {promise,resolve}}
 
 it('defaults to the exact active D folder with mount GETs only and no administrative C fallback',async()=>{
@@ -26,7 +26,7 @@ it('defaults to the exact active D folder with mount GETs only and no administra
  expect(dialog().querySelector('.wm-folder-plan-files li')?.textContent).toContain('Existe · se conserva')
  expect(dialog().querySelector('.wm-folder-directories')?.hasAttribute('open')).toBe(false)
  expect(f.mutations()).toHaveLength(1);expect(f.mutations()[0].body).toEqual({mode:'existing',path:'D:/selected-project',name:'',title:'',expected_workspace_root:'D:/selected-project'})
- expect((within(dialog()).getByRole('button',{name:'Confirmar y ejecutar'}) as HTMLButtonElement).disabled).toBe(true)
+ expect((within(dialog()).getByRole('button',{name:'Aceptar plan y ejecutar'}) as HTMLButtonElement).disabled).toBe(false)
 })
 it('applies only the reviewed ID and hash after explicit consent; no old bind, grants, minimum writes or model dispatch are inferred by UI',async()=>{
  const f=folderFixture(),selected=vi.fn();render(<WorkspaceManager onSelected={selected}/>);await ready();await prepare()
@@ -64,7 +64,7 @@ it.each(['path','name','title','mode'])('changing %s invalidates the accepted pl
  const f=folderFixture();render(<WorkspaceManager/>);await ready();await prepare();accept()
  if(field==='mode'){fireEvent.click(screen.getByLabelText('Crear una carpeta hija'));fireEvent.click(screen.getByLabelText('Usar esta carpeta existente'))}
  else{const control=field==='path'?pathInput():screen.getByLabelText(field==='name'?'Nombre de carpeta':'Título del proyecto') as HTMLInputElement;const original=control.value;fireEvent.change(control,{target:{value:original+'-edited'}});fireEvent.change(control,{target:{value:original}})}
- expect(screen.queryByRole('dialog')).toBeNull();expect(f.mutations()).toHaveLength(1);await prepare();expect((within(dialog()).getByRole('checkbox') as HTMLInputElement).checked).toBe(false)
+ expect(screen.queryByRole('dialog')).toBeNull();expect(f.mutations()).toHaveLength(1);await prepare();expect(within(dialog()).queryByRole('checkbox')).toBeNull();expect(f.mutations().filter(c=>c.url.endsWith('/apply'))).toHaveLength(0)
 })
 it('late context does not overwrite a human draft and late preparation cannot resurrect an edited review',async()=>{
  const context=deferred<unknown>(),pendingPlan=deferred<unknown>();let captured:any

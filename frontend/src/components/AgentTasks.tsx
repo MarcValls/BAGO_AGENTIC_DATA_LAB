@@ -3,6 +3,7 @@ import {AgentPresentationError} from './AgentTaskForm'
 import {useI18n, t, formatDate, formatNumber, apiError, errorMessage} from '../i18n'
 import { useEffect, useId, useRef, useState } from 'react'
 import AgentTaskForm, { taskError, type TaskDefinition } from './AgentTaskForm'
+import TaskExecutionPanel from './TaskExecutionPanel'
 import './AgentTasks.css'
 import './AgentTaskResponse.css'
 
@@ -113,7 +114,7 @@ export default function AgentTasks({ initialAgentId = '' }: { initialAgentId?: s
   const editor = useRef<HTMLElement | null>(null)
   const [editConfirm, setEditConfirm] = useState(false), [focusEditor, setFocusEditor] = useState(false)
   const [reviewSource, setReviewSource] = useState<TaskRun | null>(null), [reviewContext, setReviewContext] = useState<ReviewContext | null>(null)
-  const [reviewerId, setReviewerId] = useState(''), [reviewAccepted, setReviewAccepted] = useState(false)
+  const [reviewerId, setReviewerId] = useState('')
   const [reviewLoading, setReviewLoading] = useState(false), [reviewError, setReviewError] = useState<string | Error>('')
   const reviewHeading = useRef<HTMLHeadingElement | null>(null)
   const reviewGeneration = useRef(0)
@@ -139,8 +140,9 @@ export default function AgentTasks({ initialAgentId = '' }: { initialAgentId?: s
     const controller = new AbortController()
     activeRequest.current?.abort(); activeRequest.current = controller
     setSaved(null); setDraft(emptyTask()); setRuns([]); setError(''); setHistoryError(''); setNotice(''); setBusy(null); setSourceRun(null); setForceDirty(false)
-    setEditConfirm(false); setFocusEditor(false); setReviewSource(null); setReviewContext(null); setReviewError(''); setReviewAccepted(false); setReviewLoading(false)
+    setEditConfirm(false); setFocusEditor(false); setReviewSource(null); setReviewContext(null); setReviewError(''); setReviewLoading(false)
     reviewGeneration.current++
+    if (listLoading) {setLoading(true);setHistoryLoading(true);return () => controller.abort()}
     if (!agentId) { setLoading(false); setHistoryLoading(false); return () => controller.abort() }
     setLoading(true); setHistoryLoading(true)
     void request<SavedTask>(`/api/agents/${encodeURIComponent(agentId)}/task`, { signal: controller.signal }).then(data => {
@@ -153,7 +155,7 @@ export default function AgentTasks({ initialAgentId = '' }: { initialAgentId?: s
       if (!controller.signal.aborted && current === generation.current && historyCurrent === historyGeneration.current) setRuns(historyResponse(data, agentId))
     }).catch(cause => { if (!controller.signal.aborted && current === generation.current && historyCurrent === historyGeneration.current) setHistoryError(cause) }).finally(() => { if (!controller.signal.aborted && current === generation.current && historyCurrent === historyGeneration.current) setHistoryLoading(false) })
     return () => controller.abort()
-  }, [agentId, agents, taskReload])
+  }, [agentId, agents, taskReload, listLoading])
   useEffect(() => () => { generation.current++; activeRequest.current?.abort() }, [])
   useEffect(() => { if (focusEditor && !busy && !loading) {
     const input = editor.current?.querySelector<HTMLTextAreaElement>('textarea')
@@ -183,20 +185,29 @@ export default function AgentTasks({ initialAgentId = '' }: { initialAgentId?: s
   const openReview = async (source: TaskRun) => {
     if (busy || source.status !== 'answered' || source.agent_id !== agentId) return
     const current = generation.current, reviewCurrent = ++reviewGeneration.current
-    setReviewSource(source); setReviewContext(null); setReviewerId(''); setReviewAccepted(false); setReviewError(''); setReviewLoading(true)
+    setReviewSource(source); setReviewContext(null); setReviewerId(''); setReviewError(''); setReviewLoading(true)
     try {
       const data = await request<unknown>(`/api/agents/${encodeURIComponent(source.agent_id)}/task-runs/${encodeURIComponent(source.run_id)}/reviews`)
-      if (current === generation.current && reviewCurrent === reviewGeneration.current) setReviewContext(reviewContextResponse(data, source))
+      if (current === generation.current && reviewCurrent === reviewGeneration.current) {
+        const context = reviewContextResponse(data, source)
+        setReviewContext(context)
+        if (!context.reviews.length && context.reviewers.length === 1) {
+          setReviewerId(context.reviewers[0].agent_id)
+          void executeReview(context.reviewers[0].agent_id, context, source)
+        }
+      }
     } catch (cause) { if (current === generation.current && reviewCurrent === reviewGeneration.current) setReviewError(cause instanceof Error ? cause : String(cause)) }
     finally { if (current === generation.current && reviewCurrent === reviewGeneration.current) setReviewLoading(false) }
   }
-  const closeReview = () => { if (!busy) {reviewGeneration.current++; setReviewSource(null); setReviewContext(null); setReviewAccepted(false); setReviewLoading(false)} }
-  const executeReview = async () => {
-    const selected = reviewContext?.reviewers.find(item => item.agent_id === reviewerId)
-    if (!reviewSource || !reviewContext || !selected || !reviewAccepted || busy || selected.agent_id === agentId || reviewSource.agent_id !== agentId) return
-    const source = reviewSource, context = reviewContext, current = generation.current
+  const closeReview = () => { if (!busy) {reviewGeneration.current++; setReviewSource(null); setReviewContext(null); setReviewLoading(false)} }
+  const reviewLock = useRef(false)
+  const executeReview = async (selectedId = reviewerId, context = reviewContext, source = reviewSource) => {
+    const selected = context?.reviewers.find(item => item.agent_id === selectedId)
+    if (!source || !context || !selected || busy || reviewLock.current || selected.agent_id === agentId || source.agent_id !== agentId) return
+    const current = generation.current
+    reviewLock.current = true
     const controller = new AbortController(); activeRequest.current = controller
-    setBusy('review'); setReviewError(''); setReviewAccepted(false)
+    setBusy('review'); setReviewError('')
     try {
       const data = await request<unknown>(`/api/agents/${encodeURIComponent(source.agent_id)}/task-runs/${encodeURIComponent(source.run_id)}/reviews`, {
         method: 'POST', signal: controller.signal, headers: {'Content-Type': 'application/json'}, body: JSON.stringify({
@@ -207,7 +218,7 @@ export default function AgentTasks({ initialAgentId = '' }: { initialAgentId?: s
       if (result.reviewer_agent_id !== selected.agent_id || result.reviewer_profile_sha256 !== selected.profile_sha256) throw new AgentPresentationError(() => t('agents.AgentTasks.invalid_review'))
       setReviewContext({...context, reviews: [result, ...context.reviews.filter(item => item.review_id !== result.review_id)]})
     } catch (cause) { if (!controller.signal.aborted && current === generation.current) setReviewError(cause instanceof Error ? cause : String(cause)) }
-    finally { if (!controller.signal.aborted && current === generation.current) setBusy(null) }
+    finally { reviewLock.current = false; if (!controller.signal.aborted && current === generation.current) setBusy(null) }
   }
   const save = async () => {
     if (!saved || busy || invalid) return
@@ -251,6 +262,33 @@ export default function AgentTasks({ initialAgentId = '' }: { initialAgentId?: s
     finally { if (current === generation.current && historyCurrent === historyGeneration.current) setHistoryLoading(false) }
   }
   const selectedReviewer = reviewContext?.reviewers.find(item => item.agent_id === reviewerId)
+  const reviewPanel = reviewSource ? (<section className="agent-task-review-panel" role="region" aria-labelledby={`${reviewUid}-heading`} onKeyDown={event => {
+      if (event.key === 'Escape' && !busy) {closeReview(); return}
+    }}>
+      <h3 id={`${reviewUid}-heading`} tabIndex={-1} ref={reviewHeading}>{t('agents.AgentTasks.independent_review')}</h3>
+      <p>{t('agents.AgentTasks.review_scope')}</p><p><code>{reviewSource.run_id}</code></p>
+      {reviewLoading && <p role="status">{t('agents.AgentTasks.loading_review')}</p>}
+      {reviewError && <p role="alert">{typeof reviewError === 'string' ? reviewError : presentAgentError(reviewError)}</p>}
+      {reviewContext && <>
+        <details><summary>{t('agents.AgentTasks.review_snapshot')}</summary><code>{reviewContext.source_sha256}</code><h4>{t('agents.AgentTasks.sent_request')}</h4><pre>{reviewContext.source_run.rendered_prompt}</pre><h4>{t('agents.AgentTasks.agent_answer')}</h4><pre>{reviewContext.source_run.answer}</pre></details>
+        <label>{t('agents.AgentTasks.reviewer_label')}<select value={reviewerId} disabled={Boolean(busy)} onChange={event => {setReviewerId(event.target.value); if(event.target.value)void executeReview(event.target.value)}}><option value="">{t('agents.AgentTasks.choose_reviewer')}</option>{reviewContext.reviewers.map(item => <option key={item.agent_id} value={item.agent_id}>{item.name || item.agent_id} · {item.provider_id} / {item.model_id}</option>)}</select></label>
+        {selectedReviewer && <details><summary>{t('agents.AgentTasks.review_binding')}</summary><code>{selectedReviewer.agent_id}</code><code>{selectedReviewer.profile_sha256}</code></details>}
+        {!reviewContext.reviewers.length && <p role="status">{t('agents.AgentTasks.no_reviewer')}</p>}
+        {busy==='review'&&<p role="status">{t('agents.AgentTasks.reviewing')}</p>}
+        {reviewError&&<button type="button" disabled={Boolean(busy)||!reviewerId} onClick={()=>void executeReview()}>{t('agents.AgentBuilder.reintentar')}</button>}
+        <h4>{t('agents.AgentTasks.saved_reviews')}</h4>
+        {!reviewContext.reviews.length && <p>{t('agents.AgentTasks.no_reviews')}</p>}
+        {reviewContext.reviews.map(item => <article className="agent-task-review-result" key={item.review_id}>
+          <h4>{item.reviewer_name || item.reviewer_agent_id} · {outcome(item.status)}</h4><code>{item.review_id}</code>
+          <p>{t('agents.AgentTasks.review_advisory')}</p>
+          {item.answer !== null && <pre>{item.answer}</pre>}{item.error && <p role="alert">{item.error.message} <code>{item.error.code}</code></p>}
+          <details><summary>{t('agents.AgentTasks.review_binding')}</summary><code>{item.source_run_id}</code><code>{item.source_sha256}</code><code>{item.reviewer_agent_id}</code><code>{item.reviewer_profile_sha256}</code></details>
+        </article>)}
+      </>}
+      <button type="button" disabled={Boolean(busy) || reviewLoading} onClick={() => void openReview(reviewSource)}>{t('agents.AgentManagement.actualizar')}</button>
+      <button type="button" disabled={Boolean(busy)} onClick={closeReview}>{t('agents.AgentTasks.close_review')}</button>
+    </section>) : null
+
 
   return <section className="agent-tasks" aria-label={t('agents.AgentTasks.tareas_de_agentes')}>
     <header className="agent-tasks-heading"><h2>{t('agents.AgentTasks.tareas')}</h2><label>{t('agents.AgentTasks.agente')}<select aria-label={t('agents.AgentTasks.agente_para_tareas')} value={agentId} disabled={listLoading} onChange={event => {
@@ -258,6 +296,7 @@ export default function AgentTasks({ initialAgentId = '' }: { initialAgentId?: s
     }}><option value="">{t('agents.AgentTasks.selecciona_un_agente')}</option>{agents.map(agent => <option key={agent.id} value={agent.id}>{agent.config.name}</option>)}</select></label></header>
     {listLoading && <p role="status">{t('agents.AgentManagement.cargando_agentes')}</p>}
     {listError && <div role="alert">{typeof listError === 'string' ? listError : presentAgentError(listError)} <button type="button" onClick={() => setReload(value => value + 1)}>{t('agents.AgentBuilder.reintentar')}</button></div>}
+    <TaskExecutionPanel sourceIdentity={agentId&&saved?`${agentId}:${saved.revision}`:'new-task'} taskText={saved?.task?.prompt||''}/>
     {!listLoading && !listError && !agents.length && <p role="status">{t('agents.AgentTasks.crea_un_agente_para_guardar_su_tarea')}</p>}
     {agentId && <div className="agent-tasks-layout">
       <section className="agent-task-editor" ref={editor} aria-label={t('agents.AgentTasks.tarea_guardada_2')}>
@@ -286,6 +325,8 @@ export default function AgentTasks({ initialAgentId = '' }: { initialAgentId?: s
           <div className="agent-task-run-meta"><code>{item.run_id}</code><span>{item.provider_id} · {item.model_id}</span>{item.completed_at && <span>{t('agents.AgentTasks.finalizada')} <time dateTime={item.completed_at}>{formatDate(item.completed_at)}</time></span>}</div>
           <button type="button" disabled={Boolean(busy) || loading || !saved} onClick={() => { setDraft(copyTask(item.task_snapshot)); setForceDirty(true); setSourceRun(item.run_id); setError(''); setNotice(new AgentPresentationError(() => t('agents.AgentTasks.copia_preparada_guarda_antes_de_ejecutar'))) }}>{t('agents.AgentTasks.relanzar')}</button>
           <button type="button" disabled={Boolean(busy) || reviewLoading || item.status !== 'answered'} onClick={() => void openReview(item)}>{t('agents.AgentTasks.independent_review')}</button>
+          {reviewSource?.run_id===item.run_id&&reviewPanel}
+          {item.status==='answered'&&<TaskExecutionPanel sourceIdentity={item.run_id} taskText={item.rendered_prompt}/>}
           <p className="agent-task-answer-scope">{t('agents.AgentTasks.copy_scope')}</p>
         </details>)}
       </section>
@@ -293,36 +334,6 @@ export default function AgentTasks({ initialAgentId = '' }: { initialAgentId?: s
     {editConfirm && <section className="agent-task-action-dialog" role="alertdialog" aria-label={t('agents.AgentTasks.edit_manually')} onKeyDown={event => {if (event.key === 'Escape') setEditConfirm(false)}}>
       <p>{t('agents.AgentTasks.discard_draft_notice')}</p><button type="button" onClick={() => void editCurrent(true)}>{t('agents.AgentTasks.load_saved_task')}</button><button type="button" onClick={() => setEditConfirm(false)}>{t('agents.AgentManagement.cancelar')}</button>
     </section>}
-    {reviewSource && <section className="agent-task-action-dialog" role="dialog" aria-modal="true" aria-labelledby={`${reviewUid}-heading`} onKeyDown={event => {
-      if (event.key === 'Escape' && !busy) {closeReview(); return}
-      if (event.key !== 'Tab') return
-      const controls = Array.from(event.currentTarget.querySelectorAll<HTMLElement>('button:not(:disabled),select:not(:disabled),input:not(:disabled),summary'))
-      const first = controls[0], last = controls[controls.length - 1]
-      if (first && last && event.shiftKey && (document.activeElement === first || document.activeElement === reviewHeading.current)) {event.preventDefault(); last.focus()}
-      else if (first && last && !event.shiftKey && document.activeElement === last) {event.preventDefault(); first.focus()}
-    }}>
-      <h3 id={`${reviewUid}-heading`} tabIndex={-1} ref={reviewHeading}>{t('agents.AgentTasks.independent_review')}</h3>
-      <p>{t('agents.AgentTasks.review_scope')}</p><p><code>{reviewSource.run_id}</code></p>
-      {reviewLoading && <p role="status">{t('agents.AgentTasks.loading_review')}</p>}
-      {reviewError && <p role="alert">{typeof reviewError === 'string' ? reviewError : presentAgentError(reviewError)}</p>}
-      {reviewContext && <>
-        <details><summary>{t('agents.AgentTasks.review_snapshot')}</summary><code>{reviewContext.source_sha256}</code><h4>{t('agents.AgentTasks.sent_request')}</h4><pre>{reviewContext.source_run.rendered_prompt}</pre><h4>{t('agents.AgentTasks.agent_answer')}</h4><pre>{reviewContext.source_run.answer}</pre></details>
-        <label>{t('agents.AgentTasks.reviewer_label')}<select value={reviewerId} disabled={Boolean(busy)} onChange={event => {setReviewerId(event.target.value); setReviewAccepted(false)}}><option value="">{t('agents.AgentTasks.choose_reviewer')}</option>{reviewContext.reviewers.map(item => <option key={item.agent_id} value={item.agent_id}>{item.name || item.agent_id} · {item.provider_id} / {item.model_id}</option>)}</select></label>
-        {selectedReviewer && <details><summary>{t('agents.AgentTasks.review_binding')}</summary><code>{selectedReviewer.agent_id}</code><code>{selectedReviewer.profile_sha256}</code></details>}
-        {!reviewContext.reviewers.length && <p role="status">{t('agents.AgentTasks.no_reviewer')}</p>}
-        <label className="agent-task-review-consent"><input type="checkbox" disabled={Boolean(busy) || !reviewerId} checked={reviewAccepted} onChange={event => setReviewAccepted(event.target.checked)}/>{t('agents.AgentTasks.review_consent')}</label>
-        <button type="button" disabled={Boolean(busy) || !reviewerId || !reviewAccepted} onClick={() => void executeReview()}>{busy === 'review' ? t('agents.AgentTasks.reviewing') : t('agents.AgentTasks.confirm_review')}</button>
-        <h4>{t('agents.AgentTasks.saved_reviews')}</h4>
-        {!reviewContext.reviews.length && <p>{t('agents.AgentTasks.no_reviews')}</p>}
-        {reviewContext.reviews.map(item => <article className="agent-task-review-result" key={item.review_id}>
-          <h4>{item.reviewer_name || item.reviewer_agent_id} · {outcome(item.status)}</h4><code>{item.review_id}</code>
-          <p>{t('agents.AgentTasks.review_advisory')}</p>
-          {item.answer !== null && <pre>{item.answer}</pre>}{item.error && <p role="alert">{item.error.message} <code>{item.error.code}</code></p>}
-          <details><summary>{t('agents.AgentTasks.review_binding')}</summary><code>{item.source_run_id}</code><code>{item.source_sha256}</code><code>{item.reviewer_agent_id}</code><code>{item.reviewer_profile_sha256}</code></details>
-        </article>)}
-      </>}
-      <button type="button" disabled={Boolean(busy) || reviewLoading} onClick={() => void openReview(reviewSource)}>{t('agents.AgentManagement.actualizar')}</button>
-      <button type="button" disabled={Boolean(busy)} onClick={closeReview}>{t('agents.AgentTasks.close_review')}</button>
-    </section>}
+
   </section>
 }
