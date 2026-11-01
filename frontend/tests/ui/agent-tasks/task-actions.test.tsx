@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 import React from 'react'
 import {afterEach,beforeEach,expect,it,vi} from 'vitest'
-import {cleanup,fireEvent,render,screen,within} from '@testing-library/react'
+import {cleanup,fireEvent,render,screen,waitFor,within} from '@testing-library/react'
 import AgentTasks from '../../../src/components/AgentTasks'
 import {resetLocaleForTests,setLocale,t} from '../../../src/i18n'
 
@@ -33,7 +33,13 @@ function fixture(options:{reviewers?:typeof target[];reviewError?:boolean;invali
  }))
  return {state,calls}
 }
-async function loaded(){await screen.findByRole('textbox',{name:t('agents.AgentTaskForm.tarea')})}
+async function loaded(){
+ await waitFor(()=>{
+  expect((screen.getByRole('combobox',{name:t('agents.AgentTasks.agente_para_tareas')}) as HTMLSelectElement).disabled).toBe(false)
+  expect((screen.getByRole('textbox',{name:t('agents.AgentTaskForm.tarea')}) as HTMLTextAreaElement).value).toBe(task.prompt)
+  expect((screen.getByRole('button',{name:t('agents.AgentManagement.actualizar')}) as HTMLButtonElement).disabled).toBe(false)
+ })
+}
 async function openReview(){
  await loaded();const history=screen.getByRole('region',{name:t('agents.AgentTasks.historial_de_tareas')})
  fireEvent.click(history.querySelector('summary')!);fireEvent.click(within(history).getByRole('button',{name:t('agents.AgentTasks.independent_review')}))
