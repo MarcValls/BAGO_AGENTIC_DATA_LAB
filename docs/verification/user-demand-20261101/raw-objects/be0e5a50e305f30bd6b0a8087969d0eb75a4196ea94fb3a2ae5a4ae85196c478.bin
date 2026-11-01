@@ -1,0 +1,29 @@
+{
+  "image_id": "sha256:3d92378210d9a4b5411f2f74f9bfe08bd1f90787c5426b589e8b95486c243480",
+  "argv": [
+    "docker",
+    "run",
+    "--rm",
+    "-i",
+    "--name",
+    "bago-readme-actions-d2a6955e859e",
+    "--network",
+    "none",
+    "--cpus",
+    "2",
+    "--memory",
+    "4g",
+    "--mount",
+    "type=bind,source=C:\\Users\\AMTEC_Terminal_1\u00ba\\Desktop\\BAGO5_ADL\\.worktrees\\csv-table-preview-20261101\\.bago\\goals\\task-response-actions-20261101\\readme-gate\\attempt1,target=/results",
+    "--entrypoint",
+    "python",
+    "sha256:3d92378210d9a4b5411f2f74f9bfe08bd1f90787c5426b589e8b95486c243480",
+    "-B",
+    "-c",
+    "from pathlib import Path;import os,sys,tarfile;root=Path('/tmp')/'bago-readme-actions-d2a6955e859e';root.mkdir();archive=tarfile.open(fileobj=sys.stdin.buffer,mode='r|');archive.extractall(root,filter='data');archive.close();os.chdir(root);exec((root/'.readme-gate/inner.py').read_text())"
+  ],
+  "archive_sha256": "61a9135c6e36e0864f0b29673d0570c70dbfb2d74503c912b9b842c53fcde109",
+  "head": "ed0efc83cc39a40aac231d9aa0da77a5d30a91e7",
+  "source_overlay_files": 16,
+  "scope": "New owned container only, ephemeral Linux /tmp source, no ports/host network/privileged, only results mount; no Docker configuration contents read."
+}

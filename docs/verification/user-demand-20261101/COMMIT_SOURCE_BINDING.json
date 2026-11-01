@@ -1,0 +1,106 @@
+{
+  "at": "2026-11-01T01:36:19.139607+00:00",
+  "base_before_worktree": "ed0efc83cc39a40aac231d9aa0da77a5d30a91e7",
+  "refreshed_base_before_publish": "ed0efc83cc39a40aac231d9aa0da77a5d30a91e7",
+  "tested_sources": [
+    {
+      "path": "frontend/src/components/AgentTasks.tsx",
+      "tested_raw_sha256": "1c6b45a9bd0ad783d93ae6925cdde84fcf0a0335d253d1317340637fa51b10db",
+      "git_blob_sha256": "3403aeadd6d0e3ab5fde43cc8270aa38ff56401532f0eb21ca235d65df534d9b",
+      "equivalence": "CRLF_TO_LF_ONLY"
+    },
+    {
+      "path": "frontend/src/components/AgentTaskResponse.css",
+      "tested_raw_sha256": "2124c35844d3b6fbd7219b77cc3bdd451841f57155fe143eab96d7fb7bc9dabc",
+      "git_blob_sha256": "2124c35844d3b6fbd7219b77cc3bdd451841f57155fe143eab96d7fb7bc9dabc",
+      "equivalence": "IDENTICAL"
+    },
+    {
+      "path": "frontend/src/i18n/domains/agents.ts",
+      "tested_raw_sha256": "b639b670258cb0c26d85a95b179a6c115fc8861836463bd45c7eda0b372bc3af",
+      "git_blob_sha256": "b639b670258cb0c26d85a95b179a6c115fc8861836463bd45c7eda0b372bc3af",
+      "equivalence": "IDENTICAL"
+    },
+    {
+      "path": "frontend/tests/ui/agent-tasks/saved-tasks.test.tsx",
+      "tested_raw_sha256": "b7409b03dafc757fb6580382b7b846d04ed5fe2799d9b9fcad0d46f790aeb073",
+      "git_blob_sha256": "8c3f2e61109b8d2525a034ca366d5f69370a0f89128e463ac0cc5c1fefd75036",
+      "equivalence": "CRLF_TO_LF_ONLY"
+    },
+    {
+      "path": "frontend/tests/ui/agent-tasks/response-display.test.tsx",
+      "tested_raw_sha256": "a742e9a9ba388d9322391ff1185ac5a4c920763dd5ca496b3acfd175ce09038e",
+      "git_blob_sha256": "a742e9a9ba388d9322391ff1185ac5a4c920763dd5ca496b3acfd175ce09038e",
+      "equivalence": "IDENTICAL"
+    },
+    {
+      "path": "frontend/tests/ui/agent-tasks/task-actions.test.tsx",
+      "tested_raw_sha256": "28187c846e490889b6bf91e13464772a5b3fbd423cdf9516f02138605da6b92d",
+      "git_blob_sha256": "28187c846e490889b6bf91e13464772a5b3fbd423cdf9516f02138605da6b92d",
+      "equivalence": "IDENTICAL"
+    },
+    {
+      "path": "src/agent_tasks/store.py",
+      "tested_raw_sha256": "07a9c5f68e6ad975d26a03584f3f2c85ec9e869a8661cf77a2b86cdee3e45cf3",
+      "git_blob_sha256": "850fe9a5a0494daf78986c9de058bec8bf12162877960da1e6949e3150968e5d",
+      "equivalence": "CRLF_TO_LF_ONLY"
+    },
+    {
+      "path": "src/api/task_routes.py",
+      "tested_raw_sha256": "283d6061dcb7e83e8062c7e0041ab7cbd9be6c540ee3d0eb5644d23644f09183",
+      "git_blob_sha256": "eb5f2a0dc8b1da4d3ce2d9481321907f513352c87bcbf14cdf1fca574e3ddb3e",
+      "equivalence": "CRLF_TO_LF_ONLY"
+    },
+    {
+      "path": "tests/test_task_response_reviews.py",
+      "tested_raw_sha256": "0765aba9bd1e5e5c1a6714e69aa52ec4bd2ffba692be7e75a1b4218317a90f91",
+      "git_blob_sha256": "0765aba9bd1e5e5c1a6714e69aa52ec4bd2ffba692be7e75a1b4218317a90f91",
+      "equivalence": "IDENTICAL"
+    },
+    {
+      "path": "frontend/src/components/WorkspaceManager.tsx",
+      "tested_raw_sha256": "f26f56728425fa88b9e08b8f0f937ae3f9d5478c47f8a31ce6cd04b42756c468",
+      "git_blob_sha256": "d38f22fd0d27f196384719d3f4316742e2020f5c8e16850c1d15018fa3d32773",
+      "equivalence": "CRLF_TO_LF_ONLY"
+    },
+    {
+      "path": "frontend/src/components/CsvTablePreview.tsx",
+      "tested_raw_sha256": "bdad8478d3a25819f8f382f940e2b6dc2c2401de82ae53aa4d8bd57f88f8b843",
+      "git_blob_sha256": "bdad8478d3a25819f8f382f940e2b6dc2c2401de82ae53aa4d8bd57f88f8b843",
+      "equivalence": "IDENTICAL"
+    },
+    {
+      "path": "frontend/src/components/CsvTablePreview.css",
+      "tested_raw_sha256": "7316746c5b658a531e583d0aa9aeb936a087f0380c477cf340c3fdf4601d2e66",
+      "git_blob_sha256": "7316746c5b658a531e583d0aa9aeb936a087f0380c477cf340c3fdf4601d2e66",
+      "equivalence": "IDENTICAL"
+    },
+    {
+      "path": "frontend/src/utils/delimitedText.ts",
+      "tested_raw_sha256": "a0f372f18b3aa1c781647325598d642114f255a30edc28374153a3f2efe9efc0",
+      "git_blob_sha256": "a0f372f18b3aa1c781647325598d642114f255a30edc28374153a3f2efe9efc0",
+      "equivalence": "IDENTICAL"
+    },
+    {
+      "path": "frontend/src/i18n/domains/commerce.ts",
+      "tested_raw_sha256": "29abdf4c07726681a4c512b0251b837c368d38bae4839aeca25833281d9ef48e",
+      "git_blob_sha256": "08491fa0bad543645f6fdad951cfc2455d0819ebc485a25c5072b506a7f62813",
+      "equivalence": "CRLF_TO_LF_ONLY"
+    },
+    {
+      "path": "frontend/tests/workspace/csv-preview.test.tsx",
+      "tested_raw_sha256": "bf9624b66a0f714576945e5c90faeb1bf112aeea5e10a17cec5468e9f151a185",
+      "git_blob_sha256": "bf9624b66a0f714576945e5c90faeb1bf112aeea5e10a17cec5468e9f151a185",
+      "equivalence": "IDENTICAL"
+    },
+    {
+      "path": "frontend/tests/workspace/csv-parser.test.tsx",
+      "tested_raw_sha256": "910bc29f5e483d10eafcc30d1c91db7967c74fbc1471e2151744de634f6ebdcf",
+      "git_blob_sha256": "910bc29f5e483d10eafcc30d1c91db7967c74fbc1471e2151744de634f6ebdcf",
+      "equivalence": "IDENTICAL"
+    }
+  ],
+  "suite": "1806 PASS / 2 SKIP; raw-source-bound receipts exported",
+  "native_ui": "Real existing Brave + real provider reviewed separately from implementer.",
+  "merge_authorized": false
+}

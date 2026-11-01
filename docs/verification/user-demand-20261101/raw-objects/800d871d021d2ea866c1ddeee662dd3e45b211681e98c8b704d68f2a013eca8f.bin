@@ -1,0 +1,13 @@
+# CSV: auditoría y propuesta aplicada
+
+Base obtenida por fetch del host: origin/main ed0efc83cc39a40aac231d9aa0da77a5d30a91e7. Worktree aislado csv-table-preview-20261101. UI React19/TypeScript/Vite8 actual; no se importan rutas ni arquitectura de otro BAGO.
+
+Superficie inspeccionada: App como destino existente de proyectos/archivos, WorkspaceManager y sus lecturas/revisiones de escritura/dirty, ServiceTabs con teclado WAI, estilos WorkspaceManager/ServiceSurfaces, catálogo ES/EN, pruebas workspace/project-folders. El escáner de la skill sólo reconoce JSX/JS y rutas de otro layout; no se usa como prueba de cobertura TSX. No se detectó otro parser/renderer CSV reutilizable. Se reutiliza ServiceTabs y estado original de texto.
+
+Hallazgo P2: el editor presenta CSV únicamente como texto, lo que dificulta leer columnas. No se declara una auditoría global ni ausencia de otros defectos.
+
+Mapa: Proyectos y archivos → Archivos → Explorador → abrir archivo → Tabla/Texto, dos representaciones hermanas del mismo contenido. CSV/TSV abren inicialmente Tabla; otros archivos conservan Texto. Tabla muestra primera fila como encabezado, valores escapados por React, región de scroll y cabecera fija. Texto conserva el textarea y guardado con revisión existentes. Cambiar de representación no escribe ni cambia dirty; editar Texto actualiza la vista previa. Sin endpoints ni dependencias nuevos.
+
+Contrato: comas CSV/tabuladores TSV, campos entre comillas con delimitadores/newlines y comillas dobles escapadas, CRLF preservado en estado original; las filas irregulares se muestran con aviso. Archivo vacío y sólo encabezado explícitos. Formato de comillas inválido produce aviso y conserva Texto. Máximo200filas de datos/50columnas/200000caracteres; contenido fuera del límite no se presenta como validado. No autodetección de punto y coma ni edición de celdas. La vista interactiva propuesta es el propio componente integrado; revisión visual en ventana real de root PENDING, sin abrir otra UI.
+
+Conservar: APIs/binding/permisos/revisión, estructura del editor, texto editable, teclado WAI y estilos/tokens. Modificar: representación de CSV/TSV y traducciones correspondientes. Eliminar: nada. No se modifica backend, raíz sucia, runtime anterior ni configuración global. SOURCE_SCOPE enumera rutas reales; el controlador per-goal gobierna snapshots/evidencias y no se presenta como sandbox de fuentes.

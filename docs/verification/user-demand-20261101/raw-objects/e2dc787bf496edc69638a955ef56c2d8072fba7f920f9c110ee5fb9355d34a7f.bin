@@ -1,0 +1,69 @@
+from pathlib import Path
+import difflib,hashlib,json,shutil,subprocess
+ROOT=Path(__file__).resolve().parents[1];REPO=next(p for p in ROOT.parents if (p/'.git').exists())
+sha=lambda p:hashlib.sha256(p.read_bytes()).hexdigest()
+load=lambda p:json.loads(p.read_text(encoding='utf-8-sig'))
+scope=load(ROOT/'SOURCE_SCOPE.json');tests=load(ROOT/'ui/TESTS_R2.json');build=load(ROOT/'ui/BUILD_R2.json');be=load(ROOT/'backend/SOURCE_BINDING.json')
+assert tests['status']==build['status']=='PASS'
+assert all(sha(REPO/v['path'])==v['sha256'] for v in be['sources']+scope['preserved_csv_sources'])
+csv=REPO/'.bago/goals/csv-table-preview-20261101/workspace';old=REPO/'.bago/goals/task-response-presentation-20261101/workspace'
+assert sha(csv/'evidence/handoff-UI.json')==scope['preserved_csv_handoff_sha256']
+assert sha(old/'evidence/handoff-UI.json')==scope['predecessor_handoff_sha256']
+rows=[];patch=[]
+for name in scope['actual_repository_source_scopes']:
+ source=REPO/name
+ assert all(next(v['sha256'] for v in result['sources'] if v['path']==name)==sha(source) for result in [tests,build])
+ historical=old/'sources'/name
+ if historical.is_file():oldbytes=historical.read_bytes()
+ else:
+  prior=subprocess.run(['git','show',scope['base_sha']+':'+name],cwd=REPO,capture_output=True);oldbytes=prior.stdout if prior.returncode==0 else b''
+ patch.extend(difflib.unified_diff(oldbytes.decode('utf-8').splitlines(keepends=True),source.read_text(encoding='utf-8').splitlines(keepends=True),fromfile='a/'+name if oldbytes else '/dev/null',tofile='b/'+name))
+ if name in scope['ui_source_scopes']:
+  target=ROOT/'ui-sources'/name;target.parent.mkdir(parents=True,exist_ok=True);shutil.copyfile(source,target);assert sha(source)==sha(target)
+  rows.append({'path':name,'snapshot':target.relative_to(ROOT).as_posix(),'sha256':sha(source),'bytes':source.stat().st_size})
+(ROOT/'ui/SOURCE.diff').write_text(''.join(patch),encoding='utf-8')
+tracked=subprocess.check_output(['git','diff','--name-only'],cwd=REPO,text=True).splitlines();others=subprocess.check_output(['git','ls-files','--others','--exclude-standard'],cwd=REPO,text=True).splitlines()
+allowed=scope['actual_repository_source_scopes']+[v['path'] for v in scope['preserved_csv_sources']]
+unexpected=[p for p in tracked+others if p not in allowed and not p.startswith(('frontend/.build/','frontend/dist/'))]
+assert not unexpected, str(unexpected)
+for asset in build['assets']:assert sha(REPO/asset['path'])==asset['sha256']
+binding={'status':'PASS','base_sha':scope['base_sha'],'head':subprocess.check_output(['git','rev-parse','HEAD'],cwd=REPO,text=True).strip(),
+ 'ui_sources':rows,'backend_sources':be['sources'],'preserved_csv_sources':scope['preserved_csv_sources'],
+ 'preserved_csv_handoff_sha256':scope['preserved_csv_handoff_sha256'],'historical_predecessor_handoff_sha256':scope['predecessor_handoff_sha256'],
+ 'predecessor_close_eligible_for_successor':False,'authority_change_request':'backend/CR.json',
+ 'diff_basis':'Shared UI paths compared with immutable predecessor source snapshots; backend/new paths compared with fetched base. No old evidence is rewritten.',
+ 'source_scope':'Explicit authorized source paths with hash/diff checks; no OS sandbox claim. Only generated frontend build files additionally changed.',
+ 'commit_state':'Uncommitted; HEAD identifies fetched base. Source byte hashes bind tested successor.'}
+(ROOT/'ui/SOURCE_BINDING.json').write_text(json.dumps(binding,indent=2,ensure_ascii=False)+'\n',encoding='utf-8')
+report='''# Acciones reales de tarea y revisión: entrega sucesora
+
+IMPLEMENTED; backend, frontend y build VERIFIED dentro del alcance indicado. Root LIVE/visual, aceptación y cierre siguen PENDING. No se declara revisión del modelo como VALIDATED.
+
+La petición actual autoriza esta misión sucesora BAGO_TASK_RESPONSE_ACTIONS_20261101 en el mismo worktree csv-table-preview-20261101. CR-TASK-RESPONSE-ACTIONS-20261101 registra los hashes de fuente/handoff consumidos anteriormente y declara que su CLOSE no cubre las nuevas fuentes. Los artefactos antiguos no se reescriben: su evidencia permanece histórica para su candidato. CSV7fuentes y handoff intactos. HEAD sigue en base origin/main ed0efc83cc39a40aac231d9aa0da77a5d30a91e7, sin commit/push/merge.
+
+Editar tarea manualmente usa GET de la tarea guardada actual y enfoca/centra su textarea. Si existe un borrador sucio, exige confirmar su descarte; cancelar lo conserva. Leer/abrir no guarda ni ejecuta. La edición exige revisar el borrador y Guardar tarea explícitamente; Ejecutar permanece separado y bloqueado mientras esté sucio. La copia histórica ahora se llama Copiar como borrador, explica que prepara la tarea actual y no otra identidad, y mantiene source_run_id hasta guardar/ejecutar conforme al contrato original.
+
+Revisar por agente independiente ofrece una operación real: GET /api/agents/{autor}/task-runs/{run}/reviews devuelve el snapshot original+SHA, perfiles guardados distintos con su SHA y revisiones almacenadas. La UI exige seleccionar otro perfil y confirmar envío exclusivamente textual. POST sobre la misma ruta revalida los dos hashes, el estado answered y la identidad distinta antes de contactar al modelo del perfil seleccionado. Se usa el generate existente de create_task_router, que termina en provider_runtime.chat; no se invocan tools, servicios de archivos, delegaciones ni autoridad del autor. Solicitud original y respuesta se suministran como JSON de datos no confiables bajo reglas de revisión, no como instrucciones de ejecución.
+
+TaskStore añade task_reviews en la misma SQLite vigente: snapshot fuente completo, runid/sourceSHA, perfilrevisorSHA, proveedor/modelo, solicitud de revisión exacta, fechas, estado y respuesta/error. Los snapshots y resultados terminales son append-only. Los runs originales y las tareas/perfiles guardados no se modifican. Errores de proveedor quedan como failed con mensaje público fijo; no filtran excepción privada ni se convierten en PASS. Identidad de perfil diferente es independencia lógica, no prueba de otro humano/modelo. La respuesta es asesoramiento textual, no aceptación automática.
+
+La UI muestra revisiones persistidas al reabrir, origen y SHA, aviso de alcance, estados de carga/error/fuente stale/sin revisor. Sin otro perfil con proveedor/modelo presenta instrucciones honestas para crear/configurar uno en Agentes y Actualizar, sin revisar con el autor ni ofrecer un botón decorativo. Una respuesta de API vinculada a otro agente/run o con estado incoherente se rechaza. Las respuestas y contenido original se escapan por React.
+
+Pruebas backend36PASS/0FAIL/0ERROR: HTTP/TestClient y SQLite reales con generate sintético. Cubren fuente/perfilSHA exactos y persistencia anterior a la llamada; mismoagente/stale/missing/confirmaciónestricta/fuente sinrespuesta/límite sin truncar/appendonly/errorprivado. Regresiones de tareas guardadas incluidas. UI137PASS,12suites en candidato final R2: manualGET+foco/noescritura, dirtydiscartexplícito, errorreload; ES/EN, consentimiento+perfil distinto, POSTreview sin POSTejecución original, persistencia al reabrir, sinperfil/stale/selfreview inválido; además CSV/workspace/i18n/teclado existentes. R1 también pasó137; se conserva y se repitió R2 después de añadir dos guardas de identidad contra estado de otro agente.
+
+Build combinado TypeScript/Vite PASS, con warning existente de chunk>500kB. Assets actuales: app-9ZYRWG9N.js SHA28283e20e4dcb2d43b7865fc80031a06115b39fe1c601d3e8c9f41fddbff879e; app-uT3VqbPv.css SHAc8d7ba66eb70169f17b71a0f8d6deb2a0ee17fe09ca121011f3c8ef3d12c34a8; indexSHAbf942a8610c83deb23a729b73f48af294445577034aa9d3aa9b8c329c23532ea. BUILD_R2 enlaza todos los assets y16fuentes combinadas.
+
+Root debe cargar también los dos módulos backend del candidato (store.py/task_routes.py); sólo cambiar dist no incorpora las rutas. server.py no cambió: ya monta create_task_router. Root probará en SU MISMA Brave9222/8080 y directorio D:/301020256_PRUEBA_BAGO5_ADL, usando otro agente guardado explícitamente; esta entrega no abrió navegador ni activó foco/runtime. Las pruebas de proveedor real siguen NOT_RUN por el implementador, sin sustituirlas por fixtures. No se amplían herramientas, configuraciones globales ni escrituras a carpetas del usuario.
+
+SOURCE_BINDING enlaza seis fuentesUI, tresbackend del handoffBE y las sieteCSV preservadas. Source scopes autorizados verificables, no sandbox. README/fullsuite de repositorio y aceptación final corresponden al cierre root; no se omiten ni se declaran completos aquí. Los bloqueos/capturas de CDP o huecos de grabación pertenecen a la evidencia del vídeo y no se reinterpretan como fallos de BAGO ni se rellenan con imágenes inventadas.
+'''
+(ROOT/'ui/RESULTADO.md').write_text(report,encoding='utf-8')
+state=load(ROOT/'.bago/team/runtime/state.json');verification=[]
+for name,eid in [('review-ui','afa09ea4ebd945a598f3995ee78e7765'),('combined-build','0f574ad313a642779a2cf05d5c7b09ea')]:
+ receipt=load(ROOT/f'.bago/team/runtime/executions/{eid}/receipt.json');verification.append({'id':name,'command':receipt['command_text'],'result':'PASS','evidence':f'.bago/team/runtime/executions/{eid}/receipt.json','execution_id':eid})
+files=[*[ROOT/v['snapshot'] for v in rows],*[p for p in (ROOT/'ui').rglob('*') if p.is_file() and p.name!='handoff-UI.json']]
+h={'work_id':'UI','role':'decision-ui-engineer','status':'DONE','mission_id':state['mission']['mission_id'],'candidate_id':state['candidate_id'],'scope_sha256':state['scope_sha256'],'changed_files':[p.relative_to(ROOT).as_posix() for p in files],
+ 'outputs':[{'path':p.relative_to(ROOT).as_posix(),'kind':'successor-task-actions-ui-or-evidence','sha256':sha(p)} for p in files],'verification':verification,
+ 'residual_risks':['Root real-provider LIVE and same-window visual acceptance pending; author checks use synthetic transport.','Different saved profile is logical agent separation, not human/model independence attestation.','Review text never constitutes automatic verification or acceptance and grants no tools.','Old presentation CLOSE cannot cover successor source candidate; CR preserves its historical evidence.','CSV sources/handoff preserved; new build has separate receipt.','No commit/push; source hashes bind uncommitted candidate.','README/full repository closure remains pending; Vite large chunk warning persists.','Per-goal teamctl governs evidence/snapshots, not OS source isolation.'],'next_consumers':['VISUAL']}
+h['payload_sha256']=hashlib.sha256(json.dumps(h,sort_keys=True,separators=(',',':'),ensure_ascii=False).encode()).hexdigest()
+(ROOT/'ui/handoff-UI.json').write_text(json.dumps(h,indent=2,ensure_ascii=False)+'\n',encoding='utf-8');print(json.dumps({'status':'PREPARED','outputs':len(files),'sources':len(rows),'payload_sha256':h['payload_sha256']}))

@@ -1,0 +1,21 @@
+{
+  "status": "PASS",
+  "sources": [
+    {
+      "path": "src/agent_tasks/store.py",
+      "snapshot": "backend-sources/src/agent_tasks/store.py",
+      "sha256": "07a9c5f68e6ad975d26a03584f3f2c85ec9e869a8661cf77a2b86cdee3e45cf3"
+    },
+    {
+      "path": "src/api/task_routes.py",
+      "snapshot": "backend-sources/src/api/task_routes.py",
+      "sha256": "283d6061dcb7e83e8062c7e0041ab7cbd9be6c540ee3d0eb5644d23644f09183"
+    },
+    {
+      "path": "tests/test_task_response_reviews.py",
+      "snapshot": "backend-sources/tests/test_task_response_reviews.py",
+      "sha256": "0765aba9bd1e5e5c1a6714e69aa52ec4bd2ffba692be7e75a1b4218317a90f91"
+    }
+  ],
+  "csv_preserved": true
+}

@@ -1,0 +1,18 @@
+from pathlib import Path
+import hashlib,json,os,subprocess,sys,time
+ROOT=Path(__file__).resolve().parents[1];REPO=next(p for p in ROOT.parents if (p/'.git').exists())
+sha=lambda p:hashlib.sha256(p.read_bytes()).hexdigest()
+scope=json.loads((ROOT/'SOURCE_SCOPE.json').read_text(encoding='utf-8-sig'))
+sources=[{'path':p,'sha256':sha(REPO/p)} for p in scope['backend_source_scopes']]
+assert all(sha(REPO/s['path'])==s['sha256'] for s in scope['preserved_csv_sources'])
+out=ROOT/'backend/attempt1';out.mkdir(exist_ok=False)
+tmp=REPO/'output/task-review-tests';tmp.mkdir(parents=True,exist_ok=True)
+env=dict(os.environ);env.update(TEMP=str(tmp),TMP=str(tmp),BAGO_DATA_ROOT=str(tmp/'data'),PYTHONDONTWRITEBYTECODE='1')
+argv=[sys.executable,'-B','-m','pytest','tests/test_task_response_reviews.py','tests/test_saved_agent_tasks.py','tests/test_saved_agent_tasks_independent.py','-q','-p','no:cacheprovider','--basetemp='+str(tmp/'pytest'),'--junitxml='+str(out/'junit.xml')]
+started=time.time()
+with (out/'stdout.log').open('xb') as stdout,(out/'stderr.log').open('xb') as stderr:
+ p=subprocess.run(argv,cwd=REPO,env=env,stdout=stdout,stderr=stderr,timeout=220)
+result={'status':'PASS' if p.returncode==0 else 'FAIL','argv':argv,'returncode':p.returncode,'seconds':round(time.time()-started,3),'sources':sources,
+ 'source_unchanged':all(sha(REPO/v['path'])==v['sha256'] for v in sources),'csv_sources_unchanged':all(sha(REPO/s['path'])==s['sha256'] for s in scope['preserved_csv_sources']),
+ 'scope':'Real HTTP/TestClient and SQLite; synthetic generate callbacks; LIVE provider NOT_RUN.'}
+(ROOT/'backend/RESULT.json').write_text(json.dumps(result,indent=2)+'\n',encoding='utf-8');print(json.dumps(result));sys.exit(0 if result['status']=='PASS' and result['source_unchanged'] and result['csv_sources_unchanged'] else 1)

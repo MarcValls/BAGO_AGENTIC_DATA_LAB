@@ -1,0 +1,34 @@
+from pathlib import Path
+import hashlib,json,os,shutil,subprocess,sys,time
+ROOT=Path(__file__).resolve().parents[1];REPO=next(p for p in ROOT.parents if (p/'.git').exists());FRONT=REPO/'frontend'
+sha=lambda p:hashlib.sha256(p.read_bytes()).hexdigest()
+load=lambda p:json.loads(p.read_text(encoding='utf-8-sig'))
+scope=load(ROOT/'SOURCE_SCOPE.json');backend=load(ROOT/'backend/SOURCE_BINDING.json')
+assert all(sha(REPO/v['path'])==v['sha256'] for v in backend['sources'])
+assert all(sha(REPO/v['path'])==v['sha256'] for v in scope['preserved_csv_sources'])
+csv=REPO/'.bago/goals/csv-table-preview-20261101/workspace';old=REPO/'.bago/goals/task-response-presentation-20261101/workspace'
+assert sha(csv/'evidence/handoff-UI.json')==scope['preserved_csv_handoff_sha256']
+assert sha(old/'evidence/handoff-UI.json')==scope['predecessor_handoff_sha256']
+names=scope['actual_repository_source_scopes']+[v['path'] for v in scope['preserved_csv_sources']]
+sources=[{'path':v,'sha256':sha(REPO/v)} for v in names]
+kind=sys.argv[1];out=ROOT/'ui'/(kind+'-attempt2');out.mkdir(exist_ok=False)
+if kind=='tests':commands=[[shutil.which('node'),str(FRONT/'node_modules/vitest/vitest.mjs'),'run','--reporter=json','--outputFile='+str(out/'vitest.json'),
+ 'tests/ui/agent-tasks','tests/i18n/agents/agents.test.tsx','tests/workspace/csv-parser.test.tsx','tests/workspace/csv-preview.test.tsx','tests/workspace/manager.test.tsx','tests/project-folders','tests/i18n/commerce','tests/service-tabs/service-tabs.test.tsx']]
+else:commands=[[shutil.which('node'),str(FRONT/'node_modules/typescript/bin/tsc'),'-b'],[shutil.which('node'),str(FRONT/'node_modules/vite/bin/vite.js'),'build']]
+env=dict(os.environ);env.update(TEMP=str(FRONT/'.build/temp-task-actions'),TMP=str(FRONT/'.build/temp-task-actions'));Path(env['TEMP']).mkdir(parents=True,exist_ok=True)
+runs=[]
+for n,argv in enumerate(commands):
+ started=time.time()
+ with (out/f'{n}.stdout.log').open('xb') as stdout,(out/f'{n}.stderr.log').open('xb') as stderr:
+  p=subprocess.run(argv,cwd=FRONT,env=env,stdout=stdout,stderr=stderr,timeout=300)
+ runs.append({'argv':argv,'returncode':p.returncode,'seconds':round(time.time()-started,3)})
+ if p.returncode:break
+ok=len(runs)==len(commands) and all(v['returncode']==0 for v in runs)
+result={'status':'PASS' if ok else 'FAIL','sources':sources,'runs':runs,'source_unchanged':all(sha(REPO/v['path'])==v['sha256'] for v in sources),
+ 'old_handoffs_preserved':sha(csv/'evidence/handoff-UI.json')==scope['preserved_csv_handoff_sha256'] and sha(old/'evidence/handoff-UI.json')==scope['predecessor_handoff_sha256'],
+ 'scope':'Frontend DOM tests with synthetic API; actual backend separately tested with real HTTP/SQLite. Root LIVE/visual pending.'}
+if kind=='tests' and (out/'vitest.json').exists():
+ data=load(out/'vitest.json');result['tests']={k:data[k] for k in ['numTotalTests','numPassedTests','numFailedTests','numTotalTestSuites','success']};ok=ok and data['success'] is True
+if kind=='build' and ok:result['assets']=[{'path':p.relative_to(REPO).as_posix(),'bytes':p.stat().st_size,'sha256':sha(p)} for p in sorted((FRONT/'dist').rglob('*')) if p.is_file()]
+ok=ok and result['source_unchanged'] and result['old_handoffs_preserved'];result['status']='PASS' if ok else 'FAIL'
+(ROOT/'ui'/('TESTS_R2.json' if kind=='tests' else 'BUILD_R2.json')).write_text(json.dumps(result,indent=2,ensure_ascii=False)+'\n',encoding='utf-8');print(json.dumps(result,ensure_ascii=False));sys.exit(0 if ok else 1)

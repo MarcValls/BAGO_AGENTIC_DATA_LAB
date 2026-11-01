@@ -1,0 +1,46 @@
+[
+  {
+    "path": "R19-check.json",
+    "sha256": "29a7d8f646c5e40846a1d1f57a1b3498ad4648e57147a83879563197b35e9d70"
+  },
+  {
+    "path": "R19_RECORDED-driver.json",
+    "sha256": "ed7bc1dbcb91dcf0b333d8a397b5343fdd118e276743a8d36a852e64d3bbc68f"
+  },
+  {
+    "path": "R19_RECORDED.png",
+    "sha256": "6fac4bff7278bc3c7faef5d07d8aa6fa1f82be90c4d458e3f48f89007f854365"
+  },
+  {
+    "path": "R20-check.json",
+    "sha256": "a3cf64a8d85ead0edddfbb0da45676f468f90c83950a73e8e036a3c69185fc42"
+  },
+  {
+    "path": "R20_COMPLEX_RECORDED-driver.json",
+    "sha256": "ea7a47afc193d8812a63fb98189dc1b817da7565e62e0937d09c3737e0973774"
+  },
+  {
+    "path": "R20_COMPLEX_RECORDED.png",
+    "sha256": "530b367cacb93ba5289424eda448367db766b9d80da5c8babdc29cba5b4d130f"
+  },
+  {
+    "path": "R21-check.json",
+    "sha256": "908cc31e5c6f0074147f71f39b751394bb2f6ba446be5762350412e94651e003"
+  },
+  {
+    "path": "R21_INVALID_RECORDED-driver.json",
+    "sha256": "0c63764af33cfbf58028ff4d97bf535c3ff3cb46d85997e50348c0106cea4c2c"
+  },
+  {
+    "path": "R21_INVALID_RECORDED.png",
+    "sha256": "6a5f5dcff5808635cef16247297a920faba1e33c53474724b430f8b7efe811c9"
+  },
+  {
+    "path": "R21_REOPEN-driver.json",
+    "sha256": "f34abef33b3313fabb9f42a6e5ef860332ade4037290ea75027a338b7f0b516d"
+  },
+  {
+    "path": "SOURCE_EXPECTED.json",
+    "sha256": "9c7cd92c7c73442e11d848884f928bb1941fd47929aef68f0ff6863c88f77290"
+  }
+]

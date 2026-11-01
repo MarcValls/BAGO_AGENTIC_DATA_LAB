@@ -1,0 +1,17 @@
+# CSV/TSV: entrega para revisión visual
+
+IMPLEMENTED; pruebas focalizadas y build VERIFIED. VALIDACIÓN VISUAL, aceptación, cierre y publicación PENDING.
+
+Base fetch origin/main: ed0efc83cc39a40aac231d9aa0da77a5d30a91e7. Rama codex/csv-table-preview-20261101, worktree .worktrees/csv-table-preview-20261101. HEAD sigue siendo la base; no se ha hecho commit/push/merge. El candidato exacto son los hashes de SOURCE_BINDING.json, iguales durante tests/build y al copiar snapshots.
+
+El editor real WorkspaceManager abre .csv/.tsv con Tabla/Texto. La tabla es semántica de lectura, primera fila como cabecera, scroll propio y texto escapado por React. Comillas, delimitadores internos, comillas dobles, saltos de línea y CRLF dentro de celdas se interpretan; el texto original permanece en el mismo estado editable, sin serialización ni escritura por visualizar. Otras extensiones conservan el editor habitual. El guardado sigue usando su revisión explícita original.
+
+Estados: vacío, sólo cabecera, filas irregulares con aviso, comillas inválidas con aviso y acceso a Texto. Vista limitada a200filas de datos/50columnas/200000caracteres; el resto no se presenta como validado. No hay edición de celdas ni detección de punto y coma. Sin dependencias ni endpoints nuevos.
+
+Pruebas:65PASS,0FAIL,8suites. Incluyen parser/preview nuevos, WorkspaceManager existente, project-folders, i18ncommerce y teclado ServiceTabs. Se comprobaron escape HTML, texto CRLF preservado al preparar guardado, ausencia de llamadas HTTP/dirty al cambiar representaciones y actualización del preview al editar. Primer ensayo48PASS conservado; ejecución formal posterior amplió cobertura sin cambios de fuente.
+
+Build TypeScript y Vite PASS. Warning de tamaño de chunk>500kB registrado; sin errores. CSV_BUILD.json contiene ruta/tamaño/SHA de todos los assets. App principal app-2POdCJlr.js SHA4555c74f77fc8777b25d71633a5e603e3d983ad6b739c0d8443c22c200b85e09; CSS app-CBkuWDx3.css SHA3799ef03700c05c2098df6dced121f550c42ec5e69dadc3f516eb323ac1b5eb8.
+
+Propuesta de aceptación root en SU MISMA ventana Brave: abrir CSV real de D:/301020256_PRUEBA_BAGO5_ADL, observar columnas/celdas y scroll, cambiar Texto y volver Tabla con teclado, comprobar ausencia de dirty/write al visualizar; revisar filas largas y una muestra sintética de comillas/newline y HTML inerte, luego TSV/plainfile según criterio. El agente no abrió navegador ni cambió runtime/puertos/foco. Las respuestas de API en Vitest son fixtures sintéticas; no se presentan como prueba del backend real.
+
+Fuentes: siete rutas enumeradas en SOURCE_SCOPE y snapshots en sources/. No se modificó backend, raíz sucia, HOST/GOV, runtimelegacy del worktree ni globales. teamctl nuevo per-goal controla evidencias y snapshots; no se afirma aislamiento físico de las ediciones externas. Runtime nuevo en workspace/.bago/team/runtime; VISUAL y CLOSE siguen pendientes. README generado/fullsuite de repositorio NOT_RUN por este implementador; corresponden al cierre, no se omiten ni se declara repositorio completo.

@@ -1,0 +1,11 @@
+{
+  "status": "CAPTURE_GAP_PRESERVED",
+  "observed_error": "Not attached to an active page",
+  "last_video_seconds": 1455.25,
+  "camera_ended_at": "2026-11-01T00:45:19.576Z",
+  "supervisor_already_exited": true,
+  "original_events_sha256": "e221afc785397068b7aa16e5ad78ba93bfd0257a83e85b8e78c06550afe7817c",
+  "main_timeline_seed": "F01-F18 plus append-only factual amendments",
+  "unrecorded_tail": "F19-F23 remain in original event archive and screenshots; live demonstration will be repeated with new IDs",
+  "source_video": "segment-A.mkv"
+}

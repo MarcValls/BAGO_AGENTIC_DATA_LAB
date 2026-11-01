@@ -1,0 +1,20 @@
+{
+  "status": "PASS",
+  "verification": {
+    "id": "csv-visual",
+    "command": "[\"C:\\\\Python314\\\\python.exe\",\"-B\",\"C:\\\\Users\\\\AMTEC_Terminal_1º\\\\Desktop\\\\BAGO5_ADL\\\\.worktrees\\\\csv-table-preview-20261101\\\\.bago\\\\goals\\\\csv-table-preview-20261101\\\\workspace\\\\review\\\\verify_observation.py\"]",
+    "result": "PASS",
+    "evidence": ".bago/team/runtime/executions/d2879550b5544aed9b454454d8240738/receipt.json",
+    "execution_id": "d2879550b5544aed9b454454d8240738"
+  },
+  "execution_id": "d2879550b5544aed9b454454d8240738",
+  "receipt": ".bago/team/runtime/executions/d2879550b5544aed9b454454d8240738/receipt.json",
+  "returncode": 0,
+  "outputs": [
+    {
+      "path": "review/RESULT.json",
+      "sha256": "bb57fb680860a7571c314f0c02f9bbf70cfb176030ec637777a4248140c1e252"
+    }
+  ],
+  "paused_during_execution": false
+}

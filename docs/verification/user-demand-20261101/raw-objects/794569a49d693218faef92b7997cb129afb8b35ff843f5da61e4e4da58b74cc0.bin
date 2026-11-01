@@ -1,0 +1,29 @@
+"""Actual final-worktree consistency check after successful full-suite generation."""
+from pathlib import Path
+import hashlib,json,os,subprocess,sys,time
+HERE=Path(__file__).resolve().parent;REPO=next(p for p in HERE.parents if (p/'.git').exists())
+sha=lambda p:hashlib.sha256(p.read_bytes()).hexdigest()
+result=json.loads((HERE/'attempt1/RESULT.json').read_text())
+assert result['status']=='PASS' and result['writeback'] is True,'Full generator must pass before final consistency check'
+manifest=json.loads((HERE/'INPUT_MANIFEST.json').read_text())
+assert all(sha(REPO/v['path'])==v['sha256'] for v in manifest['uncommitted_overlay'])
+assert all(sha(REPO/v['path'])==v['sha256'] for v in result['generated_files'])
+folder=HERE/'local-check-attempt1';folder.mkdir(exist_ok=False)
+temp=REPO/'output/readme-local-check';temp.mkdir(parents=True,exist_ok=True)
+env=dict(os.environ)
+for name in ['BAGO_APP_ROOT','BAGO_DATA_ROOT','BAGO_CONVERSATION_DB_PATH','BAGO_TASK_HISTORY_PATH','BAGO_AGENT_EVALUATION_DB_PATH','PYTEST_ADDOPTS']:
+    env.pop(name,None)
+env.update(TEMP=str(temp),TMP=str(temp),BAGO_DATA_ROOT=str(temp/'data'),BAGO_CONVERSATION_DB_PATH=str(temp/'conversations.sqlite3'),
+           BAGO_TASK_HISTORY_PATH=str(temp/'task-history.sqlite3'),PYTHONDONTWRITEBYTECODE='1',PYTHONUTF8='1',
+           PYTEST_ADDOPTS=f'--basetemp={temp/"collection"} -p no:cacheprovider')
+argv=[sys.executable,'-B','scripts/generate_dynamic_readme.py','--check','--skip-tests']
+started=time.time()
+with (folder/'stdout.log').open('xb') as stdout,(folder/'stderr.log').open('xb') as stderr:
+    p=subprocess.run(argv,cwd=REPO,env=env,stdout=stdout,stderr=stderr,timeout=180)
+ok=p.returncode==0 and all(sha(REPO/v['path'])==v['sha256'] for v in manifest['uncommitted_overlay'])
+output={'status':'PASS' if ok else 'FAIL','argv':argv,'returncode':p.returncode,'seconds':round(time.time()-started,3),
+        'head':subprocess.check_output(['git','rev-parse','HEAD'],cwd=REPO,text=True).strip(),
+        'scope':'Actual Windows worktree consistency/pytest collection only; suite execution belongs to preserved Docker generate step, not --skip-tests.',
+        'readmes':[{'path':name,'sha256':sha(REPO/name)} for name in ['README.md','README_DETAILS.md']],
+        'product_sources_unchanged':True,'docker_environment_limit':'Cached image pypdf6.21.2 vs declared pin6.21.4; exact pinned CI remains separate.'}
+(folder/'RESULT.json').write_text(json.dumps(output,indent=2)+'\n',encoding='utf-8');print(json.dumps(output));sys.exit(0 if ok else 1)

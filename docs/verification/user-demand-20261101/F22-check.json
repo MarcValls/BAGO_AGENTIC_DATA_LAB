@@ -1,0 +1,14 @@
+{
+  "status": "PASS",
+  "checks": {
+    "same_run_ids": true,
+    "answer_unchanged": true,
+    "answer_shown_before_request": true,
+    "actual_answer_visible": true,
+    "actual_prompt_visible": true,
+    "copy_requires_save": true,
+    "execute_disabled_after_copy": true
+  },
+  "run_id": "taskrun_8f7aaadbce8a4e4892e95b009cb7fc53",
+  "answer_sha256": "27d2882d454b97cc8567a0a650692b2511c88b2c33bffeaab4cd2689fe66ec07"
+}

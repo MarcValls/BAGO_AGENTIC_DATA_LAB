@@ -1,0 +1,8 @@
+{
+  "agent_id": "agent_128fb855a6284deeb0fe45a9588bec33",
+  "task": {
+    "prompt": "Prepara un plan revisable para crear demo-usuario/calcular_pedidos.py y demo-usuario/test_calcular_pedidos.py. Usa Decimal, valida unidades no negativas y descuento entre 0 y 100, y enumera los tres casos de prueba del encargo guardado. Indica claramente qué permisos y herramientas reales faltan para escribir y ejecutar. En esta tarea solo quiero el plan: no escribas archivos, no ejecutes comandos ni envíes mensajes.",
+    "dates": []
+  },
+  "revision": "4f1ef44c2965c11240c59de4bb17379648b28fb9dbda42f40dd214e20b495d5e"
+}

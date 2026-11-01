@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<testsuites name="vitest tests" tests="29" failures="0" errors="0" time="3.2162021">
+    <testsuite name="tests/ui/agent-tasks/response-display.test.tsx" timestamp="2026-11-01T01:15:06.927Z" hostname="DESKTOP-1NJ5EQ8" tests="5" failures="0" errors="0" skipped="0" time="0.6949717">
+        <testcase classname="tests/ui/agent-tasks/response-display.test.tsx" name="separates real sent text from the full escaped answer and labels copy precisely in es" time="0.4916384">
+        </testcase>
+        <testcase classname="tests/ui/agent-tasks/response-display.test.tsx" name="separates real sent text from the full escaped answer and labels copy precisely in en" time="0.1058278">
+        </testcase>
+        <testcase classname="tests/ui/agent-tasks/response-display.test.tsx" name="retains an explicit empty history without inventing a request or answer" time="0.0210041">
+        </testcase>
+        <testcase classname="tests/ui/agent-tasks/response-display.test.tsx" name="shows a failed run error separately from its sent request without claiming an answer" time="0.0497115">
+        </testcase>
+        <testcase classname="tests/ui/agent-tasks/response-display.test.tsx" name="rejects an answered state with an empty answer instead of substituting the sent request" time="0.0240638">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/ui/agent-tasks/task-actions.test.tsx" timestamp="2026-11-01T01:15:06.931Z" hostname="DESKTOP-1NJ5EQ8" tests="10" failures="0" errors="0" skipped="0" time="1.2344538">
+        <testcase classname="tests/ui/agent-tasks/task-actions.test.tsx" name="loads the current saved task and focuses its editor without saving or running in es" time="0.2938147">
+        </testcase>
+        <testcase classname="tests/ui/agent-tasks/task-actions.test.tsx" name="loads the current saved task and focuses its editor without saving or running in en" time="0.1226843">
+        </testcase>
+        <testcase classname="tests/ui/agent-tasks/task-actions.test.tsx" name="does not silently discard a dirty draft when manual edit is requested" time="0.1377519">
+        </testcase>
+        <testcase classname="tests/ui/agent-tasks/task-actions.test.tsx" name="retains the draft and surfaces a failed manual reload" time="0.0527995">
+        </testcase>
+        <testcase classname="tests/ui/agent-tasks/task-actions.test.tsx" name="requires a different selected profile and confirmation, persists the bound review and never runs the original task in es" time="0.1717581">
+        </testcase>
+        <testcase classname="tests/ui/agent-tasks/task-actions.test.tsx" name="requires a different selected profile and confirmation, persists the bound review and never runs the original task in en" time="0.1695831">
+        </testcase>
+        <testcase classname="tests/ui/agent-tasks/task-actions.test.tsx" name="explains missing other profiles honestly and cannot submit self-review" time="0.0481006">
+        </testcase>
+        <testcase classname="tests/ui/agent-tasks/task-actions.test.tsx" name="shows a stale reviewer rejection without rendering a successful review or running the original" time="0.108763">
+        </testcase>
+        <testcase classname="tests/ui/agent-tasks/task-actions.test.tsx" name="rejects a returned self-review rather than labelling it independent" time="0.0992849">
+        </testcase>
+        <testcase classname="tests/ui/agent-tasks/task-actions.test.tsx" name="does not offer model review for a running source without an answer" time="0.027538">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/workspace/csv-parser.test.tsx" timestamp="2026-11-01T01:15:06.936Z" hostname="DESKTOP-1NJ5EQ8" tests="8" failures="0" errors="0" skipped="0" time="0.0241295">
+        <testcase classname="tests/workspace/csv-parser.test.tsx" name="decodes quoted delimiters, escaped quotes, exact CRLF inside fields and trailing empty fields" time="0.0026593">
+        </testcase>
+        <testcase classname="tests/workspace/csv-parser.test.tsx" name="preserves empty fields and explicit blank records without adding a phantom terminal record" time="0.0011142">
+        </testcase>
+        <testcase classname="tests/workspace/csv-parser.test.tsx" name="accepts BOM and TSV without converting tabs or comma content" time="0.000559">
+        </testcase>
+        <testcase classname="tests/workspace/csv-parser.test.tsx" name="reports malformed quoted input a
+&quot;broken without a misleading partial table" time="0.0002633">
+        </testcase>
+        <testcase classname="tests/workspace/csv-parser.test.tsx" name="reports malformed quoted input a
+b&quot;c without a misleading partial table" time="0.0002207">
+        </testcase>
+        <testcase classname="tests/workspace/csv-parser.test.tsx" name="reports malformed quoted input a
+&quot;b&quot;x without a misleading partial table" time="0.0001666">
+        </testcase>
+        <testcase classname="tests/workspace/csv-parser.test.tsx" name="preserves ragged records for a visible width warning" time="0.0002294">
+        </testcase>
+        <testcase classname="tests/workspace/csv-parser.test.tsx" name="bounds rows, columns and character scanning without calling an unfinished bounded field invalid" time="0.0170567">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/workspace/csv-preview.test.tsx" timestamp="2026-11-01T01:15:06.939Z" hostname="DESKTOP-1NJ5EQ8" tests="6" failures="0" errors="0" skipped="0" time="1.2626471">
+        <testcase classname="tests/workspace/csv-preview.test.tsx" name="opens CSV as a semantic escaped table, switches with keyboard, and never writes or marks dirty by viewing" time="0.4548849">
+        </testcase>
+        <testcase classname="tests/workspace/csv-preview.test.tsx" name="reflects edits in the preview without an implicit write and leaves unsaved state intact when switching" time="0.2014172">
+        </testcase>
+        <testcase classname="tests/workspace/csv-preview.test.tsx" name="keeps plain files in the existing editable text view without CSV tabs" time="0.1450541">
+        </testcase>
+        <testcase classname="tests/workspace/csv-preview.test.tsx" name="shows errors with Text still available and preserves malformed input unchanged" time="0.1650583">
+        </testcase>
+        <testcase classname="tests/workspace/csv-preview.test.tsx" name="renders empty, header-only, ragged and truncated states explicitly" time="0.1394004">
+        </testcase>
+        <testcase classname="tests/workspace/csv-preview.test.tsx" name="uses the same table/text path for TSV" time="0.1542599">
+        </testcase>
+    </testsuite>
+</testsuites>

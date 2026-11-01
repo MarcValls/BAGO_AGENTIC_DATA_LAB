@@ -1,0 +1,66 @@
+"""Bind approved real source paths to per-goal immutable snapshots and checks."""
+from pathlib import Path
+import difflib,hashlib,json,shutil,subprocess,sys
+ROOT=Path(__file__).resolve().parents[1]
+REPO=next(p for p in ROOT.parents if (p/'.git').exists())
+def sha(p):return hashlib.sha256(p.read_bytes()).hexdigest()
+def write(p,v):p.write_text(json.dumps(v,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
+scope=json.loads((ROOT/'SOURCE_SCOPE.json').read_text(encoding='utf-8-sig'))
+tests=json.loads((ROOT/'evidence/CSV_TESTS.json').read_text(encoding='utf-8'));build=json.loads((ROOT/'evidence/CSV_BUILD.json').read_text(encoding='utf-8'))
+assert tests['status']==build['status']=='PASS'
+rows=[];patch=[]
+for name in scope['actual_repository_source_scopes']:
+ source=REPO/name;target=ROOT/'sources'/name;target.parent.mkdir(parents=True,exist_ok=True)
+ shutil.copyfile(source,target)
+ assert sha(source)==sha(target)
+ assert all(next(r['sha256'] for r in result['sources'] if r['path']==name)==sha(source) for result in [tests,build])
+ old=subprocess.run(['git','show',scope['base_sha']+':'+name],cwd=REPO,capture_output=True)
+ oldlines=old.stdout.decode('utf-8').splitlines(keepends=True) if old.returncode==0 else []
+ newlines=source.read_text(encoding='utf-8').splitlines(keepends=True)
+ patch.extend(difflib.unified_diff(oldlines,newlines,fromfile='a/'+name if old.returncode==0 else '/dev/null',tofile='b/'+name))
+ rows.append({'path':name,'snapshot':target.relative_to(ROOT).as_posix(),'sha256':sha(source),'bytes':source.stat().st_size,'base_exists':old.returncode==0})
+(ROOT/'evidence/SOURCE.diff').write_text(''.join(patch),encoding='utf-8')
+tracked=subprocess.check_output(['git','diff','--name-only'],cwd=REPO,text=True,encoding='utf-8').splitlines()
+untracked=subprocess.check_output(['git','ls-files','--others','--exclude-standard'],cwd=REPO,text=True,encoding='utf-8').splitlines()
+unexpected=[name for name in tracked+untracked if name not in scope['actual_repository_source_scopes'] and not name.startswith(('frontend/.build/','frontend/dist/'))]
+assert not unexpected, 'Unexpected working-tree paths: '+str(unexpected)
+for asset in build['assets']:assert sha(REPO/asset['path'])==asset['sha256']
+write(ROOT/'evidence/SOURCE_BINDING.json',{'status':'PASS','base_ref':scope['base_ref'],'base_sha':scope['base_sha'],'head':subprocess.check_output(['git','rev-parse','HEAD'],cwd=REPO,text=True).strip(),
+ 'commit_state':'Implementation is uncommitted; HEAD names base only. Exact source bytes above are the tested candidate.',
+ 'sources':rows,'all_actual_changes_within_declared_sources_or_build_outputs':not unexpected,'tracked_generated_outputs':[p for p in tracked if p.startswith(('frontend/.build/','frontend/dist/'))],
+ 'source_scope_boundary':'User authorization + post-change hash/diff check; per-goal teamctl does not sandbox actual frontend source writes.',
+ 'build_asset_checks':'PASS: every listed dist asset rehashed against CSV_BUILD; no browser session launched.'})
+report='''# CSV/TSV: entrega para revisión visual
+
+IMPLEMENTED; pruebas focalizadas y build VERIFIED. VALIDACIÓN VISUAL, aceptación, cierre y publicación PENDING.
+
+Base fetch origin/main: ed0efc83cc39a40aac231d9aa0da77a5d30a91e7. Rama codex/csv-table-preview-20261101, worktree .worktrees/csv-table-preview-20261101. HEAD sigue siendo la base; no se ha hecho commit/push/merge. El candidato exacto son los hashes de SOURCE_BINDING.json, iguales durante tests/build y al copiar snapshots.
+
+El editor real WorkspaceManager abre .csv/.tsv con Tabla/Texto. La tabla es semántica de lectura, primera fila como cabecera, scroll propio y texto escapado por React. Comillas, delimitadores internos, comillas dobles, saltos de línea y CRLF dentro de celdas se interpretan; el texto original permanece en el mismo estado editable, sin serialización ni escritura por visualizar. Otras extensiones conservan el editor habitual. El guardado sigue usando su revisión explícita original.
+
+Estados: vacío, sólo cabecera, filas irregulares con aviso, comillas inválidas con aviso y acceso a Texto. Vista limitada a200filas de datos/50columnas/200000caracteres; el resto no se presenta como validado. No hay edición de celdas ni detección de punto y coma. Sin dependencias ni endpoints nuevos.
+
+Pruebas:65PASS,0FAIL,8suites. Incluyen parser/preview nuevos, WorkspaceManager existente, project-folders, i18ncommerce y teclado ServiceTabs. Se comprobaron escape HTML, texto CRLF preservado al preparar guardado, ausencia de llamadas HTTP/dirty al cambiar representaciones y actualización del preview al editar. Primer ensayo48PASS conservado; ejecución formal posterior amplió cobertura sin cambios de fuente.
+
+Build TypeScript y Vite PASS. Warning de tamaño de chunk>500kB registrado; sin errores. CSV_BUILD.json contiene ruta/tamaño/SHA de todos los assets. App principal app-2POdCJlr.js SHA4555c74f77fc8777b25d71633a5e603e3d983ad6b739c0d8443c22c200b85e09; CSS app-CBkuWDx3.css SHA3799ef03700c05c2098df6dced121f550c42ec5e69dadc3f516eb323ac1b5eb8.
+
+Propuesta de aceptación root en SU MISMA ventana Brave: abrir CSV real de D:/301020256_PRUEBA_BAGO5_ADL, observar columnas/celdas y scroll, cambiar Texto y volver Tabla con teclado, comprobar ausencia de dirty/write al visualizar; revisar filas largas y una muestra sintética de comillas/newline y HTML inerte, luego TSV/plainfile según criterio. El agente no abrió navegador ni cambió runtime/puertos/foco. Las respuestas de API en Vitest son fixtures sintéticas; no se presentan como prueba del backend real.
+
+Fuentes: siete rutas enumeradas en SOURCE_SCOPE y snapshots en sources/. No se modificó backend, raíz sucia, HOST/GOV, runtimelegacy del worktree ni globales. teamctl nuevo per-goal controla evidencias y snapshots; no se afirma aislamiento físico de las ediciones externas. Runtime nuevo en workspace/.bago/team/runtime; VISUAL y CLOSE siguen pendientes. README generado/fullsuite de repositorio NOT_RUN por este implementador; corresponden al cierre, no se omiten ni se declara repositorio completo.
+'''
+(ROOT/'evidence/RESULTADO.md').write_text(report,encoding='utf-8')
+state=json.loads((ROOT/'.bago/team/runtime/state.json').read_text(encoding='utf-8'))
+ids={'csv-tests':'f32fa9b0d1bc444a8058ddf1c49037de','csv-build':'728f5ae55ee6433fa9d93d5a0e27239e'}
+verification=[]
+for name,eid in ids.items():
+ receipt=json.loads((ROOT/f'.bago/team/runtime/executions/{eid}/receipt.json').read_text(encoding='utf-8'))
+ verification.append({'id':name,'command':receipt['command_text'],'result':'PASS','evidence':f'.bago/team/runtime/executions/{eid}/receipt.json','execution_id':eid})
+outputs=[ROOT/'SOURCE_SCOPE.json',*[ROOT/r['snapshot'] for r in rows],*[p for p in (ROOT/'evidence').rglob('*') if p.is_file() and p.name!='handoff-UI.json']]
+handoff={'work_id':'UI','role':'decision-ui-engineer','status':'DONE','mission_id':state['mission']['mission_id'],'candidate_id':state['candidate_id'],'scope_sha256':state['scope_sha256'],
+ 'changed_files':[p.relative_to(ROOT).as_posix() for p in outputs],
+ 'outputs':[{'path':p.relative_to(ROOT).as_posix(),'kind':'csv-source-snapshot-or-check-evidence','sha256':sha(p)} for p in outputs],
+ 'verification':verification,'residual_risks':['Visual acceptance in the existing real Brave window is pending; no browser claim from Vitest.','READMEs/full repository suite closure and publication are pending.','Preview is read-only and bounded; text remains authoritative; semicolon autodetection/cell editing not implemented.','HEAD is base, not implementation commit; exact actual source hashes bound in SOURCE_BINDING.','Per-goal coordination validates scoped snapshots/evidence, not OS permissions of real source writes.','Vite reports a large chunk warning.'],
+ 'next_consumers':['VISUAL']}
+handoff['payload_sha256']=hashlib.sha256(json.dumps(handoff,sort_keys=True,separators=(',',':'),ensure_ascii=False,allow_nan=False).encode()).hexdigest()
+write(ROOT/'evidence/handoff-UI.json',handoff)
+print(json.dumps({'status':'PREPARED','source_count':len(rows),'output_count':len(outputs),'payload_sha256':handoff['payload_sha256']}))

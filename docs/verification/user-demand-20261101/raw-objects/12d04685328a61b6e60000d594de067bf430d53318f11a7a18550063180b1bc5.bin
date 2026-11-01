@@ -1,0 +1,11 @@
+# Solicitud y respuesta: auditoría y cambio mínimo
+
+Skill ui-expert adaptada al layout React19/TSX actual y decision-ui-engineer aplicada. Superficie: AgentTasks/AgentTaskForm, AgentTasks.css y override App.css, contratos de runResponse/historyResponse, tests de tareas guardadas y ES/EN. No parser/backend/capacidad de ejecución nueva.
+
+Hallazgo P1 de presentación observado por usuario: el resumen dice Respuesta recibida, pero el primer párrafo es task_snapshot.prompt sin etiqueta; la respuesta está después en un pre de alto máximo320px. El botón Relanzar sólo copia un borrador, de modo que su nombre sugiere un efecto inexistente. Evidencia root F14-response-comparison.json del run taskrun_8f7aaadbce8a4e4892e95b009cb7fc53: solicitud420caracteres/respuesta1958, hashes distintos. Ese contraste fue realizado por root; esta entrega no afirma haber vuelto a ejecutar inferencia ni operaciones.
+
+Arquitectura y mapa conservados: Tareas → Historial → desplegar run. Primero Respuesta del agente con texto íntegro y nota de alcance (respuesta del modelo no acredita efectos/verificación). Debajo Solicitud enviada desplegable con rendered_prompt, el texto efectivamente enviado, y fechas. Copiar como nueva tarea mantiene el mismo onClick: copia task_snapshot, forceDirty, guarda obligatoriamente y luego requiere ejecutar explícito. No se convierte answered en ejecución exitosa.
+
+Propuesta navegable: componente integrado real, sin ruta nueva; botón nativo/details nativo, escape React, whitespace pre-wrap, salto seguro para líneas largas. Estado running explícito; errores y vacío existentes conservados. Se elimina sólo el recorte CSS engañoso de la respuesta; no se elimina historia ni metadatos.
+
+Cinco fuentes reales disjuntas de CSV en SOURCE_SCOPE. La misión per-goal gobierna snapshots y evidencias, no aísla físicamente el editor externo. Los siete archivos CSV y su handoff se verifican intactos en cada check; build combinado tiene recibo nuevo aquí, sin sobrescribir CSV_BUILD anterior. Visual real y aceptación corresponden a root en su misma ventana Brave. El agente no abre navegador ni cambia foco/runtime/puertos.

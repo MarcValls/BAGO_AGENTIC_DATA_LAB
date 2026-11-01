@@ -1,0 +1,38 @@
+{
+  "status": "PASS",
+  "readme_gate": {
+    "status": "PASS",
+    "scope": "Read-only verification of preserved actual generator/full-suite and final worktree consistency receipts.",
+    "head_unchanged": "ed0efc83cc39a40aac231d9aa0da77a5d30a91e7",
+    "product_source_files": 16,
+    "pytest_passed": 1806,
+    "junit_counts_including_subtests": {
+      "tests": 1922,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 2
+    },
+    "readmes": [
+      {
+        "path": "README.md",
+        "sha256": "aeb823c75ef3cf24def0e39f97d58e32e2f8f1375e71b4156a0b8c320a507b63",
+        "bytes": 2800
+      },
+      {
+        "path": "README_DETAILS.md",
+        "sha256": "7a2682fea70897ae318537835912743ed0f1193922ada9a7d6c04b41b11ef003",
+        "bytes": 61191
+      }
+    ],
+    "environment_limit": "Docker pypdf6.21.2 vs declared pin6.21.4; exact pinned CI not claimed.",
+    "docs_scope": "New public docs were added after Docker input capture; final actual-worktree consistency included them. No claim that Docker suite executed their separate export verifier."
+  },
+  "visual_gate": "PASS",
+  "verdict": "GO_SCOPED",
+  "acceptance": "Requested bounded repair is implemented and independently observed with real UI evidence. Model review is advisory, different profile may share model.",
+  "limits": [
+    "Current repair only; historical video FAIL/BLOCKED remain open.",
+    "No merge authorized; GitHub publication verified separately.",
+    "Full-suite runtime dependency difference pypdf6.21.2 vs pin6.21.4 documented."
+  ]
+}

@@ -1,0 +1,189 @@
+{
+  "status": "PASS",
+  "sources": [
+    {
+      "path": "src/agent_tasks/store.py",
+      "sha256": "07a9c5f68e6ad975d26a03584f3f2c85ec9e869a8661cf77a2b86cdee3e45cf3"
+    },
+    {
+      "path": "src/api/task_routes.py",
+      "sha256": "283d6061dcb7e83e8062c7e0041ab7cbd9be6c540ee3d0eb5644d23644f09183"
+    },
+    {
+      "path": "tests/test_task_response_reviews.py",
+      "sha256": "0765aba9bd1e5e5c1a6714e69aa52ec4bd2ffba692be7e75a1b4218317a90f91"
+    },
+    {
+      "path": "frontend/src/components/AgentTasks.tsx",
+      "sha256": "1c6b45a9bd0ad783d93ae6925cdde84fcf0a0335d253d1317340637fa51b10db"
+    },
+    {
+      "path": "frontend/src/components/AgentTaskResponse.css",
+      "sha256": "2124c35844d3b6fbd7219b77cc3bdd451841f57155fe143eab96d7fb7bc9dabc"
+    },
+    {
+      "path": "frontend/src/i18n/domains/agents.ts",
+      "sha256": "b639b670258cb0c26d85a95b179a6c115fc8861836463bd45c7eda0b372bc3af"
+    },
+    {
+      "path": "frontend/tests/ui/agent-tasks/saved-tasks.test.tsx",
+      "sha256": "b7409b03dafc757fb6580382b7b846d04ed5fe2799d9b9fcad0d46f790aeb073"
+    },
+    {
+      "path": "frontend/tests/ui/agent-tasks/response-display.test.tsx",
+      "sha256": "a742e9a9ba388d9322391ff1185ac5a4c920763dd5ca496b3acfd175ce09038e"
+    },
+    {
+      "path": "frontend/tests/ui/agent-tasks/task-actions.test.tsx",
+      "sha256": "28187c846e490889b6bf91e13464772a5b3fbd423cdf9516f02138605da6b92d"
+    },
+    {
+      "path": "frontend/src/components/WorkspaceManager.tsx",
+      "sha256": "f26f56728425fa88b9e08b8f0f937ae3f9d5478c47f8a31ce6cd04b42756c468"
+    },
+    {
+      "path": "frontend/src/components/CsvTablePreview.tsx",
+      "sha256": "bdad8478d3a25819f8f382f940e2b6dc2c2401de82ae53aa4d8bd57f88f8b843"
+    },
+    {
+      "path": "frontend/src/components/CsvTablePreview.css",
+      "sha256": "7316746c5b658a531e583d0aa9aeb936a087f0380c477cf340c3fdf4601d2e66"
+    },
+    {
+      "path": "frontend/src/utils/delimitedText.ts",
+      "sha256": "a0f372f18b3aa1c781647325598d642114f255a30edc28374153a3f2efe9efc0"
+    },
+    {
+      "path": "frontend/src/i18n/domains/commerce.ts",
+      "sha256": "29abdf4c07726681a4c512b0251b837c368d38bae4839aeca25833281d9ef48e"
+    },
+    {
+      "path": "frontend/tests/workspace/csv-preview.test.tsx",
+      "sha256": "bf9624b66a0f714576945e5c90faeb1bf112aeea5e10a17cec5468e9f151a185"
+    },
+    {
+      "path": "frontend/tests/workspace/csv-parser.test.tsx",
+      "sha256": "910bc29f5e483d10eafcc30d1c91db7967c74fbc1471e2151744de634f6ebdcf"
+    }
+  ],
+  "runs": [
+    {
+      "argv": [
+        "C:\\Program Files\\nodejs\\node.EXE",
+        "C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\.worktrees\\csv-table-preview-20261101\\frontend\\node_modules\\typescript\\bin\\tsc",
+        "-b"
+      ],
+      "returncode": 0,
+      "seconds": 3.044
+    },
+    {
+      "argv": [
+        "C:\\Program Files\\nodejs\\node.EXE",
+        "C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\.worktrees\\csv-table-preview-20261101\\frontend\\node_modules\\vite\\bin\\vite.js",
+        "build"
+      ],
+      "returncode": 0,
+      "seconds": 1.882
+    }
+  ],
+  "source_unchanged": true,
+  "old_handoffs_preserved": true,
+  "scope": "Frontend DOM tests with synthetic API; actual backend separately tested with real HTTP/SQLite. Root LIVE/visual pending.",
+  "assets": [
+    {
+      "path": "frontend/dist/assets/app-9ZYRWG9N.js",
+      "bytes": 1162565,
+      "sha256": "28283e20e4dcb2d43b7865fc80031a06115b39fe1c601d3e8c9f41fddbff879e"
+    },
+    {
+      "path": "frontend/dist/assets/app-uT3VqbPv.css",
+      "bytes": 242351,
+      "sha256": "c8d7ba66eb70169f17b71a0f8d6deb2a0ee17fe09ca121011f3c8ef3d12c34a8"
+    },
+    {
+      "path": "frontend/dist/assets/jsx-runtime-m3dJAGn0.js",
+      "bytes": 220103,
+      "sha256": "4403bdf36f579732ef50dee559d2d84c9ccf4a7a863193f433ffd196741af1b0"
+    },
+    {
+      "path": "frontend/dist/assets/uiKitPreview-BOaX4Gki.js",
+      "bytes": 7737,
+      "sha256": "3adb6b1e19686984f662dd1e86c284c25a153319a3abdb24ef563884ebb1d2e7"
+    },
+    {
+      "path": "frontend/dist/assets/uiKitPreview-BXNbx56n.css",
+      "bytes": 10140,
+      "sha256": "7230530fce3cebe82e34c80481dd900d334a04fbec8a8d58f381730ccfd7bdd2"
+    },
+    {
+      "path": "frontend/dist/brand/anthropic.svg",
+      "bytes": 296,
+      "sha256": "1c10881e4729127e1a86e569613d786240acae13eacfa01860be065b66260e36"
+    },
+    {
+      "path": "frontend/dist/brand/BAGO_logotipo_horizontal.png",
+      "bytes": 21229,
+      "sha256": "7ad2cf3be4ba6b25dfef26edc86f07b5f1dff336540edac0349af42ed9133ef8"
+    },
+    {
+      "path": "frontend/dist/brand/BAGO_logotipo_horizontal.svg",
+      "bytes": 1675,
+      "sha256": "e06014adf28e831ab5ada712a1e29f902bd3a6616737e8ddde1c02ae88f9a0b7"
+    },
+    {
+      "path": "frontend/dist/brand/BAGO_simbolo.png",
+      "bytes": 6854,
+      "sha256": "07ee3f538eb797ecec4c1d8542d52064a3de929ab4cf3b457155cbd8778ea7f9"
+    },
+    {
+      "path": "frontend/dist/brand/BAGO_simbolo.svg",
+      "bytes": 656,
+      "sha256": "a150f6c0971d0808f081229de48db205f38765f4c3777202925b7d488452e53e"
+    },
+    {
+      "path": "frontend/dist/brand/BAGO_simbolo_negativo.svg",
+      "bytes": 684,
+      "sha256": "72628ee1e4dcd8f46f81340986bbd610b07ac7142fd5756317e7e216b8461e00"
+    },
+    {
+      "path": "frontend/dist/brand/github-copilot.svg",
+      "bytes": 1759,
+      "sha256": "0d34b0aa829c23094eafce1447481d56f41dde65d779121222dcf294943dd245"
+    },
+    {
+      "path": "frontend/dist/brand/ollama.svg",
+      "bytes": 4784,
+      "sha256": "8d113044ac7b6a4bea46c335f8410a04976c2e6ae5beaf9fc6b823d90f8b05a0"
+    },
+    {
+      "path": "frontend/dist/brand/openai.svg",
+      "bytes": 1687,
+      "sha256": "a595df6b423920c67a7f8f73c063e4bfb72d415948097b6cac063a2366bb5186"
+    },
+    {
+      "path": "frontend/dist/brand/opencode.svg",
+      "bytes": 159,
+      "sha256": "c65afefdb1eb67be19a50f715d0a7a2c19558dbf0cbdc974feb367e055cd5f58"
+    },
+    {
+      "path": "frontend/dist/brand/openrouter-official.svg",
+      "bytes": 566,
+      "sha256": "ba3275a9803f7eef3c776f33f0ce7904577578ba23ec83e573e60d7e85f4ac25"
+    },
+    {
+      "path": "frontend/dist/index.html",
+      "bytes": 745,
+      "sha256": "bf942a8610c83deb23a729b73f48af294445577034aa9d3aa9b8c329c23532ea"
+    },
+    {
+      "path": "frontend/dist/team-monitor.html",
+      "bytes": 8501,
+      "sha256": "4faaf25f8ecc0e3218be8a2a294c39463b6a5b35735ad0ec21e44b96c4ee2ab5"
+    },
+    {
+      "path": "frontend/dist/ui-kit-preview.html",
+      "bytes": 746,
+      "sha256": "75d011f0b98bf3a8d1cad4b0654e464e438c942460f5a775ba86bc719f63d701"
+    }
+  ]
+}

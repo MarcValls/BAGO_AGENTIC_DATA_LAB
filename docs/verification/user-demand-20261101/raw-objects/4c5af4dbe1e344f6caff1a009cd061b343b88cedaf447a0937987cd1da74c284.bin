@@ -1,0 +1,24 @@
+# Gate README: PASS
+
+Se ejecutó el generador real sin --skip-tests. La suite completa terminó con1806PASS,2SKIP,0FAIL,0ERROR. JUnit registra1922entradas, incluyendo114subtests además de1808casos principales. Ejecución01:23:12–01:30:05UTC,2026-11-01. No se sustituyó la ejecución por colección.
+
+Después se ejecutó scripts/generate_dynamic_readme.py --check --skip-tests dentro de Docker y de nuevo en el worktree Windows final con los docs nuevos de root: ambosPASS,1808casos recogidos. Esos checks se declaran NOT_RUN para ejecución de suite y no incrementan el conteoPASS.
+
+Fuente probada: HEAD base ed0efc83cc39a40aac231d9aa0da77a5d30a91e7 más16fuentes exactas del candidato sin commit (6UI,3backend,7CSV), todas rehasheadas antes/después. INPUT_MANIFEST fija árbolGit/pack y overlay; DEPENDENCIES conserva el inventario de dependencias existentes. El contenedor reconstruyó Git shallow real del mismo HEAD, aisló código/tests/temporales en almacenamiento Linux nuevo y no recibió red ni puertos. Únicamente resultados se montaron al proyecto; el contenedor propio quedó eliminado.
+
+Entorno exacto: imagen sha256:3d92378210d9a4b5411f2f74f9bfe08bd1f90787c5426b589e8b95486c243480, Python3.11, pytest9.0.3, FastAPI0.136.1, Pydantic2.12.5, Node22.23.4, JSDOM observado. LÍMITE explícito: pypdf6.21.2 en esta imagen frente al pin6.21.4 declarado. No se disfraza como lock/pinsCI exactos; la CI de la rama deberá comprobar los pins actuales por separado. No se cambió producto ni contrato para ocultar esa diferencia.
+
+Omisiones observadas: test real WinRT recognition necesitaWindows; test de regresión real CIM esWindows. La suiteWindows completa NO se ejecutó aquí; las pruebas focalizadas anteriores tienen recibos independientes. La comprobación final de consistencia sí se ejecutó en Windows real del worktree, con temporales/datos de colección aislados en el proyecto.
+
+El generador produjo README.md y README_DETAILS.md; se conservaron sus copias.generated y sólo se copiaron al worktree después del PASS de suite+consistencia y verificación de hashes. Sus textos ya coincidían con el canon, por lo que el diff semánticoGit es vacío. No se editó manualmente ninguno ni se modificaron fuentes canónicas.
+
+README.md SHA256 aeb823c75ef3cf24def0e39f97d58e32e2f8f1375e71b4156a0b8c320a507b63.
+README_DETAILS.md SHA256 7a2682fea70897ae318537835912743ed0f1193922ada9a7d6c04b41b11ef003.
+
+Los docs/verification/user-demand-20261101 nuevos de root llegaron después de la capturaDocker. No se atribuye su comprobación de export a esa suite: el render esperado y --check final se ejecutaron con ellos presentes, y root mantiene su verificación de export/LIVE independiente. Ninguna fuente, build, handoffBE/UI, ledger, perfil, base de datos de runtime, navegador, configuración global ni HEAD se modificó por este gate. Sin commit/push.
+
+Recuperar evidencia: attempt1/RESULT.json, inner-result.json, generate.xml, logs y README*.generated; local-check-attempt1/RESULT.json y logs; SUMMARY.json y scripts. verify_gate.py valida recibos/loghashes, fuentes, README actuales y HEAD sin volver a ejecutar modelo ni suite. Es un gate local previo al commit; no pretende sustituir el verificador portable del paquete público.
+
+Para CLOSE: root debe registrar una ejecución real del check review-closure en la misión sucesora; su wrapper puede invocar verify_gate.py como comprobación de recibos y además comprobar sus propios recibosVISUAL/LIVE. El resultado de un revisor del modelo no es VALIDATED por sí mismo. No se reescribieron handoffs previos ni se reclama publicación/aceptación a partir del gateREADME.
+
+Publicación finita: PUBLISH_FILES.json enumera scripts/manifiestos/logs/JUnit/copiasREADME y hashes. EXCLUIR inputs/candidate.tar(371MB) y candidate.pack(97MB), dependencias binarias/node_modules y cualquier runtime/config. No subir automáticamente los temporales grandes.

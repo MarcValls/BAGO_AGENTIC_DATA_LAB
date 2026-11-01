@@ -1,0 +1,71 @@
+"""Materialize response UI handoff without touching the prior CSV mission."""
+from pathlib import Path
+import difflib,hashlib,json,shutil,subprocess
+ROOT=Path(__file__).resolve().parents[1]
+REPO=next(p for p in ROOT.parents if (p/'.git').exists())
+def sha(p):return hashlib.sha256(p.read_bytes()).hexdigest()
+def load(p):return json.loads(p.read_text(encoding='utf-8-sig'))
+def write(p,v):p.write_text(json.dumps(v,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
+scope=load(ROOT/'SOURCE_SCOPE.json');tests=load(ROOT/'evidence/RESPONSE_TESTS.json');build=load(ROOT/'evidence/COMBINED_BUILD.json')
+assert tests['status']==build['status']=='PASS'
+csv=REPO/'.bago/goals/csv-table-preview-20261101/workspace'
+assert sha(csv/'evidence/handoff-UI.json')==tests['csv_handoff_sha256']==build['csv_handoff_sha256']
+rows=[];patch=[]
+for name in scope['actual_repository_source_scopes']:
+ source=REPO/name;target=ROOT/'sources'/name;target.parent.mkdir(parents=True,exist_ok=True);shutil.copyfile(source,target)
+ assert sha(source)==sha(target)
+ assert all(next(v['sha256'] for v in result['sources'] if v['path']==name)==sha(source) for result in [tests,build])
+ old=subprocess.run(['git','show',scope['base_sha']+':'+name],cwd=REPO,capture_output=True)
+ patch.extend(difflib.unified_diff(old.stdout.decode('utf-8').splitlines(keepends=True) if old.returncode==0 else [],source.read_text(encoding='utf-8').splitlines(keepends=True),fromfile='a/'+name if old.returncode==0 else '/dev/null',tofile='b/'+name))
+ rows.append({'path':name,'snapshot':target.relative_to(ROOT).as_posix(),'sha256':sha(source),'bytes':source.stat().st_size})
+csv_binding=load(csv/'evidence/SOURCE_BINDING.json')
+assert all(sha(REPO/v['path'])==v['sha256'] for v in csv_binding['sources'])
+tracked=subprocess.check_output(['git','diff','--name-only'],cwd=REPO,text=True).splitlines()
+others=subprocess.check_output(['git','ls-files','--others','--exclude-standard'],cwd=REPO,text=True).splitlines()
+allowed=scope['actual_repository_source_scopes']+scope['preserved_source_scopes']
+unexpected=[p for p in tracked+others if p not in allowed and not p.startswith(('frontend/.build/','frontend/dist/'))]
+assert not unexpected, str(unexpected)
+for asset in build['assets']:assert sha(REPO/asset['path'])==asset['sha256']
+(ROOT/'evidence/SOURCE.diff').write_text(''.join(patch),encoding='utf-8')
+write(ROOT/'evidence/SOURCE_BINDING.json',{'status':'PASS','base_sha':scope['base_sha'],'head':subprocess.check_output(['git','rev-parse','HEAD'],cwd=REPO,text=True).strip(),
+ 'sources':rows,'preserved_csv_sources':csv_binding['sources'],'preserved_csv_handoff_sha256':sha(csv/'evidence/handoff-UI.json'),
+ 'combined_build_manifest':'evidence/COMBINED_BUILD.json','scope_check':'PASS: only five new response UI paths, seven unchanged CSV paths and generated frontend build outputs.',
+ 'commit_state':'Uncommitted source candidate; exact raw hashes are authoritative, HEAD still identifies base.',
+ 'coordination_scope':'Per-goal teamctl evidence/snapshot validation; actual source writes governed by explicit user-authorized paths, no OS sandbox claim.'})
+root_observation=Path(scope['observed_problem_evidence'])
+observation=load(root_observation)
+write(ROOT/'evidence/ROOT_OBSERVATION_BINDING.json',{'source':str(root_observation),'sha256':sha(root_observation),'run_id':observation['run_id'],
+ 'prompt_equals_answer':observation['prompt_equals_answer'],'prompt_characters':observation['prompt_characters'],'answer_characters':observation['answer_characters'],
+ 'scope':'Root observed the actual API result; this implementation did not run another model call or modify backend.'})
+report='''# Solicitud y respuesta: entrega combinada
+
+IMPLEMENTED y pruebas/build VERIFIED. Revisión visual independiente, aceptación, README/cierre y publicación PENDING.
+
+Mismo worktree csv-table-preview-20261101, rama codex/csv-table-preview-20261101, base origin/main ed0efc83cc39a40aac231d9aa0da77a5d30a91e7. No commit/push. Cinco fuentes nuevas de esta misión disjuntas de los siete archivos CSV; snapshots y hashes de ambas familias en SOURCE_BINDING. CSV handoff original y sus evidencias se conservan sin reescribir.
+
+Problema confirmado por root: en taskrun_8f7aaadbce8a4e4892e95b009cb7fc53 la solicitud420caracteres y respuesta1958 tienen hashes distintos; la UI anteponía el prompt sin título bajo Respuesta recibida. Esta entrega corrige la presentación; no afirma haber corregido un eco de backend inexistente ni ejecutado nuevas herramientas/inferencia.
+
+AgentTasks ahora presenta primero Respuesta del agente y texto íntegro con whitespace/escape React, sin el máximo320px del pre. Una nota precisa que answered es respuesta del modelo, no evidencia de efectos ni verificación. Solicitud enviada es un desplegable separado con rendered_prompt (texto efectivamente enviado y fechas), no la plantilla sin sustituciones. El botón Copiar como nueva tarea conserva literalmente la operación de copiar task_snapshot al borrador, forzar dirty y exigir guardar antes de ejecutar. No se ejecuta automáticamente al copiar ni al guardar.
+
+127pruebas PASS/0FAIL,11suites: historial/tareas existentes,5casos nuevos (ES/EN, respuesta larga distinta y escaped, petición efectiva, copiar sinPOST, empty, failed, answeredvacío rechazado), catálogoagents y regresiones CSV/workspace/projectfolders/i18ncommerce/teclado. Fixtures de API sintéticas, no se presentan como backend real. Build combinado TypeScript+Vite PASS. Las fuentes CSV y su handoff permanecieron byteidénticos durante ambos checks.
+
+Runtime listo en frontend/dist: app-isU5IlZU.js SHA5c42d9d02dcd1b1d5a9a1f352647c54ffcb980e73ac82442e0e1ae48132e0bd8; app-DnreUfqM.css SHA9874db0cd48e5c7d3a08077e0c582132e664f66ce808e8106b12d6cf49bf5a74; indexSHA08f2c23068658148542e6d11cd2d7dc85febf00548530771bbf77241dee15469. Este build combinado es posterior al buildCSV original y tiene su propio recibo, sin sustituir evidencia histórica.
+
+Visual root en MISMA ventana Brave pendiente: desplegar run real, observar respuesta primero y solicitud separada, recorrer respuesta completa sin corte, abrir Solicitud enviada y contrastar ambos textos; botón debe decir Copiar como nueva tarea y sólo preparar borrador. No iniciar un run real salvo autorización específica del flujo vigente. Probar además Tabla/Texto CSV del mismo candidato como ya previsto. El implementador no abrió navegador ni cambió foco/runtime/puertos.
+
+No cambios backend, README, AGENTS raíz, configuración global, raíz sucia, HOST/GOV ni código CSV congelado. Estado answered/contratos validadores no se alteran. Warning de chunkVite>500kB conservado. Fullsuitebackend/generaciónREADME NOT_RUN por este implementador; siguen en el cierre correspondiente. EstadoUI es DONE con handoff, no misióncompleta ni aceptación del usuario.
+'''
+(ROOT/'evidence/RESULTADO.md').write_text(report,encoding='utf-8')
+state=load(ROOT/'.bago/team/runtime/state.json')
+verification=[]
+for name,eid in [('response-tests','dded392c1e4e43cd95f906c29827afa6'),('combined-build','471eb99e2fce425ea1aa7e3a2ac1ecc4')]:
+ receipt=load(ROOT/f'.bago/team/runtime/executions/{eid}/receipt.json')
+ verification.append({'id':name,'command':receipt['command_text'],'result':'PASS','evidence':f'.bago/team/runtime/executions/{eid}/receipt.json','execution_id':eid})
+files=[ROOT/'SOURCE_SCOPE.json',*[ROOT/r['snapshot'] for r in rows],*[p for p in (ROOT/'evidence').rglob('*') if p.is_file() and p.name!='handoff-UI.json']]
+h={'work_id':'UI','role':'decision-ui-engineer','status':'DONE','mission_id':state['mission']['mission_id'],'candidate_id':state['candidate_id'],'scope_sha256':state['scope_sha256'],
+ 'changed_files':[p.relative_to(ROOT).as_posix() for p in files],
+ 'outputs':[{'path':p.relative_to(ROOT).as_posix(),'kind':'response-ui-source-or-evidence','sha256':sha(p)} for p in files],
+ 'verification':verification,'residual_risks':['Independent real-window visual acceptance pending; author tests use synthetic API fixtures.','answered is a model response only; no additional effects/execution/validation are claimed.','No commit/push; exact source hashes bind uncommitted candidate.','Original CSV handoff and sources preserved; this combined build has new evidence and assets.','README/full repository closure gates pending; Vite chunk warning remains.','Controller per-goal validates snapshots/evidence, not an OS write sandbox.'],
+ 'next_consumers':['VISUAL']}
+h['payload_sha256']=hashlib.sha256(json.dumps(h,sort_keys=True,separators=(',',':'),ensure_ascii=False,allow_nan=False).encode()).hexdigest()
+write(ROOT/'evidence/handoff-UI.json',h);print(json.dumps({'status':'PREPARED','outputs':len(files),'source_count':len(rows),'payload_sha256':h['payload_sha256']}))

@@ -1,0 +1,9 @@
+{
+  "source": "C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\.bago\\goals\\user-demand-video-20261101\\F14-response-comparison.json",
+  "sha256": "da12673545daa1cdd6c96dae2a6ae02c30e9b34ddd0c32e65caf3b0a04722996",
+  "run_id": "taskrun_8f7aaadbce8a4e4892e95b009cb7fc53",
+  "prompt_equals_answer": false,
+  "prompt_characters": 420,
+  "answer_characters": 1958,
+  "scope": "Root observed the actual API result; this implementation did not run another model call or modify backend."
+}

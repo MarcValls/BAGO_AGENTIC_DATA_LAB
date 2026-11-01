@@ -1,0 +1,4 @@
+/raw-objects/** -text -diff
+*.mp4 -text -diff
+*.png -text -diff
+*.srt whitespace=-blank-at-eof

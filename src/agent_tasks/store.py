@@ -155,6 +155,19 @@ class TaskStore:
                 connection.execute("""CREATE TRIGGER IF NOT EXISTS no_delete_task_runs
                     BEFORE DELETE ON task_runs
                     BEGIN SELECT RAISE(ABORT, 'immutable task history'); END""")
+                connection.execute("""CREATE TABLE IF NOT EXISTS task_reviews (
+                    review_id TEXT PRIMARY KEY, source_agent_id TEXT NOT NULL,
+                    source_run_id TEXT NOT NULL, snapshot TEXT NOT NULL, created_at TEXT NOT NULL,
+                    completed_at TEXT, status TEXT NOT NULL, answer TEXT, error TEXT)""")
+                connection.execute("""CREATE TRIGGER IF NOT EXISTS immutable_task_review_snapshot
+                    BEFORE UPDATE OF review_id, source_agent_id, source_run_id, snapshot, created_at ON task_reviews
+                    BEGIN SELECT RAISE(ABORT, 'immutable task review snapshot'); END""")
+                connection.execute("""CREATE TRIGGER IF NOT EXISTS immutable_finished_task_review
+                    BEFORE UPDATE ON task_reviews WHEN OLD.status != 'running'
+                    BEGIN SELECT RAISE(ABORT, 'finished task review'); END""")
+                connection.execute("""CREATE TRIGGER IF NOT EXISTS no_delete_task_reviews
+                    BEFORE DELETE ON task_reviews
+                    BEGIN SELECT RAISE(ABORT, 'immutable task reviews'); END""")
                 yield connection
         finally:
             connection.close()
@@ -248,3 +261,90 @@ class TaskStore:
         with self._db() as db:
             rows = db.execute("SELECT * FROM task_runs WHERE agent_id=? ORDER BY created_at DESC, rowid DESC LIMIT ?", (agent_id, limit)).fetchall()
         return [self._decode(row) for row in rows]
+
+    def review_source(self, agent_id: str, run_id: str) -> dict[str, Any]:
+        source = self.run(agent_id, run_id)
+        if source["status"] != "answered" or not isinstance(source["answer"], str) or not source["answer"].strip():
+            raise TaskError("task_review_answer_required", "La revisión requiere una respuesta terminada del agente.", 409)
+        return source
+
+    def review_context(self, directory: Path, agent_id: str, run_id: str) -> dict[str, Any]:
+        source = self.review_source(agent_id, run_id)
+        reviewers, unavailable = [], 0
+        for path in sorted(directory.glob("agent_*.json")):
+            if path.stem == agent_id:
+                continue
+            try:
+                profile = self.read_agent(directory, path.stem)
+                config = profile["config"]
+                if not config.get("provider_id") or not config.get("model_id"):
+                    unavailable += 1
+                    continue
+                reviewers.append({"agent_id": path.stem, "name": str(config.get("name", path.stem)),
+                    "profile_sha256": task_revision(profile), "provider_id": config["provider_id"], "model_id": config["model_id"]})
+            except TaskError:
+                unavailable += 1
+        return {"source_run": source, "source_sha256": task_revision(source), "reviewers": reviewers,
+            "unavailable_reviewer_count": unavailable, "reviews": self.reviews(agent_id, run_id)}
+
+    def start_review(self, directory: Path, agent_id: str, run_id: str, reviewer_agent_id: str,
+        expected_source_sha256: str, expected_reviewer_sha256: str, workspace_root: str, *, validate_model=None) -> dict[str, Any]:
+        if reviewer_agent_id == agent_id:
+            raise TaskError("task_review_same_agent", "Selecciona un agente guardado distinto del autor.", 409)
+        with agent_lock(directory, reviewer_agent_id):
+            source = self.review_source(agent_id, run_id)
+            if task_revision(source) != expected_source_sha256:
+                raise TaskError("task_review_source_changed", "La ejecución cambió. Actualiza antes de revisar.", 409)
+            profile = self.read_agent(directory, reviewer_agent_id)
+            if task_revision(profile) != expected_reviewer_sha256:
+                raise TaskError("task_review_profile_changed", "El perfil revisor cambió. Selecciónalo de nuevo.", 409)
+            config = profile["config"]
+            if not config.get("provider_id") or not config.get("model_id"):
+                raise TaskError("agent_model_required", "Selecciona proveedor y modelo en el perfil revisor.", 409)
+            if validate_model is not None:
+                validate_model(config)
+            user_message = json.dumps({"source_agent_id": agent_id, "source_run_id": run_id,
+                "source_sha256": expected_source_sha256, "source_snapshot": source}, sort_keys=True, ensure_ascii=False)
+            if len(user_message) > 120_000:
+                raise TaskError("task_review_source_too_large", "La respuesta supera el límite de revisión textual; no se enviará parcialmente.", 413)
+            system_prompt = str(config.get("system_prompt") or "")
+            snapshot = {"source_sha256": expected_source_sha256, "source_snapshot": source,
+                "reviewer_agent_id": reviewer_agent_id, "reviewer_profile_sha256": expected_reviewer_sha256,
+                "reviewer_name": str(config.get("name", reviewer_agent_id)), "provider_id": config["provider_id"],
+                "model_id": config["model_id"], "workspace_root": workspace_root, "review_request": user_message,
+                "review_policy": "model-only-independent-task-review.v1",
+                "reviewer_system_prompt_sha256": hashlib.sha256(system_prompt.encode()).hexdigest()}
+            review_id, created = f"taskreview_{uuid.uuid4().hex}", _now()
+            with self._db() as db:
+                db.execute("INSERT INTO task_reviews VALUES (?, ?, ?, ?, ?, NULL, 'running', NULL, NULL)",
+                    (review_id, agent_id, run_id, json.dumps(snapshot, ensure_ascii=False), created))
+            return {**self.review(agent_id, run_id, review_id), "_system_prompt": system_prompt}
+
+    @staticmethod
+    def _decode_review(row: sqlite3.Row) -> dict[str, Any]:
+        return {"review_id": row["review_id"], "source_agent_id": row["source_agent_id"], "source_run_id": row["source_run_id"],
+            **json.loads(row["snapshot"]), "created_at": row["created_at"], "completed_at": row["completed_at"],
+            "status": row["status"], "answer": row["answer"], "error": json.loads(row["error"]) if row["error"] else None}
+
+    def review(self, agent_id: str, run_id: str, review_id: str) -> dict[str, Any]:
+        with self._db() as db:
+            row = db.execute("SELECT * FROM task_reviews WHERE source_agent_id=? AND source_run_id=? AND review_id=?",
+                (agent_id, run_id, review_id)).fetchone()
+        if row is None:
+            raise TaskError("task_review_not_found", "Revisión no encontrada para esta ejecución.", 404)
+        return self._decode_review(row)
+
+    def reviews(self, agent_id: str, run_id: str) -> list[dict[str, Any]]:
+        with self._db() as db:
+            rows = db.execute("SELECT * FROM task_reviews WHERE source_agent_id=? AND source_run_id=? ORDER BY created_at DESC, rowid DESC LIMIT 50",
+                (agent_id, run_id)).fetchall()
+        return [self._decode_review(row) for row in rows]
+
+    def finish_review(self, agent_id: str, run_id: str, review_id: str, *, answer: str | None = None,
+        error: dict[str, str] | None = None) -> dict[str, Any]:
+        with self._db() as db:
+            cursor = db.execute("UPDATE task_reviews SET completed_at=?, status=?, answer=?, error=? WHERE review_id=? AND source_agent_id=? AND source_run_id=? AND status='running'",
+                (_now(), "failed" if error else "answered", answer, json.dumps(error) if error else None, review_id, agent_id, run_id))
+            if cursor.rowcount != 1:
+                raise TaskError("task_review_finalized", "La revisión ya terminó o no existe.", 409)
+        return self.review(agent_id, run_id, review_id)

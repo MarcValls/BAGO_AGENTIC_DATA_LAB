@@ -1,0 +1,22 @@
+{
+  "base_ref": "origin/main",
+  "actual_repository_source_scopes": [
+    "frontend/src/components/WorkspaceManager.tsx",
+    "frontend/src/components/CsvTablePreview.tsx",
+    "frontend/src/components/CsvTablePreview.css",
+    "frontend/src/utils/delimitedText.ts",
+    "frontend/src/i18n/domains/commerce.ts",
+    "frontend/tests/workspace/csv-preview.test.tsx",
+    "frontend/tests/workspace/csv-parser.test.tsx"
+  ],
+  "preserved": [
+    "root dirty worktree",
+    "HOST/GOV evidence",
+    "backend",
+    "global config"
+  ],
+  "branch": "codex/csv-table-preview-20261101",
+  "source_snapshots": "sources/<repository-relative-path>",
+  "base_sha": "ed0efc83cc39a40aac231d9aa0da77a5d30a91e7",
+  "scope_enforcement": "User-authorized bounded paths plus post-diff checks; teamctl per-goal root governs evidence snapshots, not an OS sandbox"
+}

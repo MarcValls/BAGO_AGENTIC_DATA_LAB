@@ -1,0 +1,29 @@
+{
+  "status": "PASS",
+  "checks": {
+    "input_hashes": true,
+    "current_source_bytes": true,
+    "manual_button_present": true,
+    "dirty_execution_disabled": true,
+    "discard_requires_confirmation": true,
+    "cancel_keeps_draft": true,
+    "restored_clean": true,
+    "saved_task_unchanged": true,
+    "original_runs_unchanged": true,
+    "copy_requires_save": true,
+    "copy_named_honestly": true,
+    "review_available": true,
+    "consent_required": true,
+    "real_review_answered": true,
+    "different_profile": true,
+    "exact_source_binding": true,
+    "review_request_correlated": true,
+    "review_persisted_after_reopen": true,
+    "advisory_visible": true,
+    "negative_http": true,
+    "live_readback_source_unchanged": true,
+    "live_readback_review_unchanged": true
+  },
+  "at": "2026-11-01T01:20:57.704587+00:00",
+  "scope": "Root independently observed the existing Brave UI after implementation handoff. Source bytes and raw evidence retained. Profile-separated model review is advisory, not validation. No global or original frozen evidence was altered."
+}

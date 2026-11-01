@@ -1,0 +1,78 @@
+{
+  "schema": "bago.readme.closure-gate.v1",
+  "status": "PASS",
+  "observed_at": "2026-11-01T01:34:03.467843+00:00",
+  "head_unchanged": "ed0efc83cc39a40aac231d9aa0da77a5d30a91e7",
+  "full_suite": {
+    "command": [
+      "/usr/local/bin/python",
+      "-B",
+      "scripts/generate_dynamic_readme.py"
+    ],
+    "runtime": "Docker Linux/Python3.11, immutable image3d92378210d9...",
+    "passed": 1806,
+    "junit_counts_including_subtests": {
+      "tests": 1922,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 2
+    },
+    "junit_sha256": "7e8f623483e7356b85679b78025b2d2fad8758b0453b94ff3bc3d3aa2c227db2",
+    "source_overlay_count": 16
+  },
+  "consistency_docker": "PASS; --check --skip-tests collection only, NOT_RUN for suite execution",
+  "consistency_actual_final_windows_worktree": {
+    "status": "PASS",
+    "argv": [
+      "C:\\Python314\\python.exe",
+      "-B",
+      "scripts/generate_dynamic_readme.py",
+      "--check",
+      "--skip-tests"
+    ],
+    "returncode": 0,
+    "seconds": 24.597,
+    "head": "ed0efc83cc39a40aac231d9aa0da77a5d30a91e7",
+    "scope": "Actual Windows worktree consistency/pytest collection only; suite execution belongs to preserved Docker generate step, not --skip-tests.",
+    "readmes": [
+      {
+        "path": "README.md",
+        "sha256": "aeb823c75ef3cf24def0e39f97d58e32e2f8f1375e71b4156a0b8c320a507b63"
+      },
+      {
+        "path": "README_DETAILS.md",
+        "sha256": "7a2682fea70897ae318537835912743ed0f1193922ada9a7d6c04b41b11ef003"
+      }
+    ],
+    "product_sources_unchanged": true,
+    "docker_environment_limit": "Cached image pypdf6.21.2 vs declared pin6.21.4; exact pinned CI remains separate."
+  },
+  "generated_readmes": [
+    {
+      "path": "README.md",
+      "sha256": "aeb823c75ef3cf24def0e39f97d58e32e2f8f1375e71b4156a0b8c320a507b63",
+      "bytes": 2800
+    },
+    {
+      "path": "README_DETAILS.md",
+      "sha256": "7a2682fea70897ae318537835912743ed0f1193922ada9a7d6c04b41b11ef003",
+      "bytes": 61191
+    }
+  ],
+  "canonical_source_edits": [],
+  "git_semantic_readme_diff": "Empty; generated texts already match canon. Generator still actually ran full suite and wrote both outputs.",
+  "container_removed": true,
+  "all_product_sources_unchanged": true,
+  "limitations": [
+    "Cached Docker pypdf6.21.2 differs from declared6.21.4. Result is bound to exact image, not pinned CI; future branch CI remains separate.",
+    "Two Linux skips: real WinRT recognition and Windows CIM process regression; no claim of new full Windows execution.",
+    "New public docs were added after Docker source capture; actual final Windows consistency included them, but Docker did not run their separate export verifier.",
+    "No independent acceptance or publication inferred from README gate; root owns CLOSE."
+  ],
+  "publication_exclusions": [
+    "inputs/candidate.tar",
+    "inputs/candidate.pack",
+    "Any node_modules, runtime DB/profile directories or environment/config dumps"
+  ],
+  "no_product_edits_head_moves_browser_or_commit": true
+}

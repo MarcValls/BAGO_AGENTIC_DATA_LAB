@@ -1,0 +1,34 @@
+{
+  "status": "PASS",
+  "at": "2026-11-01T01:17:21.248001+00:00",
+  "checks": {
+    "manual_button_present": true,
+    "dirty_execution_disabled": true,
+    "discard_requires_confirmation": true,
+    "cancel_keeps_draft": true,
+    "restored_clean": true,
+    "saved_task_unchanged": true,
+    "original_runs_unchanged": true,
+    "copy_requires_save": true,
+    "copy_named_honestly": true,
+    "review_available": true,
+    "consent_required": true,
+    "real_review_answered": true,
+    "different_profile": true,
+    "exact_source_binding": true,
+    "review_request_correlated": true,
+    "review_persisted_after_reopen": true,
+    "advisory_visible": true,
+    "negative_http": true
+  },
+  "source_run_id": "taskrun_8f7aaadbce8a4e4892e95b009cb7fc53",
+  "source_sha256": "7c6db027daa384a643a8375624b45271617b2963ae0cfa6fbe13f43b143ea12e",
+  "review_id": "taskreview_e3118e712c08474f8faf9920bf14b116",
+  "reviewer_agent_id": "agent_38709d316a754f5a983a2d0551102726",
+  "review_answer_sha256": "2c307bb03f87a231e45e77e079d332a45d6b96377bd180f6f9b33ca2b7f175b1",
+  "scope": "Real existing Brave UI and real Codex model; independent observer is root, implementer was goals_decisions. Model review is text-only, same provider/model and distinct saved profile, not automatic acceptance.",
+  "tooling_limits": [
+    "PowerShell converted ISO timestamps to equivalent local offsets; comparisons normalize known timestamp fields only. Failed raw comparison remains preserved.",
+    "Initial long PTY JSON and label selector failed before application input; successful role-selector retries are the evidence."
+  ]
+}

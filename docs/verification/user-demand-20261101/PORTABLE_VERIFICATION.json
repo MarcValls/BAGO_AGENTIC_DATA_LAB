@@ -1,0 +1,10 @@
+{
+  "status": "PASS",
+  "scope": "finite raw bytes and raw-to-Git-LF equivalence only",
+  "logical_files": 274,
+  "physical_payloads": 186,
+  "source_normalizations": 0,
+  "errors": [],
+  "product_validation": "NOT_IMPLIED",
+  "Windows_paths_required": false
+}

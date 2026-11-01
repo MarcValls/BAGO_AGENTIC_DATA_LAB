@@ -1,0 +1,12 @@
+....................................                                     [100%]
+============================== warnings summary ===============================
+tests/test_saved_agent_tasks.py::test_server_creates_default_task_preserves_legacy_and_profile_updates
+  C:\Users\AMTEC_Terminal_1º\Desktop\BAGO5_ADL\.worktrees\csv-table-preview-20261101\src\api\server.py:1702: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    response_data = {"id": f"agent_{uuid.uuid4().hex}", "config": config.model_dump(), "created_at": datetime.utcnow().isoformat()}
+
+tests/test_saved_agent_tasks.py::test_server_creates_default_task_preserves_legacy_and_profile_updates
+  C:\Users\AMTEC_Terminal_1º\Desktop\BAGO5_ADL\.worktrees\csv-table-preview-20261101\src\api\server.py:2991: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    "export_date": datetime.utcnow().isoformat(),
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+36 passed, 2 warnings in 8.08s

@@ -1,0 +1,19 @@
+# Independent source review — task response actions
+
+**Candidate:** `codex/csv-table-preview-20261101` at `ed0efc83cc39a40aac231d9aa0da77a5d30a91e7`.
+
+## Verdict
+
+No P1/P2 source defect was found in the reviewed task-response persistence, manual editing, request/answer presentation, or CSV preview paths. One P3 wording qualification remains: “independent agent” only means a different saved profile; the implementation does not require a different model or provider. The surrounding text correctly limits the feature to advisory textual review. This meets the requested different-profile behavior but must not be described as independent model or human verification.
+
+## Evidence
+
+- Backend targeted tests: **14 passed** (`backend-review.junit.xml`, SHA-256 `CF3D7A52565AF186CBD502D6181D235C2A7C916E46A5E55CEF2BAD9B98AD18FD`). The provider callback was synthetic; live provider is **NOT_RUN**.
+- Frontend targeted tests: **29 passed** (`frontend-review.junit.xml`, SHA-256 `94F8BF37DDB8E75435C3A2775A88CD947BE36BFC9EC72430CC8C77E0FEC076A2`). These use Vitest/jsdom fixtures, not a live app.
+- Read-only hash audit: **17/17** bound backend/UI and preserved CSV source hashes matched the mission snapshots; see [SOURCE_MANIFEST.json](SOURCE_MANIFEST.json), SHA-256 `c89c9dba9637c3f85145f4041780affeccdbf6fab4e61b57267513cb15d1c942`.
+
+Backend review found exact source-run and reviewer-profile hash checks, literal consent, self-review denial, rejection of unfinished source runs, no partial truncation above the size limit, durable `running` record before the model callback, sanitized failure persistence, and SQLite immutability for snapshots and completed records. UI review found separate request/answer rendering, escaped text, explicit manual save/run actions, and stale or mismatched response rejection. CSV preview is bounded and read-only; parse errors/truncation are surfaced, and preview values render as text.
+
+## Scope limits
+
+The CSV implementation is a preserved predecessor scope under the CR, not a successor source edit. I inspected it and matched its recorded hashes, but do not treat its predecessor handoff as a new successor execution. Root-owned VISUAL/provider checks remain outside this review. No live Brave, provider, or full-app acceptance is claimed.
