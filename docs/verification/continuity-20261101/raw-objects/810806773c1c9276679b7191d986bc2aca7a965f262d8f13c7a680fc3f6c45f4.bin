@@ -1,0 +1,24 @@
+# Publicación original de continuidad: gate README PASS
+
+Este gate pertenece exclusivamente al worktree continuity-evidence-20261101, misión de publicación original. No incorpora el producto UI de PR112 ni toca esa rama.
+
+Root ejecutó el generador real sin --skip-tests en Docker:1792PASS+2SKIP,0FAIL/0ERROR. JUnit1908entradas incluye114subtests adicionales a1794casos principales. Comando scripts/generate_dynamic_readme.py,01:30:57–01:37:07UTC del2026-11-01. Después consistencyDocker --check --skip-testsPASS; el segundo paso es colección y se declara NOT_RUN para ejecución de suite.
+
+Esta tarea ejecutó de verdad --check --skip-tests en Windows sobre el worktree final con los docs/export de root presentes:PASS,1794casos recogidos,12.6segundos. No modificaREADME ni ejecuta la suiteWindows completa; no sustituye los1792PASS del generador. Sus temporales/datos/colección quedan sólo en este readme-gate, no en el runtime de la aplicación.
+
+Fuente: HEADed0efc83cc39a40aac231d9aa0da77a5d30a91e7 con un único overlay autorizadoAGENTS.md SHA256d11c7dc1a2a14487556fa916c83a2faa500b7131f59d980e448731a0f71a4874. Se verificaron overlay intacto y ausencia de diffs/archivos nuevos de producto en src,frontend/src,tests. HEAD no se movió. Root ya realizó la generación/copyback; esta tarea sólo comprobó y escribió evidencia dentro de este readme-gate. No se editó AGENTS,producto,README,canónicos,docs/export,estados de equipo ni navegador; sin commit/push.
+
+Imagen exacta sha256:3d92378210d9a4b5411f2f74f9bfe08bd1f90787c5426b589e8b95486c243480,Python3.11/pytest9.0.3/FastAPI0.136.1/Pydantic2.12.5/Node22.23.4; preflightJSDOM/git/ffmpeg registrado. LIMITACIÓN conservada: pypdf6.21.2 frente al pin6.21.4. Acredita ese entorno exacto, no los pins actuales de CI. La CI del commit publicado deberá comprobarlos por separado. Rednone y contenedor propio eliminado.
+
+Los dos skips corresponden a reconocimientoWinRT real y regresiónCIM real Windows. No se promocionan aPASS ni se atribuye coberturaWindows completa a Docker.
+
+README.md SHA256aeb823c75ef3cf24def0e39f97d58e32e2f8f1375e71b4156a0b8c320a507b63.
+README_DETAILS.md SHA2567a2682fea70897ae318537835912743ed0f1193922ada9a7d6c04b41b11ef003.
+
+Se conservaron README*.generated del generador; sus bytes coinciden con los archivos actuales y el check no los cambió. El contenido ya representa el canon y no se requirió corregirlo. No se editan generados manualmente.
+
+Deltaexport: root agregó/actualizó docs públicos,STATUS y recibos después de la capturaDocker. No se afirma que esa suite ejecutara su verificadorportable; su propio gate de export es independiente. El --check real final se hizo con los docs presentes y pasó. Si luego root añade recibos que no cambian el render canónico, la comprobación histórica queda identificada por fecha/candidato; no se reescriben sus resultados.
+
+Evidencia: INPUT_MANIFEST,DEPENDENCIES,scripts,attempt1/{RESULT,inner-result,generate.xml,logs,README*.generated},local-check-attempt1/{RESULT,stdout,stderr}. verify_gate.py revalida hashes y recibos sólo en lectura, sin repetir modelo/tests. Es un gate local previo al commit: exige el HEADbase observado; después de publicar debe usarse la evidencia y equivalencia propias del nuevo commit, no fingir que el nuevoHEAD fue el de esta ejecución.
+
+PUBLISH_FILES enumera una exportación finita. Excluir inputs/candidate.tar(363MB),candidate.pack(97MB),tmp/datos de colección,node_modules/config/runtime. No se reclama cierre global,aceptaciónindependiente ni publicación a partir del gateREADME; root orquesta CLOSE con el controlador vigente.

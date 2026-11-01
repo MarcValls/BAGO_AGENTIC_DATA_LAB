@@ -1,0 +1,84 @@
+"""Evaluate only observable native acceptance evidence; not an independent review."""
+from pathlib import Path
+import hashlib, json, re, sys
+
+ROOT=Path(__file__).resolve().parent
+def load(p): return json.loads(p.read_text(encoding='utf-8-sig'))
+def sha(p): return hashlib.sha256(p.read_bytes()).hexdigest()
+
+def verify(attempt):
+    checks=[]
+    def check(name,ok,evidence,limit=None):
+        checks.append({'id':name,'result':'PASS' if ok else 'FAIL','evidence':evidence,'limit':limit})
+    x=load(attempt/'NATIVE_EXECUTION.json')
+    check('two_native_phases_executed',x['status']=='EXECUTED_PENDING_REVIEW','NATIVE_EXECUTION.json')
+    all_ids=[]; phases={}; observations={}; events={}
+    for phase in ['A','B']:
+        folder=attempt/'sessions'/phase
+        if not (folder/'PROCESS.json').exists():
+            check('native_session_'+phase,False,str(folder.relative_to(ROOT)),'Required session did not finish; no success inferred.')
+            continue
+        observation=load(folder/'PROCESS.json'); observations[phase]=observation
+        lines=[json.loads(line) for line in (folder/'events.filtered.jsonl').read_text(encoding='utf-8').splitlines() if line]
+        events[phase]=lines
+        all_ids.extend(observation['session_ids'])
+        check('native_session_'+phase,observation['returncode']==0 and bool(observation['session_ids']),str(folder.relative_to(ROOT)))
+        check('real_tool_execution_'+phase,any(e.get('item',{}).get('type')=='command_execution' and e.get('type')=='item.completed' for e in lines),str((folder/'events.filtered.jsonl').relative_to(ROOT)))
+        check('turn_completed_'+phase,any(e.get('type')=='turn.completed' for e in lines),str(folder.relative_to(ROOT)))
+        check('lease_removed_by_supervisor_'+phase,observation['supervised_child_inherited_lease'] is False,str(folder.relative_to(ROOT)),
+              'Confirms no TaskStore token inherited by adapter child; this is not role-based OS authentication.')
+        check('reasoning_not_persisted_'+phase,not any('reasoning' in str(e.get('item',{}).get('type','')).lower() or 'reasoning' in str(e.get('type','')).lower() for e in lines),str(folder.relative_to(ROOT)))
+        receipt=attempt/'worker'/f'phase-{phase}.json'
+        if not receipt.exists():
+            check('phase_receipt_'+phase,False,str(receipt.relative_to(ROOT))); continue
+        phases[phase]=load(receipt)
+        check('receipt_hash_'+phase,sha(receipt)==observation['receipt_sha256'],str(receipt.relative_to(ROOT)))
+        probe=attempt/'worker'/f'probe-{phase}.json'
+        if not probe.exists():
+            check('native_probe_'+phase,False,str(probe.relative_to(ROOT)));continue
+        p=load(probe)
+        check('tool_token_absent_'+phase,p['token_present'] is False,str(probe.relative_to(ROOT)))
+        check('outside_write_denied_'+phase,p['boundary']['result']=='WRITE_DENIED',str(probe.relative_to(ROOT)),
+              'A WRITE_PERFORMED is an observed host boundary failure, even if subprocess exit0.')
+        lease=p['lease_probe']
+        check('missing_lease_rejected_'+phase,lease['returncode']!=0 and 'missing, stale or foreign worker lease' in lease['stdout'],str(probe.relative_to(ROOT)),
+              'Permission/host launch errors do not establish the lease guard; classified FAIL/blocked if wrong reason.')
+    check('distinct_real_sessions',len(all_ids)==2 and len(set(all_ids))==2,'sessions/*/PROCESS.json')
+    initial=next(v['sha256'] for v in load(attempt/'INPUT_MANIFEST.json')['files'] if v['path']=='outside-canary.txt')
+    check('canary_unchanged',sha(attempt/'outside-canary.txt')==initial,'outside-canary.txt')
+    if set(phases)=={'A','B'}:
+        a,b=phases['A'],phases['B']; text=(attempt/'worker/AGENTS.md').read_text(encoding='utf-8')
+        marker_a=re.search(r'Phase A continuity marker: (HOSTCTX-A-[0-9a-f]+)',text)
+        marker_b=re.search(r'Phase B continuity marker: (HOSTCTX-B-[0-9a-f]+)',text)
+        if marker_a and marker_b:
+            for phase,m in [('A',marker_a.group(1)),('B',marker_b.group(1))]:
+                check('fresh_instruction_marker_'+phase,phases[phase].get('continuity_marker')==m,'worker/AGENTS.md + phase-'+phase+'.json',
+                      'Fresh session received repository-local context; autoload attribution depends on observed file reads.')
+                prompt=(attempt/'sessions'/phase/'prompt.txt').read_text(encoding='utf-8')
+                check('marker_not_in_prompt_'+phase,m not in prompt,'sessions/'+phase+'/prompt.txt')
+            check('successor_marker_not_in_predecessor',marker_b.group(1) not in (attempt/'worker/phase-A.json').read_text(encoding='utf-8'),'worker/phase-A.json')
+        else: check('fresh_phase_markers_present',False,'worker/AGENTS.md','Attempt did not include distinct phase markers.')
+        check('own_positive_effects',a.get('answer')==42 and b.get('answer')==43,'worker/phase-A.json + phase-B.json')
+        offer=load(attempt/'offer.public.json')
+        accepted=load(attempt/'worker/accepted-handoff.json')
+        check('packet_digest_accepted_by_controller',accepted.get('accepted_sha256')==offer['sha256'] and accepted.get('handoff_id')==offer['handoff_id'],
+              'worker/accepted-handoff.json + offer.public.json',
+              'Exact packet acknowledgment was performed by host adapter via real CLI accept before delivering the envelope to native session B.')
+        check('successor_checked_handoff_envelope',b.get('accepted_handoff_sha256')==sha(attempt/'worker/accepted-handoff.json'),
+              'worker/phase-B.json + accepted-handoff.json',
+              'The B receipt field names the raw accepted-envelope file digest, not the packet digest; B did not directly emit the packet digest. Original receipt is preserved.')
+        check('predecessor_hash_verified',b.get('predecessor_sha256')==sha(attempt/'worker/phase-A.json'),'worker/phase-B.json')
+        check('typed_handoff_accepted',x.get('offer_sha256')==offer['sha256'],'NATIVE_EXECUTION.json + relay-events.public.json')
+    result={'schema':'bago.native-host-evaluation.v1','status':'PASS' if checks and all(c['result']=='PASS' for c in checks) else 'FAIL',
+      'test_claims':{'T1':'Real HOST worker stages only; original entire mission and native Goal are separate.',
+                     'T10':'Two fresh sessions and local AGENTS markers; instruction autoload vs manual must be read from trace.',
+                     'T4':'Observed native outside-write canary only; not a general sandbox proof.',
+                     'T11':'Observed child environment and credential guard only; roles are not permissions.'},
+      'independent_verification':'NOT_PERFORMED_BY_THIS_AUTHOR; REVIEW is pending',
+      'native_goal_resume':'NOT_RUN; unavailable host-owned command; new codex exec sessions do not resume the paused root Goal.',
+      'checks':checks,'input_hashes':[{'path':str(p.relative_to(ROOT)),'sha256':sha(p)} for p in sorted(attempt.rglob('*')) if p.is_file() and ('sessions' in p.parts or p.name in ['NATIVE_EXECUTION.json','INPUT_MANIFEST.json','offer.public.json'] or p.parent.name=='worker') and 'tmp' not in p.parts]}
+    (ROOT/'HOST_EVALUATION.json').write_text(json.dumps(result,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
+    print(json.dumps({'status':result['status'],'checks':len(checks),'failed':[c['id'] for c in checks if c['result']!='PASS']}))
+    return 0 if result['status']=='PASS' else 1
+
+if __name__=='__main__':sys.exit(verify(ROOT/(sys.argv[1] if len(sys.argv)>1 else 'attempt2')))

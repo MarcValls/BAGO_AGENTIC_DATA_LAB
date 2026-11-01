@@ -1,0 +1,69 @@
+{
+  "schema": "bago.readme.fullsuite-input.v1",
+  "head": "ed0efc83cc39a40aac231d9aa0da77a5d30a91e7",
+  "uncommitted_overlay": [
+    {
+      "path": "AGENTS.md",
+      "sha256": "d11c7dc1a2a14487556fa916c83a2faa500b7131f59d980e448731a0f71a4874"
+    }
+  ],
+  "archive": {
+    "path": "inputs/candidate.tar",
+    "sha256": "0df9c0d396d560051bca3a40b9cc853d9561b2d53ccd0aea803cda1089bcea27",
+    "bytes": 362915840
+  },
+  "git_pack": {
+    "path": "inputs/candidate.pack",
+    "sha256": "daf0281043164d647a70ab68ca92e079ea5a7b7cb27159cd935436f7569197aa",
+    "bytes": 96910671
+  },
+  "readme_before": [
+    {
+      "path": "README.md",
+      "sha256": "25bd1ddba0d5a7c9f0f163b6c16f0bd742397e1ca18ac5923f55805d8fb7e9cd"
+    },
+    {
+      "path": "README_DETAILS.md",
+      "sha256": "e929d796e86386efeeccdb2d28c9be62cb41f21175cf473ccba61262358ae43a"
+    }
+  ],
+  "requirements": [
+    {
+      "path": "requirements.txt",
+      "sha256": "7c1c94071ed3c3cd703be92058d4a8b0f8e1e9b826d4f3344e5bc5b5bb96b100"
+    },
+    {
+      "path": "requirements-test.txt",
+      "sha256": "2c2c5115e2de7eb77637ccdc623df92a259afaa406e684588d0cbc8f753a0478"
+    },
+    {
+      "path": "requirements-whatsapp.txt",
+      "sha256": "d759ca6494b4764dd3a0b873604299d875556b48aa2b6dd36ed212368fc18d1a"
+    },
+    {
+      "path": "requirements-documents.txt",
+      "sha256": "3d63fa4f24498b208e74d87c49c9685e24f349d8917ec67217285640d1e2b918"
+    },
+    {
+      "path": "frontend/package-lock.json",
+      "sha256": "61e35732d55a55e3071af9cd5692fd9024e478c38b53a61613225e93211a64fe"
+    }
+  ],
+  "dependency_files": 4771,
+  "dependency_bytes": 100621164,
+  "source_identity": "Fetched base Git tree plus exact raw-byte overlay of the authorized continuity AGENTS instructions; no product changes; no product edits, no user runtime data, no .git/auth/config directory copied.",
+  "scripts": [
+    {
+      "path": "prepare_inputs.py",
+      "sha256": "0f0625703adfe47098dd4c531d51a845fc8b0bdef35c68322850cfd67d400022"
+    },
+    {
+      "path": "inner.py",
+      "sha256": "807f68d901e556be943183cb77ad204955dcfa74362ed0f69b4b3c3ba64fcb95"
+    },
+    {
+      "path": "run_docker_gate.py",
+      "sha256": "6662b515e40f67732b3491ac10f402f88a812ba4ff68460a8718e4fe19fb72ce"
+    }
+  ]
+}

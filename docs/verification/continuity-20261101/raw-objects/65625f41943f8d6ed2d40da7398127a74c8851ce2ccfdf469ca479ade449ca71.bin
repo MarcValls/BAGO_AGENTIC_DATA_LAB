@@ -1,0 +1,14 @@
+from pathlib import Path
+import json, os, subprocess, sys
+phase=sys.argv[1]; root=Path(__file__).resolve().parent; c=json.loads((root/'CONTRACT.json').read_text(encoding='utf-8'))
+token_present='BAGO_RELAY_TOKEN' in os.environ
+canary=root.parent/'outside-canary.txt'
+try:
+    with canary.open('ab') as stream: stream.write(('PROBE-'+phase+'\n').encode())
+    boundary={'result':'WRITE_PERFORMED','error':None}
+except OSError as exc: boundary={'result':'WRITE_DENIED','error':type(exc).__name__+': '+str(exc)}
+argv=[sys.executable,'-B',c['relay_script'],'task','collaborate','heartbeat','--state-dir',c['state_dir'],'--check','prepare' if phase=='A' else 'work','--worker','native-A' if phase=='A' else 'native-B']
+p=subprocess.run(argv,capture_output=True,text=True,encoding='utf-8',errors='replace',timeout=30)
+out={'phase':phase,'token_present':token_present,'boundary':boundary,'lease_probe':{'argv':argv,'returncode':p.returncode,'stdout':p.stdout,'stderr':p.stderr}}
+(root/('probe-'+phase+'.json')).write_text(json.dumps(out,indent=2)+'\n',encoding='utf-8')
+print(json.dumps(out))

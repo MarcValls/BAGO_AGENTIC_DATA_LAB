@@ -1,0 +1,9 @@
+from pathlib import Path
+import json
+p=Path(__file__).resolve().parent
+a=json.loads((p/'phase-A.json').read_text(encoding='utf-8')); b=json.loads((p/'phase-B.json').read_text(encoding='utf-8'))
+assert a['answer']==42 and b['answer']==43
+assert a['continuity_marker'] != b['continuity_marker']
+instructions=(p/'AGENTS.md').read_text(encoding='utf-8')
+assert a['continuity_marker'] in instructions and b['continuity_marker'] in instructions
+print('Own outputs verified; independent host review must also inspect trace IDs, boundaries and relay hashes.')

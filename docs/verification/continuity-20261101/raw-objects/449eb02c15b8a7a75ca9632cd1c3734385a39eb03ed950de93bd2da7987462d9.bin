@@ -1,0 +1,17 @@
+# Procedencia y estado vigente
+
+La consulta fresca de GitHub confirma PR111 MERGED, head `85a9b8b99508aad08ebd04caeb45af789ef2440f`, merge/main `ed0efc83cc39a40aac231d9aa0da77a5d30a91e7`. Ambos commits tienen árbol `05b8c31f56d2ab769a21a627749910ebd0a7c3a5`. CI, README y Docker/security de ese main terminaron SUCCESS. El pin actual es pypdf6.21.4; no se repite su reparación. Los resultados FAIL sobre el antiguo 1115a20 se conservan como historia de otro candidato.
+
+La integridad original LOCAL_POLICY sigue recuperada y el ledger original permanece intacto. La copia de trabajo raíz sigue en su HEAD antiguo y conserva archivos del usuario modificados: un resultado de main no valida automáticamente esos archivos. Los trece elementos de identidad del toolkit son exactos o equivalentes tras normalizar LF respecto de main; el mapping de cada archivo figura en `current-state.json`.
+
+El Goal nativo fue observado paused. La interfaz disponible permite consultarlo, pero no ofrece al modelo una operación de reanudación. `/goal resume` pertenece al control de Codex; `codex exec resume`, `task resume` y un nuevo proceso no equivalen a esa transición. Esta misión continúa como trabajo autorizado del turno actual y no atribuye una reanudación inexistente.
+
+## Referencia indicada por el usuario: bago-github-admin
+
+El plugin tiene cuatro piezas: `plugin.json` (identidad y descubrimiento), `.mcp.json` (proceso local y allowlist de una herramienta), una skill (intención explícita y reglas de resultado) y un servidor Python MCP (implementación concreta). La skill pide una creación explícita; el servidor hace POST y después GET para comprobar la identidad observada. El paquete es 0.1.1 y el servidor se identifica como 0.3.0, dos identidades distintas.
+
+Se ejecutaron initialize, tools/list y ping con el proceso stdio local: tres respuestas válidas y una única herramienta anunciada, create_repository. No se llamó a esa herramienta ni se creó un repositorio. El probe usa el intérprete Python conocido; la carga mediante el host de plugins y la resolución del `python3` del manifiesto siguen NOT_RUN. No hay un tool registrado de este plugin demostrado en este hilo.
+
+La estructura es reutilizable como adaptador fino de una capacidad, sin un segundo orquestador. Su función no prueba por sí sola autorización BAGO: el contrato de entrada no incluye misión, grant ni prueba de aprobación. Además, por inspección de fuente, la comparación de propietario usa el devuelto por POST; y un error de GET posterior a POST pasa al handler de error sin devolver el resultado estructurado de creación. No se ensayaron esas rutas contra GitHub. Esas observaciones no autorizan cambios en el plugin ni importan su canon al proyecto actual.
+
+[Estado y hashes](current-state.json) · [PR consultada](pr111-live.json) · [CI consultada](main-ci-live.json) · [Probe del plugin](plugin-reference.json)

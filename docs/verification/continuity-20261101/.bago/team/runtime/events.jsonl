@@ -1,0 +1,16 @@
+{"at":"2026-11-01T00:12:38.984489+00:00","kind":"MISSION_INIT","mission_id":"BAGO_CONTINUITY_PUBLICATION_20261101"}
+{"agent":"codex_orchestrator","at":"2026-11-01T00:12:42.694397+00:00","kind":"CLAIM","work_id":"EXPORT"}
+{"at":"2026-11-01T01:42:41.730553+00:00","execution_id":"66ebaf1634c1432eb2f4a84fa7b4a2c2","kind":"EXECUTION_STARTED","pid":22512,"work_id":"EXPORT"}
+{"at":"2026-11-01T01:42:42.157662+00:00","execution_id":"66ebaf1634c1432eb2f4a84fa7b4a2c2","kind":"EXECUTION_COMPLETED","result":"PASS"}
+{"at":"2026-11-01T01:42:42.688812+00:00","execution_id":"b1cf320656c649ceb9c10e4e8b94ba26","kind":"EXECUTION_STARTED","pid":26040,"work_id":"EXPORT"}
+{"at":"2026-11-01T01:42:43.038225+00:00","execution_id":"b1cf320656c649ceb9c10e4e8b94ba26","kind":"EXECUTION_COMPLETED","result":"PASS"}
+{"at":"2026-11-01T01:42:43.563408+00:00","execution_id":"a6092e56cada43d3bff2fbb6fb55e3d3","kind":"EXECUTION_STARTED","pid":17752,"work_id":"EXPORT"}
+{"at":"2026-11-01T01:42:43.912768+00:00","execution_id":"a6092e56cada43d3bff2fbb6fb55e3d3","kind":"EXECUTION_COMPLETED","result":"PASS"}
+{"at":"2026-11-01T01:42:45.406576+00:00","kind":"HANDOFF_DONE","work_id":"EXPORT"}
+{"agent":"brave_e2e_r5","at":"2026-11-01T01:44:02.309520+00:00","kind":"CLAIM","work_id":"VERIFY"}
+{"at":"2026-11-01T01:45:11.586770+00:00","execution_id":"c8e318669e9d4d7e8c3615af4ece53ff","kind":"EXECUTION_STARTED","pid":12820,"work_id":"VERIFY"}
+{"at":"2026-11-01T01:45:11.699336+00:00","execution_id":"c8e318669e9d4d7e8c3615af4ece53ff","kind":"EXECUTION_COMPLETED","result":"FAIL"}
+{"at":"2026-11-01T01:45:17.559987+00:00","execution_id":"f6c3b607889c451dab344ac19a284588","kind":"EXECUTION_STARTED","pid":8720,"work_id":"VERIFY"}
+{"at":"2026-11-01T01:45:17.853893+00:00","execution_id":"f6c3b607889c451dab344ac19a284588","kind":"EXECUTION_COMPLETED","result":"PASS"}
+{"at":"2026-11-01T01:46:30.185506+00:00","kind":"HANDOFF_DONE","work_id":"VERIFY"}
+{"agent":"codex_orchestrator","at":"2026-11-01T01:47:33.113945+00:00","kind":"CLAIM","work_id":"PUBLISH"}

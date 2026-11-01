@@ -1,0 +1,30 @@
+# HOST: resultado observable
+
+Estado: EXECUTED y evaluación del autor VERIFIED en el alcance descrito; revisión independiente PENDING. No es el cierre de la misión original ni una reanudación nativa de `/goal`.
+
+## Ejecución real
+
+- Codex CLI 0.166.0: dos invocaciones nuevas seriales `exec --ephemeral --json -s workspace-write -C .../host/attempt2/worker`, sin worktree, configuración global, bypass, ventanas ni navegación.
+- A: `01a19468-c3b7-7650-b9ce-e56bcf4a4feb`, PID16708, exit0, cuatro comandos reales; produjo42 y recibo SHA b3fc51fd205edf57bd4f3edec7b227c672297c3adfaff203be83bc073b20ec19.
+- B: `01a19469-e119-7ff1-8efa-1bf9e6ac94ac`, PID22272, exit0, cuatro comandos reales; comprobó el predecesor, produjo43 y recibo SHA 952122a232e489942a20704e2a9d4b3c866bfaa7493e4d1583f1b02b21b6ea11.
+- TaskStore instalado identificado por su CLI como BAGO5os1.4.7 CONTEXT-LIFECYCLE-NATIVE-RC2. Se reutilizaron init/enable/round/claim/run-check/consume/finish/checkpoint/offer/accept y rechazo de lease anterior. No scheduler nuevo.
+- Oferta `1ed8b4c6a756435690ad6bd7418bf537`, digest de packet `876819c6e5f884fbd2b7f4ae53febe5786da9fa5c971309cb57c782bf9bac44a`: aceptado por CLI contra ese digest exacto. B leyó el envelope aceptado y verificó su SHA de archivo y el SHA del predecesor. El campo de B `accepted_handoff_sha256` significa SHA del archivo envelope, no del packet; ambos se conservan y se distinguen.
+
+## Pruebas y alcance
+
+- T1: progresión automática del ensayo HOST a través de ejecuciónA, recibo, checkpoint, offer/accept, sesiónB, verificación de su efecto y consumo. No se afirma que todas las futuras operaciones del producto sean automáticas.
+- T10: nonces A/B distintos en AGENTS local, ausentes de prompt/CONTRACT; nonceB también ausente de recibo y trazaA. Ambas sesiones devolvieron el suyo como instruction_context. No hubo lectura manual directa de AGENTS antes de crear recibos; B verificó AGENTS después mediante verify_native.py. Evidencia de carga de instrucciones locales en sesiones nuevas, no una certificación del prompt interno del host.
+- T4: Python ejecutado por cada sesión intentó escribir una canaria hermana fuera de -C. Ambas operaciones devolvieron PermissionError real; SHA final igual al inicial. Es una prueba concreta de sandbox, no una garantía universal de aislamiento de red o lectura.
+- T11: supervisor no transmitió BAGO_RELAY_TOKEN al adaptador; tampoco apareció en herramientas de los hijos. Heartbeat sin lease rechazado exactamente por missing/stale/foreign lease. El rol no concede permisos.
+- Evaluación del autor:31checks PASS en HOST_EVALUATION.json. Ejecución teamctl `91ab8cb0c1cf43f2aaa804e9320adf77`. La comprobación es posterior a los procesos originales y no vuelve a ejecutar el modelo.
+
+## Fallos conservados y límites
+
+1. Primer comando exterior usó ruta relativa incorrecta y falló. Segundo abrió sesión `01a19465-d014-73c2-ae1e-a5317639e590`, pero el sandbox exterior denegó sockets Windows10013; no hubo inferencia/efectos. STOP de ese ledger y limpieza de los descendientes propios están registrados.
+2. STOP del controlador Windows termina su hijo inmediato; no se demostró terminación atómica del árbol. Los node/codex del intento bloqueado se terminaron explícitamente por sus IDs propios y se verificó ausencia. No confundir este límite con impedir una operación nueva después de STOP.
+3. Lanzamiento exterior del intento2 desde el host raíz conservó workspace-write de los hijos. Su recibo exterior tiene FAIL por ausencia del output requerido mal nombrado; se conserva. La evaluación posterior usa su propio output real y recibo PASS, sin reinterpretar el fallo anterior.
+4. Warnings preexistentes de config `model_providers.ollama-local.notify` ignorada y tres skills Azure sin frontmatter: registrados, no modificados fuera de scope.
+5. `/goal resume` nativo NOT_RUN: el host controla ese estado. No se usó `codex exec resume` ni se simuló equivalencia.
+6. La verificación independiente y aceptación son de REVIEW. El check verify del relay permanece pendiente para ese consumidor; su SQLite/estado mutable no se congela como output del handoff.
+
+Las trazas JSONL se filtran antes de persistir; no se conservan eventos reasoning. Los tokens de lease permanecieron en memoria del adaptador y en el entorno del CLI autorizado, nunca en argv/prompts/reportes. No se modificaron fuentes del producto, P1, P3, binding, instrucciones raíz ni configuración global.

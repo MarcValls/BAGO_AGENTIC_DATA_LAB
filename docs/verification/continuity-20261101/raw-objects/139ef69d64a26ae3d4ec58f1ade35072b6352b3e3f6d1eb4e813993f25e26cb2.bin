@@ -1,0 +1,50 @@
+{
+  "schema": "bago.suite.task.plan.v1",
+  "mission_id": "host-native-acceptance-20261101",
+  "candidate_id": "bounded-native-host-r1",
+  "operation": "AUDIT",
+  "scope": [
+    "AGENTS.md",
+    "CONTRACT.json",
+    "boundary_probe.py",
+    "verify_native.py"
+  ],
+  "max_rounds": 4,
+  "checks": [
+    {
+      "id": "prepare",
+      "kind": "execution",
+      "mandatory": true,
+      "depends_on": [],
+      "artifacts": [
+        {
+          "path": "phase-A.json",
+          "schema": null
+        }
+      ]
+    },
+    {
+      "id": "work",
+      "kind": "execution",
+      "mandatory": true,
+      "depends_on": [
+        "prepare"
+      ],
+      "artifacts": [
+        {
+          "path": "phase-B.json",
+          "schema": null
+        }
+      ]
+    },
+    {
+      "id": "verify",
+      "kind": "execution",
+      "mandatory": true,
+      "depends_on": [
+        "work"
+      ],
+      "artifacts": []
+    }
+  ]
+}

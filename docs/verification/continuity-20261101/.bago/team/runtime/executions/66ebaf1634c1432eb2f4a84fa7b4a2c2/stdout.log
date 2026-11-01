@@ -1,0 +1,1 @@
+{"status": "PASS", "check_id": "portable-evidence", "scope": "Finite raw public bytes only; no runtime repeated.", "observed": {"status": "PASS", "scope": "finite raw bytes and raw-to-Git-LF equivalence only", "logical_files": 153, "physical_payloads": 143, "source_normalizations": 0, "errors": [], "product_validation": "NOT_IMPLIED", "Windows_paths_required": false}}

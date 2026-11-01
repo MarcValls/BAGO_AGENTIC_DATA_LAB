@@ -1,0 +1,29 @@
+[
+  {
+    "conclusion": "success",
+    "databaseId": 41250976019,
+    "event": "push",
+    "headSha": "ed0efc83cc39a40aac231d9aa0da77a5d30a91e7",
+    "name": "README consistency",
+    "status": "completed",
+    "url": "https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/actions/runs/41250976019"
+  },
+  {
+    "conclusion": "success",
+    "databaseId": 41250976018,
+    "event": "push",
+    "headSha": "ed0efc83cc39a40aac231d9aa0da77a5d30a91e7",
+    "name": "Docker Build and Push",
+    "status": "completed",
+    "url": "https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/actions/runs/41250976018"
+  },
+  {
+    "conclusion": "success",
+    "databaseId": 41250976115,
+    "event": "push",
+    "headSha": "ed0efc83cc39a40aac231d9aa0da77a5d30a91e7",
+    "name": "CI",
+    "status": "completed",
+    "url": "https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/actions/runs/41250976115"
+  }
+]

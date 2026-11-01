@@ -1,0 +1,96 @@
+{
+  "result": {
+    "ok": true,
+    "executed": true,
+    "effect_id": "filesystem.write",
+    "path": "canary.txt",
+    "absolute_path": "\\\\?\\C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\.bago\\goals\\operational-continuity-governance-20261031\\evidence\\acceptance-20261101\\workspace\\governance\\supplement1\\missing_receipt\\w\\canary.txt",
+    "project_root": "\\\\?\\C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\.bago\\goals\\operational-continuity-governance-20261031\\evidence\\acceptance-20261101\\workspace\\governance\\supplement1\\missing_receipt\\w",
+    "created": false,
+    "overwritten": true,
+    "bytes_written": 18,
+    "evidence": [
+      "file_sha256:169780c31eccc80e8bc3ec558000183570d7aa221b81aa6a072bfef59383a7eb",
+      "path:\\\\?\\C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\.bago\\goals\\operational-continuity-governance-20261031\\evidence\\acceptance-20261101\\workspace\\governance\\supplement1\\missing_receipt\\w\\canary.txt"
+    ],
+    "receipt_id": "filesystem-write:sha256:666a6ac05274037fc293d91b1c2381a0dfe4573bd4c1d37075ff8b77f3b0e0c6"
+  },
+  "authorization": {
+    "permit_id": "permit-a6ee46383dcc4997b8069e12d74189c3",
+    "decision_id": "authdec-6b7a795531914b7ca2ffaed43ed1b2a5",
+    "proof_id": "authproof-b9f4707207904d7a9b5c46587cb51c2a",
+    "operation_fingerprint": "3b3f42c41569866628e99ca3c930f61c327f1e78ab48237ad9ae089a6614913a",
+    "request_id": "exec-30165c5e78a9417faef6fc2338797d2f",
+    "effect_id": "filesystem.write",
+    "session_id": "gov-parent",
+    "issued_at": "2026-11-01T00:00:09.482107+00:00",
+    "expires_at": "2026-11-01T00:02:09.482107+00:00",
+    "world_state_digest": "8c38ed6f9cf5696cdb98d5c93222f2d01c0b090ab4c316880dfc589697024f97",
+    "state": "consumed",
+    "proof": {
+      "proof_id": "authproof-b9f4707207904d7a9b5c46587cb51c2a",
+      "principal_id": "governance-test",
+      "authenticated_session_id": "gov-parent",
+      "interaction_id": "GO+OK_ACEPTO:GOV-missing_receipt",
+      "operation_fingerprint": "3b3f42c41569866628e99ca3c930f61c327f1e78ab48237ad9ae089a6614913a",
+      "effect_id": "filesystem.write",
+      "user_decision": "approve",
+      "issued_at": "2026-11-01T00:00:09.482107+00:00",
+      "expires_at": "2026-11-01T00:02:09.482107+00:00",
+      "provenance": {
+        "kind": "direct_user_interaction",
+        "channel": "chatgpt-user-authorized-continuity-test",
+        "verified_by": "local_host_canary_scope:5bf332f4f0c024605b4c21de598f97c9f336fe55c95e99d19762ab92292b1234",
+        "contract": "bago.authorization/v2"
+      }
+    },
+    "decision": {
+      "decision_id": "authdec-6b7a795531914b7ca2ffaed43ed1b2a5",
+      "result": "allow",
+      "proof_id": "authproof-b9f4707207904d7a9b5c46587cb51c2a",
+      "operation_fingerprint": "3b3f42c41569866628e99ca3c930f61c327f1e78ab48237ad9ae089a6614913a",
+      "effect_id": "filesystem.write",
+      "reason": "verified_direct_user_interaction",
+      "decided_at": "2026-11-01T00:00:09.482107+00:00"
+    },
+    "consumed_at": "2026-11-01T00:00:09.484330+00:00",
+    "executed_request_id": "exec-30165c5e78a9417faef6fc2338797d2f",
+    "executed_request": {
+      "request_id": "exec-30165c5e78a9417faef6fc2338797d2f",
+      "contract": "bago.execution-request/v3",
+      "effect_id": "filesystem.write",
+      "actor_kind": "agent",
+      "principal_id": "governance-test",
+      "session_id": "gov-parent",
+      "source_surface": "host.continuity-acceptance",
+      "target": {
+        "path": "canary.txt"
+      },
+      "target_digest": "6071c339c8b636dc7a1b49f7fe15a5d21b5ddd37ba5e3e7b74899b0ce22c364e",
+      "arguments_digest": "0431073b3f89697162e318a476308c6c6ca8ef22d3b16fa36ac82e83ce69a4aa",
+      "scope": "workspace",
+      "policy_version": "309702e4871ff90ca527e9d2ae7f8bcfa669a91a8a79c0dcd2cfbbe49f8ff119",
+      "world_state_digest": "8c38ed6f9cf5696cdb98d5c93222f2d01c0b090ab4c316880dfc589697024f97",
+      "parent_execution_id": "",
+      "delegation_id": "",
+      "preconditions": [],
+      "operation_fingerprint": "3b3f42c41569866628e99ca3c930f61c327f1e78ab48237ad9ae089a6614913a"
+    }
+  },
+  "inherited_parent_permit_rejected": {
+    "type": "AuthorizationError",
+    "code": "authorization_permit_invalid",
+    "message": "Permit desconocido"
+  },
+  "own_single_use_replay_rejected": {
+    "type": "AuthorizationError",
+    "code": "authorization_permit_replay",
+    "message": "Permit ya consumido o revocado"
+  },
+  "actual_file_after_replay": {
+    "exists": true,
+    "sha256": "169780c31eccc80e8bc3ec558000183570d7aa221b81aa6a072bfef59383a7eb",
+    "mtime_ns": 1793491209481507300
+  },
+  "new_authority_origin": "Fresh native issuance in this worker, after current GO canary scope and TaskStore ACTIVE checks; not inherited parent authority"
+}

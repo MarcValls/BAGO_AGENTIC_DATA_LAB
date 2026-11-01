@@ -1,0 +1,15 @@
+# Active handoff
+
+Goal: `.bago/goals/operational-continuity-governance-20261031/goal.md`
+
+Status: `PREPARED`; local continuity instructions are being applied and Browser Bridge P2 is delegated.
+
+Mission: `CODEX_GOVERNED_CONTINUITY_20261031`, candidate and write scopes registered in `.bago/team/runtime/state.json`; terminal gate `OPEN`.
+
+Preserved before activation: prior active handoff and legacy `ADL_SAVED_AGENT_TASKS_20261020` team state, with matching SHA-256 values in `.bago/goals/operational-continuity-governance-20261031/evidence/control/preexisting-runtime-archive.json`. The prior team state was `LEGACY_UNVERIFIED`; its old `DONE` label was not promoted.
+
+Browser Bridge: CR-014 approval is recorded in revision4, revision5 plan is in the existing Browser Bridge worktree, and `P2_HOST_R5` has been claimed by the P2 agent. P1, P3, binding, revision2, revision4 and the visible Brave session stay preserved.
+
+Host boundary: Codex native Goal currently reports `paused`; this runtime has no resume operation. Do not simulate `/goal resume` or automatically change host state. Continue the current user-authorized task in this turn. Physical agent write isolation is unavailable under `danger-full-access`; use scopes, separate paths, and post-change verification without claiming an OS sandbox.
+
+Continuation rule: once a required work item is validly handed off, verify it, recompute `teamctl pair`, and dispatch the next authorized dependent work without ending merely to announce it. Stop only at a real blocker or required user/host decision.

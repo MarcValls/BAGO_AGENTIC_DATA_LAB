@@ -1,0 +1,28 @@
+# Continuidad operativa gobernada en Codex
+
+## Objetivo
+Reducir las interrupciones entre planificación, registro, autorización, delegación, ejecución, verificación, evidencias y cierre cuando el trabajo está definido y autorizado, sin ampliar autoridad ni reanudar pausas del host explícitas o de causa desconocida.
+
+## Criterios de aceptación
+La configuración local de BAGO5_ADL mantiene el trabajo autorizado en el turno activo; registra misión, dependencias y scopes; usa Browser Bridge Brave revision5 como prueba; ejecuta T1-T12 con evidencia y `NOT_RUN` donde falte capacidad; y cierra con revisión independiente y README generado, o informa `NO_GO` con el bloqueo exacto.
+
+## Alcance
+Incluye `AGENTS.md`, goal/evidencias bajo este directorio y el host P2 más pruebas y artefactos revision5 en el worktree Browser Bridge. Excluye cambios globales de Codex, `.codex/config.toml`, el estado nativo de `/goal`, P1, P3, binding P2/P3, ADL/GEX, permisos del host, páginas externas y datos privados.
+
+## Diagnóstico inicial
+- El runtime expone `get_goal`, `create_goal` y `update_goal`, pero ninguna operación de reanudación; el Goal actual figura `paused`.
+- `teamctl` valida dependencias, scopes y recibos; `continue` informa `automatic_rounds: false` y no despacha agentes.
+- El worktree Browser Bridge tiene revision4 `E2E4` en `CLAIMED`, CR-014 aprobada y plan revision5; el agente P2 solo leyó y verificó el hash del plan.
+- La sesión usa `danger-full-access`. Los scopes teamctl son validación de coordinación/handoff, no sandbox del sistema operativo.
+
+## Plan y evidencia
+| Paso | Acción | Evidencia | Estado |
+|---|---|---|---|
+| P0 | Inspeccionar repo, Codex Goal y teamctl | ruta, archivos locales y OpenAI Docs | VERIFIED |
+| P1 | Registrar objetivo y misión acotada | `mission.json`, `evidence/control/` | PREPARED |
+| P2 | Persistir continuidad local y handoff | `AGENTS.md`, `ACTIVE_HANDOFF.md`, check | PROPOSED |
+| P3 | Reparar P2 y validar Brave | revisión5 y recibos | PROPOSED |
+| P4 | Revisión independiente, matriz T1-T12 y README | `evidence/review/`, `evidence/closure/` | PROPOSED |
+
+## Límites
+Goals es estado persistente ligado al hilo; el host controla pausa/reanudación. Las interrupciones pueden pausar el Goal y su ciclo de vida es controlado por usuario/sistema. Los agentes comparten el perfil de filesystem; no se afirmará que los scopes evitan físicamente escrituras fuera de alcance.

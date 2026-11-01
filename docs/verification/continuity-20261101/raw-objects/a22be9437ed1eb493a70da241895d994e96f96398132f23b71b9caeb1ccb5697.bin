@@ -1,0 +1,226 @@
+'use strict';
+
+const fs = require('node:fs');
+const path = require('node:path');
+const crypto = require('node:crypto');
+const { execFileSync } = require('node:child_process');
+
+const root = path.resolve(__dirname, '../../..');
+const revision = path.join(root, '.bago/goals/browser-bridge-runtime-validation-20261030/revision5');
+const profile = path.join(revision, 'evidence/runtime/profile-brave-r5-attempt7');
+const screenshotDir = path.join(revision, 'screenshots');
+const videoDir = path.join(revision, 'video');
+const outputPath = path.join(revision, 'evidence/runtime/brave-native-messaging-runtime-attempt7.json');
+const screenshotPath = path.join(screenshotDir, 'fixture-brave-r5-attempt7.png');
+const videoPath = path.join(videoDir, 'fixture-brave-r5-attempt7.webm');
+const braveExe = 'C:/Program Files/BraveSoftware/Brave-Browser/Application/brave.exe';
+const extensionDir = path.join(root, 'extensions/bago-browser-bridge');
+const extensionId = 'jeocgjmcakdgbogpcbmhmpcfkgamoaec';
+const hostName = 'com.bago.browser_bridge';
+const fixtureUrl = 'http://127.0.0.1:18765/';
+const playwrightPath = path.join(root, '.bago/goals/browser-bridge-runtime-validation-20261030/tooling/playwright/node_modules/playwright-core');
+
+function assert(condition, message) {
+  if (!condition) throw new Error(message);
+}
+
+async function run() {
+  const result = {
+    status: 'FAIL',
+    browser: 'Brave',
+    fixture_url: fixtureUrl,
+    extension_id: extensionId,
+    host_name: hostName,
+    registry_key: 'HKCU\\Software\\Google\\Chrome\\NativeMessagingHosts\\com.bago.browser_bridge',
+    registry_view: 'Registry64 (Chromium lookup checks Registry32 then Registry64)',
+    toolbar_gesture: 'NOT_RUN',
+    video: { status: 'NOT_RUN', reason: 'Playwright ffmpeg-1013 bundle is unavailable; no binary was copied or installed.' },
+    interaction: 'Native Messaging API invoked directly from the loaded extension popup page; no toolbar click or window activation.',
+    protocol_responses: [],
+    browser_errors: [],
+  };
+  let context;
+  let video;
+  let earlyWorkerPromise;
+  try {
+    for (const target of [profile, screenshotPath, videoPath, outputPath]) {
+      assert(!fs.existsSync(target), `refusing to overwrite existing artifact: ${target}`);
+    }
+    fs.mkdirSync(screenshotDir, { recursive: true });
+    fs.mkdirSync(videoDir, { recursive: true });
+    const { chromium } = require(playwrightPath);
+    context = await chromium.launchPersistentContext(profile, {
+      executablePath: braveExe,
+      headless: false,
+      viewport: { width: 1280, height: 800 },
+      ignoreDefaultArgs: ['--disable-extensions'],
+      args: [
+        `--disable-extensions-except=${extensionDir}`,
+        `--load-extension=${extensionDir}`,
+        '--enable-extensions',
+        '--no-first-run',
+        '--no-default-browser-check',
+        '--start-minimized',
+        '--window-position=-32000,-32000',
+        '--window-size=1280,800',
+      ],
+    });
+    const workerUrl = `chrome-extension://${extensionId}/service_worker.js`;
+    // Subscribe immediately after launch so a short-lived startup event cannot be missed
+    // while the fixture is loading and its screenshot is captured.
+    earlyWorkerPromise = context.waitForEvent('serviceworker', { timeout: 20000 }).catch(() => null);
+    const page = context.pages()[0] || await context.newPage();
+    page.on('pageerror', (error) => result.browser_errors.push(String(error)));
+    page.on('console', (message) => {
+      if (message.type() === 'error' && !message.text().includes('favicon')) result.browser_errors.push(message.text());
+    });
+    await page.goto(fixtureUrl, { waitUntil: 'domcontentloaded', timeout: 15000 });
+    assert(new URL(page.url()).origin === new URL(fixtureUrl).origin, 'fixture origin mismatch');
+    result.page_title = await page.title();
+    const content = (await page.locator('main').innerText()).replace(/\s+/g, ' ').trim();
+    assert(content.includes('Texto sintético autorizado para comprobar el resumen.'), 'fixture text marker missing');
+    assert(content.includes('Vector inerte:'), 'fixture inert-vector marker missing');
+    const contentBytes = Buffer.from(content, 'utf8');
+    const digest = crypto.createHash('sha256').update(contentBytes).digest('hex');
+    const cdp = await context.newCDPSession(page);
+    const frameTree = await cdp.send('Page.getFrameTree');
+    const documentEpoch = frameTree.frameTree.frame.loaderId;
+    assert(typeof documentEpoch === 'string' && documentEpoch.length > 0, 'document loader id unavailable');
+    result.document_epoch = documentEpoch;
+    result.origin = new URL(page.url()).origin;
+    result.sha256 = digest;
+    result.byte_length = contentBytes.length;
+    await page.screenshot({ path: screenshotPath, fullPage: true });
+
+    let worker = context.serviceWorkers().find((candidate) => candidate.url() === workerUrl);
+    if (!worker && earlyWorkerPromise) {
+      const eventWorker = await earlyWorkerPromise;
+      if (eventWorker?.url() === workerUrl) worker = eventWorker;
+    }
+    result.service_worker = worker?.url() || 'NOT_OBSERVED';
+    const browserCdp = await context.browser().newBrowserCDPSession();
+    try {
+      await browserCdp.send('Target.setDiscoverTargets', { discover: true });
+      const targets = await browserCdp.send('Target.getTargets');
+      result.service_worker_targets = targets.targetInfos
+        .filter((target) => target.type === 'service_worker' && target.url.startsWith(`chrome-extension://${extensionId}/`));
+    } finally { await browserCdp.detach(); }
+
+    // Use a stable extension document context for Native Messaging. The service worker
+    // can be suspended between Playwright discovery and evaluation on Chromium.
+    const fixtureTabId = await page.evaluate(async () => {
+      const tabs = await chrome.tabs.query({ active: true, lastFocusedWindow: true });
+      if (!tabs[0] || !Number.isInteger(tabs[0].id)) throw new Error('fixture tab ID unavailable');
+      return tabs[0].id;
+    }).catch(() => null);
+    result.fixture_tab_id_before_popup = fixtureTabId;
+    await page.goto(`chrome-extension://${extensionId}/popup.html`, { waitUntil: 'domcontentloaded', timeout: 15000 });
+    result.extension_page_url = page.url();
+    result.connect_native_type = await page.evaluate(() => typeof chrome.runtime.connectNative);
+    assert(result.connect_native_type === 'function', 'connectNative is unavailable in extension page');
+
+    const payload = {
+      protocol_version: 'bago.browser-bridge.native.v2',
+      type: 'share_preview',
+      request_id: 'r5-valid-preview-01',
+      document_epoch: documentEpoch,
+      origin: result.origin,
+      title: result.page_title,
+      text_base64: contentBytes.toString('base64'),
+      sha256: digest,
+      byte_length: contentBytes.length,
+    };
+    const protocol = await page.evaluate(async ({ hostName, payload, badDigest, wrongOrigin }) => {
+      const tabs = await chrome.tabs.query({});
+      const active = tabs.find((tab) => tab.active) || tabs[0];
+      if (!active || !Number.isInteger(active.id)) throw new Error('active Brave tab id unavailable');
+      payload.tab_id = active.id;
+      const wrongDigestPayload = { ...payload, request_id: 'r5-deny-digest-01', sha256: badDigest };
+      const wrongOriginPayload = { ...payload, request_id: 'r5-deny-origin-01', origin: wrongOrigin };
+      return await new Promise((resolve, reject) => {
+        const port = chrome.runtime.connectNative(hostName);
+        self.__bagoR5NativePort = port;
+        const responses = [];
+        const requests = [
+          { protocol_version: 'bago.browser-bridge.native.v2', type: 'hello', request_id: 'r5-hello-01' },
+          payload,
+          wrongDigestPayload,
+          wrongOriginPayload,
+          { protocol_version: 'bago.browser-bridge.native.v2', type: 'shell', request_id: 'r5-deny-shell-01' },
+        ];
+        let expected = 0;
+        const timer = setTimeout(() => reject(new Error('Native Messaging response timeout')), 12000);
+        port.onMessage.addListener((message) => {
+          responses.push(message);
+          if (expected === 0) {
+            if (message.type !== 'ready' || message.accepted !== true) return reject(new Error('Native Messaging handshake rejected'));
+          } else if (expected === 1) {
+            if (message.type !== 'preview_receipt' || message.accepted !== true) return reject(new Error('valid fixture preview was not receipted'));
+          } else if (message.type !== 'denied' || message.accepted !== false) {
+            return reject(new Error(`negative case ${expected} was not denied`));
+          }
+          expected += 1;
+          if (expected === requests.length) {
+            clearTimeout(timer);
+            resolve({ tab_id: active.id, responses });
+          } else {
+            port.postMessage(requests[expected]);
+          }
+        });
+        port.onDisconnect.addListener(() => {
+          const reason = chrome.runtime.lastError?.message || 'Native Messaging port disconnected early';
+          if (expected < requests.length) reject(new Error(reason));
+        });
+        port.postMessage(requests[0]);
+      });
+    }, {
+      hostName,
+      payload,
+      badDigest: '0'.repeat(64),
+      wrongOrigin: 'https://example.invalid',
+    });
+    result.tab_id = protocol.tab_id;
+    result.protocol_responses = protocol.responses;
+    assert(protocol.responses.length === 5, 'unexpected response count');
+    const receipt = protocol.responses[1];
+    assert(receipt.request_id === payload.request_id, 'receipt request_id mismatch');
+    assert(receipt.tab_id === protocol.tab_id, 'receipt tab_id mismatch');
+    assert(receipt.document_epoch === documentEpoch, 'receipt document_epoch mismatch');
+    assert(receipt.sha256 === digest && receipt.byte_length === contentBytes.length, 'receipt digest/length mismatch');
+    assert(receipt.content_retained === false, 'host reported retained content');
+    result.denial_cases = ['altered digest', 'non-fixture origin', 'shell command'].map((name, index) => ({
+      case: name,
+      response_type: protocol.responses[index + 2].type,
+      accepted: protocol.responses[index + 2].accepted,
+    }));
+
+    const hostProcesses = execFileSync('powershell.exe', ['-NoProfile', '-Command',
+      "Get-CimInstance Win32_Process -Filter \"Name='BagoBrowserBridgeHost.exe'\" | Select-Object ProcessId,CommandLine | ConvertTo-Json -Compress"],
+      { encoding: 'utf8', windowsHide: true }).trim();
+    result.native_host_process_snapshot = hostProcesses ? JSON.parse(hostProcesses) : [];
+    const processRows = Array.isArray(result.native_host_process_snapshot)
+      ? result.native_host_process_snapshot : [result.native_host_process_snapshot];
+    result.parent_window_argument_observed = processRows.some((row) => /--parent-window=[+-]?\d+/.test(row.CommandLine || ''));
+    assert(result.parent_window_argument_observed, 'Brave host process command line did not expose --parent-window');
+    result.status = 'PASS';
+  } catch (error) {
+    result.error = String(error && error.stack ? error.stack : error);
+  } finally {
+    if (context) {
+      try { await context.close(); }
+      catch (error) { result.context_close_error = String(error); result.status = 'FAIL'; }
+    }
+    if (fs.existsSync(screenshotPath)) result.screenshot = path.relative(root, screenshotPath).replaceAll(path.sep, '/');
+    result.recorded_at_utc = new Date().toISOString();
+    fs.writeFileSync(outputPath, `${JSON.stringify(result, null, 2)}\n`, { encoding: 'utf8', flag: 'wx' });
+  }
+  return result;
+}
+
+run().then((result) => {
+  process.stdout.write(`${JSON.stringify(result)}\n`);
+  if (result.status !== 'PASS') process.exitCode = 1;
+}).catch((error) => {
+  process.stderr.write(`${String(error)}\n`);
+  process.exitCode = 1;
+});

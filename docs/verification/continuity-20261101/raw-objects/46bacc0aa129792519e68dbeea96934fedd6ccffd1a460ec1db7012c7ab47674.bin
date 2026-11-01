@@ -1,0 +1,35 @@
+# Independent continuity acceptance review
+
+Mission `BAGO_CONTINUITY_ACCEPTANCE_20261101`; candidate `0f74f0d818f422d2a9506957e6396070300bbb77d88c602605b4fa647e7cc774`; scope `0af844db09c04531999970ed71e0bce9ed1f51245b48416d0453a7bc7cef9df9`.
+
+## Verdict
+
+**Local T1–T12 evidence: GO_SCOPED. Original mission closure: NO_GO pending publication and generated README gate.** This review did not modify product, frozen GOV/HOST/PROVENANCE evidence, P1/P3/binding, global configuration, or the historical goal ledger.
+
+The package handoffs were checked against their registered identities and declared output hashes. Managed `teamctl verify` and `pair` passed before review. A separate read-only checker was executed by the HOST TaskStore `independent-review` worker: receipt `host/attempt2/relay-state/receipts/b081a48f6b3e40c580409d016f3c1931.json`, SHA-256 `b223bb5d9ae77d32c5994713b40f3854e3af1b73bf49904995183dd412d3395d`; process PID 13420, exit 0. It verified seven assertions: native A/B session identity and handoff chain, both canary denials and unchanged hash, GOV/HOST/PROVENANCE handoff identity and outputs, and presence of the governance matrix/report. The first wrapper discarded the lease token before `consume`/`finish`; that attempt is preserved. After lease expiry, the documented recovery API was used with the completed child record as the stop confirmation. A redundant rerun was rejected before process creation because the frozen check permits one attempt per round; it produced no additional run record. The existing PASS receipt was then consumed (`evidence_status=VALID`) and the relay verifier work finished DONE by `independent-review`.
+
+The formal team check `independent-acceptance` passed as final execution `e410f589a6b74d8f9b0cec1cf2583e27`, with output `review/independent-acceptance.json` SHA-256 `e0b371abe3080a5029536b7ba8fb9c1748aade29ff82150c81fea06d9b16e3b5`. Its first attempt failed because the checker printed PASS but did not create the declared output file; that failed attempt and receipt remain preserved. The corrected checker writes only the required reviewer result inside the assigned `review/**` scope.
+
+The original acceptance requires public Brave revision5 runtime receipts and generated README validation, or a precise NO_GO. Current public `origin/main` at `ed0efc83cc39a40aac231d9aa0da77a5d30a91e7` did not contain the revision5 runtime receipt/evidence paths when independently inspected. PR111's merge and green CI establish the nearest-goals publication/security checks, not publication of the separate Brave P2 evidence. Root has since registered an evidence-only publication mission, but its export work is still claimed; no public receipt or README result is yet verified here. The original `status.json` remains historical PREPARED / AC-01..12 OPEN and is not overwritten by this review.
+
+## T1–T12 findings
+
+See `goal-matrix.json` for per-criterion status, evidence paths, and scoped closure eligibility. In brief, the bounded local evidence supports T1–T3, T5, T7–T9 and T12; T4, T6, T10 and T11 are scoped to the exact tested native sessions, workers, canary, and adapters. The original mission as a whole remains NO_GO until publication and README requirements are resolved.
+
+## Material limits
+
+- Native `/goal resume` is explicitly outside the original goal scope and unavailable in the host API. No bypass or simulated resume was used.
+- TaskStore leases and mission scopes are logical coordination, not a universal OS sandbox. The two actual Codex sessions did receive `PermissionError` writing the exact sibling canary, whose SHA remained unchanged; this proves only that tested boundary.
+- STOP blocked subsequent admitted launches/claims in the checked adapters. Windows descendant termination was not atomic; owned descendants were explicitly cleaned and checked.
+- HOST's 31 authored checks are not independent review. This review independently checked the registered evidence and ran the separate read-only managed checker; it did not repeat native sessions, the governance suite, browser tests, or CI.
+- Brave R5 attempt7 executed real `chrome.runtime.connectNative` from the loaded extension popup in isolated Brave, returned handshake and digest receipt, and denied altered digest, non-fixture origin, and shell-command cases. The runtime record SHA-256 is `a39a9b4d0367d03ad205b97cb78d79151a8b9db89b7b92e16aa92658a5bcfec9`; managed runtime receipt `82c2292c60ea403e9dadb313be96202d` SHA-256 `552bb8d8f13d4a8cc31e7adcc9223c499c48c6548432412915a32288df2ccde6`. Cleanup verification SHA-256 `1bf5c6fb1386219a61f6f4ac57f18c0d974ed2589ba0b9e222ef51b1dc29a9ec` confirms registry, manifest, isolated profile and host processes absent and foreground PID/title unchanged; cleanup receipt `8d3041fd47fa4d4bb821aca94f642596` SHA-256 `75da9ac53db22df4351fc3f771acb72a5eab5007ba214432e1f804c15759fbf4`. Screenshot SHA-256 `614bb7bb7ea375f271736bbc733600b641516052429ca8994c9aafdb647d1f9d`. Toolbar gesture and video are NOT_RUN; a fixture resource returned 404. Earlier failed attempts remain preserved. Public availability of this evidence remains pending the current evidence-only publication candidate.
+- The generated README commands were not run by this reviewer: the evidence-only publication candidate has not completed. Do not infer README closure from PR111 CI.
+
+## Independent evidence pointers
+
+- `host/attempt2/NATIVE_EXECUTION.json`: actual native session IDs/PIDs, return codes, process receipt digests, current TaskStore summary.
+- `host/attempt2/worker/phase-A.json`, `phase-B.json`, `accepted-handoff.json`: predecessor/output and packet/envelope hash chain.
+- `host/attempt2/worker/probe-A.json`, `probe-B.json`, `host/attempt2/outside-canary.txt`: OS write denial and unchanged canary.
+- `governance/MATRIX.json`, `REPORT.md`, `evidence-manifest.json`: local authorization-boundary cases and limits.
+- `.bago/team/runtime/handoffs/{GOV,HOST,PROVENANCE}.json`: managed handoff records; their outputs were hash-checked by `review/independent_verify.py` under the TaskStore run.
+- `review/goal-matrix.json`, `review/independent_verify.py`: this independent result and its reproducible read-only verifier.

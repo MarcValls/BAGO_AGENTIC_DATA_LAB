@@ -1,0 +1,31 @@
+"""Final consistency on this publication worktree; all local effects stay in this gate."""
+from pathlib import Path
+import hashlib,json,os,subprocess,sys,time
+HERE=Path(__file__).resolve().parent;REPO=next(p for p in HERE.parents if (p/'.git').exists())
+sha=lambda p:hashlib.sha256(p.read_bytes()).hexdigest()
+load=lambda p:json.loads(p.read_text(encoding='utf-8-sig'))
+docker=load(HERE/'attempt1/RESULT.json');manifest=load(HERE/'INPUT_MANIFEST.json')
+assert docker['status']=='PASS' and docker['writeback'] is True
+assert all(sha(REPO/v['path'])==v['sha256'] for v in manifest['uncommitted_overlay'])
+assert all(sha(REPO/v['path'])==v['sha256'] for v in docker['generated_files'])
+folder=HERE/'local-check-attempt1';folder.mkdir(exist_ok=False)
+temp=HERE/'tmp';temp.mkdir(exist_ok=False)
+env=dict(os.environ)
+for key in ['BAGO_APP_ROOT','BAGO_DATA_ROOT','BAGO_CONVERSATION_DB_PATH','BAGO_TASK_HISTORY_PATH','BAGO_AGENT_EVALUATION_DB_PATH','PYTEST_ADDOPTS']:
+    env.pop(key,None)
+env.update(TEMP=str(temp),TMP=str(temp),BAGO_DATA_ROOT=str(temp/'data'),BAGO_CONVERSATION_DB_PATH=str(temp/'conversations.sqlite3'),
+    BAGO_TASK_HISTORY_PATH=str(temp/'tasks.sqlite3'),PYTHONDONTWRITEBYTECODE='1',PYTHONUTF8='1',
+    PYTEST_ADDOPTS=f'--basetemp={temp/"collection"} -p no:cacheprovider')
+before={p['path']:sha(REPO/p['path']) for p in docker['generated_files']}
+argv=[sys.executable,'-B','scripts/generate_dynamic_readme.py','--check','--skip-tests']
+started=time.time()
+with (folder/'stdout.log').open('xb') as stdout,(folder/'stderr.log').open('xb') as stderr:
+    p=subprocess.run(argv,cwd=REPO,env=env,stdout=stdout,stderr=stderr,timeout=180)
+head=subprocess.check_output(['git','rev-parse','HEAD'],cwd=REPO,text=True).strip()
+unchanged=all(sha(REPO/v['path'])==v['sha256'] for v in manifest['uncommitted_overlay']) and all(sha(REPO/name)==digest for name,digest in before.items())
+ok=p.returncode==0 and unchanged and head==manifest['head']
+result={'status':'PASS' if ok else 'FAIL','argv':argv,'returncode':p.returncode,'seconds':round(time.time()-started,3),'head':head,
+ 'scope':'Actual final Windows publication worktree with current public docs; consistency/collection only, NOT_RUN for full-suite execution.',
+ 'overlay_unchanged':unchanged,'readmes_unchanged_by_check':before,'writes_scope':'This readme-gate only: logs/result/temp/data; no source/README/AGENTS edits.',
+ 'docker_runtime_limit':'pypdf6.21.2 in cached image, declared pin6.21.4; future pinned branch CI separate.'}
+(folder/'RESULT.json').write_text(json.dumps(result,indent=2)+'\n',encoding='utf-8');print(json.dumps(result));sys.exit(0 if ok else 1)

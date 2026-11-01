@@ -1,0 +1,54 @@
+{
+  "files": [
+    {
+      "path": "native_session.py",
+      "sha256": "55ece5fe17c4fa4d1e15301d62e3329247af382c815f56356ffabbae85ac84ce",
+      "bytes": 4925
+    },
+    {
+      "path": "prepare_and_run.py",
+      "sha256": "98d1b0cfe6ba8aac47f71954e422040dbaf50950d403af336ee5cd9c39e6398d",
+      "bytes": 11291
+    },
+    {
+      "path": "plan.json",
+      "sha256": "139ef69d64a26ae3d4ec58f1ade35072b6352b3e3f6d1eb4e813993f25e26cb2",
+      "bytes": 969
+    },
+    {
+      "path": "config.json",
+      "sha256": "11e8b4ca6cdb906ebb1604a7a0f4c7e67144cf7616b937af8d4bc0796a91d12d",
+      "bytes": 419
+    },
+    {
+      "path": "worker\\AGENTS.md",
+      "sha256": "adc3ba16b6e2016400e32eec4ee4f3220ae3123b3f1aca1943997105cf267121",
+      "bytes": 1315
+    },
+    {
+      "path": "worker\\CONTRACT.json",
+      "sha256": "baf8a95e898079ae44212b7f46fcc911ba9c82c9b5c4287e0a994ac408fa0163",
+      "bytes": 1568
+    },
+    {
+      "path": "worker\\boundary_probe.py",
+      "sha256": "65625f41943f8d6ed2d40da7398127a74c8851ce2ccfdf469ca479ade449ca71",
+      "bytes": 1100
+    },
+    {
+      "path": "worker\\verify_native.py",
+      "sha256": "21b75359f4d224c82eaedcaf4aad002170031349083ad37f3c003e168e15742e",
+      "bytes": 561
+    },
+    {
+      "path": "outside-canary.txt",
+      "sha256": "191b8bff4456e8f32fb1b161948af0411a42a307d4cbd615ae9f65f1f776ff2a",
+      "bytes": 57
+    }
+  ],
+  "head": "2b3b58963515bc99b434f43d9326b8ddd65b2682",
+  "documentation": [
+    "https://learn.chatgpt.com/docs/non-interactive-mode",
+    "https://learn.chatgpt.com/docs/security"
+  ]
+}

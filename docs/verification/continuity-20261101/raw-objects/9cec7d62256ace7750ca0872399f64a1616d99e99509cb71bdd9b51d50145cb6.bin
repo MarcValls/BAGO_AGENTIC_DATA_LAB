@@ -1,0 +1,58 @@
+{
+  "artifacts": [
+    {
+      "path": "runs/8368924ce326429caf69cc8d02f6cdef/stdout.log",
+      "root": "state",
+      "schema": null,
+      "sha256": "5fd43f521c8d177dd7365d35c4213d3d9354a363ffc9338723726dd056d3be8c",
+      "size": 254
+    },
+    {
+      "path": "runs/8368924ce326429caf69cc8d02f6cdef/stderr.log",
+      "root": "state",
+      "schema": null,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0
+    },
+    {
+      "path": "runs/8368924ce326429caf69cc8d02f6cdef/process.json",
+      "root": "state",
+      "schema": null,
+      "sha256": "325300e22931bed0723c75c03dedb8a329f9a18a2b42c3dac53659139fb30712",
+      "size": 882
+    }
+  ],
+  "candidate": {
+    "id": "canary-fixed-input",
+    "scope_sha256": "8a800749feb74d87ce94d2737253554298df114c1bed53beed01dc4e7a4d2a7a",
+    "suite": {
+      "kind": "explicit-local-governance-fixture"
+    }
+  },
+  "check_id": "work",
+  "created_at": "2026-10-31T23:59:12.775059+00:00",
+  "dependencies": [],
+  "execution": {
+    "argv": [
+      "C:\\Python314\\python.exe",
+      "-B",
+      "C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\.bago\\goals\\operational-continuity-governance-20261031\\evidence\\acceptance-20261101\\workspace\\governance\\acceptance.py",
+      "child",
+      "attempt4",
+      "positive",
+      "effect"
+    ],
+    "cwd": "\\\\?\\C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\.bago\\goals\\operational-continuity-governance-20261031\\evidence\\acceptance-20261101\\workspace\\governance\\attempt4\\positive\\w",
+    "finished_at": "2026-10-31T23:59:12.729000+00:00",
+    "interruption": "NONE",
+    "pid": 7880,
+    "returncode": 0,
+    "run_id": "8368924ce326429caf69cc8d02f6cdef",
+    "started_at": "2026-10-31T23:59:11.982938+00:00"
+  },
+  "kind": "execution",
+  "mission_id": "gov-positive",
+  "outcome": "PASS",
+  "receipt_id": "551ba6798d8e42119382a56cc807a434",
+  "schema": "bago.suite.task.receipt.v1"
+}

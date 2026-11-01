@@ -1,0 +1,81 @@
+{
+  "headRefOid": "85a9b8b99508aad08ebd04caeb45af789ef2440f",
+  "mergeCommit": {
+    "oid": "ed0efc83cc39a40aac231d9aa0da77a5d30a91e7"
+  },
+  "mergedAt": "2026-10-31T23:04:44Z",
+  "state": "MERGED",
+  "statusCheckRollup": [
+    {
+      "__typename": "CheckRun",
+      "completedAt": "2026-10-31T23:10:22Z",
+      "conclusion": "SUCCESS",
+      "detailsUrl": "https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/actions/runs/41249116680/job/124683395938",
+      "name": "verify",
+      "startedAt": "2026-10-31T23:00:59Z",
+      "status": "COMPLETED",
+      "workflowName": "CI"
+    },
+    {
+      "__typename": "CheckRun",
+      "completedAt": "2026-10-31T23:09:35Z",
+      "conclusion": "SUCCESS",
+      "detailsUrl": "https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/actions/runs/41249112678/job/124683392830",
+      "name": "verify",
+      "startedAt": "2026-10-31T23:00:58Z",
+      "status": "COMPLETED",
+      "workflowName": "CI"
+    },
+    {
+      "__typename": "CheckRun",
+      "completedAt": "2026-10-31T23:01:45Z",
+      "conclusion": "SUCCESS",
+      "detailsUrl": "https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/actions/runs/41249116656/job/124683394458",
+      "name": "build",
+      "startedAt": "2026-10-31T23:00:59Z",
+      "status": "COMPLETED",
+      "workflowName": "Docker Build and Push"
+    },
+    {
+      "__typename": "CheckRun",
+      "completedAt": "2026-10-31T23:01:27Z",
+      "conclusion": "SUCCESS",
+      "detailsUrl": "https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/actions/runs/41249116583/job/124683394120",
+      "name": "readme",
+      "startedAt": "2026-10-31T23:00:58Z",
+      "status": "COMPLETED",
+      "workflowName": "README consistency"
+    },
+    {
+      "__typename": "CheckRun",
+      "completedAt": "2026-10-31T23:01:31Z",
+      "conclusion": "SUCCESS",
+      "detailsUrl": "https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/actions/runs/41249112754/job/124683394833",
+      "name": "readme",
+      "startedAt": "2026-10-31T23:00:59Z",
+      "status": "COMPLETED",
+      "workflowName": "README consistency"
+    },
+    {
+      "__typename": "CheckRun",
+      "completedAt": "2026-10-31T23:03:21Z",
+      "conclusion": "SUCCESS",
+      "detailsUrl": "https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/actions/runs/41249116656/job/124683577691",
+      "name": "security-scan",
+      "startedAt": "2026-10-31T23:01:47Z",
+      "status": "COMPLETED",
+      "workflowName": "Docker Build and Push"
+    },
+    {
+      "__typename": "CheckRun",
+      "completedAt": "2026-10-31T23:03:11Z",
+      "conclusion": "SUCCESS",
+      "detailsUrl": "https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/runs/124683872832",
+      "name": "Trivy",
+      "startedAt": "2026-10-31T23:03:08Z",
+      "status": "COMPLETED",
+      "workflowName": ""
+    }
+  ],
+  "url": "https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/pull/111"
+}

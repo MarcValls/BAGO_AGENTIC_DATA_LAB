@@ -1,0 +1,68 @@
+{
+  "artifacts": [
+    {
+      "path": "runs/31215cc0d00342588b7b546b95b1338a/stdout.log",
+      "root": "state",
+      "schema": null,
+      "sha256": "504f87e1f9eabc0dfd5572d4ee7069bba2fadd77f47aa2c1a68521a36d168a0b",
+      "size": 492
+    },
+    {
+      "path": "runs/31215cc0d00342588b7b546b95b1338a/stderr.log",
+      "root": "state",
+      "schema": null,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0
+    },
+    {
+      "path": "runs/31215cc0d00342588b7b546b95b1338a/process.json",
+      "root": "state",
+      "schema": null,
+      "sha256": "e11b87ee08897d561000600eab8f398cd3ab51f3dd3c86a786582eb6a11337b9",
+      "size": 802
+    }
+  ],
+  "candidate": {
+    "id": "bounded-native-host-r1",
+    "scope_sha256": "67605bf6125fc79f60f80a762a214250182cf0474d9683815cf400e752ca9eff",
+    "suite": {
+      "candidate": "CONTEXT-LIFECYCLE-NATIVE-RC2",
+      "display_name": "BAGO5os 1.4.7",
+      "identity_sha256": "082ab22f16d418da4c07352e153232ee56cde70f2382ae4bcaa9905e28737d6d",
+      "package_id": "bago-operating-suite",
+      "payload_files": 600,
+      "payload_sha256": "e8a211b01420776dabafe8efdb98ea78c35c1156efcdfd0baeb7eb33aa121114",
+      "release_id": "BAGO-SUITE-147-BAGO-SKILL-RC2",
+      "schema": "bago.suite.candidate-identity.v1",
+      "scope": "exact installed skill bytes; unsigned integrity, not publisher authentication",
+      "version": "1.4.7"
+    }
+  },
+  "check_id": "verify",
+  "created_at": "2026-11-01T00:12:46.547897+00:00",
+  "dependencies": [
+    {
+      "check_id": "work",
+      "receipt_sha256": "3f52ac1454e0f1da505256931a52550daab81634b243c3c9e7dffe3ba2a0ae4e"
+    }
+  ],
+  "execution": {
+    "argv": [
+      "C:\\Python314\\python.exe",
+      "-B",
+      "C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\.bago\\goals\\operational-continuity-governance-20261031\\evidence\\acceptance-20261101\\workspace\\review\\independent_verify.py"
+    ],
+    "cwd": "C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\.bago\\goals\\operational-continuity-governance-20261031\\evidence\\acceptance-20261101\\workspace\\host\\attempt2\\worker",
+    "finished_at": "2026-11-01T00:12:46.492265+00:00",
+    "interruption": "NONE",
+    "pid": 13420,
+    "returncode": 0,
+    "run_id": "31215cc0d00342588b7b546b95b1338a",
+    "started_at": "2026-11-01T00:12:46.298099+00:00"
+  },
+  "kind": "execution",
+  "mission_id": "host-native-acceptance-20261101",
+  "outcome": "PASS",
+  "receipt_id": "b081a48f6b3e40c580409d016f3c1931",
+  "schema": "bago.suite.task.receipt.v1"
+}

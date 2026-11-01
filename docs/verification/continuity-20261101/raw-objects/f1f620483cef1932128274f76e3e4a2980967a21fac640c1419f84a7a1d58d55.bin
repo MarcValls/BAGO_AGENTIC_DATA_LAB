@@ -1,0 +1,79 @@
+{
+  "schema": "bago.continuity-publication.readme-gate.v1",
+  "status": "PASS",
+  "observed_at": "2026-11-01T01:41:27.917537+00:00",
+  "head": "ed0efc83cc39a40aac231d9aa0da77a5d30a91e7",
+  "overlay": [
+    {
+      "path": "AGENTS.md",
+      "sha256": "d11c7dc1a2a14487556fa916c83a2faa500b7131f59d980e448731a0f71a4874"
+    }
+  ],
+  "product_source_diff_empty": true,
+  "full_suite": {
+    "command": [
+      "/usr/local/bin/python",
+      "-B",
+      "scripts/generate_dynamic_readme.py"
+    ],
+    "passed": 1792,
+    "junit_counts_including_subtests": {
+      "tests": 1908,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 2
+    },
+    "junit_sha256": "8496ba62f1f5e19f8822753dfaf0fab786d8a095797ca5a0a8c803647d14cf93",
+    "image_id": "sha256:3d92378210d9a4b5411f2f74f9bfe08bd1f90787c5426b589e8b95486c243480",
+    "network": "none"
+  },
+  "docker_consistency": "PASS, --check --skip-tests; collection only NOT_RUN for execution",
+  "actual_final_windows_consistency": {
+    "status": "PASS",
+    "argv": [
+      "C:\\Python314\\python.exe",
+      "-B",
+      "scripts/generate_dynamic_readme.py",
+      "--check",
+      "--skip-tests"
+    ],
+    "returncode": 0,
+    "seconds": 12.635,
+    "head": "ed0efc83cc39a40aac231d9aa0da77a5d30a91e7",
+    "scope": "Actual final Windows publication worktree with current public docs; consistency/collection only, NOT_RUN for full-suite execution.",
+    "overlay_unchanged": true,
+    "readmes_unchanged_by_check": {
+      "README.md": "aeb823c75ef3cf24def0e39f97d58e32e2f8f1375e71b4156a0b8c320a507b63",
+      "README_DETAILS.md": "7a2682fea70897ae318537835912743ed0f1193922ada9a7d6c04b41b11ef003"
+    },
+    "writes_scope": "This readme-gate only: logs/result/temp/data; no source/README/AGENTS edits.",
+    "docker_runtime_limit": "pypdf6.21.2 in cached image, declared pin6.21.4; future pinned branch CI separate."
+  },
+  "generated_readmes": [
+    {
+      "path": "README.md",
+      "sha256": "aeb823c75ef3cf24def0e39f97d58e32e2f8f1375e71b4156a0b8c320a507b63",
+      "bytes": 2800
+    },
+    {
+      "path": "README_DETAILS.md",
+      "sha256": "7a2682fea70897ae318537835912743ed0f1193922ada9a7d6c04b41b11ef003",
+      "bytes": 61191
+    }
+  ],
+  "container_removed": true,
+  "canonical_or_product_edits_by_this_task": [],
+  "ui_branch": "Not touched; no claim about PR112 from this gate.",
+  "limits": [
+    "Cached image pypdf6.21.2 differs from declared pin6.21.4; future pinned CI is separate.",
+    "Two Linux skips require real Windows WinRT recognition/CIM process; no full Windows suite claimed here.",
+    "Root public export/STATUS/receipts may have changed after Docker capture. Final real Windows render consistency includes current checkout; no claim that Docker ran their separate export verifier.",
+    "Gate is candidate-bound before commit. Published commit requires its own equivalence/provenance and CI; no publication/acceptance implied."
+  ],
+  "publication_exclusions": [
+    "inputs/candidate.tar",
+    "inputs/candidate.pack",
+    "tmp/**",
+    "Any runtime databases, local config or node_modules"
+  ]
+}

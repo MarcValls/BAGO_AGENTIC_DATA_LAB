@@ -1,0 +1,195 @@
+{
+  "schema": "bago.continuity.governance.acceptance.v1",
+  "result": "FAIL",
+  "mission_id": "BAGO_CONTINUITY_ACCEPTANCE_20261101",
+  "checks": [
+    {
+      "case": "registration_and_lease_grant_no_authority",
+      "tests": [
+        "T2",
+        "T3"
+      ],
+      "result": "PASS"
+    },
+    {
+      "case": "authorized_real_effect_replay_and_required_verification",
+      "tests": [
+        "T7",
+        "T12"
+      ],
+      "result": "FAIL"
+    },
+    {
+      "case": "revoked_permit_blocks_actual_canary_write",
+      "tests": [
+        "T5"
+      ],
+      "result": "FAIL"
+    },
+    {
+      "case": "expired_permit_is_distinct_from_unissued",
+      "tests": [
+        "T2"
+      ],
+      "result": "FAIL"
+    },
+    {
+      "case": "scope_and_delegated_identity_do_not_inherit_authority",
+      "tests": [
+        "T4",
+        "T11"
+      ],
+      "result": "FAIL"
+    },
+    {
+      "case": "durable_STOP_blocks_later_process_and_claim",
+      "tests": [
+        "T6"
+      ],
+      "result": "FAIL"
+    },
+    {
+      "case": "failed_real_process_never_becomes_success",
+      "tests": [
+        "T9",
+        "T12"
+      ],
+      "result": "PASS"
+    },
+    {
+      "case": "receipt_mismatch_blocks_consumption_and_closure",
+      "tests": [
+        "T9",
+        "T12"
+      ],
+      "result": "PASS"
+    }
+  ],
+  "details": {
+    "registration_and_lease_grant_no_authority": {
+      "registered_mission": "gov-registration",
+      "challenge_state": "pending",
+      "without_authorization": {
+        "type": "AuthorizationError",
+        "code": "authorization_permit_required",
+        "message": "La ejecución requiere un Permit emitido por AuthorizationBoundary"
+      },
+      "relay_lease_is_not_permit": {
+        "type": "AuthorizationError",
+        "code": "authorization_permit_invalid",
+        "message": "Permit desconocido"
+      },
+      "actual_file_unchanged": {
+        "exists": true,
+        "sha256": "f62fca0bf989804c43da8fd0be6d218d07ea84d77381b7e924897913dda70186",
+        "mtime_ns": 1793490983980051500
+      },
+      "host_grant_origin": "Current user GO + OK, ACEPTO; mission BAGO_CONTINUITY_ACCEPTANCE_20261101"
+    },
+    "authorized_real_effect_replay_and_required_verification": {
+      "error": "ModuleNotFoundError(\"No module named 'handlers_files'\")",
+      "traceback": "Traceback (most recent call last):\n  File \"C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\.bago\\goals\\operational-continuity-governance-20261031\\evidence\\acceptance-20261101\\workspace\\governance\\acceptance.py\", line 108, in check\n    try:detail=fn();rows.append({'case':name,'tests':tests,'result':'PASS'});details[name]=redact(detail)\n               ~~^^\n  File \"C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\.bago\\goals\\operational-continuity-governance-20261031\\evidence\\acceptance-20261101\\workspace\\governance\\acceptance.py\", line 121, in positive\n    b,w,s,m,g,_=new_case(root,'positive');req=request(m);approved=approve(boundary,req,m,g);lease=s.relay().claim('work','exec-A')\n                                                                  ~~~~~~~^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\.bago\\goals\\operational-continuity-governance-20261031\\evidence\\acceptance-20261101\\workspace\\governance\\acceptance.py\", line 51, in approve\n    admitted(grant,req,m)\n    ~~~~~~~~^^^^^^^^^^^^^\n  File \"C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\.bago\\goals\\operational-continuity-governance-20261031\\evidence\\acceptance-20261101\\workspace\\governance\\acceptance.py\", line 47, in admitted\n    target,_,_=_resolve_target(m,req.target['path'])\n               ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\AMTEC_Terminal_1º\\.codex\\skills\\bago-operating-suite\\runtime\\BAGO-4.11.10\\backend\\.bago\\core\\filesystem_effects.py\", line 76, in _resolve_target\n    from handlers_files import _resolve_namespaced_target, _workspace_root\nModuleNotFoundError: No module named 'handlers_files'\n"
+    },
+    "revoked_permit_blocks_actual_canary_write": {
+      "error": "ModuleNotFoundError(\"No module named 'handlers_files'\")",
+      "traceback": "Traceback (most recent call last):\n  File \"C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\.bago\\goals\\operational-continuity-governance-20261031\\evidence\\acceptance-20261101\\workspace\\governance\\acceptance.py\", line 108, in check\n    try:detail=fn();rows.append({'case':name,'tests':tests,'result':'PASS'});details[name]=redact(detail)\n               ~~^^\n  File \"C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\.bago\\goals\\operational-continuity-governance-20261031\\evidence\\acceptance-20261101\\workspace\\governance\\acceptance.py\", line 141, in revoked\n    b,w,s,m,g,_=new_case(root,'revoked');req=request(m);a=approve(boundary,req,m,g);before=observed(w/'canary.txt')\n                                                          ~~~~~~~^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\.bago\\goals\\operational-continuity-governance-20261031\\evidence\\acceptance-20261101\\workspace\\governance\\acceptance.py\", line 51, in approve\n    admitted(grant,req,m)\n    ~~~~~~~~^^^^^^^^^^^^^\n  File \"C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\.bago\\goals\\operational-continuity-governance-20261031\\evidence\\acceptance-20261101\\workspace\\governance\\acceptance.py\", line 47, in admitted\n    target,_,_=_resolve_target(m,req.target['path'])\n               ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\AMTEC_Terminal_1º\\.codex\\skills\\bago-operating-suite\\runtime\\BAGO-4.11.10\\backend\\.bago\\core\\filesystem_effects.py\", line 76, in _resolve_target\n    from handlers_files import _resolve_namespaced_target, _workspace_root\nModuleNotFoundError: No module named 'handlers_files'\n"
+    },
+    "expired_permit_is_distinct_from_unissued": {
+      "error": "ModuleNotFoundError(\"No module named 'handlers_files'\")",
+      "traceback": "Traceback (most recent call last):\n  File \"C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\.bago\\goals\\operational-continuity-governance-20261031\\evidence\\acceptance-20261101\\workspace\\governance\\acceptance.py\", line 108, in check\n    try:detail=fn();rows.append({'case':name,'tests':tests,'result':'PASS'});details[name]=redact(detail)\n               ~~^^\n  File \"C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\.bago\\goals\\operational-continuity-governance-20261031\\evidence\\acceptance-20261101\\workspace\\governance\\acceptance.py\", line 147, in expired\n    b,w,s,m,g,_=new_case(root,'expired');req=request(m);a=approve(boundary,req,m,g);before=observed(w/'canary.txt')\n                                                          ~~~~~~~^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\.bago\\goals\\operational-continuity-governance-20261031\\evidence\\acceptance-20261101\\workspace\\governance\\acceptance.py\", line 51, in approve\n    admitted(grant,req,m)\n    ~~~~~~~~^^^^^^^^^^^^^\n  File \"C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\.bago\\goals\\operational-continuity-governance-20261031\\evidence\\acceptance-20261101\\workspace\\governance\\acceptance.py\", line 47, in admitted\n    target,_,_=_resolve_target(m,req.target['path'])\n               ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\AMTEC_Terminal_1º\\.codex\\skills\\bago-operating-suite\\runtime\\BAGO-4.11.10\\backend\\.bago\\core\\filesystem_effects.py\", line 76, in _resolve_target\n    from handlers_files import _resolve_namespaced_target, _workspace_root\nModuleNotFoundError: No module named 'handlers_files'\n"
+    },
+    "scope_and_delegated_identity_do_not_inherit_authority": {
+      "error": "ModuleNotFoundError(\"No module named 'handlers_files'\")",
+      "traceback": "Traceback (most recent call last):\n  File \"C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\.bago\\goals\\operational-continuity-governance-20261031\\evidence\\acceptance-20261101\\workspace\\governance\\acceptance.py\", line 108, in check\n    try:detail=fn();rows.append({'case':name,'tests':tests,'result':'PASS'});details[name]=redact(detail)\n               ~~^^\n  File \"C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\.bago\\goals\\operational-continuity-governance-20261031\\evidence\\acceptance-20261101\\workspace\\governance\\acceptance.py\", line 154, in scopes\n    b,w,s,m,g,_=new_case(root,'scopes');req=request(m);a=approve(boundary,req,m,g);before=observed(w/'other.txt')\n                                                         ~~~~~~~^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\.bago\\goals\\operational-continuity-governance-20261031\\evidence\\acceptance-20261101\\workspace\\governance\\acceptance.py\", line 51, in approve\n    admitted(grant,req,m)\n    ~~~~~~~~^^^^^^^^^^^^^\n  File \"C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\.bago\\goals\\operational-continuity-governance-20261031\\evidence\\acceptance-20261101\\workspace\\governance\\acceptance.py\", line 47, in admitted\n    target,_,_=_resolve_target(m,req.target['path'])\n               ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\AMTEC_Terminal_1º\\.codex\\skills\\bago-operating-suite\\runtime\\BAGO-4.11.10\\backend\\.bago\\core\\filesystem_effects.py\", line 76, in _resolve_target\n    from handlers_files import _resolve_namespaced_target, _workspace_root\nModuleNotFoundError: No module named 'handlers_files'\n"
+    },
+    "durable_STOP_blocks_later_process_and_claim": {
+      "error": "ModuleNotFoundError(\"No module named 'handlers_files'\")",
+      "traceback": "Traceback (most recent call last):\n  File \"C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\.bago\\goals\\operational-continuity-governance-20261031\\evidence\\acceptance-20261101\\workspace\\governance\\acceptance.py\", line 108, in check\n    try:detail=fn();rows.append({'case':name,'tests':tests,'result':'PASS'});details[name]=redact(detail)\n               ~~^^\n  File \"C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\.bago\\goals\\operational-continuity-governance-20261031\\evidence\\acceptance-20261101\\workspace\\governance\\acceptance.py\", line 165, in stopped\n    b,w,s,m,g,_=new_case(root,'stopped');req=request(m);a=approve(boundary,req,m,g);lease=s.relay().claim('work','exec-A');before=observed(w/'canary.txt')\n                                                          ~~~~~~~^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\.bago\\goals\\operational-continuity-governance-20261031\\evidence\\acceptance-20261101\\workspace\\governance\\acceptance.py\", line 51, in approve\n    admitted(grant,req,m)\n    ~~~~~~~~^^^^^^^^^^^^^\n  File \"C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\.bago\\goals\\operational-continuity-governance-20261031\\evidence\\acceptance-20261101\\workspace\\governance\\acceptance.py\", line 47, in admitted\n    target,_,_=_resolve_target(m,req.target['path'])\n               ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\AMTEC_Terminal_1º\\.codex\\skills\\bago-operating-suite\\runtime\\BAGO-4.11.10\\backend\\.bago\\core\\filesystem_effects.py\", line 76, in _resolve_target\n    from handlers_files import _resolve_namespaced_target, _workspace_root\nModuleNotFoundError: No module named 'handlers_files'\n"
+    },
+    "failed_real_process_never_becomes_success": {
+      "native_failed_run": {
+        "status": "FAIL",
+        "run_id": "81658cd845914124b37e2d193e9118fc",
+        "receipt": "receipts/84711173c75d4bb68493cf7486f9a1a4.json",
+        "outcome": "FAIL",
+        "interruption": "NONE",
+        "evidence_error": null,
+        "supervision_error": null,
+        "process_outcome": "FAIL"
+      },
+      "consumption_preserves_FAIL": {
+        "status": "PASS",
+        "evidence_status": "VALID",
+        "product_status": "FAIL",
+        "check_id": "work"
+      },
+      "close_rejected": {
+        "status": "INCONCLUSIVE",
+        "operation": "REPAIR",
+        "task_status": "OPEN",
+        "product_status": "NOT_VERIFIED",
+        "evidence_status": "INCOMPLETE",
+        "outcomes": {
+          "work": "FAIL",
+          "verify": "NOT_RUN"
+        },
+        "mandatory_not_satisfied": [
+          "work",
+          "verify"
+        ],
+        "unconsumed_or_missing": [
+          "verify"
+        ],
+        "owned_child_running": false,
+        "target": null,
+        "published": false,
+        "collaboration_incomplete": true
+      },
+      "canary": {
+        "exists": true,
+        "sha256": "f62fca0bf989804c43da8fd0be6d218d07ea84d77381b7e924897913dda70186",
+        "mtime_ns": 1793490984711549700
+      }
+    },
+    "receipt_mismatch_blocks_consumption_and_closure": {
+      "real_run": {
+        "status": "PASS",
+        "run_id": "f1c5a9d5676c4c4eb446c9f8b3a2352a",
+        "receipt": "receipts/90b26a371198423a9bed060bbf6644ba.json",
+        "outcome": "PASS",
+        "interruption": "NONE",
+        "evidence_error": null,
+        "supervision_error": null,
+        "process_outcome": "PASS"
+      },
+      "original_receipt_sha256": "a65882e155cdabedf05e25953e1e2dfe1aec6383a5eb6253ee43edded58506ca",
+      "tampered_sha256": "eb08fdec21eb55128bfff80069302786006414d18fcc2d6aa26ffdba3ff3a645",
+      "consume_rejected": {
+        "type": "ControlError",
+        "code": null,
+        "message": "receipt bytes changed"
+      },
+      "close_rejected": {
+        "type": "ControlError",
+        "code": null,
+        "message": "receipt bytes changed"
+      }
+    }
+  },
+  "limits": [
+    "Deterministic local workers, not LLM/host sessions.",
+    "TaskStore/relay and Gateway are actual native implementations; logical admission is not OS isolation.",
+    "Authorization issuance uses the same protected local-host seam as the cognitive adapter, with truthful GO-origin scoped canary grants; no GUI/TTY identity is fabricated.",
+    "STOP here fences cooperative ledger admission and owned subprocesses; arbitrary external processes are not claimed stopped.",
+    "No global Codex configuration, product source, original mission receipts or toolkit were modified."
+  ],
+  "sources": {
+    "C:\\Users\\AMTEC_Terminal_1º\\.codex\\skills\\bago-operating-suite\\runtime\\BAGO-4.11.10\\backend\\.bago\\core\\authorization_boundary.py": "23d9a1bb2ecf9e27f9e3f8341a7c4629644d64a9e698a1be6273c14d1fd30b09",
+    "C:\\Users\\AMTEC_Terminal_1º\\.codex\\skills\\bago-operating-suite\\runtime\\BAGO-4.11.10\\backend\\.bago\\core\\execution_gateway.py": "c889d61353709c0fff94497a8eba3b8602e8ab124c985c9a721bd67dee94903a",
+    "C:\\Users\\AMTEC_Terminal_1º\\.codex\\skills\\bago-operating-suite\\runtime\\BAGO-4.11.10\\backend\\.bago\\core\\execution_adapters\\filesystem.py": "53111f4649a58fdae1ceb078c0215bd15be8cc0d25c70a1f544f9b3c9bc1713a",
+    "C:\\Users\\AMTEC_Terminal_1º\\.codex\\skills\\bago-operating-suite\\runtime\\BAGO-4.11.10\\backend\\.bago\\core\\filesystem_effects.py": "88b2986bb4d0dd799fb7c088b8484d2c9595e76b3c36dcdbe2f35f8eb5833663",
+    "C:\\Users\\AMTEC_Terminal_1º\\.codex\\skills\\bago-operating-suite\\scripts\\suite_control.py": "052a62a161d71617cc9c8f736d8c58d89aabadc27795122c7705d02443aa8bf0",
+    "C:\\Users\\AMTEC_Terminal_1º\\.codex\\skills\\bago-operating-suite\\scripts\\suite_relay.py": "aaedb95c76611967ca01668ea0101067e158d8389356a3c10ebaa592d117456b",
+    "C:\\Users\\AMTEC_Terminal_1º\\.codex\\skills\\bago-operating-suite\\modules\\cognitive-mission\\src\\mission_runtime.py": "d1a21bd347b9faaf7da5e1219efa3de1442dd4631bb1370467d5426de64db31e"
+  }
+}

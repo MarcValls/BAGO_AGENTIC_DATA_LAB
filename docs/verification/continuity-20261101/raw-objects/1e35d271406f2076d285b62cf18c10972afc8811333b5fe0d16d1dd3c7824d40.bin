@@ -1,0 +1,13 @@
+{
+  "schema": "bago.local-policy.exact-byte-recovery.v1",
+  "state": "VERIFIED",
+  "source_session": "C:\\Users\\AMTEC_Terminal_1\u00ba\\.codex\\sessions\\2026\\10\\31\\rollout-2026-10-31T13-38-46-01a191f8-3819-7c21-8c24-6e91f734c124.jsonl",
+  "source_line": 47,
+  "source_event_sha256": "9245c4b60fccbcd4d00f2274a613c4cf431223fde453437643f7f96ea7cd9045",
+  "frozen_status_sha256": "f5a22128f52634a073b0d92723812c4a54dfab4bb590c56cc4067f81d882b2ae",
+  "current_status_sha256": "142bf2347f6268812fbb9bf9e4f8f61466981b42a53cb45846eb858f84b1f432",
+  "recovery_semantics": "Restore exact already-consumed bytes; preserve newer operational state in a separate mutable projection. Never replace or re-sign handoff/receipt.",
+  "current_reference": ".bago/goals/operational-continuity-governance-20261031/evidence/checks/current-operational-status.json",
+  "executed_at": "2026-10-31T17:55:44.118934+00:00",
+  "handoff_unchanged": true
+}

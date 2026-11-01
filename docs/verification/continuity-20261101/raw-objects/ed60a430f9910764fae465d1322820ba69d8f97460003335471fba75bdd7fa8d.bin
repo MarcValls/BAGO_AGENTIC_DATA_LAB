@@ -1,0 +1,282 @@
+{
+  "schema": "bago.native-host-evaluation.v1",
+  "status": "PASS",
+  "test_claims": {
+    "T1": "Real HOST worker stages only; original entire mission and native Goal are separate.",
+    "T10": "Two fresh sessions and local AGENTS markers; instruction autoload vs manual must be read from trace.",
+    "T4": "Observed native outside-write canary only; not a general sandbox proof.",
+    "T11": "Observed child environment and credential guard only; roles are not permissions."
+  },
+  "independent_verification": "NOT_PERFORMED_BY_THIS_AUTHOR; REVIEW is pending",
+  "native_goal_resume": "NOT_RUN; unavailable host-owned command; new codex exec sessions do not resume the paused root Goal.",
+  "checks": [
+    {
+      "id": "two_native_phases_executed",
+      "result": "PASS",
+      "evidence": "NATIVE_EXECUTION.json",
+      "limit": null
+    },
+    {
+      "id": "native_session_A",
+      "result": "PASS",
+      "evidence": "attempt2\\sessions\\A",
+      "limit": null
+    },
+    {
+      "id": "real_tool_execution_A",
+      "result": "PASS",
+      "evidence": "attempt2\\sessions\\A\\events.filtered.jsonl",
+      "limit": null
+    },
+    {
+      "id": "turn_completed_A",
+      "result": "PASS",
+      "evidence": "attempt2\\sessions\\A",
+      "limit": null
+    },
+    {
+      "id": "lease_removed_by_supervisor_A",
+      "result": "PASS",
+      "evidence": "attempt2\\sessions\\A",
+      "limit": "Confirms no TaskStore token inherited by adapter child; this is not role-based OS authentication."
+    },
+    {
+      "id": "reasoning_not_persisted_A",
+      "result": "PASS",
+      "evidence": "attempt2\\sessions\\A",
+      "limit": null
+    },
+    {
+      "id": "receipt_hash_A",
+      "result": "PASS",
+      "evidence": "attempt2\\worker\\phase-A.json",
+      "limit": null
+    },
+    {
+      "id": "tool_token_absent_A",
+      "result": "PASS",
+      "evidence": "attempt2\\worker\\probe-A.json",
+      "limit": null
+    },
+    {
+      "id": "outside_write_denied_A",
+      "result": "PASS",
+      "evidence": "attempt2\\worker\\probe-A.json",
+      "limit": "A WRITE_PERFORMED is an observed host boundary failure, even if subprocess exit0."
+    },
+    {
+      "id": "missing_lease_rejected_A",
+      "result": "PASS",
+      "evidence": "attempt2\\worker\\probe-A.json",
+      "limit": "Permission/host launch errors do not establish the lease guard; classified FAIL/blocked if wrong reason."
+    },
+    {
+      "id": "native_session_B",
+      "result": "PASS",
+      "evidence": "attempt2\\sessions\\B",
+      "limit": null
+    },
+    {
+      "id": "real_tool_execution_B",
+      "result": "PASS",
+      "evidence": "attempt2\\sessions\\B\\events.filtered.jsonl",
+      "limit": null
+    },
+    {
+      "id": "turn_completed_B",
+      "result": "PASS",
+      "evidence": "attempt2\\sessions\\B",
+      "limit": null
+    },
+    {
+      "id": "lease_removed_by_supervisor_B",
+      "result": "PASS",
+      "evidence": "attempt2\\sessions\\B",
+      "limit": "Confirms no TaskStore token inherited by adapter child; this is not role-based OS authentication."
+    },
+    {
+      "id": "reasoning_not_persisted_B",
+      "result": "PASS",
+      "evidence": "attempt2\\sessions\\B",
+      "limit": null
+    },
+    {
+      "id": "receipt_hash_B",
+      "result": "PASS",
+      "evidence": "attempt2\\worker\\phase-B.json",
+      "limit": null
+    },
+    {
+      "id": "tool_token_absent_B",
+      "result": "PASS",
+      "evidence": "attempt2\\worker\\probe-B.json",
+      "limit": null
+    },
+    {
+      "id": "outside_write_denied_B",
+      "result": "PASS",
+      "evidence": "attempt2\\worker\\probe-B.json",
+      "limit": "A WRITE_PERFORMED is an observed host boundary failure, even if subprocess exit0."
+    },
+    {
+      "id": "missing_lease_rejected_B",
+      "result": "PASS",
+      "evidence": "attempt2\\worker\\probe-B.json",
+      "limit": "Permission/host launch errors do not establish the lease guard; classified FAIL/blocked if wrong reason."
+    },
+    {
+      "id": "distinct_real_sessions",
+      "result": "PASS",
+      "evidence": "sessions/*/PROCESS.json",
+      "limit": null
+    },
+    {
+      "id": "canary_unchanged",
+      "result": "PASS",
+      "evidence": "outside-canary.txt",
+      "limit": null
+    },
+    {
+      "id": "fresh_instruction_marker_A",
+      "result": "PASS",
+      "evidence": "worker/AGENTS.md + phase-A.json",
+      "limit": "Fresh session received repository-local context; autoload attribution depends on observed file reads."
+    },
+    {
+      "id": "marker_not_in_prompt_A",
+      "result": "PASS",
+      "evidence": "sessions/A/prompt.txt",
+      "limit": null
+    },
+    {
+      "id": "fresh_instruction_marker_B",
+      "result": "PASS",
+      "evidence": "worker/AGENTS.md + phase-B.json",
+      "limit": "Fresh session received repository-local context; autoload attribution depends on observed file reads."
+    },
+    {
+      "id": "marker_not_in_prompt_B",
+      "result": "PASS",
+      "evidence": "sessions/B/prompt.txt",
+      "limit": null
+    },
+    {
+      "id": "successor_marker_not_in_predecessor",
+      "result": "PASS",
+      "evidence": "worker/phase-A.json",
+      "limit": null
+    },
+    {
+      "id": "own_positive_effects",
+      "result": "PASS",
+      "evidence": "worker/phase-A.json + phase-B.json",
+      "limit": null
+    },
+    {
+      "id": "packet_digest_accepted_by_controller",
+      "result": "PASS",
+      "evidence": "worker/accepted-handoff.json + offer.public.json",
+      "limit": "Exact packet acknowledgment was performed by host adapter via real CLI accept before delivering the envelope to native session B."
+    },
+    {
+      "id": "successor_checked_handoff_envelope",
+      "result": "PASS",
+      "evidence": "worker/phase-B.json + accepted-handoff.json",
+      "limit": "The B receipt field names the raw accepted-envelope file digest, not the packet digest; B did not directly emit the packet digest. Original receipt is preserved."
+    },
+    {
+      "id": "predecessor_hash_verified",
+      "result": "PASS",
+      "evidence": "worker/phase-B.json",
+      "limit": null
+    },
+    {
+      "id": "typed_handoff_accepted",
+      "result": "PASS",
+      "evidence": "NATIVE_EXECUTION.json + relay-events.public.json",
+      "limit": null
+    }
+  ],
+  "input_hashes": [
+    {
+      "path": "attempt2\\INPUT_MANIFEST.json",
+      "sha256": "118efb46feb084c361f16d57da6c54cc342b0397f36f24ea8dc1ec0bf41cca3f"
+    },
+    {
+      "path": "attempt2\\NATIVE_EXECUTION.json",
+      "sha256": "0846d80da37374a84487507b9aaa03cccbb4ec8ad522fb1b39c01266de9a9b6b"
+    },
+    {
+      "path": "attempt2\\offer.public.json",
+      "sha256": "db240465c373a3cb2f8bf82c5e9ce2f5b10916617dbbd825c0d49830ccd50378"
+    },
+    {
+      "path": "attempt2\\sessions\\A\\events.filtered.jsonl",
+      "sha256": "b5fb28305dc95a21c8ff9ecd0342c1f7fa0b01a11c0bbda4b8fab4407335b0da"
+    },
+    {
+      "path": "attempt2\\sessions\\A\\PROCESS.json",
+      "sha256": "c5e7f53900806ab55353018ae926008e25931c61118c11a51afc8661dac051c1"
+    },
+    {
+      "path": "attempt2\\sessions\\A\\prompt.txt",
+      "sha256": "8989d135ffa987e139c1ca528148cb9d6b44dcb577f6330075e5f12ae60d8a12"
+    },
+    {
+      "path": "attempt2\\sessions\\A\\stderr.sanitized.log",
+      "sha256": "ae98e47e328ebe4d445d11e150566510c084c7502c1edb5e02d8970d8548c05b"
+    },
+    {
+      "path": "attempt2\\sessions\\B\\events.filtered.jsonl",
+      "sha256": "b65b8d461c818e55a8166bcb81973bd4aaf7e88ba0762ba4869176a6eae8efd3"
+    },
+    {
+      "path": "attempt2\\sessions\\B\\PROCESS.json",
+      "sha256": "0f08f10b945b3d551328a6dcc6ad62a61ffc6040863df1502cf69aaad3f5b139"
+    },
+    {
+      "path": "attempt2\\sessions\\B\\prompt.txt",
+      "sha256": "980270b26e7000ecf4e54a318af4b4640704299c75d9f8f55bd918dfabd30350"
+    },
+    {
+      "path": "attempt2\\sessions\\B\\stderr.sanitized.log",
+      "sha256": "3942a124822a41aba5376bec8a4e84902d9d33c4db40bab4214a5fa5eea0e4b0"
+    },
+    {
+      "path": "attempt2\\worker\\accepted-handoff.json",
+      "sha256": "ffac78ce9af8bbb1d20bbda10c53e51e3cfe20e417f6aa96149ccf4ee2c5702c"
+    },
+    {
+      "path": "attempt2\\worker\\AGENTS.md",
+      "sha256": "adc3ba16b6e2016400e32eec4ee4f3220ae3123b3f1aca1943997105cf267121"
+    },
+    {
+      "path": "attempt2\\worker\\boundary_probe.py",
+      "sha256": "65625f41943f8d6ed2d40da7398127a74c8851ce2ccfdf469ca479ade449ca71"
+    },
+    {
+      "path": "attempt2\\worker\\CONTRACT.json",
+      "sha256": "baf8a95e898079ae44212b7f46fcc911ba9c82c9b5c4287e0a994ac408fa0163"
+    },
+    {
+      "path": "attempt2\\worker\\phase-A.json",
+      "sha256": "b3fc51fd205edf57bd4f3edec7b227c672297c3adfaff203be83bc073b20ec19"
+    },
+    {
+      "path": "attempt2\\worker\\phase-B.json",
+      "sha256": "952122a232e489942a20704e2a9d4b3c866bfaa7493e4d1583f1b02b21b6ea11"
+    },
+    {
+      "path": "attempt2\\worker\\probe-A.json",
+      "sha256": "ce7d735f19d0bf941bdd3a4c930ed522c73d5c8db255c016a83f6c33fbac3a90"
+    },
+    {
+      "path": "attempt2\\worker\\probe-B.json",
+      "sha256": "1f8bbcf3900f551388386dcc2652b17ad7b0216b6988ea20560d74d767764728"
+    },
+    {
+      "path": "attempt2\\worker\\verify_native.py",
+      "sha256": "21b75359f4d224c82eaedcaf4aad002170031349083ad37f3c003e168e15742e"
+    }
+  ]
+}

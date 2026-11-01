@@ -1,0 +1,41 @@
+{
+  "schema": "bago.continuity.independent-review.result.v1",
+  "mission_id": "BAGO_CONTINUITY_ACCEPTANCE_20261101",
+  "candidate_id": "0f74f0d818f422d2a9506957e6396070300bbb77d88c602605b4fa647e7cc774",
+  "reviewer": "brave_e2e_r5",
+  "local_criteria": "GO_SCOPED",
+  "original_mission": "NO_GO_PENDING_PUBLICATION_AND_README",
+  "independent_taskstore_verify": {
+    "run_status": "PASS",
+    "receipt": "host/attempt2/relay-state/receipts/b081a48f6b3e40c580409d016f3c1931.json",
+    "receipt_sha256": "b223bb5d9ae77d32c5994713b40f3854e3af1b73bf49904995183dd412d3395d",
+    "consume_finish": "PASS_CONSUMED_AND_FINISHED",
+    "preserved_attempt": true
+  },
+  "publication": {
+    "brave_revision5_public_receipt": "NOT_VERIFIED",
+    "fresh_publication_candidate": "CLAIMED_NOT_COMPLETED",
+    "generated_readme": "NOT_RUN"
+  },
+  "criteria": {
+    "T1": "PASS_SCOPED",
+    "T2": "PASS",
+    "T3": "PASS",
+    "T4": "PASS_SCOPED",
+    "T5": "PASS",
+    "T6": "PASS_SCOPED",
+    "T7": "PASS",
+    "T8": "PASS_SCOPED",
+    "T9": "PASS",
+    "T10": "PASS_SCOPED",
+    "T11": "PASS_SCOPED",
+    "T12": "PASS"
+  },
+  "teamctl_independent_acceptance": {
+    "status": "PASS",
+    "execution_id": "e410f589a6b74d8f9b0cec1cf2583e27",
+    "output": "review/independent-acceptance.json",
+    "output_sha256": "e0b371abe3080a5029536b7ba8fb9c1748aade29ff82150c81fea06d9b16e3b5"
+  },
+  "review_handoff": "PREPARED_FOR_MATERIALIZATION"
+}

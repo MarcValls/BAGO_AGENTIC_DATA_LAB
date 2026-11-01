@@ -1,0 +1,121 @@
+{
+  "updated_at": "2026-10-31T12:30:55.4582018Z",
+  "goal_id": "operational-continuity-governance-20261031",
+  "current_phase": "P0 - inspection and mission preparation",
+  "steps": [
+    {
+      "state": "VERIFIED",
+      "evidence": [
+        {
+          "scope": "BAGO5_ADL main checkout and Browser Bridge worktree as observed on 2026-10-31",
+          "source": "AGENTS.md; .bago/INDEX.md; teamctl.py; functions.get_goal; official OpenAI Goals documentation",
+          "claim": "Repository, Codex Goal API, teamctl, instructions and workflows inspected",
+          "result": "PASS"
+        }
+      ],
+      "id": "P0"
+    },
+    {
+      "state": "PREPARED",
+      "evidence": [
+        {
+          "scope": "local project operational contract",
+          "source": ".bago/goals/operational-continuity-governance-20261031/evidence/workflow-route.json and mission.json",
+          "claim": "Workflow route and mission contract prepared",
+          "result": "PASS"
+        }
+      ],
+      "id": "P1"
+    },
+    {
+      "state": "NOT_RUN",
+      "evidence": [],
+      "id": "P2"
+    },
+    {
+      "state": "NOT_RUN",
+      "evidence": [],
+      "id": "P3"
+    }
+  ],
+  "schema": "bago.goal.status.v1",
+  "state": "PREPARED",
+  "acceptance_criteria": [
+    {
+      "state": "OPEN",
+      "evidence": [],
+      "description": "Authorized mission advances automatically between stages in the active turn.",
+      "id": "AC-01"
+    },
+    {
+      "state": "OPEN",
+      "evidence": [],
+      "description": "Missions without authorization perform no writes.",
+      "id": "AC-02"
+    },
+    {
+      "state": "OPEN",
+      "evidence": [],
+      "description": "Registration grants no permissions.",
+      "id": "AC-03"
+    },
+    {
+      "state": "OPEN",
+      "evidence": [],
+      "description": "Out-of-scope writes are prevented.",
+      "id": "AC-04"
+    },
+    {
+      "state": "OPEN",
+      "evidence": [],
+      "description": "Revocation blocks later effects.",
+      "id": "AC-05"
+    },
+    {
+      "state": "OPEN",
+      "evidence": [],
+      "description": "Explicit STOP prevents automatic resumption.",
+      "id": "AC-06"
+    },
+    {
+      "state": "OPEN",
+      "evidence": [],
+      "description": "Repeated registration does not duplicate mission/effects.",
+      "id": "AC-07"
+    },
+    {
+      "state": "OPEN",
+      "evidence": [],
+      "description": "Prior state and evidence remain preserved.",
+      "id": "AC-08"
+    },
+    {
+      "state": "OPEN",
+      "evidence": [],
+      "description": "Failed verification never becomes PASS.",
+      "id": "AC-09"
+    },
+    {
+      "state": "OPEN",
+      "evidence": [],
+      "description": "Project-local policy persists in new sessions.",
+      "id": "AC-10"
+    },
+    {
+      "state": "OPEN",
+      "evidence": [],
+      "description": "Delegated agents receive no excess inherited authority.",
+      "id": "AC-11"
+    },
+    {
+      "state": "OPEN",
+      "evidence": [],
+      "description": "Closure waits for mandatory criteria.",
+      "id": "AC-12"
+    }
+  ],
+  "notes": [
+    "Native Codex Goal remains paused; this runtime exposes no resume operation. Do not bypass host lifecycle.",
+    "Current permission profile is danger-full-access; teamctl scopes are not a physical sandbox."
+  ]
+}

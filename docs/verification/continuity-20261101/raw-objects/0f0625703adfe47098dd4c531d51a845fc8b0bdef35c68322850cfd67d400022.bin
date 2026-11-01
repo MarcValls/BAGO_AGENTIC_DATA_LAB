@@ -1,0 +1,50 @@
+"""Finite source/dependency capture for the real README generator; no Docker access."""
+from pathlib import Path
+import hashlib,io,json,os,subprocess,tarfile
+
+HERE=Path(__file__).resolve().parent
+REPO=next(p for p in HERE.parents if (p/'.git').exists())
+def sha(p):return hashlib.sha256(p.read_bytes()).hexdigest()
+def load(p):return json.loads(p.read_text(encoding='utf-8-sig'))
+
+def prepare():
+    inputs=HERE/'inputs';inputs.mkdir(exist_ok=False)
+    sources=[{'path':'AGENTS.md','sha256':sha(REPO/'AGENTS.md')}]
+    assert sources[0]['sha256']=='d11c7dc1a2a14487556fa916c83a2faa500b7131f59d980e448731a0f71a4874'
+    assert all(sha(REPO/v['path'])==v['sha256'] for v in sources)
+    head=subprocess.check_output(['git','rev-parse','HEAD'],cwd=REPO,text=True).strip()
+    archive=inputs/'candidate.tar'
+    with archive.open('wb') as stream:
+        subprocess.run(['git','archive','--format=tar',head],cwd=REPO,stdout=stream,check=True)
+    object_ids=subprocess.check_output(['git','rev-list','--objects','--no-object-names','--no-walk=unsorted',head],cwd=REPO)
+    pack=inputs/'candidate.pack'
+    with pack.open('wb') as stream:
+        subprocess.run(['git','pack-objects','--stdout'],cwd=REPO,input=object_ids,stdout=stream,check=True)
+    dependencies=[]
+    with tarfile.open(archive,'a') as target:
+        def add(name,data,mode=0o644):
+            info=tarfile.TarInfo(name);info.size=len(data);info.mode=mode;target.addfile(info,io.BytesIO(data))
+        for source in sources:add(source['path'],(REPO/source['path']).read_bytes())
+        add('.readme-gate/candidate.pack',pack.read_bytes())
+        add('.readme-gate/inner.py',(HERE/'inner.py').read_bytes())
+        add('.readme-gate/source.json',json.dumps({'head':head,'sources':sources},ensure_ascii=False).encode())
+        for directory,dirs,files in os.walk(REPO/'frontend/node_modules',followlinks=False):
+            dirs[:]=sorted(n for n in dirs if n not in {'.cache','.vite','.bin'})
+            for name in sorted(files):
+                path=Path(directory)/name;assert not path.is_symlink(),str(path)
+                data=path.read_bytes();relative=path.relative_to(REPO).as_posix();add(relative,data)
+                dependencies.append({'path':relative,'sha256':hashlib.sha256(data).hexdigest(),'bytes':len(data)})
+    manifest={'schema':'bago.readme.fullsuite-input.v1','head':head,'uncommitted_overlay':sources,
+        'archive':{'path':'inputs/candidate.tar','sha256':sha(archive),'bytes':archive.stat().st_size},
+        'git_pack':{'path':'inputs/candidate.pack','sha256':sha(pack),'bytes':pack.stat().st_size},
+        'readme_before':[{'path':name,'sha256':sha(REPO/name)} for name in ['README.md','README_DETAILS.md']],
+        'requirements':[{'path':name,'sha256':sha(REPO/name)} for name in ['requirements.txt','requirements-test.txt','requirements-whatsapp.txt','requirements-documents.txt','frontend/package-lock.json']],
+        'dependency_files':len(dependencies),'dependency_bytes':sum(v['bytes'] for v in dependencies),
+        'source_identity':'Fetched base Git tree plus exact raw-byte overlay of the authorized continuity AGENTS instructions; no product changes; no product edits, no user runtime data, no .git/auth/config directory copied.',
+        'scripts':[{'path':p.name,'sha256':sha(p)} for p in [HERE/'prepare_inputs.py',HERE/'inner.py',HERE/'run_docker_gate.py']]}
+    (HERE/'DEPENDENCIES.json').write_text(json.dumps(dependencies,indent=2)+'\n',encoding='utf-8')
+    (HERE/'INPUT_MANIFEST.json').write_text(json.dumps(manifest,indent=2,ensure_ascii=False)+'\n',encoding='utf-8')
+    print(json.dumps({'status':'PREPARED','head':head,'source_files':len(sources),'archive_bytes':archive.stat().st_size,'dependency_files':len(dependencies)}))
+    return manifest
+
+if __name__=='__main__':prepare()

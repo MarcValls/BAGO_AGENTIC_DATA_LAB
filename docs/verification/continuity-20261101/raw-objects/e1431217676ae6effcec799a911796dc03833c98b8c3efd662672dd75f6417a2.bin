@@ -1,0 +1,77 @@
+'use strict';
+
+const fs = require('node:fs');
+const path = require('node:path');
+
+const root = path.resolve(__dirname, '../../..');
+const revision = path.join(root, '.bago/goals/browser-bridge-runtime-validation-20261030/revision5');
+const runtime = path.join(revision, 'evidence/runtime');
+const profile = path.join(runtime, 'profile-api-diagnostic-attempt7');
+const output = path.join(runtime, 'brave-api-diagnostic-attempt7.json');
+const braveExe = 'C:/Program Files/BraveSoftware/Brave-Browser/Application/brave.exe';
+const extensionDir = path.join(root, 'extensions/bago-browser-bridge');
+const extensionId = 'jeocgjmcakdgbogpcbmhmpcfkgamoaec';
+const hostName = 'com.bago.browser_bridge';
+const playwrightPath = path.join(root, '.bago/goals/browser-bridge-runtime-validation-20261030/tooling/playwright/node_modules/playwright-core');
+
+async function main() {
+  if (fs.existsSync(profile) || fs.existsSync(output)) throw new Error('Refusing to overwrite API diagnostic artifacts.');
+  const result = { status: 'FAIL', registry_modified: false, host_name: hostName };
+  let context;
+  try {
+    const { chromium } = require(playwrightPath);
+    context = await chromium.launchPersistentContext(profile, {
+      executablePath: braveExe,
+      headless: false,
+      viewport: { width: 1280, height: 800 },
+      ignoreDefaultArgs: ['--disable-extensions'],
+      args: [
+        `--disable-extensions-except=${extensionDir}`,
+        `--load-extension=${extensionDir}`,
+        '--enable-extensions', '--no-first-run', '--no-default-browser-check',
+        '--start-minimized', '--window-position=-32000,-32000', '--window-size=1280,800',
+      ],
+    });
+    const page = await context.newPage();
+    await page.goto(`chrome-extension://${extensionId}/popup.html`, { waitUntil: 'domcontentloaded', timeout: 15000 });
+    result.extension_page_url = page.url();
+    result.page_title = await page.title();
+    result.api_probe = await page.evaluate(async ({ expectedId, hostName }) => {
+      const result = { extension_id: chrome.runtime.id, connectNative_type: typeof chrome.runtime.connectNative };
+      if (chrome.runtime.id !== expectedId) throw new Error('extension id mismatch');
+      if (typeof chrome.runtime.connectNative !== 'function') throw new Error('connectNative unavailable in extension page');
+      try {
+        const port = chrome.runtime.connectNative(hostName);
+        result.connect_call = 'returned-port';
+        result.port_name = port.name;
+        result.disconnect_error = await new Promise((resolve) => {
+          const timer = setTimeout(() => { try { port.disconnect(); } catch {} resolve('timeout'); }, 5000);
+          port.onDisconnect.addListener(() => {
+            clearTimeout(timer);
+            resolve(chrome.runtime.lastError?.message || 'disconnected-without-lastError');
+          });
+          port.postMessage({ protocol_version: 'bago.browser-bridge.native.v2', type: 'hello', request_id: 'r5-api-probe-no-host' });
+        });
+      } catch (error) { result.connect_call = 'threw'; result.connect_error = String(error); }
+      return result;
+    }, { expectedId: extensionId, hostName });
+    result.service_workers = context.serviceWorkers().map((worker) => worker.url());
+    const browserCdp = await context.browser().newBrowserCDPSession();
+    try { result.cdp_targets = await browserCdp.send('Target.getTargets'); }
+    finally { await browserCdp.detach(); }
+    result.status = 'DIAGNOSTIC_COMPLETE';
+  } catch (error) { result.error = String(error && error.stack ? error.stack : error); }
+  finally {
+    if (context) { try { await context.close(); } catch (error) { result.close_error = String(error); } }
+    try {
+      if (fs.existsSync(profile)) fs.rmSync(profile, { recursive: true, force: false });
+      result.profile_absent_after = !fs.existsSync(profile);
+    } catch (error) { result.cleanup_error = String(error); result.status = 'FAIL'; }
+    result.recorded_at_utc = new Date().toISOString();
+    fs.writeFileSync(output, `${JSON.stringify(result, null, 2)}\n`, { flag: 'wx' });
+  }
+  process.stdout.write(`${JSON.stringify(result)}\n`);
+  if (result.status !== 'DIAGNOSTIC_COMPLETE') process.exitCode = 1;
+}
+
+main().catch((error) => { process.stderr.write(`${String(error)}\n`); process.exitCode = 1; });

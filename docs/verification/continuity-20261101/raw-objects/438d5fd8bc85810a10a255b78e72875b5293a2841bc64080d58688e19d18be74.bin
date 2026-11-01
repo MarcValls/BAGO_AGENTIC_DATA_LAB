@@ -1,0 +1,40 @@
+import hashlib, json
+from pathlib import Path
+import jsonschema
+root=Path(__file__).resolve().parents[5]
+goal=root/'.bago/goals/operational-continuity-governance-20261031'
+checks=[]
+def record(name, ok, detail):
+    checks.append({'id':name,'result':'PASS' if ok else 'FAIL','detail':detail})
+agent=(root/'AGENTS.md').read_text(encoding='utf-8')
+section='## Continuity and receipt of delegated work'
+record('local-agents-section',section in agent,'AGENTS.md has the persisted continuity section')
+for token in ('Continue through each necessary and already authorized stage','Recheck mission identity, candidate, scopes, approval, STOP, and revocation','A delegated recap remains pending until it is actually received','Never auto-resume across explicit STOP'):
+    record('rule-'+str(len(checks)+1),token in agent,token)
+mission=json.loads((goal/'mission.json').read_text(encoding='utf-8'))
+teamctl=root/'.bago/team/kit/scripts/teamctl.py'
+import sys
+sys.path.insert(0,str(teamctl.parent))
+import teamctl as tc
+record('mission-id',mission['mission_id']=='CODEX_GOVERNED_CONTINUITY_20261031',mission['mission_id'])
+record('approval-not-permission','Registro y delegación no conceden autoridad.' in mission['constraints'],'registration constraint exists')
+schema_path=Path.home()/'.codex/skills/bago-workflow/references/modules/bago-goal/schemas/status.schema.json'
+schema=json.loads(schema_path.read_text(encoding='utf-8'))
+status=json.loads((goal/'status.json').read_text(encoding='utf-8'))
+jsonschema.Draft202012Validator(schema,format_checker=jsonschema.FormatChecker()).validate(status)
+record('goal-status-schema',True,'bago.goal.status.v1 validates')
+old=json.loads((goal/'evidence/control/preexisting-runtime-archive.json').read_text(encoding='utf-8'))
+for key in ('state_archive','active_handoff_archive'):
+    p=root/old[key]
+    record('preserved-'+key,p.is_file(),old[key])
+    record('hash-'+key,hashlib.sha256(p.read_bytes()).hexdigest().upper()==old['state_sha256' if key=='state_archive' else 'active_handoff_sha256'].upper(),old[key])
+current=json.loads((root/'.bago/team/runtime/state.json').read_text(encoding='utf-8'))
+record('teamctl-registered',current['mission']['mission_id']==mission['mission_id'],current['mission']['mission_id'])
+record('exact-claimed-work',current['work_status']['LOCAL_POLICY']['status']=='CLAIMED' and current['work_status']['P2_HOST_R5']['status']=='CLAIMED','LOCAL_POLICY and P2_HOST_R5 are claimed separately')
+result='PASS' if all(c['result']=='PASS' for c in checks) else 'FAIL'
+out={'check_id':'local-continuity-contract','result':result,'mission_id':mission['mission_id'],'checks':checks}
+out_path=goal/'evidence/checks/local-continuity-contract.json'
+out_path.write_text(json.dumps(out,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
+print(json.dumps({'result':result,'checks':len(checks),'output':str(out_path)},ensure_ascii=False))
+if result != 'PASS': raise SystemExit(1)
+

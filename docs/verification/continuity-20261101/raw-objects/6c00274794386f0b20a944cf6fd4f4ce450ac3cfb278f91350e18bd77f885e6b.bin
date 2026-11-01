@@ -1,0 +1,138 @@
+{
+  "schema": "bago.continuity.current-state.v1",
+  "captured_at": "2026-10-31T23:54:06.849015+00:00",
+  "root_head": "2b3b58963515bc99b434f43d9326b8ddd65b2682",
+  "main_sha": "ed0efc83cc39a40aac231d9aa0da77a5d30a91e7",
+  "pr_head_sha": "85a9b8b99508aad08ebd04caeb45af789ef2440f",
+  "source_tree": "05b8c31f56d2ab769a21a627749910ebd0a7c3a5",
+  "checks": {
+    "pr_merged": true,
+    "head_merge_trees_equal": true,
+    "exact_main_ci": true,
+    "security_workflow_passed": true,
+    "recovered_policy_hash": true,
+    "root_ledger_preserved": true
+  },
+  "requirements_documents": "# Document/image decoding in the delivered backend; OCR engine remains external.\npypdf==6.21.4\nPillow==13.0.0",
+  "original_candidate_id": "0f74f0d818f422d2a9506957e6396070300bbb77d88c602605b4fa647e7cc774",
+  "root_terminal_gate": "OPEN",
+  "local_policy_expected_sha256": "f5a22128f52634a073b0d92723812c4a54dfab4bb590c56cc4067f81d882b2ae",
+  "local_policy_actual_sha256": "f5a22128f52634a073b0d92723812c4a54dfab4bb590c56cc4067f81d882b2ae",
+  "preserved": {
+    ".bago/team/runtime/state.json": "c1d56870c4d9ed0ba90cfab6ab35e6aa3564b3319bcca1a200bbd4bcdfd3b9a3",
+    ".bago/team/runtime/handoffs/LOCAL_POLICY.json": "eca6c2ffc9731bed1b63781dcb1bfe5f66d16041c7684c25260e6ab5683aa2ab",
+    ".bago/goals/operational-continuity-governance-20261031/status.json": "f5a22128f52634a073b0d92723812c4a54dfab4bb590c56cc4067f81d882b2ae"
+  },
+  "toolkit_source_mapping": [
+    {
+      "path": ".bago/team/kit/LICENSE",
+      "local_raw_sha256": "e9e8f3a6cced95dd4d876916303514540238c1c385d0d92b90d5f2d7bef52e75",
+      "git_blob_sha256": "3ae1416a8ae21b4a838f4afe6e520316940095449cf66db30a5488d393441744",
+      "exact": false,
+      "lf_equivalent": true
+    },
+    {
+      "path": ".bago/team/kit/SOURCE_LOCK.json",
+      "local_raw_sha256": "b45aaa8951043d1bf682f7eb25b594563b2d4b2a689b9694f8244ad2db64586f",
+      "git_blob_sha256": "b45aaa8951043d1bf682f7eb25b594563b2d4b2a689b9694f8244ad2db64586f",
+      "exact": true,
+      "lf_equivalent": true
+    },
+    {
+      "path": ".bago/team/kit/missions/agent-decision-inspector.json",
+      "local_raw_sha256": "0de61ee35df2eacc215a45ab9c9cdb90ea4767a5de2f553e6bb23e9131e12be2",
+      "git_blob_sha256": "0de61ee35df2eacc215a45ab9c9cdb90ea4767a5de2f553e6bb23e9131e12be2",
+      "exact": true,
+      "lf_equivalent": true
+    },
+    {
+      "path": ".bago/team/kit/protocol/COMMUNICATION.md",
+      "local_raw_sha256": "a02d685b5b683db1d505662f53e0ea50738904c273d18edc47b08f8f26bc8d09",
+      "git_blob_sha256": "a02d685b5b683db1d505662f53e0ea50738904c273d18edc47b08f8f26bc8d09",
+      "exact": true,
+      "lf_equivalent": true
+    },
+    {
+      "path": ".bago/team/kit/protocol/TEAM_PROTOCOL.md",
+      "local_raw_sha256": "26508c678346577b26b0e98d5019c0fd096bde350189f99f2a016878759ba022",
+      "git_blob_sha256": "26508c678346577b26b0e98d5019c0fd096bde350189f99f2a016878759ba022",
+      "exact": true,
+      "lf_equivalent": true
+    },
+    {
+      "path": ".bago/team/kit/protocol/handoff.schema.json",
+      "local_raw_sha256": "8e75c14a1479ceeffd75c0db5d49a2d8069feed999954b32c380648849408cea",
+      "git_blob_sha256": "8e75c14a1479ceeffd75c0db5d49a2d8069feed999954b32c380648849408cea",
+      "exact": true,
+      "lf_equivalent": true
+    },
+    {
+      "path": ".bago/team/kit/protocol/mission.schema.json",
+      "local_raw_sha256": "ba63cdf23eeca183e1c2472d51c1ae01103af4f913a57b1105e6837fbef69905",
+      "git_blob_sha256": "ba63cdf23eeca183e1c2472d51c1ae01103af4f913a57b1105e6837fbef69905",
+      "exact": true,
+      "lf_equivalent": true
+    },
+    {
+      "path": ".bago/team/kit/protocol/work_item.schema.json",
+      "local_raw_sha256": "09bc87f8219308c70074f29728494642c11dac15ea7e6ccf3cb9dd0d73c84328",
+      "git_blob_sha256": "09bc87f8219308c70074f29728494642c11dac15ea7e6ccf3cb9dd0d73c84328",
+      "exact": true,
+      "lf_equivalent": true
+    },
+    {
+      "path": ".bago/team/kit/requirements.txt",
+      "local_raw_sha256": "cdceb38795ad91f06f3aed720ae192b700e70efcb9c584f161340fd771be6cf1",
+      "git_blob_sha256": "cdceb38795ad91f06f3aed720ae192b700e70efcb9c584f161340fd771be6cf1",
+      "exact": true,
+      "lf_equivalent": true
+    },
+    {
+      "path": ".bago/team/kit/scripts/team_safety.py",
+      "local_raw_sha256": "8bf080d42be147509f8ad9e521e4ea124fa7d92a2a3fa16ebc8088a3147441d3",
+      "git_blob_sha256": "8bf080d42be147509f8ad9e521e4ea124fa7d92a2a3fa16ebc8088a3147441d3",
+      "exact": true,
+      "lf_equivalent": true
+    },
+    {
+      "path": ".bago/team/kit/scripts/teamctl.py",
+      "local_raw_sha256": "17ace00bb34b0b74aedb30251830ba4136fd4a9b234adff1b40d542ad7d51652",
+      "git_blob_sha256": "17ace00bb34b0b74aedb30251830ba4136fd4a9b234adff1b40d542ad7d51652",
+      "exact": true,
+      "lf_equivalent": true
+    },
+    {
+      "path": ".bago/team/kit/templates/handoff-draft.example.json",
+      "local_raw_sha256": "ad18dfd95c9e55bf580d9f98c39c9bcbcc9cb37c3e4d93dce4fc5975281af925",
+      "git_blob_sha256": "ad18dfd95c9e55bf580d9f98c39c9bcbcc9cb37c3e4d93dce4fc5975281af925",
+      "exact": true,
+      "lf_equivalent": true
+    },
+    {
+      "path": "plugins/bago-agent-decision-engineering-team/scripts/teamctl.py",
+      "local_raw_sha256": "d08f5e068a6567ac615dd00875475930dd190563b2cb1d413840961973591a41",
+      "git_blob_sha256": "eb3a8cfefb7608f06ac981903511164706ab711aa4ec2a5d9a158fced80e54ad",
+      "exact": false,
+      "lf_equivalent": true
+    }
+  ],
+  "native_goal": {
+    "status_observed": "paused",
+    "resume_tool": "NOT_AVAILABLE",
+    "user_command": "/goal resume",
+    "official_contract": "https://developers.openai.com/cookbook/examples/codex/using_goals_in_codex"
+  },
+  "supersessions": [
+    {
+      "claim": "PR111 unmerged and image security FAIL",
+      "old_commit": "1115a206c98a1a2fd479652ff8be011b6f512666",
+      "current": "PR111 merged; image security and all listed main workflows PASS on ed0efc83cc39a40aac231d9aa0da77a5d30a91e7",
+      "rule": "Old records remain valid historical observations; new evidence does not rewrite them."
+    }
+  ],
+  "limitations": [
+    "Fresh GitHub workflow status is evidence for its exact commit, not every local dirty source.",
+    "The original ledger remains active and unclosed until actual acceptance passes.",
+    "Native Goal pause/resume and local TaskStore pause/resume are different controls."
+  ]
+}

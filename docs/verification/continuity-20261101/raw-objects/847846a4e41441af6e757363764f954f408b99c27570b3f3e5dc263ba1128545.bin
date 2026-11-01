@@ -1,0 +1,76 @@
+$ErrorActionPreference = 'Stop'
+$root = (Resolve-Path (Join-Path $PSScriptRoot '..\..\..')).Path
+$revision = Join-Path $root '.bago\goals\browser-bridge-runtime-validation-20261030\revision5'
+$runtimeDir = Join-Path $revision 'evidence\runtime'
+$manifestPath = Join-Path $runtimeDir 'com.bago.browser_bridge.json'
+$profile = Join-Path $runtimeDir 'profile-brave-r5-attempt7'
+$registrySubKey = 'Software\Google\Chrome\NativeMessagingHosts\com.bago.browser_bridge'
+$runtimeResultPath = Join-Path $runtimeDir 'brave-native-messaging-runtime-attempt7.json'
+$cleanupPath = Join-Path $revision 'checks\e2e\cleanup-result-attempt7.json'
+$verificationPath = Join-Path $revision 'checks\e2e\cleanup-verification-attempt7.json'
+$hostPath = Join-Path $revision 'build\BagoBrowserBridgeHost.exe'
+function Get-Sha256Python([string]$path) {
+    $hashLines = & python -c "import hashlib,sys; print(hashlib.sha256(open(sys.argv[1], 'rb').read()).hexdigest())" $path 2>&1
+    if ($LASTEXITCODE -ne 0) { throw "Python SHA-256 failed for ${path}: $($hashLines -join ' ')" }
+    return (($hashLines | Select-Object -Last 1).ToString().Trim().ToLowerInvariant())
+}
+
+$issues = [System.Collections.Generic.List[string]]::new()
+foreach ($view in @([Microsoft.Win32.RegistryView]::Registry32, [Microsoft.Win32.RegistryView]::Registry64)) {
+    $base = [Microsoft.Win32.RegistryKey]::OpenBaseKey([Microsoft.Win32.RegistryHive]::CurrentUser, $view)
+    try {
+        $key = $base.OpenSubKey($registrySubKey)
+        if ($null -ne $key) { $key.Dispose(); $issues.Add("effective Google Native Messaging key remains in $view") }
+    } finally { $base.Dispose() }
+}
+if (Test-Path -LiteralPath $manifestPath) { $issues.Add('temporary Native Messaging manifest remains') }
+if (Test-Path -LiteralPath $profile) { $issues.Add('isolated Brave profile remains') }
+$processes = @(Get-CimInstance Win32_Process | Where-Object {
+    $_.Name -eq 'brave.exe' -and $_.CommandLine -and $_.CommandLine.IndexOf("--user-data-dir=$profile", [System.StringComparison]::OrdinalIgnoreCase) -ge 0
+})
+if ($processes.Count -gt 0) { $issues.Add('isolated Brave processes remain: ' + (($processes | ForEach-Object ProcessId) -join ',')) }
+$hostProcesses = @(Get-CimInstance Win32_Process | Where-Object {
+    $_.Name -eq 'BagoBrowserBridgeHost.exe' -and $_.CommandLine -and $_.CommandLine.IndexOf($hostPath, [System.StringComparison]::OrdinalIgnoreCase) -ge 0
+})
+if ($hostProcesses.Count -gt 0) { $issues.Add('revision5 native host process remains: ' + (($hostProcesses | ForEach-Object ProcessId) -join ',')) }
+if (-not (Test-Path -LiteralPath $runtimeResultPath -PathType Leaf)) { $issues.Add('runtime result evidence is missing') }
+if (-not (Test-Path -LiteralPath $cleanupPath -PathType Leaf)) { $issues.Add('cleanup result evidence is missing') }
+if (Test-Path -LiteralPath $runtimeResultPath -PathType Leaf) {
+    $runtimeResult = Get-Content -LiteralPath $runtimeResultPath -Raw -Encoding UTF8 | ConvertFrom-Json
+    if ($runtimeResult.status -ne 'PASS') { $issues.Add('runtime result is not PASS') }
+    if ($runtimeResult.video.status -ne 'NOT_RUN') { $issues.Add('runtime video status does not match the declared ffmpeg limitation') }
+}
+if (Test-Path -LiteralPath $cleanupPath -PathType Leaf) {
+    $cleanupResult = Get-Content -LiteralPath $cleanupPath -Raw -Encoding UTF8 | ConvertFrom-Json
+    if ($cleanupResult.registry_absent_after -ne $true -or $cleanupResult.manifest_absent_after -ne $true -or $cleanupResult.profile_absent_after -ne $true) { $issues.Add('cleanup result does not confirm all exact resources absent') }
+    if (@($cleanupResult.cleanup_errors).Count -gt 0) { $issues.Add('cleanup result lists cleanup errors') }
+}
+if ($issues.Count -gt 0) {
+    Write-Output (@{ status = 'FAIL'; issues = @($issues) } | ConvertTo-Json -Depth 5 -Compress)
+    exit 1
+}
+$screenshot = Join-Path $revision 'screenshots\fixture-brave-r5-attempt7.png'
+if (-not (Test-Path -LiteralPath $screenshot -PathType Leaf)) { throw 'Runtime screenshot missing.' }
+$cleanupResult = Get-Content -LiteralPath $cleanupPath -Raw -Encoding UTF8 | ConvertFrom-Json
+$runtimeResult = Get-Content -LiteralPath $runtimeResultPath -Raw -Encoding UTF8 | ConvertFrom-Json
+$result = [ordered]@{
+    status = 'PASS'
+    registry_absent = $true
+    manifest_absent = $true
+    isolated_profile_absent = $true
+    isolated_processes_absent = $true
+    revision5_host_processes_absent = $true
+    registry_path = 'HKCU\Software\Google\Chrome\NativeMessagingHosts\com.bago.browser_bridge'
+    registry_views_checked = @('Registry32', 'Registry64')
+    screenshot_sha256 = Get-Sha256Python $screenshot
+    video_status = $runtimeResult.video.status
+    video_reason = $runtimeResult.video.reason
+    runtime_evidence_sha256 = Get-Sha256Python $runtimeResultPath
+    cleanup_record_sha256 = Get-Sha256Python $cleanupPath
+    runtime_check_execution_id = '82c2292c60ea403e9dadb313be96202d'
+    candidate_id = '0f74f0d818f422d2a9506957e6396070300bbb77d88c602605b4fa647e7cc774'
+    scope_sha256 = '0af844db09c04531999970ed71e0bce9ed1f51245b48416d0453a7bc7cef9df9'
+}
+if (Test-Path -LiteralPath $verificationPath) { throw 'Refusing to overwrite cleanup verification evidence.' }
+ [System.IO.File]::WriteAllText($verificationPath, ($result | ConvertTo-Json -Depth 6) + "`n", [System.Text.UTF8Encoding]::new($false))
+Write-Output ($result | ConvertTo-Json -Depth 5 -Compress)

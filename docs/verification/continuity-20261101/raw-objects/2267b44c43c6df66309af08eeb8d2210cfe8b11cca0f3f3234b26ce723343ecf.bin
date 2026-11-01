@@ -1,0 +1,63 @@
+{
+  "artifacts": [
+    {
+      "path": "runs/032ce576db4f4627a0edd6cd22967ca1/stdout.log",
+      "root": "state",
+      "schema": null,
+      "sha256": "b977c346be46fc860ee8ed65a2f55006847b1b682e33770740ed9715a3bca092",
+      "size": 32
+    },
+    {
+      "path": "runs/032ce576db4f4627a0edd6cd22967ca1/stderr.log",
+      "root": "state",
+      "schema": null,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0
+    },
+    {
+      "path": "runs/032ce576db4f4627a0edd6cd22967ca1/process.json",
+      "root": "state",
+      "schema": null,
+      "sha256": "213f5446f358b8a663ae6d2f44149baba9ab40e6d679d1dea97ae52fbb396df4",
+      "size": 882
+    }
+  ],
+  "candidate": {
+    "id": "canary-fixed-input",
+    "scope_sha256": "8a800749feb74d87ce94d2737253554298df114c1bed53beed01dc4e7a4d2a7a",
+    "suite": {
+      "kind": "explicit-local-governance-fixture"
+    }
+  },
+  "check_id": "verify",
+  "created_at": "2026-10-31T23:59:13.788573+00:00",
+  "dependencies": [
+    {
+      "check_id": "work",
+      "receipt_sha256": "9cec7d62256ace7750ca0872399f64a1616d99e99509cb71bdd9b51d50145cb6"
+    }
+  ],
+  "execution": {
+    "argv": [
+      "C:\\Python314\\python.exe",
+      "-B",
+      "C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\.bago\\goals\\operational-continuity-governance-20261031\\evidence\\acceptance-20261101\\workspace\\governance\\acceptance.py",
+      "child",
+      "attempt4",
+      "positive",
+      "verify"
+    ],
+    "cwd": "\\\\?\\C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\.bago\\goals\\operational-continuity-governance-20261031\\evidence\\acceptance-20261101\\workspace\\governance\\attempt4\\positive\\w",
+    "finished_at": "2026-10-31T23:59:13.745027+00:00",
+    "interruption": "NONE",
+    "pid": 6152,
+    "returncode": 0,
+    "run_id": "032ce576db4f4627a0edd6cd22967ca1",
+    "started_at": "2026-10-31T23:59:13.113079+00:00"
+  },
+  "kind": "execution",
+  "mission_id": "gov-positive",
+  "outcome": "PASS",
+  "receipt_id": "9a78ddca7fde4de6a5caf5ae5c71ac3a",
+  "schema": "bago.suite.task.receipt.v1"
+}

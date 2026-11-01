@@ -1,0 +1,13 @@
+{
+  "status": "PASS",
+  "ready": [
+    "INDEPENDENT_REVIEW"
+  ],
+  "batches": [
+    [
+      "INDEPENDENT_REVIEW"
+    ]
+  ],
+  "round": 1,
+  "automatic_rounds": false
+}

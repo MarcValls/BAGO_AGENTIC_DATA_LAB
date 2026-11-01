@@ -1,0 +1,26 @@
+{
+  "schema": "bago.suite.relay.context.v1",
+  "summary": "Real native session A wrote phase-A receipt; successor must inspect and continue exact artifacts, no inherited permissions.",
+  "completed": [
+    "phase A actual tool execution and receipt; trace stored under sessions/A"
+  ],
+  "pending": [
+    "New native session B must verify predecessor digest, record fresh context marker, execute scoped effects and produce phase-B receipt."
+  ],
+  "decisions": [
+    "No token in prompts or child environment. Roles are logical only. Native goal remains paused."
+  ],
+  "risks": [
+    "Boundary outcome requires reviewing actual probe, not a narrative assertion."
+  ],
+  "artifacts": [
+    {
+      "root": "workspace",
+      "path": "phase-A.json"
+    },
+    {
+      "root": "workspace",
+      "path": "probe-A.json"
+    }
+  ]
+}

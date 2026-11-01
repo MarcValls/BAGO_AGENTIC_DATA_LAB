@@ -1,0 +1,43 @@
+{
+  "schema": "bago.browser-bridge.brave-r5.resume-preflight.v1",
+  "attempt": 6,
+  "recorded_at_utc": "2026-10-31T15:32:48.2640484Z",
+  "mission_id": "CODEX_GOVERNED_CONTINUITY_20261031",
+  "candidate_id": "0f74f0d818f422d2a9506957e6396070300bbb77d88c602605b4fa647e7cc774",
+  "scope_sha256": "0af844db09c04531999970ed71e0bce9ed1f51245b48416d0453a7bc7cef9df9",
+  "work_id": "BRAVE_E2E_R5",
+  "role": "runtime-integration-engineer",
+  "work_status": "CLAIMED",
+  "p2_status": "DONE",
+  "p2_handoff_sha256": "b3bf64cf73804d3762192dbe437e817967958d9e0f9f3ef5dc20aa13484a8a72",
+  "pause_history_count": 0,
+  "interruptions_count": 0,
+  "terminal_gate": "OPEN",
+  "effective_key": "HKCU\\Software\\Google\\Chrome\\NativeMessagingHosts\\com.bago.browser_bridge",
+  "registry_views": [
+    {
+      "view": "Registry32",
+      "absent": true
+    },
+    {
+      "view": "Registry64",
+      "absent": true
+    }
+  ],
+  "manifest_absent": true,
+  "profile_absent": true,
+  "chrome_process_count": 0,
+  "exe_sha256": "2aefdaa63fbfeadb79498acac429bee36e3fce3ac323664fa0733347a030e333",
+  "extension_id": "jeocgjmcakdgbogpcbmhmpcfkgamoaec",
+  "diagnosis_file": "C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\.worktrees\\browser-bridge-runtime-validation-20261030\\.bago\\goals\\browser-bridge-runtime-validation-20261030\\revision5\\evidence\\runtime\\brave-worker-diagnostic-attempt5.json",
+  "diagnosis_sha256": "f0fc0cf742398150a0a9aca107cde096e39b60faf004771a06691495aea0450e",
+  "diagnosis_worker_target": "service_worker target present; context.serviceWorkers reports expected extension URL; profile cleanup true",
+  "runner_sha256": "55c1cb59ec8eac2053af87e5798d3081d2ad228654275cb3d775206cb45b2227",
+  "node_sha256": "62c77c1dd62285409d0f57903f009b447744600d0a325e93395cf7ff9a0cac68",
+  "worker_detection": "listener armed immediately on launch then Target.getTargets polling fallback",
+  "video": "NOT_RUN if bundled ffmpeg remains unavailable",
+  "outputs": [
+    ".worktrees/browser-bridge-runtime-validation-20261030/.bago/goals/browser-bridge-runtime-validation-20261030/revision5/evidence/runtime/brave-native-messaging-runtime-attempt6.json",
+    ".worktrees/browser-bridge-runtime-validation-20261030/.bago/goals/browser-bridge-runtime-validation-20261030/revision5/checks/e2e/cleanup-result-attempt6.json"
+  ]
+}

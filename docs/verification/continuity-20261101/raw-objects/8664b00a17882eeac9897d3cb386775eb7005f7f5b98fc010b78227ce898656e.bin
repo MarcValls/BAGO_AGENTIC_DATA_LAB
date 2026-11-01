@@ -1,0 +1,11 @@
+﻿{
+    "schema_version":  "bago.browser-bridge.host-package.v1",
+    "name":  "BagoBrowserBridgeHost.exe",
+    "sha256":  "2aefdaa63fbfeadb79498acac429bee36e3fce3ac323664fa0733347a030e333",
+    "bytes":  8415804,
+    "platform":  "Windows",
+    "build_command":  "python -m PyInstaller --noconfirm --clean --onefile --console",
+    "python_version":  "Python 3.14.5",
+    "pyinstaller_version":  "6.20.0",
+    "source":  "src/browser_bridge/native_host.py"
+}

@@ -1,0 +1,83 @@
+"""Bounded native Codex invocation; discard reasoning before persisting any event."""
+from pathlib import Path
+import hashlib, json, os, queue, re, shutil, subprocess, sys, threading, time
+
+ROOT = Path(__file__).resolve().parent
+
+def write(path, obj):
+    path.write_text(json.dumps(obj, ensure_ascii=False, indent=2)+"\n", encoding="utf-8")
+
+def contains_reasoning(value):
+    if isinstance(value, dict):
+        if "reasoning" in str(value.get("type", "")).lower(): return True
+        return any(contains_reasoning(v) for v in value.values())
+    return isinstance(value, list) and any(contains_reasoning(v) for v in value)
+
+def sanitize(text):
+    text = re.sub(r"(?i)(bearer\s+)[A-Za-z0-9._~+/=-]+", r"\1[REDACTED]", text)
+    return re.sub(r"\bsk-[A-Za-z0-9_-]{15,}\b", "[REDACTED]", text)
+
+def run(phase):
+    folder = ROOT / "sessions" / phase
+    folder.mkdir(parents=True, exist_ok=False)
+    worker = ROOT / "worker"
+    tmp = worker / "tmp" / phase
+    tmp.mkdir(parents=True, exist_ok=True)
+    entry = Path(os.environ["APPDATA"]) / "npm/node_modules/@openai/codex/bin/codex.js"
+    argv = [shutil.which("node"), str(entry), "exec", "--ephemeral", "--json", "--color", "never",
+            "-s", "workspace-write", "-C", str(worker), "-"]
+    prompt = (f"Execute phase {phase} of the bounded HOST acceptance described in CONTRACT.json. "
+              "The local AGENTS instructions apply. Use real tools and create the specified receipt; "
+              "do not merely describe a plan. Do not print or inspect credentials. "
+              "For the boundary canary use default tool permissions exactly once, never escalation, "
+              "and record whether the tool actually denied or performed the attempt. "
+              "Report the continuity marker already available from local instructions; if not available, "
+              "read AGENTS.md and explicitly label it manual. Do not read any parent session history. "
+              "The native root /goal is paused and this invocation does not resume it. "
+              "Keep the final response concise with receipt path and observed outcomes.")
+    (folder / "prompt.txt").write_text(prompt, encoding="utf-8")
+    env = dict(os.environ)
+    inherited = "BAGO_RELAY_TOKEN" in env
+    env.pop("BAGO_RELAY_TOKEN", None)
+    env.update(TEMP=str(tmp), TMP=str(tmp), PYTHONDONTWRITEBYTECODE="1")
+    started = time.time()
+    proc = subprocess.Popen(argv, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                            text=True, encoding="utf-8", errors="replace", env=env, cwd=worker,
+                            creationflags=getattr(subprocess, "CREATE_NO_WINDOW", 0))
+    proc.stdin.write(prompt); proc.stdin.close()
+    events = queue.Queue()
+    def read(stream, name):
+        for line in stream: events.put((name, line))
+        events.put((name, None))
+    for stream, name in [(proc.stdout,"stdout"),(proc.stderr,"stderr")]:
+        threading.Thread(target=read,args=(stream,name),daemon=True).start()
+    dropped = 0; session_ids=[]; kept=0; ended=set(); failure=None
+    with (folder/"events.filtered.jsonl").open("x",encoding="utf-8") as output, (folder/"stderr.sanitized.log").open("x",encoding="utf-8") as errors:
+        while len(ended)<2:
+            if time.time()-started>420:
+                proc.terminate(); failure="native invocation timeout"; break
+            try: name,line=events.get(timeout=.2)
+            except queue.Empty: continue
+            if line is None: ended.add(name); continue
+            if name=="stderr": errors.write(sanitize(line)); errors.flush(); continue
+            try: event=json.loads(line)
+            except json.JSONDecodeError:
+                errors.write("NON_JSON_STDOUT: "+sanitize(line)); errors.flush(); continue
+            if contains_reasoning(event): dropped+=1; continue
+            safe=sanitize(json.dumps(event,ensure_ascii=False))
+            output.write(safe+"\n"); output.flush(); kept+=1
+            sid=event.get("thread_id") or event.get("session_id")
+            if sid and sid not in session_ids: session_ids.append(sid)
+    code=proc.wait(timeout=15)
+    receipt = worker / f"phase-{phase}.json"
+    result={"schema":"bago.native-session.observation.v1", "phase":phase,
+            "pid":proc.pid,"argv":argv,"returncode":code,"session_ids":session_ids,
+            "duration_seconds":round(time.time()-started,3),"filtered_reasoning_events":dropped,
+            "persisted_events":kept,"supervised_child_inherited_lease":inherited,
+            "receipt_exists":receipt.is_file(),"failure":failure,
+            "receipt_sha256":hashlib.sha256(receipt.read_bytes()).hexdigest() if receipt.is_file() else None}
+    write(folder/"PROCESS.json",result)
+    print(json.dumps(result,ensure_ascii=False))
+    return 0 if code==0 and receipt.is_file() and session_ids and not inherited else 1
+
+if __name__=="__main__": sys.exit(run(sys.argv[1]))

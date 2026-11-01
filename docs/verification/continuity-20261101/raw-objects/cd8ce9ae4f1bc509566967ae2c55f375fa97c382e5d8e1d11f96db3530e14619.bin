@@ -1,0 +1,77 @@
+{
+  "check_id": "local-continuity-contract",
+  "result": "PASS",
+  "mission_id": "CODEX_GOVERNED_CONTINUITY_20261031",
+  "checks": [
+    {
+      "id": "local-agents-section",
+      "result": "PASS",
+      "detail": "AGENTS.md has the persisted continuity section"
+    },
+    {
+      "id": "rule-2",
+      "result": "PASS",
+      "detail": "Continue through each necessary and already authorized stage"
+    },
+    {
+      "id": "rule-3",
+      "result": "PASS",
+      "detail": "Recheck mission identity, candidate, scopes, approval, STOP, and revocation"
+    },
+    {
+      "id": "rule-4",
+      "result": "PASS",
+      "detail": "A delegated recap remains pending until it is actually received"
+    },
+    {
+      "id": "rule-5",
+      "result": "PASS",
+      "detail": "Never auto-resume across explicit STOP"
+    },
+    {
+      "id": "mission-id",
+      "result": "PASS",
+      "detail": "CODEX_GOVERNED_CONTINUITY_20261031"
+    },
+    {
+      "id": "approval-not-permission",
+      "result": "PASS",
+      "detail": "registration constraint exists"
+    },
+    {
+      "id": "goal-status-schema",
+      "result": "PASS",
+      "detail": "bago.goal.status.v1 validates"
+    },
+    {
+      "id": "preserved-state_archive",
+      "result": "PASS",
+      "detail": ".bago/goals/operational-continuity-governance-20261031/evidence/control/preexisting-team-state-ADL_SAVED_AGENT_TASKS_20261020.json"
+    },
+    {
+      "id": "hash-state_archive",
+      "result": "PASS",
+      "detail": ".bago/goals/operational-continuity-governance-20261031/evidence/control/preexisting-team-state-ADL_SAVED_AGENT_TASKS_20261020.json"
+    },
+    {
+      "id": "preserved-active_handoff_archive",
+      "result": "PASS",
+      "detail": ".bago/goals/operational-continuity-governance-20261031/evidence/control/preexisting-active-handoff.md"
+    },
+    {
+      "id": "hash-active_handoff_archive",
+      "result": "PASS",
+      "detail": ".bago/goals/operational-continuity-governance-20261031/evidence/control/preexisting-active-handoff.md"
+    },
+    {
+      "id": "teamctl-registered",
+      "result": "PASS",
+      "detail": "CODEX_GOVERNED_CONTINUITY_20261031"
+    },
+    {
+      "id": "exact-claimed-work",
+      "result": "PASS",
+      "detail": "LOCAL_POLICY and P2_HOST_R5 are claimed separately"
+    }
+  ]
+}

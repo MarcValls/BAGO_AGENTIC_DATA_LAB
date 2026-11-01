@@ -1,0 +1,21 @@
+{
+  "status": "PASS",
+  "argv": [
+    "C:\\Python314\\python.exe",
+    "-B",
+    "scripts/generate_dynamic_readme.py",
+    "--check",
+    "--skip-tests"
+  ],
+  "returncode": 0,
+  "seconds": 12.635,
+  "head": "ed0efc83cc39a40aac231d9aa0da77a5d30a91e7",
+  "scope": "Actual final Windows publication worktree with current public docs; consistency/collection only, NOT_RUN for full-suite execution.",
+  "overlay_unchanged": true,
+  "readmes_unchanged_by_check": {
+    "README.md": "aeb823c75ef3cf24def0e39f97d58e32e2f8f1375e71b4156a0b8c320a507b63",
+    "README_DETAILS.md": "7a2682fea70897ae318537835912743ed0f1193922ada9a7d6c04b41b11ef003"
+  },
+  "writes_scope": "This readme-gate only: logs/result/temp/data; no source/README/AGENTS edits.",
+  "docker_runtime_limit": "pypdf6.21.2 in cached image, declared pin6.21.4; future pinned branch CI separate."
+}

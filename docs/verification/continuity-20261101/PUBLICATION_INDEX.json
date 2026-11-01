@@ -1,0 +1,1194 @@
+{
+  "schema": "bago.continuity.public-projection.v1",
+  "files": [
+    {
+      "source": ".bago/goals/operational-continuity-governance-20261031/mission.json",
+      "published": "raw-objects/c7aa94085e0359545a21b10f2b617b9d8f8b90dbfeb66ac11854cd6fbf960232.bin",
+      "sha256": "c7aa94085e0359545a21b10f2b617b9d8f8b90dbfeb66ac11854cd6fbf960232",
+      "bytes": 8623,
+      "handling_note": "Original criteria/history; preserve as historical, not a new close result."
+    },
+    {
+      "source": ".bago/goals/operational-continuity-governance-20261031/goal.md",
+      "published": "raw-objects/cd9146f47ed5bc34bbb9fbdf7f5039b0539afb41977bd283a76a0d19e3e5386c.bin",
+      "sha256": "cd9146f47ed5bc34bbb9fbdf7f5039b0539afb41977bd283a76a0d19e3e5386c",
+      "bytes": 2449,
+      "handling_note": "Original criteria/history; preserve as historical, not a new close result."
+    },
+    {
+      "source": ".bago/goals/operational-continuity-governance-20261031/status.json",
+      "published": "raw-objects/f5a22128f52634a073b0d92723812c4a54dfab4bb590c56cc4067f81d882b2ae.bin",
+      "sha256": "f5a22128f52634a073b0d92723812c4a54dfab4bb590c56cc4067f81d882b2ae",
+      "bytes": 3393,
+      "handling_note": "Original criteria/history; preserve as historical, not a new close result."
+    },
+    {
+      "source": ".bago/team/runtime/handoffs/LOCAL_POLICY.json",
+      "published": "raw-objects/eca6c2ffc9731bed1b63781dcb1bfe5f66d16041c7684c25260e6ab5683aa2ab.bin",
+      "sha256": "eca6c2ffc9731bed1b63781dcb1bfe5f66d16041c7684c25260e6ab5683aa2ab",
+      "bytes": 2411,
+      "handling_note": "Historical immutable source handoff; do not rewrite."
+    },
+    {
+      "source": "AGENTS.md",
+      "published": "raw-objects/d11c7dc1a2a14487556fa916c83a2faa500b7131f59d980e448731a0f71a4874.bin",
+      "sha256": "d11c7dc1a2a14487556fa916c83a2faa500b7131f59d980e448731a0f71a4874",
+      "bytes": 3329,
+      "handling_note": "Declared output; exact handoff binding."
+    },
+    {
+      "source": ".bago/runtime/ACTIVE_HANDOFF.md",
+      "published": "raw-objects/80b35c02e5eed721e1dcf34b3c232e18c0bead6968e7a2fcc04b6495dceefd41.bin",
+      "sha256": "80b35c02e5eed721e1dcf34b3c232e18c0bead6968e7a2fcc04b6495dceefd41",
+      "bytes": 1560,
+      "handling_note": "Declared output; exact handoff binding."
+    },
+    {
+      "source": ".bago/goals/operational-continuity-governance-20261031/goal.md",
+      "published": "raw-objects/cd9146f47ed5bc34bbb9fbdf7f5039b0539afb41977bd283a76a0d19e3e5386c.bin",
+      "sha256": "cd9146f47ed5bc34bbb9fbdf7f5039b0539afb41977bd283a76a0d19e3e5386c",
+      "bytes": 2449,
+      "handling_note": "Declared output; exact handoff binding."
+    },
+    {
+      "source": ".bago/goals/operational-continuity-governance-20261031/status.json",
+      "published": "raw-objects/f5a22128f52634a073b0d92723812c4a54dfab4bb590c56cc4067f81d882b2ae.bin",
+      "sha256": "f5a22128f52634a073b0d92723812c4a54dfab4bb590c56cc4067f81d882b2ae",
+      "bytes": 3393,
+      "handling_note": "Declared output; exact handoff binding."
+    },
+    {
+      "source": ".bago/goals/operational-continuity-governance-20261031/evidence/checks/verify_local_continuity.py",
+      "published": "raw-objects/438d5fd8bc85810a10a255b78e72875b5293a2841bc64080d58688e19d18be74.bin",
+      "sha256": "438d5fd8bc85810a10a255b78e72875b5293a2841bc64080d58688e19d18be74",
+      "bytes": 2935,
+      "handling_note": "Declared output; exact handoff binding."
+    },
+    {
+      "source": ".bago/goals/operational-continuity-governance-20261031/evidence/checks/local-continuity-contract.json",
+      "published": "raw-objects/cd8ce9ae4f1bc509566967ae2c55f375fa97c382e5d8e1d11f96db3530e14619.bin",
+      "sha256": "cd8ce9ae4f1bc509566967ae2c55f375fa97c382e5d8e1d11f96db3530e14619",
+      "bytes": 2375,
+      "handling_note": "Declared output; exact handoff binding."
+    },
+    {
+      "source": ".bago/team/runtime/executions/56778b44530141d7b13d39927882d7ef/receipt.json",
+      "published": "raw-objects/ce0060f7c55616664184cd1feb0666a6aa56f3313533b14fb845dee7a2b47203.bin",
+      "sha256": "ce0060f7c55616664184cd1feb0666a6aa56f3313533b14fb845dee7a2b47203",
+      "bytes": 1603,
+      "handling_note": "PASS receipt; no lease/token keys."
+    },
+    {
+      "source": ".bago/goals/operational-continuity-governance-20261031/evidence/control/status-recovery/RESULT.md",
+      "published": "raw-objects/bc17784d543f6d17b00d1b93d64b5c08d805323c2bc37c330b43f3a2c15d38f2.bin",
+      "sha256": "bc17784d543f6d17b00d1b93d64b5c08d805323c2bc37c330b43f3a2c15d38f2",
+      "bytes": 757,
+      "handling_note": "Append-only recovery proof; status bytes restored, historic handoff unchanged."
+    },
+    {
+      "source": ".bago/goals/operational-continuity-governance-20261031/evidence/control/status-recovery/proof.json",
+      "published": "raw-objects/1e35d271406f2076d285b62cf18c10972afc8811333b5fe0d16d1dd3c7824d40.bin",
+      "sha256": "1e35d271406f2076d285b62cf18c10972afc8811333b5fe0d16d1dd3c7824d40",
+      "bytes": 942,
+      "handling_note": "Append-only recovery proof; status bytes restored, historic handoff unchanged."
+    },
+    {
+      "source": ".bago/goals/operational-continuity-governance-20261031/evidence/control/status-recovery/verify-after.json",
+      "published": "raw-objects/b46a89ace0878a2733c7eb895f468a1311238ddaa80f9ac1b42396fe3e36b520.bin",
+      "sha256": "b46a89ace0878a2733c7eb895f468a1311238ddaa80f9ac1b42396fe3e36b520",
+      "bytes": 152,
+      "handling_note": "Append-only recovery proof; status bytes restored, historic handoff unchanged."
+    },
+    {
+      "source": ".bago/goals/operational-continuity-governance-20261031/evidence/control/status-recovery/pair-after.json",
+      "published": "raw-objects/bd5eb69469a022024b70045dfa4a18ea7ecff89839734c7c9e67aa9f5eed7fc6.bin",
+      "sha256": "bd5eb69469a022024b70045dfa4a18ea7ecff89839734c7c9e67aa9f5eed7fc6",
+      "bytes": 179,
+      "handling_note": "Append-only recovery proof; status bytes restored, historic handoff unchanged."
+    },
+    {
+      "source": ".bago/team/runtime/handoffs/P2_HOST_R5.json",
+      "published": "raw-objects/b3bf64cf73804d3762192dbe437e817967958d9e0f9f3ef5dc20aa13484a8a72.bin",
+      "sha256": "b3bf64cf73804d3762192dbe437e817967958d9e0f9f3ef5dc20aa13484a8a72",
+      "bytes": 8698,
+      "handling_note": "Source handoff metadata; R5 runtime record binds executed binary digest."
+    },
+    {
+      "source": ".worktrees/browser-bridge-runtime-validation-20261030/.bago/goals/browser-bridge-runtime-validation-20261030/revision5/build/package-manifest.json",
+      "published": "raw-objects/8664b00a17882eeac9897d3cb386775eb7005f7f5b98fc010b78227ce898656e.bin",
+      "sha256": "8664b00a17882eeac9897d3cb386775eb7005f7f5b98fc010b78227ce898656e",
+      "bytes": 472,
+      "handling_note": "Minimal package/source binding; omit executable binary bytes."
+    },
+    {
+      "source": ".worktrees/browser-bridge-runtime-validation-20261030/.bago/goals/browser-bridge-runtime-validation-20261030/revision5/evidence/p2/package-identity.json",
+      "published": "raw-objects/dec14ea78f63016dfa060214012585b9025b68250f91b3828dfce9b292844eee.bin",
+      "sha256": "dec14ea78f63016dfa060214012585b9025b68250f91b3828dfce9b292844eee",
+      "bytes": 639,
+      "handling_note": "Minimal package/source binding; omit executable binary bytes."
+    },
+    {
+      "source": ".worktrees/browser-bridge-runtime-validation-20261030/.bago/goals/browser-bridge-runtime-validation-20261030/revision5/evidence/p2/p2-host-invariants.json",
+      "published": "raw-objects/a8d47acb6c3d5e22f6f743f010d5ed3b4d68f6c5beaf77d2e4de149f6db3727c.bin",
+      "sha256": "a8d47acb6c3d5e22f6f743f010d5ed3b4d68f6c5beaf77d2e4de149f6db3727c",
+      "bytes": 935,
+      "handling_note": "Minimal package/source binding; omit executable binary bytes."
+    },
+    {
+      "source": ".worktrees/browser-bridge-runtime-validation-20261030/.bago/goals/browser-bridge-runtime-validation-20261030/revision5/checks/p2/P2_HOST_R5.diff.json",
+      "published": "raw-objects/5f129de9a7a33334b0cc5cd457849f8dc86e19ff84c140ad28fc1d526947444d.bin",
+      "sha256": "5f129de9a7a33334b0cc5cd457849f8dc86e19ff84c140ad28fc1d526947444d",
+      "bytes": 6774,
+      "handling_note": "Minimal package/source binding; omit executable binary bytes."
+    },
+    {
+      "source": ".bago/team/runtime/executions/ce8897cce79647229326ba45ebbc3bbe/receipt.json",
+      "published": "raw-objects/ca2b8b709be0222ca1c601ecca2109e58ddb9e8db82b937c01d5faaeaa5633c5.bin",
+      "sha256": "ca2b8b709be0222ca1c601ecca2109e58ddb9e8db82b937c01d5faaeaa5633c5",
+      "bytes": 1866,
+      "handling_note": "Required P2 package/contract check receipt."
+    },
+    {
+      "source": ".bago/team/runtime/executions/3fdd5f686bfa4d54b97738f486285ba0/receipt.json",
+      "published": "raw-objects/4e03dc403f248a0beddc58fe1b6be622aeaf7795d0b85a32c02a71502078b995.bin",
+      "sha256": "4e03dc403f248a0beddc58fe1b6be622aeaf7795d0b85a32c02a71502078b995",
+      "bytes": 1870,
+      "handling_note": "Required P2 package/contract check receipt."
+    },
+    {
+      "source": ".worktrees/browser-bridge-runtime-validation-20261030/.bago/goals/browser-bridge-runtime-validation-20261030/revision5/evidence/runtime/BRAVE_E2E_R5-handoff-submission.json",
+      "published": "raw-objects/72bb0a819a00f93c486df7ed5394f534e7a746c2ec1b7234c8e610c9a84208b3.bin",
+      "sha256": "72bb0a819a00f93c486df7ed5394f534e7a746c2ec1b7234c8e610c9a84208b3",
+      "bytes": 18398,
+      "handling_note": "Exact source submission for 29-output R5 handoff."
+    },
+    {
+      "source": ".bago/team/runtime/handoffs/BRAVE_E2E_R5.json",
+      "published": "raw-objects/f547de10b5fee7482d2e987278af497520763cb053bb839a01c9fe9b3e832c02.bin",
+      "sha256": "f547de10b5fee7482d2e987278af497520763cb053bb839a01c9fe9b3e832c02",
+      "bytes": 17033,
+      "handling_note": "Immutable managed handoff with original candidate binding."
+    },
+    {
+      "source": ".worktrees/browser-bridge-runtime-validation-20261030/scripts/browser_bridge/runtime/brave_native_messaging_r5.cjs",
+      "published": "raw-objects/a22be9437ed1eb493a70da241895d994e96f96398132f23b71b9caeb1ccb5697.bin",
+      "sha256": "a22be9437ed1eb493a70da241895d994e96f96398132f23b71b9caeb1ccb5697",
+      "bytes": 11807,
+      "handling_note": "One of all 29 immutable declared outputs; retain failed attempts and screenshot history."
+    },
+    {
+      "source": ".worktrees/browser-bridge-runtime-validation-20261030/scripts/browser_bridge/runtime/run_brave_e2e_r5.ps1",
+      "published": "raw-objects/80bddbb1e8d5a58c850940e6c8b052337b395c3df2d539492b2a2a3d46d97917.bin",
+      "sha256": "80bddbb1e8d5a58c850940e6c8b052337b395c3df2d539492b2a2a3d46d97917",
+      "bytes": 14609,
+      "handling_note": "One of all 29 immutable declared outputs; retain failed attempts and screenshot history."
+    },
+    {
+      "source": ".worktrees/browser-bridge-runtime-validation-20261030/scripts/browser_bridge/runtime/verify_brave_cleanup_r5.ps1",
+      "published": "raw-objects/847846a4e41441af6e757363764f954f408b99c27570b3f3e5dc263ba1128545.bin",
+      "sha256": "847846a4e41441af6e757363764f954f408b99c27570b3f3e5dc263ba1128545",
+      "bytes": 5393,
+      "handling_note": "One of all 29 immutable declared outputs; retain failed attempts and screenshot history."
+    },
+    {
+      "source": ".worktrees/browser-bridge-runtime-validation-20261030/scripts/browser_bridge/runtime/diagnose_brave_extension_r5.cjs",
+      "published": "raw-objects/efce6c036f1cbd8c92de4dea1685d8bd1fca146e84a7ecf23376c38557fe8b49.bin",
+      "sha256": "efce6c036f1cbd8c92de4dea1685d8bd1fca146e84a7ecf23376c38557fe8b49",
+      "bytes": 5576,
+      "handling_note": "One of all 29 immutable declared outputs; retain failed attempts and screenshot history."
+    },
+    {
+      "source": ".worktrees/browser-bridge-runtime-validation-20261030/scripts/browser_bridge/runtime/diagnose_brave_extension_api_r5.cjs",
+      "published": "raw-objects/e1431217676ae6effcec799a911796dc03833c98b8c3efd662672dd75f6417a2.bin",
+      "sha256": "e1431217676ae6effcec799a911796dc03833c98b8c3efd662672dd75f6417a2",
+      "bytes": 4288,
+      "handling_note": "One of all 29 immutable declared outputs; retain failed attempts and screenshot history."
+    },
+    {
+      "source": ".worktrees/browser-bridge-runtime-validation-20261030/.bago/goals/browser-bridge-runtime-validation-20261030/revision5/evidence/runtime/BRAVE_E2E_R5-preflight.json",
+      "published": "raw-objects/f891e8c2023025220718d73b25835f2494ddc018368d9e1474ff1afe0931b6b0.bin",
+      "sha256": "f891e8c2023025220718d73b25835f2494ddc018368d9e1474ff1afe0931b6b0",
+      "bytes": 1648,
+      "handling_note": "One of all 29 immutable declared outputs; retain failed attempts and screenshot history."
+    },
+    {
+      "source": ".worktrees/browser-bridge-runtime-validation-20261030/.bago/goals/browser-bridge-runtime-validation-20261030/revision5/evidence/runtime/BRAVE_E2E_R5-resume-preflight.json",
+      "published": "raw-objects/df6027d19542a2008ff6a5b8dd9536629c28e6e10eeb8c5ee1a78a3ae7ccfa14.bin",
+      "sha256": "df6027d19542a2008ff6a5b8dd9536629c28e6e10eeb8c5ee1a78a3ae7ccfa14",
+      "bytes": 1122,
+      "handling_note": "One of all 29 immutable declared outputs; retain failed attempts and screenshot history."
+    },
+    {
+      "source": ".worktrees/browser-bridge-runtime-validation-20261030/.bago/goals/browser-bridge-runtime-validation-20261030/revision5/evidence/runtime/BRAVE_E2E_R5-resume-preflight-attempt5.json",
+      "published": "raw-objects/e6d1d063aa2588ce896d59cb8c4cd566c7e914143310f491d4f62d1f910e6af8.bin",
+      "sha256": "e6d1d063aa2588ce896d59cb8c4cd566c7e914143310f491d4f62d1f910e6af8",
+      "bytes": 2070,
+      "handling_note": "One of all 29 immutable declared outputs; retain failed attempts and screenshot history."
+    },
+    {
+      "source": ".worktrees/browser-bridge-runtime-validation-20261030/.bago/goals/browser-bridge-runtime-validation-20261030/revision5/evidence/runtime/BRAVE_E2E_R5-resume-preflight-attempt6.json",
+      "published": "raw-objects/0bf01833da098a68034fa78e86d7c8be556e819549ae23b140b021ff2e9876be.bin",
+      "sha256": "0bf01833da098a68034fa78e86d7c8be556e819549ae23b140b021ff2e9876be",
+      "bytes": 2362,
+      "handling_note": "One of all 29 immutable declared outputs; retain failed attempts and screenshot history."
+    },
+    {
+      "source": ".worktrees/browser-bridge-runtime-validation-20261030/.bago/goals/browser-bridge-runtime-validation-20261030/revision5/evidence/runtime/BRAVE_E2E_R5-resume-preflight-attempt7.json",
+      "published": "raw-objects/b21844ef29ce11b97172679a711e61f893d032cc808f76fee1131f8144380918.bin",
+      "sha256": "b21844ef29ce11b97172679a711e61f893d032cc808f76fee1131f8144380918",
+      "bytes": 2502,
+      "handling_note": "One of all 29 immutable declared outputs; retain failed attempts and screenshot history."
+    },
+    {
+      "source": ".worktrees/browser-bridge-runtime-validation-20261030/.bago/goals/browser-bridge-runtime-validation-20261030/revision5/evidence/runtime/brave-native-messaging-runtime-attempt3.json",
+      "published": "raw-objects/805d2291f79e2f718d3ba7f75aeafe04d4cf7de08f1a28fcbde7a9166e2d7265.bin",
+      "sha256": "805d2291f79e2f718d3ba7f75aeafe04d4cf7de08f1a28fcbde7a9166e2d7265",
+      "bytes": 4974,
+      "handling_note": "One of all 29 immutable declared outputs; retain failed attempts and screenshot history."
+    },
+    {
+      "source": ".worktrees/browser-bridge-runtime-validation-20261030/.bago/goals/browser-bridge-runtime-validation-20261030/revision5/evidence/runtime/brave-native-messaging-runtime-attempt4.json",
+      "published": "raw-objects/b7c6ad30bfe23e96020fbe31962bef44f95a0bd8905b38416f5ccc4178f056ff.bin",
+      "sha256": "b7c6ad30bfe23e96020fbe31962bef44f95a0bd8905b38416f5ccc4178f056ff",
+      "bytes": 1470,
+      "handling_note": "One of all 29 immutable declared outputs; retain failed attempts and screenshot history."
+    },
+    {
+      "source": ".worktrees/browser-bridge-runtime-validation-20261030/.bago/goals/browser-bridge-runtime-validation-20261030/revision5/evidence/runtime/brave-native-messaging-runtime-attempt5.json",
+      "published": "raw-objects/e97fa28bde5ca226002e535bca48ae181d76c2384016a242112db19f16c2e9ed.bin",
+      "sha256": "e97fa28bde5ca226002e535bca48ae181d76c2384016a242112db19f16c2e9ed",
+      "bytes": 1528,
+      "handling_note": "One of all 29 immutable declared outputs; retain failed attempts and screenshot history."
+    },
+    {
+      "source": ".worktrees/browser-bridge-runtime-validation-20261030/.bago/goals/browser-bridge-runtime-validation-20261030/revision5/evidence/runtime/brave-native-messaging-runtime-attempt6.json",
+      "published": "raw-objects/0025bb8c9b0c79a72a0ce221160621809cbba9b48a099efcf23d67b3fea2be07.bin",
+      "sha256": "0025bb8c9b0c79a72a0ce221160621809cbba9b48a099efcf23d67b3fea2be07",
+      "bytes": 1591,
+      "handling_note": "One of all 29 immutable declared outputs; retain failed attempts and screenshot history."
+    },
+    {
+      "source": ".worktrees/browser-bridge-runtime-validation-20261030/.bago/goals/browser-bridge-runtime-validation-20261030/revision5/evidence/runtime/brave-native-messaging-runtime-attempt7.json",
+      "published": "raw-objects/a39a9b4d0367d03ad205b97cb78d79151a8b9db89b7b92e16aa92658a5bcfec9.bin",
+      "sha256": "a39a9b4d0367d03ad205b97cb78d79151a8b9db89b7b92e16aa92658a5bcfec9",
+      "bytes": 4253,
+      "handling_note": "One of all 29 immutable declared outputs; retain failed attempts and screenshot history."
+    },
+    {
+      "source": ".worktrees/browser-bridge-runtime-validation-20261030/.bago/goals/browser-bridge-runtime-validation-20261030/revision5/evidence/runtime/brave-worker-diagnostic-attempt5.json",
+      "published": "raw-objects/f0fc0cf742398150a0a9aca107cde096e39b60faf004771a06691495aea0450e.bin",
+      "sha256": "f0fc0cf742398150a0a9aca107cde096e39b60faf004771a06691495aea0450e",
+      "bytes": 2586,
+      "handling_note": "One of all 29 immutable declared outputs; retain failed attempts and screenshot history."
+    },
+    {
+      "source": ".worktrees/browser-bridge-runtime-validation-20261030/.bago/goals/browser-bridge-runtime-validation-20261030/revision5/evidence/runtime/brave-api-diagnostic-attempt7.json",
+      "published": "raw-objects/3e586c3221c5f7e0418ae4d0832eda3e8a4a97f2250707a0fa3cdef45f5a0252.bin",
+      "sha256": "3e586c3221c5f7e0418ae4d0832eda3e8a4a97f2250707a0fa3cdef45f5a0252",
+      "bytes": 1763,
+      "handling_note": "One of all 29 immutable declared outputs; retain failed attempts and screenshot history."
+    },
+    {
+      "source": ".worktrees/browser-bridge-runtime-validation-20261030/.bago/goals/browser-bridge-runtime-validation-20261030/revision5/checks/e2e/cleanup-result.json",
+      "published": "raw-objects/c0b82504de4dc0bcffb8bc8ea4c6032e18f93daeac91d7c5a5271a2430618d56.bin",
+      "sha256": "c0b82504de4dc0bcffb8bc8ea4c6032e18f93daeac91d7c5a5271a2430618d56",
+      "bytes": 1393,
+      "handling_note": "One of all 29 immutable declared outputs; retain failed attempts and screenshot history."
+    },
+    {
+      "source": ".worktrees/browser-bridge-runtime-validation-20261030/.bago/goals/browser-bridge-runtime-validation-20261030/revision5/checks/e2e/cleanup-result-attempt2.json",
+      "published": "raw-objects/699a94da84a79547826587fc1d2fe7b25063d200d5fbf12f3b52bb96c738888d.bin",
+      "sha256": "699a94da84a79547826587fc1d2fe7b25063d200d5fbf12f3b52bb96c738888d",
+      "bytes": 1561,
+      "handling_note": "One of all 29 immutable declared outputs; retain failed attempts and screenshot history."
+    },
+    {
+      "source": ".worktrees/browser-bridge-runtime-validation-20261030/.bago/goals/browser-bridge-runtime-validation-20261030/revision5/checks/e2e/cleanup-result-attempt3.json",
+      "published": "raw-objects/1bb4f059dd890d3fbfeec9c88f87aff3de21330f64f2bbee02ec54f4fe8e3b44.bin",
+      "sha256": "1bb4f059dd890d3fbfeec9c88f87aff3de21330f64f2bbee02ec54f4fe8e3b44",
+      "bytes": 11775,
+      "handling_note": "One of all 29 immutable declared outputs; retain failed attempts and screenshot history."
+    },
+    {
+      "source": ".worktrees/browser-bridge-runtime-validation-20261030/.bago/goals/browser-bridge-runtime-validation-20261030/revision5/checks/e2e/cleanup-result-attempt4.json",
+      "published": "raw-objects/1a9fee2423a03c5d796dcee1a79832ab8175bbc86d8d673801a74f2d5226de91.bin",
+      "sha256": "1a9fee2423a03c5d796dcee1a79832ab8175bbc86d8d673801a74f2d5226de91",
+      "bytes": 4508,
+      "handling_note": "One of all 29 immutable declared outputs; retain failed attempts and screenshot history."
+    },
+    {
+      "source": ".worktrees/browser-bridge-runtime-validation-20261030/.bago/goals/browser-bridge-runtime-validation-20261030/revision5/checks/e2e/cleanup-result-attempt5.json",
+      "published": "raw-objects/e2bb4dc471f7ee5e8ddbb41b1bddaef75fd4fa16529f6eb7db2b6811ba774bcf.bin",
+      "sha256": "e2bb4dc471f7ee5e8ddbb41b1bddaef75fd4fa16529f6eb7db2b6811ba774bcf",
+      "bytes": 4661,
+      "handling_note": "One of all 29 immutable declared outputs; retain failed attempts and screenshot history."
+    },
+    {
+      "source": ".worktrees/browser-bridge-runtime-validation-20261030/.bago/goals/browser-bridge-runtime-validation-20261030/revision5/checks/e2e/cleanup-result-attempt6.json",
+      "published": "raw-objects/3fd42bda5a676031bc12d2c661c0b9d8996c941db7868f67fd7c4a534362a659.bin",
+      "sha256": "3fd42bda5a676031bc12d2c661c0b9d8996c941db7868f67fd7c4a534362a659",
+      "bytes": 4779,
+      "handling_note": "One of all 29 immutable declared outputs; retain failed attempts and screenshot history."
+    },
+    {
+      "source": ".worktrees/browser-bridge-runtime-validation-20261030/.bago/goals/browser-bridge-runtime-validation-20261030/revision5/checks/e2e/cleanup-result-attempt7.json",
+      "published": "raw-objects/a010c28a699587b5c074084453ce96eec9539c18f0663786bbff39dffb41c382.bin",
+      "sha256": "a010c28a699587b5c074084453ce96eec9539c18f0663786bbff39dffb41c382",
+      "bytes": 5433,
+      "handling_note": "One of all 29 immutable declared outputs; retain failed attempts and screenshot history."
+    },
+    {
+      "source": ".worktrees/browser-bridge-runtime-validation-20261030/.bago/goals/browser-bridge-runtime-validation-20261030/revision5/checks/e2e/cleanup-verification-attempt7.json",
+      "published": "raw-objects/1bf5c6fb1386219a61f6f4ac57f18c0d974ed2589ba0b9e222ef51b1dc29a9ec.bin",
+      "sha256": "1bf5c6fb1386219a61f6f4ac57f18c0d974ed2589ba0b9e222ef51b1dc29a9ec",
+      "bytes": 1175,
+      "handling_note": "One of all 29 immutable declared outputs; retain failed attempts and screenshot history."
+    },
+    {
+      "source": ".worktrees/browser-bridge-runtime-validation-20261030/.bago/goals/browser-bridge-runtime-validation-20261030/revision5/screenshots/fixture-brave-r5-attempt4.png",
+      "published": "raw-objects/614bb7bb7ea375f271736bbc733600b641516052429ca8994c9aafdb647d1f9d.bin",
+      "sha256": "614bb7bb7ea375f271736bbc733600b641516052429ca8994c9aafdb647d1f9d",
+      "bytes": 17215,
+      "handling_note": "One of all 29 immutable declared outputs; retain failed attempts and screenshot history."
+    },
+    {
+      "source": ".worktrees/browser-bridge-runtime-validation-20261030/.bago/goals/browser-bridge-runtime-validation-20261030/revision5/screenshots/fixture-brave-r5-attempt5.png",
+      "published": "raw-objects/614bb7bb7ea375f271736bbc733600b641516052429ca8994c9aafdb647d1f9d.bin",
+      "sha256": "614bb7bb7ea375f271736bbc733600b641516052429ca8994c9aafdb647d1f9d",
+      "bytes": 17215,
+      "handling_note": "One of all 29 immutable declared outputs; retain failed attempts and screenshot history."
+    },
+    {
+      "source": ".worktrees/browser-bridge-runtime-validation-20261030/.bago/goals/browser-bridge-runtime-validation-20261030/revision5/screenshots/fixture-brave-r5-attempt6.png",
+      "published": "raw-objects/614bb7bb7ea375f271736bbc733600b641516052429ca8994c9aafdb647d1f9d.bin",
+      "sha256": "614bb7bb7ea375f271736bbc733600b641516052429ca8994c9aafdb647d1f9d",
+      "bytes": 17215,
+      "handling_note": "One of all 29 immutable declared outputs; retain failed attempts and screenshot history."
+    },
+    {
+      "source": ".worktrees/browser-bridge-runtime-validation-20261030/.bago/goals/browser-bridge-runtime-validation-20261030/revision5/screenshots/fixture-brave-r5-attempt7.png",
+      "published": "raw-objects/614bb7bb7ea375f271736bbc733600b641516052429ca8994c9aafdb647d1f9d.bin",
+      "sha256": "614bb7bb7ea375f271736bbc733600b641516052429ca8994c9aafdb647d1f9d",
+      "bytes": 17215,
+      "handling_note": "One of all 29 immutable declared outputs; retain failed attempts and screenshot history."
+    },
+    {
+      "source": ".bago/team/runtime/executions/82c2292c60ea403e9dadb313be96202d/receipt.json",
+      "published": "raw-objects/552bb8d8f13d4a8cc31e7adcc9223c499c48c6548432412915a32288df2ccde6.bin",
+      "sha256": "552bb8d8f13d4a8cc31e7adcc9223c499c48c6548432412915a32288df2ccde6",
+      "bytes": 2203,
+      "handling_note": "Managed runtime/cleanup PASS receipt; no lease/token fields."
+    },
+    {
+      "source": ".bago/team/runtime/executions/8d3041fd47fa4d4bb821aca94f642596/receipt.json",
+      "published": "raw-objects/75da9ac53db22df4351fc3f771acb72a5eab5007ba214432e1f804c15759fbf4.bin",
+      "sha256": "75da9ac53db22df4351fc3f771acb72a5eab5007ba214432e1f804c15759fbf4",
+      "bytes": 1932,
+      "handling_note": "Managed runtime/cleanup PASS receipt; no lease/token fields."
+    },
+    {
+      "source": ".bago/goals/operational-continuity-governance-20261031/evidence/acceptance-20261101/workspace/.bago/team/runtime/handoffs/GOV.json",
+      "published": "raw-objects/bacc4c6b0a15d29f4b77f60f42131567b37e67951c749484a0dcd180787d8b08.bin",
+      "sha256": "bacc4c6b0a15d29f4b77f60f42131567b37e67951c749484a0dcd180787d8b08",
+      "bytes": 16345,
+      "handling_note": "Original handoff digest; public projection intentionally omits private/irrelevant declared outputs (count 72)."
+    },
+    {
+      "source": ".bago/goals/operational-continuity-governance-20261031/evidence/acceptance-20261101/workspace/.bago/team/runtime/handoffs/HOST.json",
+      "published": "raw-objects/e0fb5de9d573188f54ed4409cd7fa757fe79855912bce656185ef3dc5a723f17.bin",
+      "sha256": "e0fb5de9d573188f54ed4409cd7fa757fe79855912bce656185ef3dc5a723f17",
+      "bytes": 8187,
+      "handling_note": "Original handoff digest; public projection intentionally omits private/irrelevant declared outputs (count 36)."
+    },
+    {
+      "source": ".bago/goals/operational-continuity-governance-20261031/evidence/acceptance-20261101/workspace/.bago/team/runtime/handoffs/PROVENANCE.json",
+      "published": "raw-objects/db822acda1b122cb7ad3b0ff54adb754a6dcf7f6e56383cc427c580d55482576.bin",
+      "sha256": "db822acda1b122cb7ad3b0ff54adb754a6dcf7f6e56383cc427c580d55482576",
+      "bytes": 2380,
+      "handling_note": "Original handoff digest; public projection intentionally omits private/irrelevant declared outputs (count 7)."
+    },
+    {
+      "source": ".bago/goals/operational-continuity-governance-20261031/evidence/acceptance-20261101/workspace/.bago/team/runtime/handoffs/REVIEW.json",
+      "published": "raw-objects/7ea051d4ad8c5a51e320938b204f1601a68de0f44cc2bba705eb8d3f7b5281ae.bin",
+      "sha256": "7ea051d4ad8c5a51e320938b204f1601a68de0f44cc2bba705eb8d3f7b5281ae",
+      "bytes": 2838,
+      "handling_note": "Original handoff digest; public projection intentionally omits private/irrelevant declared outputs (count 6)."
+    },
+    {
+      "source": ".bago/goals/operational-continuity-governance-20261031/evidence/acceptance-20261101/workspace/governance/MATRIX.json",
+      "published": "raw-objects/18ba5de307e5be5e571bd16c1c8e4afaaa52f70bb98f06da64082a405d416b18.bin",
+      "sha256": "18ba5de307e5be5e571bd16c1c8e4afaaa52f70bb98f06da64082a405d416b18",
+      "bytes": 4170,
+      "handling_note": "Selected public case evidence; this is not the complete 72-output source handoff."
+    },
+    {
+      "source": ".bago/goals/operational-continuity-governance-20261031/evidence/acceptance-20261101/workspace/governance/REPORT.md",
+      "published": "raw-objects/d5cdd8ba32f355ac23c7b0f42a559137fbc607a14a0803bd29466ee1a8e70af0.bin",
+      "sha256": "d5cdd8ba32f355ac23c7b0f42a559137fbc607a14a0803bd29466ee1a8e70af0",
+      "bytes": 2542,
+      "handling_note": "Selected public case evidence; this is not the complete 72-output source handoff."
+    },
+    {
+      "source": ".bago/goals/operational-continuity-governance-20261031/evidence/acceptance-20261101/workspace/governance/attempt1/result.json",
+      "published": "raw-objects/4513fa35e60fae25fd5d484aa480edcc2d5a421bd12118d0f6c51ebdd5533774.bin",
+      "sha256": "4513fa35e60fae25fd5d484aa480edcc2d5a421bd12118d0f6c51ebdd5533774",
+      "bytes": 15830,
+      "handling_note": "Selected public case evidence; this is not the complete 72-output source handoff."
+    },
+    {
+      "source": ".bago/goals/operational-continuity-governance-20261031/evidence/acceptance-20261101/workspace/governance/attempt2/result.json",
+      "published": "raw-objects/4a33347aee575eb53ac8fc4999a496126ee07667d8e7aafa6ca85253b386e2c2.bin",
+      "sha256": "4a33347aee575eb53ac8fc4999a496126ee07667d8e7aafa6ca85253b386e2c2",
+      "bytes": 15830,
+      "handling_note": "Selected public case evidence; this is not the complete 72-output source handoff."
+    },
+    {
+      "source": ".bago/goals/operational-continuity-governance-20261031/evidence/acceptance-20261101/workspace/governance/attempt3/result.json",
+      "published": "raw-objects/86f4315aec0b635be26b6525a8ddee6bfc79425eb9332850af15b90102672717.bin",
+      "sha256": "86f4315aec0b635be26b6525a8ddee6bfc79425eb9332850af15b90102672717",
+      "bytes": 17307,
+      "handling_note": "Selected public case evidence; this is not the complete 72-output source handoff."
+    },
+    {
+      "source": ".bago/goals/operational-continuity-governance-20261031/evidence/acceptance-20261101/workspace/governance/attempt4/result.json",
+      "published": "raw-objects/d8aabc585b13f2a7dca72d8bc1e7861cd572e391e6d61a9c0db9b7a7e00457cd.bin",
+      "sha256": "d8aabc585b13f2a7dca72d8bc1e7861cd572e391e6d61a9c0db9b7a7e00457cd",
+      "bytes": 23950,
+      "handling_note": "Selected public case evidence; this is not the complete 72-output source handoff."
+    },
+    {
+      "source": ".bago/goals/operational-continuity-governance-20261031/evidence/acceptance-20261101/workspace/governance/supplement1/result.json",
+      "published": "raw-objects/5ab4d33087841c079c331c08c90ab6bd8f0563925fa3af38f57d75f53c13aff6.bin",
+      "sha256": "5ab4d33087841c079c331c08c90ab6bd8f0563925fa3af38f57d75f53c13aff6",
+      "bytes": 7039,
+      "handling_note": "Selected public case evidence; this is not the complete 72-output source handoff."
+    },
+    {
+      "source": ".bago/goals/operational-continuity-governance-20261031/evidence/acceptance-20261101/workspace/governance/evidence/positive-gateway-result.json",
+      "published": "raw-objects/6534d4d534b37d86cab5925ae9fcc332f617af4974cb4615b693953de6ce9aba.bin",
+      "sha256": "6534d4d534b37d86cab5925ae9fcc332f617af4974cb4615b693953de6ce9aba",
+      "bytes": 4823,
+      "handling_note": "Selected public case evidence; this is not the complete 72-output source handoff."
+    },
+    {
+      "source": ".bago/goals/operational-continuity-governance-20261031/evidence/acceptance-20261101/workspace/governance/evidence/positive-receipt-0.json",
+      "published": "raw-objects/9cec7d62256ace7750ca0872399f64a1616d99e99509cb71bdd9b51d50145cb6.bin",
+      "sha256": "9cec7d62256ace7750ca0872399f64a1616d99e99509cb71bdd9b51d50145cb6",
+      "bytes": 1953,
+      "handling_note": "Selected public case evidence; this is not the complete 72-output source handoff."
+    },
+    {
+      "source": ".bago/goals/operational-continuity-governance-20261031/evidence/acceptance-20261101/workspace/governance/evidence/positive-receipt-1.json",
+      "published": "raw-objects/2267b44c43c6df66309af08eeb8d2210cfe8b11cca0f3f3234b26ce723343ecf.bin",
+      "sha256": "2267b44c43c6df66309af08eeb8d2210cfe8b11cca0f3f3234b26ce723343ecf",
+      "bytes": 2086,
+      "handling_note": "Selected public case evidence; this is not the complete 72-output source handoff."
+    },
+    {
+      "source": ".bago/goals/operational-continuity-governance-20261031/evidence/acceptance-20261101/workspace/governance/evidence/missing_receipt-gateway-result.json",
+      "published": "raw-objects/5771bfcd0c855d60ef0028819731bf294f6ebf09e28a737929c09380ba4f9335.bin",
+      "sha256": "5771bfcd0c855d60ef0028819731bf294f6ebf09e28a737929c09380ba4f9335",
+      "bytes": 4860,
+      "handling_note": "Selected public case evidence; this is not the complete 72-output source handoff."
+    },
+    {
+      "source": ".bago/goals/operational-continuity-governance-20261031/evidence/acceptance-20261101/workspace/governance/evidence/mismatch-receipt-before-tamper.json",
+      "published": "raw-objects/0fb57a170aca4e8c4c47ba291b4ef1bd7093f4430655bce5a5ab53274df344e4.bin",
+      "sha256": "0fb57a170aca4e8c4c47ba291b4ef1bd7093f4430655bce5a5ab53274df344e4",
+      "bytes": 1761,
+      "handling_note": "Selected public case evidence; this is not the complete 72-output source handoff."
+    },
+    {
+      "source": ".bago/goals/operational-continuity-governance-20261031/evidence/acceptance-20261101/workspace/provenance/REPORT.md",
+      "published": "raw-objects/449eb02c15b8a7a75ca9632cd1c3734385a39eb03ed950de93bd2da7987462d9.bin",
+      "sha256": "449eb02c15b8a7a75ca9632cd1c3734385a39eb03ed950de93bd2da7987462d9",
+      "bytes": 2926,
+      "handling_note": "Selected publication/CI proof; review paths before copying."
+    },
+    {
+      "source": ".bago/goals/operational-continuity-governance-20261031/evidence/acceptance-20261101/workspace/provenance/current-state.json",
+      "published": "raw-objects/6c00274794386f0b20a944cf6fd4f4ce450ac3cfb278f91350e18bd77f885e6b.bin",
+      "sha256": "6c00274794386f0b20a944cf6fd4f4ce450ac3cfb278f91350e18bd77f885e6b",
+      "bytes": 6512,
+      "handling_note": "Selected publication/CI proof; review paths before copying."
+    },
+    {
+      "source": ".bago/goals/operational-continuity-governance-20261031/evidence/acceptance-20261101/workspace/provenance/pr111-live.json",
+      "published": "raw-objects/3846692e891278057a9bdfeb3b681a0e312d5214f667f345a2de0806c6e77c10.bin",
+      "sha256": "3846692e891278057a9bdfeb3b681a0e312d5214f667f345a2de0806c6e77c10",
+      "bytes": 2951,
+      "handling_note": "Selected publication/CI proof; review paths before copying."
+    },
+    {
+      "source": ".bago/goals/operational-continuity-governance-20261031/evidence/acceptance-20261101/workspace/provenance/main-ci-live.json",
+      "published": "raw-objects/27d51101011fcd86cf3b071cd5038dddb8454c068ec6acb9f6180ab4293ada07.bin",
+      "sha256": "27d51101011fcd86cf3b071cd5038dddb8454c068ec6acb9f6180ab4293ada07",
+      "bytes": 916,
+      "handling_note": "Selected publication/CI proof; review paths before copying."
+    },
+    {
+      "source": ".bago/goals/operational-continuity-governance-20261031/evidence/acceptance-20261101/workspace/review/goal-matrix.json",
+      "published": "raw-objects/07fe111b30911114e4c58568cc1aea7a0f660adf0d61f9b3224abe734ba76062.bin",
+      "sha256": "07fe111b30911114e4c58568cc1aea7a0f660adf0d61f9b3224abe734ba76062",
+      "bytes": 5726,
+      "handling_note": "Public review conclusion and managed acceptance output; helper scripts excluded."
+    },
+    {
+      "source": ".bago/goals/operational-continuity-governance-20261031/evidence/acceptance-20261101/workspace/review/RESULT.json",
+      "published": "raw-objects/df2b5e1a78d2c7024f63bb2dfb86e61233bbc5fc0caa423d93c5cc6ab6494e1c.bin",
+      "sha256": "df2b5e1a78d2c7024f63bb2dfb86e61233bbc5fc0caa423d93c5cc6ab6494e1c",
+      "bytes": 1425,
+      "handling_note": "Public review conclusion and managed acceptance output; helper scripts excluded."
+    },
+    {
+      "source": ".bago/goals/operational-continuity-governance-20261031/evidence/acceptance-20261101/workspace/review/REPORT.md",
+      "published": "raw-objects/46bacc0aa129792519e68dbeea96934fedd6ccffd1a460ec1db7012c7ab47674.bin",
+      "sha256": "46bacc0aa129792519e68dbeea96934fedd6ccffd1a460ec1db7012c7ab47674",
+      "bytes": 6197,
+      "handling_note": "Public review conclusion and managed acceptance output; helper scripts excluded."
+    },
+    {
+      "source": ".bago/goals/operational-continuity-governance-20261031/evidence/acceptance-20261101/workspace/review/independent-acceptance.json",
+      "published": "raw-objects/e0b371abe3080a5029536b7ba8fb9c1748aade29ff82150c81fea06d9b16e3b5.bin",
+      "sha256": "e0b371abe3080a5029536b7ba8fb9c1748aade29ff82150c81fea06d9b16e3b5",
+      "bytes": 641,
+      "handling_note": "Public review conclusion and managed acceptance output; helper scripts excluded."
+    },
+    {
+      "source": ".bago/goals/operational-continuity-governance-20261031/evidence/acceptance-20261101/workspace/host/attempt2/relay-state/receipts/b081a48f6b3e40c580409d016f3c1931.json",
+      "published": "raw-objects/b223bb5d9ae77d32c5994713b40f3854e3af1b73bf49904995183dd412d3395d.bin",
+      "sha256": "b223bb5d9ae77d32c5994713b40f3854e3af1b73bf49904995183dd412d3395d",
+      "bytes": 2553,
+      "handling_note": "Single safe verifier receipt; omit the full TaskStore database and lease state."
+    },
+    {
+      "source": ".bago/goals/operational-continuity-governance-20261031/evidence/acceptance-20261101/workspace/.bago/team/runtime/executions/2158111884aa407a84bd8e336dfb89cc/receipt.json",
+      "published": "raw-objects/6923792342cebf8f979bcde9b3f51ead03a22935748444eafba20ba60cb661cb.bin",
+      "sha256": "6923792342cebf8f979bcde9b3f51ead03a22935748444eafba20ba60cb661cb",
+      "bytes": 1425,
+      "handling_note": "Managed check receipt; no token/lease-key fields."
+    },
+    {
+      "source": ".bago/goals/operational-continuity-governance-20261031/evidence/acceptance-20261101/workspace/.bago/team/runtime/executions/cc8e7ef8a1e24f4e9a99aec5e0b029ad/receipt.json",
+      "published": "raw-objects/851597f195a8bfab5f295ab41fb5aad384fef1ba7a45be554ccc55d64e0e61ce.bin",
+      "sha256": "851597f195a8bfab5f295ab41fb5aad384fef1ba7a45be554ccc55d64e0e61ce",
+      "bytes": 1452,
+      "handling_note": "Managed check receipt; no token/lease-key fields."
+    },
+    {
+      "source": ".bago/goals/operational-continuity-governance-20261031/evidence/acceptance-20261101/workspace/.bago/team/runtime/executions/91ab8cb0c1cf43f2aaa804e9320adf77/receipt.json",
+      "published": "raw-objects/8ccbbb73655ea50b1a31fa340ecba52f768645ee59398ab4f9b0bff6cca126e9.bin",
+      "sha256": "8ccbbb73655ea50b1a31fa340ecba52f768645ee59398ab4f9b0bff6cca126e9",
+      "bytes": 1720,
+      "handling_note": "Managed check receipt; no token/lease-key fields."
+    },
+    {
+      "source": ".bago/goals/operational-continuity-governance-20261031/evidence/acceptance-20261101/workspace/.bago/team/runtime/executions/335a5b1ba41849efa06f6c1eeff17bca/receipt.json",
+      "published": "raw-objects/6889f05c4dcd25a536a79104b882f90ebb367f7da38a2aff211bd8871bd9a664.bin",
+      "sha256": "6889f05c4dcd25a536a79104b882f90ebb367f7da38a2aff211bd8871bd9a664",
+      "bytes": 1627,
+      "handling_note": "Managed check receipt; no token/lease-key fields."
+    },
+    {
+      "source": ".bago/goals/operational-continuity-governance-20261031/evidence/acceptance-20261101/workspace/.bago/team/runtime/executions/8e4e6a837fe14959aee7cf4346f58181/receipt.json",
+      "published": "raw-objects/79d35ee5d14a9a9f7292a82b15885d6aaea51cdcc044393fcf613a0abcd1af8d.bin",
+      "sha256": "79d35ee5d14a9a9f7292a82b15885d6aaea51cdcc044393fcf613a0abcd1af8d",
+      "bytes": 1398,
+      "handling_note": "Managed check receipt; no token/lease-key fields."
+    },
+    {
+      "source": ".bago/goals/operational-continuity-governance-20261031/evidence/acceptance-20261101/workspace/.bago/team/runtime/executions/e410f589a6b74d8f9b0cec1cf2583e27/receipt.json",
+      "published": "raw-objects/21fe3c6092b81e58753c9fd9a8929fd28dbf3914b1e4b50f0cc288c249053283.bin",
+      "sha256": "21fe3c6092b81e58753c9fd9a8929fd28dbf3914b1e4b50f0cc288c249053283",
+      "bytes": 1772,
+      "handling_note": "Managed check receipt; no token/lease-key fields."
+    },
+    {
+      "source": ".bago/goals/operational-continuity-governance-20261031/evidence/acceptance-20261101/workspace/host/handoff-HOST.json",
+      "published": "raw-objects/2e3757dd26efc59efd189d868aa2d03a032abfb0d3b2cf0bbc9c85b77f9ed1c6.bin",
+      "sha256": "2e3757dd26efc59efd189d868aa2d03a032abfb0d3b2cf0bbc9c85b77f9ed1c6",
+      "bytes": 9995,
+      "handling_note": "Source hash verified; safe projection selected by independent reviewer."
+    },
+    {
+      "source": ".bago/goals/operational-continuity-governance-20261031/evidence/acceptance-20261101/workspace/host/HOST_RESULTADO.md",
+      "published": "raw-objects/ab36366bee10378e0b05acc96e3fe8a09d7efbef17f0df162cf280477c03abcc.bin",
+      "sha256": "ab36366bee10378e0b05acc96e3fe8a09d7efbef17f0df162cf280477c03abcc",
+      "bytes": 4524,
+      "handling_note": "Source hash verified; safe projection selected by independent reviewer."
+    },
+    {
+      "source": ".bago/goals/operational-continuity-governance-20261031/evidence/acceptance-20261101/workspace/host/HOST_EVALUATION.json",
+      "published": "raw-objects/ed60a430f9910764fae465d1322820ba69d8f97460003335471fba75bdd7fa8d.bin",
+      "sha256": "ed60a430f9910764fae465d1322820ba69d8f97460003335471fba75bdd7fa8d",
+      "bytes": 9538,
+      "handling_note": "Source hash verified; safe projection selected by independent reviewer."
+    },
+    {
+      "source": ".bago/goals/operational-continuity-governance-20261031/evidence/acceptance-20261101/workspace/host/TRACE_SUPPLEMENT.json",
+      "published": "raw-objects/f44a02261e682434d37c826a66a6703658a0b21c4acc89038c6d9e8bf2e061ed.bin",
+      "sha256": "f44a02261e682434d37c826a66a6703658a0b21c4acc89038c6d9e8bf2e061ed",
+      "bytes": 3434,
+      "handling_note": "Source hash verified; safe projection selected by independent reviewer."
+    },
+    {
+      "source": ".bago/goals/operational-continuity-governance-20261031/evidence/acceptance-20261101/workspace/host/PUBLIC_ARTIFACT_SCAN.json",
+      "published": "raw-objects/46cf0c70ed45ff6ef87d7f2e2e950582dead8e5aef1d317f8eb81dbfc78e3582.bin",
+      "sha256": "46cf0c70ed45ff6ef87d7f2e2e950582dead8e5aef1d317f8eb81dbfc78e3582",
+      "bytes": 169,
+      "handling_note": "Source hash verified; safe projection selected by independent reviewer."
+    },
+    {
+      "source": ".bago/goals/operational-continuity-governance-20261031/evidence/acceptance-20261101/workspace/host/verify_host.py",
+      "published": "raw-objects/33996e5c14421dd7789ecb74becea57da50e45bc57b317c0e1b3163ecd35e14b.bin",
+      "sha256": "33996e5c14421dd7789ecb74becea57da50e45bc57b317c0e1b3163ecd35e14b",
+      "bytes": 7527,
+      "handling_note": "Source hash verified; safe projection selected by independent reviewer."
+    },
+    {
+      "source": ".bago/goals/operational-continuity-governance-20261031/evidence/acceptance-20261101/workspace/host/materialize_handoff.py",
+      "published": "raw-objects/d65160d845d826d9ffec78763b2221794057bee4967f4011381df1777c69b0d0.bin",
+      "sha256": "d65160d845d826d9ffec78763b2221794057bee4967f4011381df1777c69b0d0",
+      "bytes": 11288,
+      "handling_note": "Source hash verified; safe projection selected by independent reviewer."
+    },
+    {
+      "source": ".bago/goals/operational-continuity-governance-20261031/evidence/acceptance-20261101/workspace/host/owned-native-stop-result.json",
+      "published": "raw-objects/ce5fcfc141b564f90a6a4d6bfde90b0113a0312067926f52d2ada3e85e3364b8.bin",
+      "sha256": "ce5fcfc141b564f90a6a4d6bfde90b0113a0312067926f52d2ada3e85e3364b8",
+      "bytes": 250,
+      "handling_note": "Source hash verified; safe projection selected by independent reviewer."
+    },
+    {
+      "source": ".bago/goals/operational-continuity-governance-20261031/evidence/acceptance-20261101/workspace/host/NATIVE_EXECUTION.json",
+      "published": "raw-objects/bb567e6f69f25c113985c96d4c277751b4ca18cf7a9a0bb493420eba86a04a87.bin",
+      "sha256": "bb567e6f69f25c113985c96d4c277751b4ca18cf7a9a0bb493420eba86a04a87",
+      "bytes": 2325,
+      "handling_note": "Source hash verified; safe projection selected by independent reviewer."
+    },
+    {
+      "source": ".bago/goals/operational-continuity-governance-20261031/evidence/acceptance-20261101/workspace/host/relay-events.public.json",
+      "published": "raw-objects/801f4ef2c8462e742f9ecb5a3a5c587ab8c8469352e6db66d223dd9ea3323b04.bin",
+      "sha256": "801f4ef2c8462e742f9ecb5a3a5c587ab8c8469352e6db66d223dd9ea3323b04",
+      "bytes": 10082,
+      "handling_note": "Source hash verified; safe projection selected by independent reviewer."
+    },
+    {
+      "source": ".bago/goals/operational-continuity-governance-20261031/evidence/acceptance-20261101/workspace/host/attempt2/config.json",
+      "published": "raw-objects/11e8b4ca6cdb906ebb1604a7a0f4c7e67144cf7616b937af8d4bc0796a91d12d.bin",
+      "sha256": "11e8b4ca6cdb906ebb1604a7a0f4c7e67144cf7616b937af8d4bc0796a91d12d",
+      "bytes": 419,
+      "handling_note": "Source hash verified; safe projection selected by independent reviewer."
+    },
+    {
+      "source": ".bago/goals/operational-continuity-governance-20261031/evidence/acceptance-20261101/workspace/host/attempt2/context.json",
+      "published": "raw-objects/85640493987a05f6bccfcfae1a9f1fd1f7c4bc3d29a293d15e872ed3537837cd.bin",
+      "sha256": "85640493987a05f6bccfcfae1a9f1fd1f7c4bc3d29a293d15e872ed3537837cd",
+      "bytes": 855,
+      "handling_note": "Source hash verified; safe projection selected by independent reviewer."
+    },
+    {
+      "source": ".bago/goals/operational-continuity-governance-20261031/evidence/acceptance-20261101/workspace/host/attempt2/INPUT_MANIFEST.json",
+      "published": "raw-objects/118efb46feb084c361f16d57da6c54cc342b0397f36f24ea8dc1ec0bf41cca3f.bin",
+      "sha256": "118efb46feb084c361f16d57da6c54cc342b0397f36f24ea8dc1ec0bf41cca3f",
+      "bytes": 1630,
+      "handling_note": "Source hash verified; safe projection selected by independent reviewer."
+    },
+    {
+      "source": ".bago/goals/operational-continuity-governance-20261031/evidence/acceptance-20261101/workspace/host/attempt2/NATIVE_EXECUTION.json",
+      "published": "raw-objects/0846d80da37374a84487507b9aaa03cccbb4ec8ad522fb1b39c01266de9a9b6b.bin",
+      "sha256": "0846d80da37374a84487507b9aaa03cccbb4ec8ad522fb1b39c01266de9a9b6b",
+      "bytes": 7898,
+      "handling_note": "Source hash verified; safe projection selected by independent reviewer."
+    },
+    {
+      "source": ".bago/goals/operational-continuity-governance-20261031/evidence/acceptance-20261101/workspace/host/attempt2/native_session.py",
+      "published": "raw-objects/55ece5fe17c4fa4d1e15301d62e3329247af382c815f56356ffabbae85ac84ce.bin",
+      "sha256": "55ece5fe17c4fa4d1e15301d62e3329247af382c815f56356ffabbae85ac84ce",
+      "bytes": 4925,
+      "handling_note": "Source hash verified; safe projection selected by independent reviewer."
+    },
+    {
+      "source": ".bago/goals/operational-continuity-governance-20261031/evidence/acceptance-20261101/workspace/host/attempt2/offer.public.json",
+      "published": "raw-objects/db240465c373a3cb2f8bf82c5e9ce2f5b10916617dbbd825c0d49830ccd50378.bin",
+      "sha256": "db240465c373a3cb2f8bf82c5e9ce2f5b10916617dbbd825c0d49830ccd50378",
+      "bytes": 4978,
+      "handling_note": "Source hash verified; safe projection selected by independent reviewer."
+    },
+    {
+      "source": ".bago/goals/operational-continuity-governance-20261031/evidence/acceptance-20261101/workspace/host/attempt2/outside-canary.txt",
+      "published": "raw-objects/191b8bff4456e8f32fb1b161948af0411a42a307d4cbd615ae9f65f1f776ff2a.bin",
+      "sha256": "191b8bff4456e8f32fb1b161948af0411a42a307d4cbd615ae9f65f1f776ff2a",
+      "bytes": 57,
+      "handling_note": "Source hash verified; safe projection selected by independent reviewer."
+    },
+    {
+      "source": ".bago/goals/operational-continuity-governance-20261031/evidence/acceptance-20261101/workspace/host/attempt2/plan.json",
+      "published": "raw-objects/139ef69d64a26ae3d4ec58f1ade35072b6352b3e3f6d1eb4e813993f25e26cb2.bin",
+      "sha256": "139ef69d64a26ae3d4ec58f1ade35072b6352b3e3f6d1eb4e813993f25e26cb2",
+      "bytes": 969,
+      "handling_note": "Source hash verified; safe projection selected by independent reviewer."
+    },
+    {
+      "source": ".bago/goals/operational-continuity-governance-20261031/evidence/acceptance-20261101/workspace/host/attempt2/prepare_and_run.py",
+      "published": "raw-objects/98d1b0cfe6ba8aac47f71954e422040dbaf50950d403af336ee5cd9c39e6398d.bin",
+      "sha256": "98d1b0cfe6ba8aac47f71954e422040dbaf50950d403af336ee5cd9c39e6398d",
+      "bytes": 11291,
+      "handling_note": "Source hash verified; safe projection selected by independent reviewer."
+    },
+    {
+      "source": ".bago/goals/operational-continuity-governance-20261031/evidence/acceptance-20261101/workspace/host/attempt2/relay-events.public.json",
+      "published": "raw-objects/02a878f5f0146acd102096beeb0c0469f84c593c07614988ef4cb032a629f417.bin",
+      "sha256": "02a878f5f0146acd102096beeb0c0469f84c593c07614988ef4cb032a629f417",
+      "bytes": 37923,
+      "handling_note": "Source hash verified; safe projection selected by independent reviewer."
+    },
+    {
+      "source": ".bago/goals/operational-continuity-governance-20261031/evidence/acceptance-20261101/workspace/host/attempt2/worker/accepted-handoff.json",
+      "published": "raw-objects/ffac78ce9af8bbb1d20bbda10c53e51e3cfe20e417f6aa96149ccf4ee2c5702c.bin",
+      "sha256": "ffac78ce9af8bbb1d20bbda10c53e51e3cfe20e417f6aa96149ccf4ee2c5702c",
+      "bytes": 3757,
+      "handling_note": "Source hash verified; safe projection selected by independent reviewer."
+    },
+    {
+      "source": ".bago/goals/operational-continuity-governance-20261031/evidence/acceptance-20261101/workspace/host/attempt2/worker/AGENTS.md",
+      "published": "raw-objects/adc3ba16b6e2016400e32eec4ee4f3220ae3123b3f1aca1943997105cf267121.bin",
+      "sha256": "adc3ba16b6e2016400e32eec4ee4f3220ae3123b3f1aca1943997105cf267121",
+      "bytes": 1315,
+      "handling_note": "Source hash verified; safe projection selected by independent reviewer."
+    },
+    {
+      "source": ".bago/goals/operational-continuity-governance-20261031/evidence/acceptance-20261101/workspace/host/attempt2/worker/boundary_probe.py",
+      "published": "raw-objects/65625f41943f8d6ed2d40da7398127a74c8851ce2ccfdf469ca479ade449ca71.bin",
+      "sha256": "65625f41943f8d6ed2d40da7398127a74c8851ce2ccfdf469ca479ade449ca71",
+      "bytes": 1100,
+      "handling_note": "Source hash verified; safe projection selected by independent reviewer."
+    },
+    {
+      "source": ".bago/goals/operational-continuity-governance-20261031/evidence/acceptance-20261101/workspace/host/attempt2/worker/CONTRACT.json",
+      "published": "raw-objects/baf8a95e898079ae44212b7f46fcc911ba9c82c9b5c4287e0a994ac408fa0163.bin",
+      "sha256": "baf8a95e898079ae44212b7f46fcc911ba9c82c9b5c4287e0a994ac408fa0163",
+      "bytes": 1568,
+      "handling_note": "Source hash verified; safe projection selected by independent reviewer."
+    },
+    {
+      "source": ".bago/goals/operational-continuity-governance-20261031/evidence/acceptance-20261101/workspace/host/attempt2/worker/phase-A.json",
+      "published": "raw-objects/b3fc51fd205edf57bd4f3edec7b227c672297c3adfaff203be83bc073b20ec19.bin",
+      "sha256": "b3fc51fd205edf57bd4f3edec7b227c672297c3adfaff203be83bc073b20ec19",
+      "bytes": 2904,
+      "handling_note": "Source hash verified; safe projection selected by independent reviewer."
+    },
+    {
+      "source": ".bago/goals/operational-continuity-governance-20261031/evidence/acceptance-20261101/workspace/host/attempt2/worker/phase-B.json",
+      "published": "raw-objects/952122a232e489942a20704e2a9d4b3c866bfaa7493e4d1583f1b02b21b6ea11.bin",
+      "sha256": "952122a232e489942a20704e2a9d4b3c866bfaa7493e4d1583f1b02b21b6ea11",
+      "bytes": 3496,
+      "handling_note": "Source hash verified; safe projection selected by independent reviewer."
+    },
+    {
+      "source": ".bago/goals/operational-continuity-governance-20261031/evidence/acceptance-20261101/workspace/host/attempt2/worker/probe-A.json",
+      "published": "raw-objects/ce7d735f19d0bf941bdd3a4c930ed522c73d5c8db255c016a83f6c33fbac3a90.bin",
+      "sha256": "ce7d735f19d0bf941bdd3a4c930ed522c73d5c8db255c016a83f6c33fbac3a90",
+      "bytes": 1297,
+      "handling_note": "Source hash verified; safe projection selected by independent reviewer."
+    },
+    {
+      "source": ".bago/goals/operational-continuity-governance-20261031/evidence/acceptance-20261101/workspace/host/attempt2/worker/probe-B.json",
+      "published": "raw-objects/1f8bbcf3900f551388386dcc2652b17ad7b0216b6988ea20560d74d767764728.bin",
+      "sha256": "1f8bbcf3900f551388386dcc2652b17ad7b0216b6988ea20560d74d767764728",
+      "bytes": 1294,
+      "handling_note": "Source hash verified; safe projection selected by independent reviewer."
+    },
+    {
+      "source": ".bago/goals/operational-continuity-governance-20261031/evidence/acceptance-20261101/workspace/host/attempt2/worker/verify_native.py",
+      "published": "raw-objects/21b75359f4d224c82eaedcaf4aad002170031349083ad37f3c003e168e15742e.bin",
+      "sha256": "21b75359f4d224c82eaedcaf4aad002170031349083ad37f3c003e168e15742e",
+      "bytes": 561,
+      "handling_note": "Source hash verified; safe projection selected by independent reviewer."
+    },
+    {
+      "source": ".bago/goals/operational-continuity-governance-20261031/evidence/acceptance-20261101/workspace/host/attempt2/sessions/A/events.filtered.jsonl",
+      "published": "raw-objects/b5fb28305dc95a21c8ff9ecd0342c1f7fa0b01a11c0bbda4b8fab4407335b0da.bin",
+      "sha256": "b5fb28305dc95a21c8ff9ecd0342c1f7fa0b01a11c0bbda4b8fab4407335b0da",
+      "bytes": 12164,
+      "handling_note": "Source hash verified; safe projection selected by independent reviewer."
+    },
+    {
+      "source": ".bago/goals/operational-continuity-governance-20261031/evidence/acceptance-20261101/workspace/host/attempt2/sessions/A/PROCESS.json",
+      "published": "raw-objects/c5e7f53900806ab55353018ae926008e25931c61118c11a51afc8661dac051c1.bin",
+      "sha256": "c5e7f53900806ab55353018ae926008e25931c61118c11a51afc8661dac051c1",
+      "bytes": 939,
+      "handling_note": "Source hash verified; safe projection selected by independent reviewer."
+    },
+    {
+      "source": ".bago/goals/operational-continuity-governance-20261031/evidence/acceptance-20261101/workspace/host/attempt2/sessions/A/prompt.txt",
+      "published": "raw-objects/8989d135ffa987e139c1ca528148cb9d6b44dcb577f6330075e5f12ae60d8a12.bin",
+      "sha256": "8989d135ffa987e139c1ca528148cb9d6b44dcb577f6330075e5f12ae60d8a12",
+      "bytes": 705,
+      "handling_note": "Source hash verified; safe projection selected by independent reviewer."
+    },
+    {
+      "source": ".bago/goals/operational-continuity-governance-20261031/evidence/acceptance-20261101/workspace/host/attempt2/sessions/A/stderr.sanitized.log",
+      "published": "raw-objects/ae98e47e328ebe4d445d11e150566510c084c7502c1edb5e02d8970d8548c05b.bin",
+      "sha256": "ae98e47e328ebe4d445d11e150566510c084c7502c1edb5e02d8970d8548c05b",
+      "bytes": 1724,
+      "handling_note": "Source hash verified; safe projection selected by independent reviewer."
+    },
+    {
+      "source": ".bago/goals/operational-continuity-governance-20261031/evidence/acceptance-20261101/workspace/host/attempt2/sessions/B/events.filtered.jsonl",
+      "published": "raw-objects/b65b8d461c818e55a8166bcb81973bd4aaf7e88ba0762ba4869176a6eae8efd3.bin",
+      "sha256": "b65b8d461c818e55a8166bcb81973bd4aaf7e88ba0762ba4869176a6eae8efd3",
+      "bytes": 32531,
+      "handling_note": "Source hash verified; safe projection selected by independent reviewer."
+    },
+    {
+      "source": ".bago/goals/operational-continuity-governance-20261031/evidence/acceptance-20261101/workspace/host/attempt2/sessions/B/PROCESS.json",
+      "published": "raw-objects/0f08f10b945b3d551328a6dcc6ad62a61ffc6040863df1502cf69aaad3f5b139.bin",
+      "sha256": "0f08f10b945b3d551328a6dcc6ad62a61ffc6040863df1502cf69aaad3f5b139",
+      "bytes": 939,
+      "handling_note": "Source hash verified; safe projection selected by independent reviewer."
+    },
+    {
+      "source": ".bago/goals/operational-continuity-governance-20261031/evidence/acceptance-20261101/workspace/host/attempt2/sessions/B/prompt.txt",
+      "published": "raw-objects/980270b26e7000ecf4e54a318af4b4640704299c75d9f8f55bd918dfabd30350.bin",
+      "sha256": "980270b26e7000ecf4e54a318af4b4640704299c75d9f8f55bd918dfabd30350",
+      "bytes": 705,
+      "handling_note": "Source hash verified; safe projection selected by independent reviewer."
+    },
+    {
+      "source": ".bago/goals/operational-continuity-governance-20261031/evidence/acceptance-20261101/workspace/host/attempt2/sessions/B/stderr.sanitized.log",
+      "published": "raw-objects/3942a124822a41aba5376bec8a4e84902d9d33c4db40bab4214a5fa5eea0e4b0.bin",
+      "sha256": "3942a124822a41aba5376bec8a4e84902d9d33c4db40bab4214a5fa5eea0e4b0",
+      "bytes": 1724,
+      "handling_note": "Source hash verified; safe projection selected by independent reviewer."
+    },
+    {
+      "source": ".worktrees/continuity-evidence-20261101/.bago/goals/continuity-publication-20261101/readme-gate/attempt1/consistency.stderr.log",
+      "published": "raw-objects/e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0,
+      "handling_note": "Finite actual generator/full-suite and consistency receipt; no dependency archive or runtime data."
+    },
+    {
+      "source": ".worktrees/continuity-evidence-20261101/.bago/goals/continuity-publication-20261101/readme-gate/attempt1/consistency.stdout.log",
+      "published": "raw-objects/ff4fbc6b097973a416be8687d64be2c82d7fb29c895b2e4381d85188df5f1c79.bin",
+      "sha256": "ff4fbc6b097973a416be8687d64be2c82d7fb29c895b2e4381d85188df5f1c79",
+      "bytes": 56,
+      "handling_note": "Finite actual generator/full-suite and consistency receipt; no dependency archive or runtime data."
+    },
+    {
+      "source": ".worktrees/continuity-evidence-20261101/.bago/goals/continuity-publication-20261101/readme-gate/attempt1/consistency.xml",
+      "published": "raw-objects/c7de795bda16527addce88bfc64283eb39f16092efcc66fc0a8d1088a51e5fc0.bin",
+      "sha256": "c7de795bda16527addce88bfc64283eb39f16092efcc66fc0a8d1088a51e5fc0",
+      "bytes": 238,
+      "handling_note": "Finite actual generator/full-suite and consistency receipt; no dependency archive or runtime data."
+    },
+    {
+      "source": ".worktrees/continuity-evidence-20261101/.bago/goals/continuity-publication-20261101/readme-gate/attempt1/docker.stderr.log",
+      "published": "raw-objects/e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0,
+      "handling_note": "Finite actual generator/full-suite and consistency receipt; no dependency archive or runtime data."
+    },
+    {
+      "source": ".worktrees/continuity-evidence-20261101/.bago/goals/continuity-publication-20261101/readme-gate/attempt1/docker.stdout.log",
+      "published": "raw-objects/24d0551ef9e4dadfacfaccc20be5b314956d1bd936de4d9768bb7d99559e9b02.bin",
+      "sha256": "24d0551ef9e4dadfacfaccc20be5b314956d1bd936de4d9768bb7d99559e9b02",
+      "bytes": 3710,
+      "handling_note": "Finite actual generator/full-suite and consistency receipt; no dependency archive or runtime data."
+    },
+    {
+      "source": ".worktrees/continuity-evidence-20261101/.bago/goals/continuity-publication-20261101/readme-gate/attempt1/dom.stderr.log",
+      "published": "raw-objects/e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0,
+      "handling_note": "Finite actual generator/full-suite and consistency receipt; no dependency archive or runtime data."
+    },
+    {
+      "source": ".worktrees/continuity-evidence-20261101/.bago/goals/continuity-publication-20261101/readme-gate/attempt1/dom.stdout.log",
+      "published": "raw-objects/9ab2f08435053c6aadd16f41611ec5bf1b4743f46ee15c5a44d506a0c5f12952.bin",
+      "sha256": "9ab2f08435053c6aadd16f41611ec5bf1b4743f46ee15c5a44d506a0c5f12952",
+      "bytes": 17,
+      "handling_note": "Finite actual generator/full-suite and consistency receipt; no dependency archive or runtime data."
+    },
+    {
+      "source": ".worktrees/continuity-evidence-20261101/.bago/goals/continuity-publication-20261101/readme-gate/attempt1/generate.stderr.log",
+      "published": "raw-objects/e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0,
+      "handling_note": "Finite actual generator/full-suite and consistency receipt; no dependency archive or runtime data."
+    },
+    {
+      "source": ".worktrees/continuity-evidence-20261101/.bago/goals/continuity-publication-20261101/readme-gate/attempt1/generate.stdout.log",
+      "published": "raw-objects/0b738a39861f48b4b9e91b199718acfdbd4e5ef30e38ec16f2b0554c1a5b4761.bin",
+      "sha256": "0b738a39861f48b4b9e91b199718acfdbd4e5ef30e38ec16f2b0554c1a5b4761",
+      "bytes": 40,
+      "handling_note": "Finite actual generator/full-suite and consistency receipt; no dependency archive or runtime data."
+    },
+    {
+      "source": ".worktrees/continuity-evidence-20261101/.bago/goals/continuity-publication-20261101/readme-gate/attempt1/generate.xml",
+      "published": "raw-objects/8496ba62f1f5e19f8822753dfaf0fab786d8a095797ca5a0a8c803647d14cf93.bin",
+      "sha256": "8496ba62f1f5e19f8822753dfaf0fab786d8a095797ca5a0a8c803647d14cf93",
+      "bytes": 254867,
+      "handling_note": "Finite actual generator/full-suite and consistency receipt; no dependency archive or runtime data."
+    },
+    {
+      "source": ".worktrees/continuity-evidence-20261101/.bago/goals/continuity-publication-20261101/readme-gate/attempt1/inner-result.json",
+      "published": "raw-objects/1db9a340d0eacccdb9f29e946e5de85d304bcc103c67f539220ffbbf25655481.bin",
+      "sha256": "1db9a340d0eacccdb9f29e946e5de85d304bcc103c67f539220ffbbf25655481",
+      "bytes": 4269,
+      "handling_note": "Finite actual generator/full-suite and consistency receipt; no dependency archive or runtime data."
+    },
+    {
+      "source": ".worktrees/continuity-evidence-20261101/.bago/goals/continuity-publication-20261101/readme-gate/attempt1/launch.json",
+      "published": "raw-objects/e885ec6de4bb60727cefb562569929ea48b001c0a8ae7035d054531bf7530d60.bin",
+      "sha256": "e885ec6de4bb60727cefb562569929ea48b001c0a8ae7035d054531bf7530d60",
+      "bytes": 1305,
+      "handling_note": "Finite actual generator/full-suite and consistency receipt; no dependency archive or runtime data."
+    },
+    {
+      "source": ".worktrees/continuity-evidence-20261101/.bago/goals/continuity-publication-20261101/readme-gate/attempt1/progress.json",
+      "published": "raw-objects/93339c4d01b26252752245ed79f420c96e209dd1af6535eea6d3586e70b44614.bin",
+      "sha256": "93339c4d01b26252752245ed79f420c96e209dd1af6535eea6d3586e70b44614",
+      "bytes": 3303,
+      "handling_note": "Finite actual generator/full-suite and consistency receipt; no dependency archive or runtime data."
+    },
+    {
+      "source": ".worktrees/continuity-evidence-20261101/.bago/goals/continuity-publication-20261101/readme-gate/attempt1/README.md.generated",
+      "published": "raw-objects/aeb823c75ef3cf24def0e39f97d58e32e2f8f1375e71b4156a0b8c320a507b63.bin",
+      "sha256": "aeb823c75ef3cf24def0e39f97d58e32e2f8f1375e71b4156a0b8c320a507b63",
+      "bytes": 2800,
+      "handling_note": "Finite actual generator/full-suite and consistency receipt; no dependency archive or runtime data."
+    },
+    {
+      "source": ".worktrees/continuity-evidence-20261101/.bago/goals/continuity-publication-20261101/readme-gate/attempt1/README_DETAILS.md.generated",
+      "published": "raw-objects/7a2682fea70897ae318537835912743ed0f1193922ada9a7d6c04b41b11ef003.bin",
+      "sha256": "7a2682fea70897ae318537835912743ed0f1193922ada9a7d6c04b41b11ef003",
+      "bytes": 61191,
+      "handling_note": "Finite actual generator/full-suite and consistency receipt; no dependency archive or runtime data."
+    },
+    {
+      "source": ".worktrees/continuity-evidence-20261101/.bago/goals/continuity-publication-20261101/readme-gate/attempt1/RESULT.json",
+      "published": "raw-objects/248e7fb5f54276fe9f94703b30d2750b244cca7214bd16dafe68cb875b05cb29.bin",
+      "sha256": "248e7fb5f54276fe9f94703b30d2750b244cca7214bd16dafe68cb875b05cb29",
+      "bytes": 579,
+      "handling_note": "Finite actual generator/full-suite and consistency receipt; no dependency archive or runtime data."
+    },
+    {
+      "source": ".worktrees/continuity-evidence-20261101/.bago/goals/continuity-publication-20261101/readme-gate/attempt1/tools.stderr.log",
+      "published": "raw-objects/e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0,
+      "handling_note": "Finite actual generator/full-suite and consistency receipt; no dependency archive or runtime data."
+    },
+    {
+      "source": ".worktrees/continuity-evidence-20261101/.bago/goals/continuity-publication-20261101/readme-gate/attempt1/tools.stdout.log",
+      "published": "raw-objects/feb76e92c6bea9db0c65fa8413f1dbe5670991152adf2bf56ffcdf9d648ae98c.bin",
+      "sha256": "feb76e92c6bea9db0c65fa8413f1dbe5670991152adf2bf56ffcdf9d648ae98c",
+      "bytes": 170,
+      "handling_note": "Finite actual generator/full-suite and consistency receipt; no dependency archive or runtime data."
+    },
+    {
+      "source": ".worktrees/continuity-evidence-20261101/.bago/goals/continuity-publication-20261101/readme-gate/check_final.py",
+      "published": "raw-objects/339d8b0a67703f21c82d54d1067ade43f68f53e761bf890c5f3ef5c2d789ed2f.bin",
+      "sha256": "339d8b0a67703f21c82d54d1067ade43f68f53e761bf890c5f3ef5c2d789ed2f",
+      "bytes": 2627,
+      "handling_note": "Finite actual generator/full-suite and consistency receipt; no dependency archive or runtime data."
+    },
+    {
+      "source": ".worktrees/continuity-evidence-20261101/.bago/goals/continuity-publication-20261101/readme-gate/DEPENDENCIES.json",
+      "published": "raw-objects/38b5af38343ecaaa6f46ad21676c7a4e24473c42cd648391808259cf0e96e140.bin",
+      "sha256": "38b5af38343ecaaa6f46ad21676c7a4e24473c42cd648391808259cf0e96e140",
+      "bytes": 904820,
+      "handling_note": "Finite actual generator/full-suite and consistency receipt; no dependency archive or runtime data."
+    },
+    {
+      "source": ".worktrees/continuity-evidence-20261101/.bago/goals/continuity-publication-20261101/readme-gate/inner.py",
+      "published": "raw-objects/807f68d901e556be943183cb77ad204955dcfa74362ed0f69b4b3c3ba64fcb95.bin",
+      "sha256": "807f68d901e556be943183cb77ad204955dcfa74362ed0f69b4b3c3ba64fcb95",
+      "bytes": 4826,
+      "handling_note": "Finite actual generator/full-suite and consistency receipt; no dependency archive or runtime data."
+    },
+    {
+      "source": ".worktrees/continuity-evidence-20261101/.bago/goals/continuity-publication-20261101/readme-gate/INPUT_MANIFEST.json",
+      "published": "raw-objects/34dc55ead37e6ee4ef9ffdb586ea22148f703c286669a58cb1435fd3b6cb5ba4.bin",
+      "sha256": "34dc55ead37e6ee4ef9ffdb586ea22148f703c286669a58cb1435fd3b6cb5ba4",
+      "bytes": 2323,
+      "handling_note": "Finite actual generator/full-suite and consistency receipt; no dependency archive or runtime data."
+    },
+    {
+      "source": ".worktrees/continuity-evidence-20261101/.bago/goals/continuity-publication-20261101/readme-gate/local-check-attempt1/RESULT.json",
+      "published": "raw-objects/bc633c015777471d6bb530f8b484c84037f0d45f204f103814a6d578af26d139.bin",
+      "sha256": "bc633c015777471d6bb530f8b484c84037f0d45f204f103814a6d578af26d139",
+      "bytes": 874,
+      "handling_note": "Finite actual generator/full-suite and consistency receipt; no dependency archive or runtime data."
+    },
+    {
+      "source": ".worktrees/continuity-evidence-20261101/.bago/goals/continuity-publication-20261101/readme-gate/local-check-attempt1/stderr.log",
+      "published": "raw-objects/e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0,
+      "handling_note": "Finite actual generator/full-suite and consistency receipt; no dependency archive or runtime data."
+    },
+    {
+      "source": ".worktrees/continuity-evidence-20261101/.bago/goals/continuity-publication-20261101/readme-gate/local-check-attempt1/stdout.log",
+      "published": "raw-objects/1da279267bcd58400d3fc7c36359c19fffeceb68171be0ab5cc8718ae4d56aa1.bin",
+      "sha256": "1da279267bcd58400d3fc7c36359c19fffeceb68171be0ab5cc8718ae4d56aa1",
+      "bytes": 57,
+      "handling_note": "Finite actual generator/full-suite and consistency receipt; no dependency archive or runtime data."
+    },
+    {
+      "source": ".worktrees/continuity-evidence-20261101/.bago/goals/continuity-publication-20261101/readme-gate/prepare_inputs.py",
+      "published": "raw-objects/0f0625703adfe47098dd4c531d51a845fc8b0bdef35c68322850cfd67d400022.bin",
+      "sha256": "0f0625703adfe47098dd4c531d51a845fc8b0bdef35c68322850cfd67d400022",
+      "bytes": 3861,
+      "handling_note": "Finite actual generator/full-suite and consistency receipt; no dependency archive or runtime data."
+    },
+    {
+      "source": ".worktrees/continuity-evidence-20261101/.bago/goals/continuity-publication-20261101/readme-gate/RESULTADO.md",
+      "published": "raw-objects/810806773c1c9276679b7191d986bc2aca7a965f262d8f13c7a680fc3f6c45f4.bin",
+      "sha256": "810806773c1c9276679b7191d986bc2aca7a965f262d8f13c7a680fc3f6c45f4",
+      "bytes": 3647,
+      "handling_note": "Finite actual generator/full-suite and consistency receipt; no dependency archive or runtime data."
+    },
+    {
+      "source": ".worktrees/continuity-evidence-20261101/.bago/goals/continuity-publication-20261101/readme-gate/run_docker_gate.py",
+      "published": "raw-objects/6662b515e40f67732b3491ac10f402f88a812ba4ff68460a8718e4fe19fb72ce.bin",
+      "sha256": "6662b515e40f67732b3491ac10f402f88a812ba4ff68460a8718e4fe19fb72ce",
+      "bytes": 4051,
+      "handling_note": "Finite actual generator/full-suite and consistency receipt; no dependency archive or runtime data."
+    },
+    {
+      "source": ".worktrees/continuity-evidence-20261101/.bago/goals/continuity-publication-20261101/readme-gate/SUMMARY.json",
+      "published": "raw-objects/f1f620483cef1932128274f76e3e4a2980967a21fac640c1419f84a7a1d58d55.bin",
+      "sha256": "f1f620483cef1932128274f76e3e4a2980967a21fac640c1419f84a7a1d58d55",
+      "bytes": 3162,
+      "handling_note": "Finite actual generator/full-suite and consistency receipt; no dependency archive or runtime data."
+    },
+    {
+      "source": ".worktrees/continuity-evidence-20261101/.bago/goals/continuity-publication-20261101/readme-gate/verify_gate.py",
+      "published": "raw-objects/4310503c1cfe0f61fff0f723f0ed2ef30d4e0d2738716c3dc0215fcad1f774d0.bin",
+      "sha256": "4310503c1cfe0f61fff0f723f0ed2ef30d4e0d2738716c3dc0215fcad1f774d0",
+      "bytes": 2694,
+      "handling_note": "Finite actual generator/full-suite and consistency receipt; no dependency archive or runtime data."
+    }
+  ],
+  "source_normalization": [],
+  "tooling": [
+    {
+      "path": "verify_publication.py",
+      "sha256": "205db2e8851f6118e600ef83d4df9b21358dee58202654861c6d1ad9f1824e05"
+    }
+  ],
+  "excluded_private_files": [
+    {
+      "source_path": ".bago/goals/operational-continuity-governance-20261031/evidence/acceptance-20261101/workspace/governance/evidence/expired-control.sqlite3",
+      "sha256": "20f44c195f33e3a94c353e3ecdc469f508d32e2a81154b0c4daa22954ed30282",
+      "reason": "private authorization grant or TaskStore/control database; not for publication"
+    },
+    {
+      "source_path": ".bago/goals/operational-continuity-governance-20261031/evidence/acceptance-20261101/workspace/governance/evidence/expired-GO-grant.json",
+      "sha256": "ed0ee584eca54f859180e1051fe50bc2753e59b6451bd89629d50cceff8f8429",
+      "reason": "private authorization grant or TaskStore/control database; not for publication"
+    },
+    {
+      "source_path": ".bago/goals/operational-continuity-governance-20261031/evidence/acceptance-20261101/workspace/governance/evidence/failed-control.sqlite3",
+      "sha256": "df4b153fa7c17f5441b5ddb431c79e65938191401a79e765dd9460c9073bc67c",
+      "reason": "private authorization grant or TaskStore/control database; not for publication"
+    },
+    {
+      "source_path": ".bago/goals/operational-continuity-governance-20261031/evidence/acceptance-20261101/workspace/governance/evidence/failed-GO-grant.json",
+      "sha256": "2b7f260708f0af8e6cbb3974830c29ed6a9e8c236b65b4790296329c05539fe2",
+      "reason": "private authorization grant or TaskStore/control database; not for publication"
+    },
+    {
+      "source_path": ".bago/goals/operational-continuity-governance-20261031/evidence/acceptance-20261101/workspace/governance/evidence/mismatch-control.sqlite3",
+      "sha256": "a4bd9be9759cbd063fcbdb1fea285308b08fafcf72e9e0e0013d52d0ba82e4d1",
+      "reason": "private authorization grant or TaskStore/control database; not for publication"
+    },
+    {
+      "source_path": ".bago/goals/operational-continuity-governance-20261031/evidence/acceptance-20261101/workspace/governance/evidence/mismatch-GO-grant.json",
+      "sha256": "c8c02bd5a27d5a6cd456edaf8e83db595ed9fe48db96699ca944a66c1e440d53",
+      "reason": "private authorization grant or TaskStore/control database; not for publication"
+    },
+    {
+      "source_path": ".bago/goals/operational-continuity-governance-20261031/evidence/acceptance-20261101/workspace/governance/evidence/missing_receipt-control.sqlite3",
+      "sha256": "160846caf2335dacb950e1371d02d20ff546238868f5766e462673d28b7abcf8",
+      "reason": "private authorization grant or TaskStore/control database; not for publication"
+    },
+    {
+      "source_path": ".bago/goals/operational-continuity-governance-20261031/evidence/acceptance-20261101/workspace/governance/evidence/missing_receipt-GO-grant.json",
+      "sha256": "b557d57902b28a340bf004f6f2d2de19b737d66cf5a1e2ea051458f3b136ca16",
+      "reason": "private authorization grant or TaskStore/control database; not for publication"
+    },
+    {
+      "source_path": ".bago/goals/operational-continuity-governance-20261031/evidence/acceptance-20261101/workspace/governance/evidence/positive-control.sqlite3",
+      "sha256": "7f99b95a6469f9d68f4d524c78f85591dc2bd57730bf58c4a319804f8e42e621",
+      "reason": "private authorization grant or TaskStore/control database; not for publication"
+    },
+    {
+      "source_path": ".bago/goals/operational-continuity-governance-20261031/evidence/acceptance-20261101/workspace/governance/evidence/positive-GO-grant.json",
+      "sha256": "9277dadf9b1d57390efa3d71a4760778cf70b40e7cbabc7f76a68c8dadf0aadb",
+      "reason": "private authorization grant or TaskStore/control database; not for publication"
+    },
+    {
+      "source_path": ".bago/goals/operational-continuity-governance-20261031/evidence/acceptance-20261101/workspace/governance/evidence/registration-control.sqlite3",
+      "sha256": "a27acd7d58d9062aca96155b25029768fb01783e95ec7ac9a098ebc393a546d5",
+      "reason": "private authorization grant or TaskStore/control database; not for publication"
+    },
+    {
+      "source_path": ".bago/goals/operational-continuity-governance-20261031/evidence/acceptance-20261101/workspace/governance/evidence/registration-GO-grant.json",
+      "sha256": "01cbb78aa30884e9127edf004692cd388ba990d9110c9b29eef4ad79d35e2ced",
+      "reason": "private authorization grant or TaskStore/control database; not for publication"
+    },
+    {
+      "source_path": ".bago/goals/operational-continuity-governance-20261031/evidence/acceptance-20261101/workspace/governance/evidence/revoked-control.sqlite3",
+      "sha256": "655a195b32d0c7a367e8f20d5d6583b34fd8f4e2a83b97f410673c2239e959bf",
+      "reason": "private authorization grant or TaskStore/control database; not for publication"
+    },
+    {
+      "source_path": ".bago/goals/operational-continuity-governance-20261031/evidence/acceptance-20261101/workspace/governance/evidence/revoked-GO-grant.json",
+      "sha256": "39a5962cfbce393e30afa938e0b5139d54cf80781ce9478d7c74f3bf1f70ad7d",
+      "reason": "private authorization grant or TaskStore/control database; not for publication"
+    },
+    {
+      "source_path": ".bago/goals/operational-continuity-governance-20261031/evidence/acceptance-20261101/workspace/governance/evidence/scopes-control.sqlite3",
+      "sha256": "882cc4bd6adf9334613816480d16b06ea5a1af9580276d0f495311cf6a0ed18e",
+      "reason": "private authorization grant or TaskStore/control database; not for publication"
+    },
+    {
+      "source_path": ".bago/goals/operational-continuity-governance-20261031/evidence/acceptance-20261101/workspace/governance/evidence/scopes-GO-grant.json",
+      "sha256": "88c6ccef418a2c6faf62880ebc0e215c026e24c3131a9d91303c1883cf84d855",
+      "reason": "private authorization grant or TaskStore/control database; not for publication"
+    },
+    {
+      "source_path": ".bago/goals/operational-continuity-governance-20261031/evidence/acceptance-20261101/workspace/governance/evidence/stopped-control.sqlite3",
+      "sha256": "28554353671260e0698565cf82ba7978f4c4ca3374b4bbcebe6d133f9456c62f",
+      "reason": "private authorization grant or TaskStore/control database; not for publication"
+    },
+    {
+      "source_path": ".bago/goals/operational-continuity-governance-20261031/evidence/acceptance-20261101/workspace/governance/evidence/stopped-GO-grant.json",
+      "sha256": "5fde858344c7f484708e518014119f9290c9f6303009ce101679a106fab223c0",
+      "reason": "private authorization grant or TaskStore/control database; not for publication"
+    },
+    {
+      "source_path": ".bago/goals/operational-continuity-governance-20261031/evidence/acceptance-20261101/workspace/host/attempt2/relay-state/control.sqlite3",
+      "sha256": "b5b476eb4ecf2c53323425e189d16f768e191935ae827f00541d4d958250432e",
+      "reason": "private relay controller database may contain leases"
+    },
+    {
+      "source_path": ".bago/goals/operational-continuity-governance-20261031/evidence/cognitive-closeout-20261031/user/state/sessions/<session>/tokens.json",
+      "sha256": null,
+      "reason": "private session token store; path/session ID and contents excluded"
+    },
+    {
+      "source_path": ".bago/goals/operational-continuity-governance-20261031/evidence/acceptance-20261101/workspace/review/finish_existing_relay.py",
+      "sha256": "6e5308a92487573e16f3319ccca7f8f3cbe7c016a3863deda878ff2024b3fccc",
+      "reason": "private relay recovery helper not needed for public acceptance"
+    }
+  ],
+  "source_mission_id": "CODEX_GOVERNED_CONTINUITY_20261031",
+  "source_candidate": "0f74f0d818f422d2a9506957e6396070300bbb77d88c602605b4fa647e7cc774",
+  "publication_base": "ed0efc83cc39a40aac231d9aa0da77a5d30a91e7",
+  "scope": "Safe subset projection of existing immutable evidence; GOV grants/control stores and private TaskStore/lease/token/reasoning data omitted. Not a complete re-materialization of every source handoff."
+}

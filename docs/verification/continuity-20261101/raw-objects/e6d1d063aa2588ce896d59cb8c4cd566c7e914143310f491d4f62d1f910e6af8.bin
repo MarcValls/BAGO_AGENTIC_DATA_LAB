@@ -1,0 +1,35 @@
+{
+  "schema": "bago.browser-bridge.brave-r5.resume-preflight.v1",
+  "attempt": 5,
+  "created_at_utc": "2026-10-31T15:29:44.8736692Z",
+  "mission_id": "CODEX_GOVERNED_CONTINUITY_20261031",
+  "candidate_id": "0f74f0d818f422d2a9506957e6396070300bbb77d88c602605b4fa647e7cc774",
+  "scope_sha256": "0af844db09c04531999970ed71e0bce9ed1f51245b48416d0453a7bc7cef9df9",
+  "role": "runtime-integration-engineer",
+  "effective_registry_key": "HKCU\\Software\\Google\\Chrome\\NativeMessagingHosts\\com.bago.browser_bridge",
+  "registry_views": [
+    {
+      "view": "Registry32",
+      "exists": false,
+      "default": null
+    },
+    {
+      "view": "Registry64",
+      "exists": false,
+      "default": null
+    }
+  ],
+  "manifest_path": "C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\.worktrees\\browser-bridge-runtime-validation-20261030\\.bago\\goals\\browser-bridge-runtime-validation-20261030\\revision5\\evidence\\runtime\\com.bago.browser_bridge.json",
+  "manifest_absent": true,
+  "profile_path": "C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\.worktrees\\browser-bridge-runtime-validation-20261030\\.bago\\goals\\browser-bridge-runtime-validation-20261030\\revision5\\evidence\\runtime\\profile-brave-r5-attempt5",
+  "profile_absent": true,
+  "chrome_processes": 0,
+  "chrome_profiles_with_extension": [],
+  "packaged_exe": "C:\\Users\\AMTEC_Terminal_1º\\Desktop\\BAGO5_ADL\\.worktrees\\browser-bridge-runtime-validation-20261030\\.bago\\goals\\browser-bridge-runtime-validation-20261030\\revision5\\build\\BagoBrowserBridgeHost.exe",
+  "packaged_exe_sha256": "2aefdaa63fbfeadb79498acac429bee36e3fce3ac323664fa0733347a030e333",
+  "extension_id": "jeocgjmcakdgbogpcbmhmpcfkgamoaec",
+  "host_name": "com.bago.browser_bridge",
+  "video": "NOT_RUN if Playwright ffmpeg dependency absent",
+  "authorization_basis": "User authorization covers Brave effective route; root confirmed Chromium Windows lookup and scope before this preflight.",
+  "p2_handoff_sha256": "b3bf64cf73804d3762192dbe437e817967958d9e0f9f3ef5dc20aa13484a8a72"
+}

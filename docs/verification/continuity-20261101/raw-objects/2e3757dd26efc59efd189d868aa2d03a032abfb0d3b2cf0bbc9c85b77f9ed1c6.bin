@@ -1,0 +1,250 @@
+{
+  "work_id": "HOST",
+  "role": "trace-observability-engineer",
+  "status": "DONE",
+  "mission_id": "BAGO_CONTINUITY_ACCEPTANCE_20261101",
+  "candidate_id": "0f74f0d818f422d2a9506957e6396070300bbb77d88c602605b4fa647e7cc774",
+  "scope_sha256": "0af844db09c04531999970ed71e0bce9ed1f51245b48416d0453a7bc7cef9df9",
+  "changed_files": [
+    "host/HOST_RESULTADO.md",
+    "host/HOST_EVALUATION.json",
+    "host/TRACE_SUPPLEMENT.json",
+    "host/PUBLIC_ARTIFACT_SCAN.json",
+    "host/verify_host.py",
+    "host/materialize_handoff.py",
+    "host/owned-native-stop-result.json",
+    "host/NATIVE_EXECUTION.json",
+    "host/relay-events.public.json",
+    "host/attempt2/config.json",
+    "host/attempt2/context.json",
+    "host/attempt2/INPUT_MANIFEST.json",
+    "host/attempt2/NATIVE_EXECUTION.json",
+    "host/attempt2/native_session.py",
+    "host/attempt2/offer.public.json",
+    "host/attempt2/outside-canary.txt",
+    "host/attempt2/plan.json",
+    "host/attempt2/prepare_and_run.py",
+    "host/attempt2/relay-events.public.json",
+    "host/attempt2/worker/accepted-handoff.json",
+    "host/attempt2/worker/AGENTS.md",
+    "host/attempt2/worker/boundary_probe.py",
+    "host/attempt2/worker/CONTRACT.json",
+    "host/attempt2/worker/phase-A.json",
+    "host/attempt2/worker/phase-B.json",
+    "host/attempt2/worker/probe-A.json",
+    "host/attempt2/worker/probe-B.json",
+    "host/attempt2/worker/verify_native.py",
+    "host/attempt2/sessions/A/events.filtered.jsonl",
+    "host/attempt2/sessions/A/PROCESS.json",
+    "host/attempt2/sessions/A/prompt.txt",
+    "host/attempt2/sessions/A/stderr.sanitized.log",
+    "host/attempt2/sessions/B/events.filtered.jsonl",
+    "host/attempt2/sessions/B/PROCESS.json",
+    "host/attempt2/sessions/B/prompt.txt",
+    "host/attempt2/sessions/B/stderr.sanitized.log"
+  ],
+  "outputs": [
+    {
+      "path": "host/HOST_RESULTADO.md",
+      "kind": "stable-host-evidence",
+      "sha256": "ab36366bee10378e0b05acc96e3fe8a09d7efbef17f0df162cf280477c03abcc"
+    },
+    {
+      "path": "host/HOST_EVALUATION.json",
+      "kind": "stable-host-evidence",
+      "sha256": "ed60a430f9910764fae465d1322820ba69d8f97460003335471fba75bdd7fa8d"
+    },
+    {
+      "path": "host/TRACE_SUPPLEMENT.json",
+      "kind": "stable-host-evidence",
+      "sha256": "f44a02261e682434d37c826a66a6703658a0b21c4acc89038c6d9e8bf2e061ed"
+    },
+    {
+      "path": "host/PUBLIC_ARTIFACT_SCAN.json",
+      "kind": "stable-host-evidence",
+      "sha256": "46cf0c70ed45ff6ef87d7f2e2e950582dead8e5aef1d317f8eb81dbfc78e3582"
+    },
+    {
+      "path": "host/verify_host.py",
+      "kind": "stable-host-evidence",
+      "sha256": "33996e5c14421dd7789ecb74becea57da50e45bc57b317c0e1b3163ecd35e14b"
+    },
+    {
+      "path": "host/materialize_handoff.py",
+      "kind": "stable-host-evidence",
+      "sha256": "d65160d845d826d9ffec78763b2221794057bee4967f4011381df1777c69b0d0"
+    },
+    {
+      "path": "host/owned-native-stop-result.json",
+      "kind": "stable-host-evidence",
+      "sha256": "ce5fcfc141b564f90a6a4d6bfde90b0113a0312067926f52d2ada3e85e3364b8"
+    },
+    {
+      "path": "host/NATIVE_EXECUTION.json",
+      "kind": "stable-host-evidence",
+      "sha256": "bb567e6f69f25c113985c96d4c277751b4ca18cf7a9a0bb493420eba86a04a87"
+    },
+    {
+      "path": "host/relay-events.public.json",
+      "kind": "stable-host-evidence",
+      "sha256": "801f4ef2c8462e742f9ecb5a3a5c587ab8c8469352e6db66d223dd9ea3323b04"
+    },
+    {
+      "path": "host/attempt2/config.json",
+      "kind": "stable-host-evidence",
+      "sha256": "11e8b4ca6cdb906ebb1604a7a0f4c7e67144cf7616b937af8d4bc0796a91d12d"
+    },
+    {
+      "path": "host/attempt2/context.json",
+      "kind": "stable-host-evidence",
+      "sha256": "85640493987a05f6bccfcfae1a9f1fd1f7c4bc3d29a293d15e872ed3537837cd"
+    },
+    {
+      "path": "host/attempt2/INPUT_MANIFEST.json",
+      "kind": "stable-host-evidence",
+      "sha256": "118efb46feb084c361f16d57da6c54cc342b0397f36f24ea8dc1ec0bf41cca3f"
+    },
+    {
+      "path": "host/attempt2/NATIVE_EXECUTION.json",
+      "kind": "stable-host-evidence",
+      "sha256": "0846d80da37374a84487507b9aaa03cccbb4ec8ad522fb1b39c01266de9a9b6b"
+    },
+    {
+      "path": "host/attempt2/native_session.py",
+      "kind": "stable-host-evidence",
+      "sha256": "55ece5fe17c4fa4d1e15301d62e3329247af382c815f56356ffabbae85ac84ce"
+    },
+    {
+      "path": "host/attempt2/offer.public.json",
+      "kind": "stable-host-evidence",
+      "sha256": "db240465c373a3cb2f8bf82c5e9ce2f5b10916617dbbd825c0d49830ccd50378"
+    },
+    {
+      "path": "host/attempt2/outside-canary.txt",
+      "kind": "stable-host-evidence",
+      "sha256": "191b8bff4456e8f32fb1b161948af0411a42a307d4cbd615ae9f65f1f776ff2a"
+    },
+    {
+      "path": "host/attempt2/plan.json",
+      "kind": "stable-host-evidence",
+      "sha256": "139ef69d64a26ae3d4ec58f1ade35072b6352b3e3f6d1eb4e813993f25e26cb2"
+    },
+    {
+      "path": "host/attempt2/prepare_and_run.py",
+      "kind": "stable-host-evidence",
+      "sha256": "98d1b0cfe6ba8aac47f71954e422040dbaf50950d403af336ee5cd9c39e6398d"
+    },
+    {
+      "path": "host/attempt2/relay-events.public.json",
+      "kind": "stable-host-evidence",
+      "sha256": "02a878f5f0146acd102096beeb0c0469f84c593c07614988ef4cb032a629f417"
+    },
+    {
+      "path": "host/attempt2/worker/accepted-handoff.json",
+      "kind": "stable-host-evidence",
+      "sha256": "ffac78ce9af8bbb1d20bbda10c53e51e3cfe20e417f6aa96149ccf4ee2c5702c"
+    },
+    {
+      "path": "host/attempt2/worker/AGENTS.md",
+      "kind": "stable-host-evidence",
+      "sha256": "adc3ba16b6e2016400e32eec4ee4f3220ae3123b3f1aca1943997105cf267121"
+    },
+    {
+      "path": "host/attempt2/worker/boundary_probe.py",
+      "kind": "stable-host-evidence",
+      "sha256": "65625f41943f8d6ed2d40da7398127a74c8851ce2ccfdf469ca479ade449ca71"
+    },
+    {
+      "path": "host/attempt2/worker/CONTRACT.json",
+      "kind": "stable-host-evidence",
+      "sha256": "baf8a95e898079ae44212b7f46fcc911ba9c82c9b5c4287e0a994ac408fa0163"
+    },
+    {
+      "path": "host/attempt2/worker/phase-A.json",
+      "kind": "stable-host-evidence",
+      "sha256": "b3fc51fd205edf57bd4f3edec7b227c672297c3adfaff203be83bc073b20ec19"
+    },
+    {
+      "path": "host/attempt2/worker/phase-B.json",
+      "kind": "stable-host-evidence",
+      "sha256": "952122a232e489942a20704e2a9d4b3c866bfaa7493e4d1583f1b02b21b6ea11"
+    },
+    {
+      "path": "host/attempt2/worker/probe-A.json",
+      "kind": "stable-host-evidence",
+      "sha256": "ce7d735f19d0bf941bdd3a4c930ed522c73d5c8db255c016a83f6c33fbac3a90"
+    },
+    {
+      "path": "host/attempt2/worker/probe-B.json",
+      "kind": "stable-host-evidence",
+      "sha256": "1f8bbcf3900f551388386dcc2652b17ad7b0216b6988ea20560d74d767764728"
+    },
+    {
+      "path": "host/attempt2/worker/verify_native.py",
+      "kind": "stable-host-evidence",
+      "sha256": "21b75359f4d224c82eaedcaf4aad002170031349083ad37f3c003e168e15742e"
+    },
+    {
+      "path": "host/attempt2/sessions/A/events.filtered.jsonl",
+      "kind": "stable-host-evidence",
+      "sha256": "b5fb28305dc95a21c8ff9ecd0342c1f7fa0b01a11c0bbda4b8fab4407335b0da"
+    },
+    {
+      "path": "host/attempt2/sessions/A/PROCESS.json",
+      "kind": "stable-host-evidence",
+      "sha256": "c5e7f53900806ab55353018ae926008e25931c61118c11a51afc8661dac051c1"
+    },
+    {
+      "path": "host/attempt2/sessions/A/prompt.txt",
+      "kind": "stable-host-evidence",
+      "sha256": "8989d135ffa987e139c1ca528148cb9d6b44dcb577f6330075e5f12ae60d8a12"
+    },
+    {
+      "path": "host/attempt2/sessions/A/stderr.sanitized.log",
+      "kind": "stable-host-evidence",
+      "sha256": "ae98e47e328ebe4d445d11e150566510c084c7502c1edb5e02d8970d8548c05b"
+    },
+    {
+      "path": "host/attempt2/sessions/B/events.filtered.jsonl",
+      "kind": "stable-host-evidence",
+      "sha256": "b65b8d461c818e55a8166bcb81973bd4aaf7e88ba0762ba4869176a6eae8efd3"
+    },
+    {
+      "path": "host/attempt2/sessions/B/PROCESS.json",
+      "kind": "stable-host-evidence",
+      "sha256": "0f08f10b945b3d551328a6dcc6ad62a61ffc6040863df1502cf69aaad3f5b139"
+    },
+    {
+      "path": "host/attempt2/sessions/B/prompt.txt",
+      "kind": "stable-host-evidence",
+      "sha256": "980270b26e7000ecf4e54a318af4b4640704299c75d9f8f55bd918dfabd30350"
+    },
+    {
+      "path": "host/attempt2/sessions/B/stderr.sanitized.log",
+      "kind": "stable-host-evidence",
+      "sha256": "3942a124822a41aba5376bec8a4e84902d9d33c4db40bab4214a5fa5eea0e4b0"
+    }
+  ],
+  "verification": [
+    {
+      "id": "native-host-relay",
+      "command": "[\"python\",\"-B\",\"C:\\\\Users\\\\AMTEC_Terminal_1º\\\\Desktop\\\\BAGO5_ADL\\\\.bago\\\\goals\\\\operational-continuity-governance-20261031\\\\evidence\\\\acceptance-20261101\\\\workspace\\\\host\\\\verify_host.py\",\"attempt2\"]",
+      "result": "PASS",
+      "evidence": ".bago/team/runtime/executions/91ab8cb0c1cf43f2aaa804e9320adf77/receipt.json",
+      "execution_id": "91ab8cb0c1cf43f2aaa804e9320adf77"
+    }
+  ],
+  "residual_risks": [
+    "Author evaluation is not independent review; REVIEW required.",
+    "Native /goal resume unavailable/NOT_RUN.",
+    "Windows STOP immediate child is not full descendant-tree termination.",
+    "T1/T4/T10/T11 claims are bounded to observed HOST fixture, not universal product guarantees.",
+    "B emits accepted envelope-file SHA; exact packet digest acknowledgment belongs to real host-adapter CLI accept.",
+    "Mutable relay verify check remains pending to independent-review; ledger is not a frozen output.",
+    "Historical failures, preexisting config/skills warnings and cleanup are preserved."
+  ],
+  "next_consumers": [
+    "REVIEW"
+  ],
+  "payload_sha256": "3f62fed972cec38abbf80665780c419e51a59e77568c3e365c662265bb633441"
+}
