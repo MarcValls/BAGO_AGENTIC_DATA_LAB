@@ -8,6 +8,7 @@ from __future__ import annotations
 from decimal import Decimal
 from contextlib import contextmanager
 from concurrent.futures import ThreadPoolExecutor
+from types import SimpleNamespace
 import hashlib
 import json
 import os
@@ -20,7 +21,7 @@ import pytest
 from src.agent_tools import csv_chat
 from src.agent_tools.workspace_read import (
     WorkspaceReadAuthorizations, WorkspaceReadAuthorizationError,
-    read_workspace_file, workspace_file_identity,
+    read_workspace_file, workspace_file_identity, _stat_identity,
 )
 from src.project_permissions import ProjectContext, ProjectPermissions, PermissionError as ProjectPermissionError
 
@@ -86,6 +87,16 @@ def run(rig, token, grant, interpret=None):
     return csv_chat.run_csv_analysis(workspace_root=rig["root"], permissions=rig["policy"],
         token=token, grant=grant, identity=rig["identity"], csv_request=rig["request"],
         interpret=interpret or rig["interpret"], check_conversation=lambda: None)
+
+
+def test_stat_identity_prefers_birthtime_when_ctime_differs():
+    stable = dict(st_dev=1, st_ino=2, st_size=3, st_mtime_ns=4, st_nlink=1,
+                  st_birthtime_ns=5)
+    path_stat = SimpleNamespace(**stable, st_ctime_ns=10)
+    handle_stat = SimpleNamespace(**stable, st_ctime_ns=20)
+    assert _stat_identity(path_stat) == _stat_identity(handle_stat)
+    assert _stat_identity(path_stat)["st_birthtime_ns"] == 5
+    assert "st_ctime_ns" not in _stat_identity(path_stat)
 
 
 def test_original_bytes_actual_read_and_independently_checked_results(rig):

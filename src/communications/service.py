@@ -12,6 +12,7 @@ import re
 import sqlite3
 import stat
 import uuid
+from contextlib import contextmanager
 from datetime import datetime, timedelta, timezone
 from pathlib import Path, PurePosixPath
 from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
@@ -125,10 +126,15 @@ class CommunicationService:
             CREATE TABLE IF NOT EXISTS whatsapp_authorizations(project_key TEXT PRIMARY KEY,data TEXT NOT NULL);
             CREATE TABLE IF NOT EXISTS requested_messages(request_id TEXT PRIMARY KEY,identity TEXT NOT NULL,draft_id TEXT NOT NULL);""")
 
+    @contextmanager
     def _db(self):
         db = sqlite3.connect(self.root / "communications.sqlite3", timeout=15)
         db.row_factory = sqlite3.Row
-        return db
+        try:
+            with db:
+                yield db
+        finally:
+            db.close()
 
     def _now(self):
         value = self.clock()

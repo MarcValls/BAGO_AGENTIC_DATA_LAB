@@ -609,7 +609,16 @@ def child_main(case):
 
 
 @pytest.mark.parametrize("case", CASES)
-def test_governed_csv_http_flow(case):
+def test_governed_csv_http_flow(case, tmp_path):
+    if case == "symlink":
+        target, link = tmp_path / "target", tmp_path / "link"
+        target.write_text("target", encoding="utf-8")
+        try:
+            link.symlink_to(target)
+        except OSError as error:
+            if getattr(error, "winerror", None) == 1314:
+                pytest.skip("Windows symlink privilege unavailable; run this case on a symlink-enabled host")
+            raise
     completed = subprocess.run([sys.executable, str(Path(__file__).resolve()), "--case", case],
                                cwd=REPO, capture_output=True, text=True, timeout=75)
     assert completed.returncode == 0, completed.stdout[-4000:] + "\n" + completed.stderr[-10000:]

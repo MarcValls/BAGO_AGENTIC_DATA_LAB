@@ -98,13 +98,28 @@ def test_minimal_manifest_rejects_invalid_content(tmp_path, monkeypatch, mutatio
         generator.render_svg_landing()
 
 
-def test_markdown_targets_reject_absolute_and_symlink_escape(tmp_path, monkeypatch):
+def test_markdown_targets_reject_absolute(tmp_path, monkeypatch):
     outside = tmp_path / 'outside.md'
     outside.write_text('outside', encoding='utf-8')
     repo = tmp_path / 'repo'
     repo.mkdir()
-    (repo / 'link.md').symlink_to(outside)
     monkeypatch.setattr(generator, 'REPO_ROOT', repo)
-    for target in (str(outside), 'link.md'):
-        with pytest.raises(ValueError):
-            generator._validate_local_markdown_target(target, 'escape')
+    with pytest.raises(ValueError):
+        generator._validate_local_markdown_target(str(outside), 'escape')
+
+
+def test_markdown_targets_reject_symlink_escape(tmp_path, monkeypatch):
+    outside = tmp_path / 'outside.md'
+    outside.write_text('outside', encoding='utf-8')
+    repo = tmp_path / 'repo'
+    repo.mkdir()
+    link = repo / 'link.md'
+    try:
+        link.symlink_to(outside)
+    except OSError as error:
+        if getattr(error, 'winerror', None) == 1314:
+            pytest.skip('Windows symlink privilege unavailable; run this case on a symlink-enabled host')
+        raise
+    monkeypatch.setattr(generator, 'REPO_ROOT', repo)
+    with pytest.raises(ValueError):
+        generator._validate_local_markdown_target('link.md', 'escape')
