@@ -1,5 +1,7 @@
 ## Branch base freshness
 
+Before non-trivial work, read `.bago/INDEX.md` and follow its project-context authority and reading order.
+
 Before creating an implementation worktree, fetch the intended remote base
 (normally `origin/main`), record its exact SHA, and create the work branch from
 that fetched ref. Do not use a similarly named local branch or an older task
