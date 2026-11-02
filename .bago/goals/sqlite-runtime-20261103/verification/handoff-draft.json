@@ -1,0 +1,71 @@
+{
+  "work_id": "W02",
+  "role": "verification-engineer",
+  "status": "DONE",
+  "mission_id": "SQLITE_RUNTIME_20261103",
+  "candidate_id": "22d79bdf89e24c5260f63668c4992937b545d0ca0f364abd074421eca1d82356",
+  "scope_sha256": "13460a6f2563bcf779d6c921d5b789900c47cbbdc335f8de0cf394a1077b1bec",
+  "changed_files": [
+    "verification/verify_cases.py",
+    "verification/report.json",
+    "verification/focused-tests.log",
+    "verification/managed-check.json"
+  ],
+  "reviewed_paths": [
+    "goal.md"
+  ],
+  "outputs": [
+    {
+      "path": "verification/verify_cases.py",
+      "sha256": "d1e3d78bc266821e3f434ba61d5ff6dfcb2e815e76872dd45da5e8f47b9157b6",
+      "kind": "independent-verification"
+    },
+    {
+      "path": "verification/report.json",
+      "sha256": "fc83079f7d92a664546a6640f0bbd989f3b905cd0b994d4727644660a97b2c9c",
+      "kind": "independent-verification"
+    },
+    {
+      "path": "verification/focused-tests.log",
+      "sha256": "91f18b00aa4b28f12c5c6d50290633243f2da55b7062698a98d7d906c741202f",
+      "kind": "independent-verification"
+    },
+    {
+      "path": "verification/managed-check.json",
+      "sha256": "8e03eff9e1b193220f2d1b46888a1f705fc7b011cefa2f3fba89a7555e98b2d6",
+      "kind": "independent-verification"
+    }
+  ],
+  "verification": [
+    {
+      "id": "acceptance",
+      "command": "[\"/tmp/adl-sqlite-venv/bin/python\",\"verification/verify_cases.py\"]",
+      "result": "PASS",
+      "evidence": ".bago/team/runtime/executions/7b81fd853c104e88a5d9aca36cab4b00/receipt.json",
+      "execution_id": "7b81fd853c104e88a5d9aca36cab4b00"
+    }
+  ],
+  "findings": [
+    {
+      "id": "SQLITE-PERSISTENCE-UNRESOLVED",
+      "severity": "P1",
+      "scope": "PRODUCT",
+      "status": "OPEN",
+      "affects_correction": true,
+      "description": "Observed historical conversation rollback and shared-directory failures remain unresolved; no repair attribution to PR116"
+    }
+  ],
+  "residual_risks": [
+    "Path stat samples do not identify the SQLite open file descriptor or replacing process",
+    "Observation timing and concurrent reads may require independent read verification before concluding loss",
+    "HMAC correlation and high-water marks are per observer session; caps evict old state and stop logging after declared limit",
+    "Temporary and workspace trials here share overlay device; placement is not equivalent to original synchronization semantics",
+    "First new malformed trial lost detailed steps/fixture; retained traceback proves only query failure",
+    "Original mobile route in original environment",
+    "Windows installation",
+    "Host-wide syscall attribution: ptrace denied",
+    "Cross-process/restart high-water durability"
+  ],
+  "next_consumers": [],
+  "payload_sha256": "598141217720b8388902fe95deb5b4efa119efa376889fcef623948b42a6fc37"
+}

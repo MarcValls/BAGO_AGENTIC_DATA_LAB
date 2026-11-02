@@ -1,0 +1,19 @@
+{
+  "base_sha": "6173ade56d64051b40586b80386faff79e22a119",
+  "pr116_sha": "8b6e48b5cc9243b4884af90b5db876dba09ecc73",
+  "python": "3.12.14",
+  "files": {
+    "src/conversations/library.py": "fa71c5502bb61a33300bf986409ffd592072574d6262e83497292e91afd8599b",
+    "src/conversations/diagnostics.py": "d6da7630ccb64708d921d26d9f8554c63140d8e891e6d4af915f62198474d673",
+    "scripts/audit_sqlite_runtime.py": "59c38b16dd48ff622b1cffc20f6ebe8ff4a01162d9d834d282209fc9e1a56ebd",
+    "tests/test_conversation_diagnostics.py": "afd495e76620d4389b94bda381596bdc019568a92d78f0cf5b66e4869ef570da"
+  },
+  "host_evidence": {
+    "pid_ns": "pid:[4026532278]",
+    "mount_ns": "mnt:[4026532276]",
+    "tmp_device": 27,
+    "workspace_device": 27,
+    "filesystem": "overlay",
+    "syscall_attribution": "NOT_RUN: ptrace denied"
+  }
+}

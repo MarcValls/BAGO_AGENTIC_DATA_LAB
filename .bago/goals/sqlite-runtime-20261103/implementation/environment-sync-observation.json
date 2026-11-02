@@ -1,0 +1,42 @@
+{
+  "status": "OBSERVED_CONFIGURATION_NOT_ATTRIBUTION",
+  "process_names_observed": [
+    "rsync",
+    "sync_share.sh",
+    "inotifywait"
+  ],
+  "sync_script": {
+    "path": "/usr/local/scripts/sync_share.sh",
+    "sha256": "7a4b7aa2c2ee89eddb9b24fbe5267f4abd75a8cded4328773be9248d61cf3c32",
+    "options": [
+      "-a",
+      "--no-owner",
+      "--no-group",
+      "--delay-updates",
+      "--partial-dir=.rsync-tmp",
+      "--update",
+      "--times"
+    ],
+    "exclusions": [
+      "*.crdownload",
+      ".git/",
+      ".rsync-tmp/",
+      "node_modules"
+    ],
+    "debounce_seconds": 2
+  },
+  "daemon": {
+    "config_path": "/etc/rsyncd.conf",
+    "scratch_path": "/workspace/scratch",
+    "read_only": false,
+    "use_chroot": true
+  },
+  "limitations": [
+    "Script outgoing destination and credentials deliberately omitted",
+    "Configuration does not link a transfer to any database or historical failure",
+    "No readable transfer log at /var/log/rsyncd.log or /var/log/rsync.log",
+    "ptrace denied; no system-call attribution",
+    "Current namespace cannot establish actions of external peers or host processes"
+  ],
+  "hypothesis": "A synchronization transfer is compatible with file replacement and retained older mtime; unproven as incident cause"
+}

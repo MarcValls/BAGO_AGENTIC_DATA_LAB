@@ -1,0 +1,56 @@
+{
+  "mission_id": "SQLITE_RUNTIME_20261103",
+  "operation": "AUDIT",
+  "title": "SQLite replacement investigation",
+  "objective": "Preserve historical failures; diagnose without claiming repair",
+  "max_concurrency": 1,
+  "terminal_work_items": [
+    "W02"
+  ],
+  "work_items": [
+    {
+      "id": "W01",
+      "title": "trace-observability-engineer",
+      "role": "trace-observability-engineer",
+      "depends_on": [],
+      "write_scopes": [
+        "implementation/**"
+      ],
+      "output_scopes": [
+        "implementation/**"
+      ],
+      "required_checks": [
+        "acceptance"
+      ]
+    },
+    {
+      "id": "W02",
+      "title": "verification-engineer",
+      "role": "verification-engineer",
+      "depends_on": [
+        "W01"
+      ],
+      "write_scopes": [
+        "verification/**"
+      ],
+      "output_scopes": [
+        "verification/**"
+      ],
+      "required_checks": [
+        "acceptance"
+      ]
+    }
+  ],
+  "audit_scope": {
+    "include": [
+      "goal.md"
+    ],
+    "exclude": [],
+    "evidence_roots": [
+      "implementation",
+      "verification"
+    ],
+    "fixture_roots": [],
+    "preserved_roots": []
+  }
+}

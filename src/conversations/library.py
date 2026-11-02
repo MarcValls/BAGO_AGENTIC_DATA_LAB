@@ -76,10 +76,22 @@ class ConversationStore:
 
         return conversation_metadata(self.database_path, limit, current_project_scope())
 
-    def __init__(self, database_path: Path | str | None = None) -> None:
+    def __init__(self, database_path: Path | str | None = None, *, diagnostics=None) -> None:
         self.database_path = Path(database_path) if database_path else default_database_path()
+        # Explicitly injected: disabled by default; diagnostics never changes SQL behavior.
+        self.diagnostics = diagnostics
+
+    def _diagnose(self, phase, **metadata):
+        if self.diagnostics is not None:
+            try:
+                self.diagnostics.record(self.database_path, phase, **metadata)
+            except Exception:
+                # An observer must not turn a committed write into an HTTP failure.
+                import logging
+                logging.getLogger(__name__).warning("SQLite diagnostic observer failed")
 
     def _connect(self) -> sqlite3.Connection:
+        self._diagnose("connect_before")
         self.database_path.parent.mkdir(parents=True, exist_ok=True)
         connection = sqlite3.connect(self.database_path, timeout=10, isolation_level=None)
         connection.row_factory = sqlite3.Row
@@ -131,6 +143,7 @@ class ConversationStore:
                 connection.rollback()
                 connection.close()
                 raise
+        self._diagnose("connect_ready")
         return connection
 
     @staticmethod
@@ -191,6 +204,7 @@ class ConversationStore:
                 (conversation_id, current_project_scope()),
             ).fetchone()
             if row is None:
+                self._diagnose("get_missing", conversation_id=conversation_id)
                 raise ConversationNotFound(conversation_id)
             result = self._decode_conversation(row)
             if include_messages:
@@ -198,6 +212,8 @@ class ConversationStore:
                     "SELECT * FROM messages WHERE conversation_id = ? ORDER BY sequence", (conversation_id,)
                 ).fetchall()
                 result["messages"] = [self._decode_message(message) for message in messages]
+        self._diagnose("get", conversation_id=conversation_id, revision=result["revision"],
+                       message_count=len(result["messages"]) if include_messages else None)
         return result
 
     def append_message(
@@ -238,6 +254,8 @@ class ConversationStore:
                 connection.execute("UPDATE conversations SET title = ? WHERE id = ?", (title, conversation_id))
             saved = connection.execute("SELECT * FROM messages WHERE id = ?", (message_id,)).fetchone()
             connection.commit()
+            self._diagnose("append_committed", conversation_id=conversation_id,
+                           revision=next_revision, sequence=sequence)
         return {**self._decode_message(saved), "revision": next_revision}
 
     def rename(self, conversation_id: str, expected_revision: int, title: str) -> dict[str, Any]:

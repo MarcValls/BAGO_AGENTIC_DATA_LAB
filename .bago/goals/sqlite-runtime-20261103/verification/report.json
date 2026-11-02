@@ -1,0 +1,71 @@
+{
+  "status": "PASS",
+  "scope": "diagnostic implementation and preserved evidence; no repair verdict",
+  "checks": {
+    "source_manifest": {
+      "status": "PASS"
+    },
+    "focused_tests": {
+      "status": "PASS",
+      "returncode": 0,
+      "command": [
+        "/tmp/adl-sqlite-venv/bin/python",
+        "-m",
+        "pytest",
+        "tests/test_conversation_diagnostics.py",
+        "tests/test_conversation_library.py",
+        "-q"
+      ]
+    },
+    "missing_after_restore": {
+      "status": "PASS",
+      "observed": "physical replacement and confirmed conversation missing; payload absent"
+    },
+    "mtime_without_replacement": {
+      "status": "PASS",
+      "observed": "mtime regression is distinguished from identity change and data loss"
+    },
+    "short_writes": {
+      "status": "PASS",
+      "observed": "short writes complete one valid JSON event"
+    }
+  },
+  "historical_failures": {
+    "status": "FAIL",
+    "cases": [
+      3,
+      7
+    ],
+    "preserved": true
+  },
+  "new_malformed_failure": {
+    "status": "FAIL",
+    "evidence": "../implementation/attempt-01-failure.json",
+    "replacement_proven": false,
+    "actor_identified": false
+  },
+  "implementation_findings": [],
+  "product_findings": [
+    {
+      "id": "SQLITE-PERSISTENCE-UNRESOLVED",
+      "severity": "P1",
+      "scope": "PRODUCT",
+      "status": "OPEN",
+      "affects_correction": true,
+      "description": "Observed historical conversation rollback and shared-directory failures remain unresolved; no repair attribution to PR116"
+    }
+  ],
+  "not_run": [
+    "Original mobile route in original environment",
+    "Windows installation",
+    "Host-wide syscall attribution: ptrace denied",
+    "Cross-process/restart high-water durability"
+  ],
+  "limitations": [
+    "Path stat samples do not identify the SQLite open file descriptor or replacing process",
+    "Observation timing and concurrent reads may require independent read verification before concluding loss",
+    "HMAC correlation and high-water marks are per observer session; caps evict old state and stop logging after declared limit",
+    "Temporary and workspace trials here share overlay device; placement is not equivalent to original synchronization semantics",
+    "First new malformed trial lost detailed steps/fixture; retained traceback proves only query failure"
+  ]
+}

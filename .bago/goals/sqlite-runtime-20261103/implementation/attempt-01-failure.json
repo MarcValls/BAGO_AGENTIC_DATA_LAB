@@ -1,0 +1,14 @@
+{
+  "status": "FAIL",
+  "variant": "pr116",
+  "location": "workspace",
+  "trial": 1,
+  "stage": "independent final query",
+  "error": "sqlite3.DatabaseError: database disk image is malformed",
+  "evidence": "matrix.stdout.log",
+  "limitations": [
+    "Initial harness lost per-step details and deleted the fixture on unhandled exception",
+    "No physical replacement or actor established by this failure",
+    "The completed trial 0 in pr116-workspace.jsonl remains PASS; trial 1 remains FAIL"
+  ]
+}

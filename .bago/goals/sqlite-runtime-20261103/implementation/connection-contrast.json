@@ -1,0 +1,26 @@
+[
+  {
+    "source": "main",
+    "source_sha256": "2e94d45fd7cdc66e45cc5516285e0c00543909943e4239b535b006c9e1634ad7",
+    "connections_after_context": [
+      "OPEN",
+      "OPEN",
+      "OPEN"
+    ],
+    "reply_revision": 1,
+    "get_revision": 1,
+    "messages": 1
+  },
+  {
+    "source": "pr116",
+    "source_sha256": "6d9e73b464afd65794c5fb43c1e4df578f36b5b4ade9e284ab3a7efb1fd0889a",
+    "connections_after_context": [
+      "CLOSED",
+      "CLOSED",
+      "CLOSED"
+    ],
+    "reply_revision": 1,
+    "get_revision": 1,
+    "messages": 1
+  }
+]
