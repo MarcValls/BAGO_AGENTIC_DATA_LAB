@@ -150,11 +150,11 @@ def test_rendered_readme_is_comprehensive_scope_bound_and_does_not_claim_collect
     assert "docs/one_command_demo.md" in rendered
     assert "README.md` es un artefacto generado" in rendered
     assert "docs/readme_manifest.json" in rendered
-    # The previous CI remains visible as history; the opening snapshot now has
-    # its own dated, candidate-bound verification record.
+    # The current CI pointer is bound to its exact candidate; the prior run
+    # remains explicitly labelled as historical evidence.
     assert "Registro histórico de CI conservado en STATE.md" in rendered
-    assert "38665463586" in rendered
-    assert "ff9292fe4340a2bdab9658a2e804579fa4ef8fb0" in rendered
+    assert "41390718613" in rendered
+    assert "0f13018560f4b679e985c9a69a52060f38b4c676" in rendered
     assert "This result does not cover later changes" in rendered
     assert "NOT_RUN" in rendered
     assert "2026-10-08" in rendered
