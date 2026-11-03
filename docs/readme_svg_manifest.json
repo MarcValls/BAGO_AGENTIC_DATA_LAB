@@ -53,12 +53,12 @@
     },
     {
       "asset": "docs/assets/readme-banner/01-map.svg",
-      "alt": "Índice gráfico de las catorce secciones del laboratorio",
+      "alt": "Mapa documental de chat, CSV, agentes, gobierno y evidencia",
       "target": "README_DETAILS.md"
     },
     {
       "asset": "docs/assets/readme-banner/02-workspace.svg",
-      "alt": "Experiencia de chat, frontend, agentes e inspección",
+      "alt": "Chat y consulta autorizada de CSV: esquema conceptual, no captura",
       "target": "docs/readme_frontend.md"
     },
     {
@@ -73,17 +73,17 @@
     },
     {
       "asset": "docs/assets/readme-banner/05-inspection.svg",
-      "alt": "Observabilidad: LocalTrace, Inspect, recibos y evaluación",
+      "alt": "Observabilidad: LocalTrace, Inspect, recibos y procedencia del CSV",
       "target": "docs/observability_evals.md"
     },
     {
       "asset": "docs/assets/readme-banner/06-demos.svg",
-      "alt": "Demostraciones delimitadas y estados de verificación",
+      "alt": "Demo local, CSV con interpretación controlada y chat histórico: alcances independientes",
       "target": "docs/one_command_demo.md"
     },
     {
       "asset": "docs/assets/readme-banner/07-operations.svg",
-      "alt": "Instalación local de la app y acceso al estado documentado",
+      "alt": "Instalación local y diagnóstico optativo de sustitución SQLite",
       "target": "docs/agent-chat-control/LOCAL_SETUP.md"
     },
     {
@@ -98,7 +98,7 @@
       {
         "label": "Chat y workspace",
         "target": "docs/readme_frontend.md",
-        "description": "Conversar, preparar contexto, consultar y revisar propuestas sin confundir una respuesta con una ejecución."
+        "description": "Conversar, preparar contexto y consultar un CSV autorizado con cálculos deterministas, fórmulas y filas de origen. Cada recorrido conserva sus condiciones y límites."
       },
       {
         "label": "Agentes y conocimiento",

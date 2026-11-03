@@ -10,7 +10,7 @@ ADL permite formular una intención desde el chat, preparar una operación, revi
 
 ## Qué ofrece
 
-**[Chat y workspace](docs/readme_frontend.md)** — Conversar, preparar contexto, consultar y revisar propuestas sin confundir una respuesta con una ejecución.
+**[Chat y workspace](docs/readme_frontend.md)** — Conversar, preparar contexto y consultar un CSV autorizado con cálculos deterministas, fórmulas y filas de origen. Cada recorrido conserva sus condiciones y límites.
 
 **[Agentes y conocimiento](docs/governed_rag.md)** — Organizar capacidades, recuperar información con procedencia y mantener los límites de autoridad.
 
@@ -40,6 +40,6 @@ Captura documentada del 2026-10-22; no acredita por sí sola el estado actual de
 
 **Referencia:** [Contrato de ejecución](docs/governed-execution/GEX_V1_NORMATIVE_CONTRACT.md) · [Estado canónico](.bago/canon/STATE.md) · [Seguridad](SECURITY.md) · [Guía técnica completa](README_DETAILS.md)
 
-[Recursos SVG originales](docs/assets/readme-banner/) · [Contrato de generación](docs/readme_generation.md)
+[Paneles SVG actualizados y fuentes](docs/assets/readme-banner/) · [Contrato de generación](docs/readme_generation.md)
 
 Portada generada desde el manifiesto; los estados y resultados conservan la fecha y el alcance de sus fuentes.

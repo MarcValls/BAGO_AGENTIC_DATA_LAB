@@ -1271,7 +1271,7 @@ def _render_minimal_landing(config: dict[str, Any], groups: dict[str, list[str]]
         if category != "Inicio":
             lines.extend([f"**{category}:** " + " · ".join(links), ""])
     lines.extend([
-        "[Recursos SVG originales](docs/assets/readme-banner/) · [Contrato de generación](docs/readme_generation.md)", "",
+        "[Paneles SVG actualizados y fuentes](docs/assets/readme-banner/) · [Contrato de generación](docs/readme_generation.md)", "",
         "Portada generada desde el manifiesto; los estados y resultados conservan la fecha y el alcance de sus fuentes.", "",
     ])
     return "\n".join(lines)

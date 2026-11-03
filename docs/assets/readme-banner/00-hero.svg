@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1200" height="400" viewBox="0 0 1200 400" role="img" aria-labelledby="banner-title banner-description">
   <title id="banner-title">BAGO — Agentic Data Lab</title>
-  <desc id="banner-description">Laboratorio de agentes, datos y ejecución gobernada. Un recorrido desde el chat hasta agentes, datos y evidencia inspeccionable. Identidad visual corporativa BAGO.</desc>
+  <desc id="banner-description">Laboratorio de agentes, datos y ejecución gobernada. Resumen editorial del 3 de noviembre de 2026: chat, CSV autorizado, agentes y evidencia inspeccionable. Identidad visual corporativa BAGO.</desc>
   <defs>
     <linearGradient id="background" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#101d2d"/><stop offset="1" stop-color="#17283b"/></linearGradient>
     <linearGradient id="accent" x1="0" y1="0" x2="1" y2="0"><stop stop-color="#447B9D"/><stop offset="1" stop-color="#81afc9"/></linearGradient>
@@ -25,9 +25,9 @@
   <g font-family="Segoe UI, Arial, sans-serif" fill="#F2EFEA">
     <text x="56" y="172" font-size="47" font-weight="700" letter-spacing="-.7">Agentic Data Lab</text>
     <text x="58" y="216" font-size="22" fill="#c9d8e3">Agentes, datos y ejecución gobernada</text>
-    <text x="58" y="261" font-size="17" fill="#a8bdcc">Del objetivo en el chat a un resultado que puedes inspeccionar.</text>
+    <text x="58" y="261" font-size="17" fill="#a8bdcc">Chat, CSV autorizado, agentes y resultados con procedencia.</text>
     <rect x="58" y="302" width="228" height="38" fill="#203c52" stroke="#447B9D"/>
-    <text x="172" y="326" text-anchor="middle" font-size="13" font-weight="600" letter-spacing="1.2">BAGO · ENGINEERING LAB</text>
+    <text x="172" y="326" text-anchor="middle" font-size="13" font-weight="600" letter-spacing="1.2">BAGO · 03 NOV 2026</text>
     <text x="790" y="68" font-size="12" fill="#a8bdcc" letter-spacing="2">UN RECORRIDO INSPECCIONABLE</text>
     <g stroke="#447B9D" stroke-width="2" fill="none"><path d="M918 135H950V231H982"/><path d="M918 231H950V327H982"/></g>
     <g fill="#17283b" stroke="#447B9D"><rect x="784" y="100" width="134" height="70"/><rect x="982" y="196" width="164" height="70"/><rect x="784" y="196" width="134" height="70"/><rect x="982" y="292" width="164" height="70"/></g>
