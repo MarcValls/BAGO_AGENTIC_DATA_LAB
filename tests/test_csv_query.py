@@ -131,7 +131,8 @@ def test_explicit_separator_resolves_structural_ambiguity_without_guessing():
     (b'a\n1\n', {"delimiter": ":"}, "CSV_DELIMITER_INVALID"),
     (b'a\n1\n', {"max_rows": 251}, "CSV_INVALID_LIMIT"),
     (b'a\n1\n', {"max_rows": True}, "CSV_INVALID_LIMIT"),
-])
+], ids=["default-row-limit", "explicit-row-limit", "column-limit", "cell-limit",
+       "byte-limit", "invalid-delimiter", "excessive-row-limit", "boolean-row-limit"])
 def test_limits_do_not_turn_a_partial_or_wide_file_into_single_column_success(raw, options, code):
     with pytest.raises(DocumentError) as error:
         parse_csv_table(raw, **options)

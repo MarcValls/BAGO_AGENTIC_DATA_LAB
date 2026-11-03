@@ -205,8 +205,17 @@ def request_fingerprint(request: dict[str, Any]) -> str:
 
 
 def _stat_identity(info) -> dict[str, int]:
-    return {name: int(getattr(info, name)) for name in
-            ("st_dev", "st_ino", "st_size", "st_mtime_ns", "st_ctime_ns", "st_nlink")}
+    identity = {name: int(getattr(info, name)) for name in
+                ("st_dev", "st_ino", "st_size", "st_mtime_ns", "st_nlink")}
+    # On Windows Python 3.12+ deprecates st_ctime in favor of st_birthtime.
+    # Path.stat() and fstat() can otherwise report different ctime values for
+    # the same file, falsely rejecting an unchanged file read.
+    birthtime_ns = getattr(info, "st_birthtime_ns", None)
+    if birthtime_ns is None:
+        identity["st_ctime_ns"] = int(info.st_ctime_ns)
+    else:
+        identity["st_birthtime_ns"] = int(birthtime_ns)
+    return identity
 
 
 def workspace_file_identity(workspace_root: Path | str, path: str) -> dict[str, int]:

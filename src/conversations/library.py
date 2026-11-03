@@ -155,7 +155,7 @@ class ConversationStore:
             owner_id = "app-assistant"
         conversation_id = "conv_" + uuid.uuid4().hex
         now = _now()
-        with self._connect() as connection:
+        with closing(self._connect()) as connection:
             connection.execute(
                 "INSERT INTO conversations (id, project_id, owner_kind, owner_id, title, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?)",
                 (conversation_id, current_project_scope(), owner_kind, owner_id, title.strip()[:160] or "New conversation", now, now),
@@ -178,14 +178,14 @@ class ConversationStore:
             clauses.append("owner_id = ?")
             values.append(owner_id)
         values.append(max(1, min(limit, 200)))
-        with self._connect() as connection:
+        with closing(self._connect()) as connection:
             rows = connection.execute(
                 f"SELECT * FROM conversations WHERE {' AND '.join(clauses)} ORDER BY updated_at DESC LIMIT ?", values
             ).fetchall()
         return [self._decode_conversation(row) for row in rows]
 
     def get(self, conversation_id: str, include_messages: bool = True) -> dict[str, Any]:
-        with self._connect() as connection:
+        with closing(self._connect()) as connection:
             row = connection.execute(
                 "SELECT * FROM conversations WHERE id = ? AND project_id = ? AND status != 'deleted'",
                 (conversation_id, current_project_scope()),
@@ -205,7 +205,7 @@ class ConversationStore:
         content: str, references: dict[str, Any] | None = None, status: str = "complete",
     ) -> dict[str, Any]:
         now = _now()
-        with self._connect() as connection:
+        with closing(self._connect()) as connection:
             connection.execute("BEGIN IMMEDIATE")
             row = connection.execute(
                 "SELECT revision, status FROM conversations WHERE id = ? AND project_id = ?",
@@ -286,7 +286,7 @@ class ConversationStore:
             assignments.append("status = ?")
             values.append(status)
         values.extend([conversation_id, current_project_scope(), expected_revision])
-        with self._connect() as connection:
+        with closing(self._connect()) as connection:
             changed = connection.execute(
                 f"UPDATE conversations SET {', '.join(assignments)} WHERE id = ? AND project_id = ? AND revision = ? AND status != 'deleted'",
                 values,
@@ -301,7 +301,7 @@ class ConversationStore:
         return self.get(conversation_id)
 
     def restore(self, conversation_id: str, expected_revision: int) -> dict[str, Any]:
-        with self._connect() as connection:
+        with closing(self._connect()) as connection:
             changed = connection.execute(
                 "UPDATE conversations SET status = 'active', updated_at = ?, revision = revision + 1 WHERE id = ? AND project_id = ? AND revision = ? AND status IN ('archived', 'deleted')",
                 (_now(), conversation_id, current_project_scope(), expected_revision),

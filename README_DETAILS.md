@@ -631,7 +631,7 @@ flowchart LR
 
 **Siguiente bloque declarado:** NOT_DECLARED
 
-**Registro histórico de CI conservado en STATE.md:** GitHub Actions run [38665463586](https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/actions/runs/38665463586) completed successfully on commit `ff9292fe4340a2bdab9658a2e804579fa4ef8fb0` (2026-10-15). Its complete test-suite step and README check both succeeded. This result does not cover later changes.
+**Registro histórico de CI conservado en STATE.md:** GitHub Actions run [41398965845](https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/actions/runs/41398965845) completed successfully on commit `db3773522373e8b31ba69480dad0d25f1fd5a430` (2026-11-02). The complete test suite, generated README, OpenMetadata, Jaeger, frontend, and portfolio video checks succeeded. The separate README consistency run [41398965904](https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/actions/runs/41398965904) also succeeded on the same commit. This result does not cover later changes after that commit.
 
 Las observaciones históricas de crédito AWS no son un saldo vigente ni una comprobación actual de disponibilidad/facturación.
 
