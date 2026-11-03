@@ -18,7 +18,11 @@ def test_minimal_landing_preserves_navigation_and_complete_reference():
     assert manifest["schema"] == "bago.readme.svg.landing.v3"
     assert visual.startswith("# BAGO Agentic Data Lab\n")
     assert "<details" not in visual.lower() and "<summary" not in visual.lower()
-    assert "00-hero.svg" not in visual and "01-map.svg" not in visual
+    assert "## Paneles del laboratorio" in visual
+    assert visual.count('<img ') == len(manifest["panels"])
+    for panel in manifest["panels"]:
+        assert f'<img src="{panel["asset"]}"' in visual
+        assert f'<a href="{panel["target"]}">' in visual
     for item in manifest["navigation"]:
         assert f'[{item["label"]}]({item["target"]})' in visual
         assert (ROOT / item["target"].split("#", 1)[0]).is_file()

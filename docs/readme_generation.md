@@ -93,10 +93,11 @@ links appear before the first content section; remaining navigation appears
 under documentation and evidence. Short area paragraphs wrap on narrow screens.
 The screenshot is explicitly historical and cannot certify today's runtime.
 
-The nine versioned SVG panels under `docs/assets/readme-banner/` remain intact
-and reachable through the landing's resource-directory link. All panel paths,
-destinations and SVG safety checks still run before rendering v3, even though
-the images are no longer embedded in the landing. The v2 manifest schema and
+The nine versioned SVG panels under `docs/assets/readme-banner/` are embedded
+directly in the root landing, after its entry links, in manifest order and
+without disclosure controls. Each full-width image links to its technical
+destination. The resource-directory gallery also remains available. All panel
+paths, destinations and SVG safety checks run before rendering v3. The v2 manifest schema and
 its former vector renderer remain supported for compatibility. Unsupported
 schemas fail closed. New editorial text cannot inject Markdown/HTML controls;
 capture paths, PNG signature, observation date and provenance are validated.
@@ -156,10 +157,13 @@ against its sources before closing work:
 
 ## Landing acceptance
 
+The user correction on 2026-11-03 supersedes the earlier choice to keep the
+SVGs only in a linked subdirectory. The root repository page must display them.
+
 - README.md exposes installation, demo, architecture and traces before the
   first section, plus security, GEX, state and the full reference below.
-- Four functional areas, the governed route and one dated capture are visible
-  without `<details>` or `<summary>`; there is no dominant SVG hero.
+- Nine SVG panels appear directly in README.md, without `<details>` or
+  `<summary>`, followed by the four functional areas, governed route and dated capture.
 - Every rendered destination exists; unsafe, escaping and missing paths fail.
 - Vector resources and their safety validation remain intact; v2 still renders.
 - README_DETAILS.md retains the original source-bound material and links.

@@ -1248,8 +1248,18 @@ def _render_minimal_landing(config: dict[str, Any], groups: dict[str, list[str]]
         raise ValueError("Minimal landing requires four entry links")
     lines = [
         f"# {config['title']}", "", f"**{_landing_text(config['summary'], 'summary')}**", "",
-        intro, "", " · ".join(groups["Inicio"]), "", "---", "", "## Qué ofrece", "",
+        intro, "", " · ".join(groups["Inicio"]), "",
+        "## Paneles del laboratorio", "",
+        "Resumen visual actualizado; cada panel enlaza su documentación y conserva los límites de sus fuentes.", "",
     ]
+    # render_svg_landing has already validated every asset and destination.
+    for panel in config["panels"]:
+        lines.extend([
+            f'<a href="{html_escape(panel["target"], quote=True)}">'
+            f'<img src="{html_escape(panel["asset"], quote=True)}" width="100%" '
+            f'alt="{html_escape(panel["alt"], quote=True)}" /></a>', "",
+        ])
+    lines.extend(["---", "", "## Qué ofrece", ""])
     # Short paragraphs wrap naturally on narrow GitHub screens.
     for area in areas:
         label = _landing_text(area["label"], "area label")
