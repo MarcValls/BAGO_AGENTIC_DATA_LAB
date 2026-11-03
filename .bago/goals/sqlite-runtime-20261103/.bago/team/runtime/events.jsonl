@@ -1,0 +1,10 @@
+{"at":"2026-11-02T23:11:10.034346+00:00","kind":"MISSION_INIT","mission_id":"SQLITE_RUNTIME_20261103"}
+{"agent":"root","at":"2026-11-02T23:11:10.439318+00:00","kind":"CLAIM","work_id":"W01"}
+{"at":"2026-11-02T23:16:32.963616+00:00","execution_id":"8035bd8e65f74d26b529d92806347f33","kind":"EXECUTION_STARTED","pid":9,"work_id":"W01"}
+{"at":"2026-11-02T23:16:32.993860+00:00","execution_id":"8035bd8e65f74d26b529d92806347f33","kind":"EXECUTION_COMPLETED","result":"PASS"}
+{"at":"2026-11-02T23:16:44.862710+00:00","kind":"HANDOFF_DONE","work_id":"W01"}
+{"agent":"sqlite_verification","at":"2026-11-02T23:17:16.888092+00:00","kind":"CLAIM","work_id":"W02"}
+{"at":"2026-11-02T23:18:02.439652+00:00","execution_id":"7b81fd853c104e88a5d9aca36cab4b00","kind":"EXECUTION_STARTED","pid":8,"work_id":"W02"}
+{"at":"2026-11-02T23:18:05.946223+00:00","execution_id":"7b81fd853c104e88a5d9aca36cab4b00","kind":"EXECUTION_COMPLETED","result":"PASS"}
+{"at":"2026-11-02T23:18:32.895085+00:00","kind":"HANDOFF_DONE","work_id":"W02"}
+{"at":"2026-11-02T23:21:02.977204+00:00","kind":"MISSION_CLOSED","operation":"AUDIT"}

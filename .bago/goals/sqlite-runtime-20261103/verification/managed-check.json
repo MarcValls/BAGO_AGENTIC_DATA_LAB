@@ -1,0 +1,24 @@
+{
+  "status": "PASS",
+  "verification": {
+    "id": "acceptance",
+    "command": "[\"/tmp/adl-sqlite-venv/bin/python\",\"verification/verify_cases.py\"]",
+    "result": "PASS",
+    "evidence": ".bago/team/runtime/executions/7b81fd853c104e88a5d9aca36cab4b00/receipt.json",
+    "execution_id": "7b81fd853c104e88a5d9aca36cab4b00"
+  },
+  "execution_id": "7b81fd853c104e88a5d9aca36cab4b00",
+  "receipt": ".bago/team/runtime/executions/7b81fd853c104e88a5d9aca36cab4b00/receipt.json",
+  "returncode": 0,
+  "outputs": [
+    {
+      "path": "verification/report.json",
+      "sha256": "fc83079f7d92a664546a6640f0bbd989f3b905cd0b994d4727644660a97b2c9c"
+    },
+    {
+      "path": "verification/focused-tests.log",
+      "sha256": "91f18b00aa4b28f12c5c6d50290633243f2da55b7062698a98d7d906c741202f"
+    }
+  ],
+  "paused_during_execution": false
+}
