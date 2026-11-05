@@ -10,6 +10,7 @@ $global:BagoSmokeBrowserSuppressed = $false
 $global:BagoSmokeInjectFrontend = $null
 $global:BagoSmokeInjectBackend = $null
 $global:BagoSmokeFailReceiptMove = $false
+$global:BagoSmokeNpmEntered = $false
 $ownedListener = $null
 $result = [ordered]@{ status = 'FAIL'; identity = @{}; checks = @{}; error = $null; error_stack = $null; cleanup_errors = @(); limits = @('Hosted Windows runner only.', 'Browser opening is suppressed for the initial launch. Optional focus result is recorded separately in browser-window.json.', 'No external provider inference is claimed.') }
 
@@ -25,6 +26,7 @@ if (@(Get-NetTCPConnection -LocalPort 8080 -State Listen -ErrorAction SilentlyCo
 
 function Read-Host { param([Parameter(Position=0)][string]$Prompt) return '' }
 function npm {
+    $global:BagoSmokeNpmEntered = $true
     $command = Get-Command npm.cmd -CommandType Application -ErrorAction Stop
     & $command.Source @args
     if ($LASTEXITCODE -eq 0 -and $global:BagoSmokeInjectFrontend) {
@@ -79,9 +81,17 @@ try {
     try {
         $global:BagoSmokeInjectFrontend = $frontendMarker
         $failed = $null
-        try { & $launcher } catch { $failed = $_.Exception.Message }
+        $failureRecord = $null
+        try { & $launcher } catch { $failureRecord = $_; $failed = $_.Exception.Message }
+        $result.checks.frontend_probe_error = $failed
+        $result.checks.frontend_probe_error_id = if ($failureRecord) { $failureRecord.FullyQualifiedErrorId } else { $null }
+        $result.checks.frontend_probe_stack = if ($failureRecord) { $failureRecord.ScriptStackTrace } else { $null }
+        $result.checks.frontend_probe_npm_entered = $global:BagoSmokeNpmEntered
+        $result.checks.frontend_probe_marker_created = Test-Path -LiteralPath $frontendMarker
+        $result.checks.frontend_probe_server_launched = [bool]$global:BagoSmokeLauncherProcess
+        $result.checks.frontend_probe_listener_count = @(Get-NetTCPConnection -LocalPort 8080 -State Listen -ErrorAction SilentlyContinue).Count
         if (-not $failed -or $failed -notmatch 'fuentes frontend cambiaron durante el build' -or $global:BagoSmokeLauncherProcess -or
-            @(Get-NetTCPConnection -LocalPort 8080 -State Listen -ErrorAction SilentlyContinue).Count -ne 0) { throw 'Frontend mutation did not block startup safely.' }
+            $result.checks.frontend_probe_listener_count -ne 0) { throw 'Frontend mutation did not block startup safely; see frontend_probe_error.' }
         $result.checks.frontend_change_during_build_blocks_start = $true
     } finally {
         $global:BagoSmokeInjectFrontend = $null
