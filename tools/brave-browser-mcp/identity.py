@@ -1,40 +1,60 @@
-"""Fail-closed identity check for local Chromium DevTools listeners."""
+"""Inspect the exact local listener before attaching to Chromium DevTools."""
 
 from __future__ import annotations
 
+import ipaddress
+import ntpath
 import os
-from pathlib import PureWindowsPath
 
 
-def loopback_listener_is_brave(port: int) -> bool:
-    """Verify the Windows executable owning a local CDP listening port.
+def _is_windows() -> bool:
+    return os.name == "nt"
 
-    Brave reports a generic Chrome product string through CDP. The listening
-    executable is the identity signal; missing dependencies, inaccessible
-    process tables, and non-Brave executables all fail closed.
+
+def listener_state(address: str, port: int, expected_executable: str) -> str:
+    """Return MATCH, ABSENT, MISMATCH or UNKNOWN; unknown never authorizes attach.
+
+    Only an exact loopback binding owned by the configured Brave executable is
+    accepted. Wildcard bindings are treated as conflicts, not as absent ports.
     """
-    if os.name != "nt":
-        return False
+    if not _is_windows():
+        return "UNKNOWN"
+    if ntpath.basename(expected_executable).casefold() != "brave.exe":
+        return "MISMATCH"
     try:
+        expected_address = ipaddress.ip_address(address)
+        if not expected_address.is_loopback:
+            return "UNKNOWN"
         import psutil
-    except ImportError:
-        return False
-    try:
         connections = psutil.net_connections(kind="tcp")
-    except (psutil.AccessDenied, OSError):
-        return False
+    except (ImportError, ValueError, OSError):
+        return "UNKNOWN"
+    except psutil.AccessDenied:
+        return "UNKNOWN"
+
+    matches = []
     for connection in connections:
-        if (
-            connection.status != psutil.CONN_LISTEN
-            or not connection.laddr
-            or connection.laddr.port != port
-            or connection.pid is None
-        ):
+        if connection.status != psutil.CONN_LISTEN or not connection.laddr:
+            continue
+        if connection.laddr.port != port:
             continue
         try:
-            executable = psutil.Process(connection.pid).exe()
-        except (psutil.AccessDenied, psutil.NoSuchProcess, OSError):
-            continue
-        if PureWindowsPath(executable).name.casefold() == "brave.exe":
-            return True
-    return False
+            bound = ipaddress.ip_address(connection.laddr.ip)
+        except ValueError:
+            return "UNKNOWN"
+        # A wildcard listener may own the requested endpoint, including on a
+        # dual-stack socket. Do not launch another browser or attach to it.
+        if bound.is_unspecified:
+            return "MISMATCH"
+        if bound == expected_address:
+            matches.append(connection)
+    if not matches:
+        return "ABSENT"
+    if len(matches) != 1 or matches[0].pid is None:
+        return "UNKNOWN"
+    try:
+        executable = psutil.Process(matches[0].pid).exe()
+    except (psutil.AccessDenied, psutil.NoSuchProcess, OSError):
+        return "UNKNOWN"
+    normalize = lambda value: ntpath.normcase(ntpath.normpath(value))
+    return "MATCH" if normalize(executable) == normalize(expected_executable) else "MISMATCH"

@@ -9,15 +9,13 @@ import subprocess
 import sys
 from pathlib import Path
 from typing import Any
-from urllib.error import URLError
-from urllib.request import urlopen
 from urllib.parse import urlparse
 
 from mcp.server.fastmcp import FastMCP
 from mcp.server.fastmcp.utilities.types import Image
 from mcp.types import ToolAnnotations
 from playwright.async_api import Browser, Page, Playwright, async_playwright
-from identity import loopback_listener_is_brave
+from identity import listener_state
 
 
 DEFAULT_CDP_URL = os.environ.get("BRAVE_CDP_URL", "http://127.0.0.1:9222")
@@ -46,6 +44,7 @@ class BraveSession:
     def __init__(self) -> None:
         self.playwright: Playwright | None = None
         self.browser: Browser | None = None
+        self.connected_endpoint: str | None = None
         self.launch_process: subprocess.Popen[bytes] | None = None
         self.pages_by_id: dict[str, Page] = {}
         self.ids_by_object: dict[int, str] = {}
@@ -68,31 +67,18 @@ class BraveSession:
         ]
         for candidate in candidates:
             if candidate and Path(candidate).is_file():
-                return str(Path(candidate))
+                return str(Path(candidate).resolve())
         raise RuntimeError(
             "Brave was not found. Set BRAVE_EXECUTABLE to the full path of brave.exe."
         )
 
-    @staticmethod
-    def _remote_product() -> str | None:
-        try:
-            with urlopen(f"{DEFAULT_CDP_URL.rstrip('/')}/json/version", timeout=1.5) as response:
-                import json
-
-                payload = json.loads(response.read(16_384).decode("utf-8"))
-                return str(payload.get("Browser", ""))
-        except (OSError, URLError, ValueError):
-            return None
-
-    def _launch_brave(self) -> None:
+    def _launch_brave(self, address: str, port: int, executable: str) -> None:
         if self.launch_process and self.launch_process.poll() is None:
             return
-        executable = self._brave_executable()
         PROFILE_DIR.mkdir(parents=True, exist_ok=True)
-        port = urlparse(DEFAULT_CDP_URL).port or 9222
         args = [
             executable,
-            "--remote-debugging-address=127.0.0.1",
+            f"--remote-debugging-address={address}",
             f"--remote-debugging-port={port}",
             f"--user-data-dir={PROFILE_DIR}",
             "--no-first-run",
@@ -109,9 +95,6 @@ class BraveSession:
 
     async def ensure_connected(self) -> Browser:
         async with self.lock:
-            if self.browser and self.browser.is_connected():
-                return self.browser
-
             endpoint = urlparse(DEFAULT_CDP_URL)
             if endpoint.scheme != "http" or endpoint.hostname not in {
                 "127.0.0.1",
@@ -120,34 +103,68 @@ class BraveSession:
             }:
                 raise RuntimeError("BRAVE_CDP_URL must use HTTP on a loopback address.")
 
-            product = await asyncio.to_thread(self._remote_product)
-            port = endpoint.port or 9222
-            if product and "brave" not in product.casefold() and not await asyncio.to_thread(
-                loopback_listener_is_brave, port
-            ):
-                raise RuntimeError(
-                    f"CDP endpoint {DEFAULT_CDP_URL} belongs to {product!r}, not Brave. "
-                    "The loopback listener executable could not be verified as brave.exe. "
-                    "Set BRAVE_CDP_URL to a Brave debugging endpoint."
-                )
-
-            if not product:
-                self._launch_brave()
-
-            if self.playwright is None:
-                self.playwright = await async_playwright().start()
+            if endpoint.username or endpoint.password or endpoint.path not in {"", "/"} or endpoint.query or endpoint.fragment:
+                raise RuntimeError("BRAVE_CDP_URL must identify only a loopback host and port.")
+            port = endpoint.port
+            if port == 0:
+                raise RuntimeError("BRAVE_CDP_URL port must be between 1 and 65535.")
+            port = port if port is not None else 9222
+            executable = self._brave_executable()
+            if endpoint.hostname == "localhost":
+                states = {
+                    address: await asyncio.to_thread(listener_state, address, port, executable)
+                    for address in ("127.0.0.1", "::1")
+                }
+                if any(state not in {"MATCH", "ABSENT"} for state in states.values()):
+                    raise RuntimeError(f"Cannot safely resolve localhost listeners: {states}.")
+                matches = [address for address, state in states.items() if state == "MATCH"]
+                if len(matches) > 1:
+                    raise RuntimeError("Multiple Brave localhost listeners are ambiguous.")
+                address = matches[0] if matches else "127.0.0.1"
+                state = states[address]
+            else:
+                address = endpoint.hostname
+                state = await asyncio.to_thread(listener_state, address, port, executable)
+            endpoint_url = f"http://[{address}]:{port}" if ":" in address else f"http://{address}:{port}"
+            if self.browser and self.browser.is_connected():
+                if state != "MATCH" or self.connected_endpoint != endpoint_url:
+                    await self.browser.close()
+                    self.browser = None
+                    self.connected_endpoint = None
+                    raise RuntimeError(f"Cannot verify existing Brave listener at {endpoint_url}: {state}.")
+                return self.browser
+            if state == "ABSENT":
+                self._launch_brave(address, port, executable)
+            elif state != "MATCH":
+                raise RuntimeError(f"Cannot verify Brave listener at {endpoint_url}: {state}.")
 
             last_error: Exception | None = None
             for _ in range(40):
+                state = await asyncio.to_thread(listener_state, address, port, executable)
+                if state == "ABSENT":
+                    await asyncio.sleep(0.25)
+                    continue
+                if state != "MATCH":
+                    raise RuntimeError(f"Cannot verify Brave listener at {endpoint_url}: {state}.")
                 try:
+                    if self.playwright is None:
+                        self.playwright = await async_playwright().start()
                     self.browser = await self.playwright.chromium.connect_over_cdp(
-                        DEFAULT_CDP_URL,
+                        endpoint_url,
                         timeout=1_500,
                     )
-                    return self.browser
                 except Exception as exc:  # connection may race Brave startup
                     last_error = exc
                     await asyncio.sleep(0.25)
+                else:
+                    state = await asyncio.to_thread(listener_state, address, port, executable)
+                    if state != "MATCH":
+                        await self.browser.close()
+                        self.browser = None
+                        self.connected_endpoint = None
+                        raise RuntimeError(f"Brave listener changed during connection: {state}.")
+                    self.connected_endpoint = endpoint_url
+                    return self.browser
 
             raise RuntimeError(
                 "Could not connect to Brave over CDP at "
