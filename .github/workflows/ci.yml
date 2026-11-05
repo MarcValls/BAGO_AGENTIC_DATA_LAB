@@ -41,8 +41,16 @@ jobs:
         run: npm ci
         working-directory: frontend
       - name: Run complete test suite
-        run: python -m pytest tests -q
-      - name: Check generated README
+        # Keep the legacy README tests, but exclude them just like the disabled generator/check.
+        run: >-
+          python -m pytest tests -q
+          --ignore=tests/test_dynamic_readme.py
+          --ignore=tests/test_readme_minimal.py
+          --ignore=tests/test_readme_presentation.py
+          --ignore=tests/test_readme_svg_landing.py
+      # Disabled by the BAGO5_ADL decision to retain, but not run, the legacy README editor/generator.
+      - name: Check generated README (disabled)
+        if: false
         run: python scripts/generate_dynamic_readme.py --check --skip-tests
       - name: Check public E2E demo
         run: python scripts/run_public_e2e_demo.py --check

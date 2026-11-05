@@ -42,6 +42,10 @@ def test_public_demo_evidence_declares_its_external_boundaries():
     assert "AWS live: `NOT_RUN`" in evidence
     assert "OpenMetadata live: `NOT_RUN`" in evidence
     assert "bash scripts/install_demo.sh" in evidence
+    assert "the README generator check is disabled" in evidence
+    for module in ("test_dynamic_readme.py", "test_readme_minimal.py", "test_readme_presentation.py", "test_readme_svg_landing.py"):
+        assert f"--ignore=tests/{module}" in evidence
+    assert "python scripts/generate_dynamic_readme.py --check --skip-tests" not in evidence
     assert '"evaluation_status": "PASS"' in evidence
 
 
