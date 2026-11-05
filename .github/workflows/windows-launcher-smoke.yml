@@ -28,7 +28,7 @@ jobs:
         working-directory: frontend
         run: npm ci
       - name: Check launcher preflight and PID selection
-        run: python -m pytest -q -p no:cacheprovider tests/test_run_local_ui_preflight.py
+        run: python -m pytest -q -p no:cacheprovider tests/test_run_local_ui_preflight.py tests/test_runtime_fingerprint.py
       - name: Start and verify launcher on an isolated runner
         shell: pwsh
         env:

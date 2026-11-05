@@ -171,6 +171,43 @@ Test-LocalUiRuntimeIdentity $runtime $expectedSource 4312 | ConvertTo-Json -Comp
 
 
 @pytest.mark.parametrize("shell", [SHELL, shutil.which("powershell.exe")])
+@pytest.mark.parametrize("case,expected", [('valid', True), ('missing', False), ('version', False),
+                                           ('pid', False), ('start', False), ('root', False),
+                                           ('backend', False), ('frontend', False), ('dist', False)])
+def test_reuse_requires_matching_start_receipt(case, expected, shell):
+    if shell is None:
+        pytest.skip('PowerShell runtime not available')
+    source = str(ROOT / 'scripts' / 'run-local-ui.ps1').replace("'", "''")
+    repo = str(ROOT).replace("'", "''")
+    code = f"""
+$errors = $null; $tokens = $null
+$ast = [System.Management.Automation.Language.Parser]::ParseFile('{source}', [ref]$tokens, [ref]$errors)
+if ($errors.Count) {{ throw 'PowerShell parse failed' }}
+$node = $ast.Find({{ param($n) $n -is [System.Management.Automation.Language.FunctionDefinitionAst] -and $n.Name -eq 'Test-LocalUiFreshnessProof' }}, $true)
+. ([scriptblock]::Create($node.Extent.Text))
+$repoRoot = '{repo}'
+$start = [datetime]::Parse('2026-11-05T10:00:00Z').ToUniversalTime()
+$proof = [pscustomobject]@{{ managed_by='bago-agent-chat-launcher'; fingerprint_version='bago-runtime-inputs-v1'; repo_root=$repoRoot; listener_pid=4312; listener_start_utc=$start.ToString('o'); input_fingerprints=[pscustomobject]@{{backend=('a'*64); frontend=('b'*64); dist=('c'*64)}} }}
+function Get-LocalUiInputFingerprint {{ param($kind) switch ($kind) {{ backend {{'a'*64}} frontend {{'b'*64}} dist {{'c'*64}} }} }}
+switch ('{case}') {{
+  missing {{ $proof=$null }}
+  version {{ $proof.fingerprint_version='older' }}
+  pid {{ $proof.listener_pid=4313 }}
+  start {{ $proof.listener_start_utc=$start.AddSeconds(-1).ToString('o') }}
+  root {{ $proof.repo_root=$repoRoot+'-different' }}
+  backend {{ $proof.input_fingerprints.backend='d'*64 }}
+  frontend {{ $proof.input_fingerprints.frontend='d'*64 }}
+  dist {{ $proof.input_fingerprints.dist='d'*64 }}
+}}
+Test-LocalUiFreshnessProof $proof 4312 $start | ConvertTo-Json -Compress
+"""
+    result = subprocess.run([shell, '-NoProfile', '-NonInteractive', '-Command', code],
+                            cwd=ROOT, capture_output=True, text=True, encoding='utf-8', timeout=30)
+    assert result.returncode == 0, result.stderr
+    assert json.loads(result.stdout.strip()) is expected
+
+
+@pytest.mark.parametrize("shell", [SHELL, shutil.which("powershell.exe")])
 @pytest.mark.parametrize("listeners,expected", [([], True), ([4312], False), ([4312, 4313], False)])
 def test_port_availability_accepts_pipeline_cardinality_under_strict_mode(shell, listeners, expected):
     if shell is None:

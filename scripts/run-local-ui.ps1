@@ -138,6 +138,46 @@ function Test-LocalUiRuntimeIdentity([object]$Runtime, [string]$ExpectedSource, 
     }
 }
 
+function Get-LocalUiInstanceFile {
+    $directory = Join-Path $env:LOCALAPPDATA 'BAGO\AgentChat\instances'
+    $hasher = [System.Security.Cryptography.SHA256]::Create()
+    try {
+        $bytes = $hasher.ComputeHash([Text.Encoding]::UTF8.GetBytes($repoRoot.ToLowerInvariant()))
+        $name = ([BitConverter]::ToString($bytes) -replace '-', '').Substring(0, 16).ToLowerInvariant()
+    } finally { $hasher.Dispose() }
+    return (Join-Path $directory "$name.json")
+}
+
+function Get-LocalUiInputFingerprint([string]$Kind) {
+    $python = Join-Path $repoRoot '.venv\Scripts\python.exe'
+    if (-not (Test-Path -LiteralPath $python -PathType Leaf)) {
+        $command = Get-Command python -ErrorAction SilentlyContinue
+        if (-not $command) { throw 'Python no disponible para comprobar las fuentes.' }
+        $python = $command.Source
+    }
+    $helper = Join-Path $repoRoot 'scripts\runtime_fingerprint.py'
+    $output = @(& $python -B $helper --root $repoRoot --kind $Kind)
+    if ($LASTEXITCODE -ne 0 -or $output.Count -ne 1 -or $output[0] -notmatch '^[0-9a-f]{64}$') {
+        throw "No se pudo comprobar la huella de $Kind."
+    }
+    return [string]$output[0]
+}
+
+function Test-LocalUiFreshnessProof([object]$Proof, [int]$OwnerId, [datetime]$OwnerStart) {
+    try {
+        if (-not $Proof -or $Proof.managed_by -ne 'bago-agent-chat-launcher' -or
+            $Proof.fingerprint_version -ne 'bago-runtime-inputs-v1' -or
+            [IO.Path]::GetFullPath([string]$Proof.repo_root) -ine [IO.Path]::GetFullPath($repoRoot) -or
+            [int]$Proof.listener_pid -ne $OwnerId -or
+            [datetime]::Parse([string]$Proof.listener_start_utc).ToUniversalTime() -ne $OwnerStart.ToUniversalTime()) { return $false }
+        foreach ($kind in @('backend', 'frontend', 'dist')) {
+            $recorded = [string]$Proof.input_fingerprints.$kind
+            if ($recorded -notmatch '^[0-9a-f]{64}$' -or (Get-LocalUiInputFingerprint $kind) -cne $recorded) { return $false }
+        }
+        return $true
+    } catch { return $false }
+}
+
 function Enter-LocalUiStartLock([string]$Name = 'Local\BAGO_ADL_UI_8080') {
     $mutex = [System.Threading.Mutex]::new($false, $Name)
     try {
@@ -150,7 +190,7 @@ function Enter-LocalUiStartLock([string]$Name = 'Local\BAGO_ADL_UI_8080') {
     }
 }
 
-function Get-LocalUiPreflight {
+function Get-LocalUiPreflight([object]$PendingProof = $null) {
     $allListeners = @(Get-NetTCPConnection -State Listen -ErrorAction SilentlyContinue)
     $otherListeners = @($allListeners | Where-Object { $_.LocalPort -ne 8080 })
     foreach ($otherId in @($otherListeners | Select-Object -ExpandProperty OwningProcess -Unique)) {
@@ -188,6 +228,16 @@ function Get-LocalUiPreflight {
         $expectedSource = [IO.Path]::GetFullPath((Join-Path $repoRoot 'src\api\server.py'))
         if (-not (Test-LocalUiRuntimeIdentity $runtime $expectedSource $ownerId)) {
             throw 'El servidor no acredita el PID y las fuentes actuales de este checkout.'
+        }
+        $proof = $PendingProof
+        if (-not $proof) {
+            $proofPath = Get-LocalUiInstanceFile
+            if (-not (Test-Path -LiteralPath $proofPath -PathType Leaf)) { throw 'Falta el recibo de fuentes de esta instancia.' }
+            $proof = Get-Content -Raw -LiteralPath $proofPath | ConvertFrom-Json
+        }
+        $ownerProcess = Get-Process -Id $ownerId -ErrorAction Stop
+        if (-not (Test-LocalUiFreshnessProof $proof $ownerId $ownerProcess.StartTime)) {
+            throw 'La instancia no acredita que backend, fuentes frontend y build sigan siendo los registrados al arrancar.'
         }
         $indexPath = Join-Path $repoRoot 'frontend\dist\index.html'
         $indexBytes = [System.IO.File]::ReadAllBytes($indexPath)
@@ -279,6 +329,7 @@ if (-not (Test-Path -LiteralPath $nodeModules)) {
     throw 'Frontend packages are missing. Run npm ci in the frontend directory first.'
 }
 
+$frontendBeforeBuild = Get-LocalUiInputFingerprint 'frontend'
 Push-Location (Join-Path $repoRoot 'frontend')
 try {
     & npm run build
@@ -286,6 +337,9 @@ try {
 } finally {
     Pop-Location
 }
+$frontendFingerprint = Get-LocalUiInputFingerprint 'frontend'
+if ($frontendBeforeBuild -cne $frontendFingerprint) { throw 'Las fuentes frontend cambiaron durante el build; no se iniciará ADL.' }
+$distFingerprint = Get-LocalUiInputFingerprint 'dist'
 
 & $pythonExe -c 'import fastapi, uvicorn, keyring, requests' 2>$null
 if ($LASTEXITCODE -ne 0) {
@@ -310,16 +364,9 @@ function Test-LocalPortAvailable([int]$Port) {
     }
 }
 
-$stateDirectory = Join-Path $env:LOCALAPPDATA 'BAGO\AgentChat\instances'
+$instanceFile = Get-LocalUiInstanceFile
+$stateDirectory = Split-Path -Parent $instanceFile
 New-Item -ItemType Directory -Path $stateDirectory -Force | Out-Null
-$pathHasher = [System.Security.Cryptography.SHA256]::Create()
-try {
-    $pathHashBytes = $pathHasher.ComputeHash([Text.Encoding]::UTF8.GetBytes($repoRoot.ToLowerInvariant()))
-    $pathHash = ([BitConverter]::ToString($pathHashBytes) -replace '-', '').Substring(0, 16).ToLowerInvariant()
-} finally {
-    $pathHasher.Dispose()
-}
-$instanceFile = Join-Path $stateDirectory "$pathHash.json"
 $port = 8080
 if (-not (Test-LocalPortAvailable $port)) {
     throw 'Port 8080 became occupied after preflight. No alternate port or second instance will be started.'
@@ -334,10 +381,15 @@ $previousApiHost = $env:BAGO_API_HOST
 $previousRuntimeMode = $env:BAGO_RUNTIME_MODE
 $previousApiPort = $env:BAGO_API_PORT
 $previousCorsOrigins = $env:BAGO_CORS_ORIGINS
+$previousPyCachePrefix = $env:PYTHONPYCACHEPREFIX
+$previousDontWriteBytecode = $env:PYTHONDONTWRITEBYTECODE
+$backendFingerprint = Get-LocalUiInputFingerprint 'backend'
 $env:BAGO_API_HOST = '127.0.0.1'
 $env:BAGO_RUNTIME_MODE = 'host'
 $env:BAGO_API_PORT = "$port"
 $env:BAGO_CORS_ORIGINS = "http://localhost:$port,http://127.0.0.1:$port,http://localhost:5173,http://127.0.0.1:5173"
+$env:PYTHONPYCACHEPREFIX = Join-Path $logDirectory ('unused-bytecode-' + [guid]::NewGuid().ToString('N'))
+$env:PYTHONDONTWRITEBYTECODE = '1'
 try {
     $server = Start-Process -FilePath $pythonExe -ArgumentList @('-m', 'src.api.server') -WorkingDirectory $repoRoot -WindowStyle Hidden -RedirectStandardOutput $stdoutLog -RedirectStandardError $stderrLog -PassThru
 } finally {
@@ -345,6 +397,8 @@ try {
     $env:BAGO_RUNTIME_MODE = $previousRuntimeMode
     $env:BAGO_API_PORT = $previousApiPort
     $env:BAGO_CORS_ORIGINS = $previousCorsOrigins
+    $env:PYTHONPYCACHEPREFIX = $previousPyCachePrefix
+    $env:PYTHONDONTWRITEBYTECODE = $previousDontWriteBytecode
 }
 
 $ready = $false
@@ -373,7 +427,19 @@ if ($listenerInfo.CommandLine -notmatch ' -m src\.api\.server(?:\s|$)' -or
     if (-not $server.HasExited) { Stop-Process -Id $server.Id -Force }
     throw "The listener on port $port is not the BAGO Agent Chat server."
 }
-$postflight = Get-LocalUiPreflight
+$instanceState = [pscustomobject][ordered]@{
+    managed_by = 'bago-agent-chat-launcher'
+    repo_root = $repoRoot
+    launcher_pid = $server.Id
+    launcher_start_utc = $server.StartTime.ToUniversalTime().ToString('o')
+    listener_pid = $listenerPid
+    listener_start_utc = $listenerProcess.StartTime.ToUniversalTime().ToString('o')
+    fingerprint_version = 'bago-runtime-inputs-v1'
+    input_fingerprints = [pscustomobject]@{ backend = $backendFingerprint; frontend = $frontendFingerprint; dist = $distFingerprint }
+    port = $port
+    url = "http://127.0.0.1:$port"
+}
+$postflight = Get-LocalUiPreflight -PendingProof $instanceState
 if ($postflight.State -ne 'REUSE' -or [int]$postflight.Pid -ne $listenerPid) {
     $stillListener = Get-Process -Id $listenerPid -ErrorAction SilentlyContinue
     $stillInfo = Get-CimInstance Win32_Process -Filter "ProcessId=$listenerPid" -ErrorAction SilentlyContinue
@@ -384,19 +450,29 @@ if ($postflight.State -ne 'REUSE' -or [int]$postflight.Pid -ne $listenerPid) {
     if (-not $server.HasExited) { Stop-Process -Id $server.Id -Force -ErrorAction SilentlyContinue }
     throw "The started listener failed identity or asset checks: $($postflight.Reason)"
 }
-$instanceState = [ordered]@{
-    managed_by = 'bago-agent-chat-launcher'
-    repo_root = $repoRoot
-    launcher_pid = $server.Id
-    launcher_start_utc = $server.StartTime.ToUniversalTime().ToString('o')
-    listener_pid = $listenerPid
-    listener_start_utc = $listenerProcess.StartTime.ToUniversalTime().ToString('o')
-    port = $port
-    url = "http://127.0.0.1:$port"
+$temporaryState = "$instanceFile.$([guid]::NewGuid().ToString('N')).tmp"
+try {
+    $instanceState | ConvertTo-Json -Depth 4 | Set-Content -LiteralPath $temporaryState -Encoding utf8
+    Move-Item -LiteralPath $temporaryState -Destination $instanceFile -Force
+} catch {
+    $receiptError = $_.Exception.Message
+    $cleanupOk = $true
+    try {
+        $stillListener = Get-Process -Id $listenerPid -ErrorAction SilentlyContinue
+        $stillInfo = Get-CimInstance Win32_Process -Filter "ProcessId=$listenerPid" -ErrorAction SilentlyContinue
+        if ($stillListener -and $stillInfo -and $stillListener.StartTime -eq $listenerProcess.StartTime -and
+            ($listenerPid -eq $server.Id -or [int]$stillInfo.ParentProcessId -eq $server.Id)) {
+            Stop-Process -Id $listenerPid -Force -ErrorAction Stop
+        } elseif ($stillListener) { $cleanupOk = $false }
+        if ($server.Id -ne $listenerPid) {
+            $stillServer = Get-Process -Id $server.Id -ErrorAction SilentlyContinue
+            if ($stillServer -and $stillServer.StartTime -eq $server.StartTime) { Stop-Process -Id $server.Id -Force -ErrorAction Stop }
+            elseif ($stillServer) { $cleanupOk = $false }
+        }
+    } catch { $cleanupOk = $false }
+    Remove-Item -LiteralPath $temporaryState -Force -ErrorAction SilentlyContinue
+    throw "No se pudo guardar el recibo de la instancia PID $listenerPid; limpieza del proceso iniciado: $cleanupOk. $receiptError"
 }
-$temporaryState = "$instanceFile.tmp"
-$instanceState | ConvertTo-Json | Set-Content -LiteralPath $temporaryState -Encoding utf8
-Move-Item -LiteralPath $temporaryState -Destination $instanceFile -Force
 
 $url = "http://127.0.0.1:$port"
 Write-Output "Agent Chat UI started at $url (PID $($server.Id))."
