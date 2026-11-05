@@ -419,7 +419,6 @@ function App() {
         </header>
         <div className="settings-layer-layout">
           <nav className="settings-layer-navigation" aria-label={t("core.App.settings_sections_e26d51")}>
-            <span className="navigation-caption">{t("core.App.configure_6defaf")}</span>
             <button type="button" className={`navigation-item ${settingsView === 'cognition' ? 'active' : ''}`} aria-current={settingsView === 'cognition' ? 'page' : undefined} onClick={() => setSettingsView('cognition')}>{t("core.App.cognition_and_context_8fb65b")}</button>
             <button type="button" className={`navigation-item ${settingsView === 'providers' ? 'active' : ''}`} aria-current={settingsView === 'providers' ? 'page' : undefined} onClick={() => setSettingsView('providers')}>{t("core.App.providers_and_models_740468")}</button>
             <button type="button" className={`navigation-item ${settingsView === 'connections' ? 'active' : ''}`} aria-current={settingsView === 'connections' ? 'page' : undefined} onClick={()=>setSettingsView('connections')}>{t('commerce.capability_ui.connections')}</button>
