@@ -17,6 +17,7 @@ from mcp.server.fastmcp import FastMCP
 from mcp.server.fastmcp.utilities.types import Image
 from mcp.types import ToolAnnotations
 from playwright.async_api import Browser, Page, Playwright, async_playwright
+from identity import loopback_listener_is_brave
 
 
 DEFAULT_CDP_URL = os.environ.get("BRAVE_CDP_URL", "http://127.0.0.1:9222")
@@ -120,9 +121,13 @@ class BraveSession:
                 raise RuntimeError("BRAVE_CDP_URL must use HTTP on a loopback address.")
 
             product = await asyncio.to_thread(self._remote_product)
-            if product and "brave" not in product.casefold():
+            port = endpoint.port or 9222
+            if product and "brave" not in product.casefold() and not await asyncio.to_thread(
+                loopback_listener_is_brave, port
+            ):
                 raise RuntimeError(
                     f"CDP endpoint {DEFAULT_CDP_URL} belongs to {product!r}, not Brave. "
+                    "The loopback listener executable could not be verified as brave.exe. "
                     "Set BRAVE_CDP_URL to a Brave debugging endpoint."
                 )
 
