@@ -410,7 +410,7 @@ export default function AgentRunner() {
           void fetchAgents()
         }} /> : <dl className="agent-profile-fields">
           <div><dt>{t('agents.AgentRunner.provider_and_model')}</dt><dd>{selectedAgent.config.provider_id || t('agents.AgentRunner.not_provided')} · {selectedAgent.config.model_id || t('agents.AgentRunner.not_provided')}</dd></div>
-          <div><dt>{t('agents.AgentRunner.registered_tools')}</dt><dd>{selectedAgent.config.tools.length ? selectedAgent.config.tools.join(', ') : t('agents.AgentRunner.no_tools_registered')}</dd></div>
+          {selectedAgent.config.tools.length > 0 && <div><dt>{t('agents.AgentRunner.registered_tools')}</dt><dd>{selectedAgent.config.tools.join(', ')}</dd></div>}
         </dl>}
       </section>}
 
