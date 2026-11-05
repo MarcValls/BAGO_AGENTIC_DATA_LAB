@@ -72,6 +72,75 @@ def test_another_adl_port_blocks_new_instance():
     assert "8081" in result["Reason"]
 
 
+@pytest.mark.parametrize("address,expected", [
+    ("127.0.0.1:8080", True),
+    ("http://localhost:8080/settings", True),
+    ("http://127.0.0.1:8080?project=1", True),
+    ("https://127.0.0.1:8080", False),
+    ("127.0.0.1:80801", False),
+    ("http://localhost:8080.evil.example", False),
+    ("https://example.org", False),
+])
+def test_address_recognition_does_not_accept_other_origins(address, expected):
+    source = str(ROOT / "scripts" / "run-local-ui.ps1").replace("'", "''")
+    value = address.replace("'", "''")
+    code = f"""
+$errors = $null; $tokens = $null
+$ast = [System.Management.Automation.Language.Parser]::ParseFile('{source}', [ref]$tokens, [ref]$errors)
+if ($errors.Count) {{ throw 'PowerShell parse failed' }}
+$node = $ast.Find({{ param($n) $n -is [System.Management.Automation.Language.FunctionDefinitionAst] -and $n.Name -eq 'Test-LocalUiAddress' }}, $true)
+. ([scriptblock]::Create($node.Extent.Text))
+Test-LocalUiAddress '{value}' | ConvertTo-Json -Compress
+"""
+    result = subprocess.run([SHELL, "-NoProfile", "-NonInteractive", "-Command", code],
+                            cwd=ROOT, capture_output=True, text=True, encoding="utf-8", timeout=30)
+    assert result.returncode == 0, result.stderr
+    assert json.loads(result.stdout.strip()) is expected
+
+
+@pytest.mark.parametrize("selection,expected", [("", "skip"), ("4312", "focus")])
+def test_matching_address_still_requires_pid_confirmation(selection, expected):
+    source = str(ROOT / "scripts" / "run-local-ui.ps1").replace("'", "''")
+    code = f"""
+$errors = $null; $tokens = $null
+$ast = [System.Management.Automation.Language.Parser]::ParseFile('{source}', [ref]$tokens, [ref]$errors)
+if ($errors.Count) {{ throw 'PowerShell parse failed' }}
+$node = $ast.Find({{ param($n) $n -is [System.Management.Automation.Language.FunctionDefinitionAst] -and $n.Name -eq 'Resolve-BrowserWindowAction' }}, $true)
+. ([scriptblock]::Create($node.Extent.Text))
+function Get-VisibleBrowserWindows {{ [pscustomobject]@{{ProcessId=4312; ProcessName='brave'; Title='fixture'; AddressState='MATCH'}} }}
+function Read-Host {{ param($Prompt) '{selection}' }}
+function Write-Host {{ param($Object) }}
+Resolve-BrowserWindowAction | Select-Object Action,BagoRecognized | ConvertTo-Json -Compress
+"""
+    result = subprocess.run([SHELL, "-NoProfile", "-NonInteractive", "-Command", code],
+                            cwd=ROOT, capture_output=True, text=True, encoding="utf-8", timeout=30)
+    assert result.returncode == 0, result.stderr
+    assert json.loads(result.stdout.strip())["Action"] == expected
+
+
+def test_all_windows_remain_selectable_when_one_address_matches():
+    source = str(ROOT / "scripts" / "run-local-ui.ps1").replace("'", "''")
+    code = f"""
+$errors = $null; $tokens = $null
+$ast = [System.Management.Automation.Language.Parser]::ParseFile('{source}', [ref]$tokens, [ref]$errors)
+if ($errors.Count) {{ throw 'PowerShell parse failed' }}
+$node = $ast.Find({{ param($n) $n -is [System.Management.Automation.Language.FunctionDefinitionAst] -and $n.Name -eq 'Resolve-BrowserWindowAction' }}, $true)
+. ([scriptblock]::Create($node.Extent.Text))
+function Get-VisibleBrowserWindows {{
+  [pscustomobject]@{{ProcessId=4312; ProcessName='brave'; Title='fixture 1'; AddressState='MATCH'}}
+  [pscustomobject]@{{ProcessId=4313; ProcessName='brave'; Title='fixture 2'; AddressState='OTHER'}}
+}}
+function Read-Host {{ param($Prompt) '4313' }}
+function Write-Host {{ param($Object) }}
+$result = Resolve-BrowserWindowAction
+[pscustomobject]@{{ Action=$result.Action; Pid=$result.Window.ProcessId; Recognized=$result.BagoRecognized }} | ConvertTo-Json -Compress
+"""
+    result = subprocess.run([SHELL, "-NoProfile", "-NonInteractive", "-Command", code],
+                            cwd=ROOT, capture_output=True, text=True, encoding="utf-8", timeout=30)
+    assert result.returncode == 0, result.stderr
+    assert json.loads(result.stdout.strip()) == {"Action": "focus", "Pid": 4313, "Recognized": False}
+
+
 @pytest.mark.parametrize("shell", [SHELL, shutil.which("powershell.exe")])
 @pytest.mark.parametrize("case,expected", [("valid", True), ("pid", False), ("path", False), ("hash", False)])
 def test_runtime_identity_binds_pid_source_and_loaded_bytes(case, expected, shell):

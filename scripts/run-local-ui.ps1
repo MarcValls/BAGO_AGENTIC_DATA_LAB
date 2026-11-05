@@ -1,4 +1,4 @@
-param([switch]$PreflightOnly)
+param([switch]$PreflightOnly, [switch]$InspectWindowsOnly)
 
 $ErrorActionPreference = 'Stop'
 
@@ -15,33 +15,62 @@ function Get-VisibleBrowserWindows {
                 ProcessName = [string]$process.ProcessName
                 Title = [string]$process.MainWindowTitle
                 Handle = [IntPtr]$process.MainWindowHandle
+                AddressState = Get-VisibleBrowserAddressState ([IntPtr]$process.MainWindowHandle)
             }
         }
     }
     return @($windows | Sort-Object ProcessId -Unique)
 }
 
+function Test-LocalUiAddress([string]$Value) {
+    return $Value -match '(?i)^(?:http://)?(?:127\.0\.0\.1|localhost):8080(?:[/?#]|$)'
+}
+
+function Get-VisibleBrowserAddressState([IntPtr]$Handle) {
+    try {
+        Add-Type -AssemblyName UIAutomationClient, UIAutomationTypes
+        $window = [System.Windows.Automation.AutomationElement]::FromHandle($Handle)
+        if (-not $window) { return 'UNKNOWN' }
+        $condition = [System.Windows.Automation.PropertyCondition]::new(
+            [System.Windows.Automation.AutomationElement]::ControlTypeProperty,
+            [System.Windows.Automation.ControlType]::Edit)
+        $edits = $window.FindAll([System.Windows.Automation.TreeScope]::Descendants, $condition)
+        $states = @()
+        foreach ($edit in $edits) {
+            if ($edit.Current.IsOffscreen) { continue }
+            $name = [string]$edit.Current.Name
+            $id = [string]$edit.Current.AutomationId
+            if ($name -notmatch '(?i)address.*search|search.*address|address bar|direcci[oó]n.*b[uú]squeda|barra de direcciones' -and
+                $id -notmatch '(?i)^(?:address|omnibox)') { continue }
+            $pattern = $null
+            if ($edit.TryGetCurrentPattern([System.Windows.Automation.ValuePattern]::Pattern, [ref]$pattern)) {
+                if (Test-LocalUiAddress ([string]$pattern.Current.Value)) { $states += 'MATCH' }
+                else { $states += 'OTHER' }
+            }
+        }
+        if ($states.Count -eq 1) { return $states[0] }
+    } catch { return 'UNKNOWN' }
+    return 'UNKNOWN'
+}
+
 function Resolve-BrowserWindowAction {
     $windows = @(Get-VisibleBrowserWindows)
-    $bagoWindows = @($windows | Where-Object { $_.Title -match '(?i)\bBAGO(?:5)?\b|Agent\s+Chat' })
-    if ($bagoWindows.Count -eq 1) {
-        return [pscustomobject]@{ Action = 'focus'; Window = $bagoWindows[0]; BagoRecognized = $true }
+    $bagoWindows = @($windows | Where-Object { $_.AddressState -eq 'MATCH' })
+    if ($windows.Count -eq 0) {
+        return [pscustomobject]@{ Action = 'launch'; Window = $null; BagoRecognized = $false }
     }
-
+    $candidates = $windows
     if ($bagoWindows.Count -gt 0) {
-        $candidates = $bagoWindows
-        Write-Host 'BAGO aparece en varias ventanas. Elige el PID que quieres reutilizar:'
-    } elseif ($windows.Count -gt 0) {
-        $candidates = $windows
+        Write-Host 'La barra de alguna ventana contiene la direccion local; confirma el PID que quieres reutilizar:'
+    } else {
         Write-Host 'Hay ventanas de navegador, pero no puedo confirmar cuál tiene BAGO activa.'
         Write-Host 'Indica el PID de la ventana donde ya está abierta BAGO. No abriré otra pestaña.'
-    } else {
-        return [pscustomobject]@{ Action = 'launch'; Window = $null; BagoRecognized = $false }
     }
 
     foreach ($candidate in $candidates) {
         $title = if ([string]::IsNullOrWhiteSpace($candidate.Title)) { '(sin título)' } else { $candidate.Title }
-        Write-Host ('  PID {0}  {1}  {2}' -f $candidate.ProcessId, $candidate.ProcessName, $title)
+        $hint = if ($candidate.AddressState -eq 'MATCH') { ' [barra coincide]' } else { '' }
+        Write-Host ('  PID {0}  {1}  {2}{3}' -f $candidate.ProcessId, $candidate.ProcessName, $title, $hint)
     }
     try {
         $selectedPidText = Read-Host 'PID (Intro para no abrir navegador)'
@@ -63,13 +92,13 @@ function Resolve-BrowserWindowAction {
     return [pscustomobject]@{
         Action = 'focus'
         Window = $selectedWindow[0]
-        BagoRecognized = ($selectedWindow[0].Title -match '(?i)\bBAGO(?:5)?\b|Agent\s+Chat')
+        BagoRecognized = ($selectedWindow[0].AddressState -eq 'MATCH')
     }
 }
 
 function Focus-BrowserWindow([object]$Window) {
     $process = Get-Process -Id ([int]$Window.ProcessId) -ErrorAction SilentlyContinue
-    if (-not $process -or $process.MainWindowHandle -eq [IntPtr]::Zero) {
+    if (-not $process -or $process.MainWindowHandle -eq [IntPtr]::Zero -or $process.MainWindowHandle -ne $Window.Handle) {
         Write-Warning "La ventana del navegador PID $($Window.ProcessId) ya no está disponible; no abriré otra."
         return $false
     }
@@ -186,6 +215,11 @@ function Get-LocalUiPreflight {
     }
 }
 
+if ($InspectWindowsOnly) {
+    @(Get-VisibleBrowserWindows | Select-Object ProcessId, AddressState) | ConvertTo-Json -Compress
+    return
+}
+
 $preflight = Get-LocalUiPreflight
 if ($PreflightOnly) {
     $preflight | ConvertTo-Json -Compress
@@ -200,7 +234,11 @@ if ($preflight.State -eq 'REUSE') {
     $browserAction = Resolve-BrowserWindowAction
     if ($browserAction.Action -eq 'focus') {
         if (Focus-BrowserWindow $browserAction.Window) {
-            Write-Output "Ventana existente enfocada (PID $($browserAction.Window.ProcessId)); su URL no se puede confirmar por el titulo."
+            if ($browserAction.BagoRecognized) {
+                Write-Output "Ventana seleccionada enfocada (PID $($browserAction.Window.ProcessId)); la barra coincide, pero la navegacion no se ha autenticado."
+            } else {
+                Write-Output "Ventana seleccionada enfocada (PID $($browserAction.Window.ProcessId)); su URL no se pudo confirmar."
+            }
         }
     } elseif ($browserAction.Action -eq 'launch') {
         Start-Process 'http://127.0.0.1:8080'
@@ -370,8 +408,10 @@ if ($browserAction.Action -eq 'launch') {
 if ($browserAction.Action -eq 'focus') {
     if (Focus-BrowserWindow $browserAction.Window) {
         Write-Output "Ventana existente enfocada (PID $($browserAction.Window.ProcessId)); no se abrió otra pestaña."
-        if (-not $browserAction.BagoRecognized) {
-            Write-Output 'No pude verificar el título de la pestaña BAGO; enfoqué la ventana elegida sin navegar ni cambiar de pestaña.'
+        if ($browserAction.BagoRecognized) {
+            Write-Output 'La barra coincide con la direccion local, pero no autentica la navegacion.'
+        } else {
+            Write-Output 'No pude confirmar la direccion en la barra; enfoque la ventana elegida sin navegar ni cambiar de pestana.'
         }
     }
 } elseif ($browserAction.Action -eq 'launch') {
