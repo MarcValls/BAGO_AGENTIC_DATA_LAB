@@ -165,11 +165,20 @@ function Get-LocalUiInputFingerprint([string]$Kind) {
 
 function Test-LocalUiFreshnessProof([object]$Proof, [int]$OwnerId, [datetime]$OwnerStart) {
     try {
-        if (-not $Proof -or $Proof.managed_by -ne 'bago-agent-chat-launcher' -or
+        if (-not $Proof) { return $false }
+        $recordedStart = if ($Proof.listener_start_utc -is [datetime]) {
+            if ($Proof.listener_start_utc.Kind -ne [DateTimeKind]::Utc) { return $false }
+            $Proof.listener_start_utc.ToUniversalTime()
+        } else {
+            $text = [string]$Proof.listener_start_utc
+            if ($text -notmatch '^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{7}Z$') { return $false }
+            [datetime]::ParseExact($text, 'o', [Globalization.CultureInfo]::InvariantCulture, [Globalization.DateTimeStyles]::RoundtripKind).ToUniversalTime()
+        }
+        if ($Proof.managed_by -ne 'bago-agent-chat-launcher' -or
             $Proof.fingerprint_version -ne 'bago-runtime-inputs-v1' -or
             [IO.Path]::GetFullPath([string]$Proof.repo_root) -ine [IO.Path]::GetFullPath($repoRoot) -or
             [int]$Proof.listener_pid -ne $OwnerId -or
-            [datetime]::Parse([string]$Proof.listener_start_utc).ToUniversalTime() -ne $OwnerStart.ToUniversalTime()) { return $false }
+            $recordedStart -ne $OwnerStart.ToUniversalTime()) { return $false }
         foreach ($kind in @('backend', 'frontend', 'dist')) {
             $recorded = [string]$Proof.input_fingerprints.$kind
             if ($recorded -notmatch '^[0-9a-f]{64}$' -or (Get-LocalUiInputFingerprint $kind) -cne $recorded) { return $false }

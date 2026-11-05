@@ -171,8 +171,9 @@ Test-LocalUiRuntimeIdentity $runtime $expectedSource 4312 | ConvertTo-Json -Comp
 
 
 @pytest.mark.parametrize("shell", [SHELL, shutil.which("powershell.exe")])
-@pytest.mark.parametrize("case,expected", [('valid', True), ('missing', False), ('version', False),
-                                           ('pid', False), ('start', False), ('root', False),
+@pytest.mark.parametrize("case,expected", [('valid', True), ('persisted', True), ('missing', False), ('version', False),
+                                           ('pid', False), ('start', False), ('tick', False), ('persisted_tick', False),
+                                           ('timezone', False), ('persisted_timezone', False), ('root', False),
                                            ('backend', False), ('frontend', False), ('dist', False)])
 def test_reuse_requires_matching_start_receipt(case, expected, shell):
     if shell is None:
@@ -186,14 +187,19 @@ if ($errors.Count) {{ throw 'PowerShell parse failed' }}
 $node = $ast.Find({{ param($n) $n -is [System.Management.Automation.Language.FunctionDefinitionAst] -and $n.Name -eq 'Test-LocalUiFreshnessProof' }}, $true)
 . ([scriptblock]::Create($node.Extent.Text))
 $repoRoot = '{repo}'
-$start = [datetime]::Parse('2026-11-05T10:00:00Z').ToUniversalTime()
+$start = [datetime]::Parse('2026-11-23T10:00:00.1234567Z').ToUniversalTime()
 $proof = [pscustomobject]@{{ managed_by='bago-agent-chat-launcher'; fingerprint_version='bago-runtime-inputs-v1'; repo_root=$repoRoot; listener_pid=4312; listener_start_utc=$start.ToString('o'); input_fingerprints=[pscustomobject]@{{backend=('a'*64); frontend=('b'*64); dist=('c'*64)}} }}
 function Get-LocalUiInputFingerprint {{ param($kind) switch ($kind) {{ backend {{'a'*64}} frontend {{'b'*64}} dist {{'c'*64}} }} }}
 switch ('{case}') {{
+  persisted {{ $proof=$proof | ConvertTo-Json -Depth 5 | ConvertFrom-Json }}
   missing {{ $proof=$null }}
   version {{ $proof.fingerprint_version='older' }}
   pid {{ $proof.listener_pid=4313 }}
   start {{ $proof.listener_start_utc=$start.AddSeconds(-1).ToString('o') }}
+  tick {{ $proof.listener_start_utc=$start.AddTicks(1).ToString('o') }}
+  persisted_tick {{ $proof.listener_start_utc=$start.AddTicks(1).ToString('o'); $proof=$proof | ConvertTo-Json -Depth 5 | ConvertFrom-Json }}
+  timezone {{ $proof.listener_start_utc='2026-11-23T10:00:00.1234567' }}
+  persisted_timezone {{ $proof.listener_start_utc='2026-11-23T10:00:00.1234567'; $proof=$proof | ConvertTo-Json -Depth 5 | ConvertFrom-Json }}
   root {{ $proof.repo_root=$repoRoot+'-different' }}
   backend {{ $proof.input_fingerprints.backend='d'*64 }}
   frontend {{ $proof.input_fingerprints.frontend='d'*64 }}

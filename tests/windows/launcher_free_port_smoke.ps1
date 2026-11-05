@@ -140,8 +140,11 @@ try {
     $health = Invoke-RestMethod 'http://127.0.0.1:8080/api/health' -TimeoutSec 5
     if ($health.status -ne 'ok') { throw 'Health endpoint failed.' }
     $probeOutput = & pwsh -NoProfile -NonInteractive -File $launcher -PreflightOnly
-    if ($LASTEXITCODE -ne 0) { throw 'Second preflight failed.' }
+    $result.checks.second_preflight_exit_code = $LASTEXITCODE
     $probe = ($probeOutput | Out-String | ConvertFrom-Json)
+    $result.checks.second_preflight_state = $probe.State
+    $result.checks.second_preflight_reason = $probe.Reason
+    if ($LASTEXITCODE -ne 0) { throw 'Second preflight failed; see recorded reason.' }
     if ($probe.State -ne 'REUSE' -or [int]$probe.Pid -ne $ownerId) { throw 'Second preflight did not reuse the started listener.' }
     $result.checks.free_before = $true
     $result.checks.launcher_started = $true
