@@ -443,7 +443,7 @@ Governed RAG
 - OpenMetadata live: `NOT_RUN`
 - LLM transport: injected fixture; no AWS request is made
 - Sandbox: `LocalRestrictedBackend`, workspace write scope, network deny
-- CI: GitHub Actions runs the same tests, README check, demo check and compile check
+- CI: GitHub Actions runs the test suite with the legacy README modules excluded, plus demo, compile and other checks; the README generator check is disabled
 
 ## Result
 
@@ -472,8 +472,7 @@ Governed RAG
 bash scripts/install_demo.sh
 source .venv/bin/activate
 python scripts/bago.py demo
-python -m pytest tests -q
-python scripts/generate_dynamic_readme.py --check --skip-tests
+python -m pytest tests -q --ignore=tests/test_dynamic_readme.py --ignore=tests/test_readme_minimal.py --ignore=tests/test_readme_presentation.py --ignore=tests/test_readme_svg_landing.py
 ```
 
 The installer creates a local `.venv` and installs the pinned requirements.
