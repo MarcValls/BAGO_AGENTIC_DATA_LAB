@@ -10,13 +10,19 @@ const authorization={available:true,enabled:false,revision:'none',grant_id:null,
 const authorizationUrl='/api/communications/whatsapp-authorization'
 beforeEach(()=>{localStorage.clear();resetLocaleForTests();setLocale('es')})
 afterEach(() => { cleanup(); vi.unstubAllGlobals() })
+it('identifies the linking method as WhatsApp Web in English', async () => {
+  setLocale('en')
+  vi.stubGlobal('fetch', vi.fn(async (url: string) => response(url === authorizationUrl ? authorization : state)))
+  render(<WhatsAppSettings />)
+  expect(await screen.findByRole('button', { name: 'Link WhatsApp Web' })).toBeTruthy()
+})
 it('does not infer connection from saved configuration; opening sends explicit confirmation', async () => {
   const calls: unknown[] = []
   vi.stubGlobal('fetch', vi.fn(async (url: string, init?: RequestInit) => {if(url===authorizationUrl)return response(authorization); if (init?.method) calls.push(JSON.parse(String(init.body))); return response(state) }))
   render(<WhatsAppSettings />)
   await screen.findByText('Desconectada')
   expect(screen.queryByText('Conectada')).toBeNull()
-  fireEvent.click(screen.getByRole('button', { name: 'Vincular WhatsApp' }))
+  fireEvent.click(screen.getByRole('button', { name: 'Vincular WhatsApp Web' }))
   await waitFor(() => expect(calls).toEqual([{ confirmed: true }]))
 })
 it('clears connected display immediately on close and observes disconnected result', async () => {

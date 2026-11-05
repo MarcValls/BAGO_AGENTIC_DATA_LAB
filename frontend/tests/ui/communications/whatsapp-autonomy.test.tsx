@@ -48,7 +48,7 @@ it('legacy enabled is never automatic consent and the connected surface has one 
   const f=await mount()
   expect((screen.getByRole('checkbox',{name:consentLabel}) as HTMLInputElement).checked).toBe(false)
   expect(screen.queryByRole('button',{name:'Guardar configuración'})).toBeNull()
-  expect(screen.queryByRole('button',{name:'Vincular WhatsApp'})).toBeNull()
+  expect(screen.queryByRole('button',{name:'Vincular WhatsApp Web'})).toBeNull()
   const advanced=screen.getByText('Avanzado').closest('details')!
   expect(advanced.open).toBe(false)
   expect(screen.getByRole('button',{name:'Comprobar conexión ahora'}).closest('details')).toBe(advanced)
@@ -92,7 +92,7 @@ it('editing the label autosaves once after debounce without granting legacy conn
 
 it('a disconnected first session offers linking but never opens or configures a browser on render',async()=>{
   const f=await mount({state:'not_configured',configured:false})
-  expect(screen.getByRole('button',{name:'Vincular WhatsApp'})).toBeTruthy()
+  expect(screen.getByRole('button',{name:'Vincular WhatsApp Web'})).toBeTruthy()
   expect(screen.getByText(/La primera vez necesitas vincular/)).toBeTruthy()
   expect(f.writes()).toEqual([])
 })
@@ -102,10 +102,10 @@ it('automatic checks update the observed connection and remove an unnecessary QR
   const f=fixture({state:'linking'})
   render(<WhatsAppSettings />)
   await act(async()=>{})
-  expect(screen.getByRole('button',{name:'Vincular WhatsApp'})).toBeTruthy()
+  expect(screen.getByRole('button',{name:'Vincular WhatsApp Web'})).toBeTruthy()
   f.setState('connected')
   await act(async()=>{await vi.advanceTimersByTimeAsync(15000)})
-  expect(screen.queryByRole('button',{name:'Vincular WhatsApp'})).toBeNull()
+  expect(screen.queryByRole('button',{name:'Vincular WhatsApp Web'})).toBeNull()
   expect(f.calls.filter(v=>v.method==='GET')).toHaveLength(4)
   expect(f.writes()).toEqual([])
 })
