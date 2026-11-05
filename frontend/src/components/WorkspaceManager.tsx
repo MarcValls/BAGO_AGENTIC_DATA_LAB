@@ -179,7 +179,6 @@ export default function WorkspaceManager({ inline = false, onSelected, proposal,
     </>}
     <section role="tabpanel" tabIndex={0} id={`${uid}-panel-projects`} aria-labelledby={`${uid}-tab-projects`} hidden={area !== 'projects'}>
       <fieldset className="wm-folder-selection"><legend>{t('commerce.project_folder.form_title')}</legend>
-        <p>{t('commerce.project_folder.global_scope')}</p>
         <p>{t('commerce.project_folder.active')} <code>{activeRoot??t('commerce.project_folder.active_unavailable')}</code></p>
         <div className="wm-folder-modes"><label><input type="radio" name={`${uid}-folder-mode`} checked={folderMode==='existing'} onChange={()=>editFolder(()=>setFolderMode('existing'))} disabled={folderBusy}/>{t('commerce.project_folder.existing')}</label><label><input type="radio" name={`${uid}-folder-mode`} checked={folderMode==='create_child'} onChange={()=>editFolder(()=>setFolderMode('create_child'))} disabled={folderBusy}/>{t('commerce.project_folder.child')}</label></div>
         <p>{t(folderMode==='existing'?'commerce.project_folder.existing_notice':'commerce.project_folder.child_notice')}</p>
