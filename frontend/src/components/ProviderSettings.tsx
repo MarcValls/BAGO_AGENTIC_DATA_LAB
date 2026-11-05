@@ -551,7 +551,7 @@ function ProviderRegistrationForm({ provider, registration, onSaved, onRefresh, 
         await onRefresh()
       }
       setError(cause instanceof Error ? cause : "commerce.providers.could_not_save_the_registration")
-    } finally { setSaving(false) }
+    } finally { setSaving(false); setVerifying(false) }
   }
 
   return (
