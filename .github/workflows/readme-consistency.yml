@@ -10,6 +10,8 @@ permissions:
 
 jobs:
   readme:
+    # Retain this workflow for history; the legacy README editor/check is disabled.
+    if: false
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
