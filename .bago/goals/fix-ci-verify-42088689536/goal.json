@@ -1,0 +1,22 @@
+{
+  "objective": "Fix the CI verify failure caused by an OpenMetadata image-pull TLS handshake timeout.",
+  "branch": "copilot/fix-failing-github-actions-job-verify",
+  "initial_remote_base_sha": "65843494981f56f032b0dc10f932beb596859590",
+  "final_remote_base_sha": "65843494981f56f032b0dc10f932beb596859590",
+  "implementation_commit": "59905ab",
+  "failed_job_url": "https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/actions/runs/42088689536/job/127460634887",
+  "fix": "Pull all OpenMetadata Compose images with at most three attempts and 10/20-second backoff; start with --pull never. Exhausted retries fail the job.",
+  "verification": {
+    "docker_workflow_tests": "PASS: 8 tests, including immediate success, third-attempt recovery and exhausted retries.",
+    "ci_python_suite": "PASS: 2102 passed, 61 skipped, 114 subtests passed using the existing four README test exclusions.",
+    "compose_config": "PASS: docker compose config --quiet.",
+    "independent_review": "No significant issues found.",
+    "codeql": "PASS: zero Actions or Python alerts.",
+    "readme_generation": "BLOCKED: 2151 passed, 61 skipped, 114 subtests passed and one pre-existing failure in tests/test_dynamic_readme.py::test_ci_installs_video_runtime_before_running_full_suite. The test searches for a single-line pytest command, but the base workflow already uses run: >-. CI excludes this legacy test. Generation exited before changing README files.",
+    "readme_check_skip_tests": "PASS: README verified; 2213 cases collected, suite NOT_RUN.",
+    "diff_check": "PASS",
+    "remote_ci": "NOT_VERIFIED: no check runs available for the implementation when inspected.",
+    "live_registry_pull": "NOT_RUN locally; shell regression tests exercise retry behavior without registry access."
+  },
+  "closure": "INCOMPLETE: required README generation is blocked by an unrelated legacy test; the requested CI fix and CI-equivalent Python validation are complete."
+}
