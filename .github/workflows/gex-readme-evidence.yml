@@ -8,6 +8,8 @@ permissions:
 
 jobs:
   generator-evidence:
+    # Retain this workflow for history; the legacy README editor/generator is disabled.
+    if: false
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
