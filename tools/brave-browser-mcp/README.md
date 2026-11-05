@@ -14,8 +14,9 @@ persistent profile. It does not read, close, or reuse the user's normal Brave
 profile. Sign in to sites in this dedicated profile if needed.
 
 If Brave is already running with a CDP endpoint, set `BRAVE_CDP_URL` to that
-loopback endpoint before starting the MCP server. The server checks the endpoint
-identity and refuses to attach if it does not identify itself as Brave. The
+loopback endpoint before starting the MCP server. The server checks the exact
+loopback listener against the configured or discovered Brave executable path
+before and after connecting. It refuses ambiguous or inaccessible listeners. The
 default endpoint is `http://127.0.0.1:9222`; CDP is kept on loopback.
 
 Chromium's current remote-debugging security behavior requires a non-default
@@ -67,3 +68,5 @@ python tools/brave-browser-mcp/server.py
 - `brave_fill`, `brave_click`, and `brave_press_key` can change page state or
   transmit text when a page submits it. Codex requests approval for these calls.
 - The visible browser profile is separate from the normal Brave profile.
+- Executable path matching is not a signature check; the local process can
+  change between operating-system inspection and the CDP connection.
