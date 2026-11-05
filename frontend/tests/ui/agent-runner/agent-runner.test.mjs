@@ -115,6 +115,23 @@ afterEach(() => { cleanup(); currentSocket = undefined })
 after(async () => { await server.close(); dom.window.close() })
 
 describe('BER Agent Runner UI', () => {
+  it('shows the tools row only when the selected profile has tools', async () => {
+    const withoutTools = { ...agent, id: 'agent_empty', config: { ...agent.config, name: 'No tools agent', tools: [] } }
+    const withTools = { ...agent, id: 'agent_tools', config: { ...agent.config, name: 'Tools agent', tools: ['sandbox.run', 'workspace.read'] } }
+    const restoreFetch = stubAgentFetch({ agents: [withoutTools, withTools] })
+    try {
+      render(React.createElement(AgentRunner))
+      fireEvent.click(await screen.findByRole('button', { name: /No tools agent/ }))
+      assert.equal(screen.queryByText('Registered tools'), null)
+      assert.equal(screen.queryByText('No tools registered'), null)
+
+      fireEvent.click(screen.getByRole('button', { name: /Tools agent/ }))
+      const label = screen.getByText('Registered tools')
+      assert.equal(label.tagName, 'DT')
+      assert.equal(label.nextElementSibling?.textContent, 'sandbox.run, workspace.read')
+    } finally { restoreFetch() }
+  })
+
   it('renders loading, empty and profile request error states', async () => {
     let resolveFetch
     const originalFetch = globalThis.fetch
