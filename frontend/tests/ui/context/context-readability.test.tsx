@@ -36,6 +36,12 @@ it('leaves WorkspaceOnly without new classes or path focus stops and preserves i
  expect(view.container.querySelector('.project-document-path')?.getAttribute('class')).toBe('project-document-path')
  const input=screen.getByDisplayValue(root) as HTMLInputElement;fireEvent.change(input,{target:{value:'UNSAVED_WORKSPACE'}});expect(input.value).toBe('UNSAVED_WORKSPACE')
 })
+it('keeps the integrated workspace picker compact',async()=>{
+ const fetch=vi.fn(async()=>response(metadata));vi.stubGlobal('fetch',fetch)
+ const open=vi.fn();render(<CognitionSettings mode="baseline" onModeChange={vi.fn()} workspaceOnly onRequestWorkspaceSelection={open}/>);const button=await screen.findByRole('button',{name:t('commerce.project_folder.edit_in_projects')})
+ expect(screen.getByText(root)).toBeTruthy();expect(screen.queryByText(/commerce\.project_folder\.global_scope|La carpeta activa se usa en ADL|Used across ADL/i)).toBeNull()
+ fireEvent.click(button);expect(open).toHaveBeenCalledOnce()
+})
 it('retains loading and empty metadata without fabricating sources',async()=>{
  let finish!:(value:unknown)=>void;vi.stubGlobal('fetch',vi.fn(()=>new Promise(resolve=>{finish=resolve})))
  const view=render(<CognitionSettings mode="baseline" onModeChange={vi.fn()}/>)
