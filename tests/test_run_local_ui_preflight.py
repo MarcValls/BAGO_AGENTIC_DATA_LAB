@@ -170,6 +170,29 @@ Test-LocalUiRuntimeIdentity $runtime $expectedSource 4312 | ConvertTo-Json -Comp
     assert json.loads(result.stdout.strip()) is expected
 
 
+@pytest.mark.parametrize("shell", [SHELL, shutil.which("powershell.exe")])
+@pytest.mark.parametrize("listeners,expected", [([], True), ([4312], False), ([4312, 4313], False)])
+def test_port_availability_accepts_pipeline_cardinality_under_strict_mode(shell, listeners, expected):
+    if shell is None:
+        pytest.skip("PowerShell runtime not available")
+    source = str(ROOT / "scripts" / "run-local-ui.ps1").replace("'", "''")
+    values = ",".join(map(str, listeners))
+    code = f"""
+$errors = $null; $tokens = $null
+$ast = [System.Management.Automation.Language.Parser]::ParseFile('{source}', [ref]$tokens, [ref]$errors)
+if ($errors.Count) {{ throw 'PowerShell parse failed' }}
+$node = $ast.Find({{ param($n) $n -is [System.Management.Automation.Language.FunctionDefinitionAst] -and $n.Name -eq 'Test-LocalPortAvailable' }}, $true)
+. ([scriptblock]::Create($node.Extent.Text))
+function Get-ListenerProcessIds {{ param($Port) @({values}) }}
+Set-StrictMode -Version Latest
+Test-LocalPortAvailable 0 | ConvertTo-Json -Compress
+"""
+    result = subprocess.run([shell, "-NoProfile", "-NonInteractive", "-Command", code],
+                            cwd=ROOT, capture_output=True, text=True, encoding="utf-8", timeout=30)
+    assert result.returncode == 0, result.stderr
+    assert json.loads(result.stdout.strip()) is expected
+
+
 def test_start_lock_serializes_competing_processes():
     source = str(ROOT / "scripts" / "run-local-ui.ps1").replace("'", "''")
     name = "Local\\BAGO_TEST_" + uuid.uuid4().hex

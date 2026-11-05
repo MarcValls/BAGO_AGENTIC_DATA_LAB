@@ -298,7 +298,7 @@ function Get-ListenerProcessIds([int]$Port) {
 }
 
 function Test-LocalPortAvailable([int]$Port) {
-    if ((Get-ListenerProcessIds $Port).Count -gt 0) { return $false }
+    if (@(Get-ListenerProcessIds $Port).Count -gt 0) { return $false }
     $probe = [System.Net.Sockets.TcpListener]::new([System.Net.IPAddress]::Loopback, $Port)
     try {
         $probe.Start()
@@ -360,7 +360,7 @@ if (-not $ready) {
     throw "Agent Chat API did not become healthy. Check logs: $stderrLog"
 }
 
-$listenerIds = Get-ListenerProcessIds $port
+$listenerIds = @(Get-ListenerProcessIds $port)
 if ($listenerIds.Count -ne 1) {
     if (-not $server.HasExited) { Stop-Process -Id $server.Id -Force }
     throw "Expected one API listener on port $port; found $($listenerIds.Count)."

@@ -8,7 +8,7 @@ $startedAt = [DateTime]::UtcNow
 $global:BagoSmokeLauncherProcess = $null
 $global:BagoSmokeBrowserSuppressed = $false
 $ownedListener = $null
-$result = [ordered]@{ status = 'FAIL'; identity = @{}; checks = @{}; error = $null; cleanup_errors = @(); limits = @('Hosted Windows runner only.', 'Browser opening and focus are suppressed and NOT_RUN.', 'No external provider inference is claimed.') }
+$result = [ordered]@{ status = 'FAIL'; identity = @{}; checks = @{}; error = $null; error_stack = $null; cleanup_errors = @(); limits = @('Hosted Windows runner only.', 'Browser opening and focus are suppressed and NOT_RUN.', 'No external provider inference is claimed.') }
 
 if ($env:GITHUB_ACTIONS -ne 'true' -or $env:RUNNER_ENVIRONMENT -ne 'github-hosted') {
     throw 'This smoke test only runs on a GitHub-hosted ephemeral runner.'
@@ -76,6 +76,7 @@ try {
     $result.status = 'PASS'
 } catch {
     $result.error = $_.Exception.Message
+    $result.error_stack = $_.ScriptStackTrace
 } finally {
     $cleanupOk = $true
     try {
