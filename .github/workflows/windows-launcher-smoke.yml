@@ -1,0 +1,48 @@
+name: Windows launcher smoke
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  launcher:
+    runs-on: windows-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install Python dependencies
+        run: python -m pip install -r requirements-test.txt
+      - name: Install frontend dependencies
+        working-directory: frontend
+        run: npm ci
+      - name: Check launcher preflight and PID selection
+        run: python -m pytest -q -p no:cacheprovider tests/test_run_local_ui_preflight.py tests/test_runtime_fingerprint.py
+      - name: Start and verify launcher on an isolated runner
+        shell: pwsh
+        env:
+          BAGO_DATA_ROOT: ${{ runner.temp }}\bago-launcher-smoke\data
+          BAGO_COMMUNICATIONS_STATE_DIR: ${{ runner.temp }}\bago-launcher-smoke\communications
+          BAGO_OTEL_EXPORTER_OTLP_ENDPOINT: ''
+          BAGO_SMOKE_PR_HEAD: ${{ github.event.pull_request.head.sha }}
+        run: |
+          New-Item -ItemType Directory -Path (Join-Path $env:RUNNER_TEMP 'bago-launcher-smoke') -Force | Out-Null
+          ./tests/windows/launcher_free_port_smoke.ps1 -EvidencePath (Join-Path $env:RUNNER_TEMP 'bago-launcher-smoke/result.json')
+      - name: Retain smoke result
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-launcher-smoke
+          path: ${{ runner.temp }}\bago-launcher-smoke\*.json
+          if-no-files-found: warn
