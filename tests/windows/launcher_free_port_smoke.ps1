@@ -8,7 +8,7 @@ $startedAt = [DateTime]::UtcNow
 $global:BagoSmokeLauncherProcess = $null
 $global:BagoSmokeBrowserSuppressed = $false
 $ownedListener = $null
-$result = [ordered]@{ status = 'FAIL'; identity = @{}; checks = @{}; error = $null; error_stack = $null; cleanup_errors = @(); limits = @('Hosted Windows runner only.', 'Browser opening and focus are suppressed and NOT_RUN.', 'No external provider inference is claimed.') }
+$result = [ordered]@{ status = 'FAIL'; identity = @{}; checks = @{}; error = $null; error_stack = $null; cleanup_errors = @(); limits = @('Hosted Windows runner only.', 'Browser opening is suppressed for the initial launch. Optional focus result is recorded separately in browser-window.json.', 'No external provider inference is claimed.') }
 
 if ($env:GITHUB_ACTIONS -ne 'true' -or $env:RUNNER_ENVIRONMENT -ne 'github-hosted') {
     throw 'This smoke test only runs on a GitHub-hosted ephemeral runner.'
@@ -20,8 +20,8 @@ if (@(Get-NetTCPConnection -LocalPort 8080 -State Listen -ErrorAction SilentlyCo
     throw $result.error
 }
 
-function global:Read-Host { param([Parameter(Position=0)][string]$Prompt) return '' }
-function global:Start-Process {
+function Read-Host { param([Parameter(Position=0)][string]$Prompt) return '' }
+function Start-Process {
     [CmdletBinding()]
     param(
         [Parameter(Mandatory=$true, Position=0)][string]$FilePath,
@@ -73,6 +73,7 @@ try {
     $probe = ($probeOutput | Out-String | ConvertFrom-Json)
     if ($probe.State -ne 'REUSE' -or [int]$probe.Pid -ne $ownerId) { throw 'Second preflight did not reuse the started listener.' }
     $result.checks = @{ free_before = $true; launcher_started = $true; one_loopback_listener = $true; health = $true; postflight_reuse_same_pid = $true; listener_pid = $ownerId; browser_launch_suppressed = $global:BagoSmokeBrowserSuppressed }
+    & (Join-Path $PSScriptRoot 'browser_window_smoke.ps1') -EvidencePath (Join-Path (Split-Path $EvidencePath) 'browser-window.json') -ExpectedServerPid $ownerId
     $result.status = 'PASS'
 } catch {
     $result.error = $_.Exception.Message
@@ -122,12 +123,7 @@ try {
     } finally {
         $result.checks.cleanup_verified = $cleanupOk
         if (-not $cleanupOk) { $result.status = 'FAIL'; if (-not $result.error) { $result.error = 'Cleanup could not be verified.' } }
-        try {
-            $result | ConvertTo-Json -Depth 8 | Set-Content -LiteralPath $EvidencePath -Encoding utf8
-        } finally {
-            Remove-Item Function:\global:Start-Process -ErrorAction SilentlyContinue
-            Remove-Item Function:\global:Read-Host -ErrorAction SilentlyContinue
-        }
+        $result | ConvertTo-Json -Depth 8 | Set-Content -LiteralPath $EvidencePath -Encoding utf8
     }
 }
 if ($result.status -ne 'PASS') { throw "Launcher smoke failed: $($result.error)" }

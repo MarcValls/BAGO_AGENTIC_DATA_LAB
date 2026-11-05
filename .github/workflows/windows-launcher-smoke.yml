@@ -44,5 +44,5 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: windows-launcher-smoke
-          path: ${{ runner.temp }}\bago-launcher-smoke\result.json
+          path: ${{ runner.temp }}\bago-launcher-smoke\*.json
           if-no-files-found: warn
