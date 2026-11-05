@@ -93,8 +93,8 @@ La instantánea anterior contabilizaba el goal de exportación y verificación g
 ## Trabajo en curso y límites
 
 - [PR #119](https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/pull/119) fusionada: mantiene desactivados el generador y las pruebas README heredados. La revisión de README en GitHub sigue detenida.
-- [PR #120](https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/pull/120) en borrador: comprobación del listener de Brave; el recorrido completo de navegación y recarga permanece `NOT_RUN`.
-- [PR #122](https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/pull/122) en borrador: lanzador de instancia única; la CI de su revisión actual continúa en curso y la apertura desde el lanzador y la entrada humana del PID permanecen `NOT_RUN`.
+- Al corte, la [PR #120](https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/pull/120) estaba en borrador: comprobación del listener de Brave; el recorrido completo de navegación y recarga figuraba `NOT_RUN`.
+- Al corte, la [PR #122](https://github.com/MarcValls/BAGO_AGENTIC_DATA_LAB/pull/122) estaba en borrador: lanzador de instancia única; la CI de esa revisión seguía en curso y la apertura desde el lanzador y la entrada humana del PID figuraban `NOT_RUN`.
 - `CR-GEX-001` identifica tanto un goal de contrato como una solicitud distinta de cambio de canon. El cierre del goal es solo de especificación y no aprueba automáticamente la solicitud homónima ni habilita Agent Runner.
 - El checkout local contiene cambios aún no conciliados con GitHub; ni esta página ni el estado de `main` demuestran que todos estén publicados.
 - La aceptación visual es solo de escritorio. Las revisiones móviles siguen aplazadas.
