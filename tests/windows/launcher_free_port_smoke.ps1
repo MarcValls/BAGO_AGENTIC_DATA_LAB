@@ -27,7 +27,7 @@ if (@(Get-NetTCPConnection -LocalPort 8080 -State Listen -ErrorAction SilentlyCo
 function Read-Host { param([Parameter(Position=0)][string]$Prompt) return '' }
 function npm {
     $global:BagoSmokeNpmEntered = $true
-    $command = Get-Command npm.cmd -CommandType Application -ErrorAction Stop
+    $command = Get-Command npm.cmd -CommandType Application -ErrorAction Stop | Select-Object -First 1
     & $command.Source @args
     if ($LASTEXITCODE -eq 0 -and $global:BagoSmokeInjectFrontend) {
         $marker = [IO.File]::Open($global:BagoSmokeInjectFrontend, [IO.FileMode]::CreateNew, [IO.FileAccess]::Write, [IO.FileShare]::None)
