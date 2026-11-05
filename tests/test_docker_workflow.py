@@ -4,6 +4,10 @@ from pathlib import Path
 import fnmatch
 import re
 import shlex
+import subprocess
+import textwrap
+
+import pytest
 
 
 ROOT = Path(__file__).parent.parent
@@ -77,3 +81,42 @@ def test_ui_image_includes_pinned_ber_artifact_and_lock():
     assert "COPY scripts/ber_effect_demo.py scripts/ber_effect_demo.py" in dockerfile
     assert (ROOT / "runtime" / "ber" / "bago-embedded-runtime-0.1.0.zip").is_file()
     assert (ROOT / "runtime" / "ber" / "BER.lock.json").is_file()
+
+
+@pytest.mark.parametrize(
+    ("success_on", "attempts", "returncode"),
+    [(1, 1, 0), (3, 3, 0), (4, 3, 1)],
+)
+def test_openmetadata_image_pull_retries_are_bounded(success_on, attempts, returncode):
+    workflow = (ROOT / ".github" / "workflows" / "ci.yml").read_text(
+        encoding="utf-8"
+    )
+    pull_step, start_step = workflow.split(
+        "      - name: Pull local OpenMetadata images\n", 1
+    )[1].split("      - name: Start local OpenMetadata\n", 1)
+    script = textwrap.dedent(pull_step.split("        run: |\n", 1)[1])
+    stubs = f"""
+    calls=0
+    docker() {{
+      calls=$((calls + 1))
+      echo "docker $*"
+      [ "$calls" -ge {success_on} ]
+    }}
+    sleep() {{ echo "sleep $*"; }}
+    """
+    result = subprocess.run(
+        ["bash", "-e", "-c", textwrap.dedent(stubs) + script],
+        capture_output=True,
+        text=True,
+        timeout=5,
+    )
+
+    assert result.returncode == returncode, result.stderr
+    command = "compose -p bago-openmetadata -f infra/openmetadata/docker-compose.yml"
+    assert result.stdout.count(f"docker {command} pull\n") == attempts
+    assert [
+        line for line in result.stdout.splitlines() if line.startswith("sleep ")
+    ] == [f"sleep {attempt * 10}" for attempt in range(1, attempts)]
+    assert ("failed after 3 attempts" in result.stdout) == (returncode != 0)
+    assert f"run: docker {command} up -d --pull never\n" in start_step
+    assert "continue-on-error" not in pull_step

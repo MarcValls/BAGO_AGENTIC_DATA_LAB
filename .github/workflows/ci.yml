@@ -63,8 +63,21 @@ jobs:
           path: demo_output/ci
       - name: Check local vector store
         run: python scripts/run_l14_vector_store_validation.py --check
+      - name: Pull local OpenMetadata images
+        run: |
+          for attempt in {1..3}; do
+            if docker compose -p bago-openmetadata -f infra/openmetadata/docker-compose.yml pull; then
+              exit 0
+            fi
+            if [ "$attempt" -eq 3 ]; then
+              echo "OpenMetadata image pull failed after 3 attempts"
+              exit 1
+            fi
+            echo "Retrying OpenMetadata image pull ($attempt/3)"
+            sleep $((attempt * 10))
+          done
       - name: Start local OpenMetadata
-        run: docker compose -p bago-openmetadata -f infra/openmetadata/docker-compose.yml up -d
+        run: docker compose -p bago-openmetadata -f infra/openmetadata/docker-compose.yml up -d --pull never
       - name: Wait for OpenMetadata to be healthy
         run: |
           for i in {1..60}; do
