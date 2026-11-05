@@ -1,6 +1,232 @@
+param([switch]$PreflightOnly)
+
 $ErrorActionPreference = 'Stop'
 
 $repoRoot = (Resolve-Path (Join-Path $PSScriptRoot '..')).Path
+
+function Get-VisibleBrowserWindows {
+    $browserNames = @('brave', 'chrome', 'msedge', 'firefox', 'vivaldi', 'opera', 'opera_gx', 'chromium')
+    $windows = @()
+    foreach ($browserName in $browserNames) {
+        foreach ($process in @(Get-Process -Name $browserName -ErrorAction SilentlyContinue)) {
+            if ($process.MainWindowHandle -eq [IntPtr]::Zero) { continue }
+            $windows += [pscustomobject]@{
+                ProcessId = [int]$process.Id
+                ProcessName = [string]$process.ProcessName
+                Title = [string]$process.MainWindowTitle
+                Handle = [IntPtr]$process.MainWindowHandle
+            }
+        }
+    }
+    return @($windows | Sort-Object ProcessId -Unique)
+}
+
+function Resolve-BrowserWindowAction {
+    $windows = @(Get-VisibleBrowserWindows)
+    $bagoWindows = @($windows | Where-Object { $_.Title -match '(?i)\bBAGO(?:5)?\b|Agent\s+Chat' })
+    if ($bagoWindows.Count -eq 1) {
+        return [pscustomobject]@{ Action = 'focus'; Window = $bagoWindows[0]; BagoRecognized = $true }
+    }
+
+    if ($bagoWindows.Count -gt 0) {
+        $candidates = $bagoWindows
+        Write-Host 'BAGO aparece en varias ventanas. Elige el PID que quieres reutilizar:'
+    } elseif ($windows.Count -gt 0) {
+        $candidates = $windows
+        Write-Host 'Hay ventanas de navegador, pero no puedo confirmar cuál tiene BAGO activa.'
+        Write-Host 'Indica el PID de la ventana donde ya está abierta BAGO. No abriré otra pestaña.'
+    } else {
+        return [pscustomobject]@{ Action = 'launch'; Window = $null; BagoRecognized = $false }
+    }
+
+    foreach ($candidate in $candidates) {
+        $title = if ([string]::IsNullOrWhiteSpace($candidate.Title)) { '(sin título)' } else { $candidate.Title }
+        Write-Host ('  PID {0}  {1}  {2}' -f $candidate.ProcessId, $candidate.ProcessName, $title)
+    }
+    try {
+        $selectedPidText = Read-Host 'PID (Intro para no abrir navegador)'
+    } catch {
+        Write-Host 'No hay consola interactiva; omito el navegador para evitar abrir otra ventana.'
+        return [pscustomobject]@{ Action = 'skip'; Window = $null; BagoRecognized = $false }
+    }
+    if ([string]::IsNullOrWhiteSpace($selectedPidText)) {
+        return [pscustomobject]@{ Action = 'skip'; Window = $null; BagoRecognized = $false }
+    }
+    $selectedPid = 0
+    if (-not [int]::TryParse($selectedPidText.Trim(), [ref]$selectedPid)) {
+        throw "PID no válido: '$selectedPidText'. No se abrirá otra ventana del navegador."
+    }
+    $selectedWindow = @($candidates | Where-Object { $_.ProcessId -eq $selectedPid } | Select-Object -First 1)
+    if ($selectedWindow.Count -ne 1) {
+        throw "El PID $selectedPid no corresponde a una ventana candidata. No se abrirá otra ventana del navegador."
+    }
+    return [pscustomobject]@{
+        Action = 'focus'
+        Window = $selectedWindow[0]
+        BagoRecognized = ($selectedWindow[0].Title -match '(?i)\bBAGO(?:5)?\b|Agent\s+Chat')
+    }
+}
+
+function Focus-BrowserWindow([object]$Window) {
+    $process = Get-Process -Id ([int]$Window.ProcessId) -ErrorAction SilentlyContinue
+    if (-not $process -or $process.MainWindowHandle -eq [IntPtr]::Zero) {
+        Write-Warning "La ventana del navegador PID $($Window.ProcessId) ya no está disponible; no abriré otra."
+        return $false
+    }
+    if (-not ('Bago.LocalUi.WindowApi' -as [type])) {
+        Add-Type -TypeDefinition @'
+using System;
+using System.Runtime.InteropServices;
+namespace Bago.LocalUi {
+    public static class WindowApi {
+        [DllImport("user32.dll")] public static extern bool ShowWindowAsync(IntPtr hWnd, int nCmdShow);
+        [DllImport("user32.dll")] public static extern bool SetForegroundWindow(IntPtr hWnd);
+    }
+}
+'@
+    }
+    [Bago.LocalUi.WindowApi]::ShowWindowAsync($process.MainWindowHandle, 9) | Out-Null
+    if (-not [Bago.LocalUi.WindowApi]::SetForegroundWindow($process.MainWindowHandle)) {
+        Write-Warning "Windows no permitió enfocar el navegador PID $($Window.ProcessId); no abriré otra ventana."
+        return $false
+    }
+    return $true
+}
+
+function Test-LocalUiRuntimeIdentity([object]$Runtime, [string]$ExpectedSource, [int]$OwnerId) {
+    try {
+        $sha = [System.Security.Cryptography.SHA256]::Create()
+        try {
+            $sourceHash = [BitConverter]::ToString($sha.ComputeHash([IO.File]::ReadAllBytes($ExpectedSource))).Replace('-', '')
+        } finally {
+            $sha.Dispose()
+        }
+        return ([int]$Runtime.process_id -eq $OwnerId -and $Runtime.server_source_path -and
+            [IO.Path]::GetFullPath([string]$Runtime.server_source_path) -ieq [IO.Path]::GetFullPath($ExpectedSource) -and
+            [string]$Runtime.server_source_sha256_at_import -ieq $sourceHash)
+    } catch {
+        return $false
+    }
+}
+
+function Enter-LocalUiStartLock([string]$Name = 'Local\BAGO_ADL_UI_8080') {
+    $mutex = [System.Threading.Mutex]::new($false, $Name)
+    try {
+        try { $acquired = $mutex.WaitOne(0) } catch [System.Threading.AbandonedMutexException] { $acquired = $true }
+        if (-not $acquired) { $mutex.Dispose(); return $null }
+        return $mutex
+    } catch {
+        $mutex.Dispose()
+        throw
+    }
+}
+
+function Get-LocalUiPreflight {
+    $allListeners = @(Get-NetTCPConnection -State Listen -ErrorAction SilentlyContinue)
+    $otherListeners = @($allListeners | Where-Object { $_.LocalPort -ne 8080 })
+    foreach ($otherId in @($otherListeners | Select-Object -ExpandProperty OwningProcess -Unique)) {
+        $otherProcess = Get-Process -Id ([int]$otherId) -ErrorAction SilentlyContinue
+        if (-not $otherProcess -or $otherProcess.ProcessName -notmatch '^(?:python(?:w)?(?:\d+(?:\.\d+)*)?|uvicorn)$') { continue }
+        $otherInfo = Get-CimInstance Win32_Process -Filter "ProcessId=$([int]$otherId)" -ErrorAction SilentlyContinue
+        if ($otherInfo -and $otherInfo.CommandLine -match '(?i)(?:\s-m\s+src\.api\.server(?:\s|$)|\bsrc\.api\.server:app\b)') {
+            $otherPorts = @($otherListeners | Where-Object { $_.OwningProcess -eq $otherId } | Select-Object -ExpandProperty LocalPort -Unique)
+            return [pscustomobject]@{ State = 'CONFLICT'; Pid = [int]$otherId; Reason = "Otro proceso ADL escucha en puerto(s): $($otherPorts -join ',')." }
+        }
+    }
+    $listeners = @($allListeners | Where-Object { $_.LocalPort -eq 8080 })
+    if ($listeners.Count -eq 0) { return [pscustomobject]@{ State = 'FREE'; Pid = $null; Reason = '' } }
+    $ids = @($listeners | Select-Object -ExpandProperty OwningProcess -Unique)
+    if ($ids.Count -ne 1 -or @($listeners | Where-Object { $_.LocalAddress -ne '127.0.0.1' }).Count -gt 0) {
+        return [pscustomobject]@{ State = 'CONFLICT'; Pid = ($ids -join ','); Reason = 'Listener ambiguo o no limitado a 127.0.0.1.' }
+    }
+    $ownerId = [int]$ids[0]
+    $owner = Get-CimInstance Win32_Process -Filter "ProcessId=$ownerId" -ErrorAction SilentlyContinue
+    if (-not $owner -or $owner.Name -notmatch '^python(?:w)?(?:\d+(?:\.\d+)*)?\.exe$' -or $owner.CommandLine -notmatch '(?i)\s-m\s+src\.api\.server(?:\s|$)') {
+        return [pscustomobject]@{ State = 'CONFLICT'; Pid = $ownerId; Reason = 'No se pudo identificar el servidor de este checkout.' }
+    }
+    Add-Type -AssemblyName System.Net.Http
+    $client = [System.Net.Http.HttpClient]::new()
+    $client.Timeout = [TimeSpan]::FromSeconds(5)
+    $hasher = [System.Security.Cryptography.SHA256]::Create()
+    try {
+        $base = 'http://127.0.0.1:8080'
+        $health = ($client.GetStringAsync("$base/api/health").GetAwaiter().GetResult() | ConvertFrom-Json)
+        if ($health.status -ne 'ok') { throw 'Health no es ok.' }
+        $spec = ($client.GetStringAsync("$base/openapi.json").GetAwaiter().GetResult() | ConvertFrom-Json)
+        $routes = @($spec.paths.PSObject.Properties.Name)
+        if ('/api/health' -notin $routes -or '/api/providers/selection' -notin $routes -or '/api/runtime/storage' -notin $routes) { throw 'Faltan rutas esperadas.' }
+        $runtime = ($client.GetStringAsync("$base/api/runtime/storage").GetAwaiter().GetResult() | ConvertFrom-Json)
+        $expectedSource = [IO.Path]::GetFullPath((Join-Path $repoRoot 'src\api\server.py'))
+        if (-not (Test-LocalUiRuntimeIdentity $runtime $expectedSource $ownerId)) {
+            throw 'El servidor no acredita el PID y las fuentes actuales de este checkout.'
+        }
+        $indexPath = Join-Path $repoRoot 'frontend\dist\index.html'
+        $indexBytes = [System.IO.File]::ReadAllBytes($indexPath)
+        $servedIndex = $client.GetByteArrayAsync("$base/").GetAwaiter().GetResult()
+        if ([BitConverter]::ToString($hasher.ComputeHash($indexBytes)) -ne [BitConverter]::ToString($hasher.ComputeHash($servedIndex))) { throw 'El index servido no coincide con frontend/dist.' }
+        $html = [Text.Encoding]::UTF8.GetString($indexBytes)
+        $matches = [regex]::Matches($html, '(?:src|href)="(/assets/[A-Za-z0-9_.-]+\.(?:js|css))"')
+        $paths = @($matches | ForEach-Object { $_.Groups[1].Value } | Sort-Object -Unique)
+        if (-not ($paths | Where-Object { $_ -like '*.js' }) -or -not ($paths | Where-Object { $_ -like '*.css' })) { throw 'No se identifican los assets JS y CSS.' }
+        foreach ($asset in $paths) {
+            $file = Join-Path (Join-Path $repoRoot 'frontend\dist') $asset.TrimStart([char]'/').Replace('/', [IO.Path]::DirectorySeparatorChar)
+            $local = [System.IO.File]::ReadAllBytes($file)
+            $served = $client.GetByteArrayAsync("$base$asset").GetAwaiter().GetResult()
+            if ([BitConverter]::ToString($hasher.ComputeHash($local)) -ne [BitConverter]::ToString($hasher.ComputeHash($served))) { throw "El asset $asset no coincide con frontend/dist." }
+        }
+        $current = Get-CimInstance Win32_Process -Filter "ProcessId=$ownerId" -ErrorAction SilentlyContinue
+        $currentIds = @(Get-NetTCPConnection -LocalPort 8080 -State Listen -ErrorAction SilentlyContinue | Select-Object -ExpandProperty OwningProcess -Unique)
+        if (-not $current -or $current.CreationDate -ne $owner.CreationDate -or $currentIds.Count -ne 1 -or [int]$currentIds[0] -ne $ownerId) { throw 'El listener cambio durante la comprobacion.' }
+        return [pscustomobject]@{ State = 'REUSE'; Pid = $ownerId; Reason = '' }
+    } catch {
+        return [pscustomobject]@{ State = 'CONFLICT'; Pid = $ownerId; Reason = $_.Exception.Message }
+    } finally {
+        $hasher.Dispose()
+        $client.Dispose()
+    }
+}
+
+$preflight = Get-LocalUiPreflight
+if ($PreflightOnly) {
+    $preflight | ConvertTo-Json -Compress
+    if ($preflight.State -eq 'CONFLICT') { exit 2 }
+    exit 0
+}
+if ($preflight.State -eq 'CONFLICT') {
+    throw "El puerto 8080 esta ocupado por PID $($preflight.Pid): $($preflight.Reason) No se iniciara otra instancia."
+}
+if ($preflight.State -eq 'REUSE') {
+    Write-Output "Se reutiliza la API existente en http://127.0.0.1:8080 (PID $($preflight.Pid))."
+    $browserAction = Resolve-BrowserWindowAction
+    if ($browserAction.Action -eq 'focus') {
+        if (Focus-BrowserWindow $browserAction.Window) {
+            Write-Output "Ventana existente enfocada (PID $($browserAction.Window.ProcessId)); su URL no se puede confirmar por el titulo."
+        }
+    } elseif ($browserAction.Action -eq 'launch') {
+        Start-Process 'http://127.0.0.1:8080'
+    } else {
+        Write-Output 'Navegador omitido; no se creo ninguna pestana o ventana nueva.'
+    }
+    return
+}
+
+$startLock = Enter-LocalUiStartLock
+if (-not $startLock) { throw 'Otro lanzador esta preparando ADL. No se iniciara una segunda instancia.' }
+try {
+    $lockedPreflight = Get-LocalUiPreflight
+    if ($lockedPreflight.State -ne 'FREE') {
+        throw 'El puerto 8080 cambio durante el inicio. Ejecuta de nuevo el lanzador para reutilizar la instancia o revisar el conflicto.'
+    }
+
+# Detect the existing UI before building or starting anything. A blank PID choice
+# intentionally suppresses browser launch; it never creates another tab/window.
+$browserAction = Resolve-BrowserWindowAction
+if ($browserAction.Action -eq 'focus') {
+    Write-Output "Se reutilizará la ventana PID $($browserAction.Window.ProcessId) ($($browserAction.Window.Title))."
+} elseif ($browserAction.Action -eq 'skip') {
+    Write-Output 'No se abrirá ni enfocará un navegador; la API se puede iniciar igualmente.'
+}
+
 $pythonExe = Join-Path $repoRoot '.venv\Scripts\python.exe'
 if (-not (Test-Path -LiteralPath $pythonExe)) {
     $pythonCommand = Get-Command python -ErrorAction SilentlyContinue
@@ -56,56 +282,16 @@ try {
     $pathHasher.Dispose()
 }
 $instanceFile = Join-Path $stateDirectory "$pathHash.json"
-$previousInstance = $null
-if (Test-Path -LiteralPath $instanceFile) {
-    try { $previousInstance = Get-Content -LiteralPath $instanceFile -Raw | ConvertFrom-Json } catch { $previousInstance = $null }
-    if (-not $previousInstance.listener_pid -or -not $previousInstance.launcher_pid) { $previousInstance = $null }
+$port = 8080
+if (-not (Test-LocalPortAvailable $port)) {
+    throw 'Port 8080 became occupied after preflight. No alternate port or second instance will be started.'
 }
-
-function ConvertTo-UtcRoundTrip([object]$Value) {
-    if (-not $Value) { return '' }
-    return ([DateTime]$Value).ToUniversalTime().ToString('o')
-}
-
-# Stop only the recorded listener process for this checkout. Windows Python venv launchers
-# can create a second Python process, so the launcher PID alone does not own the socket.
-if ($previousInstance -and $previousInstance.repo_root -eq $repoRoot -and $previousInstance.managed_by -eq 'bago-agent-chat-launcher') {
-    $listenerProcess = Get-Process -Id ([int]$previousInstance.listener_pid) -ErrorAction SilentlyContinue
-    $listenerInfo = Get-CimInstance Win32_Process -Filter "ProcessId=$([int]$previousInstance.listener_pid)" -ErrorAction SilentlyContinue
-    if ($previousInstance.listener_pid) {
-        $listenerProcess = Get-Process -Id ([int]$previousInstance.listener_pid) -ErrorAction SilentlyContinue
-        $listenerInfo = Get-CimInstance Win32_Process -Filter "ProcessId=$([int]$previousInstance.listener_pid)" -ErrorAction SilentlyContinue
-    } else {
-        $listenerProcess = $null
-        $listenerInfo = $null
-    }
-    if (
-        $listenerProcess -and $listenerInfo -and
-        (ConvertTo-UtcRoundTrip $listenerProcess.StartTime) -eq (ConvertTo-UtcRoundTrip $previousInstance.listener_start_utc) -and
-        $listenerInfo.CommandLine -match ' -m src\.api\.server(?:\s|$)'
-    ) {
-        Stop-Process -Id $listenerProcess.Id -Force
-        $listenerProcess.WaitForExit(10000) | Out-Null
-    }
-    $launcherProcess = Get-Process -Id ([int]$previousInstance.launcher_pid) -ErrorAction SilentlyContinue
-    if (
-        $launcherProcess -and $previousInstance.launcher_start_utc -and
-        (ConvertTo-UtcRoundTrip $launcherProcess.StartTime) -eq (ConvertTo-UtcRoundTrip $previousInstance.launcher_start_utc) -and
-        $launcherProcess.Path -eq $pythonExe
-    ) {
-        Stop-Process -Id $launcherProcess.Id -Force -ErrorAction SilentlyContinue
-    }
-}
-
-$basePort = 8080
-$port = $basePort
-while ($port -le 9000 -and -not (Test-LocalPortAvailable $port)) { $port++ }
-if ($port -gt 9000) { throw 'No free local port was found in the range 8080-9000.' }
 
 $logDirectory = Join-Path $env:LOCALAPPDATA 'BAGO\AgentChat\logs'
 New-Item -ItemType Directory -Path $logDirectory -Force | Out-Null
-$stdoutLog = Join-Path $logDirectory 'api.stdout.log'
-$stderrLog = Join-Path $logDirectory 'api.stderr.log'
+$logId = [guid]::NewGuid().ToString('N')
+$stdoutLog = Join-Path $logDirectory "api.$logId.stdout.log"
+$stderrLog = Join-Path $logDirectory "api.$logId.stderr.log"
 $previousApiHost = $env:BAGO_API_HOST
 $previousRuntimeMode = $env:BAGO_RUNTIME_MODE
 $previousApiPort = $env:BAGO_API_PORT
@@ -133,7 +319,6 @@ for ($attempt = 0; $attempt -lt 30; $attempt++) {
 }
 if (-not $ready) {
     if (-not $server.HasExited) { Stop-Process -Id $server.Id -Force }
-    Remove-Item -LiteralPath $instanceFile -Force -ErrorAction SilentlyContinue
     throw "Agent Chat API did not become healthy. Check logs: $stderrLog"
 }
 
@@ -145,9 +330,21 @@ if ($listenerIds.Count -ne 1) {
 $listenerPid = [int]$listenerIds[0]
 $listenerProcess = Get-Process -Id $listenerPid
 $listenerInfo = Get-CimInstance Win32_Process -Filter "ProcessId=$listenerPid"
-if ($listenerInfo.CommandLine -notmatch ' -m src\.api\.server(?:\s|$)') {
+if ($listenerInfo.CommandLine -notmatch ' -m src\.api\.server(?:\s|$)' -or
+    ($listenerPid -ne $server.Id -and [int]$listenerInfo.ParentProcessId -ne $server.Id)) {
     if (-not $server.HasExited) { Stop-Process -Id $server.Id -Force }
     throw "The listener on port $port is not the BAGO Agent Chat server."
+}
+$postflight = Get-LocalUiPreflight
+if ($postflight.State -ne 'REUSE' -or [int]$postflight.Pid -ne $listenerPid) {
+    $stillListener = Get-Process -Id $listenerPid -ErrorAction SilentlyContinue
+    $stillInfo = Get-CimInstance Win32_Process -Filter "ProcessId=$listenerPid" -ErrorAction SilentlyContinue
+    if ($stillListener -and $stillInfo -and $stillListener.StartTime -eq $listenerProcess.StartTime -and
+        ($listenerPid -eq $server.Id -or [int]$stillInfo.ParentProcessId -eq $server.Id)) {
+        Stop-Process -Id $listenerPid -Force -ErrorAction SilentlyContinue
+    }
+    if (-not $server.HasExited) { Stop-Process -Id $server.Id -Force -ErrorAction SilentlyContinue }
+    throw "The started listener failed identity or asset checks: $($postflight.Reason)"
 }
 $instanceState = [ordered]@{
     managed_by = 'bago-agent-chat-launcher'
@@ -166,4 +363,23 @@ Move-Item -LiteralPath $temporaryState -Destination $instanceFile -Force
 $url = "http://127.0.0.1:$port"
 Write-Output "Agent Chat UI started at $url (PID $($server.Id))."
 Write-Output "Logs: $logDirectory"
-Start-Process $url
+if ($browserAction.Action -eq 'launch') {
+    # Recheck after startup to avoid a race with a window opened in the meantime.
+    $browserAction = Resolve-BrowserWindowAction
+}
+if ($browserAction.Action -eq 'focus') {
+    if (Focus-BrowserWindow $browserAction.Window) {
+        Write-Output "Ventana existente enfocada (PID $($browserAction.Window.ProcessId)); no se abrió otra pestaña."
+        if (-not $browserAction.BagoRecognized) {
+            Write-Output 'No pude verificar el título de la pestaña BAGO; enfoqué la ventana elegida sin navegar ni cambiar de pestaña.'
+        }
+    }
+} elseif ($browserAction.Action -eq 'launch') {
+    Start-Process $url
+} else {
+    Write-Output 'Navegador omitido; no se creó ninguna pestaña o ventana nueva.'
+}
+} finally {
+    $startLock.ReleaseMutex()
+    $startLock.Dispose()
+}
