@@ -80,7 +80,7 @@ Python, LangGraph, Pydantic, GovernedRAG, local ontology engine, local restricte
 
 **30 seconds:** A fictional late-delivery question produces a fixture-backed answer, citations, receipts, a trace, and a structural evaluation. No live provider is called.
 
-**90 seconds:** Run `python demo.py` in a prepared environment. Read the question and answer in `summary.json`, then follow the shared run and trace IDs through `agent_run.json`, `receipts.json`, `trace.json`, and `evaluation.json`. The evaluation checks evidence and governance linkage; it is not an assessment of answer quality.
+**90 seconds:** Run `python demo.py` in a prepared environment. Read the question and answer in `summary.json`. Follow the run ID through `agent_run.json`, `receipts.json`, and `trace.json`, then the trace ID through `receipts.json`, `trace.json`, and `evaluation.json`. The evaluation checks evidence and governance linkage; it is not an assessment of answer quality.
 
 **5 minutes:** Show the two retrieved policy/QA sources, the ontology result, the injected provider receipt, and the typed sandbox receipt. Follow the receipt references into the ordered trace and evaluation checks. Explain that IDs change between runs, the five files must be read as one bundle, and live AWS and OpenMetadata are outside this fixture's evidence.
 
