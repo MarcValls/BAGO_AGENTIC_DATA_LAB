@@ -3,7 +3,7 @@ import React from 'react'
 import {beforeEach,afterEach,expect,it,vi} from 'vitest'
 import {act,cleanup,fireEvent,render,screen,waitFor} from '@testing-library/react'
 import AgentChat from '../../src/components/AgentChat'
-import {resetLocaleForTests,setLocale,formatDate} from '../../src/i18n'
+import {resetLocaleForTests,setLocale,formatDate,t} from '../../src/i18n'
 import {conversationButton,conversationLibrary} from '../helpers/conversation-library'
 beforeEach(()=>{localStorage.clear();resetLocaleForTests();setLocale('es');HTMLElement.prototype.scrollIntoView=vi.fn()})
 afterEach(()=>{cleanup();vi.unstubAllGlobals()})
@@ -12,8 +12,9 @@ const summary=(id:string,date?:string)=>({id,owner_kind:'assistant',owner_id:'ap
 const rows=[summary('old','2026-10-20T10:15:00Z'),summary('tie-one','2026-10-24T11:00:00+01:00'),summary('tie-two','2026-10-24T10:00:00Z'),summary('bad','invalid-date'),summary('missing'),summary('date-only','2026-10-24')]
 function chat(policy:'explicit'|'latest'|undefined='explicit',workspaceScopeVersion=0){return <AgentChat historySelection={policy} workspaceScopeVersion={workspaceScopeVersion} cognitiveMode="baseline" onNavigate={()=>{}} onOpenProviderSettings={()=>{}} onOpenCognitionSettings={()=>{}}/>}
 async function fixture({policy='explicit',late=false,fail=false,workspaceScopeVersion=0,listRows=rows}:{policy?:'explicit'|'latest';late?:boolean;fail?:boolean;workspaceScopeVersion?:number;listRows?:typeof rows}={}){
- const calls:Array<{url:string;method:string;body:any}>=[];const created=new Map<string,any>();let delayed:((value:any)=>void)|null=null;let activeTitle='Proyecto A'
+ const calls:Array<{url:string;method:string;body:any}>=[];const created=new Map<string,any>();let delayed:((value:any)=>void)|null=null;let activeTitle='Proyecto A'; let resolveVoice: ((v:any)=>void)|null=null; let voiceSignal: AbortSignal|null=null
  const fetcher=vi.fn(async(url:string,init?:RequestInit)=>{
+ if(url==='/api/voice/transcribe'){voiceSignal=init?.signal as AbortSignal;return await new Promise(r=>{resolveVoice=r})}
  const method=init?.method??'GET',body=init?.body?JSON.parse(String(init.body)):null;calls.push({url,method,body})
  if(url==='/api/agents/list')return response({agents:[{id:'fixture-agent',config:{name:'Agente de prueba',type:'tool',tools:[],system_prompt:'fixture'},created_at:'2026-10-24'}]})
  if(url==='/api/providers/selection')return response({provider_id:null,model_id:null})
@@ -36,7 +37,7 @@ async function fixture({policy='explicit',late=false,fail=false,workspaceScopeVe
  }
  return response({models:[],proposals:[]})
   });vi.stubGlobal('fetch',fetcher);const view=render(chat(policy,workspaceScopeVersion));await waitFor(()=>expect(calls.some(c=>c.url.startsWith('/api/conversations?'))).toBe(true));if(!late)await act(async()=>{})
-  return {view,calls,created,changeProject:()=>{activeTitle='Proyecto B'},resolveList:async()=>{await act(async()=>{delayed!(response({conversations:rows}))})}}
+  return {view,calls,created,resolveVoice:async()=>{await act(async()=>{resolveVoice!(response({text:'TRANSCRIPCION TARDIA'}))})},getVoiceSignal:()=>voiceSignal,changeProject:()=>{activeTitle='Proyecto B'},resolveList:async()=>{await act(async()=>{delayed!(response({conversations:rows}))})}}
 }
 const writes=(calls:Array<{method:string}>)=>calls.filter(c=>c.method!=='GET')
 const details=(calls:Array<{url:string;method:string}>)=>calls.filter(c=>c.method==='GET'&&c.url.startsWith('/api/conversations/'))
@@ -77,4 +78,26 @@ it('list failure shows error while blank composer remains usable and no record o
 })
 it('latest embedding compatibility remains available explicitly without changing its old detail selection',async()=>{
  const f=await fixture({policy:'latest'});await screen.findByText('Contenido elegido old');expect(details(f.calls).map(c=>c.url)).toEqual(['/api/conversations/old']);expect(writes(f.calls)).toEqual([])
+})
+
+class ContextRecorder {
+ static isTypeSupported(){return true}
+ static current: ContextRecorder|null=null
+ state: RecordingState='inactive';mimeType='audio/webm';ondataavailable:((e:BlobEvent)=>void)|null=null;onstop:(()=>void)|null=null;onerror:(()=>void)|null=null
+ constructor(_stream: MediaStream){ContextRecorder.current=this}
+ start(){this.state='recording'}
+ stop(){this.state='inactive';queueMicrotask(()=>this.onstop?.())}
+}
+it.each(['conversation','project'] as const)('AgentChat preserves typed draft and rejects late voice on %s change',async which=>{
+ const stopped=vi.fn();Object.defineProperty(navigator,'mediaDevices',{configurable:true,value:{getUserMedia:vi.fn(async()=>({getTracks:()=>[{stop:stopped}]}))}});vi.stubGlobal('MediaRecorder',ContextRecorder)
+ const f=await fixture();const composer=screen.getByRole('textbox',{name:'Mensaje al asistente o agente seleccionado'}) as HTMLTextAreaElement
+ fireEvent.change(composer,{target:{value:'Borrador humano'}})
+ fireEvent.click(screen.getByRole('button',{name:t('commerce.voice.dictate')}))
+ await waitFor(()=>expect(ContextRecorder.current?.state).toBe('recording'))
+ ContextRecorder.current?.ondataavailable?.({data:new Blob(['synthetic'])} as BlobEvent)
+ fireEvent.click(screen.getByRole('button',{name:t('commerce.voice.stop_dictation')}))
+ await waitFor(()=>expect(f.getVoiceSignal()).not.toBeNull())
+ if(which==='conversation'){fireEvent.click(conversationButton(document,'Historial tie-two'));await screen.findByText('Contenido elegido tie-two')}
+ else{f.changeProject();f.view.rerender(chat('explicit',1));await screen.findByText('Proyecto B')}
+ expect(f.getVoiceSignal()?.aborted).toBe(true);await f.resolveVoice();expect(composer.value).toBe('Borrador humano');expect(stopped).toHaveBeenCalled();expect(writes(f.calls)).toEqual([])
 })

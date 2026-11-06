@@ -5091,6 +5091,9 @@ class _TaskExecutionHost:
 
 from src.api.task_execution_routes import create_task_execution_router
 app.include_router(create_task_execution_router(service=_TaskExecutionHost()))
+from src.voice_bridge import VoiceBridge
+from src.api.voice_routes import create_voice_router
+app.include_router(create_voice_router(VoiceBridge()))
 
 
 if FRONTEND_BUILD.exists():
