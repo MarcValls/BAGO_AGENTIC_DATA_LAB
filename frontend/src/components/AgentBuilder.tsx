@@ -313,7 +313,7 @@ export default function AgentBuilder({ onAgentCreated, onBack, initialAgent, age
               <strong>{t('agents.AgentBuilder.system_prompt_2')}</strong>
               <div className="preview-code">{agent.system_prompt}</div>
             </div>
-            <div className="preview-field">
+            {agent.tools.length > 0 && <div className="preview-field">
               <strong>{t('agents.builder.toolsCount',{count:formatNumber(agent.tools.length)})}</strong>
               <div className="tools-preview">
                 {agent.tools.map((tool) => (
@@ -322,7 +322,7 @@ export default function AgentBuilder({ onAgentCreated, onBack, initialAgent, age
                   </span>
                 ))}
               </div>
-            </div>
+            </div>}
           </div>
 
           <div className="button-group">
@@ -354,7 +354,6 @@ export default function AgentBuilder({ onAgentCreated, onBack, initialAgent, age
 
             <div className="completion-details">
               <p><strong>{t('agents.AgentBuilder.type')}</strong> {agentStateLabel(agent.type)}</p>
-              <p><strong>{t('agents.AgentBuilder.tools_2')}</strong> {t('agents.builder.availableTools',{count:formatNumber(agent.tools.length)})}</p>
             </div>
 
             <div className="button-group">
