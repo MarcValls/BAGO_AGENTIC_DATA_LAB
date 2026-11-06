@@ -134,6 +134,16 @@ describe('Gestión de agentes con API', () => {
     expect(callbacks.onEvaluate).toHaveBeenCalledWith(twelveProfiles[0].id)
   })
 
+  it('omits generic empty-tools notices from the saved-agent list and detail', async () => {
+    vi.stubGlobal('fetch', vi.fn(async () => response({ agents: [original] })))
+    render(<AgentManagement {...props()} />)
+    const option = await screen.findByRole('button', { name: /Ámbar/ })
+    expect(option.textContent).not.toContain('Sin herramientas asignadas')
+    const detail = await screen.findByRole('article', { name: 'Ámbar' })
+    expect(within(detail).queryByText('Sin herramientas asignadas')).toBeNull()
+    expect(within(detail).queryByText(t('agents.AgentManagement.herramientas_asignadas'))).toBeNull()
+  })
+
   it('returns from mobile detail to the list with search and selected identity intact', async () => {
     vi.stubGlobal('fetch', vi.fn(async () => response({ agents: twelveProfiles })))
     render(<AgentManagement {...props()} />)

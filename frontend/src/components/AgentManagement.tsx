@@ -111,7 +111,6 @@ export default function AgentManagement({ onCreate, onTest, onEvaluate }: Props)
   const selected = agents.find(agent => agent.id === selectedId) ?? agents[0] ?? null
   const returnFromEdit = () => { setEditing(null); void refresh() }
   const toolsSummary = (agent: Profile) => {
-    if (!agent.config.tools.length) return t('agents.AgentManagement.sin_herramientas_asignadas')
     const visible = agent.config.tools.slice(0, 2).join(', ')
     return agent.config.tools.length > 2 ? visible + ' +' + (agent.config.tools.length - 2) : visible
   }
@@ -167,7 +166,7 @@ export default function AgentManagement({ onCreate, onTest, onEvaluate }: Props)
                 </span>
                 <span className="agent-management-option-description">{agent.config.description}</span>
                 <span className="agent-management-option-meta">{providerModel(agent)}</span>
-                <span className="agent-management-option-meta">{toolsSummary(agent)}</span>
+                {agent.config.tools.length > 0 && <span className="agent-management-option-meta">{toolsSummary(agent)}</span>}
               </button>
             </li>)}
           </ul>}
@@ -182,11 +181,9 @@ export default function AgentManagement({ onCreate, onTest, onEvaluate }: Props)
         <dl className="agent-management-metadata agent-management-detail-metadata">
           <div className="agent-meta-provider"><dt>{t('agents.AgentManagement.proveedor_y_modelo')}</dt><dd>{providerModel(selected)}</dd></div>
           <div className="agent-meta-scope"><dt>{t('agents.AgentManagement.alcance_de_asignacion')}</dt><dd>{selected.config.task_scope || t('agents.AgentManagement.sin_alcance_declarado')}</dd></div>
-          <div className="agent-meta-tools"><dt>{t('agents.AgentManagement.herramientas_asignadas')}</dt><dd>
-            {selected.config.tools.length
-              ? <ul>{selected.config.tools.map(tool => <li key={tool}><code>{tool}</code></li>)}</ul>
-              : <span>{t('agents.AgentManagement.sin_herramientas_asignadas')}</span>}
-          </dd></div>
+          {selected.config.tools.length > 0 && <div className="agent-meta-tools"><dt>{t('agents.AgentManagement.herramientas_asignadas')}</dt><dd>
+            <ul>{selected.config.tools.map(tool => <li key={tool}><code>{tool}</code></li>)}</ul>
+          </dd></div>}
         </dl>
         <div className="agent-management-actions agent-management-detail-actions">
           <button type="button" disabled={busy || loading} onClick={() => void select(selected.id, 'edit')}>{t('agents.AgentManagement.editar')}</button>
