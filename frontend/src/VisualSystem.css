@@ -113,6 +113,24 @@
   background: var(--vs-work);
   border-color: var(--vs-line);
 }
+/* Keep the agent builder's legacy wizard surfaces within the shared visual system. */
+#root .app-shell .agent-builder :is(.wizard-step, .checkbox-label) {
+  background: var(--vs-work);
+  border-color: var(--vs-line);
+  border-radius: 0;
+  box-shadow: none;
+}
+#root .app-shell .agent-builder :is(.form-input, .form-textarea, .form-select) {
+  background: var(--vs-base);
+  border-color: var(--vs-line);
+  border-radius: 0;
+}
+#root .app-shell .agent-builder :is(.form-input, .form-textarea, .form-select):focus-visible {
+  box-shadow: 0 0 0 2px var(--vs-focus);
+}
+#root .app-shell .agent-builder .checkbox-label:hover {
+  border-color: var(--vs-focus);
+}
 /* Full library and quiet Manage action retain their established geometry and behavior. */
 #root .app-shell .control-chat .chat-agent-panel {
   background: var(--vs-work);
