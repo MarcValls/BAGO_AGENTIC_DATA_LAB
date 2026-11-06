@@ -120,14 +120,14 @@ def test_unlisted_model_is_rejected_before_inference(monkeypatch, tmp_path: Path
     assert response.json()["detail"]["code"] == "model_unavailable"
 
 
-def test_unverified_but_discovered_model_is_rejected_before_inference(monkeypatch, tmp_path: Path):
+def test_other_discovered_model_is_rejected_before_inference(monkeypatch, tmp_path: Path):
     store = EvaluationStore(tmp_path / "workspace", tmp_path / "db.sqlite3")
     suite = store.create_suite("verification required", "agent_12345678", valid_cases())
     monkeypatch.setattr(server, "EVALUATIONS", store)
     monkeypatch.setattr(server, "_load_agent", lambda _id: _agent())
     monkeypatch.setattr(server.ollama, "status", lambda: {"provider_id": "ollama-cloud", "state": "ready", "model_id": "verified-model"})
     monkeypatch.setattr(server.ollama, "discover_models", lambda: {"models": [{"model_id": "unverified-model"}]})
-    monkeypatch.setattr(server.ollama, "chat", lambda *_args: pytest.fail("unverified model cannot reach inference"))
+    monkeypatch.setattr(server.ollama, "chat", lambda *_args: pytest.fail("a different saved model cannot reach inference"))
 
     response = TestClient(server.app).post(
         f"/api/evaluations/suites/{suite['id']}/run",
@@ -144,7 +144,7 @@ def test_real_run_api_preserves_case_trace_correlation_redacts_payload_and_has_n
     monkeypatch.setattr(server, "EVALUATIONS", store)
     monkeypatch.setattr(server, "EVALUATION_TRACE_DIR", tmp_path / "traces")
     monkeypatch.setattr(server, "_load_agent", lambda _id: _agent())
-    monkeypatch.setattr(server.ollama, "status", lambda: {"provider_id": "ollama-cloud", "state": "ready", "model_id": "gemma4:31b-cloud"})
+    monkeypatch.setattr(server.ollama, "status", lambda: {"provider_id": "ollama-cloud", "state": "configured_unverified", "model_id": "gemma4:31b-cloud"})
     monkeypatch.setattr(server.ollama, "discover_models", lambda: {"models": [{"model_id": "gemma4:31b-cloud"}]})
     calls = []
 
