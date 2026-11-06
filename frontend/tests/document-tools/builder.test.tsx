@@ -50,3 +50,21 @@ it('renders the registry labels and enum correctly in English',async()=>{
  expect(await screen.findByLabelText('Plan files')).toBeTruthy()
  expect(screen.getByRole('button',{name:'Use template: Delivery reviewer'})).toBeTruthy()
 })
+
+
+it('does not show zero tools in preview or an availability claim after saving',async()=>{
+ setup()
+ fireEvent.click(await screen.findByRole('button',{name:/Vista previa/}))
+ expect(screen.queryByText(t('agents.builder.toolsCount',{count:'0'}))).toBeNull()
+ fireEvent.click(screen.getByRole('button',{name:t('agents.AgentBuilder.save_changes')}))
+ await screen.findByRole('heading',{name:t('agents.AgentBuilder.changes_saved')},{timeout:3000})
+ expect(screen.queryByText(t('agents.builder.availableTools',{count:'0'}))).toBeNull()
+})
+
+it('keeps assigned tools visible in the preview',async()=>{
+ setup()
+ fireEvent.click(await screen.findByLabelText('Preparar archivos'))
+ fireEvent.click(screen.getByRole('button',{name:/Vista previa/}))
+ expect(screen.getByText(t('agents.builder.toolsCount',{count:'1'}))).toBeTruthy()
+ expect(screen.getByText('Preparar archivos')).toBeTruthy()
+})
