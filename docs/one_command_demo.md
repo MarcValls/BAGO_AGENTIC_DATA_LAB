@@ -14,7 +14,7 @@ The agent retrieves two fixture-backed policy/evidence chunks, reasons over the 
 
 - Python 3.11 or newer.
 - Git and a repository checkout.
-- No API keys, environment variables, network access, Docker, AWS account, or paid service are required for this demo.
+- Once the dependencies are installed, the local fixture demo does not require API keys, network access, Docker, an AWS account, or a paid service. Installing the dependencies may require access to a package source.
 
 POSIX shell:
 
@@ -48,9 +48,9 @@ PowerShell accepts the same `--output-dir` option. Relative paths are resolved f
 
 ## Canonical fixture question and expected result
 
-**Question:** `¿Qué sustituye a la política anterior y qué evidencia la valida?`
+**Question:** `¿Qué política aplica a los pedidos exprés que llegan con más de 24 horas de retraso y qué evidencia valida la regla?`
 
-**Answer:** `La política vigente sustituye a la anterior y la evidencia enlazada valida esa relación.` The answer includes citations to the committed policy-v2 and validation-receipt fixtures. Run-specific IDs, durations, timestamps, and sandbox receipt hashes can vary; semantic results are expected to remain `PASS`, two retrieval hits, zero ontology contradictions, 15 trace events, and evaluation score `1.0`.
+**Answer:** `Para pedidos exprés con más de 24 horas de retraso, la política vigente devuelve el coste del envío; el acta de QA valida la regla.` The answer includes citations to the committed policy-v2 and validation-receipt fixtures. Run-specific IDs, durations, timestamps, and sandbox receipt hashes can vary; the observed local fixture produced `PASS`, two retrieval hits, zero ontology contradictions, 15 trace events, and evaluation score `1.0`.
 
 ## Artifacts
 
@@ -62,19 +62,27 @@ PowerShell accepts the same `--output-dir` option. Relative paths are resolved f
 | `trace.json` | Ordered LocalTrace events, parent IDs, evidence refs, run ID and trace ID. |
 | `evaluation.json` | Deterministic structural checks and their evidence refs; this evaluates trace/governance linkage, not natural-language answer quality. |
 
-The five files are written only after a successful run. Each JSON file is replaced atomically. A failed demo prints a JSON error to stderr and exits non-zero; it does not claim PASS. If interrupted during output writing, rerun the command to regenerate the set.
+The five files are written after the demo returns a result. They are written individually and can overwrite files in the selected output directory; the set is not an atomic transaction. If writing is interrupted, inspect the output and run again in a new directory before treating the files as a complete bundle. An uncaught error exits non-zero and may produce a Python traceback.
 
 ## Governance controls observed
 
 - Fixture metadata/citations are retained through governed retrieval.
 - The Bedrock-shaped client is injected; no AWS transport occurs (`aws_live: NOT_RUN`).
-- Typed sandbox request is bounded to the temporary workspace and `test_runner` profile; network mode is deny.
+- The typed sandbox request uses a temporary workspace and the `test_runner` profile with network mode `DENY`. This is a policy setting; it does not establish OS-level network isolation.
 - Provider and sandbox operations carry permit/receipt IDs.
 - Trace/evaluation check workflow coverage, retrieval evidence, permit/receipt linkage, absence of unauthorized effects, and sandbox receipt linkage.
 
 ## Stack and CI
 
-Python, LangGraph, Pydantic, GovernedRAG, local ontology engine, local restricted sandbox, LocalTraceBuilder, LocalTraceEvaluator, pytest, GitHub Actions. The workflow runs the full suite, generated README check, public E2E, vector-store validation, local OpenMetadata/Jaeger validations, compile check, and the one-command artifact contract tests.
+Python, LangGraph, Pydantic, GovernedRAG, local ontology engine, local restricted sandbox, LocalTraceBuilder, LocalTraceEvaluator, pytest, GitHub Actions. The local CI configuration includes the public E2E, vector-store validation, local OpenMetadata/Jaeger validations, compile check, and one-command demo; the legacy README generator check and its tests are disabled. A configured step is not evidence that a particular candidate passed CI.
+
+## Presenting the demo
+
+**30 seconds:** A fictional late-delivery question produces a fixture-backed answer, citations, receipts, a trace, and a structural evaluation. No live provider is called.
+
+**90 seconds:** Run `python demo.py` in a prepared environment. Read the question and answer in `summary.json`, then follow the shared run and trace IDs through `agent_run.json`, `receipts.json`, `trace.json`, and `evaluation.json`. The evaluation checks evidence and governance linkage; it is not an assessment of answer quality.
+
+**5 minutes:** Show the two retrieved policy/QA sources, the ontology result, the injected provider receipt, and the typed sandbox receipt. Follow the receipt references into the ordered trace and evaluation checks. Explain that IDs change between runs, the five files must be read as one bundle, and live AWS and OpenMetadata are outside this fixture's evidence.
 
 ## Limitations
 
