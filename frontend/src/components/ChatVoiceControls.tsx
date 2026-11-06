@@ -1,3 +1,4 @@
+import './ChatVoiceControls.css'
 import {useEffect, useRef, useState} from 'react'
 import {t, useI18n, type TranslationKey} from '../i18n'
 
