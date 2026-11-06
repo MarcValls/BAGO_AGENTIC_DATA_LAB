@@ -95,4 +95,3 @@ it('does not replace a newer manual conversation of the same agent',async()=>{
  render(<AgentChat historySelection="explicit" workspaceScopeVersion={0} cognitiveMode="baseline" onNavigate={()=>{}} onOpenProviderSettings={()=>{}} onOpenCognitionSettings={()=>{}} />)
  await screen.findByText('Conversación principal');fireEvent.click(conversationButton(document,'Conversación principal'));fireEvent.click(await screen.findByRole('button',{name:'Abrir hijo de prueba'}));await waitFor(()=>expect(finish).toBeDefined());await screen.findByText('Conversación elegida');fireEvent.click(conversationButton(document,'Conversación elegida'));await screen.findByText('CONTENIDO ELEGIDO');await act(async()=>{finish!(reply(child));await Promise.resolve()});expect(screen.queryByText('CONTENIDO HIJO TARDÍO')).toBeNull();expect(screen.getByText('CONTENIDO ELEGIDO')).toBeTruthy()
 })
-
