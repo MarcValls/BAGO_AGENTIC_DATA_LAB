@@ -1649,10 +1649,10 @@ async def evaluation_run_suite(suite_id: str, request: EvaluationRunRequest) -> 
     try:
         selected_model = ollama.validate_model_id(request.model_id)
         status = ollama.status()
-        if status.get("provider_id") != "ollama-cloud" or status.get("state") != "ready":
-            raise ollama.ProviderError("provider_not_ready", "Configure and verify Ollama before running this suite.", status.get("state", "not_configured"))
+        if status.get("provider_id") != "ollama-cloud" or status.get("state") not in {"ready", "configured_unverified"}:
+            raise ollama.ProviderError("provider_not_ready", "Configure Ollama before running this suite.", status.get("state", "not_configured"))
         if status.get("model_id") != selected_model:
-            raise ollama.ProviderError("model_not_verified", "Verify the selected Ollama model in Provider Settings before running this suite.", "configured_unverified")
+            raise ollama.ProviderError("model_not_verified", "Select and save this Ollama model in Provider Settings before running the suite.", "configured_unverified")
         discovery = ollama.discover_models()
         model_ids = {item.get("model_id") for item in discovery.get("models", []) if isinstance(item, dict)}
         if selected_model not in model_ids:

@@ -106,12 +106,13 @@ def test_run_preflights_model_and_never_falls_back_to_fixtures(monkeypatch, tmp_
     assert response.json()["detail"]["code"] == "provider_not_ready"
 
 
-def test_unlisted_model_is_rejected_before_inference(monkeypatch, tmp_path: Path):
+@pytest.mark.parametrize("provider_state", ["ready", "configured_unverified"])
+def test_unlisted_model_is_rejected_before_inference(monkeypatch, tmp_path: Path, provider_state):
     store = EvaluationStore(tmp_path / "workspace", tmp_path / "db.sqlite3")
     suite = store.create_suite("model preflight", "agent_12345678", valid_cases())
     monkeypatch.setattr(server, "EVALUATIONS", store)
     monkeypatch.setattr(server, "_load_agent", lambda _id: _agent())
-    monkeypatch.setattr(server.ollama, "status", lambda: {"provider_id": "ollama-cloud", "state": "ready", "model_id": "gemma4:31b-cloud"})
+    monkeypatch.setattr(server.ollama, "status", lambda: {"provider_id": "ollama-cloud", "state": provider_state, "model_id": "gemma4:31b-cloud"})
     monkeypatch.setattr(server.ollama, "discover_models", lambda: {"models": [{"model_id": "other-model"}]})
     monkeypatch.setattr(server.ollama, "chat", lambda *_args: pytest.fail("unlisted model cannot reach inference"))
     client = TestClient(server.app)
@@ -120,14 +121,15 @@ def test_unlisted_model_is_rejected_before_inference(monkeypatch, tmp_path: Path
     assert response.json()["detail"]["code"] == "model_unavailable"
 
 
-def test_unverified_but_discovered_model_is_rejected_before_inference(monkeypatch, tmp_path: Path):
+@pytest.mark.parametrize("provider_state", ["ready", "configured_unverified"])
+def test_other_discovered_model_is_rejected_before_inference(monkeypatch, tmp_path: Path, provider_state):
     store = EvaluationStore(tmp_path / "workspace", tmp_path / "db.sqlite3")
     suite = store.create_suite("verification required", "agent_12345678", valid_cases())
     monkeypatch.setattr(server, "EVALUATIONS", store)
     monkeypatch.setattr(server, "_load_agent", lambda _id: _agent())
-    monkeypatch.setattr(server.ollama, "status", lambda: {"provider_id": "ollama-cloud", "state": "ready", "model_id": "verified-model"})
+    monkeypatch.setattr(server.ollama, "status", lambda: {"provider_id": "ollama-cloud", "state": provider_state, "model_id": "verified-model"})
     monkeypatch.setattr(server.ollama, "discover_models", lambda: {"models": [{"model_id": "unverified-model"}]})
-    monkeypatch.setattr(server.ollama, "chat", lambda *_args: pytest.fail("unverified model cannot reach inference"))
+    monkeypatch.setattr(server.ollama, "chat", lambda *_args: pytest.fail("a different saved model cannot reach inference"))
 
     response = TestClient(server.app).post(
         f"/api/evaluations/suites/{suite['id']}/run",
@@ -144,7 +146,7 @@ def test_real_run_api_preserves_case_trace_correlation_redacts_payload_and_has_n
     monkeypatch.setattr(server, "EVALUATIONS", store)
     monkeypatch.setattr(server, "EVALUATION_TRACE_DIR", tmp_path / "traces")
     monkeypatch.setattr(server, "_load_agent", lambda _id: _agent())
-    monkeypatch.setattr(server.ollama, "status", lambda: {"provider_id": "ollama-cloud", "state": "ready", "model_id": "gemma4:31b-cloud"})
+    monkeypatch.setattr(server.ollama, "status", lambda: {"provider_id": "ollama-cloud", "state": "configured_unverified", "model_id": "gemma4:31b-cloud"})
     monkeypatch.setattr(server.ollama, "discover_models", lambda: {"models": [{"model_id": "gemma4:31b-cloud"}]})
     calls = []
 
@@ -249,3 +251,19 @@ def _agent():
                    "system_prompt": "Only answer from the synthetic input.", "provider_id": "ollama-cloud",
                    "model_id": "gemma4:31b-cloud", "tools": [], "retrieval_config": None, "sandbox_profile": None},
     })
+
+
+def test_configured_unverified_discovery_failure_never_starts_inference(monkeypatch, tmp_path: Path):
+    store = EvaluationStore(tmp_path / "workspace", tmp_path / "db.sqlite3")
+    suite = store.create_suite("discovery failure", "agent_12345678", valid_cases())
+    monkeypatch.setattr(server, "EVALUATIONS", store)
+    monkeypatch.setattr(server, "_load_agent", lambda _id: _agent())
+    monkeypatch.setattr(server.ollama, "status", lambda: {"provider_id": "ollama-cloud", "state": "configured_unverified", "model_id": "gemma4:31b-cloud"})
+    def failed_discovery():
+        raise ProviderError("provider_unavailable", "synthetic discovery failure")
+    monkeypatch.setattr(server.ollama, "discover_models", failed_discovery)
+    monkeypatch.setattr(server.ollama, "chat", lambda *_args: pytest.fail("failed discovery must not start inference"))
+    monkeypatch.setattr(store, "acquire_suite_run", lambda *_args: pytest.fail("failed discovery must not reserve a run"))
+    response = TestClient(server.app).post(f"/api/evaluations/suites/{suite['id']}/run", json={"revision": 0, "model_id": "gemma4:31b-cloud"})
+    assert response.status_code == 503
+    assert response.json()["detail"]["code"] == "provider_unavailable"
