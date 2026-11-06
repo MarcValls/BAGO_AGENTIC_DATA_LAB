@@ -125,6 +125,12 @@
   border-color: var(--vs-line);
   border-radius: 0;
 }
+#root .app-shell .agent-builder :is(.form-input, .form-textarea, .form-select):focus-visible {
+  box-shadow: 0 0 0 2px var(--vs-focus);
+}
+#root .app-shell .agent-builder .checkbox-label:hover {
+  border-color: var(--vs-focus);
+}
 /* Full library and quiet Manage action retain their established geometry and behavior. */
 #root .app-shell .control-chat .chat-agent-panel {
   background: var(--vs-work);
