@@ -57,7 +57,7 @@ it('ignores a late failed detail after switching owners',async()=>{
   return reply({models:[],proposals:[]})
  }))
  render(<AgentChat historySelection="latest" workspaceScopeVersion={0} cognitiveMode="baseline" onNavigate={()=>{}} onOpenProviderSettings={()=>{}} onOpenCognitionSettings={()=>{}} />)
- await waitFor(()=>expect(failOld).toBeDefined());fireEvent.click(screen.getByRole('button',{name:'Agente A'}));await screen.findByText('MENSAJE CORRECTO');await act(async()=>{failOld!({ok:false,status:404,json:async()=>({})});await Promise.resolve()});expect(screen.getByText('MENSAJE CORRECTO')).toBeTruthy()
+ await waitFor(()=>expect(failOld).toBeDefined());fireEvent.click(screen.getByRole('button',{name:'Elegir agente'}));fireEvent.click(screen.getByRole('button',{name:'Agente A'}));await screen.findByText('MENSAJE CORRECTO');await act(async()=>{failOld!({ok:false,status:404,json:async()=>({})});await Promise.resolve()});expect(screen.getByText('MENSAJE CORRECTO')).toBeTruthy()
 })
 
 it('opens the delegated child when the owner and project remain unchanged',async()=>{

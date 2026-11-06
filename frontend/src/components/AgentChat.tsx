@@ -238,6 +238,7 @@ export default function AgentChat({ onInspectionSelection, onInspectExecution: i
   const [agentsState, setAgentsState] = useState<'loading' | 'ready' | 'error'>('loading')
   const [inventoryWarning, setInventoryWarning] = useState<string|Error>('')
   const [selectedAgent, setSelectedAgent] = useState<Agent | null>(null)
+  const [agentPickerOpen, setAgentPickerOpen] = useState(false)
   const delegatedOpenGeneration = useRef(0)
   const [messages, setMessages] = useState<Message[]>([])
   const [activeConversation, setActiveConversation] = useState<StoredConversation | null>(null)
@@ -1376,8 +1377,8 @@ export default function AgentChat({ onInspectionSelection, onInspectExecution: i
     setAgentPanelOpen(false)
     agentPanelRef.current?.querySelector<HTMLElement>(':scope > summary')?.focus()
   }
-  const openControlChat = () => { delegatedOpenGeneration.current++; setSelectedAgent(null); setCapabilityDraft(null); setCapabilityProposals([]); setError('') }
-  const selectAgent = (agent: Agent) => { delegatedOpenGeneration.current++; setSelectedAgent(agent); setCapabilityDraft(null); setCapabilityProposals([]); setError('') }
+  const openControlChat = () => { delegatedOpenGeneration.current++; setAgentPickerOpen(false); setSelectedAgent(null); setCapabilityDraft(null); setCapabilityProposals([]); setError('') }
+  const selectAgent = (agent: Agent) => { delegatedOpenGeneration.current++; setAgentPickerOpen(false); setSelectedAgent(agent); setCapabilityDraft(null); setCapabilityProposals([]); setError('') }
   const latestDirectoryScanPromptId = [...messages].reverse().find((message) => message.inlineDirectoryScan)?.id
   const latestDelegationMessageIds = new Set<string>()
   const seenDelegationProposalIds = new Set<string>()
@@ -1543,7 +1544,8 @@ export default function AgentChat({ onInspectionSelection, onInspectExecution: i
                   : <div className="conversation-participant-list">{conversationAgents.map(agent => <article className="conversation-participant" key={agent.id}><strong>{agent.name}</strong><span>{agent.model}</span></article>)}</div>}
               </section>
               <button type="button" className={`control-agent-option ${selectedAgent === null ? 'selected' : ''}`} onClick={openControlChat}><strong>{t('commerce.app_assistant')}</strong></button>
-              {agents.map(agent => <button key={agent.id} type="button" aria-label={agents.filter(item => item.config.name === agent.config.name).length > 1 ? `${agent.config.name} (${agent.id})` : agent.config.name} className={`control-agent-option ${selectedAgent?.id === agent.id ? 'selected' : ''}`} onClick={() => selectAgent(agent)}><strong>{agent.config.name}</strong>{agents.filter(item => item.config.name === agent.config.name).length > 1 && <small> {agent.id}</small>}</button> )}
+              <button type="button" aria-expanded={agentPickerOpen} onClick={() => setAgentPickerOpen(open => !open)}>{t('commerce.choose_saved_agent')}</button>
+              {agentPickerOpen && agents.map(agent => <button key={agent.id} type="button" aria-label={agents.filter(item => item.config.name === agent.config.name).length > 1 ? `${agent.config.name} (${agent.id})` : agent.config.name} className={`control-agent-option ${selectedAgent?.id === agent.id ? 'selected' : ''}`} onClick={() => selectAgent(agent)}><strong>{agent.config.name}</strong>{agents.filter(item => item.config.name === agent.config.name).length > 1 && <small> {agent.id}</small>}</button> )}
               {inventoryWarning && <p className="warning-state" role="status">{errorMessage(inventoryWarning)}</p>}
             </section>
           </aside>
