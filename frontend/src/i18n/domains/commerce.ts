@@ -1,5 +1,6 @@
 // Manually authored product presentation catalog. Protocol values and user content are not translated.
 export const es = {
+  "commerce.choose_saved_agent": "Elegir agente",
   "commerce.web_notice.title": "Aviso de lectura web",
   "commerce.web_notice.explanation": "Has activado la opción de lectura web para esta conversación. Los enlaces se toman de tus mensajes y puedes desactivar la opción con la casilla del chat.",
   "commerce.web_notice.sites": "Sitios permitidos en este envío:",
@@ -882,6 +883,7 @@ export const es = {
   "commerce.voice.errors.request_failed": "No se pudo completar la operación de voz.",
 } as const
 export const en: {[K in keyof typeof es]: string} = {
+  "commerce.choose_saved_agent": "Choose agent",
   "commerce.web_notice.title": "Web reading notice",
   "commerce.web_notice.explanation": "You enabled the web reading option for this conversation. Links come from your messages, and you can turn the option off using the chat checkbox.",
   "commerce.web_notice.sites": "Sites allowed for this message:",

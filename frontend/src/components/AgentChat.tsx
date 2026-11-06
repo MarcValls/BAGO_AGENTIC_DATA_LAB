@@ -238,6 +238,8 @@ export default function AgentChat({ onInspectionSelection, onInspectExecution: i
   const [agentsState, setAgentsState] = useState<'loading' | 'ready' | 'error'>('loading')
   const [inventoryWarning, setInventoryWarning] = useState<string|Error>('')
   const [selectedAgent, setSelectedAgent] = useState<Agent | null>(null)
+  const [agentPickerOpen, setAgentPickerOpen] = useState(false)
+  const delegatedOpenGeneration = useRef(0)
   const [messages, setMessages] = useState<Message[]>([])
   const [activeConversation, setActiveConversation] = useState<StoredConversation | null>(null)
   const [conversationList, setConversationList] = useState<ConversationSummary[]>([])
@@ -677,7 +679,7 @@ export default function AgentChat({ onInspectionSelection, onInspectExecution: i
         } else if (conversations.length) {
           const latest = await fetch(`/api/conversations/${encodeURIComponent(conversations[0].id)}`)
           if (latest.ok) {const detail = await latest.json() as StoredConversation;if (current() && detail.id === conversations[0].id && matchesOwner(detail)) applyConversation(detail)}
-          else { setActiveConversation(null); setMessages([]) }
+          else if (current()) { setActiveConversation(null); setMessages([]) }
         } else {
           setActiveConversation(null)
           setMessages([])
@@ -762,6 +764,7 @@ export default function AgentChat({ onInspectionSelection, onInspectExecution: i
 
   const startConversation = async () => {
     if (creatingConversationRef.current) return
+    delegatedOpenGeneration.current++
     creatingConversationRef.current = true
     setCreatingConversation(true)
     setError('')
@@ -802,6 +805,7 @@ export default function AgentChat({ onInspectionSelection, onInspectExecution: i
   }
 
   const openConversation = async (conversationId: string) => {
+    delegatedOpenGeneration.current++
     const generation = ++conversationLoadGeneration.current
     const scope = conversationScopeRef.current
     clearInspectionSelection()
@@ -823,16 +827,21 @@ export default function AgentChat({ onInspectionSelection, onInspectExecution: i
   const openDelegatedChild = async (identity: { agentId: string; conversationId: string }) => {
     const agent = agents.find(item => item.id === identity.agentId)
     if (!agent) { setLibraryError('commerce.the_saved_agent_for_this_child_conversation_is_unavailable'); return }
+    const generation = ++delegatedOpenGeneration.current
+    const expectedScope = `agent:${identity.agentId}:active:${workspaceScopeVersion}`
+    const current = () => generation === delegatedOpenGeneration.current && conversationScopeRef.current === expectedScope
     setSelectedAgent(agent)
     setLibraryMode('active')
     await new Promise(resolve => window.setTimeout(resolve, 0))
+    if (!current()) return
     try {
       const response = await fetch(`/api/conversations/${encodeURIComponent(identity.conversationId)}`)
       if (!response.ok) throw await responseError(response)
       const conversation = await response.json() as StoredConversation
+      if (!current()) return
       if (conversation.id !== identity.conversationId || conversation.owner_kind !== 'agent' || conversation.owner_id !== identity.agentId || conversation.status === 'deleted') throw new Error('commerce.conversation_response_identity_mismatch')
       applyConversation(conversation)
-    } catch (cause) { setLibraryError(cause instanceof Error ? cause : 'commerce.conversation_could_not_be_opened') }
+    } catch (cause) { if (current()) setLibraryError(cause instanceof Error ? cause : 'commerce.conversation_could_not_be_opened') }
   }
 
   const manageConversation = async (action: 'rename' | 'archive' | 'delete' | 'restore', target: ConversationSummary | StoredConversation | null = activeConversation) => {
@@ -1368,8 +1377,8 @@ export default function AgentChat({ onInspectionSelection, onInspectExecution: i
     setAgentPanelOpen(false)
     agentPanelRef.current?.querySelector<HTMLElement>(':scope > summary')?.focus()
   }
-  const openControlChat = () => { setSelectedAgent(null); setCapabilityDraft(null); setCapabilityProposals([]); setError('') }
-  const selectAgent = (agent: Agent) => { setSelectedAgent(agent); setCapabilityDraft(null); setCapabilityProposals([]); setError('') }
+  const openControlChat = () => { delegatedOpenGeneration.current++; setAgentPickerOpen(false); setSelectedAgent(null); setCapabilityDraft(null); setCapabilityProposals([]); setError('') }
+  const selectAgent = (agent: Agent) => { delegatedOpenGeneration.current++; setAgentPickerOpen(false); setSelectedAgent(agent); setCapabilityDraft(null); setCapabilityProposals([]); setError('') }
   const latestDirectoryScanPromptId = [...messages].reverse().find((message) => message.inlineDirectoryScan)?.id
   const latestDelegationMessageIds = new Set<string>()
   const seenDelegationProposalIds = new Set<string>()
@@ -1535,6 +1544,8 @@ export default function AgentChat({ onInspectionSelection, onInspectExecution: i
                   : <div className="conversation-participant-list">{conversationAgents.map(agent => <article className="conversation-participant" key={agent.id}><strong>{agent.name}</strong><span>{agent.model}</span></article>)}</div>}
               </section>
               <button type="button" className={`control-agent-option ${selectedAgent === null ? 'selected' : ''}`} onClick={openControlChat}><strong>{t('commerce.app_assistant')}</strong></button>
+              <button type="button" aria-expanded={agentPickerOpen} onClick={() => setAgentPickerOpen(open => !open)}>{t('commerce.choose_saved_agent')}</button>
+              {agentPickerOpen && agents.map(agent => <button key={agent.id} type="button" aria-label={agents.filter(item => item.config.name === agent.config.name).length > 1 ? `${agent.config.name} (${agent.id})` : agent.config.name} className={`control-agent-option ${selectedAgent?.id === agent.id ? 'selected' : ''}`} onClick={() => selectAgent(agent)}><strong>{agent.config.name}</strong>{agents.filter(item => item.config.name === agent.config.name).length > 1 && <small> {agent.id}</small>}</button> )}
               {inventoryWarning && <p className="warning-state" role="status">{errorMessage(inventoryWarning)}</p>}
             </section>
           </aside>
