@@ -11,12 +11,12 @@ const response=(data:unknown,status=200)=>({ok:status<400,status,json:async()=>d
 const summary=(id:string,date?:string)=>({id,owner_kind:'assistant',owner_id:'app-assistant',title:'Historial '+id,status:'active',updated_at:date,revision:2})
 const rows=[summary('old','2026-10-20T10:15:00Z'),summary('tie-one','2026-10-24T11:00:00+01:00'),summary('tie-two','2026-10-24T10:00:00Z'),summary('bad','invalid-date'),summary('missing'),summary('date-only','2026-10-24')]
 function chat(policy:'explicit'|'latest'|undefined='explicit',workspaceScopeVersion=0){return <AgentChat historySelection={policy} workspaceScopeVersion={workspaceScopeVersion} cognitiveMode="baseline" onNavigate={()=>{}} onOpenProviderSettings={()=>{}} onOpenCognitionSettings={()=>{}}/>}
-async function fixture({policy='explicit',late=false,fail=false,workspaceScopeVersion=0,listRows=rows}:{policy?:'explicit'|'latest';late?:boolean;fail?:boolean;workspaceScopeVersion?:number;listRows?:typeof rows}={}){
+async function fixture({policy='explicit',late=false,fail=false,workspaceScopeVersion=0,listRows=rows,duplicate=false}:{policy?:'explicit'|'latest';late?:boolean;fail?:boolean;workspaceScopeVersion?:number;listRows?:typeof rows;duplicate?:boolean}={}){
  const calls:Array<{url:string;method:string;body:any}>=[];const created=new Map<string,any>();let delayed:((value:any)=>void)|null=null;let activeTitle='Proyecto A'; let resolveVoice: ((v:any)=>void)|null=null; let voiceSignal: AbortSignal|null=null
  const fetcher=vi.fn(async(url:string,init?:RequestInit)=>{
  if(url==='/api/voice/transcribe'){voiceSignal=init?.signal as AbortSignal;return await new Promise(r=>{resolveVoice=r})}
  const method=init?.method??'GET',body=init?.body?JSON.parse(String(init.body)):null;calls.push({url,method,body})
- if(url==='/api/agents/list')return response({agents:[{id:'fixture-agent',config:{name:'Agente de prueba',type:'tool',tools:[],system_prompt:'fixture'},created_at:'2026-10-24'}]})
+ if(url==='/api/agents/list')return response({agents:[{id:'fixture-agent',config:{name:'Agente de prueba',type:'tool',tools:[],system_prompt:'fixture'},created_at:'2026-10-24'},...(duplicate?[{id:'fixture-agent-2',config:{name:'Agente de prueba',type:'tool',tools:[],system_prompt:'fixture'},created_at:'2026-10-24'}]:[])]})
  if(url==='/api/providers/selection')return response({provider_id:null,model_id:null})
  if(url==='/api/project-folders/v1/active')return response({project_id:'workspace-'+(activeTitle==='Proyecto A'?'a':'b'),title:activeTitle,scope:'project'})
  if(url.startsWith('/api/conversations?')){
@@ -60,9 +60,9 @@ it('first explicit send lazily creates one record and uses the ordinary chat rev
 it('New stays an explicit one-record action instead of a mount effect',async()=>{
  const f=await fixture();fireEvent.click(screen.getByRole('button',{name:'Nueva',exact:true}));await waitFor(()=>expect(f.created.size).toBe(1));expect(writes(f.calls).map(c=>c.url)).toEqual(['/api/conversations']);expect(f.calls.some(c=>c.url==='/api/chat/control')).toBe(false)
 })
-it('blank BAGO5 lists only assistant history, keeps agent histories inaccessible and clears turn consent on manual selection without writes',async()=>{
+it('blank BAGO5 lists only assistant history and clears turn consent on manual selection without writes',async()=>{
  const f=await fixture();const composer=screen.getByRole('textbox',{name:'Mensaje al asistente o agente seleccionado'}) as HTMLTextAreaElement;fireEvent.change(composer,{target:{value:'Borrador del orquestador'}});fireEvent.click(screen.getByLabelText('Permitir lectura web pública'))
- const lists=f.calls.filter(c=>c.url.startsWith('/api/conversations?'));expect(lists.every(c=>{const q=new URLSearchParams(c.url.split('?')[1]);return q.get('owner_kind')==='assistant'&&q.get('owner_id')==='app-assistant'})).toBe(true);expect(screen.queryByRole('button',{name:/Historial agent-history/})).toBeNull();expect(screen.queryByRole('button',{name:/Agente de prueba/})).toBeNull();expect(details(f.calls)).toEqual([]);expect(f.view.container.querySelectorAll('article.control-message')).toHaveLength(0)
+ const lists=f.calls.filter(c=>c.url.startsWith('/api/conversations?'));expect(lists.every(c=>{const q=new URLSearchParams(c.url.split('?')[1]);return q.get('owner_kind')==='assistant'&&q.get('owner_id')==='app-assistant'})).toBe(true);expect(screen.queryByRole('button',{name:/Historial agent-history/})).toBeNull();expect(screen.queryByRole('button',{name:'Agente de prueba'})).toBeNull();expect(details(f.calls)).toEqual([]);expect(f.view.container.querySelectorAll('article.control-message')).toHaveLength(0)
  fireEvent.click(conversationButton(document,'Historial tie-two'));await screen.findByText('Contenido elegido tie-two');expect(details(f.calls).map(c=>c.url)).toEqual(['/api/conversations/tie-two']);await waitFor(()=>expect((screen.getByLabelText('Permitir lectura web pública') as HTMLInputElement).checked).toBe(false));expect(composer.value).toBe('Borrador del orquestador');expect(writes(f.calls)).toEqual([]);expect(f.created.size).toBe(0)
 })
 it('orders valid activity instants newest-first with stable ties and exposes true UTC date/time only',async()=>{
@@ -100,4 +100,12 @@ it.each(['conversation','project'] as const)('AgentChat preserves typed draft an
  if(which==='conversation'){fireEvent.click(conversationButton(document,'Historial tie-two'));await screen.findByText('Contenido elegido tie-two')}
  else{f.changeProject();f.view.rerender(chat('explicit',1));await screen.findByText('Proyecto B')}
  expect(f.getVoiceSignal()?.aborted).toBe(true);await f.resolveVoice();expect(composer.value).toBe('Borrador humano');expect(stopped).toHaveBeenCalled();expect(writes(f.calls)).toEqual([])
+})
+
+it('switches owner to a saved agent and back without creating a conversation',async()=>{
+ const f=await fixture();fireEvent.click(screen.getByRole('button',{name:'Elegir agente'}));fireEvent.click(screen.getByRole('button',{name:'Agente de prueba'}));await screen.findByText('Historial agent-history');expect(screen.queryByText('Historial tie-two')).toBeNull();expect(details(f.calls)).toEqual([]);fireEvent.click(conversationButton(document,'Historial agent-history'));await screen.findByText('Contenido elegido agent-history');expect(writes(f.calls)).toEqual([]);fireEvent.click(screen.getByRole('button',{name:'Orquestador BAGO5'}));await screen.findByText('Historial tie-two');expect(screen.queryByText('Historial agent-history')).toBeNull();expect(writes(f.calls)).toEqual([])
+})
+
+it('distinguishes agents with the same name by accessible identity',async()=>{
+ await fixture({duplicate:true});fireEvent.click(screen.getByRole('button',{name:'Elegir agente'}));expect(screen.getByRole('button',{name:'Agente de prueba (fixture-agent)'})).toBeTruthy();expect(screen.getByRole('button',{name:'Agente de prueba (fixture-agent-2)'})).toBeTruthy()
 })
