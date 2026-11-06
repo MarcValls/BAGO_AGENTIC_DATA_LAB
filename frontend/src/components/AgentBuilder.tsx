@@ -1,7 +1,7 @@
 import {presentAgentError} from './AgentTaskForm'
 import {agentStateLabel} from './AgentTaskForm'
 import {AgentPresentationError} from './AgentTaskForm'
-import {useI18n, getLocale, t, formatDate, formatNumber, apiError, errorMessage} from '../i18n'
+import {useI18n, getLocale, t, formatDate, apiError, errorMessage} from '../i18n'
 import './AgentBuilder.css'
 import { useCallback, useEffect, useState } from 'react'
 import AgentTaskForm, { taskError, type TaskDefinition } from './AgentTaskForm'
@@ -314,7 +314,7 @@ export default function AgentBuilder({ onAgentCreated, onBack, initialAgent, age
               <div className="preview-code">{agent.system_prompt}</div>
             </div>
             {agent.tools.length > 0 && <div className="preview-field">
-              <strong>{t('agents.builder.toolsCount',{count:formatNumber(agent.tools.length)})}</strong>
+              <strong>{t('agents.builder.assignedTools')}</strong>
               <div className="tools-preview">
                 {agent.tools.map((tool) => (
                   <span key={tool} className="badge badge-tool">
