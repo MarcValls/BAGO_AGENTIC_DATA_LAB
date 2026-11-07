@@ -118,3 +118,11 @@ it('cancels pending dictation as soon as a conversation begins opening',async()=
  const originalFetch=globalThis.fetch;let releaseDetail:(()=>void)|undefined;vi.stubGlobal('fetch',vi.fn((url:string,init?:RequestInit)=>url==='/api/conversations/tie-two'?new Promise(resolve=>{releaseDetail=()=>resolve(originalFetch(url,init))}):originalFetch(url,init)))
  fireEvent.click(conversationButton(document,'Historial tie-two'));await waitFor(()=>expect(releaseDetail).toBeDefined());await f.resolveVoice();expect(composer.value).toBe('Borrador humano');expect(f.getVoiceSignal()?.aborted).toBe(true);await act(async()=>{releaseDetail!()});await screen.findByText('Contenido elegido tie-two')
 })
+
+
+it('re-enables dictation after a conversation fails to open',async()=>{
+ const f=await fixture();const composer=screen.getByRole('textbox',{name:'Mensaje al asistente o agente seleccionado'}) as HTMLTextAreaElement;fireEvent.change(composer,{target:{value:'Borrador humano'}})
+ const originalFetch=globalThis.fetch;let failDetail:(()=>void)|undefined;vi.stubGlobal('fetch',vi.fn((url:string,init?:RequestInit)=>url==='/api/conversations/tie-two'?new Promise(resolve=>{failDetail=()=>resolve(response({detail:'synthetic failure'},500))}):originalFetch(url,init)))
+ fireEvent.click(conversationButton(document,'Historial tie-two'));await waitFor(()=>expect(failDetail).toBeDefined());expect((screen.getByRole('button',{name:t('commerce.voice.dictate')}) as HTMLButtonElement).disabled).toBe(true)
+ await act(async()=>{failDetail!()});await waitFor(()=>expect((screen.getByRole('button',{name:t('commerce.voice.dictate')}) as HTMLButtonElement).disabled).toBe(false));expect(composer.value).toBe('Borrador humano')
+})
