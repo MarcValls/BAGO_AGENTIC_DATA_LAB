@@ -658,6 +658,7 @@ export default function AgentChat({ onInspectionSelection, onInspectExecution: i
   }
 
   const refreshConversationList = async () => {
+    setLoadingConversation(false)
     const generation = ++conversationLoadGeneration.current
     const scope = conversationScopeRef.current
     const current = () => generation === conversationLoadGeneration.current && scope === conversationScopeRef.current

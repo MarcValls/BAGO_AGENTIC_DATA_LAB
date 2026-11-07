@@ -126,3 +126,10 @@ it('re-enables dictation after a conversation fails to open',async()=>{
  fireEvent.click(conversationButton(document,'Historial tie-two'));await waitFor(()=>expect(failDetail).toBeDefined());expect((screen.getByRole('button',{name:t('commerce.voice.dictate')}) as HTMLButtonElement).disabled).toBe(true)
  await act(async()=>{failDetail!()});await waitFor(()=>expect((screen.getByRole('button',{name:t('commerce.voice.dictate')}) as HTMLButtonElement).disabled).toBe(false));expect(composer.value).toBe('Borrador humano')
 })
+
+
+it('re-enables dictation when a project switch supersedes a pending open',async()=>{
+ const f=await fixture();const originalFetch=globalThis.fetch;let releaseDetail:(()=>void)|undefined;vi.stubGlobal('fetch',vi.fn((url:string,init?:RequestInit)=>url==='/api/conversations/tie-two'?new Promise(resolve=>{releaseDetail=()=>resolve(originalFetch(url,init))}):originalFetch(url,init)))
+ fireEvent.click(conversationButton(document,'Historial tie-two'));await waitFor(()=>expect(releaseDetail).toBeDefined());expect((screen.getByRole('button',{name:t('commerce.voice.dictate')}) as HTMLButtonElement).disabled).toBe(true)
+ f.changeProject();f.view.rerender(chat('explicit',1));await screen.findByText('Proyecto B');await act(async()=>{releaseDetail!()});await waitFor(()=>expect((screen.getByRole('button',{name:t('commerce.voice.dictate')}) as HTMLButtonElement).disabled).toBe(false));expect(screen.queryByText('Contenido elegido tie-two')).toBeNull()
+})
