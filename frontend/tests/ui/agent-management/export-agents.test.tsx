@@ -19,7 +19,12 @@ describe('Exportación desde Mis agentes', () => {
     vi.stubGlobal('fetch', fetchMock)
     const create = vi.fn(() => 'blob:export-test')
     const revoke = vi.fn()
-    vi.stubGlobal('URL', Object.assign(URL, { createObjectURL: create, revokeObjectURL: revoke }))
+    const NativeURL = URL
+    class TestURL extends NativeURL {
+      static createObjectURL = create
+      static revokeObjectURL = revoke
+    }
+    vi.stubGlobal('URL', TestURL)
     let filename = ''
     vi.spyOn(HTMLAnchorElement.prototype, 'click').mockImplementation(function (this: HTMLAnchorElement) { filename = this.download })
 
