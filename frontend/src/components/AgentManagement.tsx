@@ -36,6 +36,8 @@ export default function AgentManagement({ onCreate, onTest, onEvaluate }: Props)
   const [review, setReview] = useState<Review | null>(null)
   const [confirmed, setConfirmed] = useState(false)
   const [busy, setBusy] = useState(false)
+  const [exporting, setExporting] = useState(false)
+  const [exportError, setExportError] = useState(false)
   const generation = useRef(0)
   const controller = useRef<AbortController | null>(null)
   const reviewRegion = useRef<HTMLElement | null>(null)
@@ -77,6 +79,28 @@ export default function AgentManagement({ onCreate, onTest, onEvaluate }: Props)
     finally { if (current === generation.current && !next.signal.aborted) setLoading(false) }
   }, [])
   useEffect(() => { void refresh(); return () => { generation.current++; controller.current?.abort() } }, [refresh])
+
+  const exportAgents = async () => {
+    setExporting(true)
+    setExportError(false)
+    try {
+      const response = await fetch('/api/agents/export')
+      if (!response.ok) throw new Error('export failed')
+      const url = URL.createObjectURL(await response.blob())
+      try {
+        const link = document.createElement('a')
+        link.href = url
+        link.download = 'agents-export.json'
+        link.click()
+      } finally {
+        URL.revokeObjectURL(url)
+      }
+    } catch {
+      setExportError(true)
+    } finally {
+      setExporting(false)
+    }
+  }
 
   const select = async (id: string, action: 'edit' | 'delete') => {
     if (action === 'delete') reviewTrigger.current = document.activeElement instanceof HTMLElement ? document.activeElement : null
@@ -133,6 +157,7 @@ export default function AgentManagement({ onCreate, onTest, onEvaluate }: Props)
       <div><p className="app-kicker">{t('agents.AgentManagement.bago_biblioteca_de_perfiles')}</p><h1 id="agent-management-title">{t('agents.AgentManagement.agentes')}</h1></div>
       <div className="agent-management-actions">
         <button type="button" onClick={onCreate}>{t('agents.AgentManagement.crear_agente')}</button>
+        <button type="button" disabled={exporting} onClick={() => void exportAgents()}>{t('agents.AgentRunner.export_all_agents')}</button>
         <button type="button" disabled={loading || busy} onClick={() => void refresh()}>{t('agents.AgentManagement.actualizar')}</button>
       </div>
     </header>
@@ -143,6 +168,7 @@ export default function AgentManagement({ onCreate, onTest, onEvaluate }: Props)
     {loading && <p role="status">{t('agents.AgentManagement.cargando_agentes')}</p>}
     {!loading && <p className="agent-management-count" role="status">{t('agents.management.count',{shown:formatNumber(shown.length),total:formatNumber(agents.length)})}</p>}
     {warnings > 0 && <p role="alert">{t('agents.management.warnings',{count:formatNumber(warnings)})}</p>}
+    {exportError && <p role="alert">{t('agents.AgentRunner.agent_profiles_could_not_be_exported')}</p>}
     {error && <div role="alert"><p>{typeof error === 'string' ? error : presentAgentError(error)}</p><button type="button" onClick={() => void refresh()}>{t('agents.AgentManagement.actualizar_y_reintentar')}</button></div>}
     {notice && <p role="status">{typeof notice === 'string' ? notice : presentAgentError(notice)}</p>}
     {!loading && !error && !agents.length && <div className="agent-management-empty"><h2>{t('agents.AgentManagement.aun_no_hay_agentes_guardados')}</h2><p>{t('agents.AgentManagement.crea_el_primero_para_definir_su_tarea_proveedor_y_herramientas')}</p><button type="button" onClick={onCreate}>{t('agents.AgentManagement.crear_mi_primer_agente')}</button></div>}
