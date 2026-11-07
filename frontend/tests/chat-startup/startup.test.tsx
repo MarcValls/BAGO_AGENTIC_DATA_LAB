@@ -109,3 +109,12 @@ it('switches owner to a saved agent and back without creating a conversation',as
 it('distinguishes agents with the same name by accessible identity',async()=>{
  await fixture({duplicate:true});fireEvent.click(screen.getByRole('button',{name:'Elegir agente'}));expect(screen.getByRole('button',{name:'Agente de prueba (fixture-agent)'})).toBeTruthy();expect(screen.getByRole('button',{name:'Agente de prueba (fixture-agent-2)'})).toBeTruthy()
 })
+
+
+it('cancels pending dictation as soon as a conversation begins opening',async()=>{
+ const stopped=vi.fn();Object.defineProperty(navigator,'mediaDevices',{configurable:true,value:{getUserMedia:vi.fn(async()=>({getTracks:()=>[{stop:stopped}]}))}});vi.stubGlobal('MediaRecorder',ContextRecorder)
+ const f=await fixture();const composer=screen.getByRole('textbox',{name:'Mensaje al asistente o agente seleccionado'}) as HTMLTextAreaElement
+ fireEvent.change(composer,{target:{value:'Borrador humano'}});fireEvent.click(screen.getByRole('button',{name:t('commerce.voice.dictate')}));await waitFor(()=>expect(ContextRecorder.current?.state).toBe('recording'));ContextRecorder.current?.ondataavailable?.({data:new Blob(['synthetic'])} as BlobEvent);fireEvent.click(screen.getByRole('button',{name:t('commerce.voice.stop_dictation')}));await waitFor(()=>expect(f.getVoiceSignal()).not.toBeNull())
+ const originalFetch=globalThis.fetch;let releaseDetail:(()=>void)|undefined;vi.stubGlobal('fetch',vi.fn((url:string,init?:RequestInit)=>url==='/api/conversations/tie-two'?new Promise(resolve=>{releaseDetail=()=>resolve(originalFetch(url,init))}):originalFetch(url,init)))
+ fireEvent.click(conversationButton(document,'Historial tie-two'));await waitFor(()=>expect(releaseDetail).toBeDefined());await f.resolveVoice();expect(composer.value).toBe('Borrador humano');expect(f.getVoiceSignal()?.aborted).toBe(true);await act(async()=>{releaseDetail!()});await screen.findByText('Contenido elegido tie-two')
+})
