@@ -336,8 +336,8 @@ function CodexProviderSettings({ registration, onSaved, onStatusChange, sessionC
     } finally { setApiKey(''); setStartingLogin(false) }
   }
 
-  const saveAndVerifyModel = async (event: FormEvent) => {
-    event.preventDefault()
+  const saveAndVerifyModel = async (event?: FormEvent, verify = true) => {
+    event?.preventDefault()
     setSaving(true); setError(''); setNotice('')
     try {
       const response = await fetch('/api/providers/registry/codex', {
@@ -348,6 +348,10 @@ function CodexProviderSettings({ registration, onSaved, onStatusChange, sessionC
       const result = await response.json() as Registration
       onSaved(result)
       onStatusChange({ state: result.state as ProviderState, auth_mode: 'codex_cli' })
+      if (!verify) {
+        setNotice("core.ProviderSettings.access_saved_aa539c")
+        return
+      }
       setSaving(false)
       setVerifying(true)
       const verifyResponse = await fetch('/api/providers/registry/codex/verify', {
@@ -389,7 +393,7 @@ function CodexProviderSettings({ registration, onSaved, onStatusChange, sessionC
         </select>
       </label>
       <p className="provider-footnote">{t("core.ProviderSettings.the_check_consumes_usage_0cd29a")}{' '}{session.auth_mode === 'api_key' ? t("core.ProviderSettings.billed_api_usage_b6f05a") : t("core.ProviderSettings.plan_usage_5aa5d6")}.</p>
-      <div className="provider-form-actions"><button className="provider-primary" type="submit" disabled={startingLogin || Boolean(loginId) || saving || verifying || !modelId}>{saving ? t("core.ProviderSettings.saving_3c8dc4") : verifying ? t("core.ProviderSettings.checking_access_d445c7") : t("core.ProviderSettings.save_and_check_access_1a16f4")}</button></div>
+      <div className="provider-form-actions"><button className="provider-secondary" type="button" onClick={() => void saveAndVerifyModel(undefined, false)} disabled={startingLogin || Boolean(loginId) || saving || verifying || !modelId}>{t("core.ProviderSettings.save_registration_73b38a")}</button><button className="provider-primary" type="submit" disabled={startingLogin || Boolean(loginId) || saving || verifying || !modelId}>{saving ? t("core.ProviderSettings.saving_3c8dc4") : verifying ? t("core.ProviderSettings.checking_access_d445c7") : t("core.ProviderSettings.save_and_check_access_1a16f4")}</button></div>
     </form>}
     {loading && <p className="provider-footnote" role="status">{t("core.ProviderSettings.checking_codex_6b9d30")}</p>}
     {error && <p className="provider-alert error" role="alert">{errorMessage(error)}</p>}
@@ -540,8 +544,8 @@ function ProviderRegistrationForm({ provider, registration, onSaved, onRefresh, 
   const integrated = registration?.runtime_support === 'chat_and_agent_runner'
   const unsavedChanges = authMode !== registration?.auth_mode || modelId.trim() !== (registration?.model_id || '') || baseUrl.trim() !== (registration?.base_url || '') || Boolean(apiKey)
 
-  const saveRegistration = async (event: FormEvent) => {
-    event.preventDefault()
+  const saveRegistration = async (event?: FormEvent, verify = true) => {
+    event?.preventDefault()
     setSaving(true)
     setError('')
     setNotice('')
@@ -562,7 +566,7 @@ function ProviderRegistrationForm({ provider, registration, onSaved, onRefresh, 
       savedRegistration = result
       onSaved(result)
       setApiKey('')
-      if (result.runtime_support === 'chat_and_agent_runner') {
+      if (result.runtime_support === 'chat_and_agent_runner' && verify) {
         setSaving(false)
         setVerifying(true)
         const verifyResponse = await fetch(`/api/providers/registry/${provider.id}/verify`, {
@@ -573,8 +577,10 @@ function ProviderRegistrationForm({ provider, registration, onSaved, onRefresh, 
         const verified = await verifyResponse.json() as Registration
         onSaved({ ...result, ...verified, provider_id: provider.id, model_id: modelId.trim() })
         setNotice(localMessage("core.ProviderSettings.access_verified_for_p0_p1_the_provider_9248bb",{p0:String(provider.label),p1:String(modelId.trim())}))
-      } else {
+      } else if (result.runtime_support !== 'chat_and_agent_runner') {
         setNotice("core.ProviderSettings.registration_saved_this_provider_is_not_yet_0e714f")
+      } else {
+        setNotice("core.ProviderSettings.access_saved_aa539c")
       }
     } catch (cause) {
       if (savedRegistration) {
@@ -597,7 +603,7 @@ function ProviderRegistrationForm({ provider, registration, onSaved, onRefresh, 
           tabIndex={authMode === mode ? 0 : -1}
           id={`provider-method-${mode}`}
           className={`provider-method-tab${authMode === mode ? ' active' : ''}`}
-          disabled={saving || verifying}
+          disabled={saving || verifying || loadingCopilotModels}
           onClick={() => { setAuthMode(mode); setError(''); setNotice(''); setApiKey(''); if (provider.id === 'github-copilot') { setCopilotModels([]); setModelId('') } }}
           onKeyDown={event => {
             const direction = event.key === 'ArrowRight' || event.key === 'ArrowDown' ? 1 : event.key === 'ArrowLeft' || event.key === 'ArrowUp' ? -1 : 0
@@ -628,7 +634,7 @@ function ProviderRegistrationForm({ provider, registration, onSaved, onRefresh, 
 
       {needsSecret && <div className="provider-field">
         <label htmlFor={`${provider.id}-credential`}>{authMode === 'token' ? t("core.ProviderSettings.github_token_ccbbe2") : t("core.ProviderSettings.api_key_16f0ee")} <span>{t("core.ProviderSettings.write_only_d50a55")}</span></label>
-        <input id={`${provider.id}-credential`} type="password" autoComplete="new-password" value={apiKey} onChange={event => setApiKey(event.target.value)} placeholder={registration?.has_credential ? t("core.ProviderSettings.a_credential_is_saved_leave_empty_to_d072eb") : t("core.ProviderSettings.paste_the_credential_here_a61633")} spellCheck={false} disabled={saving || verifying} />
+        <input id={`${provider.id}-credential`} type="password" autoComplete="new-password" value={apiKey} onChange={event => { setApiKey(event.target.value); if (provider.id === 'github-copilot') { setCopilotModels([]); setModelId(''); setNotice('') } }} placeholder={registration?.has_credential ? t("core.ProviderSettings.a_credential_is_saved_leave_empty_to_d072eb") : t("core.ProviderSettings.paste_the_credential_here_a61633")} spellCheck={false} disabled={loadingCopilotModels || saving || verifying} />
         <small>{compact ? t("core.ProviderSettings.the_key_is_saved_in_the_system_c67aec") : t("core.ProviderSettings.adl_does_not_display_the_saved_credential_d978cc")}</small>
       </div>}
 
@@ -643,7 +649,7 @@ function ProviderRegistrationForm({ provider, registration, onSaved, onRefresh, 
           <option value="">{copilotModels.length ? t("core.ProviderSettings.select_a_model_088d84") : t("core.ProviderSettings.load_the_available_models_695e3d")}</option>
           {copilotModels.map(model => <option key={model.model_id} value={model.model_id}>{model.display_name}</option>)}
         </select>
-        <button className="provider-secondary" type="button" onClick={() => void loadCopilotModels()} disabled={loadingCopilotModels || (authMode === 'copilot_cli' && copilotAuthenticated !== true) || (authMode === 'token' && !apiKey && !registration?.has_credential)}>{loadingCopilotModels ? t("core.ProviderSettings.loading_models_172b28") : t("core.ProviderSettings.load_available_models_8b83fa")}</button>
+        <button className="provider-secondary" type="button" onClick={() => void loadCopilotModels()} disabled={loadingCopilotModels || saving || verifying || (authMode === 'copilot_cli' && copilotAuthenticated !== true) || (authMode === 'token' && !apiKey && !registration?.has_credential)}>{loadingCopilotModels ? t("core.ProviderSettings.loading_models_172b28") : t("core.ProviderSettings.load_available_models_8b83fa")}</button>
       </div> : <div className="provider-field">
         <label htmlFor={`${provider.id}-model`}>{t("core.ProviderSettings.default_model_a1e90f")}{' '}{!integrated && <span>{t("core.ProviderSettings.optional_83eddb")}</span>}</label>
         <input id={`${provider.id}-model`} type="text" required={integrated} disabled={saving || verifying} value={modelId} onChange={event => setModelId(event.target.value)} placeholder={provider.modelPlaceholder} spellCheck={false} />
@@ -661,7 +667,7 @@ function ProviderRegistrationForm({ provider, registration, onSaved, onRefresh, 
       {error && <p className="provider-alert error" role="alert">{errorMessage(error)}</p>}
       {notice && <p className="provider-alert notice" role="status">{errorMessage(notice)}</p>}
       {integrated && unsavedChanges && <p className="provider-footnote">{t("core.ProviderSettings.save_the_changes_to_check_this_configuration_c820e9")}</p>}
-      <div className="provider-form-actions"><button className="provider-primary" type="submit" disabled={saving || verifying || startingCopilotLogin || Boolean(copilotLogin) || (provider.id === 'github-copilot' && authMode === 'copilot_cli' && copilotAuthenticated !== true)}>{saving ? t("core.ProviderSettings.saving_3c8dc4") : verifying ? t("core.ProviderSettings.checking_access_d445c7") : integrated ? t("core.ProviderSettings.save_and_check_access_1a16f4") : t("core.ProviderSettings.save_registration_73b38a")}</button></div>
+      <div className="provider-form-actions">{integrated && <button className="provider-secondary" type="button" onClick={() => void saveRegistration(undefined, false)} disabled={loadingCopilotModels || saving || verifying || startingCopilotLogin || Boolean(copilotLogin) || !modelId.trim() || (provider.id === 'github-copilot' && authMode === 'copilot_cli' && copilotAuthenticated !== true)}>{t("core.ProviderSettings.save_registration_73b38a")}</button>}<button className="provider-primary" type="submit" disabled={loadingCopilotModels || saving || verifying || startingCopilotLogin || Boolean(copilotLogin) || (provider.id === 'github-copilot' && authMode === 'copilot_cli' && copilotAuthenticated !== true)}>{saving ? t("core.ProviderSettings.saving_3c8dc4") : verifying ? t("core.ProviderSettings.checking_access_d445c7") : integrated ? t("core.ProviderSettings.save_and_check_access_1a16f4") : t("core.ProviderSettings.save_registration_73b38a")}</button></div>
       </div>
     </form>
   )
@@ -693,7 +699,7 @@ function OllamaProviderSettings({ onStatusChange }: { onStatusChange?: (status: 
   const [notice, setNotice] = useState<any>('')
   const [verification, setVerification] = useState<any>('')
 
-  const fetchModels = async () => {
+  const fetchModels = async (updateList = true) => {
     setLoadingModels(true)
     setError('')
     try {
@@ -701,12 +707,16 @@ function OllamaProviderSettings({ onStatusChange }: { onStatusChange?: (status: 
       if (!response.ok) throw await safeError(response)
       const data = await response.json()
       const available = Array.isArray(data.models) ? data.models as ProviderModel[] : []
-      setModels(available)
-      setModelId(current => available.some(model => model.model_id === current) ? current : available.length === 1 ? available[0].model_id : '')
-      if (!available.length) setNotice("core.ProviderSettings.no_models_check_access_and_reload_the_483fcf")
-      else setNotice(localMessage("core.ProviderSettings.found_p0_models_check_access_to_the_414012",{get p0(){return formatNumber(available.length)}}))
+      if (updateList) {
+        setModels(available)
+        setModelId(current => available.some(model => model.model_id === current) ? current : available.length === 1 ? available[0].model_id : '')
+        if (!available.length) setNotice("core.ProviderSettings.no_models_check_access_and_reload_the_483fcf")
+        else setNotice(localMessage("core.ProviderSettings.found_p0_models_check_access_to_the_414012",{get p0(){return formatNumber(available.length)}}))
+      }
+      return available
     } catch (cause) {
       setError(cause instanceof Error ? cause : "commerce.providers.could_not_load_the_model_list")
+      return null
     } finally { setLoadingModels(false) }
   }
 
@@ -733,6 +743,21 @@ function OllamaProviderSettings({ onStatusChange }: { onStatusChange?: (status: 
       return
     }
     await fetchModels()
+  }
+
+  const checkAvailability = async () => {
+    if (!modelId.trim() || status?.auth_mode !== authMode || (authMode === 'api_key' && apiKey.length > 0)) {
+      setNotice("core.ProviderSettings.save_the_authentication_method_and_api_key_b9dbf2")
+      return
+    }
+    const selected = modelId.trim()
+    setVerification('')
+    const available = await fetchModels(false)
+    if (!available) return
+    setNotice('')
+    setVerification(localMessage(available.some(model => model.model_id === selected)
+      ? 'commerce.providers.ollama_listed_without_generation'
+      : 'commerce.providers.ollama_not_listed_without_generation', { model: selected }))
   }
 
   useEffect(() => { void loadStatus() }, [])
@@ -823,21 +848,21 @@ function OllamaProviderSettings({ onStatusChange }: { onStatusChange?: (status: 
         >{section === 'access' ? t("core.ProviderSettings.access_bf904a") : t("core.ProviderSettings.model_a5ab32")}</button>)}
       </div>
       <form className="provider-card" role="tabpanel" id="ollama-settings-panel-access" aria-labelledby="ollama-settings-tab-access" hidden={activeSection !== 'access'} onSubmit={event => void saveConfiguration(event)}>
-        <fieldset className="auth-choice-group" disabled={saving || verifying || status?.runtime_mode === 'container'}><legend className="sr-only">{t("core.ProviderSettings.ollama_authentication_method_baa4c1")}</legend>
-          <label className={`auth-choice ${authMode === 'api_key' ? 'active' : ''}`}><input type="radio" name="ollama-auth-mode" value="api_key" checked={authMode === 'api_key'} onChange={() => { setAuthMode('api_key'); setModels([]); setModelId(''); setNotice(''); setError('') }} /><span><strong>{t("core.ProviderSettings.cloud_api_key_4e553a")}</strong></span></label>
-          <label className={`auth-choice ${authMode === 'local_cli' ? 'active' : ''}`}><input type="radio" name="ollama-auth-mode" value="local_cli" checked={authMode === 'local_cli'} onChange={() => { setAuthMode('local_cli'); setApiKey(''); setModels([]); setModelId(''); setNotice(''); setError('') }} /><span><strong>{t("core.ProviderSettings.local_ollama_f69f95")}</strong></span></label>
+        <fieldset className="auth-choice-group" disabled={loadingModels || saving || verifying || status?.runtime_mode === 'container'}><legend className="sr-only">{t("core.ProviderSettings.ollama_authentication_method_baa4c1")}</legend>
+          <label className={`auth-choice ${authMode === 'api_key' ? 'active' : ''}`}><input type="radio" name="ollama-auth-mode" value="api_key" checked={authMode === 'api_key'} onChange={() => { setAuthMode('api_key'); setModels([]); setModelId(''); setNotice(''); setError(''); setVerification('') }} /><span><strong>{t("core.ProviderSettings.cloud_api_key_4e553a")}</strong></span></label>
+          <label className={`auth-choice ${authMode === 'local_cli' ? 'active' : ''}`}><input type="radio" name="ollama-auth-mode" value="local_cli" checked={authMode === 'local_cli'} onChange={() => { setAuthMode('local_cli'); setApiKey(''); setModels([]); setModelId(''); setNotice(''); setError(''); setVerification('') }} /><span><strong>{t("core.ProviderSettings.local_ollama_f69f95")}</strong></span></label>
         </fieldset>
-        {authMode === 'api_key' ? <div className="provider-field"><label htmlFor="ollama-api-key">{t("core.ProviderSettings.api_key_16f0ee")}{' '}<span>{t("core.ProviderSettings.write_only_d50a55")}</span></label><input id="ollama-api-key" type="password" autoComplete="new-password" value={apiKey} onChange={event => setApiKey(event.target.value)} placeholder={t("core.ProviderSettings.new_key_to_replace_the_saved_key_0f431f")} spellCheck={false} disabled={saving || verifying} /></div> : <div className="cli-instructions"><p>{t("core.ProviderSettings.start_ollama_on_this_computer_save_access_1b7e7c")}</p></div>}
-        <button className="provider-primary" type="submit" disabled={saving || verifying || loading || status?.runtime_mode === 'container'}>{saving ? t("core.ProviderSettings.saving_3c8dc4") : t("core.ProviderSettings.save_access_4ed1bb")}</button>
+        {authMode === 'api_key' ? <div className="provider-field"><label htmlFor="ollama-api-key">{t("core.ProviderSettings.api_key_16f0ee")}{' '}<span>{t("core.ProviderSettings.write_only_d50a55")}</span></label><input id="ollama-api-key" type="password" autoComplete="new-password" value={apiKey} onChange={event => { setApiKey(event.target.value); setVerification('') }} placeholder={t("core.ProviderSettings.new_key_to_replace_the_saved_key_0f431f")} spellCheck={false} disabled={loadingModels || saving || verifying} /></div> : <div className="cli-instructions"><p>{t("core.ProviderSettings.start_ollama_on_this_computer_save_access_1b7e7c")}</p></div>}
+        <button className="provider-primary" type="submit" disabled={loadingModels || saving || verifying || loading || status?.runtime_mode === 'container'}>{saving ? t("core.ProviderSettings.saving_3c8dc4") : t("core.ProviderSettings.save_access_4ed1bb")}</button>
       </form>
 
       <section className="provider-card" role="tabpanel" id="ollama-settings-panel-model" aria-labelledby="ollama-settings-tab-model" hidden={activeSection !== 'model'}>
         <div className="model-controls">
-          <label className="provider-field model-select-field" htmlFor="ollama-model"><span className="sr-only">{t("core.ProviderSettings.model_a5ab32")}</span><select id="ollama-model" value={modelId} onChange={event => setModelId(event.target.value)} disabled={saving || verifying || loading || status?.runtime_mode === 'container'}><option value="">{t("core.ProviderSettings.select_a_model_088d84")}</option>{models.map(model => <option key={`${model.provider_id}:${model.model_id}`} value={model.model_id}>{model.display_name}</option>)}</select></label>
+          <label className="provider-field model-select-field" htmlFor="ollama-model"><span className="sr-only">{t("core.ProviderSettings.model_a5ab32")}</span><select id="ollama-model" value={modelId} onChange={event => { setModelId(event.target.value); setVerification('') }} disabled={loadingModels || saving || verifying || loading || status?.runtime_mode === 'container'}><option value="">{t("core.ProviderSettings.select_a_model_088d84")}</option>{models.map(model => <option key={`${model.provider_id}:${model.model_id}`} value={model.model_id}>{model.display_name}</option>)}</select></label>
           <button className="provider-secondary" type="button" onClick={() => void loadModels()} disabled={loadingModels || saving || verifying || status?.runtime_mode === 'container'}>{loadingModels ? t("core.ProviderSettings.loading_205443") : t("core.ProviderSettings.load_models_00fe5e")}</button>
         </div>
         {models.length === 0 && !loadingModels && <p className="provider-empty-models">{t("core.ProviderSettings.save_access_and_load_the_models_6b5e3b")}</p>}
-        <div className="model-actions"><button className="provider-secondary" type="button" onClick={() => void verifyConfiguration()} disabled={saving || verifying || loading || !modelId.trim() || status?.runtime_mode === 'container'}>{verifying ? t("core.ProviderSettings.checking_d2a709") : t("core.ProviderSettings.save_and_check_access_1a16f4")}</button></div>
+        <div className="model-actions"><button className="provider-secondary" type="button" onClick={() => void checkAvailability()} disabled={loadingModels || saving || verifying || loading || !modelId.trim() || status?.runtime_mode === 'container'}>{t('commerce.providers.ollama_check_without_generation')}</button><button className="provider-secondary" type="button" onClick={() => void verifyConfiguration()} disabled={loadingModels || saving || verifying || loading || !modelId.trim() || status?.runtime_mode === 'container'}>{verifying ? t("core.ProviderSettings.checking_d2a709") : t("core.ProviderSettings.save_and_check_access_1a16f4")}</button></div>
         <p className="provider-footnote">{t("core.ProviderSettings.the_check_may_consume_cloud_usage_456f1f")}</p>
       </section>
 
