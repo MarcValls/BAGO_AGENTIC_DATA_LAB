@@ -3027,10 +3027,10 @@ async def export_agents() -> dict[str, Any]:
     if AGENTS_DIR.exists():
         for agent_file in AGENTS_DIR.glob("*.json"):
             try:
-                data = json.loads(agent_file.read_text())
+                data = json.loads(agent_file.read_text(encoding="utf-8"))
                 agents.append(data)
-            except (json.JSONDecodeError, TypeError):
-                pass
+            except (json.JSONDecodeError, UnicodeDecodeError, OSError, TypeError):
+                raise HTTPException(status_code=409, detail="An agent profile could not be read; export was not created.") from None
 
     return {
         "agents": agents,
