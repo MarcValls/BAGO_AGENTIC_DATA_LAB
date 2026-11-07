@@ -389,7 +389,7 @@ describe('Provider settings behavior with simulated API responses', () => {
     expect(screen.getAllByRole('status', { name: 'Sin registrar' }).length).toBeGreaterThan(0)
     expect(document.querySelectorAll('.provider-tab small')).toHaveLength(0)
     fireEvent.click(screen.getByRole('tab', { name: /OpenAI/ }))
-    expect(await screen.findByText('Disponible para chat de agentes y ejecuciones de agentes')).toBeTruthy()
+    expect(await screen.findByText('Disponible para chat de agentes')).toBeTruthy()
     expect(screen.queryByText('El registro no confirma acceso en vivo')).toBeNull()
     const saveAndVerify = screen.getByRole('button', { name: 'Guardar y comprobar acceso' }) as HTMLButtonElement
     fireEvent.change(screen.getByLabelText(/Clave API/, { selector: 'input[type=password]' }), { target: { value: 'TEST_SECRET_WRITE_ONLY' } })
@@ -424,7 +424,7 @@ describe('Provider settings behavior with simulated API responses', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Guardar y comprobar acceso' }))
     expect(await screen.findByText(/La credencial fue rechazada\./)).toBeTruthy()
     await waitFor(() => expect(screen.queryByText(/respuesta comprobada:/)).toBeNull())
-    expect(screen.getByText('Disponible para chat de agentes y ejecuciones de agentes')).toBeTruthy()
+    expect(screen.getByText('Disponible para chat de agentes')).toBeTruthy()
   })
 
   it('groups OpenAI in one tab and keeps ChatGPT and API credentials bound to their own registrations', async () => {
