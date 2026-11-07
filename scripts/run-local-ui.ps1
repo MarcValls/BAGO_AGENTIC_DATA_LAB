@@ -59,6 +59,9 @@ function Resolve-BrowserWindowAction {
     if ($windows.Count -eq 0) {
         return [pscustomobject]@{ Action = 'launch'; Window = $null; BagoRecognized = $false }
     }
+    if ($bagoWindows.Count -eq 1) {
+        return [pscustomobject]@{ Action = 'focus'; Window = $bagoWindows[0]; BagoRecognized = $true }
+    }
     $candidates = $windows
     if ($bagoWindows.Count -gt 0) {
         Write-Host 'La barra de alguna ventana contiene la direccion local; confirma el PID que quieres reutilizar:'

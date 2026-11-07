@@ -98,8 +98,7 @@ Test-LocalUiAddress '{value}' | ConvertTo-Json -Compress
     assert json.loads(result.stdout.strip()) is expected
 
 
-@pytest.mark.parametrize("selection,expected", [("", "skip"), ("4312", "focus")])
-def test_matching_address_still_requires_pid_confirmation(selection, expected):
+def test_unique_matching_address_is_focused_without_prompt():
     source = str(ROOT / "scripts" / "run-local-ui.ps1").replace("'", "''")
     code = f"""
 $errors = $null; $tokens = $null
@@ -108,17 +107,17 @@ if ($errors.Count) {{ throw 'PowerShell parse failed' }}
 $node = $ast.Find({{ param($n) $n -is [System.Management.Automation.Language.FunctionDefinitionAst] -and $n.Name -eq 'Resolve-BrowserWindowAction' }}, $true)
 . ([scriptblock]::Create($node.Extent.Text))
 function Get-VisibleBrowserWindows {{ [pscustomobject]@{{ProcessId=4312; ProcessName='brave'; Title='fixture'; AddressState='MATCH'}} }}
-function Read-Host {{ param($Prompt) '{selection}' }}
+function Read-Host {{ throw 'Unexpected PID prompt' }}
 function Write-Host {{ param($Object) }}
 Resolve-BrowserWindowAction | Select-Object Action,BagoRecognized | ConvertTo-Json -Compress
 """
     result = subprocess.run([SHELL, "-NoProfile", "-NonInteractive", "-Command", code],
                             cwd=ROOT, capture_output=True, text=True, encoding="utf-8", timeout=30)
     assert result.returncode == 0, result.stderr
-    assert json.loads(result.stdout.strip())["Action"] == expected
+    assert json.loads(result.stdout.strip()) == {"Action": "focus", "BagoRecognized": True}
 
 
-def test_all_windows_remain_selectable_when_one_address_matches():
+def test_matching_windows_remain_selectable_when_multiple_addresses_match():
     source = str(ROOT / "scripts" / "run-local-ui.ps1").replace("'", "''")
     code = f"""
 $errors = $null; $tokens = $null
@@ -128,7 +127,7 @@ $node = $ast.Find({{ param($n) $n -is [System.Management.Automation.Language.Fun
 . ([scriptblock]::Create($node.Extent.Text))
 function Get-VisibleBrowserWindows {{
   [pscustomobject]@{{ProcessId=4312; ProcessName='brave'; Title='fixture 1'; AddressState='MATCH'}}
-  [pscustomobject]@{{ProcessId=4313; ProcessName='brave'; Title='fixture 2'; AddressState='OTHER'}}
+  [pscustomobject]@{{ProcessId=4313; ProcessName='brave'; Title='fixture 2'; AddressState='MATCH'}}
 }}
 function Read-Host {{ param($Prompt) '4313' }}
 function Write-Host {{ param($Object) }}
@@ -138,7 +137,7 @@ $result = Resolve-BrowserWindowAction
     result = subprocess.run([SHELL, "-NoProfile", "-NonInteractive", "-Command", code],
                             cwd=ROOT, capture_output=True, text=True, encoding="utf-8", timeout=30)
     assert result.returncode == 0, result.stderr
-    assert json.loads(result.stdout.strip()) == {"Action": "focus", "Pid": 4313, "Recognized": False}
+    assert json.loads(result.stdout.strip()) == {"Action": "focus", "Pid": 4313, "Recognized": True}
 
 
 @pytest.mark.parametrize("shell", [SHELL, shutil.which("powershell.exe")])
