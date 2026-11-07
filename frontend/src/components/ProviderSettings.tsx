@@ -1,7 +1,7 @@
 import type {TranslationKey} from '../i18n'
 import {useI18n,t,localMessage,errorMessage,apiError,formatDate,formatNumber} from '../i18n'
 import './ProviderSettings.css'
-import { FormEvent, useCallback, useEffect, useState } from 'react'
+import { FormEvent, useCallback, useEffect, useRef, useState } from 'react'
 import ModelAssignments from './ModelAssignments'
 
 type AuthMode = 'api_key' | 'local_cli' | 'codex_cli'
@@ -108,6 +108,7 @@ export default function ProviderSettings({ onStatusChange, onExit }: { onStatusC
   const [selectedProvider, setSelectedProvider] = useState<ProviderId>('ollama')
   const [ollamaStatus, setOllamaStatus] = useState<ProviderStatusSummary | null>(null)
   const [codexStatus, setCodexStatus] = useState<ProviderStatusSummary | null>(null)
+  const [codexSessionChanged, setCodexSessionChanged] = useState(false)
   const [registrations, setRegistrations] = useState<Record<string, Registration>>({})
   const [loadingRegistry, setLoadingRegistry] = useState(true)
   const [registryError, setRegistryError] = useState<any>('')
@@ -131,7 +132,11 @@ export default function ProviderSettings({ onStatusChange, onExit }: { onStatusC
 
   const activeProvider = PROVIDERS.find(provider => provider.id === selectedProvider) ?? PROVIDERS[0]
   const registration = registrations[selectedProvider]
-  const state = selectedProvider === 'ollama' ? ollamaStatus?.state : selectedProvider === 'codex' ? codexStatus?.state ?? registration?.state : registration?.state
+  const codexState = codexStatus?.state === 'ready' && registrations.codex?.state !== 'ready'
+    ? registrations.codex?.state ?? 'configured_unverified'
+    : codexStatus?.state ?? registrations.codex?.state
+  const state = selectedProvider === 'ollama' ? ollamaStatus?.state : selectedProvider === 'codex' ? codexState : registration?.state
+  const registryDisplayLabel = (value: string | undefined) => loadingRegistry ? t('core.ProviderSettings.loading_205443') : registryError ? t('core.ProviderSettings.state_unknown') : statusLabel(value)
 
   return (
     <section className="provider-settings" aria-label={t("core.ProviderSettings.provider_and_model_settings_6355bf")}>
@@ -147,9 +152,20 @@ export default function ProviderSettings({ onStatusChange, onExit }: { onStatusC
           <div className="provider-tabs-list" role="tablist" aria-label={t("core.ProviderSettings.providers_bb1bb5")}>
           {PROVIDER_TABS.map(provider => {
             const providerRegistration = registrations[provider.id]
-            const providerState = provider.id === 'ollama' ? ollamaStatus?.state : provider.id === 'codex' ? codexStatus?.state ?? providerRegistration?.state : providerRegistration?.state
+            const providerState = provider.id === 'ollama' ? ollamaStatus?.state : provider.id === 'codex' ? codexState : providerRegistration?.state
             const usable = providerUsable(providerState)
               || (provider.id === 'codex' && providerUsable(registrations['openai-platform']?.state))
+            const tabStateLabel = (value: string | undefined, unknownWhenMissing = false, registryDependent = true) => {
+              if (registryDependent && loadingRegistry) return t('core.ProviderSettings.loading_205443')
+              if (registryDependent && registryError) return t('core.ProviderSettings.state_unknown')
+              if (value !== undefined) return statusLabel(value)
+              return unknownWhenMissing ? t('core.ProviderSettings.state_unknown') : statusLabel('not_configured')
+            }
+            const accessibleStatus = provider.id === 'codex'
+              ? `Codex: ${tabStateLabel(providerState, true)}; OpenAI Platform: ${tabStateLabel(registrations['openai-platform']?.state)}`
+              : tabStateLabel(providerState, provider.id === 'ollama', provider.id !== 'ollama')
+            const tabClass = provider.id !== 'ollama' && (loadingRegistry || registryError)
+              ? 'unknown' : usable ? 'usable' : 'unavailable'
             const providerIndex = PROVIDER_TABS.findIndex(item => item.id === provider.id)
             return <button
               key={provider.id}
@@ -159,7 +175,7 @@ export default function ProviderSettings({ onStatusChange, onExit }: { onStatusC
               aria-selected={selectedProvider === provider.id}
               aria-controls={`provider-panel-${provider.id}`}
               tabIndex={selectedProvider === provider.id ? 0 : -1}
-              className={`provider-tab ${usable ? 'usable' : 'unavailable'}${selectedProvider === provider.id ? ' active' : ''}`}
+              className={`provider-tab ${tabClass}${selectedProvider === provider.id ? ' active' : ''}`}
               onClick={() => setSelectedProvider(provider.id)}
               onKeyDown={event => {
                 const direction = event.key === 'ArrowDown' || event.key === 'ArrowRight' ? 1 : event.key === 'ArrowUp' || event.key === 'ArrowLeft' ? -1 : 0
@@ -174,8 +190,8 @@ export default function ProviderSettings({ onStatusChange, onExit }: { onStatusC
             >
               <img className="provider-tab-logo" src={provider.logo} alt="" aria-hidden="true" />
               <span>{provider.id === 'codex' ? 'OpenAI' : provider.label}</span>
-              <span className={`provider-tab-status sr-only ${usable ? 'usable' : 'unavailable'}`} role="status" aria-label={usable ? t("core.ProviderSettings.registered_enabled_222718") : t("core.ProviderSettings.not_registered_unavailable_7f29c0")}>
-                {usable ? t("core.ProviderSettings.registered_enabled_222718") : t("core.ProviderSettings.not_registered_unavailable_7f29c0")}
+              <span className={`provider-tab-status sr-only ${usable ? 'usable' : 'unavailable'}`} role="status" aria-label={accessibleStatus}>
+                {accessibleStatus}
               </span>
             </button>
           })}
@@ -185,18 +201,18 @@ export default function ProviderSettings({ onStatusChange, onExit }: { onStatusC
         <section className="provider-pane" role="tabpanel" id={`provider-panel-${selectedProvider}`} aria-labelledby={`provider-tab-${selectedProvider}`}>
           {selectedProvider !== 'ollama' && <div className="provider-pane-heading">
             <div><h3>{selectedProvider === 'codex' ? 'OpenAI' : activeProvider.label}</h3>{selectedProvider !== 'codex' && <p>{activeProvider.summary}</p>}</div>
-            {selectedProvider !== 'codex' && <span className={`provider-state ${state === 'ready' ? 'ready' : state === 'configured_unverified' ? 'pending' : 'neutral'}`} role="status">{statusLabel(state)}</span>}
+            {selectedProvider !== 'codex' && <span className={`provider-state ${loadingRegistry || registryError ? 'neutral' : state === 'ready' ? 'ready' : state === 'configured_unverified' ? 'pending' : 'neutral'}`} role="status">{registryDisplayLabel(state)}</span>}
           </div>}
           {selectedProvider === 'ollama'
             ? <OllamaProviderSettings onStatusChange={summary => { setOllamaStatus(summary); onStatusChange?.(summary) }} />
             : selectedProvider === 'codex'
               ? <div className="openai-provider-settings">
                 <section className="provider-card openai-account" aria-labelledby="openai-chatgpt-title">
-                  <div className="openai-account-heading"><h4 id="openai-chatgpt-title">ChatGPT / Codex</h4><span className="provider-state" role="status">{statusLabel(codexStatus?.state ?? registrations.codex?.state)}</span></div>
-                  <CodexProviderSettings registration={registrations.codex} onStatusChange={setCodexStatus} onSaved={updated => setRegistrations(current => ({ ...current, codex: updated }))} />
+                  <div className="openai-account-heading"><h4 id="openai-chatgpt-title">ChatGPT / Codex</h4><span className="provider-state" role="status">{registryDisplayLabel(codexState)}</span></div>
+                  <CodexProviderSettings registration={registrations.codex} onStatusChange={setCodexStatus} sessionChanged={codexSessionChanged} setSessionChanged={setCodexSessionChanged} onSaved={updated => setRegistrations(current => ({ ...current, codex: updated }))} />
                 </section>
                 <section className="provider-card openai-account" aria-labelledby="openai-platform-title">
-                  <div className="openai-account-heading"><h4 id="openai-platform-title">OpenAI Platform</h4><span className="provider-state" role="status">{statusLabel(registrations['openai-platform']?.state)}</span></div>
+                  <div className="openai-account-heading"><h4 id="openai-platform-title">OpenAI Platform</h4><span className="provider-state" role="status">{registryDisplayLabel(registrations['openai-platform']?.state)}</span></div>
                   <ProviderRegistrationForm compact provider={OPENAI_PLATFORM} registration={registrations['openai-platform']} onRefresh={refreshRegistry} onSaved={updated => setRegistrations(current => ({ ...current, 'openai-platform': updated }))} />
                 </section>
               </div>
@@ -213,15 +229,18 @@ export default function ProviderSettings({ onStatusChange, onExit }: { onStatusC
 type CodexSession = { authenticated: boolean; auth_mode?: 'chatgpt' | 'api_key' | null; plan_type?: string | null; models: Array<{ model_id: string; display_name: string; is_default: boolean }> }
 type CodexLogin = { login_id?: string; auth_url?: string; state: 'pending' | 'completed' | 'failed' | 'expired'; registration?: Registration; error?: string | null }
 
-function CodexProviderSettings({ registration, onSaved, onStatusChange }: {
+function CodexProviderSettings({ registration, onSaved, onStatusChange, sessionChanged, setSessionChanged }: {
   registration?: Registration
   onSaved: (registration: Registration) => void
   onStatusChange: (status: ProviderStatusSummary) => void
+  sessionChanged: boolean
+  setSessionChanged: (changed: boolean) => void
 }) {
   useI18n()
 
   const [session, setSession] = useState<CodexSession | null>(null)
   const [modelId, setModelId] = useState(registration?.model_id ?? '')
+  const modelEdited = useRef(false)
   const [loginId, setLoginId] = useState('')
   const [authUrl, setAuthUrl] = useState('')
   const [loginMode, setLoginMode] = useState<'chatgpt' | 'api_key'>('chatgpt')
@@ -238,10 +257,21 @@ function CodexProviderSettings({ registration, onSaved, onStatusChange }: {
     if (!response.ok) throw await safeError(response)
     const result = await response.json() as CodexSession
     setSession(result)
+    if (changed) setSessionChanged(true)
     if (result.auth_mode) setLoginMode(result.auth_mode)
     setModelId(current => result.models.some(item => item.model_id === current) ? current : result.models.find(item => item.is_default)?.model_id ?? result.models[0]?.model_id ?? '')
-    onStatusChange({ state: result.authenticated ? registration?.model_id ? !changed && registration.state === 'ready' ? 'ready' : 'configured_unverified' : 'authenticated' : 'needs_authentication', auth_mode: result.authenticated ? 'codex_cli' : null })
   }
+
+  useEffect(() => {
+    if (!modelEdited.current && registration?.model_id && session?.models.some(item => item.model_id === registration.model_id)) {
+      setModelId(registration.model_id)
+    }
+  }, [registration?.model_id, session])
+
+  useEffect(() => {
+    if (!session) return
+    onStatusChange({ state: session.authenticated ? registration?.model_id ? !sessionChanged && registration.state === 'ready' ? 'ready' : 'configured_unverified' : 'authenticated' : 'needs_authentication', auth_mode: session.authenticated ? 'codex_cli' : null })
+  }, [session, sessionChanged, registration?.model_id, registration?.state, onStatusChange])
 
   useEffect(() => {
     void loadSession().catch(cause => setError(cause instanceof Error ? cause : "commerce.providers.could_not_query_the_codex_session")).finally(() => setLoading(false))
@@ -327,6 +357,7 @@ function CodexProviderSettings({ registration, onSaved, onStatusChange }: {
       if (!verifyResponse.ok) throw await safeError(verifyResponse)
       const verified = await verifyResponse.json() as Registration
       onSaved(verified)
+      setSessionChanged(false)
       onStatusChange({ state: verified.state as ProviderState, auth_mode: 'codex_cli' })
       setNotice(localMessage("core.ProviderSettings.access_verified_for_p0_codex_completed_a_ee2395",{p0:String(modelId)}))
     } catch (cause) {
@@ -352,7 +383,7 @@ function CodexProviderSettings({ registration, onSaved, onStatusChange }: {
     </section>
     {authenticated && <form className="provider-registration-form" onSubmit={event => void saveAndVerifyModel(event)}>
       <label className="provider-field" htmlFor="codex-model"><span>{t("core.ProviderSettings.codex_model_d11f32")}</span>
-        <select id="codex-model" value={modelId} onChange={event => setModelId(event.target.value)} required disabled={!session.models.length || startingLogin || Boolean(loginId) || saving || verifying}>
+        <select id="codex-model" value={modelId} onChange={event => { modelEdited.current = true; setModelId(event.target.value) }} required disabled={!session.models.length || startingLogin || Boolean(loginId) || saving || verifying}>
           {session.models.length === 0 && <option value="">{t("core.ProviderSettings.the_model_catalog_is_unavailable_893ed1")}</option>}
           {session.models.map(model => <option key={model.model_id} value={model.model_id}>{model.display_name}{model.is_default ? t("core.ProviderSettings.default_cc78e4") : ''}</option>)}
         </select>
