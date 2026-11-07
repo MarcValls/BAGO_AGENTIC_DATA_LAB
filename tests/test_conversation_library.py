@@ -14,6 +14,7 @@ def test_default_database_is_under_portable_application_data_root(monkeypatch, t
     app_root = tmp_path / "application"
     app_root.mkdir()
     monkeypatch.setenv("BAGO_APP_ROOT", str(app_root))
+    monkeypatch.delenv("BAGO_DATA_ROOT", raising=False)
     monkeypatch.setenv("LOCALAPPDATA", str(tmp_path / "legacy-local"))
     monkeypatch.delenv("BAGO_CONVERSATION_DB_PATH", raising=False)
 
