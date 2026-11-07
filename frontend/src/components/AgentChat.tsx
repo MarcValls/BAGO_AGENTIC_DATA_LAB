@@ -658,6 +658,7 @@ export default function AgentChat({ onInspectionSelection, onInspectExecution: i
   }
 
   const refreshConversationList = async () => {
+    setLoadingConversation(false)
     const generation = ++conversationLoadGeneration.current
     const scope = conversationScopeRef.current
     const current = () => generation === conversationLoadGeneration.current && scope === conversationScopeRef.current
@@ -1613,7 +1614,7 @@ export default function AgentChat({ onInspectionSelection, onInspectExecution: i
           event.preventDefault()
           void sendMessage()
         }} placeholder={activeConversation?.status && activeConversation.status !== 'active' ? t('commerce.restore_or_start_a_new_conversation') : selectedAgent ? t('commerce.message_agent',{name:selectedAgent.config.name}) : t('commerce.message_the_assistant')} disabled={sending || Boolean(activeConversation && activeConversation.status !== 'active')} />
-            <ChatDictationButton key={JSON.stringify([conversationScope, activeProject?.project_id ?? null, activeProject?.root ?? null, activeConversation?.id ?? null])} disabled={sending || Boolean(activeConversation && activeConversation.status !== 'active')} onTranscript={transcript => {setInput(current => current ? `${current}${current.endsWith('\n') ? '' : '\n'}${transcript}` : transcript); requestAnimationFrame(() => composerRef.current?.focus())}} />
+            <ChatDictationButton key={JSON.stringify([conversationScope, activeProject?.project_id ?? null, activeProject?.root ?? null, activeConversation?.id ?? null, loadingConversation])} disabled={sending || loadingConversation || Boolean(activeConversation && activeConversation.status !== 'active')} onTranscript={transcript => {setInput(current => current ? `${current}${current.endsWith('\n') ? '' : '\n'}${transcript}` : transcript); requestAnimationFrame(() => composerRef.current?.focus())}} />
             <button className="primary-action" type="submit" disabled={sending || orchestratorSelectionBlocked || !input.trim() || Boolean(activeConversation && activeConversation.status !== 'active')}>{sending ? 'Sending.' : t('commerce.send')}</button>
           </div>
           <div className="chat-composer-actions">
