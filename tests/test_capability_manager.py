@@ -17,6 +17,7 @@ def test_default_database_is_portable_and_workspace_scoped(monkeypatch, tmp_path
     app_root = tmp_path / "application"
     app_root.mkdir()
     monkeypatch.setenv("BAGO_APP_ROOT", str(app_root))
+    monkeypatch.delenv("BAGO_DATA_ROOT", raising=False)
     monkeypatch.setenv("LOCALAPPDATA", str(tmp_path / "legacy-local"))
     monkeypatch.delenv("BAGO_CAPABILITY_DB_PATH", raising=False)
 
