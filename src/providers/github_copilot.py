@@ -14,11 +14,12 @@ from collections.abc import Mapping
 from typing import Any
 
 from src.providers import registration
-from src.providers.tool_protocol import arguments_object, wire_name
+from src.providers.tool_protocol import arguments_object, wire_name, SERVICE_TOOL_NAMES
 from src.development import TOOL_IDS as DEVELOPMENT_TOOL_IDS
 
 _LOGIN_LOCK = threading.RLock()
 _LOGIN_FLOWS: dict[str, dict[str, Any]] = {}
+TOOL_NAMES = {"sandbox.run", "read_workspace_file", "scan_code_duplicates", "public_web_read", "propose_workspace_write"} | DEVELOPMENT_TOOL_IDS | SERVICE_TOOL_NAMES
 _DEVICE_CODE_RE = re.compile(r"\b([A-Z0-9]{4,8}-[A-Z0-9]{4,8})\b")
 _DEVICE_URL = "https://github.com/login/device"
 
@@ -234,7 +235,7 @@ async def _async_chat(model_id: str, messages: list[dict[str, Any]], tools: list
     for schema in tools or []:
         function = schema.get("function", {})
         name = function.get("name")
-        if name not in {"sandbox.run", "read_workspace_file", "scan_code_duplicates", "public_web_read", "propose_workspace_write"} | DEVELOPMENT_TOOL_IDS:
+        if name not in TOOL_NAMES:
             raise registration.RegistrationError("invalid_tool_name", "This ADL tool is not available through Copilot.")
         def capture(invocation: Any, *, _name=name) -> Any:
             args = arguments_object(getattr(invocation, "arguments", None))

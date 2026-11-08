@@ -9,6 +9,14 @@ from src.providers.registration import RegistrationError
 
 ALIASES = {"sandbox.run": "adl_sandbox_run"}
 
+# Service schemas are transported by providers but effects remain host-governed.
+SERVICE_TOOL_NAMES = frozenset({
+    "filesystem_inventory", "filesystem_plan",
+    "document_inventory", "document_extract", "document_relate",
+    "document_plan_rename", "document_export",
+    "delivery_review", "delivery_revalidate", "delivery_prepare_draft",
+})
+
 
 def wire_name(name: str) -> str:
     name = ALIASES.get(name, name)
