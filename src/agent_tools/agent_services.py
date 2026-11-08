@@ -178,6 +178,9 @@ class AgentServiceSession:
             receipt.update(evidence_path=str(path),evidence_sha256=hashlib.sha256(path.read_bytes()).hexdigest())
             return result,receipt
         except (ValueError,OSError,TypeError,KeyError) as error:
+            if name == 'filesystem_plan' and isinstance(args,dict) and args.get('operation') == 'restore':
+                receipt.update(decision='DENY',reason_code='permission_denied',reason='Restore request unavailable or not authorized.')
+                return {'state':'DENIED','reason_code':'permission_denied','send_executed':False},receipt
             receipt.update(decision='FAIL' if receipt['executed'] else 'DENY',reason_code='AGENT_SERVICE_REJECTED',reason=str(error))
             return {'state':'FAILED','error':str(error),'send_executed':False},receipt
         except Exception as error:
