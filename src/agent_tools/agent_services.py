@@ -121,26 +121,36 @@ class AgentServiceSession:
                     native={'status':'VERIFIED'}
                 else:
                     from contextlib import ExitStack
+                    restore_target = None
+                    operation = args.get('operation') if name == 'filesystem_plan' else None
+                    if name == 'filesystem_plan' and args.get('operation') == 'restore':
+                        restore_target = FilesystemToolkit(self.root).restore_target(args.get('trash_id'))
                     with ExitStack() as leases:
                         if name=='filesystem_plan' and self.project_permissions:
-                            operation=args.get('operation');source=args.get('source');target=args.get('target')
-                            if source and operation in {'copy','move','rename','trash','restore'}:
+                            source=args.get('source');target=args.get('target')
+                            if operation == 'restore' and restore_target:
+                                leases.enter_context(self.project_permissions.lease('write',(restore_target,),expected_revision=self.project_snapshot['revision']))
+                            elif source and operation in {'copy','move','rename','trash'}:
                                 leases.enter_context(self.project_permissions.lease('read',(source,),expected_revision=self.project_snapshot['revision']))
                             if operation=='edit' and target:
                                 leases.enter_context(self.project_permissions.lease('read',(target,),expected_revision=self.project_snapshot['revision']))
-                            if source and operation in {'move','rename','trash','restore'}:
+                            if source and operation in {'move','rename','trash'}:
                                 leases.enter_context(self.project_permissions.lease('write',(source,),expected_revision=self.project_snapshot['revision']))
-                            if target and operation not in {'trash'}:
+                            if target and operation not in {'trash','restore'}:
                                 leases.enter_context(self.project_permissions.lease('write',(target,),expected_revision=self.project_snapshot['revision']))
                         result,native=FilesystemSession().invoke(name,args,{'root':str(self.root),'tools':assigned})
+                        if operation == 'restore' and (result.get('target') != restore_target or result.get('trash_id') != args.get('trash_id')):
+                            raise ValueError('restore record changed during preparation')
                 if name=='filesystem_plan':
-                    if any(_protected(result.get(key)) for key in ('source','target')):raise ValueError('resolved filesystem plan targets an internal path')
+                    plan = result
+                    public_plan = {**plan, 'source': None, 'source_snapshot': None} if plan.get('operation') == 'restore' else plan
+                    if any(_protected(public_plan.get(key)) for key in ('source','target')):raise ValueError('resolved filesystem plan targets an internal path')
                     proposal='fsproposal_'+uuid.uuid4().hex
                     binding={'proposal_id':proposal,'owner_id':self.owner_id,'conversation_id':self.conversation_id,'root':str(self.root),
-                        'plan_id':result['id'],'plan_sha256':result['sha256'],'status':'PROPOSED','expires_at':result['expires_at'],'plan':result,
+                        'plan_id':plan['id'],'plan_sha256':plan['sha256'],'status':'PROPOSED','expires_at':plan['expires_at'],'plan':plan,
                         'project_snapshot':self.project_snapshot}
                     write(self.workspace/'.bago/state/fop'/(proposal+'.json'),binding)
-                    result={'proposal_id':proposal,'plan':result,'state':'PROPOSED','executed':False}
+                    result={'proposal_id':proposal,'plan':public_plan,'state':'PROPOSED','executed':False}
                     receipt['filesystem_proposal']={k:binding[k] for k in ('proposal_id','owner_id','conversation_id','plan_sha256','root','status')}
                 receipt.update(executed=True,decision='ALLOW',outcome=native['status'])
             else:
@@ -219,6 +229,17 @@ def _proposal_path(workspace,proposal_id):
     return Path(workspace).resolve()/'.bago/state/fop'/(proposal_id+'.json')
 
 
+def filesystem_proposal_plan(*,workspace,proposal_id,owner_id,conversation_id,expected_plan_sha256):
+    path=_proposal_path(workspace,proposal_id)
+    saved=json.loads(path.read_text(encoding='utf8'))
+    plan=saved.get('plan')
+    if (saved.get('owner_id')!=owner_id or saved.get('conversation_id')!=conversation_id
+            or saved.get('proposal_id')!=proposal_id or saved.get('plan_sha256')!=expected_plan_sha256
+            or not isinstance(plan,dict) or plan.get('sha256')!=expected_plan_sha256):
+        raise ValueError('foreign or changed filesystem proposal')
+    return plan
+
+
 def review_filesystem(*,workspace,proposal_id,owner_id,conversation_id,revision,project_permissions=None):
     with _LOCK:
         path=_proposal_path(workspace,proposal_id);saved=json.loads(path.read_text(encoding='utf8'))
@@ -264,9 +285,9 @@ def execute_filesystem(*,workspace,proposal_id,owner_id,conversation_id,revision
             if project_permissions:
                 policy=saved.get('project_snapshot') or {}
                 expected=policy.get('revision')
-                if source and operation in {'copy','move','rename','trash','restore'}:
+                if source and operation in {'copy','move','rename','trash'}:
                     leases.enter_context(project_permissions.lease('read',(source,),expected_revision=expected))
-                if source and operation in {'move','rename','trash','restore'}:
+                if source and operation in {'move','rename','trash'}:
                     leases.enter_context(project_permissions.lease('write',(source,),expected_revision=expected))
                 if target and operation not in {'trash'}:
                     effect_path=target if operation != 'edit' else target

@@ -97,6 +97,24 @@ def test_explicit_save_read_write_and_revoke_change_revision(tmp_path: Path) -> 
     assert revoked["revision"] != granted["revision"]
 
 
+def test_out_of_scope_read_denial_does_not_reveal_path_existence(tmp_path: Path) -> None:
+    root = tmp_path / "project"
+    (root / "docs").mkdir(parents=True)
+    (root / "private").mkdir()
+    (root / "private/known.txt").write_text("synthetic", encoding="utf-8")
+    svc = service(root)
+    save_all(svc, read=("docs",), write=())
+
+    denial_codes = []
+    for path in ("private/known.txt", "private/missing.txt"):
+        with pytest.raises(PermissionError) as denied:
+            with svc.lease("read", (path,)):
+                pytest.fail("an out-of-scope read must not receive a lease")
+        denial_codes.append(denied.value.code)
+
+    assert denial_codes == ["permission_denied", "permission_denied"]
+
+
 def test_exact_file_grants_are_persistent_and_do_not_include_siblings(tmp_path: Path) -> None:
     root = tmp_path / "project"
     root.mkdir()

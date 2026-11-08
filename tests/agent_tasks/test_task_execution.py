@@ -350,6 +350,47 @@ def test_real_host_inventory_returns_native_result_with_exact_read_subdirectory_
     assert len(native_reads) == 3
 
 
+def test_host_restores_with_destination_scopes_and_durable_receipt(tmp_path):
+    import time
+    from src.agent_tools.filesystem_tools import FilesystemToolkit
+    root=tmp_path/'project'; (root/'docs').mkdir(parents=True)
+    (root/'docs'/'invoice.txt').write_text('synthetic',encoding='utf-8')
+    toolkit=FilesystemToolkit(root); trash=toolkit.plan('trash',source='docs/invoice.txt')
+    assert toolkit.execute(trash['id'],approval={'root':str(root),'plan_sha256':trash['sha256'],
+        'operations':['trash'],'actor':'fixture','expires_at':time.time()+60})['status']=='VERIFIED'
+    context=ProjectContext('p1',root,'binding','Fixture'); permissions=ProjectPermissions(lambda:context)
+    initial=permissions.snapshot()
+    permissions.save(expected_project_id='p1',expected_binding='binding',expected_revision=initial['revision'],
+        read_directories=['docs'],write_directories=['docs'],confirmed=True)
+    snapshot=permissions.snapshot()
+    agent={'agent_id':AGENT_ID,'profile_sha256':PROFILE_SHA,'type':'tool','tools':['filesystem_plan']}
+    adapters=build_host_task_execution_adapters(project_snapshot=permissions.snapshot,
+        current_agent=lambda _:agent,select_agent=lambda *_:{**agent,'task_scope':'restore fixture','created_for_task':True},
+        model_catalog=lambda:{'models':[{'provider_id':'codex','model_id':'fixture','state':'ready','orchestrator_enabled':True,'agent_types':['tool']}]},
+        model_eligible=lambda *_:True,probe_model=lambda *_:{'status':'PASS','generation_sha256':hashlib.sha256(b'probe').hexdigest()},
+        generate_plan=lambda *_:json.dumps({'steps':[{'step_id':'restore','type':'filesystem','operation':'restore','arguments':{'trash_id':trash['id']},'depends_on':[]}]}),
+        review_plan=lambda plan,_:{'status':'approved','reviewer_id':REVIEWER_ID,'reviewer_sha256':REVIEWER_SHA,'receipt':{'plan_sha256':digest(plan)}},
+        workspace_root=lambda:tmp_path,project_permissions=lambda:permissions,development_service=lambda:None,
+        development_reviewer=lambda *_:None)
+    service=TaskExecutionService(TaskStore(tmp_path/'tasks.sqlite3'),adapters)
+    request=PlanPrepareInput.model_validate({'request_id':'7aa022ef-4132-458d-8d9b-58e4b3638cee','task_text':'Restore the fixture file',
+        'expected_project_id':'p1','expected_binding':'binding','expected_permissions_revision':snapshot['revision'],
+        'model_selection':{'mode':'explicit','provider_id':'codex','model_id':'fixture'},'agent_selection':{'mode':'auto'}})
+    prepared=service.prepare(request)
+    assert prepared['status']=='AWAITING_ACCEPTANCE'
+    step=prepared['plan']['steps'][0]
+    assert step['required_scopes']==[{'kind':'write','path':'docs'}]
+    assert step['expected_inputs']==[]
+    assert 'trash/' not in json.dumps(prepared)
+    result=service.accept(prepared['plan_id'],PlanAcceptInput(expected_plan_sha256=prepared['plan_sha256'],
+        expected_plan_revision=1,idempotency_key='56a4813e-30c2-48a4-a139-3a33653e8d11',confirmed=True))
+    assert result['status']=='SUCCEEDED', result
+    assert result['step_results']['restore']['receipt']['effect_executed'] is True
+    assert 'trash/' not in json.dumps(result)
+    assert (root/'docs'/'invoice.txt').read_text(encoding='utf-8')=='synthetic'
+    assert service.get(prepared['execution_id'])['step_results']['restore']['receipt']['effect_executed'] is True
+
+
 def test_single_acceptance_executes_once_and_idempotent_replay_returns_saved_receipt(tmp_path):
     service, request, calls, _ = make_service(tmp_path)
     prepared = service.prepare(request)

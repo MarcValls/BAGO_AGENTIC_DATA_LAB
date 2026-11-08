@@ -120,6 +120,14 @@ class FilesystemToolkit:
         self._plain(path)
         return json.loads(path.read_text(encoding='utf-8'))
 
+    def restore_target(self, trash_id):
+        """Resolve a restore destination for host authorization without exposing payload paths."""
+        with self._lock():
+            record = self._load('trash-index', trash_id)
+            target = record.get('original_path')
+            self._path(target)
+            return target
+
     @contextmanager
     def _lock(self):
         self._ensure_state()

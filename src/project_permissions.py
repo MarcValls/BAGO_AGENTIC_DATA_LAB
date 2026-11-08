@@ -524,6 +524,10 @@ class ProjectPermissions:
             for relative in paths:
                 rel = _safe_effect_path(relative)
                 target = root.joinpath(*rel.parts)
+                # Reject paths outside the granted lexical scope before probing
+                # the filesystem, so denial does not reveal whether they exist.
+                if not any(_path_within(target, approved) for approved in approved_roots):
+                    raise _deny("permission_denied")
                 _inspect_no_links(target, allow_missing=effect == "write")
                 try:
                     resolved = target.resolve(strict=effect == "read")

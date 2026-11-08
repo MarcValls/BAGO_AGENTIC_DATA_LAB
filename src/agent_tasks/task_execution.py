@@ -368,9 +368,11 @@ def build_host_task_execution_adapters(*, project_snapshot: Callable[[], dict[st
             if operation == "edit": pairs.append(("read", target))
         elif operation == "copy":
             pairs.extend((("read", source), ("write", target)))
-        elif operation in {"move", "rename", "trash", "restore"}:
+        elif operation in {"move", "rename", "trash"}:
             if source: pairs.extend((("read", source), ("write", source)))
             if operation != "trash" and target: pairs.append(("write", target))
+        elif operation == "restore" and target:
+            pairs.append(("write", target))
         required = { (kind, path if operation == "inventory" else fs_scope(path))
             for kind, path in pairs if isinstance(path, str) }
         return [{"kind": kind, "path": path} for kind, path in sorted(required)]
@@ -451,7 +453,7 @@ def build_host_task_execution_adapters(*, project_snapshot: Callable[[], dict[st
                 if not (deferred_source or deferred_parent):
                     return {**step, "status":"DENIED", "reason_code":str(tool_receipt.get("reason_code") or "scope_denied"),
                         "prepared_ref":None, "prepared_sha256":None, "expected_inputs":[], "expected_outputs":[],
-                        "required_scopes":[], "granted_scopes":[], "required_checks":[]}
+                        "required_scopes":required, "granted_scopes":prepared_scopes(required, snapshot), "required_checks":[]}
                 planned_shape = {"source":source, "target":target}
                 required = required_fs_scopes(operation, planned_shape, args)
                 inputs = []
@@ -471,15 +473,24 @@ def build_host_task_execution_adapters(*, project_snapshot: Callable[[], dict[st
             plan = plan_reply["plan"]
             required = required_fs_scopes(operation, plan, args)
             granted = prepared_scopes(required, snapshot)
+            evidence_plan = plan
+            if operation == "restore":
+                from src.agent_tools.agent_services import filesystem_proposal_plan
+                owner_id, conversation_id = task_identity(context)
+                evidence_plan = filesystem_proposal_plan(workspace=workspace_root(),
+                    proposal_id=plan_reply.get("proposal_id"), owner_id=owner_id, conversation_id=conversation_id,
+                    expected_plan_sha256=plan.get("sha256"))
+                if evidence_plan.get("target") != plan.get("target") or evidence_plan.get("operation") != "restore":
+                    raise TaskError("plan_stale", "La propuesta de restauración cambió durante su preparación.", 409)
             inputs = []
-            if plan.get("source") and plan.get("source_snapshot"):
+            if operation != "restore" and plan.get("source") and plan.get("source_snapshot"):
                 inputs.append({"path":plan["target"] if operation == "edit" else plan["source"],
                     "sha256":plan["source_snapshot"]["sha256"]})
             outputs = []
             if operation in {"write", "edit"}:
                 outputs.append({"path":plan["target"], "sha256":plan["content_sha256"]})
-            elif operation in {"copy", "move", "rename", "restore"} and plan.get("source_snapshot"):
-                outputs.append({"path":plan["target"], "sha256":plan["source_snapshot"]["sha256"]})
+            elif operation in {"copy", "move", "rename", "restore"} and evidence_plan.get("source_snapshot"):
+                outputs.append({"path":plan["target"], "sha256":evidence_plan["source_snapshot"]["sha256"]})
             elif operation == "mkdir":
                 outputs.append({"path":plan["target"], "kind":"directory"})
             return {**step, "status":"READY", "prepared_ref":plan_reply["proposal_id"],
@@ -626,6 +637,8 @@ def build_host_task_execution_adapters(*, project_snapshot: Callable[[], dict[st
             if receipt.get("status") != "VERIFIED":
                 raise TaskError("execution_inconclusive", "El recibo Filesystem no confirma el resultado.", 503)
             native = receipt.get("receipt") or {}
+            if step["operation"] == "restore":
+                native = {key: value for key, value in native.items() if key != "source"}
             outputs = []
             if native.get("target") and isinstance(native.get("readback"), dict):
                 readback = native["readback"]
