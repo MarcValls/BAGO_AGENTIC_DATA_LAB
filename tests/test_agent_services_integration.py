@@ -75,6 +75,22 @@ def test_provider_allowlist_does_not_grant_unassigned_service_tool(fixture):
     assert 'private.txt' not in json.dumps(result)
 
 
+def test_restore_denials_do_not_disclose_internal_trash_index_paths(fixture):
+    session=services(fixture)
+    outcomes=[]
+    for trash_id in ('0'*32, 'invalid'):
+        result,receipt=session.invoke('filesystem_plan',{'operation':'restore','trash_id':trash_id},SERVICE_TOOL_IDS)
+        outcomes.append((result,receipt))
+
+    assert outcomes[0][0] == outcomes[1][0] == {
+        'state':'DENIED','reason_code':'permission_denied','send_executed':False}
+    for result,receipt in outcomes:
+        assert receipt['decision']=='DENY'
+        assert receipt['reason_code']=='permission_denied'
+        assert '.bago-filesystem' not in json.dumps({'result':result,'receipt':receipt})
+        assert 'trash-index' not in json.dumps({'result':result,'receipt':receipt})
+
+
 def test_project_policy_gates_filesystem_plan_and_host_apply_with_edit_copy_rename(fixture):
     workspace,root,comms,_=fixture
     (root/'source.txt').write_text('source v1',encoding='utf-8')
