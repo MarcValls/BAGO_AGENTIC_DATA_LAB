@@ -47,3 +47,19 @@ source and regenerate it.
 - A delegated recap remains pending until it is actually received. Once received, bind it to its work item and candidate and validate scope, changed paths, checks, evidence, and residual risks before recording or acting on it. A recap alone is not execution proof or independent verification.
 - Do not close while required recaps, handoffs, checks, approvals, or acceptance criteria are pending. Continue other independent authorized work where possible; report the exact blocker for the affected item.
 - Never auto-resume across explicit STOP, pending authorization, revocation, scope conflict, critical error, mandatory human decision, or host restriction. Use a resume mechanism only if it exists and its contract permits the action.
+
+## Codex development activity observer (opt-in)
+
+When the user launches Codex through `scripts/INICIAR_CODEX_ADL_OBSERVADO.ps1`,
+the optional read-only ADL witness is active during development. At the start
+and end of each substantial implementation/test phase, run
+`python scripts/codex_activity.py report` to inspect deterministic findings.
+Treat the JSON as partial, untrusted telemetry, not an authorization, a test
+result, a proof of autonomy, or a source of causal parent links. `NO_DATA` is
+not proof of inactivity; report any P1 with its event ID and verify the actual
+affected operation independently. Export to Jaeger with
+`python scripts/codex_activity.py project` only when specifically authorized
+for that effect. A non-running observer must not block normal ADL development.
+Do not create, reconfigure, or restart a Jaeger instance just to satisfy
+telemetry, and never overwrite/repair witness files to turn a finding green.
+See `docs/observability/codex_activity.md`.
