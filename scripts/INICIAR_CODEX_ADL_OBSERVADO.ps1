@@ -18,6 +18,7 @@ New-Item -ItemType Directory -Force -Path $logs | Out-Null
 $stdout = Join-Path $logs 'observer-stdout.log'
 $stderr = Join-Path $logs 'observer-stderr.log'
 $sidecar = Start-Process -FilePath $python -ArgumentList @("`"$observer`"", 'serve') -PassThru -WindowStyle Hidden -RedirectStandardOutput $stdout -RedirectStandardError $stderr
+$codexStatus = 1
 try {
     $ready = $false
     for ($i = 0; $i -lt 40; $i++) {
@@ -37,11 +38,15 @@ try {
         '-c', 'otel.trace_exporter={ otlp-http = { endpoint = "http://127.0.0.1:4318/v1/traces", protocol = "binary" } }'
     )
     Push-Location $repo
-    try { & $codex @config @CodexArgs }
+    try {
+        & $codex @config @CodexArgs
+        $codexStatus = $LASTEXITCODE
+    }
     finally { Pop-Location }
 } finally {
     if ($sidecar -and -not $sidecar.HasExited) {
         Stop-Process -Id $sidecar.Id -ErrorAction SilentlyContinue
     }
-    & $python $observer report
+    try { & $python $observer report } catch { Write-Warning "Observer report unavailable: $($_.Exception.Message)" }
 }
+exit $codexStatus
