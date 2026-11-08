@@ -339,6 +339,39 @@ def test_production_adapter_factory_executes_scoped_filesystem_write(tmp_path):
     assert denied_step["granted_scopes"] == denied_step["required_scopes"]
 
 
+def test_production_adapter_returns_exact_missing_scope_for_denied_filesystem_tool(tmp_path):
+    project_root = tmp_path / "project"
+    (project_root / "allowed").mkdir(parents=True)
+    permissions = _permissions(project_root, read=["allowed"], write=[])
+    snapshot = permissions.snapshot()
+    proposal = {"step_id":"write-one", "type":"filesystem", "operation":"write",
+        "arguments":{"target":"allowed/result.txt", "content":"bounded output"}, "depends_on":[]}
+    adapters = build_host_task_execution_adapters(
+        project_snapshot=permissions.snapshot,
+        current_agent=lambda agent_id: {"agent_id":AUTHOR, "profile_sha256":PROFILE_SHA,
+            "type":"tool", "tools":["filesystem_plan"]},
+        select_agent=lambda selection, task, model_selection: {"agent_id":AUTHOR, "profile_sha256":PROFILE_SHA,
+            "type":"tool", "tools":["filesystem_plan"]},
+        model_catalog=lambda: {"models":[]}, model_eligible=lambda provider, model, role: True,
+        probe_model=lambda provider, model: {"status":"PASS"},
+        generate_plan=lambda provider, model, messages: "{}",
+        review_plan=lambda plan, context: {"status":"approved"},
+        workspace_root=lambda: tmp_path, project_permissions=lambda: permissions,
+        development_service=lambda: None,
+        development_reviewer=lambda change, context: {"status":"approved"},
+    )
+
+    denied = adapters.prepare_step(proposal, {"project":snapshot,
+        "agent":{"agent_id":AUTHOR, "tools":["filesystem_plan"]},
+        "execution_id":"taskexec_"+"1"*32, "dependency_outputs":{}})
+
+    assert denied["status"] == "DENIED"
+    assert denied["reason_code"] == "permission_denied"
+    assert denied["required_scopes"] == [{"kind":"write", "path":"allowed"}]
+    assert denied["granted_scopes"] == []
+    assert not (project_root / "allowed" / "result.txt").exists()
+
+
 def test_production_adapter_factory_runs_development_checks_review_and_apply(tmp_path):
     project_root = tmp_path / "project"
     source = project_root / "src" / "sample.py"
