@@ -60,6 +60,21 @@ def project_permissions(root, *, read=('.',), write=('.',)):
         expected_revision=snapshot['revision'],read_directories=read,write_directories=write,confirmed=True),service
 
 
+def test_provider_allowlist_does_not_grant_unassigned_service_tool(fixture):
+    workspace,root,comms,_=fixture
+    (root/'private.txt').write_text('must not be returned',encoding='utf-8')
+    session=AgentServiceSession(workspace=workspace,root=root,owner_id='writer',conversation_id='write-chat',
+        communications=comms)
+
+    schemas=session.schemas(['filesystem_plan'])
+    assert {schema['function']['name'] for schema in schemas} == {'filesystem_plan'}
+    result,receipt=session.invoke('filesystem_inventory',{'path':'.'},['filesystem_plan'])
+
+    assert receipt['decision']=='DENY' and receipt['executed'] is False
+    assert result['state']=='FAILED'
+    assert 'private.txt' not in json.dumps(result)
+
+
 def test_project_policy_gates_filesystem_plan_and_host_apply_with_edit_copy_rename(fixture):
     workspace,root,comms,_=fixture
     (root/'source.txt').write_text('source v1',encoding='utf-8')
