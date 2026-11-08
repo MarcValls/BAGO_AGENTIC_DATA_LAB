@@ -5,6 +5,7 @@ node_modules/
 venv/
 .venv/
 .pytest_cache/
+/pytest-of-*/
 demo_output/
 .tmp-demo-output*/
 .playwright-cli/
@@ -31,6 +32,7 @@ excluded/bago-app-game-development/
 /output/
 /.bago/goals/
 /.bago/runtime/
+/.bago/tmp/
 /.bago/traces/
 /.bago/team/runtime/
 /agents/created/
