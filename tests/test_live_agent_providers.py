@@ -10,10 +10,16 @@ from fastapi.testclient import TestClient
 
 from src.api import server
 from src.conversations import ConversationStore
-from src.providers import github_copilot, ollama, openai_platform, registration, runtime
+from src.providers import codex, github_copilot, ollama, openai_platform, registration, runtime
+from src.providers.tool_protocol import SERVICE_TOOL_NAMES
 from src.runtime.ber.agent_runner import _tool_schema
 
 SECRET = "TEST_CREDENTIAL_NEVER_EXPOSE"
+
+
+def test_codex_and_copilot_accept_registered_service_schemas():
+    assert SERVICE_TOOL_NAMES <= codex.TOOL_NAMES
+    assert SERVICE_TOOL_NAMES <= github_copilot.TOOL_NAMES
 
 
 @pytest.fixture
