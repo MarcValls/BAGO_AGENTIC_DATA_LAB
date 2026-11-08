@@ -52,7 +52,7 @@ source and regenerate it.
 
 When the user launches Codex through `scripts/INICIAR_CODEX_ADL_OBSERVADO.ps1`,
 the optional read-only ADL witness is active during development. At the start
-and end of each substantial implementation/test phase, you MAY run
+and end of each substantial implementation/test phase, run
 `python scripts/codex_activity.py report` to inspect deterministic findings.
 Treat the JSON as partial, untrusted telemetry, not an authorization, a test
 result, a proof of autonomy, or a source of causal parent links. `NO_DATA` is
