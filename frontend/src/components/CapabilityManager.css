@@ -29,7 +29,7 @@
 .capability-status.status-available { color: #a6e4be; border-color: #315e47; background: #132b22; }
 .capability-status.status-unavailable { color: #f1d08c; border-color: #78643d; background: #302817; }
 .capability-metadata { display: flex; flex-wrap: wrap; align-items: stretch; gap: 8px; margin: 1px 0; }
-.capability-metadata > div { display: flex; min-width: min(100%, 180px); flex: 1 1 180px; flex-direction: column; justify-content: center; gap: 3px; padding: 7px 10px; border: 1px solid #3b5872; border-left-width: 3px; border-radius: 5px; background: #142438; }
+.capability-metadata > div { display: flex; min-width: min(100%, 180px); flex: 1 1 180px; flex-direction: column; justify-content: center; gap: 3px; padding: 7px 10px; border: 1px solid #3b5872; border-left-width: 3px; border-radius: 0; background: #142438; }
 .capability-metadata .metadata-effect { color: #b6dcff; border-color: #456b91; background: #152a40; }
 .capability-metadata .metadata-provider { color: #d6c7ff; border-color: #66558f; background: #211d38; }
 .capability-metadata .metadata-integration { color: #b5d4e9; border-color: #4c6680; background: #152537; }
