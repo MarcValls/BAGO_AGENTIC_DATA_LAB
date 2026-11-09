@@ -92,6 +92,23 @@ def _schema(db: sqlite3.Connection) -> bool:
         raise ReconciliationError('orphaned_message')
     if db.execute('PRAGMA integrity_check').fetchone()[0] != 'ok' or db.execute('PRAGMA foreign_key_check').fetchone():
         raise ReconciliationError('invalid_database')
+    if db.execute("SELECT 1 FROM conversations WHERE owner_kind IS NULL OR owner_kind NOT IN ('assistant','agent') OR status IS NULL OR status NOT IN ('active','archived','deleted') OR project_id IS NULL OR project_id='' LIMIT 1").fetchone():
+        raise ReconciliationError('invalid_conversation_values')
+    if db.execute("SELECT 1 FROM messages WHERE role IS NULL OR role NOT IN ('user','assistant') LIMIT 1").fetchone():
+        raise ReconciliationError('invalid_message_values')
+    def invalid_constant(value):
+        raise ValueError(f'invalid JSON constant: {value}')
+    try:
+        if len(conv) > len(CONVERSATION_COLUMNS):
+            for row in db.execute('SELECT labels_json FROM conversations'):
+                labels = json.loads(row[0] or '[]', parse_constant=invalid_constant)
+                if not isinstance(labels, list) or any(not isinstance(label, str) for label in labels):
+                    raise ValueError('labels must be a list of strings')
+        for row in db.execute('SELECT references_json FROM messages'):
+            if not isinstance(json.loads(row[0], parse_constant=invalid_constant), dict):
+                raise ValueError('references must be an object')
+    except (TypeError, ValueError) as error:
+        raise ReconciliationError('invalid_json_payload') from error
     return len(conv) > len(CONVERSATION_COLUMNS)
 
 
@@ -115,7 +132,7 @@ def _promote_without_overwrite(staged: Path, output: Path) -> bool:
             return False
 
 
-def reconcile(base: Path, incoming: Path, output: Path) -> dict:
+def reconcile(base: Path, incoming: Path, output: Path, *, allow_shared_projects: frozenset[str] = frozenset()) -> dict:
     base, incoming, output = Path(base), Path(incoming), Path(output)
     _reject_reparse(output)
     if base.resolve() == incoming.resolve() or output.resolve() in (base.resolve(), incoming.resolve()):
@@ -135,6 +152,15 @@ def reconcile(base: Path, incoming: Path, output: Path) -> dict:
         first.execute('BEGIN')
         second.execute('BEGIN')
         first_labels, second_labels = _schema(first), _schema(second)
+        if any(not isinstance(value, str) or not value for value in allow_shared_projects):
+            raise ReconciliationError('invalid_shared_project_authorization')
+        first_projects = {row[0] for row in first.execute('SELECT DISTINCT project_id FROM conversations')}
+        second_projects = {row[0] for row in second.execute('SELECT DISTINCT project_id FROM conversations')}
+        shared_projects = first_projects & second_projects
+        if shared_projects - allow_shared_projects:
+            raise ReconciliationError('shared_project_identity_requires_confirmation')
+        if allow_shared_projects - shared_projects:
+            raise ReconciliationError('unknown_shared_project_authorization')
         # A failed candidate stays under a unique staging directory and is never
         # exposed at the requested final name.
         stage = Path(tempfile.mkdtemp(prefix='.bago-reconcile-', dir=output.parent))
@@ -173,6 +199,8 @@ def reconcile(base: Path, incoming: Path, output: Path) -> dict:
             raise ReconciliationError(f'candidate_failed_or_id_conflict:stage={stage.name}') from error
     return {'status': 'prepared', 'incoming_conversations': conv_count, 'incoming_messages': msg_count,
             'output': os.fspath(output), 'activated': False,
+            'shared_projects_explicitly_approved': len(shared_projects),
+            'shared_project_ids': sorted(shared_projects),
             'staging_retained': None if staging_clean else os.fspath(stage)}
 
 
@@ -181,9 +209,12 @@ def main() -> None:
     parser.add_argument('base', type=Path)
     parser.add_argument('incoming', type=Path)
     parser.add_argument('output', type=Path)
+    parser.add_argument('--allow-shared-project', action='append', default=[], metavar='PROJECT_ID',
+                        help='Confirm that this exact project ID refers to the same project in both inputs; repeat for each shared project.')
     args = parser.parse_args()
     try:
-        print(json.dumps(reconcile(args.base, args.incoming, args.output)))
+        print(json.dumps(reconcile(args.base, args.incoming, args.output,
+                                   allow_shared_projects=frozenset(args.allow_shared_project))))
     except ReconciliationError as error:
         parser.exit(1, f'reconciliation failed: {error}\n')
 

@@ -15,11 +15,14 @@ def make_db(path: Path, identifier: str, *, labels: bool = False):
     with sqlite3.connect(path) as db:
         db.executescript('''
           CREATE TABLE conversations (id TEXT PRIMARY KEY, project_id TEXT NOT NULL,
-            owner_kind TEXT NOT NULL, owner_id TEXT NOT NULL, title TEXT NOT NULL,
-            status TEXT NOT NULL, created_at TEXT NOT NULL, updated_at TEXT NOT NULL,
+            owner_kind TEXT NOT NULL CHECK (owner_kind IN ('assistant', 'agent')),
+            owner_id TEXT NOT NULL, title TEXT NOT NULL,
+            status TEXT NOT NULL CHECK (status IN ('active', 'archived', 'deleted')),
+            created_at TEXT NOT NULL, updated_at TEXT NOT NULL,
             revision INTEGER NOT NULL DEFAULT 0);
           CREATE TABLE messages (id TEXT PRIMARY KEY, conversation_id TEXT NOT NULL
-            REFERENCES conversations(id), sequence INTEGER NOT NULL, role TEXT NOT NULL,
+            REFERENCES conversations(id), sequence INTEGER NOT NULL,
+            role TEXT NOT NULL CHECK (role IN ('user', 'assistant')),
             content TEXT NOT NULL, created_at TEXT NOT NULL, status TEXT NOT NULL DEFAULT 'complete',
             references_json TEXT NOT NULL DEFAULT '{}', UNIQUE(conversation_id, sequence));
         ''')
@@ -55,7 +58,7 @@ def test_conflict_and_existing_destination_never_change_inputs(tmp_path):
     make_db(a, 'a'); make_db(b, 'a')
     before = [p.read_bytes() for p in (a, b)]
     with pytest.raises(ReconciliationError, match='conflict'):
-        reconcile(a, b, out)
+        reconcile(a, b, out, allow_shared_projects=frozenset({'project-a'}))
     assert [p.read_bytes() for p in (a, b)] == before
     assert not out.exists()
     out.write_bytes(b'existing')
@@ -101,6 +104,55 @@ def test_rejects_orphaned_messages_before_creating_output(tmp_path):
     with pytest.raises(ReconciliationError, match='orphaned_message'):
         reconcile(a, b, out)
     assert not out.exists()
+
+
+@pytest.mark.parametrize(('source', 'column', 'value'), [
+    ('base', 'labels_json', 'INVALID'), ('incoming', 'labels_json', '{}'),
+    ('base', 'references_json', '['), ('incoming', 'references_json', '[]'),
+    ('incoming', 'references_json', '{"value": NaN}'),
+])
+def test_invalid_json_is_rejected_in_both_inputs(tmp_path, source, column, value):
+    a, b, out = (tmp_path / x for x in ('a.db', 'b.db', 'out.db'))
+    make_db(a, 'a', labels=True); make_db(b, 'b', labels=True)
+    with sqlite3.connect(a if source == 'base' else b) as db:
+        table = 'conversations' if column == 'labels_json' else 'messages'
+        db.execute(f'UPDATE {table} SET {column}=?', (value,))
+    with pytest.raises(ReconciliationError, match='invalid_json_payload'):
+        reconcile(a, b, out)
+    assert not out.exists()
+
+
+def test_shared_project_requires_explicit_exact_confirmation(tmp_path):
+    a, b, out = (tmp_path / x for x in ('a.db', 'b.db', 'out.db'))
+    make_db(a, 'a'); make_db(b, 'b')
+    with sqlite3.connect(b) as db:
+        db.execute("UPDATE conversations SET project_id='project-a'")
+    with pytest.raises(ReconciliationError, match='shared_project_identity_requires_confirmation'):
+        reconcile(a, b, out)
+    assert not out.exists()
+    with pytest.raises(ReconciliationError, match='unknown_shared_project_authorization'):
+        reconcile(a, b, out, allow_shared_projects=frozenset({'project-a', 'wrong-project'}))
+    result = reconcile(a, b, out, allow_shared_projects=frozenset({'project-a'}))
+    assert result['shared_projects_explicitly_approved'] == 1
+    assert result['shared_project_ids'] == ['project-a']
+    token = set_project_scope('project-a')
+    try:
+        assert {row['id'] for row in ConversationStore(out).list()} == {'a', 'b'}
+    finally:
+        reset_project_scope(token)
+
+
+def test_empty_legacy_labels_are_accepted_like_product(tmp_path):
+    a, b, out = (tmp_path / x for x in ('a.db', 'b.db', 'out.db'))
+    make_db(a, 'a', labels=True); make_db(b, 'b', labels=True)
+    with sqlite3.connect(b) as db:
+        db.execute("UPDATE conversations SET labels_json=''")
+    reconcile(a, b, out)
+    token = set_project_scope('project-b')
+    try:
+        assert ConversationStore(out).list()[0]['labels'] == []
+    finally:
+        reset_project_scope(token)
 
 
 def test_message_id_conflict_rolls_back_incoming_conversations(tmp_path):
