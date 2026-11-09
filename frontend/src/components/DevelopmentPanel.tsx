@@ -24,16 +24,24 @@ async function readResponse(response: Response) {
   return data
 }
 
-export default function DevelopmentPanel({ownerId, projectRoot = null, portalTarget = null, disabled = false, workspaceContent, historyContent, showChanges = true, initialOpen = true}: {ownerId: string; projectRoot?: string | null; portalTarget?: HTMLElement | null; disabled?: boolean; workspaceContent?: ReactNode; historyContent?: ReactNode; showChanges?: boolean; initialOpen?: boolean}) {
+export default function DevelopmentPanel({ownerId, projectRoot = null, portalTarget = null, disabled = false, workspaceContent, historyContent, showChanges = true, initialOpen = true, navigationRevision = 0}: {ownerId: string; projectRoot?: string | null; portalTarget?: HTMLElement | null; disabled?: boolean; workspaceContent?: ReactNode; historyContent?: ReactNode; showChanges?: boolean; initialOpen?: boolean; navigationRevision?: number}) {
   useI18n()
   const [open, setOpen] = useState(initialOpen)
   const panelId = useId()
   const toggleRef = useRef<HTMLButtonElement>(null)
   const closeRef = useRef<HTMLButtonElement>(null)
   const firstRender = useRef(true)
+  const navigationFocus = useRef(false)
+  const lastNavigation = useRef(navigationRevision)
+  useEffect(() => {
+    if (lastNavigation.current === navigationRevision) return
+    lastNavigation.current = navigationRevision
+    if (open) { navigationFocus.current = true; setOpen(false) }
+  }, [navigationRevision, open])
   useEffect(() => {
     if (firstRender.current) {firstRender.current = false; return}
     if (open) closeRef.current?.focus()
+    else if (navigationFocus.current) navigationFocus.current = false
     else toggleRef.current?.focus()
   }, [open])
   useEffect(() => {

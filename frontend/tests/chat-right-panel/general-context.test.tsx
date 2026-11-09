@@ -9,7 +9,7 @@ import {conversationButton} from '../helpers/conversation-library'
 beforeEach(()=>{localStorage.clear();resetLocaleForTests();setLocale('es');HTMLElement.prototype.scrollIntoView=vi.fn()})
 afterEach(()=>{cleanup();vi.unstubAllGlobals()})
 const rows=[{id:'older',title:'Conversación antigua',updated_at:'2026-10-20T10:15:00Z'},{id:'newer',title:'Conversación reciente',updated_at:'2026-10-24T12:30:00+02:00'},{id:'unknown',title:'Sin fecha',updated_at:'bad-date'}].map(c=>({...c,owner_kind:'assistant',owner_id:'app-assistant',status:'active',revision:2}))
-async function mount({fail=false,linked=false}:{fail?:boolean;linked?:boolean}={}){
+async function mount({fail=false,linked=false,inline=false}:{fail?:boolean;linked?:boolean;inline?:boolean}={}){
  const calls:Array<{url:string;method:string;body:any}>=[];const navigate=vi.fn()
  const fetcher=vi.fn(async(url:string,init?:RequestInit)=>{const method=init?.method??'GET';calls.push({url,method,body:init?.body?JSON.parse(String(init.body)):null});const ok=(data:unknown,status=200)=>({ok:status<400,status,json:async()=>data})
   if(url==='/api/agents/list')return ok({agents:[{id:'plain-agent',config:{name:'Agente sin desarrollo',type:'tool',tools:[],system_prompt:'fixture'},created_at:'2026-10-24'},...(linked?[{id:'linked-agent',config:{name:'Agente participante vinculado',type:'tool',tools:['filesystem_plan'],system_prompt:'fixture'},created_at:'2026-10-24'}]:[])]})
@@ -23,8 +23,13 @@ async function mount({fail=false,linked=false}:{fail?:boolean;linked?:boolean}={
   return ok({models:[],proposals:[]})
  });vi.stubGlobal('fetch',fetcher)
  const props={historySelection:'explicit' as const,cognitiveMode:'baseline' as const,onNavigate:navigate,onOpenProviderSettings:vi.fn(),onOpenCognitionSettings:vi.fn()}
- const view=render(<AgentChat {...props}/>);await waitFor(()=>expect(calls.some(c=>c.url.startsWith('/api/conversations?'))).toBe(true));await act(async()=>{});return {view,calls,navigate,props}
+ const view=render(<AgentChat {...props} renderInlineView={inline ? (view) => <section aria-label="Destino abierto">{view}</section> : undefined}/>);await waitFor(()=>expect(calls.some(c=>c.url.startsWith('/api/conversations?'))).toBe(true));await act(async()=>{});return {view,calls,navigate,props}
 }
+it('collapses the project panel when opening the workspace in chat while retaining the draft',async()=>{
+ const f=await mount({inline:true});const panel=screen.getByRole('region',{name:'Contexto del proyecto'});const composer=screen.getByRole('textbox',{name:'Mensaje al asistente o agente seleccionado'}) as HTMLTextAreaElement
+ fireEvent.change(composer,{target:{value:'Borrador conservado'}});fireEvent.click(within(panel).getByRole('button',{name:'Examinar carpeta de trabajo'}))
+ expect(panel.hidden).toBe(true);expect(screen.getByRole('region',{name:'Destino abierto'}).textContent).toBe('workspace');expect(composer.value).toBe('Borrador conservado');expect(mutations(f.calls)).toEqual([])
+})
 const mutations=(calls:Array<{method:string;url:string}>)=>calls.filter(c=>c.method!=='GET'&&c.url!=='/api/project-permissions/directories')
 it('general blank startup keeps selected-project permissions available in the project-access dialog without per-turn controls',async()=>{
  const f=await mount();const panel=screen.getByRole('region',{name:'Contexto del proyecto'});expect(panel.hidden).toBe(false)
@@ -48,6 +53,7 @@ it('folding sections and whole panel preserves draft, returns keyboard focus and
 })
 it('project permissions remain selected-project policy and workspace navigation stays an explicit local action',async()=>{
  const f=await mount();const panel=screen.getByRole('region',{name:'Contexto del proyecto'});fireEvent.click(within(panel).getByRole('button',{name:'Administrar acceso'}));const dialog=await screen.findByRole('dialog',{name:'Permisos del proyecto'});const permissions=within(dialog).getByRole('region',{name:'Permisos del proyecto'});expect(within(permissions).getByText('src',{selector:'.project-permissions__scope code'})).toBeTruthy();expect(within(permissions).getByText('docs',{selector:'.project-permissions__scope code'})).toBeTruthy();expect(within(dialog).queryByLabelText('Permitir lectura de archivos del proyecto')).toBeNull();expect(within(dialog).queryByLabelText('Rutas relativas al proyecto')).toBeNull();expect(within(panel).getByText('Directorio de trabajo:')).toBeTruthy();fireEvent.click(within(dialog).getByRole('button',{name:'Cerrar'}));fireEvent.click(within(panel).getByRole('button',{name:'Examinar carpeta de trabajo'}));expect(f.navigate).toHaveBeenCalledWith('workspace');expect(mutations(f.calls)).toEqual([]);expect(f.calls.some(c=>c.url.includes('/browse')||c.url.startsWith('/api/development/'))).toBe(false)
+ expect(panel.hidden).toBe(true)
 })
 it('keeps saved READ/WRITE policy across a selected delegated-agent chat and back',async()=>{
  const f=await mount({linked:true});fireEvent.click(conversationButton(document,'Conversación antigua'));await screen.findByText('Respuesta conservada older')

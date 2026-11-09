@@ -248,6 +248,7 @@ export default function AgentChat({ onInspectionSelection, onInspectExecution: i
   const [libraryMode, setLibraryMode] = useState<LibraryMode>('active')
   const [conversationSort, setConversationSort] = useState<ConversationSort>({key: 'updated_at', direction: 'desc'})
   const [agentPanelOpen, setAgentPanelOpen] = useState(false)
+  const [navigationRevision, setNavigationRevision] = useState(0)
   const agentPanelContentId = useId()
   const [libraryError, setLibraryError] = useState<string|Error>('')
   const [permanentlyDeleting, setPermanentlyDeleting] = useState(false)
@@ -568,12 +569,18 @@ export default function AgentChat({ onInspectionSelection, onInspectExecution: i
   }
   function openInlineResource(view: ChatInlineView, messageId?: string, details: Omit<InlineResource, 'view'> = {}) {
     if (!renderInlineView) return
+    closePanelsForNavigation()
     const resource = {view, ...details}
     if (messageId) setMessages(previous => previous.map(message => message.id === messageId ? {...message, inlineResource: resource} : message))
     else setConversationResource({resource, scope: conversationScope, conversationId: activeConversation?.id ?? null})
   }
-  const onNavigate = (view: ExistingView) => renderInlineView ? openInlineResource(view) : navigateOutside(view)
-  const onManageAgents = renderInlineView ? () => openInlineResource('agents') : manageAgentsOutside
+  function closePanelsForNavigation() {
+    setNavigationRevision(value => value + 1)
+    if (agentPanelRef.current) agentPanelRef.current.open = false
+    setAgentPanelOpen(false)
+  }
+  const onNavigate = (view: ExistingView) => { if (renderInlineView) openInlineResource(view); else { closePanelsForNavigation(); navigateOutside(view) } }
+  const onManageAgents = renderInlineView ? () => openInlineResource('agents') : manageAgentsOutside && (() => { closePanelsForNavigation(); manageAgentsOutside() })
   const onOpenProviderSettings = () => renderInlineView ? openInlineResource('provider_settings') : providerSettingsOutside()
   const onOpenCognitionSettings = () => renderInlineView ? openInlineResource('cognition_settings') : cognitionSettingsOutside()
   const onOpenCommunication = renderInlineView ? (draftId: string) => openInlineResource('communications', messages.find(message => message.communicationDraftId === draftId || message.communicationDraft?.id === draftId)?.id, {draftId}) : communicationOutside
@@ -1637,7 +1644,7 @@ export default function AgentChat({ onInspectionSelection, onInspectExecution: i
           {input.trim() && extractPublicHttpsUrls(input).urls.length > 0 && <section aria-label={t('commerce.web_preference.detected_links')}><small>{t('commerce.web_preference.detected_notice')}</small><ul>{extractPublicHttpsUrls(input).urls.slice(0, 8).map(url => <li key={url}><code>{url}</code></li>)}</ul></section>}
 
         </form>
-        {!selectedAgent && <DevelopmentPanel initialOpen={initialProjectPanelOpen} key="app-assistant-context" ownerId={ownerId} projectRoot={activeProject?.root ?? null} portalTarget={developmentPanelTarget} disabled={sending} showChanges={false} historyContent={!agentPanelOpen ? conversationLibrary : undefined} workspaceContent={
+        {!selectedAgent && <DevelopmentPanel navigationRevision={navigationRevision} initialOpen={initialProjectPanelOpen} key="app-assistant-context" ownerId={ownerId} projectRoot={activeProject?.root ?? null} portalTarget={developmentPanelTarget} disabled={sending} showChanges={false} historyContent={!agentPanelOpen ? conversationLibrary : undefined} workspaceContent={
           <ProjectPermissions
             projectId={activeProject?.project_id ?? null}
             projectRoot={activeProject?.root ?? null}
@@ -1645,7 +1652,7 @@ export default function AgentChat({ onInspectionSelection, onInspectExecution: i
             onBrowseWorkspace={() => onNavigate('workspace')}
           />
         } />}
-        {selectedAgent && <DevelopmentPanel initialOpen={initialProjectPanelOpen} key={selectedAgent.id} ownerId={selectedAgent.id} projectRoot={activeProject?.root ?? null} portalTarget={developmentPanelTarget} disabled={sending} showChanges={Boolean(selectedAgent.config.tools?.some(tool=>tool.startsWith('development_')))} workspaceContent={
+        {selectedAgent && <DevelopmentPanel navigationRevision={navigationRevision} initialOpen={initialProjectPanelOpen} key={selectedAgent.id} ownerId={selectedAgent.id} projectRoot={activeProject?.root ?? null} portalTarget={developmentPanelTarget} disabled={sending} showChanges={Boolean(selectedAgent.config.tools?.some(tool=>tool.startsWith('development_')))} workspaceContent={
           <ProjectPermissions
             projectId={activeProject?.project_id ?? null}
             projectRoot={activeProject?.root ?? null}

@@ -115,6 +115,11 @@ function InlineChatResource({view, context, cognitiveMode, onCognitiveMode, work
   workspaceRefresh: number; onWorkspaceChanged: () => void
 }) {
   const open = context.onOpenView
+  const resourceRef = useRef<HTMLElement>(null)
+  useEffect(() => {
+    resourceRef.current?.focus({preventScroll: true})
+    resourceRef.current?.scrollIntoView({block: 'nearest'})
+  }, [view])
   let content
   if (view === 'workspace') content = <WorkspaceManager inline refreshKey={workspaceRefresh} onSelected={onWorkspaceChanged} contextPanel={({openProjectSelection, refreshKey}) => <CognitionSettings key={refreshKey} mode={cognitiveMode} onModeChange={onCognitiveMode} workspaceOnly onRequestWorkspaceSelection={openProjectSelection} />} />
   else if (view === 'agents') content = <AgentManagement onCreate={() => open('builder')} onTest={agentId => open('runner', {agentId})} onEvaluate={agentId => open('evaluation_lab', {agentId})} />
@@ -135,7 +140,7 @@ function InlineChatResource({view, context, cognitiveMode, onCognitiveMode, work
     const inspectionView = view === 'traces' ? 'trace' : view
     content = context.messageId && !context.selection ? <p role="status">{t('commerce.chat_inline.inspection_unbound')}</p> : <ChatInspection embedded view={inspectionView} selection={context.selection} onSelect={selection => open(view, {selection})} onViewChange={next => open(next === 'trace' ? 'traces' : next, {selection: context.selection ?? undefined})} />
   }
-  return <section className="capability-chat-card" aria-label={t('commerce.chat_inline.resource')}><header className="draft-heading"><strong>{t('commerce.chat_inline.resource')}</strong><button type="button" onClick={context.onClose}>{t('commerce.chat_inline.close')}</button></header>{content}</section>
+  return <section ref={resourceRef} tabIndex={-1} className="capability-chat-card" aria-label={t('commerce.chat_inline.resource')}><header className="draft-heading"><strong>{t('commerce.chat_inline.resource')}</strong><button type="button" onClick={context.onClose}>{t('commerce.chat_inline.close')}</button></header>{content}</section>
 }
 
 function App() {
