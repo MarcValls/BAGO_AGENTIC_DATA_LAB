@@ -137,6 +137,10 @@ def reconcile(base: Path, incoming: Path, output: Path, *, allow_shared_projects
     _reject_reparse(output)
     if base.resolve() == incoming.resolve() or output.resolve() in (base.resolve(), incoming.resolve()):
         raise ReconciliationError('paths_must_be_distinct')
+    source_sidecars = {Path(str(path.resolve()) + suffix) for path in (base, incoming)
+                       for suffix in ('-wal', '-shm', '-journal')}
+    if output.resolve() in source_sidecars:
+        raise ReconciliationError('output_conflicts_with_source_sidecar')
     if base.exists() and incoming.exists() and os.path.samefile(base, incoming):
         raise ReconciliationError('paths_must_be_distinct')
     if output.exists() or output.is_symlink():

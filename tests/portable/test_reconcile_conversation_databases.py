@@ -155,6 +155,19 @@ def test_empty_legacy_labels_are_accepted_like_product(tmp_path):
         reset_project_scope(token)
 
 
+@pytest.mark.parametrize('source', ['base', 'incoming'])
+@pytest.mark.parametrize('suffix', ['-wal', '-shm', '-journal'])
+def test_output_must_not_be_a_source_sidecar(tmp_path, source, suffix):
+    a, b = (tmp_path / x for x in ('a.db', 'b.db'))
+    make_db(a, 'a'); make_db(b, 'b')
+    out = Path(str(a if source == 'base' else b) + suffix)
+    before = (a.read_bytes(), b.read_bytes())
+    with pytest.raises(ReconciliationError, match='output_conflicts_with_source_sidecar'):
+        reconcile(a, b, out)
+    assert not out.exists()
+    assert (a.read_bytes(), b.read_bytes()) == before
+
+
 def test_message_id_conflict_rolls_back_incoming_conversations(tmp_path):
     a, b, out = (tmp_path / x for x in ('a.db', 'b.db', 'out.db'))
     make_db(a, 'a'); make_db(b, 'b')
