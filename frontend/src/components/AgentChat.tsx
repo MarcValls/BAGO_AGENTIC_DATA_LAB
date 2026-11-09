@@ -582,13 +582,13 @@ export default function AgentChat({ onInspectionSelection, onInspectExecution: i
   }
   const onNavigate = (view: ExistingView) => { if (renderInlineView) openInlineResource(view); else { closePanelsForNavigation(); navigateOutside(view) } }
   const onManageAgents = renderInlineView ? () => openInlineResource('agents') : manageAgentsOutside && (() => { closePanelsForNavigation(); manageAgentsOutside() })
-  const onOpenProviderSettings = () => renderInlineView ? openInlineResource('provider_settings') : providerSettingsOutside()
-  const onOpenCognitionSettings = () => renderInlineView ? openInlineResource('cognition_settings') : cognitionSettingsOutside()
-  const onOpenCommunication = renderInlineView ? (draftId: string) => openInlineResource('communications', messages.find(message => message.communicationDraftId === draftId || message.communicationDraft?.id === draftId)?.id, {draftId}) : communicationOutside
-  const onInspectExecution = renderInlineView ? (selection: InspectionSelection) => openInlineResource('inspector', undefined, {selection}) : inspectOutside
+  const onOpenProviderSettings = () => { if (renderInlineView) openInlineResource('provider_settings'); else { closePanelsForNavigation(); providerSettingsOutside() } }
+  const onOpenCognitionSettings = () => { if (renderInlineView) openInlineResource('cognition_settings'); else { closePanelsForNavigation(); cognitionSettingsOutside() } }
+  const onOpenCommunication = renderInlineView ? (draftId: string) => openInlineResource('communications', messages.find(message => message.communicationDraftId === draftId || message.communicationDraft?.id === draftId)?.id, {draftId}) : communicationOutside && ((draftId: string) => { closePanelsForNavigation(); communicationOutside(draftId) })
+  const onInspectExecution = renderInlineView ? (selection: InspectionSelection) => openInlineResource('inspector', undefined, {selection}) : inspectOutside && ((selection: InspectionSelection) => { closePanelsForNavigation(); inspectOutside(selection) })
   function inspectMessage(messageId: string, selection: InspectionSelection) {
     if (renderInlineView) openInlineResource('inspector', messageId, {selection})
-    else inspectOutside?.(selection)
+    else if (inspectOutside) { closePanelsForNavigation(); inspectOutside(selection) }
   }
   function inlineContext(resource: InlineResource, messageId: string|null): ChatInlineContext {
     const message = messageId ? messages.find(item => item.id === messageId) : null
