@@ -50,7 +50,9 @@ COPY scripts/ber_effect_demo.py scripts/ber_effect_demo.py
 # Set PATH for pip-installed binaries
 ENV PATH=/root/.local/bin:$PATH \
     PYTHONUNBUFFERED=1 \
-    PYTHONDONTWRITEBYTECODE=1
+    PYTHONDONTWRITEBYTECODE=1 \
+    BAGO_RUNTIME_MODE=container \
+    BAGO_API_HOST=0.0.0.0
 
 EXPOSE 8080
 
