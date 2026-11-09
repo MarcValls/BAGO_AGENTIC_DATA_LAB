@@ -1,4 +1,5 @@
 import hashlib
+import json
 import sqlite3
 import subprocess
 import sys
@@ -153,6 +154,25 @@ def test_empty_legacy_labels_are_accepted_like_product(tmp_path):
         assert ConversationStore(out).list()[0]['labels'] == []
     finally:
         reset_project_scope(token)
+
+
+def test_cli_requires_confirmation_for_each_shared_project(tmp_path):
+    a, b, out = (tmp_path / x for x in ('a.db', 'b.db', 'out.db'))
+    make_db(a, 'a'); make_db(b, 'b')
+    for path, suffix in ((a, 'a'), (b, 'b')):
+        with sqlite3.connect(path) as db:
+            db.execute("UPDATE conversations SET project_id='shared-1'")
+            db.execute("INSERT INTO conversations SELECT ?, 'shared-2', owner_kind, owner_id, title, status, created_at, updated_at, revision FROM conversations LIMIT 1", ('extra-' + suffix,))
+    before = (a.read_bytes(), b.read_bytes())
+    command = [sys.executable, '-B', str(Path(reconciliation.__file__)), str(a), str(b), str(out)]
+    denied = subprocess.run(command + ['--allow-shared-project', 'shared-1'], capture_output=True, text=True)
+    assert denied.returncode != 0
+    assert 'shared_project_identity_requires_confirmation' in denied.stderr
+    assert not out.exists()
+    accepted = subprocess.run(command + ['--allow-shared-project', 'shared-1', '--allow-shared-project', 'shared-2'], capture_output=True, text=True)
+    assert accepted.returncode == 0, accepted.stderr
+    assert json.loads(accepted.stdout)['shared_project_ids'] == ['shared-1', 'shared-2']
+    assert (a.read_bytes(), b.read_bytes()) == before
 
 
 @pytest.mark.parametrize('source', ['base', 'incoming'])
