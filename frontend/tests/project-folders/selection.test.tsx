@@ -17,6 +17,20 @@ const accept=()=>expect(within(dialog()).queryByRole('checkbox')).toBeNull()
 const confirm=()=>fireEvent.click(within(dialog()).getByRole('button',{name:'Aceptar plan y ejecutar'}))
 function deferred<T>(){let resolve!:(value:T)=>void;const promise=new Promise<T>(r=>{resolve=r});return {promise,resolve}}
 
+it('keeps optional names collapsed for existing folders and preserves them across modes',async()=>{
+ const f=folderFixture();render(<WorkspaceManager/>);await ready()
+ expect(screen.queryByText('No hay proyectos gestionados. Crear uno no modifica carpetas existentes.')).toBeNull()
+ const summary=screen.getByText('Nombre y título (opcional)'),options=summary.closest('details')!
+ expect(options.open).toBe(false);fireEvent.click(summary);expect(options.open).toBe(true)
+ fireEvent.change(screen.getByLabelText('Título del proyecto'),{target:{value:'Mi título'}})
+ fireEvent.click(screen.getByLabelText('Crear una carpeta hija'))
+ expect(screen.queryByText('Nombre y título (opcional)')).toBeNull()
+ expect((screen.getByLabelText('Título del proyecto') as HTMLInputElement).value).toBe('Mi título')
+ fireEvent.click(screen.getByLabelText('Usar esta carpeta existente'))
+ expect((screen.getByLabelText('Título del proyecto') as HTMLInputElement).value).toBe('Mi título')
+ expect(f.mutations()).toEqual([])
+})
+
 it('defaults to the exact active D folder with mount GETs only and no administrative C fallback',async()=>{
  const f=folderFixture({workspaces:[workspace('C:/old-admin-root')]});render(<WorkspaceManager/>);await ready()
  expect(pathInput().value).toBe('D:/selected-project');expect((screen.getByLabelText('Usar esta carpeta existente') as HTMLInputElement).checked).toBe(true)
