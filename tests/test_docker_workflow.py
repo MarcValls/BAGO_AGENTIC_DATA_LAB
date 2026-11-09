@@ -113,18 +113,19 @@ def test_openmetadata_image_pull_retries_are_bounded(success_on, attempts, retur
     sleep() {{ echo "sleep $*"; }}
     """
     result = subprocess.run(
-        ["bash", "-e", "-c", textwrap.dedent(stubs) + script],
+        ["bash", "-e", "-s"],
+        input=(textwrap.dedent(stubs) + script).encode('utf-8'),
         capture_output=True,
-        text=True,
         timeout=5,
     )
 
-    assert result.returncode == returncode, result.stderr
+    assert result.returncode == returncode, result.stderr.decode('utf-8', errors='replace')
     command = "compose -p bago-openmetadata -f infra/openmetadata/docker-compose.yml"
-    assert result.stdout.count(f"docker {command} pull\n") == attempts
+    stdout = result.stdout.decode('utf-8').replace('\r\n', '\n')
+    assert stdout.count(f"docker {command} pull\n") == attempts
     assert [
-        line for line in result.stdout.splitlines() if line.startswith("sleep ")
+        line for line in stdout.splitlines() if line.startswith("sleep ")
     ] == [f"sleep {attempt * 10}" for attempt in range(1, attempts)]
-    assert ("failed after 3 attempts" in result.stdout) == (returncode != 0)
+    assert ("failed after 3 attempts" in stdout) == (returncode != 0)
     assert f"run: docker {command} up -d --pull never\n" in start_step
     assert "continue-on-error" not in pull_step
