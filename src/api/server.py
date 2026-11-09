@@ -33,6 +33,7 @@ from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from src.web_research import Authorizations, PublicWebReader, SnapshotStore, WebReadError, PUBLIC_WEB_TOOL
 from src.api.gex_routes import create_gex_router
+from src.api.workspace_picker import pick_workspace_directory as _pick_workspace_directory
 from src.api.connection_routes import create_connection_router
 from src.api.task_routes import create_task_router
 from src.api.agent_management_routes import create_agent_management_router
@@ -210,21 +211,6 @@ def _set_workspace_root(candidate: str | Path) -> Path:
         EVALUATION_TRACE_DIR = EVALUATIONS.database_path.parent / "traces"
         _REQUEST_WORKSPACE_ROOT.set(root)
     return root
-
-
-def _pick_workspace_directory(initial: Path) -> str | None:
-    try:
-        import tkinter as tk
-        from tkinter import filedialog
-        window = tk.Tk()
-        window.withdraw()
-        window.attributes("-topmost", True)
-        try:
-            return filedialog.askdirectory(initialdir=str(initial), title="Select workspace folder", mustexist=True) or None
-        finally:
-            window.destroy()
-    except Exception as error:
-        raise RuntimeError("The Windows folder picker is unavailable in this session.") from error
 
 
 def _capability_store() -> CapabilityStore:
