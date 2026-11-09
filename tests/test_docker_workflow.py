@@ -13,6 +13,14 @@ import pytest
 ROOT = Path(__file__).parent.parent
 
 
+def test_image_defaults_to_container_interface_and_compose_publishes_loopback():
+    dockerfile = (ROOT / 'Dockerfile.ui').read_text(encoding='utf-8')
+    compose = (ROOT / 'docker-compose.ui.yml').read_text(encoding='utf-8')
+    assert 'BAGO_RUNTIME_MODE=container' in dockerfile
+    assert 'BAGO_API_HOST=0.0.0.0' in dockerfile
+    assert '127.0.0.1:8080:8080' in compose
+
+
 def test_python_builder_copies_every_included_requirements_file():
     pending = ["requirements.txt"]
     required = set()
