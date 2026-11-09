@@ -10,7 +10,7 @@ const prepared = vi.hoisted(() => vi.fn())
 vi.mock('axios', () => ({default: {get: vi.fn(async () => ({data: {}}))}}))
 vi.mock('../../../src/components/RuntimeStatusBar', () => ({default: () => null}))
 vi.mock('../../../src/components/TaskExecutionPanel', () => ({default: ({taskText, sourceIdentity}: any) => <button data-source={sourceIdentity} onClick={() => prepared(taskText, sourceIdentity)}>Preparar ejecución real fixture</button>}))
-vi.mock('../../../src/components/WorkspaceManager', () => ({default: () => <h3>Workspace inline fixture</h3>}))
+vi.mock('../../../src/components/WorkspaceManager', () => ({default: () => <><h3>Workspace inline fixture</h3><input aria-label="Borrador del recurso" /></>}))
 vi.mock('../../../src/components/AgentTasks', () => ({default: ({initialAgentId}: any) => <h3>Tareas inline fixture {initialAgentId}</h3>}))
 vi.mock('../../../src/components/AgentBuilder', () => ({default: ({onBack}: any) => <div><h3>Constructor inline fixture</h3><button onClick={onBack}>Volver a agentes fixture</button></div>}))
 vi.mock('../../../src/components/AgentManagement', () => ({default: ({onCreate, onTest}: any) => <div><h3>Agentes inline fixture</h3><button onClick={onCreate}>Crear perfil fixture</button><button onClick={() => onTest('agent-saved')}>Tareas del perfil fixture</button></div>}))
@@ -74,6 +74,7 @@ it.each([
   const {composer, answer} = await setup(view)
   fireEvent.click(within(answer).getByRole('button', {name: 'Abrir aquí en el chat'}))
   expect(within(answer).getByRole('heading', {name: heading})).toBeTruthy()
+  expect(document.activeElement).toBe(within(answer).getByRole('region', {name: t('commerce.chat_inline.resource')}))
   expect(screen.getByRole('textbox', {name: t('commerce.message_the_assistant_or_selected_agent')})).toBe(composer)
   expect(screen.getByRole('main').getAttribute('aria-label')).toContain('Chat')
   expect(screen.queryByRole('button', {name: /Volver al chat/})).toBeNull()
@@ -88,6 +89,19 @@ it('keeps nested capability callbacks inline and the resource close preserves th
   expect(within(answer).queryByRole('heading', {name: 'Conexiones inline fixture'})).toBeNull()
   expect(within(answer).getByText('Respuesta de la solicitud')).toBeTruthy()
   expect(composer.isConnected).toBe(true)
+})
+
+it('focuses an already open resource again without discarding its draft', async () => {
+  const {answer} = await setup('workspace')
+  const open = within(answer).getByRole('button', {name: 'Abrir aquí en el chat'})
+  fireEvent.click(open)
+  const input = within(answer).getByRole('textbox', {name: 'Borrador del recurso'}) as HTMLInputElement
+  fireEvent.change(input, {target: {value: 'conservar'}})
+  open.focus()
+  fireEvent.click(open)
+  expect(within(answer).getByRole('textbox', {name: 'Borrador del recurso'})).toBe(input)
+  expect(input.value).toBe('conservar')
+  expect(document.activeElement).toBe(within(answer).getByRole('region', {name: t('commerce.chat_inline.resource')}))
 })
 
 it('pins inline inspection to the clicked response trace, not the global inspector selection', async () => {

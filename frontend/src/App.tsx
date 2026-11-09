@@ -119,7 +119,7 @@ function InlineChatResource({view, context, cognitiveMode, onCognitiveMode, work
   useEffect(() => {
     resourceRef.current?.focus({preventScroll: true})
     resourceRef.current?.scrollIntoView({block: 'nearest'})
-  }, [view])
+  }, [view, context.focusToken])
   let content
   if (view === 'workspace') content = <WorkspaceManager inline refreshKey={workspaceRefresh} onSelected={onWorkspaceChanged} contextPanel={({openProjectSelection, refreshKey}) => <CognitionSettings key={refreshKey} mode={cognitiveMode} onModeChange={onCognitiveMode} workspaceOnly onRequestWorkspaceSelection={openProjectSelection} />} />
   else if (view === 'agents') content = <AgentManagement onCreate={() => open('builder')} onTest={agentId => open('runner', {agentId})} onEvaluate={agentId => open('evaluation_lab', {agentId})} />
