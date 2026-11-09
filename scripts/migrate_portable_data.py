@@ -392,7 +392,14 @@ def apply_plan(plan_path: Path, *, include_private_owned: bool = False,
                 _reject_reparse(final_file)
                 if final_file.exists():
                     raise MigrationError("target_appeared_after_preflight")
-                os.link(staged_file, final_file)
+                try:
+                    os.link(staged_file, final_file)
+                except OSError as error:
+                    # Windows rename refuses an existing destination. It also
+                    # works on exFAT, where hard links are not supported.
+                    if os.name != "nt" or getattr(error, "winerror", None) not in (1, 50):
+                        raise
+                    os.rename(staged_file, final_file)
             shutil.rmtree(stage)
     except Exception as error:
         code = str(error) if isinstance(error, MigrationError) else "copy_failed"
