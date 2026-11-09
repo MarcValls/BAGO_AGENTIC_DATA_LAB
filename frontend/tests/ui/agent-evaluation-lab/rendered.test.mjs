@@ -108,7 +108,7 @@ describe('Agent Evaluation Lab rendered behavior', () => {
     assert.equal(screen.queryByRole('button', { name: 'Run evaluation' }), null)
     fireEvent.click(getByButtonName('New suite'))
     assert.ok(screen.getByText('Create a suite'))
-    assert.ok(screen.getByText(/No verified Ollama model is available/))
+    assert.ok(screen.getByText(/No configured Ollama model is available/))
     assert.equal(getByButtonName('Save suite').disabled, true)
     const panel = screen.getByLabelText('Saved evaluation suites')
     const content = panel.querySelector('#eval-suites-content')
@@ -142,17 +142,43 @@ describe('Agent Evaluation Lab rendered behavior', () => {
     restore()
   })
 
-  it('preselects only the verified model and does not inherit an agent model that is unverified', async () => {
+  it('preselects the saved listed model instead of a different agent model', async () => {
     const restore = stubFetch(standardFetch())
     render(React.createElement(AgentEvaluationLab))
     fireEvent.click(await screen.findByRole('button', { name: /Response contract/ }))
     await waitFor(() => assert.ok(screen.getByText('Support agent', { selector: 'dd' })))
     const runButton = getByButtonName('Run evaluation')
-    assert.equal(screen.getByLabelText('Verified Ollama model').value, model.model_id)
+    assert.equal(screen.getByLabelText('Available Ollama model').value, model.model_id)
     assert.equal(screen.getByText(/Effective model/).parentElement.textContent.includes(model.model_id), true)
     assert.equal(runButton.disabled, false)
     restore()
   })
+
+  it('allows an explicitly selected and listed configured-unverified model', async () => {
+    const restore = stubFetch(standardFetch({ providerState: 'configured_unverified' }))
+    render(React.createElement(AgentEvaluationLab))
+    fireEvent.click(await screen.findByRole('button', { name: /Response contract/ }))
+    assert.equal(screen.getByLabelText('Available Ollama model').value, model.model_id)
+    const button = getByButtonName('Run evaluation')
+    assert.equal(button.disabled, false)
+    fireEvent.click(button)
+    await screen.findByRole('heading', { name: /Passed \(PASS\).*Response contract v1/ })
+    restore()
+  })
+
+  for (const [name, overrides] of [
+    ['unlisted configured model', { providerState: 'configured_unverified', verifiedModelId: 'other-model' }],
+    ['provider requiring authentication', { providerState: 'needs_authentication' }],
+  ]) {
+    it(`does not enable evaluation for ${name}`, async () => {
+      const restore = stubFetch(standardFetch(overrides))
+      render(React.createElement(AgentEvaluationLab))
+      fireEvent.click(await screen.findByRole('button', { name: /Response contract/ }))
+      assert.equal(screen.getByLabelText('Available Ollama model').value, '')
+      assert.equal(getByButtonName('Run evaluation').disabled, true)
+      restore()
+    })
+  }
 
   it('loads persisted suite values into the editor and saves edits with the expected revision', async () => {
     let savedSuite = { ...suite, cases: suite.cases.map((item) => ({ ...item, must_include: [...item.must_include], must_not_include: [...item.must_not_include] })) }
@@ -183,7 +209,7 @@ describe('Agent Evaluation Lab rendered behavior', () => {
     assert.equal(screen.getByLabelText('Suite name').value, suite.name)
     assert.equal(screen.getByLabelText('Prompt').value, 'Say hello')
     assert.equal(screen.getByLabelText(/Must include/).value, 'hello')
-    assert.equal(screen.getByLabelText('Verified Ollama model').value, model.model_id)
+    assert.equal(screen.getByLabelText('Available Ollama model').value, model.model_id)
     assert.equal(screen.queryByRole('button', { name: 'Run evaluation' }), null)
     assert.equal(runCalls, 0, 'suite review must not start inference')
     fireEvent.change(screen.getByLabelText('Suite name'), { target: { value: 'Response contract revised' } })
@@ -233,7 +259,7 @@ describe('Agent Evaluation Lab rendered behavior', () => {
     })
     render(React.createElement(AgentEvaluationLab))
     fireEvent.click(await screen.findByRole('button', { name: /Response contract/ }))
-    assert.equal(screen.getByLabelText('Verified Ollama model').value, model.model_id)
+    assert.equal(screen.getByLabelText('Available Ollama model').value, model.model_id)
     const runButton = getByButtonName('Run evaluation')
     await waitFor(() => assert.equal(runButton.disabled, false))
     assert.equal(calls.some(([url]) => url.endsWith('/run')), false)
@@ -261,7 +287,7 @@ describe('Agent Evaluation Lab rendered behavior', () => {
     })
     render(React.createElement(AgentEvaluationLab))
     fireEvent.click(await screen.findByRole('button', { name: /Response contract/ }))
-    assert.equal(screen.getByLabelText('Verified Ollama model').value, model.model_id)
+    assert.equal(screen.getByLabelText('Available Ollama model').value, model.model_id)
     fireEvent.click(await screen.findByRole('button', { name: 'Run evaluation' }))
     await screen.findByText('local-only')
     assert.equal(screen.queryByRole('link', { name: /Jaeger/ }), null)
