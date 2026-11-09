@@ -14,6 +14,30 @@ def _mapping(path: Path, entries):
     path.write_text(json.dumps({"version": 1, "entries": entries}), encoding="utf-8")
 
 
+@pytest.mark.skipif(migration.os.name != "nt", reason="Windows rename semantics")
+def test_windows_fallback_never_replaces_target_created_during_promotion(tmp_path, monkeypatch):
+    source = tmp_path / "source.txt"
+    source.write_text("source", encoding="utf-8")
+    destination = tmp_path / "data"
+    destination.mkdir()
+    mapping = tmp_path / "mapping.json"
+    _mapping(mapping, [{"source": str(source), "target": "file.txt", "kind": "file"}])
+    plan = tmp_path / "plan.json"
+    migration.create_plan(mapping, destination, plan)
+
+    def unsupported_link_with_racing_target(_source, target):
+        Path(target).write_text("concurrent", encoding="utf-8")
+        error = OSError("hard links unavailable")
+        error.winerror = 1
+        raise error
+
+    monkeypatch.setattr(migration.os, "link", unsupported_link_with_racing_target)
+    with pytest.raises(migration.MigrationError, match="migration_stage_retained"):
+        migration.apply_plan(plan)
+    assert (destination / "file.txt").read_text(encoding="utf-8") == "concurrent"
+    assert source.read_text(encoding="utf-8") == "source"
+
+
 def test_explicit_plan_and_apply_copy_file_and_sqlite_without_mutating_sources(tmp_path):
     source = tmp_path / "legacy"
     source.mkdir()
