@@ -182,7 +182,7 @@ export default function ExternalConnections() {
             {selected.last_error && <p className="external-connections-error">{errorMessage(apiError({detail:selected.last_error},0,'agents'))}</p>}
             <label className="external-check"><input type="checkbox" checked={discoveryApproved} onChange={event => setDiscoveryApproved(event.target.checked)} />{t("core.ExternalConnections.i_authorize_contacting_this_service_to_discover_03b14b")}</label>
             <button type="button" className="secondary-action" disabled={!discoveryApproved} onClick={() => void discover()}>{busy === 'discover' ? t("core.ExternalConnections.discovering_d63420") : t("core.ExternalConnections.discover_tools_41eb80")}</button>
-            {selected.tools.length === 0 ? <p>{t("core.ExternalConnections.no_tools_are_available_discover_the_service_a53080")}</p> : <>
+            {selected.tools.length > 0 && <>
               <label>{t("core.ExternalConnections.tool_d96883")}<select value={toolName} onChange={event => { resetOperation(); setToolName(event.target.value); setArgumentsText('{}') }}><option value="">{t("core.ExternalConnections.select_a_tool_c57751")}</option>{selected.tools.map(item => <option key={item.name} value={item.name}>{item.name}</option>)}</select></label>
               {tool && <>
                 <p>{tool.description}</p>
