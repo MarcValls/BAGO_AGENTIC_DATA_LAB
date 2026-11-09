@@ -167,23 +167,23 @@ export default function WorkspaceManager({ inline = false, onSelected, proposal,
   }
   const folders = [...new Set(files.flatMap(f => f.path.split('/').slice(0, -1).map((_part, i, parts) => parts.slice(0, i + 1).join('/'))))].sort()
   const visible = files.filter(f => !directory || f.path.startsWith(directory + '/'))
+  const folderNames = <div className="wm-folder-names"><label>{t('commerce.folder_name')}<input value={name} onChange={event=>editFolder(()=>setName(event.target.value))} disabled={folderBusy}/></label><label>{t('commerce.project_title')}<input value={title} onChange={event=>editFolder(()=>setTitle(event.target.value))} disabled={folderBusy}/></label></div>
   return <section className={`workspace-manager ${inline ? 'workspace-manager--inline' : ''}`} aria-label={t('commerce.project_and_file_management')}>
     <header><h2>{t('commerce.projects_and_files')}</h2></header>
     <ServiceTabs<'projects'|'files'|'context'> id={uid} label={t('commerce.workspace_sections')} value={area} onChange={setArea} items={[{id:'projects',label:t('commerce.projects')},{id:'files',label:t('commerce.files')},{id:'context',label:t('commerce.context_and_memory')}]} />
     {proposal && <p role="status">{t('commerce.chat_proposal_awaiting_your_review')}</p>}
     {loading && <p role="status">{t('commerce.loading_projects')}</p>}
     {error && <p className="wm-error" role="alert">{errorMessage(error)}</p>}{notice && <p role="status">{errorMessage(notice)}</p>}
-    {config && <>
+    {config && workspaces.length > 0 && <>
       <label>{t('commerce.managed_project')}<select value={workspace?.id ?? ''} disabled={busy || folderBusy || dirty || Boolean(review) || Boolean(folderPlan)} onChange={e => { const next = workspaces.find(w => w.id === e.target.value); if (next) void select(next) }}><option value="">{t('commerce.select_a_project')}</option>{workspaces.map(w => <option key={w.id} value={w.id}>{w.title} · {w.name}</option>)}</select></label>
-      {!workspaces.length && <p>{t('commerce.no_managed_projects_creating_one_does_not_modify_existing_folders')}</p>}
     </>}
     <section role="tabpanel" tabIndex={0} id={`${uid}-panel-projects`} aria-labelledby={`${uid}-tab-projects`} hidden={area !== 'projects'}>
       <fieldset className="wm-folder-selection"><legend>{t('commerce.project_folder.form_title')}</legend>
         <p>{t('commerce.project_folder.active')} <code>{activeRoot??t('commerce.project_folder.active_unavailable')}</code></p>
         <div className="wm-folder-modes"><label><input type="radio" name={`${uid}-folder-mode`} checked={folderMode==='existing'} onChange={()=>editFolder(()=>setFolderMode('existing'))} disabled={folderBusy}/>{t('commerce.project_folder.existing')}</label><label><input type="radio" name={`${uid}-folder-mode`} checked={folderMode==='create_child'} onChange={()=>editFolder(()=>setFolderMode('create_child'))} disabled={folderBusy}/>{t('commerce.project_folder.child')}</label></div>
-        <p>{t(folderMode==='existing'?'commerce.project_folder.existing_notice':'commerce.project_folder.child_notice')}</p>
+        {folderMode==='create_child' && <p>{t('commerce.project_folder.child_notice')}</p>}
         <label htmlFor={`${uid}-folder-path`}>{t('commerce.project_folder.path')}</label><div className="wm-folder-path"><input id={`${uid}-folder-path`} ref={folderInput} value={folderPath} onChange={event=>editFolder(()=>setFolderPath(event.target.value),true)} disabled={folderBusy}/><button type="button" onClick={()=>void browseFolder()} disabled={busy||folderBusy}>{t('commerce.project_folder.browse')}</button></div>
-        <div className="wm-folder-names"><label>{t('commerce.folder_name')}<input value={name} onChange={event=>editFolder(()=>setName(event.target.value))} disabled={folderBusy}/></label><label>{t('commerce.project_title')}<input value={title} onChange={event=>editFolder(()=>setTitle(event.target.value))} disabled={folderBusy}/></label></div>
+        {folderMode==='create_child' ? folderNames : <details className="wm-folder-options"><summary>{t('commerce.project_folder.naming_options')}</summary>{folderNames}</details>}
         <button type="button" disabled={busy||folderBusy||loading||dirty||!config||!activeRoot||!folderPath.trim()||(folderMode==='create_child'&&(!name.trim()||!title.trim()))} onClick={event=>{folderOrigin.current=event.currentTarget;void prepareFolder()}}>{t('commerce.project_folder.prepare')}</button>
       </fieldset>
       {workspace && <div className="wm-card"><strong>{workspace.title}</strong><details><summary>{t('commerce.project_location')}</summary><code>{workspace.root}</code></details><button type="button" disabled={busy||folderBusy||dirty||!activeRoot||!config} onClick={event=>{folderOrigin.current=event.currentTarget;void prepareFolder({mode:'existing',path:workspace.root,name:workspace.name,title:workspace.title,expected_workspace_root:activeRoot!})}}>{t('commerce.use_this_project_in_adl')}</button><button type="button" disabled={busy} onClick={()=>{setBusy(true);void refresh(workspace.id).catch(e=>setError(e)).finally(()=>setBusy(false))}}>{t('commerce.refresh_files')}</button></div>}
