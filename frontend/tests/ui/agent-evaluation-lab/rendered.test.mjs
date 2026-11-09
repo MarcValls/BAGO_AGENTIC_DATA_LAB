@@ -108,7 +108,7 @@ describe('Agent Evaluation Lab rendered behavior', () => {
     assert.equal(screen.queryByRole('button', { name: 'Run evaluation' }), null)
     fireEvent.click(getByButtonName('New suite'))
     assert.ok(screen.getByText('Create a suite'))
-    assert.ok(screen.getByText(/No configured Ollama model is available/))
+    assert.ok(screen.getByText(/The configured Ollama model cannot be used right now/))
     assert.equal(getByButtonName('Save suite').disabled, true)
     const panel = screen.getByLabelText('Saved evaluation suites')
     const content = panel.querySelector('#eval-suites-content')
@@ -176,6 +176,7 @@ describe('Agent Evaluation Lab rendered behavior', () => {
       fireEvent.click(await screen.findByRole('button', { name: /Response contract/ }))
       assert.equal(screen.getByLabelText('Available Ollama model').value, '')
       assert.equal(getByButtonName('Run evaluation').disabled, true)
+      assert.ok(screen.getByText(/The configured Ollama model cannot be used right now/))
       restore()
     })
   }
