@@ -67,11 +67,11 @@ export default function AgentEvaluationLab({ initialAgentId = '' }: { initialAge
     try {
       const results = await Promise.all([evaluationApi.agents(), evaluationApi.models(), evaluationApi.providerStatus(), evaluationApi.suites(), evaluationApi.runs()])
       const catalog = results[1].models ?? []
-      const verifiedModels = results[2].state === 'ready' && results[2].model_id
+      const availableModels = ['ready', 'configured_unverified'].includes(results[2].state) && results[2].model_id
         ? catalog.filter((model) => model.model_id === results[2].model_id)
         : []
-      setAgents(results[0].agents ?? []); setModels(verifiedModels); setSuites(results[3].suites ?? []); setRuns(results[4].runs ?? [])
-      setModelId((current) => verifiedModels.some((model) => model.model_id === current) ? current : verifiedModels[0]?.model_id ?? '')
+      setAgents(results[0].agents ?? []); setModels(availableModels); setSuites(results[3].suites ?? []); setRuns(results[4].runs ?? [])
+      setModelId((current) => availableModels.some((model) => model.model_id === current) ? current : availableModels[0]?.model_id ?? '')
     } catch (cause) {
       const message = cause instanceof Error && 'originalDetail' in cause ? String(cause.originalDetail) : cause instanceof Error ? cause.message : ''
       setError(cause instanceof Error ? cause : new AgentPresentationError(() => t('agents.AgentEvaluationLab.evaluation_lab_data_could_not_be_loaded'))); setUnavailable((cause instanceof Error && 'status' in cause && cause.status === 404) || message.toLowerCase().includes('404') || message.toLowerCase().includes('unavailable') || message.toLowerCase().includes('not found'))
