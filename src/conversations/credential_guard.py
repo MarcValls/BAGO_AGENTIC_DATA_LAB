@@ -198,7 +198,9 @@ def _contains_json_node(node):
     return contains_credential_tree(node)
 
 
-def _redact_json_node(node, sensitive_key=None):
+def _redact_json_node(node, sensitive_key=None, under_sensitive=False):
+    if not under_sensitive and sensitive_key is not None and isinstance(node, (dict, list, tuple)) and _sensitive_key(sensitive_key, node):
+        under_sensitive = True
     if isinstance(node, _JsonObject):
         reserved = {key for key, _ in node if redact_credential_tree(key) == key}
         used = set(reserved)
@@ -212,10 +214,12 @@ def _redact_json_node(node, sensitive_key=None):
                     clean_key = f"{base} [{suffix}]"
                     suffix += 1
                 used.add(clean_key)
-            pairs.append((clean_key, _redact_json_node(value, key)))
+            pairs.append((clean_key, _redact_json_node(value, key, under_sensitive)))
         return pairs
     if isinstance(node, list):
-        return [_redact_json_node(value, sensitive_key) for value in node]
+        return [_redact_json_node(value, sensitive_key, under_sensitive) for value in node]
+    if under_sensitive and isinstance(node, str) and node.strip():
+        return '[REDACTED]'
     if sensitive_key is not None and _sensitive_key(sensitive_key, node):
         return "[REDACTED]"
     return redact_credential_tree(node)
@@ -231,8 +235,12 @@ def _dump_json_node(node):
 
 
 def _sensitive_key(key, value):
-    if isinstance(value, _JsonObject):
+    if not isinstance(key, str):
         return False
+    if isinstance(value, (dict, _JsonObject)):
+        if not (_SENSITIVE_KEY.fullmatch(key) or key.casefold() == 'authorization'):
+            return False
+        return _sensitive_container_has_value(value)
     if isinstance(value, (list, tuple)):
         return any(_sensitive_key(key, item) for item in value)
     if not isinstance(key, str) or not isinstance(value, str) or not value.strip():
@@ -242,7 +250,41 @@ def _sensitive_key(key, value):
     return bool(_SENSITIVE_KEY.fullmatch(key))
 
 
+def _sensitive_container_has_value(value):
+    if isinstance(value, _JsonObject):
+        return any(_sensitive_container_has_value(item) for _, item in value)
+    if isinstance(value, dict):
+        return any(_sensitive_container_has_value(item) for item in value.values())
+    if isinstance(value, (list, tuple)):
+        return any(_sensitive_container_has_value(item) for item in value)
+    return isinstance(value, str) and bool(value.strip())
+
+
+def _redact_sensitive_container(value):
+    if isinstance(value, _JsonObject):
+        return _redact_json_node(value, under_sensitive=True)
+    if isinstance(value, dict):
+        result = {}
+        reserved = {key for key in value if redact_credential_tree(key) == key}
+        for key, item in value.items():
+            clean_key = redact_credential_tree(key)
+            if clean_key != key and (clean_key in result or clean_key in reserved):
+                base, index = clean_key, 2
+                while clean_key in result or clean_key in reserved:
+                    clean_key = f'{base} [{index}]'
+                    index += 1
+            result[clean_key] = _redact_sensitive_container(item)
+        return result
+    if isinstance(value, list):
+        return [_redact_sensitive_container(item) for item in value]
+    if isinstance(value, tuple):
+        return tuple(_redact_sensitive_container(item) for item in value)
+    return '[REDACTED]' if isinstance(value, str) and value.strip() else value
+
+
 def _redact_sensitive_value(key, value):
+    if isinstance(value, (dict, _JsonObject)) and _sensitive_key(key, value):
+        return _redact_sensitive_container(value)
     if isinstance(value, list):
         return [_redact_sensitive_value(key, item) for item in value]
     if isinstance(value, tuple):
