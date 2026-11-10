@@ -46,6 +46,52 @@ def test_nested_nonsensitive_data_preserved():
         assert redact_credential_tree(value) == value
 
 
+def test_authorization_metadata_preserved_when_nested_credentials_redacted():
+    value = {'authorization': {'kind': 'channel_task', 'grant_id': 'grant-123',
+             'payload': {'text': 'hello'}, 'value': 'synthetic-nonpattern-credential',
+             'nested': {'api_key': 'synthetic-other-credential'}}}
+    for original in (value, json.dumps(value)):
+        assert contains_credential_tree(original)
+        result = redact_credential_tree(original)
+        if isinstance(result, str):
+            result = json.loads(result)
+        auth = result['authorization']
+        assert auth['kind'] == 'channel_task'
+        assert auth['grant_id'] == 'grant-123'
+        assert auth['payload']['text'] == 'hello'
+        assert auth['value'] == '[REDACTED]'
+        assert auth['nested']['api_key'] == '[REDACTED]'
+
+
+@pytest.mark.parametrize('item', [
+    {'authorization': ['Bearer synthetic-unpattern-secret']},
+    {'authorization': {'header': 'Bearer synthetic-unpattern-secret'}},
+])
+def test_authorization_header_and_list_are_detected_and_redacted(item):
+    for value in (item, json.dumps(item)):
+        assert contains_credential_tree(value)
+        assert 'synthetic-unpattern-secret' not in str(redact_credential_tree(value))
+
+
+def test_deep_authorization_has_linear_visits(monkeypatch):
+    from src.conversations import credential_guard as guard
+    depth = 48
+    raw = '{"authorization":' * depth + '{"kind":"channel_task","header":"Bearer synthetic-nonpattern"}' + '}' * depth
+    calls = 0
+    original = guard._authorization_visit
+
+    def counted(*args, **kwargs):
+        nonlocal calls
+        calls += 1
+        return original(*args, **kwargs)
+
+    monkeypatch.setattr(guard, '_authorization_visit', counted)
+    result = guard.redact_credential_tree(raw)
+    assert 'synthetic-nonpattern' not in result
+    assert 'channel_task' in result
+    assert calls <= depth * 3 + 10
+
+
 def test_deep_sensitive_json_visits_each_node_once_and_preserves_pairs(monkeypatch):
     from src.conversations import credential_guard as guard
 
