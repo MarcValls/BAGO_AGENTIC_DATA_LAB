@@ -32,6 +32,7 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from src.web_research import Authorizations, PublicWebReader, SnapshotStore, WebReadError, PUBLIC_WEB_TOOL
+from src.conversations.credential_guard import contains_credential_tree, redact_credential_tree
 from src.api.gex_routes import create_gex_router
 from src.api.workspace_picker import pick_workspace_directory as _pick_workspace_directory
 from src.api.connection_routes import create_connection_router
@@ -2020,6 +2021,8 @@ def _explicit_saved_agent_request(message: str, agents: list["AgentResponse"]) -
 def _control_request_from_turn(
     turn: dict[str, Any], *, recover_invalid_delegate_for_task: bool = False
 ) -> dict[str, Any] | None:
+    if contains_credential_tree(turn):
+        return {"decision":"answer", "reply":"La respuesta contenía una posible credencial y no se procesó."}
     tool_calls = turn.get("tool_calls")
     if isinstance(tool_calls, list) and tool_calls:
         if len(tool_calls) != 1:
@@ -2246,6 +2249,8 @@ async def _chat_with_workspace_read(
                 provider_runtime.chat_turn, provider_id, model_id, messages, **turn_kwargs)
         if turn_observation is not None:
             turn_observation["provider_response_observed"] = True
+        if contains_credential_tree(turn):
+            return ("La respuesta contenía una posible credencial y no se procesó.", sources, read_events, None)
         raw_calls = turn.get("tool_calls")
         tool_calls = raw_calls if isinstance(raw_calls, list) else []
         if (allow_navigation and round_index == 0 and tool_calls
@@ -2575,6 +2580,7 @@ async def create_workspace_scan_authorization(request: WorkspaceScanAuthorizatio
 
 def _record_workspace_scan_trace(result: dict[str, Any], receipt: dict[str, Any], *, started_at_ns: int,
                                  ended_at_ns: int) -> dict[str, str]:
+    receipt = redact_credential_tree(receipt)
     trace_id = "trace-" + uuid.uuid4().hex[:16]
     event = TraceEvent(
         event_id="event-" + uuid.uuid4().hex[:16], trace_id=trace_id, sequence=0,
@@ -2613,6 +2619,7 @@ def _record_workspace_scan_trace(result: dict[str, Any], receipt: dict[str, Any]
 @app.post("/api/workspace-scan/run")
 async def run_workspace_code_scan(request: WorkspaceScanRunRequest) -> dict[str, Any]:
     """Run one deterministic local scan using an explicit single-use directory grant."""
+    scan_message = redact_credential_tree(f"Run a read-only duplicate-code scan in {request.directory}.")
     owner_kind = "assistant"
     owner_id = "app-assistant"
     workspace_root = current_workspace_root()
@@ -2626,7 +2633,7 @@ async def run_workspace_code_scan(request: WorkspaceScanRunRequest) -> dict[str,
     try:
         user_message = CONVERSATIONS.append_message(
             request.conversation_id, request.revision, "user",
-            f"Run a read-only duplicate-code scan in {request.directory}.",
+            scan_message,
         )
     except (ConversationConflict, ConversationNotFound) as error:
         raise _conversation_error(error) from None
@@ -2843,6 +2850,7 @@ async def cancel_capability_proposal(proposal_id: str, request: CapabilityPropos
 
 @app.post("/api/conversations")
 async def create_conversation(request: ConversationCreateRequest) -> dict[str, Any]:
+    _reject_chat_credentials(request.title)
     owner_id = "app-assistant" if request.owner_kind == "assistant" else request.owner_id
     if request.owner_kind == "agent":
         _load_agent(owner_id)
@@ -2870,6 +2878,7 @@ async def get_conversation(conversation_id: str) -> dict[str, Any]:
 
 @app.patch("/api/conversations/{conversation_id}")
 async def rename_conversation(conversation_id: str, request: ConversationRenameRequest) -> dict[str, Any]:
+    _reject_chat_credentials(request.title)
     try:
         return CONVERSATIONS.rename(conversation_id, request.revision, request.title)
     except (ConversationNotFound, ConversationConflict, ValueError) as error:
@@ -2878,6 +2887,7 @@ async def rename_conversation(conversation_id: str, request: ConversationRenameR
 
 @app.patch("/api/conversations/{conversation_id}/labels")
 async def set_conversation_labels(conversation_id: str, request: ConversationLabelsRequest) -> dict[str, Any]:
+    _reject_chat_credentials(request.labels)
     try:
         return CONVERSATIONS.set_labels(conversation_id, request.revision, request.labels)
     except (ConversationNotFound, ConversationConflict, ValueError) as error:
@@ -3079,9 +3089,15 @@ async def _failed_chat_exception(error, *, owner_id, provider_id, model_id, conv
     return HTTPException(original.status_code, detail=detail, headers=original.headers)
 
 
+def _reject_chat_credentials(value: Any) -> None:
+    if contains_credential_tree(value):
+        raise HTTPException(422, detail={"code":"credential_in_chat", "message":"Quita la credencial del texto antes de continuar."})
+
+
 @app.post("/api/chat/control")
 async def control_chat(request: ControlChatRequest) -> dict[str, Any]:
     """Persist app-assistant turns; draft editing never grants delivery authorization."""
+    _reject_chat_credentials(request.message or request.operation)
     turn_started_at_ns = time.time_ns()
     provider_id, model_id = "application", "not_used"
     provider_observation: dict[str, bool] = {"observed": False}
@@ -3136,10 +3152,12 @@ async def control_chat(request: ControlChatRequest) -> dict[str, Any]:
     revision = user_message["revision"]
 
     async def finish_turn(operation: str, assistant_message: str, **payload: Any) -> dict[str, Any]:
+        assistant_message = redact_credential_tree(assistant_message)
+        payload = redact_credential_tree(payload)
         nonlocal revision
         csv_publish_guard = payload.pop("_csv_publish_guard", None)
-        payload.setdefault("sources", sources)
-        payload.setdefault("read_events", read_events)
+        payload.setdefault("sources", redact_credential_tree(sources))
+        payload.setdefault("read_events", redact_credential_tree(read_events))
         if provider_observation["observed"] and provider_id not in {"application", ""} and model_id not in {"not_used", ""}:
             payload.setdefault("provider_response_observation", {
                 "provider_id": provider_id,
@@ -4244,6 +4262,7 @@ def _native_chat_response_headers(response, metadata):
 
 
 async def _execute_agent_chat_turn(agent_id,request,response,*,delegation_context=None,expected_config=None,expected_selection=None):
+    _reject_chat_credentials(request.message)
     from uuid import uuid4
     from src.observability.native_timing import NativeTimingRecorder
 
@@ -4470,6 +4489,7 @@ async def _execute_native_agent_chat_turn(agent_id,request,response,*,recorder,n
             if failure.detail.get("evidence_persistence", {}).get("conversation") != "persisted":
                 raise failure
         raise failure from None
+    answer = redact_credential_tree(answer)
     with operation("cognition.evidence.persist"):
         cognitive_trace = await asyncio.to_thread(
             _record_chat_cognition_trace,
@@ -4727,6 +4747,9 @@ async def websocket_agent_chat(websocket: WebSocket) -> None:
         msg = json.loads(await websocket.receive_text())
         if not isinstance(msg, dict) or not isinstance(msg.get("agent_id"), str) or not isinstance(msg.get("message"), str) or not isinstance(msg.get("conversation_id"), str) or not isinstance(msg.get("revision"), int):
             raise ValueError("A valid agent ID, conversation ID, revision, and message are required.")
+        if contains_credential_tree(msg["message"]):
+            await websocket.send_json({"type":"error", "code":"credential_in_chat", "data":"Quita la credencial del texto antes de continuar."})
+            return
         record = _load_model_enabled_agent(msg["agent_id"])
         conversation = _owned_conversation(msg["conversation_id"], "agent", record.id)
         if conversation["revision"] != msg["revision"]:
@@ -4757,6 +4780,7 @@ async def websocket_agent_chat(websocket: WebSocket) -> None:
         except (ollama.ProviderError, registration.RegistrationError, provider_runtime.ProviderRuntimeError) as error:
             await websocket.send_json({"type": "error", "data": error.message, "code": error.code})
             return
+        answer = redact_credential_tree(answer)
         trace_metadata = await asyncio.to_thread(
             _record_agent_chat_trace,
             agent_id=record.id,

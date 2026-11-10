@@ -1,0 +1,72 @@
+import asyncio
+import json
+from types import SimpleNamespace
+from unittest.mock import patch
+
+import pytest
+from fastapi import HTTPException
+
+from src.api import server
+from src.conversations.credential_guard import contains_credential_tree, redact_credential_tree
+from src.conversations.library import ConversationStore
+
+
+def test_user_credential_rejected_and_assistant_data_redacted(tmp_path):
+    marker = 'synthetic-only-secret-value'
+    db = tmp_path / 'conversations.sqlite'
+    store = ConversationStore(db)
+    conversation = store.create('assistant', 'agent')
+    with pytest.raises(ValueError):
+        store.append_message(conversation['id'], 0, 'user', 'password: ' + marker)
+    assert store.get(conversation['id'])['revision'] == 0
+    store.append_message(conversation['id'], 0, 'assistant', 'result', {'oauth': {'refresh_token': marker}})
+    assert marker not in str(store.get(conversation['id']))
+    assert marker.encode() not in db.read_bytes()
+
+
+def test_json_duplicate_keys_collisions_and_safe_content():
+    raw = '{"password":"synthetic-secret","password":null,"password=one-secret":1,"password=two-secret":2,"[REDACTED]":3}'
+    assert contains_credential_tree(raw)
+    clean = redact_credential_tree(raw)
+    assert 'synthetic-secret' not in clean
+    assert sorted(v for v in json.loads(clean).values() if isinstance(v, int)) == [1, 2, 3]
+    for text in ('I am the bearer of bad news.', 'bearer responsibility', 'sha256: ' + 'a' * 64, '{"password":""}'):
+        assert not contains_credential_tree(text)
+        assert redact_credential_tree(text) == text
+    assert contains_credential_tree('Authorization: Bearer synthetic')
+    assert 'synthetic' not in redact_credential_tree('Authorization: Bearer synthetic')
+
+
+def test_chat_rejects_before_provider():
+    async def run():
+        request = SimpleNamespace(message='password: synthetic-early-marker')
+        for invoke in (lambda: server.control_chat(request), lambda: server._execute_agent_chat_turn('agent', request, None)):
+            with pytest.raises(HTTPException) as error:
+                await invoke()
+            assert error.value.status_code == 422
+            assert error.value.detail['code'] == 'credential_in_chat'
+            assert 'synthetic-early-marker' not in str(error.value.detail)
+    asyncio.run(run())
+
+def test_provider_tool_call_with_credential_has_no_effect(tmp_path):
+    class Filesystem:
+        def __init__(self):
+            self.calls = []
+        def schemas(self, ids):
+            return []
+        def execute(self, *args, **kwargs):
+            self.calls.append((args, kwargs))
+            raise AssertionError('unexpected effect')
+    async def run():
+        marker = 'synthetic-only-refresh-secret'
+        filesystem = Filesystem()
+        turn = {'tool_calls': [{'id': 'c1', 'function': {'name': 'filesystem_plan', 'arguments': {
+            'operation': 'write', 'target': 'fixture.txt', 'content': 'ok', 'refresh_token': marker}}}]}
+        with patch.object(server.provider_runtime, 'chat_turn', return_value=turn):
+            answer, _, _, _ = await server._chat_with_workspace_read(
+                'synthetic-model', [{'role': 'user', 'content': 'prepare file'}], [],
+                provider_id='synthetic-provider', workspace_root=tmp_path, filesystem_service=filesystem)
+        assert not filesystem.calls
+        assert 'credencial' in answer.lower() and marker not in answer
+        assert not list(tmp_path.iterdir())
+    asyncio.run(run())

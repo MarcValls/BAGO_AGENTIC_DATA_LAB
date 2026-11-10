@@ -12,6 +12,8 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Literal
 
+from .credential_guard import contains_credential_tree, redact_credential_tree
+
 OwnerKind = Literal["assistant", "agent"]
 PROJECT_ID = "bago-agentic-data-lab:default"
 MAX_CONVERSATION_LABELS = 20
@@ -164,6 +166,8 @@ class ConversationStore:
         }
 
     def create(self, owner_kind: OwnerKind, owner_id: str, title: str = "New conversation") -> dict[str, Any]:
+        if contains_credential_tree(title):
+            raise ValueError("Remove the credential-like text before saving.")
         if owner_kind == "assistant":
             owner_id = "app-assistant"
         conversation_id = "conv_" + uuid.uuid4().hex
@@ -220,6 +224,10 @@ class ConversationStore:
         self, conversation_id: str, expected_revision: int, role: Literal["user", "assistant"],
         content: str, references: dict[str, Any] | None = None, status: str = "complete",
     ) -> dict[str, Any]:
+        if role == "user" and contains_credential_tree(content):
+            raise ValueError("Remove the credential-like text before saving.")
+        content = redact_credential_tree(content)
+        references = redact_credential_tree(references or {})
         now = _now()
         with closing(self._connect()) as connection:
             connection.execute("BEGIN IMMEDIATE")
@@ -259,12 +267,16 @@ class ConversationStore:
         return {**self._decode_message(saved), "revision": next_revision}
 
     def rename(self, conversation_id: str, expected_revision: int, title: str) -> dict[str, Any]:
+        if contains_credential_tree(title):
+            raise ValueError("Remove the credential-like text before saving.")
         title = " ".join(title.strip().split())[:160]
         if not title:
             raise ValueError("A conversation title is required.")
         return self._change_status_or_title(conversation_id, expected_revision, title=title)
 
     def set_labels(self, conversation_id: str, expected_revision: int, labels: list[str]) -> dict[str, Any]:
+        if contains_credential_tree(labels):
+            raise ValueError("Remove the credential-like text before saving.")
         normalized = normalize_conversation_labels(labels)
         with closing(self._connect()) as connection:
             connection.execute("BEGIN IMMEDIATE")
