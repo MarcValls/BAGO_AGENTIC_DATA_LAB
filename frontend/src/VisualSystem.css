@@ -47,6 +47,15 @@
   border-radius: 0;
   box-shadow: none;
 }
+/* Restore the editor/history accents after the shared surface defaults. */
+#root .app-shell section.agent-task-editor {
+  border-top-color: var(--adl-accent-blue);
+  background: #111f2f;
+}
+#root .app-shell section.agent-task-history {
+  border-top-color: var(--adl-accent-violet);
+  background: #161e2d;
+}
 /* Nested groups are part of their parent rather than another raised card. */
 #root .app-shell :is(.card .card, .card .metric,
   .window-panel .data-grid-scroll, .wm-card .wm-card,
