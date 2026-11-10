@@ -1,4 +1,4 @@
-import {t, useI18n, formatDate, formatNumber, errorMessage, localMessage} from '../i18n'
+import {t, useI18n, formatDate, formatNumber, errorMessage, localMessage, PresentationError} from '../i18n'
 import {useEffect, useId, useRef, useState, type ChangeEvent} from 'react'
 import {contactsRequest as request, type AddressContact, type ContactPreview, type GoogleContactStatus} from '../types/contacts'
 import './Contacts.css'
@@ -30,7 +30,7 @@ export default function Contacts({inline = false, onUseContact}: Props) {
   const [selected, setSelected] = useState<Set<string>>(new Set())
   const [previewQuery, setPreviewQuery] = useState('')
   const [importReviewed, setImportReviewed] = useState(false)
-  const fail = (cause: unknown) => setError(cause instanceof Error ? cause : "commerce.could_not_complete_the_operation")
+  const fail = (cause: unknown) => setError(cause instanceof PresentationError && cause.code === "invalid_phone" ? localMessage("commerce.contact_invalid_phone") : cause instanceof Error ? cause : "commerce.could_not_complete_the_operation")
   const reload = async () => {
     const result = await request<{contacts: AddressContact[]}>(`/contacts?q=${encodeURIComponent(query)}`)
     setContacts(result.contacts)

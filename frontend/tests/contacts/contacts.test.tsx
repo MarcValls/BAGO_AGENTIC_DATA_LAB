@@ -40,6 +40,18 @@ describe('Contacts UI — simulated API, no Google account or external sends', (
     expect(await screen.findByRole('alert')).toHaveProperty('textContent', t('common.requestFailed')+'\n'+t('common.originalDiagnostic')+': Servicio no instalado')
     expect(screen.getByText('Sin comprobar')).toBeTruthy()
   })
+  it('explains an invalid phone in the selected language without showing the technical diagnostic', async () => {
+    stub((path, init) => path === '/contacts/local-a' && init?.method === 'PUT'
+      ? response({error: {code: 'invalid_phone', message: 'Phone must include an explicit E.164 country prefix'}}, 422) : undefined)
+    render(<Contacts />)
+    fireEvent.click(await screen.findByRole('button', {name: 'Editar PRUEBA Alfa'}))
+    fireEvent.change(screen.getByLabelText('Teléfono internacional'), {target: {value: '１２３'}})
+    fireEvent.click(screen.getByRole('button', {name: 'Guardar cambios'}))
+    expect((await screen.findByRole('alert')).textContent).toBe('Usa +, el prefijo del país y números del 0 al 9, por ejemplo +34612345678.')
+    setLocale('en')
+    await waitFor(() => expect(screen.getByRole('alert').textContent).toBe('Use +, the country code and digits 0 to 9, for example +34612345678.'))
+    expect((screen.getByLabelText('International phone') as HTMLInputElement).value).toBe('１２３')
+  })
   it('saves an edited contact using its current revision', async () => {
     const calls = stub((path, init) => path === '/contacts/local-a' && init?.method === 'PUT'
       ? response({...contact, name: 'PRUEBA Alfa editada', revision: 'revision-2'}) : undefined)
