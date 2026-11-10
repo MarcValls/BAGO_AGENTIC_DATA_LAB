@@ -78,6 +78,82 @@ def _start(app, root: Path, *, path="notes/result.txt", content="approved conten
     return thread_id, interrupts[0].value
 
 
+def test_graph_checkpoint_replay_has_its_own_denial_trace(tmp_path: Path):
+    (tmp_path / 'notes').mkdir()
+    app, _ = _app(tmp_path)
+    thread_id, pending = _start(app, tmp_path)
+    initial = resume_approval(app, thread_id=thread_id, fingerprint=pending['fingerprint'])
+    target = tmp_path / 'notes/result.txt'
+    before = target.read_bytes()
+    snapshot = next(snapshot for snapshot in app.get_state_history(
+        {'configurable': {'thread_id': thread_id}}) if snapshot.next == ('execute_action',))
+    replay = app.invoke(None, config=snapshot.config)
+    receipt = replay['sandbox_result'].receipt
+    assert receipt.status is SandboxStatus.DENIED
+    assert receipt.error_code == 'PERMIT_REPLAY'
+    assert target.read_bytes() == before
+    assert receipt.receipt_id != initial['sandbox_result'].receipt.receipt_id
+    trace = replay['local_trace']
+    assert trace.trace_id != initial['local_trace'].trace_id
+    assert trace.events[-1].attributes['receipt_id'] == receipt.receipt_id
+    assert trace.events[-1].attributes['error_code'] == 'PERMIT_REPLAY'
+    approval = next(event for event in initial['local_trace'].events if event.name == 'human.approval')
+    reused = next(event for event in trace.events if event.name == 'authorization.reused')
+    assert 'human.approval' not in trace.names
+    assert reused.status == 'REUSED'
+    assert approval.attributes['approval_id']
+    assert reused.attributes['approval_id'] == approval.attributes['approval_id']
+    assert reused.attributes['fingerprint'] == approval.attributes['fingerprint']
+    assert 'action.proposal' not in trace.names
+    assert 'governed_retrieval' not in trace.names
+    from src.orchestration.governed_execution import _trace_from_state
+    replay_without_identity = {**replay, 'approval': {key: value for key, value in replay['approval'].items() if key != 'approval_id'}}
+    unknown = _trace_from_state(replay_without_identity)
+    assert 'authorization.reused' not in unknown.names
+    assert 'human.approval' not in unknown.names
+    assert 'authorization.unknown' in unknown.names
+
+
+def test_unregistered_capability_is_denied_without_human_approval_event(tmp_path: Path):
+    app, _ = _app(tmp_path)
+    result = app.invoke({'request_id': 'unsupported-synthetic', 'action_kind': 'unsupported', 'query': 'local governance'},
+                        config={'configurable': {'thread_id': uuid.uuid4().hex}})
+    assert not result.get('__interrupt__')
+    assert result['sandbox_result'].receipt.error_code == 'CAPABILITY_NOT_REGISTERED'
+    assert 'capability is not registered' in result['final_response']
+    assert 'no approval was requested' in result['final_response']
+    assert 'no operation was executed' in result['final_response']
+    assert result['sandbox_result'].receipt.receipt_id in result['final_response']
+    trace = result['local_trace']
+    assert 'human.approval' not in trace.names
+    assert 'authorization.reused' not in trace.names
+    event = next(event for event in trace.events if event.name == 'authorization.not_requested')
+    assert event.status == 'NOT_REQUESTED'
+    assert event.attributes['reason'] == 'CAPABILITY_NOT_REGISTERED'
+
+
+def test_missing_approval_identity_is_not_described_as_human_approval(tmp_path: Path):
+    from src.orchestration.governed_execution import _trace_from_state
+    (tmp_path / 'notes').mkdir()
+    app, _ = _app(tmp_path)
+    thread_id, pending = _start(app, tmp_path)
+    state = resume_approval(app, thread_id=thread_id, fingerprint=pending['fingerprint'])
+    state['approval'] = {key: value for key, value in state['approval'].items() if key != 'approval_id'}
+    trace = _trace_from_state(state)
+    assert 'human.approval' not in trace.names
+    assert 'authorization.unknown' in trace.names
+
+
+def test_l1_demo_replay_uses_graph_receipt_and_trace(tmp_path: Path, monkeypatch):
+    from scripts import run_l1_governed_execution_demo as demo
+    monkeypatch.setattr(demo, '_git_head', lambda: 'uncommitted-candidate')
+    result = demo.run(tmp_path)
+    replay = result['cases']['replay']
+    assert replay['receipt']['error_code'] == 'PERMIT_REPLAY'
+    assert replay['trace']['events'][-1]['attributes']['receipt_id'] == replay['receipt']['receipt_id']
+    assert replay['trace']['trace_id'] != result['cases']['allowed']['trace']['trace_id']
+
+
 def test_integrated_graph_pauses_before_effect_and_requires_exact_approval(tmp_path: Path):
     (tmp_path / "notes").mkdir()
     app, _gateway = _app(tmp_path)
@@ -97,6 +173,7 @@ def test_integrated_graph_pauses_before_effect_and_requires_exact_approval(tmp_p
     )
     assert not target.exists()
     assert denied["authorization_status"] == "DENIED"
+    assert 'Approval was denied or did not match' in denied['final_response']
     assert denied["sandbox_result"].receipt.status is SandboxStatus.DENIED
     assert denied["sandbox_result"].receipt.error_code == "PERMIT_REQUIRED"
     assert "sandbox.execution" in denied["local_trace"].names
