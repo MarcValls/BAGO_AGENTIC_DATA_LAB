@@ -92,6 +92,7 @@ def _trace_from_state(state: GovernedExecutionState) -> LocalTrace:
     request = proposal.get("request", {})
     result = state.get("sandbox_result")
     receipt = result.receipt if result is not None else None
+    replay = receipt is not None and receipt.error_code == 'PERMIT_REPLAY'
     status = state.get("authorization_status", "NO_ACTION")
     run_id = state.get("request_id") or request.get("request_id") or uuid.uuid4().hex
     trace_identity = f"{run_id}:{receipt.receipt_id}" if receipt is not None else run_id
@@ -114,19 +115,20 @@ def _trace_from_state(state: GovernedExecutionState) -> LocalTrace:
 
     add("langgraph.run", TraceKind.WORKFLOW, "COMPLETED", {"run_id": run_id})
     retrieval = state.get("retrieved", {})
-    add("governed_retrieval", TraceKind.RETRIEVAL, "SUCCESS" if retrieval.get("hits") else "EMPTY",
+    add("governed_retrieval.reference" if replay else "governed_retrieval", TraceKind.RETRIEVAL, "SUCCESS" if retrieval.get("hits") else "EMPTY",
         {"hits": retrieval.get("hits", []), "citations": retrieval.get("citations", [])},
         tuple(retrieval.get("citations", [])))
     if request:
-        add("action.proposal", TraceKind.TOOL, "PROPOSED", {
+        add("action.proposal.reference" if replay else "action.proposal", TraceKind.TOOL, "PROPOSED", {
             "request_id": request.get("request_id"),
             "fingerprint": proposal.get("fingerprint"),
             "tool_name": request.get("tool_name"),
             "effect_type": request.get("effect_type"),
         })
-        add("human.approval", TraceKind.AUTHORIZATION, status, {
+        add("authorization.reused" if replay else "human.approval", TraceKind.AUTHORIZATION, "REUSED" if replay else status, {
             "fingerprint": proposal.get("fingerprint"),
             "approved": state.get("approval", {}).get("approved", False),
+            "approval_id": state.get("approval", {}).get("approval_id"),
         })
     if receipt is not None:
         payload = receipt.to_dict()
@@ -234,6 +236,7 @@ def build_integrated_governed_graph(
         approval = {
             "approved": approved,
             "fingerprint": response.get("fingerprint") if isinstance(response, dict) else None,
+            "approval_id": "approval-" + uuid.uuid4().hex,
         }
         if not approved:
             return {"approval": approval, "permit": None, "authorization_status": "DENIED"}

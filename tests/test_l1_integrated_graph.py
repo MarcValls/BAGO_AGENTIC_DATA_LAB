@@ -97,6 +97,15 @@ def test_graph_checkpoint_replay_has_its_own_denial_trace(tmp_path: Path):
     assert trace.trace_id != initial['local_trace'].trace_id
     assert trace.events[-1].attributes['receipt_id'] == receipt.receipt_id
     assert trace.events[-1].attributes['error_code'] == 'PERMIT_REPLAY'
+    approval = next(event for event in initial['local_trace'].events if event.name == 'human.approval')
+    reused = next(event for event in trace.events if event.name == 'authorization.reused')
+    assert 'human.approval' not in trace.names
+    assert reused.status == 'REUSED'
+    assert approval.attributes['approval_id']
+    assert reused.attributes['approval_id'] == approval.attributes['approval_id']
+    assert reused.attributes['fingerprint'] == approval.attributes['fingerprint']
+    assert 'action.proposal' not in trace.names
+    assert 'governed_retrieval' not in trace.names
 
 
 def test_l1_demo_replay_uses_graph_receipt_and_trace(tmp_path: Path, monkeypatch):
