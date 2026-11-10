@@ -38,6 +38,9 @@ export default function AgentManagement({ onCreate, onTest, onEvaluate }: Props)
   const [busy, setBusy] = useState(false)
   const [exporting, setExporting] = useState(false)
   const [exportError, setExportError] = useState(false)
+  const [importing, setImporting] = useState(false)
+  const [importMessage, setImportMessage] = useState('')
+  const [importAlert, setImportAlert] = useState(false)
   const generation = useRef(0)
   const controller = useRef<AbortController | null>(null)
   const reviewRegion = useRef<HTMLElement | null>(null)
@@ -102,6 +105,40 @@ export default function AgentManagement({ onCreate, onTest, onEvaluate }: Props)
     }
   }
 
+  const importAgents = async (file: File) => {
+    setImporting(true); setImportMessage(''); setImportAlert(false)
+    try {
+      if (file.size > 5 * 1024 * 1024) {
+        setImportAlert(true); setImportMessage(t('agents.import.too_large')); return
+      }
+      const response = await fetch('/api/agents/import', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' }, body: await file.text(),
+      })
+      const body = await response.json().catch(() => null)
+      if (!response.ok) {
+        setImportAlert(true)
+        if (body?.detail?.code === 'agent_import_incomplete') {
+          const ids = Array.isArray(body.detail.imported_ids) ? body.detail.imported_ids.filter((id: unknown): id is string => typeof id === 'string') : []
+          const attempted = typeof body.detail.attempted_id === 'string' ? body.detail.attempted_id : ''
+          setImportMessage(t('agents.import.incomplete', { ids: ids.join(', ') || '—', attempted: attempted || '—' }))
+          await refresh()
+        } else if (response.status === 422 || response.status === 413) {
+          setImportMessage(t(response.status === 413 ? 'agents.import.too_large' : 'agents.import.invalid'))
+        } else {
+          setImportMessage(t('agents.import.uncertain')); await refresh()
+        }
+        return
+      }
+      if (body?.status !== 'imported' || !Number.isInteger(body.count) || body.count < 1 || !Array.isArray(body.agent_ids) || body.agent_ids.length !== body.count || !body.agent_ids.every((id: unknown) => typeof id === 'string')) {
+        setImportAlert(true); setImportMessage(t('agents.import.uncertain')); await refresh(); return
+      }
+      await refresh()
+      setImportMessage(t('agents.import.success', { count: formatNumber(body.count) }))
+    } catch {
+      setImportAlert(true); setImportMessage(t('agents.import.uncertain')); await refresh()
+    } finally { setImporting(false) }
+  }
+
   const select = async (id: string, action: 'edit' | 'delete') => {
     if (action === 'delete') reviewTrigger.current = document.activeElement instanceof HTMLElement ? document.activeElement : null
     const current = ++generation.current
@@ -158,6 +195,7 @@ export default function AgentManagement({ onCreate, onTest, onEvaluate }: Props)
       <div className="agent-management-actions">
         <button type="button" onClick={onCreate}>{t('agents.AgentManagement.crear_agente')}</button>
         <button type="button" disabled={exporting} onClick={() => void exportAgents()}>{t('agents.AgentRunner.export_all_agents')}</button>
+        <label className="agent-management-import">{t('agents.import.select')}<input type="file" accept=".json,application/json" aria-label={t('agents.import.select')} disabled={importing} onChange={event => { const file = event.currentTarget.files?.[0]; event.currentTarget.value = ''; if (file) void importAgents(file) }} /></label>
         <button type="button" disabled={loading || busy} onClick={() => void refresh()}>{t('agents.AgentManagement.actualizar')}</button>
       </div>
     </header>
@@ -169,6 +207,8 @@ export default function AgentManagement({ onCreate, onTest, onEvaluate }: Props)
     {!loading && <p className="agent-management-count" role="status">{t('agents.management.count',{shown:formatNumber(shown.length),total:formatNumber(agents.length)})}</p>}
     {warnings > 0 && <p role="alert">{t('agents.management.warnings',{count:formatNumber(warnings)})}</p>}
     {exportError && <p role="alert">{t('agents.AgentRunner.agent_profiles_could_not_be_exported')}</p>}
+    {importing && <p role="status">{t('agents.import.loading')}</p>}
+    {importMessage && <p role={importAlert ? 'alert' : 'status'}>{importMessage}</p>}
     {error && <div role="alert"><p>{typeof error === 'string' ? error : presentAgentError(error)}</p><button type="button" onClick={() => void refresh()}>{t('agents.AgentManagement.actualizar_y_reintentar')}</button></div>}
     {notice && <p role="status">{typeof notice === 'string' ? notice : presentAgentError(notice)}</p>}
     {!loading && !error && !agents.length && <div className="agent-management-empty"><h2>{t('agents.AgentManagement.aun_no_hay_agentes_guardados')}</h2><p>{t('agents.AgentManagement.crea_el_primero_para_definir_su_tarea_proveedor_y_herramientas')}</p><button type="button" onClick={onCreate}>{t('agents.AgentManagement.crear_mi_primer_agente')}</button></div>}

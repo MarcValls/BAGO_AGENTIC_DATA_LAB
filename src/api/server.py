@@ -4587,10 +4587,68 @@ async def agent_metrics(agent_id: str) -> dict[str, Any]:
 
 
 @app.post("/api/agents/import")
-async def import_agents(file: Any) -> dict[str, Any]:
-    """Import agents from JSON file."""
-    # In production, would parse JSON/ZIP and save agents
-    return {"status": "imported", "count": 0}
+async def import_agents(request: Request) -> dict[str, Any]:
+    """Import validated copies from the JSON produced by agent export."""
+    origin = request.headers.get("origin")
+    if origin is not None and origin not in _cors_origins:
+        raise HTTPException(status_code=403, detail={"code": "origin_not_allowed", "message": "Origin is not allowed."})
+    media_type = request.headers.get("content-type", "").split(";", 1)[0].strip().lower()
+    if media_type != "application/json":
+        raise HTTPException(status_code=415, detail={"code": "unsupported_media_type", "message": "Use application/json."})
+    raw = bytearray()
+    async for chunk in request.stream():
+        raw.extend(chunk)
+        if len(raw) > 5 * 1024 * 1024:
+            raise HTTPException(status_code=413, detail={"code": "import_too_large", "message": "The import file is too large."})
+    try:
+        def unique_object(pairs):
+            result = {}
+            for key, value in pairs:
+                if key in result:
+                    raise ValueError("duplicate key")
+                result[key] = value
+            return result
+        data = json.loads(raw, object_pairs_hook=unique_object)
+        if not isinstance(data, dict) or not isinstance(data.get("agents"), list) or not 1 <= len(data["agents"]) <= 100:
+            raise ValueError("invalid agent list")
+        records = [AgentResponse.model_validate(item) for item in data["agents"]]
+        if len({item.id for item in records}) != len(records):
+            raise ValueError("duplicate agent identity")
+    except (ValueError, TypeError, UnicodeError):
+        raise HTTPException(status_code=422, detail={"code": "invalid_agent_import", "message": "The exported agent file is invalid."}) from None
+
+    imported = []
+    attempted_id = None
+    try:
+        AGENTS_DIR.mkdir(parents=True, exist_ok=True)
+        for record in records:
+            agent_id = f"agent_{uuid.uuid4().hex}"
+            attempted_id = agent_id
+            payload = {"id": agent_id, "config": record.config.model_dump(), "created_at": datetime.utcnow().isoformat()}
+            # Publish only complete, flushed bytes without replacing a profile.
+            # Windows rename rejects an existing target, including on exFAT.
+            # POSIX rename may replace: retain exclusive hard-link publication.
+            import tempfile
+            fd, temp_name = tempfile.mkstemp(prefix=".agent-import-", suffix=".tmp", dir=AGENTS_DIR)
+            try:
+                with os.fdopen(fd, "w", encoding="utf-8") as stream:
+                    json.dump(payload, stream, indent=2, ensure_ascii=False)
+                    stream.flush()
+                    os.fsync(stream.fileno())
+                target = AGENTS_DIR / f"{agent_id}.json"
+                if os.name == "nt":
+                    os.rename(temp_name, target)
+                else:
+                    os.link(temp_name, target)
+                imported.append(agent_id)
+            finally:
+                try:
+                    os.unlink(temp_name)
+                except FileNotFoundError:
+                    pass
+    except OSError:
+        raise HTTPException(status_code=500, detail={"code": "agent_import_incomplete", "message": "Import did not finish; check the imported profiles before retrying.", "imported_ids": imported, "attempted_id": attempted_id}) from None
+    return {"status": "imported", "count": len(imported), "agent_ids": imported}
 
 
 # ===== API: GitHub Actions Integration =====
