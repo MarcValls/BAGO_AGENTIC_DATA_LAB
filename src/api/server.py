@@ -874,6 +874,8 @@ def _provider_http_error(error: Any) -> HTTPException:
         status_code = 422
     elif code in {"authentication_required", "authentication_failed"}:
         status_code = 401
+    elif code == "model_policy_conflict":
+        status_code = 409
     return HTTPException(status_code=status_code, detail={"code": code, "message": getattr(error, "message", "The provider request failed."), "state": getattr(error, "status", "error")})
 
 
