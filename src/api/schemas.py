@@ -298,6 +298,7 @@ class EvaluationSuiteCreateRequest(BaseModel):
     name: str = Field(min_length=1, max_length=100)
     agent_id: str = Field(min_length=1, max_length=64)
     cases: list[dict[str, Any]] = Field(min_length=1, max_length=10)
+    level: Literal["green", "blue", "amber", "red", "purple"] | None = None
 
 class EvaluationSuiteUpdateRequest(EvaluationSuiteCreateRequest):
     expected_revision: int = Field(ge=0)
