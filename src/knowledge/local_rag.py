@@ -21,7 +21,7 @@ if _SRC_ROOT not in sys.path:
 from src.agent_tools.workspace_read import MAX_FILE_BYTES, _blocked_path_parts, normalize_workspace_path
 from src.etl.pipeline import ChunkStage, EnrichStage, NormalizeStage, SourceDocument, SourceType
 from src.retrieval.governed_rag import GovernedRAG, MetadataFilter, RetrievalChunk, RetrievalMode
-from src.retrieval.sqlite_vector_store import SQLiteVectorStore
+from src.retrieval.sqlite_vector_store import SQLiteVectorStore, VectorIdentityConflict
 from src.sandbox import SandboxFilesystem, SandboxProfile, SandboxSpecification
 
 AUTHORITY = frozenset({"PROPOSED", "VERIFIED"})
@@ -130,21 +130,6 @@ def run_ingest_and_answer(*, workspace_root: Path, path: str, question: str,
     revision = hashlib.sha256(raw).hexdigest()
     source_id = "src_" + hashlib.sha256(f"{source_path}\0{revision}".encode()).hexdigest()[:32]
     now = datetime.now(timezone.utc).isoformat()
-    # Recomputing slices under an existing vector identity must never replace
-    # historical evidence. A changed chunker requires a separate migration.
-    preview = SourceDocument(id=source_id, source_type=SourceType.FILE, location=source_path,
-                             raw_content=normalized_content, fetched_at=now, content_hash=revision)
-    preview_chunks = ChunkStage(chunk_size=1200, overlap=100).chunk(EnrichStage().enrich(NormalizeStage().normalize(preview)))
-    expected_chunks = {f"{source_id}:{chunk.chunk_index}": chunk.content for chunk in preview_chunks}
-    if db.exists():
-        with sqlite3.connect(db) as conn:
-            table = conn.execute("SELECT 1 FROM sqlite_master WHERE type='table' AND name='vector_chunks'").fetchone()
-            if table:
-                existing_chunks = dict(conn.execute(
-                    "SELECT chunk_id, content FROM vector_chunks WHERE source_uri=? AND revision=?",
-                    (source_path, revision)).fetchall())
-                if existing_chunks and existing_chunks != expected_chunks:
-                    raise LocalRAGError("Existing chunks differ for this source revision; a separate migration is required.")
     response: dict[str, Any] = {"run_id": run_id, "status": "failed", "ingestion": {}, "retrieval": None, "generation": None, "trace": {"trace_id": trace_id}}
     try:
         db.parent.mkdir(parents=True, exist_ok=True)
@@ -204,6 +189,14 @@ def run_ingest_and_answer(*, workspace_root: Path, path: str, question: str,
         trace_record = {**response, "trace": {"trace_id": trace_id, "events": ["source_read", "etl_normalized", "version_persisted", "vector_indexed", "authority_filtered", "retrieval_completed", response["status"]]}}
         trace_path, trace_hash = _save_trace(trace_dir, run_id, trace_record)
         response["trace"] = {"trace_id": trace_id, "path": trace_path, "sha256": trace_hash}
+        return response
+    except VectorIdentityConflict:
+        response["error"] = {"code": "knowledge_index_conflict", "message": "Existing indexed evidence conflicts with this source revision. No ingestion changes were saved; review the existing index before retrying."}
+        try:
+            trace_path, trace_hash = _save_trace(trace_dir, run_id, response)
+            response["trace"].update(path=trace_path, sha256=trace_hash)
+        except LocalRAGError:
+            pass
         return response
     except LocalRAGError:
         raise

@@ -112,4 +112,30 @@ describe('Grounded local source route', () => {
       assert.equal(screen.queryByText('unbound text'), null)
     } finally { stub.restore() }
   })
+
+  it('shows a failed index conflict without inventing an ingestion receipt or answer', async () => {
+    const failed = {run_id: 'failed-run', status: 'failed', ingestion: {}, trace: {trace_id: 'failed-trace'}, generation: {answer: 'Untrusted failed answer'},
+      error: {code: 'knowledge_index_conflict', message: 'backend detail'}}
+    const stub = stubFetch(async () => response(failed))
+    try {
+      render(React.createElement(KnowledgeIngest)); fillForm()
+      fireEvent.click(screen.getByRole('button', { name: 'Index source and answer' }))
+      assert.match((await screen.findByRole('alert')).textContent, /index contains evidence that conflicts/i)
+      assert.doesNotMatch(screen.getByRole('alert').textContent, /migration|incomplete run/i)
+      assert.equal(screen.queryByText('The procedure has two steps.'), null)
+      assert.equal(screen.queryByText('Untrusted failed answer'), null)
+    } finally { stub.restore() }
+  })
+
+  it('explains the same conflict in Spanish', async () => {
+    setLocale('es')
+    const stub = stubFetch(async () => response({run_id:'fallo', status:'failed', ingestion:{}, trace:{trace_id:'traza'}, error:{code:'knowledge_index_conflict'}}))
+    try {
+      render(React.createElement(KnowledgeIngest))
+      fireEvent.change(document.querySelector('input[placeholder="docs/guide.md"]'), { target: { value: 'docs/guide.md' } })
+      fireEvent.change(document.querySelector('textarea'), { target: { value: '¿Qué indica?' } })
+      fireEvent.submit(document.querySelector('form'))
+      assert.match((await screen.findByRole('alert')).textContent, /índice contiene evidencias incompatibles/i)
+    } finally { stub.restore(); setLocale('en') }
+  })
 })

@@ -29,6 +29,10 @@ class VectorIndexError(ValueError):
     """Raised when a persistent vector index cannot satisfy a request."""
 
 
+class VectorIdentityConflict(VectorIndexError):
+    """Existing evidence cannot be replaced under the same identity."""
+
+
 @dataclass(frozen=True)
 class VectorHit:
     """Evidence-bearing result from the local vector index."""
@@ -184,14 +188,14 @@ class SQLiteVectorStore:
                         (source_uri, revision))}
                     expected = {chunk.chunk_id: chunk.content for chunk in materialized}
                     if existing and existing != expected:
-                        raise VectorIndexError('existing source revision differs; separate migration required')
+                        raise VectorIdentityConflict('existing source revision differs')
                 for chunk in materialized:
                     prior = connection.execute(
                         'SELECT content, source_uri, revision FROM vector_chunks WHERE chunk_id=?',
                         (chunk.chunk_id,),
                     ).fetchone()
                     if prior is not None and (prior['content'], prior['source_uri'], prior['revision']) != (chunk.content, chunk.source_uri, chunk.revision):
-                        raise VectorIndexError('existing chunk identity has different content or provenance')
+                        raise VectorIdentityConflict('existing chunk identity has different content or provenance')
             for chunk in materialized:
                 metadata_json = json.dumps(
                     dict(chunk.metadata),

@@ -97,8 +97,10 @@ def test_reingest_changed_chunking_rejects_without_overwriting_legacy_vectors(tm
         conn.execute('UPDATE vector_chunks SET content=?', ('legacy synthetic content',))
         before = conn.execute('SELECT * FROM vector_chunks ORDER BY chunk_id').fetchall()
     response = client.post('/api/knowledge/ingest-and-answer', json=_request())
-    assert response.status_code == 422
-    assert 'migration' in response.text.lower()
+    assert response.status_code == 200
+    assert response.json()['status'] == 'failed'
+    assert response.json()['error']['code'] == 'knowledge_index_conflict'
+    assert 'No ingestion changes were saved' in response.json()['error']['message']
     with sqlite3.connect(db) as conn:
         assert conn.execute('SELECT * FROM vector_chunks ORDER BY chunk_id').fetchall() == before
     assert len(calls) == 1
@@ -120,6 +122,7 @@ def test_extra_chunk_inserted_after_preflight_is_detected_under_write_lock(tmp_p
     monkeypatch.setattr(SQLiteVectorStore, 'upsert', inject_before_upsert)
     response = client.post('/api/knowledge/ingest-and-answer', json=_request()).json()
     assert response['status'] == 'failed'
+    assert response['error']['code'] == 'knowledge_index_conflict'
     assert len(calls) == 1
     with sqlite3.connect(db) as conn:
         assert conn.execute("SELECT COUNT(*) FROM vector_chunks WHERE chunk_id='synthetic-extra'").fetchone()[0] == 0
