@@ -466,7 +466,9 @@ def test_failed_chat_final_reference_contract_uses_real_sqlite_writeback(
 
     monkeypatch.setattr(server, "_execute_native_agent_chat_turn", execute)
     monkeypatch.setattr(server, "_finalize_native_agent_chat_trace", finalize)
-    request = SimpleNamespace(conversation_id="conversation-final")
+    request = server.AgentChatRequest(
+        message="Test message without credentials.",
+        conversation_id="conversation-final", revision=0)
     with pytest.raises(HTTPException) as raised:
         asyncio.run(server._execute_agent_chat_turn("agent-final", request, Response()))
     detail = raised.value.detail
