@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
+    "build:local": "tsc --noEmit --incremental false -p tsconfig.json && tsc --noEmit --incremental false --composite false -p tsconfig.node.json && vite build",
     "preview": "vite preview",
     "lint": "eslint src",
     "test": "vitest run",

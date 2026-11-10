@@ -344,7 +344,7 @@ if (-not (Test-Path -LiteralPath $nodeModules)) {
 $frontendBeforeBuild = Get-LocalUiInputFingerprint 'frontend'
 Push-Location (Join-Path $repoRoot 'frontend')
 try {
-    & npm run build
+    & npm run build:local
     if ($LASTEXITCODE -ne 0) { throw 'Frontend build failed.' }
 } finally {
     Pop-Location
