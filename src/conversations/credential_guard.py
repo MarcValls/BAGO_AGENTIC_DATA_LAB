@@ -5,7 +5,10 @@ bare hexadecimal and opaque entropy heuristics to preserve content hashes.
 This module only identifies recognizable patterns; it is not comprehensive DLP. Isolated opaque Bearer tokens without Authorization context are not recognized.
 """
 from __future__ import annotations
+import ast
+import io
 import json
+import tokenize
 import re
 
 _LABEL = re.compile(r"""(?:api[_ -]?key|access[_ -]?token|refresh[_ -]?token|id[_ -]?token|client[_ -]?secret|password|credential)["']?\s*[:=]\s*(?:"(?:\\.|[^"\\])+(?:"|\Z)|'(?:\\.|[^'\\])+(?:'|\Z)|(?!(?:none|null|false|true)(?=$|[\s,}\]]))(?![{\["'])\S+)""", re.IGNORECASE)
@@ -13,10 +16,55 @@ _AUTH_HEADER = re.compile(r"""\bauthorization["']?\s*[:=]\s*["']?(?:basic|bearer
 _PEM = re.compile(r'-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----[\s\S]*?(?:-----END (?:RSA |EC |OPENSSH )?PRIVATE KEY-----|\Z)', re.IGNORECASE)
 _TOKEN = re.compile(r"-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----|\b(?:github_pat_|gh[pousr]_?|xox[baprs]-|AIza|ya29\.|AKIA|ASIA|sk-|rk-)[A-Za-z0-9_./+=-]{12,}\b|\beyJ[A-Za-z0-9_-]{8,}\.[A-Za-z0-9_-]{8,}\.[A-Za-z0-9_-]{8,}\b", re.IGNORECASE)
 
+def _safe_code_assignment(value: str) -> bool:
+    """Allow only simple credential references without embedded default values."""
+    try:
+        tree = ast.parse(value.strip())
+    except (SyntaxError, ValueError, RecursionError):
+        return False
+    try:
+        if any(token.type == tokenize.COMMENT for token in tokenize.generate_tokens(io.StringIO(value).readline)):
+            return False
+    except (tokenize.TokenError, IndentationError):
+        return False
+    if len(tree.body) != 1 or not isinstance(tree.body[0], ast.Assign):
+        return False
+    node = tree.body[0]
+    if len(node.targets) != 1 or not isinstance(node.targets[0], ast.Name):
+        return False
+    call = node.value
+    if not isinstance(call, ast.Call) or call.keywords:
+        return False
+    if isinstance(call.func, ast.Name) and call.func.id == 'input':
+        return not call.args
+    if len(call.args) != 1 or not isinstance(call.args[0], ast.Constant) or not isinstance(call.args[0].value, str):
+        return False
+    if any(pattern.search(call.args[0].value) for pattern in (_TOKEN, _PEM, _LABEL, _AUTH_HEADER)):
+        return False
+    func = call.func
+    return (isinstance(func, ast.Attribute) and func.attr in ('get', 'getenv')
+            and isinstance(func.value, ast.Name) and func.value.id == 'os' and func.attr == 'getenv') or (
+            isinstance(func, ast.Attribute) and func.attr == 'get'
+            and isinstance(func.value, ast.Attribute) and func.value.attr == 'environ'
+            and isinstance(func.value.value, ast.Name) and func.value.value.id == 'os')
+
+def _unsafe_code_credential_call(value: str) -> bool:
+    try:
+        tree = ast.parse(value.strip())
+    except (SyntaxError, ValueError, RecursionError):
+        return False
+    return any(isinstance(node, ast.Assign) and isinstance(node.value, ast.Call)
+               and any(isinstance(target, ast.Name) and _SENSITIVE_KEY.fullmatch(target.id)
+                       for target in node.targets) for node in tree.body)
+
 def contains_recognizable_credential(value: str) -> bool:
-    return bool(_LABEL.search(value) or _AUTH_HEADER.search(value) or _PEM.search(value) or _TOKEN.search(value))
+    return not _safe_code_assignment(value) and bool(_LABEL.search(value) or _AUTH_HEADER.search(value) or _PEM.search(value) or _TOKEN.search(value))
 
 def redact_recognizable_credentials(value: str) -> str:
+    if _safe_code_assignment(value):
+        return value
+    if _unsafe_code_credential_call(value):
+        return '[REDACTED]'
     return _TOKEN.sub('[REDACTED]', _LABEL.sub('[REDACTED]', _AUTH_HEADER.sub('[REDACTED]', _PEM.sub('[REDACTED]', value))))
 
 

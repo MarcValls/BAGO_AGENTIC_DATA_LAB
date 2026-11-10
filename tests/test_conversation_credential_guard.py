@@ -70,3 +70,30 @@ def test_provider_tool_call_with_credential_has_no_effect(tmp_path):
         assert 'credencial' in answer.lower() and marker not in answer
         assert not list(tmp_path.iterdir())
     asyncio.run(run())
+
+
+def test_code_references_do_not_reveal_literal_secrets():
+    safe = ('password=os.environ.get("PASSWORD")', 'api_key=os.getenv("API_KEY")', 'password=input()')
+    for text in safe:
+        assert not contains_credential_tree(text)
+        assert redact_credential_tree(text) == text
+    unsafe = ('password="synthetic-secret"', 'password=os.getenv("PASSWORD", "synthetic-secret")',
+              'password=os.getenv("PASSWORD"); api_key="synthetic-secret"')
+    for text in unsafe:
+        assert contains_credential_tree(text)
+        assert 'synthetic-secret' not in redact_credential_tree(text)
+
+
+def test_comment_does_not_bypass_credential_guard():
+    text = 'password = os.getenv("PASSWORD") # password=synthetic-comment-secret'
+    assert contains_credential_tree(text)
+    assert 'synthetic-comment-secret' not in redact_credential_tree(text)
+    safe = 'password = os.getenv("PASSWORD#SCOPE")'
+    assert not contains_credential_tree(safe)
+    assert redact_credential_tree(safe) == safe
+
+
+def test_authorization_header_inside_environment_argument_is_redacted():
+    text = 'password = os.getenv("Authorization: Bearer synthetic-header-secret")'
+    assert contains_credential_tree(text)
+    assert 'synthetic-header-secret' not in redact_credential_tree(text)
