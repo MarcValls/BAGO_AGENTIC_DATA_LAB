@@ -55,14 +55,20 @@ export default function KnowledgeIngest() {
       if (!response.ok) throw await responseError(response)
       const body = await response.json() as GroundedRun
       if (!body || !['answered', 'no_evidence', 'failed'].includes(body.status ?? '') || typeof body.run_id !== 'string'
-        || typeof body.trace?.trace_id !== 'string' || typeof body.ingestion?.receipt_id !== 'string') {
+        || typeof body.trace?.trace_id !== 'string' || (body.status !== 'failed' && typeof body.ingestion?.receipt_id !== 'string')) {
         throw localMessage("core.KnowledgeIngest.the_backend_returned_an_incomplete_run_record_70b3e4")
       }
       if (body.status === 'answered' && (typeof body.generation?.answer !== 'string' || !Array.isArray(body.retrieval?.hits) || body.retrieval.hits.length === 0)) {
         throw localMessage("core.KnowledgeIngest.the_backend_returned_an_answer_without_linked_fd0021")
       }
       setResult(body)
-      if (body.status === 'failed') setError(typeof body.error === 'string' ? apiError({detail:{message:body.error}},0,'agents') : localMessage('agents.aux.KnowledgeIngest.the_backend_recorded_a_failed_run'))
+      if (body.status === 'failed') {
+        const detail = body.error && typeof body.error === 'object' ? body.error as {code?: unknown; message?: unknown} : null
+        if (detail?.code === 'knowledge_index_conflict') setError(localMessage('agents.aux.KnowledgeIngest.index_conflict'))
+        else if (detail && typeof detail.message === 'string') setError(apiError({detail},0,'agents'))
+        else if (typeof body.error === 'string') setError(apiError({detail:{message:body.error}},0,'agents'))
+        else setError(localMessage('agents.aux.KnowledgeIngest.the_backend_recorded_a_failed_run'))
+      }
     } catch (cause) {
       setError(cause instanceof Error ? cause : localMessage('agents.aux.KnowledgeIngest.the_knowledge_request_could_not_be_completed'))
     } finally { setLoading(false) }

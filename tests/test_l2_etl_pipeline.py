@@ -6,7 +6,58 @@ import sys
 
 sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 
-from etl.pipeline import ETLPipeline, ValidationStatus
+from etl.pipeline import ChunkStage, EnrichedDocument, ETLPipeline, ValidationStatus
+
+
+@pytest.mark.parametrize('content', [
+    'A' * 758 + '\n\n' + 'B' * 600,
+    'first paragraph\n\n' + 'C' * 700,
+    '   α🙂á' * 130 + '\n\n' + '日本語é ' * 130 + '  ',
+    '\n\n' * 400 + 'text',
+    '  leading and trailing  ',
+])
+def test_chunks_are_exact_source_slices_with_bounded_offsets(content):
+    doc = EnrichedDocument('synthetic', 'title', content, [], [], 0, 'source', 'now')
+    chunks = ChunkStage(chunk_size=500, overlap=50).chunk(doc)
+    assert chunks
+    for index, chunk in enumerate(chunks):
+        assert chunk.chunk_index == index
+        assert 0 <= chunk.start_offset < chunk.end_offset <= len(content)
+        assert chunk.content == content[chunk.start_offset:chunk.end_offset]
+        assert len(chunk.content) <= 500
+    assert all(any(c.start_offset <= i < c.end_offset for c in chunks)
+               for i, char in enumerate(content) if not char.isspace())
+
+
+def test_long_paragraph_overlap_and_zero_overlap():
+    doc = EnrichedDocument('synthetic', 'title', 'a' * 1200, [], [], 0, 'source', 'now')
+    overlapping = ChunkStage(chunk_size=500, overlap=50).chunk(doc)
+    assert [(c.start_offset, c.end_offset) for c in overlapping] == [(0, 500), (450, 950), (900, 1200)]
+    disjoint = ChunkStage(chunk_size=500, overlap=0).chunk(doc)
+    assert [(c.start_offset, c.end_offset) for c in disjoint] == [(0, 500), (500, 1000), (1000, 1200)]
+    assert len({c.id for c in overlapping + disjoint}) > len(overlapping)
+    assert overlapping[0].id == ChunkStage(chunk_size=500, overlap=50).chunk(doc)[0].id
+
+
+def test_versioned_chunk_id_does_not_overwrite_legacy_row(tmp_path):
+    from etl.pipeline import LoadStage
+    doc = EnrichedDocument('stable-id', 'title', 'a' * 750, [], [], 0, 'source', 'now')
+    db = tmp_path / 'legacy.sqlite'
+    loader = LoadStage(str(db))
+    with sqlite3.connect(db) as conn:
+        conn.execute('INSERT INTO chunks VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
+                     ('chunk_stable-id_0', doc.id, 0, 'legacy citation', 0, 15, 2, '{}', 'past'))
+    chunks = ChunkStage().chunk(doc)
+    assert loader.load(chunks) == len(chunks)
+    with sqlite3.connect(db) as conn:
+        assert conn.execute('SELECT content FROM chunks WHERE id=?', ('chunk_stable-id_0',)).fetchone()[0] == 'legacy citation'
+        assert conn.execute('SELECT COUNT(*) FROM chunks').fetchone()[0] == len(chunks) + 1
+
+
+@pytest.mark.parametrize('size,overlap', [(0, 0), (10, -1), (10, 10), (10, 11)])
+def test_invalid_chunk_sizes_rejected(size, overlap):
+    with pytest.raises(ValueError):
+        ChunkStage(size, overlap)
 
 
 class TestL2ETLPipeline:

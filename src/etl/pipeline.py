@@ -281,6 +281,8 @@ class ChunkStage:
     """Stage 5: Chunking semántico."""
     
     def __init__(self, chunk_size: int = 500, overlap: int = 50):
+        if chunk_size <= 0 or overlap < 0 or overlap >= chunk_size:
+            raise ValueError("chunk_size must be positive and overlap must be between 0 and chunk_size - 1")
         self.chunk_size = chunk_size
         self.overlap = overlap
     
@@ -289,57 +291,32 @@ class ChunkStage:
         content = doc.content
         chunks = []
         
-        # Split por párrafos (simplificado)
-        paragraphs = content.split('\n\n')
-        
-        current_chunk = ""
-        current_start = 0
-        chunk_index = 0
-        
-        for para in paragraphs:
-            if len(current_chunk) + len(para) < self.chunk_size:
-                current_chunk += para + '\n\n'
-            else:
-                # Crear chunk actual
-                if current_chunk.strip():
-                    chunk = DocumentChunk(
-                        id=f"chunk_{doc.id}_{chunk_index}",
-                        document_id=doc.id,
-                        chunk_index=chunk_index,
-                        content=current_chunk.strip(),
-                        start_offset=current_start,
-                        end_offset=current_start + len(current_chunk),
-                        word_count=len(current_chunk.split()),
-                        embedding=None,  # L4: embeddings reales
-                        metadata={
-                            'entities': doc.entities,
-                            'keywords': doc.keywords[:3]
-                        }
-                    )
-                    chunks.append(chunk)
-                    chunk_index += 1
-                
-                # Nuevo chunk con overlap
-                current_start += len(current_chunk) - self.overlap
-                current_chunk = current_chunk[-self.overlap:] + para + '\n\n'
-        
-        # Último chunk
-        if current_chunk.strip():
-            chunk = DocumentChunk(
-                id=f"chunk_{doc.id}_{chunk_index}",
-                document_id=doc.id,
-                chunk_index=chunk_index,
-                content=current_chunk.strip(),
-                start_offset=current_start,
-                end_offset=len(content),
-                word_count=len(current_chunk.split()),
-                embedding=None,
-                metadata={
-                    'entities': doc.entities,
-                    'keywords': doc.keywords[:3]
-                }
-            )
-            chunks.append(chunk)
+        # Work on original Unicode character offsets, not reconstructed text.
+        start = 0
+        while start < len(content):
+            end = min(start + self.chunk_size, len(content))
+            if end < len(content):
+                boundary = content.rfind('\n\n', start + self.overlap + 1, end)
+                if boundary >= 0:
+                    end = boundary + 2
+            fragment = content[start:end]
+            stripped = fragment.strip()
+            if stripped:
+                left = start + len(fragment) - len(fragment.lstrip())
+                right = end - (len(fragment) - len(fragment.rstrip()))
+                identity = hashlib.sha256(json.dumps(
+                    ['source-slice-v2', doc.id, left, right, content[left:right]],
+                    ensure_ascii=False, separators=(',', ':')).encode('utf-8')).hexdigest()
+                chunks.append(DocumentChunk(
+                    id=f"chunk_{doc.id}_v2_{identity}", document_id=doc.id,
+                    chunk_index=len(chunks), content=content[left:right],
+                    start_offset=left, end_offset=right,
+                    word_count=len(stripped.split()), embedding=None,
+                    metadata={'entities': doc.entities, 'keywords': doc.keywords[:3]},
+                ))
+            if end == len(content):
+                break
+            start = max(start + 1, right - self.overlap) if stripped and self.overlap else end
         
         return chunks
 

@@ -21,7 +21,7 @@ if _SRC_ROOT not in sys.path:
 from src.agent_tools.workspace_read import MAX_FILE_BYTES, _blocked_path_parts, normalize_workspace_path
 from src.etl.pipeline import ChunkStage, EnrichStage, NormalizeStage, SourceDocument, SourceType
 from src.retrieval.governed_rag import GovernedRAG, MetadataFilter, RetrievalChunk, RetrievalMode
-from src.retrieval.sqlite_vector_store import SQLiteVectorStore
+from src.retrieval.sqlite_vector_store import SQLiteVectorStore, VectorIdentityConflict
 from src.sandbox import SandboxFilesystem, SandboxProfile, SandboxSpecification
 
 AUTHORITY = frozenset({"PROPOSED", "VERIFIED"})
@@ -134,7 +134,10 @@ def run_ingest_and_answer(*, workspace_root: Path, path: str, question: str,
     try:
         db.parent.mkdir(parents=True, exist_ok=True)
         _ensure_tables(db)
+        store = SQLiteVectorStore(db)
         with sqlite3.connect(db) as conn:
+            conn.row_factory = sqlite3.Row
+            conn.execute('BEGIN IMMEDIATE')
             prior = conn.execute("SELECT revision FROM knowledge_sources WHERE source_path=? AND validity='CURRENT'", (source_path,)).fetchall()
             existing = conn.execute("SELECT authority, ingested_at FROM knowledge_sources WHERE source_path=? AND revision=?", (source_path, revision)).fetchone()
             idempotent = bool(existing and existing[0] == source_authority)
@@ -146,19 +149,18 @@ def run_ingest_and_answer(*, workspace_root: Path, path: str, question: str,
             for old_revision, in prior:
                 if old_revision != revision:
                     conn.execute("UPDATE vector_chunks SET validity='SUPERSEDED' WHERE source_uri=? AND revision=?", (source_path, old_revision))
-        source_created_at = existing[1] if existing else now
-        src = SourceDocument(id=source_id, source_type=SourceType.FILE, location=source_path, raw_content=normalized_content, fetched_at=source_created_at, content_hash=revision)
-        normalized = NormalizeStage().normalize(src)
-        enriched = EnrichStage().enrich(normalized)
-        etl_chunks = ChunkStage(chunk_size=1200, overlap=100).chunk(enriched)
-        chunks = tuple(RetrievalChunk(
-            chunk_id=f"{source_id}:{chunk.chunk_index}", document_id=source_id,
-            content=chunk.content, title=normalized.title, source_uri=source_path, revision=revision,
-            authority=source_authority, validity="CURRENT",
-            metadata={**chunk.metadata, "source_path": source_path, "source_sha256": revision, "authority_declared_by_user": True}, created_at=source_created_at,
-        ) for chunk in etl_chunks)
-        store = SQLiteVectorStore(db)
-        store.upsert(chunks)
+            source_created_at = existing[1] if existing else now
+            src = SourceDocument(id=source_id, source_type=SourceType.FILE, location=source_path, raw_content=normalized_content, fetched_at=source_created_at, content_hash=revision)
+            normalized = NormalizeStage().normalize(src)
+            enriched = EnrichStage().enrich(normalized)
+            etl_chunks = ChunkStage(chunk_size=1200, overlap=100).chunk(enriched)
+            chunks = tuple(RetrievalChunk(
+                chunk_id=f"{source_id}:{chunk.chunk_index}", document_id=source_id,
+                content=chunk.content, title=normalized.title, source_uri=source_path, revision=revision,
+                authority=source_authority, validity="CURRENT",
+                metadata={**chunk.metadata, "source_path": source_path, "source_sha256": revision, "authority_declared_by_user": True}, created_at=source_created_at,
+            ) for chunk in etl_chunks)
+            store.upsert(chunks, immutable_content=True, immutable_scope=(source_path, revision), connection=conn)
         fingerprint = store.index_fingerprint
         response["ingestion"] = {"receipt_id": f"receipt_{run_id}", "source_id": source_id, "source_path": source_path, "source_sha256": revision, "source_revision": revision, "source_authority": source_authority, "minimum_authority": minimum_authority, "index_fingerprint": fingerprint, "chunk_count": len(chunks), "idempotent": idempotent}
         retriever = GovernedRAG.from_sqlite_vector_store(db, policy=MetadataFilter(minimum_authority=minimum_authority))
@@ -187,6 +189,14 @@ def run_ingest_and_answer(*, workspace_root: Path, path: str, question: str,
         trace_record = {**response, "trace": {"trace_id": trace_id, "events": ["source_read", "etl_normalized", "version_persisted", "vector_indexed", "authority_filtered", "retrieval_completed", response["status"]]}}
         trace_path, trace_hash = _save_trace(trace_dir, run_id, trace_record)
         response["trace"] = {"trace_id": trace_id, "path": trace_path, "sha256": trace_hash}
+        return response
+    except VectorIdentityConflict:
+        response["error"] = {"code": "knowledge_index_conflict", "message": "Existing indexed evidence conflicts with this source revision. No ingestion changes were saved; review the existing index before retrying."}
+        try:
+            trace_path, trace_hash = _save_trace(trace_dir, run_id, response)
+            response["trace"].update(path=trace_path, sha256=trace_hash)
+        except LocalRAGError:
+            pass
         return response
     except LocalRAGError:
         raise
