@@ -54,3 +54,22 @@
 @media (max-width: 850px) { .eval-layout, .eval-layout.suites-collapsed { grid-template-columns: minmax(0, 1fr); } }
 @media (max-width: 560px) { .eval-two-columns, .eval-review dl, .eval-run-identity { grid-template-columns: 1fr; } .eval-layout { padding: 10px; } }
 .eval-layout, .eval-editor, .eval-results { min-height: 0; min-width: 0; }
+
+.eval-templates { margin: 14px 0; padding: 12px; border: 1px solid #34485f; }
+.eval-templates h4 { margin: 0 0 6px; }
+.eval-templates p, .eval-templates small { color: #b9cce0; }
+.eval-template-list { display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 0; }
+.evaluation-lab .eval-template { display: grid; text-align: left; gap: 4px; flex: 1 1 145px; border-left: 4px solid var(--template-color); }
+.eval-template span { font-size: .8rem; color: #b9cce0; }
+.eval-template-green { --template-color: #69dba5; }
+.eval-template-blue { --template-color: #7bbaff; }
+.eval-template-amber { --template-color: #ffc867; }
+.eval-template-red { --template-color: #ff8e8e; }
+.eval-template-purple { --template-color: #c6a2ff; }
+
+.eval-level-badge { width: fit-content; border-left: 4px solid #9bb0c9; padding-left: 7px; }
+.eval-level-green { border-color: #55c48b; }
+.eval-level-blue { border-color: #72baff; }
+.eval-level-amber { border-color: #f3bd63; }
+.eval-level-red { border-color: #ff8b8b; }
+.eval-level-purple { border-color: #c6a1ff; }

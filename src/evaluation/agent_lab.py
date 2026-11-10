@@ -17,6 +17,16 @@ from pathlib import Path
 from typing import Any, Iterable
 
 
+_LEVEL_UNSET = object()
+_LEVELS = frozenset({"green", "blue", "amber", "red", "purple"})
+
+
+def _validate_level(value: Any) -> str | None:
+    if value is not None and (not isinstance(value, str) or value not in _LEVELS):
+        raise EvaluationValidationError("Invalid evaluation level.")
+    return value
+
+
 class SuiteNotFound(Exception):
     pass
 
@@ -180,6 +190,17 @@ class EvaluationStore:
         );
         CREATE INDEX IF NOT EXISTS idx_eval_runs_started ON runs(started_at DESC);
         """)
+        # Serialize schema upgrades across concurrent connections. Existing rows remain unclassified.
+        connection.execute("BEGIN IMMEDIATE")
+        try:
+            columns = {row[1] for row in connection.execute("PRAGMA table_info(suites)")}
+            if "level" not in columns:
+                connection.execute("ALTER TABLE suites ADD COLUMN level TEXT")
+            connection.commit()
+        except BaseException:
+            connection.rollback()
+            connection.close()
+            raise
         return connection
 
     def acquire_suite_run(self, suite_id: str, run_id: str) -> bool:
@@ -204,7 +225,7 @@ class EvaluationStore:
     @staticmethod
     def _decode_suite(row: sqlite3.Row) -> dict[str, Any]:
         return {"id": row["id"], "name": row["name"], "agent_id": row["agent_id"], "version": row["version"],
-                "revision": row["revision"], "cases": json.loads(row["cases_json"]),
+                "revision": row["revision"], "cases": json.loads(row["cases_json"]), "level": _validate_level(row["level"]),
                 "created_at": row["created_at"], "updated_at": row["updated_at"]}
 
     def list_suites(self) -> list[dict[str, Any]]:
@@ -222,18 +243,21 @@ class EvaluationStore:
             raise SuiteNotFound(suite_id)
         return self._decode_suite(row)
 
-    def create_suite(self, name: str, agent_id: str, cases: Any) -> dict[str, Any]:
+    def create_suite(self, name: str, agent_id: str, cases: Any, level: str | None = None) -> dict[str, Any]:
+        level = _validate_level(level)
         cases = validate_cases(cases)
         name = _validate_name(name)
         now, suite_id = utc_now(), "evalsuite_" + uuid.uuid4().hex
         with self._connect() as db:
             db.execute("BEGIN IMMEDIATE")
-            db.execute("INSERT INTO suites VALUES (?, ?, ?, 1, 0, ?, ?, ?)", (suite_id, name, agent_id, json.dumps(cases, ensure_ascii=False), now, now))
+            db.execute("INSERT INTO suites (id, name, agent_id, version, revision, cases_json, created_at, updated_at, level) VALUES (?, ?, ?, 1, 0, ?, ?, ?, ?)", (suite_id, name, agent_id, json.dumps(cases, ensure_ascii=False), now, now, level))
             db.execute("INSERT INTO suite_heads VALUES (?, 1, 0)", (suite_id,))
             db.commit()
         return self.get_suite(suite_id)
 
-    def update_suite(self, suite_id: str, name: str, agent_id: str, cases: Any, expected_revision: int) -> dict[str, Any]:
+    def update_suite(self, suite_id: str, name: str, agent_id: str, cases: Any, expected_revision: int, level: Any = _LEVEL_UNSET) -> dict[str, Any]:
+        if level is not _LEVEL_UNSET:
+            level = _validate_level(level)
         cases, name, now = validate_cases(cases), _validate_name(name), utc_now()
         with self._connect() as db:
             db.execute("BEGIN IMMEDIATE")
@@ -245,8 +269,12 @@ class EvaluationStore:
                 db.rollback()
                 raise SuiteConflict(suite_id)
             version, revision = head["version"] + 1, head["revision"] + 1
-            db.execute("INSERT INTO suites VALUES (?, ?, ?, ?, ?, ?, (SELECT created_at FROM suites WHERE id=? AND version=?), ?)",
-                       (suite_id, name, agent_id, version, revision, json.dumps(cases, ensure_ascii=False), suite_id, head["version"], now))
+            old_level = db.execute("SELECT level FROM suites WHERE id=? AND version=?", (suite_id, head["version"])).fetchone()
+            if old_level is None:
+                raise SuiteNotFound(suite_id)
+            effective_level = _validate_level(old_level["level"]) if level is _LEVEL_UNSET else level
+            db.execute("INSERT INTO suites (id, name, agent_id, version, revision, cases_json, created_at, updated_at, level) VALUES (?, ?, ?, ?, ?, ?, (SELECT created_at FROM suites WHERE id=? AND version=?), ?, ?)",
+                       (suite_id, name, agent_id, version, revision, json.dumps(cases, ensure_ascii=False), suite_id, head["version"], now, effective_level))
             db.execute("UPDATE suite_heads SET version=?, revision=? WHERE id=? AND revision=?", (version, revision, suite_id, expected_revision))
             if db.total_changes < 2:
                 db.rollback()

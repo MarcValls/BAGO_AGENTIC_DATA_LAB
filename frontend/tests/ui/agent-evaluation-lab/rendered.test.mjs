@@ -274,7 +274,7 @@ describe('Agent Evaluation Lab rendered behavior', () => {
   })
 
   it('does not fabricate a Jaeger link when the run has only LocalTrace identity', async () => {
-    const noJaegerRun = { ...run, cases: [{ ...traceResult, trace: { trace_id: 'local-only', trace_state: 'saved' } }] }
+    const noJaegerRun = { ...run, cases: [{ ...traceResult, trace: { trace_id: 'local-only', trace_state: 'local_only' } }] }
     let savedRuns = []
     const restore = stubFetch(async (input, init) => {
       const url = String(input)
@@ -294,6 +294,20 @@ describe('Agent Evaluation Lab rendered behavior', () => {
     assert.equal(screen.queryByRole('link', { name: /Jaeger/ }), null)
     restore()
   })
+
+  for (const traceState of ['exported', 'export_failed']) {
+    it(`shows saved local trace for ${traceState}`, async () => {
+      const tracedRun = { ...run, cases: [{ ...traceResult, trace: { trace_id: `trace-${traceState}`, trace_state: traceState } }] }
+      const restore = stubFetch(standardFetch({ runs: [tracedRun] }))
+      render(React.createElement(AgentEvaluationLab))
+      fireEvent.click(await screen.findByRole('button', { name: /evalrun_demo/ }))
+      await screen.findByText(/LocalTrace saved:/)
+      assert.ok(screen.getByText(`trace-${traceState}`))
+      if (traceState === 'export_failed') assert.ok(screen.getByText(/Trace export failed; local copy is saved/))
+      assert.equal(screen.queryByRole('link', { name: /Jaeger/ }), null)
+      restore()
+    })
+  }
 
   it('labels a provisional trace ID as unsaved after LocalTrace persistence fails', async () => {
     const failedTraceRun = {
