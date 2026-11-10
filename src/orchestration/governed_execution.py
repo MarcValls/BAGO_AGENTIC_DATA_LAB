@@ -125,11 +125,26 @@ def _trace_from_state(state: GovernedExecutionState) -> LocalTrace:
             "tool_name": request.get("tool_name"),
             "effect_type": request.get("effect_type"),
         })
-        add("authorization.reused" if replay else "human.approval", TraceKind.AUTHORIZATION, "REUSED" if replay else status, {
-            "fingerprint": proposal.get("fingerprint"),
-            "approved": state.get("approval", {}).get("approved", False),
-            "approval_id": state.get("approval", {}).get("approval_id"),
-        })
+        approval = state.get("approval", {})
+        approval_id = approval.get("approval_id")
+        if replay and approval_id:
+            add("authorization.reused", TraceKind.AUTHORIZATION, "REUSED", {
+                "fingerprint": proposal.get("fingerprint"),
+                "approved": approval.get("approved", False), "approval_id": approval_id,
+            })
+        elif not replay and approval_id:
+            add("human.approval", TraceKind.AUTHORIZATION, status, {
+                "fingerprint": proposal.get("fingerprint"),
+                "approved": approval.get("approved", False), "approval_id": approval_id,
+            })
+        elif receipt is not None and receipt.error_code == "CAPABILITY_NOT_REGISTERED":
+            add("authorization.not_requested", TraceKind.AUTHORIZATION, "NOT_REQUESTED", {
+                "reason": "CAPABILITY_NOT_REGISTERED",
+            })
+        else:
+            add("authorization.unknown", TraceKind.AUTHORIZATION, "UNKNOWN", {
+                "reason": "approval_provenance_missing",
+            })
     if receipt is not None:
         payload = receipt.to_dict()
         refs = tuple(payload.get("evidence_refs", ()))
@@ -320,7 +335,9 @@ def build_integrated_governed_graph(
 
     def respond(state: GovernedExecutionState) -> dict[str, Any]:
         result = state.get("sandbox_result")
-        if state.get("authorization_status") == "DENIED":
+        if result is not None and result.receipt.error_code == "CAPABILITY_NOT_REGISTERED":
+            message = f"The requested capability is not registered; no approval was requested and no operation was executed. Receipt {result.receipt.receipt_id}."
+        elif state.get("authorization_status") == "DENIED":
             message = f"Approval was denied or did not match; no write was authorized. Receipt {result.receipt.receipt_id}."
         elif result is None:
             message = "No material operation was executed."

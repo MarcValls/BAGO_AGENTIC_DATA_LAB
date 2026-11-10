@@ -106,6 +106,42 @@ def test_graph_checkpoint_replay_has_its_own_denial_trace(tmp_path: Path):
     assert reused.attributes['fingerprint'] == approval.attributes['fingerprint']
     assert 'action.proposal' not in trace.names
     assert 'governed_retrieval' not in trace.names
+    from src.orchestration.governed_execution import _trace_from_state
+    replay_without_identity = {**replay, 'approval': {key: value for key, value in replay['approval'].items() if key != 'approval_id'}}
+    unknown = _trace_from_state(replay_without_identity)
+    assert 'authorization.reused' not in unknown.names
+    assert 'human.approval' not in unknown.names
+    assert 'authorization.unknown' in unknown.names
+
+
+def test_unregistered_capability_is_denied_without_human_approval_event(tmp_path: Path):
+    app, _ = _app(tmp_path)
+    result = app.invoke({'request_id': 'unsupported-synthetic', 'action_kind': 'unsupported', 'query': 'local governance'},
+                        config={'configurable': {'thread_id': uuid.uuid4().hex}})
+    assert not result.get('__interrupt__')
+    assert result['sandbox_result'].receipt.error_code == 'CAPABILITY_NOT_REGISTERED'
+    assert 'capability is not registered' in result['final_response']
+    assert 'no approval was requested' in result['final_response']
+    assert 'no operation was executed' in result['final_response']
+    assert result['sandbox_result'].receipt.receipt_id in result['final_response']
+    trace = result['local_trace']
+    assert 'human.approval' not in trace.names
+    assert 'authorization.reused' not in trace.names
+    event = next(event for event in trace.events if event.name == 'authorization.not_requested')
+    assert event.status == 'NOT_REQUESTED'
+    assert event.attributes['reason'] == 'CAPABILITY_NOT_REGISTERED'
+
+
+def test_missing_approval_identity_is_not_described_as_human_approval(tmp_path: Path):
+    from src.orchestration.governed_execution import _trace_from_state
+    (tmp_path / 'notes').mkdir()
+    app, _ = _app(tmp_path)
+    thread_id, pending = _start(app, tmp_path)
+    state = resume_approval(app, thread_id=thread_id, fingerprint=pending['fingerprint'])
+    state['approval'] = {key: value for key, value in state['approval'].items() if key != 'approval_id'}
+    trace = _trace_from_state(state)
+    assert 'human.approval' not in trace.names
+    assert 'authorization.unknown' in trace.names
 
 
 def test_l1_demo_replay_uses_graph_receipt_and_trace(tmp_path: Path, monkeypatch):
@@ -137,6 +173,7 @@ def test_integrated_graph_pauses_before_effect_and_requires_exact_approval(tmp_p
     )
     assert not target.exists()
     assert denied["authorization_status"] == "DENIED"
+    assert 'Approval was denied or did not match' in denied['final_response']
     assert denied["sandbox_result"].receipt.status is SandboxStatus.DENIED
     assert denied["sandbox_result"].receipt.error_code == "PERMIT_REQUIRED"
     assert "sandbox.execution" in denied["local_trace"].names
