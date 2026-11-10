@@ -1559,7 +1559,7 @@ def evaluation_list_suites() -> dict[str, Any]:
 def evaluation_create_suite(request: EvaluationSuiteCreateRequest) -> dict[str, Any]:
     try:
         _load_agent(request.agent_id)
-        return {"suite": EVALUATIONS.create_suite(request.name, request.agent_id, request.cases)}
+        return {"suite": EVALUATIONS.create_suite(request.name, request.agent_id, request.cases, level=request.level)}
     except EvaluationValidationError as error:
         raise HTTPException(status_code=422, detail={"code": "invalid_suite", "message": str(error)}) from None
 
@@ -1568,7 +1568,7 @@ def evaluation_create_suite(request: EvaluationSuiteCreateRequest) -> dict[str, 
 def evaluation_update_suite(suite_id: str, request: EvaluationSuiteUpdateRequest) -> dict[str, Any]:
     try:
         _load_agent(request.agent_id)
-        return {"suite": EVALUATIONS.update_suite(suite_id, request.name, request.agent_id, request.cases, request.expected_revision)}
+        return {"suite": EVALUATIONS.update_suite(suite_id, request.name, request.agent_id, request.cases, request.expected_revision, **({"level": request.level} if "level" in request.model_fields_set else {}))}
     except SuiteNotFound:
         raise HTTPException(status_code=404, detail={"code": "suite_not_found", "message": "Evaluation suite not found."}) from None
     except SuiteConflict:
