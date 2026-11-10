@@ -94,7 +94,8 @@ def _trace_from_state(state: GovernedExecutionState) -> LocalTrace:
     receipt = result.receipt if result is not None else None
     status = state.get("authorization_status", "NO_ACTION")
     run_id = state.get("request_id") or request.get("request_id") or uuid.uuid4().hex
-    trace_id = "trace-" + hashlib.sha256(run_id.encode()).hexdigest()[:16]
+    trace_identity = f"{run_id}:{receipt.receipt_id}" if receipt is not None else run_id
+    trace_id = "trace-" + hashlib.sha256(trace_identity.encode()).hexdigest()[:16]
     events: list[TraceEvent] = []
 
     def add(name: str, kind: TraceKind, event_status: str, attributes: dict[str, Any], refs: tuple[str, ...] = ()) -> None:

@@ -78,6 +78,37 @@ def _start(app, root: Path, *, path="notes/result.txt", content="approved conten
     return thread_id, interrupts[0].value
 
 
+def test_graph_checkpoint_replay_has_its_own_denial_trace(tmp_path: Path):
+    (tmp_path / 'notes').mkdir()
+    app, _ = _app(tmp_path)
+    thread_id, pending = _start(app, tmp_path)
+    initial = resume_approval(app, thread_id=thread_id, fingerprint=pending['fingerprint'])
+    target = tmp_path / 'notes/result.txt'
+    before = target.read_bytes()
+    snapshot = next(snapshot for snapshot in app.get_state_history(
+        {'configurable': {'thread_id': thread_id}}) if snapshot.next == ('execute_action',))
+    replay = app.invoke(None, config=snapshot.config)
+    receipt = replay['sandbox_result'].receipt
+    assert receipt.status is SandboxStatus.DENIED
+    assert receipt.error_code == 'PERMIT_REPLAY'
+    assert target.read_bytes() == before
+    assert receipt.receipt_id != initial['sandbox_result'].receipt.receipt_id
+    trace = replay['local_trace']
+    assert trace.trace_id != initial['local_trace'].trace_id
+    assert trace.events[-1].attributes['receipt_id'] == receipt.receipt_id
+    assert trace.events[-1].attributes['error_code'] == 'PERMIT_REPLAY'
+
+
+def test_l1_demo_replay_uses_graph_receipt_and_trace(tmp_path: Path, monkeypatch):
+    from scripts import run_l1_governed_execution_demo as demo
+    monkeypatch.setattr(demo, '_git_head', lambda: 'uncommitted-candidate')
+    result = demo.run(tmp_path)
+    replay = result['cases']['replay']
+    assert replay['receipt']['error_code'] == 'PERMIT_REPLAY'
+    assert replay['trace']['events'][-1]['attributes']['receipt_id'] == replay['receipt']['receipt_id']
+    assert replay['trace']['trace_id'] != result['cases']['allowed']['trace']['trace_id']
+
+
 def test_integrated_graph_pauses_before_effect_and_requires_exact_approval(tmp_path: Path):
     (tmp_path / "notes").mkdir()
     app, _gateway = _app(tmp_path)

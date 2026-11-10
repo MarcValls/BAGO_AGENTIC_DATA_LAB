@@ -106,26 +106,18 @@ def run(output: Path) -> dict:
         cases["denied"] = {"fingerprint": denied_pending["fingerprint"], "receipt": denied_receipt.to_dict(), "trace": denied["local_trace"].to_dict()}
         transcript.append(f"RUN denied: no file created; receipt={denied_receipt.receipt_id}; error={denied_receipt.error_code}")
 
-        # Replay the exact permit/request through the same manager instance.
-        proposal = allowed["proposal"]["request"]
-        request = ExecutionRequest(
-            request_id=proposal["request_id"], tool_name=proposal["tool_name"],
-            effect_type=EffectType(proposal["effect_type"]), parameters=proposal["parameters"],
-            proposed_by=proposal["proposed_by"], context_revision=proposal["context_revision"], timestamp=proposal["timestamp"],
-        )
-        replay = gateway.execute(
-            request=request,
-            permit=allowed["permit"],
-            sandbox_request=SandboxRequest(
-                request_id=request.request_id, workspace_root=root,
-                operation=FilesystemRequest(request_id=request.request_id, operation=FilesystemOperation.WRITE,
-                                            relative_path=proposal["parameters"]["path"], content=proposal["parameters"]["content"]),
-                requested_profile=SandboxProfile.REPOSITORY_WORKER,
-            ),
-        )
-        assert replay.receipt.error_code == "PERMIT_REPLAY"
-        cases["replay"] = {"receipt": replay.receipt.to_dict(), "permit_lifetime": "same SandboxManager instance"}
-        transcript.append(f"RUN replay: receipt={replay.receipt.receipt_id}; error={replay.receipt.error_code}")
+        # Replay the authorised graph checkpoint using its original consumed permit.
+        before_replay = hashlib.sha256(approved_path.read_bytes()).hexdigest()
+        checkpoint = next(snapshot for snapshot in app.get_state_history(
+            {"configurable": {"thread_id": thread_id}}) if snapshot.next == ("execute_action",))
+        replay = app.invoke(None, config=checkpoint.config)
+        replay_receipt = replay["sandbox_result"].receipt
+        assert replay_receipt.error_code == "PERMIT_REPLAY"
+        assert hashlib.sha256(approved_path.read_bytes()).hexdigest() == before_replay
+        assert replay["local_trace"].trace_id != allowed["local_trace"].trace_id
+        cases["replay"] = {"receipt": replay_receipt.to_dict(), "trace": replay["local_trace"].to_dict(),
+                           "permit_lifetime": "same SandboxManager instance"}
+        transcript.append(f"RUN replay: receipt={replay_receipt.receipt_id}; error={replay_receipt.error_code}")
 
         # Approved but escaping path produces a controlled sandbox denial and trace receipt.
         fail_app, _ = build_app(root, SandboxManager())
