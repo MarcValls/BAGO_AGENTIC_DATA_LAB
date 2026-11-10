@@ -88,9 +88,21 @@ def execute(fixture,body=None):
     return fixture['client'].post('/api/agent-delegations/'+fixture['proposal']['proposal_id']+'/execute',json=body or payload(fixture))
 
 
+def grant_corpus_project_permissions(fixture):
+    from src.project_permissions import ProjectContext,ProjectPermissions
+    root=fixture['workspace']
+    permissions=ProjectPermissions(lambda:ProjectContext('delegation-fixture',root,'delegation-fixture-binding','Delegation fixture'))
+    snapshot=permissions.snapshot()
+    permissions.save(expected_project_id=snapshot['project_id'],expected_binding=snapshot['binding'],
+        expected_revision=snapshot['revision'],read_directories=['corpus'],write_directories=['corpus'],confirmed=True)
+    fixture['monkeypatch'].setattr(server,'_current_project_permissions',lambda:permissions)
+    return permissions
+
+
 def test_control_proposes_saved_agent_and_native_grant_executes_real_plan_with_parent_child_receipts(setup):
     f=setup;p=propose(f)
     assert len(f['calls'])==0 and not list((f['workspace']/'.bago').glob('**/*'))
+    grant_corpus_project_permissions(f)
     response=execute(f,payload(f,tools=True));assert response.status_code==200,response.text
     data=response.json();p=data['agent_delegation'];assert p['state']=='PASSED',p
     assert p['tools_executed'] and not p['target_written'] and not (f['workspace']/'corpus/synthetic.txt').exists()
@@ -104,6 +116,25 @@ def test_control_proposes_saved_agent_and_native_grant_executes_real_plan_with_p
     assert hashlib.sha256(receipt.read_bytes()).hexdigest()==p['receipt_sha256']
     assert json.loads(receipt.read_text())['human_scope']['root']==str(f['workspace']/'corpus')
     assert f['comms'].runs()==[]
+
+
+@pytest.mark.parametrize('failure', [OSError('synthetic I/O failure'), ValueError('synthetic invalid policy')])
+def test_unavailable_project_policy_cannot_authorize_delegated_filesystem(setup, failure):
+    f = setup
+    propose(f)
+    class UnavailablePermissions:
+        def snapshot(self):
+            raise failure
+    f['monkeypatch'].setattr(server, '_current_project_permissions', lambda: UnavailablePermissions())
+    response = execute(f, payload(f, tools=True))
+    assert response.status_code == 200, response.text
+    delegation = response.json()['agent_delegation']
+    assert delegation['state'] == 'NEEDS_AUTHORIZATION'
+    assert not delegation['tools_executed'] and not delegation['target_written']
+    receipt = json.loads((f['tmp']/'traces/agent-delegations/receipts'/(delegation['receipt_id']+'.json')).read_text())
+    assert receipt['tool_receipts'][0]['decision'] == 'DENY'
+    assert receipt['tool_receipts'][0]['reason_code'] == 'project_context_unavailable'
+    assert not (f['workspace']/'.bago/state/fop').exists()
 
 
 def test_general_orchestrator_dispatches_clear_in_scope_task_without_a_review_card(setup):

@@ -328,6 +328,12 @@ def test_project_scope_middleware_binds_filesystem_review_execute_and_delegated_
 
 def test_agent_chat_dispatches_real_filesystem_proposal_without_autoexecution(fixture,monkeypatch,tmp_path):
     workspace,root,comms,_=fixture;store=ConversationStore(tmp_path/'conversations.sqlite3');conv=store.create('agent','producer')
+    from src.project_permissions import ProjectContext, ProjectPermissions
+    permissions=ProjectPermissions(lambda: ProjectContext('services-fixture',workspace,'services-fixture-binding','Services fixture'))
+    snapshot=permissions.snapshot()
+    relative=root.relative_to(workspace).as_posix()
+    permissions.save(expected_project_id=snapshot['project_id'],expected_binding=snapshot['binding'],expected_revision=snapshot['revision'],read_directories=[relative],write_directories=[relative],confirmed=True)
+    monkeypatch.setattr(server,'_current_project_permissions',lambda:permissions)
     actor=SimpleNamespace(id='producer',config=SimpleNamespace(system_prompt='Prepare only.',provider_id='ollama-cloud',model_id='fixture',tools=['filesystem_plan']))
     monkeypatch.setattr(server,'CONVERSATIONS',store);monkeypatch.setattr(server,'current_workspace_root',lambda:workspace)
     monkeypatch.setattr(server,'_load_model_enabled_agent',lambda _:actor);monkeypatch.setattr(server,'AGENT_CHAT_TRACE_DIR',tmp_path/'traces')

@@ -4348,9 +4348,11 @@ async def _execute_native_agent_chat_turn(agent_id,request,response,*,recorder,n
                     try:
                         document_grant["services"].project_permissions = _current_project_permissions()
                         document_grant["services"].project_snapshot = document_grant["services"].project_permissions.snapshot()
+                        document_grant["services"].project_permission_unavailable = False
                     except (ProjectPermissionError, OSError, ValueError):
                         document_grant["services"].project_permissions = None
                         document_grant["services"].project_snapshot = None
+                        document_grant["services"].project_permission_unavailable = True
             except DocumentAccessError as error:
                 raise HTTPException(422, detail={"code": error.code, "message": "La autorización documental no es válida; revisa y autoriza de nuevo la carpeta."}) from None
         authorized_paths = _consume_workspace_read_authorization(
@@ -4859,6 +4861,12 @@ async def _delegation_execute_turn(binding,child,grant):
         decision = args.get("decision") if isinstance(args, dict) and set(args) == {"decision", "reason"} and isinstance(args.get("reason"), str) else "unclear"
         status = {"completed":"COMPLETED", "out_of_scope":"OUT_OF_SCOPE", "needs_authorization":"NEEDS_AUTHORIZATION"}.get(decision, "NEEDS_REVIEW")
     except Exception:
+        status = "NEEDS_REVIEW"
+    # A model cannot turn a denied or failed tool receipt into completion.
+    events = result.get("read_events") or []
+    if any(isinstance(event, dict) and event.get("decision") == "DENY" for event in events):
+        status = "NEEDS_AUTHORIZATION"
+    elif any(isinstance(event, dict) and event.get("decision") == "FAIL" for event in events):
         status = "NEEDS_REVIEW"
     result["orchestration_status"] = status
     return result
