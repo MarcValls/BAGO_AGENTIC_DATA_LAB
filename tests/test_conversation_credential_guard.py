@@ -135,6 +135,8 @@ def test_long_literal_concatenation_without_quadratic_ast_walk():
     'x = "sk-" + """synthetic\\\n123456789012345\\',
     'x = ("sk-" + # nota\n "synthetic123456789012345',
     'x = "sk-" u"synthetic123456789012345',
+    'x = "sk-" r"synthetic123456789012345',
+    'x = "sk-" + U"synthetic123456789012345',
 ])
 def test_truncated_literal_credentials_are_redacted(text):
     assert contains_credential_tree(text)
@@ -147,6 +149,8 @@ def test_truncated_literal_credentials_are_redacted(text):
     'x = "sk-" + """synthetic 123456789012345',
     'api_key = os.getenv("API_KEY") # comentario',
     'x = "sk-" + "abc" # synthetic123456789012345',
+    'x = "sk-" u "synthetic123456789012345',
+    'x = "hello" u"unfinished',
 ])
 def test_truncated_literal_whitespace_raw_and_comments_are_preserved(text):
     assert not contains_credential_tree(text)

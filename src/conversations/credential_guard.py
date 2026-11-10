@@ -90,6 +90,11 @@ def _code_has_credential_literal(value: str) -> bool:
                 if token.type == tokenize.COMMENT and any(pattern.search(token.string) for pattern in (_TOKEN, _PEM, _LABEL, _AUTH_HEADER)):
                     return True
                 continue
+            elif (token.type == tokenize.NAME and parts and token.string.lower() in ('u', 'r')
+                  and token.line[token.end[1]:token.end[1] + 1] in ('"', "'")):
+                # Python 3.11 tokenizes an unfinished prefixed string as NAME
+                # followed by ERRORTOKEN; retain the preceding literal run.
+                continue
             elif token.type == tokenize.ERRORTOKEN and token.string.isspace() and awaiting_string:
                 continue
             elif token.type == tokenize.ERRORTOKEN and token.string in ('"', "'") and parts:
