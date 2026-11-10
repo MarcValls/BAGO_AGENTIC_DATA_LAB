@@ -17,10 +17,11 @@ _PEM = re.compile(r'-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----[\s\S]*?(?:
 _TOKEN = re.compile(r"-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----|\b(?:github_pat_|gh[pousr]_?|xox[baprs]-|AIza|ya29\.|AKIA|ASIA|sk-|rk-)[A-Za-z0-9_./+=-]{12,}\b|\beyJ[A-Za-z0-9_-]{8,}\.[A-Za-z0-9_-]{8,}\.[A-Za-z0-9_-]{8,}\b", re.IGNORECASE)
 
 def _safe_code_assignment(value: str) -> bool:
-    """Allow a narrow set of references, never comments or embedded secrets."""
+    """Allow narrow reference assignments only when comments contain no known secret."""
     try:
         tree = ast.parse(value.strip())
-        if any(token.type == tokenize.COMMENT for token in tokenize.generate_tokens(io.StringIO(value).readline)):
+        comments = (token.string for token in tokenize.generate_tokens(io.StringIO(value).readline) if token.type == tokenize.COMMENT)
+        if any(any(pattern.search(comment) for pattern in (_TOKEN, _PEM, _LABEL, _AUTH_HEADER)) for comment in comments):
             return False
     except (SyntaxError, ValueError, RecursionError, tokenize.TokenError, IndentationError):
         return False
@@ -85,13 +86,69 @@ def _code_has_credential_literal(value: str) -> bool:
             elif token.type == tokenize.OP and token.string == '+' and parts and not awaiting_string:
                 awaiting_string = True
                 continue
+            elif token.type in (tokenize.COMMENT, tokenize.NL) and parts:
+                if token.type == tokenize.COMMENT and any(pattern.search(token.string) for pattern in (_TOKEN, _PEM, _LABEL, _AUTH_HEADER)):
+                    return True
+                continue
+            elif token.type == tokenize.ERRORTOKEN and token.string.isspace() and awaiting_string:
+                continue
+            elif token.type == tokenize.ERRORTOKEN and token.string in ('"', "'") and parts:
+                # tokenize emits an opening quote separately for an unfinished
+                # literal. Inspect the remaining line as data, never execute it.
+                line = token.line[token.start[1] + 1:]
+                if any(pattern.search(''.join(parts) + line) for pattern in (_TOKEN, _PEM, _LABEL, _AUTH_HEADER)):
+                    return True
             if parts:
                 if sensitive():
                     return True
                 parts.clear()
                 awaiting_string = False
         return bool(parts and sensitive())
-    except (tokenize.TokenError, IndentationError, RecursionError):
+    except tokenize.TokenError as error:
+        if parts and error.args and ('unterminated string literal' in str(error.args[0]) or 'EOF in multi-line string' in str(error.args[0])):
+            try:
+                row, offset = error.args[1]
+                lines = value.splitlines(keepends=True)
+                line = lines[row - 1]
+                # tokenize reports the quote at a zero-based offset for triple
+                # strings, and a one-based offset for unterminated single strings.
+                positions = (offset, offset - 1, offset + 1)
+                start = next((i for i in positions if 0 <= i < len(line) and line[i] in ('"', "'")), -1)
+                if start < 0:
+                    return bool(parts and sensitive())
+                quote = line[start]
+                while start > 0 and line[start - 1] == quote:
+                    start -= 1
+                delimiter_length = 3 if line[start:start + 3] == quote * 3 else 1
+                suffix = line[start + delimiter_length:]
+                if delimiter_length == 3:
+                    suffix += ''.join(lines[row:])
+                    # Decode only a synthetically closed literal, never code. Raw
+                    # prefixes retain backslashes and real whitespace verbatim.
+                    prefix_match = re.search(r'(?i)(?<![\w])([rub]{0,2})$', line[:start])
+                    prefix = prefix_match.group(1) if prefix_match else ''
+                    try:
+                        decoded = ast.literal_eval(prefix + quote * 3 + suffix + quote * 3)
+                        if isinstance(decoded, str):
+                            suffix = decoded
+                    except (SyntaxError, ValueError, RecursionError):
+                        # A lone final backslash leaves the source incomplete.
+                        # Decode the preceding prefix only, for detection, and
+                        # never normalize raw literal content.
+                        trailing = len(suffix) - len(suffix.rstrip('\\'))
+                        if trailing % 2 and 'r' not in prefix.lower():
+                            try:
+                                decoded = ast.literal_eval(prefix + quote * 3 + suffix[:-1] + quote * 3)
+                                if isinstance(decoded, str):
+                                    suffix = decoded + '\\'
+                            except (SyntaxError, ValueError, RecursionError):
+                                pass
+                if any(pattern.search(''.join(parts) + suffix) for pattern in (_TOKEN, _PEM, _LABEL, _AUTH_HEADER)):
+                    return True
+            except (IndexError, TypeError, ValueError):
+                pass
+        return bool(parts and sensitive())
+    except (IndentationError, RecursionError):
         # Preserve ordinary malformed prose; only fail closed when a literal run
         # already contains a recognized marker.
         return bool(parts and sensitive())
