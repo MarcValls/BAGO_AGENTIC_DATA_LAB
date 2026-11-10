@@ -121,7 +121,7 @@ async def session_for(connection, headers):
         command, args = docker_command(connection["profile"])
         await asyncio.to_thread(docker_preflight, command, connection["profile"])
         # Only OS infrastructure, never provider credentials or arbitrary env.
-        env = {key: os.environ[key] for key in ("SYSTEMROOT", "WINDIR", "USERPROFILE", "HOME", "LOCALAPPDATA", "APPDATA", "TEMP", "TMP", "PATH") if key in os.environ}
+        env = {key: os.environ[key] for key in ("SYSTEMROOT", "WINDIR", "USERPROFILE", "HOME", "LOCALAPPDATA", "APPDATA", "TEMP", "TMP", "PATH", "ProgramFiles", "ProgramData") if key in os.environ}
         async with bounded_stdio(command, args, env) as (read, write):
             async with ClientSession(read, write, read_timeout_seconds=timedelta(seconds=TIMEOUT)) as session:
                 await session.initialize()
