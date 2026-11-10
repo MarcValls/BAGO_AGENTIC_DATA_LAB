@@ -1,5 +1,12 @@
 // Authored UI labels only. Runtime evidence and user content are not translated.
 export const es = {
+  'agents.import.select': 'Importar agentes desde JSON',
+  'agents.import.loading': 'Importando agentes…',
+  'agents.import.success': 'Se han importado {count} agentes.',
+  'agents.import.invalid': 'El archivo de agentes no es válido.',
+  'agents.import.too_large': 'El archivo supera el límite de 5 MiB.',
+  'agents.import.incomplete': 'La importación no terminó. Identificadores creados: {ids}. Identificador en curso: {attempted}. Revisa los perfiles antes de reintentar.',
+  'agents.import.uncertain': 'No se pudo confirmar el resultado. Revisa los perfiles antes de reintentar.',
   "agents.TaskExecution.inventory.title": "Inventario leído",
   "agents.TaskExecution.inventory.region": "Resultados de la lectura de carpeta",
   "agents.TaskExecution.inventory.path": "Ruta relativa",
@@ -1001,6 +1008,13 @@ export const es = {
   "agents.hierarchy.traceUnavailable": "La traza seleccionada no está disponible. No se muestran datos de otra ejecución.",
 } as const
 export const en: {[K in keyof typeof es]: string} = {
+  'agents.import.select': 'Import agents from JSON',
+  'agents.import.loading': 'Importing agents…',
+  'agents.import.success': '{count} agents imported.',
+  'agents.import.invalid': 'The agent file is invalid.',
+  'agents.import.too_large': 'The file exceeds the 5 MiB limit.',
+  'agents.import.incomplete': 'Import did not finish. Created IDs: {ids}. ID being written: {attempted}. Review the profiles before retrying.',
+  'agents.import.uncertain': 'The result could not be confirmed. Review the profiles before retrying.',
   "agents.TaskExecution.inventory.title": "Observed inventory",
   "agents.TaskExecution.inventory.region": "Folder read results",
   "agents.TaskExecution.inventory.path": "Relative path",
