@@ -6,6 +6,7 @@ import json
 import sqlite3
 from pathlib import Path
 
+import pytest
 from fastapi.testclient import TestClient
 
 from src.api import server
@@ -85,6 +86,68 @@ def test_changed_file_creates_revision_and_supersedes_prior_chunks(tmp_path, mon
         versions = conn.execute("SELECT COUNT(*) FROM knowledge_sources WHERE source_path='policy.md'").fetchone()[0]
     assert old == ("SUPERSEDED",)
     assert versions == 2
+
+
+def test_reingest_changed_chunking_rejects_without_overwriting_legacy_vectors(tmp_path, monkeypatch):
+    _, db, _, calls = _setup(tmp_path, monkeypatch)
+    client = TestClient(server.app)
+    first = client.post('/api/knowledge/ingest-and-answer', json=_request()).json()
+    assert first['status'] == 'answered'
+    with sqlite3.connect(db) as conn:
+        conn.execute('UPDATE vector_chunks SET content=?', ('legacy synthetic content',))
+        before = conn.execute('SELECT * FROM vector_chunks ORDER BY chunk_id').fetchall()
+    response = client.post('/api/knowledge/ingest-and-answer', json=_request())
+    assert response.status_code == 422
+    assert 'migration' in response.text.lower()
+    with sqlite3.connect(db) as conn:
+        assert conn.execute('SELECT * FROM vector_chunks ORDER BY chunk_id').fetchall() == before
+    assert len(calls) == 1
+
+
+def test_extra_chunk_inserted_after_preflight_is_detected_under_write_lock(tmp_path, monkeypatch):
+    _, db, _, calls = _setup(tmp_path, monkeypatch)
+    client = TestClient(server.app)
+    assert client.post('/api/knowledge/ingest-and-answer', json=_request()).json()['status'] == 'answered'
+    original = SQLiteVectorStore.upsert
+
+    def inject_before_upsert(self, chunks, **kwargs):
+        conn = kwargs['connection']
+        row = conn.execute('SELECT * FROM vector_chunks LIMIT 1').fetchone()
+        conn.execute('INSERT INTO vector_chunks VALUES (?,?,?,?,?,?,?,?,?,?,?,?)',
+                     ('synthetic-extra', *row[1:]))
+        return original(self, chunks, **kwargs)
+
+    monkeypatch.setattr(SQLiteVectorStore, 'upsert', inject_before_upsert)
+    response = client.post('/api/knowledge/ingest-and-answer', json=_request()).json()
+    assert response['status'] == 'failed'
+    assert len(calls) == 1
+    with sqlite3.connect(db) as conn:
+        assert conn.execute("SELECT COUNT(*) FROM vector_chunks WHERE chunk_id='synthetic-extra'").fetchone()[0] == 0
+
+
+@pytest.mark.parametrize('new_revision', [False, True])
+def test_failed_vector_upsert_rolls_back_source_authority_and_supersession(tmp_path, monkeypatch, new_revision):
+    workspace, db, _, calls = _setup(tmp_path, monkeypatch)
+    client = TestClient(server.app)
+    assert client.post('/api/knowledge/ingest-and-answer', json=_request()).json()['status'] == 'answered'
+    with sqlite3.connect(db) as conn:
+        before_sources = conn.execute('SELECT * FROM knowledge_sources ORDER BY source_id').fetchall()
+        before_vectors = conn.execute('SELECT * FROM vector_chunks ORDER BY chunk_id').fetchall()
+    if new_revision:
+        (workspace / 'policy.md').write_text('Synthetic replacement policy for a new revision.', encoding='utf-8')
+    original = SQLiteVectorStore.upsert
+
+    def fail_after_upsert(self, chunks, **kwargs):
+        original(self, chunks, **kwargs)
+        raise RuntimeError('synthetic failure after vector writes')
+
+    monkeypatch.setattr(SQLiteVectorStore, 'upsert', fail_after_upsert)
+    result = client.post('/api/knowledge/ingest-and-answer', json=_request(source_authority='PROPOSED')).json()
+    assert result['status'] == 'failed'
+    assert len(calls) == 1
+    with sqlite3.connect(db) as conn:
+        assert conn.execute('SELECT * FROM knowledge_sources ORDER BY source_id').fetchall() == before_sources
+        assert conn.execute('SELECT * FROM vector_chunks ORDER BY chunk_id').fetchall() == before_vectors
 
 
 def test_rejects_unsafe_paths_and_extra_request_fields_without_ingestion(tmp_path, monkeypatch):

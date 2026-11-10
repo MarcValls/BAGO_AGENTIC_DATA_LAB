@@ -10,7 +10,7 @@ from __future__ import annotations
 import hashlib
 import json
 import sqlite3
-from contextlib import contextmanager
+from contextlib import contextmanager, nullcontext
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Iterable, Iterator, Sequence
@@ -160,14 +160,38 @@ class SQLiteVectorStore:
             f"dimensions={self.embedder.dimensions}\n{payload}".encode("utf-8")
         ).hexdigest()
 
-    def upsert(self, chunks: Iterable[RetrievalChunk]) -> int:
+    def upsert(self, chunks: Iterable[RetrievalChunk], *, immutable_content: bool = False,
+               immutable_scope: tuple[str, str] | None = None,
+               connection: sqlite3.Connection | None = None) -> int:
         """Persist chunks and deterministic vectors; return rows written."""
 
         materialized = tuple(chunks)
         identifiers = [chunk.chunk_id for chunk in materialized]
         if len(identifiers) != len(set(identifiers)):
             raise VectorIndexError("chunk_id debe ser único en el vector index")
-        with self._connection() as connection:
+        with (self._connection() if connection is None else nullcontext(connection)) as connection:
+            if immutable_content or immutable_scope is not None:
+                # Hold the write lock through comparison and upsert so another
+                # writer cannot change a citation identity between the two.
+                if not connection.in_transaction:
+                    connection.execute('BEGIN IMMEDIATE')
+                if immutable_scope is not None:
+                    source_uri, revision = immutable_scope
+                    if any((chunk.source_uri, chunk.revision) != immutable_scope for chunk in materialized):
+                        raise VectorIndexError('chunks do not match immutable scope')
+                    existing = {row['chunk_id']: row['content'] for row in connection.execute(
+                        'SELECT chunk_id, content FROM vector_chunks WHERE source_uri=? AND revision=?',
+                        (source_uri, revision))}
+                    expected = {chunk.chunk_id: chunk.content for chunk in materialized}
+                    if existing and existing != expected:
+                        raise VectorIndexError('existing source revision differs; separate migration required')
+                for chunk in materialized:
+                    prior = connection.execute(
+                        'SELECT content, source_uri, revision FROM vector_chunks WHERE chunk_id=?',
+                        (chunk.chunk_id,),
+                    ).fetchone()
+                    if prior is not None and (prior['content'], prior['source_uri'], prior['revision']) != (chunk.content, chunk.source_uri, chunk.revision):
+                        raise VectorIndexError('existing chunk identity has different content or provenance')
             for chunk in materialized:
                 metadata_json = json.dumps(
                     dict(chunk.metadata),

@@ -63,6 +63,55 @@ def test_sqlite_vector_store_persists_vectors_and_applies_metadata_gate(tmp_path
     assert response.citations[0] == "evidence/policy-receipt.md#revision=1.0.0"
 
 
+def test_immutable_upsert_rejects_content_change_without_partial_write(tmp_path: Path):
+    from dataclasses import replace
+    import pytest
+    store = SQLiteVectorStore(tmp_path / 'immutable.db')
+    original = _chunks()[0]
+    store.upsert([original], immutable_content=True)
+    new = replace(_chunks()[1], chunk_id='new-synthetic')
+    conflicting = replace(original, content='different synthetic content')
+    with pytest.raises(VectorIndexError):
+        store.upsert([new, conflicting], immutable_content=True)
+    assert store.count == 1
+    assert store.load_chunks()[0].content == original.content
+    assert store.upsert([original], immutable_content=True) == 1
+
+
+def test_immutable_scope_observes_concurrent_writer_before_upsert(tmp_path: Path):
+    import sqlite3
+    import threading
+    store = SQLiteVectorStore(tmp_path / 'concurrent.db')
+    original = _chunks()[0]
+    store.upsert([original])
+    started, finished = threading.Event(), threading.Event()
+    errors = []
+
+    def worker():
+        started.set()
+        try:
+            store.upsert([original], immutable_content=True,
+                         immutable_scope=(original.source_uri, original.revision))
+        except Exception as error:
+            errors.append(error)
+        finally:
+            finished.set()
+
+    with sqlite3.connect(store.db_path) as conn:
+        conn.execute('BEGIN IMMEDIATE')
+        row = conn.execute('SELECT * FROM vector_chunks WHERE chunk_id=?', (original.chunk_id,)).fetchone()
+        conn.execute('INSERT INTO vector_chunks VALUES (?,?,?,?,?,?,?,?,?,?,?,?)', ('extra-concurrent', *row[1:]))
+        thread = threading.Thread(target=worker)
+        thread.start()
+        assert started.wait(2)
+        assert not finished.wait(.2)
+        conn.commit()
+    thread.join(5)
+    assert not thread.is_alive()
+    assert len(errors) == 1 and isinstance(errors[0], VectorIndexError)
+    assert store.count == 2
+
+
 def test_governed_rag_can_use_the_persistent_vector_backend(tmp_path: Path):
     db_path = tmp_path / "vectors.db"
     chunks = _chunks()
