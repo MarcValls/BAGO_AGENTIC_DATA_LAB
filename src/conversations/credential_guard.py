@@ -17,50 +17,91 @@ _PEM = re.compile(r'-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----[\s\S]*?(?:
 _TOKEN = re.compile(r"-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----|\b(?:github_pat_|gh[pousr]_?|xox[baprs]-|AIza|ya29\.|AKIA|ASIA|sk-|rk-)[A-Za-z0-9_./+=-]{12,}\b|\beyJ[A-Za-z0-9_-]{8,}\.[A-Za-z0-9_-]{8,}\.[A-Za-z0-9_-]{8,}\b", re.IGNORECASE)
 
 def _safe_code_assignment(value: str) -> bool:
-    """Allow only simple credential references without embedded default values."""
+    """Allow a narrow set of references, never comments or embedded secrets."""
     try:
         tree = ast.parse(value.strip())
-    except (SyntaxError, ValueError, RecursionError):
-        return False
-    try:
         if any(token.type == tokenize.COMMENT for token in tokenize.generate_tokens(io.StringIO(value).readline)):
             return False
-    except (tokenize.TokenError, IndentationError):
+    except (SyntaxError, ValueError, RecursionError, tokenize.TokenError, IndentationError):
         return False
-    if len(tree.body) != 1 or not isinstance(tree.body[0], ast.Assign):
+    nodes = tree.body
+    if len(nodes) == 2 and isinstance(nodes[0], ast.Import) and len(nodes[0].names) == 1 and nodes[0].names[0].name == 'os' and nodes[0].names[0].asname is None:
+        nodes = nodes[1:]
+    if len(nodes) != 1 or not isinstance(nodes[0], ast.Assign):
         return False
-    node = tree.body[0]
-    if len(node.targets) != 1 or not isinstance(node.targets[0], ast.Name):
+    node = nodes[0]
+    if len(node.targets) != 1 or not isinstance(node.targets[0], ast.Name) or not _SENSITIVE_KEY.fullmatch(node.targets[0].id):
         return False
-    call = node.value
-    if not isinstance(call, ast.Call) or call.keywords:
+    expr = node.value
+    if isinstance(expr, ast.Subscript) and isinstance(expr.value, ast.Attribute) and expr.value.attr == 'environ' and isinstance(expr.value.value, ast.Name) and expr.value.value.id == 'os':
+        argument = expr.slice
+    elif isinstance(expr, ast.Call) and not expr.keywords:
+        func = expr.func
+        if isinstance(func, ast.Name) and func.id == 'input':
+            if not expr.args:
+                return True
+            if len(expr.args) != 1:
+                return False
+            argument = expr.args[0]
+        elif len(expr.args) == 1 and ((isinstance(func, ast.Attribute) and func.attr == 'getenv' and isinstance(func.value, ast.Name) and func.value.id == 'os') or (isinstance(func, ast.Attribute) and func.attr == 'get' and isinstance(func.value, ast.Attribute) and func.value.attr == 'environ' and isinstance(func.value.value, ast.Name) and func.value.value.id == 'os')):
+            argument = expr.args[0]
+        else:
+            return False
+    else:
         return False
-    if isinstance(call.func, ast.Name) and call.func.id == 'input':
-        return not call.args
-    if len(call.args) != 1 or not isinstance(call.args[0], ast.Constant) or not isinstance(call.args[0].value, str):
-        return False
-    if any(pattern.search(call.args[0].value) for pattern in (_TOKEN, _PEM, _LABEL, _AUTH_HEADER)):
-        return False
-    func = call.func
-    return (isinstance(func, ast.Attribute) and func.attr in ('get', 'getenv')
-            and isinstance(func.value, ast.Name) and func.value.id == 'os' and func.attr == 'getenv') or (
-            isinstance(func, ast.Attribute) and func.attr == 'get'
-            and isinstance(func.value, ast.Attribute) and func.value.attr == 'environ'
-            and isinstance(func.value.value, ast.Name) and func.value.value.id == 'os')
+    return (isinstance(argument, ast.Constant) and isinstance(argument.value, str)
+            and not any(pattern.search(argument.value) for pattern in (_TOKEN, _PEM, _LABEL, _AUTH_HEADER)))
+
 
 def _unsafe_code_credential_call(value: str) -> bool:
     try:
         tree = ast.parse(value.strip())
     except (SyntaxError, ValueError, RecursionError):
         return False
-    return any(isinstance(node, ast.Assign) and isinstance(node.value, ast.Call)
-               and any(isinstance(target, ast.Name) and _SENSITIVE_KEY.fullmatch(target.id)
-                       for target in node.targets) for node in tree.body)
+    return any(isinstance(node, ast.Assign)
+               and any(isinstance(target, ast.Name) and _SENSITIVE_KEY.fullmatch(target.id) for target in node.targets)
+               and (isinstance(node.value, (ast.Call, ast.BinOp)) or (isinstance(node.value, ast.Constant) and isinstance(node.value.value, str) and bool(node.value.value)))
+               for node in tree.body)
+def _code_has_credential_literal(value: str) -> bool:
+    """Scan literal runs once; never evaluate expressions or execute code."""
+    parts = []
+    awaiting_string = False
+    def sensitive():
+        text = ''.join(parts)
+        return any(pattern.search(text) for pattern in (_TOKEN, _PEM, _LABEL, _AUTH_HEADER))
+    try:
+        for token in tokenize.generate_tokens(io.StringIO(value).readline):
+            if token.type == tokenize.STRING:
+                try:
+                    decoded = ast.literal_eval(token.string)
+                except (SyntaxError, ValueError, RecursionError):
+                    decoded = None
+                if isinstance(decoded, str):
+                    if parts and any(pattern.search(parts[-1] + decoded) for pattern in (_TOKEN, _PEM, _LABEL, _AUTH_HEADER)):
+                        return True
+                    parts.append(decoded)
+                    awaiting_string = False
+                    continue
+            elif token.type == tokenize.OP and token.string == '+' and parts and not awaiting_string:
+                awaiting_string = True
+                continue
+            if parts:
+                if sensitive():
+                    return True
+                parts.clear()
+                awaiting_string = False
+        return bool(parts and sensitive())
+    except (tokenize.TokenError, IndentationError, RecursionError):
+        # Preserve ordinary malformed prose; only fail closed when a literal run
+        # already contains a recognized marker.
+        return bool(parts and sensitive())
 
 def contains_recognizable_credential(value: str) -> bool:
-    return not _safe_code_assignment(value) and bool(_LABEL.search(value) or _AUTH_HEADER.search(value) or _PEM.search(value) or _TOKEN.search(value))
+    return _code_has_credential_literal(value) or (not _safe_code_assignment(value) and bool(_unsafe_code_credential_call(value) or _LABEL.search(value) or _AUTH_HEADER.search(value) or _PEM.search(value) or _TOKEN.search(value)))
 
 def redact_recognizable_credentials(value: str) -> str:
+    if _code_has_credential_literal(value):
+        return '[REDACTED]'
     if _safe_code_assignment(value):
         return value
     if _unsafe_code_credential_call(value):

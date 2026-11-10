@@ -97,3 +97,35 @@ def test_authorization_header_inside_environment_argument_is_redacted():
     text = 'password = os.getenv("Authorization: Bearer synthetic-header-secret")'
     assert contains_credential_tree(text)
     assert 'synthetic-header-secret' not in redact_credential_tree(text)
+
+
+def test_code_references_and_concatenated_literals():
+    safe = ('password=input("Password: ")', 'password=os.environ["PASSWORD"]',
+            'import os\napi_key=os.getenv("API_KEY")')
+    for text in safe:
+        assert not contains_credential_tree(text)
+        assert redact_credential_tree(text) == text
+    for text in ('password="synthetic-" "secret"', 'password="synthetic-" + "secret"',
+                 'password=input("Password: ") # password=synthetic-secret'):
+        assert contains_credential_tree(text)
+        assert 'secret' not in redact_credential_tree(text)
+
+
+def test_concatenated_recognizable_credentials_in_any_assignment():
+    for text in ('x="sk-" "synthetic123456789"',
+                 'x=os.getenv("Authorization: " "Bearer synthetic-secret")',
+                 'x="sk-" + "synthetic123456789"'):
+        assert contains_credential_tree(text)
+        assert 'synthetic' not in redact_credential_tree(text)
+    for text in ('x="hello" " world"', 'x=os.getenv("API_KEY")'):
+        assert not contains_credential_tree(text)
+        assert redact_credential_tree(text) == text
+
+
+def test_long_literal_concatenation_without_quadratic_ast_walk():
+    safe = 'x=' + '+'.join(['"hello"'] * 600)
+    dangerous = 'x=' + '+'.join(['"hello"'] * 600 + ['"Authorization: "', '"Bearer synthetic-secret"'])
+    assert not contains_credential_tree(safe)
+    assert redact_credential_tree(safe) == safe
+    assert contains_credential_tree(dangerous)
+    assert 'synthetic-secret' not in redact_credential_tree(dangerous)
